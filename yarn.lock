@@ -1334,10 +1334,15 @@ acorn-walk@^7.1.1, acorn-walk@^7.2.0:
   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-7.2.0.tgz#0de889a601203909b0fbe07b8938dc21d2e967bc"
   integrity sha512-OPdCF6GsMIP+Az+aWfAAOEt2/+iVDKE7oy6lJ098aoe59oAmK76qV6Gw60SbZ8jHuG2wH058GF4pLFbYamYrVA==
 
-acorn@^7.0.0, acorn@^7.1.1, acorn@^7.4.0:
+acorn@^7.0.0, acorn@^7.1.1:
   version "7.4.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.0.tgz#e1ad486e6c54501634c6c397c5c121daa383607c"
   integrity sha512-+G7P8jJmCHr+S+cLfQxygbWhXy+8YTVGzAkpEbcLo2mLoL7tij/VG41QSHACSf5QgYRhMZYHuNc6drJaO0Da+w==
+
+acorn@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.0.1.tgz#d7e8eca9b71d5840db0e7e415b3b2b20e250f938"
+  integrity sha512-dmKn4pqZ29iQl2Pvze1zTrps2luvls2PBY//neO2WJ0s10B3AxJXshN+Ph7B4GrhfGhHXrl4dnUwyNNXQcnWGQ==
 
 ajv@^6.12.3:
   version "6.12.3"
