@@ -11,18 +11,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 27,
-          "line": 157,
+          "line": 163,
         },
         "start": Position {
           "column": 19,
-          "line": 157,
+          "line": 163,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 157: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 163: Error: head(xs) expects a pair as argument xs, but encountered null",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -59,18 +59,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 47,
-          "line": 157,
+          "line": 163,
         },
         "start": Position {
           "column": 39,
-          "line": 157,
+          "line": 163,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 157: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 163: Error: tail(xs) expects a pair as argument xs, but encountered null",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -107,18 +107,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 47,
-          "line": 157,
+          "line": 163,
         },
         "start": Position {
           "column": 39,
-          "line": 157,
+          "line": 163,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 157: Error: tail(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "Line 163: Error: tail(xs) expects a pair as argument xs, but encountered null",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -156,11 +156,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 16,
-          "line": 157,
+          "line": 163,
         },
         "start": Position {
           "column": 9,
-          "line": 157,
+          "line": 163,
         },
       },
       "severity": "Error",
@@ -168,7 +168,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 157: Expected string on right hand side of operation, got number.",
+  "parsedErrors": "Line 163: Expected string on right hand side of operation, got number.",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -206,11 +206,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 20,
-          "line": 55,
+          "line": 61,
         },
         "start": Position {
           "column": 15,
-          "line": 55,
+          "line": 61,
         },
       },
       "severity": "Error",
@@ -218,7 +218,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 55: Expected number on left hand side of operation, got string.",
+  "parsedErrors": "Line 61: Expected number on left hand side of operation, got string.",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -256,11 +256,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 61,
-          "line": 149,
+          "line": 155,
         },
         "start": Position {
           "column": 52,
-          "line": 149,
+          "line": 155,
         },
       },
       "severity": "Error",
@@ -268,7 +268,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 149: Expected string on right hand side of operation, got number.",
+  "parsedErrors": "Line 155: Expected string on right hand side of operation, got number.",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -306,11 +306,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 20,
-          "line": 149,
+          "line": 155,
         },
         "start": Position {
           "column": 9,
-          "line": 149,
+          "line": 155,
         },
       },
       "severity": "Error",
@@ -318,7 +318,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 149: Expected string on right hand side of operation, got number.",
+  "parsedErrors": "Line 155: Expected string on right hand side of operation, got number.",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -356,11 +356,11 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 20,
-          "line": 149,
+          "line": 155,
         },
         "start": Position {
           "column": 9,
-          "line": 149,
+          "line": 155,
         },
       },
       "severity": "Error",
@@ -368,7 +368,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 149: Expected number on right hand side of operation, got string.",
+  "parsedErrors": "Line 155: Expected number on right hand side of operation, got string.",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -505,18 +505,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 41,
-          "line": 101,
+          "line": 107,
         },
         "start": Position {
           "column": 33,
-          "line": 101,
+          "line": 107,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 101: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "parsedErrors": "Line 107: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -582,18 +582,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 19,
-          "line": 139,
+          "line": 145,
         },
         "start": Position {
           "column": 11,
-          "line": 139,
+          "line": 145,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 139: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "parsedErrors": "Line 145: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -630,18 +630,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 16,
-          "line": 68,
+          "line": 74,
         },
         "start": Position {
           "column": 8,
-          "line": 68,
+          "line": 74,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 68: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "parsedErrors": "Line 74: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -678,18 +678,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 46,
-          "line": 34,
+          "line": 40,
         },
         "start": Position {
           "column": 38,
-          "line": 34,
+          "line": 40,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 34: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "parsedErrors": "Line 40: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -726,18 +726,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 45,
-          "line": 43,
+          "line": 49,
         },
         "start": Position {
           "column": 37,
-          "line": 43,
+          "line": 49,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 43: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "parsedErrors": "Line 49: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -774,18 +774,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 44,
-          "line": 110,
+          "line": 116,
         },
         "start": Position {
           "column": 36,
-          "line": 110,
+          "line": 116,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 110: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "parsedErrors": "Line 116: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -822,18 +822,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 44,
-          "line": 118,
+          "line": 124,
         },
         "start": Position {
           "column": 36,
-          "line": 118,
+          "line": 124,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 118: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "parsedErrors": "Line 124: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -870,18 +870,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 20,
-          "line": 127,
+          "line": 133,
         },
         "start": Position {
           "column": 12,
-          "line": 127,
+          "line": 133,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 127: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "parsedErrors": "Line 133: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -918,18 +918,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 60,
-          "line": 90,
+          "line": 96,
         },
         "start": Position {
           "column": 46,
-          "line": 90,
+          "line": 96,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 90: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
+  "parsedErrors": "Line 96: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -2214,6 +2214,19 @@ const globals = native.globals;
 }
 lastStatementResult;
 ",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`equal: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "!equal(1, x => x) && !equal(x => x, 1);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
 `;
