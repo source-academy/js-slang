@@ -115,4 +115,4 @@ test('display_list is linear runtime', () => {
   // estimated power is less than 1.2
   // means it's probably near 1
   // => probably linear?
-}, 100000)
+}, 1000000)
