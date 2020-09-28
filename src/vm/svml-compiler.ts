@@ -752,7 +752,8 @@ const compilers = {
           }
           break
         case 'number': // need to adjust depending on target
-          if (Number.isInteger(value)) {
+          // LGCI takes a signed 32-bit integer operand (hence the range)
+          if (Number.isInteger(value) && -2_147_483_648 <= value && value <= 2_147_483_647) {
             addUnaryInstruction(OpCodes.LGCI, value)
           } else {
             addUnaryInstruction(OpCodes.LGCF64, value)
