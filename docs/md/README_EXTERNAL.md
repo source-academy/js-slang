@@ -25,4 +25,7 @@ library in the Source Academy interface.
 <li>
 <a href="../GAME/index.html">GAME</a>: Source Academy game
 </li>
+<li>
+<a href="../EV3/index.html">EV3</a>: Library for EV3 Lego Mindstorms robots
+</li>
 </ul>
