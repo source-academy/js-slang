@@ -19,7 +19,7 @@ These names come in two groups:
 
 The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>,
 a learning environment that uses SICP JS and Source, comes with the following 
-<a href="External libraries/">external libraries</a> suitable for Source §1:
+<a href="../External libraries/">external libraries</a> suitable for Source §1:
   <ul>
     <li>
       <a href="../RUNES/index.html">RUNES</a>: Library for runes graphics

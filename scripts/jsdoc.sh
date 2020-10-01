@@ -290,7 +290,8 @@ run() {
 	     ${LIB}/webGLhi_graph.js \
 	     ${LIB}/video_lib.js \
 	     ${LIB}/game.js \
-	     ${LIB}/sound
+	     ${LIB}/sound \
+	     ${LIB}/ev3.js
     
 }
 
