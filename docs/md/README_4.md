@@ -53,6 +53,9 @@ a learning environment that uses SICP JS and Source, comes with the following
     <li>
       <a href="../GAME/index.html">GAME</a>: Library for Source Academy game
     </li>
+    <li>
+      <a href="../EV3/index.html">EV3</a>: Library for EV3 Lego Mindstorms robots
+    </li>
   </ul>
 
 ## What can you do in Source §4?
