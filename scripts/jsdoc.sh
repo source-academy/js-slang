@@ -271,6 +271,14 @@ run() {
 	     -R ${MD}/GAME_README.md \
 	     ${LIB}/game.js 
     
+   # EV3
+
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -d "${DST}/EV3/" \
+	     -R ${MD}/EV3_README.md \
+	     ${LIB}/ev3.js
+
     # External
     
     ${JSDOC} -r -t ${TMPL}/ \
