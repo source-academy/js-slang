@@ -21,7 +21,7 @@ order. Click on a name to see how it is used. They come in these three groups:
 
 The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>,
 a learning environment that uses SICP JS and Source, comes with the following 
-<a href="External libraries/">external libraries</a> for Source §2:
+<a href="../External libraries/">external libraries</a> for Source §2:
   <ul>
     <li>
       <a href="../RUNES/index.html">RUNES</a>: Library for runes graphics
