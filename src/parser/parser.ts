@@ -8,6 +8,7 @@ import {
 import { parse as acornLooseParse } from 'acorn-loose'
 import { ancestor, AncestorWalkerFn } from 'acorn-walk/dist/walk'
 import * as es from 'estree'
+import { ACORN_PARSE_OPTIONS } from '../constants'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 import { stripIndent } from '../utils/formatters'
 import rules from './rules'
@@ -101,7 +102,7 @@ export class TrailingCommaError implements SourceError {
 export function parseAt(source: string, num: number) {
   let theNode: acorn.Node | undefined
   try {
-    theNode = acornParseAt(source, num)
+    theNode = acornParseAt(source, num, ACORN_PARSE_OPTIONS)
   } catch (error) {
     return undefined
   }
