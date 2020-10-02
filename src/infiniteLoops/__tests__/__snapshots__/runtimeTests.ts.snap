@@ -907,6 +907,24 @@ Object {
 }
 `;
 
+exports[`infinite loops: shadowed parameters to function do not cause false positives 1`] = `1`;
+
+exports[`infinite loops: shadowed parameters to function do not cause false positives: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(f){
+    return f(1);
+  }
+  f((x)=>x);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`no false positive detected: countdown fn 1`] = `0`;
 
 exports[`no false positive detected: countdown fn: expectResult 1`] = `
