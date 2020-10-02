@@ -826,11 +826,12 @@ const compilers = {
   // Loops need to have their own environment due to closures
   WhileStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as taggedWhileStatement
+    const isFor = (node as taggedWhileStatement).isFor
     const condIndex = functionCode.length
     const { maxStackSize: m1 } = compile(node.test, indexTable, false)
     addUnaryInstruction(OpCodes.BRF, NaN)
     const BRFIndex = functionCode.length - 1
-    loopTracker.push([(node as taggedWhileStatement).isFor ? 'for' : 'while', [], [], NaN])
+    loopTracker.push([isFor ? 'for' : 'while', [], [], NaN])
 
     // Add environment for loop and run in new environment
     const locals = extractAndRenameNames(node.body as es.BlockStatement, new Map())
@@ -839,6 +840,10 @@ const compilers = {
     const body = node.body as taggedBlockStatement
     body.isLoopBlock = true
     const { maxStackSize: m2 } = compile(body, extendedIndexTable, false)
+    if (!isFor) {
+      // for while loops, the `continue` statement should branch here
+      loopTracker[loopTracker.length - 1][CONT_DEST_INDEX] = functionCode.length
+    }
     addNullaryInstruction(OpCodes.POPENV)
     const endLoopIndex = functionCode.length
     addUnaryInstruction(OpCodes.BR, condIndex - endLoopIndex)
