@@ -38,7 +38,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
-    "test": "jest --testPathIgnorePatterns='.*benchmark.*'",
+    "test": "jest",
     "benchmark": "jest --testPathPattern='.*benchmark.*'",
     "test-coveralls": "./scripts/test-coveralls.sh",
     "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\"",
@@ -84,7 +84,8 @@
     },
     "testRegex": "/__tests__/.*\\.ts$",
     "testPathIgnorePatterns": [
-      "/dist/"
+      "/dist/",
+      "'.*benchmark.*'"
     ],
     "coveragePathIgnorePatterns": [
       "/dist/",
