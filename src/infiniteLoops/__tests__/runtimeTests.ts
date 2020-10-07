@@ -324,3 +324,11 @@ test('infinite loops not detected', () => {
       `
   return expectResult(code, { chapter: 2 }).toMatchSnapshot()
 })
+
+test('infinite loops: shadowed parameters to function do not cause false positives', () => {
+  const code = `function f(f){
+    return f(1);
+  }
+  f((x)=>x);`
+  return expectResult(code).toMatchSnapshot()
+})
