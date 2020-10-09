@@ -195,14 +195,14 @@ var colorSensorBlue = function(colorSensor) {
  * Gets the colour as seen by the colour sensor.
  *
  * Possible colour return values are:
- * <ul><li><code>0    none</li>
- * <li>1    black</li>
- * <li>2    blue</li>
- * <li>3    green</li>
- * <li>4    yellow</li>
- * <li>5    red</li>
- * <li>6    white</li>
- * <li>7    brown</li></ul>
+ * <ul><li>0 none</li>
+ * <li>1 black</li>
+ * <li>2 blue</li>
+ * <li>3 green</li>
+ * <li>4 yellow</li>
+ * <li>5 red</li>
+ * <li>6 white</li>
+ * <li>7 brown</li></ul>
  *
  * @param {peripheral} colorSensor - The colour sensor.
  * @returns {number} A number representing the colour observed by the device.
@@ -336,3 +336,119 @@ var gyroSensorAngle = function(gyroSensor) {
 var pause = function(time) {
 };
 
+/**
+ * Returns a hello world message.
+ *
+ * @returns {string} A hello world message.
+ * @alias ev3_hello
+ */
+var hello = function() {};
+
+/**
+ * Waits for one of the buttons on the EV3's control face to be pressed, then
+ * returns a value corresponding to the button that was pressed:
+ *
+ * <ul><li>0 enter (the middle button)</li>
+ * <li>1 back (the top left button)</li>
+ * <li>2 left</li>
+ * <li>3 right</li>
+ * <li>4 up</li>
+ * <li>5 down</li></ul>
+ *
+ * @returns {number} A number corresponding to the button that was pressed
+ * @alias ev3_waitForButtonPress
+ */
+var waitForButtonPress = function() {};
+
+/**
+ * Makes the robot speak the given words through its speaker. Returns after the
+ * words are spoken.
+ *
+ * @param {string} words - The words to speak.
+ * @alias ev3_speak
+ */
+var speak = function(words) {};
+
+/**
+ * Causes the robot to emit a sequence of beeps. Returns after the beeps are
+ * emitted.
+ *
+ * The beep sequence is an array of <code>[frequency, length (ms), delay (ms),
+ * ...]</code>. For example, <code>[1000, 500, 500, 250, 500, 0]</code> will
+ * cause the robot to emit a 1000 Hz beep for 500 ms, wait 500 ms, then emit a
+ * 250 Hz beep for 500 ms.
+ *
+ * @param {Array} beeps - The beep sequence.
+ * @alias ev3_playSequence
+ */
+var playSequence = function(beeps) {};
+
+/**
+ * Gets the left green LED.
+ *
+ * Note that the four LEDs on the EV3 are laid out in two pairs of green and
+ * red. If both in a pair are turned on, you can vary the colours in a small
+ * spectrum between red and green.
+ *
+ * @returns {peripheral} The left green LED
+ * @alias ev3_ledLeftGreen
+ */
+var ledLeftGreen = function() {};
+
+/**
+ * Gets the left red LED.
+ *
+ * Note that the four LEDs on the EV3 are laid out in two pairs of green and
+ * red. If both in a pair are turned on, you can vary the colours in a small
+ * spectrum between red and green.
+ *
+ * @returns {peripheral} The left red LED
+ * @alias ev3_ledLeftRed
+ */
+var ledLeftRed = function() {};
+
+/**
+ * Gets the right green LED.
+ *
+ * Note that the four LEDs on the EV3 are laid out in two pairs of green and
+ * red. If both in a pair are turned on, you can vary the colours in a small
+ * spectrum between red and green.
+ *
+ * @returns {peripheral} The right green LED
+ * @alias ev3_ledRightGreen
+ */
+var ledRightGreen = function() {};
+
+/**
+ * Gets the right red LED.
+ *
+ * Note that the four LEDs on the EV3 are laid out in two pairs of green and
+ * red. If both in a pair are turned on, you can vary the colours in a small
+ * spectrum between red and green.
+ *
+ * @returns {peripheral} The right red LED
+ * @alias ev3_ledRightRed
+ */
+var ledRightRed = function() {};
+
+/**
+ * Gets the brightness of the given LED.
+ *
+ * The brightness is a number ranging from 0 (off) to 255 (maximum).
+ *
+ * @param {peripheral} led - The LED
+ * @returns {number} The brightness of the given LED
+ * @alias ev3_ledGetBrightness
+ */
+var ledGetBrightness = function (led) {};
+
+/**
+ * Sets the brightness of the given LED.
+ *
+ * The brightness is a number ranging from 0 (off) to 255 (maximum).
+ *
+ * @param {peripheral} led - The LED
+ * @param {number} brightness - The desired brightness
+ * @alias ev3_ledSetBrightness
+ */
+var ledSetBrightness = function (led, brightness) {};
