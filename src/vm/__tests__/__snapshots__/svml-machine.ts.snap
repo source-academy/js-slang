@@ -1585,6 +1585,30 @@ for (i; i < 2; i = i + 1) {
 }
 `;
 
+exports[`standard program execution continue in while loops works: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let x = false;
+while (true) {
+  if (x) {
+    break;
+  } else {
+    x = true;
+  }
+  continue;
+}
+display(0);",
+  "displayResult": Array [
+    "0",
+  ],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "all threads terminated",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard program execution list functions work: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],

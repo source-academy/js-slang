@@ -40,6 +40,9 @@ comes with the following <a href="External libraries/">external libraries</a>:
 <li>
 <a href="GAME/index.html">GAME</a>: Library for Source Academy game
 </li>
+<li>
+<a href="EV3/index.html">EV3</a>: Library for EV3 Lego Mindstorms robots
+</li>
 </ul>
 
 ### Style guide

@@ -1254,6 +1254,28 @@ describe('standard program execution', () => {
               ]
             `)
   })
+
+  test('continue in while loops works', () => {
+    return expectDisplayResult(
+      stripIndent`
+        let x = false;
+        while (true) {
+          if (x) {
+            break;
+          } else {
+            x = true;
+          }
+          continue;
+        }
+        display(0);
+      `,
+      { chapter: 3, variant: 'concurrent' }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "0",
+              ]
+            `)
+  })
 })
 
 // fails with a large enough TO

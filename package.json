@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.4.64",
+  "version": "0.4.66",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
     "JavaScript",
@@ -15,15 +15,15 @@
   },
   "dependencies": {
     "@types/estree": "0.0.45",
-    "acorn": "^7.4.0",
-    "acorn-loose": "^7.1.0",
-    "acorn-walk": "^7.2.0",
+    "acorn": "^8.0.3",
+    "acorn-loose": "^8.0.0",
+    "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.20",
     "node-getopt": "^0.3.2",
     "source-map": "^0.7.3",
     "xmlhttprequest-ts": "^1.0.1",
-    "gpu.js": "^2.9.5"
+    "gpu.js": "^2.10.4"
   },
   "main": "dist/index",
   "types": "dist/index",
@@ -38,7 +38,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
-    "test": "jest --testPathIgnorePatterns='.*benchmark.*'",
+    "test": "jest",
     "benchmark": "jest --testPathPattern='.*benchmark.*'",
     "test-coveralls": "./scripts/test-coveralls.sh",
     "tslint": "tslint -t verbose \"src/**/*.{ts,tsx}\"",
@@ -56,22 +56,22 @@
   },
   "homepage": "https://github.com/source-academy/js-slang",
   "devDependencies": {
-    "@types/jest": "^26.0.8",
+    "@types/jest": "^26.0.14",
     "@types/lodash.assignin": "^4.2.6",
     "@types/lodash.clonedeep": "^4.5.6",
-    "@types/node": "^14.0.27",
+    "@types/node": "^14.11.2",
     "ace-builds": "^1.4.12",
     "coveralls": "^3.1.0",
-    "escodegen": "^1.14.3",
-    "husky": "^4.2.5",
-    "jest": "^26.2.2",
-    "jest-html-reporter": "^3.1.3",
-    "jsdoc": "3.6.5",
-    "jsdom": "^16.3.0",
-    "prettier": "^2.0.5",
-    "ts-jest": "^26.1.4",
+    "escodegen": "^2.0.0",
+    "husky": "^4.3.0",
+    "jest": "^26.4.2",
+    "jest-html-reporter": "^3.2.0",
+    "jsdoc": "3.6.6",
+    "jsdom": "^16.4.0",
+    "prettier": "^2.1.2",
+    "ts-jest": "^26.4.1",
     "tslint": "^6.1.3",
-    "typescript": "^3.9.7"
+    "typescript": "^4.0.3"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -84,7 +84,8 @@
     },
     "testRegex": "/__tests__/.*\\.ts$",
     "testPathIgnorePatterns": [
-      "/dist/"
+      "/dist/",
+      "'.*benchmark.*'"
     ],
     "coveragePathIgnorePatterns": [
       "/dist/",
