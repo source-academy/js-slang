@@ -93,7 +93,7 @@ export function HighlightRulesSelector(
     }
 
     const ChapterForbbidenWordSelector = () => {
-      if (id <= 3) {
+      if (id < 3) {
         return 'while|for|break|continue|let'
       } else {
         return ''

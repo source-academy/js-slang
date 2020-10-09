@@ -1708,18 +1708,18 @@ Object {
       "location": SourceLocation {
         "end": Position {
           "column": 46,
-          "line": 34,
+          "line": 40,
         },
         "start": Position {
           "column": 38,
-          "line": 34,
+          "line": 40,
         },
       },
       "severity": "Error",
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 34: Error: tail(xs) expects a pair as argument xs, but encountered 1",
+  "parsedErrors": "Line 40: Error: tail(xs) expects a pair as argument xs, but encountered 1",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

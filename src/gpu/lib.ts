@@ -5,6 +5,7 @@ import { parse } from 'acorn'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { gpuRuntimeTranspile } from './transfomer'
+import { ACORN_PARSE_OPTIONS } from '../constants'
 
 // Heuristic : Only use GPU if array is bigger than this
 const MAX_SIZE = 200
@@ -226,7 +227,7 @@ export function __createKernelSource(
 
   const code = f.toString()
   // We don't need the full source parser here because it's already validated at transpile time.
-  const ast = (parse(code) as unknown) as es.Program
+  const ast = (parse(code, ACORN_PARSE_OPTIONS) as unknown) as es.Program
   const body = (ast.body[0] as es.ExpressionStatement).expression as es.ArrowFunctionExpression
   const newBody = gpuRuntimeTranspile(body, new Set(localNames))
   const kernel = new Function(generate(newBody))

@@ -1,3 +1,4 @@
+import { Options } from 'acorn'
 import * as es from 'estree'
 import { SourceLanguage } from './types'
 
@@ -34,3 +35,5 @@ export const sourceLanguages: SourceLanguage[] = [
   { chapter: 4, variant: 'default' },
   { chapter: 4, variant: 'gpu' }
 ]
+
+export const ACORN_PARSE_OPTIONS: Options = { ecmaVersion: 2015 }
