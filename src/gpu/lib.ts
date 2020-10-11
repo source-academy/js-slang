@@ -1,6 +1,5 @@
 import { GPU } from 'gpu.js'
 import { TypeError } from '../utils/rttc'
-import { isArray } from 'util'
 import { parse } from 'acorn'
 import { generate } from 'astring'
 import * as es from 'estree'
@@ -69,14 +68,6 @@ function checkArray3D(arr: any, end: any): boolean {
   return true
 }
 
-function checkForNumber(arr: any): boolean {
-  if (isArray(arr)) {
-    return arr.length > 0 && arr.filter(x => !checkForNumber(x)).length === 0
-  }
-
-  return typeof arr === 'number'
-}
-
 /*
  * we only use the gpu if:
  * 1. we are working with numbers
@@ -88,14 +79,10 @@ function checkValidGPU(f: any, end: any): boolean {
   if (end.length === 2) res = f(0, 0)
   if (end.length === 3) res = f(0, 0, 0)
 
+  // we do not allow array assignment
+  // we expect the programmer break it down for us
   if (typeof res !== 'number') {
-    if (!Array.isArray(res)) {
-      return false
-    }
-
-    if (!checkForNumber(res)) {
-      return false
-    }
+    return false
   }
 
   let cnt = 1
@@ -148,10 +135,6 @@ function manualRun(f: any, end: any, res: any) {
  */
 export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any) {
   const gpu = new GPU()
-  const nend = []
-  for (let i = end.length - 1; i >= 0; i--) {
-    nend.push(end[i])
-  }
 
   // check array is initialized properly
   let ok = checkArray(arr)
@@ -184,6 +167,11 @@ export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any)
   if (!ok) {
     manualRun(f2, end, arr)
     return
+  }
+
+  const nend = []
+  for (let i = end.length - 1; i >= 0; i--) {
+    nend.push(end[i])
   }
 
   // external variables to be in the GPU
