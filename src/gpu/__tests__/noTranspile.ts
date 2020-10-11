@@ -117,6 +117,23 @@ test('simple for loop with different initialization does not get transpiled', ()
   expect(cnt).toEqual(null)
 })
 
+test('simple for loop with assignment to array does not get transpiled', () => {
+  const code = stripIndent`
+      let res = [];
+      let i = [1, 2, 3];
+      for (i = 0; i < 5; i = i + 1) {
+          res[i] = i;
+      }
+      `
+  const context = mockContext(4, 'gpu')
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
+
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
+})
+
 test('simple for loop with global variable update does not get transpiled', () => {
   const code = stripIndent`
       let res = [];
