@@ -35,7 +35,7 @@ comes with the following <a href="External libraries/">external libraries</a>:
 <a href="BINARYTREES/index.html">BINARYTREES</a>: binary trees
 </li>
 <li>
-<a href="PIX%26FLIX/index.html">PIX&amp;FLIX</a>: image and video processing
+<a href="PIXNFLIX/index.html">PIXNFLIX</a>: image and video processing
 </li>
 <li>
 <a href="GAME/index.html">GAME</a>: Library for Source Academy game
