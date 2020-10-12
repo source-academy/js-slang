@@ -255,12 +255,12 @@ run() {
 	     -d ${DST}/BINARYTREES \
 	     ${LIB}/tree.js
 
-   # PIX&FLIX
+   # PIXNFLIX
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -d "${DST}/PIX&FLIX/" \
-	     -R ${MD}/VIDEO_README.md \
+	     -d "${DST}/PIXNFLIX/" \
+	     -R ${MD}/PIXNFLIX_README.md \
 	     ${LIB}/video_lib.js 
     
    # GAME

@@ -12,8 +12,8 @@
 
 /**
  * Returns the red component of a given Pixel <CODE>px</CODE>
- * @param {px} Pixel - given Pixel
- * @returns {Number} the red component as a number between 0 and 255
+ * @param {Pixel} px - given Pixel
+ * @returns {Number} the red component as a number from 0 to 255
  */
 function red_of(px) { // returns the red value of px respectively
     return px[0];
@@ -21,8 +21,8 @@ function red_of(px) { // returns the red value of px respectively
 
 /**
  * Returns the green component of a given Pixel <CODE>px</CODE>
- * @param {px} Pixel - given Pixel
- * @returns {Number} the green component as a number between 0 and 255
+ * @param {Pixel} px - given Pixel
+ * @returns {Number} the green component as a number from 0 to 255
  */
 function green_of(px) { // returns the green value of px respectively
     return px[1];
@@ -30,47 +30,44 @@ function green_of(px) { // returns the green value of px respectively
 
 /**
  * Returns the blue component of a given Pixel <CODE>px</CODE>
- * @param {px} Pixel - given Pixel
- * @returns {Number} the blue component as a number between 0 and 255
+ * @param {Pixel} px - given Pixel
+ * @returns {Number} the blue component as a number from 0 to 255
  */
 function blue_of(px) { // returns the blue value of px respectively
     return px[2];
 }
 
 /**
- * Assigns the red, green and blue components of a pixel 
- * <CODE>px</CODE> to given values
- * @param {px} Pixel - given Pixel
- * @param {r} Number - the red component as a number between 0 and 255
- * @param {g} Number - the green component as a number between 0 and 255
- * @param {b} Number - the blue component as a number between 0 and 255
- * @param {px} Pixel - given Pixel
- * @returns {undefined} 
+ * Returns the alpha component of a given Pixel <CODE>px</CODE>
+ * @param {Pixel} px - given Pixel
+ * @returns {Number} the alpha component as a number from 0 to 255
  */
-function set_rgb(px,r,g,b) { // assigns the r,g,b values to this px
-    px[0] = r;
-    px[1] = g;
-    px[2] = b;
+function alpha_of(px) { // returns the blue value of px respectively
+    return px[3];
 }
 
 /**
- * Copies the red, green and blue components of a Pixel 
- * <CODE>src</CODE> to a Pixel <CODE>dst</CODE>
- * @param {px} Pixel - source Pixel
- * @param {px} Pixel - destination Pixel
+ * Assigns the red, green, blue and alpha components of a Pixel 
+ * <CODE>px</CODE> to given values
+ * @param {Pixel} px - given Pixel
+ * @param {Number} r - the red component as a number from 0 to 255
+ * @param {Number} g - the green component as a number from 0 to 255
+ * @param {Number} b - the blue component as a number from 0 to 255
+ * @param {Number} a - the alpha component as a number from 0 to 255
  * @returns {undefined} 
  */
-function copy_pixel(src,dest) { 
-    dest[0] = src[0];
-    dest[1] = src[1];
-    dest[2] = src[2];
+function set_rgba(px,r,g,b,a) { // assigns the r,g,b,a values to this px
+    px[0] = r;
+    px[1] = g;
+    px[2] = b;
+    px[3] = a;
 }
 
 /**
  * Filter that copies all Pixels faithfully from the
- * source Image to the destination Image
- * @param {src} Image - source Image
- * @param {dst} Image - destination Image
+ * source Image <CODE>src</CODE> to the destination Image <CODE>dst</CODE>
+ * @param {Image} src - source Image
+ * @param {Image} dst - destination Image
  * @returns {undefined} 
  */
 function copy_image(src, dest) {
@@ -79,16 +76,6 @@ function copy_image(src, dest) {
 	    copy_pixel(src[i][j], dest[i][j]);
 	}
     }
-}
-
-/**
- * Constrains a given color value to lie between 0 and 255
- * @param {Number} val - source value
- * @returns {Number} constrained value between 0 and 255
- */
-function constrain_color(val) {
-    return val > 255 ? 255 
-	: val < 0 ? 0 : val;
 }
 
 // returns a new filter that will have the effect of applying filter1 first and then filter2
@@ -116,7 +103,7 @@ var _HEIGHT = 300;
  * pixels, i.e. the number of pixels in vertical direction
  * @returns {Number} height of output display (in pixels)
  */
-function get_video_height() {
+function video_height() {
     return _HEIGHT;
 }
 
@@ -125,24 +112,24 @@ function get_video_height() {
  * pixels, i.e. the number of pixels in horizontal direction
  * @returns {Number} width of output display (in pixels)
  */
-function get_video_width() {
+function video_width() {
     return _WIDTH;
 }
 
 // changes the current filter to my_filter
 // default filter is copy_image
 /**
- * Installs a given filter to be used to transform
- * the images that the camera captures into images
- * displayed on the screen. A filter is a function
- * that is applied to two two-dimensional arrays
- * of Pixels: the source image and the destination
- * image.
- * @param {f} filter - the filter to be installed
+ * Installs a given Filter to be used to transform
+ * the Images that the camera captures into Images
+ * displayed on the screen. A Filter is a function
+ * that is applied to two Images (2-D arrays
+ * of Pixels): the source Image and the destination
+ * Image.
+ * @param {Filter} f - the Filter to be installed
  * @returns {undefined} 
  */
-function apply_filter(filter) { 
-    VD._student_filter = filter;
+function install_filter(f) { 
+    VD._student_filter = f;
     if (!VD._video_playing) {
         VD.handleStart( () => {
 	    VD._draw_once();
@@ -151,70 +138,10 @@ function apply_filter(filter) {
     }
 }
 
-/*
-  make_distortion_filter(reverse_mapping)
-  make_static_distortion_filter(reverse_mapping)
-  distortion
-  a rearrangement of the pixels in the original src
-  reverse_mapping([x,y])
-  this is a function that takes in [x,y], which are the coordinates of a pixel on dest
-  and returns [u,v], the coordinates of a pixel on src
-  These two functions will return a filter that will
-  map every pixel - dest[x][y] for all x,y - to take the rgb values of src[u][v]
-  if [u,v] exceeds the boundaries of src, a black pixel will be displayed instead
-  
-  make_static_distortion_filter
-  for filters that will not change with time
-  the pixel mappings are only calculated once
-  make_distortion_filter
-  for filters that will change with time
-  the pixel mappings are recalculated in every frame
-*/
-function make_distortion_filter(reverse_mapping) {
-    function filter(src, dest) {
-	for (let i=0; i<_WIDTH; i = i + 1) {
-	    for (let j=0; j<_HEIGHT; j = j + 1) {
-		let pt = reverse_mapping([i,j]);
-		if (0 <= pt[0] && pt[0] < _WIDTH && 0 <= pt[1] && pt[1] < _HEIGHT) {
-		    copy_pixel(src[pt[0]][pt[1]], dest[i][j]);
-		} else {
-		    set_rgb(dest[i][j], 0,0,0);
-		}
-	    }
-	}
-    }
-    return filter;
-}
-
-function make_static_distortion_filter(reverse_mapping) {
-    let rev_map_grid = [];
-    for (let i=0; i<_WIDTH; i = i + 1) {
-	rev_map_grid[i] = [];
-	for (let j=0; j<_HEIGHT; j = j + 1) {
-	    let pt = reverse_mapping([i,j]);
-	    if (0 <= pt[0] && pt[0] < _WIDTH && 0 <= pt[1] && pt[1] < _HEIGHT) {
-		rev_map_grid[i][j] = pt;
-	    } else {
-		rev_map_grid[i][j] = null;
-	    }
-	    
-	}
-    }
-    function filter(src, dest) {
-	for (let i=0; i<_WIDTH; i = i + 1) {
-	    for (let j=0; j<_HEIGHT; j = j + 1) {
-		let pt = rev_map_grid[i][j];
-		if (pt != null) {
-		    copy_pixel(src[pt[0]][pt[1]], dest[i][j]);
-		} else {
-		    set_rgb(dest[i][j], 0,0,0);
-		}
-	    }
-	}
-    }
-    return filter;
-}
-
+/**
+ * Resets the installed Filter back to the default Filter
+ * @returns {undefined} 
+ */
 function reset_filter() {
     apply_filter(copy_image);
 }
@@ -273,7 +200,7 @@ VD._make_pixelData = function(pixelData) {
     }
 }
 
-/**
+/*
  * draw one frame only
  */
 VD._draw_once = function() {
@@ -288,7 +215,7 @@ VD._draw_once = function() {
     VD._context.putImageData(VD._pixelData, 0, 0);
 }
 
-/**
+/*
  * The main loop
  */
 VD._draw = function() {	
