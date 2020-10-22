@@ -17,11 +17,11 @@
 
 function stream_tail(xs) {
     if (is_pair(xs)) {
-	const tail = head(xs);
-	if (is_function(tail)) {
-	    return tail();
+	const the_tail = tail(xs);
+	if (is_function(the_tail)) {
+	    return the_tail();
 	} else {
-	    error(tail,
+	    error(the_tail,
 		  'stream_tail(xs) expects a function as ' +
 		  'the tail of the argument pair xs, ' +
 		  'but encountered ');
