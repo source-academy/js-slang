@@ -215,7 +215,7 @@ transformers = new Map([
   [
     'Literal',
     (node: es.Literal) => {
-      return node.value
+      return vector_to_list(['literal', node.value])
     }
   ],
 

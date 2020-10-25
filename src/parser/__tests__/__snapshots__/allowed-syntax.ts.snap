@@ -179,7 +179,13 @@ Object {
                                               ],
                                             ],
                                             Array [
-                                              1,
+                                              Array [
+                                                "literal",
+                                                Array [
+                                                  1,
+                                                  null,
+                                                ],
+                                              ],
                                               null,
                                             ],
                                           ],
@@ -237,7 +243,13 @@ Object {
                                                               ],
                                                             ],
                                                             Array [
-                                                              2,
+                                                              Array [
+                                                                "literal",
+                                                                Array [
+                                                                  2,
+                                                                  null,
+                                                                ],
+                                                              ],
                                                               null,
                                                             ],
                                                           ],
@@ -246,7 +258,13 @@ Object {
                                                       ],
                                                     ],
                                                     Array [
-                                                      0,
+                                                      Array [
+                                                        "literal",
+                                                        Array [
+                                                          0,
+                                                          null,
+                                                        ],
+                                                      ],
                                                       null,
                                                     ],
                                                   ],
@@ -270,7 +288,13 @@ Object {
                                                       ],
                                                       Array [
                                                         Array [
-                                                          1,
+                                                          Array [
+                                                            "literal",
+                                                            Array [
+                                                              1,
+                                                              null,
+                                                            ],
+                                                          ],
                                                           null,
                                                         ],
                                                         null,
@@ -316,7 +340,13 @@ Object {
                                                                       ],
                                                                     ],
                                                                     Array [
-                                                                      2,
+                                                                      Array [
+                                                                        "literal",
+                                                                        Array [
+                                                                          2,
+                                                                          null,
+                                                                        ],
+                                                                      ],
                                                                       null,
                                                                     ],
                                                                   ],
@@ -325,7 +355,13 @@ Object {
                                                               ],
                                                             ],
                                                             Array [
-                                                              0,
+                                                              Array [
+                                                                "literal",
+                                                                Array [
+                                                                  0,
+                                                                  null,
+                                                                ],
+                                                              ],
                                                               null,
                                                             ],
                                                           ],
@@ -337,7 +373,13 @@ Object {
                                                       Array [
                                                         "return_statement",
                                                         Array [
-                                                          1,
+                                                          Array [
+                                                            "literal",
+                                                            Array [
+                                                              1,
+                                                              null,
+                                                            ],
+                                                          ],
                                                           null,
                                                         ],
                                                       ],
@@ -383,7 +425,13 @@ Object {
                                                                   ],
                                                                 ],
                                                                 Array [
-                                                                  0,
+                                                                  Array [
+                                                                    "literal",
+                                                                    Array [
+                                                                      0,
+                                                                      null,
+                                                                    ],
+                                                                  ],
                                                                   Array [
                                                                     Array [
                                                                       "application",
@@ -397,7 +445,13 @@ Object {
                                                                         ],
                                                                         Array [
                                                                           Array [
-                                                                            2,
+                                                                            Array [
+                                                                              "literal",
+                                                                              Array [
+                                                                                2,
+                                                                                null,
+                                                                              ],
+                                                                            ],
                                                                             null,
                                                                           ],
                                                                           null,
@@ -457,9 +511,21 @@ Object {
               ],
               Array [
                 Array [
-                  1,
                   Array [
-                    2,
+                    "literal",
+                    Array [
+                      1,
+                      null,
+                    ],
+                  ],
+                  Array [
+                    Array [
+                      "literal",
+                      Array [
+                        2,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
@@ -596,7 +662,13 @@ Object {
             Array [
               "return_statement",
               Array [
-                true,
+                Array [
+                  "literal",
+                  Array [
+                    true,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -745,9 +817,21 @@ Object {
       ],
       Array [
         Array [
-          1,
           Array [
-            2,
+            "literal",
+            Array [
+              1,
+              null,
+            ],
+          ],
+          Array [
+            Array [
+              "literal",
+              Array [
+                2,
+                null,
+              ],
+            ],
             null,
           ],
         ],
@@ -818,7 +902,13 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "pretranspiled": "",
-  "result": true,
+  "result": Array [
+    "literal",
+    Array [
+      true,
+      null,
+    ],
+  ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -882,7 +972,13 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "pretranspiled": "",
-  "result": false,
+  "result": Array [
+    "literal",
+    Array [
+      false,
+      null,
+    ],
+  ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -946,7 +1042,13 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "pretranspiled": "",
-  "result": "a string \\"\\" ''",
+  "result": Array [
+    "literal",
+    Array [
+      "a string \\"\\" ''",
+      null,
+    ],
+  ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1022,7 +1124,13 @@ Object {
       ],
       Array [
         Array [
-          31.4,
+          Array [
+            "literal",
+            Array [
+              31.4,
+              null,
+            ],
+          ],
           Array [
             Array [
               "application",
@@ -1072,7 +1180,13 @@ Object {
                                         ],
                                         Array [
                                           Array [
-                                            31400000000,
+                                            Array [
+                                              "literal",
+                                              Array [
+                                                31400000000,
+                                                null,
+                                              ],
+                                            ],
                                             null,
                                           ],
                                           null,
@@ -1092,7 +1206,13 @@ Object {
                                           ],
                                           Array [
                                             Array [
-                                              1,
+                                              Array [
+                                                "literal",
+                                                Array [
+                                                  1,
+                                                  null,
+                                                ],
+                                              ],
                                               null,
                                             ],
                                             null,
@@ -1107,7 +1227,13 @@ Object {
                               ],
                             ],
                             Array [
-                              2,
+                              Array [
+                                "literal",
+                                Array [
+                                  2,
+                                  null,
+                                ],
+                              ],
                               null,
                             ],
                           ],
@@ -1116,7 +1242,13 @@ Object {
                       ],
                     ],
                     Array [
-                      1.5,
+                      Array [
+                        "literal",
+                        Array [
+                          1.5,
+                          null,
+                        ],
+                      ],
                       null,
                     ],
                   ],
@@ -1266,9 +1398,21 @@ Object {
                                               ],
                                               Array [
                                                 Array [
-                                                  1,
                                                   Array [
-                                                    1,
+                                                    "literal",
+                                                    Array [
+                                                      1,
+                                                      null,
+                                                    ],
+                                                  ],
+                                                  Array [
+                                                    Array [
+                                                      "literal",
+                                                      Array [
+                                                        1,
+                                                        null,
+                                                      ],
+                                                    ],
                                                     null,
                                                   ],
                                                 ],
@@ -1289,9 +1433,21 @@ Object {
                                                 ],
                                                 Array [
                                                   Array [
-                                                    1,
                                                     Array [
-                                                      2,
+                                                      "literal",
+                                                      Array [
+                                                        1,
+                                                        null,
+                                                      ],
+                                                    ],
+                                                    Array [
+                                                      Array [
+                                                        "literal",
+                                                        Array [
+                                                          2,
+                                                          null,
+                                                        ],
+                                                      ],
                                                       null,
                                                     ],
                                                   ],
@@ -1319,9 +1475,21 @@ Object {
                                         ],
                                         Array [
                                           Array [
-                                            1,
                                             Array [
-                                              2,
+                                              "literal",
+                                              Array [
+                                                1,
+                                                null,
+                                              ],
+                                            ],
+                                            Array [
+                                              Array [
+                                                "literal",
+                                                Array [
+                                                  2,
+                                                  null,
+                                                ],
+                                              ],
                                               null,
                                             ],
                                           ],
@@ -1349,9 +1517,21 @@ Object {
                                 ],
                                 Array [
                                   Array [
-                                    2,
                                     Array [
-                                      1,
+                                      "literal",
+                                      Array [
+                                        2,
+                                        null,
+                                      ],
+                                    ],
+                                    Array [
+                                      Array [
+                                        "literal",
+                                        Array [
+                                          1,
+                                          null,
+                                        ],
+                                      ],
                                       null,
                                     ],
                                   ],
@@ -1379,9 +1559,21 @@ Object {
                         ],
                         Array [
                           Array [
-                            2,
                             Array [
-                              1,
+                              "literal",
+                              Array [
+                                2,
+                                null,
+                              ],
+                            ],
+                            Array [
+                              Array [
+                                "literal",
+                                Array [
+                                  1,
+                                  null,
+                                ],
+                              ],
                               null,
                             ],
                           ],
@@ -1397,7 +1589,13 @@ Object {
             ],
           ],
           Array [
-            false,
+            Array [
+              "literal",
+              Array [
+                false,
+                null,
+              ],
+            ],
             null,
           ],
         ],
@@ -1471,11 +1669,29 @@ Object {
   "result": Array [
     "conditional_expression",
     Array [
-      true,
       Array [
-        1,
+        "literal",
         Array [
-          2,
+          true,
+          null,
+        ],
+      ],
+      Array [
+        Array [
+          "literal",
+          Array [
+            1,
+            null,
+          ],
+        ],
+        Array [
+          Array [
+            "literal",
+            Array [
+              2,
+              null,
+            ],
+          ],
           null,
         ],
       ],
@@ -1579,7 +1795,13 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "pretranspiled": "",
-  "result": null,
+  "result": Array [
+    "literal",
+    Array [
+      null,
+      null,
+    ],
+  ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1690,9 +1912,21 @@ Object {
       ],
       Array [
         Array [
-          1,
           Array [
-            null,
+            "literal",
+            Array [
+              1,
+              null,
+            ],
+          ],
+          Array [
+            Array [
+              "literal",
+              Array [
+                null,
+                null,
+              ],
+            ],
             null,
           ],
         ],
@@ -1807,7 +2041,13 @@ Object {
       ],
       Array [
         Array [
-          1,
+          Array [
+            "literal",
+            Array [
+              1,
+              null,
+            ],
+          ],
           null,
         ],
         null,
@@ -2253,7 +2493,13 @@ Object {
               ],
             ],
             Array [
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
               null,
             ],
           ],
@@ -2282,7 +2528,13 @@ Object {
                         ],
                       ],
                       Array [
-                        5,
+                        Array [
+                          "literal",
+                          Array [
+                            5,
+                            null,
+                          ],
+                        ],
                         null,
                       ],
                     ],
@@ -2322,7 +2574,13 @@ Object {
                                 ],
                               ],
                               Array [
-                                1,
+                                Array [
+                                  "literal",
+                                  Array [
+                                    1,
+                                    null,
+                                  ],
+                                ],
                                 null,
                               ],
                             ],
@@ -2901,7 +3159,13 @@ Object {
               ],
             ],
             Array [
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
               null,
             ],
           ],
@@ -2921,7 +3185,13 @@ Object {
                     ],
                   ],
                   Array [
-                    1,
+                    Array [
+                      "literal",
+                      Array [
+                        1,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
@@ -2947,7 +3217,13 @@ Object {
                           ],
                         ],
                         Array [
-                          5,
+                          Array [
+                            "literal",
+                            Array [
+                              5,
+                              null,
+                            ],
+                          ],
                           null,
                         ],
                       ],
@@ -2987,7 +3263,13 @@ Object {
                                   ],
                                 ],
                                 Array [
-                                  1,
+                                  Array [
+                                    "literal",
+                                    Array [
+                                      1,
+                                      null,
+                                    ],
+                                  ],
                                   null,
                                 ],
                               ],
@@ -4071,7 +4353,13 @@ Object {
               ],
             ],
             Array [
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
               null,
             ],
           ],
@@ -4091,7 +4379,13 @@ Object {
                     ],
                   ],
                   Array [
-                    0,
+                    Array [
+                      "literal",
+                      Array [
+                        0,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
@@ -4117,7 +4411,13 @@ Object {
                           ],
                         ],
                         Array [
-                          5,
+                          Array [
+                            "literal",
+                            Array [
+                              5,
+                              null,
+                            ],
+                          ],
                           null,
                         ],
                       ],
@@ -4157,7 +4457,13 @@ Object {
                                   ],
                                 ],
                                 Array [
-                                  1,
+                                  Array [
+                                    "literal",
+                                    Array [
+                                      1,
+                                      null,
+                                    ],
+                                  ],
                                   null,
                                 ],
                               ],
@@ -4193,7 +4499,13 @@ Object {
                                   ],
                                 ],
                                 Array [
-                                  1,
+                                  Array [
+                                    "literal",
+                                    Array [
+                                      1,
+                                      null,
+                                    ],
+                                  ],
                                   null,
                                 ],
                               ],
@@ -4242,7 +4554,13 @@ Object {
                                                   ],
                                                 ],
                                                 Array [
-                                                  1,
+                                                  Array [
+                                                    "literal",
+                                                    Array [
+                                                      1,
+                                                      null,
+                                                    ],
+                                                  ],
                                                   null,
                                                 ],
                                               ],
@@ -4278,7 +4596,13 @@ Object {
                                                   ],
                                                 ],
                                                 Array [
-                                                  2,
+                                                  Array [
+                                                    "literal",
+                                                    Array [
+                                                      2,
+                                                      null,
+                                                    ],
+                                                  ],
                                                   null,
                                                 ],
                                               ],
@@ -4635,11 +4959,29 @@ Object {
     "array_expression",
     Array [
       Array [
-        1,
         Array [
-          2,
+          "literal",
           Array [
-            3,
+            1,
+            null,
+          ],
+        ],
+        Array [
+          Array [
+            "literal",
+            Array [
+              2,
+              null,
+            ],
+          ],
+          Array [
+            Array [
+              "literal",
+              Array [
+                3,
+                null,
+              ],
+            ],
             null,
           ],
         ],
@@ -4915,11 +5257,29 @@ Object {
         "array_expression",
         Array [
           Array [
-            1,
             Array [
-              2,
+              "literal",
               Array [
-                3,
+                1,
+                null,
+              ],
+            ],
+            Array [
+              Array [
+                "literal",
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+              Array [
+                Array [
+                  "literal",
+                  Array [
+                    3,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -4928,7 +5288,13 @@ Object {
         ],
       ],
       Array [
-        1,
+        Array [
+          "literal",
+          Array [
+            1,
+            null,
+          ],
+        ],
         null,
       ],
     ],
@@ -5280,11 +5646,29 @@ Object {
                 "array_expression",
                 Array [
                   Array [
-                    1,
                     Array [
-                      2,
+                      "literal",
                       Array [
-                        3,
+                        1,
+                        null,
+                      ],
+                    ],
+                    Array [
+                      Array [
+                        "literal",
+                        Array [
+                          2,
+                          null,
+                        ],
+                      ],
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            3,
+                            null,
+                          ],
+                        ],
                         null,
                       ],
                     ],
@@ -5308,7 +5692,13 @@ Object {
                 ],
               ],
               Array [
-                1,
+                Array [
+                  "literal",
+                  Array [
+                    1,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -5765,11 +6155,29 @@ Object {
                 "array_expression",
                 Array [
                   Array [
-                    1,
                     Array [
-                      2,
+                      "literal",
                       Array [
-                        3,
+                        1,
+                        null,
+                      ],
+                    ],
+                    Array [
+                      Array [
+                        "literal",
+                        Array [
+                          2,
+                          null,
+                        ],
+                      ],
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            3,
+                            null,
+                          ],
+                        ],
                         null,
                       ],
                     ],
@@ -5796,13 +6204,25 @@ Object {
                     ],
                   ],
                   Array [
-                    1,
+                    Array [
+                      "literal",
+                      Array [
+                        1,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
               ],
               Array [
-                4,
+                Array [
+                  "literal",
+                  Array [
+                    4,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -6125,7 +6545,13 @@ Object {
               null,
             ],
           ],
-          1,
+          Array [
+            "literal",
+            Array [
+              1,
+              null,
+            ],
+          ],
         ],
         Array [
           Array [
@@ -6136,7 +6562,13 @@ Object {
                 null,
               ],
             ],
-            2,
+            Array [
+              "literal",
+              Array [
+                2,
+                null,
+              ],
+            ],
           ],
           null,
         ],
@@ -6346,7 +6778,13 @@ Object {
                   null,
                 ],
               ],
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
             ],
             Array [
               Array [
@@ -6357,7 +6795,13 @@ Object {
                     null,
                   ],
                 ],
-                2,
+                Array [
+                  "literal",
+                  Array [
+                    2,
+                    null,
+                  ],
+                ],
               ],
               null,
             ],
@@ -6366,7 +6810,13 @@ Object {
         ],
       ],
       Array [
-        "a",
+        Array [
+          "literal",
+          Array [
+            "a",
+            null,
+          ],
+        ],
         null,
       ],
     ],
@@ -6728,7 +7178,13 @@ Object {
                   null,
                 ],
               ],
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
             ],
             Array [
               Array [
@@ -6739,7 +7195,13 @@ Object {
                     null,
                   ],
                 ],
-                2,
+                Array [
+                  "literal",
+                  Array [
+                    2,
+                    null,
+                  ],
+                ],
               ],
               null,
             ],
@@ -7114,12 +7576,24 @@ Object {
           Array [
             Array [
               "a",
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
             ],
             Array [
               Array [
                 "b",
-                2,
+                Array [
+                  "literal",
+                  Array [
+                    2,
+                    null,
+                  ],
+                ],
               ],
               null,
             ],
@@ -7334,12 +7808,24 @@ Object {
           Array [
             Array [
               1,
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
             ],
             Array [
               Array [
                 2,
-                2,
+                Array [
+                  "literal",
+                  Array [
+                    2,
+                    null,
+                  ],
+                ],
               ],
               null,
             ],
@@ -7348,7 +7834,13 @@ Object {
         ],
       ],
       Array [
-        "1",
+        Array [
+          "literal",
+          Array [
+            "1",
+            null,
+          ],
+        ],
         null,
       ],
     ],
@@ -7553,7 +8045,13 @@ Object {
               ],
             ],
             Array [
-              "a",
+              Array [
+                "literal",
+                Array [
+                  "a",
+                  null,
+                ],
+              ],
               null,
             ],
           ],
@@ -7574,7 +8072,13 @@ Object {
                           null,
                         ],
                       ],
-                      1,
+                      Array [
+                        "literal",
+                        Array [
+                          1,
+                          null,
+                        ],
+                      ],
                     ],
                     Array [
                       Array [
@@ -7585,7 +8089,13 @@ Object {
                             null,
                           ],
                         ],
-                        2,
+                        Array [
+                          "literal",
+                          Array [
+                            2,
+                            null,
+                          ],
+                        ],
                       ],
                       null,
                     ],
@@ -7877,7 +8387,13 @@ Object {
                           null,
                         ],
                       ],
-                      1,
+                      Array [
+                        "literal",
+                        Array [
+                          1,
+                          null,
+                        ],
+                      ],
                     ],
                     Array [
                       Array [
@@ -7888,7 +8404,13 @@ Object {
                             null,
                           ],
                         ],
-                        2,
+                        Array [
+                          "literal",
+                          Array [
+                            2,
+                            null,
+                          ],
+                        ],
                       ],
                       null,
                     ],
@@ -7927,7 +8449,13 @@ Object {
                 ],
               ],
               Array [
-                3,
+                Array [
+                  "literal",
+                  Array [
+                    3,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -8151,7 +8679,13 @@ Object {
                           null,
                         ],
                       ],
-                      1,
+                      Array [
+                        "literal",
+                        Array [
+                          1,
+                          null,
+                        ],
+                      ],
                     ],
                     Array [
                       Array [
@@ -8162,7 +8696,13 @@ Object {
                             null,
                           ],
                         ],
-                        2,
+                        Array [
+                          "literal",
+                          Array [
+                            2,
+                            null,
+                          ],
+                        ],
                       ],
                       null,
                     ],
@@ -8189,13 +8729,25 @@ Object {
                     ],
                   ],
                   Array [
-                    "a",
+                    Array [
+                      "literal",
+                      Array [
+                        "a",
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
               ],
               Array [
-                3,
+                Array [
+                  "literal",
+                  Array [
+                    3,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -8420,7 +8972,13 @@ Object {
                           null,
                         ],
                       ],
-                      1,
+                      Array [
+                        "literal",
+                        Array [
+                          1,
+                          null,
+                        ],
+                      ],
                     ],
                     Array [
                       Array [
@@ -8431,7 +8989,13 @@ Object {
                             null,
                           ],
                         ],
-                        2,
+                        Array [
+                          "literal",
+                          Array [
+                            2,
+                            null,
+                          ],
+                        ],
                       ],
                       null,
                     ],
@@ -8455,7 +9019,13 @@ Object {
                 ],
               ],
               Array [
-                "a",
+                Array [
+                  "literal",
+                  Array [
+                    "a",
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -8487,7 +9057,13 @@ Object {
                   ],
                 ],
                 Array [
-                  3,
+                  Array [
+                    "literal",
+                    Array [
+                      3,
+                      null,
+                    ],
+                  ],
                   null,
                 ],
               ],
