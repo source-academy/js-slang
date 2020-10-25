@@ -89,12 +89,16 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 \end{alignat*}
 
 \begin{alignat*}{9}
-                                           && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{self-evaluating} \\
-&&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
-                                                           && \textrm{self-evaluating} \\
+  && \textit{expression}
+                         && ::= &\quad && \textit{number}  && \texttt{list("literal",}\ \textit{number}\texttt{)} \\
+&&                       && |   &\quad && \textbf{\texttt{true}}
+                                                           && \texttt{list("literal",}\ \textbf{\texttt{true}}\texttt{)} \\
+&&                       && |   &\quad && \textbf{\texttt{false}}
+                                                           && \texttt{list("literal",}\ \textbf{\texttt{false}}\texttt{)} \\
 &&                       && |   &\quad && \textbf{\texttt{null}}
-                                                           && \textrm{self-evaluating} \\
-&&                       && |   &\quad &&  \textit{string}   && \textrm{self-evaluating} \\
+                                                           && \texttt{list("literal",}\ \textbf{\texttt{null}}\texttt{)} \\
+&&                       && |   &\quad &&  \textit{string}
+                                                           && \texttt{list("literal",}\ \textit{string}\texttt{)} \\
 &&                       && |   &\quad &&  \textit{name}   && \texttt{list("name", string)}  \\
 &&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
                                             \textit{expression} \qquad
