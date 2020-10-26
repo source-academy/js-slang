@@ -156,7 +156,7 @@ transformers = new Map([
         'operator_combination',
         node.operator,
         transform(node.left),
-	transform(node.right)
+        transform(node.right)
       ])
     }
   ],
@@ -168,7 +168,7 @@ transformers = new Map([
         'logical_composition',
         node.operator,
         transform(node.left),
-	transform(node.right)
+        transform(node.right)
       ])
     }
   ],
