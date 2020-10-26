@@ -100,12 +100,12 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 &&                       && |   &\quad &&  \textit{string}
                                                            && \texttt{list("literal",}\ \textit{string}\texttt{)} \\
 &&                       && |   &\quad &&  \textit{name}   && \texttt{list("name", string)}  \\
-&&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
-                                            \textit{expression} \qquad
-                                                           && \texttt{list("application",  } \langle \textit{binary-operator}\rangle \textit{, list of  } \langle \textit{expression}\rangle \textit{)} \\
-&&                       && |   &\quad &&   \textit{unary-operator} \ 
+&&                       && |   &\quad &&  \textit{expression}_1 \  \textit{bin-op} \ 
+                                            \textit{expression}_2 \qquad
+                                                           && \texttt{list("operator_combination",  } \langle \textit{bin-op}\rangle \textit{, } \langle \textit{expression}_1\rangle \textit{, } \langle \textit{expression}_2\rangle \textit{)} \\
+&&                       && |   &\quad &&   \textit{un-op} \ 
                                             \textit{expression}
-                                                           && \texttt{list("application",  } \langle \textit{unary-operator}\rangle \textit{, list of  } \langle \textit{expression}\rangle \textit{)} \\
+                                                           && \texttt{list("operator_combination",  } \langle \textit{un-op}\rangle \textit{, } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad &&   \textit{expression} \ 
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
@@ -140,15 +140,18 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
                                                            && \textrm{treat as}:\ \textit{expression}\ \textbf{\texttt{[ "}}\textit{name}\textbf{\texttt{" ]}}  \\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{treat as:}\ \textit{expression} \\[1mm]
-&& \textit{binary-operator}    \ 
+&& \textit{bin-op}    \ 
                         && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
                                    \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
 &&                       && |  &\quad &&  \texttt{\textbf{<}}\ |\ \texttt{\textbf{>}}\ |\ \texttt{\textbf{<=}}\ |\ \texttt{\textbf{>=}}\
                                           |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
-                                          && \texttt{list("name", string)} \\[1mm]
-&& \textit{unary-operator}    
-                        && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}
-                        && \texttt{list("name", string)} \\
+                                          && \textit{string} \\[1mm]
+&& \textit{un-op}    
+                        && ::= &\quad && \textbf{\texttt{!}}
+                        && \texttt{"!"} \\
+&& 
+                        && | &\quad && \textbf{\texttt{-}}
+                        && \texttt{"-unary"} \\
 && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
