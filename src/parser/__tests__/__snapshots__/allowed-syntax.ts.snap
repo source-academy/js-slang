@@ -66,7 +66,7 @@ Object {
     Array [
       Array [
         Array [
-          "constant_declaration",
+          "function_declaration",
           Array [
             Array [
               "name",
@@ -77,168 +77,203 @@ Object {
             ],
             Array [
               Array [
-                "lambda_expression",
+                Array [
+                  "name",
+                  Array [
+                    "a",
+                    null,
+                  ],
+                ],
                 Array [
                   Array [
+                    "name",
                     Array [
-                      "name",
-                      Array [
-                        "a",
-                        null,
-                      ],
-                    ],
-                    Array [
-                      Array [
-                        "name",
-                        Array [
-                          "b",
-                          null,
-                        ],
-                      ],
+                      "b",
                       null,
                     ],
                   ],
+                  null,
+                ],
+              ],
+              Array [
+                Array [
+                  "block",
                   Array [
                     Array [
-                      "block",
+                      "sequence",
                       Array [
                         Array [
-                          "sequence",
                           Array [
+                            "constant_declaration",
                             Array [
                               Array [
-                                "constant_declaration",
+                                "name",
+                                Array [
+                                  "sum",
+                                  null,
+                                ],
+                              ],
+                              Array [
+                                Array [
+                                  "operator_combination",
+                                  Array [
+                                    "+",
+                                    Array [
+                                      Array [
+                                        "name",
+                                        Array [
+                                          "a",
+                                          null,
+                                        ],
+                                      ],
+                                      Array [
+                                        Array [
+                                          "name",
+                                          Array [
+                                            "b",
+                                            null,
+                                          ],
+                                        ],
+                                        null,
+                                      ],
+                                    ],
+                                  ],
+                                ],
+                                null,
+                              ],
+                            ],
+                          ],
+                          Array [
+                            Array [
+                              "conditional_statement",
+                              Array [
+                                Array [
+                                  "operator_combination",
+                                  Array [
+                                    ">",
+                                    Array [
+                                      Array [
+                                        "name",
+                                        Array [
+                                          "sum",
+                                          null,
+                                        ],
+                                      ],
+                                      Array [
+                                        Array [
+                                          "literal",
+                                          Array [
+                                            1,
+                                            null,
+                                          ],
+                                        ],
+                                        null,
+                                      ],
+                                    ],
+                                  ],
+                                ],
                                 Array [
                                   Array [
-                                    "name",
+                                    "return_statement",
                                     Array [
-                                      "sum",
+                                      Array [
+                                        "name",
+                                        Array [
+                                          "sum",
+                                          null,
+                                        ],
+                                      ],
                                       null,
                                     ],
                                   ],
                                   Array [
                                     Array [
-                                      "application",
+                                      "conditional_statement",
                                       Array [
                                         Array [
-                                          "name",
+                                          "operator_combination",
                                           Array [
-                                            "+",
-                                            null,
-                                          ],
-                                        ],
-                                        Array [
-                                          Array [
-                                            Array [
-                                              "name",
-                                              Array [
-                                                "a",
-                                                null,
-                                              ],
-                                            ],
+                                            "===",
                                             Array [
                                               Array [
-                                                "name",
+                                                "operator_combination",
                                                 Array [
-                                                  "b",
-                                                  null,
-                                                ],
-                                              ],
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                    ],
-                                    null,
-                                  ],
-                                ],
-                              ],
-                              Array [
-                                Array [
-                                  "conditional_statement",
-                                  Array [
-                                    Array [
-                                      "application",
-                                      Array [
-                                        Array [
-                                          "name",
-                                          Array [
-                                            ">",
-                                            null,
-                                          ],
-                                        ],
-                                        Array [
-                                          Array [
-                                            Array [
-                                              "name",
-                                              Array [
-                                                "sum",
-                                                null,
-                                              ],
-                                            ],
-                                            Array [
-                                              Array [
-                                                "literal",
-                                                Array [
-                                                  1,
-                                                  null,
-                                                ],
-                                              ],
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                    ],
-                                    Array [
-                                      Array [
-                                        "return_statement",
-                                        Array [
-                                          Array [
-                                            "name",
-                                            Array [
-                                              "sum",
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                      Array [
-                                        Array [
-                                          "conditional_statement",
-                                          Array [
-                                            Array [
-                                              "application",
-                                              Array [
-                                                Array [
-                                                  "name",
+                                                  "%",
                                                   Array [
-                                                    "===",
+                                                    Array [
+                                                      "name",
+                                                      Array [
+                                                        "a",
+                                                        null,
+                                                      ],
+                                                    ],
+                                                    Array [
+                                                      Array [
+                                                        "literal",
+                                                        Array [
+                                                          2,
+                                                          null,
+                                                        ],
+                                                      ],
+                                                      null,
+                                                    ],
+                                                  ],
+                                                ],
+                                              ],
+                                              Array [
+                                                Array [
+                                                  "literal",
+                                                  Array [
+                                                    0,
                                                     null,
                                                   ],
                                                 ],
+                                                null,
+                                              ],
+                                            ],
+                                          ],
+                                        ],
+                                        Array [
+                                          Array [
+                                            "return_statement",
+                                            Array [
+                                              Array [
+                                                "operator_combination",
                                                 Array [
+                                                  "-unary",
                                                   Array [
                                                     Array [
-                                                      "application",
+                                                      "literal",
                                                       Array [
+                                                        1,
+                                                        null,
+                                                      ],
+                                                    ],
+                                                    null,
+                                                  ],
+                                                ],
+                                              ],
+                                              null,
+                                            ],
+                                          ],
+                                          Array [
+                                            Array [
+                                              "conditional_statement",
+                                              Array [
+                                                Array [
+                                                  "operator_combination",
+                                                  Array [
+                                                    "===",
+                                                    Array [
+                                                      Array [
+                                                        "operator_combination",
                                                         Array [
-                                                          "name",
-                                                          Array [
-                                                            "%",
-                                                            null,
-                                                          ],
-                                                        ],
-                                                        Array [
+                                                          "%",
                                                           Array [
                                                             Array [
                                                               "name",
                                                               Array [
-                                                                "a",
+                                                                "b",
                                                                 null,
                                                               ],
                                                             ],
@@ -253,84 +288,54 @@ Object {
                                                               null,
                                                             ],
                                                           ],
-                                                          null,
                                                         ],
                                                       ],
+                                                      Array [
+                                                        Array [
+                                                          "literal",
+                                                          Array [
+                                                            0,
+                                                            null,
+                                                          ],
+                                                        ],
+                                                        null,
+                                                      ],
                                                     ],
+                                                  ],
+                                                ],
+                                                Array [
+                                                  Array [
+                                                    "return_statement",
                                                     Array [
                                                       Array [
                                                         "literal",
                                                         Array [
-                                                          0,
+                                                          1,
                                                           null,
                                                         ],
                                                       ],
                                                       null,
                                                     ],
                                                   ],
-                                                  null,
-                                                ],
-                                              ],
-                                            ],
-                                            Array [
-                                              Array [
-                                                "return_statement",
-                                                Array [
-                                                  Array [
-                                                    "application",
-                                                    Array [
-                                                      Array [
-                                                        "name",
-                                                        Array [
-                                                          "-",
-                                                          null,
-                                                        ],
-                                                      ],
-                                                      Array [
-                                                        Array [
-                                                          Array [
-                                                            "literal",
-                                                            Array [
-                                                              1,
-                                                              null,
-                                                            ],
-                                                          ],
-                                                          null,
-                                                        ],
-                                                        null,
-                                                      ],
-                                                    ],
-                                                  ],
-                                                  null,
-                                                ],
-                                              ],
-                                              Array [
-                                                Array [
-                                                  "conditional_statement",
                                                   Array [
                                                     Array [
-                                                      "application",
+                                                      "return_statement",
                                                       Array [
                                                         Array [
-                                                          "name",
-                                                          Array [
-                                                            "===",
-                                                            null,
-                                                          ],
-                                                        ],
-                                                        Array [
+                                                          "conditional_expression",
                                                           Array [
                                                             Array [
-                                                              "application",
+                                                              "operator_combination",
                                                               Array [
+                                                                ">",
                                                                 Array [
-                                                                  "name",
                                                                   Array [
-                                                                    "%",
-                                                                    null,
+                                                                    "name",
+                                                                    Array [
+                                                                      "a",
+                                                                      null,
+                                                                    ],
                                                                   ],
-                                                                ],
-                                                                Array [
                                                                   Array [
                                                                     Array [
                                                                       "name",
@@ -339,18 +344,8 @@ Object {
                                                                         null,
                                                                       ],
                                                                     ],
-                                                                    Array [
-                                                                      Array [
-                                                                        "literal",
-                                                                        Array [
-                                                                          2,
-                                                                          null,
-                                                                        ],
-                                                                      ],
-                                                                      null,
-                                                                    ],
+                                                                    null,
                                                                   ],
-                                                                  null,
                                                                 ],
                                                               ],
                                                             ],
@@ -362,61 +357,16 @@ Object {
                                                                   null,
                                                                 ],
                                                               ],
-                                                              null,
-                                                            ],
-                                                          ],
-                                                          null,
-                                                        ],
-                                                      ],
-                                                    ],
-                                                    Array [
-                                                      Array [
-                                                        "return_statement",
-                                                        Array [
-                                                          Array [
-                                                            "literal",
-                                                            Array [
-                                                              1,
-                                                              null,
-                                                            ],
-                                                          ],
-                                                          null,
-                                                        ],
-                                                      ],
-                                                      Array [
-                                                        Array [
-                                                          "return_statement",
-                                                          Array [
-                                                            Array [
-                                                              "conditional_expression",
                                                               Array [
                                                                 Array [
-                                                                  "application",
+                                                                  "operator_combination",
                                                                   Array [
-                                                                    Array [
-                                                                      "name",
-                                                                      Array [
-                                                                        ">",
-                                                                        null,
-                                                                      ],
-                                                                    ],
+                                                                    "-unary",
                                                                     Array [
                                                                       Array [
+                                                                        "literal",
                                                                         Array [
-                                                                          "name",
-                                                                          Array [
-                                                                            "a",
-                                                                            null,
-                                                                          ],
-                                                                        ],
-                                                                        Array [
-                                                                          Array [
-                                                                            "name",
-                                                                            Array [
-                                                                              "b",
-                                                                              null,
-                                                                            ],
-                                                                          ],
+                                                                          2,
                                                                           null,
                                                                         ],
                                                                       ],
@@ -424,64 +374,27 @@ Object {
                                                                     ],
                                                                   ],
                                                                 ],
-                                                                Array [
-                                                                  Array [
-                                                                    "literal",
-                                                                    Array [
-                                                                      0,
-                                                                      null,
-                                                                    ],
-                                                                  ],
-                                                                  Array [
-                                                                    Array [
-                                                                      "application",
-                                                                      Array [
-                                                                        Array [
-                                                                          "name",
-                                                                          Array [
-                                                                            "-",
-                                                                            null,
-                                                                          ],
-                                                                        ],
-                                                                        Array [
-                                                                          Array [
-                                                                            Array [
-                                                                              "literal",
-                                                                              Array [
-                                                                                2,
-                                                                                null,
-                                                                              ],
-                                                                            ],
-                                                                            null,
-                                                                          ],
-                                                                          null,
-                                                                        ],
-                                                                      ],
-                                                                    ],
-                                                                    null,
-                                                                  ],
-                                                                ],
+                                                                null,
                                                               ],
                                                             ],
-                                                            null,
                                                           ],
                                                         ],
                                                         null,
                                                       ],
                                                     ],
+                                                    null,
                                                   ],
                                                 ],
-                                                null,
                                               ],
                                             ],
+                                            null,
                                           ],
                                         ],
-                                        null,
                                       ],
                                     ],
+                                    null,
                                   ],
                                 ],
-                                null,
                               ],
                             ],
                             null,
@@ -493,8 +406,8 @@ Object {
                     null,
                   ],
                 ],
+                null,
               ],
-              null,
             ],
           ],
         ],
@@ -775,36 +688,27 @@ Object {
               "return_statement",
               Array [
                 Array [
-                  "application",
+                  "operator_combination",
                   Array [
+                    "+",
                     Array [
-                      "name",
                       Array [
-                        "+",
-                        null,
+                        "name",
+                        Array [
+                          "x",
+                          null,
+                        ],
                       ],
-                    ],
-                    Array [
                       Array [
                         Array [
                           "name",
                           Array [
-                            "x",
+                            "y",
                             null,
                           ],
                         ],
-                        Array [
-                          Array [
-                            "name",
-                            Array [
-                              "y",
-                              null,
-                            ],
-                          ],
-                          null,
-                        ],
+                        null,
                       ],
-                      null,
                     ],
                   ],
                 ],
@@ -1113,112 +1017,42 @@ Object {
   "parsedErrors": "",
   "pretranspiled": "",
   "result": Array [
-    "application",
+    "operator_combination",
     Array [
-      Array [
-        "name",
-        Array [
-          "+",
-          null,
-        ],
-      ],
+      "+",
       Array [
         Array [
+          "literal",
           Array [
-            "literal",
-            Array [
-              31.4,
-              null,
-            ],
+            31.4,
+            null,
           ],
+        ],
+        Array [
           Array [
+            "operator_combination",
             Array [
-              "application",
+              "/",
               Array [
                 Array [
-                  "name",
+                  "operator_combination",
                   Array [
-                    "/",
-                    null,
-                  ],
-                ],
-                Array [
-                  Array [
+                    "%",
                     Array [
-                      "application",
                       Array [
+                        "operator_combination",
                         Array [
-                          "name",
-                          Array [
-                            "%",
-                            null,
-                          ],
-                        ],
-                        Array [
+                          "*",
                           Array [
                             Array [
-                              "application",
+                              "operator_combination",
                               Array [
-                                Array [
-                                  "name",
-                                  Array [
-                                    "*",
-                                    null,
-                                  ],
-                                ],
+                                "-unary",
                                 Array [
                                   Array [
+                                    "literal",
                                     Array [
-                                      "application",
-                                      Array [
-                                        Array [
-                                          "name",
-                                          Array [
-                                            "-",
-                                            null,
-                                          ],
-                                        ],
-                                        Array [
-                                          Array [
-                                            Array [
-                                              "literal",
-                                              Array [
-                                                31400000000,
-                                                null,
-                                              ],
-                                            ],
-                                            null,
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                    ],
-                                    Array [
-                                      Array [
-                                        "application",
-                                        Array [
-                                          Array [
-                                            "name",
-                                            Array [
-                                              "-",
-                                              null,
-                                            ],
-                                          ],
-                                          Array [
-                                            Array [
-                                              Array [
-                                                "literal",
-                                                Array [
-                                                  1,
-                                                  null,
-                                                ],
-                                              ],
-                                              null,
-                                            ],
-                                            null,
-                                          ],
-                                        ],
-                                      ],
+                                      31400000000,
                                       null,
                                     ],
                                   ],
@@ -1228,27 +1062,44 @@ Object {
                             ],
                             Array [
                               Array [
-                                "literal",
+                                "operator_combination",
                                 Array [
-                                  2,
-                                  null,
+                                  "-unary",
+                                  Array [
+                                    Array [
+                                      "literal",
+                                      Array [
+                                        1,
+                                        null,
+                                      ],
+                                    ],
+                                    null,
+                                  ],
                                 ],
                               ],
                               null,
                             ],
                           ],
-                          null,
                         ],
+                      ],
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            2,
+                            null,
+                          ],
+                        ],
+                        null,
                       ],
                     ],
+                  ],
+                ],
+                Array [
+                  Array [
+                    "literal",
                     Array [
-                      Array [
-                        "literal",
-                        Array [
-                          1.5,
-                          null,
-                        ],
-                      ],
+                      1.5,
                       null,
                     ],
                   ],
@@ -1256,10 +1107,9 @@ Object {
                 ],
               ],
             ],
-            null,
           ],
+          null,
         ],
-        null,
       ],
     ],
   ],
@@ -1327,203 +1177,34 @@ Object {
   "parsedErrors": "",
   "pretranspiled": "",
   "result": Array [
-    "boolean_operation",
+    "logical_composition",
     Array [
-      Array [
-        "name",
-        Array [
-          "||",
-          null,
-        ],
-      ],
+      "||",
       Array [
         Array [
+          "logical_composition",
           Array [
-            "boolean_operation",
+            "&&",
             Array [
               Array [
-                "name",
+                "logical_composition",
                 Array [
                   "&&",
-                  null,
-                ],
-              ],
-              Array [
-                Array [
                   Array [
-                    "boolean_operation",
                     Array [
+                      "logical_composition",
                       Array [
-                        "name",
-                        Array [
-                          "&&",
-                          null,
-                        ],
-                      ],
-                      Array [
+                        "&&",
                         Array [
                           Array [
-                            "boolean_operation",
+                            "logical_composition",
                             Array [
-                              Array [
-                                "name",
-                                Array [
-                                  "&&",
-                                  null,
-                                ],
-                              ],
+                              "&&",
                               Array [
                                 Array [
+                                  "operator_combination",
                                   Array [
-                                    "boolean_operation",
-                                    Array [
-                                      Array [
-                                        "name",
-                                        Array [
-                                          "&&",
-                                          null,
-                                        ],
-                                      ],
-                                      Array [
-                                        Array [
-                                          Array [
-                                            "application",
-                                            Array [
-                                              Array [
-                                                "name",
-                                                Array [
-                                                  "===",
-                                                  null,
-                                                ],
-                                              ],
-                                              Array [
-                                                Array [
-                                                  Array [
-                                                    "literal",
-                                                    Array [
-                                                      1,
-                                                      null,
-                                                    ],
-                                                  ],
-                                                  Array [
-                                                    Array [
-                                                      "literal",
-                                                      Array [
-                                                        1,
-                                                        null,
-                                                      ],
-                                                    ],
-                                                    null,
-                                                  ],
-                                                ],
-                                                null,
-                                              ],
-                                            ],
-                                          ],
-                                          Array [
-                                            Array [
-                                              "application",
-                                              Array [
-                                                Array [
-                                                  "name",
-                                                  Array [
-                                                    "<",
-                                                    null,
-                                                  ],
-                                                ],
-                                                Array [
-                                                  Array [
-                                                    Array [
-                                                      "literal",
-                                                      Array [
-                                                        1,
-                                                        null,
-                                                      ],
-                                                    ],
-                                                    Array [
-                                                      Array [
-                                                        "literal",
-                                                        Array [
-                                                          2,
-                                                          null,
-                                                        ],
-                                                      ],
-                                                      null,
-                                                    ],
-                                                  ],
-                                                  null,
-                                                ],
-                                              ],
-                                            ],
-                                            null,
-                                          ],
-                                        ],
-                                        null,
-                                      ],
-                                    ],
-                                  ],
-                                  Array [
-                                    Array [
-                                      "application",
-                                      Array [
-                                        Array [
-                                          "name",
-                                          Array [
-                                            "<=",
-                                            null,
-                                          ],
-                                        ],
-                                        Array [
-                                          Array [
-                                            Array [
-                                              "literal",
-                                              Array [
-                                                1,
-                                                null,
-                                              ],
-                                            ],
-                                            Array [
-                                              Array [
-                                                "literal",
-                                                Array [
-                                                  2,
-                                                  null,
-                                                ],
-                                              ],
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                    ],
-                                    null,
-                                  ],
-                                ],
-                                null,
-                              ],
-                            ],
-                          ],
-                          Array [
-                            Array [
-                              "application",
-                              Array [
-                                Array [
-                                  "name",
-                                  Array [
-                                    ">=",
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  Array [
-                                    Array [
-                                      "literal",
-                                      Array [
-                                        2,
-                                        null,
-                                      ],
-                                    ],
+                                    "===",
                                     Array [
                                       Array [
                                         "literal",
@@ -1532,32 +1213,86 @@ Object {
                                           null,
                                         ],
                                       ],
-                                      null,
+                                      Array [
+                                        Array [
+                                          "literal",
+                                          Array [
+                                            1,
+                                            null,
+                                          ],
+                                        ],
+                                        null,
+                                      ],
+                                    ],
+                                  ],
+                                ],
+                                Array [
+                                  Array [
+                                    "operator_combination",
+                                    Array [
+                                      "<",
+                                      Array [
+                                        Array [
+                                          "literal",
+                                          Array [
+                                            1,
+                                            null,
+                                          ],
+                                        ],
+                                        Array [
+                                          Array [
+                                            "literal",
+                                            Array [
+                                              2,
+                                              null,
+                                            ],
+                                          ],
+                                          null,
+                                        ],
+                                      ],
                                     ],
                                   ],
                                   null,
                                 ],
                               ],
                             ],
+                          ],
+                          Array [
+                            Array [
+                              "operator_combination",
+                              Array [
+                                "<=",
+                                Array [
+                                  Array [
+                                    "literal",
+                                    Array [
+                                      1,
+                                      null,
+                                    ],
+                                  ],
+                                  Array [
+                                    Array [
+                                      "literal",
+                                      Array [
+                                        2,
+                                        null,
+                                      ],
+                                    ],
+                                    null,
+                                  ],
+                                ],
+                              ],
+                            ],
                             null,
                           ],
                         ],
-                        null,
                       ],
                     ],
-                  ],
-                  Array [
                     Array [
-                      "application",
                       Array [
+                        "operator_combination",
                         Array [
-                          "name",
-                          Array [
-                            ">",
-                            null,
-                          ],
-                        ],
-                        Array [
+                          ">=",
                           Array [
                             Array [
                               "literal",
@@ -1577,29 +1312,54 @@ Object {
                               null,
                             ],
                           ],
+                        ],
+                      ],
+                      null,
+                    ],
+                  ],
+                ],
+              ],
+              Array [
+                Array [
+                  "operator_combination",
+                  Array [
+                    ">",
+                    Array [
+                      Array [
+                        "literal",
+                        Array [
+                          2,
                           null,
                         ],
                       ],
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            1,
+                            null,
+                          ],
+                        ],
+                        null,
+                      ],
                     ],
-                    null,
                   ],
                 ],
                 null,
               ],
             ],
           ],
-          Array [
-            Array [
-              "literal",
-              Array [
-                false,
-                null,
-              ],
-            ],
-            null,
-          ],
         ],
-        null,
+        Array [
+          Array [
+            "literal",
+            Array [
+              false,
+              null,
+            ],
+          ],
+          null,
+        ],
       ],
     ],
   ],
@@ -2509,36 +2269,27 @@ Object {
             "while_loop",
             Array [
               Array [
-                "application",
+                "operator_combination",
                 Array [
-                  Array [
-                    "name",
-                    Array [
-                      "<",
-                      null,
-                    ],
-                  ],
+                  "<",
                   Array [
                     Array [
+                      "name",
                       Array [
-                        "name",
-                        Array [
-                          "i",
-                          null,
-                        ],
-                      ],
-                      Array [
-                        Array [
-                          "literal",
-                          Array [
-                            5,
-                            null,
-                          ],
-                        ],
+                        "i",
                         null,
                       ],
                     ],
-                    null,
+                    Array [
+                      Array [
+                        "literal",
+                        Array [
+                          5,
+                          null,
+                        ],
+                      ],
+                      null,
+                    ],
                   ],
                 ],
               ],
@@ -2555,36 +2306,27 @@ Object {
                     ],
                     Array [
                       Array [
-                        "application",
+                        "operator_combination",
                         Array [
-                          Array [
-                            "name",
-                            Array [
-                              "+",
-                              null,
-                            ],
-                          ],
+                          "+",
                           Array [
                             Array [
+                              "name",
                               Array [
-                                "name",
-                                Array [
-                                  "i",
-                                  null,
-                                ],
-                              ],
-                              Array [
-                                Array [
-                                  "literal",
-                                  Array [
-                                    1,
-                                    null,
-                                  ],
-                                ],
+                                "i",
                                 null,
                               ],
                             ],
-                            null,
+                            Array [
+                              Array [
+                                "literal",
+                                Array [
+                                  1,
+                                  null,
+                                ],
+                              ],
+                              null,
+                            ],
                           ],
                         ],
                       ],
@@ -3198,36 +2940,27 @@ Object {
               ],
               Array [
                 Array [
-                  "application",
+                  "operator_combination",
                   Array [
-                    Array [
-                      "name",
-                      Array [
-                        "<",
-                        null,
-                      ],
-                    ],
+                    "<",
                     Array [
                       Array [
+                        "name",
                         Array [
-                          "name",
-                          Array [
-                            "i",
-                            null,
-                          ],
-                        ],
-                        Array [
-                          Array [
-                            "literal",
-                            Array [
-                              5,
-                              null,
-                            ],
-                          ],
+                          "i",
                           null,
                         ],
                       ],
-                      null,
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            5,
+                            null,
+                          ],
+                        ],
+                        null,
+                      ],
                     ],
                   ],
                 ],
@@ -3244,36 +2977,27 @@ Object {
                       ],
                       Array [
                         Array [
-                          "application",
+                          "operator_combination",
                           Array [
-                            Array [
-                              "name",
-                              Array [
-                                "+",
-                                null,
-                              ],
-                            ],
+                            "+",
                             Array [
                               Array [
+                                "name",
                                 Array [
-                                  "name",
-                                  Array [
-                                    "i",
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  Array [
-                                    "literal",
-                                    Array [
-                                      1,
-                                      null,
-                                    ],
-                                  ],
+                                  "i",
                                   null,
                                 ],
                               ],
-                              null,
+                              Array [
+                                Array [
+                                  "literal",
+                                  Array [
+                                    1,
+                                    null,
+                                  ],
+                                ],
+                                null,
+                              ],
                             ],
                           ],
                         ],
@@ -4392,36 +4116,27 @@ Object {
               ],
               Array [
                 Array [
-                  "application",
+                  "operator_combination",
                   Array [
-                    Array [
-                      "name",
-                      Array [
-                        "<",
-                        null,
-                      ],
-                    ],
+                    "<",
                     Array [
                       Array [
+                        "name",
                         Array [
-                          "name",
-                          Array [
-                            "j",
-                            null,
-                          ],
-                        ],
-                        Array [
-                          Array [
-                            "literal",
-                            Array [
-                              5,
-                              null,
-                            ],
-                          ],
+                          "j",
                           null,
                         ],
                       ],
-                      null,
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            5,
+                            null,
+                          ],
+                        ],
+                        null,
+                      ],
                     ],
                   ],
                 ],
@@ -4438,36 +4153,27 @@ Object {
                       ],
                       Array [
                         Array [
-                          "application",
+                          "operator_combination",
                           Array [
-                            Array [
-                              "name",
-                              Array [
-                                "+",
-                                null,
-                              ],
-                            ],
+                            "+",
                             Array [
                               Array [
+                                "name",
                                 Array [
-                                  "name",
-                                  Array [
-                                    "j",
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  Array [
-                                    "literal",
-                                    Array [
-                                      1,
-                                      null,
-                                    ],
-                                  ],
+                                  "j",
                                   null,
                                 ],
                               ],
-                              null,
+                              Array [
+                                Array [
+                                  "literal",
+                                  Array [
+                                    1,
+                                    null,
+                                  ],
+                                ],
+                                null,
+                              ],
                             ],
                           ],
                         ],
@@ -4480,36 +4186,27 @@ Object {
                       "conditional_statement",
                       Array [
                         Array [
-                          "application",
+                          "operator_combination",
                           Array [
-                            Array [
-                              "name",
-                              Array [
-                                "<",
-                                null,
-                              ],
-                            ],
+                            "<",
                             Array [
                               Array [
+                                "name",
                                 Array [
-                                  "name",
-                                  Array [
-                                    "j",
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  Array [
-                                    "literal",
-                                    Array [
-                                      1,
-                                      null,
-                                    ],
-                                  ],
+                                  "j",
                                   null,
                                 ],
                               ],
-                              null,
+                              Array [
+                                Array [
+                                  "literal",
+                                  Array [
+                                    1,
+                                    null,
+                                  ],
+                                ],
+                                null,
+                              ],
                             ],
                           ],
                         ],
@@ -4535,36 +4232,27 @@ Object {
                                       ],
                                       Array [
                                         Array [
-                                          "application",
+                                          "operator_combination",
                                           Array [
-                                            Array [
-                                              "name",
-                                              Array [
-                                                "+",
-                                                null,
-                                              ],
-                                            ],
+                                            "+",
                                             Array [
                                               Array [
+                                                "name",
                                                 Array [
-                                                  "name",
-                                                  Array [
-                                                    "i",
-                                                    null,
-                                                  ],
-                                                ],
-                                                Array [
-                                                  Array [
-                                                    "literal",
-                                                    Array [
-                                                      1,
-                                                      null,
-                                                    ],
-                                                  ],
+                                                  "i",
                                                   null,
                                                 ],
                                               ],
-                                              null,
+                                              Array [
+                                                Array [
+                                                  "literal",
+                                                  Array [
+                                                    1,
+                                                    null,
+                                                  ],
+                                                ],
+                                                null,
+                                              ],
                                             ],
                                           ],
                                         ],
@@ -4577,36 +4265,27 @@ Object {
                                       "conditional_statement",
                                       Array [
                                         Array [
-                                          "application",
+                                          "operator_combination",
                                           Array [
-                                            Array [
-                                              "name",
-                                              Array [
-                                                ">",
-                                                null,
-                                              ],
-                                            ],
+                                            ">",
                                             Array [
                                               Array [
+                                                "name",
                                                 Array [
-                                                  "name",
-                                                  Array [
-                                                    "j",
-                                                    null,
-                                                  ],
-                                                ],
-                                                Array [
-                                                  Array [
-                                                    "literal",
-                                                    Array [
-                                                      2,
-                                                      null,
-                                                    ],
-                                                  ],
+                                                  "j",
                                                   null,
                                                 ],
                                               ],
-                                              null,
+                                              Array [
+                                                Array [
+                                                  "literal",
+                                                  Array [
+                                                    2,
+                                                    null,
+                                                  ],
+                                                ],
+                                                null,
+                                              ],
                                             ],
                                           ],
                                         ],
