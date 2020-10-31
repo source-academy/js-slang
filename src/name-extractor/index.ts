@@ -143,7 +143,7 @@ export function getProgramNames(
   while (queue.length > 0) {
     // Workaround due to minification problem
     // tslint:disable-next-line
-    let node = queue.shift()!
+    const node = queue.shift()!
     if (isFunction(node)) {
       // This is the only time we want raw identifiers
       nameQueue.push(...(node as any).params)
