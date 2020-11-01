@@ -1328,9 +1328,9 @@ acorn-globals@^6.0.0:
     acorn-walk "^7.1.1"
 
 acorn-loose@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/acorn-loose/-/acorn-loose-8.0.0.tgz#499830b2cb886528d8e85e03e02881b3e2781451"
-  integrity sha512-YtQI8QdA6Tl8It5p0eRQCunnMM6ze3VnAAGcAxkzMpCNgI/crsSKp3QCdW5e5Soh4gyJ1Y2NQVk5WlP38KKWXQ==
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/acorn-loose/-/acorn-loose-8.0.1.tgz#aefca8d000488422a31550a1643a5afaec985520"
+  integrity sha512-8fMxm/1uteix7z+FXiINxciDL0mTPS8ewCvMtHgA01QRXoLEt9EQkHKupa55sjFcyEnN8K8209yhL7KCeZhIiQ==
   dependencies:
     acorn "^8.0.0"
 
