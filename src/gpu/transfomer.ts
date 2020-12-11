@@ -50,7 +50,7 @@ class GPUTransformer {
       this.program,
       {
         ForStatement(node: es.ForStatement) {
-          let state = gpuTranspile(node)
+          const state = gpuTranspile(node)
           if (state > 0 && node.loc) {
             res.push([node.loc.start.line, state])
           }

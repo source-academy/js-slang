@@ -9,5 +9,5 @@ script:
   - yarn jsdoc
   - yarn autocomplete
   - yarn format:ci
-  - yarn tslint
+  - yarn eslint
   - yarn test-coveralls
