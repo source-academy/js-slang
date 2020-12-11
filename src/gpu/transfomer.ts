@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { ancestor, simple, make } from 'acorn-walk/dist/walk'
+import { ancestor, simple, make } from '../utils/walkers'
 import * as create from '../utils/astCreator'
 import GPULoopVerifier from './verification/loopVerifier'
 import GPUBodyVerifier from './verification/bodyVerifier'

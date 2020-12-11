@@ -6,7 +6,7 @@ import {
   Position
 } from 'acorn'
 import { parse as acornLooseParse } from 'acorn-loose'
-import { ancestor, AncestorWalkerFn } from 'acorn-walk/dist/walk'
+import { ancestor, AncestorWalkerFn } from '../utils/walkers'
 import * as es from 'estree'
 import { ACORN_PARSE_OPTIONS } from '../constants'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -226,7 +226,7 @@ function createWalkers(
         const errors = checker(node, ancestors)
         errors.forEach(e => context.errors.push(e))
       }
-      newWalkers.set(syntax, (node: es.Node, context: Context<any>, ancestors) => {
+      newWalkers.set(syntax, (node: es.Node, context: Context<any>, ancestors: es.Node[]) => {
         oldCheck(node, context, ancestors)
         newCheck(node, context, ancestors)
       })
