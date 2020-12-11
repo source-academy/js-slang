@@ -10,8 +10,8 @@ export class MultipleDeclarationsError implements SourceError {
 
   constructor(public node: es.VariableDeclaration) {
     this.fixs = node.declarations.map(declaration => ({
-      type: 'VariableDeclaration' as 'VariableDeclaration',
-      kind: 'let' as 'let',
+      type: 'VariableDeclaration' as const,
+      kind: 'let' as const,
       loc: declaration.loc,
       declarations: [declaration]
     }))

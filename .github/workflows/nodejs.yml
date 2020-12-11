@@ -27,7 +27,7 @@ jobs:
     - run: yarn
     - run: yarn build
     - run: yarn format:ci
-    - run: yarn tslint
+    - run: yarn eslint
     - run: yarn test
       env:
         CI: true

@@ -41,11 +41,11 @@ export function HighlightRulesSelector(
   function _SourceHighlightRules(acequire, exports, module) {
     'use strict'
 
-    var oop = acequire('../lib/oop')
-    var DocCommentHighlightRules = acequire('./doc_comment_highlight_rules')
+    const oop = acequire('../lib/oop')
+    const DocCommentHighlightRules = acequire('./doc_comment_highlight_rules')
       .DocCommentHighlightRules
-    var TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules
-    var identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
+    const TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules
+    const identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
 
     const chapter = variant === 'default' ? id.toString() : id.toString() + '_' + variant
     const builtin_lib = SourceDocumentation.builtins[chapter]
@@ -55,7 +55,7 @@ export function HighlightRulesSelector(
         return ''
       }
       let func = ''
-      for (let name in builtin_lib) {
+      for (const name in builtin_lib) {
         if (builtin_lib[name]['meta'] === meta) {
           func += '|' + name
         }
@@ -101,9 +101,9 @@ export function HighlightRulesSelector(
     }
 
     // @ts-ignore
-    var SourceHighlightRules = function (options) {
+    const SourceHighlightRules = function (options) {
       // @ts-ignore
-      let keywordMapper = this.createKeywordMapper(
+      const keywordMapper = this.createKeywordMapper(
         {
           builtinconsts: getAllNames('const'),
 
@@ -137,9 +137,9 @@ export function HighlightRulesSelector(
       )
 
       // origiinal keywordBeforeRegex = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
-      var keywordBeforeRegex = 'else|return'
+      const keywordBeforeRegex = 'else|return'
 
-      var escapedRegex =
+      const escapedRegex =
         '\\\\(?:x[0-9a-fA-F]{2}|' + // hex
         'u[0-9a-fA-F]{4}|' + // unicode
         'u{[0-9a-fA-F]{1,6}}|' + // es6 unicode
@@ -567,11 +567,11 @@ export function HighlightRulesSelector(
     oop.inherits(SourceHighlightRules, TextHighlightRules)
 
     function JSX() {
-      var tagRegex = identifierRegex.replace('\\d', '\\d\\-')
-      var jsxTag = {
+      const tagRegex = identifierRegex.replace('\\d', '\\d\\-')
+      const jsxTag = {
         // @ts-ignore
         onMatch: function (val, state, stack) {
-          var offset = val.charAt(1) == '/' ? 2 : 1
+          const offset = val.charAt(1) == '/' ? 2 : 1
           if (offset == 1) {
             if (state != this.nextState) stack.unshift(this.next, this.nextState, 0)
             else stack.unshift(this.next)
@@ -602,7 +602,7 @@ export function HighlightRulesSelector(
       }
       // @ts-ignore
       this.$rules.start.unshift(jsxTag)
-      var jsxJsRule = {
+      const jsxJsRule = {
         regex: '{',
         token: 'paren.quasi.start',
         push: 'start'
@@ -725,16 +725,16 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
   function _Mode(acequire, exports, module) {
     'use strict'
 
-    var oop = acequire('../lib/oop')
-    var TextMode = acequire('./text').Mode
-    var SourceHighlightRules = acequire('./source_highlight_rules' + name).SourceHighlightRules
-    var MatchingBraceOutdent = acequire('./matching_brace_outdent').MatchingBraceOutdent
+    const oop = acequire('../lib/oop')
+    const TextMode = acequire('./text').Mode
+    const SourceHighlightRules = acequire('./source_highlight_rules' + name).SourceHighlightRules
+    const MatchingBraceOutdent = acequire('./matching_brace_outdent').MatchingBraceOutdent
     // For JSHint background worker
-    // var WorkerClient = acequire('../worker/worker_client').WorkerClient
-    var CstyleBehaviour = acequire('./behaviour/cstyle').CstyleBehaviour
-    var CStyleFoldMode = acequire('./folding/cstyle').FoldMode
+    // const WorkerClient = acequire('../worker/worker_client').WorkerClient
+    const CstyleBehaviour = acequire('./behaviour/cstyle').CstyleBehaviour
+    const CStyleFoldMode = acequire('./folding/cstyle').FoldMode
 
-    var Mode = function () {
+    const Mode = function () {
       // @ts-ignore
       this.HighlightRules = SourceHighlightRules
       // @ts-ignore
@@ -755,18 +755,18 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
 
       // @ts-ignore
       this.getNextLineIndent = function (state, line, tab) {
-        var indent = this.$getIndent(line)
+        let indent = this.$getIndent(line)
 
-        var tokenizedLine = this.getTokenizer().getLineTokens(line, state)
-        var tokens = tokenizedLine.tokens
-        var endState = tokenizedLine.state
+        const tokenizedLine = this.getTokenizer().getLineTokens(line, state)
+        const tokens = tokenizedLine.tokens
+        const endState = tokenizedLine.state
 
         if (tokens.length && tokens[tokens.length - 1].type == 'comment') {
           return indent
         }
 
         if (state == 'start' || state == 'no_regex') {
-          var match = line.match(/^.*(?:\bcase\b.*:|[\{\(\[])\s*$/)
+          const match = line.match(/^.*(?:\bcase\b.*:|[\{\(\[])\s*$/)
           if (match) {
             indent += tab
           }
@@ -774,7 +774,7 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
           if (endState == 'start' || endState == 'no_regex') {
             return ''
           }
-          var match = line.match(/^\s*(\/?)\*/)
+          const match = line.match(/^\s*(\/?)\*/)
           if (match) {
             if (match[1]) {
               indent += ' '
@@ -808,7 +808,7 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
 
       // // @ts-ignore
       // this.createWorker = function (session) {
-      //   var worker = new WorkerClient(["ace"], "ace/mode/javascript_worker", "JavaScriptWorker");
+      //   const worker = new WorkerClient(["ace"], "ace/mode/javascript_worker", "JavaScriptWorker");
       //   worker.attachToDocument(session.getDocument())
       //
       //   // @ts-ignore

@@ -611,12 +611,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   BlockStatement: function*(node: es.BlockStatement, context: Context) {
-    let result: Value
-
     // Create a new environment (block scoping)
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     pushEnvironment(context, environment)
-    result = yield* evaluateBlockSatement(context, node)
+    const result: Value = yield* evaluateBlockSatement(context, node)
     popEnvironment(context)
     return result
   },
