@@ -28,7 +28,10 @@ jobs:
     - run: yarn build
     - run: yarn format:ci
     - run: yarn eslint
-    - run: yarn test
-    - run: yarn test-coveralls
+    - run: yarn test-coverage
       env:
         CI: true
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
