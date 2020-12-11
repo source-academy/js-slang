@@ -1670,7 +1670,7 @@ function pathifyMain(
       if (path[pathIndex] === 'left') {
         if (pathIndex === endIndex) {
           redex = left
-          if (redex.type === 'BinaryExpression' || redex.type === 'ConditionalExpression') {
+          if (redex.type === 'ConditionalExpression') {
             left = withBrackets as es.Expression
           } else {
             left = redexMarker as es.Expression
