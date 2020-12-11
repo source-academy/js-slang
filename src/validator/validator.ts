@@ -1,4 +1,4 @@
-import { ancestor, base, FullWalkerCallback } from 'acorn-walk/dist/walk'
+import { ancestor, base, FullWalkerCallback } from '../utils/walkers'
 import * as es from 'estree'
 import { ConstAssignment } from '../errors/errors'
 import { NoAssignmentToForVariable } from '../errors/validityErrors'

@@ -45,14 +45,14 @@ a learning environment that uses SICP JS and Source, comes with the following
       <a href="../BINARYTREES/index.html">BINARYTREES</a>: Library for binary trees
     </li>
     <li>
-    <a href="../PIX%26FLIX/index.html">PIX&amp;FLIX</a>: image and video processing
+    <a href="../PIXNFLIX/index.html">PIXNFLIX</a>: image and video processing
     </li>
     <li>
       <a href="../GAME/index.html">GAME</a>: Library for Source Academy game
     </li>
     <li>
       <a href="../EV3/index.html">EV3</a>: Library for EV3 Lego Mindstorms robots
-    <li>
+    </li>
   </ul>
 
 ## What can you do in Source §3?

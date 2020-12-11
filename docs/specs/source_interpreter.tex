@@ -35,8 +35,7 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
                                                            && \texttt{list("object\_assignment", } \langle \textit{expression}_1 \textbf{\texttt{[}} \textit{expression}_2 \textbf{\texttt{]}}  \rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
                                    \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
-                                                           &&  \textrm{treat as}:\ \textbf{\texttt{const}}\  \textit{name} \ 
-                                   \textbf{\texttt{=}}\  \textit{parameters} \ \textbf{\texttt{=>}}\ \textit{block} \textbf{\texttt{;}} \\
+                                                           &&  \texttt{list("function\_declaration",  } \langle \textit{name}\rangle \textit{, } \langle \textit{parameters}\rangle \textit{,}\ \langle \textit{block}\rangle \textit{)} \\
 &&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \texttt{list("return\_statement",  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad && \textit{if-statement} \quad
@@ -89,19 +88,26 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 \end{alignat*}
 
 \begin{alignat*}{9}
-                                           && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{self-evaluating} \\
-&&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
-                                                           && \textrm{self-evaluating} \\
+  && \textit{expression}
+                         && ::= &\quad && \textit{number}  && \texttt{list("literal",}\ \textit{number}\texttt{)} \\
+&&                       && |   &\quad && \textbf{\texttt{true}}
+                                                           && \texttt{list("literal",}\ \textbf{\texttt{true}}\texttt{)} \\
+&&                       && |   &\quad && \textbf{\texttt{false}}
+                                                           && \texttt{list("literal",}\ \textbf{\texttt{false}}\texttt{)} \\
 &&                       && |   &\quad && \textbf{\texttt{null}}
-                                                           && \textrm{self-evaluating} \\
-&&                       && |   &\quad &&  \textit{string}   && \textrm{self-evaluating} \\
+                                                           && \texttt{list("literal",}\ \textbf{\texttt{null}}\texttt{)} \\
+&&                       && |   &\quad &&  \textit{string}
+                                                           && \texttt{list("literal",}\ \textit{string}\texttt{)} \\
 &&                       && |   &\quad &&  \textit{name}   && \texttt{list("name", string)}  \\
-&&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
-                                            \textit{expression} \qquad
-                                                           && \texttt{list("application",  } \langle \textit{binary-operator}\rangle \textit{, list of  } \langle \textit{expression}\rangle \textit{)} \\
-&&                       && |   &\quad &&   \textit{unary-operator} \ 
+&&                       && |   &\quad &&  \textit{expression}_1 \  \textit{log-op} \ 
+                                            \textit{expression}_2 \qquad
+                                                           && \texttt{list("logical\_composition",  } \langle \textit{log-op}\rangle \textit{, } \langle \textit{expression}_1\rangle \textit{, } \langle \textit{expression}_2\rangle \textit{)} \\
+&&                       && |   &\quad &&  \textit{expression}_1 \  \textit{bin-op} \ 
+                                            \textit{expression}_2 \qquad
+                                                           && \texttt{list("operator\_combination",  } \langle \textit{bin-op}\rangle \textit{, } \langle \textit{expression}_1\rangle \textit{, } \langle \textit{expression}_2\rangle \textit{)} \\
+&&                       && |   &\quad &&   \textit{un-op} \ 
                                             \textit{expression}
-                                                           && \texttt{list("application",  } \langle \textit{unary-operator}\rangle \textit{, list of  } \langle \textit{expression}\rangle \textit{)} \\
+                                                           && \texttt{list("operator\_combination",  } \langle \textit{un-op}\rangle \textit{, } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad &&   \textit{expression} \ 
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
@@ -136,15 +142,20 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
                                                            && \textrm{treat as}:\ \textit{expression}\ \textbf{\texttt{[ "}}\textit{name}\textbf{\texttt{" ]}}  \\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{treat as:}\ \textit{expression} \\[1mm]
-&& \textit{binary-operator}    \ 
+&& \textit{log-op}    \ 
+                        && ::= &\quad && \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
+                                          && \textit{string representing operator} \\[1mm]
+&& \textit{bin-op}    \ 
                         && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
-                                   \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
-&&                       && |  &\quad &&  \texttt{\textbf{<}}\ |\ \texttt{\textbf{>}}\ |\ \texttt{\textbf{<=}}\ |\ \texttt{\textbf{>=}}\
-                                          |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
-                                          && \texttt{list("name", string)} \\[1mm]
-&& \textit{unary-operator}    
-                        && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}
-                        && \texttt{list("name", string)} \\
+                                   \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}  && \textit{string representing operator} \\
+&&                       && |  &\quad &&  \texttt{\textbf{<}}\ |\ \texttt{\textbf{>}}\ |\ \texttt{\textbf{<=}}\ |\ \texttt{\textbf{>=}}
+                                          && \textit{string representing operator} \\[1mm]
+&& \textit{un-op}    
+                        && ::= &\quad && \textbf{\texttt{!}}
+                        && \texttt{"!"} \\
+&& 
+                        && | &\quad && \textbf{\texttt{-}}
+                        && \texttt{"-unary"} \\
 && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
