@@ -40,7 +40,7 @@
     "prepublishOnly": "tsc",
     "test": "jest",
     "benchmark": "jest --testPathPattern='.*benchmark.*'",
-    "test-coveralls": "./scripts/test-coveralls.sh",
+    "test-coverage": "jest --coverage",
     "eslint": "eslint --ext \".ts,.tsx\" src",
     "jsdoc": "./scripts/jsdoc.sh",
     "autocomplete": "node ./scripts/updateAutocompleteDocs.js",
