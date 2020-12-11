@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { simple, make } from 'acorn-walk/dist/walk'
+import { simple, make } from '../../utils/walkers'
 
 /*
  * GPU Body verifier helps to ensure the body is parallelizable
