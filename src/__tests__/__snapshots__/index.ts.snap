@@ -95,6 +95,65 @@ Object {
 }
 `;
 
+exports[`Array assignment has value: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let arr = [];
+const a = arr[0] = 1;
+const b = arr[1] = arr[2] = 4;
+arr[0] === 1 && arr[1] === 4 && arr[2] === 4;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "pretranspiled": "",
+  "result": true,
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    let arr = [];
+    const a = setProp(arr, 0, 1, 2, 10);
+    const b = setProp(arr, 1, setProp(arr, 2, 4, 3, 19), 3, 10);
+    lastStatementResult = eval(\\"boolOrErr(boolOrErr(binaryOp(\\\\\\"===\\\\\\", 3, getProp(arr, 0, 4, 0), 1, 4, 0), 4, 0) && binaryOp(\\\\\\"===\\\\\\", 3, getProp(arr, 1, 4, 16), 4, 4, 16), 4, 0) && binaryOp(\\\\\\"===\\\\\\", 3, getProp(arr, 2, 4, 32), 4, 4, 32);\\");
+    globals.variables.set(\\"arr\\", {
+      kind: \\"let\\",
+      getValue: () => {
+        return arr;
+      },
+      assignNewValue: function (unique) {
+        return arr = unique;
+      }
+    });
+    globals.variables.set(\\"a\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return a;
+      }
+    });
+    globals.variables.set(\\"b\\", {
+      kind: \\"const\\",
+      getValue: () => {
+        return b;
+      }
+    });
+  }
+}
+lastStatementResult;
+",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Arrays toString matches up with JS: expect to match JS 1`] = `
 Object {
   "alertResult": Array [],
@@ -151,6 +210,60 @@ f(list(1, 2));",
   f([1, [2, null]])..  f([1, [2, null]])..  f([1, [2, null]])..",
   "result": undefined,
   "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Assignment has value: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let a = 1;
+let b = a = 4;
+b === 4 && a === 4;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "pretranspiled": "",
+  "result": true,
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    let a = 1;
+    let b = a = 4;
+    lastStatementResult = eval(\\"boolOrErr(binaryOp(\\\\\\"===\\\\\\", 3, b, 4, 3, 0), 3, 0) && binaryOp(\\\\\\"===\\\\\\", 3, a, 4, 3, 11);\\");
+    globals.variables.set(\\"a\\", {
+      kind: \\"let\\",
+      getValue: () => {
+        return a;
+      },
+      assignNewValue: function (unique) {
+        return a = unique;
+      }
+    });
+    globals.variables.set(\\"b\\", {
+      kind: \\"let\\",
+      getValue: () => {
+        return b;
+      },
+      assignNewValue: function (unique0) {
+        return b = unique0;
+      }
+    });
+  }
+}
+lastStatementResult;
+",
   "visualiseListResult": Array [],
 }
 `;
