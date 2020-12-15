@@ -161,6 +161,30 @@ test('Cannot overwrite consts even when assignment is allowed', () => {
   ).toMatchInlineSnapshot(`"Line 3: Cannot assign new value to constant constant."`)
 })
 
+test('Assignment has value', () => {
+  return expectResult(
+    stripIndent`
+    let a = 1;
+    let b = a = 4;
+    b === 4 && a === 4;
+  `,
+
+    { chapter: 3, native: true }
+  ).toBe(true)
+})
+
+test('Array assignment has value', () => {
+  return expectResult(
+    stripIndent`
+    let arr = [];
+    const a = arr[0] = 1;
+    const b = arr[1] = arr[2] = 4;
+    arr[0] === 1 && arr[1] === 4 && arr[2] === 4;
+  `,
+    { chapter: 3, native: true }
+  ).toBe(true)
+})
+
 test('Can overwrite lets when assignment is allowed', () => {
   return expectResult(
     stripIndent`
