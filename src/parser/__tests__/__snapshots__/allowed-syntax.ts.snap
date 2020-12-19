@@ -115,7 +115,7 @@ Object {
                               ],
                               Array [
                                 Array [
-                                  "operator_combination",
+                                  "binary_operator_combination",
                                   Array [
                                     "+",
                                     Array [
@@ -148,7 +148,7 @@ Object {
                               "conditional_statement",
                               Array [
                                 Array [
-                                  "operator_combination",
+                                  "binary_operator_combination",
                                   Array [
                                     ">",
                                     Array [
@@ -191,12 +191,12 @@ Object {
                                       "conditional_statement",
                                       Array [
                                         Array [
-                                          "operator_combination",
+                                          "binary_operator_combination",
                                           Array [
                                             "===",
                                             Array [
                                               Array [
-                                                "operator_combination",
+                                                "binary_operator_combination",
                                                 Array [
                                                   "%",
                                                   Array [
@@ -238,7 +238,7 @@ Object {
                                             "return_statement",
                                             Array [
                                               Array [
-                                                "operator_combination",
+                                                "unary_operator_combination",
                                                 Array [
                                                   "-unary",
                                                   Array [
@@ -261,12 +261,12 @@ Object {
                                               "conditional_statement",
                                               Array [
                                                 Array [
-                                                  "operator_combination",
+                                                  "binary_operator_combination",
                                                   Array [
                                                     "===",
                                                     Array [
                                                       Array [
-                                                        "operator_combination",
+                                                        "binary_operator_combination",
                                                         Array [
                                                           "%",
                                                           Array [
@@ -325,7 +325,7 @@ Object {
                                                           "conditional_expression",
                                                           Array [
                                                             Array [
-                                                              "operator_combination",
+                                                              "binary_operator_combination",
                                                               Array [
                                                                 ">",
                                                                 Array [
@@ -359,7 +359,7 @@ Object {
                                                               ],
                                                               Array [
                                                                 Array [
-                                                                  "operator_combination",
+                                                                  "unary_operator_combination",
                                                                   Array [
                                                                     "-unary",
                                                                     Array [
@@ -688,7 +688,7 @@ Object {
               "return_statement",
               Array [
                 Array [
-                  "operator_combination",
+                  "binary_operator_combination",
                   Array [
                     "+",
                     Array [
@@ -1017,7 +1017,7 @@ Object {
   "parsedErrors": "",
   "pretranspiled": "",
   "result": Array [
-    "operator_combination",
+    "binary_operator_combination",
     Array [
       "+",
       Array [
@@ -1030,22 +1030,22 @@ Object {
         ],
         Array [
           Array [
-            "operator_combination",
+            "binary_operator_combination",
             Array [
               "/",
               Array [
                 Array [
-                  "operator_combination",
+                  "binary_operator_combination",
                   Array [
                     "%",
                     Array [
                       Array [
-                        "operator_combination",
+                        "binary_operator_combination",
                         Array [
                           "*",
                           Array [
                             Array [
-                              "operator_combination",
+                              "unary_operator_combination",
                               Array [
                                 "-unary",
                                 Array [
@@ -1062,7 +1062,7 @@ Object {
                             ],
                             Array [
                               Array [
-                                "operator_combination",
+                                "unary_operator_combination",
                                 Array [
                                   "-unary",
                                   Array [
@@ -1202,7 +1202,7 @@ Object {
                               "&&",
                               Array [
                                 Array [
-                                  "operator_combination",
+                                  "binary_operator_combination",
                                   Array [
                                     "===",
                                     Array [
@@ -1228,7 +1228,7 @@ Object {
                                 ],
                                 Array [
                                   Array [
-                                    "operator_combination",
+                                    "binary_operator_combination",
                                     Array [
                                       "<",
                                       Array [
@@ -1259,7 +1259,7 @@ Object {
                           ],
                           Array [
                             Array [
-                              "operator_combination",
+                              "binary_operator_combination",
                               Array [
                                 "<=",
                                 Array [
@@ -1290,7 +1290,7 @@ Object {
                     ],
                     Array [
                       Array [
-                        "operator_combination",
+                        "binary_operator_combination",
                         Array [
                           ">=",
                           Array [
@@ -1321,7 +1321,7 @@ Object {
               ],
               Array [
                 Array [
-                  "operator_combination",
+                  "binary_operator_combination",
                   Array [
                     ">",
                     Array [
@@ -2269,7 +2269,7 @@ Object {
             "while_loop",
             Array [
               Array [
-                "operator_combination",
+                "binary_operator_combination",
                 Array [
                   "<",
                   Array [
@@ -2306,7 +2306,7 @@ Object {
                     ],
                     Array [
                       Array [
-                        "operator_combination",
+                        "binary_operator_combination",
                         Array [
                           "+",
                           Array [
@@ -2940,7 +2940,7 @@ Object {
               ],
               Array [
                 Array [
-                  "operator_combination",
+                  "binary_operator_combination",
                   Array [
                     "<",
                     Array [
@@ -2977,7 +2977,7 @@ Object {
                       ],
                       Array [
                         Array [
-                          "operator_combination",
+                          "binary_operator_combination",
                           Array [
                             "+",
                             Array [
@@ -4116,7 +4116,7 @@ Object {
               ],
               Array [
                 Array [
-                  "operator_combination",
+                  "binary_operator_combination",
                   Array [
                     "<",
                     Array [
@@ -4153,7 +4153,7 @@ Object {
                       ],
                       Array [
                         Array [
-                          "operator_combination",
+                          "binary_operator_combination",
                           Array [
                             "+",
                             Array [
@@ -4186,7 +4186,7 @@ Object {
                       "conditional_statement",
                       Array [
                         Array [
-                          "operator_combination",
+                          "binary_operator_combination",
                           Array [
                             "<",
                             Array [
@@ -4232,7 +4232,7 @@ Object {
                                       ],
                                       Array [
                                         Array [
-                                          "operator_combination",
+                                          "binary_operator_combination",
                                           Array [
                                             "+",
                                             Array [
@@ -4265,7 +4265,7 @@ Object {
                                       "conditional_statement",
                                       Array [
                                         Array [
-                                          "operator_combination",
+                                          "binary_operator_combination",
                                           Array [
                                             ">",
                                             Array [
