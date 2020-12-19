@@ -141,7 +141,7 @@ const transformers: ASTTransformers = new Map([
     'UnaryExpression',
     (node: es.UnaryExpression) => {
       return vector_to_list([
-        'operator_combination',
+        'unary_operator_combination',
         node.operator === '-' ? '-unary' : node.operator,
         transform(node.argument)
       ])
@@ -152,7 +152,7 @@ const transformers: ASTTransformers = new Map([
     'BinaryExpression',
     (node: es.BinaryExpression) => {
       return vector_to_list([
-        'operator_combination',
+        'binary_operator_combination',
         node.operator,
         transform(node.left),
         transform(node.right)
