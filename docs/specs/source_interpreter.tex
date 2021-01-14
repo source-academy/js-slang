@@ -18,6 +18,9 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 \newpage
 \KOMAoptions{paper=landscape,pagesize}
 \recalctypearea
+	\addtolength{\oddsidemargin}{-6cm}
+	\addtolength{\evensidemargin}{-6cm}
+	\addtolength{\textwidth}{13cm}
 
 \begin{alignat*}{9}
 && \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
@@ -89,7 +92,7 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 
 \begin{alignat*}{9}
   && \textit{expression}
-                         && ::= &\quad && \textit{number}  && \texttt{list("literal",}\ \textit{number}\texttt{)} \\
+                         &&\quad  ::= &\quad && \textit{number}  && \texttt{list("literal",}\ \textit{number}\texttt{)} \\
 &&                       && |   &\quad && \textbf{\texttt{true}}
                                                            && \texttt{list("literal",}\ \textbf{\texttt{true}}\texttt{)} \\
 &&                       && |   &\quad && \textbf{\texttt{false}}
@@ -104,10 +107,10 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
                                                            && \texttt{list("logical\_composition",  } \langle \textit{log-op}\rangle \textit{, } \langle \textit{expression}_1\rangle \textit{, } \langle \textit{expression}_2\rangle \textit{)} \\
 &&                       && |   &\quad &&  \textit{expression}_1 \  \textit{bin-op} \ 
                                             \textit{expression}_2 \qquad
-                                                           && \texttt{list("operator\_combination",  } \langle \textit{bin-op}\rangle \textit{, } \langle \textit{expression}_1\rangle \textit{, } \langle \textit{expression}_2\rangle \textit{)} \\
+                                                           && \texttt{list("binary\_operator\_combination",  } \langle \textit{bin-op}\rangle \textit{, } \langle \textit{expression}_1\rangle \textit{, } \langle \textit{expression}_2\rangle \textit{)} \\
 &&                       && |   &\quad &&   \textit{un-op} \ 
                                             \textit{expression}
-                                                           && \texttt{list("operator\_combination",  } \langle \textit{un-op}\rangle \textit{, } \langle \textit{expression}\rangle \textit{)} \\
+                                                           && \texttt{list("unary\_operator\_combination",  } \langle \textit{un-op}\rangle \textit{, } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad &&   \textit{expression} \ 
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
@@ -142,21 +145,21 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
                                                            && \textrm{treat as}:\ \textit{expression}\ \textbf{\texttt{[ "}}\textit{name}\textbf{\texttt{" ]}}  \\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{treat as:}\ \textit{expression} \\[1mm]
-&& \textit{log-op}    \ 
-                        && ::= &\quad && \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
+&& \textit{log-op}    
+                        &&\quad  ::= &\quad && \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
                                           && \textit{string representing operator} \\[1mm]
-&& \textit{bin-op}    \ 
-                        && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
+&& \textit{bin-op}     
+                        &&\quad  ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
                                    \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}  && \textit{string representing operator} \\
 &&                       && |  &\quad &&  \texttt{\textbf{<}}\ |\ \texttt{\textbf{>}}\ |\ \texttt{\textbf{<=}}\ |\ \texttt{\textbf{>=}}
                                           && \textit{string representing operator} \\[1mm]
 && \textit{un-op}    
-                        && ::= &\quad && \textbf{\texttt{!}}
+                        &&\quad  ::= &\quad && \textbf{\texttt{!}}
                         && \texttt{"!"} \\
 && 
                         && | &\quad && \textbf{\texttt{-}}
                         && \texttt{"-unary"} \\
-&& \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
+&& \textit{expressions}  &&\quad  ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
                                                                       )\ \ldots
@@ -168,4 +171,25 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 \newpage
 \KOMAoptions{paper=portrait}
 \recalctypearea
+
+% ALIGN EVEN- AND ODD-NUMBERED PAGES.
+\evensidemargin 35pt
+
+% HORIZONTAL MARGINS
+% Left margin 1 inch (0 + 1)
+\setlength{\oddsidemargin}{0in}
+% Text width 6.5 inch (so right margin 1 inch).
+\setlength{\textwidth}{6.5in}
+
+% ----------------
+% VERTICAL MARGINS
+% Top margin 0.5 inch (-0.5 + 1)
+\setlength{\topmargin}{-0.5in}
+% Head height 0.25 inch (where page headers go)
+\setlength{\headheight}{0.25in}
+% Head separation 0.25 inch (between header and top line of text)
+\setlength{\headsep}{0.25in}
+% Text height 8.5 inch (so bottom margin 1.5 in)
+\setlength{\textheight}{10.0in}
+
 
