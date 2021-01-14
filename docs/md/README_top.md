@@ -84,7 +84,7 @@ the Source Academy.
   
 #### <a href="source_2_lazy.pdf">Specification of Source §2 Lazy</a>
 
-#### <a href="source_3_non-det.pdf">Specification of Source §3 Non-Det</a>
+#### <a href="source_3_nondet.pdf">Specification of Source §3 Non-Det</a>
 
 #### <a href="source_3_concurrent.pdf">Specification of Source §3 Concurrent</a>
 
