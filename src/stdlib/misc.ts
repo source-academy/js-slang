@@ -100,6 +100,15 @@ export function parse_int(str: string, radix: number) {
   }
 }
 
+export function char_at(str: string, index: number) {
+  if (typeof str !== 'string') {
+    throw new Error('char_at expects the first argument to be a string.')
+  } else if (typeof index !== 'number' || !Number.isInteger(index) || index < 0) {
+    throw new Error('char_at expects the second argument to be a nonnegative integer.')
+  }
+  return str[index]
+}
+
 export function get_time() {
   return new Date().getTime()
 }
