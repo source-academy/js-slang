@@ -17,7 +17,7 @@ main() {
 	clean
     elif [ "$1" == "via" ]; then
 	via
-    elif [[ $(git rev-parse --show-toplevel 2> /dev/null) = "$PWD" ]]; then
+    elif [[ "$(git rev-parse --show-toplevel 2> /dev/null)" -ef "$PWD" ]]; then
         run
     else
         echo "Please run this command from the git root directory."
