@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [12.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -27,7 +27,11 @@ jobs:
     - run: yarn
     - run: yarn build
     - run: yarn format:ci
-    - run: yarn tslint
-    - run: yarn test
+    - run: yarn eslint
+    - run: yarn test-coverage
       env:
         CI: true
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}

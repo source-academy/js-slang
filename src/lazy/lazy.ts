@@ -1,4 +1,4 @@
-import { simple } from 'acorn-walk/dist/walk'
+import { simple } from '../utils/walkers'
 import * as create from '../utils/astCreator'
 import * as es from 'estree'
 import { getIdentifiersInProgram } from '../utils/uniqueIds'

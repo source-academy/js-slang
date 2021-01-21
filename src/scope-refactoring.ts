@@ -1,4 +1,4 @@
-import { simple } from 'acorn-walk/dist/walk'
+import { simple } from './utils/walkers'
 import * as es from 'estree'
 import { isInLoc } from './finder'
 import { BlockFrame, DefinitionNode } from './types'

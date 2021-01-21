@@ -6,7 +6,6 @@ import bracesAroundFor from './bracesAroundFor'
 import bracesAroundIfElse from './bracesAroundIfElse'
 import bracesAroundWhile from './bracesAroundWhile'
 import forStatementMustHaveAllParts from './forStatementMustHaveAllParts'
-import noAssignmentExpression from './noAssignmentExpression'
 import noDeclareMutable from './noDeclareMutable'
 import noDotAbbreviation from './noDotAbbreviation'
 import noEval from './noEval'
@@ -26,7 +25,6 @@ const rules: Rule<es.Node>[] = [
   bracesAroundIfElse,
   bracesAroundWhile,
   forStatementMustHaveAllParts,
-  noAssignmentExpression,
   noDeclareMutable,
   noDotAbbreviation,
   noIfWithoutElse,

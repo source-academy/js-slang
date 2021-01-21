@@ -1,4 +1,4 @@
-import { recursive, simple } from 'acorn-walk/dist/walk'
+import { recursive, simple } from '../utils/walkers'
 import * as es from 'estree'
 import * as create from '../utils/astCreator'
 import { UndefinedVariable, ConstAssignment } from '../errors/errors'

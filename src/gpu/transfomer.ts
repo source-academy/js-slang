@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { ancestor, simple, make } from 'acorn-walk/dist/walk'
+import { ancestor, simple, make } from '../utils/walkers'
 import * as create from '../utils/astCreator'
 import GPULoopVerifier from './verification/loopVerifier'
 import GPUBodyVerifier from './verification/bodyVerifier'
@@ -50,7 +50,7 @@ class GPUTransformer {
       this.program,
       {
         ForStatement(node: es.ForStatement) {
-          let state = gpuTranspile(node)
+          const state = gpuTranspile(node)
           if (state > 0 && node.loc) {
             res.push([node.loc.start.line, state])
           }

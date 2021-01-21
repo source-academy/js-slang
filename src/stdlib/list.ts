@@ -7,7 +7,7 @@ import { Value } from '../types'
 // Translated to TypeScript by Evan Sebastian
 export type Pair<H, T> = [H, T]
 export type List = null | NonEmptyList
-interface NonEmptyList extends Pair<any, any> {}
+type NonEmptyList = Pair<any, any>
 
 // array test works differently for Rhino and
 // the Firefox environment (especially Web Console)

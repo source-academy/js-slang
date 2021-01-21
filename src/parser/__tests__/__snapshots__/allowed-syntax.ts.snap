@@ -66,7 +66,7 @@ Object {
     Array [
       Array [
         Array [
-          "constant_declaration",
+          "function_declaration",
           Array [
             Array [
               "name",
@@ -77,349 +77,61 @@ Object {
             ],
             Array [
               Array [
-                "lambda_expression",
+                Array [
+                  "name",
+                  Array [
+                    "a",
+                    null,
+                  ],
+                ],
                 Array [
                   Array [
+                    "name",
                     Array [
-                      "name",
-                      Array [
-                        "a",
-                        null,
-                      ],
-                    ],
-                    Array [
-                      Array [
-                        "name",
-                        Array [
-                          "b",
-                          null,
-                        ],
-                      ],
+                      "b",
                       null,
                     ],
                   ],
+                  null,
+                ],
+              ],
+              Array [
+                Array [
+                  "block",
                   Array [
                     Array [
-                      "block",
+                      "sequence",
                       Array [
                         Array [
-                          "sequence",
                           Array [
+                            "constant_declaration",
                             Array [
                               Array [
-                                "constant_declaration",
+                                "name",
                                 Array [
-                                  Array [
-                                    "name",
-                                    Array [
-                                      "sum",
-                                      null,
-                                    ],
-                                  ],
-                                  Array [
-                                    Array [
-                                      "application",
-                                      Array [
-                                        Array [
-                                          "name",
-                                          Array [
-                                            "+",
-                                            null,
-                                          ],
-                                        ],
-                                        Array [
-                                          Array [
-                                            Array [
-                                              "name",
-                                              Array [
-                                                "a",
-                                                null,
-                                              ],
-                                            ],
-                                            Array [
-                                              Array [
-                                                "name",
-                                                Array [
-                                                  "b",
-                                                  null,
-                                                ],
-                                              ],
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                    ],
-                                    null,
-                                  ],
+                                  "sum",
+                                  null,
                                 ],
                               ],
                               Array [
                                 Array [
-                                  "conditional_statement",
+                                  "binary_operator_combination",
                                   Array [
+                                    "+",
                                     Array [
-                                      "application",
+                                      Array [
+                                        "name",
+                                        Array [
+                                          "a",
+                                          null,
+                                        ],
+                                      ],
                                       Array [
                                         Array [
                                           "name",
                                           Array [
-                                            ">",
+                                            "b",
                                             null,
-                                          ],
-                                        ],
-                                        Array [
-                                          Array [
-                                            Array [
-                                              "name",
-                                              Array [
-                                                "sum",
-                                                null,
-                                              ],
-                                            ],
-                                            Array [
-                                              1,
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                    ],
-                                    Array [
-                                      Array [
-                                        "return_statement",
-                                        Array [
-                                          Array [
-                                            "name",
-                                            Array [
-                                              "sum",
-                                              null,
-                                            ],
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                      Array [
-                                        Array [
-                                          "conditional_statement",
-                                          Array [
-                                            Array [
-                                              "application",
-                                              Array [
-                                                Array [
-                                                  "name",
-                                                  Array [
-                                                    "===",
-                                                    null,
-                                                  ],
-                                                ],
-                                                Array [
-                                                  Array [
-                                                    Array [
-                                                      "application",
-                                                      Array [
-                                                        Array [
-                                                          "name",
-                                                          Array [
-                                                            "%",
-                                                            null,
-                                                          ],
-                                                        ],
-                                                        Array [
-                                                          Array [
-                                                            Array [
-                                                              "name",
-                                                              Array [
-                                                                "a",
-                                                                null,
-                                                              ],
-                                                            ],
-                                                            Array [
-                                                              2,
-                                                              null,
-                                                            ],
-                                                          ],
-                                                          null,
-                                                        ],
-                                                      ],
-                                                    ],
-                                                    Array [
-                                                      0,
-                                                      null,
-                                                    ],
-                                                  ],
-                                                  null,
-                                                ],
-                                              ],
-                                            ],
-                                            Array [
-                                              Array [
-                                                "return_statement",
-                                                Array [
-                                                  Array [
-                                                    "application",
-                                                    Array [
-                                                      Array [
-                                                        "name",
-                                                        Array [
-                                                          "-",
-                                                          null,
-                                                        ],
-                                                      ],
-                                                      Array [
-                                                        Array [
-                                                          1,
-                                                          null,
-                                                        ],
-                                                        null,
-                                                      ],
-                                                    ],
-                                                  ],
-                                                  null,
-                                                ],
-                                              ],
-                                              Array [
-                                                Array [
-                                                  "conditional_statement",
-                                                  Array [
-                                                    Array [
-                                                      "application",
-                                                      Array [
-                                                        Array [
-                                                          "name",
-                                                          Array [
-                                                            "===",
-                                                            null,
-                                                          ],
-                                                        ],
-                                                        Array [
-                                                          Array [
-                                                            Array [
-                                                              "application",
-                                                              Array [
-                                                                Array [
-                                                                  "name",
-                                                                  Array [
-                                                                    "%",
-                                                                    null,
-                                                                  ],
-                                                                ],
-                                                                Array [
-                                                                  Array [
-                                                                    Array [
-                                                                      "name",
-                                                                      Array [
-                                                                        "b",
-                                                                        null,
-                                                                      ],
-                                                                    ],
-                                                                    Array [
-                                                                      2,
-                                                                      null,
-                                                                    ],
-                                                                  ],
-                                                                  null,
-                                                                ],
-                                                              ],
-                                                            ],
-                                                            Array [
-                                                              0,
-                                                              null,
-                                                            ],
-                                                          ],
-                                                          null,
-                                                        ],
-                                                      ],
-                                                    ],
-                                                    Array [
-                                                      Array [
-                                                        "return_statement",
-                                                        Array [
-                                                          1,
-                                                          null,
-                                                        ],
-                                                      ],
-                                                      Array [
-                                                        Array [
-                                                          "return_statement",
-                                                          Array [
-                                                            Array [
-                                                              "conditional_expression",
-                                                              Array [
-                                                                Array [
-                                                                  "application",
-                                                                  Array [
-                                                                    Array [
-                                                                      "name",
-                                                                      Array [
-                                                                        ">",
-                                                                        null,
-                                                                      ],
-                                                                    ],
-                                                                    Array [
-                                                                      Array [
-                                                                        Array [
-                                                                          "name",
-                                                                          Array [
-                                                                            "a",
-                                                                            null,
-                                                                          ],
-                                                                        ],
-                                                                        Array [
-                                                                          Array [
-                                                                            "name",
-                                                                            Array [
-                                                                              "b",
-                                                                              null,
-                                                                            ],
-                                                                          ],
-                                                                          null,
-                                                                        ],
-                                                                      ],
-                                                                      null,
-                                                                    ],
-                                                                  ],
-                                                                ],
-                                                                Array [
-                                                                  0,
-                                                                  Array [
-                                                                    Array [
-                                                                      "application",
-                                                                      Array [
-                                                                        Array [
-                                                                          "name",
-                                                                          Array [
-                                                                            "-",
-                                                                            null,
-                                                                          ],
-                                                                        ],
-                                                                        Array [
-                                                                          Array [
-                                                                            2,
-                                                                            null,
-                                                                          ],
-                                                                          null,
-                                                                        ],
-                                                                      ],
-                                                                    ],
-                                                                    null,
-                                                                  ],
-                                                                ],
-                                                              ],
-                                                            ],
-                                                            null,
-                                                          ],
-                                                        ],
-                                                        null,
-                                                      ],
-                                                    ],
-                                                  ],
-                                                ],
-                                                null,
-                                              ],
-                                            ],
                                           ],
                                         ],
                                         null,
@@ -428,6 +140,261 @@ Object {
                                   ],
                                 ],
                                 null,
+                              ],
+                            ],
+                          ],
+                          Array [
+                            Array [
+                              "conditional_statement",
+                              Array [
+                                Array [
+                                  "binary_operator_combination",
+                                  Array [
+                                    ">",
+                                    Array [
+                                      Array [
+                                        "name",
+                                        Array [
+                                          "sum",
+                                          null,
+                                        ],
+                                      ],
+                                      Array [
+                                        Array [
+                                          "literal",
+                                          Array [
+                                            1,
+                                            null,
+                                          ],
+                                        ],
+                                        null,
+                                      ],
+                                    ],
+                                  ],
+                                ],
+                                Array [
+                                  Array [
+                                    "return_statement",
+                                    Array [
+                                      Array [
+                                        "name",
+                                        Array [
+                                          "sum",
+                                          null,
+                                        ],
+                                      ],
+                                      null,
+                                    ],
+                                  ],
+                                  Array [
+                                    Array [
+                                      "conditional_statement",
+                                      Array [
+                                        Array [
+                                          "binary_operator_combination",
+                                          Array [
+                                            "===",
+                                            Array [
+                                              Array [
+                                                "binary_operator_combination",
+                                                Array [
+                                                  "%",
+                                                  Array [
+                                                    Array [
+                                                      "name",
+                                                      Array [
+                                                        "a",
+                                                        null,
+                                                      ],
+                                                    ],
+                                                    Array [
+                                                      Array [
+                                                        "literal",
+                                                        Array [
+                                                          2,
+                                                          null,
+                                                        ],
+                                                      ],
+                                                      null,
+                                                    ],
+                                                  ],
+                                                ],
+                                              ],
+                                              Array [
+                                                Array [
+                                                  "literal",
+                                                  Array [
+                                                    0,
+                                                    null,
+                                                  ],
+                                                ],
+                                                null,
+                                              ],
+                                            ],
+                                          ],
+                                        ],
+                                        Array [
+                                          Array [
+                                            "return_statement",
+                                            Array [
+                                              Array [
+                                                "unary_operator_combination",
+                                                Array [
+                                                  "-unary",
+                                                  Array [
+                                                    Array [
+                                                      "literal",
+                                                      Array [
+                                                        1,
+                                                        null,
+                                                      ],
+                                                    ],
+                                                    null,
+                                                  ],
+                                                ],
+                                              ],
+                                              null,
+                                            ],
+                                          ],
+                                          Array [
+                                            Array [
+                                              "conditional_statement",
+                                              Array [
+                                                Array [
+                                                  "binary_operator_combination",
+                                                  Array [
+                                                    "===",
+                                                    Array [
+                                                      Array [
+                                                        "binary_operator_combination",
+                                                        Array [
+                                                          "%",
+                                                          Array [
+                                                            Array [
+                                                              "name",
+                                                              Array [
+                                                                "b",
+                                                                null,
+                                                              ],
+                                                            ],
+                                                            Array [
+                                                              Array [
+                                                                "literal",
+                                                                Array [
+                                                                  2,
+                                                                  null,
+                                                                ],
+                                                              ],
+                                                              null,
+                                                            ],
+                                                          ],
+                                                        ],
+                                                      ],
+                                                      Array [
+                                                        Array [
+                                                          "literal",
+                                                          Array [
+                                                            0,
+                                                            null,
+                                                          ],
+                                                        ],
+                                                        null,
+                                                      ],
+                                                    ],
+                                                  ],
+                                                ],
+                                                Array [
+                                                  Array [
+                                                    "return_statement",
+                                                    Array [
+                                                      Array [
+                                                        "literal",
+                                                        Array [
+                                                          1,
+                                                          null,
+                                                        ],
+                                                      ],
+                                                      null,
+                                                    ],
+                                                  ],
+                                                  Array [
+                                                    Array [
+                                                      "return_statement",
+                                                      Array [
+                                                        Array [
+                                                          "conditional_expression",
+                                                          Array [
+                                                            Array [
+                                                              "binary_operator_combination",
+                                                              Array [
+                                                                ">",
+                                                                Array [
+                                                                  Array [
+                                                                    "name",
+                                                                    Array [
+                                                                      "a",
+                                                                      null,
+                                                                    ],
+                                                                  ],
+                                                                  Array [
+                                                                    Array [
+                                                                      "name",
+                                                                      Array [
+                                                                        "b",
+                                                                        null,
+                                                                      ],
+                                                                    ],
+                                                                    null,
+                                                                  ],
+                                                                ],
+                                                              ],
+                                                            ],
+                                                            Array [
+                                                              Array [
+                                                                "literal",
+                                                                Array [
+                                                                  0,
+                                                                  null,
+                                                                ],
+                                                              ],
+                                                              Array [
+                                                                Array [
+                                                                  "unary_operator_combination",
+                                                                  Array [
+                                                                    "-unary",
+                                                                    Array [
+                                                                      Array [
+                                                                        "literal",
+                                                                        Array [
+                                                                          2,
+                                                                          null,
+                                                                        ],
+                                                                      ],
+                                                                      null,
+                                                                    ],
+                                                                  ],
+                                                                ],
+                                                                null,
+                                                              ],
+                                                            ],
+                                                          ],
+                                                        ],
+                                                        null,
+                                                      ],
+                                                    ],
+                                                    null,
+                                                  ],
+                                                ],
+                                              ],
+                                            ],
+                                            null,
+                                          ],
+                                        ],
+                                      ],
+                                    ],
+                                    null,
+                                  ],
+                                ],
                               ],
                             ],
                             null,
@@ -439,8 +406,8 @@ Object {
                     null,
                   ],
                 ],
+                null,
               ],
-              null,
             ],
           ],
         ],
@@ -457,9 +424,21 @@ Object {
               ],
               Array [
                 Array [
-                  1,
                   Array [
-                    2,
+                    "literal",
+                    Array [
+                      1,
+                      null,
+                    ],
+                  ],
+                  Array [
+                    Array [
+                      "literal",
+                      Array [
+                        2,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
@@ -596,7 +575,13 @@ Object {
             Array [
               "return_statement",
               Array [
-                true,
+                Array [
+                  "literal",
+                  Array [
+                    true,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -703,36 +688,27 @@ Object {
               "return_statement",
               Array [
                 Array [
-                  "application",
+                  "binary_operator_combination",
                   Array [
+                    "+",
                     Array [
-                      "name",
                       Array [
-                        "+",
-                        null,
+                        "name",
+                        Array [
+                          "x",
+                          null,
+                        ],
                       ],
-                    ],
-                    Array [
                       Array [
                         Array [
                           "name",
                           Array [
-                            "x",
+                            "y",
                             null,
                           ],
                         ],
-                        Array [
-                          Array [
-                            "name",
-                            Array [
-                              "y",
-                              null,
-                            ],
-                          ],
-                          null,
-                        ],
+                        null,
                       ],
-                      null,
                     ],
                   ],
                 ],
@@ -745,9 +721,21 @@ Object {
       ],
       Array [
         Array [
-          1,
           Array [
-            2,
+            "literal",
+            Array [
+              1,
+              null,
+            ],
+          ],
+          Array [
+            Array [
+              "literal",
+              Array [
+                2,
+                null,
+              ],
+            ],
             null,
           ],
         ],
@@ -818,7 +806,13 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "pretranspiled": "",
-  "result": true,
+  "result": Array [
+    "literal",
+    Array [
+      true,
+      null,
+    ],
+  ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -882,7 +876,13 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "pretranspiled": "",
-  "result": false,
+  "result": Array [
+    "literal",
+    Array [
+      false,
+      null,
+    ],
+  ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -946,7 +946,13 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "pretranspiled": "",
-  "result": "a string \\"\\" ''",
+  "result": Array [
+    "literal",
+    Array [
+      "a string \\"\\" ''",
+      null,
+    ],
+  ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1011,94 +1017,42 @@ Object {
   "parsedErrors": "",
   "pretranspiled": "",
   "result": Array [
-    "application",
+    "binary_operator_combination",
     Array [
-      Array [
-        "name",
-        Array [
-          "+",
-          null,
-        ],
-      ],
+      "+",
       Array [
         Array [
-          31.4,
+          "literal",
           Array [
+            31.4,
+            null,
+          ],
+        ],
+        Array [
+          Array [
+            "binary_operator_combination",
             Array [
-              "application",
+              "/",
               Array [
                 Array [
-                  "name",
+                  "binary_operator_combination",
                   Array [
-                    "/",
-                    null,
-                  ],
-                ],
-                Array [
-                  Array [
+                    "%",
                     Array [
-                      "application",
                       Array [
+                        "binary_operator_combination",
                         Array [
-                          "name",
-                          Array [
-                            "%",
-                            null,
-                          ],
-                        ],
-                        Array [
+                          "*",
                           Array [
                             Array [
-                              "application",
+                              "unary_operator_combination",
                               Array [
-                                Array [
-                                  "name",
-                                  Array [
-                                    "*",
-                                    null,
-                                  ],
-                                ],
+                                "-unary",
                                 Array [
                                   Array [
+                                    "literal",
                                     Array [
-                                      "application",
-                                      Array [
-                                        Array [
-                                          "name",
-                                          Array [
-                                            "-",
-                                            null,
-                                          ],
-                                        ],
-                                        Array [
-                                          Array [
-                                            31400000000,
-                                            null,
-                                          ],
-                                          null,
-                                        ],
-                                      ],
-                                    ],
-                                    Array [
-                                      Array [
-                                        "application",
-                                        Array [
-                                          Array [
-                                            "name",
-                                            Array [
-                                              "-",
-                                              null,
-                                            ],
-                                          ],
-                                          Array [
-                                            Array [
-                                              1,
-                                              null,
-                                            ],
-                                            null,
-                                          ],
-                                        ],
-                                      ],
+                                      31400000000,
                                       null,
                                     ],
                                   ],
@@ -1107,14 +1061,43 @@ Object {
                               ],
                             ],
                             Array [
-                              2,
+                              Array [
+                                "unary_operator_combination",
+                                Array [
+                                  "-unary",
+                                  Array [
+                                    Array [
+                                      "literal",
+                                      Array [
+                                        1,
+                                        null,
+                                      ],
+                                    ],
+                                    null,
+                                  ],
+                                ],
+                              ],
                               null,
                             ],
                           ],
-                          null,
                         ],
                       ],
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            2,
+                            null,
+                          ],
+                        ],
+                        null,
+                      ],
                     ],
+                  ],
+                ],
+                Array [
+                  Array [
+                    "literal",
                     Array [
                       1.5,
                       null,
@@ -1124,10 +1107,9 @@ Object {
                 ],
               ],
             ],
-            null,
           ],
+          null,
         ],
-        null,
       ],
     ],
   ],
@@ -1195,110 +1177,47 @@ Object {
   "parsedErrors": "",
   "pretranspiled": "",
   "result": Array [
-    "boolean_operation",
+    "logical_composition",
     Array [
-      Array [
-        "name",
-        Array [
-          "||",
-          null,
-        ],
-      ],
+      "||",
       Array [
         Array [
+          "logical_composition",
           Array [
-            "boolean_operation",
+            "&&",
             Array [
               Array [
-                "name",
+                "logical_composition",
                 Array [
                   "&&",
-                  null,
-                ],
-              ],
-              Array [
-                Array [
                   Array [
-                    "boolean_operation",
                     Array [
+                      "logical_composition",
                       Array [
-                        "name",
-                        Array [
-                          "&&",
-                          null,
-                        ],
-                      ],
-                      Array [
+                        "&&",
                         Array [
                           Array [
-                            "boolean_operation",
+                            "logical_composition",
                             Array [
-                              Array [
-                                "name",
-                                Array [
-                                  "&&",
-                                  null,
-                                ],
-                              ],
+                              "&&",
                               Array [
                                 Array [
+                                  "binary_operator_combination",
                                   Array [
-                                    "boolean_operation",
+                                    "===",
                                     Array [
                                       Array [
-                                        "name",
+                                        "literal",
                                         Array [
-                                          "&&",
+                                          1,
                                           null,
                                         ],
                                       ],
                                       Array [
                                         Array [
+                                          "literal",
                                           Array [
-                                            "application",
-                                            Array [
-                                              Array [
-                                                "name",
-                                                Array [
-                                                  "===",
-                                                  null,
-                                                ],
-                                              ],
-                                              Array [
-                                                Array [
-                                                  1,
-                                                  Array [
-                                                    1,
-                                                    null,
-                                                  ],
-                                                ],
-                                                null,
-                                              ],
-                                            ],
-                                          ],
-                                          Array [
-                                            Array [
-                                              "application",
-                                              Array [
-                                                Array [
-                                                  "name",
-                                                  Array [
-                                                    "<",
-                                                    null,
-                                                  ],
-                                                ],
-                                                Array [
-                                                  Array [
-                                                    1,
-                                                    Array [
-                                                      2,
-                                                      null,
-                                                    ],
-                                                  ],
-                                                  null,
-                                                ],
-                                              ],
-                                            ],
+                                            1,
                                             null,
                                           ],
                                         ],
@@ -1306,20 +1225,23 @@ Object {
                                       ],
                                     ],
                                   ],
+                                ],
+                                Array [
                                   Array [
+                                    "binary_operator_combination",
                                     Array [
-                                      "application",
+                                      "<",
                                       Array [
                                         Array [
-                                          "name",
+                                          "literal",
                                           Array [
-                                            "<=",
+                                            1,
                                             null,
                                           ],
                                         ],
                                         Array [
                                           Array [
-                                            1,
+                                            "literal",
                                             Array [
                                               2,
                                               null,
@@ -1329,36 +1251,92 @@ Object {
                                         ],
                                       ],
                                     ],
-                                    null,
-                                  ],
-                                ],
-                                null,
-                              ],
-                            ],
-                          ],
-                          Array [
-                            Array [
-                              "application",
-                              Array [
-                                Array [
-                                  "name",
-                                  Array [
-                                    ">=",
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  Array [
-                                    2,
-                                    Array [
-                                      1,
-                                      null,
-                                    ],
                                   ],
                                   null,
                                 ],
                               ],
                             ],
+                          ],
+                          Array [
+                            Array [
+                              "binary_operator_combination",
+                              Array [
+                                "<=",
+                                Array [
+                                  Array [
+                                    "literal",
+                                    Array [
+                                      1,
+                                      null,
+                                    ],
+                                  ],
+                                  Array [
+                                    Array [
+                                      "literal",
+                                      Array [
+                                        2,
+                                        null,
+                                      ],
+                                    ],
+                                    null,
+                                  ],
+                                ],
+                              ],
+                            ],
+                            null,
+                          ],
+                        ],
+                      ],
+                    ],
+                    Array [
+                      Array [
+                        "binary_operator_combination",
+                        Array [
+                          ">=",
+                          Array [
+                            Array [
+                              "literal",
+                              Array [
+                                2,
+                                null,
+                              ],
+                            ],
+                            Array [
+                              Array [
+                                "literal",
+                                Array [
+                                  1,
+                                  null,
+                                ],
+                              ],
+                              null,
+                            ],
+                          ],
+                        ],
+                      ],
+                      null,
+                    ],
+                  ],
+                ],
+              ],
+              Array [
+                Array [
+                  "binary_operator_combination",
+                  Array [
+                    ">",
+                    Array [
+                      Array [
+                        "literal",
+                        Array [
+                          2,
+                          null,
+                        ],
+                      ],
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            1,
                             null,
                           ],
                         ],
@@ -1366,42 +1344,22 @@ Object {
                       ],
                     ],
                   ],
-                  Array [
-                    Array [
-                      "application",
-                      Array [
-                        Array [
-                          "name",
-                          Array [
-                            ">",
-                            null,
-                          ],
-                        ],
-                        Array [
-                          Array [
-                            2,
-                            Array [
-                              1,
-                              null,
-                            ],
-                          ],
-                          null,
-                        ],
-                      ],
-                    ],
-                    null,
-                  ],
                 ],
                 null,
               ],
             ],
           ],
-          Array [
-            false,
-            null,
-          ],
         ],
-        null,
+        Array [
+          Array [
+            "literal",
+            Array [
+              false,
+              null,
+            ],
+          ],
+          null,
+        ],
       ],
     ],
   ],
@@ -1471,11 +1429,29 @@ Object {
   "result": Array [
     "conditional_expression",
     Array [
-      true,
       Array [
-        1,
+        "literal",
         Array [
-          2,
+          true,
+          null,
+        ],
+      ],
+      Array [
+        Array [
+          "literal",
+          Array [
+            1,
+            null,
+          ],
+        ],
+        Array [
+          Array [
+            "literal",
+            Array [
+              2,
+              null,
+            ],
+          ],
           null,
         ],
       ],
@@ -1579,7 +1555,13 @@ Object {
   "errors": Array [],
   "parsedErrors": "",
   "pretranspiled": "",
-  "result": null,
+  "result": Array [
+    "literal",
+    Array [
+      null,
+      null,
+    ],
+  ],
   "resultStatus": "finished",
   "transpiled": "const native = nativeStorage;
 const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -1690,9 +1672,21 @@ Object {
       ],
       Array [
         Array [
-          1,
           Array [
-            null,
+            "literal",
+            Array [
+              1,
+              null,
+            ],
+          ],
+          Array [
+            Array [
+              "literal",
+              Array [
+                null,
+                null,
+              ],
+            ],
             null,
           ],
         ],
@@ -1807,7 +1801,13 @@ Object {
       ],
       Array [
         Array [
-          1,
+          Array [
+            "literal",
+            Array [
+              1,
+              null,
+            ],
+          ],
           null,
         ],
         null,
@@ -2253,7 +2253,13 @@ Object {
               ],
             ],
             Array [
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
               null,
             ],
           ],
@@ -2263,30 +2269,27 @@ Object {
             "while_loop",
             Array [
               Array [
-                "application",
+                "binary_operator_combination",
                 Array [
-                  Array [
-                    "name",
-                    Array [
-                      "<",
-                      null,
-                    ],
-                  ],
+                  "<",
                   Array [
                     Array [
+                      "name",
                       Array [
-                        "name",
-                        Array [
-                          "i",
-                          null,
-                        ],
-                      ],
-                      Array [
-                        5,
+                        "i",
                         null,
                       ],
                     ],
-                    null,
+                    Array [
+                      Array [
+                        "literal",
+                        Array [
+                          5,
+                          null,
+                        ],
+                      ],
+                      null,
+                    ],
                   ],
                 ],
               ],
@@ -2303,30 +2306,27 @@ Object {
                     ],
                     Array [
                       Array [
-                        "application",
+                        "binary_operator_combination",
                         Array [
-                          Array [
-                            "name",
-                            Array [
-                              "+",
-                              null,
-                            ],
-                          ],
+                          "+",
                           Array [
                             Array [
+                              "name",
                               Array [
-                                "name",
-                                Array [
-                                  "i",
-                                  null,
-                                ],
-                              ],
-                              Array [
-                                1,
+                                "i",
                                 null,
                               ],
                             ],
-                            null,
+                            Array [
+                              Array [
+                                "literal",
+                                Array [
+                                  1,
+                                  null,
+                                ],
+                              ],
+                              null,
+                            ],
                           ],
                         ],
                       ],
@@ -2901,7 +2901,13 @@ Object {
               ],
             ],
             Array [
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
               null,
             ],
           ],
@@ -2921,37 +2927,40 @@ Object {
                     ],
                   ],
                   Array [
-                    1,
+                    Array [
+                      "literal",
+                      Array [
+                        1,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
               ],
               Array [
                 Array [
-                  "application",
+                  "binary_operator_combination",
                   Array [
-                    Array [
-                      "name",
-                      Array [
-                        "<",
-                        null,
-                      ],
-                    ],
+                    "<",
                     Array [
                       Array [
+                        "name",
                         Array [
-                          "name",
-                          Array [
-                            "i",
-                            null,
-                          ],
-                        ],
-                        Array [
-                          5,
+                          "i",
                           null,
                         ],
                       ],
-                      null,
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            5,
+                            null,
+                          ],
+                        ],
+                        null,
+                      ],
                     ],
                   ],
                 ],
@@ -2968,30 +2977,27 @@ Object {
                       ],
                       Array [
                         Array [
-                          "application",
+                          "binary_operator_combination",
                           Array [
-                            Array [
-                              "name",
-                              Array [
-                                "+",
-                                null,
-                              ],
-                            ],
+                            "+",
                             Array [
                               Array [
+                                "name",
                                 Array [
-                                  "name",
-                                  Array [
-                                    "i",
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  1,
+                                  "i",
                                   null,
                                 ],
                               ],
-                              null,
+                              Array [
+                                Array [
+                                  "literal",
+                                  Array [
+                                    1,
+                                    null,
+                                  ],
+                                ],
+                                null,
+                              ],
                             ],
                           ],
                         ],
@@ -4071,7 +4077,13 @@ Object {
               ],
             ],
             Array [
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
               null,
             ],
           ],
@@ -4091,37 +4103,40 @@ Object {
                     ],
                   ],
                   Array [
-                    0,
+                    Array [
+                      "literal",
+                      Array [
+                        0,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
               ],
               Array [
                 Array [
-                  "application",
+                  "binary_operator_combination",
                   Array [
-                    Array [
-                      "name",
-                      Array [
-                        "<",
-                        null,
-                      ],
-                    ],
+                    "<",
                     Array [
                       Array [
+                        "name",
                         Array [
-                          "name",
-                          Array [
-                            "j",
-                            null,
-                          ],
-                        ],
-                        Array [
-                          5,
+                          "j",
                           null,
                         ],
                       ],
-                      null,
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            5,
+                            null,
+                          ],
+                        ],
+                        null,
+                      ],
                     ],
                   ],
                 ],
@@ -4138,30 +4153,27 @@ Object {
                       ],
                       Array [
                         Array [
-                          "application",
+                          "binary_operator_combination",
                           Array [
-                            Array [
-                              "name",
-                              Array [
-                                "+",
-                                null,
-                              ],
-                            ],
+                            "+",
                             Array [
                               Array [
+                                "name",
                                 Array [
-                                  "name",
-                                  Array [
-                                    "j",
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  1,
+                                  "j",
                                   null,
                                 ],
                               ],
-                              null,
+                              Array [
+                                Array [
+                                  "literal",
+                                  Array [
+                                    1,
+                                    null,
+                                  ],
+                                ],
+                                null,
+                              ],
                             ],
                           ],
                         ],
@@ -4174,30 +4186,27 @@ Object {
                       "conditional_statement",
                       Array [
                         Array [
-                          "application",
+                          "binary_operator_combination",
                           Array [
-                            Array [
-                              "name",
-                              Array [
-                                "<",
-                                null,
-                              ],
-                            ],
+                            "<",
                             Array [
                               Array [
+                                "name",
                                 Array [
-                                  "name",
-                                  Array [
-                                    "j",
-                                    null,
-                                  ],
-                                ],
-                                Array [
-                                  1,
+                                  "j",
                                   null,
                                 ],
                               ],
-                              null,
+                              Array [
+                                Array [
+                                  "literal",
+                                  Array [
+                                    1,
+                                    null,
+                                  ],
+                                ],
+                                null,
+                              ],
                             ],
                           ],
                         ],
@@ -4223,30 +4232,27 @@ Object {
                                       ],
                                       Array [
                                         Array [
-                                          "application",
+                                          "binary_operator_combination",
                                           Array [
-                                            Array [
-                                              "name",
-                                              Array [
-                                                "+",
-                                                null,
-                                              ],
-                                            ],
+                                            "+",
                                             Array [
                                               Array [
+                                                "name",
                                                 Array [
-                                                  "name",
-                                                  Array [
-                                                    "i",
-                                                    null,
-                                                  ],
-                                                ],
-                                                Array [
-                                                  1,
+                                                  "i",
                                                   null,
                                                 ],
                                               ],
-                                              null,
+                                              Array [
+                                                Array [
+                                                  "literal",
+                                                  Array [
+                                                    1,
+                                                    null,
+                                                  ],
+                                                ],
+                                                null,
+                                              ],
                                             ],
                                           ],
                                         ],
@@ -4259,30 +4265,27 @@ Object {
                                       "conditional_statement",
                                       Array [
                                         Array [
-                                          "application",
+                                          "binary_operator_combination",
                                           Array [
-                                            Array [
-                                              "name",
-                                              Array [
-                                                ">",
-                                                null,
-                                              ],
-                                            ],
+                                            ">",
                                             Array [
                                               Array [
+                                                "name",
                                                 Array [
-                                                  "name",
-                                                  Array [
-                                                    "j",
-                                                    null,
-                                                  ],
-                                                ],
-                                                Array [
-                                                  2,
+                                                  "j",
                                                   null,
                                                 ],
                                               ],
-                                              null,
+                                              Array [
+                                                Array [
+                                                  "literal",
+                                                  Array [
+                                                    2,
+                                                    null,
+                                                  ],
+                                                ],
+                                                null,
+                                              ],
                                             ],
                                           ],
                                         ],
@@ -4635,11 +4638,29 @@ Object {
     "array_expression",
     Array [
       Array [
-        1,
         Array [
-          2,
+          "literal",
           Array [
-            3,
+            1,
+            null,
+          ],
+        ],
+        Array [
+          Array [
+            "literal",
+            Array [
+              2,
+              null,
+            ],
+          ],
+          Array [
+            Array [
+              "literal",
+              Array [
+                3,
+                null,
+              ],
+            ],
             null,
           ],
         ],
@@ -4915,11 +4936,29 @@ Object {
         "array_expression",
         Array [
           Array [
-            1,
             Array [
-              2,
+              "literal",
               Array [
-                3,
+                1,
+                null,
+              ],
+            ],
+            Array [
+              Array [
+                "literal",
+                Array [
+                  2,
+                  null,
+                ],
+              ],
+              Array [
+                Array [
+                  "literal",
+                  Array [
+                    3,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -4928,7 +4967,13 @@ Object {
         ],
       ],
       Array [
-        1,
+        Array [
+          "literal",
+          Array [
+            1,
+            null,
+          ],
+        ],
         null,
       ],
     ],
@@ -5280,11 +5325,29 @@ Object {
                 "array_expression",
                 Array [
                   Array [
-                    1,
                     Array [
-                      2,
+                      "literal",
                       Array [
-                        3,
+                        1,
+                        null,
+                      ],
+                    ],
+                    Array [
+                      Array [
+                        "literal",
+                        Array [
+                          2,
+                          null,
+                        ],
+                      ],
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            3,
+                            null,
+                          ],
+                        ],
                         null,
                       ],
                     ],
@@ -5308,7 +5371,13 @@ Object {
                 ],
               ],
               Array [
-                1,
+                Array [
+                  "literal",
+                  Array [
+                    1,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -5765,11 +5834,29 @@ Object {
                 "array_expression",
                 Array [
                   Array [
-                    1,
                     Array [
-                      2,
+                      "literal",
                       Array [
-                        3,
+                        1,
+                        null,
+                      ],
+                    ],
+                    Array [
+                      Array [
+                        "literal",
+                        Array [
+                          2,
+                          null,
+                        ],
+                      ],
+                      Array [
+                        Array [
+                          "literal",
+                          Array [
+                            3,
+                            null,
+                          ],
+                        ],
                         null,
                       ],
                     ],
@@ -5796,13 +5883,25 @@ Object {
                     ],
                   ],
                   Array [
-                    1,
+                    Array [
+                      "literal",
+                      Array [
+                        1,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
               ],
               Array [
-                4,
+                Array [
+                  "literal",
+                  Array [
+                    4,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -5882,6 +5981,737 @@ lastStatementResult;
 exports[`Syntaxes are allowed in the chapter they are introduced 21: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
+  "code": "let x = 3;
+let y = 4;
+let z = 5;
+x = y = z = 6;
+x;",
+  "displayResult": Array [],
+  "errors": Array [
+    NoDeclareMutableError {
+      "node": Node {
+        "declarations": Array [
+          Node {
+            "end": 9,
+            "id": Node {
+              "end": 5,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 5,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 4,
+                  "line": 1,
+                },
+              },
+              "name": "x",
+              "start": 4,
+              "type": "Identifier",
+            },
+            "init": Node {
+              "end": 9,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 8,
+                  "line": 1,
+                },
+              },
+              "raw": "3",
+              "start": 8,
+              "type": "Literal",
+              "value": 3,
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 1,
+              },
+            },
+            "start": 4,
+            "type": "VariableDeclarator",
+          },
+        ],
+        "end": 10,
+        "kind": "let",
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "VariableDeclaration",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+    NoDeclareMutableError {
+      "node": Node {
+        "declarations": Array [
+          Node {
+            "end": 20,
+            "id": Node {
+              "end": 16,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 5,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 4,
+                  "line": 2,
+                },
+              },
+              "name": "y",
+              "start": 15,
+              "type": "Identifier",
+            },
+            "init": Node {
+              "end": 20,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 9,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 8,
+                  "line": 2,
+                },
+              },
+              "raw": "4",
+              "start": 19,
+              "type": "Literal",
+              "value": 4,
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 2,
+              },
+            },
+            "start": 15,
+            "type": "VariableDeclarator",
+          },
+        ],
+        "end": 21,
+        "kind": "let",
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 2,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "start": 11,
+        "type": "VariableDeclaration",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+    NoDeclareMutableError {
+      "node": Node {
+        "declarations": Array [
+          Node {
+            "end": 31,
+            "id": Node {
+              "end": 27,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 5,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 4,
+                  "line": 3,
+                },
+              },
+              "name": "z",
+              "start": 26,
+              "type": "Identifier",
+            },
+            "init": Node {
+              "end": 31,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 9,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 8,
+                  "line": 3,
+                },
+              },
+              "raw": "5",
+              "start": 30,
+              "type": "Literal",
+              "value": 5,
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 3,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 3,
+              },
+            },
+            "start": 26,
+            "type": "VariableDeclarator",
+          },
+        ],
+        "end": 32,
+        "kind": "let",
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 3,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 3,
+          },
+        },
+        "start": 22,
+        "type": "VariableDeclaration",
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+    DisallowedConstructError {
+      "node": Node {
+        "end": 46,
+        "left": Node {
+          "end": 42,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 9,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 8,
+              "line": 4,
+            },
+          },
+          "name": "z",
+          "start": 41,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 13,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 8,
+            "line": 4,
+          },
+        },
+        "operator": "=",
+        "right": Node {
+          "end": 46,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 13,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 12,
+              "line": 4,
+            },
+          },
+          "raw": "6",
+          "start": 45,
+          "type": "Literal",
+          "value": 6,
+        },
+        "start": 41,
+        "type": "AssignmentExpression",
+      },
+      "nodeType": "Assignment expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+    DisallowedConstructError {
+      "node": Node {
+        "end": 46,
+        "left": Node {
+          "end": 38,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 5,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 4,
+              "line": 4,
+            },
+          },
+          "name": "y",
+          "start": 37,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 13,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 4,
+            "line": 4,
+          },
+        },
+        "operator": "=",
+        "right": Node {
+          "end": 46,
+          "left": Node {
+            "end": 42,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 8,
+                "line": 4,
+              },
+            },
+            "name": "z",
+            "start": 41,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 13,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 8,
+              "line": 4,
+            },
+          },
+          "operator": "=",
+          "right": Node {
+            "end": 46,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 12,
+                "line": 4,
+              },
+            },
+            "raw": "6",
+            "start": 45,
+            "type": "Literal",
+            "value": 6,
+          },
+          "start": 41,
+          "type": "AssignmentExpression",
+        },
+        "start": 37,
+        "type": "AssignmentExpression",
+      },
+      "nodeType": "Assignment expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+    DisallowedConstructError {
+      "node": Node {
+        "end": 46,
+        "left": Node {
+          "end": 34,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 4,
+            },
+          },
+          "name": "x",
+          "start": 33,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 13,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 4,
+          },
+        },
+        "operator": "=",
+        "right": Node {
+          "end": 46,
+          "left": Node {
+            "end": 38,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 5,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 4,
+              },
+            },
+            "name": "y",
+            "start": 37,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 13,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 4,
+              "line": 4,
+            },
+          },
+          "operator": "=",
+          "right": Node {
+            "end": 46,
+            "left": Node {
+              "end": 42,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 9,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 8,
+                  "line": 4,
+                },
+              },
+              "name": "z",
+              "start": 41,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 8,
+                "line": 4,
+              },
+            },
+            "operator": "=",
+            "right": Node {
+              "end": 46,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 13,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 12,
+                  "line": 4,
+                },
+              },
+              "raw": "6",
+              "start": 45,
+              "type": "Literal",
+              "value": 6,
+            },
+            "start": 41,
+            "type": "AssignmentExpression",
+          },
+          "start": 37,
+          "type": "AssignmentExpression",
+        },
+        "start": 33,
+        "type": "AssignmentExpression",
+      },
+      "nodeType": "Assignment expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Mutable variable declaration using keyword 'let' is not allowed.
+Line 2: Mutable variable declaration using keyword 'let' is not allowed.
+Line 3: Mutable variable declaration using keyword 'let' is not allowed.
+Line 4: Assignment expressions are not allowed
+Line 4: Assignment expressions are not allowed
+Line 4: Assignment expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 21: parse passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse(\\"let x = 3;\\\\nlet y = 4;\\\\nlet z = 5;\\\\nx = y = z = 6;\\\\nx;\\");",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "pretranspiled": "",
+  "result": Array [
+    "sequence",
+    Array [
+      Array [
+        Array [
+          "variable_declaration",
+          Array [
+            Array [
+              "name",
+              Array [
+                "x",
+                null,
+              ],
+            ],
+            Array [
+              Array [
+                "literal",
+                Array [
+                  3,
+                  null,
+                ],
+              ],
+              null,
+            ],
+          ],
+        ],
+        Array [
+          Array [
+            "variable_declaration",
+            Array [
+              Array [
+                "name",
+                Array [
+                  "y",
+                  null,
+                ],
+              ],
+              Array [
+                Array [
+                  "literal",
+                  Array [
+                    4,
+                    null,
+                  ],
+                ],
+                null,
+              ],
+            ],
+          ],
+          Array [
+            Array [
+              "variable_declaration",
+              Array [
+                Array [
+                  "name",
+                  Array [
+                    "z",
+                    null,
+                  ],
+                ],
+                Array [
+                  Array [
+                    "literal",
+                    Array [
+                      5,
+                      null,
+                    ],
+                  ],
+                  null,
+                ],
+              ],
+            ],
+            Array [
+              Array [
+                "assignment",
+                Array [
+                  Array [
+                    "name",
+                    Array [
+                      "x",
+                      null,
+                    ],
+                  ],
+                  Array [
+                    Array [
+                      "assignment",
+                      Array [
+                        Array [
+                          "name",
+                          Array [
+                            "y",
+                            null,
+                          ],
+                        ],
+                        Array [
+                          Array [
+                            "assignment",
+                            Array [
+                              Array [
+                                "name",
+                                Array [
+                                  "z",
+                                  null,
+                                ],
+                              ],
+                              Array [
+                                Array [
+                                  "literal",
+                                  Array [
+                                    6,
+                                    null,
+                                  ],
+                                ],
+                                null,
+                              ],
+                            ],
+                          ],
+                          null,
+                        ],
+                      ],
+                    ],
+                    null,
+                  ],
+                ],
+              ],
+              Array [
+                Array [
+                  "name",
+                  Array [
+                    "x",
+                    null,
+                  ],
+                ],
+                null,
+              ],
+            ],
+          ],
+        ],
+      ],
+      null,
+    ],
+  ],
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse, 1, 0, \\\\\\"let x = 3;\\\\\\\\nlet y = 4;\\\\\\\\nlet z = 5;\\\\\\\\nx = y = z = 6;\\\\\\\\nx;\\\\\\");\\");
+  }
+}
+lastStatementResult;
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 21: passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let x = 3;
+let y = 4;
+let z = 5;
+x = y = z = 6;
+x;",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "pretranspiled": "",
+  "result": 6,
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    let x = 3;
+    let y = 4;
+    let z = 5;
+    x = y = z = 6;
+    lastStatementResult = eval(\\"x;\\");
+    globals.variables.set(\\"x\\", {
+      kind: \\"let\\",
+      getValue: () => {
+        return x;
+      },
+      assignNewValue: function (unique) {
+        return x = unique;
+      }
+    });
+    globals.variables.set(\\"y\\", {
+      kind: \\"let\\",
+      getValue: () => {
+        return y;
+      },
+      assignNewValue: function (unique0) {
+        return y = unique0;
+      }
+    });
+    globals.variables.set(\\"z\\", {
+      kind: \\"let\\",
+      getValue: () => {
+        return z;
+      },
+      assignNewValue: function (unique1) {
+        return z = unique1;
+      }
+    });
+  }
+}
+lastStatementResult;
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 22: fails a chapter below 1`] = `
+Object {
+  "alertResult": Array [],
   "code": "({});",
   "displayResult": Array [],
   "errors": Array [
@@ -5914,7 +6744,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 21: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 22: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"({});\\");",
@@ -5952,7 +6782,7 @@ lastStatementResult;
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 21: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 22: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({});",
@@ -5965,228 +6795,10 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 22: fails a chapter below 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "({a: 1, b: 2});",
-  "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 13,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 1,
-            "line": 1,
-          },
-        },
-        "properties": Array [
-          Node {
-            "computed": false,
-            "end": 6,
-            "key": Node {
-              "end": 3,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 3,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-              },
-              "name": "a",
-              "start": 2,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 6,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 2,
-            "type": "Property",
-            "value": Node {
-              "end": 6,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 5,
-              "type": "Literal",
-              "value": 1,
-            },
-          },
-          Node {
-            "computed": false,
-            "end": 12,
-            "key": Node {
-              "end": 9,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "name": "b",
-              "start": 8,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 12,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 8,
-            "type": "Property",
-            "value": Node {
-              "end": 12,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 12,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 11,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 11,
-              "type": "Literal",
-              "value": 2,
-            },
-          },
-        ],
-        "start": 1,
-        "type": "ObjectExpression",
-      },
-      "nodeType": "Object expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
-  "parsedErrors": "Line 1: Object expressions are not allowed",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Syntaxes are allowed in the chapter they are introduced 22: parse passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "parse(\\"({a: 1, b: 2});\\");",
-  "displayResult": Array [],
-  "errors": Array [],
-  "parsedErrors": "",
-  "pretranspiled": "",
-  "result": Array [
-    "object_expression",
-    Array [
-      Array [
-        Array [
-          Array [
-            "property",
-            Array [
-              "a",
-              null,
-            ],
-          ],
-          1,
-        ],
-        Array [
-          Array [
-            Array [
-              "property",
-              Array [
-                "b",
-                null,
-              ],
-            ],
-            2,
-          ],
-          null,
-        ],
-      ],
-      null,
-    ],
-  ],
-  "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse, 1, 0, \\\\\\"({a: 1, b: 2});\\\\\\");\\");
-  }
-}
-lastStatementResult;
-",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Syntaxes are allowed in the chapter they are introduced 22: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "({a: 1, b: 2});",
-  "displayResult": Array [],
-  "errors": Array [],
-  "parsedErrors": "",
-  "result": Object {
-    "a": 1,
-    "b": 2,
-  },
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Syntaxes are allowed in the chapter they are introduced 23: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "({a: 1, b: 2})['a'];",
+  "code": "({a: 1, b: 2});",
   "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
@@ -6326,6 +6938,236 @@ Object {
 exports[`Syntaxes are allowed in the chapter they are introduced 23: parse passes 1`] = `
 Object {
   "alertResult": Array [],
+  "code": "parse(\\"({a: 1, b: 2});\\");",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "pretranspiled": "",
+  "result": Array [
+    "object_expression",
+    Array [
+      Array [
+        Array [
+          Array [
+            "property",
+            Array [
+              "a",
+              null,
+            ],
+          ],
+          Array [
+            "literal",
+            Array [
+              1,
+              null,
+            ],
+          ],
+        ],
+        Array [
+          Array [
+            Array [
+              "property",
+              Array [
+                "b",
+                null,
+              ],
+            ],
+            Array [
+              "literal",
+              Array [
+                2,
+                null,
+              ],
+            ],
+          ],
+          null,
+        ],
+      ],
+      null,
+    ],
+  ],
+  "resultStatus": "finished",
+  "transpiled": "const native = nativeStorage;
+const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
+const boolOrErr = native.operators.get(\\"boolOrErr\\");
+const wrap = native.operators.get(\\"wrap\\");
+const unaryOp = native.operators.get(\\"unaryOp\\");
+const binaryOp = native.operators.get(\\"binaryOp\\");
+const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
+const setProp = native.operators.get(\\"setProp\\");
+const getProp = native.operators.get(\\"getProp\\");
+let lastStatementResult = undefined;
+const globals = native.globals;
+{
+  {
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse, 1, 0, \\\\\\"({a: 1, b: 2});\\\\\\");\\");
+  }
+}
+lastStatementResult;
+",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 23: passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "({a: 1, b: 2});",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": Object {
+    "a": 1,
+    "b": 2,
+  },
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 24: fails a chapter below 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "({a: 1, b: 2})['a'];",
+  "displayResult": Array [],
+  "errors": Array [
+    DisallowedConstructError {
+      "node": Node {
+        "end": 13,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 13,
+            "line": 1,
+          },
+          "start": Position {
+            "column": 1,
+            "line": 1,
+          },
+        },
+        "properties": Array [
+          Node {
+            "computed": false,
+            "end": 6,
+            "key": Node {
+              "end": 3,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 3,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 1,
+                },
+              },
+              "name": "a",
+              "start": 2,
+              "type": "Identifier",
+            },
+            "kind": "init",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 6,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 2,
+                "line": 1,
+              },
+            },
+            "method": false,
+            "shorthand": false,
+            "start": 2,
+            "type": "Property",
+            "value": Node {
+              "end": 6,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 6,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 5,
+                  "line": 1,
+                },
+              },
+              "raw": "1",
+              "start": 5,
+              "type": "Literal",
+              "value": 1,
+            },
+          },
+          Node {
+            "computed": false,
+            "end": 12,
+            "key": Node {
+              "end": 9,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 8,
+                  "line": 1,
+                },
+              },
+              "name": "b",
+              "start": 8,
+              "type": "Identifier",
+            },
+            "kind": "init",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 8,
+                "line": 1,
+              },
+            },
+            "method": false,
+            "shorthand": false,
+            "start": 8,
+            "type": "Property",
+            "value": Node {
+              "end": 12,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 12,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 11,
+                  "line": 1,
+                },
+              },
+              "raw": "2",
+              "start": 11,
+              "type": "Literal",
+              "value": 2,
+            },
+          },
+        ],
+        "start": 1,
+        "type": "ObjectExpression",
+      },
+      "nodeType": "Object expressions",
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 1: Object expressions are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 24: parse passes 1`] = `
+Object {
+  "alertResult": Array [],
   "code": "parse(\\"({a: 1, b: 2})['a'];\\");",
   "displayResult": Array [],
   "errors": Array [],
@@ -6346,7 +7188,13 @@ Object {
                   null,
                 ],
               ],
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
             ],
             Array [
               Array [
@@ -6357,7 +7205,13 @@ Object {
                     null,
                   ],
                 ],
-                2,
+                Array [
+                  "literal",
+                  Array [
+                    2,
+                    null,
+                  ],
+                ],
               ],
               null,
             ],
@@ -6366,7 +7220,13 @@ Object {
         ],
       ],
       Array [
-        "a",
+        Array [
+          "literal",
+          Array [
+            "a",
+            null,
+          ],
+        ],
         null,
       ],
     ],
@@ -6394,7 +7254,7 @@ lastStatementResult;
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 23: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 24: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2})['a'];",
@@ -6407,7 +7267,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 24: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 25: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2}).a;",
@@ -6705,7 +7565,7 @@ Line 1: Dot abbreviations are not allowed.",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 24: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 25: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"({a: 1, b: 2}).a;\\");",
@@ -6728,7 +7588,13 @@ Object {
                   null,
                 ],
               ],
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
             ],
             Array [
               Array [
@@ -6739,7 +7605,13 @@ Object {
                     null,
                   ],
                 ],
-                2,
+                Array [
+                  "literal",
+                  Array [
+                    2,
+                    null,
+                  ],
+                ],
               ],
               null,
             ],
@@ -6782,7 +7654,7 @@ lastStatementResult;
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 24: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 25: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2}).a;",
@@ -6795,7 +7667,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 25: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 26: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({'a': 1, 'b': 2}).a;",
@@ -7097,7 +7969,7 @@ Line 1: Dot abbreviations are not allowed.",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 25: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 26: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"({'a': 1, 'b': 2}).a;\\");",
@@ -7114,12 +7986,24 @@ Object {
           Array [
             Array [
               "a",
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
             ],
             Array [
               Array [
                 "b",
-                2,
+                Array [
+                  "literal",
+                  Array [
+                    2,
+                    null,
+                  ],
+                ],
               ],
               null,
             ],
@@ -7162,7 +8046,7 @@ lastStatementResult;
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 25: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 26: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({'a': 1, 'b': 2}).a;",
@@ -7175,7 +8059,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 26: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 27: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({1: 1, 2: 2})['1'];",
@@ -7317,7 +8201,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 26: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 27: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"({1: 1, 2: 2})['1'];\\");",
@@ -7334,12 +8218,24 @@ Object {
           Array [
             Array [
               1,
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
             ],
             Array [
               Array [
                 2,
-                2,
+                Array [
+                  "literal",
+                  Array [
+                    2,
+                    null,
+                  ],
+                ],
               ],
               null,
             ],
@@ -7348,7 +8244,13 @@ Object {
         ],
       ],
       Array [
-        "1",
+        Array [
+          "literal",
+          Array [
+            "1",
+            null,
+          ],
+        ],
         null,
       ],
     ],
@@ -7376,7 +8278,7 @@ lastStatementResult;
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 26: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 27: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({1: 1, 2: 2})['1'];",
@@ -7389,7 +8291,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 27: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 28: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "const key = 'a';
@@ -7530,7 +8432,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 27: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 28: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"const key = 'a';\\\\n({a: 1, b: 2})[key];\\");",
@@ -7553,7 +8455,13 @@ Object {
               ],
             ],
             Array [
-              "a",
+              Array [
+                "literal",
+                Array [
+                  "a",
+                  null,
+                ],
+              ],
               null,
             ],
           ],
@@ -7574,7 +8482,13 @@ Object {
                           null,
                         ],
                       ],
-                      1,
+                      Array [
+                        "literal",
+                        Array [
+                          1,
+                          null,
+                        ],
+                      ],
                     ],
                     Array [
                       Array [
@@ -7585,7 +8499,13 @@ Object {
                             null,
                           ],
                         ],
-                        2,
+                        Array [
+                          "literal",
+                          Array [
+                            2,
+                            null,
+                          ],
+                        ],
                       ],
                       null,
                     ],
@@ -7634,7 +8554,7 @@ lastStatementResult;
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 27: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 28: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "const key = 'a';
@@ -7648,7 +8568,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 28: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 29: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};
@@ -7842,7 +8762,7 @@ Line 2: Dot abbreviations are not allowed.",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 28: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 29: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = {a: 1, b: 2};\\\\nx.a = 3;\\");",
@@ -7877,7 +8797,13 @@ Object {
                           null,
                         ],
                       ],
-                      1,
+                      Array [
+                        "literal",
+                        Array [
+                          1,
+                          null,
+                        ],
+                      ],
                     ],
                     Array [
                       Array [
@@ -7888,7 +8814,13 @@ Object {
                             null,
                           ],
                         ],
-                        2,
+                        Array [
+                          "literal",
+                          Array [
+                            2,
+                            null,
+                          ],
+                        ],
                       ],
                       null,
                     ],
@@ -7927,7 +8859,13 @@ Object {
                 ],
               ],
               Array [
-                3,
+                Array [
+                  "literal",
+                  Array [
+                    3,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -7961,7 +8899,7 @@ lastStatementResult;
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 28: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 29: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};
@@ -7975,7 +8913,7 @@ x.a = 3;",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 29: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 30: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};
@@ -8116,7 +9054,7 @@ x['a'] = 3;",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 29: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 30: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = {a: 1, b: 2};\\\\nx['a'] = 3;\\");",
@@ -8151,7 +9089,13 @@ Object {
                           null,
                         ],
                       ],
-                      1,
+                      Array [
+                        "literal",
+                        Array [
+                          1,
+                          null,
+                        ],
+                      ],
                     ],
                     Array [
                       Array [
@@ -8162,7 +9106,13 @@ Object {
                             null,
                           ],
                         ],
-                        2,
+                        Array [
+                          "literal",
+                          Array [
+                            2,
+                            null,
+                          ],
+                        ],
                       ],
                       null,
                     ],
@@ -8189,13 +9139,25 @@ Object {
                     ],
                   ],
                   Array [
-                    "a",
+                    Array [
+                      "literal",
+                      Array [
+                        "a",
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
               ],
               Array [
-                3,
+                Array [
+                  "literal",
+                  Array [
+                    3,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -8229,7 +9191,7 @@ lastStatementResult;
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 29: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 30: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};
@@ -8243,7 +9205,7 @@ x['a'] = 3;",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 30: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 31: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};
@@ -8385,7 +9347,7 @@ x[key] = 3;",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 30: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 31: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = {a: 1, b: 2};\\\\nconst key = 'a';\\\\nx[key] = 3;\\");",
@@ -8420,7 +9382,13 @@ Object {
                           null,
                         ],
                       ],
-                      1,
+                      Array [
+                        "literal",
+                        Array [
+                          1,
+                          null,
+                        ],
+                      ],
                     ],
                     Array [
                       Array [
@@ -8431,7 +9399,13 @@ Object {
                             null,
                           ],
                         ],
-                        2,
+                        Array [
+                          "literal",
+                          Array [
+                            2,
+                            null,
+                          ],
+                        ],
                       ],
                       null,
                     ],
@@ -8455,7 +9429,13 @@ Object {
                 ],
               ],
               Array [
-                "a",
+                Array [
+                  "literal",
+                  Array [
+                    "a",
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -8487,7 +9467,13 @@ Object {
                   ],
                 ],
                 Array [
-                  3,
+                  Array [
+                    "literal",
+                    Array [
+                      3,
+                      null,
+                    ],
+                  ],
                   null,
                 ],
               ],
@@ -8522,7 +9508,7 @@ lastStatementResult;
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 30: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 31: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};

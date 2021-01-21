@@ -67,3 +67,41 @@ test('parse_int with string arg radix throws error', () => {
     `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
   )
 })
+
+test('char_at with non string first argument errors', () => {
+  return expectParsedError(stripIndent`
+    char_at(42, 123);
+  `).toMatchInlineSnapshot(`"Line 1: Error: char_at expects the first argument to be a string."`)
+})
+
+test('char_at with non nonnegative integer second argument errors', () => {
+  return expectParsedError(stripIndent`
+    char_at('', -1);
+  `).toMatchInlineSnapshot(
+    `"Line 1: Error: char_at expects the second argument to be a nonnegative integer."`
+  )
+})
+
+test('char_at with non nonnegative integer second argument errors', () => {
+  return expectParsedError(stripIndent`
+    char_at('', "");
+  `).toMatchInlineSnapshot(
+    `"Line 1: Error: char_at expects the second argument to be a nonnegative integer."`
+  )
+})
+
+test('char_at with valid args is ok', () => {
+  return expectResult(
+    stripIndent`
+    char_at("123", 0);
+  `
+  ).toBe('1')
+})
+
+test('char_at with valid args (but index out of bounds) returns undefined', () => {
+  return expectResult(
+    stripIndent`
+    char_at("123", 3);
+  `
+  ).toBe(undefined)
+})

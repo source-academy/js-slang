@@ -115,9 +115,7 @@ function deleteAllAfterReturn(input: es.Node[]): es.Node[] {
         output.push(nd)
         return [true, output]
       } else if (nd.type === 'BlockStatement') {
-        let newBody
-        let changedNodes
-        ;[changedNodes, newBody] = helper(nd.body)
+        const [changedNodes, newBody] = helper(nd.body)
         const newBlock = { ...nd, body: newBody } as es.BlockStatement
         output.push(newBlock)
         if (changedNodes) {

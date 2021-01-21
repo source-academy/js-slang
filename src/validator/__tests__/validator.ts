@@ -1,4 +1,4 @@
-import { simple } from 'acorn-walk/dist/walk'
+import { simple } from '../../utils/walkers'
 import * as es from 'estree'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
@@ -8,7 +8,7 @@ import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
 import { validateAndAnnotate } from '../validator'
 
-export async function toValidatedAst(code: string) {
+export function toValidatedAst(code: string) {
   const context = mockContext(1)
   const ast = parse(code, context)
   expect(ast).not.toBeUndefined()
@@ -39,7 +39,7 @@ test('for loop variable cannot be reassigned in closure', async () => {
   )
 })
 
-test('testing typability', async () => {
+test('testing typability', () => {
   const code = stripIndent`
     const a = 1; // typable
     function f() { // typable
@@ -51,7 +51,7 @@ test('testing typability', async () => {
     }
     const c = 1; // not typable
   `
-  const ast = await toValidatedAst(code)
+  const ast = toValidatedAst(code)
   expect(ast).toMatchSnapshot()
   simple(ast, {
     VariableDeclaration(node: TypeAnnotatedNode<es.VariableDeclaration>) {

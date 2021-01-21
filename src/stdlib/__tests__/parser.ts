@@ -183,3 +183,12 @@ test('Parses loops', () => {
     { chapter: 4, native: true }
   )
 })
+
+test('Parses assignment expressions', () => {
+  return snapshotSuccess(
+    stripIndent`
+    stringify(parse("x = y = x;"), undefined, 2);
+  `,
+    { chapter: 4 }
+  )
+})

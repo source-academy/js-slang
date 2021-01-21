@@ -57,32 +57,3 @@ Object {
   "visualiseListResult": Array [],
 }
 `;
-
-exports[`Syntax rules: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "stringify(parse(\\"x = y = x;\\"), undefined, 2);",
-  "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [ParseError: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 29,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 10,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
-  "parsedErrors": "Line 1: ParseError: Assignment inside an expression is not allowed. Only assignment in a statement is allowed.",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;

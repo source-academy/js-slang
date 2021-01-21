@@ -1,4 +1,4 @@
-import { simple, findNodeAt } from 'acorn-walk/dist/walk'
+import { simple, findNodeAt } from './utils/walkers'
 import { DebuggerStatement, Literal, Program, SourceLocation } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'

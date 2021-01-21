@@ -1,4 +1,4 @@
-import { ancestor, simple } from 'acorn-walk/dist/walk'
+import { ancestor, simple } from '../utils/walkers'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'

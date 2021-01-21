@@ -1,5 +1,118 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`char_at with non nonnegative integer second argument errors: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "char_at('', -1);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: char_at expects the second argument to be a nonnegative integer.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: char_at expects the second argument to be a nonnegative integer.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`char_at with non nonnegative integer second argument errors: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "char_at('', \\"\\");",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: char_at expects the second argument to be a nonnegative integer.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 15,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: char_at expects the second argument to be a nonnegative integer.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`char_at with non string first argument errors: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "char_at(42, 123);",
+  "displayResult": Array [],
+  "errors": Array [
+    ExceptionError {
+      "error": [Error: char_at expects the first argument to be a string.],
+      "location": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 1: Error: char_at expects the first argument to be a string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`char_at with valid args (but index out of bounds) returns undefined: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "char_at(\\"123\\", 3);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`char_at with valid args is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "char_at(\\"123\\", 0);",
+  "displayResult": Array [],
+  "errors": Array [],
+  "parsedErrors": "",
+  "result": "1",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`parse_int with non-integer arg radix throws error: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],

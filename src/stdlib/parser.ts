@@ -50,8 +50,7 @@ function hasDeclarationAtToplevel(exs: es.Node[]) {
 
 type ASTTransformers = Map<string, (node: es.Node) => Value>
 
-let transformers: ASTTransformers
-transformers = new Map([
+const transformers: ASTTransformers = new Map([
   [
     'Program',
     (node: es.Node) => {
@@ -90,16 +89,10 @@ transformers = new Map([
     'FunctionDeclaration',
     (node: es.FunctionDeclaration) => {
       return vector_to_list([
-        'constant_declaration',
+        'function_declaration',
         transform(node.id as es.Identifier),
-        vector_to_list([
-          'lambda_expression',
-          vector_to_list(node.params.map(transform)),
-          // body.body: strip away one layer of block:
-          // The body of a function is the statement
-          // inside the curly braces.
-          makeBlockIfNeeded(node.body.body)
-        ])
+        vector_to_list(node.params.map(transform)),
+        makeBlockIfNeeded(node.body.body)
       ])
     }
   ],
@@ -148,9 +141,9 @@ transformers = new Map([
     'UnaryExpression',
     (node: es.UnaryExpression) => {
       return vector_to_list([
-        'application',
-        vector_to_list(['name', node.operator]),
-        vector_to_list([transform(node.argument)])
+        'unary_operator_combination',
+        node.operator === '-' ? '-unary' : node.operator,
+        transform(node.argument)
       ])
     }
   ],
@@ -159,9 +152,10 @@ transformers = new Map([
     'BinaryExpression',
     (node: es.BinaryExpression) => {
       return vector_to_list([
-        'application',
-        vector_to_list(['name', node.operator]),
-        vector_to_list([transform(node.left), transform(node.right)])
+        'binary_operator_combination',
+        node.operator,
+        transform(node.left),
+        transform(node.right)
       ])
     }
   ],
@@ -170,9 +164,10 @@ transformers = new Map([
     'LogicalExpression',
     (node: es.LogicalExpression) => {
       return vector_to_list([
-        'boolean_operation',
-        vector_to_list(['name', node.operator]),
-        vector_to_list([transform(node.left), transform(node.right)])
+        'logical_composition',
+        node.operator,
+        transform(node.left),
+        transform(node.right)
       ])
     }
   ],
@@ -215,7 +210,7 @@ transformers = new Map([
   [
     'Literal',
     (node: es.Literal) => {
-      return node.value
+      return vector_to_list(['literal', node.value])
     }
   ],
 
@@ -439,9 +434,8 @@ function transform(node: es.Node) {
 }
 
 export function parse(x: string, context: Context): Value {
-  let program
   context.chapter = libraryParserLanguage
-  program = sourceParse(x, context)
+  const program = sourceParse(x, context)
   if (context.errors.length > 0) {
     throw new ParseError(context.errors[0].explain())
   }

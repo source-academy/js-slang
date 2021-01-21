@@ -17,7 +17,7 @@ main() {
 	clean
     elif [ "$1" == "via" ]; then
 	via
-    elif [[ $(git rev-parse --show-toplevel 2> /dev/null) = "$PWD" ]]; then
+    elif [[ "$(git rev-parse --show-toplevel 2> /dev/null)" -ef "$PWD" ]]; then
         run
     else
         echo "Please run this command from the git root directory."
@@ -255,12 +255,12 @@ run() {
 	     -d ${DST}/BINARYTREES \
 	     ${LIB}/tree.js
 
-   # PIX&FLIX
+   # PIXNFLIX
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -d "${DST}/PIX&FLIX/" \
-	     -R ${MD}/VIDEO_README.md \
+	     -d "${DST}/PIXNFLIX/" \
+	     -R ${MD}/PIXNFLIX_README.md \
 	     ${LIB}/video_lib.js 
     
    # GAME

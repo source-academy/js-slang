@@ -1,4 +1,4 @@
-import { ancestor, findNodeAt, recursive, WalkerCallback } from 'acorn-walk/dist/walk'
+import { ancestor, findNodeAt, recursive, WalkerCallback } from './utils/walkers'
 import {
   ArrowFunctionExpression,
   BlockStatement,
