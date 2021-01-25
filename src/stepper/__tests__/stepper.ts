@@ -882,3 +882,21 @@ test('const declarations in blocks subst into call expressions', () => {
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('6;')
 })
+
+test('scoping test', () => {
+  const code = `
+  function f(w) { 
+    return g();
+  }
+  function g() {
+    return w;
+  }
+
+  const w = 0;
+  f(1);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('1;')
+})
