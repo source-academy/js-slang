@@ -44,7 +44,7 @@ type irreducibleNodes =
 // wrapper function, calls substitute immediately.
 function substituteMain(
   name: es.Identifier,
-  replacement: irreducibleNodes,
+  replacement: irreducibleNodes | es.Pattern,
   target: substituterNodes,
   paths: string[][]
 ): [substituterNodes, string[][]] {
@@ -987,6 +987,13 @@ function reduceMain(
           firstStatement.params,
           firstStatement.body
         ) as FunctionDeclarationExpression
+        // change param name to *name* + (param), and substitute that into the rest of the body
+        for (let i = 0; i < funDecExp.params.length; i++) {
+          const param = funDecExp.params[i] as es.Identifier
+          const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
+          funDecExp.body = substituteMain(param, changed, funDecExp.body, [[]])[0] as es.BlockStatement
+          param.name = param.name + ' (param)'
+        }
         // substitute body
         funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
           []
@@ -1023,7 +1030,47 @@ function reduceMain(
           if (declarator.id.type !== 'Identifier') {
             // TODO: source does not allow destructuring
             return [dummyProgram(), context, paths, 'source does not allow destructuring']
+          // } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
+          //   let funDecExp = ast.functionDeclarationExpression(
+          //     declarator.id,
+          //     rhs.params,
+          //     rhs.body.type === 'BlockStatement'
+          //       ? rhs.body
+          //       : ast.blockStatement([ast.returnStatement(rhs.body)])
+          //   ) as FunctionDeclarationExpression
+          //   console.log(funDecExp)
+          //   for (let i = 0; i < funDecExp.params.length; i++) {
+          //     const param = funDecExp.params[i] as es.Identifier
+          //     const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
+          //     funDecExp.body = substituteMain(param, changed, funDecExp.body, [[]])[0] as es.BlockStatement
+          //     funDecExp.params[i] = changed
+          //   }
+          //   funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+          //     []
+          //   ])[0] as FunctionDeclarationExpression
+          //   // substitute the rest of the program
+          //   const remainingProgram = ast.program(otherStatements as es.Statement[])
+          //   const subst = substituteMain(funDecExp.id, funDecExp.body, remainingProgram, paths)
+          //   // concats paths such that:
+          //   // paths[0] -> path to the program to be substituted, pre-redex
+          //   // paths[1...] -> path(s) to the parts of the remaining program
+          //   // that were substituted, post-redex
+          //   paths[0].push('body[0]')
+          //   const allPaths = paths.concat(subst[1])
+          //   if (subst[1].length === 0) {
+          //     allPaths.push([])
+          //   }
+          //   return [subst[0], context, allPaths, explain(node)]
           } else if (isIrreducible(rhs)) {
+            // changes params names to *name* + ' (param)', and changes each occurence of it int the function body
+            if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
+              for (let i = 0; i < rhs.params.length; i++) {
+                    const param = rhs.params[i] as es.Identifier
+                    const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
+                    rhs.body = substituteMain(param, changed, rhs.body, [[]])[0] as es.ArrayExpression
+                    rhs.params[i] = changed
+              }
+            }
             const remainingProgram = ast.program(otherStatements as es.Statement[])
             // forced casting for some weird errors
             const subst = substituteMain(
@@ -1032,31 +1079,6 @@ function reduceMain(
               remainingProgram,
               paths
             )
-            // concats paths such that:
-            // paths[0] -> path to the program to be substituted, pre-redex
-            // paths[1...] -> path(s) to the parts of the remaining program
-            // that were substituted, post-redex
-            paths[0].push('body[0]')
-            const allPaths = paths.concat(subst[1])
-            if (subst[1].length === 0) {
-              allPaths.push([])
-            }
-            return [subst[0], context, allPaths, explain(node)]
-          } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
-            let funDecExp = ast.functionDeclarationExpression(
-              declarator.id,
-              rhs.params,
-              rhs.body.type === 'BlockStatement'
-                ? rhs.body
-                : ast.blockStatement([ast.returnStatement(rhs.body)])
-            ) as FunctionDeclarationExpression
-            // substitute body
-            funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
-              []
-            ])[0] as FunctionDeclarationExpression
-            // substitute the rest of the program
-            const remainingProgram = ast.program(otherStatements as es.Statement[])
-            const subst = substituteMain(funDecExp.id, funDecExp, remainingProgram, paths)
             // concats paths such that:
             // paths[0] -> path to the program to be substituted, pre-redex
             // paths[1...] -> path(s) to the parts of the remaining program
@@ -1147,6 +1169,13 @@ function reduceMain(
             firstStatement.params,
             firstStatement.body
           ) as FunctionDeclarationExpression
+          // change param name to *name* + (param), and substitute that into the rest of the body
+          for (let i = 0; i < funDecExp.params.length; i++) {
+            const param = funDecExp.params[i] as es.Identifier
+            const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
+            funDecExp.body = substituteMain(param, changed, funDecExp.body, [[]])[0] as es.BlockStatement
+            param.name = param.name + ' (param)'
+          }
           // substitute body
           funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
             []
@@ -1184,6 +1213,15 @@ function reduceMain(
               // TODO: source does not allow destructuring
               return [dummyBlockStatement(), context, paths, 'source does not allow destructuring']
             } else if (isIrreducible(rhs)) {
+              // changes params names to *name* + ' (param)', and changes each occurence of it int the function body
+              if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
+                for (let i = 0; i < rhs.params.length; i++) {
+                      const param = rhs.params[i] as es.Identifier
+                      const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
+                      rhs.body = substituteMain(param, changed, rhs.body, [[]])[0] as es.ArrayExpression
+                      rhs.params[i] = changed
+                }
+              }
               const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
               // force casting for weird errors
               const subst = substituteMain(
@@ -1308,6 +1346,17 @@ function reduceMain(
           firstStatement.params,
           firstStatement.body
         ) as FunctionDeclarationExpression
+        // change param name to *name* + (param), and substitute that into the rest of the body TODO
+        // check if the param name already has (param), if so then skip this step
+        // const pattern = /\(param\)/
+        // const param = funDecExp.params[0] as es.Identifier
+        // if (!pattern.test(param.name)) {
+        //   for (let i = 0; i < funDecExp.params.length; i++) {
+        //     const changed = ast.identifier(param.name + " (param)", param.loc) as es.Pattern
+        //     funDecExp.body = substituteMain(param, changed, funDecExp.body, [[]])[0] as es.BlockStatement
+        //     param.name = param.name + " (param)"
+        //   }
+        // }
         // substitute body
         funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
           []
@@ -1345,6 +1394,15 @@ function reduceMain(
             // TODO: source does not allow destructuring
             return [dummyBlockExpression(), context, paths, 'source does not allow destructuring']
           } else if (isIrreducible(rhs)) {
+            // changes params names to *name* + ' (param)', and changes each occurence of it int the function body
+            if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
+              for (let i = 0; i < rhs.params.length; i++) {
+                    const param = rhs.params[i] as es.Identifier
+                    const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
+                    rhs.body = substituteMain(param, changed, rhs.body, [[]])[0] as es.ArrayExpression
+                    rhs.params[i] = changed
+              }
+            }
             const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
             // forced casting for some weird errors
             const subst = substituteMain(
@@ -1928,7 +1986,8 @@ function pathifyMain(
           body = pathify(target.body) as es.BlockStatement
         }
       }
-      return ast.arrowFunctionExpression(target.params, body)
+      //localhost:8000
+      http: return ast.arrowFunctionExpression(target.params, body)
     },
 
     VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
