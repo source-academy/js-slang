@@ -101,7 +101,10 @@ function main() {
     )
   }
 
-  const executionMethod = opt.options.variant === 'interpreter' ? 'interpreter' : 'native'
+  const executionMethod =
+    opt.options.variant === 'interpreter' || opt.options.variant === 'non-det'
+      ? 'interpreter'
+      : 'native'
   const useSubst = opt.options.variant === 'substituter'
   const useRepl = !opt.options.e
   const prelude = opt.argv[0] ?? ''
