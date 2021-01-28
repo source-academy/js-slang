@@ -12,12 +12,18 @@ test('Load a valid module', () => {
   const moduleText = stripIndent`
     (_params) => {
       return {
-        hello: 1
+        functions: {
+          hello: 1
+        },
+        sideContents: [],
       };
     }
   `
   expect(loadModule(path, createEmptyContext(1, 'default', []), moduleText)).toEqual({
-    hello: 1
+    functions: {
+      hello: 1
+    },
+    sideContents: []
   })
 })
 
