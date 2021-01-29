@@ -124,7 +124,7 @@ function invert(curve) {
 function rotate_pi_over_2(curve) {
     return t => {
 	var ct = curve(t)
-	return make_point(-y_of(ct), x_of(ct))
+	return make_color_point(-y_of(ct), x_of(ct), r_of(ct), g_of(ct), b_of(ct))
     }
 }
 
@@ -148,7 +148,7 @@ function translate(x0, y0) {
   return curve => 
 	(t) => {
 	    var ct = curve(t)
-	    return make_point(x0 + x_of(ct), y0 + y_of(ct))
+	    return make_color_point(x0 + x_of(ct), y0 + y_of(ct), r_of(ct), g_of(ct), b_of(ct))
 	}
 }
 
@@ -171,7 +171,7 @@ function rotate_around_origin(theta) {
       var ct = curve(t)
       var x = x_of(ct)
       var y = y_of(ct)
-      return make_point(cth * x - sth * y, sth * x + cth * y)
+      return make_color_point(cth * x - sth * y, sth * x + cth * y, r_of(ct), g_of(ct), b_of(ct))
     }
   }
 }
@@ -182,7 +182,7 @@ function deriv_t(n) {
     return function(t) {
       var ct = curve(t)
       var ctdelta = curve(t + delta_t)
-      return make_point((x_of(ctdelta) - x_of(ct)) / delta_t, (y_of(ctdelta) - y_of(ct)) / delta_t)
+      return make_color_point((x_of(ctdelta) - x_of(ct)) / delta_t, (y_of(ctdelta) - y_of(ct)) / delta_t, r_of(ct), g_of(ct), b_of(ct))
     }
   }
 }
@@ -201,7 +201,7 @@ function scale_x_y(a, b) {
   return curve => 
 	t => {
 	    var ct = curve(t)
-	    return make_point(a * x_of(ct), b * y_of(ct))
+	    return make_color_point(a * x_of(ct), b * y_of(ct), r_of(ct), g_of(ct), b_of(ct))
 	}
 }
 
@@ -324,13 +324,7 @@ function put_in_standard_position(curve) {
  * @returns {Curve} result Curve
  */
 function connect_rigidly(curve1, curve2) {
-  return function(t) {
-    if (t < 1 / 2) {
-      return curve1(2 * t)
-    } else {
-      return curve2(2 * t - 1)
-    }
-  }
+  return t < 1 / 2 ? curve1(2 * t) : curve2(2 * t - 1)
 }
 
 // CONNECT-ENDS makes a Curve consisting of curve1 followed by
