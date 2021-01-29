@@ -7,7 +7,7 @@ import { ModuleNotFound, ModuleInternalError } from '../../errors/errors'
 import { stripIndent } from '../../utils/formatters'
 import { createEmptyContext } from '../../createContext'
 
-test.only('Load a valid module', () => {
+test('Load a valid module', () => {
   const path = '_mock_dir/_mock_file'
   const moduleText = stripIndent`
     (_params) => {
@@ -27,12 +27,12 @@ test.only('Load a valid module', () => {
   })
 })
 
-test('Try loading a non-existing module', () => {
+test.skip('Try loading a non-existing module', () => {
   const moduleName = '_non_existing_dir/_non_existing_file'
   expect(() => loadModuleText(moduleName)).toThrow(ModuleNotFound)
 })
 
-test.only('Try executing a wrongly implemented module', () => {
+test('Try executing a wrongly implemented module', () => {
   // A module in wrong format
   const path = '_mock_dir/_mock_file'
   const wrongModuleText = stripIndent`
