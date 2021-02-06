@@ -40,9 +40,7 @@ type irreducibleNodes =
   | es.Literal
   | es.ArrayExpression
 
-function findMain(
-  target: es.FunctionExpression | es.ArrowFunctionExpression,
-): string[] {
+function findMain(target: es.FunctionExpression | es.ArrowFunctionExpression): string[] {
   const params: string[] = []
   for (let i = 0; i < target.params.length; i++) {
     params.push((target.params[i] as es.Identifier).name)
@@ -620,9 +618,10 @@ function substituteMain(
       for (const param of target.params) {
         if (param.type === 'Identifier' && param.name === name.name) {
           substedArrow.body = target.body
+          substedArrow.expression = target.body.type !== 'BlockStatement'
           return substedArrow
         }
-        if (param.type == 'Identifier') {
+       if (param.type == 'Identifier') {
           for (const freeVar of freeNames) {
             if (param.name == freeVar) {
               // change param name
