@@ -47008,7 +47008,7 @@ pair(null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]],
 `;
 
 exports[`scoping test 1`] = `
-"function f(w) {
+"function f(w (param)) {
   return g();
 }
 function g() {
@@ -47017,7 +47017,7 @@ function g() {
 const w = 0;
 f(1);
 
-function f(w) {
+function f(w (param)) {
   return g();
 }
 function g() {
