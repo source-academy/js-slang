@@ -621,7 +621,7 @@ function substituteMain(
           substedArrow.expression = target.body.type !== 'BlockStatement'
           return substedArrow
         }
-       if (param.type == 'Identifier') {
+        if (param.type == 'Identifier') {
           for (const freeVar of freeNames) {
             if (param.name == freeVar) {
               // change param name
