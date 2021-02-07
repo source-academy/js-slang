@@ -15,16 +15,18 @@
     "url": "https://github.com/source-academy/"
   },
   "dependencies": {
+    "@babel/parser": "^7.12.15",
+    "@babel/plugin-transform-typescript": "^7.12.16",
     "@types/estree": "0.0.45",
     "acorn": "^8.0.3",
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
+    "gpu.js": "^2.10.4",
     "lodash": "^4.17.20",
     "node-getopt": "^0.3.2",
     "source-map": "^0.7.3",
-    "xmlhttprequest-ts": "^1.0.1",
-    "gpu.js": "^2.10.4"
+    "xmlhttprequest-ts": "^1.0.1"
   },
   "main": "dist/index",
   "types": "dist/index",
@@ -97,7 +99,7 @@
       "/src/typings/",
       "/src/utils/testing.ts"
     ],
-      "reporters": [
+    "reporters": [
       "default",
       [
         "./node_modules/jest-html-reporter",
