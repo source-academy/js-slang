@@ -11,7 +11,7 @@ import {
   getIdentifiersInProgram,
   getIdentifiersInNativeStorage
 } from '../utils/uniqueIds'
-import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
+import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID, MODULE_FUNCTIONS } from '../constants'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -42,8 +42,12 @@ function prefixModule(program: es.Program): string {
     if (node.type !== 'ImportDeclaration') {
       break
     }
-    const moduleText = loadModuleText(node.source.value as string)
-    prefix += `const __MODULE_${moduleCounter}__ = (${moduleText.trim()})(${MODULE_PARAMS_ID});\n`
+    const moduleText = loadModuleText(node.source.value as string).trim()
+    // remove ; from moduleText
+    prefix += `const __MODULE_${moduleCounter}__ = (${moduleText.substring(
+      0,
+      moduleText.length - 1
+    )})(${MODULE_PARAMS_ID})["${MODULE_FUNCTIONS}"];\n`
     moduleCounter++
   }
   return prefix
