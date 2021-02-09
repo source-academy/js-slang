@@ -45562,6 +45562,118 @@ Array [
 ]
 `;
 
+exports[`scoping test (function parameter) 1`] = `
+"function f(w (param)) {
+  return g();
+}
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+function f(w (param)) {
+  return g();
+}
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+const w = 0;
+f(1);
+
+const w = 0;
+f(1);
+
+f(1);
+
+f(1);
+
+g();
+
+g();
+
+0;
+
+0;
+"
+`;
+
+exports[`scoping test 2 (blocks) 1`] = `
+"function f(w) {
+  const z (const) = w;
+  return g();
+}
+function g() {
+  return z;
+}
+f(0);
+
+function f(w) {
+  const z (const) = w;
+  return g();
+}
+function g() {
+  return z;
+}
+f(0);
+
+function g() {
+  return z;
+}
+f(0);
+
+function g() {
+  return z;
+}
+f(0);
+
+f(0);
+
+f(0);
+
+{
+  const z (const) = 0;
+  return g();
+};
+
+{
+  const z (const) = 0;
+  return g();
+};
+
+{
+  return g();
+};
+
+{
+  return g();
+};
+
+g();
+
+g();
+
+z;
+
+z;
+"
+`;
+
 exports[`subsets 1`] = `
 "function subsets(s) {
   if (is_null(s)) {
@@ -47004,57 +47116,6 @@ pair(null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]],
 [null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]];
 
 [null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]];
-"
-`;
-
-exports[`scoping test 1`] = `
-"function f(w (param)) {
-  return g();
-}
-function g() {
-  return w;
-}
-const w = 0;
-f(1);
-
-function f(w (param)) {
-  return g();
-}
-function g() {
-  return w;
-}
-const w = 0;
-f(1);
-
-function g() {
-  return w;
-}
-const w = 0;
-f(1);
-
-function g() {
-  return w;
-}
-const w = 0;
-f(1);
-
-const w = 0;
-f(1);
-
-const w = 0;
-f(1);
-
-f(1);
-
-f(1);
-
-g();
-
-g();
-
-0;
-
-0;
 "
 `;
 
