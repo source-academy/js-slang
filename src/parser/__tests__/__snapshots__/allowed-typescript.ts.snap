@@ -1,0 +1,5662 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Typescript syntax is allowed at any chapter 0 1`] = `""`;
+
+exports[`Typescript syntax is allowed at any chapter 0 2`] = `""`;
+
+exports[`Typescript syntax is allowed at any chapter 0 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 0 4`] = `
+Node {
+  "body": Array [],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 1 1`] = `
+"const a: number = 5;
+a;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 1 2`] = `
+"const a = 5;
+a;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 1 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "a",
+              "type": "Identifier",
+              "typeAnnotation": Node {
+                "type": "TSTypeAnnotation",
+                "typeAnnotation": Node {
+                  "type": "TSNumberKeyword",
+                },
+              },
+            },
+            "init": Node {
+              "raw": "5",
+              "type": "Literal",
+              "value": 5,
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "const",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "name": "a",
+          "type": "Identifier",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 1 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "a",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "5",
+            "type": "Literal",
+            "value": 5,
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "const",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "name": "a",
+        "type": "Identifier",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 2 1`] = `
+"const a: number = 5;
+
+a;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 2 2`] = `
+"const a = 5;
+
+a;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 2 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "a",
+              "type": "Identifier",
+              "typeAnnotation": Node {
+                "type": "TSTypeAnnotation",
+                "typeAnnotation": Node {
+                  "type": "TSNumberKeyword",
+                },
+              },
+            },
+            "init": Node {
+              "raw": "5",
+              "type": "Literal",
+              "value": 5,
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "const",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "name": "a",
+          "type": "Identifier",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 2 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "a",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "5",
+            "type": "Literal",
+            "value": 5,
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "const",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "name": "a",
+        "type": "Identifier",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 3 1`] = `
+"const a = (5 as number);
+a;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 3 2`] = `
+"const a = 5;
+a;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 3 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "a",
+              "type": "Identifier",
+            },
+            "init": Node {
+              "expression": Node {
+                "raw": "5",
+                "type": "Literal",
+                "value": 5,
+              },
+              "extra": Object {
+                "parenStart": 10,
+                "parenthesized": true,
+              },
+              "type": "TSAsExpression",
+              "typeAnnotation": Node {
+                "type": "TSNumberKeyword",
+              },
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "const",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "name": "a",
+          "type": "Identifier",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 3 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "a",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "5",
+            "type": "Literal",
+            "value": 5,
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "const",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "name": "a",
+        "type": "Identifier",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 4 1`] = `
+"function f(x: unknown): x is number {
+  return is_number(x);
+}
+f(5);"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 4 2`] = `
+"function f(x) {
+  return is_number(x);
+}
+f(5);"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 4 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "async": false,
+        "body": Node {
+          "body": Array [
+            Node {
+              "argument": Node {
+                "arguments": Array [
+                  Node {
+                    "name": "x",
+                    "type": "Identifier",
+                  },
+                ],
+                "callee": Node {
+                  "name": "is_number",
+                  "type": "Identifier",
+                },
+                "optional": false,
+                "type": "CallExpression",
+              },
+              "type": "ReturnStatement",
+            },
+          ],
+          "type": "BlockStatement",
+        },
+        "expression": false,
+        "generator": false,
+        "id": Node {
+          "name": "f",
+          "type": "Identifier",
+        },
+        "params": Array [
+          Node {
+            "name": "x",
+            "type": "Identifier",
+            "typeAnnotation": Node {
+              "type": "TSTypeAnnotation",
+              "typeAnnotation": Node {
+                "type": "TSUnknownKeyword",
+              },
+            },
+          },
+        ],
+        "returnType": Node {
+          "type": "TSTypeAnnotation",
+          "typeAnnotation": Node {
+            "asserts": false,
+            "parameterName": Node {
+              "name": "x",
+              "type": "Identifier",
+            },
+            "type": "TSTypePredicate",
+            "typeAnnotation": Node {
+              "type": "TSTypeAnnotation",
+              "typeAnnotation": Node {
+                "type": "TSNumberKeyword",
+              },
+            },
+          },
+        },
+        "type": "FunctionDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "arguments": Array [
+            Node {
+              "raw": "5",
+              "type": "Literal",
+              "value": 5,
+            },
+          ],
+          "callee": Node {
+            "name": "f",
+            "type": "Identifier",
+          },
+          "optional": false,
+          "type": "CallExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 4 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "body": Node {
+        "body": Array [
+          Node {
+            "argument": Node {
+              "arguments": Array [
+                Node {
+                  "name": "x",
+                  "type": "Identifier",
+                },
+              ],
+              "callee": Node {
+                "name": "is_number",
+                "type": "Identifier",
+              },
+              "type": "CallExpression",
+            },
+            "type": "ReturnStatement",
+          },
+        ],
+        "type": "BlockStatement",
+      },
+      "expression": false,
+      "generator": false,
+      "id": Node {
+        "name": "f",
+        "type": "Identifier",
+      },
+      "params": Array [
+        Node {
+          "name": "x",
+          "type": "Identifier",
+        },
+      ],
+      "type": "FunctionDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "arguments": Array [
+          Node {
+            "raw": "5",
+            "type": "Literal",
+            "value": 5,
+          },
+        ],
+        "callee": Node {
+          "name": "f",
+          "type": "Identifier",
+        },
+        "type": "CallExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 5 1`] = `
+"function f(x:
+  unknown):
+  x is number {
+  return is_number(x);
+}
+f(
+
+5
+);"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 5 2`] = `
+"function f(x)
+
+{
+  return is_number(x);
+}
+f(
+
+5);"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 5 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "async": false,
+        "body": Node {
+          "body": Array [
+            Node {
+              "argument": Node {
+                "arguments": Array [
+                  Node {
+                    "name": "x",
+                    "type": "Identifier",
+                  },
+                ],
+                "callee": Node {
+                  "name": "is_number",
+                  "type": "Identifier",
+                },
+                "optional": false,
+                "type": "CallExpression",
+              },
+              "type": "ReturnStatement",
+            },
+          ],
+          "type": "BlockStatement",
+        },
+        "expression": false,
+        "generator": false,
+        "id": Node {
+          "name": "f",
+          "type": "Identifier",
+        },
+        "params": Array [
+          Node {
+            "name": "x",
+            "type": "Identifier",
+            "typeAnnotation": Node {
+              "type": "TSTypeAnnotation",
+              "typeAnnotation": Node {
+                "type": "TSUnknownKeyword",
+              },
+            },
+          },
+        ],
+        "returnType": Node {
+          "type": "TSTypeAnnotation",
+          "typeAnnotation": Node {
+            "asserts": false,
+            "parameterName": Node {
+              "name": "x",
+              "type": "Identifier",
+            },
+            "type": "TSTypePredicate",
+            "typeAnnotation": Node {
+              "type": "TSTypeAnnotation",
+              "typeAnnotation": Node {
+                "type": "TSNumberKeyword",
+              },
+            },
+          },
+        },
+        "type": "FunctionDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "arguments": Array [
+            Node {
+              "raw": "5",
+              "type": "Literal",
+              "value": 5,
+            },
+          ],
+          "callee": Node {
+            "name": "f",
+            "type": "Identifier",
+          },
+          "optional": false,
+          "type": "CallExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 5 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "body": Node {
+        "body": Array [
+          Node {
+            "argument": Node {
+              "arguments": Array [
+                Node {
+                  "name": "x",
+                  "type": "Identifier",
+                },
+              ],
+              "callee": Node {
+                "name": "is_number",
+                "type": "Identifier",
+              },
+              "type": "CallExpression",
+            },
+            "type": "ReturnStatement",
+          },
+        ],
+        "type": "BlockStatement",
+      },
+      "expression": false,
+      "generator": false,
+      "id": Node {
+        "name": "f",
+        "type": "Identifier",
+      },
+      "params": Array [
+        Node {
+          "name": "x",
+          "type": "Identifier",
+        },
+      ],
+      "type": "FunctionDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "arguments": Array [
+          Node {
+            "raw": "5",
+            "type": "Literal",
+            "value": 5,
+          },
+        ],
+        "callee": Node {
+          "name": "f",
+          "type": "Identifier",
+        },
+        "type": "CallExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 6 1`] = `
+"function name(a: number, b: number): number {
+  const sum = a + b;
+  if (sum > 1) {
+    return sum;
+  } else {
+    if (a % 2 === 0) {
+      return -1;
+    } else if (b % 2 === 0) {
+      return 1;
+    } else {
+      return a > b ? 0 : -2;
+    }
+  }
+}
+name(1, 2);"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 6 2`] = `
+"function name(a, b) {
+  const sum = a + b;
+  if (sum > 1) {
+    return sum;
+  } else {
+    if (a % 2 === 0) {
+      return -1;
+    } else if (b % 2 === 0) {
+      return 1;
+    } else {
+      return a > b ? 0 : -2;
+    }
+  }
+}
+name(1, 2);"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 6 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "async": false,
+        "body": Node {
+          "body": Array [
+            Node {
+              "declarations": Array [
+                Node {
+                  "id": Node {
+                    "name": "sum",
+                    "type": "Identifier",
+                  },
+                  "init": Node {
+                    "left": Node {
+                      "name": "a",
+                      "type": "Identifier",
+                    },
+                    "operator": "+",
+                    "right": Node {
+                      "name": "b",
+                      "type": "Identifier",
+                    },
+                    "type": "BinaryExpression",
+                  },
+                  "type": "VariableDeclarator",
+                },
+              ],
+              "kind": "const",
+              "type": "VariableDeclaration",
+            },
+            Node {
+              "alternate": Node {
+                "body": Array [
+                  Node {
+                    "alternate": Node {
+                      "alternate": Node {
+                        "body": Array [
+                          Node {
+                            "argument": Node {
+                              "alternate": Node {
+                                "argument": Node {
+                                  "raw": "2",
+                                  "type": "Literal",
+                                  "value": 2,
+                                },
+                                "operator": "-",
+                                "prefix": true,
+                                "type": "UnaryExpression",
+                              },
+                              "consequent": Node {
+                                "raw": "0",
+                                "type": "Literal",
+                                "value": 0,
+                              },
+                              "test": Node {
+                                "left": Node {
+                                  "name": "a",
+                                  "type": "Identifier",
+                                },
+                                "operator": ">",
+                                "right": Node {
+                                  "name": "b",
+                                  "type": "Identifier",
+                                },
+                                "type": "BinaryExpression",
+                              },
+                              "type": "ConditionalExpression",
+                            },
+                            "type": "ReturnStatement",
+                          },
+                        ],
+                        "type": "BlockStatement",
+                      },
+                      "consequent": Node {
+                        "body": Array [
+                          Node {
+                            "argument": Node {
+                              "raw": "1",
+                              "type": "Literal",
+                              "value": 1,
+                            },
+                            "type": "ReturnStatement",
+                          },
+                        ],
+                        "type": "BlockStatement",
+                      },
+                      "test": Node {
+                        "left": Node {
+                          "left": Node {
+                            "name": "b",
+                            "type": "Identifier",
+                          },
+                          "operator": "%",
+                          "right": Node {
+                            "raw": "2",
+                            "type": "Literal",
+                            "value": 2,
+                          },
+                          "type": "BinaryExpression",
+                        },
+                        "operator": "===",
+                        "right": Node {
+                          "raw": "0",
+                          "type": "Literal",
+                          "value": 0,
+                        },
+                        "type": "BinaryExpression",
+                      },
+                      "type": "IfStatement",
+                    },
+                    "consequent": Node {
+                      "body": Array [
+                        Node {
+                          "argument": Node {
+                            "argument": Node {
+                              "raw": "1",
+                              "type": "Literal",
+                              "value": 1,
+                            },
+                            "operator": "-",
+                            "prefix": true,
+                            "type": "UnaryExpression",
+                          },
+                          "type": "ReturnStatement",
+                        },
+                      ],
+                      "type": "BlockStatement",
+                    },
+                    "test": Node {
+                      "left": Node {
+                        "left": Node {
+                          "name": "a",
+                          "type": "Identifier",
+                        },
+                        "operator": "%",
+                        "right": Node {
+                          "raw": "2",
+                          "type": "Literal",
+                          "value": 2,
+                        },
+                        "type": "BinaryExpression",
+                      },
+                      "operator": "===",
+                      "right": Node {
+                        "raw": "0",
+                        "type": "Literal",
+                        "value": 0,
+                      },
+                      "type": "BinaryExpression",
+                    },
+                    "type": "IfStatement",
+                  },
+                ],
+                "type": "BlockStatement",
+              },
+              "consequent": Node {
+                "body": Array [
+                  Node {
+                    "argument": Node {
+                      "name": "sum",
+                      "type": "Identifier",
+                    },
+                    "type": "ReturnStatement",
+                  },
+                ],
+                "type": "BlockStatement",
+              },
+              "test": Node {
+                "left": Node {
+                  "name": "sum",
+                  "type": "Identifier",
+                },
+                "operator": ">",
+                "right": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+                "type": "BinaryExpression",
+              },
+              "type": "IfStatement",
+            },
+          ],
+          "type": "BlockStatement",
+        },
+        "expression": false,
+        "generator": false,
+        "id": Node {
+          "name": "name",
+          "type": "Identifier",
+        },
+        "params": Array [
+          Node {
+            "name": "a",
+            "type": "Identifier",
+            "typeAnnotation": Node {
+              "type": "TSTypeAnnotation",
+              "typeAnnotation": Node {
+                "type": "TSNumberKeyword",
+              },
+            },
+          },
+          Node {
+            "name": "b",
+            "type": "Identifier",
+            "typeAnnotation": Node {
+              "type": "TSTypeAnnotation",
+              "typeAnnotation": Node {
+                "type": "TSNumberKeyword",
+              },
+            },
+          },
+        ],
+        "returnType": Node {
+          "type": "TSTypeAnnotation",
+          "typeAnnotation": Node {
+            "type": "TSNumberKeyword",
+          },
+        },
+        "type": "FunctionDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "arguments": Array [
+            Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            Node {
+              "raw": "2",
+              "type": "Literal",
+              "value": 2,
+            },
+          ],
+          "callee": Node {
+            "name": "name",
+            "type": "Identifier",
+          },
+          "optional": false,
+          "type": "CallExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 6 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "body": Node {
+        "body": Array [
+          Node {
+            "declarations": Array [
+              Node {
+                "id": Node {
+                  "name": "sum",
+                  "type": "Identifier",
+                },
+                "init": Node {
+                  "left": Node {
+                    "name": "a",
+                    "type": "Identifier",
+                  },
+                  "operator": "+",
+                  "right": Node {
+                    "name": "b",
+                    "type": "Identifier",
+                  },
+                  "type": "BinaryExpression",
+                },
+                "type": "VariableDeclarator",
+              },
+            ],
+            "kind": "const",
+            "type": "VariableDeclaration",
+          },
+          Node {
+            "alternate": Node {
+              "body": Array [
+                Node {
+                  "alternate": Node {
+                    "alternate": Node {
+                      "body": Array [
+                        Node {
+                          "argument": Node {
+                            "alternate": Node {
+                              "argument": Node {
+                                "raw": "2",
+                                "type": "Literal",
+                                "value": 2,
+                              },
+                              "operator": "-",
+                              "prefix": true,
+                              "type": "UnaryExpression",
+                            },
+                            "consequent": Node {
+                              "raw": "0",
+                              "type": "Literal",
+                              "value": 0,
+                            },
+                            "test": Node {
+                              "left": Node {
+                                "name": "a",
+                                "type": "Identifier",
+                              },
+                              "operator": ">",
+                              "right": Node {
+                                "name": "b",
+                                "type": "Identifier",
+                              },
+                              "type": "BinaryExpression",
+                            },
+                            "type": "ConditionalExpression",
+                          },
+                          "type": "ReturnStatement",
+                        },
+                      ],
+                      "type": "BlockStatement",
+                    },
+                    "consequent": Node {
+                      "body": Array [
+                        Node {
+                          "argument": Node {
+                            "raw": "1",
+                            "type": "Literal",
+                            "value": 1,
+                          },
+                          "type": "ReturnStatement",
+                        },
+                      ],
+                      "type": "BlockStatement",
+                    },
+                    "test": Node {
+                      "left": Node {
+                        "left": Node {
+                          "name": "b",
+                          "type": "Identifier",
+                        },
+                        "operator": "%",
+                        "right": Node {
+                          "raw": "2",
+                          "type": "Literal",
+                          "value": 2,
+                        },
+                        "type": "BinaryExpression",
+                      },
+                      "operator": "===",
+                      "right": Node {
+                        "raw": "0",
+                        "type": "Literal",
+                        "value": 0,
+                      },
+                      "type": "BinaryExpression",
+                    },
+                    "type": "IfStatement",
+                  },
+                  "consequent": Node {
+                    "body": Array [
+                      Node {
+                        "argument": Node {
+                          "argument": Node {
+                            "raw": "1",
+                            "type": "Literal",
+                            "value": 1,
+                          },
+                          "operator": "-",
+                          "prefix": true,
+                          "type": "UnaryExpression",
+                        },
+                        "type": "ReturnStatement",
+                      },
+                    ],
+                    "type": "BlockStatement",
+                  },
+                  "test": Node {
+                    "left": Node {
+                      "left": Node {
+                        "name": "a",
+                        "type": "Identifier",
+                      },
+                      "operator": "%",
+                      "right": Node {
+                        "raw": "2",
+                        "type": "Literal",
+                        "value": 2,
+                      },
+                      "type": "BinaryExpression",
+                    },
+                    "operator": "===",
+                    "right": Node {
+                      "raw": "0",
+                      "type": "Literal",
+                      "value": 0,
+                    },
+                    "type": "BinaryExpression",
+                  },
+                  "type": "IfStatement",
+                },
+              ],
+              "type": "BlockStatement",
+            },
+            "consequent": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "name": "sum",
+                    "type": "Identifier",
+                  },
+                  "type": "ReturnStatement",
+                },
+              ],
+              "type": "BlockStatement",
+            },
+            "test": Node {
+              "left": Node {
+                "name": "sum",
+                "type": "Identifier",
+              },
+              "operator": ">",
+              "right": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              "type": "BinaryExpression",
+            },
+            "type": "IfStatement",
+          },
+        ],
+        "type": "BlockStatement",
+      },
+      "expression": false,
+      "generator": false,
+      "id": Node {
+        "name": "name",
+        "type": "Identifier",
+      },
+      "params": Array [
+        Node {
+          "name": "a",
+          "type": "Identifier",
+        },
+        Node {
+          "name": "b",
+          "type": "Identifier",
+        },
+      ],
+      "type": "FunctionDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "arguments": Array [
+          Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "raw": "2",
+            "type": "Literal",
+            "value": 2,
+          },
+        ],
+        "callee": Node {
+          "name": "name",
+          "type": "Identifier",
+        },
+        "type": "CallExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 7 1`] = `"(() => true)();"`;
+
+exports[`Typescript syntax is allowed at any chapter 7 2`] = `"(() => true)();"`;
+
+exports[`Typescript syntax is allowed at any chapter 7 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "arguments": Array [],
+          "callee": Node {
+            "async": false,
+            "body": Node {
+              "raw": "true",
+              "type": "Literal",
+              "value": true,
+            },
+            "expression": true,
+            "extra": Object {
+              "parenStart": 0,
+              "parenthesized": true,
+            },
+            "generator": false,
+            "id": null,
+            "params": Array [],
+            "type": "ArrowFunctionExpression",
+          },
+          "optional": false,
+          "type": "CallExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 7 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "arguments": Array [],
+        "callee": Node {
+          "body": Node {
+            "raw": "true",
+            "type": "Literal",
+            "value": true,
+          },
+          "expression": true,
+          "generator": false,
+          "id": null,
+          "params": Array [],
+          "type": "ArrowFunctionExpression",
+        },
+        "type": "CallExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 8 1`] = `"(<T extends number | string>(x: T, y: T): T => { return x + y; })(1, 2);"`;
+
+exports[`Typescript syntax is allowed at any chapter 8 2`] = `"((x, y) => {return x + y;})(1, 2);"`;
+
+exports[`Typescript syntax is allowed at any chapter 8 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "arguments": Array [
+            Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            Node {
+              "raw": "2",
+              "type": "Literal",
+              "value": 2,
+            },
+          ],
+          "callee": Node {
+            "async": false,
+            "body": Node {
+              "body": Array [
+                Node {
+                  "argument": Node {
+                    "left": Node {
+                      "name": "x",
+                      "type": "Identifier",
+                    },
+                    "operator": "+",
+                    "right": Node {
+                      "name": "y",
+                      "type": "Identifier",
+                    },
+                    "type": "BinaryExpression",
+                  },
+                  "type": "ReturnStatement",
+                },
+              ],
+              "type": "BlockStatement",
+            },
+            "expression": false,
+            "extra": Object {
+              "parenStart": 0,
+              "parenthesized": true,
+            },
+            "generator": false,
+            "id": null,
+            "params": Array [
+              Node {
+                "name": "x",
+                "type": "Identifier",
+                "typeAnnotation": Node {
+                  "type": "TSTypeAnnotation",
+                  "typeAnnotation": Node {
+                    "type": "TSTypeReference",
+                    "typeName": Node {
+                      "name": "T",
+                      "type": "Identifier",
+                    },
+                  },
+                },
+              },
+              Node {
+                "name": "y",
+                "type": "Identifier",
+                "typeAnnotation": Node {
+                  "type": "TSTypeAnnotation",
+                  "typeAnnotation": Node {
+                    "type": "TSTypeReference",
+                    "typeName": Node {
+                      "name": "T",
+                      "type": "Identifier",
+                    },
+                  },
+                },
+              },
+            ],
+            "returnType": Node {
+              "type": "TSTypeAnnotation",
+              "typeAnnotation": Node {
+                "type": "TSTypeReference",
+                "typeName": Node {
+                  "name": "T",
+                  "type": "Identifier",
+                },
+              },
+            },
+            "type": "ArrowFunctionExpression",
+            "typeParameters": Node {
+              "params": Array [
+                Node {
+                  "constraint": Node {
+                    "type": "TSUnionType",
+                    "types": Array [
+                      Node {
+                        "type": "TSNumberKeyword",
+                      },
+                      Node {
+                        "type": "TSStringKeyword",
+                      },
+                    ],
+                  },
+                  "name": "T",
+                  "type": "TSTypeParameter",
+                },
+              ],
+              "type": "TSTypeParameterDeclaration",
+            },
+          },
+          "optional": false,
+          "type": "CallExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 8 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "arguments": Array [
+          Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "raw": "2",
+            "type": "Literal",
+            "value": 2,
+          },
+        ],
+        "callee": Node {
+          "body": Node {
+            "body": Array [
+              Node {
+                "argument": Node {
+                  "left": Node {
+                    "name": "x",
+                    "type": "Identifier",
+                  },
+                  "operator": "+",
+                  "right": Node {
+                    "name": "y",
+                    "type": "Identifier",
+                  },
+                  "type": "BinaryExpression",
+                },
+                "type": "ReturnStatement",
+              },
+            ],
+            "type": "BlockStatement",
+          },
+          "expression": false,
+          "generator": false,
+          "id": null,
+          "params": Array [
+            Node {
+              "name": "x",
+              "type": "Identifier",
+            },
+            Node {
+              "name": "y",
+              "type": "Identifier",
+            },
+          ],
+          "type": "ArrowFunctionExpression",
+        },
+        "type": "CallExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 9 1`] = `"true;"`;
+
+exports[`Typescript syntax is allowed at any chapter 9 2`] = `"true;"`;
+
+exports[`Typescript syntax is allowed at any chapter 9 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "raw": "true",
+          "type": "Literal",
+          "value": true,
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 9 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "raw": "true",
+        "type": "Literal",
+        "value": true,
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 10 1`] = `"(false as boolean);"`;
+
+exports[`Typescript syntax is allowed at any chapter 10 2`] = `"false;"`;
+
+exports[`Typescript syntax is allowed at any chapter 10 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "expression": Node {
+            "raw": "false",
+            "type": "Literal",
+            "value": false,
+          },
+          "extra": Object {
+            "parenStart": 0,
+            "parenthesized": true,
+          },
+          "type": "TSAsExpression",
+          "typeAnnotation": Node {
+            "type": "TSBooleanKeyword",
+          },
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 10 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "raw": "false",
+        "type": "Literal",
+        "value": false,
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 11 1`] = `"'a string \\"\\" \\\\'\\\\'';"`;
+
+exports[`Typescript syntax is allowed at any chapter 11 2`] = `"'a string \\"\\" \\\\'\\\\'';"`;
+
+exports[`Typescript syntax is allowed at any chapter 11 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "directive": "a string \\"\\" \\\\'\\\\'",
+        "expression": Node {
+          "raw": "'a string \\"\\" \\\\'\\\\''",
+          "type": "Literal",
+          "value": "a string \\"\\" ''",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 11 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "directive": "a string \\"\\" \\\\'\\\\'",
+      "expression": Node {
+        "raw": "'a string \\"\\" \\\\'\\\\''",
+        "type": "Literal",
+        "value": "a string \\"\\" ''",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 12 1`] = `"31.4 + (-3.14e10) * -1 % 2 / (1.5 as number);"`;
+
+exports[`Typescript syntax is allowed at any chapter 12 2`] = `"31.4 + -3.14e10 * -1 % 2 / 1.5;"`;
+
+exports[`Typescript syntax is allowed at any chapter 12 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "left": Node {
+            "raw": "31.4",
+            "type": "Literal",
+            "value": 31.4,
+          },
+          "operator": "+",
+          "right": Node {
+            "left": Node {
+              "left": Node {
+                "left": Node {
+                  "argument": Node {
+                    "raw": "3.14e10",
+                    "type": "Literal",
+                    "value": 31400000000,
+                  },
+                  "extra": Object {
+                    "parenStart": 7,
+                    "parenthesized": true,
+                  },
+                  "operator": "-",
+                  "prefix": true,
+                  "type": "UnaryExpression",
+                },
+                "operator": "*",
+                "right": Node {
+                  "argument": Node {
+                    "raw": "1",
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                  "operator": "-",
+                  "prefix": true,
+                  "type": "UnaryExpression",
+                },
+                "type": "BinaryExpression",
+              },
+              "operator": "%",
+              "right": Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+              "type": "BinaryExpression",
+            },
+            "operator": "/",
+            "right": Node {
+              "expression": Node {
+                "raw": "1.5",
+                "type": "Literal",
+                "value": 1.5,
+              },
+              "extra": Object {
+                "parenStart": 29,
+                "parenthesized": true,
+              },
+              "type": "TSAsExpression",
+              "typeAnnotation": Node {
+                "type": "TSNumberKeyword",
+              },
+            },
+            "type": "BinaryExpression",
+          },
+          "type": "BinaryExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 12 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "left": Node {
+          "raw": "31.4",
+          "type": "Literal",
+          "value": 31.4,
+        },
+        "operator": "+",
+        "right": Node {
+          "left": Node {
+            "left": Node {
+              "left": Node {
+                "argument": Node {
+                  "raw": "3.14e10",
+                  "type": "Literal",
+                  "value": 31400000000,
+                },
+                "operator": "-",
+                "prefix": true,
+                "type": "UnaryExpression",
+              },
+              "operator": "*",
+              "right": Node {
+                "argument": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+                "operator": "-",
+                "prefix": true,
+                "type": "UnaryExpression",
+              },
+              "type": "BinaryExpression",
+            },
+            "operator": "%",
+            "right": Node {
+              "raw": "2",
+              "type": "Literal",
+              "value": 2,
+            },
+            "type": "BinaryExpression",
+          },
+          "operator": "/",
+          "right": Node {
+            "raw": "1.5",
+            "type": "Literal",
+            "value": 1.5,
+          },
+          "type": "BinaryExpression",
+        },
+        "type": "BinaryExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 13 1`] = `"1 === 1 && 1 < 2 && 1 <= 2 && 2 >= 1 && 2 > 1 || false;"`;
+
+exports[`Typescript syntax is allowed at any chapter 13 2`] = `"1 === 1 && 1 < 2 && 1 <= 2 && 2 >= 1 && 2 > 1 || false;"`;
+
+exports[`Typescript syntax is allowed at any chapter 13 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "left": Node {
+            "left": Node {
+              "left": Node {
+                "left": Node {
+                  "left": Node {
+                    "left": Node {
+                      "raw": "1",
+                      "type": "Literal",
+                      "value": 1,
+                    },
+                    "operator": "===",
+                    "right": Node {
+                      "raw": "1",
+                      "type": "Literal",
+                      "value": 1,
+                    },
+                    "type": "BinaryExpression",
+                  },
+                  "operator": "&&",
+                  "right": Node {
+                    "left": Node {
+                      "raw": "1",
+                      "type": "Literal",
+                      "value": 1,
+                    },
+                    "operator": "<",
+                    "right": Node {
+                      "raw": "2",
+                      "type": "Literal",
+                      "value": 2,
+                    },
+                    "type": "BinaryExpression",
+                  },
+                  "type": "LogicalExpression",
+                },
+                "operator": "&&",
+                "right": Node {
+                  "left": Node {
+                    "raw": "1",
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                  "operator": "<=",
+                  "right": Node {
+                    "raw": "2",
+                    "type": "Literal",
+                    "value": 2,
+                  },
+                  "type": "BinaryExpression",
+                },
+                "type": "LogicalExpression",
+              },
+              "operator": "&&",
+              "right": Node {
+                "left": Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+                "operator": ">=",
+                "right": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+                "type": "BinaryExpression",
+              },
+              "type": "LogicalExpression",
+            },
+            "operator": "&&",
+            "right": Node {
+              "left": Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+              "operator": ">",
+              "right": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              "type": "BinaryExpression",
+            },
+            "type": "LogicalExpression",
+          },
+          "operator": "||",
+          "right": Node {
+            "raw": "false",
+            "type": "Literal",
+            "value": false,
+          },
+          "type": "LogicalExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 13 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "left": Node {
+          "left": Node {
+            "left": Node {
+              "left": Node {
+                "left": Node {
+                  "left": Node {
+                    "raw": "1",
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                  "operator": "===",
+                  "right": Node {
+                    "raw": "1",
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                  "type": "BinaryExpression",
+                },
+                "operator": "&&",
+                "right": Node {
+                  "left": Node {
+                    "raw": "1",
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                  "operator": "<",
+                  "right": Node {
+                    "raw": "2",
+                    "type": "Literal",
+                    "value": 2,
+                  },
+                  "type": "BinaryExpression",
+                },
+                "type": "LogicalExpression",
+              },
+              "operator": "&&",
+              "right": Node {
+                "left": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+                "operator": "<=",
+                "right": Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+                "type": "BinaryExpression",
+              },
+              "type": "LogicalExpression",
+            },
+            "operator": "&&",
+            "right": Node {
+              "left": Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+              "operator": ">=",
+              "right": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              "type": "BinaryExpression",
+            },
+            "type": "LogicalExpression",
+          },
+          "operator": "&&",
+          "right": Node {
+            "left": Node {
+              "raw": "2",
+              "type": "Literal",
+              "value": 2,
+            },
+            "operator": ">",
+            "right": Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            "type": "BinaryExpression",
+          },
+          "type": "LogicalExpression",
+        },
+        "operator": "||",
+        "right": Node {
+          "raw": "false",
+          "type": "Literal",
+          "value": false,
+        },
+        "type": "LogicalExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 14 1`] = `"true ? 1 : 2;"`;
+
+exports[`Typescript syntax is allowed at any chapter 14 2`] = `"true ? 1 : 2;"`;
+
+exports[`Typescript syntax is allowed at any chapter 14 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "alternate": Node {
+            "raw": "2",
+            "type": "Literal",
+            "value": 2,
+          },
+          "consequent": Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          "test": Node {
+            "raw": "true",
+            "type": "Literal",
+            "value": true,
+          },
+          "type": "ConditionalExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 14 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "alternate": Node {
+          "raw": "2",
+          "type": "Literal",
+          "value": 2,
+        },
+        "consequent": Node {
+          "raw": "1",
+          "type": "Literal",
+          "value": 1,
+        },
+        "test": Node {
+          "raw": "true",
+          "type": "Literal",
+          "value": true,
+        },
+        "type": "ConditionalExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 15 1`] = `"null;"`;
+
+exports[`Typescript syntax is allowed at any chapter 15 2`] = `"null;"`;
+
+exports[`Typescript syntax is allowed at any chapter 15 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "raw": "null",
+          "type": "Literal",
+          "value": null,
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 15 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "raw": "null",
+        "type": "Literal",
+        "value": null,
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 16 1`] = `"pair(1 as const, null);"`;
+
+exports[`Typescript syntax is allowed at any chapter 16 2`] = `"pair(1, null);"`;
+
+exports[`Typescript syntax is allowed at any chapter 16 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "arguments": Array [
+            Node {
+              "expression": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              "type": "TSAsExpression",
+              "typeAnnotation": Node {
+                "type": "TSTypeReference",
+                "typeName": Node {
+                  "name": "const",
+                  "type": "Identifier",
+                },
+              },
+            },
+            Node {
+              "raw": "null",
+              "type": "Literal",
+              "value": null,
+            },
+          ],
+          "callee": Node {
+            "name": "pair",
+            "type": "Identifier",
+          },
+          "optional": false,
+          "type": "CallExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 16 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "arguments": Array [
+          Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "raw": "null",
+            "type": "Literal",
+            "value": null,
+          },
+        ],
+        "callee": Node {
+          "name": "pair",
+          "type": "Identifier",
+        },
+        "type": "CallExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 17 1`] = `"list(1 as const);"`;
+
+exports[`Typescript syntax is allowed at any chapter 17 2`] = `"list(1);"`;
+
+exports[`Typescript syntax is allowed at any chapter 17 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "arguments": Array [
+            Node {
+              "expression": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              "type": "TSAsExpression",
+              "typeAnnotation": Node {
+                "type": "TSTypeReference",
+                "typeName": Node {
+                  "name": "const",
+                  "type": "Identifier",
+                },
+              },
+            },
+          ],
+          "callee": Node {
+            "name": "list",
+            "type": "Identifier",
+          },
+          "optional": false,
+          "type": "CallExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 17 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "arguments": Array [
+          Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+        ],
+        "callee": Node {
+          "name": "list",
+          "type": "Identifier",
+        },
+        "type": "CallExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 18 1`] = `
+"let i: number = 1;
+while (i < 5) {
+  i = i + 1;
+}
+i;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 18 2`] = `
+"let i = 1;
+while (i < 5) {
+  i = i + 1;
+}
+i;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 18 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "i",
+              "type": "Identifier",
+              "typeAnnotation": Node {
+                "type": "TSTypeAnnotation",
+                "typeAnnotation": Node {
+                  "type": "TSNumberKeyword",
+                },
+              },
+            },
+            "init": Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "body": Node {
+          "body": Array [
+            Node {
+              "expression": Node {
+                "left": Node {
+                  "name": "i",
+                  "type": "Identifier",
+                },
+                "operator": "=",
+                "right": Node {
+                  "left": Node {
+                    "name": "i",
+                    "type": "Identifier",
+                  },
+                  "operator": "+",
+                  "right": Node {
+                    "raw": "1",
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                  "type": "BinaryExpression",
+                },
+                "type": "AssignmentExpression",
+              },
+              "type": "ExpressionStatement",
+            },
+          ],
+          "type": "BlockStatement",
+        },
+        "test": Node {
+          "left": Node {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "operator": "<",
+          "right": Node {
+            "raw": "5",
+            "type": "Literal",
+            "value": 5,
+          },
+          "type": "BinaryExpression",
+        },
+        "type": "WhileStatement",
+      },
+      Node {
+        "expression": Node {
+          "name": "i",
+          "type": "Identifier",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 18 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "body": Node {
+        "body": Array [
+          Node {
+            "expression": Node {
+              "left": Node {
+                "name": "i",
+                "type": "Identifier",
+              },
+              "operator": "=",
+              "right": Node {
+                "left": Node {
+                  "name": "i",
+                  "type": "Identifier",
+                },
+                "operator": "+",
+                "right": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+                "type": "BinaryExpression",
+              },
+              "type": "AssignmentExpression",
+            },
+            "type": "ExpressionStatement",
+          },
+        ],
+        "type": "BlockStatement",
+      },
+      "test": Node {
+        "left": Node {
+          "name": "i",
+          "type": "Identifier",
+        },
+        "operator": "<",
+        "right": Node {
+          "raw": "5",
+          "type": "Literal",
+          "value": 5,
+        },
+        "type": "BinaryExpression",
+      },
+      "type": "WhileStatement",
+    },
+    Node {
+      "expression": Node {
+        "name": "i",
+        "type": "Identifier",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 19 1`] = `
+"let i = 1;
+for (i = 1; i < 5; i = i + 1) {
+}
+i;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 19 2`] = `
+"let i = 1;
+for (i = 1; i < 5; i = i + 1) {
+}
+i;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 19 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "i",
+              "type": "Identifier",
+            },
+            "init": Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "body": Node {
+          "body": Array [],
+          "type": "BlockStatement",
+        },
+        "init": Node {
+          "left": Node {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "operator": "=",
+          "right": Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "AssignmentExpression",
+        },
+        "test": Node {
+          "left": Node {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "operator": "<",
+          "right": Node {
+            "raw": "5",
+            "type": "Literal",
+            "value": 5,
+          },
+          "type": "BinaryExpression",
+        },
+        "type": "ForStatement",
+        "update": Node {
+          "left": Node {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "operator": "=",
+          "right": Node {
+            "left": Node {
+              "name": "i",
+              "type": "Identifier",
+            },
+            "operator": "+",
+            "right": Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            "type": "BinaryExpression",
+          },
+          "type": "AssignmentExpression",
+        },
+      },
+      Node {
+        "expression": Node {
+          "name": "i",
+          "type": "Identifier",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 19 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "body": Node {
+        "body": Array [],
+        "type": "BlockStatement",
+      },
+      "init": Node {
+        "left": Node {
+          "name": "i",
+          "type": "Identifier",
+        },
+        "operator": "=",
+        "right": Node {
+          "raw": "1",
+          "type": "Literal",
+          "value": 1,
+        },
+        "type": "AssignmentExpression",
+      },
+      "test": Node {
+        "left": Node {
+          "name": "i",
+          "type": "Identifier",
+        },
+        "operator": "<",
+        "right": Node {
+          "raw": "5",
+          "type": "Literal",
+          "value": 5,
+        },
+        "type": "BinaryExpression",
+      },
+      "type": "ForStatement",
+      "update": Node {
+        "left": Node {
+          "name": "i",
+          "type": "Identifier",
+        },
+        "operator": "=",
+        "right": Node {
+          "left": Node {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "operator": "+",
+          "right": Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "BinaryExpression",
+        },
+        "type": "AssignmentExpression",
+      },
+    },
+    Node {
+      "expression": Node {
+        "name": "i",
+        "type": "Identifier",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 20 1`] = `
+"let i = 1;
+for (let j = 0; j < 5; j = j + 1) {
+  if (j < 1) {
+    continue;
+  } else {
+    i = i + 1;
+    if (j > 2) {
+      break;
+    } else {
+    }
+  }
+}
+i;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 20 2`] = `
+"let i = 1;
+for (let j = 0; j < 5; j = j + 1) {
+  if (j < 1) {
+    continue;
+  } else {
+    i = i + 1;
+    if (j > 2) {
+      break;
+    } else {
+    }
+  }
+}
+i;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 20 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "i",
+              "type": "Identifier",
+            },
+            "init": Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "body": Node {
+          "body": Array [
+            Node {
+              "alternate": Node {
+                "body": Array [
+                  Node {
+                    "expression": Node {
+                      "left": Node {
+                        "name": "i",
+                        "type": "Identifier",
+                      },
+                      "operator": "=",
+                      "right": Node {
+                        "left": Node {
+                          "name": "i",
+                          "type": "Identifier",
+                        },
+                        "operator": "+",
+                        "right": Node {
+                          "raw": "1",
+                          "type": "Literal",
+                          "value": 1,
+                        },
+                        "type": "BinaryExpression",
+                      },
+                      "type": "AssignmentExpression",
+                    },
+                    "type": "ExpressionStatement",
+                  },
+                  Node {
+                    "alternate": Node {
+                      "body": Array [],
+                      "type": "BlockStatement",
+                    },
+                    "consequent": Node {
+                      "body": Array [
+                        Node {
+                          "label": null,
+                          "type": "BreakStatement",
+                        },
+                      ],
+                      "type": "BlockStatement",
+                    },
+                    "test": Node {
+                      "left": Node {
+                        "name": "j",
+                        "type": "Identifier",
+                      },
+                      "operator": ">",
+                      "right": Node {
+                        "raw": "2",
+                        "type": "Literal",
+                        "value": 2,
+                      },
+                      "type": "BinaryExpression",
+                    },
+                    "type": "IfStatement",
+                  },
+                ],
+                "type": "BlockStatement",
+              },
+              "consequent": Node {
+                "body": Array [
+                  Node {
+                    "label": null,
+                    "type": "ContinueStatement",
+                  },
+                ],
+                "type": "BlockStatement",
+              },
+              "test": Node {
+                "left": Node {
+                  "name": "j",
+                  "type": "Identifier",
+                },
+                "operator": "<",
+                "right": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+                "type": "BinaryExpression",
+              },
+              "type": "IfStatement",
+            },
+          ],
+          "type": "BlockStatement",
+        },
+        "init": Node {
+          "declarations": Array [
+            Node {
+              "id": Node {
+                "name": "j",
+                "type": "Identifier",
+              },
+              "init": Node {
+                "raw": "0",
+                "type": "Literal",
+                "value": 0,
+              },
+              "type": "VariableDeclarator",
+            },
+          ],
+          "kind": "let",
+          "type": "VariableDeclaration",
+        },
+        "test": Node {
+          "left": Node {
+            "name": "j",
+            "type": "Identifier",
+          },
+          "operator": "<",
+          "right": Node {
+            "raw": "5",
+            "type": "Literal",
+            "value": 5,
+          },
+          "type": "BinaryExpression",
+        },
+        "type": "ForStatement",
+        "update": Node {
+          "left": Node {
+            "name": "j",
+            "type": "Identifier",
+          },
+          "operator": "=",
+          "right": Node {
+            "left": Node {
+              "name": "j",
+              "type": "Identifier",
+            },
+            "operator": "+",
+            "right": Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            "type": "BinaryExpression",
+          },
+          "type": "AssignmentExpression",
+        },
+      },
+      Node {
+        "expression": Node {
+          "name": "i",
+          "type": "Identifier",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 20 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "body": Node {
+        "body": Array [
+          Node {
+            "alternate": Node {
+              "body": Array [
+                Node {
+                  "expression": Node {
+                    "left": Node {
+                      "name": "i",
+                      "type": "Identifier",
+                    },
+                    "operator": "=",
+                    "right": Node {
+                      "left": Node {
+                        "name": "i",
+                        "type": "Identifier",
+                      },
+                      "operator": "+",
+                      "right": Node {
+                        "raw": "1",
+                        "type": "Literal",
+                        "value": 1,
+                      },
+                      "type": "BinaryExpression",
+                    },
+                    "type": "AssignmentExpression",
+                  },
+                  "type": "ExpressionStatement",
+                },
+                Node {
+                  "alternate": Node {
+                    "body": Array [],
+                    "type": "BlockStatement",
+                  },
+                  "consequent": Node {
+                    "body": Array [
+                      Node {
+                        "label": null,
+                        "type": "BreakStatement",
+                      },
+                    ],
+                    "type": "BlockStatement",
+                  },
+                  "test": Node {
+                    "left": Node {
+                      "name": "j",
+                      "type": "Identifier",
+                    },
+                    "operator": ">",
+                    "right": Node {
+                      "raw": "2",
+                      "type": "Literal",
+                      "value": 2,
+                    },
+                    "type": "BinaryExpression",
+                  },
+                  "type": "IfStatement",
+                },
+              ],
+              "type": "BlockStatement",
+            },
+            "consequent": Node {
+              "body": Array [
+                Node {
+                  "label": null,
+                  "type": "ContinueStatement",
+                },
+              ],
+              "type": "BlockStatement",
+            },
+            "test": Node {
+              "left": Node {
+                "name": "j",
+                "type": "Identifier",
+              },
+              "operator": "<",
+              "right": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              "type": "BinaryExpression",
+            },
+            "type": "IfStatement",
+          },
+        ],
+        "type": "BlockStatement",
+      },
+      "init": Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "j",
+              "type": "Identifier",
+            },
+            "init": Node {
+              "raw": "0",
+              "type": "Literal",
+              "value": 0,
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      "test": Node {
+        "left": Node {
+          "name": "j",
+          "type": "Identifier",
+        },
+        "operator": "<",
+        "right": Node {
+          "raw": "5",
+          "type": "Literal",
+          "value": 5,
+        },
+        "type": "BinaryExpression",
+      },
+      "type": "ForStatement",
+      "update": Node {
+        "left": Node {
+          "name": "j",
+          "type": "Identifier",
+        },
+        "operator": "=",
+        "right": Node {
+          "left": Node {
+            "name": "j",
+            "type": "Identifier",
+          },
+          "operator": "+",
+          "right": Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "BinaryExpression",
+        },
+        "type": "AssignmentExpression",
+      },
+    },
+    Node {
+      "expression": Node {
+        "name": "i",
+        "type": "Identifier",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 21 1`] = `
+"let i = 1;
+for (let j: number = 0; j < 5; j = j + 1) {
+  if (j < 1) {
+    continue;
+  } else {
+    i = i + 1;
+    if (j > 2) {
+      break;
+    } else {
+    }
+  }
+}
+i;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 21 2`] = `
+"let i = 1;
+for (let j = 0; j < 5; j = j + 1) {
+  if (j < 1) {
+    continue;
+  } else {
+    i = i + 1;
+    if (j > 2) {
+      break;
+    } else {
+    }
+  }
+}
+i;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 21 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "i",
+              "type": "Identifier",
+            },
+            "init": Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "body": Node {
+          "body": Array [
+            Node {
+              "alternate": Node {
+                "body": Array [
+                  Node {
+                    "expression": Node {
+                      "left": Node {
+                        "name": "i",
+                        "type": "Identifier",
+                      },
+                      "operator": "=",
+                      "right": Node {
+                        "left": Node {
+                          "name": "i",
+                          "type": "Identifier",
+                        },
+                        "operator": "+",
+                        "right": Node {
+                          "raw": "1",
+                          "type": "Literal",
+                          "value": 1,
+                        },
+                        "type": "BinaryExpression",
+                      },
+                      "type": "AssignmentExpression",
+                    },
+                    "type": "ExpressionStatement",
+                  },
+                  Node {
+                    "alternate": Node {
+                      "body": Array [],
+                      "type": "BlockStatement",
+                    },
+                    "consequent": Node {
+                      "body": Array [
+                        Node {
+                          "label": null,
+                          "type": "BreakStatement",
+                        },
+                      ],
+                      "type": "BlockStatement",
+                    },
+                    "test": Node {
+                      "left": Node {
+                        "name": "j",
+                        "type": "Identifier",
+                      },
+                      "operator": ">",
+                      "right": Node {
+                        "raw": "2",
+                        "type": "Literal",
+                        "value": 2,
+                      },
+                      "type": "BinaryExpression",
+                    },
+                    "type": "IfStatement",
+                  },
+                ],
+                "type": "BlockStatement",
+              },
+              "consequent": Node {
+                "body": Array [
+                  Node {
+                    "label": null,
+                    "type": "ContinueStatement",
+                  },
+                ],
+                "type": "BlockStatement",
+              },
+              "test": Node {
+                "left": Node {
+                  "name": "j",
+                  "type": "Identifier",
+                },
+                "operator": "<",
+                "right": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+                "type": "BinaryExpression",
+              },
+              "type": "IfStatement",
+            },
+          ],
+          "type": "BlockStatement",
+        },
+        "init": Node {
+          "declarations": Array [
+            Node {
+              "id": Node {
+                "name": "j",
+                "type": "Identifier",
+                "typeAnnotation": Node {
+                  "type": "TSTypeAnnotation",
+                  "typeAnnotation": Node {
+                    "type": "TSNumberKeyword",
+                  },
+                },
+              },
+              "init": Node {
+                "raw": "0",
+                "type": "Literal",
+                "value": 0,
+              },
+              "type": "VariableDeclarator",
+            },
+          ],
+          "kind": "let",
+          "type": "VariableDeclaration",
+        },
+        "test": Node {
+          "left": Node {
+            "name": "j",
+            "type": "Identifier",
+          },
+          "operator": "<",
+          "right": Node {
+            "raw": "5",
+            "type": "Literal",
+            "value": 5,
+          },
+          "type": "BinaryExpression",
+        },
+        "type": "ForStatement",
+        "update": Node {
+          "left": Node {
+            "name": "j",
+            "type": "Identifier",
+          },
+          "operator": "=",
+          "right": Node {
+            "left": Node {
+              "name": "j",
+              "type": "Identifier",
+            },
+            "operator": "+",
+            "right": Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            "type": "BinaryExpression",
+          },
+          "type": "AssignmentExpression",
+        },
+      },
+      Node {
+        "expression": Node {
+          "name": "i",
+          "type": "Identifier",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 21 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "body": Node {
+        "body": Array [
+          Node {
+            "alternate": Node {
+              "body": Array [
+                Node {
+                  "expression": Node {
+                    "left": Node {
+                      "name": "i",
+                      "type": "Identifier",
+                    },
+                    "operator": "=",
+                    "right": Node {
+                      "left": Node {
+                        "name": "i",
+                        "type": "Identifier",
+                      },
+                      "operator": "+",
+                      "right": Node {
+                        "raw": "1",
+                        "type": "Literal",
+                        "value": 1,
+                      },
+                      "type": "BinaryExpression",
+                    },
+                    "type": "AssignmentExpression",
+                  },
+                  "type": "ExpressionStatement",
+                },
+                Node {
+                  "alternate": Node {
+                    "body": Array [],
+                    "type": "BlockStatement",
+                  },
+                  "consequent": Node {
+                    "body": Array [
+                      Node {
+                        "label": null,
+                        "type": "BreakStatement",
+                      },
+                    ],
+                    "type": "BlockStatement",
+                  },
+                  "test": Node {
+                    "left": Node {
+                      "name": "j",
+                      "type": "Identifier",
+                    },
+                    "operator": ">",
+                    "right": Node {
+                      "raw": "2",
+                      "type": "Literal",
+                      "value": 2,
+                    },
+                    "type": "BinaryExpression",
+                  },
+                  "type": "IfStatement",
+                },
+              ],
+              "type": "BlockStatement",
+            },
+            "consequent": Node {
+              "body": Array [
+                Node {
+                  "label": null,
+                  "type": "ContinueStatement",
+                },
+              ],
+              "type": "BlockStatement",
+            },
+            "test": Node {
+              "left": Node {
+                "name": "j",
+                "type": "Identifier",
+              },
+              "operator": "<",
+              "right": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              "type": "BinaryExpression",
+            },
+            "type": "IfStatement",
+          },
+        ],
+        "type": "BlockStatement",
+      },
+      "init": Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "j",
+              "type": "Identifier",
+            },
+            "init": Node {
+              "raw": "0",
+              "type": "Literal",
+              "value": 0,
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      "test": Node {
+        "left": Node {
+          "name": "j",
+          "type": "Identifier",
+        },
+        "operator": "<",
+        "right": Node {
+          "raw": "5",
+          "type": "Literal",
+          "value": 5,
+        },
+        "type": "BinaryExpression",
+      },
+      "type": "ForStatement",
+      "update": Node {
+        "left": Node {
+          "name": "j",
+          "type": "Identifier",
+        },
+        "operator": "=",
+        "right": Node {
+          "left": Node {
+            "name": "j",
+            "type": "Identifier",
+          },
+          "operator": "+",
+          "right": Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "BinaryExpression",
+        },
+        "type": "AssignmentExpression",
+      },
+    },
+    Node {
+      "expression": Node {
+        "name": "i",
+        "type": "Identifier",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 22 1`] = `"[];"`;
+
+exports[`Typescript syntax is allowed at any chapter 22 2`] = `"[];"`;
+
+exports[`Typescript syntax is allowed at any chapter 22 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "elements": Array [],
+          "type": "ArrayExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 22 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "elements": Array [],
+        "type": "ArrayExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 23 1`] = `"[(1 as number), 2, (3 as const)];"`;
+
+exports[`Typescript syntax is allowed at any chapter 23 2`] = `"[1, 2, 3];"`;
+
+exports[`Typescript syntax is allowed at any chapter 23 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "elements": Array [
+            Node {
+              "expression": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              "extra": Object {
+                "parenStart": 1,
+                "parenthesized": true,
+              },
+              "type": "TSAsExpression",
+              "typeAnnotation": Node {
+                "type": "TSNumberKeyword",
+              },
+            },
+            Node {
+              "raw": "2",
+              "type": "Literal",
+              "value": 2,
+            },
+            Node {
+              "expression": Node {
+                "raw": "3",
+                "type": "Literal",
+                "value": 3,
+              },
+              "extra": Object {
+                "parenStart": 19,
+                "parenthesized": true,
+              },
+              "type": "TSAsExpression",
+              "typeAnnotation": Node {
+                "type": "TSTypeReference",
+                "typeName": Node {
+                  "name": "const",
+                  "type": "Identifier",
+                },
+              },
+            },
+          ],
+          "type": "ArrayExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 23 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "elements": Array [
+          Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          Node {
+            "raw": "2",
+            "type": "Literal",
+            "value": 2,
+          },
+          Node {
+            "raw": "3",
+            "type": "Literal",
+            "value": 3,
+          },
+        ],
+        "type": "ArrayExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 24 1`] = `"[1, 2, 3][1 as number];"`;
+
+exports[`Typescript syntax is allowed at any chapter 24 2`] = `"[1, 2, 3][1];"`;
+
+exports[`Typescript syntax is allowed at any chapter 24 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "computed": true,
+          "object": Node {
+            "elements": Array [
+              Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+              Node {
+                "raw": "3",
+                "type": "Literal",
+                "value": 3,
+              },
+            ],
+            "type": "ArrayExpression",
+          },
+          "optional": false,
+          "property": Node {
+            "expression": Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            "type": "TSAsExpression",
+            "typeAnnotation": Node {
+              "type": "TSNumberKeyword",
+            },
+          },
+          "type": "MemberExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 24 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "computed": true,
+        "object": Node {
+          "elements": Array [
+            Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            Node {
+              "raw": "2",
+              "type": "Literal",
+              "value": 2,
+            },
+            Node {
+              "raw": "3",
+              "type": "Literal",
+              "value": 3,
+            },
+          ],
+          "type": "ArrayExpression",
+        },
+        "property": Node {
+          "raw": "1",
+          "type": "Literal",
+          "value": 1,
+        },
+        "type": "MemberExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 25 1`] = `
+"let x: number[] = [1, 2, 3];
+x[1];"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 25 2`] = `
+"let x = [1, 2, 3];
+x[1];"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 25 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "x",
+              "type": "Identifier",
+              "typeAnnotation": Node {
+                "type": "TSTypeAnnotation",
+                "typeAnnotation": Node {
+                  "elementType": Node {
+                    "type": "TSNumberKeyword",
+                  },
+                  "type": "TSArrayType",
+                },
+              },
+            },
+            "init": Node {
+              "elements": Array [
+                Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+                Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+                Node {
+                  "raw": "3",
+                  "type": "Literal",
+                  "value": 3,
+                },
+              ],
+              "type": "ArrayExpression",
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "computed": true,
+          "object": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "optional": false,
+          "property": Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "MemberExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 25 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "elements": Array [
+              Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+              Node {
+                "raw": "3",
+                "type": "Literal",
+                "value": 3,
+              },
+            ],
+            "type": "ArrayExpression",
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "computed": true,
+        "object": Node {
+          "name": "x",
+          "type": "Identifier",
+        },
+        "property": Node {
+          "raw": "1",
+          "type": "Literal",
+          "value": 1,
+        },
+        "type": "MemberExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 26 1`] = `
+"let x: [1, 2, 3] = [1, 2, 3];
+x[1] = 4;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 26 2`] = `
+"let x = [1, 2, 3];
+x[1] = 4;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 26 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "x",
+              "type": "Identifier",
+              "typeAnnotation": Node {
+                "type": "TSTypeAnnotation",
+                "typeAnnotation": Node {
+                  "elementTypes": Array [
+                    Node {
+                      "literal": Node {
+                        "raw": "1",
+                        "type": "Literal",
+                        "value": 1,
+                      },
+                      "type": "TSLiteralType",
+                    },
+                    Node {
+                      "literal": Node {
+                        "raw": "2",
+                        "type": "Literal",
+                        "value": 2,
+                      },
+                      "type": "TSLiteralType",
+                    },
+                    Node {
+                      "literal": Node {
+                        "raw": "3",
+                        "type": "Literal",
+                        "value": 3,
+                      },
+                      "type": "TSLiteralType",
+                    },
+                  ],
+                  "type": "TSTupleType",
+                },
+              },
+            },
+            "init": Node {
+              "elements": Array [
+                Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+                Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+                Node {
+                  "raw": "3",
+                  "type": "Literal",
+                  "value": 3,
+                },
+              ],
+              "type": "ArrayExpression",
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "left": Node {
+            "computed": true,
+            "object": Node {
+              "name": "x",
+              "type": "Identifier",
+            },
+            "optional": false,
+            "property": Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            "type": "MemberExpression",
+          },
+          "operator": "=",
+          "right": Node {
+            "raw": "4",
+            "type": "Literal",
+            "value": 4,
+          },
+          "type": "AssignmentExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 26 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "elements": Array [
+              Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+              Node {
+                "raw": "3",
+                "type": "Literal",
+                "value": 3,
+              },
+            ],
+            "type": "ArrayExpression",
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "left": Node {
+          "computed": true,
+          "object": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "property": Node {
+            "raw": "1",
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "MemberExpression",
+        },
+        "operator": "=",
+        "right": Node {
+          "raw": "4",
+          "type": "Literal",
+          "value": 4,
+        },
+        "type": "AssignmentExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 27 1`] = `
+"let x = 3;
+let y: any = 4;
+let z: unknown = 5;
+x = y = z = 6;
+x;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 27 2`] = `
+"let x = 3;
+let y = 4;
+let z = 5;
+x = y = z = 6;
+x;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 27 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "x",
+              "type": "Identifier",
+            },
+            "init": Node {
+              "raw": "3",
+              "type": "Literal",
+              "value": 3,
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "y",
+              "type": "Identifier",
+              "typeAnnotation": Node {
+                "type": "TSTypeAnnotation",
+                "typeAnnotation": Node {
+                  "type": "TSAnyKeyword",
+                },
+              },
+            },
+            "init": Node {
+              "raw": "4",
+              "type": "Literal",
+              "value": 4,
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "z",
+              "type": "Identifier",
+              "typeAnnotation": Node {
+                "type": "TSTypeAnnotation",
+                "typeAnnotation": Node {
+                  "type": "TSUnknownKeyword",
+                },
+              },
+            },
+            "init": Node {
+              "raw": "5",
+              "type": "Literal",
+              "value": 5,
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "left": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "operator": "=",
+          "right": Node {
+            "left": Node {
+              "name": "y",
+              "type": "Identifier",
+            },
+            "operator": "=",
+            "right": Node {
+              "left": Node {
+                "name": "z",
+                "type": "Identifier",
+              },
+              "operator": "=",
+              "right": Node {
+                "raw": "6",
+                "type": "Literal",
+                "value": 6,
+              },
+              "type": "AssignmentExpression",
+            },
+            "type": "AssignmentExpression",
+          },
+          "type": "AssignmentExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+      Node {
+        "expression": Node {
+          "name": "x",
+          "type": "Identifier",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 27 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "3",
+            "type": "Literal",
+            "value": 3,
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "y",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "4",
+            "type": "Literal",
+            "value": 4,
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "z",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "5",
+            "type": "Literal",
+            "value": 5,
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "left": Node {
+          "name": "x",
+          "type": "Identifier",
+        },
+        "operator": "=",
+        "right": Node {
+          "left": Node {
+            "name": "y",
+            "type": "Identifier",
+          },
+          "operator": "=",
+          "right": Node {
+            "left": Node {
+              "name": "z",
+              "type": "Identifier",
+            },
+            "operator": "=",
+            "right": Node {
+              "raw": "6",
+              "type": "Literal",
+              "value": 6,
+            },
+            "type": "AssignmentExpression",
+          },
+          "type": "AssignmentExpression",
+        },
+        "type": "AssignmentExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+    Node {
+      "expression": Node {
+        "name": "x",
+        "type": "Identifier",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 28 1`] = `"({});"`;
+
+exports[`Typescript syntax is allowed at any chapter 28 2`] = `"({});"`;
+
+exports[`Typescript syntax is allowed at any chapter 28 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "extra": Object {
+            "parenStart": 0,
+            "parenthesized": true,
+          },
+          "properties": Array [],
+          "type": "ObjectExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 28 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "properties": Array [],
+        "type": "ObjectExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 29 1`] = `"({a: 1, b: 2});"`;
+
+exports[`Typescript syntax is allowed at any chapter 29 2`] = `"({ a: 1, b: 2 });"`;
+
+exports[`Typescript syntax is allowed at any chapter 29 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "extra": Object {
+            "parenStart": 0,
+            "parenthesized": true,
+          },
+          "properties": Array [
+            Node {
+              "computed": false,
+              "key": Node {
+                "name": "a",
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+            Node {
+              "computed": false,
+              "key": Node {
+                "name": "b",
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+            },
+          ],
+          "type": "ObjectExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 29 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "properties": Array [
+          Node {
+            "computed": false,
+            "key": Node {
+              "name": "a",
+              "type": "Identifier",
+            },
+            "kind": "init",
+            "method": false,
+            "shorthand": false,
+            "type": "Property",
+            "value": Node {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+          },
+          Node {
+            "computed": false,
+            "key": Node {
+              "name": "b",
+              "type": "Identifier",
+            },
+            "kind": "init",
+            "method": false,
+            "shorthand": false,
+            "type": "Property",
+            "value": Node {
+              "raw": "2",
+              "type": "Literal",
+              "value": 2,
+            },
+          },
+        ],
+        "type": "ObjectExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 30 1`] = `"({a: 1, b: 2})['a'];"`;
+
+exports[`Typescript syntax is allowed at any chapter 30 2`] = `"({ a: 1, b: 2 })['a'];"`;
+
+exports[`Typescript syntax is allowed at any chapter 30 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "computed": true,
+          "object": Node {
+            "extra": Object {
+              "parenStart": 0,
+              "parenthesized": true,
+            },
+            "properties": Array [
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "a",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+              },
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "b",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+              },
+            ],
+            "type": "ObjectExpression",
+          },
+          "optional": false,
+          "property": Node {
+            "raw": "'a'",
+            "type": "Literal",
+            "value": "a",
+          },
+          "type": "MemberExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 30 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "computed": true,
+        "object": Node {
+          "properties": Array [
+            Node {
+              "computed": false,
+              "key": Node {
+                "name": "a",
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+            Node {
+              "computed": false,
+              "key": Node {
+                "name": "b",
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+            },
+          ],
+          "type": "ObjectExpression",
+        },
+        "property": Node {
+          "raw": "'a'",
+          "type": "Literal",
+          "value": "a",
+        },
+        "type": "MemberExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 31 1`] = `"({a: 1, b: 2}).a;"`;
+
+exports[`Typescript syntax is allowed at any chapter 31 2`] = `"({ a: 1, b: 2 }).a;"`;
+
+exports[`Typescript syntax is allowed at any chapter 31 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "computed": false,
+          "object": Node {
+            "extra": Object {
+              "parenStart": 0,
+              "parenthesized": true,
+            },
+            "properties": Array [
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "a",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+              },
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "b",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+              },
+            ],
+            "type": "ObjectExpression",
+          },
+          "optional": false,
+          "property": Node {
+            "name": "a",
+            "type": "Identifier",
+          },
+          "type": "MemberExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 31 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "computed": false,
+        "object": Node {
+          "properties": Array [
+            Node {
+              "computed": false,
+              "key": Node {
+                "name": "a",
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+            Node {
+              "computed": false,
+              "key": Node {
+                "name": "b",
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+            },
+          ],
+          "type": "ObjectExpression",
+        },
+        "property": Node {
+          "name": "a",
+          "type": "Identifier",
+        },
+        "type": "MemberExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 32 1`] = `"({'a': 1, 'b': 2}).a;"`;
+
+exports[`Typescript syntax is allowed at any chapter 32 2`] = `"({ 'a': 1, 'b': 2 }).a;"`;
+
+exports[`Typescript syntax is allowed at any chapter 32 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "computed": false,
+          "object": Node {
+            "extra": Object {
+              "parenStart": 0,
+              "parenthesized": true,
+            },
+            "properties": Array [
+              Node {
+                "computed": false,
+                "key": Node {
+                  "raw": "'a'",
+                  "type": "Literal",
+                  "value": "a",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+              },
+              Node {
+                "computed": false,
+                "key": Node {
+                  "raw": "'b'",
+                  "type": "Literal",
+                  "value": "b",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+              },
+            ],
+            "type": "ObjectExpression",
+          },
+          "optional": false,
+          "property": Node {
+            "name": "a",
+            "type": "Identifier",
+          },
+          "type": "MemberExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 32 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "computed": false,
+        "object": Node {
+          "properties": Array [
+            Node {
+              "computed": false,
+              "key": Node {
+                "raw": "'a'",
+                "type": "Literal",
+                "value": "a",
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+            Node {
+              "computed": false,
+              "key": Node {
+                "raw": "'b'",
+                "type": "Literal",
+                "value": "b",
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+            },
+          ],
+          "type": "ObjectExpression",
+        },
+        "property": Node {
+          "name": "a",
+          "type": "Identifier",
+        },
+        "type": "MemberExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 33 1`] = `"({1: 1, 2: 2})['1'];"`;
+
+exports[`Typescript syntax is allowed at any chapter 33 2`] = `"({ 1: 1, 2: 2 })['1'];"`;
+
+exports[`Typescript syntax is allowed at any chapter 33 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "expression": Node {
+          "computed": true,
+          "object": Node {
+            "extra": Object {
+              "parenStart": 0,
+              "parenthesized": true,
+            },
+            "properties": Array [
+              Node {
+                "computed": false,
+                "key": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+              },
+              Node {
+                "computed": false,
+                "key": Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+              },
+            ],
+            "type": "ObjectExpression",
+          },
+          "optional": false,
+          "property": Node {
+            "raw": "'1'",
+            "type": "Literal",
+            "value": "1",
+          },
+          "type": "MemberExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 33 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "expression": Node {
+        "computed": true,
+        "object": Node {
+          "properties": Array [
+            Node {
+              "computed": false,
+              "key": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+            Node {
+              "computed": false,
+              "key": Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+            },
+          ],
+          "type": "ObjectExpression",
+        },
+        "property": Node {
+          "raw": "'1'",
+          "type": "Literal",
+          "value": "1",
+        },
+        "type": "MemberExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 34 1`] = `
+"const key = 'a';
+({a: 1, b: 2})[key];"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 34 2`] = `
+"const key = 'a';
+({ a: 1, b: 2 })[key];"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 34 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "key",
+              "type": "Identifier",
+            },
+            "init": Node {
+              "raw": "'a'",
+              "type": "Literal",
+              "value": "a",
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "const",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "computed": true,
+          "object": Node {
+            "extra": Object {
+              "parenStart": 17,
+              "parenthesized": true,
+            },
+            "properties": Array [
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "a",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+              },
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "b",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+              },
+            ],
+            "type": "ObjectExpression",
+          },
+          "optional": false,
+          "property": Node {
+            "name": "key",
+            "type": "Identifier",
+          },
+          "type": "MemberExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 34 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "key",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "'a'",
+            "type": "Literal",
+            "value": "a",
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "const",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "computed": true,
+        "object": Node {
+          "properties": Array [
+            Node {
+              "computed": false,
+              "key": Node {
+                "name": "a",
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+            },
+            Node {
+              "computed": false,
+              "key": Node {
+                "name": "b",
+                "type": "Identifier",
+              },
+              "kind": "init",
+              "method": false,
+              "shorthand": false,
+              "type": "Property",
+              "value": Node {
+                "raw": "2",
+                "type": "Literal",
+                "value": 2,
+              },
+            },
+          ],
+          "type": "ObjectExpression",
+        },
+        "property": Node {
+          "name": "key",
+          "type": "Identifier",
+        },
+        "type": "MemberExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 35 1`] = `
+"let x = {a: 1, b: 2};
+x.a = 3;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 35 2`] = `
+"let x = { a: 1, b: 2 };
+x.a = 3;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 35 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "x",
+              "type": "Identifier",
+            },
+            "init": Node {
+              "properties": Array [
+                Node {
+                  "computed": false,
+                  "key": Node {
+                    "name": "a",
+                    "type": "Identifier",
+                  },
+                  "kind": "init",
+                  "method": false,
+                  "shorthand": false,
+                  "type": "Property",
+                  "value": Node {
+                    "raw": "1",
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                },
+                Node {
+                  "computed": false,
+                  "key": Node {
+                    "name": "b",
+                    "type": "Identifier",
+                  },
+                  "kind": "init",
+                  "method": false,
+                  "shorthand": false,
+                  "type": "Property",
+                  "value": Node {
+                    "raw": "2",
+                    "type": "Literal",
+                    "value": 2,
+                  },
+                },
+              ],
+              "type": "ObjectExpression",
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "left": Node {
+            "computed": false,
+            "object": Node {
+              "name": "x",
+              "type": "Identifier",
+            },
+            "optional": false,
+            "property": Node {
+              "name": "a",
+              "type": "Identifier",
+            },
+            "type": "MemberExpression",
+          },
+          "operator": "=",
+          "right": Node {
+            "raw": "3",
+            "type": "Literal",
+            "value": 3,
+          },
+          "type": "AssignmentExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 35 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "properties": Array [
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "a",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+              },
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "b",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+              },
+            ],
+            "type": "ObjectExpression",
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "left": Node {
+          "computed": false,
+          "object": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "property": Node {
+            "name": "a",
+            "type": "Identifier",
+          },
+          "type": "MemberExpression",
+        },
+        "operator": "=",
+        "right": Node {
+          "raw": "3",
+          "type": "Literal",
+          "value": 3,
+        },
+        "type": "AssignmentExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 36 1`] = `
+"let x = {a: 1, b: 2};
+x['a'] = 3;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 36 2`] = `
+"let x = { a: 1, b: 2 };
+x['a'] = 3;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 36 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "x",
+              "type": "Identifier",
+            },
+            "init": Node {
+              "properties": Array [
+                Node {
+                  "computed": false,
+                  "key": Node {
+                    "name": "a",
+                    "type": "Identifier",
+                  },
+                  "kind": "init",
+                  "method": false,
+                  "shorthand": false,
+                  "type": "Property",
+                  "value": Node {
+                    "raw": "1",
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                },
+                Node {
+                  "computed": false,
+                  "key": Node {
+                    "name": "b",
+                    "type": "Identifier",
+                  },
+                  "kind": "init",
+                  "method": false,
+                  "shorthand": false,
+                  "type": "Property",
+                  "value": Node {
+                    "raw": "2",
+                    "type": "Literal",
+                    "value": 2,
+                  },
+                },
+              ],
+              "type": "ObjectExpression",
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "left": Node {
+            "computed": true,
+            "object": Node {
+              "name": "x",
+              "type": "Identifier",
+            },
+            "optional": false,
+            "property": Node {
+              "raw": "'a'",
+              "type": "Literal",
+              "value": "a",
+            },
+            "type": "MemberExpression",
+          },
+          "operator": "=",
+          "right": Node {
+            "raw": "3",
+            "type": "Literal",
+            "value": 3,
+          },
+          "type": "AssignmentExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 36 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "properties": Array [
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "a",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+              },
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "b",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+              },
+            ],
+            "type": "ObjectExpression",
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "left": Node {
+          "computed": true,
+          "object": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "property": Node {
+            "raw": "'a'",
+            "type": "Literal",
+            "value": "a",
+          },
+          "type": "MemberExpression",
+        },
+        "operator": "=",
+        "right": Node {
+          "raw": "3",
+          "type": "Literal",
+          "value": 3,
+        },
+        "type": "AssignmentExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 37 1`] = `
+"let x: object = {a: 1, b: 2};
+const key: string = 'a';
+x[key] = 3;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 37 2`] = `
+"let x = { a: 1, b: 2 };
+const key = 'a';
+x[key] = 3;"
+`;
+
+exports[`Typescript syntax is allowed at any chapter 37 3`] = `
+Node {
+  "comments": Array [],
+  "errors": Array [],
+  "program": Node {
+    "body": Array [
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "x",
+              "type": "Identifier",
+              "typeAnnotation": Node {
+                "type": "TSTypeAnnotation",
+                "typeAnnotation": Node {
+                  "type": "TSObjectKeyword",
+                },
+              },
+            },
+            "init": Node {
+              "properties": Array [
+                Node {
+                  "computed": false,
+                  "key": Node {
+                    "name": "a",
+                    "type": "Identifier",
+                  },
+                  "kind": "init",
+                  "method": false,
+                  "shorthand": false,
+                  "type": "Property",
+                  "value": Node {
+                    "raw": "1",
+                    "type": "Literal",
+                    "value": 1,
+                  },
+                },
+                Node {
+                  "computed": false,
+                  "key": Node {
+                    "name": "b",
+                    "type": "Identifier",
+                  },
+                  "kind": "init",
+                  "method": false,
+                  "shorthand": false,
+                  "type": "Property",
+                  "value": Node {
+                    "raw": "2",
+                    "type": "Literal",
+                    "value": 2,
+                  },
+                },
+              ],
+              "type": "ObjectExpression",
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "let",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "declarations": Array [
+          Node {
+            "id": Node {
+              "name": "key",
+              "type": "Identifier",
+              "typeAnnotation": Node {
+                "type": "TSTypeAnnotation",
+                "typeAnnotation": Node {
+                  "type": "TSStringKeyword",
+                },
+              },
+            },
+            "init": Node {
+              "raw": "'a'",
+              "type": "Literal",
+              "value": "a",
+            },
+            "type": "VariableDeclarator",
+          },
+        ],
+        "kind": "const",
+        "type": "VariableDeclaration",
+      },
+      Node {
+        "expression": Node {
+          "left": Node {
+            "computed": true,
+            "object": Node {
+              "name": "x",
+              "type": "Identifier",
+            },
+            "optional": false,
+            "property": Node {
+              "name": "key",
+              "type": "Identifier",
+            },
+            "type": "MemberExpression",
+          },
+          "operator": "=",
+          "right": Node {
+            "raw": "3",
+            "type": "Literal",
+            "value": 3,
+          },
+          "type": "AssignmentExpression",
+        },
+        "type": "ExpressionStatement",
+      },
+    ],
+    "interpreter": null,
+    "sourceType": "module",
+    "type": "Program",
+  },
+  "type": "File",
+}
+`;
+
+exports[`Typescript syntax is allowed at any chapter 37 4`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "properties": Array [
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "a",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "1",
+                  "type": "Literal",
+                  "value": 1,
+                },
+              },
+              Node {
+                "computed": false,
+                "key": Node {
+                  "name": "b",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": Node {
+                  "raw": "2",
+                  "type": "Literal",
+                  "value": 2,
+                },
+              },
+            ],
+            "type": "ObjectExpression",
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "let",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "id": Node {
+            "name": "key",
+            "type": "Identifier",
+          },
+          "init": Node {
+            "raw": "'a'",
+            "type": "Literal",
+            "value": "a",
+          },
+          "type": "VariableDeclarator",
+        },
+      ],
+      "kind": "const",
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "expression": Node {
+        "left": Node {
+          "computed": true,
+          "object": Node {
+            "name": "x",
+            "type": "Identifier",
+          },
+          "property": Node {
+            "name": "key",
+            "type": "Identifier",
+          },
+          "type": "MemberExpression",
+        },
+        "operator": "=",
+        "right": Node {
+          "raw": "3",
+          "type": "Literal",
+          "value": 3,
+        },
+        "type": "AssignmentExpression",
+      },
+      "type": "ExpressionStatement",
+    },
+  ],
+  "sourceType": "module",
+  "type": "Program",
+}
+`;

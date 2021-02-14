@@ -339,3 +339,46 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   expect(timeTaken).toBeGreaterThanOrEqual(timeout)
   return parseError(context.errors)
 }
+
+export function removeUndefined(obj: object | undefined): object | undefined {
+  const visited = new Set()
+  function _removeUndefined(obj: object | undefined): object | undefined {
+    if (visited.has(obj)) {
+      return obj
+    }
+    if (obj === undefined) {
+      return obj
+    }
+    Object.keys(obj).forEach(key => {
+      if (obj[key] === Object(obj[key])) {
+        _removeUndefined(obj[key])
+      } else if (obj[key] === undefined) {
+        delete obj[key]
+      }
+    })
+    return obj
+  }
+  return _removeUndefined(obj)
+}
+
+export function removeKeys(obj: object | undefined, keysToRemove: string[]): object | undefined {
+  const visited = new Set()
+  const _keysToRemove = new Set(keysToRemove)
+  function _removeKeys(obj: object | undefined): object | undefined {
+    if (visited.has(obj)) {
+      return obj
+    }
+    if (obj === undefined) {
+      return obj
+    }
+    Object.keys(obj).forEach(key => {
+      if (_keysToRemove.has(key)) {
+        delete obj[key]
+      } else if (obj[key] === Object(obj[key])) {
+        _removeKeys(obj[key])
+      }
+    })
+    return obj
+  }
+  return _removeKeys(obj)
+}

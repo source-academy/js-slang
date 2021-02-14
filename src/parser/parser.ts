@@ -7,6 +7,10 @@ import {
 } from 'acorn'
 import { parse as acornLooseParse } from 'acorn-loose'
 import { ancestor, AncestorWalkerFn } from '../utils/walkers'
+import { parse as babelParse } from '@babel/parser'
+import babelGenerate from '@babel/generator'
+import { transform as babelTransform } from '@babel/core'
+import { File as BabelFile } from '@babel/types'
 import * as es from 'estree'
 import { ACORN_PARSE_OPTIONS } from '../constants'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
@@ -158,6 +162,74 @@ const createAcornParserOptions = (context: Context): AcornOptions => ({
     )
   }
 })
+
+export function stripTypescript(source: string, context: Context) {
+  const stripped = babelTransform(source, {
+    sourceType: 'module',
+    ast: true,
+    plugins: ['@babel/plugin-transform-typescript']
+  })
+  const transformedSource = babelGenerate(stripped!.ast!, {
+    retainLines: true,
+    retainFunctionParens: true,
+    comments: true
+  }).code
+  return transformedSource
+}
+
+export function parseTypescriptAsSource(source: string, context: Context) {
+  try {
+    const transformedSource: string = stripTypescript(source, context)
+    const program: es.Program | undefined = parse(transformedSource, context)
+    const hasErrors = context.errors.find(m => m.severity === ErrorSeverity.ERROR)
+    if (program && !hasErrors) {
+      return program
+    } else {
+      return undefined
+    }
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      // tslint:disable-next-line:no-any
+      const loc = (error as any).loc
+      const location = {
+        start: { line: loc.line, column: loc.column },
+        end: { line: loc.line, column: loc.column + 1 }
+      }
+      context.errors.push(new FatalSyntaxError(location, error.toString()))
+      return undefined
+    } else {
+      throw error
+    }
+  }
+}
+
+export function parseTypescript(source: string, context: Context) {
+  try {
+    const parsedFile: BabelFile | undefined = babelParse(source, {
+      sourceType: 'module',
+      plugins: ['estree', 'typescript']
+    })
+    const hasErrors = context.errors.find(m => m.severity === ErrorSeverity.ERROR)
+    if (parsedFile && !hasErrors) {
+      return parsedFile
+    } else {
+      return undefined
+    }
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      // tslint:disable-next-line:no-any
+      const loc = (error as any).loc
+      const location = {
+        start: { line: loc.line, column: loc.column },
+        end: { line: loc.line, column: loc.column + 1 }
+      }
+      context.errors.push(new FatalSyntaxError(location, error.toString()))
+      return undefined
+    } else {
+      throw error
+    }
+  }
+}
 
 // Names-extractor needs comments
 export function parseForNames(source: string): [es.Program, acorn.Comment[]] {
