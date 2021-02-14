@@ -27,7 +27,7 @@ test('Load a valid module', () => {
   })
 })
 
-test.skip('Try loading a non-existing module', () => {
+test('Try loading a non-existing module', () => {
   const moduleName = '_non_existing_dir/_non_existing_file'
   expect(() => loadModuleText(moduleName)).toThrow(ModuleNotFound)
 })

@@ -48,6 +48,7 @@ import { typeToString } from './utils/stringify'
 import { forceIt } from './utils/operators'
 import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 import { TimeoutError } from './errors/timeoutErrors'
+import { loadModule } from './modules/moduleLoader'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -380,6 +381,16 @@ export function getTypeInformation(
   }
 }
 
+function appendModulesToContext(program: Program, context: Context): void {
+  if (context.sideContentComponents == null) context.sideContentComponents = []
+  for (const node of program.body) {
+    if (node.type !== 'ImportDeclaration') break
+    // TODO: remove the force string type and handle errors caused by other types
+    const moduleName = (node.source.value as string).trim()
+    context.sideContentComponents.push(loadModule(moduleName, context))
+  }
+}
+
 export async function runInContext(
   code: string,
   context: Context,
@@ -408,6 +419,9 @@ export async function runInContext(
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
+
+  appendModulesToContext(program, context)
+
   if (context.variant === 'concurrent') {
     if (previousCode === code) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
@@ -418,8 +432,9 @@ export async function runInContext(
     try {
       return Promise.resolve({
         status: 'finished',
+        context,
         value: runWithProgram(compileForConcurrent(program, context), context)
-      } as Result)
+      })
     } catch (error) {
       if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
         context.errors.push(error) // use ExceptionErrors for non Source Errors
@@ -442,8 +457,9 @@ export async function runInContext(
     }
     return Promise.resolve({
       status: 'finished',
+      context,
       value: redexedSteps
-    } as Result)
+    })
   }
   if (context.chapter <= 2) {
     addInfiniteLoopProtection(program, context.chapter === 2)
@@ -492,8 +508,9 @@ export async function runInContext(
       }
       return Promise.resolve({
         status: 'finished',
+        context,
         value
-      } as Result)
+      })
     } catch (error) {
       if (error instanceof RuntimeSourceError) {
         context.errors.push(error)

@@ -712,6 +712,7 @@ export function transpile(
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
+
   const modulePrefix = prefixModule(program)
   transformImportDeclarations(program)
   const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(

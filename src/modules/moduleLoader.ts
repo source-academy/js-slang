@@ -27,7 +27,8 @@ export function loadModule(path: string, context: Context, moduleText?: string) 
     }
     // tslint:disable-next-line:no-eval
     const moduleLib = eval(moduleText)
-    return moduleLib({ runes: {}, ...context.moduleParams })
+    const moduleObject = moduleLib({ runes: {}, ...context.moduleParams })
+    return moduleObject
   } catch (_error) {
     throw new ModuleInternalError(path)
   }
