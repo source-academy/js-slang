@@ -152,7 +152,7 @@ export interface Context<T = any> {
   /**
    * The side content components to be displayed after the evaluation
    */
-  sideContentComponents?: any[]
+  modules?: any[]
 }
 
 export interface BlockFrame {

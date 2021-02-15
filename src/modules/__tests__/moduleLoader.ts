@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import { loadModuleText, loadModule } from '../moduleLoader'
+import { memoizedLoadModuleText, loadModule } from '../moduleLoader'
 import { ModuleNotFound, ModuleInternalError } from '../../errors/errors'
 import { stripIndent } from '../../utils/formatters'
 import { createEmptyContext } from '../../createContext'
@@ -29,7 +29,7 @@ test('Load a valid module', () => {
 
 test('Try loading a non-existing module', () => {
   const moduleName = '_non_existing_dir/_non_existing_file'
-  expect(() => loadModuleText(moduleName)).toThrow(ModuleNotFound)
+  expect(() => memoizedLoadModuleText(moduleName)).toThrow(ModuleNotFound)
 })
 
 test('Try executing a wrongly implemented module', () => {

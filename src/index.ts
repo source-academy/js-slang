@@ -382,12 +382,12 @@ export function getTypeInformation(
 }
 
 function appendModulesToContext(program: Program, context: Context): void {
-  if (context.sideContentComponents == null) context.sideContentComponents = []
+  if (context.modules == null) context.modules = []
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') break
     // TODO: remove the force string type and handle errors caused by other types
     const moduleName = (node.source.value as string).trim()
-    context.sideContentComponents.push(loadModule(moduleName, context))
+    context.modules.push(loadModule(moduleName, context))
   }
 }
 
@@ -419,8 +419,6 @@ export async function runInContext(
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
-
-  appendModulesToContext(program, context)
 
   if (context.variant === 'concurrent') {
     if (previousCode === code) {
@@ -484,6 +482,7 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
+      appendModulesToContext(program, context)
       // Mutates program
       switch (context.variant) {
         case 'gpu':
