@@ -13,8 +13,20 @@ export function setBackendStaticURL(url: string) {
 function loadModuleText(path: string) {
   const scriptPath = `${BACKEND_STATIC_URL}/${path}.js`
   const req = new HttpRequest()
-  req.open('GET', scriptPath, false)
-  req.send(null)
+
+  try {
+    // Set the request timeout here to a random value of 10 seconds for modules
+    // that cannot be found
+    req.timeout = 10000
+    req.open('GET', scriptPath, false)
+    req.send(null)
+  } catch (error) {
+    // Catch DOMException thrown by request when module path is not found and
+    // request timesout (For jsdom environment)
+    // For node environment, the request doesnt throw any errors...
+    if (!(error instanceof DOMException)) throw error
+  }
+
   if (req.status !== 200 && req.status !== 304) {
     throw new ModuleNotFound(path)
   }

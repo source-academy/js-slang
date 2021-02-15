@@ -1,7 +1,3 @@
-/**
- * @jest-environment node
- */
-
 import { memoizedLoadModuleText, loadModule } from '../moduleLoader'
 import { ModuleNotFound, ModuleInternalError } from '../../errors/errors'
 import { stripIndent } from '../../utils/formatters'
