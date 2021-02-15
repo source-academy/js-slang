@@ -17,6 +17,8 @@ import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 import { stripIndent } from '../utils/formatters'
 import rules from './rules'
 import syntaxBlacklist from './syntaxBlacklist'
+import { Linter } from 'eslint'
+import * as typescriptEslintParser from '@typescript-eslint/parser'
 
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -113,7 +115,26 @@ export function parseAt(source: string, num: number) {
   return theNode
 }
 
+const linter = new Linter()
+linter.defineParser('@typescript-eslint/parser', typescriptEslintParser as any)
+
+export function checkFormatting(source: string) {
+  return linter.verify(source, {
+    parser: '@typescript-eslint/parser',
+    parserOptions: {
+      ecmaVersion: 6
+    },
+    rules: {
+      'no-extra-semi': "error",
+      'semi': "error",
+      'no-restricted-syntax': ["error", "TSInterfaceDeclaration"],
+      'comma-dangle': "error"
+    }
+  })
+}
+
 export function parse(source: string, context: Context) {
+  return parseTypescriptAsSource(source, context)
   let program: es.Program | undefined
   try {
     program = (acornParse(source, createAcornParserOptions(context)) as unknown) as es.Program
@@ -163,11 +184,16 @@ const createAcornParserOptions = (context: Context): AcornOptions => ({
   }
 })
 
-export function stripTypescript(source: string, context: Context) {
+export function stripTypescript(source: string) {
   const stripped = babelTransform(source, {
     sourceType: 'module',
     ast: true,
-    plugins: ['@babel/plugin-transform-typescript']
+    highlightCode: false,
+    plugins: [
+      ['@babel/plugin-transform-typescript', {
+        onlyRemoveTypeImports: true
+      }]
+    ]
   })
   const transformedSource = babelGenerate(stripped!.ast!, {
     retainLines: true,
@@ -179,8 +205,42 @@ export function stripTypescript(source: string, context: Context) {
 
 export function parseTypescriptAsSource(source: string, context: Context) {
   try {
-    const transformedSource: string = stripTypescript(source, context)
-    const program: es.Program | undefined = parse(transformedSource, context)
+    const transformedSource: string = stripTypescript(source)
+    const program: es.Program = (acornParse(transformedSource, createAcornParserOptions(context)) as unknown) as es.Program
+    const formattingErrors = checkFormatting(source)
+    if (formattingErrors.length > 0) {
+      for (const lintMessage of formattingErrors) {
+        const loc = ({
+          start: {
+            line: lintMessage.line,
+            column: lintMessage.column
+          },
+          end: {
+            line: lintMessage.endLine || lintMessage.line,
+            column: lintMessage.endColumn || lintMessage.column
+          }
+        })
+        if (lintMessage.ruleId === 'semi') {
+          context.errors.push(new MissingSemicolonError(loc))
+        } else if (lintMessage.ruleId === 'comma-dangle') {
+          context.errors.push(new TrailingCommaError(loc))
+        } else if (lintMessage.ruleId === 'no-extra-semi') {
+          // context.errors.push(new DisallowedConstructError({
+          //   "type": "EmptyStatement",
+          //   loc
+          // }))
+        } else if (lintMessage.ruleId === 'no-restricted-syntax') {
+          context.errors.push(new FatalSyntaxError(loc,
+            "SyntaxError: The keyword 'interface' is reserved (" + lintMessage.line + ':' + lintMessage.column + ')'
+          ))
+        } else {
+          context.errors.push(new FatalSyntaxError(loc,
+            "UNKNOWN ERROR: " + lintMessage.ruleId
+          ))
+        }
+      }
+    }
+    ancestor(program as es.Node, walkers, undefined, context)
     const hasErrors = context.errors.find(m => m.severity === ErrorSeverity.ERROR)
     if (program && !hasErrors) {
       return program
@@ -195,7 +255,9 @@ export function parseTypescriptAsSource(source: string, context: Context) {
         start: { line: loc.line, column: loc.column },
         end: { line: loc.line, column: loc.column + 1 }
       }
-      context.errors.push(new FatalSyntaxError(location, error.toString()))
+      const errorMessage = error.toString()
+      const errorMessageWithoutFilename = errorMessage.replace('SyntaxError: unknown:', 'SyntaxError:')
+      context.errors.push(new FatalSyntaxError(location, errorMessageWithoutFilename))
       return undefined
     } else {
       throw error

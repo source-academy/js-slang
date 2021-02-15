@@ -129,7 +129,7 @@ describe('type checking pairs and lists', () => {
         (boolean, T0) -> T0, number, List<boolean>"
     `)
     expect(parseError(errors, true)).toMatchInlineSnapshot(`
-      "Line 8, Column 16: A type mismatch was detected in the function call:
+      "Line 8, Column 10: A type mismatch was detected in the function call:
         accumulate((x, ...  y) => x || y, 0, ys)
       The function expected 3 arguments of types:
         (number, number) -> number, number, List<number>
@@ -172,7 +172,7 @@ describe('type checking functions', () => {
       `"Line 3: foo contains cyclic reference to itself"`
     )
     expect(parseError(errors, true)).toMatchInlineSnapshot(`
-      "Line 3, Column 15: foo contains cyclic reference to itself
+      "Line 3, Column 9: foo contains cyclic reference to itself
       foo contains cyclic reference to itself
       "
     `)
@@ -215,16 +215,16 @@ describe('type checking functions', () => {
     `)
 
     expect(parseError(errors, true)).toMatchInlineSnapshot(`
-      "Line 3, Column 45: Function expected 1 args, but got 2
+      "Line 3, Column 38: Function expected 1 args, but got 2
       Function expected 1 args, but got 2
 
-      Line 6, Column 6: Function expected 1 args, but got 2
+      Line 6, Column 0: Function expected 1 args, but got 2
       Function expected 1 args, but got 2
 
-      Line 7, Column 6: Function expected 1 args, but got 3
+      Line 7, Column 0: Function expected 1 args, but got 3
       Function expected 1 args, but got 3
 
-      Line 8, Column 6: Function expected 0 args, but got 1
+      Line 8, Column 0: Function expected 0 args, but got 1
       Function expected 0 args, but got 1
       "
     `)

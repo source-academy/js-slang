@@ -22,7 +22,7 @@ test('Cannot leave blank init in for loop - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing init expression in for statement.
+            "Line 2, Column 0: Missing init expression in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
             "
           `)
@@ -49,7 +49,7 @@ test('Cannot leave blank test in for loop - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing test expression in for statement.
+            "Line 2, Column 0: Missing test expression in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
             "
           `)
@@ -76,7 +76,7 @@ test('Cannot leave blank update in for loop - verbose', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 3: Missing update expression in for statement.
+            "Line 2, Column 0: Missing update expression in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
             "
           `)
@@ -103,7 +103,7 @@ test('Cannot leave blank expressions in for loop - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing init, test, update expressions in for statement.
+            "Line 2, Column 0: Missing init, test, update expressions in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
             "
           `)
@@ -117,7 +117,14 @@ test('Cannot leave while loop predicate blank', () => {
   }
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: SyntaxError: Unexpected token (1:6)"`)
+  ).toMatchInlineSnapshot(`
+            "Line 1: SyntaxError: Unexpected token (1:6)
+
+            > 1 | while() {
+                |       ^
+              2 |   x;
+              3 | }"
+          `)
 })
 
 test('Cannot leave while loop predicate blank - verbose', () => {
@@ -131,6 +138,12 @@ test('Cannot leave while loop predicate blank - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 7: SyntaxError: Unexpected token (2:7)
+
+              1 | \\"enable verbose\\";
+            > 2 |  while() {
+                |        ^
+              3 |    x;
+              4 |  }
             There is a syntax error in your program
             "
           `)
@@ -180,7 +193,7 @@ test('Cannot have incomplete statements - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing semicolon at the end of statement
+            "Line 2, Column 2: Missing semicolon at the end of statement
             Every statement must be terminated by a semicolon.
             "
           `)
@@ -203,7 +216,7 @@ test('Cannot have if without else - verbose', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing \\"else\\" in \\"if-else\\" statement.
+            "Line 2, Column 0: Missing \\"else\\" in \\"if-else\\" statement.
             This \\"if\\" block requires corresponding \\"else\\" block which will be
             evaluated when true expression evaluates to false.
 
@@ -286,7 +299,7 @@ test('no declaration without assignment - verbose', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 5: Missing value in variable declaration.
+            "Line 2, Column 4: Missing value in variable declaration.
             A variable declaration assigns a value to a name.
             For instance, to assign 20 to x, you can write:
 
@@ -314,7 +327,7 @@ test('no var statements - verbose', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Variable declaration using \\"var\\" is not allowed.
+            "Line 2, Column 0: Variable declaration using \\"var\\" is not allowed.
             Use keyword \\"let\\" instead, to declare a variable:
 
             	let x = 1;
@@ -343,7 +356,7 @@ test('Cannot use update statements - verbose', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 1: The assignment operator += is not allowed. Use = instead.
+            "Line 3, Column 0: The assignment operator += is not allowed. Use = instead.
 
             	x = x + 5;
             "
@@ -449,7 +462,7 @@ test('if needs braces - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing curly braces around \\"if\\" block.
+            "Line 2, Column 0: Missing curly braces around \\"if\\" block.
             if block need to be enclosed with a pair of curly braces.
 
             if (true) {
@@ -478,7 +491,7 @@ test('if needs braces - verbose', () => {
               hello();
             world();
 
-            Line 2, Column 1: Missing curly braces around \\"else\\" block.
+            Line 2, Column 0: Missing curly braces around \\"else\\" block.
             else block need to be enclosed with a pair of curly braces.
 
             else {
@@ -529,7 +542,7 @@ test('for needs braces - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing curly braces around \\"for\\" block.
+            "Line 2, Column 0: Missing curly braces around \\"for\\" block.
             Remember to enclose your \\"for\\" block with braces:
 
              	for (let i = 0; i < 1; i = i + 1) {
@@ -560,7 +573,7 @@ test('while needs braces - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 1: Missing curly braces around \\"while\\" block.
+            "Line 3, Column 0: Missing curly braces around \\"while\\" block.
             Remember to enclose your \\"while\\" block with braces:
 
              	while (i < 1) {
@@ -587,7 +600,7 @@ test('No empty statements - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 2: Empty statements are not allowed
+            "Line 2, Column 0: Empty statements are not allowed
             You are trying to use Empty statements, which is not allowed (yet).
             "
           `)
@@ -633,7 +646,7 @@ test('No trailing commas in arrays - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 2: Trailing comma
+            "Line 2, Column 3: Trailing comma
             Please remove the trailing comma
             "
           `)
@@ -674,7 +687,7 @@ test('No rest pattern - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 12: Rest elements are not allowed
+            "Line 2, Column 11: Rest elements are not allowed
             You are trying to use Rest elements, which is not allowed (yet).
             "
           `)
@@ -703,7 +716,7 @@ test('No spread operator - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 5, Column 3: Spread elements are not allowed
+            "Line 5, Column 2: Spread elements are not allowed
             You are trying to use Spread elements, which is not allowed (yet).
             "
           `)
@@ -744,13 +757,13 @@ test('no try statements - verbose', () => {
 	`,
     { chapter: 3 }
   ).toMatchInlineSnapshot(`
-            "Line 6, Column 2: Spread elements are not allowed
+            "Line 6, Column 4: Spread elements are not allowed
             You are trying to use Spread elements, which is not allowed (yet).
 
-            Line 7, Column 3: Catch clauses are not allowed
+            Line 7, Column 2: Catch clauses are not allowed
             You are trying to use Catch clauses, which is not allowed (yet).
 
-            Line 5, Column 1: Try statements are not allowed
+            Line 5, Column 0: Try statements are not allowed
             You are trying to use Try statements, which is not allowed (yet).
             "
           `)
@@ -778,7 +791,7 @@ test('no for of loops - verbose', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 12: Missing value in variable declaration.
+            "Line 2, Column 9: Missing value in variable declaration.
             A variable declaration assigns a value to a name.
             For instance, to assign 20 to i, you can write:
 
@@ -786,7 +799,7 @@ test('no for of loops - verbose', () => {
 
               i + i; // 40
 
-            Line 2, Column 3: For of statements are not allowed
+            Line 2, Column 0: For of statements are not allowed
             You are trying to use For of statements, which is not allowed (yet).
             "
           `)
@@ -851,7 +864,7 @@ test('no generator functions - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 0: Yield expressions are not allowed
+            "Line 3, Column 2: Yield expressions are not allowed
             You are trying to use Yield expressions, which is not allowed (yet).
             "
           `)
@@ -919,19 +932,19 @@ test('no super - verbose', () => {
 	`,
     { chapter: 5 }
   ).toMatchInlineSnapshot(`
-            "Line 4, Column 2: Supers are not allowed
+            "Line 4, Column 4: Supers are not allowed
             You are trying to use Supers, which is not allowed (yet).
 
-            Line 3, Column 11: Function expressions are not allowed
+            Line 3, Column 13: Function expressions are not allowed
             You are trying to use Function expressions, which is not allowed (yet).
 
-            Line 3, Column 0: Method definitions are not allowed
+            Line 3, Column 2: Method definitions are not allowed
             You are trying to use Method definitions, which is not allowed (yet).
 
-            Line 2, Column 30: Class bodys are not allowed
+            Line 2, Column 29: Class bodys are not allowed
             You are trying to use Class bodys, which is not allowed (yet).
 
-            Line 2, Column 1: Class declarations are not allowed
+            Line 2, Column 0: Class declarations are not allowed
             You are trying to use Class declarations, which is not allowed (yet).
             "
           `)
@@ -958,7 +971,7 @@ test('no export function - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Export named declarations are not allowed
+            "Line 2, Column 0: Export named declarations are not allowed
             You are trying to use Export named declarations, which is not allowed (yet).
             "
           `)
@@ -1029,7 +1042,7 @@ test('no sequence expression - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Sequence expressions are not allowed
+            "Line 2, Column 0: Sequence expressions are not allowed
             You are trying to use Sequence expressions, which is not allowed (yet).
             "
           `)
@@ -1042,7 +1055,7 @@ test('no interface', () => {
     }
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: SyntaxError: The keyword 'interface' is reserved (1:0)"`)
+  ).toMatchInlineSnapshot(`"Line 1: The keyword 'interface' is reserved (1:1)"`)
 })
 
 test('no interface - verbose', () => {
@@ -1054,7 +1067,7 @@ test('no interface - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 0: SyntaxError: The keyword 'interface' is reserved (2:0)
+            "Line 2, Column 1: The keyword 'interface' is reserved (2:1)
             There is a syntax error in your program
             "
           `)
@@ -1067,7 +1080,7 @@ test('no template literals - verbose', () => {
 	'hi'`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 5: Missing semicolon at the end of statement
+            "Line 3, Column 6: Missing semicolon at the end of statement
             Every statement must be terminated by a semicolon.
             "
           `)
@@ -1087,10 +1100,10 @@ test('no regexp - verbose', () => {
 	/pattern/`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 10: Missing semicolon at the end of statement
+            "Line 3, Column 11: Missing semicolon at the end of statement
             Every statement must be terminated by a semicolon.
 
-            Line 3, Column 1: 'RegExp' literals are not allowed.
+            Line 3, Column 0: 'RegExp' literals are not allowed.
 
             "
           `)
@@ -1119,7 +1132,7 @@ test('no this, no new - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 0: Expected string as prop, got number.
+            "Line 3, Column 2: Expected string as prop, got number.
             Expected string as prop, got number.
             "
           `)
@@ -1193,7 +1206,7 @@ test('no implicit undefined return - verbose', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 5: Missing value in return statement.
+            "Line 3, Column 2: Missing value in return statement.
             This return statement is missing a value.
             For instance, to return the value 42, you can write
 
@@ -1210,7 +1223,14 @@ test('no repeated params', () => {
     }
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: SyntaxError: Argument name clash (1:14)"`)
+  ).toMatchInlineSnapshot(`
+            "Line 1: SyntaxError: Argument name clash (1:14)
+
+            > 1 | function f(x, x) {
+                |               ^
+              2 |   return x;
+              3 | }"
+          `)
 })
 
 test('no repeated params - verbose', () => {
@@ -1224,6 +1244,12 @@ test('no repeated params - verbose', () => {
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 15: SyntaxError: Argument name clash (2:15)
+
+              1 | \\"enable verbose\\";
+            > 2 |  function f(x, x) {
+                |                ^
+              3 | return x;
+              4 |  }
             There is a syntax error in your program
             "
           `)
@@ -1269,7 +1295,7 @@ test('no assigning to reserved keywords - verbose', () => {
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 3: SyntaxError: The keyword 'package' is reserved (2:3)
+            "Line 2, Column 0: SyntaxError: The keyword 'package' is reserved (2:0)
             There is a syntax error in your program
             "
           `)

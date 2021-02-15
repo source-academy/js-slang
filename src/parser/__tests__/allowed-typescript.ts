@@ -1,5 +1,5 @@
 import { stripIndent } from '../../utils/formatters'
-import { parseTypescript, parseTypescriptAsSource, stripTypescript } from '../parser'
+import { parseTypescript, parseTypescriptAsSource, stripTypescript, checkFormatting } from '../parser'
 import { createTestContext, removeUndefined, removeKeys } from '../../utils/testing'
 
 test.each([
@@ -346,11 +346,13 @@ test.each([
     const sourceSource = stripTypescript(snippet, context)
     const typescriptProgram = parseTypescript(snippet, context)
     const sourceProgram = parseTypescriptAsSource(snippet, context)
+    const cleanedTypescriptProgram = removeKeys(removeUndefined(typescriptProgram), ['loc', 'end', 'start'])
+    const cleanedSourceProgram = removeKeys(removeUndefined(sourceProgram), ['loc', 'end', 'start'])
+    const lintResult = checkFormatting(snippet)
     expect(snippet).toMatchSnapshot()
     expect(sourceSource).toMatchSnapshot()
-    expect(
-      removeKeys(removeUndefined(typescriptProgram), ['loc', 'end', 'start'])
-    ).toMatchSnapshot()
-    expect(removeKeys(removeUndefined(sourceProgram), ['loc', 'end', 'start'])).toMatchSnapshot()
+    expect(cleanedTypescriptProgram).toMatchSnapshot()
+    expect(cleanedSourceProgram).toMatchSnapshot()
+    expect(lintResult).toMatchSnapshot()
   }
 )

@@ -7,7 +7,12 @@ test('Blatant syntax error', () => {
     stringify(parse("'"), undefined, 2);
   `,
     { chapter: 4 }
-  ).toMatchInlineSnapshot(`"Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)"`)
+  ).toMatchInlineSnapshot(`
+            "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)
+
+            > 1 | '
+                | ^"
+          `)
 })
 
 test('Blacklisted syntax', () => {
