@@ -77,7 +77,7 @@ export function transformImportDeclarations(program: es.Program) {
   let result: es.VariableDeclaration[] = []
   let moduleCounter = 0
   while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
-    imports.unshift(program.body.shift() as es.ImportDeclaration)
+    imports.push(program.body.shift() as es.ImportDeclaration)
   }
   for (const node of imports) {
     result = transformSingleImportDeclaration(moduleCounter, node).concat(result)

@@ -40,11 +40,231 @@ type irreducibleNodes =
   | es.Literal
   | es.ArrayExpression
 
+function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Identifier[] {
+  const declaredIds: es.Identifier[] = []
+  for (const stmt of node.body) {
+    // if stmt is assignment or functionDeclaration
+    // add stmt into a set of identifiers
+    // return that set
+    if (stmt.type === 'VariableDeclaration') {
+      stmt.declarations
+        .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
+        .forEach(name => declaredIds.push(name))
+    } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
+      declaredIds.push(stmt.id)
+    }
+  }
+  return declaredIds
+}
+
+function findMain(target: es.FunctionExpression | es.ArrowFunctionExpression): string[] {
+  const params: string[] = []
+  if (target.type == 'FunctionExpression') {
+    params.push(target.id!.name)
+  }
+  for (let i = 0; i < target.params.length; i++) {
+    params.push((target.params[i] as es.Identifier).name)
+  }
+
+  const freeNames: any[] = []
+  const seenBefore: Map<substituterNodes, substituterNodes> = new Map()
+
+  const finders = {
+    Identifier(target: es.Identifier): void {
+      seenBefore.set(target, target)
+      let bound = false
+      for (let i = 0; i < params.length; i++) {
+        if (target.name == params[i]) {
+          bound = true
+          break
+        }
+      }
+      if (!bound) {
+        freeNames.push(target.name)
+      }
+    },
+
+    ExpressionStatement(target: es.ExpressionStatement): void {
+      seenBefore.set(target, target)
+      find(target.expression)
+    },
+
+    BinaryExpression(target: es.BinaryExpression): void {
+      seenBefore.set(target, target)
+      find(target.left)
+      find(target.right)
+    },
+
+    UnaryExpression(target: es.UnaryExpression): void {
+      seenBefore.set(target, target)
+      find(target.argument)
+    },
+
+    ConditionalExpression(target: es.ConditionalExpression): void {
+      seenBefore.set(target, target)
+      find(target.test)
+      find(target.consequent)
+      find(target.alternate)
+    },
+
+    LogicalExpression(target: es.LogicalExpression): void {
+      seenBefore.set(target, target)
+      find(target.left)
+      find(target.right)
+    },
+
+    CallExpression(target: es.CallExpression): void {
+      seenBefore.set(target, target)
+      for (let i = 0; i < target.arguments.length; i++) {
+        find(target.arguments[i])
+      }
+      find(target.callee)
+    },
+
+    // FunctionDeclaration(target: es.FunctionDeclaration, index: number): es.FunctionDeclaration {
+    //   const substedFunctionDeclaration = ast.functionDeclaration(
+    //     target.id,
+    //     target.params,
+    //     dummyBlockStatement()
+    //   )
+    //   seenBefore.set(target, substedFunctionDeclaration)
+    //   // check for free/bounded variable
+    //   for (const param of target.params) {
+    //     if (param.type === 'Identifier' && param.name === name.name) {
+    //       substedFunctionDeclaration.body = target.body
+    //       return substedFunctionDeclaration
+    //     }
+    //   }
+    //   if (pathNotEnded(index)) {
+    //     allPaths[index].push('body')
+    //   }
+    //   substedFunctionDeclaration.body = substitute(target.body, index) as es.BlockStatement
+    //   return substedFunctionDeclaration
+    // },
+
+    // FunctionExpression(target: es.FunctionExpression, index: number): es.FunctionExpression {
+    //   const substedFunctionExpression = target.id
+    //     ? ast.functionDeclarationExpression(target.id, target.params, dummyBlockStatement())
+    //     : ast.functionExpression(target.params as es.Identifier[], dummyBlockStatement())
+    //   seenBefore.set(target, substedFunctionExpression)
+    //   // check for free/bounded variable
+    //   for (const param of target.params) {
+    //     if (param.type === 'Identifier' && param.name === name.name) {
+    //       substedFunctionExpression.body = target.body
+    //       return substedFunctionExpression
+    //     }
+    //   }
+    //   if (pathNotEnded(index)) {
+    //     allPaths[index].push('body')
+    //   }
+    //   substedFunctionExpression.body = substitute(target.body, index) as es.BlockStatement
+    //   return substedFunctionExpression
+    // },
+
+    Program(target: es.Program): void {
+      seenBefore.set(target, target)
+      target.body.forEach(stmt => {
+        find(stmt)
+      })
+    },
+
+    BlockStatement(target: es.BlockStatement): void {
+      seenBefore.set(target, target)
+      const declaredNames: Set<string> = getDeclaredNames(target)
+      for (const item of declaredNames.values()) {
+        params.push(item)
+      }
+      target.body.forEach(stmt => {
+        find(stmt)
+      })
+    },
+
+    BlockExpression(target: BlockExpression): void {
+      seenBefore.set(target, target)
+      const declaredNames: Set<string> = getDeclaredNames(target)
+      for (const item of declaredNames.values()) {
+        params.push(item)
+      }
+      target.body.forEach(stmt => {
+        find(stmt)
+      })
+    },
+
+    ReturnStatement(target: es.ReturnStatement): void {
+      seenBefore.set(target, target)
+      find(target.argument!)
+    },
+
+    // source 1
+    // ArrowFunctionExpression(
+    //   target: es.ArrowFunctionExpression,
+    //   index: number
+    // ): es.ArrowFunctionExpression {
+    //   const substedArrow = ast.arrowFunctionExpression(target.params, dummyBlockStatement())
+    //   seenBefore.set(target, substedArrow)
+    //   // check for free/bounded variable
+    //   for (const param of target.params) {
+    //     if (param.type === 'Identifier' && param.name === name.name) {
+    //       substedArrow.body = target.body
+    //       substedArrow.expression = target.body.type !== 'BlockStatement'
+    //       return substedArrow
+    //     }
+    //   }
+    //   if (pathNotEnded(index)) {
+    //     allPaths[index].push('body')
+    //   }
+    //   substedArrow.body = substitute(target.body, index) as es.BlockStatement | es.Expression
+    //   substedArrow.expression = target.body.type !== 'BlockStatement'
+    //   return substedArrow
+    // },
+
+    VariableDeclaration(target: es.VariableDeclaration): void {
+      seenBefore.set(target, target)
+      target.declarations.forEach(dec => {
+        find(dec)
+      })
+    },
+
+    VariableDeclarator(target: es.VariableDeclarator): void {
+      seenBefore.set(target, target)
+      find(target.init!)
+    },
+
+    IfStatement(target: es.IfStatement): void {
+      seenBefore.set(target, target)
+      find(target.test)
+      find(target.consequent)
+      find(target.alternate)
+    },
+
+    ArrayExpression(target: es.ArrayExpression): void {
+      seenBefore.set(target, target)
+      target.elements.forEach(ele => {
+        find(ele)
+      })
+    }
+  }
+
+  function find(target: any): void {
+    const result = seenBefore.get(target)
+    if (!result) {
+      const finder = finders[target.type]
+      if (finder === undefined) {
+        seenBefore.set(target, target)
+      } else {
+        return finder(target)
+      }
+    }
+  }
+  find(target.body)
+  return freeNames
+}
+
 /* tslint:disable:no-shadowed-variable */
 // wrapper function, calls substitute immediately.
 function substituteMain(
   name: es.Identifier,
-  replacement: irreducibleNodes,
+  replacement: irreducibleNodes | es.Pattern,
   target: substituterNodes,
   paths: string[][]
 ): [substituterNodes, string[][]] {
@@ -235,11 +455,29 @@ function substituteMain(
         dummyBlockStatement()
       )
       seenBefore.set(target, substedFunctionDeclaration)
-      // check for free/bounded variable
+      let freeNames: any[] = []
+      if (
+        replacement.type == 'FunctionExpression' ||
+        replacement.type == 'ArrowFunctionExpression'
+      ) {
+        freeNames = findMain(replacement)
+      }
       for (const param of target.params) {
         if (param.type === 'Identifier' && param.name === name.name) {
           substedFunctionDeclaration.body = target.body
           return substedFunctionDeclaration
+        }
+        if (param.type == 'Identifier') {
+          for (const freeVar of freeNames) {
+            if (param.name == freeVar) {
+              // change param name
+              const changed = ast.identifier(param.name + ' (param)', param.loc)
+              target.body = substituteMain(param, changed, target.body, [
+                []
+              ])[0] as es.BlockStatement
+              param.name = param.name + ' (param)'
+            }
+          }
         }
       }
       if (pathNotEnded(index)) {
@@ -254,11 +492,30 @@ function substituteMain(
         ? ast.functionDeclarationExpression(target.id, target.params, dummyBlockStatement())
         : ast.functionExpression(target.params as es.Identifier[], dummyBlockStatement())
       seenBefore.set(target, substedFunctionExpression)
-      // check for free/bounded variable
+      // check for free/bounded variable in replacement
+      let freeNames: any[] = []
+      if (
+        replacement.type == 'FunctionExpression' ||
+        replacement.type == 'ArrowFunctionExpression'
+      ) {
+        freeNames = findMain(replacement)
+      }
       for (const param of target.params) {
         if (param.type === 'Identifier' && param.name === name.name) {
           substedFunctionExpression.body = target.body
           return substedFunctionExpression
+        }
+        if (param.type == 'Identifier') {
+          for (const freeVar of freeNames) {
+            if (param.name == freeVar) {
+              // change param name
+              const changed = ast.identifier(param.name + ' (param)', param.loc)
+              target.body = substituteMain(param, changed, target.body, [
+                []
+              ])[0] as es.BlockStatement
+              param.name = param.name + ' (param)'
+            }
+          }
         }
       }
       if (pathNotEnded(index)) {
@@ -297,6 +554,22 @@ function substituteMain(
       const substedBlockStatement = ast.blockStatement(substedBody)
       seenBefore.set(target, substedBlockStatement)
       const declaredNames: Set<string> = getDeclaredNames(target)
+      if (
+        replacement.type == 'FunctionExpression' ||
+        replacement.type == 'ArrowFunctionExpression'
+      ) {
+        const declaredIds: es.Identifier[] = scanOutDeclarations(target)
+        const freeNames = findMain(replacement)
+        for (const freeName of freeNames) {
+          for (const declaredId of declaredIds) {
+            if (declaredId.name == freeName) {
+              const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
+              target = substituteMain(declaredId, changed, target, [[]])[0] as es.BlockStatement
+              declaredId.name = declaredId.name + ' (const)'
+            }
+          }
+        }
+      }
       if (declaredNames.has(name.name)) {
         substedBlockStatement.body = target.body
         return substedBlockStatement
@@ -327,6 +600,22 @@ function substituteMain(
       const substedBlockExpression = ast.blockExpression(substedBody)
       seenBefore.set(target, substedBlockExpression)
       const declaredNames: Set<string> = getDeclaredNames(target)
+      if (
+        replacement.type == 'FunctionExpression' ||
+        replacement.type == 'ArrowFunctionExpression'
+      ) {
+        const declaredIds: es.Identifier[] = scanOutDeclarations(target)
+        const freeNames = findMain(replacement)
+        for (const freeName of freeNames) {
+          for (const declaredId of declaredIds) {
+            if (declaredId.name == freeName) {
+              const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
+              target = substituteMain(declaredId, changed, target, [[]])[0] as BlockExpression
+              declaredId.name = declaredId.name + ' (const)'
+            }
+          }
+        }
+      }
       if (declaredNames.has(name.name)) {
         substedBlockExpression.body = target.body
         return substedBlockExpression
@@ -370,6 +659,32 @@ function substituteMain(
       const substedArrow = ast.arrowFunctionExpression(target.params, dummyBlockStatement())
       seenBefore.set(target, substedArrow)
       // check for free/bounded variable
+      let freeNames: any[] = []
+      if (
+        replacement.type == 'FunctionExpression' ||
+        replacement.type == 'ArrowFunctionExpression'
+      ) {
+        freeNames = findMain(replacement)
+      }
+      for (const param of target.params) {
+        if (param.type === 'Identifier' && param.name === name.name) {
+          substedArrow.body = target.body
+          substedArrow.expression = target.body.type !== 'BlockStatement'
+          return substedArrow
+        }
+        if (param.type == 'Identifier') {
+          for (const freeVar of freeNames) {
+            if (param.name == freeVar) {
+              // change param name
+              const changed = ast.identifier(param.name + ' (param)', param.loc)
+              target.body = substituteMain(param, changed, target.body, [
+                []
+              ])[0] as es.BlockStatement
+              param.name = param.name + ' (param)'
+            }
+          }
+        }
+      }
       for (const param of target.params) {
         if (param.type === 'Identifier' && param.name === name.name) {
           substedArrow.body = target.body
@@ -1050,7 +1365,6 @@ function reduceMain(
                 ? rhs.body
                 : ast.blockStatement([ast.returnStatement(rhs.body)])
             ) as FunctionDeclarationExpression
-            // substitute body
             funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
               []
             ])[0] as FunctionDeclarationExpression
@@ -1928,7 +2242,8 @@ function pathifyMain(
           body = pathify(target.body) as es.BlockStatement
         }
       }
-      return ast.arrowFunctionExpression(target.params, body)
+      //localhost:8000
+      http: return ast.arrowFunctionExpression(target.params, body)
     },
 
     VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
