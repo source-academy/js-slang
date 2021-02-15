@@ -85,11 +85,11 @@ eval_stream(make_alternating_stream(enum_stream(1, 9)), 9);",
       "error": [Error: head(xs) expects a pair as argument xs, but encountered null],
       "location": SourceLocation {
         "end": Position {
-          "column": 29,
+          "column": 27,
           "line": 8,
         },
         "start": Position {
-          "column": 17,
+          "column": 15,
           "line": 8,
         },
       },
@@ -123,7 +123,7 @@ const globals = native.globals;
           isTail: true,
           function: make_alternating_stream,
           functionName: \\"make_alternating_stream\\",
-          arguments: [callIfFuncAndRightArgs(negate_whole_stream, 3, 36, callIfFuncAndRightArgs(stream_tail, 4, 40, stream))],
+          arguments: [callIfFuncAndRightArgs(negate_whole_stream, 3, 2, callIfFuncAndRightArgs(stream_tail, 4, 2, stream))],
           line: 2,
           column: 34
         }), \\"() => make_alternating_stream(negate_whole_stream(stream_tail(stream)))\\", native)],
@@ -136,16 +136,16 @@ const globals = native.globals;
         isTail: true,
         function: pair,
         functionName: \\"pair\\",
-        arguments: [unaryOp(\\"-\\", callIfFuncAndRightArgs(head, 8, 17, stream), 8, 16), wrap(() => ({
+        arguments: [unaryOp(\\"-\\", callIfFuncAndRightArgs(head, 8, 15, stream), 8, 14), wrap(() => ({
           isTail: true,
           function: negate_whole_stream,
           functionName: \\"negate_whole_stream\\",
-          arguments: [callIfFuncAndRightArgs(stream_tail, 8, 57, stream)],
+          arguments: [callIfFuncAndRightArgs(stream_tail, 8, 55, stream)],
           line: 8,
-          column: 37
+          column: 35
         }), \\"() => negate_whole_stream(stream_tail(stream))\\", native)],
         line: 8,
-        column: 11
+        column: 9
       };
     }, \\"function negate_whole_stream(stream) {\\\\n  return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));\\\\n}\\", native);
     const ones = callIfFuncAndRightArgs(pair, 11, 13, 1, wrap(() => ({
@@ -544,11 +544,11 @@ Object {
       "got": 0,
       "location": SourceLocation {
         "end": Position {
-          "column": 5,
+          "column": 3,
           "line": 3,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 3,
         },
       },
@@ -556,7 +556,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 0.
+  "parsedErrors": "Line 3, Column 0: Expected 1 arguments, but got 0.
 Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
   "result": undefined,
@@ -640,11 +640,11 @@ Object {
       "got": 2,
       "location": SourceLocation {
         "end": Position {
-          "column": 9,
+          "column": 7,
           "line": 3,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 3,
         },
       },
@@ -652,7 +652,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
+  "parsedErrors": "Line 3, Column 0: Expected 1 arguments, but got 2.
 Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
   "result": undefined,
@@ -836,11 +836,11 @@ Object {
       "got": 2,
       "location": SourceLocation {
         "end": Position {
-          "column": 12,
+          "column": 10,
           "line": 3,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 3,
         },
       },
@@ -848,7 +848,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
+  "parsedErrors": "Line 3, Column 0: Expected 1 arguments, but got 2.
 Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
   "result": undefined,
@@ -934,11 +934,11 @@ Object {
       "got": 0,
       "location": SourceLocation {
         "end": Position {
-          "column": 5,
+          "column": 3,
           "line": 5,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 5,
         },
       },
@@ -946,7 +946,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 0.
+  "parsedErrors": "Line 5, Column 0: Expected 1 arguments, but got 0.
 Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
   "result": undefined,
@@ -1036,11 +1036,11 @@ Object {
       "got": 2,
       "location": SourceLocation {
         "end": Position {
-          "column": 9,
+          "column": 7,
           "line": 5,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 5,
         },
       },
@@ -1048,7 +1048,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 2.
+  "parsedErrors": "Line 5, Column 0: Expected 1 arguments, but got 2.
 Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
   "result": undefined,
@@ -1133,39 +1133,39 @@ Object {
       "callee": "string",
       "location": SourceLocation {
         "end": Position {
-          "column": 12,
+          "column": 10,
           "line": 2,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 2,
         },
       },
       "node": Node {
         "arguments": Array [],
         "callee": Node {
-          "end": 28,
+          "end": 26,
           "inferredType": Object {
             "kind": "primitive",
             "name": "string",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 10,
+              "column": 8,
               "line": 2,
             },
             "start": Position {
-              "column": 2,
+              "column": 0,
               "line": 2,
             },
           },
           "raw": "'string'",
-          "start": 20,
+          "start": 18,
           "typability": "Typed",
           "type": "Literal",
           "value": "string",
         },
-        "end": 30,
+        "end": 28,
         "inferredType": Object {
           "constraint": "none",
           "kind": "variable",
@@ -1173,15 +1173,15 @@ Object {
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 12,
+            "column": 10,
             "line": 2,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 20,
+        "start": 18,
         "typability": "Typed",
         "type": "CallExpression",
       },
@@ -1189,7 +1189,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value \\"string\\".
+  "parsedErrors": "Line 2, Column 0: Calling non-function value \\"string\\".
 Because \\"string\\" is not a function, you cannot run \\"string\\"().
 ",
   "result": undefined,
@@ -1301,39 +1301,39 @@ Object {
       "callee": 0,
       "location": SourceLocation {
         "end": Position {
-          "column": 5,
+          "column": 3,
           "line": 2,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 2,
         },
       },
       "node": Node {
         "arguments": Array [],
         "callee": Node {
-          "end": 21,
+          "end": 19,
           "inferredType": Object {
             "kind": "primitive",
             "name": "number",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 3,
+              "column": 1,
               "line": 2,
             },
             "start": Position {
-              "column": 2,
+              "column": 0,
               "line": 2,
             },
           },
           "raw": "0",
-          "start": 20,
+          "start": 18,
           "typability": "Typed",
           "type": "Literal",
           "value": 0,
         },
-        "end": 23,
+        "end": 21,
         "inferredType": Object {
           "constraint": "none",
           "kind": "variable",
@@ -1341,15 +1341,15 @@ Object {
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 5,
+            "column": 3,
             "line": 2,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 20,
+        "start": 18,
         "typability": "Typed",
         "type": "CallExpression",
       },
@@ -1357,7 +1357,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value 0.
+  "parsedErrors": "Line 2, Column 0: Calling non-function value 0.
 Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
 ",
   "result": undefined,
@@ -1689,19 +1689,19 @@ Object {
   "errors": Array [
     NoNullError {
       "node": Node {
-        "end": 24,
+        "end": 22,
         "loc": SourceLocation {
           "end": Position {
-            "column": 6,
+            "column": 4,
             "line": 2,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 2,
           },
         },
         "raw": "null",
-        "start": 20,
+        "start": 18,
         "type": "Literal",
         "value": null,
       },
@@ -1709,7 +1709,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: null literals are not allowed.
+  "parsedErrors": "Line 2, Column 0: null literals are not allowed.
 They're not part of the Source §1 specs.
 ",
   "result": undefined,
@@ -1766,7 +1766,7 @@ Object {
       },
       "location": SourceLocation {
         "end": Position {
-          "column": 10,
+          "column": 12,
           "line": 2,
         },
         "start": Position {
@@ -1777,14 +1777,14 @@ Object {
       "node": Node {
         "arguments": Array [],
         "callee": Node {
-          "end": 25,
+          "end": 27,
           "inferredType": Object {
             "kind": "primitive",
             "name": "undefined",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 7,
+              "column": 9,
               "line": 2,
             },
             "start": Position {
@@ -1795,52 +1795,52 @@ Object {
           "properties": Array [
             Node {
               "computed": false,
-              "end": 24,
+              "end": 25,
               "key": Node {
-                "end": 21,
+                "end": 22,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 3,
+                    "column": 4,
                     "line": 2,
                   },
                   "start": Position {
-                    "column": 2,
+                    "column": 3,
                     "line": 2,
                   },
                 },
                 "name": "a",
-                "start": 20,
+                "start": 21,
                 "type": "Identifier",
               },
               "kind": "init",
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 7,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 3,
                   "line": 2,
                 },
               },
               "method": false,
               "shorthand": false,
-              "start": 20,
+              "start": 21,
               "type": "Property",
               "value": Node {
-                "end": 24,
+                "end": 25,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 6,
+                    "column": 7,
                     "line": 2,
                   },
                   "start": Position {
-                    "column": 5,
+                    "column": 6,
                     "line": 2,
                   },
                 },
                 "raw": "1",
-                "start": 23,
+                "start": 24,
                 "type": "Literal",
                 "value": 1,
               },
@@ -1850,7 +1850,7 @@ Object {
           "typability": "Typed",
           "type": "ObjectExpression",
         },
-        "end": 28,
+        "end": 30,
         "inferredType": Object {
           "constraint": "none",
           "kind": "variable",
@@ -1858,7 +1858,7 @@ Object {
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 10,
+            "column": 12,
             "line": 2,
           },
           "start": Position {
@@ -1896,7 +1896,7 @@ Object {
       },
       "location": SourceLocation {
         "end": Position {
-          "column": 10,
+          "column": 12,
           "line": 2,
         },
         "start": Position {
@@ -1907,14 +1907,14 @@ Object {
       "node": Node {
         "arguments": Array [],
         "callee": Node {
-          "end": 25,
+          "end": 27,
           "inferredType": Object {
             "kind": "primitive",
             "name": "undefined",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 7,
+              "column": 9,
               "line": 2,
             },
             "start": Position {
@@ -1925,52 +1925,52 @@ Object {
           "properties": Array [
             Node {
               "computed": false,
-              "end": 24,
+              "end": 25,
               "key": Node {
-                "end": 21,
+                "end": 22,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 3,
+                    "column": 4,
                     "line": 2,
                   },
                   "start": Position {
-                    "column": 2,
+                    "column": 3,
                     "line": 2,
                   },
                 },
                 "name": "a",
-                "start": 20,
+                "start": 21,
                 "type": "Identifier",
               },
               "kind": "init",
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 7,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 3,
                   "line": 2,
                 },
               },
               "method": false,
               "shorthand": false,
-              "start": 20,
+              "start": 21,
               "type": "Property",
               "value": Node {
-                "end": 24,
+                "end": 25,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 6,
+                    "column": 7,
                     "line": 2,
                   },
                   "start": Position {
-                    "column": 5,
+                    "column": 6,
                     "line": 2,
                   },
                 },
                 "raw": "1",
-                "start": 23,
+                "start": 24,
                 "type": "Literal",
                 "value": 1,
               },
@@ -1980,7 +1980,7 @@ Object {
           "typability": "Typed",
           "type": "ObjectExpression",
         },
-        "end": 28,
+        "end": 30,
         "inferredType": Object {
           "constraint": "none",
           "kind": "variable",
@@ -1988,7 +1988,7 @@ Object {
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 10,
+            "column": 12,
             "line": 2,
           },
           "start": Position {
@@ -2025,7 +2025,7 @@ Object {
       },
       "location": SourceLocation {
         "end": Position {
-          "column": 10,
+          "column": 12,
           "line": 1,
         },
         "start": Position {
@@ -2036,14 +2036,14 @@ Object {
       "node": Node {
         "arguments": Array [],
         "callee": Node {
-          "end": 7,
+          "end": 9,
           "inferredType": Object {
             "kind": "primitive",
             "name": "undefined",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 7,
+              "column": 9,
               "line": 1,
             },
             "start": Position {
@@ -2054,52 +2054,52 @@ Object {
           "properties": Array [
             Node {
               "computed": false,
-              "end": 6,
+              "end": 7,
               "key": Node {
-                "end": 3,
+                "end": 4,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 3,
+                    "column": 4,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 2,
+                    "column": 3,
                     "line": 1,
                   },
                 },
                 "name": "a",
-                "start": 2,
+                "start": 3,
                 "type": "Identifier",
               },
               "kind": "init",
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 7,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 3,
                   "line": 1,
                 },
               },
               "method": false,
               "shorthand": false,
-              "start": 2,
+              "start": 3,
               "type": "Property",
               "value": Node {
-                "end": 6,
+                "end": 7,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 6,
+                    "column": 7,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 5,
+                    "column": 6,
                     "line": 1,
                   },
                 },
                 "raw": "1",
-                "start": 5,
+                "start": 6,
                 "type": "Literal",
                 "value": 1,
               },
@@ -2109,7 +2109,7 @@ Object {
           "typability": "Typed",
           "type": "ObjectExpression",
         },
-        "end": 10,
+        "end": 12,
         "inferredType": Object {
           "constraint": "none",
           "kind": "variable",
@@ -2117,7 +2117,7 @@ Object {
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 10,
+            "column": 12,
             "line": 1,
           },
           "start": Position {
@@ -2151,39 +2151,39 @@ Object {
       "callee": true,
       "location": SourceLocation {
         "end": Position {
-          "column": 8,
+          "column": 6,
           "line": 2,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 2,
         },
       },
       "node": Node {
         "arguments": Array [],
         "callee": Node {
-          "end": 24,
+          "end": 22,
           "inferredType": Object {
             "kind": "primitive",
             "name": "boolean",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 6,
+              "column": 4,
               "line": 2,
             },
             "start": Position {
-              "column": 2,
+              "column": 0,
               "line": 2,
             },
           },
           "raw": "true",
-          "start": 20,
+          "start": 18,
           "typability": "Typed",
           "type": "Literal",
           "value": true,
         },
-        "end": 26,
+        "end": 24,
         "inferredType": Object {
           "constraint": "none",
           "kind": "variable",
@@ -2191,15 +2191,15 @@ Object {
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 8,
+            "column": 6,
             "line": 2,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 20,
+        "start": 18,
         "typability": "Typed",
         "type": "CallExpression",
       },
@@ -2207,7 +2207,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value true.
+  "parsedErrors": "Line 2, Column 0: Calling non-function value true.
 Because true is not a function, you cannot run true().
 ",
   "result": undefined,
@@ -2319,38 +2319,38 @@ Object {
       "callee": undefined,
       "location": SourceLocation {
         "end": Position {
-          "column": 13,
+          "column": 11,
           "line": 2,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 2,
         },
       },
       "node": Node {
         "arguments": Array [],
         "callee": Node {
-          "end": 29,
+          "end": 27,
           "inferredType": Object {
             "kind": "primitive",
             "name": "undefined",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 11,
+              "column": 9,
               "line": 2,
             },
             "start": Position {
-              "column": 2,
+              "column": 0,
               "line": 2,
             },
           },
           "name": "undefined",
-          "start": 20,
+          "start": 18,
           "typability": "Typed",
           "type": "Identifier",
         },
-        "end": 31,
+        "end": 29,
         "inferredType": Object {
           "constraint": "none",
           "kind": "variable",
@@ -2358,15 +2358,15 @@ Object {
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 13,
+            "column": 11,
             "line": 2,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 20,
+        "start": 18,
         "typability": "Typed",
         "type": "CallExpression",
       },
@@ -2374,7 +2374,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
+  "parsedErrors": "Line 2, Column 0: Calling non-function value undefined.
 Because undefined is not a function, you cannot run undefined().
 ",
   "result": undefined,
@@ -2394,83 +2394,83 @@ Object {
       "callee": undefined,
       "location": SourceLocation {
         "end": Position {
-          "column": 20,
+          "column": 18,
           "line": 2,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 2,
         },
       },
       "node": Node {
         "arguments": Array [
           Node {
-            "end": 31,
+            "end": 29,
             "inferredType": Object {
               "kind": "primitive",
               "name": "number",
             },
             "loc": SourceLocation {
               "end": Position {
-                "column": 13,
+                "column": 11,
                 "line": 2,
               },
               "start": Position {
-                "column": 12,
+                "column": 10,
                 "line": 2,
               },
             },
             "raw": "1",
-            "start": 30,
+            "start": 28,
             "typability": "Typed",
             "type": "Literal",
             "value": 1,
           },
           Node {
-            "end": 37,
+            "end": 35,
             "inferredType": Object {
               "kind": "primitive",
               "name": "boolean",
             },
             "loc": SourceLocation {
               "end": Position {
-                "column": 19,
+                "column": 17,
                 "line": 2,
               },
               "start": Position {
-                "column": 15,
+                "column": 13,
                 "line": 2,
               },
             },
             "raw": "true",
-            "start": 33,
+            "start": 31,
             "typability": "Typed",
             "type": "Literal",
             "value": true,
           },
         ],
         "callee": Node {
-          "end": 29,
+          "end": 27,
           "inferredType": Object {
             "kind": "primitive",
             "name": "undefined",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 11,
+              "column": 9,
               "line": 2,
             },
             "start": Position {
-              "column": 2,
+              "column": 0,
               "line": 2,
             },
           },
           "name": "undefined",
-          "start": 20,
+          "start": 18,
           "typability": "Typed",
           "type": "Identifier",
         },
-        "end": 38,
+        "end": 36,
         "inferredType": Object {
           "constraint": "none",
           "kind": "variable",
@@ -2478,15 +2478,15 @@ Object {
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 20,
+            "column": 18,
             "line": 2,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 20,
+        "start": 18,
         "typability": "Typed",
         "type": "CallExpression",
       },
@@ -2494,7 +2494,7 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
+  "parsedErrors": "Line 2, Column 0: Calling non-function value undefined.
 Because undefined is not a function, you cannot run undefined(1, true).
 ",
   "result": undefined,
@@ -2730,12 +2730,22 @@ const f = x => x;",
           "line": 3,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (3:6)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:6)
+
+  1 | \\"enable verbose\\";
+  2 | function f() {}
+> 3 | const f = x => x;
+    |       ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
   "parsedErrors": "Line 3, Column 6: SyntaxError: Identifier 'f' has already been declared (3:6)
+
+  1 | \\"enable verbose\\";
+  2 | function f() {}
+> 3 | const f = x => x;
+    |       ^
 There is a syntax error in your program
 ",
   "pretranspiled": "",
@@ -2764,12 +2774,20 @@ const f = x => x;",
           "line": 2,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)
+
+  1 | function f() {}
+> 2 | const f = x => x;
+    |       ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)
+
+  1 | function f() {}
+> 2 | const f = x => x;
+    |       ^",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -2796,12 +2814,20 @@ let f = x => x;",
           "line": 2,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)
+
+  1 | const f = x => x;
+> 2 | let f = x => x;
+    |     ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)
+
+  1 | const f = x => x;
+> 2 | let f = x => x;
+    |     ^",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -2828,12 +2854,20 @@ const f = x => x;",
           "line": 2,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)
+
+  1 | const f = x => x;
+> 2 | const f = x => x;
+    |       ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)
+
+  1 | const f = x => x;
+> 2 | const f = x => x;
+    |       ^",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -2861,12 +2895,22 @@ function f() {}",
           "line": 3,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)
+
+  1 | \\"enable verbose\\";
+  2 | const f = x => x;
+> 3 | function f() {}
+    |          ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
   "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+
+  1 | \\"enable verbose\\";
+  2 | const f = x => x;
+> 3 | function f() {}
+    |          ^
 There is a syntax error in your program
 ",
   "pretranspiled": "",
@@ -2895,12 +2939,20 @@ function f() {}",
           "line": 2,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)
+
+  1 | const f = x => x;
+> 2 | function f() {}
+    |          ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)
+
+  1 | const f = x => x;
+> 2 | function f() {}
+    |          ^",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -2928,12 +2980,22 @@ function f() {}",
           "line": 3,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)
+
+  1 | \\"enable verbose\\";
+  2 | function f() {}
+> 3 | function f() {}
+    |          ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
   "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+
+  1 | \\"enable verbose\\";
+  2 | function f() {}
+> 3 | function f() {}
+    |          ^
 There is a syntax error in your program
 ",
   "pretranspiled": "",
@@ -2962,12 +3024,20 @@ function f() {}",
           "line": 2,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)
+
+  1 | function f() {}
+> 2 | function f() {}
+    |          ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)
+
+  1 | function f() {}
+> 2 | function f() {}
+    |          ^",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -2995,12 +3065,22 @@ function f() {}",
           "line": 3,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)
+
+  1 | \\"enable verbose\\";
+  2 | let f = x => x;
+> 3 | function f() {}
+    |          ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
   "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+
+  1 | \\"enable verbose\\";
+  2 | let f = x => x;
+> 3 | function f() {}
+    |          ^
 There is a syntax error in your program
 ",
   "pretranspiled": "",
@@ -3029,12 +3109,20 @@ function f() {}",
           "line": 2,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)
+
+  1 | let f = x => x;
+> 2 | function f() {}
+    |          ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)
+
+  1 | let f = x => x;
+> 2 | function f() {}
+    |          ^",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -3062,12 +3150,22 @@ let f = x => x;",
           "line": 3,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (3:4)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (3:4)
+
+  1 | \\"enable verbose\\";
+  2 | function f() {}
+> 3 | let f = x => x;
+    |     ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
   "parsedErrors": "Line 3, Column 4: SyntaxError: Identifier 'f' has already been declared (3:4)
+
+  1 | \\"enable verbose\\";
+  2 | function f() {}
+> 3 | let f = x => x;
+    |     ^
 There is a syntax error in your program
 ",
   "pretranspiled": "",
@@ -3096,12 +3194,20 @@ let f = x => x;",
           "line": 2,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)
+
+  1 | function f() {}
+> 2 | let f = x => x;
+    |     ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)
+
+  1 | function f() {}
+> 2 | let f = x => x;
+    |     ^",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -3128,12 +3234,20 @@ const f = x => x;",
           "line": 2,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)
+
+  1 | let f = x => x;
+> 2 | const f = x => x;
+    |       ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)
+
+  1 | let f = x => x;
+> 2 | const f = x => x;
+    |       ^",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -3160,12 +3274,20 @@ let f = x => x;",
           "line": 2,
         },
       },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
+      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)
+
+  1 | let f = x => x;
+> 2 | let f = x => x;
+    |     ^",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)
+
+  1 | let f = x => x;
+> 2 | let f = x => x;
+    |     ^",
   "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
@@ -3212,7 +3334,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [ParseError: SyntaxError: Unterminated string constant (1:0)],
+      "error": [ParseError: SyntaxError: Unterminated string constant (1:0)
+
+> 1 | '
+    | ^],
       "location": SourceLocation {
         "end": Position {
           "column": 10,
@@ -3227,7 +3352,10 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)",
+  "parsedErrors": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)
+
+> 1 | '
+    | ^",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

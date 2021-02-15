@@ -37,7 +37,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 78,
+        "end": 76,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -53,35 +53,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 3,
+            "column": 1,
             "line": 7,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 7,
           },
         },
         "name": "a",
-        "start": 77,
+        "start": 75,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 82,
+      "end": 80,
       "inferredType": Object {
         "kind": "primitive",
         "name": "undefined",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 7,
+          "column": 5,
           "line": 7,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 7,
         },
       },
-      "start": 77,
+      "start": 75,
       "typability": "Typed",
       "type": "CallExpression",
     },
@@ -165,7 +165,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 78,
+        "end": 71,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -181,35 +181,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 3,
+            "column": 1,
             "line": 8,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 8,
           },
         },
         "name": "a",
-        "start": 77,
+        "start": 70,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 82,
+      "end": 75,
       "inferredType": Object {
         "kind": "primitive",
         "name": "undefined",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 7,
+          "column": 5,
           "line": 8,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 8,
         },
       },
-      "start": 77,
+      "start": 70,
       "typability": "Typed",
       "type": "CallExpression",
     },
@@ -398,7 +398,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 108,
+        "end": 93,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -414,35 +414,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 3,
+            "column": 1,
             "line": 9,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 9,
           },
         },
         "name": "a",
-        "start": 107,
+        "start": 92,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 112,
+      "end": 97,
       "inferredType": Object {
         "kind": "primitive",
         "name": "number",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 7,
+          "column": 5,
           "line": 9,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 9,
         },
       },
-      "start": 107,
+      "start": 92,
       "typability": "Typed",
       "type": "CallExpression",
     },
@@ -521,7 +521,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 53,
+        "end": 44,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -537,35 +537,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 3,
+            "column": 1,
             "line": 6,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 6,
           },
         },
         "name": "a",
-        "start": 52,
+        "start": 43,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 57,
+      "end": 48,
       "inferredType": Object {
         "kind": "primitive",
         "name": "number",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 7,
+          "column": 5,
           "line": 6,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 6,
         },
       },
-      "start": 52,
+      "start": 43,
       "typability": "Typed",
       "type": "CallExpression",
     },
@@ -656,7 +656,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 266,
+        "end": 235,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -672,35 +672,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 3,
+            "column": 1,
             "line": 17,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 17,
           },
         },
         "name": "a",
-        "start": 265,
+        "start": 234,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 270,
+      "end": 239,
       "inferredType": Object {
         "kind": "primitive",
         "name": "number",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 7,
+          "column": 5,
           "line": 17,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 17,
         },
       },
-      "start": 265,
+      "start": 234,
       "typability": "Typed",
       "type": "CallExpression",
     },
@@ -1225,7 +1225,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 43,
+        "end": 36,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -1241,35 +1241,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 3,
+            "column": 1,
             "line": 5,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 5,
           },
         },
         "name": "a",
-        "start": 42,
+        "start": 35,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 50,
+      "end": 43,
       "inferredType": Object {
         "kind": "primitive",
         "name": "string",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 10,
+          "column": 8,
           "line": 5,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 5,
         },
       },
-      "start": 42,
+      "start": 35,
       "typability": "Typed",
       "type": "CallExpression",
     },
@@ -1454,7 +1454,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 78,
+        "end": 67,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -1470,35 +1470,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 3,
+            "column": 1,
             "line": 7,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 7,
           },
         },
         "name": "a",
-        "start": 77,
+        "start": 66,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 81,
+      "end": 70,
       "inferredType": Object {
         "kind": "primitive",
         "name": "number",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 6,
+          "column": 4,
           "line": 7,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 7,
         },
       },
-      "start": 77,
+      "start": 66,
       "typability": "Typed",
       "type": "CallExpression",
     },
@@ -1577,7 +1577,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 58,
+        "end": 51,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -1593,35 +1593,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 5,
+            "column": 3,
             "line": 5,
           },
           "start": Position {
-            "column": 4,
+            "column": 2,
             "line": 5,
           },
         },
         "name": "a",
-        "start": 57,
+        "start": 50,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 69,
+      "end": 62,
       "inferredType": Object {
         "kind": "primitive",
         "name": "number",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 16,
+          "column": 14,
           "line": 5,
         },
         "start": Position {
-          "column": 4,
+          "column": 2,
           "line": 5,
         },
       },
-      "start": 57,
+      "start": 50,
       "typability": "Typed",
       "type": "CallExpression",
     },
@@ -1700,7 +1700,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 58,
+        "end": 51,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -1716,35 +1716,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 5,
+            "column": 3,
             "line": 5,
           },
           "start": Position {
-            "column": 4,
+            "column": 2,
             "line": 5,
           },
         },
         "name": "a",
-        "start": 57,
+        "start": 50,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 69,
+      "end": 62,
       "inferredType": Object {
         "kind": "primitive",
         "name": "number",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 16,
+          "column": 14,
           "line": 5,
         },
         "start": Position {
-          "column": 4,
+          "column": 2,
           "line": 5,
         },
       },
-      "start": 57,
+      "start": 50,
       "typability": "Typed",
       "type": "CallExpression",
     },
@@ -1823,7 +1823,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 58,
+        "end": 51,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -1839,35 +1839,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 5,
+            "column": 3,
             "line": 5,
           },
           "start": Position {
-            "column": 4,
+            "column": 2,
             "line": 5,
           },
         },
         "name": "a",
-        "start": 57,
+        "start": 50,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 69,
+      "end": 62,
       "inferredType": Object {
         "kind": "primitive",
         "name": "number",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 16,
+          "column": 14,
           "line": 5,
         },
         "start": Position {
-          "column": 4,
+          "column": 2,
           "line": 5,
         },
       },
-      "start": 57,
+      "start": 50,
       "typability": "Typed",
       "type": "CallExpression",
     },
@@ -1999,7 +1999,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 78,
+        "end": 67,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -2015,35 +2015,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 3,
+            "column": 1,
             "line": 7,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 7,
           },
         },
         "name": "a",
-        "start": 77,
+        "start": 66,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 81,
+      "end": 70,
       "inferredType": Object {
         "kind": "primitive",
         "name": "number",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 6,
+          "column": 4,
           "line": 7,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 7,
         },
       },
-      "start": 77,
+      "start": 66,
       "typability": "Typed",
       "type": "CallExpression",
     },
@@ -2122,7 +2122,7 @@ Array [
         },
       ],
       "callee": Node {
-        "end": 58,
+        "end": 51,
         "inferredType": Object {
           "kind": "function",
           "parameterTypes": Array [
@@ -2138,35 +2138,35 @@ Array [
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 5,
+            "column": 3,
             "line": 5,
           },
           "start": Position {
-            "column": 4,
+            "column": 2,
             "line": 5,
           },
         },
         "name": "a",
-        "start": 57,
+        "start": 50,
         "typability": "Typed",
         "type": "Identifier",
       },
-      "end": 69,
+      "end": 62,
       "inferredType": Object {
         "kind": "primitive",
         "name": "number",
       },
       "loc": SourceLocation {
         "end": Position {
-          "column": 16,
+          "column": 14,
           "line": 5,
         },
         "start": Position {
-          "column": 4,
+          "column": 2,
           "line": 5,
         },
       },
-      "start": 57,
+      "start": 50,
       "typability": "Typed",
       "type": "CallExpression",
     },

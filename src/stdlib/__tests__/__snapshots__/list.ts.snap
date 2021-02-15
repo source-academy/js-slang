@@ -581,11 +581,11 @@ Object {
       "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
       "location": SourceLocation {
         "end": Position {
-          "column": 19,
+          "column": 15,
           "line": 145,
         },
         "start": Position {
-          "column": 11,
+          "column": 7,
           "line": 145,
         },
       },
@@ -869,11 +869,11 @@ Object {
       "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
       "location": SourceLocation {
         "end": Position {
-          "column": 20,
+          "column": 16,
           "line": 133,
         },
         "start": Position {
-          "column": 12,
+          "column": 8,
           "line": 133,
         },
       },
@@ -1208,7 +1208,7 @@ Object {
       "error": [TypeError: display_list expects the second argument to be a string],
       "location": SourceLocation {
         "end": Position {
-          "column": 39,
+          "column": 41,
           "line": 1,
         },
         "start": Position {
@@ -1857,7 +1857,7 @@ const globals = native.globals;
         value: j
       }), \\"j => j\\", native)],
       line: 1,
-      column: 30
+      column: 32
     }), \\"i => build_list(i, j => j)\\", native)));
     lastStatementResult = eval(\\"0;\\");
   }
@@ -1922,7 +1922,7 @@ const globals = native.globals;
         value: j
       }), \\"j => j\\", native)],
       line: 1,
-      column: 31
+      column: 33
     }), \\"i => build_list(i, j => j)\\", native)));
     lastStatementResult = eval(\\"0;\\");
   }
@@ -1971,15 +1971,15 @@ const globals = native.globals;
         isTail: true,
         function: pair,
         functionName: \\"pair\\",
-        arguments: [callIfFuncAndRightArgs(build_list, 1, 52, j, wrap(k => ({
+        arguments: [callIfFuncAndRightArgs(build_list, 1, 56, j, wrap(k => ({
           isTail: false,
           value: k
         }), \\"k => k\\", native)), j],
         line: 1,
-        column: 47
+        column: 51
       }), \\"j => pair(build_list(j, k => k), j)\\", native)],
       line: 1,
-      column: 30
+      column: 32
     }), \\"i => build_list(i, j => pair(build_list(j, k => k), j))\\", native)));
     lastStatementResult = eval(\\"0;\\");
   }
@@ -2030,10 +2030,10 @@ const globals = native.globals;
         functionName: \\"pair\\",
         arguments: [j, j],
         line: 1,
-        column: 47
+        column: 51
       }), \\"j => pair(j, j)\\", native)],
       line: 1,
-      column: 30
+      column: 32
     }), \\"i => build_list(i, j => pair(j, j))\\", native)));
     lastStatementResult = eval(\\"0;\\");
   }
@@ -2528,7 +2528,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(member, 2, 2, 4, callIfFuncAndRightArgs(list, 2, 12, 1, 2, 3, 4, 123, 456, 789)), callIfFuncAndRightArgs(list, 3, 2, 4, 123, 456, 789));\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(member, 2, 0, 4, callIfFuncAndRightArgs(list, 2, 10, 1, 2, 3, 4, 123, 456, 789)), callIfFuncAndRightArgs(list, 3, 0, 4, 123, 456, 789));\\");
   }
 }
 lastStatementResult;

@@ -36,7 +36,10 @@ Object {
   "displayResult": Array [],
   "errors": Array [
     ExceptionError {
-      "error": [ParseError: SyntaxError: Unterminated string constant (1:0)],
+      "error": [ParseError: SyntaxError: Unterminated string constant (1:0)
+
+> 1 | '
+    | ^],
       "location": SourceLocation {
         "end": Position {
           "column": 20,
@@ -51,7 +54,10 @@ Object {
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)",
+  "parsedErrors": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)
+
+> 1 | '
+    | ^",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

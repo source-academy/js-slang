@@ -537,12 +537,12 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    const fac = wrap(i => boolOrErr(binaryOp(\\"===\\", 1, i, 1, 1, 19), 1, 19) ? {
+    const fac = wrap(i => boolOrErr(binaryOp(\\"===\\", 1, i, 1, 1, 17), 1, 17) ? {
       isTail: false,
       value: 1
     } : {
       isTail: false,
-      value: binaryOp(\\"*\\", 1, i, callIfFuncAndRightArgs(fac, 1, 37, binaryOp(\\"-\\", 1, i, 1, 1, 41)), 1, 33)
+      value: binaryOp(\\"*\\", 1, i, callIfFuncAndRightArgs(fac, 1, 35, binaryOp(\\"-\\", 1, i, 1, 1, 39)), 1, 31)
     }, \\"i => i === 1 ? 1 : i * fac(i - 1)\\", native);
     lastStatementResult = eval(\\"callIfFuncAndRightArgs(fac, 2, 0, 5);\\");
     globals.variables.set(\\"fac\\", {
@@ -1226,7 +1226,7 @@ const globals = native.globals;
       const f = globals.previousScope.variables.get(\\"f\\").getValue();
       {
         i = globals.previousScope.variables.get(\\"i\\").assignNewValue(100);
-        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 1, 9);\\");
+        lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 1, 8);\\");
       }
     }
   }
@@ -1525,7 +1525,7 @@ const globals = native.globals;
         value: 5
       };
     }, \\"function f(x) {\\\\n  return 5;\\\\n}\\", native);
-    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", 1, callIfFuncAndRightArgs(toString, 4, 0, wrap(a => ({   isTail: false,   value: a }), \\\\\\"a => a\\\\\\", native)), callIfFuncAndRightArgs(toString, 4, 17, f), 4, 0);\\");
+    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", 1, callIfFuncAndRightArgs(toString, 4, 0, wrap(a => ({   isTail: false,   value: a }), \\\\\\"a => a\\\\\\", native)), callIfFuncAndRightArgs(toString, 4, 19, f), 4, 0);\\");
     globals.variables.set(\\"f\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -1552,8 +1552,8 @@ Object {
           "column": 3,
           "line": 1,
         },
-        "start": Position {
-          "column": 2,
+        "start": Object {
+          "column": 3,
           "line": 1,
         },
       },

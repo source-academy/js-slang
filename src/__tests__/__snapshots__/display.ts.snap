@@ -119,8 +119,8 @@ const globals = native.globals;
 {
   {
     callIfFuncAndRightArgs(display, 1, 0, 1e38);
-    callIfFuncAndRightArgs(display, 1, 15, NaN);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 29, Infinity);\\");
+    callIfFuncAndRightArgs(display, 1, 14, NaN);
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 27, Infinity);\\");
   }
 }
 lastStatementResult;

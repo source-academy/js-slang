@@ -789,7 +789,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(wrap((x, y) => {   return {     isTail: false,     value: binaryOp(\\\\\\"+\\\\\\", 1, x, y, 1, 20)   }; }, \\\\\\"(x, y) => {\\\\\\\\n  return x + y;\\\\\\\\n}\\\\\\", native), 1, 0, 1, 2);\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(wrap((x, y) => {   return {     isTail: false,     value: binaryOp(\\\\\\"+\\\\\\", 1, x, y, 1, 19)   }; }, \\\\\\"(x, y) => {\\\\\\\\n  return x + y;\\\\\\\\n}\\\\\\", native), 1, 0, 1, 2);\\");
   }
 }
 lastStatementResult;
@@ -1159,7 +1159,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", 1, 31.4, binaryOp(\\\\\\"/\\\\\\", 1, binaryOp(\\\\\\"%\\\\\\", 1, binaryOp(\\\\\\"*\\\\\\", 1, unaryOp(\\\\\\"-\\\\\\", 3.14e10, 1, 8), unaryOp(\\\\\\"-\\\\\\", 1, 1, 20), 1, 7), 2, 1, 7), 1.5, 1, 7), 1, 0);\\");
+    lastStatementResult = eval(\\"binaryOp(\\\\\\"+\\\\\\", 1, 31.4, binaryOp(\\\\\\"/\\\\\\", 1, binaryOp(\\\\\\"%\\\\\\", 1, binaryOp(\\\\\\"*\\\\\\", 1, unaryOp(\\\\\\"-\\\\\\", 3.14e10, 1, 7), unaryOp(\\\\\\"-\\\\\\", 1, 1, 18), 1, 7), 2, 1, 7), 1.5, 1, 7), 1, 0);\\");
   }
 }
 lastStatementResult;
@@ -6803,10 +6803,10 @@ Object {
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
-        "end": 13,
+        "end": 15,
         "loc": SourceLocation {
           "end": Position {
-            "column": 13,
+            "column": 15,
             "line": 1,
           },
           "start": Position {
@@ -6817,104 +6817,104 @@ Object {
         "properties": Array [
           Node {
             "computed": false,
-            "end": 6,
+            "end": 7,
             "key": Node {
-              "end": 3,
+              "end": 4,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 3,
+                  "column": 4,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 3,
                   "line": 1,
                 },
               },
               "name": "a",
-              "start": 2,
+              "start": 3,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 6,
+                "column": 7,
                 "line": 1,
               },
               "start": Position {
-                "column": 2,
+                "column": 3,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 2,
+            "start": 3,
             "type": "Property",
             "value": Node {
-              "end": 6,
+              "end": 7,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 7,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 5,
+                  "column": 6,
                   "line": 1,
                 },
               },
               "raw": "1",
-              "start": 5,
+              "start": 6,
               "type": "Literal",
               "value": 1,
             },
           },
           Node {
             "computed": false,
-            "end": 12,
+            "end": 13,
             "key": Node {
-              "end": 9,
+              "end": 10,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 9,
+                  "column": 10,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 8,
+                  "column": 9,
                   "line": 1,
                 },
               },
               "name": "b",
-              "start": 8,
+              "start": 9,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 12,
+                "column": 13,
                 "line": 1,
               },
               "start": Position {
-                "column": 8,
+                "column": 9,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 8,
+            "start": 9,
             "type": "Property",
             "value": Node {
-              "end": 12,
+              "end": 13,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 12,
+                  "column": 13,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 11,
+                  "column": 12,
                   "line": 1,
                 },
               },
               "raw": "2",
-              "start": 11,
+              "start": 12,
               "type": "Literal",
               "value": 2,
             },
@@ -7033,10 +7033,10 @@ Object {
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
-        "end": 13,
+        "end": 15,
         "loc": SourceLocation {
           "end": Position {
-            "column": 13,
+            "column": 15,
             "line": 1,
           },
           "start": Position {
@@ -7047,104 +7047,104 @@ Object {
         "properties": Array [
           Node {
             "computed": false,
-            "end": 6,
+            "end": 7,
             "key": Node {
-              "end": 3,
+              "end": 4,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 3,
+                  "column": 4,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 3,
                   "line": 1,
                 },
               },
               "name": "a",
-              "start": 2,
+              "start": 3,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 6,
+                "column": 7,
                 "line": 1,
               },
               "start": Position {
-                "column": 2,
+                "column": 3,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 2,
+            "start": 3,
             "type": "Property",
             "value": Node {
-              "end": 6,
+              "end": 7,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 7,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 5,
+                  "column": 6,
                   "line": 1,
                 },
               },
               "raw": "1",
-              "start": 5,
+              "start": 6,
               "type": "Literal",
               "value": 1,
             },
           },
           Node {
             "computed": false,
-            "end": 12,
+            "end": 13,
             "key": Node {
-              "end": 9,
+              "end": 10,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 9,
+                  "column": 10,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 8,
+                  "column": 9,
                   "line": 1,
                 },
               },
               "name": "b",
-              "start": 8,
+              "start": 9,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 12,
+                "column": 13,
                 "line": 1,
               },
               "start": Position {
-                "column": 8,
+                "column": 9,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 8,
+            "start": 9,
             "type": "Property",
             "value": Node {
-              "end": 12,
+              "end": 13,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 12,
+                  "column": 13,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 11,
+                  "column": 12,
                   "line": 1,
                 },
               },
               "raw": "2",
-              "start": 11,
+              "start": 12,
               "type": "Literal",
               "value": 2,
             },
@@ -7275,10 +7275,10 @@ Object {
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
-        "end": 13,
+        "end": 15,
         "loc": SourceLocation {
           "end": Position {
-            "column": 13,
+            "column": 15,
             "line": 1,
           },
           "start": Position {
@@ -7289,104 +7289,104 @@ Object {
         "properties": Array [
           Node {
             "computed": false,
-            "end": 6,
+            "end": 7,
             "key": Node {
-              "end": 3,
+              "end": 4,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 3,
+                  "column": 4,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 3,
                   "line": 1,
                 },
               },
               "name": "a",
-              "start": 2,
+              "start": 3,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 6,
+                "column": 7,
                 "line": 1,
               },
               "start": Position {
-                "column": 2,
+                "column": 3,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 2,
+            "start": 3,
             "type": "Property",
             "value": Node {
-              "end": 6,
+              "end": 7,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 7,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 5,
+                  "column": 6,
                   "line": 1,
                 },
               },
               "raw": "1",
-              "start": 5,
+              "start": 6,
               "type": "Literal",
               "value": 1,
             },
           },
           Node {
             "computed": false,
-            "end": 12,
+            "end": 13,
             "key": Node {
-              "end": 9,
+              "end": 10,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 9,
+                  "column": 10,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 8,
+                  "column": 9,
                   "line": 1,
                 },
               },
               "name": "b",
-              "start": 8,
+              "start": 9,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 12,
+                "column": 13,
                 "line": 1,
               },
               "start": Position {
-                "column": 8,
+                "column": 9,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 8,
+            "start": 9,
             "type": "Property",
             "value": Node {
-              "end": 12,
+              "end": 13,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 12,
+                  "column": 13,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 11,
+                  "column": 12,
                   "line": 1,
                 },
               },
               "raw": "2",
-              "start": 11,
+              "start": 12,
               "type": "Literal",
               "value": 2,
             },
@@ -7402,10 +7402,10 @@ Object {
     NoDotAbbreviationError {
       "node": Node {
         "computed": false,
-        "end": 16,
+        "end": 18,
         "loc": SourceLocation {
           "end": Position {
-            "column": 16,
+            "column": 18,
             "line": 1,
           },
           "start": Position {
@@ -7414,10 +7414,10 @@ Object {
           },
         },
         "object": Node {
-          "end": 13,
+          "end": 15,
           "loc": SourceLocation {
             "end": Position {
-              "column": 13,
+              "column": 15,
               "line": 1,
             },
             "start": Position {
@@ -7428,104 +7428,104 @@ Object {
           "properties": Array [
             Node {
               "computed": false,
-              "end": 6,
+              "end": 7,
               "key": Node {
-                "end": 3,
+                "end": 4,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 3,
+                    "column": 4,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 2,
+                    "column": 3,
                     "line": 1,
                   },
                 },
                 "name": "a",
-                "start": 2,
+                "start": 3,
                 "type": "Identifier",
               },
               "kind": "init",
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 7,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 3,
                   "line": 1,
                 },
               },
               "method": false,
               "shorthand": false,
-              "start": 2,
+              "start": 3,
               "type": "Property",
               "value": Node {
-                "end": 6,
+                "end": 7,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 6,
+                    "column": 7,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 5,
+                    "column": 6,
                     "line": 1,
                   },
                 },
                 "raw": "1",
-                "start": 5,
+                "start": 6,
                 "type": "Literal",
                 "value": 1,
               },
             },
             Node {
               "computed": false,
-              "end": 12,
+              "end": 13,
               "key": Node {
-                "end": 9,
+                "end": 10,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 9,
+                    "column": 10,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 8,
+                    "column": 9,
                     "line": 1,
                   },
                 },
                 "name": "b",
-                "start": 8,
+                "start": 9,
                 "type": "Identifier",
               },
               "kind": "init",
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 12,
+                  "column": 13,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 8,
+                  "column": 9,
                   "line": 1,
                 },
               },
               "method": false,
               "shorthand": false,
-              "start": 8,
+              "start": 9,
               "type": "Property",
               "value": Node {
-                "end": 12,
+                "end": 13,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 12,
+                    "column": 13,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 11,
+                    "column": 12,
                     "line": 1,
                   },
                 },
                 "raw": "2",
-                "start": 11,
+                "start": 12,
                 "type": "Literal",
                 "value": 2,
               },
@@ -7535,19 +7535,19 @@ Object {
           "type": "ObjectExpression",
         },
         "property": Node {
-          "end": 16,
+          "end": 18,
           "loc": SourceLocation {
             "end": Position {
-              "column": 16,
+              "column": 18,
               "line": 1,
             },
             "start": Position {
-              "column": 15,
+              "column": 17,
               "line": 1,
             },
           },
           "name": "a",
-          "start": 15,
+          "start": 17,
           "type": "Identifier",
         },
         "start": 0,
@@ -7675,10 +7675,10 @@ Object {
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
-        "end": 17,
+        "end": 19,
         "loc": SourceLocation {
           "end": Position {
-            "column": 17,
+            "column": 19,
             "line": 1,
           },
           "start": Position {
@@ -7689,106 +7689,106 @@ Object {
         "properties": Array [
           Node {
             "computed": false,
-            "end": 8,
+            "end": 9,
             "key": Node {
-              "end": 5,
+              "end": 6,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 5,
+                  "column": 6,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 3,
                   "line": 1,
                 },
               },
               "raw": "'a'",
-              "start": 2,
+              "start": 3,
               "type": "Literal",
               "value": "a",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 8,
+                "column": 9,
                 "line": 1,
               },
               "start": Position {
-                "column": 2,
+                "column": 3,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 2,
+            "start": 3,
             "type": "Property",
             "value": Node {
-              "end": 8,
+              "end": 9,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 8,
+                  "column": 9,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 7,
+                  "column": 8,
                   "line": 1,
                 },
               },
               "raw": "1",
-              "start": 7,
+              "start": 8,
               "type": "Literal",
               "value": 1,
             },
           },
           Node {
             "computed": false,
-            "end": 16,
+            "end": 17,
             "key": Node {
-              "end": 13,
+              "end": 14,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 13,
+                  "column": 14,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 10,
+                  "column": 11,
                   "line": 1,
                 },
               },
               "raw": "'b'",
-              "start": 10,
+              "start": 11,
               "type": "Literal",
               "value": "b",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 16,
+                "column": 17,
                 "line": 1,
               },
               "start": Position {
-                "column": 10,
+                "column": 11,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 10,
+            "start": 11,
             "type": "Property",
             "value": Node {
-              "end": 16,
+              "end": 17,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 16,
+                  "column": 17,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 15,
+                  "column": 16,
                   "line": 1,
                 },
               },
               "raw": "2",
-              "start": 15,
+              "start": 16,
               "type": "Literal",
               "value": 2,
             },
@@ -7804,10 +7804,10 @@ Object {
     NoDotAbbreviationError {
       "node": Node {
         "computed": false,
-        "end": 20,
+        "end": 22,
         "loc": SourceLocation {
           "end": Position {
-            "column": 20,
+            "column": 22,
             "line": 1,
           },
           "start": Position {
@@ -7816,10 +7816,10 @@ Object {
           },
         },
         "object": Node {
-          "end": 17,
+          "end": 19,
           "loc": SourceLocation {
             "end": Position {
-              "column": 17,
+              "column": 19,
               "line": 1,
             },
             "start": Position {
@@ -7830,106 +7830,106 @@ Object {
           "properties": Array [
             Node {
               "computed": false,
-              "end": 8,
+              "end": 9,
               "key": Node {
-                "end": 5,
+                "end": 6,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 5,
+                    "column": 6,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 2,
+                    "column": 3,
                     "line": 1,
                   },
                 },
                 "raw": "'a'",
-                "start": 2,
+                "start": 3,
                 "type": "Literal",
                 "value": "a",
               },
               "kind": "init",
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 8,
+                  "column": 9,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 3,
                   "line": 1,
                 },
               },
               "method": false,
               "shorthand": false,
-              "start": 2,
+              "start": 3,
               "type": "Property",
               "value": Node {
-                "end": 8,
+                "end": 9,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 8,
+                    "column": 9,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 7,
+                    "column": 8,
                     "line": 1,
                   },
                 },
                 "raw": "1",
-                "start": 7,
+                "start": 8,
                 "type": "Literal",
                 "value": 1,
               },
             },
             Node {
               "computed": false,
-              "end": 16,
+              "end": 17,
               "key": Node {
-                "end": 13,
+                "end": 14,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 13,
+                    "column": 14,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 10,
+                    "column": 11,
                     "line": 1,
                   },
                 },
                 "raw": "'b'",
-                "start": 10,
+                "start": 11,
                 "type": "Literal",
                 "value": "b",
               },
               "kind": "init",
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 16,
+                  "column": 17,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 10,
+                  "column": 11,
                   "line": 1,
                 },
               },
               "method": false,
               "shorthand": false,
-              "start": 10,
+              "start": 11,
               "type": "Property",
               "value": Node {
-                "end": 16,
+                "end": 17,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 16,
+                    "column": 17,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 15,
+                    "column": 16,
                     "line": 1,
                   },
                 },
                 "raw": "2",
-                "start": 15,
+                "start": 16,
                 "type": "Literal",
                 "value": 2,
               },
@@ -7939,19 +7939,19 @@ Object {
           "type": "ObjectExpression",
         },
         "property": Node {
-          "end": 20,
+          "end": 22,
           "loc": SourceLocation {
             "end": Position {
-              "column": 20,
+              "column": 22,
               "line": 1,
             },
             "start": Position {
-              "column": 19,
+              "column": 21,
               "line": 1,
             },
           },
           "name": "a",
-          "start": 19,
+          "start": 21,
           "type": "Identifier",
         },
         "start": 0,
@@ -8067,10 +8067,10 @@ Object {
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
-        "end": 13,
+        "end": 15,
         "loc": SourceLocation {
           "end": Position {
-            "column": 13,
+            "column": 15,
             "line": 1,
           },
           "start": Position {
@@ -8081,106 +8081,106 @@ Object {
         "properties": Array [
           Node {
             "computed": false,
-            "end": 6,
+            "end": 7,
             "key": Node {
-              "end": 3,
+              "end": 4,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 3,
+                  "column": 4,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 3,
                   "line": 1,
                 },
               },
               "raw": "1",
-              "start": 2,
+              "start": 3,
               "type": "Literal",
               "value": 1,
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 6,
+                "column": 7,
                 "line": 1,
               },
               "start": Position {
-                "column": 2,
+                "column": 3,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 2,
+            "start": 3,
             "type": "Property",
             "value": Node {
-              "end": 6,
+              "end": 7,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 7,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 5,
+                  "column": 6,
                   "line": 1,
                 },
               },
               "raw": "1",
-              "start": 5,
+              "start": 6,
               "type": "Literal",
               "value": 1,
             },
           },
           Node {
             "computed": false,
-            "end": 12,
+            "end": 13,
             "key": Node {
-              "end": 9,
+              "end": 10,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 9,
+                  "column": 10,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 8,
+                  "column": 9,
                   "line": 1,
                 },
               },
               "raw": "2",
-              "start": 8,
+              "start": 9,
               "type": "Literal",
               "value": 2,
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 12,
+                "column": 13,
                 "line": 1,
               },
               "start": Position {
-                "column": 8,
+                "column": 9,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 8,
+            "start": 9,
             "type": "Property",
             "value": Node {
-              "end": 12,
+              "end": 13,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 12,
+                  "column": 13,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 11,
+                  "column": 12,
                   "line": 1,
                 },
               },
               "raw": "2",
-              "start": 11,
+              "start": 12,
               "type": "Literal",
               "value": 2,
             },
@@ -8300,10 +8300,10 @@ Object {
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
-        "end": 30,
+        "end": 32,
         "loc": SourceLocation {
           "end": Position {
-            "column": 13,
+            "column": 15,
             "line": 2,
           },
           "start": Position {
@@ -8314,104 +8314,104 @@ Object {
         "properties": Array [
           Node {
             "computed": false,
-            "end": 23,
+            "end": 24,
             "key": Node {
-              "end": 20,
+              "end": 21,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 3,
+                  "column": 4,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 3,
                   "line": 2,
                 },
               },
               "name": "a",
-              "start": 19,
+              "start": 20,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 6,
+                "column": 7,
                 "line": 2,
               },
               "start": Position {
-                "column": 2,
+                "column": 3,
                 "line": 2,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 19,
+            "start": 20,
             "type": "Property",
             "value": Node {
-              "end": 23,
+              "end": 24,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 7,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 5,
+                  "column": 6,
                   "line": 2,
                 },
               },
               "raw": "1",
-              "start": 22,
+              "start": 23,
               "type": "Literal",
               "value": 1,
             },
           },
           Node {
             "computed": false,
-            "end": 29,
+            "end": 30,
             "key": Node {
-              "end": 26,
+              "end": 27,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 9,
+                  "column": 10,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 8,
+                  "column": 9,
                   "line": 2,
                 },
               },
               "name": "b",
-              "start": 25,
+              "start": 26,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 12,
+                "column": 13,
                 "line": 2,
               },
               "start": Position {
-                "column": 8,
+                "column": 9,
                 "line": 2,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 25,
+            "start": 26,
             "type": "Property",
             "value": Node {
-              "end": 29,
+              "end": 30,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 12,
+                  "column": 13,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 11,
+                  "column": 12,
                   "line": 2,
                 },
               },
               "raw": "2",
-              "start": 28,
+              "start": 29,
               "type": "Literal",
               "value": 2,
             },
@@ -8577,10 +8577,10 @@ x.a = 3;",
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
-        "end": 20,
+        "end": 22,
         "loc": SourceLocation {
           "end": Position {
-            "column": 20,
+            "column": 22,
             "line": 1,
           },
           "start": Position {
@@ -8591,104 +8591,104 @@ x.a = 3;",
         "properties": Array [
           Node {
             "computed": false,
-            "end": 13,
+            "end": 14,
             "key": Node {
-              "end": 10,
+              "end": 11,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 10,
+                  "column": 11,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 9,
+                  "column": 10,
                   "line": 1,
                 },
               },
               "name": "a",
-              "start": 9,
+              "start": 10,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 13,
+                "column": 14,
                 "line": 1,
               },
               "start": Position {
-                "column": 9,
+                "column": 10,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 9,
+            "start": 10,
             "type": "Property",
             "value": Node {
-              "end": 13,
+              "end": 14,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 13,
+                  "column": 14,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 12,
+                  "column": 13,
                   "line": 1,
                 },
               },
               "raw": "1",
-              "start": 12,
+              "start": 13,
               "type": "Literal",
               "value": 1,
             },
           },
           Node {
             "computed": false,
-            "end": 19,
+            "end": 20,
             "key": Node {
-              "end": 16,
+              "end": 17,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 16,
+                  "column": 17,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 15,
+                  "column": 16,
                   "line": 1,
                 },
               },
               "name": "b",
-              "start": 15,
+              "start": 16,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 19,
+                "column": 20,
                 "line": 1,
               },
               "start": Position {
-                "column": 15,
+                "column": 16,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 15,
+            "start": 16,
             "type": "Property",
             "value": Node {
-              "end": 19,
+              "end": 20,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 19,
+                  "column": 20,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 18,
+                  "column": 19,
                   "line": 1,
                 },
               },
               "raw": "2",
-              "start": 18,
+              "start": 19,
               "type": "Literal",
               "value": 2,
             },
@@ -8704,7 +8704,7 @@ x.a = 3;",
     NoDotAbbreviationError {
       "node": Node {
         "computed": false,
-        "end": 25,
+        "end": 27,
         "loc": SourceLocation {
           "end": Position {
             "column": 3,
@@ -8716,7 +8716,7 @@ x.a = 3;",
           },
         },
         "object": Node {
-          "end": 23,
+          "end": 25,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -8728,11 +8728,11 @@ x.a = 3;",
             },
           },
           "name": "x",
-          "start": 22,
+          "start": 24,
           "type": "Identifier",
         },
         "property": Node {
-          "end": 25,
+          "end": 27,
           "loc": SourceLocation {
             "end": Position {
               "column": 3,
@@ -8744,10 +8744,10 @@ x.a = 3;",
             },
           },
           "name": "a",
-          "start": 24,
+          "start": 26,
           "type": "Identifier",
         },
-        "start": 22,
+        "start": 24,
         "type": "MemberExpression",
       },
       "severity": "Error",
@@ -8922,10 +8922,10 @@ x['a'] = 3;",
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
-        "end": 20,
+        "end": 22,
         "loc": SourceLocation {
           "end": Position {
-            "column": 20,
+            "column": 22,
             "line": 1,
           },
           "start": Position {
@@ -8936,104 +8936,104 @@ x['a'] = 3;",
         "properties": Array [
           Node {
             "computed": false,
-            "end": 13,
+            "end": 14,
             "key": Node {
-              "end": 10,
+              "end": 11,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 10,
+                  "column": 11,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 9,
+                  "column": 10,
                   "line": 1,
                 },
               },
               "name": "a",
-              "start": 9,
+              "start": 10,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 13,
+                "column": 14,
                 "line": 1,
               },
               "start": Position {
-                "column": 9,
+                "column": 10,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 9,
+            "start": 10,
             "type": "Property",
             "value": Node {
-              "end": 13,
+              "end": 14,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 13,
+                  "column": 14,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 12,
+                  "column": 13,
                   "line": 1,
                 },
               },
               "raw": "1",
-              "start": 12,
+              "start": 13,
               "type": "Literal",
               "value": 1,
             },
           },
           Node {
             "computed": false,
-            "end": 19,
+            "end": 20,
             "key": Node {
-              "end": 16,
+              "end": 17,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 16,
+                  "column": 17,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 15,
+                  "column": 16,
                   "line": 1,
                 },
               },
               "name": "b",
-              "start": 15,
+              "start": 16,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 19,
+                "column": 20,
                 "line": 1,
               },
               "start": Position {
-                "column": 15,
+                "column": 16,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 15,
+            "start": 16,
             "type": "Property",
             "value": Node {
-              "end": 19,
+              "end": 20,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 19,
+                  "column": 20,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 18,
+                  "column": 19,
                   "line": 1,
                 },
               },
               "raw": "2",
-              "start": 18,
+              "start": 19,
               "type": "Literal",
               "value": 2,
             },
@@ -9215,10 +9215,10 @@ x[key] = 3;",
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
-        "end": 20,
+        "end": 22,
         "loc": SourceLocation {
           "end": Position {
-            "column": 20,
+            "column": 22,
             "line": 1,
           },
           "start": Position {
@@ -9229,104 +9229,104 @@ x[key] = 3;",
         "properties": Array [
           Node {
             "computed": false,
-            "end": 13,
+            "end": 14,
             "key": Node {
-              "end": 10,
+              "end": 11,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 10,
+                  "column": 11,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 9,
+                  "column": 10,
                   "line": 1,
                 },
               },
               "name": "a",
-              "start": 9,
+              "start": 10,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 13,
+                "column": 14,
                 "line": 1,
               },
               "start": Position {
-                "column": 9,
+                "column": 10,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 9,
+            "start": 10,
             "type": "Property",
             "value": Node {
-              "end": 13,
+              "end": 14,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 13,
+                  "column": 14,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 12,
+                  "column": 13,
                   "line": 1,
                 },
               },
               "raw": "1",
-              "start": 12,
+              "start": 13,
               "type": "Literal",
               "value": 1,
             },
           },
           Node {
             "computed": false,
-            "end": 19,
+            "end": 20,
             "key": Node {
-              "end": 16,
+              "end": 17,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 16,
+                  "column": 17,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 15,
+                  "column": 16,
                   "line": 1,
                 },
               },
               "name": "b",
-              "start": 15,
+              "start": 16,
               "type": "Identifier",
             },
             "kind": "init",
             "loc": SourceLocation {
               "end": Position {
-                "column": 19,
+                "column": 20,
                 "line": 1,
               },
               "start": Position {
-                "column": 15,
+                "column": 16,
                 "line": 1,
               },
             },
             "method": false,
             "shorthand": false,
-            "start": 15,
+            "start": 16,
             "type": "Property",
             "value": Node {
-              "end": 19,
+              "end": 20,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 19,
+                  "column": 20,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 18,
+                  "column": 19,
                   "line": 1,
                 },
               },
               "raw": "2",
-              "start": 18,
+              "start": 19,
               "type": "Literal",
               "value": 2,
             },

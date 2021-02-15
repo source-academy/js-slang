@@ -24,7 +24,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(stream_append, 1, 21, callIfFuncAndRightArgs(stream, 1, 35, \\\\\\"string\\\\\\", 123), callIfFuncAndRightArgs(stream, 1, 58, 456, null, undefined))), callIfFuncAndRightArgs(list, 2, 4, \\\\\\"string\\\\\\", 123, 456, null, undefined));\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(stream_append, 1, 21, callIfFuncAndRightArgs(stream, 1, 35, \\\\\\"string\\\\\\", 123), callIfFuncAndRightArgs(stream, 1, 58, 456, null, undefined))), callIfFuncAndRightArgs(list, 2, 0, \\\\\\"string\\\\\\", 123, 456, null, undefined));\\");
   }
 }
 lastStatementResult;
@@ -156,7 +156,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 2, 2, callIfFuncAndRightArgs(stream_filter, 3, 4, wrap(x => ({   isTail: false,   value: binaryOp(\\\\\\"<=\\\\\\", 3, x, 4, 3, 23) }), \\\\\\"x => x <= 4\\\\\\", native), callIfFuncAndRightArgs(stream, 3, 31, 2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000))), callIfFuncAndRightArgs(list, 5, 2, 2, 1, 3, 4, 2));\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 2, 0, callIfFuncAndRightArgs(stream_filter, 3, 0, wrap(x => ({   isTail: false,   value: binaryOp(\\\\\\"<=\\\\\\", 3, x, 4, 3, 19) }), \\\\\\"x => x <= 4\\\\\\", native), callIfFuncAndRightArgs(stream, 3, 27, 2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000))), callIfFuncAndRightArgs(list, 5, 0, 2, 1, 3, 4, 2));\\");
   }
 }
 lastStatementResult;
@@ -303,7 +303,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 2, 2, callIfFuncAndRightArgs(stream_member, 2, 17, \\\\\\"string\\\\\\", callIfFuncAndRightArgs(stream, 2, 41, 1, 2, 3, \\\\\\"string\\\\\\", 123, 456, null, undefined))), callIfFuncAndRightArgs(list, 3, 2, \\\\\\"string\\\\\\", 123, 456, null, undefined));\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 2, 0, callIfFuncAndRightArgs(stream_member, 2, 15, \\\\\\"string\\\\\\", callIfFuncAndRightArgs(stream, 2, 39, 1, 2, 3, \\\\\\"string\\\\\\", 123, 456, null, undefined))), callIfFuncAndRightArgs(list, 3, 0, \\\\\\"string\\\\\\", 123, 456, null, undefined));\\");
   }
 }
 lastStatementResult;
@@ -373,12 +373,12 @@ const globals = native.globals;
     const s = callIfFuncAndRightArgs(stream, 1, 10, true, false, undefined, 1, wrap(x => ({
       isTail: false,
       value: x
-    }), \\"x => x\\", native), null, unaryOp(\\"-\\", 123, 1, 56), head);
+    }), \\"x => x\\", native), null, unaryOp(\\"-\\", 123, 1, 58), head);
     const result = [];
     callIfFuncAndRightArgs(stream_for_each, 3, 0, wrap(item => {
       setProp(result, callIfFuncAndRightArgs(array_length, 3, 32, result), item, 3, 25);
     }, \\"item => {\\\\n  result[array_length(result)] = item;\\\\n}\\", native), s);
-    lastStatementResult = eval(\\"boolOrErr(boolOrErr(binaryOp(\\\\\\"===\\\\\\", 3, callIfFuncAndRightArgs(callIfFuncAndRightArgs(stream_ref, 4, 0, s, 4), 4, 0, 22), 22, 4, 0), 4, 0) && binaryOp(\\\\\\"===\\\\\\", 3, callIfFuncAndRightArgs(callIfFuncAndRightArgs(stream_ref, 4, 30, s, 7), 4, 30, callIfFuncAndRightArgs(pair, 4, 46, '', '1')), '1', 4, 30), 4, 0) && result;\\");
+    lastStatementResult = eval(\\"boolOrErr(boolOrErr(binaryOp(\\\\\\"===\\\\\\", 3, callIfFuncAndRightArgs(callIfFuncAndRightArgs(stream_ref, 4, 0, s, 4), 4, 0, 22), 22, 4, 0), 4, 0) && binaryOp(\\\\\\"===\\\\\\", 3, callIfFuncAndRightArgs(callIfFuncAndRightArgs(stream_ref, 4, 31, s, 7), 4, 31, callIfFuncAndRightArgs(pair, 4, 48, '', '1')), '1', 4, 31), 4, 0) && result;\\");
     globals.variables.set(\\"s\\", {
       kind: \\"const\\",
       getValue: () => {
@@ -671,7 +671,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(stream_remove_all, 1, 21, 1, callIfFuncAndRightArgs(stream, 1, 42, 1, 2, 3, 4, 1, 1, \\\\\\"1\\\\\\", 5, 1, 1, 6))), callIfFuncAndRightArgs(list, 2, 2, 2, 3, 4, \\\\\\"1\\\\\\", 5, 6));\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(stream_remove_all, 1, 21, 1, callIfFuncAndRightArgs(stream, 1, 42, 1, 2, 3, 4, 1, 1, \\\\\\"1\\\\\\", 5, 1, 1, 6))), callIfFuncAndRightArgs(list, 2, 0, 2, 3, 4, \\\\\\"1\\\\\\", 5, 6));\\");
   }
 }
 lastStatementResult;
@@ -706,7 +706,7 @@ let lastStatementResult = undefined;
 const globals = native.globals;
 {
   {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(stream_reverse, 2, 2, callIfFuncAndRightArgs(stream, 3, 4, \\\\\\"string\\\\\\", null, undefined, null, 123))), callIfFuncAndRightArgs(list, 4, 0, 123, null, undefined, null, \\\\\\"string\\\\\\"));\\");
+    lastStatementResult = eval(\\"callIfFuncAndRightArgs(equal, 1, 0, callIfFuncAndRightArgs(stream_to_list, 1, 6, callIfFuncAndRightArgs(stream_reverse, 2, 0, callIfFuncAndRightArgs(stream, 3, 0, \\\\\\"string\\\\\\", null, undefined, null, 123))), callIfFuncAndRightArgs(list, 4, 0, 123, null, undefined, null, \\\\\\"string\\\\\\"));\\");
   }
 }
 lastStatementResult;

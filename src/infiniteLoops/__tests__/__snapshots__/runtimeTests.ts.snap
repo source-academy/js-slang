@@ -19,62 +19,62 @@ Object {
       "callee": 1,
       "location": SourceLocation {
         "end": Position {
-          "column": 15,
+          "column": 13,
           "line": 3,
         },
         "start": Position {
-          "column": 11,
+          "column": 9,
           "line": 3,
         },
       },
       "node": Node {
         "arguments": Array [
           Node {
-            "end": 33,
+            "end": 29,
             "inferredType": Object {
               "kind": "primitive",
               "name": "number",
             },
             "loc": SourceLocation {
               "end": Position {
-                "column": 14,
+                "column": 12,
                 "line": 3,
               },
               "start": Position {
-                "column": 13,
+                "column": 11,
                 "line": 3,
               },
             },
             "raw": "2",
-            "start": 32,
+            "start": 28,
             "typability": "Typed",
             "type": "Literal",
             "value": 2,
           },
         ],
         "callee": Node {
-          "end": 31,
+          "end": 27,
           "inferredType": Object {
             "kind": "primitive",
             "name": "number",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 12,
+              "column": 10,
               "line": 3,
             },
             "start": Position {
-              "column": 11,
+              "column": 9,
               "line": 3,
             },
           },
           "raw": "1",
-          "start": 30,
+          "start": 26,
           "typability": "Typed",
           "type": "Literal",
           "value": 1,
         },
-        "end": 34,
+        "end": 30,
         "inferredType": Object {
           "constraint": "none",
           "kind": "variable",
@@ -82,15 +82,15 @@ Object {
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 15,
+            "column": 13,
             "line": 3,
           },
           "start": Position {
-            "column": 11,
+            "column": 9,
             "line": 3,
           },
         },
-        "start": 30,
+        "start": 26,
         "typability": "Typed",
         "type": "CallExpression",
       },
@@ -120,62 +120,62 @@ Object {
       "callee": 1,
       "location": SourceLocation {
         "end": Position {
-          "column": 15,
+          "column": 13,
           "line": 3,
         },
         "start": Position {
-          "column": 11,
+          "column": 9,
           "line": 3,
         },
       },
       "node": Node {
         "arguments": Array [
           Node {
-            "end": 33,
+            "end": 29,
             "inferredType": Object {
               "kind": "primitive",
               "name": "number",
             },
             "loc": SourceLocation {
               "end": Position {
-                "column": 14,
+                "column": 12,
                 "line": 3,
               },
               "start": Position {
-                "column": 13,
+                "column": 11,
                 "line": 3,
               },
             },
             "raw": "2",
-            "start": 32,
+            "start": 28,
             "typability": "Typed",
             "type": "Literal",
             "value": 2,
           },
         ],
         "callee": Node {
-          "end": 31,
+          "end": 27,
           "inferredType": Object {
             "kind": "primitive",
             "name": "number",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 12,
+              "column": 10,
               "line": 3,
             },
             "start": Position {
-              "column": 11,
+              "column": 9,
               "line": 3,
             },
           },
           "raw": "1",
-          "start": 30,
+          "start": 26,
           "typability": "Typed",
           "type": "Literal",
           "value": 1,
         },
-        "end": 34,
+        "end": 30,
         "inferredType": Object {
           "constraint": "none",
           "kind": "variable",
@@ -183,15 +183,15 @@ Object {
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 15,
+            "column": 13,
             "line": 3,
           },
           "start": Position {
-            "column": 11,
+            "column": 9,
             "line": 3,
           },
         },
-        "start": 30,
+        "start": 26,
         "typability": "Typed",
         "type": "CallExpression",
       },
@@ -223,11 +223,11 @@ Object {
       "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
       "location": SourceLocation {
         "end": Position {
-          "column": 3,
+          "column": 1,
           "line": 4,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 2,
         },
       },
@@ -281,11 +281,11 @@ Object {
       "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
       "location": SourceLocation {
         "end": Position {
-          "column": 38,
+          "column": 41,
           "line": 2,
         },
         "start": Position {
-          "column": 32,
+          "column": 33,
           "line": 2,
         },
       },
@@ -327,7 +327,7 @@ Object {
           "line": 6,
         },
         "start": Position {
-          "column": 17,
+          "column": 15,
           "line": 6,
         },
       },
@@ -359,11 +359,11 @@ Object {
       "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
       "location": SourceLocation {
         "end": Position {
-          "column": 37,
+          "column": 45,
           "line": 3,
         },
         "start": Position {
-          "column": 21,
+          "column": 27,
           "line": 3,
         },
       },
@@ -400,11 +400,11 @@ Object {
       "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
       "location": SourceLocation {
         "end": Position {
-          "column": 61,
+          "column": 67,
           "line": 7,
         },
         "start": Position {
-          "column": 11,
+          "column": 8,
           "line": 7,
         },
       },
@@ -442,7 +442,7 @@ Object {
           "line": 6,
         },
         "start": Position {
-          "column": 17,
+          "column": 15,
           "line": 6,
         },
       },
@@ -482,7 +482,7 @@ Object {
           "line": 6,
         },
         "start": Position {
-          "column": 29,
+          "column": 27,
           "line": 6,
         },
       },
@@ -516,11 +516,11 @@ Object {
       "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
       "location": SourceLocation {
         "end": Position {
-          "column": 3,
+          "column": 1,
           "line": 4,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 2,
         },
       },
@@ -550,11 +550,11 @@ Object {
       "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
       "location": SourceLocation {
         "end": Position {
-          "column": 3,
+          "column": 1,
           "line": 4,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 2,
         },
       },
@@ -586,11 +586,11 @@ Object {
       "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
       "location": SourceLocation {
         "end": Position {
-          "column": 3,
+          "column": 1,
           "line": 4,
         },
         "start": Position {
-          "column": 2,
+          "column": 0,
           "line": 2,
         },
       },
@@ -624,11 +624,11 @@ Object {
       "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
       "location": SourceLocation {
         "end": Position {
-          "column": 36,
+          "column": 42,
           "line": 3,
         },
         "start": Position {
-          "column": 21,
+          "column": 27,
           "line": 3,
         },
       },
@@ -665,11 +665,11 @@ Object {
       "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
       "location": SourceLocation {
         "end": Position {
-          "column": 60,
+          "column": 64,
           "line": 7,
         },
         "start": Position {
-          "column": 11,
+          "column": 8,
           "line": 7,
         },
       },
@@ -703,11 +703,11 @@ Object {
       "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
       "location": SourceLocation {
         "end": Position {
-          "column": 27,
+          "column": 25,
           "line": 6,
         },
         "start": Position {
-          "column": 17,
+          "column": 15,
           "line": 6,
         },
       },
@@ -743,11 +743,11 @@ Object {
       "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
       "location": SourceLocation {
         "end": Position {
-          "column": 38,
+          "column": 34,
           "line": 6,
         },
         "start": Position {
-          "column": 28,
+          "column": 24,
           "line": 6,
         },
       },
@@ -785,11 +785,11 @@ Object {
     UndefinedVariable {
       "location": SourceLocation {
         "end": Position {
-          "column": 14,
+          "column": 12,
           "line": 9,
         },
         "start": Position {
-          "column": 10,
+          "column": 8,
           "line": 9,
         },
       },
@@ -819,11 +819,11 @@ Object {
     UndefinedVariable {
       "location": SourceLocation {
         "end": Position {
-          "column": 14,
+          "column": 12,
           "line": 5,
         },
         "start": Position {
-          "column": 10,
+          "column": 8,
           "line": 5,
         },
       },

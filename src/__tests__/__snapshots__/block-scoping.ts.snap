@@ -15,66 +15,66 @@ test();",
   "errors": Array [
     NoAssignmentToForVariable {
       "node": Node {
-        "end": 84,
+        "end": 79,
         "inferredType": Object {
           "kind": "primitive",
           "name": "number",
         },
         "left": Node {
-          "end": 80,
+          "end": 75,
           "inferredType": Object {
             "kind": "primitive",
             "name": "number",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 7,
+              "column": 5,
               "line": 4,
             },
             "start": Position {
-              "column": 6,
+              "column": 4,
               "line": 4,
             },
           },
           "name": "x",
-          "start": 79,
+          "start": 74,
           "typability": "Typed",
           "type": "Identifier",
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 11,
+            "column": 9,
             "line": 4,
           },
           "start": Position {
-            "column": 6,
+            "column": 4,
             "line": 4,
           },
         },
         "operator": "=",
         "right": Node {
-          "end": 84,
+          "end": 79,
           "inferredType": Object {
             "kind": "primitive",
             "name": "number",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 11,
+              "column": 9,
               "line": 4,
             },
             "start": Position {
-              "column": 10,
+              "column": 8,
               "line": 4,
             },
           },
           "raw": "1",
-          "start": 83,
+          "start": 78,
           "typability": "Typed",
           "type": "Literal",
           "value": 1,
         },
-        "start": 79,
+        "start": 74,
         "typability": "Typed",
         "type": "AssignmentExpression",
       },

@@ -1055,7 +1055,7 @@ test('no interface', () => {
     }
   `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: The keyword 'interface' is reserved (1:1)"`)
+  ).toMatchInlineSnapshot(`"Line 1: SyntaxError: The keyword 'interface' is reserved (1:1)"`)
 })
 
 test('no interface - verbose', () => {
@@ -1067,7 +1067,7 @@ test('no interface - verbose', () => {
 	`,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: The keyword 'interface' is reserved (2:1)
+            "Line 2, Column 1: SyntaxError: The keyword 'interface' is reserved (2:1)
             There is a syntax error in your program
             "
           `)

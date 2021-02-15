@@ -41,7 +41,7 @@ const globals = native.globals;
           isTail: true,
           function: f,
           functionName: \\"f\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, 1, 5, 18)],
+          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, 1, 5, 20)],
           line: 5,
           column: 11
         };
@@ -103,7 +103,7 @@ const globals = native.globals;
           isTail: true,
           function: f,
           functionName: \\"f\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 22), binaryOp(\\"+\\", 1, y, 1, 5, 27)],
+          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 22), binaryOp(\\"+\\", 1, y, 1, 5, 29)],
           line: 5,
           column: 20
         });
@@ -158,7 +158,7 @@ const globals = native.globals;
         isTail: true,
         function: f,
         functionName: \\"f\\",
-        arguments: [binaryOp(\\"-\\", 1, x, 1, 2, 24), binaryOp(\\"+\\", 1, y, 1, 2, 29)],
+        arguments: [binaryOp(\\"-\\", 1, x, 1, 2, 24), binaryOp(\\"+\\", 1, y, 1, 2, 31)],
         line: 2,
         column: 22
       };
@@ -212,7 +212,7 @@ const globals = native.globals;
         isTail: true,
         function: f,
         functionName: \\"f\\",
-        arguments: [binaryOp(\\"-\\", 1, x, 1, 2, 41), binaryOp(\\"+\\", 1, y, 1, 2, 46)],
+        arguments: [binaryOp(\\"-\\", 1, x, 1, 2, 41), binaryOp(\\"+\\", 1, y, 1, 2, 48)],
         line: 2,
         column: 39
       } : {
@@ -276,7 +276,7 @@ const globals = native.globals;
           isTail: true,
           function: f,
           functionName: \\"f\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, 1, 5, 18)],
+          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, 1, 5, 20)],
           line: 5,
           column: 11
         };
@@ -328,7 +328,7 @@ const globals = native.globals;
       isTail: true,
       function: f,
       functionName: \\"f\\",
-      arguments: [binaryOp(\\"-\\", 1, x, 1, 1, 35), binaryOp(\\"+\\", 1, y, 1, 1, 40)],
+      arguments: [binaryOp(\\"-\\", 1, x, 1, 1, 35), binaryOp(\\"+\\", 1, y, 1, 1, 42)],
       line: 1,
       column: 33
     }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\", native);
@@ -388,7 +388,7 @@ const globals = native.globals;
           isTail: true,
           function: f,
           functionName: \\"f\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, callIfFuncAndRightArgs(f, 5, 20, 0, z, 0), 5, 18), z],
+          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, callIfFuncAndRightArgs(f, 5, 24, 0, z, 0), 5, 20), z],
           line: 5,
           column: 11
         };
@@ -441,7 +441,7 @@ const globals = native.globals;
       isTail: true,
       function: g,
       functionName: \\"g\\",
-      arguments: [binaryOp(\\"-\\", 1, x, 1, 1, 35), binaryOp(\\"+\\", 1, y, 1, 1, 40)],
+      arguments: [binaryOp(\\"-\\", 1, x, 1, 1, 35), binaryOp(\\"+\\", 1, y, 1, 1, 42)],
       line: 1,
       column: 33
     }, \\"(x, y) => x <= 0 ? y : g(x - 1, y + 1)\\", native);
@@ -452,7 +452,7 @@ const globals = native.globals;
       isTail: true,
       function: f,
       functionName: \\"f\\",
-      arguments: [binaryOp(\\"-\\", 1, x, 1, 2, 35), binaryOp(\\"+\\", 1, y, 1, 2, 40)],
+      arguments: [binaryOp(\\"-\\", 1, x, 1, 2, 35), binaryOp(\\"+\\", 1, y, 1, 2, 42)],
       line: 2,
       column: 33
     }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\", native);
@@ -525,7 +525,7 @@ const globals = native.globals;
           isTail: true,
           function: g,
           functionName: \\"g\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, 1, 5, 18)],
+          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, 1, 5, 20)],
           line: 5,
           column: 11
         };
@@ -542,7 +542,7 @@ const globals = native.globals;
           isTail: true,
           function: f,
           functionName: \\"f\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 12, 13), binaryOp(\\"+\\", 1, y, 1, 12, 18)],
+          arguments: [binaryOp(\\"-\\", 1, x, 1, 12, 13), binaryOp(\\"+\\", 1, y, 1, 12, 20)],
           line: 12,
           column: 11
         };

@@ -26,6 +26,8 @@ Node {
 }
 `;
 
+exports[`Typescript syntax is allowed at any chapter 0 5`] = `Array []`;
+
 exports[`Typescript syntax is allowed at any chapter 1 1`] = `
 "const a: number = 5;
 a;"
@@ -115,6 +117,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 1 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 2 1`] = `
 "const a: number = 5;
@@ -207,6 +211,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 2 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 3 1`] = `
 "const a = (5 as number);
@@ -301,6 +307,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 3 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 4 1`] = `
 "function f(x: unknown): x is number {
@@ -471,6 +479,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 4 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 5 1`] = `
 "function f(x:
@@ -650,6 +660,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 5 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 6 1`] = `
 "function name(a: number, b: number): number {
@@ -1177,6 +1189,8 @@ Node {
 }
 `;
 
+exports[`Typescript syntax is allowed at any chapter 6 5`] = `Array []`;
+
 exports[`Typescript syntax is allowed at any chapter 7 1`] = `"(() => true)();"`;
 
 exports[`Typescript syntax is allowed at any chapter 7 2`] = `"(() => true)();"`;
@@ -1248,6 +1262,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 7 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 8 1`] = `"(<T extends number | string>(x: T, y: T): T => { return x + y; })(1, 2);"`;
 
@@ -1441,6 +1457,8 @@ Node {
 }
 `;
 
+exports[`Typescript syntax is allowed at any chapter 8 5`] = `Array []`;
+
 exports[`Typescript syntax is allowed at any chapter 9 1`] = `"true;"`;
 
 exports[`Typescript syntax is allowed at any chapter 9 2`] = `"true;"`;
@@ -1484,6 +1502,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 9 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 10 1`] = `"(false as boolean);"`;
 
@@ -1539,6 +1559,8 @@ Node {
 }
 `;
 
+exports[`Typescript syntax is allowed at any chapter 10 5`] = `Array []`;
+
 exports[`Typescript syntax is allowed at any chapter 11 1`] = `"'a string \\"\\" \\\\'\\\\'';"`;
 
 exports[`Typescript syntax is allowed at any chapter 11 2`] = `"'a string \\"\\" \\\\'\\\\'';"`;
@@ -1584,6 +1606,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 11 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 12 1`] = `"31.4 + (-3.14e10) * -1 % 2 / (1.5 as number);"`;
 
@@ -1734,6 +1758,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 12 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 13 1`] = `"1 === 1 && 1 < 2 && 1 <= 2 && 2 >= 1 && 2 > 1 || false;"`;
 
@@ -1959,6 +1985,8 @@ Node {
 }
 `;
 
+exports[`Typescript syntax is allowed at any chapter 13 5`] = `Array []`;
+
 exports[`Typescript syntax is allowed at any chapter 14 1`] = `"true ? 1 : 2;"`;
 
 exports[`Typescript syntax is allowed at any chapter 14 2`] = `"true ? 1 : 2;"`;
@@ -2029,6 +2057,8 @@ Node {
 }
 `;
 
+exports[`Typescript syntax is allowed at any chapter 14 5`] = `Array []`;
+
 exports[`Typescript syntax is allowed at any chapter 15 1`] = `"null;"`;
 
 exports[`Typescript syntax is allowed at any chapter 15 2`] = `"null;"`;
@@ -2072,6 +2102,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 15 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 16 1`] = `"pair(1 as const, null);"`;
 
@@ -2156,6 +2188,8 @@ Node {
 }
 `;
 
+exports[`Typescript syntax is allowed at any chapter 16 5`] = `Array []`;
+
 exports[`Typescript syntax is allowed at any chapter 17 1`] = `"list(1 as const);"`;
 
 exports[`Typescript syntax is allowed at any chapter 17 2`] = `"list(1);"`;
@@ -2228,6 +2262,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 17 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 18 1`] = `
 "let i: number = 1;
@@ -2414,6 +2450,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 18 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 19 1`] = `
 "let i = 1;
@@ -2610,6 +2648,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 19 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 20 1`] = `
 "let i = 1;
@@ -3002,6 +3042,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 20 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 21 1`] = `
 "let i = 1;
@@ -3401,6 +3443,8 @@ Node {
 }
 `;
 
+exports[`Typescript syntax is allowed at any chapter 21 5`] = `Array []`;
+
 exports[`Typescript syntax is allowed at any chapter 22 1`] = `"[];"`;
 
 exports[`Typescript syntax is allowed at any chapter 22 2`] = `"[];"`;
@@ -3442,6 +3486,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 22 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 23 1`] = `"[(1 as number), 2, (3 as const)];"`;
 
@@ -3541,6 +3587,8 @@ Node {
 }
 `;
 
+exports[`Typescript syntax is allowed at any chapter 23 5`] = `Array []`;
+
 exports[`Typescript syntax is allowed at any chapter 24 1`] = `"[1, 2, 3][1 as number];"`;
 
 exports[`Typescript syntax is allowed at any chapter 24 2`] = `"[1, 2, 3][1];"`;
@@ -3639,6 +3687,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 24 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 25 1`] = `
 "let x: number[] = [1, 2, 3];
@@ -3781,6 +3831,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 25 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 26 1`] = `
 "let x: [1, 2, 3] = [1, 2, 3];
@@ -3964,6 +4016,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 26 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 27 1`] = `
 "let x = 3;
@@ -4203,6 +4257,8 @@ Node {
 }
 `;
 
+exports[`Typescript syntax is allowed at any chapter 27 5`] = `Array []`;
+
 exports[`Typescript syntax is allowed at any chapter 28 1`] = `"({});"`;
 
 exports[`Typescript syntax is allowed at any chapter 28 2`] = `"({});"`;
@@ -4248,6 +4304,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 28 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 29 1`] = `"({a: 1, b: 2});"`;
 
@@ -4360,6 +4418,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 29 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 30 1`] = `"({a: 1, b: 2})['a'];"`;
 
@@ -4492,6 +4552,8 @@ Node {
 }
 `;
 
+exports[`Typescript syntax is allowed at any chapter 30 5`] = `Array []`;
+
 exports[`Typescript syntax is allowed at any chapter 31 1`] = `"({a: 1, b: 2}).a;"`;
 
 exports[`Typescript syntax is allowed at any chapter 31 2`] = `"({ a: 1, b: 2 }).a;"`;
@@ -4620,6 +4682,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 31 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 32 1`] = `"({'a': 1, 'b': 2}).a;"`;
 
@@ -4753,6 +4817,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 32 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 33 1`] = `"({1: 1, 2: 2})['1'];"`;
 
@@ -4888,6 +4954,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 33 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 34 1`] = `
 "const key = 'a';
@@ -5059,6 +5127,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 34 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 35 1`] = `
 "let x = {a: 1, b: 2};
@@ -5242,6 +5312,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 35 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 36 1`] = `
 "let x = {a: 1, b: 2};
@@ -5427,6 +5499,8 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 36 5`] = `Array []`;
 
 exports[`Typescript syntax is allowed at any chapter 37 1`] = `
 "let x: object = {a: 1, b: 2};
@@ -5660,3 +5734,5 @@ Node {
   "type": "Program",
 }
 `;
+
+exports[`Typescript syntax is allowed at any chapter 37 5`] = `Array []`;

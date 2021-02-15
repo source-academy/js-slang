@@ -244,9 +244,9 @@ Node {
       "body": Node {
         "body": Array [
           Node {
-            "end": 54,
+            "end": 53,
             "expression": Node {
-              "end": 53,
+              "end": 52,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 3,
@@ -258,7 +258,7 @@ Node {
                 },
               },
               "name": "c",
-              "start": 52,
+              "start": 51,
               "type": "Identifier",
             },
             "loc": SourceLocation {
@@ -271,14 +271,14 @@ Node {
                 "line": 3,
               },
             },
-            "start": 52,
+            "start": 51,
             "type": "ExpressionStatement",
           },
           Node {
             "argument": Node {
               "arguments": Array [],
               "callee": Node {
-                "end": 65,
+                "end": 64,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 10,
@@ -290,10 +290,10 @@ Node {
                   },
                 },
                 "name": "f",
-                "start": 64,
+                "start": 63,
                 "type": "Identifier",
               },
-              "end": 67,
+              "end": 66,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 12,
@@ -304,10 +304,10 @@ Node {
                   "line": 4,
                 },
               },
-              "start": 64,
+              "start": 63,
               "type": "CallExpression",
             },
-            "end": 68,
+            "end": 67,
             "loc": SourceLocation {
               "end": Position {
                 "column": 13,
@@ -318,11 +318,11 @@ Node {
                 "line": 4,
               },
             },
-            "start": 57,
+            "start": 56,
             "type": "ReturnStatement",
           },
         ],
-        "end": 70,
+        "end": 69,
         "loc": SourceLocation {
           "end": Position {
             "column": 1,
@@ -336,7 +336,7 @@ Node {
         "start": 37,
         "type": "BlockStatement",
       },
-      "end": 70,
+      "end": 69,
       "expression": false,
       "generator": false,
       "id": Node {
@@ -373,9 +373,9 @@ Node {
     Node {
       "declarations": Array [
         Node {
-          "end": 84,
+          "end": 83,
           "id": Node {
-            "end": 78,
+            "end": 77,
             "loc": SourceLocation {
               "end": Position {
                 "column": 7,
@@ -387,13 +387,13 @@ Node {
               },
             },
             "name": "b",
-            "start": 77,
+            "start": 76,
             "type": "Identifier",
           },
           "init": Node {
             "arguments": Array [],
             "callee": Node {
-              "end": 82,
+              "end": 81,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 11,
@@ -405,10 +405,10 @@ Node {
                 },
               },
               "name": "f",
-              "start": 81,
+              "start": 80,
               "type": "Identifier",
             },
-            "end": 84,
+            "end": 83,
             "loc": SourceLocation {
               "end": Position {
                 "column": 13,
@@ -419,7 +419,7 @@ Node {
                 "line": 6,
               },
             },
-            "start": 81,
+            "start": 80,
             "type": "CallExpression",
           },
           "loc": SourceLocation {
@@ -432,11 +432,11 @@ Node {
               "line": 6,
             },
           },
-          "start": 77,
+          "start": 76,
           "type": "VariableDeclarator",
         },
       ],
-      "end": 85,
+      "end": 84,
       "kind": "const",
       "loc": SourceLocation {
         "end": Position {
@@ -448,14 +448,14 @@ Node {
           "line": 6,
         },
       },
-      "start": 71,
+      "start": 70,
       "typability": "NotYetTyped",
       "type": "VariableDeclaration",
     },
     Node {
       "body": Node {
         "body": Array [],
-        "end": 128,
+        "end": 126,
         "loc": SourceLocation {
           "end": Position {
             "column": 1,
@@ -466,14 +466,14 @@ Node {
             "line": 7,
           },
         },
-        "start": 110,
+        "start": 109,
         "type": "BlockStatement",
       },
-      "end": 128,
+      "end": 126,
       "expression": false,
       "generator": false,
       "id": Node {
-        "end": 107,
+        "end": 106,
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -485,7 +485,7 @@ Node {
           },
         },
         "name": "g",
-        "start": 106,
+        "start": 105,
         "type": "Identifier",
       },
       "loc": SourceLocation {
@@ -499,16 +499,16 @@ Node {
         },
       },
       "params": Array [],
-      "start": 97,
+      "start": 96,
       "typability": "Untypable",
       "type": "FunctionDeclaration",
     },
     Node {
       "declarations": Array [
         Node {
-          "end": 140,
+          "end": 138,
           "id": Node {
-            "end": 136,
+            "end": 134,
             "loc": SourceLocation {
               "end": Position {
                 "column": 7,
@@ -520,11 +520,11 @@ Node {
               },
             },
             "name": "c",
-            "start": 135,
+            "start": 133,
             "type": "Identifier",
           },
           "init": Node {
-            "end": 140,
+            "end": 138,
             "loc": SourceLocation {
               "end": Position {
                 "column": 11,
@@ -536,7 +536,7 @@ Node {
               },
             },
             "raw": "1",
-            "start": 139,
+            "start": 137,
             "type": "Literal",
             "value": 1,
           },
@@ -550,11 +550,11 @@ Node {
               "line": 9,
             },
           },
-          "start": 135,
+          "start": 133,
           "type": "VariableDeclarator",
         },
       ],
-      "end": 141,
+      "end": 139,
       "kind": "const",
       "loc": SourceLocation {
         "end": Position {
@@ -566,12 +566,12 @@ Node {
           "line": 9,
         },
       },
-      "start": 129,
+      "start": 127,
       "typability": "Untypable",
       "type": "VariableDeclaration",
     },
   ],
-  "end": 156,
+  "end": 154,
   "loc": SourceLocation {
     "end": Position {
       "column": 27,
