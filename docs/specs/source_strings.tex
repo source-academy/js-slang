@@ -13,3 +13,18 @@ where $\textit{backquote-characters}$ is a possibly empty sequence of characters
 the character~\texttt{`}. Note that newline characters are allowed as
 $\textit{backquote-characters}$.
 
+The following characters can be represented in strings as given:
+\begin{itemize}
+\item horizontal tab: \verb#\t#
+\item vertical tab: \verb#\v#
+\item nul char:  \verb#\0#
+\item backspace:  \verb#\b#
+\item form feed:  \verb#\f#
+\item newline:  \verb#\n#
+\item carriage return:  \verb#\r#
+\item single quote:  \verb#\'#
+\item double quote:  \verb#\"#
+\item backslash:  \verb#\\#
+\end{itemize}
+Unicode characters can be used in strings using \verb#\u# followed by the hexadecimal representation
+of the unicode character, for example \lstinline{'\uD83D\uDC04'}.
