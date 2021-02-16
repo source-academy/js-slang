@@ -622,8 +622,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   ImportDeclaration: function*(node: es.ImportDeclaration, context: Context) {
     const moduleName = node.source.value as string
     const neededSymbols = node.specifiers.map(spec => spec.local.name)
-    // TODO pass relevant sideContents to frontend
-    const {functions} = loadModule(moduleName, context)
+    const { functions } = loadModule(moduleName, context)
     declareImports(context, node)
     for (const name of neededSymbols) {
       defineVariable(context, name, functions[name], true);

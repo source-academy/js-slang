@@ -148,6 +148,11 @@ export interface Context<T = any> {
   variant: Variant
 
   typeEnvironment: TypeEnvironment
+
+  /**
+   * The side content components to be displayed after the evaluation
+   */
+  modules?: any[]
 }
 
 export interface BlockFrame {
