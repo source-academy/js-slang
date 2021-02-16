@@ -309,7 +309,7 @@ function draw_3D_connected(num) {
  * displays it graphically, in a window, instead of textually. 
  * The Drawing is stretched or shrunk 
  * to show the full curve 
- * and maximize its width and height within the cube.
+ * and maximize its width, height and depth within the cube.
  * @param {Number} num - determines the number of points to be 
  * sampled. Including 0 and 1,
  * there are <CODE>num + 1</CODE> evenly spaced sample points.
