@@ -50,8 +50,8 @@ function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Iden
       stmt.declarations
         .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
         .forEach(name => declaredIds.push(name))
-    // } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
-    //   declaredIds.push(stmt.id)
+      // } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
+      //   declaredIds.push(stmt.id)
     }
   }
   return declaredIds
@@ -590,7 +590,7 @@ function substituteMain(
               target.body = substituteMain(param, changed, target.body, [
                 []
               ])[0] as es.BlockStatement
-              (substedFunctionExpression.params[i]as es.Identifier).name = param.name + ' (param)'
+              ;(substedFunctionExpression.params[i] as es.Identifier).name = param.name + ' (param)'
             }
           }
         }
@@ -981,10 +981,8 @@ function substituteMain(
                 ;(substedArrow.params[i] as es.Identifier).name = param.name + '_' + newNum
               }
               const changed = ast.identifier(param.name + ' (param)', param.loc)
-              newBody = substituteMain(param, changed, newBody, [
-                []
-              ])[0] as es.BlockStatement
-              (substedArrow.params[i]as es.Identifier).name = param.name + ' (param)'
+              newBody = substituteMain(param, changed, newBody, [[]])[0] as es.BlockStatement
+              ;(substedArrow.params[i] as es.Identifier).name = param.name + ' (param)'
             }
           }
         }
