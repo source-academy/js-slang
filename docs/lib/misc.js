@@ -107,7 +107,7 @@ function prompt(s) {
  * The notation used for the display of values 
  * is consistent with 
  * <a href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">JSON</a>, 
- * but also displays <CODE>undefined</CODE> and function objects.
+ * but also displays <CODE>undefined</CODE>, <CODE>NaN</CODE>, <CODE>Infinity</CODE>, and function objects.
  * @param {value} v to be displayed
  * @param {string} s to be displayed, preceding <CODE>v</CODE>, optional argument
  * @returns {value} v, the first argument value
@@ -127,7 +127,7 @@ function display(v, s) {
  * The notation used for the display of values 
  * is consistent with 
  * <a href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">JSON</a>, 
- * but also displays <CODE>undefined</CODE> and function objects.
+ * but also displays <CODE>undefined</CODE>, <CODE>NaN</CODE>, <CODE>Infinity</CODE>, and function objects.
  * @param {value} v to be displayed
  * @param {string} s to be displayed, preceding <CODE>v</CODE>
  */
@@ -138,7 +138,7 @@ function error(v, s) {
  * returns a string that represents the value <CODE>v</CODE>, using a
  * notation that is is consistent with 
  * <a href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">JSON</a>, 
- * but also displays <CODE>undefined</CODE> and function objects.
+ * but also displays <CODE>undefined</CODE>, <CODE>NaN</CODE>, <CODE>Infinity</CODE>, and function objects.
  * See also <a href="https://sicp.comp.nus.edu.sg/chapters/62">textbook example</a>.
  * @param {value} v the argument value
  * @returns {string} string representation of v
