@@ -324,7 +324,7 @@ function put_in_standard_position(curve) {
  * @returns {Curve} result Curve
  */
 function connect_rigidly(curve1, curve2) {
-  return t < 1 / 2 ? curve1(2 * t) : curve2(2 * t - 1)
+  return t => t < 1 / 2 ? curve1(2 * t) : curve2(2 * t - 1)
 }
 
 // CONNECT-ENDS makes a Curve consisting of curve1 followed by

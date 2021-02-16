@@ -45202,84 +45202,142 @@ Array [
 ]
 `;
 
+<<<<<<< HEAD
 exports[`scoping test (function parameter) 1`] = `
 "function f(w) {
+=======
+exports[`scoping test for function expressions 1`] = `
+"function f(x (param)) {
+>>>>>>> 441635f4f09e7bc5c9d5018dbb58d845b043df97
   return g();
 }
 function g() {
-  return w;
+  return x;
 }
-const w = 0;
-f(1);
+const x = 1;
+f(0);
 
+<<<<<<< HEAD
 function f(w) {
+=======
+function f(x (param)) {
+>>>>>>> 441635f4f09e7bc5c9d5018dbb58d845b043df97
   return g();
 }
 function g() {
-  return w;
+  return x;
 }
-const w = 0;
-f(1);
+const x = 1;
+f(0);
 
 function g() {
-  return w;
+  return x;
 }
-const w = 0;
-f(1);
+const x = 1;
+f(0);
 
 function g() {
-  return w;
+  return x;
 }
-const w = 0;
-f(1);
+const x = 1;
+f(0);
 
-const w = 0;
-f(1);
+const x = 1;
+f(0);
 
-const w = 0;
-f(1);
+const x = 1;
+f(0);
 
-f(1);
+f(0);
 
-f(1);
+f(0);
 
 g();
 
 g();
 
-0;
+1;
 
-0;
+1;
 "
 `;
 
-exports[`scoping test 2 (blocks) 1`] = `
-"function f(w) {
-  const z (const) = w;
+exports[`scoping test for lambda expressions 1`] = `
+"const f = x (param) => g();
+const g = () => x;
+const x = 1;
+f(0);
+
+const f = x (param) => g();
+const g = () => x;
+const x = 1;
+f(0);
+
+const g = () => x;
+const x = 1;
+(x (param) => g())(0);
+
+const g = () => x;
+const x = 1;
+(x (param) => g())(0);
+
+const x = 1;
+(x (param) => (() => x)())(0);
+
+const x = 1;
+(x (param) => (() => x)())(0);
+
+(x (param) => (() => 1)())(0);
+
+(x (param) => (() => 1)())(0);
+
+(() => 1)();
+
+(() => 1)();
+
+1;
+
+1;
+"
+`;
+
+exports[`scoping test for block expressions 1`] = `
+"function f(x) {
+  const y (const) = x;
   return g();
 }
 function g() {
-  return z;
+  return y;
 }
+const y = 1;
 f(0);
 
-function f(w) {
-  const z (const) = w;
+function f(x) {
+  const y (const) = x;
   return g();
 }
 function g() {
-  return z;
+  return y;
 }
+const y = 1;
 f(0);
 
 function g() {
-  return z;
+  return y;
 }
+const y = 1;
 f(0);
 
 function g() {
-  return z;
+  return y;
 }
+const y = 1;
+f(0);
+
+const y = 1;
+f(0);
+
+const y = 1;
 f(0);
 
 f(0);
@@ -45287,12 +45345,12 @@ f(0);
 f(0);
 
 {
-  const z (const) = 0;
+  const y (const) = 0;
   return g();
 };
 
 {
-  const z (const) = 0;
+  const y (const) = 0;
   return g();
 };
 
@@ -45308,9 +45366,9 @@ g();
 
 g();
 
-z;
+1;
 
-z;
+1;
 "
 `;
 

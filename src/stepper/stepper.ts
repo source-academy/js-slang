@@ -50,8 +50,6 @@ function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Iden
       stmt.declarations
         .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
         .forEach(name => declaredIds.push(name))
-      // } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
-      //   declaredIds.push(stmt.id)
     }
   }
   return declaredIds

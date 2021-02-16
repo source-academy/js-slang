@@ -883,38 +883,50 @@ test('const declarations in blocks subst into call expressions', () => {
   expect(getLastStepAsString(steps)).toEqual('6;')
 })
 
-test('scoping test (function parameter)', () => {
+test('scoping test for function expressions', () => {
   const code = `
-  function f(w) { 
+  function f(x) {
     return g();
   }
   function g() {
-    return w;
+    return x;
   }
-
-  const w = 0;
-  f(1);
-  `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('0;')
-})
-
-test('scoping test 2 (blocks)', () => {
-  const code = `
-  function f(w) {
-    const z = w; 
-    return g();
-  }
-  function g() {
-    return z;
-  }
-
+  const x = 1;
   f(0);
   `
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('z;')
+  expect(getLastStepAsString(steps)).toEqual('1;')
+})
+
+test('scoping test for lambda expressions', () => {
+  const code = `
+  const f = x => g();
+  const g = () => x;
+  const x = 1;
+  f(0);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('1;')
+})
+
+test('scoping test for block expressions', () => {
+  const code = `
+  function f(x) {
+    const y = x;
+    return g();
+  }
+  function g() {
+    return y;
+  }
+  const y = 1;
+  f(0);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('1;')
 })
