@@ -146,3 +146,16 @@ function error(v, s) {
 function stringify(v) {
 }
 
+/**
+ * Takes a string <CODE>s</CODE> as first argument and a non-negative integer
+ * <CODE>i</CODE> as second argument. If <CODE>i</CODE> is less than the length
+ * of <CODE>s</CODE>, this function returns a one-character string that contains
+ * the character of <CODE>s</CODE> at position <CODE>i</CODE>, counting from 0.
+ * If <CODE>i</CODE> is larger than or equal to the length of 
+ * <CODE>s</CODE>, this function returns <CODE>undefined</CODE>.
+ * @param {string} s - given string
+ * @param {number} i - index
+ * @returns {string} one-character or undefined
+ */
+function char_at(s, i) {}
+
