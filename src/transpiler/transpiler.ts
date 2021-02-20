@@ -4,7 +4,7 @@ import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { AllowedDeclarations, Context, NativeStorage, ValueWrapper } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
-import { loadModuleText } from '../modules/moduleLoader'
+import { memoizedLoadModuleText } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
 import {
   getUniqueId,
@@ -42,7 +42,7 @@ function prefixModule(program: es.Program): string {
     if (node.type !== 'ImportDeclaration') {
       break
     }
-    const moduleText = loadModuleText(node.source.value as string).trim()
+    const moduleText = memoizedLoadModuleText(node.source.value as string).trim()
     // remove ; from moduleText
     prefix += `const __MODULE_${moduleCounter}__ = (${moduleText.substring(
       0,
@@ -712,6 +712,7 @@ export function transpile(
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
+
   const modulePrefix = prefixModule(program)
   transformImportDeclarations(program)
   const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(

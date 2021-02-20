@@ -71,7 +71,7 @@ export class PreemptiveScheduler implements Scheduler {
       // The debugger is turned off while the code evaluates just above the debugger statement.
       let actuallyBreak: boolean = false
       let itValue = it.next()
-      const interval: number = setInterval(() => {
+      const interval = setInterval(() => {
         let step = 0
         try {
           while (!itValue.done && step < this.steps) {

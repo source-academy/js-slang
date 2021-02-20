@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.4.70",
+  "version": "0.4.71",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
     "JavaScript",
@@ -66,8 +66,8 @@
     "coveralls": "^3.1.0",
     "escodegen": "^2.0.0",
     "eslint": "^7.11.0",
-    "eslint-config-prettier": "^6.13.0",
-    "husky": "^4.3.0",
+    "eslint-config-prettier": "^7.2.0",
+    "husky": "^5.0.9",
     "jest": "^26.4.2",
     "jest-html-reporter": "^3.2.0",
     "jsdoc": "3.6.6",
@@ -107,11 +107,5 @@
         }
       ]
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn eslint --fix && yarn format && yarn eslint",
-      "pre-push": "yarn ci"
-    }
   }
 }
