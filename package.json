@@ -107,11 +107,5 @@
         }
       ]
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn eslint --fix && yarn format && yarn eslint",
-      "pre-push": "yarn ci"
-    }
   }
 }
