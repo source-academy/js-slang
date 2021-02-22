@@ -386,7 +386,6 @@ function appendModulesToContext(program: Program, context: Context): void {
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') break
     const moduleName = (node.source.value as string).trim()
-    console.log('appendModulesToContext')
     Array.prototype.push.apply(context.modules, loadModuleContent(moduleName))
   }
 }

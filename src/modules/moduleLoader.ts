@@ -113,8 +113,9 @@ const loadModulesContentText = memoize((path: string): string => {
     throw new ModuleNotFound(path)
   }
   const contentText = req.responseText
-  // remove "(React);" at the back of the contentText
-  return contentText.trim().substring(0, contentText.length - 10)
+  // remove "(React));" at the back of the contentText
+  console.log(contentText.trim().replace('(React));', ')'))
+  return contentText.trim().replace('(React));', ')')
 })
 
 /**
