@@ -1,4 +1,4 @@
-import { memoizedLoadModuleText, loadModule } from '../moduleLoader'
+import { loadModulePackageText, loadModulePackage } from '../moduleLoader'
 import { ModuleNotFound, ModuleInternalError } from '../../errors/errors'
 import { stripIndent } from '../../utils/formatters'
 import { createEmptyContext } from '../../createContext'
@@ -15,7 +15,7 @@ test('Load a valid module', () => {
       };
     }
   `
-  expect(loadModule(path, createEmptyContext(1, 'default', []), moduleText)).toEqual({
+  expect(loadModulePackage(path, createEmptyContext(1, 'default', []), moduleText)).toEqual({
     functions: {
       hello: 1
     },
@@ -25,7 +25,7 @@ test('Load a valid module', () => {
 
 test('Try loading a non-existing module', () => {
   const moduleName = '_non_existing_dir/_non_existing_file'
-  expect(() => memoizedLoadModuleText(moduleName)).toThrow(ModuleNotFound)
+  expect(() => loadModulePackageText(moduleName)).toThrow(ModuleNotFound)
 })
 
 test('Try executing a wrongly implemented module', () => {
@@ -34,7 +34,7 @@ test('Try executing a wrongly implemented module', () => {
   const wrongModuleText = stripIndent`
     export function es6_function(params) {}
   `
-  expect(() => loadModule(path, createEmptyContext(1, 'default', []), wrongModuleText)).toThrow(
-    ModuleInternalError
-  )
+  expect(() =>
+    loadModulePackage(path, createEmptyContext(1, 'default', []), wrongModuleText)
+  ).toThrow(ModuleInternalError)
 })
