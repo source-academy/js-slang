@@ -14,7 +14,7 @@ export const identifier = (name: string, loc?: es.SourceLocation | null): es.Ide
 })
 
 export const literal = (
-  value: string | number | boolean,
+  value: string | number | boolean | null,
   loc?: es.SourceLocation | null
 ): es.Literal => ({
   type: 'Literal',
