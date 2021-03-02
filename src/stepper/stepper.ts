@@ -57,9 +57,11 @@ function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Iden
   return declaredIds
 }
 
-function findMain(target: es.FunctionExpression | es.ArrowFunctionExpression | es.BlockStatement | BlockExpression): string[] {
+function findMain(
+  target: es.FunctionExpression | es.ArrowFunctionExpression | es.BlockStatement | BlockExpression
+): string[] {
   const params: string[] = []
-  if (target.type == "FunctionExpression" || target.type == "ArrowFunctionExpression") {
+  if (target.type == 'FunctionExpression' || target.type == 'ArrowFunctionExpression') {
     if (target.type == 'FunctionExpression') {
       params.push(target.id!.name)
     }
@@ -67,7 +69,7 @@ function findMain(target: es.FunctionExpression | es.ArrowFunctionExpression | e
       params.push((target.params[i] as es.Identifier).name)
     }
   }
-  
+
   const freeNames: any[] = []
   const seenBefore: Map<substituterNodes, substituterNodes> = new Map()
 
@@ -445,7 +447,7 @@ function substituteMain(
       ) {
         freeNames = findMain(replacement)
       }
-      const freeVars = findMain(target); 
+      const freeVars = findMain(target)
       for (let i = 0; i < target.params.length; i++) {
         const param = target.params[i]
         if (param.type === 'Identifier' && param.name === name.name) {
@@ -457,15 +459,15 @@ function substituteMain(
             if (param.name == freeVar) {
               // change param name
               const re = /_\d+$/
-              let newNum;
+              let newNum
               if (re.test(param.name)) {
-                const num = param.name.split("_")
+                const num = param.name.split('_')
                 newNum = Number(num[1]) + 1
                 for (const f of freeVars) {
-                  if (num[0] + "_" + newNum === f) {
+                  if (num[0] + '_' + newNum === f) {
                     newNum++
                   }
-                } 
+                }
                 const changed = ast.identifier(num[0] + '_' + newNum, param.loc)
                 target.body = substituteMain(param, changed, target.body, [
                   []
@@ -474,7 +476,7 @@ function substituteMain(
               } else {
                 newNum = 1
                 for (const f of freeVars) {
-                  if (param.name + "_" + newNum === f) {
+                  if (param.name + '_' + newNum === f) {
                     newNum++
                   }
                 }
@@ -482,7 +484,8 @@ function substituteMain(
                 target.body = substituteMain(param, changed, target.body, [
                   []
                 ])[0] as es.BlockStatement
-                ;(substedFunctionExpression.params[i] as es.Identifier).name = param.name + '_' + newNum
+                ;(substedFunctionExpression.params[i] as es.Identifier).name =
+                  param.name + '_' + newNum
               }
             }
           }
@@ -528,7 +531,7 @@ function substituteMain(
       // checks if the replacement is a functionExpression or arrowFunctionExpression and not from within the same block
       if (
         (replacement.type == 'FunctionExpression' ||
-        replacement.type == 'ArrowFunctionExpression') && 
+          replacement.type == 'ArrowFunctionExpression') &&
         !re.test(name.name)
       ) {
         const freeVars = findMain(target)
@@ -540,15 +543,15 @@ function substituteMain(
               const re = /_\d+$/
               let newNum
               if (re.test(declaredId.name)) {
-                const num = declaredId.name.split("_")
+                const num = declaredId.name.split('_')
                 newNum = Number(num[1]) + 1
                 for (const f of freeVars) {
-                  if (num[0] + "_" + newNum === f) {
+                  if (num[0] + '_' + newNum === f) {
                     newNum++
                   }
                 }
                 for (const dec of declaredIds) {
-                  if (num[0] + "_" + newNum === dec.name) {
+                  if (num[0] + '_' + newNum === dec.name) {
                     newNum++
                   }
                 }
@@ -558,12 +561,12 @@ function substituteMain(
               } else {
                 newNum = 1
                 for (const f of freeVars) {
-                  if (declaredId.name + "_" + newNum === f) {
+                  if (declaredId.name + '_' + newNum === f) {
                     newNum++
                   }
                 }
                 for (const dec of declaredIds) {
-                  if (declaredId.name + "_" + newNum === dec.name) {
+                  if (declaredId.name + '_' + newNum === dec.name) {
                     newNum++
                   }
                 }
@@ -578,7 +581,7 @@ function substituteMain(
 
       // if it is from the same block then the name would be name + " same", hence need to remove " same"
       // if not this statement does nothing as variable names should not have spaces
-      name.name = name.name.split(" ")[0]
+      name.name = name.name.split(' ')[0]
 
       if (declaredNames.has(name.name)) {
         substedBlockStatement.body = target.body
@@ -614,7 +617,7 @@ function substituteMain(
       // checks if the replacement is a functionExpression or arrowFunctionExpression and not from within the same block
       if (
         (replacement.type == 'FunctionExpression' ||
-        replacement.type == 'ArrowFunctionExpression') && 
+          replacement.type == 'ArrowFunctionExpression') &&
         !re.test(name.name)
       ) {
         const freeVars = findMain(target)
@@ -626,15 +629,15 @@ function substituteMain(
               const re = /_\d+$/
               let newNum
               if (re.test(declaredId.name)) {
-                const num = declaredId.name.split("_")
+                const num = declaredId.name.split('_')
                 newNum = Number(num[1]) + 1
                 for (const f of freeVars) {
-                  if (num[0] + "_" + newNum === f) {
+                  if (num[0] + '_' + newNum === f) {
                     newNum++
                   }
                 }
                 for (const dec of declaredIds) {
-                  if (num[0] + "_" + newNum === dec.name) {
+                  if (num[0] + '_' + newNum === dec.name) {
                     newNum++
                   }
                 }
@@ -644,12 +647,12 @@ function substituteMain(
               } else {
                 newNum = 1
                 for (const f of freeVars) {
-                  if (declaredId.name + "_" + newNum === f) {
+                  if (declaredId.name + '_' + newNum === f) {
                     newNum++
                   }
                 }
                 for (const dec of declaredIds) {
-                  if (declaredId.name + "_" + newNum === dec.name) {
+                  if (declaredId.name + '_' + newNum === dec.name) {
                     newNum++
                   }
                 }
@@ -664,7 +667,7 @@ function substituteMain(
 
       // if it is from the same block then the name would be name + " same", hence need to remove " same"
       // if not this statement does nothing as variable names should not have spaces
-      name.name = name.name.split(" ")[0]
+      name.name = name.name.split(' ')[0]
 
       if (declaredNames.has(name.name)) {
         substedBlockExpression.body = target.body
@@ -730,39 +733,35 @@ function substituteMain(
           substedArrow.expression = target.body.type !== 'BlockStatement'
           return substedArrow
         }
-        const freeVars = findMain(target); 
+        const freeVars = findMain(target)
         if (param.type == 'Identifier') {
           for (const freeVar of freeNames) {
             if (param.name == freeVar) {
               // change param name
               const re = /_\d+$/
-              let newNum;
+              let newNum
               if (re.test(param.name)) {
-                const num = param.name.split("_")
+                const num = param.name.split('_')
                 newNum = Number(num[1]) + 1
                 for (const f of freeVars) {
-                  if (num[0] + "_" + newNum === f) {
+                  if (num[0] + '_' + newNum === f) {
                     newNum++
                   }
-                } 
+                }
                 const changed = ast.identifier(num[0] + '_' + newNum, param.loc)
-                newBody = substituteMain(param, changed, target.body, [
-                  []
-                ])[0] as es.BlockStatement
+                newBody = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
                 ;(substedArrow.params[i] as es.Identifier).name = num[0] + '_' + newNum
               } else {
                 newNum = 1
                 for (const f of freeVars) {
-                  if (param.name + "_" + newNum === f) {
+                  if (param.name + '_' + newNum === f) {
                     newNum++
                   }
                 }
                 const changed = ast.identifier(param.name + '_' + newNum, param.loc)
-                newBody = substituteMain(param, changed, target.body, [
-                  []
-                ])[0] as es.BlockStatement
+                newBody = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
                 ;(substedArrow.params[i] as es.Identifier).name = param.name + '_' + newNum
-              }  
+              }
             }
           }
         }
@@ -1504,8 +1503,7 @@ function reduceMain(
       } else {
         const [firstStatement, ...otherStatements] = node.body
         if (firstStatement.type === 'ReturnStatement') {
-          const arg = firstStatement.argument as es.Expression
-          return [ast.expressionStatement(arg), context, paths, explain(node)]
+          return [firstStatement, context, paths, explain(node)]
         } else if (firstStatement.type === 'IfStatement') {
           paths[0].push('body[0]')
           const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
@@ -1534,7 +1532,7 @@ function reduceMain(
             paths.push([])
             stmt = ast.blockStatement(otherStatements as es.Statement[])
           } else {
-            stmt = ast.expressionStatement(ast.identifier('undefined'))
+             stmt = ast.expressionStatement(firstStatement.expression)
           }
           return [stmt, context, paths, explain(node)]
         } else if (firstStatement.type === 'FunctionDeclaration') {
@@ -1551,7 +1549,7 @@ function reduceMain(
           const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
           // substitution within the same block, add " same" so that substituter can differentiate between
           // substitution within the block and substitution from outside the block
-          const newId = ast.identifier(funDecExp.id.name + " same", funDecExp.id.loc)
+          const newId = ast.identifier(funDecExp.id.name + ' same', funDecExp.id.loc)
           const subst = substituteMain(newId, funDecExp, remainingBlockStatement, paths)
           // concats paths such that:
           // paths[0] -> path to the program to be substituted, pre-redex
@@ -1587,7 +1585,7 @@ function reduceMain(
               // force casting for weird errors
               // substitution within the same block, add " same" so that substituter can differentiate between
               // substitution within the block and substitution from outside the block
-              const newId = ast.identifier(declarator.id.name + " same", declarator.id.loc)
+              const newId = ast.identifier(declarator.id.name + ' same', declarator.id.loc)
               const subst = substituteMain(
                 newId,
                 rhs as es.ArrayExpression,
@@ -1623,7 +1621,7 @@ function reduceMain(
               const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
               // substitution within the same block, add " same" so that substituter can differentiate between
               // substitution within the block and substitution from outside the block
-              const newId = ast.identifier(funDecExp.id.name + " same", funDecExp.id.loc)
+              const newId = ast.identifier(funDecExp.id.name + ' same', funDecExp.id.loc)
               const subst = substituteMain(newId, funDecExp, remainingBlockStatement, paths)
               // concats paths such that:
               // paths[0] -> path to the program to be substituted, pre-redex
@@ -1721,7 +1719,7 @@ function reduceMain(
         const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
         // substitution within the same block, add " same" so that substituter can differentiate between
         // substitution within the block and substitution from outside the block
-        const newId = ast.identifier(funDecExp.id.name + " same", funDecExp.id.loc)
+        const newId = ast.identifier(funDecExp.id.name + ' same', funDecExp.id.loc)
         const subst = substituteMain(newId, funDecExp, remainingBlockExpression, paths)
         // concats paths such that:
         // paths[0] -> path to the program to be substituted, pre-redex
@@ -1757,7 +1755,7 @@ function reduceMain(
             // forced casting for some weird errors
             // substitution within the same block, add " same" so that substituter can differentiate between
             // substitution within the block and substitution from outside the block
-            const newId = ast.identifier(declarator.id.name + " same", declarator.id.loc)
+            const newId = ast.identifier(declarator.id.name + ' same', declarator.id.loc)
             const subst = substituteMain(
               newId,
               rhs as es.ArrayExpression,
@@ -1790,7 +1788,7 @@ function reduceMain(
             const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
             // substitution within the same block, add " same" so that substituter can differentiate between
             // substitution within the block and substitution from outside the block
-            const newId = ast.identifier(funDecExp.id.name + " same", funDecExp.id.loc)
+            const newId = ast.identifier(funDecExp.id.name + ' same', funDecExp.id.loc)
             const subst = substituteMain(newId, funDecExp, remainingBlockExpression, paths)
             // concats paths such that:
             // paths[0] -> path to the program to be substituted, pre-redex
