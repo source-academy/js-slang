@@ -2979,8 +2979,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 23,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 22,
@@ -2992,7 +2991,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 22,
                   "type": "Identifier",
                 },
               ],
@@ -3258,8 +3256,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 23,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 22,
@@ -3271,7 +3268,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 22,
                   "type": "Identifier",
                 },
               ],
@@ -3468,8 +3464,7 @@ Array [
                                 },
                                 "loc": undefined,
                                 "params": Array [
-                                  Node {
-                                    "end": 23,
+                                  Object {
                                     "loc": SourceLocation {
                                       "end": Position {
                                         "column": 22,
@@ -3481,7 +3476,6 @@ Array [
                                       },
                                     },
                                     "name": "n",
-                                    "start": 22,
                                     "type": "Identifier",
                                   },
                                 ],
@@ -3611,8 +3605,7 @@ Array [
                   },
                   "loc": undefined,
                   "params": Array [
-                    Node {
-                      "end": 23,
+                    Object {
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 22,
@@ -3624,7 +3617,6 @@ Array [
                         },
                       },
                       "name": "n",
-                      "start": 22,
                       "type": "Identifier",
                     },
                   ],
@@ -3888,8 +3880,7 @@ Array [
                                 },
                                 "loc": undefined,
                                 "params": Array [
-                                  Node {
-                                    "end": 23,
+                                  Object {
                                     "loc": SourceLocation {
                                       "end": Position {
                                         "column": 22,
@@ -3901,7 +3892,6 @@ Array [
                                       },
                                     },
                                     "name": "n",
-                                    "start": 22,
                                     "type": "Identifier",
                                   },
                                 ],
@@ -4031,8 +4021,7 @@ Array [
                   },
                   "loc": undefined,
                   "params": Array [
-                    Node {
-                      "end": 23,
+                    Object {
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 22,
@@ -4044,7 +4033,6 @@ Array [
                         },
                       },
                       "name": "n",
-                      "start": 22,
                       "type": "Identifier",
                     },
                   ],
@@ -4309,8 +4297,7 @@ Array [
                                 },
                                 "loc": undefined,
                                 "params": Array [
-                                  Node {
-                                    "end": 23,
+                                  Object {
                                     "loc": SourceLocation {
                                       "end": Position {
                                         "column": 22,
@@ -4322,7 +4309,6 @@ Array [
                                       },
                                     },
                                     "name": "n",
-                                    "start": 22,
                                     "type": "Identifier",
                                   },
                                 ],
@@ -4452,8 +4438,7 @@ Array [
                   },
                   "loc": undefined,
                   "params": Array [
-                    Node {
-                      "end": 23,
+                    Object {
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 22,
@@ -4465,7 +4450,6 @@ Array [
                         },
                       },
                       "name": "n",
-                      "start": 22,
                       "type": "Identifier",
                     },
                   ],
@@ -4711,8 +4695,7 @@ Array [
                                 },
                                 "loc": undefined,
                                 "params": Array [
-                                  Node {
-                                    "end": 23,
+                                  Object {
                                     "loc": SourceLocation {
                                       "end": Position {
                                         "column": 22,
@@ -4724,7 +4707,6 @@ Array [
                                       },
                                     },
                                     "name": "n",
-                                    "start": 22,
                                     "type": "Identifier",
                                   },
                                 ],
@@ -4854,8 +4836,7 @@ Array [
                   },
                   "loc": undefined,
                   "params": Array [
-                    Node {
-                      "end": 23,
+                    Object {
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 22,
@@ -4867,7 +4848,6 @@ Array [
                         },
                       },
                       "name": "n",
-                      "start": 22,
                       "type": "Identifier",
                     },
                   ],
@@ -5111,8 +5091,7 @@ Array [
                               },
                               "loc": undefined,
                               "params": Array [
-                                Node {
-                                  "end": 23,
+                                Object {
                                   "loc": SourceLocation {
                                     "end": Position {
                                       "column": 22,
@@ -5124,7 +5103,6 @@ Array [
                                     },
                                   },
                                   "name": "n",
-                                  "start": 22,
                                   "type": "Identifier",
                                 },
                               ],
@@ -5254,8 +5232,7 @@ Array [
                 },
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 23,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 22,
@@ -5267,7 +5244,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 22,
                     "type": "Identifier",
                   },
                 ],
@@ -5465,8 +5441,7 @@ Array [
                               },
                               "loc": undefined,
                               "params": Array [
-                                Node {
-                                  "end": 23,
+                                Object {
                                   "loc": SourceLocation {
                                     "end": Position {
                                       "column": 22,
@@ -5478,7 +5453,6 @@ Array [
                                     },
                                   },
                                   "name": "n",
-                                  "start": 22,
                                   "type": "Identifier",
                                 },
                               ],
@@ -5608,8 +5582,7 @@ Array [
                 },
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 23,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 22,
@@ -5621,7 +5594,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 22,
                     "type": "Identifier",
                   },
                 ],
@@ -5802,8 +5774,7 @@ Array [
                               },
                               "loc": undefined,
                               "params": Array [
-                                Node {
-                                  "end": 23,
+                                Object {
                                   "loc": SourceLocation {
                                     "end": Position {
                                       "column": 22,
@@ -5815,7 +5786,6 @@ Array [
                                     },
                                   },
                                   "name": "n",
-                                  "start": 22,
                                   "type": "Identifier",
                                 },
                               ],
@@ -5945,8 +5915,7 @@ Array [
                 },
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 23,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 22,
@@ -5958,7 +5927,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 22,
                     "type": "Identifier",
                   },
                 ],
@@ -6139,8 +6107,7 @@ Array [
                               },
                               "loc": undefined,
                               "params": Array [
-                                Node {
-                                  "end": 23,
+                                Object {
                                   "loc": SourceLocation {
                                     "end": Position {
                                       "column": 22,
@@ -6152,7 +6119,6 @@ Array [
                                     },
                                   },
                                   "name": "n",
-                                  "start": 22,
                                   "type": "Identifier",
                                 },
                               ],
@@ -6282,8 +6248,7 @@ Array [
                 },
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 23,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 22,
@@ -6295,7 +6260,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 22,
                     "type": "Identifier",
                   },
                 ],
@@ -6512,8 +6476,7 @@ Array [
                                   },
                                   "loc": undefined,
                                   "params": Array [
-                                    Node {
-                                      "end": 23,
+                                    Object {
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 22,
@@ -6525,7 +6488,6 @@ Array [
                                         },
                                       },
                                       "name": "n",
-                                      "start": 22,
                                       "type": "Identifier",
                                     },
                                   ],
@@ -6655,8 +6617,7 @@ Array [
                     },
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 23,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 22,
@@ -6668,7 +6629,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 22,
                         "type": "Identifier",
                       },
                     ],
@@ -6952,8 +6912,7 @@ Array [
                                   },
                                   "loc": undefined,
                                   "params": Array [
-                                    Node {
-                                      "end": 23,
+                                    Object {
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 22,
@@ -6965,7 +6924,6 @@ Array [
                                         },
                                       },
                                       "name": "n",
-                                      "start": 22,
                                       "type": "Identifier",
                                     },
                                   ],
@@ -7095,8 +7053,7 @@ Array [
                     },
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 23,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 22,
@@ -7108,7 +7065,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 22,
                         "type": "Identifier",
                       },
                     ],
@@ -7393,8 +7349,7 @@ Array [
                                   },
                                   "loc": undefined,
                                   "params": Array [
-                                    Node {
-                                      "end": 23,
+                                    Object {
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 22,
@@ -7406,7 +7361,6 @@ Array [
                                         },
                                       },
                                       "name": "n",
-                                      "start": 22,
                                       "type": "Identifier",
                                     },
                                   ],
@@ -7536,8 +7490,7 @@ Array [
                     },
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 23,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 22,
@@ -7549,7 +7502,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 22,
                         "type": "Identifier",
                       },
                     ],
@@ -7815,8 +7767,7 @@ Array [
                                   },
                                   "loc": undefined,
                                   "params": Array [
-                                    Node {
-                                      "end": 23,
+                                    Object {
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 22,
@@ -7828,7 +7779,6 @@ Array [
                                         },
                                       },
                                       "name": "n",
-                                      "start": 22,
                                       "type": "Identifier",
                                     },
                                   ],
@@ -7958,8 +7908,7 @@ Array [
                     },
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 23,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 22,
@@ -7971,7 +7920,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 22,
                         "type": "Identifier",
                       },
                     ],
@@ -8235,8 +8183,7 @@ Array [
                                 },
                                 "loc": undefined,
                                 "params": Array [
-                                  Node {
-                                    "end": 23,
+                                  Object {
                                     "loc": SourceLocation {
                                       "end": Position {
                                         "column": 22,
@@ -8248,7 +8195,6 @@ Array [
                                       },
                                     },
                                     "name": "n",
-                                    "start": 22,
                                     "type": "Identifier",
                                   },
                                 ],
@@ -8378,8 +8324,7 @@ Array [
                   },
                   "loc": undefined,
                   "params": Array [
-                    Node {
-                      "end": 23,
+                    Object {
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 22,
@@ -8391,7 +8336,6 @@ Array [
                         },
                       },
                       "name": "n",
-                      "start": 22,
                       "type": "Identifier",
                     },
                   ],
@@ -8609,8 +8553,7 @@ Array [
                                 },
                                 "loc": undefined,
                                 "params": Array [
-                                  Node {
-                                    "end": 23,
+                                  Object {
                                     "loc": SourceLocation {
                                       "end": Position {
                                         "column": 22,
@@ -8622,7 +8565,6 @@ Array [
                                       },
                                     },
                                     "name": "n",
-                                    "start": 22,
                                     "type": "Identifier",
                                   },
                                 ],
@@ -8752,8 +8694,7 @@ Array [
                   },
                   "loc": undefined,
                   "params": Array [
-                    Node {
-                      "end": 23,
+                    Object {
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 22,
@@ -8765,7 +8706,6 @@ Array [
                         },
                       },
                       "name": "n",
-                      "start": 22,
                       "type": "Identifier",
                     },
                   ],
@@ -8966,8 +8906,7 @@ Array [
                                 },
                                 "loc": undefined,
                                 "params": Array [
-                                  Node {
-                                    "end": 23,
+                                  Object {
                                     "loc": SourceLocation {
                                       "end": Position {
                                         "column": 22,
@@ -8979,7 +8918,6 @@ Array [
                                       },
                                     },
                                     "name": "n",
-                                    "start": 22,
                                     "type": "Identifier",
                                   },
                                 ],
@@ -9109,8 +9047,7 @@ Array [
                   },
                   "loc": undefined,
                   "params": Array [
-                    Node {
-                      "end": 23,
+                    Object {
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 22,
@@ -9122,7 +9059,6 @@ Array [
                         },
                       },
                       "name": "n",
-                      "start": 22,
                       "type": "Identifier",
                     },
                   ],
@@ -9323,8 +9259,7 @@ Array [
                                 },
                                 "loc": undefined,
                                 "params": Array [
-                                  Node {
-                                    "end": 23,
+                                  Object {
                                     "loc": SourceLocation {
                                       "end": Position {
                                         "column": 22,
@@ -9336,7 +9271,6 @@ Array [
                                       },
                                     },
                                     "name": "n",
-                                    "start": 22,
                                     "type": "Identifier",
                                   },
                                 ],
@@ -9466,8 +9400,7 @@ Array [
                   },
                   "loc": undefined,
                   "params": Array [
-                    Node {
-                      "end": 23,
+                    Object {
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 22,
@@ -9479,7 +9412,6 @@ Array [
                         },
                       },
                       "name": "n",
-                      "start": 22,
                       "type": "Identifier",
                     },
                   ],
@@ -9716,8 +9648,7 @@ Array [
                                     },
                                     "loc": undefined,
                                     "params": Array [
-                                      Node {
-                                        "end": 23,
+                                      Object {
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 22,
@@ -9729,7 +9660,6 @@ Array [
                                           },
                                         },
                                         "name": "n",
-                                        "start": 22,
                                         "type": "Identifier",
                                       },
                                     ],
@@ -9859,8 +9789,7 @@ Array [
                       },
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 23,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 22,
@@ -9872,7 +9801,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 22,
                           "type": "Identifier",
                         },
                       ],
@@ -10176,8 +10104,7 @@ Array [
                                     },
                                     "loc": undefined,
                                     "params": Array [
-                                      Node {
-                                        "end": 23,
+                                      Object {
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 22,
@@ -10189,7 +10116,6 @@ Array [
                                           },
                                         },
                                         "name": "n",
-                                        "start": 22,
                                         "type": "Identifier",
                                       },
                                     ],
@@ -10319,8 +10245,7 @@ Array [
                       },
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 23,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 22,
@@ -10332,7 +10257,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 22,
                           "type": "Identifier",
                         },
                       ],
@@ -10637,8 +10561,7 @@ Array [
                                     },
                                     "loc": undefined,
                                     "params": Array [
-                                      Node {
-                                        "end": 23,
+                                      Object {
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 22,
@@ -10650,7 +10573,6 @@ Array [
                                           },
                                         },
                                         "name": "n",
-                                        "start": 22,
                                         "type": "Identifier",
                                       },
                                     ],
@@ -10780,8 +10702,7 @@ Array [
                       },
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 23,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 22,
@@ -10793,7 +10714,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 22,
                           "type": "Identifier",
                         },
                       ],
@@ -11079,8 +10999,7 @@ Array [
                                     },
                                     "loc": undefined,
                                     "params": Array [
-                                      Node {
-                                        "end": 23,
+                                      Object {
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 22,
@@ -11092,7 +11011,6 @@ Array [
                                           },
                                         },
                                         "name": "n",
-                                        "start": 22,
                                         "type": "Identifier",
                                       },
                                     ],
@@ -11222,8 +11140,7 @@ Array [
                       },
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 23,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 22,
@@ -11235,7 +11152,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 22,
                           "type": "Identifier",
                         },
                       ],
@@ -11519,8 +11435,7 @@ Array [
                                   },
                                   "loc": undefined,
                                   "params": Array [
-                                    Node {
-                                      "end": 23,
+                                    Object {
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 22,
@@ -11532,7 +11447,6 @@ Array [
                                         },
                                       },
                                       "name": "n",
-                                      "start": 22,
                                       "type": "Identifier",
                                     },
                                   ],
@@ -11662,8 +11576,7 @@ Array [
                     },
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 23,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 22,
@@ -11675,7 +11588,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 22,
                         "type": "Identifier",
                       },
                     ],
@@ -11913,8 +11825,7 @@ Array [
                                   },
                                   "loc": undefined,
                                   "params": Array [
-                                    Node {
-                                      "end": 23,
+                                    Object {
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 22,
@@ -11926,7 +11837,6 @@ Array [
                                         },
                                       },
                                       "name": "n",
-                                      "start": 22,
                                       "type": "Identifier",
                                     },
                                   ],
@@ -12056,8 +11966,7 @@ Array [
                     },
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 23,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 22,
@@ -12069,7 +11978,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 22,
                         "type": "Identifier",
                       },
                     ],
@@ -12290,8 +12198,7 @@ Array [
                                   },
                                   "loc": undefined,
                                   "params": Array [
-                                    Node {
-                                      "end": 23,
+                                    Object {
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 22,
@@ -12303,7 +12210,6 @@ Array [
                                         },
                                       },
                                       "name": "n",
-                                      "start": 22,
                                       "type": "Identifier",
                                     },
                                   ],
@@ -12433,8 +12339,7 @@ Array [
                     },
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 23,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 22,
@@ -12446,7 +12351,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 22,
                         "type": "Identifier",
                       },
                     ],
@@ -12667,8 +12571,7 @@ Array [
                                   },
                                   "loc": undefined,
                                   "params": Array [
-                                    Node {
-                                      "end": 23,
+                                    Object {
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 22,
@@ -12680,7 +12583,6 @@ Array [
                                         },
                                       },
                                       "name": "n",
-                                      "start": 22,
                                       "type": "Identifier",
                                     },
                                   ],
@@ -12810,8 +12712,7 @@ Array [
                     },
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 23,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 22,
@@ -12823,7 +12724,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 22,
                         "type": "Identifier",
                       },
                     ],
@@ -13080,8 +12980,7 @@ Array [
                                       },
                                       "loc": undefined,
                                       "params": Array [
-                                        Node {
-                                          "end": 23,
+                                        Object {
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 22,
@@ -13093,7 +12992,6 @@ Array [
                                             },
                                           },
                                           "name": "n",
-                                          "start": 22,
                                           "type": "Identifier",
                                         },
                                       ],
@@ -13223,8 +13121,7 @@ Array [
                         },
                         "loc": undefined,
                         "params": Array [
-                          Node {
-                            "end": 23,
+                          Object {
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 22,
@@ -13236,7 +13133,6 @@ Array [
                               },
                             },
                             "name": "n",
-                            "start": 22,
                             "type": "Identifier",
                           },
                         ],
@@ -13560,8 +13456,7 @@ Array [
                                       },
                                       "loc": undefined,
                                       "params": Array [
-                                        Node {
-                                          "end": 23,
+                                        Object {
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 22,
@@ -13573,7 +13468,6 @@ Array [
                                             },
                                           },
                                           "name": "n",
-                                          "start": 22,
                                           "type": "Identifier",
                                         },
                                       ],
@@ -13703,8 +13597,7 @@ Array [
                         },
                         "loc": undefined,
                         "params": Array [
-                          Node {
-                            "end": 23,
+                          Object {
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 22,
@@ -13716,7 +13609,6 @@ Array [
                               },
                             },
                             "name": "n",
-                            "start": 22,
                             "type": "Identifier",
                           },
                         ],
@@ -14041,8 +13933,7 @@ Array [
                                       },
                                       "loc": undefined,
                                       "params": Array [
-                                        Node {
-                                          "end": 23,
+                                        Object {
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 22,
@@ -14054,7 +13945,6 @@ Array [
                                             },
                                           },
                                           "name": "n",
-                                          "start": 22,
                                           "type": "Identifier",
                                         },
                                       ],
@@ -14184,8 +14074,7 @@ Array [
                         },
                         "loc": undefined,
                         "params": Array [
-                          Node {
-                            "end": 23,
+                          Object {
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 22,
@@ -14197,7 +14086,6 @@ Array [
                               },
                             },
                             "name": "n",
-                            "start": 22,
                             "type": "Identifier",
                           },
                         ],
@@ -14503,8 +14391,7 @@ Array [
                                       },
                                       "loc": undefined,
                                       "params": Array [
-                                        Node {
-                                          "end": 23,
+                                        Object {
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 22,
@@ -14516,7 +14403,6 @@ Array [
                                             },
                                           },
                                           "name": "n",
-                                          "start": 22,
                                           "type": "Identifier",
                                         },
                                       ],
@@ -14646,8 +14532,7 @@ Array [
                         },
                         "loc": undefined,
                         "params": Array [
-                          Node {
-                            "end": 23,
+                          Object {
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 22,
@@ -14659,7 +14544,6 @@ Array [
                               },
                             },
                             "name": "n",
-                            "start": 22,
                             "type": "Identifier",
                           },
                         ],
@@ -14963,8 +14847,7 @@ Array [
                                     },
                                     "loc": undefined,
                                     "params": Array [
-                                      Node {
-                                        "end": 23,
+                                      Object {
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 22,
@@ -14976,7 +14859,6 @@ Array [
                                           },
                                         },
                                         "name": "n",
-                                        "start": 22,
                                         "type": "Identifier",
                                       },
                                     ],
@@ -15106,8 +14988,7 @@ Array [
                       },
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 23,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 22,
@@ -15119,7 +15000,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 22,
                           "type": "Identifier",
                         },
                       ],
@@ -15377,8 +15257,7 @@ Array [
                                     },
                                     "loc": undefined,
                                     "params": Array [
-                                      Node {
-                                        "end": 23,
+                                      Object {
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 22,
@@ -15390,7 +15269,6 @@ Array [
                                           },
                                         },
                                         "name": "n",
-                                        "start": 22,
                                         "type": "Identifier",
                                       },
                                     ],
@@ -15520,8 +15398,7 @@ Array [
                       },
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 23,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 22,
@@ -15533,7 +15410,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 22,
                           "type": "Identifier",
                         },
                       ],
@@ -15774,8 +15650,7 @@ Array [
                                     },
                                     "loc": undefined,
                                     "params": Array [
-                                      Node {
-                                        "end": 23,
+                                      Object {
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 22,
@@ -15787,7 +15662,6 @@ Array [
                                           },
                                         },
                                         "name": "n",
-                                        "start": 22,
                                         "type": "Identifier",
                                       },
                                     ],
@@ -15917,8 +15791,7 @@ Array [
                       },
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 23,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 22,
@@ -15930,7 +15803,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 22,
                           "type": "Identifier",
                         },
                       ],
@@ -16171,8 +16043,7 @@ Array [
                                     },
                                     "loc": undefined,
                                     "params": Array [
-                                      Node {
-                                        "end": 23,
+                                      Object {
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 22,
@@ -16184,7 +16055,6 @@ Array [
                                           },
                                         },
                                         "name": "n",
-                                        "start": 22,
                                         "type": "Identifier",
                                       },
                                     ],
@@ -16314,8 +16184,7 @@ Array [
                       },
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 23,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 22,
@@ -16327,7 +16196,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 22,
                           "type": "Identifier",
                         },
                       ],
@@ -16604,8 +16472,7 @@ Array [
                                         },
                                         "loc": undefined,
                                         "params": Array [
-                                          Node {
-                                            "end": 23,
+                                          Object {
                                             "loc": SourceLocation {
                                               "end": Position {
                                                 "column": 22,
@@ -16617,7 +16484,6 @@ Array [
                                               },
                                             },
                                             "name": "n",
-                                            "start": 22,
                                             "type": "Identifier",
                                           },
                                         ],
@@ -16747,8 +16613,7 @@ Array [
                           },
                           "loc": undefined,
                           "params": Array [
-                            Node {
-                              "end": 23,
+                            Object {
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 22,
@@ -16760,7 +16625,6 @@ Array [
                                 },
                               },
                               "name": "n",
-                              "start": 22,
                               "type": "Identifier",
                             },
                           ],
@@ -17104,8 +16968,7 @@ Array [
                                         },
                                         "loc": undefined,
                                         "params": Array [
-                                          Node {
-                                            "end": 23,
+                                          Object {
                                             "loc": SourceLocation {
                                               "end": Position {
                                                 "column": 22,
@@ -17117,7 +16980,6 @@ Array [
                                               },
                                             },
                                             "name": "n",
-                                            "start": 22,
                                             "type": "Identifier",
                                           },
                                         ],
@@ -17247,8 +17109,7 @@ Array [
                           },
                           "loc": undefined,
                           "params": Array [
-                            Node {
-                              "end": 23,
+                            Object {
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 22,
@@ -17260,7 +17121,6 @@ Array [
                                 },
                               },
                               "name": "n",
-                              "start": 22,
                               "type": "Identifier",
                             },
                           ],
@@ -17605,8 +17465,7 @@ Array [
                                         },
                                         "loc": undefined,
                                         "params": Array [
-                                          Node {
-                                            "end": 23,
+                                          Object {
                                             "loc": SourceLocation {
                                               "end": Position {
                                                 "column": 22,
@@ -17618,7 +17477,6 @@ Array [
                                               },
                                             },
                                             "name": "n",
-                                            "start": 22,
                                             "type": "Identifier",
                                           },
                                         ],
@@ -17748,8 +17606,7 @@ Array [
                           },
                           "loc": undefined,
                           "params": Array [
-                            Node {
-                              "end": 23,
+                            Object {
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 22,
@@ -17761,7 +17618,6 @@ Array [
                                 },
                               },
                               "name": "n",
-                              "start": 22,
                               "type": "Identifier",
                             },
                           ],
@@ -18087,8 +17943,7 @@ Array [
                                         },
                                         "loc": undefined,
                                         "params": Array [
-                                          Node {
-                                            "end": 23,
+                                          Object {
                                             "loc": SourceLocation {
                                               "end": Position {
                                                 "column": 22,
@@ -18100,7 +17955,6 @@ Array [
                                               },
                                             },
                                             "name": "n",
-                                            "start": 22,
                                             "type": "Identifier",
                                           },
                                         ],
@@ -18230,8 +18084,7 @@ Array [
                           },
                           "loc": undefined,
                           "params": Array [
-                            Node {
-                              "end": 23,
+                            Object {
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 22,
@@ -18243,7 +18096,6 @@ Array [
                                 },
                               },
                               "name": "n",
-                              "start": 22,
                               "type": "Identifier",
                             },
                           ],
@@ -18567,8 +18419,7 @@ Array [
                                       },
                                       "loc": undefined,
                                       "params": Array [
-                                        Node {
-                                          "end": 23,
+                                        Object {
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 22,
@@ -18580,7 +18431,6 @@ Array [
                                             },
                                           },
                                           "name": "n",
-                                          "start": 22,
                                           "type": "Identifier",
                                         },
                                       ],
@@ -18710,8 +18560,7 @@ Array [
                         },
                         "loc": undefined,
                         "params": Array [
-                          Node {
-                            "end": 23,
+                          Object {
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 22,
@@ -18723,7 +18572,6 @@ Array [
                               },
                             },
                             "name": "n",
-                            "start": 22,
                             "type": "Identifier",
                           },
                         ],
@@ -19001,8 +18849,7 @@ Array [
                                       },
                                       "loc": undefined,
                                       "params": Array [
-                                        Node {
-                                          "end": 23,
+                                        Object {
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 22,
@@ -19014,7 +18861,6 @@ Array [
                                             },
                                           },
                                           "name": "n",
-                                          "start": 22,
                                           "type": "Identifier",
                                         },
                                       ],
@@ -19144,8 +18990,7 @@ Array [
                         },
                         "loc": undefined,
                         "params": Array [
-                          Node {
-                            "end": 23,
+                          Object {
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 22,
@@ -19157,7 +19002,6 @@ Array [
                               },
                             },
                             "name": "n",
-                            "start": 22,
                             "type": "Identifier",
                           },
                         ],
@@ -19418,8 +19262,7 @@ Array [
                                       },
                                       "loc": undefined,
                                       "params": Array [
-                                        Node {
-                                          "end": 23,
+                                        Object {
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 22,
@@ -19431,7 +19274,6 @@ Array [
                                             },
                                           },
                                           "name": "n",
-                                          "start": 22,
                                           "type": "Identifier",
                                         },
                                       ],
@@ -19561,8 +19403,7 @@ Array [
                         },
                         "loc": undefined,
                         "params": Array [
-                          Node {
-                            "end": 23,
+                          Object {
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 22,
@@ -19574,7 +19415,6 @@ Array [
                               },
                             },
                             "name": "n",
-                            "start": 22,
                             "type": "Identifier",
                           },
                         ],
@@ -19835,8 +19675,7 @@ Array [
                                       },
                                       "loc": undefined,
                                       "params": Array [
-                                        Node {
-                                          "end": 23,
+                                        Object {
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 22,
@@ -19848,7 +19687,6 @@ Array [
                                             },
                                           },
                                           "name": "n",
-                                          "start": 22,
                                           "type": "Identifier",
                                         },
                                       ],
@@ -19978,8 +19816,7 @@ Array [
                         },
                         "loc": undefined,
                         "params": Array [
-                          Node {
-                            "end": 23,
+                          Object {
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 22,
@@ -19991,7 +19828,6 @@ Array [
                               },
                             },
                             "name": "n",
-                            "start": 22,
                             "type": "Identifier",
                           },
                         ],
@@ -20288,8 +20124,7 @@ Array [
                                           },
                                           "loc": undefined,
                                           "params": Array [
-                                            Node {
-                                              "end": 23,
+                                            Object {
                                               "loc": SourceLocation {
                                                 "end": Position {
                                                   "column": 22,
@@ -20301,7 +20136,6 @@ Array [
                                                 },
                                               },
                                               "name": "n",
-                                              "start": 22,
                                               "type": "Identifier",
                                             },
                                           ],
@@ -20431,8 +20265,7 @@ Array [
                             },
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 23,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 22,
@@ -20444,7 +20277,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 22,
                                 "type": "Identifier",
                               },
                             ],
@@ -20808,8 +20640,7 @@ Array [
                                           },
                                           "loc": undefined,
                                           "params": Array [
-                                            Node {
-                                              "end": 23,
+                                            Object {
                                               "loc": SourceLocation {
                                                 "end": Position {
                                                   "column": 22,
@@ -20821,7 +20652,6 @@ Array [
                                                 },
                                               },
                                               "name": "n",
-                                              "start": 22,
                                               "type": "Identifier",
                                             },
                                           ],
@@ -20951,8 +20781,7 @@ Array [
                             },
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 23,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 22,
@@ -20964,7 +20793,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 22,
                                 "type": "Identifier",
                               },
                             ],
@@ -21329,8 +21157,7 @@ Array [
                                           },
                                           "loc": undefined,
                                           "params": Array [
-                                            Node {
-                                              "end": 23,
+                                            Object {
                                               "loc": SourceLocation {
                                                 "end": Position {
                                                   "column": 22,
@@ -21342,7 +21169,6 @@ Array [
                                                 },
                                               },
                                               "name": "n",
-                                              "start": 22,
                                               "type": "Identifier",
                                             },
                                           ],
@@ -21472,8 +21298,7 @@ Array [
                             },
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 23,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 22,
@@ -21485,7 +21310,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 22,
                                 "type": "Identifier",
                               },
                             ],
@@ -21831,8 +21655,7 @@ Array [
                                           },
                                           "loc": undefined,
                                           "params": Array [
-                                            Node {
-                                              "end": 23,
+                                            Object {
                                               "loc": SourceLocation {
                                                 "end": Position {
                                                   "column": 22,
@@ -21844,7 +21667,6 @@ Array [
                                                 },
                                               },
                                               "name": "n",
-                                              "start": 22,
                                               "type": "Identifier",
                                             },
                                           ],
@@ -21974,8 +21796,7 @@ Array [
                             },
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 23,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 22,
@@ -21987,7 +21808,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 22,
                                 "type": "Identifier",
                               },
                             ],
@@ -23992,8 +23812,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -24005,11 +23824,9 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
-                Node {
-                  "end": 18,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 17,
@@ -24021,7 +23838,6 @@ Array [
                     },
                   },
                   "name": "m",
-                  "start": 17,
                   "type": "Identifier",
                 },
               ],
@@ -24303,8 +24119,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -24316,11 +24131,9 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
-                Node {
-                  "end": 18,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 17,
@@ -24332,7 +24145,6 @@ Array [
                     },
                   },
                   "name": "m",
-                  "start": 17,
                   "type": "Identifier",
                 },
               ],
@@ -24585,8 +24397,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -24598,11 +24409,9 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
-                Node {
-                  "end": 18,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 17,
@@ -24614,7 +24423,6 @@ Array [
                     },
                   },
                   "name": "m",
-                  "start": 17,
                   "type": "Identifier",
                 },
               ],
@@ -24867,8 +24675,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -24880,11 +24687,9 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
-                Node {
-                  "end": 18,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 17,
@@ -24896,7 +24701,6 @@ Array [
                     },
                   },
                   "name": "m",
-                  "start": 17,
                   "type": "Identifier",
                 },
               ],
@@ -25117,8 +24921,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -25130,11 +24933,9 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
-                Node {
-                  "end": 18,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 17,
@@ -25146,7 +24947,6 @@ Array [
                     },
                   },
                   "name": "m",
-                  "start": 17,
                   "type": "Identifier",
                 },
               ],
@@ -25367,8 +25167,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -25380,11 +25179,9 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
-                Node {
-                  "end": 18,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 17,
@@ -25396,7 +25193,6 @@ Array [
                     },
                   },
                   "name": "m",
-                  "start": 17,
                   "type": "Identifier",
                 },
               ],
@@ -25602,8 +25398,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -25615,11 +25410,9 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
-                Node {
-                  "end": 18,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 17,
@@ -25631,7 +25424,6 @@ Array [
                     },
                   },
                   "name": "m",
-                  "start": 17,
                   "type": "Identifier",
                 },
               ],
@@ -25837,8 +25629,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -25850,11 +25641,9 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
-                Node {
-                  "end": 18,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 17,
@@ -25866,7 +25655,6 @@ Array [
                     },
                   },
                   "name": "m",
-                  "start": 17,
                   "type": "Identifier",
                 },
               ],
@@ -26058,8 +25846,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -26071,11 +25858,9 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
-                Node {
-                  "end": 18,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 17,
@@ -26087,7 +25872,6 @@ Array [
                     },
                   },
                   "name": "m",
-                  "start": 17,
                   "type": "Identifier",
                 },
               ],
@@ -26279,8 +26063,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -26292,11 +26075,9 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
-                Node {
-                  "end": 18,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 17,
@@ -26308,7 +26089,6 @@ Array [
                     },
                   },
                   "name": "m",
-                  "start": 17,
                   "type": "Identifier",
                 },
               ],
@@ -27231,8 +27011,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -27244,7 +27023,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
               ],
@@ -27448,8 +27226,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -27461,7 +27238,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
               ],
@@ -27636,8 +27412,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -27649,7 +27424,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
               ],
@@ -27824,8 +27598,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -27837,7 +27610,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
               ],
@@ -27980,8 +27752,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -27993,7 +27764,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
               ],
@@ -28136,8 +27906,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -28149,7 +27918,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
               ],
@@ -28277,8 +28045,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -28290,7 +28057,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
               ],
@@ -28418,8 +28184,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 15,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 14,
@@ -28431,7 +28196,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 14,
                   "type": "Identifier",
                 },
               ],
@@ -33612,8 +33376,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 75,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 3,
@@ -33625,7 +33388,6 @@ Array [
                       },
                     },
                     "name": "y",
-                    "start": 74,
                     "type": "Identifier",
                   },
                 ],
@@ -33919,8 +33681,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 75,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 3,
@@ -33932,7 +33693,6 @@ Array [
                       },
                     },
                     "name": "y",
-                    "start": 74,
                     "type": "Identifier",
                   },
                 ],
@@ -34175,8 +33935,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 75,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 3,
@@ -34188,7 +33947,6 @@ Array [
                       },
                     },
                     "name": "y",
-                    "start": 74,
                     "type": "Identifier",
                   },
                 ],
@@ -34435,8 +34193,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 75,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 3,
@@ -34448,7 +34205,6 @@ Array [
                       },
                     },
                     "name": "y",
-                    "start": 74,
                     "type": "Identifier",
                   },
                 ],
@@ -34543,8 +34299,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 75,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 3,
@@ -34556,7 +34311,6 @@ Array [
                       },
                     },
                     "name": "y",
-                    "start": 74,
                     "type": "Identifier",
                   },
                 ],
@@ -34692,8 +34446,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 31,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 12,
@@ -34705,7 +34458,6 @@ Array [
                     },
                   },
                   "name": "g",
-                  "start": 30,
                   "type": "Identifier",
                 },
               ],
@@ -34785,8 +34537,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 75,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 3,
@@ -34798,7 +34549,6 @@ Array [
                       },
                     },
                     "name": "y",
-                    "start": 74,
                     "type": "Identifier",
                   },
                 ],
@@ -34934,8 +34684,7 @@ Array [
               },
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 31,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 12,
@@ -34947,7 +34696,6 @@ Array [
                     },
                   },
                   "name": "g",
-                  "start": 30,
                   "type": "Identifier",
                 },
               ],
@@ -35090,8 +34838,7 @@ Array [
                     "generator": false,
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 75,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 3,
@@ -35103,7 +34850,6 @@ Array [
                           },
                         },
                         "name": "y",
-                        "start": 74,
                         "type": "Identifier",
                       },
                     ],
@@ -35262,8 +35008,7 @@ Array [
                     "generator": false,
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 75,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 3,
@@ -35275,7 +35020,6 @@ Array [
                           },
                         },
                         "name": "y",
-                        "start": 74,
                         "type": "Identifier",
                       },
                     ],
@@ -35380,8 +35124,7 @@ Array [
                     "generator": false,
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 75,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 3,
@@ -35393,7 +35136,6 @@ Array [
                           },
                         },
                         "name": "y",
-                        "start": 74,
                         "type": "Identifier",
                       },
                     ],
@@ -35500,8 +35242,7 @@ Array [
                     "generator": false,
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 75,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 3,
@@ -35513,7 +35254,6 @@ Array [
                           },
                         },
                         "name": "y",
-                        "start": 74,
                         "type": "Identifier",
                       },
                     ],
@@ -35614,8 +35354,7 @@ Array [
               "generator": false,
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 75,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 3,
@@ -35627,7 +35366,6 @@ Array [
                     },
                   },
                   "name": "y",
-                  "start": 74,
                   "type": "Identifier",
                 },
               ],
@@ -35712,8 +35450,7 @@ Array [
               "generator": false,
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 75,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 3,
@@ -35725,7 +35462,6 @@ Array [
                     },
                   },
                   "name": "y",
-                  "start": 74,
                   "type": "Identifier",
                 },
               ],
@@ -36095,8 +35831,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 16,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 15,
@@ -36108,7 +35843,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 15,
                     "type": "Identifier",
                   },
                 ],
@@ -36277,8 +36011,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 65,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 16,
@@ -36290,7 +36023,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 64,
                     "type": "Identifier",
                   },
                 ],
@@ -36546,8 +36278,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 16,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 15,
@@ -36559,7 +36290,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 15,
                     "type": "Identifier",
                   },
                 ],
@@ -36728,8 +36458,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 65,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 16,
@@ -36741,7 +36470,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 64,
                     "type": "Identifier",
                   },
                 ],
@@ -37102,8 +36830,7 @@ Array [
                       "generator": false,
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 16,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 15,
@@ -37115,7 +36842,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 15,
                           "type": "Identifier",
                         },
                       ],
@@ -37140,8 +36866,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 65,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 16,
@@ -37153,7 +36878,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 64,
                     "type": "Identifier",
                   },
                 ],
@@ -37519,8 +37243,7 @@ Array [
                       "generator": false,
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 16,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 15,
@@ -37532,7 +37255,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 15,
                           "type": "Identifier",
                         },
                       ],
@@ -37557,8 +37279,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 65,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 16,
@@ -37570,7 +37291,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 64,
                     "type": "Identifier",
                   },
                 ],
@@ -37918,8 +37638,7 @@ Array [
                     "generator": false,
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 16,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 15,
@@ -37931,7 +37650,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 15,
                         "type": "Identifier",
                       },
                     ],
@@ -37956,8 +37674,7 @@ Array [
               "generator": false,
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 65,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 16,
@@ -37969,7 +37686,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 64,
                   "type": "Identifier",
                 },
               ],
@@ -38274,8 +37990,7 @@ Array [
                     "generator": false,
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 16,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 15,
@@ -38287,7 +38002,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 15,
                         "type": "Identifier",
                       },
                     ],
@@ -38312,8 +38026,7 @@ Array [
               "generator": false,
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 65,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 16,
@@ -38325,7 +38038,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 64,
                   "type": "Identifier",
                 },
               ],
@@ -38599,8 +38311,7 @@ Array [
                             "generator": false,
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 16,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 15,
@@ -38612,7 +38323,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 15,
                                 "type": "Identifier",
                               },
                             ],
@@ -38637,8 +38347,7 @@ Array [
                       "generator": false,
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 65,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 16,
@@ -38650,7 +38359,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 64,
                           "type": "Identifier",
                         },
                       ],
@@ -38749,8 +38457,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 16,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 15,
@@ -38762,7 +38469,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 15,
                     "type": "Identifier",
                   },
                 ],
@@ -39038,8 +38744,7 @@ Array [
                             "generator": false,
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 16,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 15,
@@ -39051,7 +38756,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 15,
                                 "type": "Identifier",
                               },
                             ],
@@ -39076,8 +38780,7 @@ Array [
                       "generator": false,
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 65,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 16,
@@ -39089,7 +38792,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 64,
                           "type": "Identifier",
                         },
                       ],
@@ -39188,8 +38890,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 16,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 15,
@@ -39201,7 +38902,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 15,
                     "type": "Identifier",
                   },
                 ],
@@ -39459,8 +39159,7 @@ Array [
                             "generator": false,
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 16,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 15,
@@ -39472,7 +39171,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 15,
                                 "type": "Identifier",
                               },
                             ],
@@ -39497,8 +39195,7 @@ Array [
                       "generator": false,
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 65,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 16,
@@ -39510,7 +39207,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 64,
                           "type": "Identifier",
                         },
                       ],
@@ -39609,8 +39305,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 16,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 15,
@@ -39622,7 +39317,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 15,
                     "type": "Identifier",
                   },
                 ],
@@ -39880,8 +39574,7 @@ Array [
                             "generator": false,
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 16,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 15,
@@ -39893,7 +39586,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 15,
                                 "type": "Identifier",
                               },
                             ],
@@ -39918,8 +39610,7 @@ Array [
                       "generator": false,
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 65,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 16,
@@ -39931,7 +39622,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 64,
                           "type": "Identifier",
                         },
                       ],
@@ -40030,8 +39720,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 16,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 15,
@@ -40043,7 +39732,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 15,
                     "type": "Identifier",
                   },
                 ],
@@ -40280,8 +39968,7 @@ Array [
                           "generator": false,
                           "loc": undefined,
                           "params": Array [
-                            Node {
-                              "end": 16,
+                            Object {
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 15,
@@ -40293,7 +39980,6 @@ Array [
                                 },
                               },
                               "name": "n",
-                              "start": 15,
                               "type": "Identifier",
                             },
                           ],
@@ -40318,8 +40004,7 @@ Array [
                     "generator": false,
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 65,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 16,
@@ -40331,7 +40016,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 64,
                         "type": "Identifier",
                       },
                     ],
@@ -40430,8 +40114,7 @@ Array [
               "generator": false,
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 16,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 15,
@@ -40443,7 +40126,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 15,
                   "type": "Identifier",
                 },
               ],
@@ -40678,8 +40360,7 @@ Array [
                           "generator": false,
                           "loc": undefined,
                           "params": Array [
-                            Node {
-                              "end": 16,
+                            Object {
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 15,
@@ -40691,7 +40372,6 @@ Array [
                                 },
                               },
                               "name": "n",
-                              "start": 15,
                               "type": "Identifier",
                             },
                           ],
@@ -40716,8 +40396,7 @@ Array [
                     "generator": false,
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 65,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 16,
@@ -40729,7 +40408,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 64,
                         "type": "Identifier",
                       },
                     ],
@@ -40828,8 +40506,7 @@ Array [
               "generator": false,
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 16,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 15,
@@ -40841,7 +40518,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 15,
                   "type": "Identifier",
                 },
               ],
@@ -41058,8 +40734,7 @@ Array [
                           "generator": false,
                           "loc": undefined,
                           "params": Array [
-                            Node {
-                              "end": 16,
+                            Object {
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 15,
@@ -41071,7 +40746,6 @@ Array [
                                 },
                               },
                               "name": "n",
-                              "start": 15,
                               "type": "Identifier",
                             },
                           ],
@@ -41096,8 +40770,7 @@ Array [
                     "generator": false,
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 65,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 16,
@@ -41109,7 +40782,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 64,
                         "type": "Identifier",
                       },
                     ],
@@ -41208,8 +40880,7 @@ Array [
               "generator": false,
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 16,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 15,
@@ -41221,7 +40892,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 15,
                   "type": "Identifier",
                 },
               ],
@@ -41438,8 +41108,7 @@ Array [
                           "generator": false,
                           "loc": undefined,
                           "params": Array [
-                            Node {
-                              "end": 16,
+                            Object {
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 15,
@@ -41451,7 +41120,6 @@ Array [
                                 },
                               },
                               "name": "n",
-                              "start": 15,
                               "type": "Identifier",
                             },
                           ],
@@ -41476,8 +41144,7 @@ Array [
                     "generator": false,
                     "loc": undefined,
                     "params": Array [
-                      Node {
-                        "end": 65,
+                      Object {
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 16,
@@ -41489,7 +41156,6 @@ Array [
                           },
                         },
                         "name": "n",
-                        "start": 64,
                         "type": "Identifier",
                       },
                     ],
@@ -41588,8 +41254,7 @@ Array [
               "generator": false,
               "loc": undefined,
               "params": Array [
-                Node {
-                  "end": 16,
+                Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 15,
@@ -41601,7 +41266,6 @@ Array [
                     },
                   },
                   "name": "n",
-                  "start": 15,
                   "type": "Identifier",
                 },
               ],
@@ -41837,8 +41501,7 @@ Array [
                             "generator": false,
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 65,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 16,
@@ -41850,7 +41513,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 64,
                                 "type": "Identifier",
                               },
                             ],
@@ -41949,8 +41611,7 @@ Array [
                       "generator": false,
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 16,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 15,
@@ -41962,7 +41623,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 15,
                           "type": "Identifier",
                         },
                       ],
@@ -41987,8 +41647,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 65,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 16,
@@ -42000,7 +41659,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 64,
                     "type": "Identifier",
                   },
                 ],
@@ -42301,8 +41959,7 @@ Array [
                             "generator": false,
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 65,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 16,
@@ -42314,7 +41971,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 64,
                                 "type": "Identifier",
                               },
                             ],
@@ -42413,8 +42069,7 @@ Array [
                       "generator": false,
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 16,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 15,
@@ -42426,7 +42081,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 15,
                           "type": "Identifier",
                         },
                       ],
@@ -42451,8 +42105,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 65,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 16,
@@ -42464,7 +42117,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 64,
                     "type": "Identifier",
                   },
                 ],
@@ -42766,8 +42418,7 @@ Array [
                             "generator": false,
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 65,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 16,
@@ -42779,7 +42430,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 64,
                                 "type": "Identifier",
                               },
                             ],
@@ -42878,8 +42528,7 @@ Array [
                       "generator": false,
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 16,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 15,
@@ -42891,7 +42540,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 15,
                           "type": "Identifier",
                         },
                       ],
@@ -42916,8 +42564,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 65,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 16,
@@ -42929,7 +42576,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 64,
                     "type": "Identifier",
                   },
                 ],
@@ -43212,8 +42858,7 @@ Array [
                             "generator": false,
                             "loc": undefined,
                             "params": Array [
-                              Node {
-                                "end": 65,
+                              Object {
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 16,
@@ -43225,7 +42870,6 @@ Array [
                                   },
                                 },
                                 "name": "n",
-                                "start": 64,
                                 "type": "Identifier",
                               },
                             ],
@@ -43324,8 +42968,7 @@ Array [
                       "generator": false,
                       "loc": undefined,
                       "params": Array [
-                        Node {
-                          "end": 16,
+                        Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 15,
@@ -43337,7 +42980,6 @@ Array [
                             },
                           },
                           "name": "n",
-                          "start": 15,
                           "type": "Identifier",
                         },
                       ],
@@ -43362,8 +43004,7 @@ Array [
                 "generator": false,
                 "loc": undefined,
                 "params": Array [
-                  Node {
-                    "end": 65,
+                  Object {
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 16,
@@ -43375,7 +43016,6 @@ Array [
                       },
                     },
                     "name": "n",
-                    "start": 64,
                     "type": "Identifier",
                   },
                 ],
@@ -45799,7 +45439,7 @@ f(0);
 f(0);
 =======
 exports[`scoping test (function parameter) 1`] = `
-"function f(w (param)) {
+"function f(w) {
   return g();
 }
 function g() {
@@ -45808,7 +45448,7 @@ function g() {
 const w = 0;
 f(1);
 
-function f(w (param)) {
+function f(w) {
   return g();
 }
 function g() {
