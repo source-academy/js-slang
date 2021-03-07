@@ -45562,6 +45562,252 @@ Array [
 ]
 `;
 
+exports[`scoping test for block expressions 1`] = `
+"function f(x) {
+  const y (const) = x;
+  return g();
+}
+function g() {
+  return y;
+}
+const y = 1;
+f(0);
+
+function f(x) {
+  const y (const) = x;
+  return g();
+}
+function g() {
+  return y;
+}
+const y = 1;
+f(0);
+
+function g() {
+  return y;
+}
+const y = 1;
+f(0);
+
+function g() {
+  return y;
+}
+const y = 1;
+f(0);
+
+const y = 1;
+f(0);
+
+const y = 1;
+f(0);
+
+f(0);
+
+f(0);
+
+{
+  const y (const) = 0;
+  return g();
+};
+
+{
+  const y (const) = 0;
+  return g();
+};
+
+{
+  return g();
+};
+
+{
+  return g();
+};
+
+g();
+
+g();
+
+1;
+
+1;
+"
+`;
+
+exports[`scoping test for block expressions, with renaming 1`] = `
+"function f(w) {
+  return g();
+}
+function h(f) {
+  function g_1() {
+    return w;
+  }
+  const w = 0;
+  return f(1);
+}
+h(f);
+
+function f(w) {
+  return g();
+}
+function h(f) {
+  function g_1() {
+    return w;
+  }
+  const w = 0;
+  return f(1);
+}
+h(f);
+
+function h(f) {
+  function g_1() {
+    return w;
+  }
+  const w = 0;
+  return f(1);
+}
+h(f);
+
+function h(f) {
+  function g_1() {
+    return w;
+  }
+  const w = 0;
+  return f(1);
+}
+h(f);
+
+h(f);
+
+h(f);
+
+{
+  function g_1() {
+    return w;
+  }
+  const w = 0;
+  return f(1);
+};
+
+{
+  function g_1() {
+  return w;
+}
+  const w = 0;
+  return f(1);
+};
+
+{
+  const w = 0;
+  return f(1);
+};
+
+{
+  const w = 0;
+  return f(1);
+};
+
+{
+  return f(1);
+};
+
+{
+  return f(1);
+};
+
+f(1);
+
+f(1);
+
+g();
+
+g();
+"
+`;
+
+exports[`scoping test for block expressions, no renaming 1`] = `
+"function h(w) {
+  function f(w) {
+    return g();
+  }
+  function g() {
+    return w;
+  }
+  return f(0);
+}
+h(1);
+
+function h(w) {
+  function f(w) {
+    return g();
+  }
+  function g() {
+    return w;
+  }
+  return f(0);
+}
+h(1);
+
+h(1);
+
+h(1);
+
+{
+  function f(w) {
+    return g();
+  }
+  function g() {
+    return 1;
+  }
+  return f(0);
+};
+
+{
+  function f(w) {
+  return g();
+}
+  function g() {
+    return 1;
+  }
+  return f(0);
+};
+
+{
+  function g() {
+    return 1;
+  }
+  return f(0);
+};
+
+{
+  function g() {
+  return 1;
+}
+  return f(0);
+};
+
+{
+  return f(0);
+};
+
+{
+  return f(0);
+};
+
+f(0);
+
+f(0);
+
+g();
+
+g();
+
+1;
+
+1;
+"
+`;
+
+
 exports[`scoping test for function expressions 1`] = `
 "function f(x (param)) {
   return g();
@@ -45645,77 +45891,6 @@ const x = 1;
 (() => 1)();
 
 (() => 1)();
-
-1;
-
-1;
-"
-`;
-
-exports[`scoping test for block expressions 1`] = `
-"function f(x) {
-  const y (const) = x;
-  return g();
-}
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-function f(x) {
-  const y (const) = x;
-  return g();
-}
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-const y = 1;
-f(0);
-
-const y = 1;
-f(0);
-
-f(0);
-
-f(0);
-
-{
-  const y (const) = 0;
-  return g();
-};
-
-{
-  const y (const) = 0;
-  return g();
-};
-
-{
-  return g();
-};
-
-{
-  return g();
-};
-
-g();
-
-g();
 
 1;
 
