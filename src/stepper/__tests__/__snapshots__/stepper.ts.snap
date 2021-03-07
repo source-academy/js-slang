@@ -45204,7 +45204,11 @@ Array [
 
 exports[`scoping test for block expressions 1`] = `
 "function f(x) {
+<<<<<<< HEAD
   const y (const) = x;
+=======
+  const y_1 = x;
+>>>>>>> fed5faf5cda46a93ebf1981afcff3dd8a4c4b5ff
   return g();
 }
 function g() {
@@ -45214,7 +45218,11 @@ const y = 1;
 f(0);
 
 function f(x) {
+<<<<<<< HEAD
   const y (const) = x;
+=======
+  const y_1 = x;
+>>>>>>> fed5faf5cda46a93ebf1981afcff3dd8a4c4b5ff
   return g();
 }
 function g() {
@@ -45246,12 +45254,20 @@ f(0);
 f(0);
 
 {
+<<<<<<< HEAD
   const y (const) = 0;
+=======
+  const y_1 = 0;
+>>>>>>> fed5faf5cda46a93ebf1981afcff3dd8a4c4b5ff
   return g();
 };
 
 {
+<<<<<<< HEAD
   const y (const) = 0;
+=======
+  const y_1 = 0;
+>>>>>>> fed5faf5cda46a93ebf1981afcff3dd8a4c4b5ff
   return g();
 };
 
@@ -45273,6 +45289,7 @@ g();
 "
 `;
 
+<<<<<<< HEAD
 exports[`scoping test for block expressions, with renaming 1`] = `
 "function f(w) {
   return g();
@@ -45450,6 +45467,10 @@ g();
 
 exports[`scoping test for function expressions 1`] = `
 "function f(x (param)) {
+=======
+exports[`scoping test for function expressions 1`] = `
+"function f(x) {
+>>>>>>> fed5faf5cda46a93ebf1981afcff3dd8a4c4b5ff
   return g();
 }
 function g() {
@@ -45458,7 +45479,11 @@ function g() {
 const x = 1;
 f(0);
 
+<<<<<<< HEAD
 function f(x (param)) {
+=======
+function f(x) {
+>>>>>>> fed5faf5cda46a93ebf1981afcff3dd8a4c4b5ff
   return g();
 }
 function g() {
@@ -45500,18 +45525,27 @@ g();
 `;
 
 exports[`scoping test for lambda expressions 1`] = `
+<<<<<<< HEAD
 "const f = x (param) => g();
+=======
+"const f = x => g();
+>>>>>>> fed5faf5cda46a93ebf1981afcff3dd8a4c4b5ff
 const g = () => x;
 const x = 1;
 f(0);
 
+<<<<<<< HEAD
 const f = x (param) => g();
+=======
+const f = x => g();
+>>>>>>> fed5faf5cda46a93ebf1981afcff3dd8a4c4b5ff
 const g = () => x;
 const x = 1;
 f(0);
 
 const g = () => x;
 const x = 1;
+<<<<<<< HEAD
 (x (param) => g())(0);
 
 const g = () => x;
@@ -45527,6 +45561,23 @@ const x = 1;
 (x (param) => (() => 1)())(0);
 
 (x (param) => (() => 1)())(0);
+=======
+(x => g())(0);
+
+const g = () => x;
+const x = 1;
+(x => g())(0);
+
+const x = 1;
+(x_1 => (() => x)())(0);
+
+const x = 1;
+(x_1 => (() => x)())(0);
+
+(x_1 => (() => 1)())(0);
+
+(x_1 => (() => 1)())(0);
+>>>>>>> fed5faf5cda46a93ebf1981afcff3dd8a4c4b5ff
 
 (() => 1)();
 
