@@ -883,7 +883,11 @@ test('const declarations in blocks subst into call expressions', () => {
   expect(getLastStepAsString(steps)).toEqual('6;')
 })
 
+<<<<<<< HEAD
 test('scoping test for function expressions', () => {
+=======
+test('scoping test (function parameter)', () => {
+>>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
   const code = `
   function f(x) {
     return g();
@@ -950,6 +954,7 @@ test('scoping test for block expressions, no renaming', () => {
   expect(getLastStepAsString(steps)).toEqual('0;')
 })
 
+<<<<<<< HEAD
 test('scoping test for block expressions, with renaming', () => {
   const code = `
   function f(w) {
@@ -963,9 +968,27 @@ test('scoping test for block expressions, with renaming', () => {
       return f(1);
   }
   h(f);
+=======
+test('scoping test 2 (blocks)', () => {
+  const code = `
+  function f(w) {
+    const z = w; 
+    return g();
+  }
+  function g() {
+    return z;
+  }
+
+  f(0);
+>>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
   `
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+<<<<<<< HEAD
   expect(getLastStepAsString(steps)).toEqual('g();')
 })
+=======
+  expect(getLastStepAsString(steps)).toEqual('z;')
+})
+>>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)

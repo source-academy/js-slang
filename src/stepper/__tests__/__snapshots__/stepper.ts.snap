@@ -45562,6 +45562,7 @@ Array [
 ]
 `;
 
+<<<<<<< HEAD
 exports[`scoping test for block expressions 1`] = `
 "function f(x) {
   const y (const) = x;
@@ -45796,11 +45797,54 @@ h(1);
 f(0);
 
 f(0);
+=======
+exports[`scoping test (function parameter) 1`] = `
+"function f(w (param)) {
+  return g();
+}
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+function f(w (param)) {
+  return g();
+}
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+const w = 0;
+f(1);
+
+const w = 0;
+f(1);
+
+f(1);
+
+f(1);
+>>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
 
 g();
 
 g();
 
+<<<<<<< HEAD
 1;
 
 1;
@@ -45895,6 +45939,72 @@ const x = 1;
 1;
 
 1;
+=======
+0;
+
+0;
+"
+`;
+
+exports[`scoping test 2 (blocks) 1`] = `
+"function f(w) {
+  const z (const) = w;
+  return g();
+}
+function g() {
+  return z;
+}
+f(0);
+
+function f(w) {
+  const z (const) = w;
+  return g();
+}
+function g() {
+  return z;
+}
+f(0);
+
+function g() {
+  return z;
+}
+f(0);
+
+function g() {
+  return z;
+}
+f(0);
+
+f(0);
+
+f(0);
+
+{
+  const z (const) = 0;
+  return g();
+};
+
+{
+  const z (const) = 0;
+  return g();
+};
+
+{
+  return g();
+};
+
+{
+  return g();
+};
+
+g();
+
+g();
+
+z;
+
+z;
+>>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
 "
 `;
 
