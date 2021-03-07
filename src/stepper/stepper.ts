@@ -434,7 +434,8 @@ function substituteMain(
                 target.body = substituteMain(param, changed, target.body, [
                   []
                 ])[0] as es.BlockStatement
-                ;(substedFunctionDeclaration.params[i] as es.Identifier).name = num[0] + '_' + newNum
+                ;(substedFunctionDeclaration.params[i] as es.Identifier).name =
+                  num[0] + '_' + newNum
               } else {
                 newNum = 1
                 for (const f of freeVars) {
