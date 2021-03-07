@@ -1563,7 +1563,7 @@ function reduceMain(
             paths.push([])
             stmt = ast.blockStatement(otherStatements as es.Statement[])
           } else {
-             stmt = ast.expressionStatement(firstStatement.expression)
+            stmt = ast.expressionStatement(firstStatement.expression)
           }
           return [stmt, context, paths, explain(node)]
         } else if (firstStatement.type === 'FunctionDeclaration') {
