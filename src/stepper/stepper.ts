@@ -40,7 +40,6 @@ type irreducibleNodes =
   | es.Literal
   | es.ArrayExpression
 
-<<<<<<< HEAD
 function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Identifier[] {
   const declaredIds: es.Identifier[] = []
   for (const stmt of node.body) {
@@ -63,13 +62,6 @@ function findMain(target: es.FunctionExpression | es.ArrowFunctionExpression): s
   if (target.type == 'FunctionExpression') {
     params.push(target.id!.name)
   }
-=======
-function findMain(
-  target: es.FunctionExpression | es.ArrowFunctionExpression,
-  paths: string[][]
-): string[] {
-  const params: string[] = []
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
   for (let i = 0; i < target.params.length; i++) {
     params.push((target.params[i] as es.Identifier).name)
   }
@@ -78,17 +70,9 @@ function findMain(
   const seenBefore: Map<substituterNodes, substituterNodes> = new Map()
 
   const finders = {
-<<<<<<< HEAD
     Identifier(target: es.Identifier): void {
       seenBefore.set(target, target)
       let bound = false
-=======
-    Identifier(
-      target: es.Identifier,
-    ): void {
-      seenBefore.set(target, target)
-      let bound = false;
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
       for (let i = 0; i < params.length; i++) {
         if (target.name == params[i]) {
           bound = true
@@ -116,24 +100,14 @@ function findMain(
       find(target.argument)
     },
 
-<<<<<<< HEAD
     ConditionalExpression(target: es.ConditionalExpression): void {
-=======
-    ConditionalExpression(
-      target: es.ConditionalExpression,
-    ): void {
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
       seenBefore.set(target, target)
       find(target.test)
       find(target.consequent)
       find(target.alternate)
     },
 
-<<<<<<< HEAD
     LogicalExpression(target: es.LogicalExpression): void {
-=======
-    LogicalExpression(target: es.LogicalExpression): void{
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
       seenBefore.set(target, target)
       find(target.left)
       find(target.right)
@@ -269,11 +243,7 @@ function findMain(
         find(ele)
       })
     }
-<<<<<<< HEAD
   }
-=======
-   }
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
 
   function find(target: any): void {
     const result = seenBefore.get(target)
@@ -286,18 +256,10 @@ function findMain(
       }
     }
   }
-<<<<<<< HEAD
-=======
-
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
   find(target.body)
   return freeNames
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
 /* tslint:disable:no-shadowed-variable */
 // wrapper function, calls substitute immediately.
 function substituteMain(
@@ -494,23 +456,17 @@ function substituteMain(
       )
       seenBefore.set(target, substedFunctionDeclaration)
       let freeNames: any[] = []
-<<<<<<< HEAD
       if (
         replacement.type == 'FunctionExpression' ||
         replacement.type == 'ArrowFunctionExpression'
       ) {
         freeNames = findMain(replacement)
-=======
-      if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
-        freeNames = findMain(replacement, [[]])
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
       }
       for (const param of target.params) {
         if (param.type === 'Identifier' && param.name === name.name) {
           substedFunctionDeclaration.body = target.body
           return substedFunctionDeclaration
         }
-<<<<<<< HEAD
         if (param.type == 'Identifier') {
           for (const freeVar of freeNames) {
             if (param.name == freeVar) {
@@ -523,18 +479,6 @@ function substituteMain(
             }
           }
         }
-=======
-         if (param.type == 'Identifier') {
-          for (const freeVar of freeNames) {
-            if (param.name == freeVar) {
-              // change param name
-              const changed = ast.identifier(param.name + " (param)", param.loc)
-              target.body = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
-              param.name = param.name + " (param)"
-            }
-          }
-         }
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
       }
       if (pathNotEnded(index)) {
         allPaths[index].push('body')
@@ -550,16 +494,11 @@ function substituteMain(
       seenBefore.set(target, substedFunctionExpression)
       // check for free/bounded variable in replacement
       let freeNames: any[] = []
-<<<<<<< HEAD
       if (
         replacement.type == 'FunctionExpression' ||
         replacement.type == 'ArrowFunctionExpression'
       ) {
         freeNames = findMain(replacement)
-=======
-      if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
-        freeNames = findMain(replacement, [[]])
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
       }
       for (const param of target.params) {
         if (param.type === 'Identifier' && param.name === name.name) {
@@ -570,17 +509,11 @@ function substituteMain(
           for (const freeVar of freeNames) {
             if (param.name == freeVar) {
               // change param name
-<<<<<<< HEAD
               const changed = ast.identifier(param.name + ' (param)', param.loc)
               target.body = substituteMain(param, changed, target.body, [
                 []
               ])[0] as es.BlockStatement
               param.name = param.name + ' (param)'
-=======
-              const changed = ast.identifier(param.name + " (param)", param.loc)
-              target.body = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
-              param.name = param.name + " (param)"
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
             }
           }
         }
@@ -727,41 +660,27 @@ function substituteMain(
       seenBefore.set(target, substedArrow)
       // check for free/bounded variable
       let freeNames: any[] = []
-<<<<<<< HEAD
       if (
         replacement.type == 'FunctionExpression' ||
         replacement.type == 'ArrowFunctionExpression'
       ) {
         freeNames = findMain(replacement)
-=======
-      if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
-        freeNames = findMain(replacement, [[]])
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
       }
       for (const param of target.params) {
         if (param.type === 'Identifier' && param.name === name.name) {
           substedArrow.body = target.body
-<<<<<<< HEAD
           substedArrow.expression = target.body.type !== 'BlockStatement'
-=======
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
           return substedArrow
         }
         if (param.type == 'Identifier') {
           for (const freeVar of freeNames) {
             if (param.name == freeVar) {
               // change param name
-<<<<<<< HEAD
               const changed = ast.identifier(param.name + ' (param)', param.loc)
               target.body = substituteMain(param, changed, target.body, [
                 []
               ])[0] as es.BlockStatement
               param.name = param.name + ' (param)'
-=======
-              const changed = ast.identifier(param.name + " (param)", param.loc)
-              target.body = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
-              param.name = param.name + " (param)"
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
             }
           }
         }
@@ -1439,7 +1358,6 @@ function reduceMain(
             }
             return [subst[0], context, allPaths, explain(node)]
           } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
-<<<<<<< HEAD
             let funDecExp = ast.functionDeclarationExpression(
               declarator.id,
               rhs.params,
@@ -1464,32 +1382,6 @@ function reduceMain(
             }
             return [subst[0], context, allPaths, explain(node)]
           } else {
-=======
-              let funDecExp = ast.functionDeclarationExpression(
-                declarator.id,
-                rhs.params,
-                rhs.body.type === 'BlockStatement'
-                  ? rhs.body
-                  : ast.blockStatement([ast.returnStatement(rhs.body)])
-              ) as FunctionDeclarationExpression
-              funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
-                []
-              ])[0] as FunctionDeclarationExpression
-              // substitute the rest of the program
-              const remainingProgram = ast.program(otherStatements as es.Statement[])
-              const subst = substituteMain(funDecExp.id, funDecExp, remainingProgram, paths)
-              // concats paths such that:
-              // paths[0] -> path to the program to be substituted, pre-redex
-              // paths[1...] -> path(s) to the parts of the remaining program
-              // that were substituted, post-redex
-              paths[0].push('body[0]')
-              const allPaths = paths.concat(subst[1])
-              if (subst[1].length === 0) {
-                allPaths.push([])
-              }
-              return [subst[0], context, allPaths, explain(node)] 
-            } else {
->>>>>>> 9adbe27 (added function findMain that finds free variables in functions. It is called in substituteMain by FunctionExpression, FunctionDeclarations and ArrowFunctionExpression substituters. Currently does not check for free variables in functions/ lambda functions declared within the function body, as those blocks are commented out. Also updated the test case testing for variable capturing.)
             paths[0].push('body[0]')
             paths[0].push('declarations[0]')
             paths[0].push('init')
