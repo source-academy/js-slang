@@ -2361,8 +2361,7 @@ Array [
           },
           "loc": undefined,
           "params": Array [
-            Node {
-              "end": 23,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 22,
@@ -2374,7 +2373,6 @@ Array [
                 },
               },
               "name": "n",
-              "start": 22,
               "type": "Identifier",
             },
           ],
@@ -2665,8 +2663,7 @@ Array [
           },
           "loc": undefined,
           "params": Array [
-            Node {
-              "end": 23,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 22,
@@ -2678,7 +2675,6 @@ Array [
                 },
               },
               "name": "n",
-              "start": 22,
               "type": "Identifier",
             },
           ],
@@ -23004,8 +23000,7 @@ Array [
           },
           "loc": undefined,
           "params": Array [
-            Node {
-              "end": 15,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 14,
@@ -23017,11 +23012,9 @@ Array [
                 },
               },
               "name": "n",
-              "start": 14,
               "type": "Identifier",
             },
-            Node {
-              "end": 18,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 17,
@@ -23033,7 +23026,6 @@ Array [
                 },
               },
               "name": "m",
-              "start": 17,
               "type": "Identifier",
             },
           ],
@@ -23325,8 +23317,7 @@ Array [
           },
           "loc": undefined,
           "params": Array [
-            Node {
-              "end": 15,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 14,
@@ -23338,11 +23329,9 @@ Array [
                 },
               },
               "name": "n",
-              "start": 14,
               "type": "Identifier",
             },
-            Node {
-              "end": 18,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 17,
@@ -23354,7 +23343,6 @@ Array [
                 },
               },
               "name": "m",
-              "start": 17,
               "type": "Identifier",
             },
           ],
@@ -26439,8 +26427,7 @@ Array [
           },
           "loc": undefined,
           "params": Array [
-            Node {
-              "end": 15,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 14,
@@ -26452,7 +26439,6 @@ Array [
                 },
               },
               "name": "n",
-              "start": 14,
               "type": "Identifier",
             },
           ],
@@ -26666,8 +26652,7 @@ Array [
           },
           "loc": undefined,
           "params": Array [
-            Node {
-              "end": 15,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 14,
@@ -26679,7 +26664,6 @@ Array [
                 },
               },
               "name": "n",
-              "start": 14,
               "type": "Identifier",
             },
           ],
@@ -33303,8 +33287,7 @@ Array [
           },
           "loc": undefined,
           "params": Array [
-            Node {
-              "end": 31,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 12,
@@ -33316,7 +33299,6 @@ Array [
                 },
               },
               "name": "g",
-              "start": 30,
               "type": "Identifier",
             },
           ],
@@ -33608,8 +33590,7 @@ Array [
           },
           "loc": undefined,
           "params": Array [
-            Node {
-              "end": 31,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 12,
@@ -33621,7 +33602,6 @@ Array [
                 },
               },
               "name": "g",
-              "start": 30,
               "type": "Identifier",
             },
           ],
@@ -33873,8 +33853,7 @@ Array [
           },
           "loc": undefined,
           "params": Array [
-            Node {
-              "end": 31,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 12,
@@ -33886,7 +33865,6 @@ Array [
                 },
               },
               "name": "g",
-              "start": 30,
               "type": "Identifier",
             },
           ],
@@ -34131,8 +34109,7 @@ Array [
           },
           "loc": undefined,
           "params": Array [
-            Node {
-              "end": 31,
+            Object {
               "loc": SourceLocation {
                 "end": Position {
                   "column": 12,
@@ -34144,7 +34121,6 @@ Array [
                 },
               },
               "name": "g",
-              "start": 30,
               "type": "Identifier",
             },
           ],
@@ -45200,6 +45176,193 @@ Array [
     "",
   ],
 ]
+`;
+
+exports[`renaming clash test for functions 1`] = `
+"function f(w_8) {
+  function h(w_9) {
+    return w_8 + w_9 + g();
+  }
+  return h;
+}
+function g() {
+  return w_9;
+}
+const w_9 = 0;
+f(1)(2);
+
+function f(w_8) {
+  function h(w_9) {
+    return w_8 + w_9 + g();
+  }
+  return h;
+}
+function g() {
+  return w_9;
+}
+const w_9 = 0;
+f(1)(2);
+
+function g() {
+  return w_9;
+}
+const w_9 = 0;
+f(1)(2);
+
+function g() {
+  return w_9;
+}
+const w_9 = 0;
+f(1)(2);
+
+const w_9 = 0;
+f(1)(2);
+
+const w_9 = 0;
+f(1)(2);
+
+f(1)(2);
+
+f(1)(2);
+
+{
+  function h(w_10) {
+    return 1 + w_10 + g();
+  }
+  return h;
+}(2);
+
+{
+  function h(w_10) {
+    return 1 + w_10 + g();
+  }
+  return h;
+}(2);
+
+{
+  return h;
+}(2);
+
+{
+  return h;
+}(2);
+
+h(2);
+
+h(2);
+
+1 + 2 + g();
+
+1 + 2 + g();
+
+3 + g();
+
+3 + g();
+
+3 + 0;
+
+3 + 0;
+
+3;
+
+3;
+"
+`;
+
+exports[`renaming clash test for lambda function 1`] = `
+"const f = w_11 => w_10 => w_11 + w_10 + g();
+const g = () => w_10;
+const w_10 = 0;
+f(1)(2);
+
+const f = w_11 => w_10 => w_11 + w_10 + g();
+const g = () => w_10;
+const w_10 = 0;
+f(1)(2);
+
+const g = () => w_10;
+const w_10 = 0;
+(w_11 => w_10 => w_11 + w_10 + g())(1)(2);
+
+const g = () => w_10;
+const w_10 = 0;
+(w_11 => w_10 => w_11 + w_10 + g())(1)(2);
+
+const w_10 = 0;
+(w_11 => w_12 => w_11 + w_12 + (() => w_10)())(1)(2);
+
+const w_10 = 0;
+(w_11 => w_12 => w_11 + w_12 + (() => w_10)())(1)(2);
+
+(w_11 => w_12 => w_11 + w_12 + (() => 0)())(1)(2);
+
+(w_11 => w_12 => w_11 + w_12 + (() => 0)())(1)(2);
+
+(w_12 => 1 + w_12 + (() => 0)())(2);
+
+(w_12 => 1 + w_12 + (() => 0)())(2);
+
+1 + 2 + (() => 0)();
+
+1 + 2 + (() => 0)();
+
+3 + (() => 0)();
+
+3 + (() => 0)();
+
+3 + 0;
+
+3 + 0;
+
+3;
+
+3;
+"
+`;
+
+exports[`return in nested blocks 1`] = `
+"function f(x) {
+  {
+    return 1;
+  }
+}
+f(0);
+
+function f(x) {
+  {
+    return 1;
+  }
+}
+f(0);
+
+f(0);
+
+f(0);
+
+{
+  {
+    return 1;
+  }
+};
+
+{
+  {
+    return 1;
+  }
+};
+
+{
+  return 1;
+};
+
+{
+  return 1;
+};
+
+1;
+
+1;
+"
 `;
 
 exports[`scoping test for block expressions 1`] = `
