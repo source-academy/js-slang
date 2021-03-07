@@ -562,40 +562,18 @@ function substituteMain(
       const substedBlockStatement = ast.blockStatement(substedBody)
       seenBefore.set(target, substedBlockStatement)
       const declaredNames: Set<string> = getDeclaredNames(target)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
       if (
         replacement.type == 'FunctionExpression' ||
         replacement.type == 'ArrowFunctionExpression'
       ) {
-<<<<<<< HEAD
-=======
-      if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
->>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
-=======
->>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
         const declaredIds: es.Identifier[] = scanOutDeclarations(target)
         const freeNames = findMain(replacement)
         for (const freeName of freeNames) {
           for (const declaredId of declaredIds) {
             if (declaredId.name == freeName) {
-<<<<<<< HEAD
-<<<<<<< HEAD
               const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
               target = substituteMain(declaredId, changed, target, [[]])[0] as es.BlockStatement
               declaredId.name = declaredId.name + ' (const)'
-=======
-              const changed = ast.identifier(declaredId.name + " (const)", declaredId.loc)
-              target = substituteMain(declaredId, changed, target, [[]])[0] as es.BlockStatement
-              declaredId.name = declaredId.name + " (const)"
->>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
-=======
-              const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
-              target = substituteMain(declaredId, changed, target, [[]])[0] as es.BlockStatement
-              declaredId.name = declaredId.name + ' (const)'
->>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
             }
           }
         }
@@ -630,40 +608,18 @@ function substituteMain(
       const substedBlockExpression = ast.blockExpression(substedBody)
       seenBefore.set(target, substedBlockExpression)
       const declaredNames: Set<string> = getDeclaredNames(target)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
       if (
         replacement.type == 'FunctionExpression' ||
         replacement.type == 'ArrowFunctionExpression'
       ) {
-<<<<<<< HEAD
-=======
-      if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
->>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
-=======
->>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
         const declaredIds: es.Identifier[] = scanOutDeclarations(target)
         const freeNames = findMain(replacement)
         for (const freeName of freeNames) {
           for (const declaredId of declaredIds) {
             if (declaredId.name == freeName) {
-<<<<<<< HEAD
-<<<<<<< HEAD
               const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
               target = substituteMain(declaredId, changed, target, [[]])[0] as BlockExpression
               declaredId.name = declaredId.name + ' (const)'
-=======
-              const changed = ast.identifier(declaredId.name + " (const)", declaredId.loc)
-              target = substituteMain(declaredId, changed, target, [[]])[0] as BlockExpression
-              declaredId.name = declaredId.name + " (const)"
->>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
-=======
-              const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
-              target = substituteMain(declaredId, changed, target, [[]])[0] as BlockExpression
-              declaredId.name = declaredId.name + ' (const)'
->>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
             }
           }
         }
