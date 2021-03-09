@@ -396,8 +396,9 @@ function substituteMain(
         const param = target.params[i] as es.Identifier
         substedParams.push(ast.identifier(param.name, param.loc))
       }
+      const subbed = ast.identifier((target.id as es.Identifier).name)
       const substedFunctionDeclaration = ast.functionDeclaration(
-        target.id,
+        subbed,
         substedParams,
         dummyBlockStatement()
       )
@@ -839,7 +840,8 @@ function substituteMain(
     },
 
     VariableDeclarator(target: es.VariableDeclarator, index: number): es.VariableDeclarator {
-      const substedVariableDeclarator = ast.variableDeclarator(target.id, dummyExpression())
+      const subbed = ast.identifier((target.id as es.Identifier).name)
+      const substedVariableDeclarator = ast.variableDeclarator(subbed, dummyExpression())
       seenBefore.set(target, substedVariableDeclarator)
       if (target.id.type === 'Identifier' && name.name === target.id.name) {
         substedVariableDeclarator.init = target.init
