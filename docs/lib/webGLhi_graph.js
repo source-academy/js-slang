@@ -1,7 +1,7 @@
 // USEFUL, SIMPLE, GENERAL PROCEDURES
 
 function compose(f, g) {
-  return function(x) {
+  return function (x) {
     return f(g(x))
   }
 }
@@ -41,8 +41,8 @@ function square(x) {
  * @returns {Point} Point in the line at t
  */
 function unit_circle(t) {
-    return make_point(Math.sin(2 * Math.PI * t),
-		      Math.cos(2 * Math.PI * t))
+  return make_point(Math.sin(2 * Math.PI * t),
+    Math.cos(2 * Math.PI * t))
 }
 
 /**
@@ -67,7 +67,7 @@ function unit_line(t) {
  * @returns {Curve} horizontal Curve 
  */
 function unit_line_at(y) {
-  return function(t) {
+  return function (t) {
     return make_point(t, y)
   }
 }
@@ -75,8 +75,8 @@ function unit_line_at(y) {
 // alternative_unit_circle: undocumented feature
 
 function alternative_unit_circle(t) {
-    return make_point(Math.sin(2 * Math.PI * square(t)),
-		      Math.cos(2 * Math.PI * square(t)))
+  return make_point(Math.sin(2 * Math.PI * square(t)),
+    Math.cos(2 * Math.PI * square(t)))
 }
 
 /**
@@ -108,7 +108,7 @@ function arc(t) {
  * @returns {Curve} result Curve
  */
 function invert(curve) {
-  return function(t) {
+  return function (t) {
     return curve(1 - t)
   }
 }
@@ -119,22 +119,28 @@ function invert(curve) {
 
 /**
  * this function returns a Curve transformation: 
- * It takes an x-value x0 and a y-value y0 as arguments and returns a
- * Curve transformation that
+ * It takes an x-value x0, a y-value y0 and a z-value z0 as arguments 
+ * and returns a Curve transformation that
  * takes a Curve as argument and returns
- * a new Curve, by translating the original by x0 in x-direction
- * and by y0 in y-direction.
+ * a new Curve, by translating the original by x0 in x-direction, 
+ * y0 in y-direction and z0 in z-direction.
  * 
  * @param {number} x0 - x-value
  * @param {number} y0 - y-value
+ * @param {number} z0 - z-value
  * @returns {function} Curve transformation
  */
-function translate(x0, y0) {
-  return curve => 
-	(t) => {
-	    var ct = curve(t)
-	    return make_color_point(x0 + x_of(ct), y0 + y_of(ct), r_of(ct), g_of(ct), b_of(ct))
-	}
+function translate_curve(x0, y0, z0) {
+  return function (curve) {
+    var transformation = c => (function (t) {
+      x0 = x0 == undefined ? 0 : x0
+      y0 = y0 == undefined ? 0 : y0
+      z0 = z0 == undefined ? 0 : z0
+      var ct = c(t)
+      return make_3D_color_point(x0 + x_of(ct), y0 + y_of(ct), z0 + z_of(ct), r_of(ct), g_of(ct), b_of(ct))
+    })
+    return transformation(curve)
+  }
 }
 
 // ROTATE-AROUND-ORIGIN is of type (JS-Num --> Curve-Transform)
@@ -151,8 +157,8 @@ function translate(x0, y0) {
 function rotate_around_origin(theta) {
   var cth = Math.cos(theta)
   var sth = Math.sin(theta)
-  return function(curve) {
-    return function(t) {
+  return function (curve) {
+    return function (t) {
       var ct = curve(t)
       var x = x_of(ct)
       var y = y_of(ct)
@@ -163,8 +169,8 @@ function rotate_around_origin(theta) {
 
 function deriv_t(n) {
   var delta_t = 1 / n
-  return function(curve) {
-    return function(t) {
+  return function (curve) {
+    return function (t) {
       var ct = curve(t)
       var ctdelta = curve(t + delta_t)
       return make_color_point((x_of(ctdelta) - x_of(ct)) / delta_t, (y_of(ctdelta) - y_of(ct)) / delta_t, r_of(ct), g_of(ct), b_of(ct))
@@ -183,9 +189,9 @@ function deriv_t(n) {
  * @param {number} c - scaling factor in z-direction
  * @returns {unary_Curve_operator} function that takes a Curve and returns a Curve
  */
- function scale_curve(a1, b1, c1) {
-  return function(curve) {
-    var transformation = c => (function(t) {
+function scale_curve(a1, b1, c1) {
+  return function (curve) {
+    var transformation = c => (function (t) {
       var ct = c(t)
       a1 = a1 == undefined ? 1 : a1
       b1 = b1 == undefined ? 1 : b1
@@ -337,12 +343,12 @@ function connect_rigidly(curve1, curve2) {
  * @returns {Curve} result Curve
  */
 function connect_ends(curve1, curve2) {
-    const start_point_of_curve2 = curve2(0);
-    const end_point_of_curve1 = curve1(1);
-    return connect_rigidly(curve1,
-			   (translate(x_of(end_point_of_curve1) -
-				      x_of(start_point_of_curve2),
-				      y_of(end_point_of_curve1) -
-				      y_of(start_point_of_curve2)))
-			   (curve2));
+  const start_point_of_curve2 = curve2(0);
+  const end_point_of_curve1 = curve1(1);
+  return connect_rigidly(curve1,
+    (translate(x_of(end_point_of_curve1) -
+      x_of(start_point_of_curve2),
+      y_of(end_point_of_curve1) -
+      y_of(start_point_of_curve2)))
+      (curve2));
 }
