@@ -113,21 +113,6 @@ function invert(curve) {
   }
 }
 
-/**
- * this function is a Curve transformation: a function from a
- * Curve to a Curve. The result Curve is the original Curve
- * rotated by 90 degrees in counterclockwise direction around
- * the origin.
- * @param {Curve} original - original Curve
- * @returns {Curve} result Curve
- */
-function rotate_pi_over_2(curve) {
-    return t => {
-	var ct = curve(t)
-	return make_color_point(-y_of(ct), x_of(ct), r_of(ct), g_of(ct), b_of(ct))
-    }
-}
-
 // CONSTRUCTORS OF CURVE-TRANSFORMS
 
 // TRANSLATE is of type (JS-Num, JS-Num --> Curve-Transform)
