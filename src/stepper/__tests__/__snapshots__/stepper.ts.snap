@@ -43120,6 +43120,640 @@ Array [
 ]
 `;
 
+exports[`multiple clash 2 for function declaration 1`] = `
+"function g() {
+  return x + x_1;
+}
+function f(x) {
+  function h(x_1) {
+    return x_2 + g();
+  }
+  return h;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+function g() {
+  return x + x_1;
+}
+function f(x) {
+  function h(x_1) {
+    return x_2 + g();
+  }
+  return h;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+function f(x_3) {
+  function h(x_4) {
+    return x_2 + g();
+  }
+  return h;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+function f(x_3) {
+  function h(x_4) {
+    return x_2 + g();
+  }
+  return h;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x = 1;
+f(1)(1);
+
+const x = 1;
+f(1)(1);
+
+f(1)(1);
+
+f(1)(1);
+
+{
+  function h(x_4) {
+    return 0 + g();
+  }
+  return h;
+}(1);
+
+{
+  function h(x_4) {
+    return 0 + g();
+  }
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+h(1);
+
+h(1);
+
+0 + g();
+
+0 + g();
+
+0 + (1 + 2);
+
+0 + (1 + 2);
+
+0 + 3;
+
+0 + 3;
+
+3;
+
+3;
+"
+`;
+
+exports[`multiple clash 2 for function expression 1`] = `
+"function f(x) {
+  function h(x_1) {
+    return x_2 + g();
+  }
+  return h;
+}
+function g() {
+  return x + x_1;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+function f(x) {
+  function h(x_1) {
+    return x_2 + g();
+  }
+  return h;
+}
+function g() {
+  return x + x_1;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+function g() {
+  return x + x_1;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+function g() {
+  return x + x_1;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x = 1;
+f(1)(1);
+
+const x = 1;
+f(1)(1);
+
+f(1)(1);
+
+f(1)(1);
+
+{
+  function h(x_4) {
+    return 0 + g();
+  }
+  return h;
+}(1);
+
+{
+  function h(x_4) {
+    return 0 + g();
+  }
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+h(1);
+
+h(1);
+
+0 + g();
+
+0 + g();
+
+0 + (1 + 2);
+
+0 + (1 + 2);
+
+0 + 3;
+
+0 + 3;
+
+3;
+
+3;
+"
+`;
+
+exports[`multiple clash 2 for lambda function 1`] = `
+"const f = x => x_1 => x_2 + g();
+const g = () => x + x_1;
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const f = x => x_1 => x_2 + g();
+const g = () => x + x_1;
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const g = () => x + x_1;
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+(x => x_1 => x_2 + g())(1)(1);
+
+const g = () => x + x_1;
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+(x => x_1 => x_2 + g())(1)(1);
+
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+(x_3 => x_4 => x_2 + (() => x + x_1)())(1)(1);
+
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+(x_3 => x_4 => x_2 + (() => x + x_1)())(1)(1);
+
+const x_1 = 2;
+const x = 1;
+(x_3 => x_4 => 0 + (() => x + x_1)())(1)(1);
+
+const x_1 = 2;
+const x = 1;
+(x_3 => x_4 => 0 + (() => x + x_1)())(1)(1);
+
+const x = 1;
+(x_3 => x_4 => 0 + (() => x + 2)())(1)(1);
+
+const x = 1;
+(x_3 => x_4 => 0 + (() => x + 2)())(1)(1);
+
+(x_3 => x_4 => 0 + (() => 1 + 2)())(1)(1);
+
+(x_3 => x_4 => 0 + (() => 1 + 2)())(1)(1);
+
+(x_4 => 0 + (() => 1 + 2)())(1);
+
+(x_4 => 0 + (() => 1 + 2)())(1);
+
+0 + (() => 1 + 2)();
+
+0 + (() => 1 + 2)();
+
+0 + (1 + 2);
+
+0 + (1 + 2);
+
+0 + 3;
+
+0 + 3;
+
+3;
+
+3;
+"
+`;
+
+exports[`multiple clash for function declaration 1`] = `
+"function g() {
+  return x_2 + x_3;
+}
+function f(x_2) {
+  function h(x_3) {
+    return x_4 + g();
+  }
+  return h;
+}
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+function g() {
+  return x_2 + x_3;
+}
+function f(x_2) {
+  function h(x_3) {
+    return x_4 + g();
+  }
+  return h;
+}
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+function f(x_5) {
+  function h(x_6) {
+    return x_4 + g();
+  }
+  return h;
+}
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+function f(x_5) {
+  function h(x_6) {
+    return x_4 + g();
+  }
+  return h;
+}
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const x_4 = 2;
+f(1)(1);
+
+const x_4 = 2;
+f(1)(1);
+
+f(1)(1);
+
+f(1)(1);
+
+{
+  function h(x_6) {
+    return 2 + g();
+  }
+  return h;
+}(1);
+
+{
+  function h(x_6) {
+    return 2 + g();
+  }
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+h(1);
+
+h(1);
+
+2 + g();
+
+2 + g();
+
+2 + (2 + 0);
+
+2 + (2 + 0);
+
+2 + 2;
+
+2 + 2;
+
+4;
+
+4;
+"
+`;
+
+exports[`multiple clash for function expression 1`] = `
+"function f(x_2) {
+  function h(x_3) {
+    return x_4 + g();
+  }
+  return h;
+}
+function g() {
+  return x_2 + x_3;
+}
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+function f(x_2) {
+  function h(x_3) {
+    return x_4 + g();
+  }
+  return h;
+}
+function g() {
+  return x_2 + x_3;
+}
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+function g() {
+  return x_2 + x_3;
+}
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+function g() {
+  return x_2 + x_3;
+}
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const x_4 = 2;
+f(1)(1);
+
+const x_4 = 2;
+f(1)(1);
+
+f(1)(1);
+
+f(1)(1);
+
+{
+  function h(x_6) {
+    return 2 + g();
+  }
+  return h;
+}(1);
+
+{
+  function h(x_6) {
+    return 2 + g();
+  }
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+h(1);
+
+h(1);
+
+2 + g();
+
+2 + g();
+
+2 + (2 + 0);
+
+2 + (2 + 0);
+
+2 + 2;
+
+2 + 2;
+
+4;
+
+4;
+"
+`;
+
+exports[`multiple clash for lambda function 1`] = `
+"const f = x_2 => x_3 => x_4 + g();
+const g = () => x_2 + x_3;
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const f = x_2 => x_3 => x_4 + g();
+const g = () => x_2 + x_3;
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+f(1)(1);
+
+const g = () => x_2 + x_3;
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+(x_2 => x_3 => x_4 + g())(1)(1);
+
+const g = () => x_2 + x_3;
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+(x_2 => x_3 => x_4 + g())(1)(1);
+
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+(x_5 => x_6 => x_4 + (() => x_2 + x_3)())(1)(1);
+
+const x_3 = 0;
+const x_2 = 2;
+const x_4 = 2;
+(x_5 => x_6 => x_4 + (() => x_2 + x_3)())(1)(1);
+
+const x_2 = 2;
+const x_4 = 2;
+(x_5 => x_6 => x_4 + (() => x_2 + 0)())(1)(1);
+
+const x_2 = 2;
+const x_4 = 2;
+(x_5 => x_6 => x_4 + (() => x_2 + 0)())(1)(1);
+
+const x_4 = 2;
+(x_5 => x_6 => x_4 + (() => 2 + 0)())(1)(1);
+
+const x_4 = 2;
+(x_5 => x_6 => x_4 + (() => 2 + 0)())(1)(1);
+
+(x_5 => x_6 => 2 + (() => 2 + 0)())(1)(1);
+
+(x_5 => x_6 => 2 + (() => 2 + 0)())(1)(1);
+
+(x_6 => 2 + (() => 2 + 0)())(1);
+
+(x_6 => 2 + (() => 2 + 0)())(1);
+
+2 + (() => 2 + 0)();
+
+2 + (() => 2 + 0)();
+
+2 + (2 + 0);
+
+2 + (2 + 0);
+
+2 + 2;
+
+2 + 2;
+
+4;
+
+4;
+"
+`;
+
 exports[`negative numbers as arguments 1`] = `
 Array [
   Array [
@@ -43658,6 +44292,269 @@ Array [
     "",
   ],
 ]
+`;
+
+exports[`renaming clash in replacement for function declaration 1`] = `
+"function g() {
+  return x_1 + x_2;
+}
+function f(x_1) {
+  function h(x_2) {
+    return g();
+  }
+  return h;
+}
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+function g() {
+  return x_1 + x_2;
+}
+function f(x_1) {
+  function h(x_2) {
+    return g();
+  }
+  return h;
+}
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+function f(x_3) {
+  function h(x_4) {
+    return g();
+  }
+  return h;
+}
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+function f(x_3) {
+  function h(x_4) {
+    return g();
+  }
+  return h;
+}
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+const x_2 = 0;
+f(1)(1);
+
+const x_2 = 0;
+f(1)(1);
+
+f(1)(1);
+
+f(1)(1);
+
+{
+  function h(x_4) {
+    return g();
+  }
+  return h;
+}(1);
+
+{
+  function h(x_4) {
+    return g();
+  }
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+h(1);
+
+h(1);
+
+g();
+
+g();
+
+0 + 0;
+
+0 + 0;
+
+0;
+
+0;
+"
+`;
+
+exports[`renaming clash in replacement for function expression 1`] = `
+"function f(x_1) {
+  function h(x_2) {
+    return g();
+  }
+  return h;
+}
+function g() {
+  return x_1 + x_2;
+}
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+function f(x_1) {
+  function h(x_2) {
+    return g();
+  }
+  return h;
+}
+function g() {
+  return x_1 + x_2;
+}
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+function g() {
+  return x_1 + x_2;
+}
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+function g() {
+  return x_1 + x_2;
+}
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+const x_2 = 0;
+f(1)(1);
+
+const x_2 = 0;
+f(1)(1);
+
+f(1)(1);
+
+f(1)(1);
+
+{
+  function h(x_4) {
+    return g();
+  }
+  return h;
+}(1);
+
+{
+  function h(x_4) {
+    return g();
+  }
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+h(1);
+
+h(1);
+
+g();
+
+g();
+
+0 + 0;
+
+0 + 0;
+
+0;
+
+0;
+"
+`;
+
+exports[`renaming clash in replacement for lambda function 1`] = `
+"const g = () => x_1 + x_2;
+const f = x_1 => x_2 => g();
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+const g = () => x_1 + x_2;
+const f = x_1 => x_2 => g();
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+const f = x_3 => x_4 => (() => x_1 + x_2)();
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+const f = x_3 => x_4 => (() => x_1 + x_2)();
+const x_1 = 0;
+const x_2 = 0;
+f(1)(1);
+
+const x_1 = 0;
+const x_2 = 0;
+(x_3 => x_4 => (() => x_1 + x_2)())(1)(1);
+
+const x_1 = 0;
+const x_2 = 0;
+(x_3 => x_4 => (() => x_1 + x_2)())(1)(1);
+
+const x_2 = 0;
+(x_3 => x_4 => (() => 0 + x_2)())(1)(1);
+
+const x_2 = 0;
+(x_3 => x_4 => (() => 0 + x_2)())(1)(1);
+
+(x_3 => x_4 => (() => 0 + 0)())(1)(1);
+
+(x_3 => x_4 => (() => 0 + 0)())(1)(1);
+
+(x_4 => (() => 0 + 0)())(1);
+
+(x_4 => (() => 0 + 0)())(1);
+
+(() => 0 + 0)();
+
+(() => 0 + 0)();
+
+0 + 0;
+
+0 + 0;
+
+0;
+
+0;
+"
 `;
 
 exports[`renaming clash test for functions 1`] = `
