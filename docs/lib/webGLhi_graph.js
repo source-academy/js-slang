@@ -72,13 +72,6 @@ function unit_line_at(y) {
   }
 }
 
-// alternative_unit_circle: undocumented feature
-
-function alternative_unit_circle(t) {
-  return make_point(Math.sin(2 * Math.PI * square(t)),
-    Math.cos(2 * Math.PI * square(t)))
-}
-
 /**
  * this function is a curve: a function from a
  * fraction t to a point. The points lie on the
@@ -125,9 +118,9 @@ function invert(curve) {
  * a new Curve, by translating the original by x0 in x-direction, 
  * y0 in y-direction and z0 in z-direction.
  * 
- * @param {number} x0 - x-value
- * @param {number} y0 - y-value
- * @param {number} z0 - z-value
+ * @param {number} [x0 = 0] - x-value
+ * @param {number} [y0 = 0] - y-value
+ * @param {number} [z0 = 0] - z-value
  * @returns {function} Curve transformation
  */
 function translate_curve(x0, y0, z0) {
@@ -184,9 +177,9 @@ function deriv_t(n) {
  * scales a given Curve by <CODE>a</CODE> in x-direction, <CODE>b</CODE> 
  * in y-direction and <CODE>c</CODE> in z-direction.
  * 
- * @param {number} a - scaling factor in x-direction
- * @param {number} b - scaling factor in y-direction
- * @param {number} c - scaling factor in z-direction
+ * @param {number} [a = 1] - scaling factor in x-direction
+ * @param {number} [b = 1] - scaling factor in y-direction
+ * @param {number} [c = 1] - scaling factor in z-direction
  * @returns {unary_Curve_operator} function that takes a Curve and returns a Curve
  */
 function scale_curve(a1, b1, c1) {
@@ -214,62 +207,6 @@ function scale_proportional(s) {
   return scale_curve(s, s, s)
 }
 
-// SQUEEZE-RECTANGULAR-PORTION translates and scales a curve
-// so the portion of the Curve in the rectangle
-// with corners xlo xhi ylo yhi will appear in a display window
-// which has x, y coordinates from 0 to 1.
-// It is of type (JS-Num, JS-Num, JS-Num, JS-Num --> Curve-Transform).
-
-// squeeze_rectangular_portion: undocumented feature
-
-function squeeze_rectangular_portion(xlo, xhi, ylo, yhi) {
-  var width = xhi - xlo
-  var height = yhi - ylo
-  if (width === 0 || height === 0) {
-    throw 'attempt to squeeze window to zero'
-  } else {
-    return compose(scale_x_y(1 / width, 1 / height), translate(-xlo, -ylo))
-  }
-}
-
-// SQUEEZE-FULL-VIEW translates and scales a Curve such that
-// the ends are fully visible.
-// It is very similar to the squeeze-rectangular-portion procedure
-// only that that procedure does not allow the edges to be easily seen
-
-// squeeze_full_view: undocumented feature
-
-function squeeze_full_view(xlo, xhi, ylo, yhi) {
-  var width = xhi - xlo
-  var height = yhi - ylo
-  if (width === 0 || height === 0) {
-    throw 'attempt to squeeze window to zero'
-  } else {
-    return compose(
-      scale_x_y(0.99 * 1 / width, 0.99 * 1 / height),
-      translate(-(xlo - 0.01), -(ylo - 0.01))
-    )
-  }
-}
-
-// full_view_proportional: undocumented feature
-
-function full_view_proportional(xlo, xhi, ylo, yhi) {
-  var width = xhi - xlo
-  var height = yhi - ylo
-  if (width === 0 || height === 0) {
-    throw 'attempt to squeeze window to zero'
-  } else {
-    var scale_factor = Math.min(0.9 * 1 / width, 0.9 * 1 / height)
-    var new_mid_x = scale_factor * (xlo + xhi) / 2
-    var new_mid_y = scale_factor * (ylo + yhi) / 2
-    return compose(
-      translate(0.5 - new_mid_x, 0.5 - new_mid_y),
-      scale_x_y(scale_factor, scale_factor)
-    )
-  }
-}
-
 // PUT-IN-STANDARD-POSITION is a Curve-Transform.
 // A Curve is in "standard position" if it starts at (0,0) ends at (1,0).
 // A Curve is PUT-IN-STANDARD-POSITION by rigidly translating it so its
@@ -294,12 +231,12 @@ function full_view_proportional(xlo, xhi, ylo, yhi) {
 
 function put_in_standard_position(curve) {
   var start_point = curve(0)
-  var curve_started_at_origin = translate(-x_of(start_point), -y_of(start_point))(curve)
+  var curve_started_at_origin = translate_curve(-x_of(start_point), -y_of(start_point))(curve)
   var new_end_point = curve_started_at_origin(1)
   var theta = Math.atan2(y_of(new_end_point), x_of(new_end_point))
   var curve_ended_at_x_axis = rotate_around_origin(-theta)(curve_started_at_origin)
   var end_point_on_x_axis = x_of(curve_ended_at_x_axis(1))
-  return scale(1 / end_point_on_x_axis)(curve_ended_at_x_axis)
+  return scale_proportional(1 / end_point_on_x_axis)(curve_ended_at_x_axis)
 }
 
 // Binary-transform = (Curve,Curve --> Curve)
@@ -346,7 +283,7 @@ function connect_ends(curve1, curve2) {
   const start_point_of_curve2 = curve2(0);
   const end_point_of_curve1 = curve1(1);
   return connect_rigidly(curve1,
-    (translate(x_of(end_point_of_curve1) -
+    (translate_curve(x_of(end_point_of_curve1) -
       x_of(start_point_of_curve2),
       y_of(end_point_of_curve1) -
       y_of(start_point_of_curve2)))
