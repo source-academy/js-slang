@@ -1,7 +1,7 @@
 // USEFUL, SIMPLE, GENERAL PROCEDURES
 
 function compose(f, g) {
-  return function(x) {
+  return function (x) {
     return f(g(x))
   }
 }
@@ -41,8 +41,8 @@ function square(x) {
  * @returns {Point} Point in the line at t
  */
 function unit_circle(t) {
-    return make_point(Math.sin(2 * Math.PI * t),
-		      Math.cos(2 * Math.PI * t))
+  return make_point(Math.sin(2 * Math.PI * t),
+    Math.cos(2 * Math.PI * t))
 }
 
 /**
@@ -67,7 +67,7 @@ function unit_line(t) {
  * @returns {Curve} horizontal Curve 
  */
 function unit_line_at(y) {
-  return function(t) {
+  return function (t) {
     return make_point(t, y)
   }
 }
@@ -75,8 +75,8 @@ function unit_line_at(y) {
 // alternative_unit_circle: undocumented feature
 
 function alternative_unit_circle(t) {
-    return make_point(Math.sin(2 * Math.PI * square(t)),
-		      Math.cos(2 * Math.PI * square(t)))
+  return make_point(Math.sin(2 * Math.PI * square(t)),
+    Math.cos(2 * Math.PI * square(t)))
 }
 
 /**
@@ -108,24 +108,9 @@ function arc(t) {
  * @returns {Curve} result Curve
  */
 function invert(curve) {
-  return function(t) {
+  return function (t) {
     return curve(1 - t)
   }
-}
-
-/**
- * this function is a Curve transformation: a function from a
- * Curve to a Curve. The result Curve is the original Curve
- * rotated by 90 degrees in counterclockwise direction around
- * the origin.
- * @param {Curve} original - original Curve
- * @returns {Curve} result Curve
- */
-function rotate_pi_over_2(curve) {
-    return t => {
-	var ct = curve(t)
-	return make_color_point(-y_of(ct), x_of(ct), r_of(ct), g_of(ct), b_of(ct))
-    }
 }
 
 // CONSTRUCTORS OF CURVE-TRANSFORMS
@@ -134,22 +119,28 @@ function rotate_pi_over_2(curve) {
 
 /**
  * this function returns a Curve transformation: 
- * It takes an x-value x0 and a y-value y0 as arguments and returns a
- * Curve transformation that
+ * It takes an x-value x0, a y-value y0 and a z-value z0 as arguments 
+ * and returns a Curve transformation that
  * takes a Curve as argument and returns
- * a new Curve, by translating the original by x0 in x-direction
- * and by y0 in y-direction.
+ * a new Curve, by translating the original by x0 in x-direction, 
+ * y0 in y-direction and z0 in z-direction.
  * 
  * @param {number} x0 - x-value
  * @param {number} y0 - y-value
+ * @param {number} z0 - z-value
  * @returns {function} Curve transformation
  */
-function translate(x0, y0) {
-  return curve => 
-	(t) => {
-	    var ct = curve(t)
-	    return make_color_point(x0 + x_of(ct), y0 + y_of(ct), r_of(ct), g_of(ct), b_of(ct))
-	}
+function translate_curve(x0, y0, z0) {
+  return function (curve) {
+    var transformation = c => (function (t) {
+      x0 = x0 == undefined ? 0 : x0
+      y0 = y0 == undefined ? 0 : y0
+      z0 = z0 == undefined ? 0 : z0
+      var ct = c(t)
+      return make_3D_color_point(x0 + x_of(ct), y0 + y_of(ct), z0 + z_of(ct), r_of(ct), g_of(ct), b_of(ct))
+    })
+    return transformation(curve)
+  }
 }
 
 // ROTATE-AROUND-ORIGIN is of type (JS-Num --> Curve-Transform)
@@ -166,8 +157,8 @@ function translate(x0, y0) {
 function rotate_around_origin(theta) {
   var cth = Math.cos(theta)
   var sth = Math.sin(theta)
-  return function(curve) {
-    return function(t) {
+  return function (curve) {
+    return function (t) {
       var ct = curve(t)
       var x = x_of(ct)
       var y = y_of(ct)
@@ -178,8 +169,8 @@ function rotate_around_origin(theta) {
 
 function deriv_t(n) {
   var delta_t = 1 / n
-  return function(curve) {
-    return function(t) {
+  return function (curve) {
+    return function (t) {
       var ct = curve(t)
       var ctdelta = curve(t + delta_t)
       return make_color_point((x_of(ctdelta) - x_of(ct)) / delta_t, (y_of(ctdelta) - y_of(ct)) / delta_t, r_of(ct), g_of(ct), b_of(ct))
@@ -188,33 +179,39 @@ function deriv_t(n) {
 }
 
 /**
- * this function takes scaling factors <CODE>a</CODE> and <CODE>b</CODE> as arguments 
- * and returns a Curve transformation that
- * scales a given Curve by <CODE>a</CODE> in x-direction and by <CODE>b</CODE> 
- * in y-direction.
+ * this function takes scaling factors <CODE>a</CODE>, <CODE>b</CODE> 
+ * and <CODE>c</CODE> as arguments and returns a Curve transformation that
+ * scales a given Curve by <CODE>a</CODE> in x-direction, <CODE>b</CODE> 
+ * in y-direction and <CODE>c</CODE> in z-direction.
  * 
  * @param {number} a - scaling factor in x-direction
  * @param {number} b - scaling factor in y-direction
+ * @param {number} c - scaling factor in z-direction
  * @returns {unary_Curve_operator} function that takes a Curve and returns a Curve
  */
-function scale_x_y(a, b) {
-  return curve => 
-	t => {
-	    var ct = curve(t)
-	    return make_color_point(a * x_of(ct), b * y_of(ct), r_of(ct), g_of(ct), b_of(ct))
-	}
+function scale_curve(a1, b1, c1) {
+  return function (curve) {
+    var transformation = c => (function (t) {
+      var ct = c(t)
+      a1 = a1 == undefined ? 1 : a1
+      b1 = b1 == undefined ? 1 : b1
+      c1 = c1 == undefined ? 1 : c1
+      return make_3D_color_point(a1 * x_of(ct), b1 * y_of(ct), c1 * z_of(ct), r_of(ct), g_of(ct), b_of(ct))
+    })
+    return transformation(curve)
+  }
 }
 
 /**
  * this function takes a scaling factor s argument and returns a
  * Curve transformation that
- * scales a given Curve by s in x and y direction.
+ * scales a given Curve by s in x, y and z direction.
  * 
  * @param {number} s - scaling factor
  * @returns {unary_Curve_operator} function that takes a Curve and returns a Curve
  */
-function scale(s) {
-  return scale_x_y(s, s)
+function scale_proportional(s) {
+  return scale_curve(s, s, s)
 }
 
 // SQUEEZE-RECTANGULAR-PORTION translates and scales a curve
@@ -346,113 +343,12 @@ function connect_rigidly(curve1, curve2) {
  * @returns {Curve} result Curve
  */
 function connect_ends(curve1, curve2) {
-    const start_point_of_curve2 = curve2(0);
-    const end_point_of_curve1 = curve1(1);
-    return connect_rigidly(curve1,
-			   (translate(x_of(end_point_of_curve1) -
-				      x_of(start_point_of_curve2),
-				      y_of(end_point_of_curve1) -
-				      y_of(start_point_of_curve2)))
-			   (curve2));
-}
-
-
-// function connect_ends(curve1, curve2) {...}
-
-// FRACTAL CURVES
-
-// GOSPERIZE is a Curve-Transform
-
-
-/**
- * this function is a Curve transformation: It
- * takes a Curve as argument and returns
- * a new Curve, according to the Gosper operation.
- * 
- * @param {Curve} curve - given Curve
- * @returns {Curve} result Curve
- */
-function gosperize(curve) {
-  var scaled_curve = scale(Math.sqrt(2) / 2)(curve)
-  return connect_rigidly(
-    rotate_around_origin(Math.PI / 4)(scaled_curve),
-    translate(0.5, 0.5)(rotate_around_origin(-Math.PI / 4)(scaled_curve))
-  )
-}
-
-// GOSPER-CURVE is of type (JS-Num --> Curve)
-
-/**
- * returns a gosper Curve, that results from
- * apply gosperize as many times to the unit line
- * as given by the parameter <CODE>level</CODE> of
- * the function <CODE>gosper_curve</CODE>
- * 
- * @param {number} level - number of repeated applications
- * @returns {Curve} 
- */
-function gosper_curve(level) {
-  return repeated(gosperize, level)(unit_line)
-}
-
-// DRAWING GOSPER CURVES
-
-/**
- * shows a gosper Curve of given level, by drawing it
- * with suitable parameters
- * 
- * @param {number} level - number of repeated applications of gosperize to the unit line
- * @returns {Drawing} 
- */
-function show_connected_gosper(level) {
-  return draw_connected(200)(squeeze_rectangular_portion(-0.5, 1.5, -0.5, 1.5)(gosper_curve(level)))
-}
-
-/**
- * returns a Curve that results from gosperizing the unit line
- * as often as given by the level parameter, each time
- * applying an angle given by the given angle-producing function
- * @param {number} level - number of repeated applications of gosperize to the curve
- * @param {function} angle_at - function that determines the angle at each level
- * @returns {Curve} 
- */
-function param_gosper(level, angle_at) {
-  if (level === 0) {
-    return unit_line
-  } else {
-    return param_gosperize(angle_at(level))(param_gosper(level - 1, angle_at))
-  }
-}
-
-/**
- * this function takes an angle theta and returns a Curve transformation:
- * A function that takes a Curve as argument and returns
- * a new Curve, according to the Gosper operation, modified
- * with the given angle theta
- * 
- * @param {Curve} curve - given Curve
- * @returns {Curve} result Curve
- */
-function param_gosperize(theta) {
-  return function(curve) {
-    var scale_factor = 1 / Math.cos(theta) / 2
-    var scaled_curve = scale(scale_factor)(curve)
-    return connect_rigidly(
-      rotate_around_origin(theta)(scaled_curve),
-      translate(0.5, Math.sin(theta) * scale_factor)(rotate_around_origin(-theta)(scaled_curve))
-    )
-  }
-}
-
-// DRAGONIZE
-
-// zc-dragonize is a Curve-Transform
-
-function zc_dragonize(n, curve) {
-  if (n === 0) {
-    return curve
-  } else {
-    var c = zc_dragonize(n - 1, curve)
-    return put_in_standard_position(connect_ends(rotate_around_origin(-Math.PI / 2)(c), c))
-  }
+  const start_point_of_curve2 = curve2(0);
+  const end_point_of_curve1 = curve1(1);
+  return connect_rigidly(curve1,
+    (translate(x_of(end_point_of_curve1) -
+      x_of(start_point_of_curve2),
+      y_of(end_point_of_curve1) -
+      y_of(start_point_of_curve2)))
+      (curve2));
 }
