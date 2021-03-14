@@ -28,9 +28,9 @@ export const memberExpression = (
 ): es.MemberExpression => ({
   type: 'MemberExpression',
   object,
-  computed: false,
+  computed: typeof property === 'number',
   optional: false,
-  property: typeof property === 'string' ? identifier(property) : literal(property)
+  property: typeof property === 'number' ? literal(property) : identifier(property)
 })
 
 export const declaration = (
