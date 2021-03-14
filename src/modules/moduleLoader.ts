@@ -74,7 +74,7 @@ export function loadModuleTabs(path: string) {
   try {
     const modules = JSON.parse(memoizedGetModuleFile('manifest'))
     // Retrieves the contents the module has from modules.json
-    const sideContentTabPaths: string[] = modules[path]['tabs']
+    const sideContentTabPaths: string[] = modules[path]['tabs'] || []
     // Load the contents for the current module
     return sideContentTabPaths.map(path => {
       const rawTabFile = memoizedGetModuleFile('tab', path)
