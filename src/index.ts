@@ -48,7 +48,7 @@ import { typeToString } from './utils/stringify'
 import { forceIt } from './utils/operators'
 import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 import { TimeoutError } from './errors/timeoutErrors'
-import { loadModuleContent } from './modules/moduleLoader'
+import { loadModuleTabs } from './modules/moduleLoader'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -386,7 +386,7 @@ function appendModulesToContext(program: Program, context: Context): void {
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') break
     const moduleName = (node.source.value as string).trim()
-    Array.prototype.push.apply(context.modules, loadModuleContent(moduleName))
+    Array.prototype.push.apply(context.modules, loadModuleTabs(moduleName))
   }
 }
 

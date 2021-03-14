@@ -4,7 +4,7 @@ import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { AllowedDeclarations, Context, NativeStorage, ValueWrapper } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
-import { loadModulePackageText } from '../modules/moduleLoader'
+import { memoizedGetModuleFile } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
 import {
   getUniqueId,
@@ -42,7 +42,7 @@ function prefixModule(program: es.Program): string {
     if (node.type !== 'ImportDeclaration') {
       break
     }
-    const moduleText = loadModulePackageText(node.source.value as string).trim()
+    const moduleText = memoizedGetModuleFile('bundle', node.source.value as string).trim()
     // remove ; from moduleText
     prefix += `const __MODULE_${moduleCounter}__ = (${moduleText.substring(
       0,
