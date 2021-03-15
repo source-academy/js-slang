@@ -24,13 +24,13 @@ export const literal = (
 
 export const memberExpression = (
   object: es.Expression,
-  propertyString: string
+  property: string | number
 ): es.MemberExpression => ({
   type: 'MemberExpression',
   object,
-  computed: false,
+  computed: typeof property === 'number',
   optional: false,
-  property: identifier(propertyString)
+  property: typeof property === 'number' ? literal(property) : identifier(property)
 })
 
 export const declaration = (
