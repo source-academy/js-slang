@@ -4,14 +4,14 @@ import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { AllowedDeclarations, Context, NativeStorage, ValueWrapper } from '../types'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
-import { memoizedLoadModuleText } from '../modules/moduleLoader'
+import { memoizedGetModuleFile } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
 import {
   getUniqueId,
   getIdentifiersInProgram,
   getIdentifiersInNativeStorage
 } from '../utils/uniqueIds'
-import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID, MODULE_FUNCTIONS } from '../constants'
+import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -42,12 +42,12 @@ function prefixModule(program: es.Program): string {
     if (node.type !== 'ImportDeclaration') {
       break
     }
-    const moduleText = memoizedLoadModuleText(node.source.value as string).trim()
+    const moduleText = memoizedGetModuleFile('bundle', node.source.value as string).trim()
     // remove ; from moduleText
     prefix += `const __MODULE_${moduleCounter}__ = (${moduleText.substring(
       0,
       moduleText.length - 1
-    )})(${MODULE_PARAMS_ID})["${MODULE_FUNCTIONS}"];\n`
+    )})(${MODULE_PARAMS_ID});\n`
     moduleCounter++
   }
   return prefix

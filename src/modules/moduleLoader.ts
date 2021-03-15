@@ -2,53 +2,86 @@ import { memoize } from 'lodash'
 import { ModuleNotFound, ModuleInternalError } from '../errors/errors'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
 import { Context } from '..'
-const HttpRequest = typeof window === 'undefined' ? NodeXMLHttpRequest : XMLHttpRequest
 
-let BACKEND_STATIC_URL = 'https://source-academy.github.io/modules'
+// Supports both JSDom (Web Browser) environment and Node environment
+export const newHttpRequest = () =>
+  typeof window === 'undefined' ? new NodeXMLHttpRequest() : new XMLHttpRequest()
 
-export function setBackendStaticURL(url: string) {
-  BACKEND_STATIC_URL = url
+// Default modules static url. Exported for testing.
+export let MODULES_STATIC_URL = 'https://source-academy.github.io/modules'
+
+export function setModulesStaticURL(url: string) {
+  MODULES_STATIC_URL = url
 }
 
-function loadModuleText(path: string) {
-  const scriptPath = `${BACKEND_STATIC_URL}/${path}.js`
-  const req = new HttpRequest()
-
+/**
+ * Send a HTTP GET request to the modules endpoint to retrieve the specified file
+ * @return String of module file contents
+ */
+export const memoizedGetModuleFile = memoize(getModuleFile)
+function getModuleFile(type: 'manifest'): string
+function getModuleFile(type: 'tab' | 'bundle', name: string): string
+function getModuleFile(type: 'tab' | 'bundle' | 'manifest', name?: string): string {
+  const request = newHttpRequest()
   try {
-    // Set the request timeout here to a random value of 10 seconds for modules
-    // that cannot be found
-    req.timeout = 10000
-    req.open('GET', scriptPath, false)
-    req.send(null)
+    // If running function in node environment, set request timeout
+    if (typeof window === 'undefined') request.timeout = 10000
+    const url =
+      type === 'manifest'
+        ? MODULES_STATIC_URL + `/modules.json`
+        : MODULES_STATIC_URL + `/${type}s/${name}.js`
+    request.open('GET', url, false)
+    request.send(null)
   } catch (error) {
-    // Catch DOMException thrown by request when module path is not found and
-    // request timesout (For jsdom environment)
-    // For node environment, the request doesnt throw any errors...
     if (!(error instanceof DOMException)) throw error
   }
-
-  if (req.status !== 200 && req.status !== 304) {
-    throw new ModuleNotFound(path)
-  }
-  return req.responseText
+  if (request.status !== 200 && request.status !== 304) throw new ModuleNotFound(name || 'manifest')
+  return request.responseText
 }
 
-// Uses lodash to memoize loadModuleText
-export const memoizedLoadModuleText = memoize(loadModuleText)
-
-export function loadModule(path: string, context: Context, moduleText?: string) {
+/**
+ * Loads the respective module package (functions from the module)
+ *
+ * @param path imported module name
+ * @param context
+ * @param moduleText object of functions as a String
+ * @returns an object of functions
+ */
+export function loadModuleBundle(path: string, context: Context, moduleText?: string) {
   try {
-    if (moduleText === undefined) {
-      moduleText = memoizedLoadModuleText(path)
-    }
-    // tslint:disable-next-line:no-eval
-    const moduleLib = eval(moduleText)
-    const moduleObject = moduleLib({ runes: {}, ...context.moduleParams })
-    return moduleObject
+    if (moduleText === undefined) moduleText = memoizedGetModuleFile('bundle', path)
+    const moduleBundle = eval(moduleText)
+    const moduleFunctions = moduleBundle(context)
+    return moduleFunctions
   } catch (_error) {
-    if (_error instanceof ModuleNotFound) {
-      throw _error
-    }
+    if (_error instanceof ModuleNotFound) throw _error
+    throw new ModuleInternalError(path)
+  }
+}
+
+export function convertRawTabToFunction(rawTabString: string): string {
+  rawTabString = rawTabString.trim()
+  return rawTabString.substring(0, rawTabString.length - 9) + ')'
+}
+
+/**
+ * Loads the module contents of a package
+ *
+ * @param path imported module name
+ * @returns an array of functions
+ */
+export function loadModuleTabs(path: string) {
+  try {
+    const modules = JSON.parse(memoizedGetModuleFile('manifest'))
+    // Retrieves the contents the module has from modules.json
+    const sideContentTabPaths: string[] = modules[path]['tabs'] || []
+    // Load the contents for the current module
+    return sideContentTabPaths.map(path => {
+      const rawTabFile = memoizedGetModuleFile('tab', path)
+      return eval(convertRawTabToFunction(rawTabFile))
+    })
+  } catch (_error) {
+    if (_error instanceof ModuleNotFound) throw _error
     throw new ModuleInternalError(path)
   }
 }
