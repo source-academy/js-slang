@@ -44989,6 +44989,172 @@ g();
 "
 `;
 
+exports[`scoping test for lambda expressions nested in blocks 1`] = `
+"{
+  const f = x => g();
+  const g = () => x;
+  const x = 1;
+  f(0);
+}
+
+{
+  const f = x => g();
+  const g = () => x;
+  const x = 1;
+  f(0);
+}
+
+{
+  const g = () => x;
+  const x = 1;
+  (x => g())(0);
+}
+
+{
+  const g = () => x;
+  const x = 1;
+  (x => g())(0);
+}
+
+{
+  const x = 1;
+  (x_1 => (() => x)())(0);
+}
+
+{
+  const x = 1;
+  (x_1 => (() => x)())(0);
+}
+
+{
+  (x_1 => (() => 1)())(0);
+}
+
+{
+  (x_1 => (() => 1)())(0);
+}
+
+{
+  (() => 1)();
+}
+
+{
+  (() => 1)();
+}
+
+{
+  1;
+}
+
+{
+  1;
+}
+
+1;
+
+1;
+"
+`;
+
+exports[`scoping test for blocks nested in lambda expressions 1`] = `
+"const f = x => {
+  g();
+};
+const g = () => {
+  x;
+};
+const x = 1;
+f(0);
+
+const f = x => {
+  g();
+};
+const g = () => {
+  x;
+};
+const x = 1;
+f(0);
+
+const g = () => {
+  x;
+};
+const x = 1;
+(x => {
+  g();
+})(0);
+
+const g = () => {
+  x;
+};
+const x = 1;
+(x => {
+  g();
+})(0);
+
+const x = 1;
+(x_1 => {
+  (() => {
+    x;
+  })();
+})(0);
+
+const x = 1;
+(x_1 => {
+  (() => {
+    x;
+  })();
+})(0);
+
+(x_1 => {
+  (() => {
+    1;
+  })();
+})(0);
+
+(x_1 => {
+  (() => {
+    1;
+  })();
+})(0);
+
+{
+  (() => {
+    1;
+  })();
+};
+
+{
+  (() => {
+    1;
+  })();
+};
+
+{
+  {
+    1;
+  };
+};
+
+{
+  {
+    1;
+  };
+};
+
+{
+  undefined;
+};
+
+{
+  undefined;
+};
+
+undefined;
+
+undefined;
+"
+`;
+
 exports[`scoping test for function expressions 1`] = `
 "function f(x) {
   return g();
