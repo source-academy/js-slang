@@ -1,10 +1,12 @@
 \section*{Reduction}
 
 The \emph{reducer} $\Rightarrow$ is a partial function from
-programs/statements/expressions to
-programs/statements/expressions (with slight abuse of notation
-via overloading)
+programs/statements to
+programs/statements 
 and $\Rightarrow^*$ is its reflexive transitive closure.
+The reducer is defined in terms of the
+\emph{expression reducer} $\Rightarrow_e$, a partial function from
+expressions to expressions.
 A \emph{reduction} is a sequence of programs
 $p_1 \Rightarrow \cdots \Rightarrow p_n$,
 where $p_n$ is not reducible, i.e. there is no
@@ -66,7 +68,7 @@ statements are substituted in the remaining statements.
 \[
 \frac{
              c = \textbf{\texttt{const}}\  \textit{name} \ 
-             \textbf{\texttt{=}}\  \textit{v}
+             \textbf{\texttt{=}}\  \textit{v} \ \textbf{\texttt{;}}
 }{
 c\ \textit{statement} \ldots\ 
   \Rightarrow \ 
@@ -94,14 +96,14 @@ in constant declarations are evaluated.
 \[
 \frac{
   \textit{expression}
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   \textit{expression}'
 }{
   \textbf{\texttt{const}}\  \textit{name} \ 
-  \textbf{\texttt{=}}\  \textit{expression} \ 
+  \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}\ 
   \Rightarrow \ 
   \textbf{\texttt{const}}\  \textit{name} \ 
-  \textbf{\texttt{=}}\  \textit{expression}'
+  \textbf{\texttt{=}}\  \textit{expression}' \ \textbf{\texttt{;}}
 }
 \]
 
@@ -112,7 +114,7 @@ in constant declarations are evaluated.
 is reducible if its predicate is reducible.
 \[
 \frac{
-  e\ \Rightarrow\ e'
+  e\ \Rightarrow_e\ e'
 }{  
   \textbf{\texttt{if}}\ 
   \textbf{\texttt{(}}\ 
@@ -192,7 +194,7 @@ whose predicate is false reduces to the alternative block.
 
 \subsection*{Statements: Blocks}
 
-\textbf{Block-statement-reduce}: A block statement is
+\textbf{Reduce-block-statement}: A block statement is
 reducible if its program is reducible.
 \[
 \frac{
@@ -212,10 +214,9 @@ reducible if its program is reducible.
 
 \vspace{10mm}
 
-\textbf{Block-statement-undefined}: A block statement 
+\textbf{Eliminate-block-statement-value}: A block statement 
 whose body only contains a single value statement reduces to
-the value 
-\textbf{\texttt{undefined}}.
+the value.
 
 \[
 \frac{
@@ -225,39 +226,41 @@ the value
   \textbf{\texttt{;}} \ 
   \textbf{\texttt{\}}}
 \  \Rightarrow \ 
-  \textbf{\texttt{undefined}}
+  v\ \texttt{;}
 }
 \]
 
 \vspace{10mm}
 
-\textbf{Block-statement-reduce-return}: A block statement 
-whose body only contains a single return statement can 
+\textbf{Reduce-block-statement-return}: A block statement 
+whose body starts with a return statement can 
 be reduced by reducing the return expression.
 
 \[
 \frac{
   e
-\ \Rightarrow \ 
+\ \Rightarrow_e \ 
   e'
 }{  
   \textbf{\texttt{\{}} \
   \textbf{\texttt{return}} \ e \ 
   \textbf{\texttt{;}} \ 
+  \textit{statement} \ldots\ 
   \textbf{\texttt{\}}}
 \  \Rightarrow \ 
   \textbf{\texttt{\{}} \
   \textbf{\texttt{return}} \ e' \ 
   \textbf{\texttt{;}} \ 
+  \textit{statement} \ldots\ 
   \textbf{\texttt{\}}}
 }
 \]
 
 \vspace{10mm}
 
-\textbf{Block-statement-eliminate-return}: A block statement 
-whose body only contains a single return value reduces to
-that value.
+\textbf{Eliminate-block-statement-return}: A block statement 
+whose body starts with a return value statement reduces to
+that return value statement.
 
 \[
 \frac{
@@ -265,9 +268,11 @@ that value.
   \textbf{\texttt{\{}} \
   \textbf{\texttt{return}} \ v \ 
   \textbf{\texttt{;}} \ 
+  \textit{statement} \ldots\ 
   \textbf{\texttt{\}}}
 \  \Rightarrow \ 
-  v
+  \textbf{\texttt{return}} \ v \ 
+  \textbf{\texttt{;}} 
 }
 \]
 
@@ -278,7 +283,7 @@ that value.
 is reducible if its expression is reducible.
 \[
 \frac{
-  e\ \Rightarrow\ e'
+  e\ \Rightarrow_e\ e'
 }{  
   e \textbf{\texttt{;}}
   \ \Rightarrow \ 
@@ -293,10 +298,10 @@ is reducible if its expression is reducible.
 can be reduced if its left sub-expression can be reduced.
 \[
 \frac{
-  e_1 \ \Rightarrow \ e_1'
+  e_1 \ \Rightarrow_e \ e_1'
 }{
   e_1\  \textit{binary-operator} \ e_2
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   e_1'\  \textit{binary-operator} \ e_2
 }
 \]
@@ -311,7 +316,7 @@ $\textbf{\texttt{false}}$.
 \frac{
 }{
   \textbf{\texttt{false}}\  \textbf{\texttt{\&\&}}\ e
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   \textbf{\texttt{false}}
 }
 \]
@@ -325,7 +330,7 @@ the right sub-expression.
 \frac{
 }{
   \textbf{\texttt{true}}\  \textbf{\texttt{\&\&}}\ e
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   e
 }
 \]
@@ -339,7 +344,7 @@ $\textbf{\texttt{true}}$.
 \frac{
 }{
   \textbf{\texttt{true}}\  \textbf{\texttt{||}}\ e
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   \textbf{\texttt{true}}
 }
 \]
@@ -353,7 +358,7 @@ the right sub-expression.
 \frac{
 }{
   \textbf{\texttt{false}}\  \textbf{\texttt{||}}\ e
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   e
 }
 \]
@@ -364,11 +369,11 @@ can be reduced if its left sub-expression is a value and its right
 sub-expression can be reduced.
 \[
 \frac{
-  e_2\ \Rightarrow\ e_2', \textrm{and}\ \textit{binary-operator}
+  e_2\ \Rightarrow_e\ e_2', \textrm{and}\ \textit{binary-operator}
   \mbox{is not}\ \textbf{\texttt{\&\&}}\ \textrm{or}\ \texttt{\textbf{||}}
 }{
   v\  \textit{binary-operator} \ e_2
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   v\  \textit{binary-operator} \ e_2'
 }
 \]
@@ -382,7 +387,7 @@ the corresponding function is defined for those values.
   v\ \mbox{is result of}\ v_1\  \textit{binary-operator} \ v_2
 }{
   v_1\  \textit{binary-operator} \ v_2
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   v
 }
 \]
@@ -393,10 +398,10 @@ the corresponding function is defined for those values.
 can be reduced if its sub-expression can be reduced.
 \[
 \frac{
-  e \ \Rightarrow \ e'
+  e \ \Rightarrow_e \ e'
 }{
   \textit{unary-operator} \ e
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   \textit{unary-operator} \ e'
 }
 \]
@@ -410,27 +415,27 @@ the corresponding function is defined for that value.
   v'\ \mbox{is result of}\ \textit{unary-operator} \ v
 }{
   \textit{unary-operator} \ v
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   v'
 }
 \]
 
 \subsection*{Expressions: conditionals}
 
-\textbf{Conditional-predicate-reduce}: A conditional
+\textbf{Conditional-expression-predicate-reduce}: A conditional
 expression can be reduced, if its predicate can be reduced.
 \[
 \frac{
-  e_1 \ \Rightarrow \ e_1'
+  e_1 \ \Rightarrow_e \ e_1'
 }{
   e_1\  \textbf{\texttt{?}}\ e_2\ \textbf{\texttt{:}}\ e_3
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   e_1'\ \textbf{\texttt{?}}\ e_2\ \textbf{\texttt{:}}\ e_3
 }
 \]
 
 \vspace{10mm}
-\textbf{Conditional-true-reduce}: A conditional
+\textbf{Conditional-expression-true-reduce}: A conditional
 expression whose predicate is the value
 $\textbf{\texttt{true}}$
 can be reduced to its consequent expression.
@@ -438,13 +443,13 @@ can be reduced to its consequent expression.
 \frac{
 }{
   \textbf{\texttt{true}}\  \textbf{\texttt{?}}\ e_1\ \textbf{\texttt{:}}\ e_2
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   e_1
 }
 \]
 
 \vspace{10mm}
-\textbf{Conditional-false-reduce}: A conditional
+\textbf{Conditional-expression-false-reduce}: A conditional
 expression whose predicate is the value
 $\textbf{\texttt{false}}$
 can be reduced to its alternative expression.
@@ -452,7 +457,7 @@ can be reduced to its alternative expression.
 \frac{
 }{
   \textbf{\texttt{false}}\  \textbf{\texttt{?}}\ e_1\ \textbf{\texttt{:}}\ e_2
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   e_2
 }
 \]
@@ -464,10 +469,10 @@ can be reduced to its alternative expression.
 can be reduced if its functor expression can be reduced.
 \[
 \frac{
-  e \ \Rightarrow \ e'
+  e \ \Rightarrow_e \ e'
 }{
   e\  \textbf{\texttt{(}}\ \textit{expressions} \ \textbf{\texttt{)}}
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   e'\  \textbf{\texttt{(}}\ \textit{expressions} \ \textbf{\texttt{)}}
 }
 \]
@@ -479,10 +484,10 @@ can be reduced if one of its argument expressions can be reduced and all
 preceding arguments are values.
 \[
 \frac{
-  e \ \Rightarrow \ e'
+  e \ \Rightarrow_e \ e'
 }{
   v\  \textbf{\texttt{(}}\ v_1 \ldots v_i \ e \ldots\ \textbf{\texttt{)}}
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   v\  \textbf{\texttt{(}}\ v_1 \ldots v_i \ e' \ldots\ \textbf{\texttt{)}}
 }
 \]
@@ -501,29 +506,104 @@ arguments are values.
                  \ \textbf{\texttt{)}}\ \textit{block}
 }{
   f\ \textbf{\texttt{(}}\ v_1 \ldots v_n\ \textbf{\texttt{)}}
-  \ \Rightarrow \ 
+  \ \Rightarrow_e \ 
   \textit{block} [x_1 \leftarrow v_1]\ldots[x_n \leftarrow v_n]
   [n \leftarrow f]
 }
 \]
 
 \vspace{10mm}
-\textbf{Function-definition-application-reduce}:
-The application of a function definition
+\textbf{Block-lambda-expression-application-reduce}:
+The application of a lambda expression with block body
 can be reduced, if all
 arguments are values. 
 \[
 \frac{
   f = \textbf{\texttt{(}}\  x_1 \ldots x_n
-                 \ \textbf{\texttt{)}}\ \textbf{\texttt{=>}}\ b
-                   \mbox{, where $b$ is an expression or block}
+                 \ \textbf{\texttt{)}}\ \textbf{\texttt{=>}}\ \textit{block}
 }{
   f\ \textbf{\texttt{(}}\ v_1 \ldots v_n\ \textbf{\texttt{)}}
-  \ \Rightarrow \ 
-  b [x_1 \leftarrow v_1]\ldots[x_n \leftarrow v_n]
+  \ \Rightarrow_e \ 
+  \textit{block}\ [x_1 \leftarrow v_1]\ldots[x_n \leftarrow v_n]
 }
 \]
 
+
+\vspace{10mm}
+\textbf{Expression-lambda-expression-application-reduce}:
+The application of a lambda expression with expression body
+can be reduced, if all arguments are values. 
+\[
+\frac{
+  f = \textbf{\texttt{(}}\  x_1 \ldots x_n
+                 \ \textbf{\texttt{)}}\ \textbf{\texttt{=>}}\ e
+}{
+  f\ \textbf{\texttt{(}}\ v_1 \ldots v_n\ \textbf{\texttt{)}}
+  \ \Rightarrow_e \ 
+  e\ [x_1 \leftarrow v_1]\ldots[x_n \leftarrow v_n]
+}
+\]
+
+
+\subsection*{Expressions: Blocks}
+
+\textbf{Reduce-block-expression}: A block expression is
+reducible if the block statement is reducible
+\[
+\frac{
+  \textbf{\texttt{\{}} \
+  \textit{program} 
+\ \Rightarrow \ 
+  \textit{program}'  \ 
+  \textbf{\texttt{\}}}
+}{  
+  \textbf{\texttt{\{}} \
+  \textit{program} \ 
+  \textbf{\texttt{\}}}
+\  \Rightarrow_e \ 
+  \textbf{\texttt{\{}} \
+  \textit{program}' \ 
+  \textbf{\texttt{\}}}
+}
+\]
+
+\vspace{10mm}
+
+\textbf{Eliminate-block-expression-value}: A block expression
+whose body starts with a value expression statement reduces to
+\lstinline{undefined}.
+
+\[
+\frac{
+}{  
+  \textbf{\texttt{\{}} \
+  v \ 
+  \textbf{\texttt{;}} \ 
+  \textit{statement} \ldots\ 
+  \textbf{\texttt{\}}}
+\  \Rightarrow_e \ 
+  \texttt{undefined}
+}
+\]
+
+\vspace{10mm}
+
+\textbf{Eliminate-block-expression-return}: A block expression
+whose body starts with a single return value statement reduces to
+the value.
+
+\[
+\frac{
+}{  
+  \textbf{\texttt{\{}} \
+  \textbf{\texttt{return}} \ v \ 
+  \textbf{\texttt{;}} \
+  \textit{statement} \ldots\ 
+  \textbf{\texttt{\}}}
+\  \Rightarrow_e \ 
+v \ 
+}
+\]
 
 
 
