@@ -48,7 +48,7 @@ import { typeToString } from './utils/stringify'
 import { forceIt } from './utils/operators'
 import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 import { TimeoutError } from './errors/timeoutErrors'
-import { loadModule } from './modules/moduleLoader'
+import { loadModuleTabs } from './modules/moduleLoader'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -385,9 +385,8 @@ function appendModulesToContext(program: Program, context: Context): void {
   if (context.modules == null) context.modules = []
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') break
-    // TODO: remove the force string type and handle errors caused by other types
     const moduleName = (node.source.value as string).trim()
-    context.modules.push(loadModule(moduleName, context))
+    Array.prototype.push.apply(context.modules, loadModuleTabs(moduleName))
   }
 }
 
