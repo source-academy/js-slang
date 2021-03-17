@@ -112,15 +112,16 @@ function invert(curve) {
 
 /**
  * this function returns a Curve transformation: 
- * It takes an x-value x0, a y-value y0 and a z-value z0 as arguments 
+ * It takes an x-value x0, a y-value y0 and a z-value z0, 
+ * each with default value of 0, as arguments 
  * and returns a Curve transformation that
  * takes a Curve as argument and returns
  * a new Curve, by translating the original by x0 in x-direction, 
  * y0 in y-direction and z0 in z-direction.
  * 
- * @param {number} [x0 = 0] - x-value
- * @param {number} [y0 = 0] - y-value
- * @param {number} [z0 = 0] - z-value
+ * @param {number} x0 - (Optional) x-value
+ * @param {number} y0 - (Optional) y-value
+ * @param {number} z0 - (Optional) z-value
  * @returns {function} Curve transformation
  */
 function translate_curve(x0, y0, z0) {
@@ -173,13 +174,14 @@ function deriv_t(n) {
 
 /**
  * this function takes scaling factors <CODE>a</CODE>, <CODE>b</CODE> 
- * and <CODE>c</CODE> as arguments and returns a Curve transformation that
+ * and <CODE>c</CODE>, each with default value of 1, as arguments and 
+ * returns a Curve transformation that 
  * scales a given Curve by <CODE>a</CODE> in x-direction, <CODE>b</CODE> 
  * in y-direction and <CODE>c</CODE> in z-direction.
  * 
- * @param {number} [a = 1] - scaling factor in x-direction
- * @param {number} [b = 1] - scaling factor in y-direction
- * @param {number} [c = 1] - scaling factor in z-direction
+ * @param {number} a - (Optional) scaling factor in x-direction
+ * @param {number} b - (Optional) scaling factor in y-direction
+ * @param {number} c - (Optional) scaling factor in z-direction
  * @returns {unary_Curve_operator} function that takes a Curve and returns a Curve
  */
 function scale_curve(a1, b1, c1) {
