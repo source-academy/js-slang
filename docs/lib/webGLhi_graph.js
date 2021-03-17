@@ -1,35 +1,3 @@
-// USEFUL, SIMPLE, GENERAL PROCEDURES
-
-function compose(f, g) {
-  return function (x) {
-    return f(g(x))
-  }
-}
-
-function thrice(f) {
-  return compose(compose(f, f), f)
-}
-
-function identity(t) {
-  return t
-}
-
-function repeated(f, n) {
-  if (n === 0) {
-    return identity
-  } else {
-    return compose(f, repeated(f, n - 1))
-  }
-}
-
-// USEFUL NUMERICAL PROCEDURE
-
-function square(x) {
-  return x * x
-}
-
-// SOME CURVES
-
 /**
  * this function is a curve: a function from a
  * fraction t to a point. The points lie on the
@@ -86,10 +54,6 @@ function arc(t) {
   return make_point(Math.sin(Math.PI * t), Math.cos(Math.PI * t))
 }
 
-// Curve-Transform = (Curve --> Curve)
-
-// SOME CURVE-TRANSFORMS
-
 /**
  * this function is a Curve transformation: a function from a
  * Curve to a Curve. The points of the result Curve are
@@ -105,10 +69,6 @@ function invert(curve) {
     return curve(1 - t)
   }
 }
-
-// CONSTRUCTORS OF CURVE-TRANSFORMS
-
-// TRANSLATE is of type (JS-Num, JS-Num --> Curve-Transform)
 
 /**
  * this function returns a Curve transformation: 
@@ -137,15 +97,18 @@ function translate_curve(x0, y0, z0) {
   }
 }
 
-// ROTATE-AROUND-ORIGIN is of type (JS-Num --> Curve-Transform)
 /**
  * this function 
- * takes an angle theta as parameter and returns a Curve transformation:
- * a function that takes
- * a Curve a argument and returns
+ * takes either 1 or 3 angles, a, b and c in radians as parameter and 
+ * returns a Curve transformation: 
+ * a function that takes a Curve as argument and returns
  * a new Curve, which is the original Curve rotated by the given angle
- * around the origin, in counter-clockwise direction.
- * @param {number} theta - given angle
+ * around the z-axis (1 parameter) in counter-clockwise direction, or 
+ * the original Curve rotated extrinsically with Euler angles (a, b, c) 
+ * about x, y, and z axes (3 parameters).
+ * @param {number} a - given angle
+ * @param {number} b - (Optional) given angle
+ * @param {number} c - (Optional) given angle
  * @returns {unary_Curve_operator} function that takes a Curve and returns a Curve
  */
 function rotate_around_origin(theta) {
@@ -157,17 +120,6 @@ function rotate_around_origin(theta) {
       var x = x_of(ct)
       var y = y_of(ct)
       return make_color_point(cth * x - sth * y, sth * x + cth * y, r_of(ct), g_of(ct), b_of(ct))
-    }
-  }
-}
-
-function deriv_t(n) {
-  var delta_t = 1 / n
-  return function (curve) {
-    return function (t) {
-      var ct = curve(t)
-      var ctdelta = curve(t + delta_t)
-      return make_color_point((x_of(ctdelta) - x_of(ct)) / delta_t, (y_of(ctdelta) - y_of(ct)) / delta_t, r_of(ct), g_of(ct), b_of(ct))
     }
   }
 }
@@ -209,13 +161,6 @@ function scale_proportional(s) {
   return scale_curve(s, s, s)
 }
 
-// PUT-IN-STANDARD-POSITION is a Curve-Transform.
-// A Curve is in "standard position" if it starts at (0,0) ends at (1,0).
-// A Curve is PUT-IN-STANDARD-POSITION by rigidly translating it so its
-// start Point is at the origin, then rotating it about the origin to put
-// its endpoint on the x axis, then scaling it to put the endpoint at (1,0).
-// Behavior is unspecified on closed curves (with start-point = end-point).
-
 /**
  * this function is a Curve transformation: It
  * takes a Curve as argument and returns
@@ -230,7 +175,6 @@ function scale_proportional(s) {
  * @param {Curve} curve - given Curve
  * @returns {Curve} result Curve
  */
-
 function put_in_standard_position(curve) {
   var start_point = curve(0)
   var curve_started_at_origin = translate_curve(-x_of(start_point), -y_of(start_point))(curve)
@@ -240,10 +184,6 @@ function put_in_standard_position(curve) {
   var end_point_on_x_axis = x_of(curve_ended_at_x_axis(1))
   return scale_proportional(1 / end_point_on_x_axis)(curve_ended_at_x_axis)
 }
-
-// Binary-transform = (Curve,Curve --> Curve)
-
-// CONNECT-RIGIDLY makes a Curve consisting of curve1 followed by curve2.
 
 /**
  * this function is a binary Curve operator: It
@@ -262,9 +202,6 @@ function put_in_standard_position(curve) {
 function connect_rigidly(curve1, curve2) {
   return t => t < 1 / 2 ? curve1(2 * t) : curve2(2 * t - 1)
 }
-
-// CONNECT-ENDS makes a Curve consisting of curve1 followed by
-// a copy of curve2 starting at the end of curve1
 
 /**
  * this function is a binary Curve operator: It
