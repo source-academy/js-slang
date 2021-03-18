@@ -717,7 +717,7 @@ function substituteMain(
               const num = declaredId.name.split('_')
               newNum = Number(num[1]) + 1
               const changedName: string = getFreshName(
-                declaredId.name,
+                num[0],
                 newNum,
                 freeTarget,
                 freeReplacement,
@@ -807,7 +807,7 @@ function substituteMain(
               const num = declaredId.name.split('_')
               newNum = Number(num[1]) + 1
               const changedName: string = getFreshName(
-                declaredId.name,
+                num[0],
                 newNum,
                 freeTarget,
                 freeReplacement,
