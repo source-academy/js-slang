@@ -35035,6 +35035,253 @@ Array [
               "id": Object {
                 "loc": undefined,
                 "name": "even",
+                "start": 57,
+                "type": "Identifier",
+              },
+              "init": Object {
+                "body": Object {
+                  "left": Object {
+                    "left": Node {
+                      "end": 70,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 21,
+                          "line": 3,
+                        },
+                        "start": Position {
+                          "column": 20,
+                          "line": 3,
+                        },
+                      },
+                      "name": "n",
+                      "start": 69,
+                      "type": "Identifier",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 27,
+                        "line": 3,
+                      },
+                      "start": Position {
+                        "column": 20,
+                        "line": 3,
+                      },
+                    },
+                    "operator": "===",
+                    "right": Node {
+                      "end": 76,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 27,
+                          "line": 3,
+                        },
+                        "start": Position {
+                          "column": 26,
+                          "line": 3,
+                        },
+                      },
+                      "raw": "0",
+                      "start": 75,
+                      "type": "Literal",
+                      "value": 0,
+                    },
+                    "type": "BinaryExpression",
+                  },
+                  "loc": undefined,
+                  "operator": "||",
+                  "right": Object {
+                    "arguments": Array [
+                      Object {
+                        "left": Node {
+                          "end": 85,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 36,
+                              "line": 3,
+                            },
+                            "start": Position {
+                              "column": 35,
+                              "line": 3,
+                            },
+                          },
+                          "name": "n",
+                          "start": 84,
+                          "type": "Identifier",
+                        },
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 38,
+                            "line": 3,
+                          },
+                          "start": Position {
+                            "column": 35,
+                            "line": 3,
+                          },
+                        },
+                        "operator": "-",
+                        "right": Node {
+                          "end": 87,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 38,
+                              "line": 3,
+                            },
+                            "start": Position {
+                              "column": 37,
+                              "line": 3,
+                            },
+                          },
+                          "raw": "1",
+                          "start": 86,
+                          "type": "Literal",
+                          "value": 1,
+                        },
+                        "type": "BinaryExpression",
+                      },
+                    ],
+                    "callee": Node {
+                      "end": 83,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 34,
+                          "line": 3,
+                        },
+                        "start": Position {
+                          "column": 31,
+                          "line": 3,
+                        },
+                      },
+                      "name": "odd",
+                      "start": 80,
+                      "type": "Identifier",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 39,
+                        "line": 3,
+                      },
+                      "start": Position {
+                        "column": 31,
+                        "line": 3,
+                      },
+                    },
+                    "optional": false,
+                    "type": "CallExpression",
+                  },
+                  "type": "LogicalExpression",
+                },
+                "expression": true,
+                "generator": false,
+                "loc": undefined,
+                "params": Array [
+                  Object {
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 16,
+                        "line": 3,
+                      },
+                      "start": Position {
+                        "column": 15,
+                        "line": 3,
+                      },
+                    },
+                    "name": "n",
+                    "type": "Identifier",
+                  },
+                ],
+                "type": "ArrowFunctionExpression",
+              },
+              "loc": undefined,
+              "type": "VariableDeclarator",
+            },
+          ],
+          "kind": "const",
+          "loc": undefined,
+          "type": "VariableDeclaration",
+        },
+        Object {
+          "expression": Object {
+            "arguments": Array [
+              Node {
+                "end": 98,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 8,
+                    "line": 4,
+                  },
+                  "start": Position {
+                    "column": 7,
+                    "line": 4,
+                  },
+                },
+                "raw": "1",
+                "start": 97,
+                "type": "Literal",
+                "value": 1,
+              },
+            ],
+            "callee": Node {
+              "end": 96,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 6,
+                  "line": 4,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 4,
+                },
+              },
+              "name": "even",
+              "start": 92,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 2,
+                "line": 4,
+              },
+            },
+            "optional": false,
+            "type": "CallExpression",
+          },
+          "type": "ExpressionStatement",
+        },
+      ],
+      "sourceType": "module",
+      "type": "Program",
+    },
+    Array [
+      Array [
+        "body[0]",
+      ],
+    ],
+    "Constant odd declared and substituted into rest of block",
+  ],
+  Array [
+    Object {
+      "body": Array [
+        Object {
+          "declarations": Array [
+            Object {
+              "id": Node {
+                "end": 61,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 12,
+                    "line": 3,
+                  },
+                  "start": Position {
+                    "column": 8,
+                    "line": 3,
+                  },
+                },
+                "name": "even",
+                "start": 57,
                 "type": "Identifier",
               },
               "init": Object {
@@ -44830,7 +45077,7 @@ f(0);
 f(0);
 =======
 exports[`scoping test (function parameter) 1`] = `
-"function f(w (param)) {
+"function f(w) {
   return g();
 }
 function g() {
@@ -44839,7 +45086,7 @@ function g() {
 const w = 0;
 f(1);
 
-function f(w (param)) {
+function f(w) {
   return g();
 }
 function g() {
