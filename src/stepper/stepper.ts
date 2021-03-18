@@ -40,43 +40,24 @@ type irreducibleNodes =
   | es.Literal
   | es.ArrayExpression
 
-function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Identifier[] {
-  const declaredIds: es.Identifier[] = []
-  for (const stmt of node.body) {
-    // if stmt is assignment or functionDeclaration
-    // add stmt into a set of identifiers
-    // return that set
-    if (stmt.type === 'VariableDeclaration') {
-      stmt.declarations
-        .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
-        .forEach(name => declaredIds.push(name))
-    } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
-      declaredIds.push(stmt.id)
-    }
-  }
-  return declaredIds
-}
-
 function findMain(
-  target: es.FunctionExpression | es.ArrowFunctionExpression | es.BlockStatement | BlockExpression
+  target: es.FunctionExpression | es.ArrowFunctionExpression,
+  paths: string[][]
 ): string[] {
   const params: string[] = []
-  if (target.type == 'FunctionExpression' || target.type == 'ArrowFunctionExpression') {
-    if (target.type == 'FunctionExpression') {
-      params.push(target.id!.name)
-    }
-    for (let i = 0; i < target.params.length; i++) {
-      params.push((target.params[i] as es.Identifier).name)
-    }
+  for (let i = 0; i < target.params.length; i++) {
+    params.push((target.params[i] as es.Identifier).name)
   }
 
   const freeNames: any[] = []
   const seenBefore: Map<substituterNodes, substituterNodes> = new Map()
 
   const finders = {
-    Identifier(target: es.Identifier): void {
+    Identifier(
+      target: es.Identifier,
+    ): void {
       seenBefore.set(target, target)
-      let bound = false
+      let bound = false;
       for (let i = 0; i < params.length; i++) {
         if (target.name == params[i]) {
           bound = true
@@ -104,14 +85,16 @@ function findMain(
       find(target.argument)
     },
 
-    ConditionalExpression(target: es.ConditionalExpression): void {
+    ConditionalExpression(
+      target: es.ConditionalExpression,
+    ): void {
       seenBefore.set(target, target)
       find(target.test)
       find(target.consequent)
       find(target.alternate)
     },
 
-    LogicalExpression(target: es.LogicalExpression): void {
+    LogicalExpression(target: es.LogicalExpression): void{
       seenBefore.set(target, target)
       find(target.left)
       find(target.right)
@@ -125,37 +108,45 @@ function findMain(
       find(target.callee)
     },
 
-    FunctionDeclaration(target: es.FunctionDeclaration): void {
-      seenBefore.set(target, target)
-      const freeInNested = findMain(target)
-      for (const free of freeInNested) {
-        let bound = false
-        for (const param of params) {
-          if (free === param) {
-            bound = true
-          }
-        }
-        if (!bound) {
-          freeNames.push(free)
-        }
-      }
-    },
+    // FunctionDeclaration(target: es.FunctionDeclaration, index: number): es.FunctionDeclaration {
+    //   const substedFunctionDeclaration = ast.functionDeclaration(
+    //     target.id,
+    //     target.params,
+    //     dummyBlockStatement()
+    //   )
+    //   seenBefore.set(target, substedFunctionDeclaration)
+    //   // check for free/bounded variable
+    //   for (const param of target.params) {
+    //     if (param.type === 'Identifier' && param.name === name.name) {
+    //       substedFunctionDeclaration.body = target.body
+    //       return substedFunctionDeclaration
+    //     }
+    //   }
+    //   if (pathNotEnded(index)) {
+    //     allPaths[index].push('body')
+    //   }
+    //   substedFunctionDeclaration.body = substitute(target.body, index) as es.BlockStatement
+    //   return substedFunctionDeclaration
+    // },
 
-    ArrowFunctionExpression(target: es.ArrowFunctionExpression): void {
-      seenBefore.set(target, target)
-      const freeInNested = findMain(target)
-      for (const free of freeInNested) {
-        let bound = false
-        for (const param of params) {
-          if (free === param) {
-            bound = true
-          }
-        }
-        if (!bound) {
-          freeNames.push(free)
-        }
-      }
-    },
+    // FunctionExpression(target: es.FunctionExpression, index: number): es.FunctionExpression {
+    //   const substedFunctionExpression = target.id
+    //     ? ast.functionDeclarationExpression(target.id, target.params, dummyBlockStatement())
+    //     : ast.functionExpression(target.params as es.Identifier[], dummyBlockStatement())
+    //   seenBefore.set(target, substedFunctionExpression)
+    //   // check for free/bounded variable
+    //   for (const param of target.params) {
+    //     if (param.type === 'Identifier' && param.name === name.name) {
+    //       substedFunctionExpression.body = target.body
+    //       return substedFunctionExpression
+    //     }
+    //   }
+    //   if (pathNotEnded(index)) {
+    //     allPaths[index].push('body')
+    //   }
+    //   substedFunctionExpression.body = substitute(target.body, index) as es.BlockStatement
+    //   return substedFunctionExpression
+    // },
 
     Program(target: es.Program): void {
       seenBefore.set(target, target)
@@ -191,6 +182,29 @@ function findMain(
       find(target.argument!)
     },
 
+    // source 1
+    // ArrowFunctionExpression(
+    //   target: es.ArrowFunctionExpression,
+    //   index: number
+    // ): es.ArrowFunctionExpression {
+    //   const substedArrow = ast.arrowFunctionExpression(target.params, dummyBlockStatement())
+    //   seenBefore.set(target, substedArrow)
+    //   // check for free/bounded variable
+    //   for (const param of target.params) {
+    //     if (param.type === 'Identifier' && param.name === name.name) {
+    //       substedArrow.body = target.body
+    //       substedArrow.expression = target.body.type !== 'BlockStatement'
+    //       return substedArrow
+    //     }
+    //   }
+    //   if (pathNotEnded(index)) {
+    //     allPaths[index].push('body')
+    //   }
+    //   substedArrow.body = substitute(target.body, index) as es.BlockStatement | es.Expression
+    //   substedArrow.expression = target.body.type !== 'BlockStatement'
+    //   return substedArrow
+    // },
+
     VariableDeclaration(target: es.VariableDeclaration): void {
       seenBefore.set(target, target)
       target.declarations.forEach(dec => {
@@ -216,7 +230,7 @@ function findMain(
         find(ele)
       })
     }
-  }
+   }
 
   function find(target: any): void {
     const result = seenBefore.get(target)
@@ -454,34 +468,24 @@ function substituteMain(
       )
       seenBefore.set(target, substedFunctionDeclaration)
       let freeNames: any[] = []
-      if (
-        replacement.type == 'FunctionExpression' ||
-        replacement.type == 'ArrowFunctionExpression'
-      ) {
-        freeNames = findMain(replacement)
+      if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
+        freeNames = findMain(replacement, [[]])
       }
-      const freeVars = findMain(target)
-      for (let i = 0; i < target.params.length; i++) {
-        const param = target.params[i]
+      for (const param of target.params) {
         if (param.type === 'Identifier' && param.name === name.name) {
           substedFunctionDeclaration.body = target.body
           return substedFunctionDeclaration
         }
-        if (param.type == 'Identifier') {
+         if (param.type == 'Identifier') {
           for (const freeVar of freeNames) {
             if (param.name == freeVar) {
               // change param name
-              const changed = ast.identifier(param.name + ' (param)', param.loc)
-              target.body = substituteMain(param, changed, target.body, [
-                []
-              ])[0] as es.BlockStatement
-              param.name = param.name + ' (param)'
+              const changed = ast.identifier(param.name + " (param)", param.loc)
+              target.body = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
+              param.name = param.name + " (param)"
             }
           }
-        }
-      }
-      for (const param of substedParams) {
-        bounded.push(param.name)
+         }
       }
       if (pathNotEnded(index)) {
         allPaths[index].push('body')
@@ -503,15 +507,10 @@ function substituteMain(
       seenBefore.set(target, substedFunctionExpression)
       // check for free/bounded variable in replacement
       let freeNames: any[] = []
-      if (
-        replacement.type == 'FunctionExpression' ||
-        replacement.type == 'ArrowFunctionExpression'
-      ) {
-        freeNames = findMain(replacement)
+      if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
+        freeNames = findMain(replacement, [[]])
       }
-      const freeVars = findMain(target)
-      for (let i = 0; i < target.params.length; i++) {
-        const param = target.params[i]
+      for (const param of target.params) {
         if (param.type === 'Identifier' && param.name === name.name) {
           substedFunctionExpression.body = target.body
           return substedFunctionExpression
@@ -520,46 +519,12 @@ function substituteMain(
           for (const freeVar of freeNames) {
             if (param.name == freeVar) {
               // change param name
-              const re = /_\d+$/
-              let newNum
-              if (re.test(param.name)) {
-                const num = param.name.split('_')
-                newNum = Number(num[1]) + 1
-                for (const f of freeVars) {
-                  if (num[0] + '_' + newNum === f) {
-                    newNum++
-                  }
-                }
-                const changed = ast.identifier(num[0] + '_' + newNum, param.loc)
-                target.body = substituteMain(param, changed, target.body, [
-                  []
-                ])[0] as es.BlockStatement
-                ;(substedFunctionExpression.params[i] as es.Identifier).name = num[0] + '_' + newNum
-              } else {
-                newNum = 1
-                for (const f of freeVars) {
-                  if (param.name + '_' + newNum === f) {
-                    newNum++
-                  }
-                }
-                const changed = ast.identifier(param.name + '_' + newNum, param.loc)
-                target.body = substituteMain(param, changed, target.body, [
-                  []
-                ])[0] as es.BlockStatement
-                ;(substedFunctionExpression.params[i] as es.Identifier).name =
-                  param.name + '_' + newNum
-              }
-              const changed = ast.identifier(param.name + ' (param)', param.loc)
-              target.body = substituteMain(param, changed, target.body, [
-                []
-              ])[0] as es.BlockStatement
-              (substedFunctionExpression.params[i]as es.Identifier).name = param.name + ' (param)'
+              const changed = ast.identifier(param.name + " (param)", param.loc)
+              target.body = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
+              param.name = param.name + " (param)"
             }
           }
         }
-      }
-      for (const param of substedParams) {
-        bounded.push(param.name)
       }
       if (pathNotEnded(index)) {
         allPaths[index].push('body')
@@ -663,10 +628,6 @@ function substituteMain(
         substedBlockStatement.body = target.body
         return substedBlockStatement
       }
-
-      // if it is from the same block then the name would be name + " same", hence need to remove " same"
-      // if not this statement does nothing as variable names should not have spaces
-      name.name = name.name.split(' ')[0]
 
       const arr: number[] = []
       let nextIndex = index
@@ -801,54 +762,24 @@ function substituteMain(
       seenBefore.set(target, substedArrow)
       // check for free/bounded variable
       let freeNames: any[] = []
-      if (
-        replacement.type == 'FunctionExpression' ||
-        replacement.type == 'ArrowFunctionExpression'
-      ) {
-        freeNames = findMain(replacement)
+      if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
+        freeNames = findMain(replacement, [[]])
       }
-      for (let i = 0; i < target.params.length; i++) {
-        const param = target.params[i]
+      for (const param of target.params) {
         if (param.type === 'Identifier' && param.name === name.name) {
           substedArrow.body = target.body
-          substedArrow.expression = target.body.type !== 'BlockStatement'
           return substedArrow
         }
-        const freeVars = findMain(target)
         if (param.type == 'Identifier') {
           for (const freeVar of freeNames) {
             if (param.name == freeVar) {
               // change param name
-              const re = /_\d+$/
-              let newNum
-              if (re.test(param.name)) {
-                const num = param.name.split('_')
-                newNum = Number(num[1]) + 1
-                for (const f of freeVars) {
-                  if (num[0] + '_' + newNum === f) {
-                    newNum++
-                  }
-                }
-                const changed = ast.identifier(num[0] + '_' + newNum, param.loc)
-                newBody = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
-                ;(substedArrow.params[i] as es.Identifier).name = num[0] + '_' + newNum
-              } else {
-                newNum = 1
-                for (const f of freeVars) {
-                  if (param.name + '_' + newNum === f) {
-                    newNum++
-                  }
-                }
-                const changed = ast.identifier(param.name + '_' + newNum, param.loc)
-                newBody = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
-                ;(substedArrow.params[i] as es.Identifier).name = param.name + '_' + newNum
-              }
+              const changed = ast.identifier(param.name + " (param)", param.loc)
+              target.body = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
+              param.name = param.name + " (param)"
             }
           }
         }
-      }
-      for (const param of substedParams) {
-        bounded.push(param.name)
       }
       for (const param of target.params) {
         if (param.type === 'Identifier' && param.name === name.name) {
@@ -1473,15 +1404,6 @@ function reduceMain(
           firstStatement.params,
           firstStatement.body
         ) as FunctionDeclarationExpression
-        // change param name to *name* + (param), and substitute that into the rest of the body
-        for (let i = 0; i < funDecExp.params.length; i++) {
-          const param = funDecExp.params[i] as es.Identifier
-          const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
-          funDecExp.body = substituteMain(param, changed, funDecExp.body, [
-            []
-          ])[0] as es.BlockStatement
-          param.name = param.name + ' (param)'
-        }
         // substitute body
         funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
           []
@@ -1518,47 +1440,7 @@ function reduceMain(
           if (declarator.id.type !== 'Identifier') {
             // TODO: source does not allow destructuring
             return [dummyProgram(), context, paths, 'source does not allow destructuring']
-            // } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
-            //   let funDecExp = ast.functionDeclarationExpression(
-            //     declarator.id,
-            //     rhs.params,
-            //     rhs.body.type === 'BlockStatement'
-            //       ? rhs.body
-            //       : ast.blockStatement([ast.returnStatement(rhs.body)])
-            //   ) as FunctionDeclarationExpression
-            //   console.log(funDecExp)
-            //   for (let i = 0; i < funDecExp.params.length; i++) {
-            //     const param = funDecExp.params[i] as es.Identifier
-            //     const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
-            //     funDecExp.body = substituteMain(param, changed, funDecExp.body, [[]])[0] as es.BlockStatement
-            //     funDecExp.params[i] = changed
-            //   }
-            //   funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
-            //     []
-            //   ])[0] as FunctionDeclarationExpression
-            //   // substitute the rest of the program
-            //   const remainingProgram = ast.program(otherStatements as es.Statement[])
-            //   const subst = substituteMain(funDecExp.id, funDecExp.body, remainingProgram, paths)
-            //   // concats paths such that:
-            //   // paths[0] -> path to the program to be substituted, pre-redex
-            //   // paths[1...] -> path(s) to the parts of the remaining program
-            //   // that were substituted, post-redex
-            //   paths[0].push('body[0]')
-            //   const allPaths = paths.concat(subst[1])
-            //   if (subst[1].length === 0) {
-            //     allPaths.push([])
-            //   }
-            //   return [subst[0], context, allPaths, explain(node)]
           } else if (isIrreducible(rhs)) {
-            // changes params names to *name* + ' (param)', and changes each occurence of it int the function body
-            if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
-              for (let i = 0; i < rhs.params.length; i++) {
-                const param = rhs.params[i] as es.Identifier
-                const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
-                rhs.body = substituteMain(param, changed, rhs.body, [[]])[0] as es.ArrayExpression
-                rhs.params[i] = changed
-              }
-            }
             const remainingProgram = ast.program(otherStatements as es.Statement[])
             // forced casting for some weird errors
             const subst = substituteMain(
@@ -1577,7 +1459,31 @@ function reduceMain(
               allPaths.push([])
             }
             return [subst[0], context, allPaths, explain(node)]
-          } else {
+          } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
+              let funDecExp = ast.functionDeclarationExpression(
+                declarator.id,
+                rhs.params,
+                rhs.body.type === 'BlockStatement'
+                  ? rhs.body
+                  : ast.blockStatement([ast.returnStatement(rhs.body)])
+              ) as FunctionDeclarationExpression
+              funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+                []
+              ])[0] as FunctionDeclarationExpression
+              // substitute the rest of the program
+              const remainingProgram = ast.program(otherStatements as es.Statement[])
+              const subst = substituteMain(funDecExp.id, funDecExp, remainingProgram, paths)
+              // concats paths such that:
+              // paths[0] -> path to the program to be substituted, pre-redex
+              // paths[1...] -> path(s) to the parts of the remaining program
+              // that were substituted, post-redex
+              paths[0].push('body[0]')
+              const allPaths = paths.concat(subst[1])
+              if (subst[1].length === 0) {
+                allPaths.push([])
+              }
+              return [subst[0], context, allPaths, explain(node)] 
+            } else {
             paths[0].push('body[0]')
             paths[0].push('declarations[0]')
             paths[0].push('init')
@@ -1656,15 +1562,6 @@ function reduceMain(
             firstStatement.params,
             firstStatement.body
           ) as FunctionDeclarationExpression
-          // change param name to *name* + (param), and substitute that into the rest of the body
-          for (let i = 0; i < funDecExp.params.length; i++) {
-            const param = funDecExp.params[i] as es.Identifier
-            const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
-            funDecExp.body = substituteMain(param, changed, funDecExp.body, [
-              []
-            ])[0] as es.BlockStatement
-            param.name = param.name + ' (param)'
-          }
           // substitute body
           funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
             []
@@ -1705,15 +1602,6 @@ function reduceMain(
               // TODO: source does not allow destructuring
               return [dummyBlockStatement(), context, paths, 'source does not allow destructuring']
             } else if (isIrreducible(rhs)) {
-              // changes params names to *name* + ' (param)', and changes each occurence of it int the function body
-              if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
-                for (let i = 0; i < rhs.params.length; i++) {
-                  const param = rhs.params[i] as es.Identifier
-                  const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
-                  rhs.body = substituteMain(param, changed, rhs.body, [[]])[0] as es.ArrayExpression
-                  rhs.params[i] = changed
-                }
-              }
               const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
               // force casting for weird errors
               // substitution within the same block, add " same" so that substituter can differentiate between
@@ -1844,17 +1732,6 @@ function reduceMain(
           firstStatement.params,
           firstStatement.body
         ) as FunctionDeclarationExpression
-        // change param name to *name* + (param), and substitute that into the rest of the body TODO
-        // check if the param name already has (param), if so then skip this step
-        // const pattern = /\(param\)/
-        // const param = funDecExp.params[0] as es.Identifier
-        // if (!pattern.test(param.name)) {
-        //   for (let i = 0; i < funDecExp.params.length; i++) {
-        //     const changed = ast.identifier(param.name + " (param)", param.loc) as es.Pattern
-        //     funDecExp.body = substituteMain(param, changed, funDecExp.body, [[]])[0] as es.BlockStatement
-        //     param.name = param.name + " (param)"
-        //   }
-        // }
         // substitute body
         funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
           []
@@ -1895,15 +1772,6 @@ function reduceMain(
             // TODO: source does not allow destructuring
             return [dummyBlockExpression(), context, paths, 'source does not allow destructuring']
           } else if (isIrreducible(rhs)) {
-            // changes params names to *name* + ' (param)', and changes each occurence of it int the function body
-            if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
-              for (let i = 0; i < rhs.params.length; i++) {
-                const param = rhs.params[i] as es.Identifier
-                const changed = ast.identifier(param.name + ' (param)', param.loc) as es.Pattern
-                rhs.body = substituteMain(param, changed, rhs.body, [[]])[0] as es.ArrayExpression
-                rhs.params[i] = changed
-              }
-            }
             const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
             // forced casting for some weird errors
             // substitution within the same block, add " same" so that substituter can differentiate between
