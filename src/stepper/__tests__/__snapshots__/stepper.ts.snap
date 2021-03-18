@@ -44548,6 +44548,7 @@ Array [
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 exports[`renaming clash in replacement for function declaration 1`] = `
 "function g() {
   return x_1 + x_2;
@@ -44843,6 +44844,8 @@ const x_2 = 0;
 "
 `;
 
+=======
+>>>>>>> b1da17a (added test cases for return statement in nested blocks, renaming clash for lambda functions and renaming clash test for normal functions. Fixed function declaration substituter to resolve name clashes and destructive renaming.)
 exports[`renaming clash test for functions 1`] = `
 "function f(w_8) {
   function h(w_9) {
@@ -44915,11 +44918,15 @@ f(1)(2);
 h(2);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b1da17a (added test cases for return statement in nested blocks, renaming clash for lambda functions and renaming clash test for normal functions. Fixed function declaration substituter to resolve name clashes and destructive renaming.)
 h(2);
 
 1 + 2 + g();
 
 1 + 2 + g();
+<<<<<<< HEAD
 =======
 {
   return f(1);
@@ -44967,6 +44974,8 @@ f(0);
 
 f(0);
 >>>>>>> 78477f8 (fixed merge conflicts)
+=======
+>>>>>>> b1da17a (added test cases for return statement in nested blocks, renaming clash for lambda functions and renaming clash test for normal functions. Fixed function declaration substituter to resolve name clashes and destructive renaming.)
 
 3 + g();
 
@@ -45072,6 +45081,7 @@ f(0);
   return 1;
 };
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 =======
@@ -45086,6 +45096,15 @@ exports[`scoping test for function expressions 1`] = `
 "function f(x (param)) {
 >>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
 =======
+=======
+
+1;
+
+1;
+"
+`;
+
+>>>>>>> b1da17a (added test cases for return statement in nested blocks, renaming clash for lambda functions and renaming clash test for normal functions. Fixed function declaration substituter to resolve name clashes and destructive renaming.)
 exports[`scoping test for block expressions 1`] = `
 "function f(x) {
   const y_1 = x;

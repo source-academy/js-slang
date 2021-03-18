@@ -969,3 +969,49 @@ test('scoping test for block expressions, with renaming', () => {
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('g();')
 })
+
+test('return in nested blocks', () => {
+  const code = `
+  function f(x) {{ return 1; }}
+  f(0);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('1;')
+})
+
+test('renaming clash test for lambda function', () => {
+  const code = `
+  const f = w_11 => w_10 => w_11 + w_10 + g();
+  const g = () => w_10;
+  const w_10 = 0;
+  f(1)(2);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('3;')
+})
+
+test('renaming clash test for functions', () => {
+  const code = `
+  function f(w_8) {
+    function h(w_9) {
+        return w_8 + w_9 + g(); 
+    }
+    return h;
+}
+
+function g() {
+    return w_9;
+}
+
+const w_9 = 0;
+f(1)(2);
+`
+const program = parse(code, mockContext())!
+const steps = getEvaluationSteps(program, mockContext(), 1000)
+expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+expect(getLastStepAsString(steps)).toEqual('3;')
+})

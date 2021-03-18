@@ -408,15 +408,8 @@ function substituteMain(
         const param = target.params[i] as es.Identifier
         substedParams.push(ast.identifier(param.name, param.loc))
       }
-      const re = / rename$/
-      let newID: es.Identifier
-      if (replacement.type === 'Identifier' && re.test(replacement.name)) {
-        newID = ast.identifier(replacement.name.split(' ')[0], replacement.loc)
-      } else {
-        newID = ast.identifier((target.id as es.Identifier).name, target.loc)
-      }
       const substedFunctionDeclaration = ast.functionDeclaration(
-        newID,
+        target.id,
         substedParams,
         dummyBlockStatement()
       )
@@ -428,7 +421,9 @@ function substituteMain(
       ) {
         freeNames = findMain(replacement)
       }
-      for (const param of target.params) {
+      const freeVars = findMain(target.body)
+      for (let i = 0; i < target.params.length; i++) {
+        const param = target.params[i]
         if (param.type === 'Identifier' && param.name === name.name) {
           substedFunctionDeclaration.body = target.body
           return substedFunctionDeclaration
@@ -437,11 +432,35 @@ function substituteMain(
           for (const freeVar of freeNames) {
             if (param.name == freeVar) {
               // change param name
-              const changed = ast.identifier(param.name + ' (param)', param.loc)
-              target.body = substituteMain(param, changed, target.body, [
-                []
-              ])[0] as es.BlockStatement
-              param.name = param.name + ' (param)'
+              const re = /_\d+$/
+              let newNum
+              if (re.test(param.name)) {
+                const num = param.name.split('_')
+                newNum = Number(num[1]) + 1
+                for (const f of freeVars) {
+                  if (num[0] + '_' + newNum === f) {
+                    newNum++
+                  }
+                }
+                const changed = ast.identifier(num[0] + '_' + newNum, param.loc)
+                target.body = substituteMain(param, changed, target.body, [
+                  []
+                ])[0] as es.BlockStatement
+                ;(substedFunctionDeclaration.params[i] as es.Identifier).name = num[0] + '_' + newNum
+              } else {
+                newNum = 1
+                for (const f of freeVars) {
+                  if (param.name + '_' + newNum === f) {
+                    newNum++
+                  }
+                }
+                const changed = ast.identifier(param.name + '_' + newNum, param.loc)
+                target.body = substituteMain(param, changed, target.body, [
+                  []
+                ])[0] as es.BlockStatement
+                ;(substedFunctionDeclaration.params[i] as es.Identifier).name =
+                  param.name + '_' + newNum
+              }
             }
           }
         }
