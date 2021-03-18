@@ -83,11 +83,9 @@ function findMain(
   const seenBefore: Map<substituterNodes, substituterNodes> = new Map()
 
   const finders = {
-    Identifier(
-      target: es.Identifier,
-    ): void {
+    Identifier(target: es.Identifier): void {
       seenBefore.set(target, target)
-      let bound = false;
+      let bound = false
       for (let i = 0; i < params.length; i++) {
         if (target.name == params[i]) {
           bound = true
@@ -115,16 +113,14 @@ function findMain(
       find(target.argument)
     },
 
-    ConditionalExpression(
-      target: es.ConditionalExpression,
-    ): void {
+    ConditionalExpression(target: es.ConditionalExpression): void {
       seenBefore.set(target, target)
       find(target.test)
       find(target.consequent)
       find(target.alternate)
     },
 
-    LogicalExpression(target: es.LogicalExpression): void{
+    LogicalExpression(target: es.LogicalExpression): void {
       seenBefore.set(target, target)
       find(target.left)
       find(target.right)
@@ -245,7 +241,6 @@ function findMain(
   find(target.body)
   return freeNames
 }
-
 
 /* tslint:disable:no-shadowed-variable */
 // wrapper function, calls substitute immediately.
