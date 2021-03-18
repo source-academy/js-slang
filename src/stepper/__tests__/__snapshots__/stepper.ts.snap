@@ -46771,6 +46771,57 @@ pair(null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]],
 "
 `;
 
+exports[`scoping test 1`] = `
+"function f(w) {
+  return g();
+}
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+function f(w) {
+  return g();
+}
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+function g() {
+  return w;
+}
+const w = 0;
+f(1);
+
+const w = 0;
+f(1);
+
+const w = 0;
+f(1);
+
+f(1);
+
+f(1);
+
+g();
+
+g();
+
+0;
+
+0;
+"
+`;
+
 exports[`triple equals work on function 1`] = `
 Array [
   Array [
