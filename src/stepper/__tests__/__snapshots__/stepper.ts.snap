@@ -44295,11 +44295,14 @@ Array [
 `;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 exports[`renaming clash in replacement for function declaration 1`] = `
 "function g() {
   return x_1 + x_2;
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> a434b9a (fixed merge conflicts)
 exports[`scoping test for block expressions 1`] = `
 "function f(x) {
   const y (const) = x;
@@ -44769,48 +44772,6 @@ f(0);
 f(0);
 
 f(0);
-=======
-exports[`scoping test (function parameter) 1`] = `
-"function f(w) {
-  return g();
-}
-function g() {
-  return w;
-}
-const w = 0;
-f(1);
-
-function f(w) {
-  return g();
-}
-function g() {
-  return w;
-}
-const w = 0;
-f(1);
-
-function g() {
-  return w;
-}
-const w = 0;
-f(1);
-
-function g() {
-  return w;
-}
-const w = 0;
-f(1);
-
-const w = 0;
-f(1);
-
-const w = 0;
-f(1);
-
-f(1);
-
-f(1);
->>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
 
 g();
 
