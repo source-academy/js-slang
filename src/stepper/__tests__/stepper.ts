@@ -930,3 +930,42 @@ test('scoping test for block expressions', () => {
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
+
+test('scoping test for block expressions, no renaming', () => {
+  const code = `
+  function h(w) {
+    function f(w) {
+        return g();
+    }
+    function g() {
+        return w;
+    }
+    return f(0);
+  }
+  h(1);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('1;')
+})
+
+test('scoping test for block expressions, with renaming', () => {
+  const code = `
+  function f(w) {
+    return g();
+  }
+  function h(f) {
+      function g() {
+          return w;
+      }
+      const w = 0;
+      return f(1);
+  }
+  h(f);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('g();')
+})

@@ -44561,6 +44561,7 @@ exports[`renaming clash in replacement for function declaration 1`] = `
 >>>>>>> 01e3f83 (fixed merge conflicts)
 exports[`scoping test for block expressions 1`] = `
 "function f(x) {
+<<<<<<< HEAD
   const y (const) = x;
   return g();
 >>>>>>> 1300ecb (fixed merge conflicts)
@@ -45089,6 +45090,9 @@ exports[`scoping test for block expressions 1`] = `
 "function f(x) {
   const y_1 = x;
 >>>>>>> 130a503 (changed renaming scheme and fixed such that renaming of parameters only occurs at substitution step. and fixed block scoping issues)
+=======
+  const y_1 = x;
+>>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
   return g();
 }
 function g() {
@@ -45097,6 +45101,7 @@ function g() {
 const y = 1;
 f(0);
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 function f(w) {
@@ -45372,6 +45377,10 @@ f(0);
 
 function f(x) {
   const y (const) = x;
+=======
+function f(x) {
+  const y_1 = x;
+>>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
   return g();
 }
 function g() {
@@ -45407,6 +45416,7 @@ f(0);
 {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   const y (const) = 0;
 =======
   const z (const) = 0;
@@ -45414,12 +45424,16 @@ f(0);
 =======
   const y (const) = 0;
 >>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
+=======
+  const y_1 = 0;
+>>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
   return g();
 };
 
 {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   const y (const) = 0;
 =======
   const z (const) = 0;
@@ -45427,6 +45441,17 @@ f(0);
 =======
   const y (const) = 0;
 >>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
+=======
+  const y_1 = 0;
+  return g();
+};
+
+{
+  return g();
+};
+
+{
+>>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
   return g();
 };
 =======
@@ -45441,11 +45466,141 @@ g();
 "
 `;
 
+<<<<<<< HEAD
 exports[`scoping test for lambda expressions 1`] = `
 "const f = x => g();
 const g = () => x;
 const x = 1;
 f(0);
+=======
+exports[`scoping test for block expressions, no renaming 1`] = `
+"function h(w) {
+  function f(w) {
+    return g();
+  }
+  function g() {
+    return w;
+  }
+  return f(0);
+}
+h(1);
+
+function h(w) {
+  function f(w) {
+    return g();
+  }
+  function g() {
+    return w;
+  }
+  return f(0);
+}
+h(1);
+
+h(1);
+
+h(1);
+
+{
+  function f(w) {
+    return g();
+  }
+  function g() {
+    return 1;
+  }
+  return f(0);
+};
+
+{
+  function f(w) {
+    return g();
+  }
+  function g() {
+    return 1;
+  }
+  return f(0);
+};
+
+{
+  function g() {
+    return 1;
+  }
+  return f(0);
+};
+
+{
+  function g() {
+    return 1;
+  }
+  return f(0);
+};
+
+{
+  return f(0);
+};
+
+{
+  return f(0);
+};
+
+f(0);
+
+f(0);
+
+g();
+
+g();
+
+1;
+
+1;
+"
+`;
+
+exports[`scoping test for block expressions, with renaming 1`] = `
+"function f(w) {
+  return g();
+}
+function h(f) {
+  function g_1() {
+    return w;
+  }
+  const w = 0;
+  return f(1);
+}
+h(f);
+
+function f(w) {
+  return g();
+}
+function h(f) {
+  function g_1() {
+    return w;
+  }
+  const w = 0;
+  return f(1);
+}
+h(f);
+
+function h(f) {
+  function g_1() {
+    return w;
+  }
+  const w = 0;
+  return f(1);
+}
+h(f);
+
+function h(f) {
+  function g_1() {
+    return w;
+  }
+  const w = 0;
+  return f(1);
+}
+h(f);
+
+h(f);
+>>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
 
 const f = x => g();
 const g = () => x;
@@ -45456,9 +45611,19 @@ const g = () => x;
 const x = 1;
 (x => g())(0);
 
+<<<<<<< HEAD
 const g = () => x;
 const x = 1;
 (x => g())(0);
+=======
+{
+  function g_1() {
+    return w;
+  }
+  const w = 0;
+  return f(1);
+};
+>>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
 
 const x = 1;
 (x_1 => (() => x)())(0);
@@ -45487,6 +45652,7 @@ z;
 "
 `;
 
+<<<<<<< HEAD
 exports[`scoping test for block expressions, no renaming 1`] = `
 "function h(w) {
   function f(w) {
@@ -45661,6 +45827,8 @@ g();
 "
 `;
 
+=======
+>>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
 exports[`scoping test for function expressions 1`] = `
 "function f(x) {
   return g();
