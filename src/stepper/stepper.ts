@@ -40,19 +40,18 @@ type irreducibleNodes =
   | es.Literal
   | es.ArrayExpression
 
-  function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Identifier[] {
-    const declaredIds: es.Identifier[] = []
-    for (const stmt of node.body) {
-      // if stmt is assignment or functionDeclaration
-      // add stmt into a set of identifiers
-      // return that set
-      if (stmt.type === 'VariableDeclaration') {
-        stmt.declarations
-          .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
-          .forEach(name => declaredIds.push(name))
-      } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
-        declaredIds.push(stmt.id)
-      }
+function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Identifier[] {
+  const declaredIds: es.Identifier[] = []
+  for (const stmt of node.body) {
+    // if stmt is assignment or functionDeclaration
+    // add stmt into a set of identifiers
+    // return that set
+    if (stmt.type === 'VariableDeclaration') {
+      stmt.declarations
+        .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
+        .forEach(name => declaredIds.push(name))
+      // } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
+      //   declaredIds.push(stmt.id)
     }
     return declaredIds
   }
@@ -532,7 +531,9 @@ function substituteMain(
       ) {
         freeNames = findMain(replacement)
       }
-      for (const param of target.params) {
+      //for (const param of target.params) {
+      for (let i = 0; i < target.params.length; i++) {
+        const param = target.params[i]
         if (param.type === 'Identifier' && param.name === name.name) {
           substedFunctionExpression.body = target.body
           return substedFunctionExpression
@@ -545,7 +546,7 @@ function substituteMain(
               target.body = substituteMain(param, changed, target.body, [
                 []
               ])[0] as es.BlockStatement
-              param.name = param.name + ' (param)'
+              ;(substedFunctionExpression.params[i] as es.Identifier).name = param.name + ' (param)'
             }
           }
         }
@@ -711,10 +712,8 @@ function substituteMain(
             if (param.name == freeVar) {
               // change param name
               const changed = ast.identifier(param.name + ' (param)', param.loc)
-              target.body = substituteMain(param, changed, target.body, [
-                []
-              ])[0] as es.BlockStatement
-              param.name = param.name + ' (param)'
+              newBody = substituteMain(param, changed, newBody, [[]])[0] as es.BlockStatement
+              ;(substedArrow.params[i] as es.Identifier).name = param.name + ' (param)'
             }
           }
         }
