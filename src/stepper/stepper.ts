@@ -40,22 +40,23 @@ type irreducibleNodes =
   | es.Literal
   | es.ArrayExpression
 
-function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Identifier[] {
-  const declaredIds: es.Identifier[] = []
-  for (const stmt of node.body) {
-    // if stmt is assignment or functionDeclaration
-    // add stmt into a set of identifiers
-    // return that set
-    if (stmt.type === 'VariableDeclaration') {
-      stmt.declarations
-        .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
-        .forEach(name => declaredIds.push(name))
-    } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
-      declaredIds.push(stmt.id)
+  function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Identifier[] {
+    const declaredIds: es.Identifier[] = []
+    for (const stmt of node.body) {
+      // if stmt is assignment or functionDeclaration
+      // add stmt into a set of identifiers
+      // return that set
+      if (stmt.type === 'VariableDeclaration') {
+        stmt.declarations
+          .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
+          .forEach(name => declaredIds.push(name))
+      } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
+        declaredIds.push(stmt.id)
+      }
     }
+    return declaredIds
   }
-  return declaredIds
-}
+
 
 function findMain(
   target:
@@ -66,17 +67,11 @@ function findMain(
     | es.FunctionDeclaration
 ): string[] {
   const params: string[] = []
-  if (
-    target.type == 'FunctionExpression' ||
-    target.type == 'ArrowFunctionExpression' ||
-    target.type === 'FunctionDeclaration'
-  ) {
-    if (target.type == 'FunctionExpression' || target.type === 'FunctionDeclaration') {
-      params.push(target.id!.name)
-    }
-    for (let i = 0; i < target.params.length; i++) {
-      params.push((target.params[i] as es.Identifier).name)
-    }
+  if (target.type == "FunctionExpression") {
+    params.push(target.id!.name)
+  }
+  for (let i = 0; i < target.params.length; i++) {
+    params.push((target.params[i] as es.Identifier).name)
   }
 
   const freeNames: any[] = []
@@ -480,71 +475,12 @@ function substituteMain(
           for (const freeVar of freeNames) {
             if (param.name == freeVar) {
               // change param name
-              const re = /_\d+$/
-              let newNum
-              if (re.test(param.name)) {
-                const num = param.name.split('_')
-                newNum = Number(num[1]) + 1
-                let added = true
-                while (added) {
-                  added = false
-                  for (const f of freeVars) {
-                    if (num[0] + '_' + newNum === f) {
-                      newNum++
-                      added = true
-                    }
-                  }
-                  for (const free of freeNames) {
-                    if (free === num[0] + '_' + newNum) {
-                      newNum++
-                      added = true
-                    }
-                  }
-                  for (const bound of bounded) {
-                    if (num[0] + '_' + newNum === bound) {
-                      newNum++
-                      added = true
-                    }
-                  }
-                }
-                const changed = ast.identifier(num[0] + '_' + newNum, param.loc)
-                target.body = substituteMain(param, changed, target.body, [
-                  []
-                ])[0] as es.BlockStatement
-                ;(substedFunctionDeclaration.params[i] as es.Identifier).name =
-                  num[0] + '_' + newNum
-              } else {
-                newNum = 1
-                let added = true
-                while (added) {
-                  added = false
-                  for (const f of freeVars) {
-                    if (param.name + '_' + newNum === f) {
-                      newNum++
-                      added = true
-                    }
-                  }
-                  for (const free of freeNames) {
-                    if (free === param.name + '_' + newNum) {
-                      newNum++
-                      added = true
-                    }
-                  }
-                  for (const bound of bounded) {
-                    if (param.name + '_' + newNum === bound) {
-                      newNum++
-                      added = true
-                    }
-                  }
-                }
-                const changed = ast.identifier(param.name + '_' + newNum, param.loc)
-                target.body = substituteMain(param, changed, target.body, [
-                  []
-                ])[0] as es.BlockStatement
-                ;(substedFunctionDeclaration.params[i] as es.Identifier).name =
-                  param.name + '_' + newNum
-              }
-            }
+              const changed = ast.identifier(param.name + ' (param)', param.loc)
+              target.body = substituteMain(param, changed, target.body, [
+                []
+              ])[0] as es.BlockStatement
+              param.name = param.name + ' (param)'
+            } 
           }
         }
       }
@@ -706,7 +642,7 @@ function substituteMain(
           replacement.type == 'ArrowFunctionExpression') &&
         !re.test(name.name)
       ) {
-        const freeVars = findMain(target)
+      if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
         const declaredIds: es.Identifier[] = scanOutDeclarations(target)
         const freeNames = findMain(replacement)
         for (const freeName of freeNames) {
@@ -749,6 +685,9 @@ function substituteMain(
                 )
                 target = substituteMain(newName, changed, target, [[]])[0] as es.BlockStatement
               }
+              const changed = ast.identifier(declaredId.name + " (const)", declaredId.loc)
+              target = substituteMain(declaredId, changed, target, [[]])[0] as es.BlockStatement
+              declaredId.name = declaredId.name + " (const)"
             }
           }
         }
@@ -835,6 +774,9 @@ function substituteMain(
                 const changed = ast.identifier(declaredId.name + '_' + newNum, declaredId.loc)
                 target = substituteMain(declaredId, changed, target, [[]])[0] as BlockExpression
               }
+              const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
+              target = substituteMain(declaredId, changed, target, [[]])[0] as BlockExpression
+              declaredId.name = declaredId.name + ' (const)'
             }
           }
         }
