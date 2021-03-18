@@ -24270,229 +24270,6 @@ Array [
               },
               "id": Object {
                 "loc": undefined,
-<<<<<<< HEAD
-                "name": "f",
-                "type": "Identifier",
-              },
-              "loc": undefined,
-              "params": Array [
-                Object {
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 14,
-                      "line": 2,
-                    },
-                    "start": Position {
-                      "column": 13,
-                      "line": 2,
-                    },
-                  },
-                  "name": "n",
-                  "type": "Identifier",
-                },
-                Object {
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 17,
-                      "line": 2,
-                    },
-                    "start": Position {
-                      "column": 16,
-                      "line": 2,
-                    },
-                  },
-                  "name": "m",
-                  "type": "Identifier",
-                },
-              ],
-              "type": "FunctionExpression",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 18,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 5,
-              },
-            },
-            "optional": false,
-            "type": "CallExpression",
-          },
-          "type": "ExpressionStatement",
-        },
-      ],
-      "sourceType": "module",
-      "type": "Program",
-    },
-    Array [
-      Array [
-        "body[0]",
-        "expression",
-        "arguments[0]",
-      ],
-    ],
-    "Binary expression 11 - 40 evaluated",
-  ],
-  Array [
-    Object {
-      "body": Array [
-        Object {
-          "expression": Object {
-            "arguments": Array [
-              Node {
-                "argument": Node {
-                  "end": 3,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 3,
-                      "line": 1,
-                    },
-                    "start": Position {
-                      "column": 1,
-                      "line": 1,
-                    },
-                  },
-                  "raw": "29",
-                  "start": 1,
-                  "type": "Literal",
-                  "value": 29,
-                },
-                "end": 3,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 3,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 0,
-                    "line": 1,
-                  },
-                },
-                "operator": "-",
-                "prefix": true,
-                "start": 0,
-                "type": "UnaryExpression",
-              },
-              Object {
-                "left": Node {
-                  "end": 59,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 15,
-                      "line": 5,
-                    },
-                    "start": Position {
-                      "column": 14,
-                      "line": 5,
-                    },
-                  },
-                  "raw": "2",
-                  "start": 58,
-                  "type": "Literal",
-                  "value": 2,
-                },
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 17,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 14,
-                    "line": 5,
-                  },
-                },
-                "operator": "-",
-                "right": Node {
-                  "end": 61,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 17,
-                      "line": 5,
-                    },
-                    "start": Position {
-                      "column": 16,
-                      "line": 5,
-                    },
-                  },
-                  "raw": "5",
-                  "start": 60,
-                  "type": "Literal",
-                  "value": 5,
-                },
-                "type": "BinaryExpression",
-              },
-            ],
-            "callee": Object {
-              "body": Object {
-                "body": Array [
-                  Object {
-                    "argument": Object {
-                      "left": Node {
-                        "end": 34,
-                        "loc": SourceLocation {
-                          "end": Position {
-                            "column": 12,
-                            "line": 3,
-                          },
-                          "start": Position {
-                            "column": 11,
-                            "line": 3,
-                          },
-                        },
-                        "name": "n",
-                        "start": 33,
-                        "type": "Identifier",
-                      },
-                      "loc": SourceLocation {
-                        "end": Position {
-                          "column": 16,
-                          "line": 3,
-                        },
-                        "start": Position {
-                          "column": 11,
-                          "line": 3,
-                        },
-                      },
-                      "operator": "*",
-                      "right": Node {
-                        "end": 38,
-                        "loc": SourceLocation {
-                          "end": Position {
-                            "column": 16,
-                            "line": 3,
-                          },
-                          "start": Position {
-                            "column": 15,
-                            "line": 3,
-                          },
-                        },
-                        "name": "m",
-                        "start": 37,
-                        "type": "Identifier",
-                      },
-                      "type": "BinaryExpression",
-                    },
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 17,
-                        "line": 3,
-                      },
-                      "start": Position {
-                        "column": 4,
-                        "line": 3,
-                      },
-                    },
-                    "type": "ReturnStatement",
-                  },
-                ],
-                "type": "BlockStatement",
-              },
-              "id": Object {
-                "loc": undefined,
-=======
->>>>>>> 8e606e3 (Fix destructive renaming of variables when substituting within blocks)
                 "name": "f",
                 "type": "Identifier",
               },
@@ -44760,6 +44537,7 @@ Array [
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 exports[`renaming clash in replacement for function declaration 1`] = `
 "function g() {
   return x_1 + x_2;
@@ -44777,6 +44555,11 @@ exports[`scoping test for block expressions 1`] = `
   const y (const) = x;
   return g();
 >>>>>>> 1300ecb (fixed merge conflicts)
+=======
+exports[`renaming clash in replacement for function declaration 1`] = `
+"function g() {
+  return x_1 + x_2;
+>>>>>>> 812bdc9 (Fixed renaming to non-fresh names as well as added test cases)
 }
 function f(x_1) {
   function h(x_2) {
@@ -44964,6 +44747,7 @@ h(1);
 
 h(1);
 
+<<<<<<< HEAD
 {
   const y (const) = 0;
   return g();
@@ -44982,6 +44766,8 @@ h(1);
   return g();
 };
 
+=======
+>>>>>>> 812bdc9 (Fixed renaming to non-fresh names as well as added test cases)
 g();
 
 g();
@@ -45055,8 +44841,11 @@ const x_2 = 0;
 "
 `;
 
+<<<<<<< HEAD
 =======
 >>>>>>> b1da17a (added test cases for return statement in nested blocks, renaming clash for lambda functions and renaming clash test for normal functions. Fixed function declaration substituter to resolve name clashes and destructive renaming.)
+=======
+>>>>>>> 812bdc9 (Fixed renaming to non-fresh names as well as added test cases)
 exports[`renaming clash test for functions 1`] = `
 "function f(w_8) {
   function h(w_9) {
@@ -45069,6 +44858,7 @@ function g() {
 }
 const w_9 = 0;
 f(1)(2);
+<<<<<<< HEAD
 
 function f(w_8) {
   function h(w_9) {
@@ -45464,6 +45254,8 @@ exports[`scoping test for lambda expressions 1`] = `
 const g = () => x;
 const x = 1;
 f(0);
+=======
+>>>>>>> 812bdc9 (Fixed renaming to non-fresh names as well as added test cases)
 
 const f = x (param) => g();
 const g = () => x;
