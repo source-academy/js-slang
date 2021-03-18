@@ -44296,6 +44296,7 @@ Array [
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 exports[`renaming clash in replacement for function declaration 1`] = `
 "function g() {
   return x_1 + x_2;
@@ -44303,6 +44304,8 @@ exports[`renaming clash in replacement for function declaration 1`] = `
 <<<<<<< HEAD
 =======
 >>>>>>> a434b9a (fixed merge conflicts)
+=======
+>>>>>>> 78477f8 (fixed merge conflicts)
 exports[`scoping test for block expressions 1`] = `
 "function f(x) {
   const y (const) = x;
@@ -44657,11 +44660,59 @@ f(1)(2);
 
 h(2);
 
+<<<<<<< HEAD
 h(2);
 
 1 + 2 + g();
 
 1 + 2 + g();
+=======
+{
+  return f(1);
+};
+=======
+exports[`scoping test for function expressions 1`] = `
+"function f(x (param)) {
+  return g();
+}
+function g() {
+  return x;
+}
+const x = 1;
+f(0);
+
+function f(x (param)) {
+  return g();
+}
+function g() {
+  return x;
+}
+const x = 1;
+f(0);
+
+function g() {
+  return x;
+}
+const x = 1;
+f(0);
+
+function g() {
+  return x;
+}
+const x = 1;
+f(0);
+
+const x = 1;
+f(0);
+
+const x = 1;
+f(0);
+>>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
+
+f(0);
+
+f(0);
+>>>>>>> 78477f8 (fixed merge conflicts)
 
 3 + g();
 
@@ -44880,40 +44931,92 @@ const x = 1;
 1;
 
 1;
+<<<<<<< HEAD
 =======
 0;
+=======
 
-0;
+1;
 "
 `;
 
-exports[`scoping test 2 (blocks) 1`] = `
-"function f(w) {
-  const z (const) = w;
+exports[`scoping test for lambda expressions 1`] = `
+"const f = x (param) => g();
+const g = () => x;
+const x = 1;
+f(0);
+
+const f = x (param) => g();
+const g = () => x;
+const x = 1;
+f(0);
+
+const g = () => x;
+const x = 1;
+(x (param) => g())(0);
+
+const g = () => x;
+const x = 1;
+(x (param) => g())(0);
+
+const x = 1;
+(x (param) => (() => x)())(0);
+
+const x = 1;
+(x (param) => (() => x)())(0);
+
+(x (param) => (() => 1)())(0);
+
+(x (param) => (() => 1)())(0);
+>>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
+
+(() => 1)();
+
+(() => 1)();
+
+1;
+
+1;
+"
+`;
+
+exports[`scoping test for block expressions 1`] = `
+"function f(x) {
+  const y (const) = x;
   return g();
 }
 function g() {
-  return z;
+  return y;
 }
+const y = 1;
 f(0);
 
-function f(w) {
-  const z (const) = w;
+function f(x) {
+  const y (const) = x;
   return g();
 }
 function g() {
-  return z;
+  return y;
 }
+const y = 1;
 f(0);
 
 function g() {
-  return z;
+  return y;
 }
+const y = 1;
 f(0);
 
 function g() {
-  return z;
+  return y;
 }
+const y = 1;
+f(0);
+
+const y = 1;
+f(0);
+
+const y = 1;
 f(0);
 
 f(0);
@@ -44921,12 +45024,12 @@ f(0);
 f(0);
 
 {
-  const z (const) = 0;
+  const y (const) = 0;
   return g();
 };
 
 {
-  const z (const) = 0;
+  const y (const) = 0;
   return g();
 };
 
@@ -44942,10 +45045,14 @@ g();
 
 g();
 
-z;
+1;
 
+<<<<<<< HEAD
 z;
 >>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
+=======
+1;
+>>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
 "
 `;
 
