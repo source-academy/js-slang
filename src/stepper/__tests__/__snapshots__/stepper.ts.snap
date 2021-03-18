@@ -44771,7 +44771,7 @@ f(0);
 f(0);
 =======
 exports[`scoping test (function parameter) 1`] = `
-"function f(w (param)) {
+"function f(w) {
   return g();
 }
 function g() {
@@ -44780,7 +44780,7 @@ function g() {
 const w = 0;
 f(1);
 
-function f(w (param)) {
+function f(w) {
   return g();
 }
 function g() {

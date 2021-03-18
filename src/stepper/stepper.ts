@@ -40,23 +40,22 @@ type irreducibleNodes =
   | es.Literal
   | es.ArrayExpression
 
-  function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Identifier[] {
-    const declaredIds: es.Identifier[] = []
-    for (const stmt of node.body) {
-      // if stmt is assignment or functionDeclaration
-      // add stmt into a set of identifiers
-      // return that set
-      if (stmt.type === 'VariableDeclaration') {
-        stmt.declarations
-          .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
-          .forEach(name => declaredIds.push(name))
-      } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
-        declaredIds.push(stmt.id)
-      }
+function scanOutDeclarations(node: es.BlockStatement | BlockExpression): es.Identifier[] {
+  const declaredIds: es.Identifier[] = []
+  for (const stmt of node.body) {
+    // if stmt is assignment or functionDeclaration
+    // add stmt into a set of identifiers
+    // return that set
+    if (stmt.type === 'VariableDeclaration') {
+      stmt.declarations
+        .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
+        .forEach(name => declaredIds.push(name))
+    // } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
+    //   declaredIds.push(stmt.id)
     }
-    return declaredIds
   }
-
+  return declaredIds
+}
 
 function findMain(
   target:
@@ -67,7 +66,7 @@ function findMain(
     | es.FunctionDeclaration
 ): string[] {
   const params: string[] = []
-  if (target.type == "FunctionExpression") {
+  if (target.type == 'FunctionExpression') {
     params.push(target.id!.name)
   }
   for (let i = 0; i < target.params.length; i++) {
@@ -480,7 +479,7 @@ function substituteMain(
                 []
               ])[0] as es.BlockStatement
               param.name = param.name + ' (param)'
-            } 
+            }
           }
         }
       }
@@ -591,7 +590,7 @@ function substituteMain(
               target.body = substituteMain(param, changed, target.body, [
                 []
               ])[0] as es.BlockStatement
-              param.name = param.name + ' (param)'
+              (substedFunctionExpression.params[i]as es.Identifier).name = param.name + ' (param)'
             }
           }
         }
@@ -635,19 +634,36 @@ function substituteMain(
       const substedBlockStatement = ast.blockStatement(substedBody)
       seenBefore.set(target, substedBlockStatement)
       const declaredNames: Set<string> = getDeclaredNames(target)
+<<<<<<< HEAD
       const re = / same/
       // checks if the replacement is a functionExpression or arrowFunctionExpression and not from within the same block
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
+>>>>>>> a500d5e (fixed merge conflicts)
       if (
         (replacement.type == 'FunctionExpression' ||
           replacement.type == 'ArrowFunctionExpression') &&
         !re.test(name.name)
       ) {
+<<<<<<< HEAD
       if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
+=======
+<<<<<<< HEAD
+=======
+      if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
+>>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
+=======
+>>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
+>>>>>>> a500d5e (fixed merge conflicts)
         const declaredIds: es.Identifier[] = scanOutDeclarations(target)
         const freeNames = findMain(replacement)
         for (const freeName of freeNames) {
           for (const declaredId of declaredIds) {
             if (declaredId.name == freeName) {
+<<<<<<< HEAD
               const re = /_\d+$/
               let newNum
               if (re.test(declaredId.name)) {
@@ -688,6 +704,23 @@ function substituteMain(
               const changed = ast.identifier(declaredId.name + " (const)", declaredId.loc)
               target = substituteMain(declaredId, changed, target, [[]])[0] as es.BlockStatement
               declaredId.name = declaredId.name + " (const)"
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+              const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
+              target = substituteMain(declaredId, changed, target, [[]])[0] as es.BlockStatement
+              declaredId.name = declaredId.name + ' (const)'
+=======
+              const changed = ast.identifier(declaredId.name + " (const)", declaredId.loc)
+              target = substituteMain(declaredId, changed, target, [[]])[0] as es.BlockStatement
+              declaredId.name = declaredId.name + " (const)"
+>>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
+=======
+              const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
+              target = substituteMain(declaredId, changed, target, [[]])[0] as es.BlockStatement
+              declaredId.name = declaredId.name + ' (const)'
+>>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
+>>>>>>> a500d5e (fixed merge conflicts)
             }
           }
         }
@@ -729,19 +762,36 @@ function substituteMain(
       const substedBlockExpression = ast.blockExpression(substedBody)
       seenBefore.set(target, substedBlockExpression)
       const declaredNames: Set<string> = getDeclaredNames(target)
+<<<<<<< HEAD
       const re = / same/
       // checks if the replacement is a functionExpression or arrowFunctionExpression and not from within the same block
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
+>>>>>>> a500d5e (fixed merge conflicts)
       if (
         (replacement.type == 'FunctionExpression' ||
           replacement.type == 'ArrowFunctionExpression') &&
         !re.test(name.name)
       ) {
+<<<<<<< HEAD
         const freeVars = findMain(target)
+=======
+<<<<<<< HEAD
+=======
+      if (replacement.type == "FunctionExpression" || replacement.type == "ArrowFunctionExpression") {
+>>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
+=======
+>>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
+>>>>>>> a500d5e (fixed merge conflicts)
         const declaredIds: es.Identifier[] = scanOutDeclarations(target)
         const freeNames = findMain(replacement)
         for (const freeName of freeNames) {
           for (const declaredId of declaredIds) {
             if (declaredId.name == freeName) {
+<<<<<<< HEAD
               const re = /_\d+$/
               let newNum
               if (re.test(declaredId.name)) {
@@ -777,6 +827,23 @@ function substituteMain(
               const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
               target = substituteMain(declaredId, changed, target, [[]])[0] as BlockExpression
               declaredId.name = declaredId.name + ' (const)'
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+              const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
+              target = substituteMain(declaredId, changed, target, [[]])[0] as BlockExpression
+              declaredId.name = declaredId.name + ' (const)'
+=======
+              const changed = ast.identifier(declaredId.name + " (const)", declaredId.loc)
+              target = substituteMain(declaredId, changed, target, [[]])[0] as BlockExpression
+              declaredId.name = declaredId.name + " (const)"
+>>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
+=======
+              const changed = ast.identifier(declaredId.name + ' (const)', declaredId.loc)
+              target = substituteMain(declaredId, changed, target, [[]])[0] as BlockExpression
+              declaredId.name = declaredId.name + ' (const)'
+>>>>>>> ef6c893 (updated FunctionExpression anad ArrowFunctionExpression substituters such that substitution only occurs during substitution. Have not updated for Blockstatements yet)
+>>>>>>> a500d5e (fixed merge conflicts)
             }
           }
         }
@@ -914,10 +981,10 @@ function substituteMain(
                 ;(substedArrow.params[i] as es.Identifier).name = param.name + '_' + newNum
               }
               const changed = ast.identifier(param.name + ' (param)', param.loc)
-              target.body = substituteMain(param, changed, target.body, [
+              newBody = substituteMain(param, changed, newBody, [
                 []
               ])[0] as es.BlockStatement
-              param.name = param.name + ' (param)'
+              (substedArrow.params[i]as es.Identifier).name = param.name + ' (param)'
             }
           }
         }
