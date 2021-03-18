@@ -44484,6 +44484,24 @@ h(1);
 
 h(1);
 
+{
+  const y (const) = 0;
+  return g();
+};
+
+{
+  const y (const) = 0;
+  return g();
+};
+
+{
+  return g();
+};
+
+{
+  return g();
+};
+
 g();
 
 g();
@@ -44750,9 +44768,9 @@ exports[`scoping test for block expressions 1`] = `
   return g();
 }
 function g() {
-  return y;
+  return x;
 }
-const y = 1;
+const x = 1;
 f(0);
 
 function f(x) {
@@ -44760,27 +44778,27 @@ function f(x) {
   return g();
 }
 function g() {
-  return y;
+  return x;
 }
-const y = 1;
+const x = 1;
 f(0);
 
 function g() {
-  return y;
+  return x;
 }
-const y = 1;
+const x = 1;
 f(0);
 
 function g() {
-  return y;
+  return x;
 }
-const y = 1;
+const x = 1;
 f(0);
 
-const y = 1;
+const x = 1;
 f(0);
 
-const y = 1;
+const x = 1;
 f(0);
 
 f(0);
@@ -44797,17 +44815,44 @@ f(0);
   return g();
 };
 
-{
-  return g();
-};
+1;
 
-{
-  return g();
-};
+1;
+"
+`;
 
-g();
+exports[`scoping test for lambda expressions 1`] = `
+"const f = x (param) => g();
+const g = () => x;
+const x = 1;
+f(0);
 
-g();
+const f = x (param) => g();
+const g = () => x;
+const x = 1;
+f(0);
+
+const g = () => x;
+const x = 1;
+(x (param) => g())(0);
+
+const g = () => x;
+const x = 1;
+(x (param) => g())(0);
+
+const x = 1;
+(x (param) => (() => x)())(0);
+
+const x = 1;
+(x (param) => (() => x)())(0);
+
+(x (param) => (() => 1)())(0);
+
+(x (param) => (() => 1)())(0);
+
+(() => 1)();
+
+(() => 1)();
 
 1;
 
