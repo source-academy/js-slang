@@ -44297,6 +44297,7 @@ Array [
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 exports[`renaming clash in replacement for function declaration 1`] = `
 "function g() {
   return x_1 + x_2;
@@ -44306,6 +44307,8 @@ exports[`renaming clash in replacement for function declaration 1`] = `
 >>>>>>> a434b9a (fixed merge conflicts)
 =======
 >>>>>>> 78477f8 (fixed merge conflicts)
+=======
+>>>>>>> 01e3f83 (fixed merge conflicts)
 exports[`scoping test for block expressions 1`] = `
 "function f(x) {
   const y (const) = x;
@@ -44817,6 +44820,7 @@ f(0);
 {
   return 1;
 };
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 =======
@@ -44862,13 +44866,12 @@ function g() {
 }
 const x = 1;
 f(0);
+=======
+>>>>>>> 01e3f83 (fixed merge conflicts)
 
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
+f(1);
 
+<<<<<<< HEAD
 const x = 1;
 f(0);
 
@@ -45018,6 +45021,9 @@ f(0);
 
 const y = 1;
 f(0);
+=======
+f(1);
+>>>>>>> 01e3f83 (fixed merge conflicts)
 
 f(0);
 

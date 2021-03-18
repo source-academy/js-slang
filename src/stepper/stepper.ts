@@ -66,13 +66,15 @@ function findMain(
     | es.FunctionDeclaration
 ): string[] {
   const params: string[] = []
-  if (target.type == 'FunctionExpression') {
-    params.push(target.id!.name)
+  if (target.type == "FunctionExpression" || target.type == "ArrowFunctionExpression") {
+    if (target.type == 'FunctionExpression') {
+      params.push(target.id!.name)
+    }
+    for (let i = 0; i < target.params.length; i++) {
+      params.push((target.params[i] as es.Identifier).name)
+    }
   }
-  for (let i = 0; i < target.params.length; i++) {
-    params.push((target.params[i] as es.Identifier).name)
-  }
-
+  
   const freeNames: any[] = []
   const seenBefore: Map<substituterNodes, substituterNodes> = new Map()
 
@@ -759,10 +761,11 @@ function substituteMain(
                 }
                 const changed = ast.identifier(num[0] + '_' + newNum, declaredId.loc)
                 target = substituteMain(declaredId, changed, target, [[]])[0] as BlockExpression
+                declaredId.name = num[0] + '_' + newNum
               } else {
                 newNum = 1
                 for (const f of freeVars) {
-                  if (declaredId.name + '_' + newNum === f) {
+                  if (declaredId.name + "_" + newNum === f) {
                     newNum++
                   }
                 }
@@ -1881,7 +1884,7 @@ function reduceMain(
         const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
         // substitution within the same block, add " same" so that substituter can differentiate between
         // substitution within the block and substitution from outside the block
-        const newId = ast.identifier(funDecExp.id.name + ' same', funDecExp.id.loc)
+        const newId = ast.identifier(funDecExp.id.name + " same", funDecExp.id.loc)
         const subst = substituteMain(newId, funDecExp, remainingBlockExpression, paths)
         // concats paths such that:
         // paths[0] -> path to the program to be substituted, pre-redex
@@ -1917,7 +1920,7 @@ function reduceMain(
             // forced casting for some weird errors
             // substitution within the same block, add " same" so that substituter can differentiate between
             // substitution within the block and substitution from outside the block
-            const newId = ast.identifier(declarator.id.name + ' same', declarator.id.loc)
+            const newId = ast.identifier(declarator.id.name + " same", declarator.id.loc)
             const subst = substituteMain(
               newId,
               rhs as es.ArrayExpression,
@@ -1950,7 +1953,7 @@ function reduceMain(
             const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
             // substitution within the same block, add " same" so that substituter can differentiate between
             // substitution within the block and substitution from outside the block
-            const newId = ast.identifier(funDecExp.id.name + ' same', funDecExp.id.loc)
+            const newId = ast.identifier(funDecExp.id.name + " same", funDecExp.id.loc)
             const subst = substituteMain(newId, funDecExp, remainingBlockExpression, paths)
             // concats paths such that:
             // paths[0] -> path to the program to be substituted, pre-redex
