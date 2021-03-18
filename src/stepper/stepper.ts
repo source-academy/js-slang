@@ -408,8 +408,9 @@ function substituteMain(
         const param = target.params[i] as es.Identifier
         substedParams.push(ast.identifier(param.name, param.loc))
       }
+      const subbed = ast.identifier((target.id as es.Identifier).name)
       const substedFunctionDeclaration = ast.functionDeclaration(
-        target.id,
+        subbed,
         substedParams,
         dummyBlockStatement()
       )

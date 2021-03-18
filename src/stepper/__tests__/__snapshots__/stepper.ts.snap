@@ -24270,6 +24270,7 @@ Array [
               },
               "id": Object {
                 "loc": undefined,
+<<<<<<< HEAD
                 "name": "f",
                 "type": "Identifier",
               },
@@ -24330,6 +24331,228 @@ Array [
         "body[0]",
         "expression",
         "arguments[0]",
+      ],
+    ],
+    "Binary expression 11 - 40 evaluated",
+  ],
+  Array [
+    Object {
+      "body": Array [
+        Object {
+          "expression": Object {
+            "arguments": Array [
+              Node {
+                "argument": Node {
+                  "end": 3,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 3,
+                      "line": 1,
+                    },
+                    "start": Position {
+                      "column": 1,
+                      "line": 1,
+                    },
+                  },
+                  "raw": "29",
+                  "start": 1,
+                  "type": "Literal",
+                  "value": 29,
+                },
+                "end": 3,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 3,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 0,
+                    "line": 1,
+                  },
+                },
+                "operator": "-",
+                "prefix": true,
+                "start": 0,
+                "type": "UnaryExpression",
+              },
+              Object {
+                "left": Node {
+                  "end": 59,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 15,
+                      "line": 5,
+                    },
+                    "start": Position {
+                      "column": 14,
+                      "line": 5,
+                    },
+                  },
+                  "raw": "2",
+                  "start": 58,
+                  "type": "Literal",
+                  "value": 2,
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 17,
+                    "line": 5,
+                  },
+                  "start": Position {
+                    "column": 14,
+                    "line": 5,
+                  },
+                },
+                "operator": "-",
+                "right": Node {
+                  "end": 61,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 17,
+                      "line": 5,
+                    },
+                    "start": Position {
+                      "column": 16,
+                      "line": 5,
+                    },
+                  },
+                  "raw": "5",
+                  "start": 60,
+                  "type": "Literal",
+                  "value": 5,
+                },
+                "type": "BinaryExpression",
+              },
+            ],
+            "callee": Object {
+              "body": Object {
+                "body": Array [
+                  Object {
+                    "argument": Object {
+                      "left": Node {
+                        "end": 34,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 12,
+                            "line": 3,
+                          },
+                          "start": Position {
+                            "column": 11,
+                            "line": 3,
+                          },
+                        },
+                        "name": "n",
+                        "start": 33,
+                        "type": "Identifier",
+                      },
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 16,
+                          "line": 3,
+                        },
+                        "start": Position {
+                          "column": 11,
+                          "line": 3,
+                        },
+                      },
+                      "operator": "*",
+                      "right": Node {
+                        "end": 38,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 16,
+                            "line": 3,
+                          },
+                          "start": Position {
+                            "column": 15,
+                            "line": 3,
+                          },
+                        },
+                        "name": "m",
+                        "start": 37,
+                        "type": "Identifier",
+                      },
+                      "type": "BinaryExpression",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 17,
+                        "line": 3,
+                      },
+                      "start": Position {
+                        "column": 4,
+                        "line": 3,
+                      },
+                    },
+                    "type": "ReturnStatement",
+                  },
+                ],
+                "type": "BlockStatement",
+              },
+              "id": Object {
+                "loc": undefined,
+=======
+>>>>>>> 8e606e3 (Fix destructive renaming of variables when substituting within blocks)
+                "name": "f",
+                "type": "Identifier",
+              },
+              "loc": undefined,
+              "params": Array [
+                Object {
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 14,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 13,
+                      "line": 2,
+                    },
+                  },
+                  "name": "n",
+                  "type": "Identifier",
+                },
+                Object {
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 17,
+                      "line": 2,
+                    },
+                    "start": Position {
+                      "column": 16,
+                      "line": 2,
+                    },
+                  },
+                  "name": "m",
+                  "type": "Identifier",
+                },
+              ],
+              "type": "FunctionExpression",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 18,
+                "line": 5,
+              },
+              "start": Position {
+                "column": 2,
+                "line": 5,
+              },
+            },
+            "optional": false,
+            "type": "CallExpression",
+          },
+          "type": "ExpressionStatement",
+        },
+      ],
+      "sourceType": "module",
+      "type": "Program",
+    },
+    Array [
+      Array [
+        "body[0]",
+        "expression",
+        "arguments[1]",
       ],
     ],
     "Binary expression 11 - 40 evaluated",
@@ -35035,7 +35258,6 @@ Array [
               "id": Object {
                 "loc": undefined,
                 "name": "even",
-                "start": 57,
                 "type": "Identifier",
               },
               "init": Object {
@@ -35268,20 +35490,9 @@ Array [
         Object {
           "declarations": Array [
             Object {
-              "id": Node {
-                "end": 61,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 12,
-                    "line": 3,
-                  },
-                  "start": Position {
-                    "column": 8,
-                    "line": 3,
-                  },
-                },
+              "id": Object {
+                "loc": undefined,
                 "name": "even",
-                "start": 57,
                 "type": "Identifier",
               },
               "init": Object {
@@ -45107,11 +45318,15 @@ exports[`scoping test for function expressions 1`] = `
 >>>>>>> b1da17a (added test cases for return statement in nested blocks, renaming clash for lambda functions and renaming clash test for normal functions. Fixed function declaration substituter to resolve name clashes and destructive renaming.)
 exports[`scoping test for block expressions 1`] = `
 "function f(x) {
+<<<<<<< HEAD
   const y_1 = x;
 >>>>>>> 130a503 (changed renaming scheme and fixed such that renaming of parameters only occurs at substitution step. and fixed block scoping issues)
 =======
   const y_1 = x;
 >>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
+=======
+  const y = x;
+>>>>>>> 8e606e3 (Fix destructive renaming of variables when substituting within blocks)
   return g();
 }
 function g() {
@@ -45129,8 +45344,12 @@ function f(x (param)) {
 >>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
 =======
 function f(x) {
+<<<<<<< HEAD
   const y_1 = x;
 >>>>>>> 130a503 (changed renaming scheme and fixed such that renaming of parameters only occurs at substitution step. and fixed block scoping issues)
+=======
+  const y = x;
+>>>>>>> 8e606e3 (Fix destructive renaming of variables when substituting within blocks)
   return g();
 }
 function g() {
@@ -45580,7 +45799,7 @@ exports[`scoping test for block expressions, with renaming 1`] = `
   return g();
 }
 function h(f) {
-  function g_1() {
+  function g() {
     return w;
   }
   const w = 0;
@@ -45592,7 +45811,7 @@ function f(w) {
   return g();
 }
 function h(f) {
-  function g_1() {
+  function g() {
     return w;
   }
   const w = 0;
@@ -45601,7 +45820,7 @@ function h(f) {
 h(f);
 
 function h(f) {
-  function g_1() {
+  function g() {
     return w;
   }
   const w = 0;
@@ -45610,7 +45829,7 @@ function h(f) {
 h(f);
 
 function h(f) {
-  function g_1() {
+  function g() {
     return w;
   }
   const w = 0;
@@ -49814,6 +50033,8 @@ Array [
                         },
                         "id": Object {
                           "loc": undefined,
+<<<<<<< HEAD
+=======
                           "name": "f",
                           "type": "Identifier",
                         },
@@ -49912,6 +50133,7 @@ Array [
                         },
                         "id": Object {
                           "loc": undefined,
+>>>>>>> 8e606e3 (Fix destructive renaming of variables when substituting within blocks)
                           "name": "f",
                           "type": "Identifier",
                         },
@@ -49949,6 +50171,107 @@ Array [
               },
               "id": Object {
                 "loc": undefined,
+<<<<<<< HEAD
+                "name": "g",
+                "type": "Identifier",
+              },
+              "loc": undefined,
+              "params": Array [],
+              "type": "FunctionExpression",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 11,
+                "line": 4,
+              },
+              "start": Position {
+                "column": 4,
+                "line": 4,
+              },
+            },
+            "operator": "===",
+            "right": Object {
+              "body": Object {
+                "body": Array [
+                  Object {
+                    "argument": Object {
+                      "arguments": Array [],
+                      "callee": Object {
+                        "body": Object {
+                          "body": Array [
+                            Object {
+                              "argument": Object {
+                                "arguments": Array [],
+                                "callee": [Circular],
+                                "loc": SourceLocation {
+                                  "end": Position {
+                                    "column": 29,
+                                    "line": 2,
+                                  },
+                                  "start": Position {
+                                    "column": 26,
+                                    "line": 2,
+                                  },
+                                },
+                                "optional": false,
+                                "type": "CallExpression",
+                              },
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 30,
+                                  "line": 2,
+                                },
+                                "start": Position {
+                                  "column": 19,
+                                  "line": 2,
+                                },
+                              },
+                              "type": "ReturnStatement",
+                            },
+                          ],
+                          "type": "BlockStatement",
+                        },
+                        "id": Object {
+                          "loc": undefined,
+                          "name": "f",
+                          "type": "Identifier",
+                        },
+                        "loc": undefined,
+                        "params": Array [],
+                        "type": "FunctionExpression",
+                      },
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 58,
+                          "line": 2,
+                        },
+                        "start": Position {
+                          "column": 55,
+                          "line": 2,
+                        },
+                      },
+                      "optional": false,
+                      "type": "CallExpression",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 59,
+                        "line": 2,
+                      },
+                      "start": Position {
+                        "column": 48,
+                        "line": 2,
+                      },
+                    },
+                    "type": "ReturnStatement",
+                  },
+                ],
+                "type": "BlockStatement",
+              },
+              "id": Object {
+                "loc": undefined,
+=======
+>>>>>>> 8e606e3 (Fix destructive renaming of variables when substituting within blocks)
                 "name": "g",
                 "type": "Identifier",
               },
