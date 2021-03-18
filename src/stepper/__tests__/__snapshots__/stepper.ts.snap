@@ -24329,7 +24329,7 @@ Array [
       Array [
         "body[0]",
         "expression",
-        "arguments[1]",
+        "arguments[0]",
       ],
     ],
     "Binary expression 11 - 40 evaluated",
@@ -35138,241 +35138,6 @@ Array [
                         "type": "BinaryExpression",
                       },
                     ],
-                    "callee": Node {
-                      "end": 83,
-                      "loc": SourceLocation {
-                        "end": Position {
-                          "column": 34,
-                          "line": 3,
-                        },
-                        "start": Position {
-                          "column": 31,
-                          "line": 3,
-                        },
-                      },
-                      "name": "odd",
-                      "start": 80,
-                      "type": "Identifier",
-                    },
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 39,
-                        "line": 3,
-                      },
-                      "start": Position {
-                        "column": 31,
-                        "line": 3,
-                      },
-                    },
-                    "optional": false,
-                    "type": "CallExpression",
-                  },
-                  "type": "LogicalExpression",
-                },
-                "expression": true,
-                "generator": false,
-                "loc": undefined,
-                "params": Array [
-                  Object {
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 16,
-                        "line": 3,
-                      },
-                      "start": Position {
-                        "column": 15,
-                        "line": 3,
-                      },
-                    },
-                    "name": "n",
-                    "type": "Identifier",
-                  },
-                ],
-                "type": "ArrowFunctionExpression",
-              },
-              "loc": undefined,
-              "type": "VariableDeclarator",
-            },
-          ],
-          "kind": "const",
-          "loc": undefined,
-          "type": "VariableDeclaration",
-        },
-        Object {
-          "expression": Object {
-            "arguments": Array [
-              Node {
-                "end": 98,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 8,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 7,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 97,
-                "type": "Literal",
-                "value": 1,
-              },
-            ],
-            "callee": Node {
-              "end": 96,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 4,
-                },
-              },
-              "name": "even",
-              "start": 92,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 4,
-              },
-            },
-            "optional": false,
-            "type": "CallExpression",
-          },
-          "type": "ExpressionStatement",
-        },
-      ],
-      "sourceType": "module",
-      "type": "Program",
-    },
-    Array [
-      Array [
-        "body[0]",
-      ],
-    ],
-    "Constant odd declared and substituted into rest of block",
-  ],
-  Array [
-    Object {
-      "body": Array [
-        Object {
-          "declarations": Array [
-            Object {
-              "id": Object {
-                "loc": undefined,
-                "name": "even",
-                "type": "Identifier",
-              },
-              "init": Object {
-                "body": Object {
-                  "left": Object {
-                    "left": Node {
-                      "end": 70,
-                      "loc": SourceLocation {
-                        "end": Position {
-                          "column": 21,
-                          "line": 3,
-                        },
-                        "start": Position {
-                          "column": 20,
-                          "line": 3,
-                        },
-                      },
-                      "name": "n",
-                      "start": 69,
-                      "type": "Identifier",
-                    },
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 27,
-                        "line": 3,
-                      },
-                      "start": Position {
-                        "column": 20,
-                        "line": 3,
-                      },
-                    },
-                    "operator": "===",
-                    "right": Node {
-                      "end": 76,
-                      "loc": SourceLocation {
-                        "end": Position {
-                          "column": 27,
-                          "line": 3,
-                        },
-                        "start": Position {
-                          "column": 26,
-                          "line": 3,
-                        },
-                      },
-                      "raw": "0",
-                      "start": 75,
-                      "type": "Literal",
-                      "value": 0,
-                    },
-                    "type": "BinaryExpression",
-                  },
-                  "loc": undefined,
-                  "operator": "||",
-                  "right": Object {
-                    "arguments": Array [
-                      Object {
-                        "left": Node {
-                          "end": 85,
-                          "loc": SourceLocation {
-                            "end": Position {
-                              "column": 36,
-                              "line": 3,
-                            },
-                            "start": Position {
-                              "column": 35,
-                              "line": 3,
-                            },
-                          },
-                          "name": "n",
-                          "start": 84,
-                          "type": "Identifier",
-                        },
-                        "loc": SourceLocation {
-                          "end": Position {
-                            "column": 38,
-                            "line": 3,
-                          },
-                          "start": Position {
-                            "column": 35,
-                            "line": 3,
-                          },
-                        },
-                        "operator": "-",
-                        "right": Node {
-                          "end": 87,
-                          "loc": SourceLocation {
-                            "end": Position {
-                              "column": 38,
-                              "line": 3,
-                            },
-                            "start": Position {
-                              "column": 37,
-                              "line": 3,
-                            },
-                          },
-                          "raw": "1",
-                          "start": 86,
-                          "type": "Literal",
-                          "value": 1,
-                        },
-                        "type": "BinaryExpression",
-                      },
-                    ],
                     "callee": Object {
                       "body": Object {
                         "alternate": Object {
@@ -44529,37 +44294,9 @@ Array [
 ]
 `;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 exports[`renaming clash in replacement for function declaration 1`] = `
 "function g() {
   return x_1 + x_2;
-=======
-<<<<<<< HEAD
-=======
->>>>>>> a434b9a (fixed merge conflicts)
-=======
->>>>>>> 78477f8 (fixed merge conflicts)
-=======
->>>>>>> 01e3f83 (fixed merge conflicts)
-exports[`scoping test for block expressions 1`] = `
-"function f(x) {
-<<<<<<< HEAD
-  const y (const) = x;
-  return g();
->>>>>>> 1300ecb (fixed merge conflicts)
-=======
-exports[`renaming clash in replacement for function declaration 1`] = `
-"function g() {
-  return x_1 + x_2;
->>>>>>> 812bdc9 (Fixed renaming to non-fresh names as well as added test cases)
 }
 function f(x_1) {
   function h(x_2) {
@@ -44747,27 +44484,6 @@ h(1);
 
 h(1);
 
-<<<<<<< HEAD
-{
-  const y (const) = 0;
-  return g();
-};
-
-{
-  const y (const) = 0;
-  return g();
-};
-
-{
-  return g();
-};
-
-{
-  return g();
-};
-
-=======
->>>>>>> 812bdc9 (Fixed renaming to non-fresh names as well as added test cases)
 g();
 
 g();
@@ -44841,11 +44557,6 @@ const x_2 = 0;
 "
 `;
 
-<<<<<<< HEAD
-=======
->>>>>>> b1da17a (added test cases for return statement in nested blocks, renaming clash for lambda functions and renaming clash test for normal functions. Fixed function declaration substituter to resolve name clashes and destructive renaming.)
-=======
->>>>>>> 812bdc9 (Fixed renaming to non-fresh names as well as added test cases)
 exports[`renaming clash test for functions 1`] = `
 "function f(w_8) {
   function h(w_9) {
@@ -44858,7 +44569,6 @@ function g() {
 }
 const w_9 = 0;
 f(1)(2);
-<<<<<<< HEAD
 
 function f(w_8) {
   function h(w_9) {
@@ -44918,65 +44628,11 @@ f(1)(2);
 
 h(2);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> b1da17a (added test cases for return statement in nested blocks, renaming clash for lambda functions and renaming clash test for normal functions. Fixed function declaration substituter to resolve name clashes and destructive renaming.)
 h(2);
 
 1 + 2 + g();
 
 1 + 2 + g();
-<<<<<<< HEAD
-=======
-{
-  return f(1);
-};
-=======
-exports[`scoping test for function expressions 1`] = `
-"function f(x (param)) {
-  return g();
-}
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
-
-function f(x (param)) {
-  return g();
-}
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
-
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
-
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
-
-const x = 1;
-f(0);
-
-const x = 1;
-f(0);
->>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
-
-f(0);
-
-f(0);
->>>>>>> 78477f8 (fixed merge conflicts)
-=======
->>>>>>> b1da17a (added test cases for return statement in nested blocks, renaming clash for lambda functions and renaming clash test for normal functions. Fixed function declaration substituter to resolve name clashes and destructive renaming.)
 
 3 + g();
 
@@ -45043,500 +44699,6 @@ const w_10 = 0;
 "
 `;
 
-exports[`return in nested blocks 1`] = `
-"function f(x) {
-  {
-    return 1;
-  }
-}
-f(0);
-
-function f(x) {
-  {
-    return 1;
-  }
-}
-f(0);
-
-f(0);
-
-f(0);
-
-{
-  {
-    return 1;
-  }
-};
-
-{
-  {
-    return 1;
-  }
-};
-
-{
-  return 1;
-};
-
-{
-  return 1;
-};
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-<<<<<<< HEAD
-=======
-f(0);
-
-f(0);
-=======
-exports[`scoping test (function parameter) 1`] = `
-"function f(w) {
-=======
-exports[`scoping test for function expressions 1`] = `
-"function f(x (param)) {
->>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
-=======
-=======
-
-1;
-
-1;
-"
-`;
-
->>>>>>> b1da17a (added test cases for return statement in nested blocks, renaming clash for lambda functions and renaming clash test for normal functions. Fixed function declaration substituter to resolve name clashes and destructive renaming.)
-exports[`scoping test for block expressions 1`] = `
-"function f(x) {
-<<<<<<< HEAD
-  const y_1 = x;
->>>>>>> 130a503 (changed renaming scheme and fixed such that renaming of parameters only occurs at substitution step. and fixed block scoping issues)
-=======
-  const y_1 = x;
->>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
-=======
-  const y = x;
->>>>>>> 8e606e3 (Fix destructive renaming of variables when substituting within blocks)
-  return g();
-}
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-function f(w) {
-=======
-function f(x (param)) {
->>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
-=======
-function f(x) {
-<<<<<<< HEAD
-  const y_1 = x;
->>>>>>> 130a503 (changed renaming scheme and fixed such that renaming of parameters only occurs at substitution step. and fixed block scoping issues)
-=======
-  const y = x;
->>>>>>> 8e606e3 (Fix destructive renaming of variables when substituting within blocks)
-  return g();
-}
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-const y = 1;
-f(0);
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-f(1);
->>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
-=======
-=======
-const y = 1;
->>>>>>> 130a503 (changed renaming scheme and fixed such that renaming of parameters only occurs at substitution step. and fixed block scoping issues)
-f(0);
->>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
-
-<<<<<<< HEAD
-g();
-
-g();
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 1300ecb (fixed merge conflicts)
-1;
-
-1;
-"
-`;
-
-exports[`scoping test for block expressions 1`] = `
-"function f(x) {
-  const y = x;
-  return g();
-}
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
-
-function f(x) {
-  const y = x;
-  return g();
-}
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
-
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
-=======
->>>>>>> 01e3f83 (fixed merge conflicts)
-
-f(1);
-
-<<<<<<< HEAD
-const x = 1;
-f(0);
-
-const x = 1;
-f(0);
-
-f(0);
-
-f(0);
-
-{
-  const y_1 = 0;
-  return g();
-};
-
-{
-  const y_1 = 0;
-  return g();
-};
-
-=======
->>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
-1;
-
-1;
-"
-`;
-
-exports[`scoping test for lambda expressions 1`] = `
-"const f = x (param) => g();
-const g = () => x;
-const x = 1;
-f(0);
-=======
->>>>>>> 812bdc9 (Fixed renaming to non-fresh names as well as added test cases)
-
-const f = x (param) => g();
-const g = () => x;
-const x = 1;
-f(0);
-
-const g = () => x;
-const x = 1;
-(x (param) => g())(0);
-
-const g = () => x;
-const x = 1;
-(x (param) => g())(0);
-
-const x = 1;
-(x (param) => (() => x)())(0);
-
-const x = 1;
-(x (param) => (() => x)())(0);
-
-(x (param) => (() => 1)())(0);
-
-(x (param) => (() => 1)())(0);
-<<<<<<< HEAD
-
-(() => 1)();
-
-(() => 1)();
-
-1;
-
-1;
-<<<<<<< HEAD
-=======
-0;
-=======
-
-1;
-"
-`;
-
-exports[`scoping test for lambda expressions 1`] = `
-"const f = x (param) => g();
-const g = () => x;
-const x = 1;
-=======
->>>>>>> 130a503 (changed renaming scheme and fixed such that renaming of parameters only occurs at substitution step. and fixed block scoping issues)
-f(0);
-
-f(0);
-
-{
-  const y_1 = 0;
-  return g();
-};
-
-{
-  const y_1 = 0;
-  return g();
-};
-
-{
-  return g();
-};
-
-<<<<<<< HEAD
-(x (param) => (() => 1)())(0);
->>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
-=======
-{
-  return g();
-};
->>>>>>> 130a503 (changed renaming scheme and fixed such that renaming of parameters only occurs at substitution step. and fixed block scoping issues)
-
-g();
-
-g();
-
-1;
-
-1;
-"
-`;
-
-exports[`scoping test for function expressions 1`] = `
-"function f(x) {
-  return g();
-}
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
-
-function f(x) {
-  return g();
-}
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
-
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
-
-function g() {
-  return x;
-}
-const x = 1;
-f(0);
-
-const x = 1;
-f(0);
-
-const x = 1;
-f(0);
-=======
-f(1);
->>>>>>> 01e3f83 (fixed merge conflicts)
-=======
-0;
-=======
->>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
-
-(() => 1)();
-
-(() => 1)();
-
-1;
-
-1;
-"
-`;
-
-exports[`scoping test for block expressions 1`] = `
-"function f(x) {
-  const y (const) = x;
-  return g();
-}
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-function f(x) {
-  const y (const) = x;
-=======
-function f(x) {
-  const y_1 = x;
->>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
-  return g();
-}
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-const y = 1;
-f(0);
-
-const y = 1;
-f(0);
->>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
-
-f(0);
-
-f(0);
-
-<<<<<<< HEAD
-{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  const y (const) = 0;
-=======
-  const z (const) = 0;
->>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
-=======
-  const y (const) = 0;
->>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
-=======
-  const y_1 = 0;
->>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
-  return g();
-};
-
-{
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  const y (const) = 0;
-=======
-  const z (const) = 0;
->>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
-=======
-  const y (const) = 0;
->>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
-=======
-  const y_1 = 0;
-  return g();
-};
-
-{
-  return g();
-};
-
-{
->>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
-  return g();
-};
-=======
-g();
-
-g();
->>>>>>> 130a503 (changed renaming scheme and fixed such that renaming of parameters only occurs at substitution step. and fixed block scoping issues)
-
-1;
-
-1;
-"
-`;
-
-<<<<<<< HEAD
-exports[`scoping test for lambda expressions 1`] = `
-"const f = x => g();
-const g = () => x;
-const x = 1;
-f(0);
-=======
-exports[`scoping test for block expressions, no renaming 1`] = `
-"function h(w) {
-  function f(w) {
-    return g();
-  }
-  function g() {
-    return w;
-  }
-  return f(0);
-}
-h(1);
-
-function h(w) {
-  function f(w) {
-    return g();
-  }
-  function g() {
-    return w;
-  }
-  return f(0);
-}
-h(1);
-
-h(1);
-
-h(1);
-
-<<<<<<< HEAD
-{
-  function f(w) {
-    return g();
-  }
-  function g() {
-=======
 exports[`renaming clash with declaration in replacement for function declaration 1`] = `
 "function g() {
   const x_2 = 2;
@@ -45921,47 +45083,108 @@ const x_1 = 0;
 exports[`return in nested blocks 1`] = `
 "function f(x) {
   {
->>>>>>> 42896b5 (fixed #898 renaming not occuring in blocks and abstracted away renaming into new function getFreshName)
     return 1;
   }
-  return f(0);
-};
+}
+f(0);
 
-{
-  function f(w) {
-    return g();
-  }
-  function g() {
+function f(x) {
+  {
     return 1;
   }
-  return f(0);
-};
-
-{
-  function g() {
-    return 1;
-  }
-  return f(0);
-};
-
-{
-  function g() {
-    return 1;
-  }
-  return f(0);
-};
-
-{
-  return f(0);
-};
-
-{
-  return f(0);
-};
+}
+f(0);
 
 f(0);
 
 f(0);
+
+{
+  {
+    return 1;
+  }
+};
+
+{
+  {
+    return 1;
+  }
+};
+
+{
+  return 1;
+};
+
+{
+  return 1;
+};
+
+1;
+
+1;
+"
+`;
+
+exports[`scoping test for block expressions 1`] = `
+"function f(x) {
+  const y = x;
+  return g();
+}
+function g() {
+  return y;
+}
+const y = 1;
+f(0);
+
+function f(x) {
+  const y = x;
+  return g();
+}
+function g() {
+  return y;
+}
+const y = 1;
+f(0);
+
+function g() {
+  return y;
+}
+const y = 1;
+f(0);
+
+function g() {
+  return y;
+}
+const y = 1;
+f(0);
+
+const y = 1;
+f(0);
+
+const y = 1;
+f(0);
+
+f(0);
+
+f(0);
+
+{
+  const y_1 = 0;
+  return g();
+};
+
+{
+  const y_1 = 0;
+  return g();
+};
+
+{
+  return g();
+};
+
+{
+  return g();
+};
 
 g();
 
@@ -45973,103 +45196,6 @@ g();
 "
 `;
 
-exports[`scoping test for block expressions, with renaming 1`] = `
-"function f(w) {
-  return g();
-}
-function h(f) {
-  function g() {
-    return w;
-  }
-  const w = 0;
-  return f(1);
-}
-h(f);
-
-function f(w) {
-  return g();
-}
-function h(f) {
-  function g() {
-    return w;
-  }
-  const w = 0;
-  return f(1);
-}
-h(f);
-
-function h(f) {
-  function g() {
-    return w;
-  }
-  const w = 0;
-  return f(1);
-}
-h(f);
-
-function h(f) {
-  function g() {
-    return w;
-  }
-  const w = 0;
-  return f(1);
-}
-h(f);
-
-h(f);
->>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
-
-const f = x => g();
-const g = () => x;
-const x = 1;
-f(0);
-
-const g = () => x;
-const x = 1;
-(x => g())(0);
-
-<<<<<<< HEAD
-const g = () => x;
-const x = 1;
-(x => g())(0);
-=======
-{
-  function g_1() {
-    return w;
-  }
-  const w = 0;
-  return f(1);
-};
->>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
-
-const x = 1;
-(x_1 => (() => x)())(0);
-
-const x = 1;
-(x_1 => (() => x)())(0);
-
-(x_1 => (() => 1)())(0);
-
-(x_1 => (() => 1)())(0);
-
-(() => 1)();
-
-(() => 1)();
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-1;
-
-<<<<<<< HEAD
-z;
->>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
-=======
-1;
->>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
-"
-`;
-
-<<<<<<< HEAD
 exports[`scoping test for block expressions, no renaming 1`] = `
 "function h(w) {
   function f(w) {
@@ -46244,80 +45370,6 @@ g();
 "
 `;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 448668a (fixed wrong test case: scoping test for block expressions, no renaming)
-=======
-exports[`scoping test for lambda expressions nested in blocks 1`] = `
-"{
-  const f = x => g();
-  const g = () => x;
-  const x = 1;
-  f(0);
-}
-
-{
-  const f = x => g();
-  const g = () => x;
-  const x = 1;
-  f(0);
-}
-
-{
-  const g = () => x;
-  const x = 1;
-  (x => g())(0);
-}
-
-{
-  const g = () => x;
-  const x = 1;
-  (x => g())(0);
-}
-
-{
-  const x = 1;
-  (x_1 => (() => x)())(0);
-}
-
-{
-  const x = 1;
-  (x_1 => (() => x)())(0);
-}
-
-{
-  (x_1 => (() => 1)())(0);
-}
-
-{
-  (x_1 => (() => 1)())(0);
-}
-
-{
-  (() => 1)();
-}
-
-{
-  (() => 1)();
-}
-
-{
-  1;
-}
-
-{
-  1;
-}
-
-1;
-
-1;
-"
-`;
-
-=======
->>>>>>> 42896b5 (fixed #898 renaming not occuring in blocks and abstracted away renaming into new function getFreshName)
 exports[`scoping test for blocks nested in lambda expressions 1`] = `
 "const f = x => {
   g();
@@ -46417,7 +45469,6 @@ undefined;
 "
 `;
 
->>>>>>> 5428800 (Added test cases for complex lambda expressions and blocks, improving coverage.)
 exports[`scoping test for function expressions 1`] = `
 "function f(x) {
   return g();
@@ -46505,16 +45556,6 @@ const x = 1;
 1;
 
 1;
-=======
-z;
-
-z;
->>>>>>> fe7d021 (added scanOutDeclarations method which returns an array of Identifiers in the block, it is called in the BlockStatement and BlockExpression substituters, and is used for renaming of declared variables with the same names as free variables in the replacement. Also added a test for this in the testing suite and updated the snapshots accordingly)
-=======
-1;
-
-1;
->>>>>>> 7947795 (Updated testing suite and snapshot to accommodate new scoping implementations for function expressions, lambda expressions, and block expressions.)
 "
 `;
 
@@ -50451,8 +49492,6 @@ Array [
                         },
                         "id": Object {
                           "loc": undefined,
-<<<<<<< HEAD
-=======
                           "name": "f",
                           "type": "Identifier",
                         },
@@ -50551,7 +49590,6 @@ Array [
                         },
                         "id": Object {
                           "loc": undefined,
->>>>>>> 8e606e3 (Fix destructive renaming of variables when substituting within blocks)
                           "name": "f",
                           "type": "Identifier",
                         },
@@ -50589,107 +49627,6 @@ Array [
               },
               "id": Object {
                 "loc": undefined,
-<<<<<<< HEAD
-                "name": "g",
-                "type": "Identifier",
-              },
-              "loc": undefined,
-              "params": Array [],
-              "type": "FunctionExpression",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 4,
-              },
-            },
-            "operator": "===",
-            "right": Object {
-              "body": Object {
-                "body": Array [
-                  Object {
-                    "argument": Object {
-                      "arguments": Array [],
-                      "callee": Object {
-                        "body": Object {
-                          "body": Array [
-                            Object {
-                              "argument": Object {
-                                "arguments": Array [],
-                                "callee": [Circular],
-                                "loc": SourceLocation {
-                                  "end": Position {
-                                    "column": 29,
-                                    "line": 2,
-                                  },
-                                  "start": Position {
-                                    "column": 26,
-                                    "line": 2,
-                                  },
-                                },
-                                "optional": false,
-                                "type": "CallExpression",
-                              },
-                              "loc": SourceLocation {
-                                "end": Position {
-                                  "column": 30,
-                                  "line": 2,
-                                },
-                                "start": Position {
-                                  "column": 19,
-                                  "line": 2,
-                                },
-                              },
-                              "type": "ReturnStatement",
-                            },
-                          ],
-                          "type": "BlockStatement",
-                        },
-                        "id": Object {
-                          "loc": undefined,
-                          "name": "f",
-                          "type": "Identifier",
-                        },
-                        "loc": undefined,
-                        "params": Array [],
-                        "type": "FunctionExpression",
-                      },
-                      "loc": SourceLocation {
-                        "end": Position {
-                          "column": 58,
-                          "line": 2,
-                        },
-                        "start": Position {
-                          "column": 55,
-                          "line": 2,
-                        },
-                      },
-                      "optional": false,
-                      "type": "CallExpression",
-                    },
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 59,
-                        "line": 2,
-                      },
-                      "start": Position {
-                        "column": 48,
-                        "line": 2,
-                      },
-                    },
-                    "type": "ReturnStatement",
-                  },
-                ],
-                "type": "BlockStatement",
-              },
-              "id": Object {
-                "loc": undefined,
-=======
->>>>>>> 8e606e3 (Fix destructive renaming of variables when substituting within blocks)
                 "name": "g",
                 "type": "Identifier",
               },

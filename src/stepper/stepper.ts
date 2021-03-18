@@ -757,11 +757,6 @@ function substituteMain(
       // if not this statement does nothing as variable names should not have spaces
       name.name = name.name.split(' ')[0]
 
-      if (declaredNames.has(name.name)) {
-        substedBlockStatement.body = target.body
-        return substedBlockStatement
-      }
-
       const arr: number[] = []
       let nextIndex = index
       for (let i = 1; i < target.body.length; i++) {
@@ -837,14 +832,16 @@ function substituteMain(
         }
       }
 
+      const re2 = / rename/
+      if (declaredNames.has(name.name) && !re2.test(name.name)) {
+        substedBlockExpression.body = target.body
+        return substedBlockExpression
+      }
+
       // if it is from the same block then the name would be name + " same", hence need to remove " same"
       // if not this statement does nothing as variable names should not have spaces
       name.name = name.name.split(' ')[0]
 
-      if (declaredNames.has(name.name)) {
-        substedBlockExpression.body = target.body
-        return substedBlockExpression
-      }
       const arr: number[] = []
       let nextIndex = index
       for (let i = 1; i < target.body.length; i++) {
@@ -900,7 +897,8 @@ function substituteMain(
         freeReplacement = findMain(replacement)
         boundReplacement = scanOutDeclarations(replacement.body)
       }
-      for (const param of target.params) {
+      for (let i = 0; i < target.params.length; i++) {
+        const param = target.params[i]
         if (param.type === 'Identifier' && param.name === name.name) {
           substedArrow.body = target.body
           substedArrow.expression = target.body.type !== 'BlockStatement'
