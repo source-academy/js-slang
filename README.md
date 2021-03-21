@@ -2,7 +2,7 @@ Open-source implementations of the programming language *Source*. Source
 is a series of small subsets of JavaScript, designed for teaching
 university-level programming courses for computer science majors,
 following Structure and Interpretation of Computer Programs, JavaScript
-Adaptation (<https://sicp.comp.nus.edu.sg>).
+Adaptation (<https://source-academy.github.io/sicp/>).
 
 Usage
 =====
