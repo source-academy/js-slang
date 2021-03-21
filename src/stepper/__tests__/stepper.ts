@@ -1314,5 +1314,5 @@ test(`renaming clash with parameter of function declaration in block`, () => {
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('4;') 
+  expect(getLastStepAsString(steps)).toEqual('4;')
 })

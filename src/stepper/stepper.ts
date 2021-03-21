@@ -66,8 +66,7 @@ function scanOutBoundNames(
         }
       } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
         declaredIds.push(stmt.id)
-        stmt.params
-          .forEach(param => declaredIds.push(param as es.Identifier))
+        stmt.params.forEach(param => declaredIds.push(param as es.Identifier))
       }
     }
   }
@@ -102,7 +101,7 @@ function getFreshName(
   freeReplacement: string[],
   boundTarget: es.Identifier[],
   boundUpperScope: string[],
-  boundReplacement: es.Identifier[],
+  boundReplacement: es.Identifier[]
 ): string {
   let added = true
   while (added) {
