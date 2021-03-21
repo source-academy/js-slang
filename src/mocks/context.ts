@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import createContext from '../createContext'
+import createContext, { EnvTree } from '../createContext'
 import Closure from '../interpreter/closure'
 import { Context, Environment, Variant } from '../types'
 
@@ -14,6 +14,7 @@ export function mockRuntimeContext(): Context {
     break: false,
     debuggerOn: true,
     isRunning: true,
+    environmentTree: new EnvTree(),
     environments: [],
     nodes: [
       {
