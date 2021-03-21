@@ -10,7 +10,7 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { Context, CustomBuiltIns, Value, Variant } from './types'
+import { Context, CustomBuiltIns, EmptyObject, Environment, Value, Variant } from './types'
 import * as operators from './utils/operators'
 import * as gpu_lib from './gpu/lib'
 import { stringify } from './utils/stringify'
@@ -24,10 +24,64 @@ export class LazyBuiltIn {
     this.evaluateArgs = evaluateArgs
   }
 }
+
+/** checks if `object` is empty */
+export const isEmptyObject = (object: Object): object is EmptyObject => {
+  return Object.keys(object).length === 0
+}
+
+/** checks if `env` is empty (that is, head of env is an empty object) */
+export const isEmptyEnvironment = (
+  env: Environment
+): env is Environment & { head: EmptyObject } => {
+  return isEmptyObject(env.head)
+}
+
+export class EnvTree {
+  private _root: EnvTreeNode | null = null
+  private map = new Map<Environment, EnvTreeNode>()
+
+  get root(): EnvTreeNode | null {
+    return this._root
+  }
+
+  public insert(environment: Environment): void {
+    const tailEnvironment = environment.tail
+    if (tailEnvironment === null) {
+      if (this._root === null) {
+        this._root = new EnvTreeNode(environment, null)
+        this.map.set(environment, this._root)
+      }
+    } else {
+      const parentNode = this.map.get(tailEnvironment)
+      if (parentNode) {
+        const childNode = new EnvTreeNode(environment, parentNode)
+        parentNode.addChild(childNode)
+        this.map.set(environment, childNode)
+      }
+    }
+  }
+}
+
+class EnvTreeNode {
+  private _children: EnvTreeNode[] = []
+  constructor(readonly environment: Environment, readonly parent: EnvTreeNode | null) {}
+
+  get children(): EnvTreeNode[] {
+    return this._children
+  }
+
+  public addChild(node: EnvTreeNode): EnvTreeNode {
+    this._children.push(node)
+    return node
+  }
+}
+
 const createEmptyRuntime = () => ({
   break: false,
   debuggerOn: true,
   isRunning: false,
+  environmentTree: new EnvTree(),
   environments: [],
   value: undefined,
   nodes: []
@@ -85,11 +139,16 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   if (!context.runtime) {
     context.runtime = createEmptyRuntime()
   }
+  if (!context.runtime.environmentTree) {
+    context.runtime.environmentTree = new EnvTree()
+  }
   if (!context.runtime.environments) {
     context.runtime.environments = []
   }
   if (context.runtime.environments.length === 0) {
-    context.runtime.environments.push(createGlobalEnvironment())
+    const globalEnvironment = createGlobalEnvironment()
+    context.runtime.environments.push(globalEnvironment)
+    context.runtime.environmentTree.insert(globalEnvironment)
   }
 }
 
