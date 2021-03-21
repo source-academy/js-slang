@@ -1316,3 +1316,16 @@ test(`renaming clash with parameter of function declaration in block`, () => {
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
+
+test(`renaming of outer parameter in lambda function`, () => {
+  const code = `
+  const g = () =>  w_1;
+  const f = w_1 => w_2 => w_1 + g();
+  const w_1 = 0;
+  f(1)(1);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('1;')
+})

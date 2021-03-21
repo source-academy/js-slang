@@ -44,7 +44,11 @@ function scanOutBoundNames(
   node: es.BlockStatement | BlockExpression | es.Expression
 ): es.Identifier[] {
   const declaredIds: es.Identifier[] = []
-  if (node.type == 'BlockExpression' || node.type == 'BlockStatement') {
+  if (node.type == 'ArrowFunctionExpression') {
+    for (const param of node.params) {
+      declaredIds.push(param as es.Identifier)
+    }
+  } else if (node.type == 'BlockExpression' || node.type == 'BlockStatement') {
     for (const stmt of node.body) {
       // if stmt is assignment or functionDeclaration
       // add stmt into a set of identifiers
