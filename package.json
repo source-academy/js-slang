@@ -89,7 +89,7 @@
     "testRegex": "/__tests__/.*\\.ts$",
     "testPathIgnorePatterns": [
       "/dist/",
-      "'.*benchmark.*'"
+      ".*benchmark.*"
     ],
     "coveragePathIgnorePatterns": [
       "/dist/",
