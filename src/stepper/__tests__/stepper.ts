@@ -1279,3 +1279,40 @@ test(`renaming clash with declaration in replacement for lambda function`, () =>
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('2;')
 })
+
+test(`renaming clash with parameter of lambda function declaration in block`, () => {
+  const code = `
+  const g = () => x_1;
+  const f = x_1 => {
+      const h = x_2 => x_1 + g();
+      return h;
+  };
+
+  const x_1 = 1;
+  f(3)(2);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('4;')
+})
+
+test(`renaming clash with parameter of function declaration in block`, () => {
+  const code = `
+  function g() {
+    return x_1;
+  }
+  function f (x_1) {
+      function h(x_2) {
+          return x_1 + g();
+      }
+      return h;
+  }
+  const x_1 = 1;
+  f(3)(2);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('4;') 
+})

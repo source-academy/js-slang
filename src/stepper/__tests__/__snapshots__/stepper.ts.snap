@@ -45080,6 +45080,188 @@ const x_1 = 0;
 "
 `;
 
+exports[`renaming clash with parameter of function declaration in block 1`] = `
+"function g() {
+  return x_1;
+}
+function f(x_1) {
+  function h(x_2) {
+    return x_1 + g();
+  }
+  return h;
+}
+const x_1 = 1;
+f(3)(2);
+
+function g() {
+  return x_1;
+}
+function f(x_1) {
+  function h(x_2) {
+    return x_1 + g();
+  }
+  return h;
+}
+const x_1 = 1;
+f(3)(2);
+
+function f(x_3) {
+  function h(x_2) {
+    return x_3 + g();
+  }
+  return h;
+}
+const x_1 = 1;
+f(3)(2);
+
+function f(x_3) {
+  function h(x_2) {
+    return x_3 + g();
+  }
+  return h;
+}
+const x_1 = 1;
+f(3)(2);
+
+const x_1 = 1;
+f(3)(2);
+
+const x_1 = 1;
+f(3)(2);
+
+f(3)(2);
+
+f(3)(2);
+
+{
+  function h(x_2) {
+    return 3 + g();
+  }
+  return h;
+}(2);
+
+{
+  function h(x_2) {
+    return 3 + g();
+  }
+  return h;
+}(2);
+
+{
+  return h;
+}(2);
+
+{
+  return h;
+}(2);
+
+h(2);
+
+h(2);
+
+3 + g();
+
+3 + g();
+
+3 + 1;
+
+3 + 1;
+
+4;
+
+4;
+"
+`;
+
+exports[`renaming clash with parameter of lambda function declaration in block 1`] = `
+"const g = () => x_1;
+const f = x_1 => {
+  const h = x_2 => x_1 + g();
+  return h;
+};
+const x_1 = 1;
+f(3)(2);
+
+const g = () => x_1;
+const f = x_1 => {
+  const h = x_2 => x_1 + g();
+  return h;
+};
+const x_1 = 1;
+f(3)(2);
+
+const f = x_3 => {
+  const h = x_2 => x_3 + (() => x_1)();
+  return h;
+};
+const x_1 = 1;
+f(3)(2);
+
+const f = x_3 => {
+  const h = x_2 => x_3 + (() => x_1)();
+  return h;
+};
+const x_1 = 1;
+f(3)(2);
+
+const x_1 = 1;
+(x_3 => {
+  const h = x_2 => x_3 + (() => x_1)();
+  return h;
+})(3)(2);
+
+const x_1 = 1;
+(x_3 => {
+  const h = x_2 => x_3 + (() => x_1)();
+  return h;
+})(3)(2);
+
+(x_3 => {
+  const h = x_2 => x_3 + (() => 1)();
+  return h;
+})(3)(2);
+
+(x_3 => {
+  const h = x_2 => x_3 + (() => 1)();
+  return h;
+})(3)(2);
+
+{
+  const h = x_2 => 3 + (() => 1)();
+  return h;
+}(2);
+
+{
+  const h = x_2 => 3 + (() => 1)();
+  return h;
+}(2);
+
+{
+  return x_2 => 3 + (() => 1)();
+}(2);
+
+{
+  return x_2 => 3 + (() => 1)();
+}(2);
+
+(x_2 => 3 + (() => 1)())(2);
+
+(x_2 => 3 + (() => 1)())(2);
+
+3 + (() => 1)();
+
+3 + (() => 1)();
+
+3 + 1;
+
+3 + 1;
+
+4;
+
+4;
+"
+`;
+
 exports[`return in nested blocks 1`] = `
 "function f(x) {
   {

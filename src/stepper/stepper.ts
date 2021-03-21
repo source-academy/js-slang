@@ -40,15 +40,45 @@ type irreducibleNodes =
   | es.Literal
   | es.ArrayExpression
 
+function scanOutBoundNames(
+  node: es.BlockStatement | BlockExpression | es.Expression
+): es.Identifier[] {
+  const declaredIds: es.Identifier[] = []
+  if (node.type == 'BlockExpression' || node.type == 'BlockStatement') {
+    for (const stmt of node.body) {
+      // if stmt is assignment or functionDeclaration
+      // add stmt into a set of identifiers
+      // return that set
+      if (stmt.type === 'VariableDeclaration') {
+        stmt.declarations
+          .map(decn => (decn as es.VariableDeclarator).id as es.Identifier)
+          .forEach(name => declaredIds.push(name))
+        for (const decn of stmt.declarations) {
+          if (
+            decn.init !== null &&
+            decn.init !== undefined &&
+            decn.init.type == 'ArrowFunctionExpression'
+          ) {
+            for (const param of decn.init.params) {
+              declaredIds.push(param as es.Identifier)
+            }
+          }
+        }
+      } else if (stmt.type === 'FunctionDeclaration' && stmt.id) {
+        declaredIds.push(stmt.id)
+        stmt.params
+          .forEach(param => declaredIds.push(param as es.Identifier))
+      }
+    }
+  }
+  return declaredIds
+}
+
 function scanOutDeclarations(
   node: es.BlockStatement | BlockExpression | es.Expression
 ): es.Identifier[] {
   const declaredIds: es.Identifier[] = []
-  if (node.type == 'ArrowFunctionExpression') {
-    for (const param of node.params) {
-      declaredIds.push(param as es.Identifier)
-    }
-  } else if (node.type == 'BlockExpression' || node.type == 'BlockStatement') {
+  if (node.type == 'BlockExpression' || node.type == 'BlockStatement') {
     for (const stmt of node.body) {
       // if stmt is assignment or functionDeclaration
       // add stmt into a set of identifiers
@@ -72,7 +102,7 @@ function getFreshName(
   freeReplacement: string[],
   boundTarget: es.Identifier[],
   boundUpperScope: string[],
-  boundReplacement: es.Identifier[]
+  boundReplacement: es.Identifier[],
 ): string {
   let added = true
   while (added) {
@@ -526,10 +556,10 @@ function substituteMain(
         replacement.type == 'ArrowFunctionExpression'
       ) {
         freeReplacement = findMain(replacement)
-        boundReplacement = scanOutDeclarations(replacement.body)
+        boundReplacement = scanOutBoundNames(replacement.body)
       }
       const freeTarget = findMain(target)
-      const boundTarget = scanOutDeclarations(target.body)
+      const boundTarget = scanOutBoundNames(target.body)
       for (let i = 0; i < target.params.length; i++) {
         const param = target.params[i]
         if (param.type === 'Identifier' && param.name === name.name) {
@@ -605,10 +635,10 @@ function substituteMain(
         replacement.type == 'ArrowFunctionExpression'
       ) {
         freeReplacement = findMain(replacement)
-        boundReplacement = scanOutDeclarations(replacement.body)
+        boundReplacement = scanOutBoundNames(replacement.body)
       }
       const freeTarget = findMain(target)
-      const boundTarget = scanOutDeclarations(target.body)
+      const boundTarget = scanOutBoundNames(target.body)
       for (let i = 0; i < target.params.length; i++) {
         const param = target.params[i]
         if (param.type === 'Identifier' && param.name === name.name) {
@@ -895,7 +925,7 @@ function substituteMain(
         replacement.type == 'ArrowFunctionExpression'
       ) {
         freeReplacement = findMain(replacement)
-        boundReplacement = scanOutDeclarations(replacement.body)
+        boundReplacement = scanOutBoundNames(replacement.body)
       }
       for (let i = 0; i < target.params.length; i++) {
         const param = target.params[i]
@@ -905,7 +935,7 @@ function substituteMain(
           return substedArrow
         }
         const freeTarget = findMain(target)
-        const boundTarget = scanOutDeclarations(target.body)
+        const boundTarget = scanOutBoundNames(target.body)
         if (param.type == 'Identifier') {
           if (freeReplacement.includes(param.name)) {
             // change param name
