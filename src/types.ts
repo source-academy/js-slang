@@ -7,6 +7,7 @@
 
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
+import { EnvTree } from './createContext'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -104,6 +105,7 @@ export interface Context<T = any> {
     break: boolean
     debuggerOn: boolean
     isRunning: boolean
+    environmentTree: EnvTree
     environments: Environment[]
     nodes: es.Node[]
   }
@@ -323,6 +325,11 @@ export type TypeEnvironment = {
   typeMap: Map<string, Type | ForAll>
   declKindMap: Map<string, AllowedDeclarations>
 }[]
+
+/** empty object type  */
+export type EmptyObject = {
+  [K in any]: never
+}
 
 export {
   Instruction as SVMInstruction,
