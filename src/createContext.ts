@@ -10,7 +10,7 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { Context, CustomBuiltIns, EmptyObject, Environment, Value, Variant } from './types'
+import { Context, CustomBuiltIns, Environment, Value, Variant } from './types'
 import * as operators from './utils/operators'
 import * as gpu_lib from './gpu/lib'
 import { stringify } from './utils/stringify'
@@ -23,18 +23,6 @@ export class LazyBuiltIn {
     this.func = func
     this.evaluateArgs = evaluateArgs
   }
-}
-
-/** checks if `object` is empty */
-export const isEmptyObject = (object: Object): object is EmptyObject => {
-  return Object.keys(object).length === 0
-}
-
-/** checks if `env` is empty (that is, head of env is an empty object) */
-export const isEmptyEnvironment = (
-  env: Environment
-): env is Environment & { head: EmptyObject } => {
-  return isEmptyObject(env.head)
 }
 
 export class EnvTree {

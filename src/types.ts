@@ -326,11 +326,6 @@ export type TypeEnvironment = {
   declKindMap: Map<string, AllowedDeclarations>
 }[]
 
-/** empty object type  */
-export type EmptyObject = {
-  [K in any]: never
-}
-
 export {
   Instruction as SVMInstruction,
   Program as SVMProgram,
