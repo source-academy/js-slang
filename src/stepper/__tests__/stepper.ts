@@ -883,6 +883,34 @@ test('const declarations in blocks subst into call expressions', () => {
   expect(getLastStepAsString(steps)).toEqual('6;')
 })
 
+test('scoping test for lambda expressions nested in blocks', () => {
+  const code = `
+  {
+    const f = x => g();
+    const g = () => x;
+    const x = 1;
+    f(0);
+  }
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('1;')
+})
+
+test('scoping test for blocks nested in lambda expressions', () => {
+  const code = `
+  const f = x => { g(); };
+  const g = () => { x; };
+  const x = 1;
+  f(0);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('undefined;')
+})
+
 test('scoping test for function expressions', () => {
   const code = `
   function f(x) {
@@ -998,7 +1026,7 @@ test('renaming clash test for functions', () => {
   const code = `
   function f(w_8) {
     function h(w_9) {
-        return w_8 + w_9 + g(); 
+        return w_8 + w_9 + g();
     }
     return h;
 }
@@ -1080,7 +1108,7 @@ test(`multiple clash for function declaration`, () => {
   function f(x_2) {
       function h(x_3) {
           return x_4 + g();
-      }    
+      }
       return h;
   }
   const x_3 = 0;
@@ -1188,4 +1216,116 @@ test(`multiple clash 2 for function declaration`, () => {
   const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
+})
+
+test(`renaming clash with declaration in replacement for function declaration`, () => {
+  const code = `
+  function g() {
+    const x_2 = 2;
+    return x_1 + x_2 + x;
+  }
+
+  function f(x) {
+      function h(x_1) {
+          return x + g();
+      }
+        return h;
+  }
+
+  const x_1 = 0;
+  const x = 0;
+  f(1)(1);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('3;')
+})
+
+test(`renaming clash with declaration in replacement for function expression`, () => {
+  const code = `
+  function f(x) {
+    function h(x_1) {
+        return g();
+    }
+      return h;
+  }
+
+  function g() {
+      const x_2 = 2;
+      return x_1 + x_2 + x;
+  }
+
+  const x_1 = 0;
+  const x = 0;
+  f(1)(1);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('2;')
+})
+
+test(`renaming clash with declaration in replacement for lambda function`, () => {
+  const code = `
+  const f = x => x_1 => g();
+  const g = () => { const x_2 = 2; return x_1 + x + x_2; };
+  const x = 0;
+  const x_1 = 0;
+  f(1)(1);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('2;')
+})
+
+test(`renaming clash with parameter of lambda function declaration in block`, () => {
+  const code = `
+  const g = () => x_1;
+  const f = x_1 => {
+      const h = x_2 => x_1 + g();
+      return h;
+  };
+
+  const x_1 = 1;
+  f(3)(2);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('4;')
+})
+
+test(`renaming clash with parameter of function declaration in block`, () => {
+  const code = `
+  function g() {
+    return x_1;
+  }
+  function f (x_1) {
+      function h(x_2) {
+          return x_1 + g();
+      }
+      return h;
+  }
+  const x_1 = 1;
+  f(3)(2);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('4;')
+})
+
+test(`renaming of outer parameter in lambda function`, () => {
+  const code = `
+  const g = () =>  w_1;
+  const f = w_1 => w_2 => w_1 + g();
+  const w_1 = 0;
+  f(1)(1);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('1;')
 })
