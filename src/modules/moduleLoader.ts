@@ -53,7 +53,7 @@ function getModuleManifest(): Modules {
  * @return String of module file contents
  */
 export const memoizedGetModuleFile = memoize(getModuleFile)
-function getModuleFile(type: 'tab' | 'bundle', name: string): string {
+function getModuleFile(name: string, type: 'tab' | 'bundle'): string {
   return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js`)
 }
 
@@ -70,7 +70,7 @@ export function loadModuleBundle(path: string, context: Context, node?: es.Node)
   const moduleList = Object.keys(modules)
   if (moduleList.includes(path) === false) throw new ModuleNotFoundError(path, node)
   // Get module file
-  const moduleText = memoizedGetModuleFile('bundle', path)
+  const moduleText = memoizedGetModuleFile(path, 'bundle')
   try {
     const moduleBundle: ModuleBundle = eval(moduleText)
     const moduleFunctions = moduleBundle(context)
@@ -101,7 +101,7 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   const sideContentTabPaths: string[] = modules[path].tabs
   // Load the tabs for the current module
   return sideContentTabPaths.map(path => {
-    const rawTabFile = memoizedGetModuleFile('tab', path)
+    const rawTabFile = memoizedGetModuleFile(path, 'tab')
     try {
       return eval(convertRawTabToFunction(rawTabFile))
     } catch (error) {
@@ -116,12 +116,15 @@ export function loadModuleTabs(path: string, node?: es.Node) {
  * @param context
  */
 export function appendModuleTabsToContext(program: es.Program, context: Context): void {
-  if (context.modules == null) context.modules = []
+  // Rest the modules to empty array everytime
+  context.modules = []
   for (const node of program.body) {
     if (node.type === 'ImportDeclaration') {
       if (!node.source.value) throw new ModuleNotFoundError('', node)
       const moduleName = node.source.value.toString()
-      Array.prototype.push.apply(context.modules, loadModuleTabs(moduleName, node))
+      const moduleTab = loadModuleTabs(moduleName, node)
+      console.log(moduleName, moduleTab)
+      Array.prototype.push.apply(context.modules, moduleTab)
     }
   }
 }

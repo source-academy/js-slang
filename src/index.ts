@@ -543,6 +543,7 @@ export async function runInContext(
       )
     }
   } else {
+    appendModuleTabsToContext(program, context)
     let it = evaluate(program, context)
     let scheduler: Scheduler
     if (context.variant === 'non-det') {

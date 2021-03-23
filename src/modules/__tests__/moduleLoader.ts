@@ -78,7 +78,7 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     const sampleResponse = `(function () {'use strict'; function index(_params) { return { }; } return index; })();`
     const correctUrl = moduleLoader.MODULES_STATIC_URL + `/bundles/${validModuleBundle}.js`
     const mockedXMLHttpRequest = mockXMLHttpRequest({ responseText: sampleResponse })
-    const response = moduleLoader.memoizedGetModuleFile('bundle', validModuleBundle)
+    const response = moduleLoader.memoizedGetModuleFile(validModuleBundle, 'bundle')
     expect(mockedXMLHttpRequest.open).toHaveBeenCalledTimes(1)
     expect(mockedXMLHttpRequest.open).toHaveBeenCalledWith('GET', correctUrl, false)
     expect(mockedXMLHttpRequest.send).toHaveBeenCalledTimes(1)
@@ -91,7 +91,7 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     const sampleResponse = `(function (React) {})(React);`
     const correctUrl = moduleLoader.MODULES_STATIC_URL + `/tabs/${validModuleTab}.js`
     const mockedXMLHttpRequest = mockXMLHttpRequest({ responseText: sampleResponse })
-    const response = moduleLoader.memoizedGetModuleFile('tab', validModuleTab)
+    const response = moduleLoader.memoizedGetModuleFile(validModuleTab, 'tab')
     expect(mockedXMLHttpRequest.open).toHaveBeenCalledTimes(1)
     expect(mockedXMLHttpRequest.open).toHaveBeenCalledWith('GET', correctUrl, false)
     expect(mockedXMLHttpRequest.send).toHaveBeenCalledTimes(1)
