@@ -7,6 +7,7 @@ import {
   ConstAssignment,
   ExceptionError,
   InterruptedError,
+  ModuleUndefinedError,
   UndefinedVariable
 } from './errors/errors'
 import { RuntimeSourceError } from './errors/runtimeSourceError'
@@ -384,9 +385,11 @@ export function getTypeInformation(
 function appendModulesToContext(program: Program, context: Context): void {
   if (context.modules == null) context.modules = []
   for (const node of program.body) {
-    if (node.type !== 'ImportDeclaration') break
-    const moduleName = (node.source.value as string).trim()
-    Array.prototype.push.apply(context.modules, loadModuleTabs(moduleName))
+    if (node.type === 'ImportDeclaration') {
+      if (!node.source.value) throw new ModuleUndefinedError(node)
+      const moduleName = node.source.value.toString()
+      Array.prototype.push.apply(context.modules, loadModuleTabs(moduleName))
+    }
   }
 }
 

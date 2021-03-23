@@ -20,6 +20,22 @@ export class InterruptedError extends RuntimeSourceError {
   }
 }
 
+export class ModuleUndefinedError extends RuntimeSourceError {
+  constructor(node?: es.Node) {
+    super(node)
+  }
+
+  public explain() {
+    return `Module must be a non-empty string.`
+  }
+
+  public elaborate() {
+    return `
+      You should check your import declarations, and ensure that all are valid modules.
+    `
+  }
+}
+
 export class ModuleNotFound extends RuntimeSourceError {
   constructor(public moduleName: string, node?: es.Node) {
     super(node)
