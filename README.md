@@ -2,7 +2,7 @@ Open-source implementations of the programming language *Source*. Source
 is a series of small subsets of JavaScript, designed for teaching
 university-level programming courses for computer science majors,
 following Structure and Interpretation of Computer Programs, JavaScript
-Adaptation (<https://sicp.comp.nus.edu.sg>).
+Adaptation (<https://source-academy.github.io/sicp/>).
 
 Usage
 =====
@@ -126,10 +126,12 @@ The regression tests are generated using `jest` and stored as snapshots in `src/
 $ yarn test -- --updateSnapshot
 ```
 
+
+
 Error messages
 ==============
 
-To enable verbose messages, have the statement `"enable verbose";` as the first line of your program.
+To enable verbose messages, have the statement `"enable verbose";` as the first line of your program. This also causes the program to be run by the interpreter.
 
 There are two main kinds of error messages: those that occur at runtime
 and those that occur at parse time. The first can be found in

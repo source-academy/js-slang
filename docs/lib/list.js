@@ -65,12 +65,12 @@ function list(value1, value2, ...values ) {}
 /**
  * visualizes <CODE>x</CODE> in a separate drawing
  * area in the Source Academy using a box-and-pointer diagram; time, space:
- * O(n), where n is the number of data structures such as
- * pairs in <CODE>x</CODE>.
- * @param {value} x - given value
+ * O(n), where n is the total number of data structures such as
+ * pairs in all the separate structures provided in <CODE>x</CODE>.
+ * @param {value} value1,value2,...,value_n - given values
  * @returns {value} given <CODE>x</CODE>
  */
-function draw_data(x) {}
+ function draw_data(value1, value2, ...values ) {}
 
 /**
  * Returns <CODE>true</CODE> if both

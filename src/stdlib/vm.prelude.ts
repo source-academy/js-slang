@@ -51,7 +51,7 @@ function _display(args) {
 }
 
 // 6 placeholder
-function _draw_data(v) {}
+function _draw_data(args) {}
 
 // 7
 function _enum_list(start, end) {
@@ -661,6 +661,7 @@ const VARARG_PRIMITIVES: [string, number?, number?][] = [
   ['math_min', OpCodes.MODG, OpCodes.MATH_MIN],
   ['math_hypot', OpCodes.NOTG, OpCodes.MATH_HYPOT],
   ['list'],
+  ['draw_data'],
   ['stream'],
   ['prompt', OpCodes.NOTG, OpCodes.PROMPT]
 ]
@@ -673,7 +674,6 @@ export const NULLARY_PRIMITIVES: [string, number, any?][] = [
 
 export const UNARY_PRIMITIVES: [string, number, any?][] = [
   ['array_length', OpCodes.ARRAY_LEN],
-  ['draw_data', OpCodes.DRAW_DATA],
   ['is_array', OpCodes.IS_ARRAY],
   ['is_boolean', OpCodes.IS_BOOL],
   ['is_function', OpCodes.IS_FUNC],
@@ -721,7 +721,6 @@ export const BINARY_PRIMITIVES: [string, number, any?][] = [
 
 export const EXTERNAL_PRIMITIVES: [string, number][] = [
   ['display', OpCodes.DISPLAY],
-  ['draw_data', OpCodes.DRAW_DATA],
   ['error', OpCodes.ERROR],
   ['prompt', OpCodes.PROMPT]
 ]
