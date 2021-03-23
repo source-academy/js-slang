@@ -78,14 +78,11 @@ class GPUFunctionVerifier {
     // Check that function calls within the function body are valid
     // 3. Check that no function calls are made using function params
     // 4, 5. Check that function calls are to math_* OR other valid GPUFunctions
-    const paramNames = new Set(fun.params
-      .map(x => x.type === 'Identifier' ? x.name : null)
-      .filter(x => x !== null));
+    const paramNames = new Set((fun.params as es.Identifier[]).map(x => x.name));
     const mathFuncCheck = new RegExp(/^math_[a-z]+$/)
     const verifiedFunctions = this.verifiedFunctions;
     const unverifiedFunctions = this.unverifiedFunctions;
     const customFunctions = this.customFunctions;
-    const check = this.checkFunction;
     simple(fun.body, {
       CallExpression(nx: es.CallExpression) {
         if (nx.callee.type !== 'Identifier') {
@@ -116,7 +113,8 @@ class GPUFunctionVerifier {
                 ok = false
                 return
               }
-              if (!check(fun2)) {
+              const verifier = new GPUFunctionVerifier(fun2, functionName, verifiedFunctions, unverifiedFunctions, customFunctions)
+              if (!verifier.ok) {
                 // If the recursive check fails, this function is also invalid
                 ok = false
                 return

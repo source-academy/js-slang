@@ -18,6 +18,7 @@ class GPUBodyVerifier {
   localVar: Set<string>
   counters: string[]
   outputArray: es.Identifier
+  customFunctions: Map<string, es.FunctionDeclaration>
 
   /**
    *
@@ -115,6 +116,14 @@ class GPUBodyVerifier {
         return;
       }
     }
+
+    // keep track of what custom functions were actually called by the program, for use in transpilation later
+    for (const functionName of customFunctions.keys()) {
+      if (!verifiedFunctions.has(functionName)) {
+        customFunctions.delete(functionName);
+      }
+    }
+    this.customFunctions = customFunctions;
 
     // 3. check there is only ONE assignment to a global result variable
 

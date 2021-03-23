@@ -132,8 +132,9 @@ function manualRun(f: any, end: any, res: any) {
  * @extern : external variable definitions {}
  * @f : function run as on GPU threads
  * @arr : array to be written to
+ * @customFunctions: custom functions to be passed to GPU
  */
-export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any) {
+export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any, customFunctions: any) {
   const gpu = new GPU()
 
   // check array is initialized properly
@@ -174,6 +175,10 @@ export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any)
     nend.push(end[i])
   }
 
+  // custom functions to be added to GPU
+  for (const customFunction of customFunctions) {
+    gpu.addFunction(customFunction)
+  }
   // external variables to be in the GPU
   const out = { constants: {} }
   out.constants = extern
@@ -204,23 +209,25 @@ export function __createKernelSource(
   localNames: string[],
   arr: any,
   f: any,
-  kernelId: number
+  kernelId: number,
+  functionEntries: [string, any][]
 ) {
   const extern = entriesToObject(externSource)
-
+  // TODO: properly transpile these customFunctions rather than passing as the unmodified function object
+  const customFunctions = entriesToObject(functionEntries)
   const memoizedf = kernels.get(kernelId)
   if (memoizedf !== undefined) {
-    return __createKernel(end, extern, memoizedf, arr, f)
+    return __createKernel(end, extern, memoizedf, arr, f, Object.values(customFunctions))
   }
 
   const code = f.toString()
   // We don't need the full source parser here because it's already validated at transpile time.
   const ast = (parse(code, ACORN_PARSE_OPTIONS) as unknown) as es.Program
   const body = (ast.body[0] as es.ExpressionStatement).expression as es.ArrowFunctionExpression
-  const newBody = gpuRuntimeTranspile(body, new Set(localNames))
+  const newBody = gpuRuntimeTranspile(body, new Set(localNames), new Set(Object.keys(customFunctions)))
   const kernel = new Function(generate(newBody))
 
   kernels.set(kernelId, kernel)
 
-  return __createKernel(end, extern, kernel, arr, f)
+  return __createKernel(end, extern, kernel, arr, f, Object.values(customFunctions))
 }

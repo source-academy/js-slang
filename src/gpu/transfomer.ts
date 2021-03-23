@@ -69,7 +69,8 @@ class GPUTransformer {
    * 2. Get external variables + target body (body to be run across gpu threads)
    * 3. Build a AST Node for (2) - this will be given to (8)
    * 4. Change assignment in body to a return statement
-   * 5. Call __createKernelSource and assign it to our external variable
+   * 5. Get all function expressions that are used in the body
+   * 6. Call __createKernelSource and assign it to our external variable
    */
   gpuTranspile = (node: es.ForStatement): number => {
     // initialize our class variables
@@ -98,8 +99,14 @@ class GPUTransformer {
     this.getTargetBody(node)
 
     // 3. Build a AST Node of all outer variables
+    const functionNames = new Set(verifier.customFunctions.keys())
+
     const externEntries: [es.Literal, es.Expression][] = []
     for (const key in this.outerVariables) {
+      if (functionNames.has(key)) {
+        // ignore functions as we handle them separately later
+        continue
+      }
       if (this.outerVariables.hasOwnProperty(key)) {
         const val = this.outerVariables[key]
 
@@ -139,7 +146,13 @@ class GPUTransformer {
       params.push(create.identifier(this.counters[i]))
     }
 
-    // 5. we transpile the loop to a function call, __createKernelSource
+    // 5. get all custom functions used
+    const functionEntries: [es.Literal, es.Expression][] = []
+    for (const [functionName, functionDeclaration] of verifier.customFunctions) {
+      functionEntries.push([create.literal(functionName), JSON.parse(JSON.stringify(functionDeclaration.id))])
+    }
+
+    // 6. we transpile the loop to a function call, __createKernelSource
     const kernelFunction = create.blockArrowFunction(
       this.counters.map(name => create.identifier(name)),
       this.targetBody
@@ -152,7 +165,8 @@ class GPUTransformer {
         create.arrayExpression(Array.from(locals.values()).map(v => create.literal(v))),
         this.outputArray,
         kernelFunction,
-        create.literal(currentKernelId++)
+        create.literal(currentKernelId++),
+        create.arrayExpression(functionEntries.map(create.arrayExpression))
       ],
       node.loc!
     )
@@ -242,6 +256,69 @@ class GPUTransformer {
   }
 }
 
+export function gpuFunctionTranspile(
+  node: es.FunctionDeclaration
+): es.FunctionDeclaration {
+  const body = node.body
+  const params: string[] = []
+  for (const param of node.params) {
+    params.push((param as es.Identifier).name)
+  }
+
+  const localNames = new Set<string>()
+  simple(body, {
+    VariableDeclaration(nx: es.VariableDeclaration) {
+      if (nx.declarations[0].id.type === 'Identifier') {
+        localNames.add(nx.declarations[0].id.name)
+      }
+    }
+  })
+
+  // 1. Update all math_* calls to become Math.*
+  simple(body, {
+    CallExpression(nx: es.CallExpression) {
+      if (nx.callee.type !== 'Identifier') {
+        return
+      }
+      if (!nx.callee.name.startsWith('math_')) {
+        return
+      }
+
+      const functionName = nx.callee.name
+      const term = functionName.split('_')[1]
+      const args: es.Expression[] = nx.arguments as any
+
+      create.mutateToCallExpression(
+        nx,
+        create.memberExpression(create.identifier('Math'), term),
+        args
+      )
+
+    }
+  })
+
+  // 2. Update all external variable references in body
+  // e.g. let res = 1 + y; where y is an external variable
+  // becomes let res = 1 + this.constants.y;
+  const ignoredNames: Set<string> = new Set([...params, 'Math'])
+  simple(body, {
+    Identifier(nx: es.Identifier) {
+      // ignore these names
+      if (ignoredNames.has(nx.name) || localNames.has(nx.name)) {
+        return
+      }
+
+      create.mutateToMemberExpression(
+        nx,
+        create.memberExpression(create.identifier('this'), 'constants'),
+        create.identifier(nx.name)
+      )
+
+    }
+  })
+  return node
+}
+
 /*
  * Here we transpile a source-syntax kernel function to a gpu.js kernel function
  * 0. No need for validity checks, as that is done at compile time in gpuTranspile
@@ -251,7 +328,8 @@ class GPUTransformer {
  */
 export function gpuRuntimeTranspile(
   node: es.ArrowFunctionExpression,
-  localNames: Set<string>
+  localNames: Set<string>,
+  functionNames: Set<string>
 ): es.BlockStatement {
   // Contains counters
   const params = (node.params as es.Identifier[]).map(v => v.name)
@@ -264,6 +342,9 @@ export function gpuRuntimeTranspile(
   simple(body, {
     CallExpression(nx: es.CallExpression) {
       if (nx.callee.type !== 'Identifier') {
+        return
+      }
+      if (!nx.callee.name.startsWith('math_')) {
         return
       }
 
@@ -287,7 +368,7 @@ export function gpuRuntimeTranspile(
   simple(body, {
     Identifier(nx: es.Identifier) {
       // ignore these names
-      if (ignoredNames.has(nx.name) || localNames.has(nx.name)) {
+      if (ignoredNames.has(nx.name) || localNames.has(nx.name) || functionNames.has(nx.name)) {
         return
       }
 
