@@ -20,54 +20,6 @@ export class InterruptedError extends RuntimeSourceError {
   }
 }
 
-export class ModuleUndefinedError extends RuntimeSourceError {
-  constructor(node?: es.Node) {
-    super(node)
-  }
-
-  public explain() {
-    return `Module must be a non-empty string.`
-  }
-
-  public elaborate() {
-    return `
-      You should check your import declarations, and ensure that all are valid modules.
-    `
-  }
-}
-
-export class ModuleNotFound extends RuntimeSourceError {
-  constructor(public moduleName: string, node?: es.Node) {
-    super(node)
-  }
-
-  public explain() {
-    return `Module "${this.moduleName}" not found.`
-  }
-
-  public elaborate() {
-    return `
-      You should check your Internet connection, and ensure you have used the correct module path.
-    `
-  }
-}
-
-export class ModuleInternalError extends RuntimeSourceError {
-  constructor(public moduleName: string, node?: es.Node) {
-    super(node)
-  }
-
-  public explain() {
-    return `Error(s) occured when executing the module "${this.moduleName}".`
-  }
-
-  public elaborate() {
-    return `
-      You may need to contact with the author for this module to fix this error.
-    `
-  }
-}
-
 export class ExceptionError implements SourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR

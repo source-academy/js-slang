@@ -1,5 +1,5 @@
 import * as moduleLoader from '../moduleLoader'
-import { ModuleNotFound, ModuleInternalError } from '../../errors/errors'
+import { ModuleInternalError, ModuleConnectionError } from '../../errors/moduleErrors'
 import { createEmptyContext } from '../../createContext'
 
 // Mock memoize function from lodash
@@ -39,16 +39,38 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     expect(moduleLoader.MODULES_STATIC_URL).toBe(newUrl)
   })
 
+  test('Http GET function httpGet() works correctly', () => {
+    const sampleResponse = `{ "repeat": { "contents": ["Repeat"] } }`
+    const sampleUrl = 'https://www.example.com'
+    const mockedXMLHttpRequest = mockXMLHttpRequest({ responseText: sampleResponse })
+    const response = moduleLoader.httpGet(sampleUrl)
+    expect(mockedXMLHttpRequest.open).toHaveBeenCalledTimes(1)
+    expect(mockedXMLHttpRequest.open).toHaveBeenCalledWith('GET', sampleUrl, false)
+    expect(mockedXMLHttpRequest.send).toHaveBeenCalledTimes(1)
+    expect(mockedXMLHttpRequest.send).toHaveBeenCalledWith(null)
+    expect(response).toEqual(sampleResponse)
+  })
+
+  test('Http GET function httpGet() throws ModuleConnectionError', () => {
+    const sampleUrl = 'https://www.example.com'
+    const mockedXMLHttpRequest = mockXMLHttpRequest({ status: 404 })
+    expect(() => moduleLoader.httpGet(sampleUrl)).toThrow(ModuleConnectionError)
+    expect(mockedXMLHttpRequest.open).toHaveBeenCalledTimes(1)
+    expect(mockedXMLHttpRequest.open).toHaveBeenCalledWith('GET', sampleUrl, false)
+    expect(mockedXMLHttpRequest.send).toHaveBeenCalledTimes(1)
+    expect(mockedXMLHttpRequest.send).toHaveBeenCalledWith(null)
+  })
+
   test('Http GET modules manifest correctly', () => {
     const sampleResponse = `{ "repeat": { "contents": ["Repeat"] } }`
     const mockedXMLHttpRequest = mockXMLHttpRequest({ responseText: sampleResponse })
-    const response = moduleLoader.memoizedGetModuleFile('manifest')
+    const response = moduleLoader.memoizedGetModuleManifest()
     const correctUrl = moduleLoader.MODULES_STATIC_URL + `/modules.json`
     expect(mockedXMLHttpRequest.open).toHaveBeenCalledTimes(1)
     expect(mockedXMLHttpRequest.open).toHaveBeenCalledWith('GET', correctUrl, false)
     expect(mockedXMLHttpRequest.send).toHaveBeenCalledTimes(1)
     expect(mockedXMLHttpRequest.send).toHaveBeenCalledWith(null)
-    expect(response).toEqual(sampleResponse)
+    expect(response).toEqual(JSON.parse(sampleResponse))
   })
 
   test('Http GET module bundle correctly', () => {
@@ -77,33 +99,25 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     expect(response).toEqual(sampleResponse)
   })
 
-  test('Http GET modules files correctly throws ModuleNotFound', () => {
-    const mockedXMLHttpRequest = mockXMLHttpRequest({ status: 404 })
-    expect(() => moduleLoader.memoizedGetModuleFile('manifest')).toThrow(ModuleNotFound)
-    const correctUrl = moduleLoader.MODULES_STATIC_URL + `/modules.json`
-    expect(mockedXMLHttpRequest.open).toHaveBeenCalledTimes(1)
-    expect(mockedXMLHttpRequest.open).toHaveBeenCalledWith('GET', correctUrl, false)
-    expect(mockedXMLHttpRequest.send).toHaveBeenCalledTimes(1)
-    expect(mockedXMLHttpRequest.send).toHaveBeenCalledWith(null)
-  })
-
   test('Loading a module bundle correctly', () => {
+    const sampleManifest = `{ "module": { "tabs": [] } }`
+    mockXMLHttpRequest({ responseText: sampleManifest })
+    const sampleResponse = `(function () { 'use strict'; function make_empty_array () { return []; } function index(__params) { return { make_empty_array: make_empty_array }; } return index; })();`
+    mockXMLHttpRequest({ responseText: sampleResponse })
     const loadedBundle = moduleLoader.loadModuleBundle(
-      '_mock_dir/_mock_file',
-      createEmptyContext(1, 'default', []),
-      `(function () { 'use strict'; function make_empty_array () { return []; } function index(__params) { return { make_empty_array: make_empty_array }; } return index; })();`
+      'module',
+      createEmptyContext(1, 'default', [])
     )
     expect(loadedBundle.make_empty_array()).toEqual([])
   })
 
   test('Loading a wrongly implemented module bundle throws ModuleInternalError', () => {
+    const sampleManifest = `{ "module": { "tabs": [] } }`
+    mockXMLHttpRequest({ responseText: sampleManifest })
     const wrongModuleText = `export function es6_function(params) {};`
+    mockXMLHttpRequest({ responseText: wrongModuleText })
     expect(() =>
-      moduleLoader.loadModuleBundle(
-        'wrongly_implemented_module',
-        createEmptyContext(1, 'default', []),
-        wrongModuleText
-      )
+      moduleLoader.loadModuleBundle('module', createEmptyContext(1, 'default', []))
     ).toThrow(ModuleInternalError)
   })
 

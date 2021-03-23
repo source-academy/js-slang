@@ -7,7 +7,6 @@ import {
   ConstAssignment,
   ExceptionError,
   InterruptedError,
-  ModuleUndefinedError,
   UndefinedVariable
 } from './errors/errors'
 import { RuntimeSourceError } from './errors/runtimeSourceError'
@@ -49,7 +48,7 @@ import { typeToString } from './utils/stringify'
 import { forceIt } from './utils/operators'
 import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 import { TimeoutError } from './errors/timeoutErrors'
-import { loadModuleTabs } from './modules/moduleLoader'
+import { appendModuleTabsToContext } from './modules/moduleLoader'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -382,17 +381,6 @@ export function getTypeInformation(
   }
 }
 
-function appendModulesToContext(program: Program, context: Context): void {
-  if (context.modules == null) context.modules = []
-  for (const node of program.body) {
-    if (node.type === 'ImportDeclaration') {
-      if (!node.source.value) throw new ModuleUndefinedError(node)
-      const moduleName = node.source.value.toString()
-      Array.prototype.push.apply(context.modules, loadModuleTabs(moduleName))
-    }
-  }
-}
-
 export async function runInContext(
   code: string,
   context: Context,
@@ -484,7 +472,7 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      appendModulesToContext(program, context)
+      appendModuleTabsToContext(program, context)
       // Mutates program
       switch (context.variant) {
         case 'gpu':
