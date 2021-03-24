@@ -15,7 +15,7 @@
     "url": "https://github.com/source-academy/"
   },
   "dependencies": {
-    "@types/estree": "0.0.45",
+    "@types/estree": "0.0.46",
     "acorn": "^8.0.3",
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",
