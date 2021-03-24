@@ -42,7 +42,7 @@ function prefixModule(program: es.Program): string {
     if (node.type !== 'ImportDeclaration') {
       break
     }
-    const moduleText = memoizedGetModuleFile('bundle', node.source.value as string).trim()
+    const moduleText = memoizedGetModuleFile(node.source.value as string, 'bundle').trim()
     // remove ; from moduleText
     prefix += `const __MODULE_${moduleCounter}__ = (${moduleText.substring(
       0,
