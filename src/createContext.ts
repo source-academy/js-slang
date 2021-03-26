@@ -16,6 +16,7 @@ import * as gpu_lib from './gpu/lib'
 import { stringify } from './utils/stringify'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/typeChecker'
+
 export class LazyBuiltIn {
   func: (...arg0: any) => any
   evaluateArgs: boolean
@@ -49,11 +50,16 @@ export class EnvTree {
       }
     }
   }
+
+  public getTreeNode(environment: Environment): EnvTreeNode | undefined {
+    return this.map.get(environment)
+  }
 }
 
-class EnvTreeNode {
+export class EnvTreeNode {
   private _children: EnvTreeNode[] = []
-  constructor(readonly environment: Environment, readonly parent: EnvTreeNode | null) {}
+
+  constructor(readonly environment: Environment, public parent: EnvTreeNode | null) {}
 
   get children(): EnvTreeNode[] {
     return this._children
