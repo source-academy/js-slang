@@ -75,7 +75,7 @@ export class EnvTreeNode {
     this._children = []
   }
 
-  public addChildren(newChildren: EnvTreeNode[]) {
+  public addChildren(newChildren: EnvTreeNode[]): void {
     this._children.push(...newChildren)
   }
 
