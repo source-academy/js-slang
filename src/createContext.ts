@@ -65,9 +65,23 @@ export class EnvTreeNode {
     return this._children
   }
 
-  public addChild(node: EnvTreeNode): EnvTreeNode {
-    this._children.push(node)
-    return node
+  public resetChildren(newChildren: EnvTreeNode[]): void {
+    this.clearChildren()
+    this.addChildren(newChildren)
+    newChildren.forEach(c => (c.parent = this))
+  }
+
+  public clearChildren(): void {
+    this._children = []
+  }
+
+  public addChildren(newChildren: EnvTreeNode[]) {
+    this._children.push(...newChildren)
+  }
+
+  public addChild(newChild: EnvTreeNode): EnvTreeNode {
+    this._children.push(newChild)
+    return newChild
   }
 }
 
