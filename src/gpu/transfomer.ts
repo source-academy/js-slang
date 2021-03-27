@@ -257,7 +257,8 @@ class GPUTransformer {
 }
 
 export function gpuFunctionTranspile(
-  node: es.FunctionDeclaration
+  node: es.FunctionDeclaration,
+  functionNames: Set<string>
 ): es.FunctionDeclaration {
   const body = node.body
   const params: string[] = []
@@ -304,7 +305,7 @@ export function gpuFunctionTranspile(
   simple(body, {
     Identifier(nx: es.Identifier) {
       // ignore these names
-      if (ignoredNames.has(nx.name) || localNames.has(nx.name)) {
+      if (ignoredNames.has(nx.name) || localNames.has(nx.name) || functionNames.has(nx.name)) {
         return
       }
 
