@@ -53,11 +53,11 @@ class GPUFunctionVerifier {
    * 3. No higher-order functions (functions as arguments)
    * 4. No recursive functions (this function should not call itself)
    * 5. No use of Source's standard library functions (other than math library)
-   * 6. Any functions declared inside this function have to obey these restrictions too
+   * 6. Any functions called inside this function have to obey these restrictions too
    */
 
   checkFunction = (fun: es.Function): boolean => {
-    // 1. TODO: Check no reserved keywords in GLSL used for the function name
+    // 1. Check no reserved keywords in GLSL used for the function name
     if (reservedKeywords.has(this.name) || this.name.startsWith('__')) {
       return false
     }
@@ -92,7 +92,7 @@ class GPUFunctionVerifier {
 
     // Check that function calls within the function body are valid
     // 3. Check that no function calls are made using function params
-    // 4, 5. Check that function calls are to math_* OR other valid GPUFunctions
+    // 4, 5, 6. Check that function calls are to math_* OR other valid GPUFunctions
     const paramNames = new Set((fun.params as es.Identifier[]).map(x => x.name));
     const mathFuncCheck = new RegExp(/^math_[a-z]+$/)
     const verifiedFunctions = this.verifiedFunctions;
@@ -143,8 +143,6 @@ class GPUFunctionVerifier {
     if (!ok) {
       return false;
     }
-
-    // 6. TODO: Check that inner function declarations obey these rules
 
     // Update the verified and unverified sets of functions
     verifiedFunctions.add(this.name);
