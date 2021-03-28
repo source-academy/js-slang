@@ -134,7 +134,14 @@ function manualRun(f: any, end: any, res: any) {
  * @arr : array to be written to
  * @customFunctions: custom functions to be passed to GPU
  */
-export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any, customFunctions: any) {
+export function __createKernel(
+  end: any,
+  extern: any,
+  f: any,
+  arr: any,
+  f2: any,
+  customFunctions: any
+) {
   const gpu = new GPU()
 
   // check array is initialized properly
@@ -220,12 +227,12 @@ export function __createKernelSource(
   }
 
   // Transpile custom functions into string form
-  const customFunctions : string[] = []
+  const customFunctions: string[] = []
   for (const entry of functionEntries) {
     const code = (entry[1] as es.FunctionDeclaration).toString()
     const ast = (parse(code, ACORN_PARSE_OPTIONS) as unknown) as es.Program
     const fn = ast.body[0] as es.FunctionDeclaration
-    const fnTranspiled = gpuFunctionTranspile(fn, customFunctionNames);
+    const fnTranspiled = gpuFunctionTranspile(fn, customFunctionNames)
     const fnString = generate(fnTranspiled)
     customFunctions.push(fnString)
   }

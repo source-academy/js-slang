@@ -67,7 +67,7 @@ class GPUBodyVerifier {
     }
 
     // 2. verify functions in body
-    const calledFunctions = new Set<string>();
+    const calledFunctions = new Set<string>()
     const mathFuncCheck = new RegExp(/^math_[a-z]+$/)
     simple(node, {
       CallExpression(nx: es.CallExpression) {
@@ -80,7 +80,7 @@ class GPUBodyVerifier {
         // Check if it is a math_* function
         if (!mathFuncCheck.test(functionName)) {
           // If not, must do extensive verification on it later
-          calledFunctions.add(functionName);
+          calledFunctions.add(functionName)
         }
       }
     })
@@ -90,7 +90,7 @@ class GPUBodyVerifier {
     }
 
     // first create a map of all custom function names to their declarations (to help with later verification)
-    const customFunctions = new Map<string, es.FunctionDeclaration>();
+    const customFunctions = new Map<string, es.FunctionDeclaration>()
     simple(this.program, {
       FunctionDeclaration(nx: es.FunctionDeclaration) {
         if (nx.id === null) {
@@ -101,29 +101,35 @@ class GPUBodyVerifier {
     })
 
     // check if the non math_* functions are valid GPUFunctions
-    const verifiedFunctions = new Set<string>();
-    const unverifiedFunctions = new Set<string>();
+    const verifiedFunctions = new Set<string>()
+    const unverifiedFunctions = new Set<string>()
     for (const functionName of calledFunctions) {
-      const fun = customFunctions.get(functionName);
+      const fun = customFunctions.get(functionName)
       if (fun === undefined) {
         // automatically invalid if function is not defined anywhere in program
-        ok = false;
-        return;
+        ok = false
+        return
       }
-      const functionVerifier = new GPUFunctionVerifier(fun, functionName, verifiedFunctions, unverifiedFunctions, customFunctions);
+      const functionVerifier = new GPUFunctionVerifier(
+        fun,
+        functionName,
+        verifiedFunctions,
+        unverifiedFunctions,
+        customFunctions
+      )
       if (!functionVerifier.ok) {
-        ok = false;
-        return;
+        ok = false
+        return
       }
     }
 
     // keep track of what custom functions were actually called by the program, for use in transpilation later
     for (const functionName of customFunctions.keys()) {
       if (!verifiedFunctions.has(functionName)) {
-        customFunctions.delete(functionName);
+        customFunctions.delete(functionName)
       }
     }
-    this.customFunctions = customFunctions;
+    this.customFunctions = customFunctions
 
     // 3. check there is only ONE assignment to a global result variable
 

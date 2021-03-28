@@ -149,7 +149,10 @@ class GPUTransformer {
     // 5. get all custom functions used
     const functionEntries: [es.Literal, es.Expression][] = []
     for (const [functionName, functionDeclaration] of verifier.customFunctions) {
-      functionEntries.push([create.literal(functionName), JSON.parse(JSON.stringify(functionDeclaration.id))])
+      functionEntries.push([
+        create.literal(functionName),
+        JSON.parse(JSON.stringify(functionDeclaration.id))
+      ])
     }
 
     // 6. we transpile the loop to a function call, __createKernelSource
@@ -294,7 +297,6 @@ export function gpuFunctionTranspile(
         create.memberExpression(create.identifier('Math'), term),
         args
       )
-
     }
   })
 
@@ -314,7 +316,6 @@ export function gpuFunctionTranspile(
         create.memberExpression(create.identifier('this'), 'constants'),
         create.identifier(nx.name)
       )
-
     }
   })
   return node

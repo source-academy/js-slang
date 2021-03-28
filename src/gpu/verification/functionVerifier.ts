@@ -3,15 +3,93 @@ import { simple } from '../../utils/walkers'
 
 // Set of reserved keywords in GLSL
 const reservedKeywords = new Set<string>([
-  'attribute', 'const', 'uniform', 'varying', 'break', 'continue', 'do', 'for', 'while', 'if', 'else', 'in', 'out',
-  'inout', 'float', 'int', 'void', 'bool', 'true', 'false', 'lowp', 'mediump', 'highp', 'precision', 'invariant',
-  'discard', 'return', 'mat2', 'mat3', 'mat4', 'vec2', 'vec3', 'vec4', 'ivec2', 'ivec3', 'ivec4', 'bvec2', 'bvec3',
-  'bvec4', 'sampler2D', 'samplerCubestruct', 'asm', 'class', 'union', 'enum', 'typedef', 'template', 'this', 'packed',
-  'goto', 'switch', 'defaultinlinenoinline', 'volatile', 'public', 'static', 'extern', 'external', 'interface',
-  'flat', 'long', 'short', 'double', 'half', 'fixed', 'unsigned', 'superp', 'input', 'output', 'hvec2', 'hvec3',
-  'hvec4', 'dvec2', 'dvec3', 'dvec4', 'fvec2', 'fvec3', 'fvec4', 'sampler1D sampler3D', 'sampler1DShadow',
-  'sampler2DShadow', 'sampler2DRect', 'sampler3DRect', 'sampler2DRectShadow', 'sizeof', 'castnamespace', 'using'
-]);
+  'attribute',
+  'const',
+  'uniform',
+  'varying',
+  'break',
+  'continue',
+  'do',
+  'for',
+  'while',
+  'if',
+  'else',
+  'in',
+  'out',
+  'inout',
+  'float',
+  'int',
+  'void',
+  'bool',
+  'true',
+  'false',
+  'lowp',
+  'mediump',
+  'highp',
+  'precision',
+  'invariant',
+  'discard',
+  'return',
+  'mat2',
+  'mat3',
+  'mat4',
+  'vec2',
+  'vec3',
+  'vec4',
+  'ivec2',
+  'ivec3',
+  'ivec4',
+  'bvec2',
+  'bvec3',
+  'bvec4',
+  'sampler2D',
+  'samplerCubestruct',
+  'asm',
+  'class',
+  'union',
+  'enum',
+  'typedef',
+  'template',
+  'this',
+  'packed',
+  'goto',
+  'switch',
+  'defaultinlinenoinline',
+  'volatile',
+  'public',
+  'static',
+  'extern',
+  'external',
+  'interface',
+  'flat',
+  'long',
+  'short',
+  'double',
+  'half',
+  'fixed',
+  'unsigned',
+  'superp',
+  'input',
+  'output',
+  'hvec2',
+  'hvec3',
+  'hvec4',
+  'dvec2',
+  'dvec3',
+  'dvec4',
+  'fvec2',
+  'fvec3',
+  'fvec4',
+  'sampler1D sampler3D',
+  'sampler1DShadow',
+  'sampler2DShadow',
+  'sampler2DRect',
+  'sampler3DRect',
+  'sampler2DRectShadow',
+  'sizeof',
+  'castnamespace',
+  'using'
+])
 
 /*
  * GPU function verifier helps to ensure the function is suitable for passing into GPU
@@ -21,11 +99,11 @@ const reservedKeywords = new Set<string>([
  */
 class GPUFunctionVerifier {
   fun: es.Function
-  name: string;
-  verifiedFunctions: Set<string>;
-  unverifiedFunctions: Set<string>;
-  customFunctions: Map<string, es.FunctionDeclaration>;
-  ok: boolean;
+  name: string
+  verifiedFunctions: Set<string>
+  unverifiedFunctions: Set<string>
+  customFunctions: Map<string, es.FunctionDeclaration>
+  ok: boolean
 
   /**
    *
@@ -36,14 +114,19 @@ class GPUFunctionVerifier {
    * @param customFunctions map of function names to function declarations in the whole program
    * @param counters list of for loop counters (to check array assignment)
    */
-  constructor(fun: es.Function, name: string, verifiedFunctions: Set<string>, unverifiedFunctions: Set<string>,
-              customFunctions: Map<string, es.FunctionDeclaration>) {
-    this.fun = fun;
-    this.name = name;
-    this.verifiedFunctions = verifiedFunctions;
-    this.unverifiedFunctions = unverifiedFunctions;
-    this.customFunctions = customFunctions;
-    this.ok = this.checkFunction(fun);
+  constructor(
+    fun: es.Function,
+    name: string,
+    verifiedFunctions: Set<string>,
+    unverifiedFunctions: Set<string>,
+    customFunctions: Map<string, es.FunctionDeclaration>
+  ) {
+    this.fun = fun
+    this.name = name
+    this.verifiedFunctions = verifiedFunctions
+    this.unverifiedFunctions = unverifiedFunctions
+    this.customFunctions = customFunctions
+    this.ok = this.checkFunction(fun)
   }
 
   /*
@@ -62,8 +145,8 @@ class GPUFunctionVerifier {
       return false
     }
 
-    let ok: boolean = true;
-    this.unverifiedFunctions.add(this.name);
+    let ok: boolean = true
+    this.unverifiedFunctions.add(this.name)
     // 2. Check there is no modification of external variables
 
     // Get all local variables
@@ -87,17 +170,17 @@ class GPUFunctionVerifier {
     })
 
     if (!ok) {
-      return false;
+      return false
     }
 
     // Check that function calls within the function body are valid
     // 3. Check that no function calls are made using function params
     // 4, 5, 6. Check that function calls are to math_* OR other valid GPUFunctions
-    const paramNames = new Set((fun.params as es.Identifier[]).map(x => x.name));
+    const paramNames = new Set((fun.params as es.Identifier[]).map(x => x.name))
     const mathFuncCheck = new RegExp(/^math_[a-z]+$/)
-    const verifiedFunctions = this.verifiedFunctions;
-    const unverifiedFunctions = this.unverifiedFunctions;
-    const customFunctions = this.customFunctions;
+    const verifiedFunctions = this.verifiedFunctions
+    const unverifiedFunctions = this.unverifiedFunctions
+    const customFunctions = this.customFunctions
     simple(fun.body, {
       CallExpression(nx: es.CallExpression) {
         if (nx.callee.type !== 'Identifier') {
@@ -128,7 +211,13 @@ class GPUFunctionVerifier {
                 ok = false
                 return
               }
-              const verifier = new GPUFunctionVerifier(fun2, functionName, verifiedFunctions, unverifiedFunctions, customFunctions)
+              const verifier = new GPUFunctionVerifier(
+                fun2,
+                functionName,
+                verifiedFunctions,
+                unverifiedFunctions,
+                customFunctions
+              )
               if (!verifier.ok) {
                 // If the recursive check fails, this function is also invalid
                 ok = false
@@ -141,13 +230,13 @@ class GPUFunctionVerifier {
     })
 
     if (!ok) {
-      return false;
+      return false
     }
 
     // Update the verified and unverified sets of functions
-    verifiedFunctions.add(this.name);
-    unverifiedFunctions.delete(this.name);
-    return true;
+    verifiedFunctions.add(this.name)
+    unverifiedFunctions.delete(this.name)
+    return true
   }
 }
 
