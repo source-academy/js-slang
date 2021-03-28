@@ -92,3 +92,41 @@ test('cyclically recursive functions do not get transpiled', () => {
   const cnt = transpiled.match(/__createKernelSource/g)
   expect(cnt).toEqual(null)
 })
+
+test('function using reserved keyword does not get transpiled', () => {
+  const code = stripIndent`
+    function double(x) {
+      return x * 2;
+    }
+    let res = [];
+    for (let i = 0; i < 5; i = i + 1) {
+        res[i] = double(i);
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
+
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
+})
+
+test('function beginning with double underscores does not get transpiled', () => {
+  const code = stripIndent`
+    function __fun(x) {
+      return x;
+    }
+    let res = [];
+    for (let i = 0; i < 5; i = i + 1) {
+        res[i] = __fun(i);
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
+
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
+})

@@ -1,6 +1,18 @@
 import * as es from 'estree'
 import { simple } from '../../utils/walkers'
 
+// Set of reserved keywords in GLSL
+const reservedKeywords = new Set<string>([
+  'attribute', 'const', 'uniform', 'varying', 'break', 'continue', 'do', 'for', 'while', 'if', 'else', 'in', 'out',
+  'inout', 'float', 'int', 'void', 'bool', 'true', 'false', 'lowp', 'mediump', 'highp', 'precision', 'invariant',
+  'discard', 'return', 'mat2', 'mat3', 'mat4', 'vec2', 'vec3', 'vec4', 'ivec2', 'ivec3', 'ivec4', 'bvec2', 'bvec3',
+  'bvec4', 'sampler2D', 'samplerCubestruct', 'asm', 'class', 'union', 'enum', 'typedef', 'template', 'this', 'packed',
+  'goto', 'switch', 'defaultinlinenoinline', 'volatile', 'public', 'static', 'extern', 'external', 'interface',
+  'flat', 'long', 'short', 'double', 'half', 'fixed', 'unsigned', 'superp', 'input', 'output', 'hvec2', 'hvec3',
+  'hvec4', 'dvec2', 'dvec3', 'dvec4', 'fvec2', 'fvec3', 'fvec4', 'sampler1D sampler3D', 'sampler1DShadow',
+  'sampler2DShadow', 'sampler2DRect', 'sampler3DRect', 'sampler2DRectShadow', 'sizeof', 'castnamespace', 'using'
+]);
+
 /*
  * GPU function verifier helps to ensure the function is suitable for passing into GPU
  * Upon termination will update:
@@ -45,10 +57,13 @@ class GPUFunctionVerifier {
    */
 
   checkFunction = (fun: es.Function): boolean => {
+    // 1. TODO: Check no reserved keywords in GLSL used for the function name
+    if (reservedKeywords.has(this.name) || this.name.startsWith('__')) {
+      return false
+    }
+
     let ok: boolean = true;
     this.unverifiedFunctions.add(this.name);
-    // 1. TODO: Check no reserved keywords in GLSL used for the function name
-
     // 2. Check there is no modification of external variables
 
     // Get all local variables
