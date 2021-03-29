@@ -251,7 +251,9 @@ class GPUTransformer {
  */
 export function gpuRuntimeTranspile(
   node: es.ArrowFunctionExpression,
-  localNames: Set<string>
+  localNames: Set<string>,
+  end: number[],
+  idx: (string | number)[]
 ): es.BlockStatement {
   // Contains counters
   const params = (node.params as es.Identifier[]).map(v => v.name)
@@ -303,7 +305,21 @@ export function gpuRuntimeTranspile(
   // e.g. let res = 1 + i; where i is a counter
   // becomes let res = 1 + this.thread.x;
 
+  // unused counters will simply be substitued with their end bounds
+  const endMap = {}
+  for (let i = 0; i < params.length; i++) {
+    endMap[params[i]] = end[i]
+  }
+  simple(body, {
+    Identifier(nx: es.Identifier) {
+      if (params.includes(nx.name) && !idx.includes(nx.name)) {
+        create.mutateToLiteral(nx, endMap[nx.name])
+      }
+    }
+  })
+
   // depending on state the mappings will change
+
   let threads = ['x']
   if (params.length === 2) threads = ['y', 'x']
   if (params.length === 3) threads = ['z', 'y', 'x']

@@ -136,6 +136,15 @@ export const objectExpression = (properties: es.Property[]): es.ObjectExpression
   properties
 })
 
+export const mutateToLiteral = (
+  node: es.Node,
+  value: string | number | boolean | RegExp | null | undefined
+) => {
+  node.type = 'Literal'
+  node = node as es.Literal
+  node.value = value
+}
+
 export const mutateToCallExpression = (
   node: es.Node,
   callee: es.Expression,
