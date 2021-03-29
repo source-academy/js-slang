@@ -241,7 +241,7 @@ export function __createKernelSource(
   // We don't need the full source parser here because it's already validated at transpile time.
   const ast = (parse(code, ACORN_PARSE_OPTIONS) as unknown) as es.Program
   const body = (ast.body[0] as es.ExpressionStatement).expression as es.ArrowFunctionExpression
-  const newBody = gpuRuntimeTranspile(body, new Set(localNames))
+  const newBody = gpuRuntimeTranspile(body, new Set(localNames), end, idx)
   const kernel = new Function(generate(newBody))
 
   kernels.set(kernelId, kernel)

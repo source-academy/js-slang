@@ -1,5 +1,7 @@
 /* tslint:disable:only-arrow-functions */
-import { __createKernel } from '../lib'
+// import { __createKernel } from '../lib'
+
+test.todo('')
 
 // test('__createKernel with 1 loop returns correct result', () => {
 //   const bounds = [5]

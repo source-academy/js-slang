@@ -2,6 +2,8 @@
 // import { __createKernel } from '../lib'
 // import { TypeError } from '../../utils/rttc'
 
+test.todo('')
+
 // test('__createKernel with uninitialized array throws error', () => {
 //   const bounds = [5, 4]
 //   const extern = {}
