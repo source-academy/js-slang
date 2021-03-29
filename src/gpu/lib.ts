@@ -128,12 +128,22 @@ function manualRun(f: any, end: any, res: any) {
 }
 
 /* main function that runs code on the GPU (using gpu.js library)
+ * @ctr: identifiers of loop counters
  * @end : end bounds for array
+ * @idx : identifiers/value of array indices
  * @extern : external variable definitions {}
  * @f : function run as on GPU threads
  * @arr : array to be written to
  */
-export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any) {
+export function __createKernel(
+  ctr: string[],
+  end: any,
+  idx: [string, number][],
+  extern: any,
+  f: any,
+  arr: any,
+  f2: any
+) {
   const gpu = new GPU()
 
   // check array is initialized properly
@@ -199,7 +209,9 @@ export function __clearKernelCache() {
 }
 
 export function __createKernelSource(
+  ctr: string[],
   end: number[],
+  idx: [string, number][],
   externSource: [string, any][],
   localNames: string[],
   arr: any,
@@ -210,7 +222,7 @@ export function __createKernelSource(
 
   const memoizedf = kernels.get(kernelId)
   if (memoizedf !== undefined) {
-    return __createKernel(end, extern, memoizedf, arr, f)
+    return __createKernel(ctr, end, idx, extern, memoizedf, arr, f)
   }
 
   const code = f.toString()
@@ -222,5 +234,5 @@ export function __createKernelSource(
 
   kernels.set(kernelId, kernel)
 
-  return __createKernel(end, extern, kernel, arr, f)
+  return __createKernel(ctr, end, idx, extern, kernel, arr, f)
 }
