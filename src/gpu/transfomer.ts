@@ -318,34 +318,32 @@ export function gpuRuntimeTranspile(
     }
   })
 
-  // depending on state the mappings will change
+  // depending on ordering of indices, mapping will change
+  // there is at most 3 counters as indices, guranteed by static transpile
+  const counterIdx = []
+  for (let i of idx) {
+    if (typeof i === 'string' && params.includes(i)) {
+      counterIdx.push(i)
+    }
+  }
+  counterIdx.reverse()
 
-  let threads = ['x']
-  if (params.length === 2) threads = ['y', 'x']
-  if (params.length === 3) threads = ['z', 'y', 'x']
-
-  const counters: string[] = params.slice()
+  const threads = ['x', 'y', 'z']
+  const counterMap = {}
+  for (let i = 0; i < counterIdx.length; i++) {
+    counterMap[counterIdx[i]] = threads[i]
+  }
 
   simple(body, {
     Identifier(nx: es.Identifier) {
-      let x = -1
-      for (let i = 0; i < counters.length; i = i + 1) {
-        if (nx.name === counters[i]) {
-          x = i
-          break
-        }
+      if (nx.name in counterMap) {
+        const id = counterMap[nx.name]
+        create.mutateToMemberExpression(
+          nx,
+          create.memberExpression(create.identifier('this'), 'thread'),
+          create.identifier(id)
+        )
       }
-
-      if (x === -1) {
-        return
-      }
-
-      const id = threads[x]
-      create.mutateToMemberExpression(
-        nx,
-        create.memberExpression(create.identifier('this'), 'thread'),
-        create.identifier(id)
-      )
     }
   })
 
