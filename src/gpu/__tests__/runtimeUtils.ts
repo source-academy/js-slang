@@ -53,7 +53,7 @@ test('getGPUKernelDimensions with external variables returns correct dimensions'
   const end2 = [3, 5, 1, 2]
   const idx2 = ['l', 'test', 'k']
   const kernelDim2 = getGPUKernelDimensions(ctr2, end2, idx2)
-  expect(kernelDim2).toEqual([2, 1])
+  expect(kernelDim2).toEqual([1, 2])
 })
 
 test('getGPUKernelDimensions with repeated counters returns correct dimensions', () => {

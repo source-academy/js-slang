@@ -21,7 +21,7 @@ export function getGPUKernelDimensions(ctr: string[], end: number[], idx: (strin
       dim.push(endMap[m])
     }
   }
-  return dim
+  return dim.reverse()
 }
 
 // helper function to build 2D array output
