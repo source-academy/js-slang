@@ -9,6 +9,21 @@ import { ACORN_PARSE_OPTIONS } from '../constants'
 // Heuristic : Only use GPU if array is bigger than this
 const MAX_SIZE = 200
 
+// helper function to get argument for setOutput function
+function getGPUKernelDimensions(ctr: string[], end: number[], idx: [string, number][]) {
+  const endMap = {}
+  for (let i = 0; i < ctr.length; i++) {
+    endMap[ctr[i]] = end[i]
+  }
+  const dim: number[] = []
+  for (let m of idx) {
+    if (typeof m === 'string' && m in endMap) {
+      dim.push(endMap[m])
+    }
+  }
+  return dim
+}
+
 // helper function to build 2D array output
 function buildArray(arr: Float32Array[][], end: any, res: any) {
   for (let i = 0; i < end[0]; i++) {
@@ -179,16 +194,13 @@ export function __createKernel(
     return
   }
 
-  const nend = []
-  for (let i = end.length - 1; i >= 0; i--) {
-    nend.push(end[i])
-  }
+  const kernelDim = getGPUKernelDimensions(ctr, end, idx)
 
   // external variables to be in the GPU
   const out = { constants: {} }
   out.constants = extern
 
-  const gpuFunction = gpu.createKernel(f, out).setOutput(nend)
+  const gpuFunction = gpu.createKernel(f, out).setOutput(kernelDim)
   const res = gpuFunction() as any
   if (end.length === 1) buildArray(res, end, arr)
   if (end.length === 2) build2DArray(res, end, arr)
