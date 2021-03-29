@@ -10,7 +10,7 @@ import { ACORN_PARSE_OPTIONS } from '../constants'
 const MAX_SIZE = 200
 
 // helper function to get argument for setOutput function
-function getGPUKernelDimensions(ctr: string[], end: number[], idx: [string, number][]) {
+export function getGPUKernelDimensions(ctr: string[], end: number[], idx: (string | number)[]) {
   const endMap = {}
   for (let i = 0; i < ctr.length; i++) {
     endMap[ctr[i]] = end[i]
@@ -153,7 +153,7 @@ function manualRun(f: any, end: any, res: any) {
 export function __createKernel(
   ctr: string[],
   end: any,
-  idx: [string, number][],
+  idx: (string | number)[],
   extern: any,
   f: any,
   arr: any,
@@ -223,7 +223,7 @@ export function __clearKernelCache() {
 export function __createKernelSource(
   ctr: string[],
   end: number[],
-  idx: [string, number][],
+  idx: (string | number)[],
   externSource: [string, any][],
   localNames: string[],
   arr: any,
