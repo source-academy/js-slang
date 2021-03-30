@@ -86,11 +86,10 @@ class GPUTransformer {
     }
 
     const verifier = new GPUBodyVerifier(this.program, this.innerBody, this.counters)
-    if (verifier.state === 0) {
+    if (!verifier.valid) {
       return 0
     }
 
-    this.state = verifier.state
     this.outputArray = verifier.outputArray
     this.indices = verifier.indices
     this.localVar = verifier.localVar
@@ -135,31 +134,93 @@ class GPUTransformer {
       }
     })
 
-    // deep copy here (for runtime checks)
-    const params: es.Identifier[] = []
-    for (let i = 0; i < this.state; i++) {
-      params.push(create.identifier(this.counters[i]))
+    // 5. We need to keep the outer indices that will not be parallelized
+    const toParallelize: (string | number)[] = []
+    let countersUsed = 0
+    for (let i = this.indices.length - 1; i >= 0; i--) {
+      const m = this.indices[i]
+      if (typeof m === 'string' && this.counters.includes(m)) {
+        countersUsed++
+      }
+      if (countersUsed > 3) {
+        break
+      }
+      toParallelize.push(m)
+    }
+    const toKeepIndices = []
+    for (let i = 0; i < this.indices.length - toParallelize.length; i++) {
+      toKeepIndices.push(this.indices[i])
     }
 
-    // 5. we transpile the loop to a function call, __createKernelSource
-    const kernelFunction = create.blockArrowFunction(
-      this.counters.map(name => create.identifier(name)),
-      this.targetBody
-    )
-    const createKernelSourceCall = create.callExpression(
-      this.globalIds.__createKernelSource,
-      [
-        create.arrayExpression(this.end),
-        create.arrayExpression(externEntries.map(create.arrayExpression)),
-        create.arrayExpression(Array.from(locals.values()).map(v => create.literal(v))),
-        this.outputArray,
-        kernelFunction,
-        create.literal(currentKernelId++)
-      ],
-      node.loc!
-    )
+    // 6. we need to keep the loops whose counters are not parallelized
+    const toKeepForStatements = []
+    let currForLoop = node
+    while (currForLoop.type === 'ForStatement') {
+      if (currForLoop.body.type !== 'BlockStatement') {
+        break
+      }
+      if (currForLoop.body.body.length > 1 || currForLoop.body.body.length === 0) {
+        break
+      }
 
-    create.mutateToExpressionStatement(node, createKernelSourceCall)
+      const init = currForLoop.init as es.VariableDeclaration
+      const ctr = init[0] as es.Identifier
+
+      if (toKeepIndices.includes(ctr.name)) {
+        toKeepForStatements.push(node)
+      } else {
+        // tranpile away for statement
+        this.state++
+      }
+
+      currForLoop = currForLoop.body.body[0] as any
+    }
+
+    // 7. we transpile the loop to a function call, __createKernelSource
+    const makeCreateKernelSourceCall = (arr: es.Identifier): es.CallExpression => {
+      const kernelFunction = create.blockArrowFunction(
+        this.counters.map(x => create.identifier(x)),
+        this.targetBody
+      )
+      return create.callExpression(
+        this.globalIds.__createKernelSource,
+        [
+          create.arrayExpression(this.counters.map(x => create.literal(x))),
+          create.arrayExpression(this.end),
+          create.arrayExpression(toParallelize.map(x => create.literal(x))),
+          create.arrayExpression(externEntries.map(create.arrayExpression)),
+          create.arrayExpression(Array.from(locals.values()).map(v => create.literal(v))),
+          arr,
+          kernelFunction,
+          create.literal(currentKernelId++)
+        ],
+        node.loc!
+      )
+    }
+
+    // 8. we rebuild the node, keeping the necessary for statements
+    if (toKeepIndices.length === 0) {
+      create.mutateToExpressionStatement(node, makeCreateKernelSourceCall(this.outputArray))
+      return this.state
+    }
+
+    // keep necessary outer indices
+    let mem: es.MemberExpression | es.Identifier = this.outputArray
+    for (let m of toKeepIndices) {
+      mem = create.memberExpression(mem, m, true, node.loc)
+    }
+    // we need to assign GPU.js results to a subarray now
+    const subarr = create.constantDeclaration('__arr', mem)
+    const call = makeCreateKernelSourceCall(create.identifier('__arr'))
+
+    // keep necessary for statements
+    let body = create.blockStatement([subarr, create.expressionStatement(call)])
+    for (let i = toKeepForStatements.length - 1; i > 0; i--) {
+      const cur = toKeepForStatements[i]
+      body = create.blockStatement([create.ForStatement(cur.init, cur.test, cur.update, body)])
+    }
+    const last = toKeepForStatements[0]
+    create.mutateToForStatement(node, last.init, last.test, last.update, body)
 
     return this.state
   }
