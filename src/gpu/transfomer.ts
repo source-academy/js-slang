@@ -308,7 +308,7 @@ export function gpuRuntimeTranspile(
   // unused counters will simply be substitued with their end bounds
   const endMap = {}
   for (let i = 0; i < params.length; i++) {
-    endMap[params[i]] = end[i]
+    endMap[params[i]] = end[i] - 1
   }
   simple(body, {
     Identifier(nx: es.Identifier) {

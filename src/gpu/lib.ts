@@ -7,7 +7,7 @@ import { gpuRuntimeTranspile } from './transfomer'
 import { ACORN_PARSE_OPTIONS } from '../constants'
 
 // Heuristic : Only use GPU if array is bigger than this
-const MAX_SIZE = 200
+// const MAX_SIZE = 1
 
 // helper function to get argument for setOutput function
 export function getGPUKernelDimensions(ctr: string[], end: number[], idx: (string | number)[]) {
@@ -15,10 +15,12 @@ export function getGPUKernelDimensions(ctr: string[], end: number[], idx: (strin
   for (let i = 0; i < ctr.length; i++) {
     endMap[ctr[i]] = end[i]
   }
+  const used: string[] = []
   const dim: number[] = []
   for (let m of idx) {
-    if (typeof m === 'string' && m in endMap) {
+    if (typeof m === 'string' && m in endMap && !used.includes(m)) {
       dim.push(endMap[m])
+      used.push(m)
     }
   }
   return dim.reverse()
@@ -95,12 +97,12 @@ export function checkArray(arr: any, ctr: any, end: any, idx: any, ext: any) {
 
 // helper function to assign GPU.js results to original array
 export function buildArray(arr: any, ctr: any, end: any, idx: any, ext: any, res: any) {
-  buildArrayHelper(arr, ctr, end, idx, ext, res)
+  buildArrayHelper(arr, ctr, end, idx, ext, res, {})
 }
 
 // this is a recursive helper function for buildArray
 // it recurses through the indices and determines which subarrays to reassign
-function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res: any) {
+function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res: any, used: any) {
   // we are guranteed the types are valid from checkArray
   if (idx.length === 0) {
     return arr
@@ -110,12 +112,12 @@ function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res:
   const cur = idx[0]
   if (typeof cur === 'number') {
     // we only need to modify one of the subarrays of res
-    res[cur] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[cur])
+    res[cur] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[cur], used)
   } else if (typeof cur === 'string' && cur in ext) {
     // index is an external variable, treat as a number constant
     const v = ext[cur]
-    res[v] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[v])
-  } else if (typeof cur === 'string' && ctr.includes(cur)) {
+    res[v] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[v], used)
+  } else if (typeof cur === 'string' && ctr.includes(cur) && !(cur in used)) {
     // index is a counter, we need to modify all subarrays of res from index 0
     // to the end bound of the counter
     let e = undefined
@@ -126,8 +128,14 @@ function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res:
       }
     }
     for (let i = 0; i < e; i++) {
-      res[i] = buildArrayHelper(arr[i], ctr, end, idx.slice(1), ext, res[i])
+      const newUsed = {...used}
+      newUsed[cur] = i
+      res[i] = buildArrayHelper(arr[i], ctr, end, idx.slice(1), ext, res[i], newUsed)
     }
+  } else if (typeof cur === 'string' && ctr.includes(cur) && cur in used) {
+    // if the ctr was used as an index before, we need to take the same value
+    const v = used[cur]
+    res[v] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[v], used)
   }
   return res
 }
@@ -137,59 +145,59 @@ function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res:
  * 1. we are working with numbers
  * 2. we have a large array (> 100 elements)
  */
-function checkValidGPU(f: any, end: any): boolean {
-  let res: any
-  if (end.length === 1) res = f(0)
-  if (end.length === 2) res = f(0, 0)
-  if (end.length === 3) res = f(0, 0, 0)
+// function checkValidGPU(f: any, end: any): boolean {
+//   let res: any
+//   if (end.length === 1) res = f(0)
+//   if (end.length === 2) res = f(0, 0)
+//   if (end.length === 3) res = f(0, 0, 0)
 
-  // we do not allow array assignment
-  // we expect the programmer break it down for us
-  if (typeof res !== 'number') {
-    return false
-  }
+//   // we do not allow array assignment
+//   // we expect the programmer break it down for us
+//   if (typeof res !== 'number') {
+//     return false
+//   }
 
-  let cnt = 1
-  for (const i of end) {
-    cnt = cnt * i
-  }
+//   let cnt = 1
+//   for (const i of end) {
+//     cnt = cnt * i
+//   }
 
-  return cnt > MAX_SIZE
-}
+//   return cnt > MAX_SIZE
+// }
 
 // just run on js!
-function manualRun(f: any, end: any, res: any) {
-  function build() {
-    for (let i = 0; i < end[0]; i++) {
-      res[i] = f(i)
-    }
-    return
-  }
+// function manualRun(f: any, end: any, res: any) {
+//   function build() {
+//     for (let i = 0; i < end[0]; i++) {
+//       res[i] = f(i)
+//     }
+//     return
+//   }
 
-  function build2D() {
-    for (let i = 0; i < end[0]; i = i + 1) {
-      for (let j = 0; j < end[1]; j = j + 1) {
-        res[i][j] = f(i, j)
-      }
-    }
-    return
-  }
+//   function build2D() {
+//     for (let i = 0; i < end[0]; i = i + 1) {
+//       for (let j = 0; j < end[1]; j = j + 1) {
+//         res[i][j] = f(i, j)
+//       }
+//     }
+//     return
+//   }
 
-  function build3D() {
-    for (let i = 0; i < end[0]; i = i + 1) {
-      for (let j = 0; j < end[1]; j = j + 1) {
-        for (let k = 0; k < end[2]; k = k + 1) {
-          res[i][j][k] = f(i, j, k)
-        }
-      }
-    }
-    return
-  }
+//   function build3D() {
+//     for (let i = 0; i < end[0]; i = i + 1) {
+//       for (let j = 0; j < end[1]; j = j + 1) {
+//         for (let k = 0; k < end[2]; k = k + 1) {
+//           res[i][j][k] = f(i, j, k)
+//         }
+//       }
+//     }
+//     return
+//   }
 
-  if (end.length === 1) return build()
-  if (end.length === 2) return build2D()
-  return build3D()
-}
+//   if (end.length === 1) return build()
+//   if (end.length === 2) return build2D()
+//   return build3D()
+// }
 
 /* main function that runs code on the GPU (using gpu.js library)
  * @ctr: identifiers of loop counters
@@ -215,12 +223,13 @@ export function __createKernel(
     throw new TypeError(arr, '', 'object or array', typeof arr)
   }
 
+  // we disable this for development
   // check if program is valid to run on GPU
-  const ok = checkValidGPU(f2, end)
-  if (!ok) {
-    manualRun(f2, end, arr)
-    return
-  }
+  // const ok = checkValidGPU(f2, end)
+  // if (!ok) {
+  //   manualRun(f2, end, arr)
+  //   return
+  // }
 
   const kernelDim = getGPUKernelDimensions(ctr, end, idx)
 
