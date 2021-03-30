@@ -114,7 +114,7 @@ function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res:
   } else if (typeof cur === 'string' && cur in ext) {
     // index is an external variable, treat as a number constant
     const v = ext[cur]
-    res[v.value] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[v.value])
+    res[v] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[v])
   } else if (typeof cur === 'string' && ctr.includes(cur)) {
     // index is a counter, we need to modify all subarrays of res from index 0
     // to the end bound of the counter
