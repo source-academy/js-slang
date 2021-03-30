@@ -13,7 +13,7 @@ class GPUBodyVerifier {
   program: es.Program
   node: es.Statement
 
-  state: number
+  valid: boolean
   localVar: Set<string>
   counters: string[]
   indices: (string | number)[]
@@ -28,7 +28,7 @@ class GPUBodyVerifier {
     this.program = program
     this.node = node
     this.counters = counters
-    this.state = 0
+    this.valid = false
     this.checkBody(node)
   }
 
@@ -166,7 +166,7 @@ class GPUBodyVerifier {
       return
     }
 
-    this.state = this.indices.length
+    this.valid = true
   }
 
   getArrayName = (node: es.MemberExpression): es.Identifier => {
