@@ -16,6 +16,7 @@ class GPUBodyVerifier {
   state: number
   localVar: Set<string>
   counters: string[]
+  indices: (string | number)[]
   outputArray: es.Identifier
 
   /**
@@ -133,9 +134,6 @@ class GPUBodyVerifier {
 
     // check res assignment and its counters
     const res = this.getPropertyAccess(resultExpr[0].left)
-    if (res.length === 0 || res.length > this.counters.length) {
-      return
-    }
 
     // check result variable is not used anywhere with wrong indices
     const getProp = this.getPropertyAccess
@@ -185,18 +183,19 @@ class GPUBodyVerifier {
 
   // helper function that helps to get indices accessed from array
   // e.g. returns i, j for res[i][j]
-  getPropertyAccess = (node: es.MemberExpression): string[] => {
-    const res: string[] = []
+  getPropertyAccess = (node: es.MemberExpression) => {
+    const res: (string | number)[] = []
     let ok: boolean = true
     let curr: any = node
     while (curr.type === 'MemberExpression') {
-      if (curr.property.type !== 'Identifier') {
+      if (curr.property.type === 'Literal' && typeof curr.property.value === 'number') {
+        res.push(curr.property.value)
+      } else if (curr.property.type === 'Identifier' && !(curr.property.name in this.localVar)) {
+        res.push(curr.property.name)
+      } else {
         ok = false
         break
       }
-
-      res.push(curr.property.name)
-      curr = curr.object
     }
 
     if (!ok) {
