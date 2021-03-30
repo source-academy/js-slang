@@ -24,63 +24,103 @@ export function getGPUKernelDimensions(ctr: string[], end: number[], idx: (strin
   return dim.reverse()
 }
 
-// helper function to build 2D array output
-function buildArray(arr: Float32Array[][], end: any, res: any) {
-  for (let i = 0; i < end[0]; i++) {
-    res[i] = prettyOutput(arr[i])
+// helper function to check dimensions of array to be reassigned
+export function checkArray(arr: any, ctr: any, end: any, idx: any, ext: any) {
+  const endMap = {}
+  for (let i = 0; i < ctr.length; i++) {
+    endMap[ctr[i]] = end[i]
   }
-}
 
-function build2DArray(arr: Float32Array[][], end: any, res: any) {
-  for (let i = 0; i < end[0]; i++) {
-    for (let j = 0; j < end[1]; j++) {
-      res[i][j] = prettyOutput(arr[i][j])
-    }
-  }
-}
+  let ok = true
+  let arrQueue = [arr]
+  let curIdx
 
-// helper function to build 3D array output
-function build3DArray(arr: Float32Array[][][], end: any, res: any) {
-  for (let i = 0; i < end[0]; i++) {
-    for (let j = 0; j < end[1]; j++) {
-      for (let k = 0; k < end[2]; k++) {
-        res[i][j][k] = prettyOutput(arr[i][j][k])
+  const checkArrLengths = (start: number, end: number) => {
+    const newArrQueue = []
+    for (let a of arrQueue) {
+      if (!Array.isArray(a) || a.length < end) {
+        ok = false
+        break
+      }
+      for (let i = start; i < end; i++) {
+        newArrQueue.push(a[i])
       }
     }
+    arrQueue = newArrQueue
   }
+
+  // we go through the indices, at each index, we are inspecting a "level" of
+  // the array, arrQueue contains all the elements to be inspected at that
+  // "level" of the array
+  for (let i = 0; i < idx.length; i++) {
+    curIdx = idx[i]
+
+    if (typeof curIdx === 'number') {
+      // current index is a number, we only need to inspect one element
+      checkArrLengths(curIdx, curIdx + 1)
+    } else if (typeof curIdx === 'string' && ctr.includes(curIdx)) {
+      // current index is a counter, we need to inspect all elements up till the
+      // end bound of the counter
+      checkArrLengths(0, endMap[curIdx])
+    } else if (typeof curIdx === 'string' && curIdx in ext) {
+      // current index is an external variable, if it is not a number we throw a
+      // TypeError, else we treat it as a number constant
+      const v = ext[curIdx]
+      if (typeof v !== 'number') {
+        throw new TypeError(v, '', 'number', typeof v)
+      }
+      checkArrLengths(v, v + 1)
+    } else {
+      // TODO: how to handle this properly?
+      // this should never be reached, based on our static transpilation
+      throw 'Index should not be a local variable'
+    }
+
+    if (!ok) {
+      break
+    }
+  }
+
+  return ok
 }
 
-function prettyOutput(arr: any): any {
-  if (!(arr instanceof Float32Array)) {
+// helper function to assign GPU.js results to original array
+export function buildArray(arr: any, ctr: any, end: any, idx: any, ext: any, res: any) {
+  buildArrayHelper(arr, ctr, end, idx, ext, res)
+}
+
+// this is a recursive helper function for buildArray
+// it recurses through the indices and determines which subarrays to reassign
+function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res: any) {
+  // we are guranteed the types are valid from checkArray
+  if (idx.length === 0) {
     return arr
   }
 
-  const res = arr.map(x => prettyOutput(x))
-  return Array.from(res)
-}
-
-// helper function to check array is initialized
-function checkArray(arr: any): boolean {
-  return Array.isArray(arr)
-}
-
-// helper function to check 2D array is initialized
-function checkArray2D(arr: any, end: any): boolean {
-  for (let i = 0; i < end[0]; i = i + 1) {
-    if (!Array.isArray(arr[i])) return false
-  }
-  return true
-}
-
-// helper function to check 3D array is initialized
-function checkArray3D(arr: any, end: any): boolean {
-  for (let i = 0; i < end[0]; i = i + 1) {
-    if (!Array.isArray(arr[i])) return false
-    for (let j = 0; j < end[1]; j = j + 1) {
-      if (!Array.isArray(arr[i][j])) return false
+  // look at the first index
+  const cur = idx[0]
+  if (typeof cur === 'number') {
+    // we only need to modify one of the subarrays of res
+    res[cur] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[cur])
+  } else if (typeof cur === 'string' && cur in ext) {
+    // index is an external variable, treat as a number constant
+    const v = ext[cur]
+    res[v.value] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[v.value])
+  } else if (typeof cur === 'string' && ctr.includes(cur)) {
+    // index is a counter, we need to modify all subarrays of res from index 0
+    // to the end bound of the counter
+    let e = undefined
+    for (let i = 0; i < ctr.length; i++) {
+      if (ctr[i] === cur) {
+        e = end[i]
+        break
+      }
+    }
+    for (let i = 0; i < e; i++) {
+      res[i] = buildArrayHelper(arr[i], ctr, end, idx.slice(1), ext, res[i])
     }
   }
-  return true
+  return res
 }
 
 /*
@@ -151,9 +191,9 @@ function manualRun(f: any, end: any, res: any) {
  * @arr : array to be written to
  */
 export function __createKernel(
-  ctr: string[],
+  ctr: any,
   end: any,
-  idx: (string | number)[],
+  idx: any,
   extern: any,
   f: any,
   arr: any,
@@ -161,34 +201,13 @@ export function __createKernel(
 ) {
   const gpu = new GPU()
 
-  // check array is initialized properly
-  let ok = checkArray(arr)
-  let err = ''
-  if (!ok) {
-    err = typeof arr
-  }
-
-  // TODO: find a cleaner way to do this
-  if (end.length > 1) {
-    ok = ok && checkArray2D(arr, end)
-    if (!ok) {
-      err = 'undefined'
-    }
-  }
-
-  if (end.length > 2) {
-    ok = ok && checkArray3D(arr, end)
-    if (!ok) {
-      err = 'undefined'
-    }
-  }
-
-  if (!ok) {
-    throw new TypeError(arr, '', 'object or array', err)
+  // check if the assignment is to a valid array
+  if (!checkArray(arr, ctr, end, idx, extern)) {
+    throw new TypeError(arr, '', 'object or array', typeof arr)
   }
 
   // check if program is valid to run on GPU
-  ok = checkValidGPU(f2, end)
+  const ok = checkValidGPU(f2, end)
   if (!ok) {
     manualRun(f2, end, arr)
     return
@@ -202,9 +221,7 @@ export function __createKernel(
 
   const gpuFunction = gpu.createKernel(f, out).setOutput(kernelDim)
   const res = gpuFunction() as any
-  if (end.length === 1) buildArray(res, end, arr)
-  if (end.length === 2) build2DArray(res, end, arr)
-  if (end.length === 3) build3DArray(res, end, arr)
+  buildArray(res, ctr, end, idx, extern, arr)
 }
 
 function entriesToObject(entries: [string, any][]): any {

@@ -69,3 +69,9 @@ test('getGPUKernelDimensions with repeated counters returns correct dimensions',
   const kernelDim2 = getGPUKernelDimensions(ctr2, end2, idx2)
   expect(kernelDim2).toEqual([1, 2, 2])
 })
+
+test('checkArray returns true when array is valid', () => {
+})
+
+test('checkArray returns false when array is invalid', () => {
+})
