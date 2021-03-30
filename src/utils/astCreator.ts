@@ -22,15 +22,46 @@ export const literal = (
   loc
 })
 
+export const mutateToForStatement = (
+  node: es.Node,
+  init: es.VariableDeclaration | es.Expression | null | undefined,
+  test: es.Expression | null | undefined,
+  update: es.Expression | null | undefined,
+  body: es.BlockStatement
+) => {
+  node.type = 'ForStatement'
+  node = node as es.ForStatement
+  node.init = init
+  node.test = test
+  node.update = update
+  node.body = body
+}
+
+export const ForStatement = (
+  init: es.VariableDeclaration | es.Expression | null | undefined,
+  test: es.Expression | null | undefined,
+  update: es.Expression | null | undefined,
+  body: es.BlockStatement
+): es.ForStatement => ({
+  type: 'ForStatement',
+  init: init,
+  test: test,
+  update: update,
+  body: body
+})
+
 export const memberExpression = (
   object: es.Expression,
-  property: string | number
+  property: string | number,
+  computed?: boolean,
+  loc?: es.SourceLocation | null
 ): es.MemberExpression => ({
   type: 'MemberExpression',
   object,
-  computed: typeof property === 'number',
+  computed: computed !== undefined ? computed : typeof property === 'number',
   optional: false,
-  property: typeof property === 'number' ? literal(property) : identifier(property)
+  property: typeof property === 'number' ? literal(property) : identifier(property),
+  loc
 })
 
 export const declaration = (
