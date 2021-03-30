@@ -29,6 +29,7 @@ class GPUTransformer {
   counters: string[]
   end: es.Expression[]
   state: number
+  indices: (string | number)[]
   localVar: Set<string>
   outerVariables: any
   targetBody: any
@@ -91,6 +92,7 @@ class GPUTransformer {
 
     this.state = verifier.state
     this.outputArray = verifier.outputArray
+    this.indices = verifier.indices
     this.localVar = verifier.localVar
 
     // 2. get external variables + the main body
@@ -205,7 +207,8 @@ class GPUTransformer {
    * }
    */
   getTargetBody(node: es.ForStatement) {
-    let mv = this.state
+    // get rid of all outer loops
+    let mv = this.counters.length
     this.targetBody = node
     while (mv > 1) {
       this.targetBody = this.targetBody.body.body[0]
