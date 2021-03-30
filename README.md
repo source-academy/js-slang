@@ -72,7 +72,7 @@ $ js-slang -n --chapter=1 -e "$(< my_source_program.js)"
 Documentation
 =============
 
-Source is documented here: <https://sicp.comp.nus.edu.sg/source/>
+Source is documented here: <https://source-academy.github.io/source/>
 
 ## Requirements
 * `bash`: known working version: GNU bash, version 5.0.16
@@ -126,10 +126,12 @@ The regression tests are generated using `jest` and stored as snapshots in `src/
 $ yarn test -- --updateSnapshot
 ```
 
+
+
 Error messages
 ==============
 
-To enable verbose messages, have the statement `"enable verbose";` as the first line of your program.
+To enable verbose messages, have the statement `"enable verbose";` as the first line of your program. This also causes the program to be run by the interpreter.
 
 There are two main kinds of error messages: those that occur at runtime
 and those that occur at parse time. The first can be found in
