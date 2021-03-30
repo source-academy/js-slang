@@ -164,7 +164,7 @@ class GPUTransformer {
       }
 
       const init = currForLoop.init as es.VariableDeclaration
-      const ctr = init[0] as es.Identifier
+      const ctr = init.declarations[0].id as es.Identifier
 
       if (toKeepIndices.includes(ctr.name)) {
         toKeepForStatements.push(node)

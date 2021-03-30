@@ -140,6 +140,7 @@ class GPUBodyVerifier {
     // the array, which can lead to undefined behavior if parallelized
     const getProp = this.getPropertyAccess
     const resArr = this.outputArray
+    const members = this.indices
     simple(
       node,
       {
@@ -151,7 +152,7 @@ class GPUBodyVerifier {
 
           // get indices
           const indices = getProp(nx)
-          if (JSON.stringify(indices) === JSON.stringify(this.indices)) {
+          if (JSON.stringify(indices) === JSON.stringify(members)) {
             return
           }
 
@@ -192,6 +193,7 @@ class GPUBodyVerifier {
         ok = false
         break
       }
+      curr = curr.object
     }
 
     if (!ok) {
