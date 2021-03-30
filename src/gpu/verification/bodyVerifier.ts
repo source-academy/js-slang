@@ -132,10 +132,12 @@ class GPUBodyVerifier {
       return
     }
 
-    // check res assignment and its counters
-    const res = this.getPropertyAccess(resultExpr[0].left)
+    // retrieve indices
+    this.indices = this.getPropertyAccess(resultExpr[0].left)
 
     // check result variable is not used anywhere with wrong indices
+    // this prevents scenarios such as accessing the value of another cell in
+    // the array, which can lead to undefined behavior if parallelized
     const getProp = this.getPropertyAccess
     const resArr = this.outputArray
     simple(
@@ -149,7 +151,7 @@ class GPUBodyVerifier {
 
           // get indices
           const indices = getProp(nx)
-          if (JSON.stringify(indices) === JSON.stringify(res)) {
+          if (JSON.stringify(indices) === JSON.stringify(this.indices)) {
             return
           }
 
@@ -164,13 +166,7 @@ class GPUBodyVerifier {
       return
     }
 
-    for (let i = 0; i < this.counters.length; i++) {
-      if (res[i] !== this.counters[i]) break
-      this.state++
-    }
-
-    // we only can have upto 3 states
-    if (this.state > 3) this.state = 3
+    this.state = this.indices.length
   }
 
   getArrayName = (node: es.MemberExpression): es.Identifier => {
