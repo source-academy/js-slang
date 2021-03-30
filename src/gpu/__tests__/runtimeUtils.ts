@@ -1,4 +1,4 @@
-import { getGPUKernelDimensions } from '../lib'
+import { getGPUKernelDimensions, checkArray } from '../lib'
 
 test('getGPUKernelDimensions with counter prefix returns correct dimensions', () => {
   const ctr = ['i', 'j', 'k']
@@ -70,8 +70,195 @@ test('getGPUKernelDimensions with repeated counters returns correct dimensions',
   expect(kernelDim2).toEqual([1, 2, 2])
 })
 
-test('checkArray returns true when array is valid', () => {
+test('checkArray returns true when array is valid with counter prefix', () => {
+  const arr: any = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = []
+    for (let j = 0; j < 5; j++) {
+      arr[i][j] = []
+    }
+  }
+  const ctr = ['i', 'j', 'k']
+  const end = [100, 5, 3]
+  const idx = ['i', 'j', 'k']
+  const ext = {}
+  const res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(true)
 })
 
-test('checkArray returns false when array is invalid', () => {
+test('checkArray returns true when array is valid with counter combination', () => {
+  const arr: any = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = []
+    for (let j = 0; j < 5; j++) {
+      arr[i][j] = []
+      for (let k = 0; k < 3; k++) {
+        arr[i][j][k] = []
+      }
+    }
+  }
+  const ctr = ['i', 'j', 'k', 'l']
+  const end = [100, 5, 3, 50]
+  const idx = ['k', 'i']
+  const ext = {}
+  const res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(true)
+})
+
+test('checkArray returns true when array is valid with numbers', () => {
+  const arr: any = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = []
+    arr[i][1000] = []
+  }
+  const ctr = ['i', 'j', 'k']
+  const end = [100, 5, 3]
+  const idx = ['i', 1000]
+  const ext = {}
+  const res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(true)
+})
+
+test('checkArray returns true when array is valid with external variables', () => {
+  const arr: any = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = []
+    for (let j = 0; j < 5; j++) {
+      arr[i][j] = []
+      for (let k = 0; k < 5; k++) {
+        arr[i][j][k] = []
+        arr[i][j][k][999] = []
+      }
+    }
+  }
+  const ctr = ['i', 'j', 'k']
+  const end = [100, 5, 3]
+  const idx = ['i', 'j', 'k', 'x']
+  const ext = {"x" : 999}
+  const res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(true)
+})
+
+test('checkArray returns true when array is valid with repeated counters', () => {
+  const arr: any = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = []
+    for (let j = 0; j < 100; j++) {
+      arr[i][j] = []
+    }
+  }
+  const ctr = ['i', 'j', 'k']
+  const end = [100, 5, 3]
+  const idx = ['i', 'i', 'i']
+  const ext = {}
+  const res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(true)
+})
+
+test('checkArray returns false when array is invalid with counter prefix', () => {
+  let arr: any = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = 1 
+  }
+  let ctr = ['i', 'j', 'k']
+  let end = [100, 5, 3]
+  let idx = ['i', 'j', 'k']
+  let ext = {}
+  let res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(false)
+
+  arr = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = []
+    for (let j = 0; j < 2; j++) {
+      arr[i][j] = []
+    }
+  }
+  ctr = ['i', 'j', 'k']
+  end = [100, 5, 3]
+  idx = ['i', 'j', 'k']
+  ext = {}
+  res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(false)
+})
+
+test('checkArray returns false when array is invalid with counter combination', () => {
+  const arr: any = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = []
+    for (let j = 0; j < 5; j++) {
+      arr[i][j] = []
+      for (let k = 0; k < 3; k++) {
+        arr[i][j][k] = []
+      }
+    }
+  }
+  const ctr = ['i', 'j', 'k', 'l']
+  const end = [100, 5, 3, 50]
+  const idx = ['k', 'l', 'i']
+  const ext = {}
+  const res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(false)
+})
+
+test('checkArray returns false when array is invalid with numbers', () => {
+  let arr: any = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = 'string' 
+  }
+  let ctr = ['i', 'j', 'k']
+  let end = [100, 5, 3]
+  let idx = ['i', 1000]
+  let ext = {}
+  let res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(false)
+
+  arr = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = []
+    for (let j = 0; j < 100; j++) {
+      arr[i][j] = 3
+    }
+  }
+  ctr = ['i', 'j', 'k']
+  end = [100, 5, 3]
+  idx = ['i', 'j', 1000]
+  ext = {}
+  res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(false)
+})
+
+test('checkArray returns false when array is invalid with external variables', () => {
+  const arr: any = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = []
+    for (let j = 0; j < 5; j++) {
+      arr[i][j] = []
+      for (let k = 0; k < 5; k++) {
+        arr[i][j][9999] = []
+      }
+    }
+  }
+  const ctr = ['i', 'j', 'k']
+  const end = [100, 5, 3]
+  const idx = ['i', 'j', 'x', 'k']
+  const ext = {"x" : 999}
+  const res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(false)
+})
+
+test('checkArray returns false when array is invalid with repeated counters', () => {
+  const arr: any = []
+  for (let i = 0; i < 100; i++) {
+    arr[i] = []
+    for (let j = 0; j < 5; j++) {
+      arr[i][j] = []
+    }
+  }
+  const ctr = ['i', 'j', 'k']
+  const end = [100, 5, 3]
+  const idx = ['i', 'i', 'i']
+  const ext = {}
+  const res = checkArray(arr, ctr, end, idx, ext)
+  expect(res).toBe(false)
 })

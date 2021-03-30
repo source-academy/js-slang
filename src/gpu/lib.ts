@@ -52,7 +52,7 @@ export function checkArray(arr: any, ctr: any, end: any, idx: any, ext: any) {
   // we go through the indices, at each index, we are inspecting a "level" of
   // the array, arrQueue contains all the elements to be inspected at that
   // "level" of the array
-  for (let i = 0; i < idx.length; i++) {
+  for (let i = 0; i < idx.length - 1; i++) {
     curIdx = idx[i]
 
     if (typeof curIdx === 'number') {
@@ -77,6 +77,15 @@ export function checkArray(arr: any, ctr: any, end: any, idx: any, ext: any) {
     }
 
     if (!ok) {
+      break
+    }
+  }
+
+  // for the last level of the array, we do not require it to be of a certain
+  // length, since Source supports dynamic array resizing
+  for (let a of arrQueue) {
+    if (!Array.isArray(a)) {
+      ok = false
       break
     }
   }
