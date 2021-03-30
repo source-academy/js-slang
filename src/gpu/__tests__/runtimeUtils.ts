@@ -61,13 +61,13 @@ test('getGPUKernelDimensions with repeated counters returns correct dimensions',
   const end = [3, 2, 5]
   const idx = ['i', 'i', 'k']
   const kernelDim = getGPUKernelDimensions(ctr, end, idx)
-  expect(kernelDim).toEqual([5, 3, 3])
+  expect(kernelDim).toEqual([5, 3])
 
   const ctr2 = ['i', 'j', 'k', 'l']
   const end2 = [3, 5, 1, 2]
-  const idx2 = ['l', 'l', 'k']
+  const idx2 = ['l', 'k', 'l']
   const kernelDim2 = getGPUKernelDimensions(ctr2, end2, idx2)
-  expect(kernelDim2).toEqual([1, 2, 2])
+  expect(kernelDim2).toEqual([1, 2])
 })
 
 test('checkArray returns true when array is valid with counter prefix', () => {
@@ -623,7 +623,7 @@ test('buildArray with repeated counters performs correct assignment', () => {
   let end = [1, 2, 3]
   let idx = ['j', 'j', 'k']
   let ext: any = {}
-  let res: any = [[[1, 1, 1], [1, 1, 1]], [[1, 1, 1], [1, 1, 1]]]
+  let res: any = [[1, 1, 1], [1, 1, 1]]
   let arr: any = [
     [
       [2, 2, 2],
@@ -644,11 +644,11 @@ test('buildArray with repeated counters performs correct assignment', () => {
   let exp: any = [
     [
       [1, 1, 1],
-      [1, 1, 1],
+      [2, 2, 2],
       [2, 2, 2]
     ],
     [
-      [1, 1, 1],
+      [2, 2, 2],
       [1, 1, 1],
       [2, 2, 2]
     ],

@@ -121,10 +121,10 @@ test('gpuRuntimeTranspile update reference to counters not used as index', () =>
         left.type === 'BinaryExpression' &&
         checkId(left.left, 'x') &&
         left.right.type === 'Literal' &&
-        left.right.value === 2 &&
+        left.right.value === 1 &&
         // 3
         right.type === 'Literal' &&
-        right.value === 3
+        right.value === 2
       ) {
         found = true
       }
@@ -183,7 +183,7 @@ test('gpuRuntimeTranspile update references to counters used as index', () => {
         checkId(left.left, 'y') &&
         checkId(left.right, 'x') &&
         right.type === 'Literal' &&
-        right.value === 3
+        right.value === 2
       ) {
         found = true
       }
