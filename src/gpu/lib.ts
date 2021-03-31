@@ -7,7 +7,7 @@ import { gpuRuntimeTranspile } from './transfomer'
 import { ACORN_PARSE_OPTIONS } from '../constants'
 
 // Heuristic : Only use GPU if array is bigger than this
-// const MAX_SIZE = 1
+const MAX_SIZE = 1
 
 // helper function to get argument for setOutput function
 export function getGPUKernelDimensions(ctr: string[], end: number[], idx: (string | number)[]) {
@@ -128,7 +128,7 @@ function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res:
       }
     }
     for (let i = 0; i < e; i++) {
-      const newUsed = {...used}
+      const newUsed = { ...used }
       newUsed[cur] = i
       res[i] = buildArrayHelper(arr[i], ctr, end, idx.slice(1), ext, res[i], newUsed)
     }
@@ -145,59 +145,80 @@ function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res:
  * 1. we are working with numbers
  * 2. we have a large array (> 100 elements)
  */
-// function checkValidGPU(f: any, end: any): boolean {
-//   let res: any
-//   if (end.length === 1) res = f(0)
-//   if (end.length === 2) res = f(0, 0)
-//   if (end.length === 3) res = f(0, 0, 0)
+function checkValidGPU(f: any, end: any): boolean {
+  const args = end.map(() => 0)
+  const res = f.apply({}, args)
 
-//   // we do not allow array assignment
-//   // we expect the programmer break it down for us
-//   if (typeof res !== 'number') {
-//     return false
-//   }
+  // we do not allow array assignment
+  // we expect the programmer break it down for us
+  if (typeof res !== 'number') {
+    return false
+  }
 
-//   let cnt = 1
-//   for (const i of end) {
-//     cnt = cnt * i
-//   }
+  let cnt = 1
+  for (const i of end) {
+    cnt = cnt * i
+  }
 
-//   return cnt > MAX_SIZE
-// }
+  return cnt > MAX_SIZE
+}
 
 // just run on js!
-// function manualRun(f: any, end: any, res: any) {
-//   function build() {
-//     for (let i = 0; i < end[0]; i++) {
-//       res[i] = f(i)
-//     }
-//     return
-//   }
+function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
+  // generate all permutations of counters
+  let perm: number[][] = [[]]
+  for (let e of end) {
+    const newPerm = []
+    for (let i = 0; i < e; i++) {
+      for (let p of perm) {
+        const t: number[] = [...p]
+        t.push(i)
+        newPerm.push(t)
+      }
+    }
+    perm = newPerm
+  }
 
-//   function build2D() {
-//     for (let i = 0; i < end[0]; i = i + 1) {
-//       for (let j = 0; j < end[1]; j = j + 1) {
-//         res[i][j] = f(i, j)
-//       }
-//     }
-//     return
-//   }
+  // we run the function for each permutation of counters
+  for (let p of perm) {
+    const value = f.apply({}, p)
 
-//   function build3D() {
-//     for (let i = 0; i < end[0]; i = i + 1) {
-//       for (let j = 0; j < end[1]; j = j + 1) {
-//         for (let k = 0; k < end[2]; k = k + 1) {
-//           res[i][j][k] = f(i, j, k)
-//         }
-//       }
-//     }
-//     return
-//   }
+    // we find the location to assign the result in the original array
+    let arr = res
+    for (let i = 0; i < idx.length - 1; i++) {
+      const curIdx = idx[i]
+      if (typeof curIdx === 'number') {
+        arr = arr[curIdx]
+      } else if (typeof curIdx === 'string' && ctr.includes(curIdx)) {
+        const v = p[ctr.indexOf(curIdx)]
+        arr = arr[v]
+      } else if (typeof curIdx === 'string' && curIdx in ext) {
+        const v = ext[curIdx]
+        arr = arr[v]
+      } else {
+        // index should alreday be guranteed to be a counter, number or external
+        // variable
+        throw 'Index must be number, counter or external variable'
+      }
+    }
 
-//   if (end.length === 1) return build()
-//   if (end.length === 2) return build2D()
-//   return build3D()
-// }
+    // assign the new result
+    const lastIdx = idx[idx.length - 1]
+    if (typeof lastIdx === 'number') {
+      arr[lastIdx] = value
+    } else if (typeof lastIdx === 'string' && ctr.includes(lastIdx)) {
+      const v = p[ctr.indexOf(lastIdx)]
+      arr[v] = value
+    } else if (typeof lastIdx === 'string' && lastIdx in ext) {
+      const v = ext[lastIdx]
+      arr[v] = value
+    } else {
+      // index should alreday be guranteed to be a counter, number or external
+      // variable
+      throw 'Index must be number, counter or external variable'
+    }
+  }
+}
 
 /* main function that runs code on the GPU (using gpu.js library)
  * @ctr: identifiers of loop counters
@@ -223,13 +244,12 @@ export function __createKernel(
     throw new TypeError(arr, '', 'object or array', typeof arr)
   }
 
-  // we disable this for development
   // check if program is valid to run on GPU
-  // const ok = checkValidGPU(f2, end)
-  // if (!ok) {
-  //   manualRun(f2, end, arr)
-  //   return
-  // }
+  const ok = checkValidGPU(f2, end)
+  if (!ok) {
+    manualRun(f2, ctr, end, idx, extern, arr)
+    return
+  }
 
   const kernelDim = getGPUKernelDimensions(ctr, end, idx)
 

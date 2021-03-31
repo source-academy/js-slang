@@ -167,6 +167,7 @@ class GPUBodyVerifier {
       return
     }
 
+    this.indices.reverse()
     this.valid = true
   }
 
