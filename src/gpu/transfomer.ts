@@ -156,13 +156,15 @@ class GPUTransformer {
 
     // 6. we need to keep the loops whose counters are not parallelized
     const toKeepForStatements = []
+    const untranspiledCounters: string[] = []
     let currForLoop = node
     while (currForLoop.type === 'ForStatement') {
       const init = currForLoop.init as es.VariableDeclaration
       const ctr = init.declarations[0].id as es.Identifier
 
       if (toKeepIndices.includes(ctr.name)) {
-        toKeepForStatements.push(node)
+        toKeepForStatements.push(currForLoop)
+        untranspiledCounters.push(ctr.name)
       } else {
         // tranpile away for statement
         this.state++
@@ -181,15 +183,37 @@ class GPUTransformer {
 
     // 7. we transpile the loop to a function call, __createKernelSource
     const makeCreateKernelSourceCall = (arr: es.Identifier): es.CallExpression => {
+      const ctrToTranspile = []
+      const endToTranspile = []
+      for (let i = 0; i < this.counters.length; i++) {
+        if (!untranspiledCounters.includes(this.counters[i])) {
+          ctrToTranspile.push(this.counters[i])
+          endToTranspile.push(this.end[i])
+        }
+      }
+
+      // we now treat the untranspiled counters as external variables
+      // if same name is encountered, the loop counter will override the
+      // external variable in the outer scope
+      for (let c of untranspiledCounters) {
+        for (let i = 0; i < externEntries.length; i++) {
+          if (externEntries[i][0].value === c) {
+            externEntries.splice(i, 1)
+          }
+        }
+        const x: [es.Literal, es.Expression] = [create.literal(c), create.identifier(c)]
+        externEntries.push(x)
+      }
+
       const kernelFunction = create.blockArrowFunction(
-        this.counters.map(x => create.identifier(x)),
+        ctrToTranspile.map(x => create.identifier(x)),
         this.targetBody
       )
       return create.callExpression(
         this.globalIds.__createKernelSource,
         [
-          create.arrayExpression(this.counters.map(x => create.literal(x))),
-          create.arrayExpression(this.end),
+          create.arrayExpression(ctrToTranspile.map(x => create.literal(x))),
+          create.arrayExpression(endToTranspile),
           create.arrayExpression(toParallelize.map(x => create.literal(x))),
           create.arrayExpression(externEntries.map(create.arrayExpression)),
           create.arrayExpression(Array.from(locals.values()).map(v => create.literal(v))),
