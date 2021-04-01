@@ -3,7 +3,6 @@ import { ancestor, simple, make } from '../utils/walkers'
 import * as create from '../utils/astCreator'
 import GPULoopVerifier from './verification/loopVerifier'
 import GPUBodyVerifier from './verification/bodyVerifier'
-import { generate } from 'astring'
 
 let currentKernelId = 0
 /*
@@ -252,8 +251,6 @@ class GPUTransformer {
     }
     const last = toKeepForStatements[0]
     create.mutateToForStatement(node, last.init, last.test, last.update, body)
-
-    console.log(generate(node))
 
     return this.state
   }
