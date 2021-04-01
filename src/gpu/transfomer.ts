@@ -3,6 +3,7 @@ import { ancestor, simple, make } from '../utils/walkers'
 import * as create from '../utils/astCreator'
 import GPULoopVerifier from './verification/loopVerifier'
 import GPUBodyVerifier from './verification/bodyVerifier'
+import { generate } from 'astring'
 
 let currentKernelId = 0
 /*
@@ -147,6 +148,7 @@ class GPUTransformer {
       }
       toParallelize.push(m)
     }
+    toParallelize.reverse()
     const toKeepIndices = []
     for (let i = 0; i < this.indices.length - toParallelize.length; i++) {
       toKeepIndices.push(this.indices[i])
@@ -156,13 +158,6 @@ class GPUTransformer {
     const toKeepForStatements = []
     let currForLoop = node
     while (currForLoop.type === 'ForStatement') {
-      if (currForLoop.body.type !== 'BlockStatement') {
-        break
-      }
-      if (currForLoop.body.body.length > 1 || currForLoop.body.body.length === 0) {
-        break
-      }
-
       const init = currForLoop.init as es.VariableDeclaration
       const ctr = init.declarations[0].id as es.Identifier
 
@@ -172,6 +167,14 @@ class GPUTransformer {
         // tranpile away for statement
         this.state++
       }
+
+      if (currForLoop.body.type !== 'BlockStatement') {
+        break
+      }
+      if (currForLoop.body.body.length > 1 || currForLoop.body.body.length === 0) {
+        break
+      }
+
 
       currForLoop = currForLoop.body.body[0] as any
     }
@@ -221,6 +224,8 @@ class GPUTransformer {
     }
     const last = toKeepForStatements[0]
     create.mutateToForStatement(node, last.init, last.test, last.update, body)
+
+    console.log(generate(node))
 
     return this.state
   }
