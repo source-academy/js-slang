@@ -177,7 +177,6 @@ class GPUTransformer {
         break
       }
 
-
       currForLoop = currForLoop.body.body[0] as any
     }
 
@@ -201,7 +200,10 @@ class GPUTransformer {
             externEntries.splice(i, 1)
           }
         }
-        const x: [es.Literal, es.Expression] = [create.literal(c), create.identifier(c)]
+        const x: [es.Literal, es.Expression] = [
+          create.literal(c, node.loc),
+          create.identifier(c, node.loc)
+        ]
         externEntries.push(x)
       }
 
@@ -244,7 +246,9 @@ class GPUTransformer {
     let body = create.blockStatement([subarr, create.expressionStatement(call)])
     for (let i = toKeepForStatements.length - 1; i > 0; i--) {
       const cur = toKeepForStatements[i]
-      body = create.blockStatement([create.ForStatement(cur.init, cur.test, cur.update, body)])
+      body = create.blockStatement([
+        create.ForStatement(cur.init, cur.test, cur.update, body, cur.loc)
+      ])
     }
     const last = toKeepForStatements[0]
     create.mutateToForStatement(node, last.init, last.test, last.update, body)

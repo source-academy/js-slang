@@ -41,13 +41,15 @@ export const ForStatement = (
   init: es.VariableDeclaration | es.Expression | null | undefined,
   test: es.Expression | null | undefined,
   update: es.Expression | null | undefined,
-  body: es.BlockStatement
+  body: es.BlockStatement,
+  loc?: es.SourceLocation | null
 ): es.ForStatement => ({
   type: 'ForStatement',
   init: init,
   test: test,
   update: update,
-  body: body
+  body: body,
+  loc: loc
 })
 
 export const memberExpression = (
