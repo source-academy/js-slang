@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { simple, make } from '../../utils/walkers'
+import { simple, make, ancestor } from '../../utils/walkers'
 import GPUFunctionVerifier from './functionVerifier'
 
 /*
@@ -91,12 +91,17 @@ class GPUBodyVerifier {
 
     // first create a map of all custom function names to their declarations (to help with later verification)
     const customFunctions = new Map<string, es.FunctionDeclaration>()
-    simple(this.program, {
-      FunctionDeclaration(nx: es.FunctionDeclaration) {
+    // for now we only consider custom functions that are in the global scope
+    ancestor(this.program, {
+      FunctionDeclaration(nx: es.FunctionDeclaration, ancestors: Array<es.Node>) {
         if (nx.id === null) {
           return
         }
-        customFunctions.set(nx.id.name, nx)
+        if (ancestors.length == 2) {
+          // only add a custom function if it is in the global scope (ancestors are the Program and itself)
+          console.log(nx)
+          customFunctions.set(nx.id.name, nx)
+        }
       }
     })
 
