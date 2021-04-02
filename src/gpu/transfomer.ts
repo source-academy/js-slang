@@ -259,65 +259,15 @@ class GPUTransformer {
   }
 }
 
-export function gpuFunctionTranspile(
-  node: es.FunctionDeclaration,
-  functionNames: Set<string>
-): es.FunctionDeclaration {
-  const body = node.body
-  const params: string[] = []
-  for (const param of node.params) {
-    params.push((param as es.Identifier).name)
-  }
-
-  const localNames = new Set<string>()
-  simple(body, {
-    VariableDeclaration(nx: es.VariableDeclaration) {
-      if (nx.declarations[0].id.type === 'Identifier') {
-        localNames.add(nx.declarations[0].id.name)
-      }
-    }
-  })
-
+/*
+ * Here we transpile a source-syntax custom function to a function that gpu.js is able to accept
+ * We just need to update all math_* calls to become Math.* calls
+ * No external variables are allowed, so no updating is required
+ */
+export function gpuFunctionTranspile(node: es.FunctionDeclaration): es.FunctionDeclaration {
   // 1. Update all math_* calls to become Math.*
-  simple(body, {
-    CallExpression(nx: es.CallExpression) {
-      if (nx.callee.type !== 'Identifier') {
-        return
-      }
-      if (!nx.callee.name.startsWith('math_')) {
-        return
-      }
+  transpileMathFunction(node.body)
 
-      const functionName = nx.callee.name
-      const term = functionName.split('_')[1]
-      const args: es.Expression[] = nx.arguments as any
-
-      create.mutateToCallExpression(
-        nx,
-        create.memberExpression(create.identifier('Math'), term),
-        args
-      )
-    }
-  })
-
-  // 2. Update all external variable references in body
-  // e.g. let res = 1 + y; where y is an external variable
-  // becomes let res = 1 + this.constants.y;
-  const ignoredNames: Set<string> = new Set([...params, 'Math'])
-  simple(body, {
-    Identifier(nx: es.Identifier) {
-      // ignore these names
-      if (ignoredNames.has(nx.name) || localNames.has(nx.name) || functionNames.has(nx.name)) {
-        return
-      }
-
-      create.mutateToMemberExpression(
-        nx,
-        create.memberExpression(create.identifier('this'), 'constants'),
-        create.identifier(nx.name)
-      )
-    }
-  })
   return node
 }
 
@@ -341,26 +291,7 @@ export function gpuRuntimeTranspile(
   const body = node.body as es.BlockStatement
 
   // 1. Update all math_* calls to become Math.*
-  simple(body, {
-    CallExpression(nx: es.CallExpression) {
-      if (nx.callee.type !== 'Identifier') {
-        return
-      }
-      if (!nx.callee.name.startsWith('math_')) {
-        return
-      }
-
-      const functionName = nx.callee.name
-      const term = functionName.split('_')[1]
-      const args: es.Expression[] = nx.arguments as any
-
-      create.mutateToCallExpression(
-        nx,
-        create.memberExpression(create.identifier('Math'), term),
-        args
-      )
-    }
-  })
+  transpileMathFunction(body)
 
   // 2. Update all external variable references in body
   // e.g. let res = 1 + y; where y is an external variable
@@ -417,6 +348,30 @@ export function gpuRuntimeTranspile(
   })
 
   return body
+}
+
+// Helper method to mutate all math_* calls to become Math.*
+function transpileMathFunction(node: es.Node) {
+  simple(node, {
+    CallExpression(nx: es.CallExpression) {
+      if (nx.callee.type !== 'Identifier') {
+        return
+      }
+      if (!nx.callee.name.startsWith('math_')) {
+        return
+      }
+
+      const functionName = nx.callee.name
+      const term = functionName.split('_')[1]
+      const args: es.Expression[] = nx.arguments as any
+
+      create.mutateToCallExpression(
+        nx,
+        create.memberExpression(create.identifier('Math'), term),
+        args
+      )
+    }
+  })
 }
 
 export default GPUTransformer

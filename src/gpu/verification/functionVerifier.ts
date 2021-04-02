@@ -132,7 +132,7 @@ class GPUFunctionVerifier {
   /*
    * Checks if the function is valid
    * 1. No reserved keywords in GLSL used for the function name
-   * 2. No modification of external variables
+   * 2. No use or modification of external variables
    * 3. No higher-order functions (functions as arguments)
    * 4. No recursive functions (this function should not call itself)
    * 5. No use of Source's standard library functions (other than math library)
@@ -147,7 +147,7 @@ class GPUFunctionVerifier {
 
     let ok: boolean = true
     this.unverifiedFunctions.add(this.name)
-    // 2. Check there is no modification of external variables
+    // 2. Check there is no use or modification of external variables
 
     // Get all local variables
     const localVar = new Set<string>()
@@ -159,10 +159,36 @@ class GPUFunctionVerifier {
       }
     })
 
+    const paramNames = new Set((fun.params as es.Identifier[]).map(x => x.name))
+    const customFunctionNames = new Set<string>(this.customFunctions.keys())
+
+    simple(fun.body, {
+      Identifier(node: es.Identifier) {
+        // Check if there are cases of referencing non-local variables
+        if (
+          !localVar.has(node.name) &&
+          !paramNames.has(node.name) &&
+          !customFunctionNames.has(node.name) &&
+          !node.name.startsWith('math_')
+        ) {
+          ok = false
+          return
+        }
+      }
+    })
+
+    if (!ok) {
+      return false
+    }
+
     simple(fun.body, {
       AssignmentExpression(nx: es.AssignmentExpression) {
         // Check if there are assignments to non-local variables
-        if (nx.left.type === 'Identifier' && !localVar.has(nx.left.name)) {
+        if (
+          nx.left.type === 'Identifier' &&
+          !localVar.has(nx.left.name) &&
+          !paramNames.has(nx.left.name)
+        ) {
           ok = false
           return
         }
@@ -176,7 +202,6 @@ class GPUFunctionVerifier {
     // Check that function calls within the function body are valid
     // 3. Check that no function calls are made using function params
     // 4, 5, 6. Check that function calls are to math_* OR other valid GPUFunctions
-    const paramNames = new Set((fun.params as es.Identifier[]).map(x => x.name))
     const mathFuncCheck = new RegExp(/^math_[a-z]+$/)
     const verifiedFunctions = this.verifiedFunctions
     const unverifiedFunctions = this.unverifiedFunctions

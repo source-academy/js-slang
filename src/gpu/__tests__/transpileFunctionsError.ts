@@ -130,3 +130,44 @@ test('function beginning with double underscores does not get transpiled', () =>
   const cnt = transpiled.match(/__createKernelSource/g)
   expect(cnt).toEqual(null)
 })
+
+test('function referencing external variable does not get transpiled', () => {
+  const code = stripIndent`
+    const j = 1;
+    function fun(x) {
+      return x + j;
+    }
+    let res = [];
+    for (let i = 0; i < 5; i = i + 1) {
+        res[i] = fun(i);
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
+
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
+})
+
+test('function assigning to external variable does not get transpiled', () => {
+  const code = stripIndent`
+    let j = 0;
+    function fun(x) {
+      j = 1;
+      return x;
+    }
+    let res = [];
+    for (let i = 0; i < 5; i = i + 1) {
+        res[i] = fun(i);
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
+
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
+})

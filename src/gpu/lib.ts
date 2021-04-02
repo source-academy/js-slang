@@ -232,7 +232,7 @@ export function __createKernelSource(
     const code = (entry[1] as es.FunctionDeclaration).toString()
     const ast = (parse(code, ACORN_PARSE_OPTIONS) as unknown) as es.Program
     const fn = ast.body[0] as es.FunctionDeclaration
-    const fnTranspiled = gpuFunctionTranspile(fn, customFunctionNames)
+    const fnTranspiled = gpuFunctionTranspile(fn)
     const fnString = generate(fnTranspiled)
     customFunctions.push(fnString)
   }
