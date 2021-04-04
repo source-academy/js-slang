@@ -71,11 +71,11 @@ export class EnvTreeNode {
     newChildren.forEach(c => (c.parent = this))
   }
 
-  public clearChildren(): void {
+  private clearChildren(): void {
     this._children = []
   }
 
-  public addChildren(newChildren: EnvTreeNode[]): void {
+  private addChildren(newChildren: EnvTreeNode[]): void {
     this._children.push(...newChildren)
   }
 
