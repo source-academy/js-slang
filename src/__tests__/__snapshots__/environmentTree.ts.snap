@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EnvTree::getTreeNode should return the tree node that contains a pointer to the environment 1`] = `
+exports[`EnvTree::getTreeNode should return the tree node that contains a pointer to the given environment 1`] = `
 EnvTreeNode {
   "_children": Array [],
   "environment": Object {
@@ -24,7 +24,7 @@ EnvTreeNode {
 }
 `;
 
-exports[`EnvTreeNode::addChild should add the child node to the tree node 1`] = `
+exports[`EnvTreeNode::addChild should add the given child node to the tree node 1`] = `
 Array [
   EnvTreeNode {
     "_children": Array [],
@@ -204,7 +204,7 @@ Array [
 ]
 `;
 
-exports[`EnvTreeNode::resetChildren should reset the children of the node with the new children passed in 1`] = `
+exports[`EnvTreeNode::resetChildren should reset the children of the node to the given children 1`] = `
 Array [
   EnvTreeNode {
     "_children": Array [],
@@ -1314,4 +1314,4 @@ Array [
 ]
 `;
 
-exports[`EnvTreeNode::resetChildren should reset the children of the node with the new children passed in 2`] = `undefined`;
+exports[`EnvTreeNode::resetChildren should reset the children of the node to the given children 2`] = `undefined`;
