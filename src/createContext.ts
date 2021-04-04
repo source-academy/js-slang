@@ -106,7 +106,7 @@ const createEmptyDebugger = () => ({
   }
 })
 
-const createGlobalEnvironment = () => ({
+export const createGlobalEnvironment = (): Environment => ({
   tail: null,
   name: 'global',
   head: {}
