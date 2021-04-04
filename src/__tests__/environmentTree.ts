@@ -13,14 +13,14 @@ test('EnvTree::insert should insert the globalEnvironment as the root', () => {
   expect(envTree.root).toMatchSnapshot()
 })
 
-test('EnvTree::getTreeNode should return the tree node that contains a pointer to the environment', () => {
+test('EnvTree::getTreeNode should return the tree node that contains a pointer to the given environment', () => {
   const envTree = new EnvTree()
   const globalEnvironment = createGlobalEnvironment()
   envTree.insert(globalEnvironment)
   expect(envTree.getTreeNode(globalEnvironment)).toMatchSnapshot()
 })
 
-test('EnvTreeNode::resetChildren should reset the children of the node with the new children passed in', () => {
+test('EnvTreeNode::resetChildren should reset the children of the node to the given children', () => {
   const context = mockContext(4)
   const parent = mockEnvironment(context, 'programEnvironment')
   pushEnvironment(context, parent)
@@ -57,7 +57,7 @@ test('EnvTreeNode::resetChildren should reset the children of the node with the 
   ).toMatchSnapshot()
 })
 
-test('EnvTreeNode::addChild should add the child node to the tree node', () => {
+test('EnvTreeNode::addChild should add the given child node to the tree node', () => {
   const context = mockContext(4)
   const programEnv = mockEnvironment(context, 'programEnvironment')
   const envTreeRoot = context.runtime.environmentTree.root
