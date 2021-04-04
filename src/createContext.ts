@@ -147,11 +147,11 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   if (!context.runtime) {
     context.runtime = createEmptyRuntime()
   }
-  if (!context.runtime.environmentTree) {
-    context.runtime.environmentTree = new EnvTree()
-  }
   if (!context.runtime.environments) {
     context.runtime.environments = []
+  }
+  if (!context.runtime.environmentTree) {
+    context.runtime.environmentTree = new EnvTree()
   }
   if (context.runtime.environments.length === 0) {
     const globalEnvironment = createGlobalEnvironment()
@@ -378,7 +378,8 @@ const defaultBuiltIns: CustomBuiltIns = {
   prompt: misc.rawDisplay,
   // See issue #11
   alert: misc.rawDisplay,
-  visualiseList: (v: Value) => {
+  // TODO: 'v' is defined but never used
+  visualiseList: () => {
     throw new Error('List visualizer is not enabled')
   }
 }
