@@ -17,7 +17,7 @@ test('EnvTree::getTreeNode should return the tree node that contains a pointer t
   const envTree = new EnvTree()
   const globalEnvironment = createGlobalEnvironment()
   envTree.insert(globalEnvironment)
-  expect(envTree.getTreeNode(globalEnvironment)).toMatchSnapshot()
+  expect(envTree.getTreeNode(globalEnvironment)?.environment).toMatchSnapshot()
 })
 
 test('EnvTreeNode::resetChildren should reset the children of the node to the given children', () => {
@@ -48,13 +48,12 @@ test('EnvTreeNode::resetChildren should reset the children of the node to the gi
   expect(grandChildNode2).not.toBeNull()
   expect(grandChildNode3).not.toBeNull()
   expect(parentNode?.children).toMatchSnapshot()
-  expect(
-    parentNode?.resetChildren([
-      grandChildNode1 as EnvTreeNode,
-      grandChildNode2 as EnvTreeNode,
-      grandChildNode3 as EnvTreeNode
-    ])
-  ).toMatchSnapshot()
+  parentNode?.resetChildren([
+    grandChildNode1 as EnvTreeNode,
+    grandChildNode2 as EnvTreeNode,
+    grandChildNode3 as EnvTreeNode
+  ])
+  expect(parentNode?.children).toMatchSnapshot()
 })
 
 test('EnvTreeNode::addChild should add the given child node to the tree node', () => {
