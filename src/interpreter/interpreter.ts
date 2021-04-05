@@ -624,7 +624,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   ImportDeclaration: function*(node: es.ImportDeclaration, context: Context) {
     const moduleName = node.source.value as string
     const neededSymbols = node.specifiers.map(spec => spec.local.name)
-    const functions = loadModuleBundle(moduleName, context)
+    const functions = loadModuleBundle(moduleName, context, node)
     declareImports(context, node)
     for (const name of neededSymbols) {
       defineVariable(context, name, functions[name], true);
