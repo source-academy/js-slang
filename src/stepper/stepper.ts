@@ -2688,6 +2688,9 @@ export const redexify = (node: substituterNodes, path: string[][]): [string, str
   generate(pathifyMain(node, path)[1])
 ]
 
+export const getRedex = (node: substituterNodes, path: string[][]): substituterNodes =>
+  pathifyMain(node, path)[1]
+
 // strategy: we remember how many statements are there originally in program.
 // since listPrelude are just functions, they will be disposed of one by one
 // we prepend the program with the program resulting from the definitions,
@@ -2788,8 +2791,17 @@ export interface IStepperPropContents {
   code: string
   redex: string
   explanation: string
+  function: es.Expression | undefined | es.Super
 }
 
 export function isStepperOutput(output: any): output is IStepperPropContents {
   return 'code' in output
+}
+
+export function callee(content: substituterNodes): es.Expression | undefined | es.Super {
+  if (content.type === 'CallExpression') {
+    return content.callee
+  } else {
+    return undefined
+  }
 }
