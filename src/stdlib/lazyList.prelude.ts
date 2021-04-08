@@ -23,7 +23,7 @@ function equal(xs, ys) {
         : is_number(xs)
         ? (is_number(ys) && xs === ys)
         : is_string(xs)
-        ? (is_string(xs) && xs === ys)
+        ? (is_string(ys) && xs === ys)
         :  xs === ys;
 }
 
