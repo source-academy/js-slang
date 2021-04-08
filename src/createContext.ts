@@ -379,7 +379,7 @@ const defaultBuiltIns: CustomBuiltIns = {
   // See issue #11
   alert: misc.rawDisplay,
   // TODO: 'v' is defined but never used
-  visualiseList: () => {
+  visualiseList: (v: Value) => {
     throw new Error('List visualizer is not enabled')
   }
 }
