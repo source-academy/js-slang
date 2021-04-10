@@ -10,10 +10,8 @@ import {
   getBlockFramesInCurrentBlockFrame,
   getScopeHelper
 } from '../scope-refactoring'
-import { parse } from '../parser/parser'
+import { looseParse } from '../parser/parser'
 /* tslint:disable:max-classes-per-file */
-
-const context = createContext(4)
 
 class Target {
   public name: string
@@ -172,6 +170,7 @@ const conditionalsLoopsTests = [
 ]
 
 test('Scoped based refactoring of ordinary variable definitions', () => {
+  const context = createContext(4)
   const actuals: any = []
   variableDefinitionTests.forEach(testCase => {
     testCase.targets.forEach(target => {
@@ -191,6 +190,7 @@ test('Scoped based refactoring of ordinary variable definitions', () => {
 })
 
 test('Scoped based refactoring with function scopes', () => {
+  const context = createContext(4)
   const actuals: any = []
   functionScopeTests.forEach(testCase => {
     testCase.targets.forEach(target => {
@@ -210,6 +210,7 @@ test('Scoped based refactoring with function scopes', () => {
 })
 
 test('Scoped based refactoring with arrow function scopes', () => {
+  const context = createContext(4)
   const actuals: any = []
   arrowFunctionScopeTests.forEach(testCase => {
     testCase.targets.forEach(target => {
@@ -229,6 +230,7 @@ test('Scoped based refactoring with arrow function scopes', () => {
 })
 
 test('Scoped based refactoring with conditionals and loops', () => {
+  const context = createContext(4)
   const actuals: any = []
   conditionalsLoopsTests.forEach(testCase => {
     testCase.targets.forEach(target => {
@@ -248,6 +250,7 @@ test('Scoped based refactoring with conditionals and loops', () => {
 })
 
 test('scopeVariables should return an accurate scope tree', () => {
+  const context = createContext(4)
   const program = `
     const anakin = "chancellor palpatine is evil";
     const obiwan = "from my point of view the jedi are evil";
@@ -261,10 +264,11 @@ test('scopeVariables should return an accurate scope tree', () => {
       return hahaha;
     }
   `
-  expect(scopeVariables(parse(program, context, true) as Program)).toMatchSnapshot()
+  expect(scopeVariables(looseParse(program, context) as Program)).toMatchSnapshot()
 })
 
 test('scopeVariables should return an accurate scope tree with normal block scopes', () => {
+  const context = createContext(4)
   const program = `
     const anakin = 'chancellor palpatine is evil';
     const obiwan = 'from my point of view the jedi are evil';
@@ -285,10 +289,11 @@ test('scopeVariables should return an accurate scope tree with normal block scop
       }
     }
   `
-  expect(scopeVariables(parse(program, context, true) as Program)).toMatchSnapshot()
+  expect(scopeVariables(looseParse(program, context) as Program)).toMatchSnapshot()
 })
 
 test('getBlockFromLoc with normal variable name', () => {
+  const context = createContext(4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -299,12 +304,13 @@ const nextline = 'having the time of your life';
     return dancingqueen;
   }
 }`
-  const scopedTree = scopeVariables(parse(program, context, true) as Program)
+  const scopedTree = scopeVariables(looseParse(program, context) as Program)
   const loc = { start: { line: 8, column: 12 }, end: { line: 8, column: 23 } }
   expect(getBlockFromLoc(loc, scopedTree)).toMatchSnapshot()
 })
 
 test('getBlockFromLoc with function definition name', () => {
+  const context = createContext(4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -319,12 +325,13 @@ function picklerick() {
   }
   picklerick();
 }`
-  const scopedTree = scopeVariables(parse(program, context, true) as Program)
+  const scopedTree = scopeVariables(looseParse(program, context) as Program)
   const loc = { start: { line: 13, column: 3 }, end: { line: 13, column: 12 } }
   expect(getBlockFromLoc(loc, scopedTree)).toMatchSnapshot()
 })
 
 test('getBlockFromLoc with arrow function name', () => {
+  const context = createContext(4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -339,12 +346,13 @@ const picklerick() = x => {
   }
   picklerick();
 }`
-  const scopedTree = scopeVariables(parse(program, context, true) as Program)
+  const scopedTree = scopeVariables(looseParse(program, context) as Program)
   const loc = { start: { line: 13, column: 3 }, end: { line: 13, column: 12 } }
   expect(getBlockFromLoc(loc, scopedTree)).toMatchSnapshot()
 })
 
 test('getAllIdentifiers should get all indentifiers regardless of scope', () => {
+  const context = createContext(4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -379,10 +387,11 @@ if (true) {
   return 'idontliketests';
 }
 `
-  expect(getAllIdentifiers(parse(program, context, true) as Program, 'virus').length).toBe(4)
+  expect(getAllIdentifiers(looseParse(program, context) as Program, 'virus').length).toBe(4)
 })
 
 test('getNodeLocsInCurrentBlockFrame should return all nodes in the current block frame', () => {
+  const context = createContext(4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -416,8 +425,8 @@ if (true) {
 } else {
   return 'idontliketests';
 }`
-  const block = scopeVariables(parse(program, context, true) as Program)
-  const identifiers = getAllIdentifiers(parse(program, context, true) as Program, 'virus')
+  const block = scopeVariables(looseParse(program, context) as Program)
+  const identifiers = getAllIdentifiers(looseParse(program, context) as Program, 'virus')
   expect(
     getNodeLocsInCurrentBlockFrame(
       identifiers,
@@ -431,6 +440,7 @@ if (true) {
 })
 
 test('getBlockFramesInCurrentBlockFrame', () => {
+  const context = createContext(4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -464,7 +474,7 @@ if (true) {
 } else {
   return 'idontliketests';
 }`
-  const block = scopeVariables(parse(program, context, true) as Program)
+  const block = scopeVariables(looseParse(program, context) as Program)
   const blockFrames = block.children.filter(node => node.type === 'BlockFrame')
   expect(
     getBlockFramesInCurrentBlockFrame(
@@ -479,6 +489,7 @@ if (true) {
 })
 
 test('getScopeHelper', () => {
+  const context = createContext(4)
   const program = `{
     const x = 1;
     {
@@ -493,12 +504,13 @@ test('getScopeHelper', () => {
     start: { line: 2, column: 10 },
     end: { line: 2, column: 11 }
   }
-  expect(getScopeHelper(definitionLocation, parse(program, context, true) as any, 'x').length).toBe(
+  expect(getScopeHelper(definitionLocation, looseParse(program, context) as any, 'x').length).toBe(
     2
   )
 })
 
 test('getScopeHelperNested', () => {
+  const context = createContext(4)
   const program = `{
     const x = 1;
     {
@@ -513,7 +525,7 @@ test('getScopeHelperNested', () => {
     start: { line: 4, column: 15 },
     end: { line: 4, column: 16 }
   }
-  expect(getScopeHelper(definitionLocation, parse(program, context, true) as any, 'x').length).toBe(
+  expect(getScopeHelper(definitionLocation, looseParse(program, context) as any, 'x').length).toBe(
     1
   )
 })

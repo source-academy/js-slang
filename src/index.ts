@@ -12,7 +12,7 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
-import { parse, parseAt, parseForNames } from './parser/parser'
+import { parse, looseParse, parseAt, parseForNames } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
@@ -181,7 +181,7 @@ export function findDeclaration(
   context: Context,
   loc: { line: number; column: number }
 ): SourceLocation | null | undefined {
-  const program = parse(code, context, true)
+  const program = looseParse(code, context)
   if (!program) {
     return null
   }
@@ -201,7 +201,7 @@ export function getScope(
   context: Context,
   loc: { line: number; column: number }
 ): SourceLocation[] {
-  const program = parse(code, context, true)
+  const program = looseParse(code, context)
   if (!program) {
     return []
   }
@@ -222,7 +222,7 @@ export function getAllOccurrencesInScope(
   context: Context,
   loc: { line: number; column: number }
 ): SourceLocation[] {
-  const program = parse(code, context, true)
+  const program = looseParse(code, context)
   if (!program) {
     return []
   }
@@ -242,7 +242,7 @@ export function hasDeclaration(
   context: Context,
   loc: { line: number; column: number }
 ): boolean {
-  const program = parse(code, context, true)
+  const program = looseParse(code, context)
   if (!program) {
     return false
   }
@@ -277,7 +277,7 @@ export async function getNames(
 }
 
 function typedParse(code: any, context: Context) {
-  const program: Program | undefined = parse(code, context, true)
+  const program: Program | undefined = looseParse(code, context)
   if (program === undefined) {
     return null
   }

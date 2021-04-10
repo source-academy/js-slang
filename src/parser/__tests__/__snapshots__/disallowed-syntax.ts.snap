@@ -4,7 +4,7 @@ exports[`Cannot have if without else - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- if (true) { 5; }",
+if (true) { 5; }",
   "displayResult": Array [],
   "errors": Array [
     NoIfWithoutElseError {
@@ -13,78 +13,78 @@ Object {
         "consequent": Node {
           "body": Array [
             Node {
-              "end": 33,
+              "end": 32,
               "expression": Node {
-                "end": 32,
+                "end": 31,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 14,
+                    "column": 13,
                     "line": 2,
                   },
                   "start": Position {
-                    "column": 13,
+                    "column": 12,
                     "line": 2,
                   },
                 },
                 "raw": "5",
-                "start": 31,
+                "start": 30,
                 "type": "Literal",
                 "value": 5,
               },
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 15,
+                  "column": 14,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 13,
+                  "column": 12,
                   "line": 2,
                 },
               },
-              "start": 31,
+              "start": 30,
               "type": "ExpressionStatement",
             },
           ],
-          "end": 35,
+          "end": 34,
           "loc": SourceLocation {
             "end": Position {
-              "column": 17,
+              "column": 16,
               "line": 2,
             },
             "start": Position {
-              "column": 11,
+              "column": 10,
               "line": 2,
             },
           },
-          "start": 29,
+          "start": 28,
           "type": "BlockStatement",
         },
-        "end": 35,
+        "end": 34,
         "loc": SourceLocation {
           "end": Position {
-            "column": 17,
+            "column": 16,
             "line": 2,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 19,
+        "start": 18,
         "test": Node {
-          "end": 27,
+          "end": 26,
           "loc": SourceLocation {
             "end": Position {
-              "column": 9,
+              "column": 8,
               "line": 2,
             },
             "start": Position {
-              "column": 5,
+              "column": 4,
               "line": 2,
             },
           },
           "raw": "true",
-          "start": 23,
+          "start": 22,
           "type": "Literal",
           "value": true,
         },
@@ -94,7 +94,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing \\"else\\" in \\"if-else\\" statement.
+  "parsedErrors": "Line 2, Column 0: Missing \\"else\\" in \\"if-else\\" statement.
 This \\"if\\" block requires corresponding \\"else\\" block which will be
 evaluated when true expression evaluates to false.
 
@@ -270,9 +270,9 @@ exports[`Cannot leave blank expressions in for loop - verbose: expectParsedError
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- for(;;) {
+for (;;) {
 break;
- }",
+}",
   "displayResult": Array [],
   "errors": Array [
     ForStatmentMustHaveAllParts {
@@ -301,10 +301,10 @@ break;
               "type": "BreakStatement",
             },
           ],
-          "end": 38,
+          "end": 37,
           "loc": SourceLocation {
             "end": Position {
-              "column": 2,
+              "column": 1,
               "line": 4,
             },
             "start": Position {
@@ -315,19 +315,19 @@ break;
           "start": 27,
           "type": "BlockStatement",
         },
-        "end": 38,
+        "end": 37,
         "init": null,
         "loc": SourceLocation {
           "end": Position {
-            "column": 2,
+            "column": 1,
             "line": 4,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 19,
+        "start": 18,
         "test": null,
         "type": "ForStatement",
         "update": null,
@@ -336,7 +336,7 @@ break;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing init, test, update expressions in for statement.
+  "parsedErrors": "Line 2, Column 0: Missing init, test, update expressions in for statement.
 This for statement requires all three parts (initialiser, test, update) to be present.
 ",
   "result": undefined,
@@ -348,7 +348,7 @@ This for statement requires all three parts (initialiser, test, update) to be pr
 exports[`Cannot leave blank expressions in for loop: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "for(;;) {
+  "code": "for (;;) {
   break;
 }",
   "displayResult": Array [],
@@ -363,7 +363,7 @@ Object {
         "body": Node {
           "body": Array [
             Node {
-              "end": 18,
+              "end": 19,
               "label": null,
               "loc": SourceLocation {
                 "end": Position {
@@ -375,25 +375,25 @@ Object {
                   "line": 2,
                 },
               },
-              "start": 12,
+              "start": 13,
               "type": "BreakStatement",
             },
           ],
-          "end": 20,
+          "end": 21,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
               "line": 3,
             },
             "start": Position {
-              "column": 8,
+              "column": 9,
               "line": 1,
             },
           },
-          "start": 8,
+          "start": 9,
           "type": "BlockStatement",
         },
-        "end": 20,
+        "end": 21,
         "init": null,
         "loc": SourceLocation {
           "end": Position {
@@ -425,9 +425,9 @@ exports[`Cannot leave blank init in for loop - verbose: expectParsedError 1`] = 
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- for(; i < 3; i = i + 1) {
-break;
- }",
+for (; i < 3; i = i + 1) {
+  break;
+}",
   "displayResult": Array [],
   "errors": Array [
     ForStatmentMustHaveAllParts {
@@ -438,26 +438,26 @@ break;
         "body": Node {
           "body": Array [
             Node {
-              "end": 51,
+              "end": 53,
               "label": null,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 8,
                   "line": 3,
                 },
                 "start": Position {
-                  "column": 0,
+                  "column": 2,
                   "line": 3,
                 },
               },
-              "start": 45,
+              "start": 47,
               "type": "BreakStatement",
             },
           ],
-          "end": 54,
+          "end": 55,
           "loc": SourceLocation {
             "end": Position {
-              "column": 2,
+              "column": 1,
               "line": 4,
             },
             "start": Position {
@@ -468,19 +468,19 @@ break;
           "start": 43,
           "type": "BlockStatement",
         },
-        "end": 54,
+        "end": 55,
         "init": null,
         "loc": SourceLocation {
           "end": Position {
-            "column": 2,
+            "column": 1,
             "line": 4,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 19,
+        "start": 18,
         "test": Node {
           "end": 30,
           "left": Node {
@@ -617,7 +617,7 @@ break;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing init expression in for statement.
+  "parsedErrors": "Line 2, Column 0: Missing init expression in for statement.
 This for statement requires all three parts (initialiser, test, update) to be present.
 ",
   "result": undefined,
@@ -629,7 +629,7 @@ This for statement requires all three parts (initialiser, test, update) to be pr
 exports[`Cannot leave blank init in for loop: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "for(; i < 3; i = i + 1) {
+  "code": "for (; i < 3; i = i + 1) {
   break;
 }",
   "displayResult": Array [],
@@ -642,7 +642,7 @@ Object {
         "body": Node {
           "body": Array [
             Node {
-              "end": 34,
+              "end": 35,
               "label": null,
               "loc": SourceLocation {
                 "end": Position {
@@ -654,25 +654,25 @@ Object {
                   "line": 2,
                 },
               },
-              "start": 28,
+              "start": 29,
               "type": "BreakStatement",
             },
           ],
-          "end": 36,
+          "end": 37,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
               "line": 3,
             },
             "start": Position {
-              "column": 24,
+              "column": 25,
               "line": 1,
             },
           },
-          "start": 24,
+          "start": 25,
           "type": "BlockStatement",
         },
-        "end": 36,
+        "end": 37,
         "init": null,
         "loc": SourceLocation {
           "end": Position {
@@ -686,134 +686,134 @@ Object {
         },
         "start": 0,
         "test": Node {
-          "end": 11,
+          "end": 12,
           "left": Node {
-            "end": 7,
+            "end": 8,
             "loc": SourceLocation {
               "end": Position {
-                "column": 7,
+                "column": 8,
                 "line": 1,
               },
               "start": Position {
-                "column": 6,
+                "column": 7,
                 "line": 1,
               },
             },
             "name": "i",
-            "start": 6,
+            "start": 7,
             "type": "Identifier",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 11,
+              "column": 12,
               "line": 1,
             },
             "start": Position {
-              "column": 6,
+              "column": 7,
               "line": 1,
             },
           },
           "operator": "<",
           "right": Node {
-            "end": 11,
+            "end": 12,
             "loc": SourceLocation {
               "end": Position {
-                "column": 11,
+                "column": 12,
                 "line": 1,
               },
               "start": Position {
-                "column": 10,
+                "column": 11,
                 "line": 1,
               },
             },
             "raw": "3",
-            "start": 10,
+            "start": 11,
             "type": "Literal",
             "value": 3,
           },
-          "start": 6,
+          "start": 7,
           "type": "BinaryExpression",
         },
         "type": "ForStatement",
         "update": Node {
-          "end": 22,
+          "end": 23,
           "left": Node {
-            "end": 14,
+            "end": 15,
             "loc": SourceLocation {
               "end": Position {
-                "column": 14,
+                "column": 15,
                 "line": 1,
               },
               "start": Position {
-                "column": 13,
+                "column": 14,
                 "line": 1,
               },
             },
             "name": "i",
-            "start": 13,
+            "start": 14,
             "type": "Identifier",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 22,
+              "column": 23,
               "line": 1,
             },
             "start": Position {
-              "column": 13,
+              "column": 14,
               "line": 1,
             },
           },
           "operator": "=",
           "right": Node {
-            "end": 22,
+            "end": 23,
             "left": Node {
-              "end": 18,
+              "end": 19,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 18,
+                  "column": 19,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 17,
+                  "column": 18,
                   "line": 1,
                 },
               },
               "name": "i",
-              "start": 17,
+              "start": 18,
               "type": "Identifier",
             },
             "loc": SourceLocation {
               "end": Position {
-                "column": 22,
+                "column": 23,
                 "line": 1,
               },
               "start": Position {
-                "column": 17,
+                "column": 18,
                 "line": 1,
               },
             },
             "operator": "+",
             "right": Node {
-              "end": 22,
+              "end": 23,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 22,
+                  "column": 23,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 21,
+                  "column": 22,
                   "line": 1,
                 },
               },
               "raw": "1",
-              "start": 21,
+              "start": 22,
               "type": "Literal",
               "value": 1,
             },
-            "start": 17,
+            "start": 18,
             "type": "BinaryExpression",
           },
-          "start": 13,
+          "start": 14,
           "type": "AssignmentExpression",
         },
       },
@@ -832,9 +832,9 @@ exports[`Cannot leave blank test in for loop - verbose: expectParsedError 1`] = 
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- for(let i = 0; ; i = i + 1) {
-break;
- }",
+for (let i = 0; ; i = i + 1) {
+  break;
+}",
   "displayResult": Array [],
   "errors": Array [
     ForStatmentMustHaveAllParts {
@@ -845,26 +845,26 @@ break;
         "body": Node {
           "body": Array [
             Node {
-              "end": 55,
+              "end": 57,
               "label": null,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 8,
                   "line": 3,
                 },
                 "start": Position {
-                  "column": 0,
+                  "column": 2,
                   "line": 3,
                 },
               },
-              "start": 49,
+              "start": 51,
               "type": "BreakStatement",
             },
           ],
-          "end": 58,
+          "end": 59,
           "loc": SourceLocation {
             "end": Position {
-              "column": 2,
+              "column": 1,
               "line": 4,
             },
             "start": Position {
@@ -875,7 +875,7 @@ break;
           "start": 47,
           "type": "BlockStatement",
         },
-        "end": 58,
+        "end": 59,
         "init": Node {
           "declarations": Array [
             Node {
@@ -944,15 +944,15 @@ break;
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 2,
+            "column": 1,
             "line": 4,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 19,
+        "start": 18,
         "test": null,
         "type": "ForStatement",
         "update": Node {
@@ -1041,7 +1041,7 @@ break;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing test expression in for statement.
+  "parsedErrors": "Line 2, Column 0: Missing test expression in for statement.
 This for statement requires all three parts (initialiser, test, update) to be present.
 ",
   "result": undefined,
@@ -1053,7 +1053,7 @@ This for statement requires all three parts (initialiser, test, update) to be pr
 exports[`Cannot leave blank test in for loop: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "for(let i = 0; ; i = i + 1) {
+  "code": "for (let i = 0; ; i = i + 1) {
   break;
 }",
   "displayResult": Array [],
@@ -1066,7 +1066,7 @@ Object {
         "body": Node {
           "body": Array [
             Node {
-              "end": 38,
+              "end": 39,
               "label": null,
               "loc": SourceLocation {
                 "end": Position {
@@ -1078,89 +1078,89 @@ Object {
                   "line": 2,
                 },
               },
-              "start": 32,
+              "start": 33,
               "type": "BreakStatement",
             },
           ],
-          "end": 40,
+          "end": 41,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
               "line": 3,
             },
             "start": Position {
-              "column": 28,
+              "column": 29,
               "line": 1,
             },
           },
-          "start": 28,
+          "start": 29,
           "type": "BlockStatement",
         },
-        "end": 40,
+        "end": 41,
         "init": Node {
           "declarations": Array [
             Node {
-              "end": 13,
+              "end": 14,
               "id": Node {
-                "end": 9,
+                "end": 10,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 9,
+                    "column": 10,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 8,
+                    "column": 9,
                     "line": 1,
                   },
                 },
                 "name": "i",
-                "start": 8,
+                "start": 9,
                 "type": "Identifier",
               },
               "init": Node {
-                "end": 13,
+                "end": 14,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 13,
+                    "column": 14,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 12,
+                    "column": 13,
                     "line": 1,
                   },
                 },
                 "raw": "0",
-                "start": 12,
+                "start": 13,
                 "type": "Literal",
                 "value": 0,
               },
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 13,
+                  "column": 14,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 8,
+                  "column": 9,
                   "line": 1,
                 },
               },
-              "start": 8,
+              "start": 9,
               "type": "VariableDeclarator",
             },
           ],
-          "end": 13,
+          "end": 14,
           "kind": "let",
           "loc": SourceLocation {
             "end": Position {
-              "column": 13,
+              "column": 14,
               "line": 1,
             },
             "start": Position {
-              "column": 4,
+              "column": 5,
               "line": 1,
             },
           },
-          "start": 4,
+          "start": 5,
           "type": "VariableDeclaration",
         },
         "loc": SourceLocation {
@@ -1177,84 +1177,84 @@ Object {
         "test": null,
         "type": "ForStatement",
         "update": Node {
-          "end": 26,
+          "end": 27,
           "left": Node {
-            "end": 18,
+            "end": 19,
             "loc": SourceLocation {
               "end": Position {
-                "column": 18,
+                "column": 19,
                 "line": 1,
               },
               "start": Position {
-                "column": 17,
+                "column": 18,
                 "line": 1,
               },
             },
             "name": "i",
-            "start": 17,
+            "start": 18,
             "type": "Identifier",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 26,
+              "column": 27,
               "line": 1,
             },
             "start": Position {
-              "column": 17,
+              "column": 18,
               "line": 1,
             },
           },
           "operator": "=",
           "right": Node {
-            "end": 26,
+            "end": 27,
             "left": Node {
-              "end": 22,
+              "end": 23,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 22,
+                  "column": 23,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 21,
+                  "column": 22,
                   "line": 1,
                 },
               },
               "name": "i",
-              "start": 21,
+              "start": 22,
               "type": "Identifier",
             },
             "loc": SourceLocation {
               "end": Position {
-                "column": 26,
+                "column": 27,
                 "line": 1,
               },
               "start": Position {
-                "column": 21,
+                "column": 22,
                 "line": 1,
               },
             },
             "operator": "+",
             "right": Node {
-              "end": 26,
+              "end": 27,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 26,
+                  "column": 27,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 25,
+                  "column": 26,
                   "line": 1,
                 },
               },
               "raw": "1",
-              "start": 25,
+              "start": 26,
               "type": "Literal",
               "value": 1,
             },
-            "start": 21,
+            "start": 22,
             "type": "BinaryExpression",
           },
-          "start": 17,
+          "start": 18,
           "type": "AssignmentExpression",
         },
       },
@@ -1273,196 +1273,7 @@ exports[`Cannot leave blank update in for loop - verbose: expectParsedError 1`] 
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
-   for(let i = 0; i < 3;) {
-     break;
-   }",
-  "displayResult": Array [],
-  "errors": Array [
-    ForStatmentMustHaveAllParts {
-      "missingParts": Array [
-        "update",
-      ],
-      "node": Node {
-        "body": Node {
-          "body": Array [
-            Node {
-              "end": 57,
-              "label": null,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 11,
-                  "line": 3,
-                },
-                "start": Position {
-                  "column": 5,
-                  "line": 3,
-                },
-              },
-              "start": 51,
-              "type": "BreakStatement",
-            },
-          ],
-          "end": 62,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 4,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 26,
-              "line": 2,
-            },
-          },
-          "start": 44,
-          "type": "BlockStatement",
-        },
-        "end": 62,
-        "init": Node {
-          "declarations": Array [
-            Node {
-              "end": 34,
-              "id": Node {
-                "end": 30,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 12,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 11,
-                    "line": 2,
-                  },
-                },
-                "name": "i",
-                "start": 29,
-                "type": "Identifier",
-              },
-              "init": Node {
-                "end": 34,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 16,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 15,
-                    "line": 2,
-                  },
-                },
-                "raw": "0",
-                "start": 33,
-                "type": "Literal",
-                "value": 0,
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 16,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 11,
-                  "line": 2,
-                },
-              },
-              "start": 29,
-              "type": "VariableDeclarator",
-            },
-          ],
-          "end": 34,
-          "kind": "let",
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 7,
-              "line": 2,
-            },
-          },
-          "start": 25,
-          "type": "VariableDeclaration",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 4,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 3,
-            "line": 2,
-          },
-        },
-        "start": 21,
-        "test": Node {
-          "end": 41,
-          "left": Node {
-            "end": 37,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 19,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 18,
-                "line": 2,
-              },
-            },
-            "name": "i",
-            "start": 36,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 23,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 18,
-              "line": 2,
-            },
-          },
-          "operator": "<",
-          "right": Node {
-            "end": 41,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 23,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 22,
-                "line": 2,
-              },
-            },
-            "raw": "3",
-            "start": 40,
-            "type": "Literal",
-            "value": 3,
-          },
-          "start": 36,
-          "type": "BinaryExpression",
-        },
-        "type": "ForStatement",
-        "update": null,
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
-  "parsedErrors": "Line 2, Column 3: Missing update expression in for statement.
-This for statement requires all three parts (initialiser, test, update) to be present.
-",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Cannot leave blank update in for loop: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "for(let i = 0; i < 3;) {
+for (let i = 0; i < 3;) {
   break;
 }",
   "displayResult": Array [],
@@ -1475,7 +1286,196 @@ Object {
         "body": Node {
           "body": Array [
             Node {
-              "end": 33,
+              "end": 52,
+              "label": null,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 8,
+                  "line": 3,
+                },
+                "start": Position {
+                  "column": 2,
+                  "line": 3,
+                },
+              },
+              "start": 46,
+              "type": "BreakStatement",
+            },
+          ],
+          "end": 54,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "line": 4,
+            },
+            "start": Position {
+              "column": 24,
+              "line": 2,
+            },
+          },
+          "start": 42,
+          "type": "BlockStatement",
+        },
+        "end": 54,
+        "init": Node {
+          "declarations": Array [
+            Node {
+              "end": 32,
+              "id": Node {
+                "end": 28,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 9,
+                    "line": 2,
+                  },
+                },
+                "name": "i",
+                "start": 27,
+                "type": "Identifier",
+              },
+              "init": Node {
+                "end": 32,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 14,
+                    "line": 2,
+                  },
+                  "start": Position {
+                    "column": 13,
+                    "line": 2,
+                  },
+                },
+                "raw": "0",
+                "start": 31,
+                "type": "Literal",
+                "value": 0,
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 14,
+                  "line": 2,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 2,
+                },
+              },
+              "start": 27,
+              "type": "VariableDeclarator",
+            },
+          ],
+          "end": 32,
+          "kind": "let",
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 14,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 5,
+              "line": 2,
+            },
+          },
+          "start": 23,
+          "type": "VariableDeclaration",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 1,
+            "line": 4,
+          },
+          "start": Position {
+            "column": 0,
+            "line": 2,
+          },
+        },
+        "start": 18,
+        "test": Node {
+          "end": 39,
+          "left": Node {
+            "end": 35,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 17,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 16,
+                "line": 2,
+              },
+            },
+            "name": "i",
+            "start": 34,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 2,
+            },
+            "start": Position {
+              "column": 16,
+              "line": 2,
+            },
+          },
+          "operator": "<",
+          "right": Node {
+            "end": 39,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 2,
+              },
+              "start": Position {
+                "column": 20,
+                "line": 2,
+              },
+            },
+            "raw": "3",
+            "start": 38,
+            "type": "Literal",
+            "value": 3,
+          },
+          "start": 34,
+          "type": "BinaryExpression",
+        },
+        "type": "ForStatement",
+        "update": null,
+      },
+      "severity": "Error",
+      "type": "Syntax",
+    },
+  ],
+  "parsedErrors": "Line 2, Column 0: Missing update expression in for statement.
+This for statement requires all three parts (initialiser, test, update) to be present.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Cannot leave blank update in for loop: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "for (let i = 0; i < 3;) {
+  break;
+}",
+  "displayResult": Array [],
+  "errors": Array [
+    ForStatmentMustHaveAllParts {
+      "missingParts": Array [
+        "update",
+      ],
+      "node": Node {
+        "body": Node {
+          "body": Array [
+            Node {
+              "end": 34,
               "label": null,
               "loc": SourceLocation {
                 "end": Position {
@@ -1487,89 +1487,89 @@ Object {
                   "line": 2,
                 },
               },
-              "start": 27,
+              "start": 28,
               "type": "BreakStatement",
             },
           ],
-          "end": 35,
+          "end": 36,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
               "line": 3,
             },
             "start": Position {
-              "column": 23,
+              "column": 24,
               "line": 1,
             },
           },
-          "start": 23,
+          "start": 24,
           "type": "BlockStatement",
         },
-        "end": 35,
+        "end": 36,
         "init": Node {
           "declarations": Array [
             Node {
-              "end": 13,
+              "end": 14,
               "id": Node {
-                "end": 9,
+                "end": 10,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 9,
+                    "column": 10,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 8,
+                    "column": 9,
                     "line": 1,
                   },
                 },
                 "name": "i",
-                "start": 8,
+                "start": 9,
                 "type": "Identifier",
               },
               "init": Node {
-                "end": 13,
+                "end": 14,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 13,
+                    "column": 14,
                     "line": 1,
                   },
                   "start": Position {
-                    "column": 12,
+                    "column": 13,
                     "line": 1,
                   },
                 },
                 "raw": "0",
-                "start": 12,
+                "start": 13,
                 "type": "Literal",
                 "value": 0,
               },
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 13,
+                  "column": 14,
                   "line": 1,
                 },
                 "start": Position {
-                  "column": 8,
+                  "column": 9,
                   "line": 1,
                 },
               },
-              "start": 8,
+              "start": 9,
               "type": "VariableDeclarator",
             },
           ],
-          "end": 13,
+          "end": 14,
           "kind": "let",
           "loc": SourceLocation {
             "end": Position {
-              "column": 13,
+              "column": 14,
               "line": 1,
             },
             "start": Position {
-              "column": 4,
+              "column": 5,
               "line": 1,
             },
           },
-          "start": 4,
+          "start": 5,
           "type": "VariableDeclaration",
         },
         "loc": SourceLocation {
@@ -1584,52 +1584,52 @@ Object {
         },
         "start": 0,
         "test": Node {
-          "end": 20,
+          "end": 21,
           "left": Node {
-            "end": 16,
+            "end": 17,
             "loc": SourceLocation {
               "end": Position {
-                "column": 16,
+                "column": 17,
                 "line": 1,
               },
               "start": Position {
-                "column": 15,
+                "column": 16,
                 "line": 1,
               },
             },
             "name": "i",
-            "start": 15,
+            "start": 16,
             "type": "Identifier",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 20,
+              "column": 21,
               "line": 1,
             },
             "start": Position {
-              "column": 15,
+              "column": 16,
               "line": 1,
             },
           },
           "operator": "<",
           "right": Node {
-            "end": 20,
+            "end": 21,
             "loc": SourceLocation {
               "end": Position {
-                "column": 20,
+                "column": 21,
                 "line": 1,
               },
               "start": Position {
-                "column": 19,
+                "column": 20,
                 "line": 1,
               },
             },
             "raw": "3",
-            "start": 19,
+            "start": 20,
             "type": "Literal",
             "value": 3,
           },
-          "start": 15,
+          "start": 16,
           "type": "BinaryExpression",
         },
         "type": "ForStatement",
@@ -1650,9 +1650,9 @@ exports[`Cannot leave while loop predicate blank - verbose: expectParsedError 1`
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- while() {
-   x;
- }",
+while () {
+  x;
+}",
   "displayResult": Array [],
   "errors": Array [
     FatalSyntaxError {
@@ -1683,7 +1683,7 @@ There is a syntax error in your program
 exports[`Cannot leave while loop predicate blank: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "while() {
+  "code": "while () {
   x;
 }",
   "displayResult": Array [],
@@ -1691,20 +1691,20 @@ Object {
     FatalSyntaxError {
       "location": Object {
         "end": Object {
-          "column": 7,
+          "column": 8,
           "line": 1,
         },
         "start": Object {
-          "column": 6,
+          "column": 7,
           "line": 1,
         },
       },
-      "message": "SyntaxError: Unexpected token (1:6)",
+      "message": "SyntaxError: Unexpected token (1:7)",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 1: SyntaxError: Unexpected token (1:6)",
+  "parsedErrors": "Line 1: SyntaxError: Unexpected token (1:7)",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -3504,66 +3504,66 @@ exports[`Cannot use update statements - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- let x = 3;
- x += 5;
- x;",
+let x = 3;
+x += 5;
+x;",
   "displayResult": Array [],
   "errors": Array [
     NoUpdateAssignment {
       "node": Node {
-        "end": 37,
+        "end": 35,
         "left": Node {
-          "end": 32,
+          "end": 30,
           "loc": SourceLocation {
             "end": Position {
-              "column": 2,
+              "column": 1,
               "line": 3,
             },
             "start": Position {
-              "column": 1,
+              "column": 0,
               "line": 3,
             },
           },
           "name": "x",
-          "start": 31,
+          "start": 29,
           "type": "Identifier",
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 7,
+            "column": 6,
             "line": 3,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 3,
           },
         },
         "operator": "+=",
         "right": Node {
-          "end": 37,
+          "end": 35,
           "loc": SourceLocation {
             "end": Position {
-              "column": 7,
+              "column": 6,
               "line": 3,
             },
             "start": Position {
-              "column": 6,
+              "column": 5,
               "line": 3,
             },
           },
           "raw": "5",
-          "start": 36,
+          "start": 34,
           "type": "Literal",
           "value": 5,
         },
-        "start": 31,
+        "start": 29,
         "type": "AssignmentExpression",
       },
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 1: The assignment operator += is not allowed. Use = instead.
+  "parsedErrors": "Line 3, Column 0: The assignment operator += is not allowed. Use = instead.
 
 	x = x + 5;
 ",
@@ -3860,23 +3860,23 @@ exports[`No empty statements - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
-  ;",
+;",
   "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
-        "end": 21,
+        "end": 19,
         "loc": SourceLocation {
           "end": Position {
-            "column": 3,
+            "column": 1,
             "line": 2,
           },
           "start": Position {
-            "column": 2,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 20,
+        "start": 18,
         "type": "EmptyStatement",
       },
       "nodeType": "Empty statements",
@@ -3884,7 +3884,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 2: Empty statements are not allowed
+  "parsedErrors": "Line 2, Column 0: Empty statements are not allowed
 You are trying to use Empty statements, which is not allowed (yet).
 ",
   "result": undefined,
@@ -3931,42 +3931,42 @@ exports[`No rest pattern - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- function f(...rest) {
+function f(...rest) {
 return rest;
- }
- f(1, 2);",
+}
+f(1, 2);",
   "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
         "argument": Node {
-          "end": 37,
+          "end": 36,
           "loc": SourceLocation {
             "end": Position {
-              "column": 19,
+              "column": 18,
               "line": 2,
             },
             "start": Position {
-              "column": 15,
+              "column": 14,
               "line": 2,
             },
           },
           "name": "rest",
-          "start": 33,
+          "start": 32,
           "type": "Identifier",
         },
-        "end": 37,
+        "end": 36,
         "loc": SourceLocation {
           "end": Position {
-            "column": 19,
+            "column": 18,
             "line": 2,
           },
           "start": Position {
-            "column": 12,
+            "column": 11,
             "line": 2,
           },
         },
-        "start": 30,
+        "start": 29,
         "type": "RestElement",
       },
       "nodeType": "Rest elements",
@@ -3974,7 +3974,7 @@ return rest;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 12: Rest elements are not allowed
+  "parsedErrors": "Line 2, Column 11: Rest elements are not allowed
 You are trying to use Rest elements, which is not allowed (yet).
 ",
   "result": undefined,
@@ -4040,10 +4040,10 @@ exports[`No spread operator - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- function f(x, y) {
-return x + y;
- }
- f(...[1, 2]);",
+function f(x, y) {
+  return x + y;
+}
+f(...[1, 2]);",
   "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
@@ -4051,66 +4051,66 @@ return x + y;
         "argument": Node {
           "elements": Array [
             Node {
-              "end": 63,
+              "end": 62,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 8,
+                  "column": 7,
                   "line": 5,
                 },
                 "start": Position {
-                  "column": 7,
+                  "column": 6,
                   "line": 5,
                 },
               },
               "raw": "1",
-              "start": 62,
+              "start": 61,
               "type": "Literal",
               "value": 1,
             },
             Node {
-              "end": 66,
+              "end": 65,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 11,
+                  "column": 10,
                   "line": 5,
                 },
                 "start": Position {
-                  "column": 10,
+                  "column": 9,
                   "line": 5,
                 },
               },
               "raw": "2",
-              "start": 65,
+              "start": 64,
               "type": "Literal",
               "value": 2,
             },
           ],
-          "end": 67,
+          "end": 66,
           "loc": SourceLocation {
             "end": Position {
-              "column": 12,
+              "column": 11,
               "line": 5,
             },
             "start": Position {
-              "column": 6,
+              "column": 5,
               "line": 5,
             },
           },
-          "start": 61,
+          "start": 60,
           "type": "ArrayExpression",
         },
-        "end": 67,
+        "end": 66,
         "loc": SourceLocation {
           "end": Position {
-            "column": 12,
+            "column": 11,
             "line": 5,
           },
           "start": Position {
-            "column": 3,
+            "column": 2,
             "line": 5,
           },
         },
-        "start": 58,
+        "start": 57,
         "type": "SpreadElement",
       },
       "nodeType": "Spread elements",
@@ -4118,7 +4118,7 @@ return x + y;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 5, Column 3: Spread elements are not allowed
+  "parsedErrors": "Line 5, Column 2: Spread elements are not allowed
 You are trying to use Spread elements, which is not allowed (yet).
 ",
   "result": undefined,
@@ -4303,250 +4303,250 @@ exports[`for needs braces - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- for (let i = 0; i < 1; i = i + 1)
-i;",
+for (let i = 0; i < 1; i = i + 1)
+  i;",
   "displayResult": Array [],
   "errors": Array [
     BracesAroundForError {
       "node": Node {
         "body": Node {
-          "end": 55,
+          "end": 56,
           "expression": Node {
-            "end": 54,
+            "end": 55,
             "loc": SourceLocation {
               "end": Position {
-                "column": 1,
+                "column": 3,
                 "line": 3,
               },
               "start": Position {
-                "column": 0,
+                "column": 2,
                 "line": 3,
               },
             },
             "name": "i",
-            "start": 53,
+            "start": 54,
             "type": "Identifier",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 2,
+              "column": 4,
               "line": 3,
             },
             "start": Position {
-              "column": 0,
+              "column": 2,
               "line": 3,
             },
           },
-          "start": 53,
+          "start": 54,
           "type": "ExpressionStatement",
         },
-        "end": 55,
+        "end": 56,
         "init": Node {
           "declarations": Array [
             Node {
-              "end": 33,
+              "end": 32,
               "id": Node {
-                "end": 29,
+                "end": 28,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 11,
+                    "column": 10,
                     "line": 2,
                   },
                   "start": Position {
-                    "column": 10,
+                    "column": 9,
                     "line": 2,
                   },
                 },
                 "name": "i",
-                "start": 28,
+                "start": 27,
                 "type": "Identifier",
               },
               "init": Node {
-                "end": 33,
+                "end": 32,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 15,
+                    "column": 14,
                     "line": 2,
                   },
                   "start": Position {
-                    "column": 14,
+                    "column": 13,
                     "line": 2,
                   },
                 },
                 "raw": "0",
-                "start": 32,
+                "start": 31,
                 "type": "Literal",
                 "value": 0,
               },
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 15,
+                  "column": 14,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 10,
+                  "column": 9,
                   "line": 2,
                 },
               },
-              "start": 28,
+              "start": 27,
               "type": "VariableDeclarator",
             },
           ],
-          "end": 33,
+          "end": 32,
           "kind": "let",
           "loc": SourceLocation {
             "end": Position {
-              "column": 15,
+              "column": 14,
               "line": 2,
             },
             "start": Position {
-              "column": 6,
+              "column": 5,
               "line": 2,
             },
           },
-          "start": 24,
+          "start": 23,
           "type": "VariableDeclaration",
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 2,
+            "column": 4,
             "line": 3,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 19,
+        "start": 18,
         "test": Node {
-          "end": 40,
+          "end": 39,
           "left": Node {
-            "end": 36,
+            "end": 35,
             "loc": SourceLocation {
               "end": Position {
-                "column": 18,
+                "column": 17,
                 "line": 2,
               },
               "start": Position {
-                "column": 17,
+                "column": 16,
                 "line": 2,
               },
             },
             "name": "i",
-            "start": 35,
+            "start": 34,
             "type": "Identifier",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 22,
+              "column": 21,
               "line": 2,
             },
             "start": Position {
-              "column": 17,
+              "column": 16,
               "line": 2,
             },
           },
           "operator": "<",
           "right": Node {
-            "end": 40,
+            "end": 39,
             "loc": SourceLocation {
               "end": Position {
-                "column": 22,
+                "column": 21,
                 "line": 2,
               },
               "start": Position {
-                "column": 21,
+                "column": 20,
                 "line": 2,
               },
             },
             "raw": "1",
-            "start": 39,
+            "start": 38,
             "type": "Literal",
             "value": 1,
           },
-          "start": 35,
+          "start": 34,
           "type": "BinaryExpression",
         },
         "type": "ForStatement",
         "update": Node {
-          "end": 51,
+          "end": 50,
           "left": Node {
-            "end": 43,
+            "end": 42,
             "loc": SourceLocation {
               "end": Position {
-                "column": 25,
+                "column": 24,
                 "line": 2,
               },
               "start": Position {
-                "column": 24,
+                "column": 23,
                 "line": 2,
               },
             },
             "name": "i",
-            "start": 42,
+            "start": 41,
             "type": "Identifier",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 33,
+              "column": 32,
               "line": 2,
             },
             "start": Position {
-              "column": 24,
+              "column": 23,
               "line": 2,
             },
           },
           "operator": "=",
           "right": Node {
-            "end": 51,
+            "end": 50,
             "left": Node {
-              "end": 47,
+              "end": 46,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 29,
+                  "column": 28,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 28,
+                  "column": 27,
                   "line": 2,
                 },
               },
               "name": "i",
-              "start": 46,
+              "start": 45,
               "type": "Identifier",
             },
             "loc": SourceLocation {
               "end": Position {
-                "column": 33,
+                "column": 32,
                 "line": 2,
               },
               "start": Position {
-                "column": 28,
+                "column": 27,
                 "line": 2,
               },
             },
             "operator": "+",
             "right": Node {
-              "end": 51,
+              "end": 50,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 33,
+                  "column": 32,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 32,
+                  "column": 31,
                   "line": 2,
                 },
               },
               "raw": "1",
-              "start": 50,
+              "start": 49,
               "type": "Literal",
               "value": 1,
             },
-            "start": 46,
+            "start": 45,
             "type": "BinaryExpression",
           },
-          "start": 42,
+          "start": 41,
           "type": "AssignmentExpression",
         },
       },
@@ -4554,7 +4554,7 @@ i;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing curly braces around \\"for\\" block.
+  "parsedErrors": "Line 2, Column 0: Missing curly braces around \\"for\\" block.
 Remember to enclose your \\"for\\" block with braces:
 
  	for (let i = 0; i < 1; i = i + 1) {
@@ -4832,105 +4832,105 @@ exports[`if needs braces - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- if (true)
-true;
- else
-false;",
+if (true)
+  true;
+else
+  false;",
   "displayResult": Array [],
   "errors": Array [
     BracesAroundIfElseError {
       "branch": "consequent",
       "node": Node {
         "alternate": Node {
-          "end": 47,
+          "end": 49,
           "expression": Node {
-            "end": 46,
+            "end": 48,
             "loc": SourceLocation {
               "end": Position {
-                "column": 5,
+                "column": 7,
                 "line": 5,
               },
               "start": Position {
-                "column": 0,
+                "column": 2,
                 "line": 5,
               },
             },
             "raw": "false",
-            "start": 41,
+            "start": 43,
             "type": "Literal",
             "value": false,
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 6,
+              "column": 8,
               "line": 5,
             },
             "start": Position {
-              "column": 0,
+              "column": 2,
               "line": 5,
             },
           },
-          "start": 41,
+          "start": 43,
           "type": "ExpressionStatement",
         },
         "consequent": Node {
-          "end": 34,
+          "end": 35,
           "expression": Node {
-            "end": 33,
+            "end": 34,
             "loc": SourceLocation {
               "end": Position {
-                "column": 4,
+                "column": 6,
                 "line": 3,
               },
               "start": Position {
-                "column": 0,
+                "column": 2,
                 "line": 3,
               },
             },
             "raw": "true",
-            "start": 29,
+            "start": 30,
             "type": "Literal",
             "value": true,
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 5,
+              "column": 7,
               "line": 3,
             },
             "start": Position {
-              "column": 0,
+              "column": 2,
               "line": 3,
             },
           },
-          "start": 29,
+          "start": 30,
           "type": "ExpressionStatement",
         },
-        "end": 47,
+        "end": 49,
         "loc": SourceLocation {
           "end": Position {
-            "column": 6,
+            "column": 8,
             "line": 5,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 19,
+        "start": 18,
         "test": Node {
-          "end": 27,
+          "end": 26,
           "loc": SourceLocation {
             "end": Position {
-              "column": 9,
+              "column": 8,
               "line": 2,
             },
             "start": Position {
-              "column": 5,
+              "column": 4,
               "line": 2,
             },
           },
           "raw": "true",
-          "start": 23,
+          "start": 22,
           "type": "Literal",
           "value": true,
         },
@@ -4943,95 +4943,95 @@ false;",
       "branch": "alternate",
       "node": Node {
         "alternate": Node {
-          "end": 47,
+          "end": 49,
           "expression": Node {
-            "end": 46,
+            "end": 48,
             "loc": SourceLocation {
               "end": Position {
-                "column": 5,
+                "column": 7,
                 "line": 5,
               },
               "start": Position {
-                "column": 0,
+                "column": 2,
                 "line": 5,
               },
             },
             "raw": "false",
-            "start": 41,
+            "start": 43,
             "type": "Literal",
             "value": false,
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 6,
+              "column": 8,
               "line": 5,
             },
             "start": Position {
-              "column": 0,
+              "column": 2,
               "line": 5,
             },
           },
-          "start": 41,
+          "start": 43,
           "type": "ExpressionStatement",
         },
         "consequent": Node {
-          "end": 34,
+          "end": 35,
           "expression": Node {
-            "end": 33,
+            "end": 34,
             "loc": SourceLocation {
               "end": Position {
-                "column": 4,
+                "column": 6,
                 "line": 3,
               },
               "start": Position {
-                "column": 0,
+                "column": 2,
                 "line": 3,
               },
             },
             "raw": "true",
-            "start": 29,
+            "start": 30,
             "type": "Literal",
             "value": true,
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 5,
+              "column": 7,
               "line": 3,
             },
             "start": Position {
-              "column": 0,
+              "column": 2,
               "line": 3,
             },
           },
-          "start": 29,
+          "start": 30,
           "type": "ExpressionStatement",
         },
-        "end": 47,
+        "end": 49,
         "loc": SourceLocation {
           "end": Position {
-            "column": 6,
+            "column": 8,
             "line": 5,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 19,
+        "start": 18,
         "test": Node {
-          "end": 27,
+          "end": 26,
           "loc": SourceLocation {
             "end": Position {
-              "column": 9,
+              "column": 8,
               "line": 2,
             },
             "start": Position {
-              "column": 5,
+              "column": 4,
               "line": 2,
             },
           },
           "raw": "true",
-          "start": 23,
+          "start": 22,
           "type": "Literal",
           "value": true,
         },
@@ -5041,7 +5041,7 @@ false;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Missing curly braces around \\"if\\" block.
+  "parsedErrors": "Line 2, Column 0: Missing curly braces around \\"if\\" block.
 if block need to be enclosed with a pair of curly braces.
 
 if (true) {
@@ -5070,7 +5070,7 @@ if (someCondition) {
   hello();
 world();
 
-Line 2, Column 1: Missing curly braces around \\"else\\" block.
+Line 2, Column 0: Missing curly braces around \\"else\\" block.
 else block need to be enclosed with a pair of curly braces.
 
 else {
@@ -5329,26 +5329,26 @@ exports[`no assigning to reserved keywords - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
-   package = 5;",
+package = 5;",
   "displayResult": Array [],
   "errors": Array [
     FatalSyntaxError {
       "location": Object {
         "end": Object {
-          "column": 4,
+          "column": 1,
           "line": 2,
         },
         "start": Object {
-          "column": 3,
+          "column": 0,
           "line": 2,
         },
       },
-      "message": "SyntaxError: The keyword 'package' is reserved (2:3)",
+      "message": "SyntaxError: The keyword 'package' is reserved (2:0)",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 3: SyntaxError: The keyword 'package' is reserved (2:3)
+  "parsedErrors": "Line 2, Column 0: SyntaxError: The keyword 'package' is reserved (2:0)
 There is a syntax error in your program
 ",
   "result": undefined,
@@ -5575,31 +5575,31 @@ exports[`no declaration without assignment - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- let x;",
+let x;",
   "displayResult": Array [],
   "errors": Array [
     NoImplicitDeclareUndefinedError {
       "node": Node {
-        "end": 24,
+        "end": 23,
         "loc": SourceLocation {
           "end": Position {
-            "column": 6,
+            "column": 5,
             "line": 2,
           },
           "start": Position {
-            "column": 5,
+            "column": 4,
             "line": 2,
           },
         },
         "name": "x",
-        "start": 23,
+        "start": 22,
         "type": "Identifier",
       },
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 5: Missing value in variable declaration.
+  "parsedErrors": "Line 2, Column 4: Missing value in variable declaration.
 A variable declaration assigns a value to a name.
 For instance, to assign 20 to x, you can write:
 
@@ -6024,9 +6024,9 @@ exports[`no export function - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- export function f(x) {
+export function f(x) {
 return x;
- }",
+}",
   "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
@@ -6036,7 +6036,7 @@ return x;
             "body": Array [
               Node {
                 "argument": Node {
-                  "end": 50,
+                  "end": 49,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 8,
@@ -6048,10 +6048,10 @@ return x;
                     },
                   },
                   "name": "x",
-                  "start": 49,
+                  "start": 48,
                   "type": "Identifier",
                 },
-                "end": 51,
+                "end": 50,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 9,
@@ -6062,88 +6062,88 @@ return x;
                     "line": 3,
                   },
                 },
-                "start": 42,
+                "start": 41,
                 "type": "ReturnStatement",
               },
             ],
-            "end": 54,
+            "end": 52,
             "loc": SourceLocation {
               "end": Position {
-                "column": 2,
+                "column": 1,
                 "line": 4,
               },
               "start": Position {
-                "column": 22,
+                "column": 21,
                 "line": 2,
               },
             },
-            "start": 40,
+            "start": 39,
             "type": "BlockStatement",
           },
-          "end": 54,
+          "end": 52,
           "expression": false,
           "generator": false,
           "id": Node {
-            "end": 36,
+            "end": 35,
             "loc": SourceLocation {
               "end": Position {
-                "column": 18,
+                "column": 17,
                 "line": 2,
               },
               "start": Position {
-                "column": 17,
+                "column": 16,
                 "line": 2,
               },
             },
             "name": "f",
-            "start": 35,
+            "start": 34,
             "type": "Identifier",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 2,
+              "column": 1,
               "line": 4,
             },
             "start": Position {
-              "column": 8,
+              "column": 7,
               "line": 2,
             },
           },
           "params": Array [
             Node {
-              "end": 38,
+              "end": 37,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 20,
+                  "column": 19,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 19,
+                  "column": 18,
                   "line": 2,
                 },
               },
               "name": "x",
-              "start": 37,
+              "start": 36,
               "type": "Identifier",
             },
           ],
-          "start": 26,
+          "start": 25,
           "type": "FunctionDeclaration",
         },
-        "end": 54,
+        "end": 52,
         "loc": SourceLocation {
           "end": Position {
-            "column": 2,
+            "column": 1,
             "line": 4,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 2,
           },
         },
         "source": null,
         "specifiers": Array [],
-        "start": 19,
+        "start": 18,
         "type": "ExportNamedDeclaration",
       },
       "nodeType": "Export named declarations",
@@ -6151,7 +6151,7 @@ return x;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Export named declarations are not allowed
+  "parsedErrors": "Line 2, Column 0: Export named declarations are not allowed
 You are trying to use Export named declarations, which is not allowed (yet).
 ",
   "result": undefined,
@@ -6797,25 +6797,25 @@ exports[`no for of loops - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
-   for (let i of list()) {
-   }",
+for (let i of list()) {
+}",
   "displayResult": Array [],
   "errors": Array [
     NoImplicitDeclareUndefinedError {
       "node": Node {
-        "end": 31,
+        "end": 28,
         "loc": SourceLocation {
           "end": Position {
-            "column": 13,
+            "column": 10,
             "line": 2,
           },
           "start": Position {
-            "column": 12,
+            "column": 9,
             "line": 2,
           },
         },
         "name": "i",
-        "start": 30,
+        "start": 27,
         "type": "Identifier",
       },
       "severity": "Error",
@@ -6825,114 +6825,114 @@ Object {
       "node": Node {
         "body": Node {
           "body": Array [],
-          "end": 49,
+          "end": 43,
           "loc": SourceLocation {
             "end": Position {
-              "column": 4,
+              "column": 1,
               "line": 3,
             },
             "start": Position {
-              "column": 25,
+              "column": 22,
               "line": 2,
             },
           },
-          "start": 43,
+          "start": 40,
           "type": "BlockStatement",
         },
-        "end": 49,
+        "end": 43,
         "left": Node {
           "declarations": Array [
             Node {
-              "end": 31,
+              "end": 28,
               "id": Node {
-                "end": 31,
+                "end": 28,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 13,
+                    "column": 10,
                     "line": 2,
                   },
                   "start": Position {
-                    "column": 12,
+                    "column": 9,
                     "line": 2,
                   },
                 },
                 "name": "i",
-                "start": 30,
+                "start": 27,
                 "type": "Identifier",
               },
               "init": null,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 13,
+                  "column": 10,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 12,
+                  "column": 9,
                   "line": 2,
                 },
               },
-              "start": 30,
+              "start": 27,
               "type": "VariableDeclarator",
             },
           ],
-          "end": 31,
+          "end": 28,
           "kind": "let",
           "loc": SourceLocation {
             "end": Position {
-              "column": 13,
+              "column": 10,
               "line": 2,
             },
             "start": Position {
-              "column": 8,
+              "column": 5,
               "line": 2,
             },
           },
-          "start": 26,
+          "start": 23,
           "type": "VariableDeclaration",
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 4,
+            "column": 1,
             "line": 3,
           },
           "start": Position {
-            "column": 3,
+            "column": 0,
             "line": 2,
           },
         },
         "right": Node {
           "arguments": Array [],
           "callee": Node {
-            "end": 39,
+            "end": 36,
             "loc": SourceLocation {
               "end": Position {
-                "column": 21,
+                "column": 18,
                 "line": 2,
               },
               "start": Position {
-                "column": 17,
+                "column": 14,
                 "line": 2,
               },
             },
             "name": "list",
-            "start": 35,
+            "start": 32,
             "type": "Identifier",
           },
-          "end": 41,
+          "end": 38,
           "loc": SourceLocation {
             "end": Position {
-              "column": 23,
+              "column": 20,
               "line": 2,
             },
             "start": Position {
-              "column": 17,
+              "column": 14,
               "line": 2,
             },
           },
-          "start": 35,
+          "start": 32,
           "type": "CallExpression",
         },
-        "start": 21,
+        "start": 18,
         "type": "ForOfStatement",
       },
       "nodeType": "For of statements",
@@ -6940,7 +6940,7 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 12: Missing value in variable declaration.
+  "parsedErrors": "Line 2, Column 9: Missing value in variable declaration.
 A variable declaration assigns a value to a name.
 For instance, to assign 20 to i, you can write:
 
@@ -6948,7 +6948,7 @@ For instance, to assign 20 to i, you can write:
 
   i + i; // 40
 
-Line 2, Column 3: For of statements are not allowed
+Line 2, Column 0: For of statements are not allowed
 You are trying to use For of statements, which is not allowed (yet).
 ",
   "result": undefined,
@@ -7115,44 +7115,44 @@ exports[`no generator functions - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- function* gen() {
-yield 2;
-return 1;
- }",
+function* gen() {
+  yield 2;
+  return 1;
+}",
   "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
         "argument": Node {
-          "end": 44,
+          "end": 45,
           "loc": SourceLocation {
             "end": Position {
-              "column": 7,
+              "column": 9,
               "line": 3,
             },
             "start": Position {
-              "column": 6,
+              "column": 8,
               "line": 3,
             },
           },
           "raw": "2",
-          "start": 43,
+          "start": 44,
           "type": "Literal",
           "value": 2,
         },
         "delegate": false,
-        "end": 44,
+        "end": 45,
         "loc": SourceLocation {
           "end": Position {
-            "column": 7,
+            "column": 9,
             "line": 3,
           },
           "start": Position {
-            "column": 0,
+            "column": 2,
             "line": 3,
           },
         },
-        "start": 37,
+        "start": 38,
         "type": "YieldExpression",
       },
       "nodeType": "Yield expressions",
@@ -7160,7 +7160,7 @@ return 1;
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 0: Yield expressions are not allowed
+  "parsedErrors": "Line 3, Column 2: Yield expressions are not allowed
 You are trying to use Yield expressions, which is not allowed (yet).
 ",
   "result": undefined,
@@ -7228,33 +7228,33 @@ exports[`no implicit undefined return - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
-   function f() {
-     return;
-   }",
+function f() {
+  return;
+}",
   "displayResult": Array [],
   "errors": Array [
     NoImplicitReturnUndefinedError {
       "node": Node {
         "argument": null,
-        "end": 48,
+        "end": 42,
         "loc": SourceLocation {
           "end": Position {
-            "column": 12,
+            "column": 9,
             "line": 3,
           },
           "start": Position {
-            "column": 5,
+            "column": 2,
             "line": 3,
           },
         },
-        "start": 41,
+        "start": 35,
         "type": "ReturnStatement",
       },
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 5: Missing value in return statement.
+  "parsedErrors": "Line 3, Column 2: Missing value in return statement.
 This return statement is missing a value.
 For instance, to return the value 42, you can write
 
@@ -7368,20 +7368,19 @@ Object {
 exports[`no regexp - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "
-	\\"enable verbose\\";
-	/pattern/",
+  "code": "\\"enable verbose\\";
+/pattern/",
   "displayResult": Array [],
   "errors": Array [
     MissingSemicolonError {
       "location": Object {
         "end": Object {
-          "column": 11,
-          "line": 3,
+          "column": 10,
+          "line": 2,
         },
         "start": Position {
-          "column": 10,
-          "line": 3,
+          "column": 9,
+          "line": 2,
         },
       },
       "severity": "Error",
@@ -7389,15 +7388,15 @@ Object {
     },
     NoUnspecifiedLiteral {
       "node": Node {
-        "end": 30,
+        "end": 27,
         "loc": SourceLocation {
           "end": Position {
-            "column": 10,
-            "line": 3,
+            "column": 9,
+            "line": 2,
           },
           "start": Position {
-            "column": 1,
-            "line": 3,
+            "column": 0,
+            "line": 2,
           },
         },
         "raw": "/pattern/",
@@ -7405,7 +7404,7 @@ Object {
           "flags": "",
           "pattern": "pattern",
         },
-        "start": 21,
+        "start": 18,
         "type": "Literal",
         "value": /pattern/,
       },
@@ -7413,10 +7412,10 @@ Object {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 10: Missing semicolon at the end of statement
+  "parsedErrors": "Line 2, Column 9: Missing semicolon at the end of statement
 Every statement must be terminated by a semicolon.
 
-Line 3, Column 1: 'RegExp' literals are not allowed.
+Line 2, Column 0: 'RegExp' literals are not allowed.
 
 ",
   "result": undefined,
@@ -7483,28 +7482,28 @@ exports[`no repeated params - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- function f(x, x) {
-return x;
- }",
+function f(x, x) {
+  return x;
+}",
   "displayResult": Array [],
   "errors": Array [
     FatalSyntaxError {
       "location": Object {
         "end": Object {
-          "column": 16,
-          "line": 2,
-        },
-        "start": Object {
           "column": 15,
           "line": 2,
         },
+        "start": Object {
+          "column": 14,
+          "line": 2,
+        },
       },
-      "message": "SyntaxError: Argument name clash (2:15)",
+      "message": "SyntaxError: Argument name clash (2:14)",
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 15: SyntaxError: Argument name clash (2:15)
+  "parsedErrors": "Line 2, Column 14: SyntaxError: Argument name clash (2:14)
 There is a syntax error in your program
 ",
   "result": undefined,
@@ -7691,27 +7690,27 @@ exports[`no super - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- class BoxError extends Error {
-constructor() {
-  super(1);
-}
- }",
+class BoxError extends Error {
+  constructor() {
+    super(1);
+  }
+}",
   "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
       "node": Node {
-        "end": 73,
+        "end": 76,
         "loc": SourceLocation {
           "end": Position {
-            "column": 7,
+            "column": 9,
             "line": 4,
           },
           "start": Position {
-            "column": 2,
+            "column": 4,
             "line": 4,
           },
         },
-        "start": 68,
+        "start": 71,
         "type": "Super",
       },
       "nodeType": "Supers",
@@ -7723,100 +7722,100 @@ constructor() {
         "body": Node {
           "body": Array [
             Node {
-              "end": 77,
+              "end": 80,
               "expression": Node {
                 "arguments": Array [
                   Node {
-                    "end": 75,
+                    "end": 78,
                     "loc": SourceLocation {
                       "end": Position {
-                        "column": 9,
+                        "column": 11,
                         "line": 4,
                       },
                       "start": Position {
-                        "column": 8,
+                        "column": 10,
                         "line": 4,
                       },
                     },
                     "raw": "1",
-                    "start": 74,
+                    "start": 77,
                     "type": "Literal",
                     "value": 1,
                   },
                 ],
                 "callee": Node {
-                  "end": 73,
+                  "end": 76,
                   "loc": SourceLocation {
                     "end": Position {
-                      "column": 7,
+                      "column": 9,
                       "line": 4,
                     },
                     "start": Position {
-                      "column": 2,
+                      "column": 4,
                       "line": 4,
                     },
                   },
-                  "start": 68,
+                  "start": 71,
                   "type": "Super",
                 },
-                "end": 76,
+                "end": 79,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 10,
+                    "column": 12,
                     "line": 4,
                   },
                   "start": Position {
-                    "column": 2,
+                    "column": 4,
                     "line": 4,
                   },
                 },
-                "start": 68,
+                "start": 71,
                 "type": "CallExpression",
               },
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 11,
+                  "column": 13,
                   "line": 4,
                 },
                 "start": Position {
-                  "column": 2,
+                  "column": 4,
                   "line": 4,
                 },
               },
-              "start": 68,
+              "start": 71,
               "type": "ExpressionStatement",
             },
           ],
-          "end": 79,
+          "end": 84,
           "loc": SourceLocation {
             "end": Position {
-              "column": 1,
+              "column": 3,
               "line": 5,
             },
             "start": Position {
-              "column": 14,
+              "column": 16,
               "line": 3,
             },
           },
-          "start": 64,
+          "start": 65,
           "type": "BlockStatement",
         },
-        "end": 79,
+        "end": 84,
         "expression": false,
         "generator": false,
         "id": null,
         "loc": SourceLocation {
           "end": Position {
-            "column": 1,
+            "column": 3,
             "line": 5,
           },
           "start": Position {
-            "column": 11,
+            "column": 13,
             "line": 3,
           },
         },
         "params": Array [],
-        "start": 61,
+        "start": 62,
         "type": "FunctionExpression",
       },
       "nodeType": "Function expressions",
@@ -7826,135 +7825,135 @@ constructor() {
     DisallowedConstructError {
       "node": Node {
         "computed": false,
-        "end": 79,
+        "end": 84,
         "key": Node {
-          "end": 61,
+          "end": 62,
           "loc": SourceLocation {
             "end": Position {
-              "column": 11,
+              "column": 13,
               "line": 3,
             },
             "start": Position {
-              "column": 0,
+              "column": 2,
               "line": 3,
             },
           },
           "name": "constructor",
-          "start": 50,
+          "start": 51,
           "type": "Identifier",
         },
         "kind": "constructor",
         "loc": SourceLocation {
           "end": Position {
-            "column": 1,
+            "column": 3,
             "line": 5,
           },
           "start": Position {
-            "column": 0,
+            "column": 2,
             "line": 3,
           },
         },
-        "start": 50,
+        "start": 51,
         "static": false,
         "type": "MethodDefinition",
         "value": Node {
           "body": Node {
             "body": Array [
               Node {
-                "end": 77,
+                "end": 80,
                 "expression": Node {
                   "arguments": Array [
                     Node {
-                      "end": 75,
+                      "end": 78,
                       "loc": SourceLocation {
                         "end": Position {
-                          "column": 9,
+                          "column": 11,
                           "line": 4,
                         },
                         "start": Position {
-                          "column": 8,
+                          "column": 10,
                           "line": 4,
                         },
                       },
                       "raw": "1",
-                      "start": 74,
+                      "start": 77,
                       "type": "Literal",
                       "value": 1,
                     },
                   ],
                   "callee": Node {
-                    "end": 73,
+                    "end": 76,
                     "loc": SourceLocation {
                       "end": Position {
-                        "column": 7,
+                        "column": 9,
                         "line": 4,
                       },
                       "start": Position {
-                        "column": 2,
+                        "column": 4,
                         "line": 4,
                       },
                     },
-                    "start": 68,
+                    "start": 71,
                     "type": "Super",
                   },
-                  "end": 76,
+                  "end": 79,
                   "loc": SourceLocation {
                     "end": Position {
-                      "column": 10,
+                      "column": 12,
                       "line": 4,
                     },
                     "start": Position {
-                      "column": 2,
+                      "column": 4,
                       "line": 4,
                     },
                   },
-                  "start": 68,
+                  "start": 71,
                   "type": "CallExpression",
                 },
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 11,
+                    "column": 13,
                     "line": 4,
                   },
                   "start": Position {
-                    "column": 2,
+                    "column": 4,
                     "line": 4,
                   },
                 },
-                "start": 68,
+                "start": 71,
                 "type": "ExpressionStatement",
               },
             ],
-            "end": 79,
+            "end": 84,
             "loc": SourceLocation {
               "end": Position {
-                "column": 1,
+                "column": 3,
                 "line": 5,
               },
               "start": Position {
-                "column": 14,
+                "column": 16,
                 "line": 3,
               },
             },
-            "start": 64,
+            "start": 65,
             "type": "BlockStatement",
           },
-          "end": 79,
+          "end": 84,
           "expression": false,
           "generator": false,
           "id": null,
           "loc": SourceLocation {
             "end": Position {
-              "column": 1,
+              "column": 3,
               "line": 5,
             },
             "start": Position {
-              "column": 11,
+              "column": 13,
               "line": 3,
             },
           },
           "params": Array [],
-          "start": 61,
+          "start": 62,
           "type": "FunctionExpression",
         },
       },
@@ -7967,151 +7966,151 @@ constructor() {
         "body": Array [
           Node {
             "computed": false,
-            "end": 79,
+            "end": 84,
             "key": Node {
-              "end": 61,
+              "end": 62,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 11,
+                  "column": 13,
                   "line": 3,
                 },
                 "start": Position {
-                  "column": 0,
+                  "column": 2,
                   "line": 3,
                 },
               },
               "name": "constructor",
-              "start": 50,
+              "start": 51,
               "type": "Identifier",
             },
             "kind": "constructor",
             "loc": SourceLocation {
               "end": Position {
-                "column": 1,
+                "column": 3,
                 "line": 5,
               },
               "start": Position {
-                "column": 0,
+                "column": 2,
                 "line": 3,
               },
             },
-            "start": 50,
+            "start": 51,
             "static": false,
             "type": "MethodDefinition",
             "value": Node {
               "body": Node {
                 "body": Array [
                   Node {
-                    "end": 77,
+                    "end": 80,
                     "expression": Node {
                       "arguments": Array [
                         Node {
-                          "end": 75,
+                          "end": 78,
                           "loc": SourceLocation {
                             "end": Position {
-                              "column": 9,
+                              "column": 11,
                               "line": 4,
                             },
                             "start": Position {
-                              "column": 8,
+                              "column": 10,
                               "line": 4,
                             },
                           },
                           "raw": "1",
-                          "start": 74,
+                          "start": 77,
                           "type": "Literal",
                           "value": 1,
                         },
                       ],
                       "callee": Node {
-                        "end": 73,
+                        "end": 76,
                         "loc": SourceLocation {
                           "end": Position {
-                            "column": 7,
+                            "column": 9,
                             "line": 4,
                           },
                           "start": Position {
-                            "column": 2,
+                            "column": 4,
                             "line": 4,
                           },
                         },
-                        "start": 68,
+                        "start": 71,
                         "type": "Super",
                       },
-                      "end": 76,
+                      "end": 79,
                       "loc": SourceLocation {
                         "end": Position {
-                          "column": 10,
+                          "column": 12,
                           "line": 4,
                         },
                         "start": Position {
-                          "column": 2,
+                          "column": 4,
                           "line": 4,
                         },
                       },
-                      "start": 68,
+                      "start": 71,
                       "type": "CallExpression",
                     },
                     "loc": SourceLocation {
                       "end": Position {
-                        "column": 11,
+                        "column": 13,
                         "line": 4,
                       },
                       "start": Position {
-                        "column": 2,
+                        "column": 4,
                         "line": 4,
                       },
                     },
-                    "start": 68,
+                    "start": 71,
                     "type": "ExpressionStatement",
                   },
                 ],
-                "end": 79,
+                "end": 84,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 1,
+                    "column": 3,
                     "line": 5,
                   },
                   "start": Position {
-                    "column": 14,
+                    "column": 16,
                     "line": 3,
                   },
                 },
-                "start": 64,
+                "start": 65,
                 "type": "BlockStatement",
               },
-              "end": 79,
+              "end": 84,
               "expression": false,
               "generator": false,
               "id": null,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 1,
+                  "column": 3,
                   "line": 5,
                 },
                 "start": Position {
-                  "column": 11,
+                  "column": 13,
                   "line": 3,
                 },
               },
               "params": Array [],
-              "start": 61,
+              "start": 62,
               "type": "FunctionExpression",
             },
           },
         ],
-        "end": 82,
+        "end": 86,
         "loc": SourceLocation {
           "end": Position {
-            "column": 2,
+            "column": 1,
             "line": 6,
           },
           "start": Position {
-            "column": 30,
+            "column": 29,
             "line": 2,
           },
         },
-        "start": 48,
+        "start": 47,
         "type": "ClassBody",
       },
       "nodeType": "Class bodys",
@@ -8124,195 +8123,195 @@ constructor() {
           "body": Array [
             Node {
               "computed": false,
-              "end": 79,
+              "end": 84,
               "key": Node {
-                "end": 61,
+                "end": 62,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 11,
+                    "column": 13,
                     "line": 3,
                   },
                   "start": Position {
-                    "column": 0,
+                    "column": 2,
                     "line": 3,
                   },
                 },
                 "name": "constructor",
-                "start": 50,
+                "start": 51,
                 "type": "Identifier",
               },
               "kind": "constructor",
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 1,
+                  "column": 3,
                   "line": 5,
                 },
                 "start": Position {
-                  "column": 0,
+                  "column": 2,
                   "line": 3,
                 },
               },
-              "start": 50,
+              "start": 51,
               "static": false,
               "type": "MethodDefinition",
               "value": Node {
                 "body": Node {
                   "body": Array [
                     Node {
-                      "end": 77,
+                      "end": 80,
                       "expression": Node {
                         "arguments": Array [
                           Node {
-                            "end": 75,
+                            "end": 78,
                             "loc": SourceLocation {
                               "end": Position {
-                                "column": 9,
+                                "column": 11,
                                 "line": 4,
                               },
                               "start": Position {
-                                "column": 8,
+                                "column": 10,
                                 "line": 4,
                               },
                             },
                             "raw": "1",
-                            "start": 74,
+                            "start": 77,
                             "type": "Literal",
                             "value": 1,
                           },
                         ],
                         "callee": Node {
-                          "end": 73,
+                          "end": 76,
                           "loc": SourceLocation {
                             "end": Position {
-                              "column": 7,
+                              "column": 9,
                               "line": 4,
                             },
                             "start": Position {
-                              "column": 2,
+                              "column": 4,
                               "line": 4,
                             },
                           },
-                          "start": 68,
+                          "start": 71,
                           "type": "Super",
                         },
-                        "end": 76,
+                        "end": 79,
                         "loc": SourceLocation {
                           "end": Position {
-                            "column": 10,
+                            "column": 12,
                             "line": 4,
                           },
                           "start": Position {
-                            "column": 2,
+                            "column": 4,
                             "line": 4,
                           },
                         },
-                        "start": 68,
+                        "start": 71,
                         "type": "CallExpression",
                       },
                       "loc": SourceLocation {
                         "end": Position {
-                          "column": 11,
+                          "column": 13,
                           "line": 4,
                         },
                         "start": Position {
-                          "column": 2,
+                          "column": 4,
                           "line": 4,
                         },
                       },
-                      "start": 68,
+                      "start": 71,
                       "type": "ExpressionStatement",
                     },
                   ],
-                  "end": 79,
+                  "end": 84,
                   "loc": SourceLocation {
                     "end": Position {
-                      "column": 1,
+                      "column": 3,
                       "line": 5,
                     },
                     "start": Position {
-                      "column": 14,
+                      "column": 16,
                       "line": 3,
                     },
                   },
-                  "start": 64,
+                  "start": 65,
                   "type": "BlockStatement",
                 },
-                "end": 79,
+                "end": 84,
                 "expression": false,
                 "generator": false,
                 "id": null,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 1,
+                    "column": 3,
                     "line": 5,
                   },
                   "start": Position {
-                    "column": 11,
+                    "column": 13,
                     "line": 3,
                   },
                 },
                 "params": Array [],
-                "start": 61,
+                "start": 62,
                 "type": "FunctionExpression",
               },
             },
           ],
-          "end": 82,
+          "end": 86,
           "loc": SourceLocation {
             "end": Position {
-              "column": 2,
+              "column": 1,
               "line": 6,
             },
             "start": Position {
-              "column": 30,
+              "column": 29,
               "line": 2,
             },
           },
-          "start": 48,
+          "start": 47,
           "type": "ClassBody",
         },
-        "end": 82,
+        "end": 86,
         "id": Node {
-          "end": 33,
+          "end": 32,
           "loc": SourceLocation {
             "end": Position {
-              "column": 15,
+              "column": 14,
               "line": 2,
             },
             "start": Position {
-              "column": 7,
+              "column": 6,
               "line": 2,
             },
           },
           "name": "BoxError",
-          "start": 25,
+          "start": 24,
           "type": "Identifier",
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 2,
+            "column": 1,
             "line": 6,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 19,
+        "start": 18,
         "superClass": Node {
-          "end": 47,
+          "end": 46,
           "loc": SourceLocation {
             "end": Position {
-              "column": 29,
+              "column": 28,
               "line": 2,
             },
             "start": Position {
-              "column": 24,
+              "column": 23,
               "line": 2,
             },
           },
           "name": "Error",
-          "start": 42,
+          "start": 41,
           "type": "Identifier",
         },
         "type": "ClassDeclaration",
@@ -8322,19 +8321,19 @@ constructor() {
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 4, Column 2: Supers are not allowed
+  "parsedErrors": "Line 4, Column 4: Supers are not allowed
 You are trying to use Supers, which is not allowed (yet).
 
-Line 3, Column 11: Function expressions are not allowed
+Line 3, Column 13: Function expressions are not allowed
 You are trying to use Function expressions, which is not allowed (yet).
 
-Line 3, Column 0: Method definitions are not allowed
+Line 3, Column 2: Method definitions are not allowed
 You are trying to use Method definitions, which is not allowed (yet).
 
-Line 2, Column 30: Class bodys are not allowed
+Line 2, Column 29: Class bodys are not allowed
 You are trying to use Class bodys, which is not allowed (yet).
 
-Line 2, Column 1: Class declarations are not allowed
+Line 2, Column 0: Class declarations are not allowed
 You are trying to use Class declarations, which is not allowed (yet).
 ",
   "result": undefined,
@@ -8991,27 +8990,26 @@ Line 1: Class declarations are not allowed",
 exports[`no template literals - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "
-	\\"enable verbose\\";
-	'hi'",
+  "code": "\\"enable verbose\\";
+'hi'",
   "displayResult": Array [],
   "errors": Array [
     MissingSemicolonError {
       "location": Object {
         "end": Object {
-          "column": 6,
-          "line": 3,
+          "column": 5,
+          "line": 2,
         },
         "start": Position {
-          "column": 5,
-          "line": 3,
+          "column": 4,
+          "line": 2,
         },
       },
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 5: Missing semicolon at the end of statement
+  "parsedErrors": "Line 2, Column 4: Missing semicolon at the end of statement
 Every statement must be terminated by a semicolon.
 ",
   "result": undefined,
@@ -9024,10 +9022,10 @@ exports[`no this, no new - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- function Box() {
-this[0] = 5;
- }
- const box = new Box();",
+function Box() {
+  this[0] = 5;
+}
+const box = new Box();",
   "displayResult": Array [],
   "errors": Array [
     TypeError {
@@ -9035,11 +9033,11 @@ this[0] = 5;
       "got": "number",
       "location": SourceLocation {
         "end": Position {
-          "column": 11,
+          "column": 13,
           "line": 3,
         },
         "start": Position {
-          "column": 0,
+          "column": 2,
           "line": 3,
         },
       },
@@ -9048,7 +9046,7 @@ this[0] = 5;
       "type": "Runtime",
     },
   ],
-  "parsedErrors": "Line 3, Column 0: Expected string as prop, got number.
+  "parsedErrors": "Line 3, Column 2: Expected string as prop, got number.
 Expected string as prop, got number.
 ",
   "result": undefined,
@@ -9095,14 +9093,14 @@ exports[`no try statements - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- function f(x, y) {
-return x + y;
- }
- try {
-f(...[1, 2]);
- } catch (e) {
-display(e);
- }",
+function f(x, y) {
+  return x + y;
+}
+try {
+  f(...[1, 2]);
+} catch (e) {
+  display(e);
+}",
   "displayResult": Array [],
   "errors": Array [
     DisallowedConstructError {
@@ -9110,66 +9108,66 @@ display(e);
         "argument": Node {
           "elements": Array [
             Node {
-              "end": 69,
+              "end": 70,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 7,
+                  "column": 9,
                   "line": 6,
                 },
                 "start": Position {
-                  "column": 6,
+                  "column": 8,
                   "line": 6,
                 },
               },
               "raw": "1",
-              "start": 68,
+              "start": 69,
               "type": "Literal",
               "value": 1,
             },
             Node {
-              "end": 72,
+              "end": 73,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 10,
+                  "column": 12,
                   "line": 6,
                 },
                 "start": Position {
-                  "column": 9,
+                  "column": 11,
                   "line": 6,
                 },
               },
               "raw": "2",
-              "start": 71,
+              "start": 72,
               "type": "Literal",
               "value": 2,
             },
           ],
-          "end": 73,
+          "end": 74,
           "loc": SourceLocation {
             "end": Position {
-              "column": 11,
+              "column": 13,
               "line": 6,
             },
             "start": Position {
-              "column": 5,
+              "column": 7,
               "line": 6,
             },
           },
-          "start": 67,
+          "start": 68,
           "type": "ArrayExpression",
         },
-        "end": 73,
+        "end": 74,
         "loc": SourceLocation {
           "end": Position {
-            "column": 11,
+            "column": 13,
             "line": 6,
           },
           "start": Position {
-            "column": 2,
+            "column": 4,
             "line": 6,
           },
         },
-        "start": 64,
+        "start": 65,
         "type": "SpreadElement",
       },
       "nodeType": "Spread elements",
@@ -9181,92 +9179,92 @@ display(e);
         "body": Node {
           "body": Array [
             Node {
-              "end": 102,
+              "end": 104,
               "expression": Node {
                 "arguments": Array [
                   Node {
-                    "end": 100,
+                    "end": 102,
                     "loc": SourceLocation {
                       "end": Position {
-                        "column": 9,
+                        "column": 11,
                         "line": 8,
                       },
                       "start": Position {
-                        "column": 8,
+                        "column": 10,
                         "line": 8,
                       },
                     },
                     "name": "e",
-                    "start": 99,
+                    "start": 101,
                     "type": "Identifier",
                   },
                 ],
                 "callee": Node {
-                  "end": 98,
+                  "end": 100,
                   "loc": SourceLocation {
                     "end": Position {
-                      "column": 7,
+                      "column": 9,
                       "line": 8,
                     },
                     "start": Position {
-                      "column": 0,
+                      "column": 2,
                       "line": 8,
                     },
                   },
                   "name": "display",
-                  "start": 91,
+                  "start": 93,
                   "type": "Identifier",
                 },
-                "end": 101,
+                "end": 103,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 10,
+                    "column": 12,
                     "line": 8,
                   },
                   "start": Position {
-                    "column": 0,
+                    "column": 2,
                     "line": 8,
                   },
                 },
-                "start": 91,
+                "start": 93,
                 "type": "CallExpression",
               },
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 11,
+                  "column": 13,
                   "line": 8,
                 },
                 "start": Position {
-                  "column": 0,
+                  "column": 2,
                   "line": 8,
                 },
               },
-              "start": 91,
+              "start": 93,
               "type": "ExpressionStatement",
             },
           ],
-          "end": 105,
+          "end": 106,
           "loc": SourceLocation {
             "end": Position {
-              "column": 2,
+              "column": 1,
               "line": 9,
             },
             "start": Position {
-              "column": 13,
+              "column": 12,
               "line": 7,
             },
           },
           "start": 89,
           "type": "BlockStatement",
         },
-        "end": 105,
+        "end": 106,
         "loc": SourceLocation {
           "end": Position {
-            "column": 2,
+            "column": 1,
             "line": 9,
           },
           "start": Position {
-            "column": 3,
+            "column": 2,
             "line": 7,
           },
         },
@@ -9274,11 +9272,11 @@ display(e);
           "end": 87,
           "loc": SourceLocation {
             "end": Position {
-              "column": 11,
+              "column": 10,
               "line": 7,
             },
             "start": Position {
-              "column": 10,
+              "column": 9,
               "line": 7,
             },
           },
@@ -9298,226 +9296,226 @@ display(e);
         "block": Node {
           "body": Array [
             Node {
-              "end": 75,
+              "end": 76,
               "expression": Node {
                 "arguments": Array [
                   Node {
                     "argument": Node {
                       "elements": Array [
                         Node {
-                          "end": 69,
+                          "end": 70,
                           "loc": SourceLocation {
                             "end": Position {
-                              "column": 7,
+                              "column": 9,
                               "line": 6,
                             },
                             "start": Position {
-                              "column": 6,
+                              "column": 8,
                               "line": 6,
                             },
                           },
                           "raw": "1",
-                          "start": 68,
+                          "start": 69,
                           "type": "Literal",
                           "value": 1,
                         },
                         Node {
-                          "end": 72,
+                          "end": 73,
                           "loc": SourceLocation {
                             "end": Position {
-                              "column": 10,
+                              "column": 12,
                               "line": 6,
                             },
                             "start": Position {
-                              "column": 9,
+                              "column": 11,
                               "line": 6,
                             },
                           },
                           "raw": "2",
-                          "start": 71,
+                          "start": 72,
                           "type": "Literal",
                           "value": 2,
                         },
                       ],
-                      "end": 73,
+                      "end": 74,
                       "loc": SourceLocation {
                         "end": Position {
-                          "column": 11,
+                          "column": 13,
                           "line": 6,
                         },
                         "start": Position {
-                          "column": 5,
+                          "column": 7,
                           "line": 6,
                         },
                       },
-                      "start": 67,
+                      "start": 68,
                       "type": "ArrayExpression",
                     },
-                    "end": 73,
+                    "end": 74,
                     "loc": SourceLocation {
                       "end": Position {
-                        "column": 11,
+                        "column": 13,
                         "line": 6,
                       },
                       "start": Position {
-                        "column": 2,
+                        "column": 4,
                         "line": 6,
                       },
                     },
-                    "start": 64,
+                    "start": 65,
                     "type": "SpreadElement",
                   },
                 ],
                 "callee": Node {
-                  "end": 63,
+                  "end": 64,
                   "loc": SourceLocation {
                     "end": Position {
-                      "column": 1,
+                      "column": 3,
                       "line": 6,
                     },
                     "start": Position {
-                      "column": 0,
+                      "column": 2,
                       "line": 6,
                     },
                   },
                   "name": "f",
-                  "start": 62,
+                  "start": 63,
                   "type": "Identifier",
                 },
-                "end": 74,
+                "end": 75,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 12,
+                    "column": 14,
                     "line": 6,
                   },
                   "start": Position {
-                    "column": 0,
+                    "column": 2,
                     "line": 6,
                   },
                 },
-                "start": 62,
+                "start": 63,
                 "type": "CallExpression",
               },
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 13,
+                  "column": 15,
                   "line": 6,
                 },
                 "start": Position {
-                  "column": 0,
+                  "column": 2,
                   "line": 6,
                 },
               },
-              "start": 62,
+              "start": 63,
               "type": "ExpressionStatement",
             },
           ],
           "end": 78,
           "loc": SourceLocation {
             "end": Position {
-              "column": 2,
+              "column": 1,
               "line": 7,
             },
             "start": Position {
-              "column": 5,
+              "column": 4,
               "line": 5,
             },
           },
-          "start": 60,
+          "start": 59,
           "type": "BlockStatement",
         },
-        "end": 105,
+        "end": 106,
         "finalizer": null,
         "handler": Node {
           "body": Node {
             "body": Array [
               Node {
-                "end": 102,
+                "end": 104,
                 "expression": Node {
                   "arguments": Array [
                     Node {
-                      "end": 100,
+                      "end": 102,
                       "loc": SourceLocation {
                         "end": Position {
-                          "column": 9,
+                          "column": 11,
                           "line": 8,
                         },
                         "start": Position {
-                          "column": 8,
+                          "column": 10,
                           "line": 8,
                         },
                       },
                       "name": "e",
-                      "start": 99,
+                      "start": 101,
                       "type": "Identifier",
                     },
                   ],
                   "callee": Node {
-                    "end": 98,
+                    "end": 100,
                     "loc": SourceLocation {
                       "end": Position {
-                        "column": 7,
+                        "column": 9,
                         "line": 8,
                       },
                       "start": Position {
-                        "column": 0,
+                        "column": 2,
                         "line": 8,
                       },
                     },
                     "name": "display",
-                    "start": 91,
+                    "start": 93,
                     "type": "Identifier",
                   },
-                  "end": 101,
+                  "end": 103,
                   "loc": SourceLocation {
                     "end": Position {
-                      "column": 10,
+                      "column": 12,
                       "line": 8,
                     },
                     "start": Position {
-                      "column": 0,
+                      "column": 2,
                       "line": 8,
                     },
                   },
-                  "start": 91,
+                  "start": 93,
                   "type": "CallExpression",
                 },
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 11,
+                    "column": 13,
                     "line": 8,
                   },
                   "start": Position {
-                    "column": 0,
+                    "column": 2,
                     "line": 8,
                   },
                 },
-                "start": 91,
+                "start": 93,
                 "type": "ExpressionStatement",
               },
             ],
-            "end": 105,
+            "end": 106,
             "loc": SourceLocation {
               "end": Position {
-                "column": 2,
+                "column": 1,
                 "line": 9,
               },
               "start": Position {
-                "column": 13,
+                "column": 12,
                 "line": 7,
               },
             },
             "start": 89,
             "type": "BlockStatement",
           },
-          "end": 105,
+          "end": 106,
           "loc": SourceLocation {
             "end": Position {
-              "column": 2,
+              "column": 1,
               "line": 9,
             },
             "start": Position {
-              "column": 3,
+              "column": 2,
               "line": 7,
             },
           },
@@ -9525,11 +9523,11 @@ display(e);
             "end": 87,
             "loc": SourceLocation {
               "end": Position {
-                "column": 11,
+                "column": 10,
                 "line": 7,
               },
               "start": Position {
-                "column": 10,
+                "column": 9,
                 "line": 7,
               },
             },
@@ -9542,15 +9540,15 @@ display(e);
         },
         "loc": SourceLocation {
           "end": Position {
-            "column": 2,
+            "column": 1,
             "line": 9,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 5,
           },
         },
-        "start": 56,
+        "start": 55,
         "type": "TryStatement",
       },
       "nodeType": "Try statements",
@@ -9558,13 +9556,13 @@ display(e);
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 6, Column 2: Spread elements are not allowed
+  "parsedErrors": "Line 6, Column 4: Spread elements are not allowed
 You are trying to use Spread elements, which is not allowed (yet).
 
-Line 7, Column 3: Catch clauses are not allowed
+Line 7, Column 2: Catch clauses are not allowed
 You are trying to use Catch clauses, which is not allowed (yet).
 
-Line 5, Column 1: Try statements are not allowed
+Line 5, Column 0: Try statements are not allowed
 You are trying to use Try statements, which is not allowed (yet).
 ",
   "result": undefined,
@@ -10302,81 +10300,81 @@ exports[`no var statements - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- var x = 1;",
+var x = 1;",
   "displayResult": Array [],
   "errors": Array [
     NoVarError {
       "node": Node {
         "declarations": Array [
           Node {
-            "end": 28,
+            "end": 27,
             "id": Node {
-              "end": 24,
+              "end": 23,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 6,
+                  "column": 5,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 5,
+                  "column": 4,
                   "line": 2,
                 },
               },
               "name": "x",
-              "start": 23,
+              "start": 22,
               "type": "Identifier",
             },
             "init": Node {
-              "end": 28,
+              "end": 27,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 10,
+                  "column": 9,
                   "line": 2,
                 },
                 "start": Position {
-                  "column": 9,
+                  "column": 8,
                   "line": 2,
                 },
               },
               "raw": "1",
-              "start": 27,
+              "start": 26,
               "type": "Literal",
               "value": 1,
             },
             "loc": SourceLocation {
               "end": Position {
-                "column": 10,
+                "column": 9,
                 "line": 2,
               },
               "start": Position {
-                "column": 5,
+                "column": 4,
                 "line": 2,
               },
             },
-            "start": 23,
+            "start": 22,
             "type": "VariableDeclarator",
           },
         ],
-        "end": 29,
+        "end": 28,
         "kind": "var",
         "loc": SourceLocation {
           "end": Position {
-            "column": 11,
+            "column": 10,
             "line": 2,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 2,
           },
         },
-        "start": 19,
+        "start": 18,
         "type": "VariableDeclaration",
       },
       "severity": "Error",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 2, Column 1: Variable declaration using \\"var\\" is not allowed.
+  "parsedErrors": "Line 2, Column 0: Variable declaration using \\"var\\" is not allowed.
 Use keyword \\"let\\" instead, to declare a variable:
 
 	let x = 1;
@@ -10475,9 +10473,9 @@ exports[`while needs braces - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
- let i = 0;
- while (i < 1)
-i = i + 1;",
+let i = 0;
+while (i < 1)
+  i = i + 1;",
   "displayResult": Array [],
   "errors": Array [
     BracesAroundWhileError {
@@ -10490,11 +10488,11 @@ i = i + 1;",
               "end": 46,
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 1,
+                  "column": 3,
                   "line": 4,
                 },
                 "start": Position {
-                  "column": 0,
+                  "column": 2,
                   "line": 4,
                 },
               },
@@ -10504,11 +10502,11 @@ i = i + 1;",
             },
             "loc": SourceLocation {
               "end": Position {
-                "column": 9,
+                "column": 11,
                 "line": 4,
               },
               "start": Position {
-                "column": 0,
+                "column": 2,
                 "line": 4,
               },
             },
@@ -10519,11 +10517,11 @@ i = i + 1;",
                 "end": 50,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 5,
+                    "column": 7,
                     "line": 4,
                   },
                   "start": Position {
-                    "column": 4,
+                    "column": 6,
                     "line": 4,
                   },
                 },
@@ -10533,11 +10531,11 @@ i = i + 1;",
               },
               "loc": SourceLocation {
                 "end": Position {
-                  "column": 9,
+                  "column": 11,
                   "line": 4,
                 },
                 "start": Position {
-                  "column": 4,
+                  "column": 6,
                   "line": 4,
                 },
               },
@@ -10546,11 +10544,11 @@ i = i + 1;",
                 "end": 54,
                 "loc": SourceLocation {
                   "end": Position {
-                    "column": 9,
+                    "column": 11,
                     "line": 4,
                   },
                   "start": Position {
-                    "column": 8,
+                    "column": 10,
                     "line": 4,
                   },
                 },
@@ -10567,11 +10565,11 @@ i = i + 1;",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 10,
+              "column": 12,
               "line": 4,
             },
             "start": Position {
-              "column": 0,
+              "column": 2,
               "line": 4,
             },
           },
@@ -10581,62 +10579,62 @@ i = i + 1;",
         "end": 55,
         "loc": SourceLocation {
           "end": Position {
-            "column": 10,
+            "column": 12,
             "line": 4,
           },
           "start": Position {
-            "column": 1,
+            "column": 0,
             "line": 3,
           },
         },
-        "start": 31,
+        "start": 29,
         "test": Node {
-          "end": 43,
+          "end": 41,
           "left": Node {
-            "end": 39,
+            "end": 37,
             "loc": SourceLocation {
               "end": Position {
-                "column": 9,
+                "column": 8,
                 "line": 3,
               },
               "start": Position {
-                "column": 8,
+                "column": 7,
                 "line": 3,
               },
             },
             "name": "i",
-            "start": 38,
+            "start": 36,
             "type": "Identifier",
           },
           "loc": SourceLocation {
             "end": Position {
-              "column": 13,
+              "column": 12,
               "line": 3,
             },
             "start": Position {
-              "column": 8,
+              "column": 7,
               "line": 3,
             },
           },
           "operator": "<",
           "right": Node {
-            "end": 43,
+            "end": 41,
             "loc": SourceLocation {
               "end": Position {
-                "column": 13,
+                "column": 12,
                 "line": 3,
               },
               "start": Position {
-                "column": 12,
+                "column": 11,
                 "line": 3,
               },
             },
             "raw": "1",
-            "start": 42,
+            "start": 40,
             "type": "Literal",
             "value": 1,
           },
-          "start": 38,
+          "start": 36,
           "type": "BinaryExpression",
         },
         "type": "WhileStatement",
@@ -10645,7 +10643,7 @@ i = i + 1;",
       "type": "Syntax",
     },
   ],
-  "parsedErrors": "Line 3, Column 1: Missing curly braces around \\"while\\" block.
+  "parsedErrors": "Line 3, Column 0: Missing curly braces around \\"while\\" block.
 Remember to enclose your \\"while\\" block with braces:
 
  	while (i < 1) {

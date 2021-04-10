@@ -109,7 +109,7 @@ export function parseAt(source: string, num: number) {
   return theNode
 }
 
-export function parse(source: string, context: Context, fallbackToLooseParse: boolean = false) {
+export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
     program = (acornParse(source, createAcornParserOptions(context)) as unknown) as es.Program
@@ -130,8 +130,6 @@ export function parse(source: string, context: Context, fallbackToLooseParse: bo
   const hasErrors = context.errors.find(m => m.severity === ErrorSeverity.ERROR)
   if (program && !hasErrors) {
     return program
-  } else if (fallbackToLooseParse) {
-    return looseParse(source, context)
   } else {
     return undefined
   }
