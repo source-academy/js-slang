@@ -4,7 +4,7 @@ import { expectParsedError } from '../../utils/testing'
 test('Cannot leave blank init in for loop', () => {
   return expectParsedError(
     stripIndent`
-    for(; i < 3; i = i + 1) {
+    for (; i < 3; i = i + 1) {
       break;
     }
   `,
@@ -15,14 +15,14 @@ test('Cannot leave blank init in for loop', () => {
 test('Cannot leave blank init in for loop - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  for(; i < 3; i = i + 1) {
-		break;
-	  }
-	`,
+    "enable verbose";
+    for (; i < 3; i = i + 1) {
+      break;
+    }
+  `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing init expression in for statement.
+            "Line 2, Column 0: Missing init expression in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
             "
           `)
@@ -31,7 +31,7 @@ test('Cannot leave blank init in for loop - verbose', () => {
 test('Cannot leave blank test in for loop', () => {
   return expectParsedError(
     stripIndent`
-    for(let i = 0; ; i = i + 1) {
+    for (let i = 0; ; i = i + 1) {
       break;
     }
   `,
@@ -42,14 +42,14 @@ test('Cannot leave blank test in for loop', () => {
 test('Cannot leave blank test in for loop - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  for(let i = 0; ; i = i + 1) {
-		break;
-	  }
-	`,
+    "enable verbose";
+    for (let i = 0; ; i = i + 1) {
+      break;
+    }
+  `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing test expression in for statement.
+            "Line 2, Column 0: Missing test expression in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
             "
           `)
@@ -58,7 +58,7 @@ test('Cannot leave blank test in for loop - verbose', () => {
 test('Cannot leave blank update in for loop', () => {
   return expectParsedError(
     stripIndent`
-    for(let i = 0; i < 3;) {
+    for (let i = 0; i < 3;) {
       break;
     }
   `,
@@ -69,14 +69,14 @@ test('Cannot leave blank update in for loop', () => {
 test('Cannot leave blank update in for loop - verbose', () => {
   return expectParsedError(
     stripIndent`
-	"enable verbose";
-    for(let i = 0; i < 3;) {
+    "enable verbose";
+    for (let i = 0; i < 3;) {
       break;
     }
   `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 3: Missing update expression in for statement.
+            "Line 2, Column 0: Missing update expression in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
             "
           `)
@@ -85,7 +85,7 @@ test('Cannot leave blank update in for loop - verbose', () => {
 test('Cannot leave blank expressions in for loop', () => {
   return expectParsedError(
     stripIndent`
-    for(;;) {
+    for (;;) {
       break;
     }
   `,
@@ -96,14 +96,14 @@ test('Cannot leave blank expressions in for loop', () => {
 test('Cannot leave blank expressions in for loop - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  for(;;) {
-		break;
-	  }
-	`,
+    "enable verbose";
+    for (;;) {
+    break;
+    }
+  `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing init, test, update expressions in for statement.
+            "Line 2, Column 0: Missing init, test, update expressions in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
             "
           `)
@@ -112,22 +112,22 @@ test('Cannot leave blank expressions in for loop - verbose', () => {
 test('Cannot leave while loop predicate blank', () => {
   return expectParsedError(
     stripIndent`
-  while() {
-    x;
-  }
-  `,
+    while () {
+      x;
+    }
+    `,
     { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: SyntaxError: Unexpected token (1:6)"`)
+  ).toMatchInlineSnapshot(`"Line 1: SyntaxError: Unexpected token (1:7)"`)
 })
 
 test('Cannot leave while loop predicate blank - verbose', () => {
   return expectParsedError(
     stripIndent`
-	"enable verbose";
-  while() {
-    x;
-  }
-  `,
+    "enable verbose";
+    while () {
+      x;
+    }
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 7: SyntaxError: Unexpected token (2:7)
@@ -139,10 +139,10 @@ test('Cannot leave while loop predicate blank - verbose', () => {
 test('Cannot use update expressions', () => {
   return expectParsedError(
     stripIndent`
-  let x = 3;
-  x++;
-  x;
-  `,
+    let x = 3;
+    x++;
+    x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: Update expressions are not allowed"`)
 })
@@ -150,11 +150,11 @@ test('Cannot use update expressions', () => {
 test('Cannot use update expressions - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	let x = 3;
-	x++;
-	x;
-	`,
+    "enable verbose";
+    let x = 3;
+    x++;
+    x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 0: Update expressions are not allowed
@@ -166,8 +166,8 @@ test('Cannot use update expressions - verbose', () => {
 test('Cannot have incomplete statements', () => {
   return expectParsedError(
     stripIndent`
-  5
-  `,
+    5
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Missing semicolon at the end of statement"`)
 })
@@ -175,9 +175,9 @@ test('Cannot have incomplete statements', () => {
 test('Cannot have incomplete statements - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	5
-	`,
+    "enable verbose";
+    5
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 1: Missing semicolon at the end of statement
@@ -189,8 +189,8 @@ test('Cannot have incomplete statements - verbose', () => {
 test('Cannot have if without else', () => {
   return expectParsedError(
     stripIndent`
-  if (true) { 5; }
-  `,
+    if (true) { 5; }
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Missing \\"else\\" in \\"if-else\\" statement."`)
 })
@@ -198,12 +198,12 @@ test('Cannot have if without else', () => {
 test('Cannot have if without else - verbose', () => {
   return expectParsedError(
     stripIndent`
-	"enable verbose";
-  if (true) { 5; }
-  `,
+    "enable verbose";
+    if (true) { 5; }
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing \\"else\\" in \\"if-else\\" statement.
+            "Line 2, Column 0: Missing \\"else\\" in \\"if-else\\" statement.
             This \\"if\\" block requires corresponding \\"else\\" block which will be
             evaluated when true expression evaluates to false.
 
@@ -216,9 +216,9 @@ test('Cannot have if without else - verbose', () => {
 test('Cannot use multiple declarations', () => {
   return expectParsedError(
     stripIndent`
-  let x = 3, y = 5;
-  x;
-  `,
+    let x = 3, y = 5;
+    x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Multiple declaration in a single statement."`)
 })
@@ -226,10 +226,10 @@ test('Cannot use multiple declarations', () => {
 test('Cannot use multiple declarations - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	let x = 3, y = 5;
-	x;
-	`,
+    "enable verbose";
+    let x = 3, y = 5;
+    x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Multiple declaration in a single statement.
@@ -245,10 +245,10 @@ test('Cannot use multiple declarations - verbose', () => {
 test('Cannot use destructuring declarations', () => {
   return expectParsedError(
     stripIndent`
-  let x = [1, 2];
-  let [a, b] = x;
-  a;
-  `,
+    let x = [1, 2];
+    let [a, b] = x;
+    a;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: Array patterns are not allowed"`)
 })
@@ -256,11 +256,11 @@ test('Cannot use destructuring declarations', () => {
 test('Cannot use destructuring declarations - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	let x = [1, 2];
-	let [a, b] = x;
-	a;
-	`,
+    "enable verbose";
+    let x = [1, 2];
+    let [a, b] = x;
+    a;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 4: Array patterns are not allowed
@@ -272,8 +272,8 @@ test('Cannot use destructuring declarations - verbose', () => {
 test('no declaration without assignment', () => {
   return expectParsedError(
     stripIndent`
-  let x;
-  `,
+    let x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Missing value in variable declaration."`)
 })
@@ -281,12 +281,12 @@ test('no declaration without assignment', () => {
 test('no declaration without assignment - verbose', () => {
   return expectParsedError(
     stripIndent`
-	"enable verbose";
-  let x;
-  `,
+    "enable verbose";
+    let x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 5: Missing value in variable declaration.
+            "Line 2, Column 4: Missing value in variable declaration.
             A variable declaration assigns a value to a name.
             For instance, to assign 20 to x, you can write:
 
@@ -300,8 +300,8 @@ test('no declaration without assignment - verbose', () => {
 test('no var statements', () => {
   return expectParsedError(
     stripIndent`
-  var x = 1;
-  `,
+    var x = 1;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Variable declaration using \\"var\\" is not allowed."`)
 })
@@ -309,12 +309,12 @@ test('no var statements', () => {
 test('no var statements - verbose', () => {
   return expectParsedError(
     stripIndent`
-	"enable verbose";
-  var x = 1;
-  `,
+    "enable verbose";
+    var x = 1;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Variable declaration using \\"var\\" is not allowed.
+            "Line 2, Column 0: Variable declaration using \\"var\\" is not allowed.
             Use keyword \\"let\\" instead, to declare a variable:
 
             	let x = 1;
@@ -325,10 +325,10 @@ test('no var statements - verbose', () => {
 test('Cannot use update statements', () => {
   return expectParsedError(
     stripIndent`
-  let x = 3;
-  x += 5;
-  x;
-  `,
+    let x = 3;
+    x += 5;
+    x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: The assignment operator += is not allowed. Use = instead."`)
 })
@@ -336,14 +336,14 @@ test('Cannot use update statements', () => {
 test('Cannot use update statements - verbose', () => {
   return expectParsedError(
     stripIndent`
-	"enable verbose";
-  let x = 3;
-  x += 5;
-  x;
-  `,
+    "enable verbose";
+    let x = 3;
+    x += 5;
+    x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 1: The assignment operator += is not allowed. Use = instead.
+            "Line 3, Column 0: The assignment operator += is not allowed. Use = instead.
 
             	x = x + 5;
             "
@@ -353,10 +353,10 @@ test('Cannot use update statements - verbose', () => {
 test('Cannot use update statements', () => {
   return expectParsedError(
     stripIndent`
-	let x = 3;
-	x <<= 5;
-	x;
-	`,
+    let x = 3;
+    x <<= 5;
+    x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: The assignment operator <<= is not allowed. Use = instead."`)
 })
@@ -364,11 +364,11 @@ test('Cannot use update statements', () => {
 test('Cannot use update statements - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	let x = 3;
-	x <<= 5;
-	x;
-	`,
+    "enable verbose";
+    let x = 3;
+    x <<= 5;
+    x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 0: The assignment operator <<= is not allowed. Use = instead.
@@ -380,8 +380,8 @@ test('Cannot use update statements - verbose', () => {
 test('Cannot use function expressions', () => {
   return expectParsedError(
     stripIndent`
-  (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
-  `,
+    (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
+    `,
     { chapter: 5 }
   ).toMatchInlineSnapshot(`"Line 1: Function expressions are not allowed"`)
 })
@@ -389,9 +389,9 @@ test('Cannot use function expressions', () => {
 test('Cannot use function expressions - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	(function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
-	`,
+    "enable verbose";
+    (function fib(x) { return x <= 1 ? x : fib(x-1) + fib(x-2); })(4);
+    `,
     { chapter: 5 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 1: Function expressions are not allowed
@@ -403,8 +403,8 @@ test('Cannot use function expressions - verbose', () => {
 test('Cannot use function expressions', () => {
   return expectParsedError(
     stripIndent`
-  (function(x) { return x + 1; })(4);
-  `,
+    (function(x) { return x + 1; })(4);
+    `,
     { chapter: 5 }
   ).toMatchInlineSnapshot(`"Line 1: Function expressions are not allowed"`)
 })
@@ -412,9 +412,9 @@ test('Cannot use function expressions', () => {
 test('Cannot use function expressions - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	(function(x) { return x + 1; })(4);
-	`,
+    "enable verbose";
+    (function(x) { return x + 1; })(4);
+    `,
     { chapter: 5 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 1: Function expressions are not allowed
@@ -430,7 +430,7 @@ test('if needs braces', () => {
       true;
     else
       false;
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 1: Missing curly braces around \\"if\\" block.
@@ -441,15 +441,15 @@ test('if needs braces', () => {
 test('if needs braces - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  if (true)
-		true;
-	  else
-		false;
-	`,
+    "enable verbose";
+    if (true)
+      true;
+    else
+      false;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing curly braces around \\"if\\" block.
+            "Line 2, Column 0: Missing curly braces around \\"if\\" block.
             if block need to be enclosed with a pair of curly braces.
 
             if (true) {
@@ -478,7 +478,7 @@ test('if needs braces - verbose', () => {
               hello();
             world();
 
-            Line 2, Column 1: Missing curly braces around \\"else\\" block.
+            Line 2, Column 0: Missing curly braces around \\"else\\" block.
             else block need to be enclosed with a pair of curly braces.
 
             else {
@@ -515,7 +515,7 @@ test('for needs braces', () => {
     stripIndent`
     for (let i = 0; i < 1; i = i + 1)
       i;
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Missing curly braces around \\"for\\" block."`)
 })
@@ -523,13 +523,13 @@ test('for needs braces', () => {
 test('for needs braces - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  for (let i = 0; i < 1; i = i + 1)
-		i;
-	`,
+    "enable verbose";
+    for (let i = 0; i < 1; i = i + 1)
+      i;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Missing curly braces around \\"for\\" block.
+            "Line 2, Column 0: Missing curly braces around \\"for\\" block.
             Remember to enclose your \\"for\\" block with braces:
 
              	for (let i = 0; i < 1; i = i + 1) {
@@ -545,7 +545,7 @@ test('while needs braces', () => {
     let i = 0;
     while (i < 1)
       i = i + 1;
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: Missing curly braces around \\"while\\" block."`)
 })
@@ -553,14 +553,14 @@ test('while needs braces', () => {
 test('while needs braces - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  let i = 0;
-	  while (i < 1)
-		i = i + 1;
-	`,
+    "enable verbose";
+    let i = 0;
+    while (i < 1)
+      i = i + 1;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 1: Missing curly braces around \\"while\\" block.
+            "Line 3, Column 0: Missing curly braces around \\"while\\" block.
             Remember to enclose your \\"while\\" block with braces:
 
              	while (i < 1) {
@@ -574,7 +574,7 @@ test('No empty statements', () => {
   return expectParsedError(
     stripIndent`
     ;
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Empty statements are not allowed"`)
 })
@@ -582,12 +582,12 @@ test('No empty statements', () => {
 test('No empty statements - verbose', () => {
   return expectParsedError(
     stripIndent`
-	"enable verbose";
-	  ;
-	`,
+    "enable verbose";
+    ;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 2: Empty statements are not allowed
+            "Line 2, Column 0: Empty statements are not allowed
             You are trying to use Empty statements, which is not allowed (yet).
             "
           `)
@@ -597,7 +597,7 @@ test('No array expressions in chapter 2', () => {
   return expectParsedError(
     stripIndent`
     [];
-  `,
+    `,
     { chapter: 2 }
   ).toMatchInlineSnapshot(`"Line 1: Array expressions are not allowed"`)
 })
@@ -605,9 +605,9 @@ test('No array expressions in chapter 2', () => {
 test('No array expressions in chapter 2 - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  [];
-	`,
+    "enable verbose";
+    [];
+    `,
     { chapter: 2 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Array expressions are not allowed
@@ -620,7 +620,7 @@ test('No trailing commas in arrays', () => {
   return expectParsedError(
     stripIndent`
     [1,];
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Trailing comma"`)
 })
@@ -628,9 +628,9 @@ test('No trailing commas in arrays', () => {
 test('No trailing commas in arrays - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  [1,];
-	`,
+    "enable verbose";
+    [1,];
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 2: Trailing comma
@@ -646,7 +646,7 @@ test('No trailing commas in objects', () => {
       a: 1,
       b: 2,
     });
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 3: Trailing comma"`)
 })
@@ -658,7 +658,7 @@ test('No rest pattern', () => {
       return rest;
     }
     f(1, 2);
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Rest elements are not allowed"`)
 })
@@ -666,15 +666,15 @@ test('No rest pattern', () => {
 test('No rest pattern - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  function f(...rest) {
-		return rest;
-	  }
-	  f(1, 2);
-	`,
+    "enable verbose";
+    function f(...rest) {
+    return rest;
+    }
+    f(1, 2);
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 12: Rest elements are not allowed
+            "Line 2, Column 11: Rest elements are not allowed
             You are trying to use Rest elements, which is not allowed (yet).
             "
           `)
@@ -687,7 +687,7 @@ test('No spread operator', () => {
       return x + y;
     }
     f(...[1, 2]);
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 4: Spread elements are not allowed"`)
 })
@@ -695,15 +695,15 @@ test('No spread operator', () => {
 test('No spread operator - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  function f(x, y) {
-		return x + y;
-	  }
-	  f(...[1, 2]);
-	`,
+    "enable verbose";
+    function f(x, y) {
+      return x + y;
+    }
+    f(...[1, 2]);
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 5, Column 3: Spread elements are not allowed
+            "Line 5, Column 2: Spread elements are not allowed
             You are trying to use Spread elements, which is not allowed (yet).
             "
           `)
@@ -720,7 +720,7 @@ test('no try statements', () => {
     } catch (e) {
       display(e);
     }
-  `,
+    `,
     { chapter: 3 }
   ).toMatchInlineSnapshot(`
             "Line 5: Spread elements are not allowed
@@ -732,25 +732,25 @@ test('no try statements', () => {
 test('no try statements - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  function f(x, y) {
-		return x + y;
-	  }
-	  try {
-		f(...[1, 2]);
-	  } catch (e) {
-		display(e);
-	  }
-	`,
+    "enable verbose";
+    function f(x, y) {
+      return x + y;
+    }
+    try {
+      f(...[1, 2]);
+    } catch (e) {
+      display(e);
+    }
+    `,
     { chapter: 3 }
   ).toMatchInlineSnapshot(`
-            "Line 6, Column 2: Spread elements are not allowed
+            "Line 6, Column 4: Spread elements are not allowed
             You are trying to use Spread elements, which is not allowed (yet).
 
-            Line 7, Column 3: Catch clauses are not allowed
+            Line 7, Column 2: Catch clauses are not allowed
             You are trying to use Catch clauses, which is not allowed (yet).
 
-            Line 5, Column 1: Try statements are not allowed
+            Line 5, Column 0: Try statements are not allowed
             You are trying to use Try statements, which is not allowed (yet).
             "
           `)
@@ -772,13 +772,13 @@ test('no for of loops', () => {
 test('no for of loops - verbose', () => {
   return expectParsedError(
     stripIndent`
-	"enable verbose";
+    "enable verbose";
     for (let i of list()) {
     }
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 12: Missing value in variable declaration.
+            "Line 2, Column 9: Missing value in variable declaration.
             A variable declaration assigns a value to a name.
             For instance, to assign 20 to i, you can write:
 
@@ -786,7 +786,7 @@ test('no for of loops - verbose', () => {
 
               i + i; // 40
 
-            Line 2, Column 3: For of statements are not allowed
+            Line 2, Column 0: For of statements are not allowed
             You are trying to use For of statements, which is not allowed (yet).
             "
           `)
@@ -797,7 +797,7 @@ test('no for in loops', () => {
     stripIndent`
     for (let i in { a: 1, b: 2 }) {
     }
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 1: Missing value in variable declaration.
@@ -808,10 +808,10 @@ test('no for in loops', () => {
 test('no for in loops - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  for (let i in { a: 1, b: 2 }) {
-	  }
-	`,
+    "enable verbose";
+    for (let i in { a: 1, b: 2 }) {
+    }
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 9: Missing value in variable declaration.
@@ -843,15 +843,15 @@ test('no generator functions', () => {
 test('no generator functions - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  function* gen() {
-		yield 2;
-		return 1;
-	  }
-	`,
+    "enable verbose";
+    function* gen() {
+      yield 2;
+      return 1;
+    }
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 0: Yield expressions are not allowed
+            "Line 3, Column 2: Yield expressions are not allowed
             You are trying to use Yield expressions, which is not allowed (yet).
             "
           `)
@@ -862,7 +862,7 @@ test('no classes', () => {
     stripIndent`
     class Box {
     }
-  `,
+    `,
     { chapter: 5 }
   ).toMatchInlineSnapshot(`
             "Line 1: Class bodys are not allowed
@@ -873,10 +873,10 @@ test('no classes', () => {
 test('no classes - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  class Box {
-	  }
-	`,
+    "enable verbose";
+    class Box {
+    }
+    `,
     { chapter: 5 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 10: Class bodys are not allowed
@@ -896,7 +896,7 @@ test('no super', () => {
         super(1);
       }
     }
-  `,
+    `,
     { chapter: 5 }
   ).toMatchInlineSnapshot(`
             "Line 3: Supers are not allowed
@@ -910,28 +910,28 @@ test('no super', () => {
 test('no super - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  class BoxError extends Error {
-		constructor() {
-		  super(1);
-		}
-	  }
-	`,
+    "enable verbose";
+    class BoxError extends Error {
+      constructor() {
+        super(1);
+      }
+    }
+  `,
     { chapter: 5 }
   ).toMatchInlineSnapshot(`
-            "Line 4, Column 2: Supers are not allowed
+            "Line 4, Column 4: Supers are not allowed
             You are trying to use Supers, which is not allowed (yet).
 
-            Line 3, Column 11: Function expressions are not allowed
+            Line 3, Column 13: Function expressions are not allowed
             You are trying to use Function expressions, which is not allowed (yet).
 
-            Line 3, Column 0: Method definitions are not allowed
+            Line 3, Column 2: Method definitions are not allowed
             You are trying to use Method definitions, which is not allowed (yet).
 
-            Line 2, Column 30: Class bodys are not allowed
+            Line 2, Column 29: Class bodys are not allowed
             You are trying to use Class bodys, which is not allowed (yet).
 
-            Line 2, Column 1: Class declarations are not allowed
+            Line 2, Column 0: Class declarations are not allowed
             You are trying to use Class declarations, which is not allowed (yet).
             "
           `)
@@ -943,7 +943,7 @@ test('no export function', () => {
     export function f(x) {
       return x;
     }
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Export named declarations are not allowed"`)
 })
@@ -951,14 +951,14 @@ test('no export function', () => {
 test('no export function - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  export function f(x) {
-		return x;
-	  }
-	`,
+    "enable verbose";
+    export function f(x) {
+    return x;
+    }
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 1: Export named declarations are not allowed
+            "Line 2, Column 0: Export named declarations are not allowed
             You are trying to use Export named declarations, which is not allowed (yet).
             "
           `)
@@ -968,7 +968,7 @@ test('no export constant', () => {
   return expectParsedError(
     stripIndent`
     export const x = 1;
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Export named declarations are not allowed"`)
 })
@@ -976,9 +976,9 @@ test('no export constant', () => {
 test('no export constant - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  export const x = 1;
-	`,
+    "enable verbose";
+    export const x = 1;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Export named declarations are not allowed
@@ -992,7 +992,7 @@ test('no export default', () => {
     stripIndent`
     const x = 1;
     export default x;
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: Export default declarations are not allowed"`)
 })
@@ -1000,10 +1000,10 @@ test('no export default', () => {
 test('no export default - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  const x = 1;
-	  export default x;
-	`,
+    "enable verbose";
+    const x = 1;
+    export default x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 0: Export default declarations are not allowed
@@ -1016,7 +1016,7 @@ test('no sequence expression', () => {
   return expectParsedError(
     stripIndent`
     (1, 2);
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Sequence expressions are not allowed"`)
 })
@@ -1024,9 +1024,9 @@ test('no sequence expression', () => {
 test('no sequence expression - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  (1, 2);
-	`,
+    "enable verbose";
+    (1, 2);
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 1: Sequence expressions are not allowed
@@ -1040,7 +1040,7 @@ test('no interface', () => {
     stripIndent`
     interface Box {
     }
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: The keyword 'interface' is reserved (1:0)"`)
 })
@@ -1048,10 +1048,10 @@ test('no interface', () => {
 test('no interface - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  interface Box {
-	  }
-	`,
+    "enable verbose";
+    interface Box {
+    }
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: SyntaxError: The keyword 'interface' is reserved (2:0)
@@ -1062,19 +1062,25 @@ test('no interface - verbose', () => {
 
 test('no template literals - verbose', () => {
   return expectParsedError(
-    `
-	"enable verbose";
-	'hi'`,
+    stripIndent`
+    "enable verbose";
+    'hi'
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 5: Missing semicolon at the end of statement
+            "Line 2, Column 4: Missing semicolon at the end of statement
             Every statement must be terminated by a semicolon.
             "
           `)
 })
 
 test('no regexp', () => {
-  return expectParsedError('/pattern/', { chapter: 100 }).toMatchInlineSnapshot(`
+  return expectParsedError(
+    stripIndent`
+    /pattern/
+    `,
+    { chapter: 100 }
+  ).toMatchInlineSnapshot(`
             "Line 1: Missing semicolon at the end of statement
             Line 1: 'RegExp' literals are not allowed."
           `)
@@ -1082,15 +1088,16 @@ test('no regexp', () => {
 
 test('no regexp - verbose', () => {
   return expectParsedError(
-    `
-	"enable verbose";
-	/pattern/`,
+    stripIndent`
+    "enable verbose";
+    /pattern/
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 10: Missing semicolon at the end of statement
+            "Line 2, Column 9: Missing semicolon at the end of statement
             Every statement must be terminated by a semicolon.
 
-            Line 3, Column 1: 'RegExp' literals are not allowed.
+            Line 2, Column 0: 'RegExp' literals are not allowed.
 
             "
           `)
@@ -1103,7 +1110,7 @@ test('no this, no new', () => {
       this[0] = 5;
     }
     const box = new Box();
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: Expected string as prop, got number."`)
 })
@@ -1111,15 +1118,15 @@ test('no this, no new', () => {
 test('no this, no new - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  function Box() {
-		this[0] = 5;
-	  }
-	  const box = new Box();
-	`,
+    "enable verbose";
+    function Box() {
+      this[0] = 5;
+    }
+    const box = new Box();
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 0: Expected string as prop, got number.
+            "Line 3, Column 2: Expected string as prop, got number.
             Expected string as prop, got number.
             "
           `)
@@ -1129,7 +1136,7 @@ test('no unspecified operators', () => {
   return expectParsedError(
     stripIndent`
     1 << 10;
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: Operator '<<' is not allowed."`)
 })
@@ -1137,9 +1144,9 @@ test('no unspecified operators', () => {
 test('no unspecified operators - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  1 << 10;
-	`,
+    "enable verbose";
+    1 << 10;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Operator '<<' is not allowed.
@@ -1153,7 +1160,7 @@ test('no unspecified unary operators', () => {
     stripIndent`
     let x = 5;
     typeof x;
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: Operator 'typeof' is not allowed."`)
 })
@@ -1161,10 +1168,10 @@ test('no unspecified unary operators', () => {
 test('no unspecified unary operators - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  let x = 5;
-	  typeof x;
-	`,
+    "enable verbose";
+    let x = 5;
+    typeof x;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 0: Operator 'typeof' is not allowed.
@@ -1179,21 +1186,21 @@ test('no implicit undefined return', () => {
     function f() {
       return;
     }
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 2: Missing value in return statement."`)
 })
 test('no implicit undefined return - verbose', () => {
   return expectParsedError(
     stripIndent`
-	"enable verbose";
+    "enable verbose";
     function f() {
       return;
     }
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 3, Column 5: Missing value in return statement.
+            "Line 3, Column 2: Missing value in return statement.
             This return statement is missing a value.
             For instance, to return the value 42, you can write
 
@@ -1208,7 +1215,7 @@ test('no repeated params', () => {
     function f(x, x) {
       return x;
     }
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: Argument name clash (1:14)"`)
 })
@@ -1216,14 +1223,14 @@ test('no repeated params', () => {
 test('no repeated params - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  function f(x, x) {
-		return x;
-	  }
-	`,
+    "enable verbose";
+    function f(x, x) {
+      return x;
+    }
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 15: SyntaxError: Argument name clash (2:15)
+            "Line 2, Column 14: SyntaxError: Argument name clash (2:14)
             There is a syntax error in your program
             "
           `)
@@ -1233,7 +1240,7 @@ test('no declaring reserved keywords', () => {
   return expectParsedError(
     stripIndent`
     let yield = 5;
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: The keyword 'yield' is reserved (1:4)"`)
 })
@@ -1241,9 +1248,9 @@ test('no declaring reserved keywords', () => {
 test('no declaring reserved keywords - verbose', () => {
   return expectParsedError(
     stripIndent`
-	  "enable verbose";
-	  let yield = 5;
-	`,
+    "enable verbose";
+    let yield = 5;
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 4: SyntaxError: The keyword 'yield' is reserved (2:4)
@@ -1256,7 +1263,7 @@ test('no assigning to reserved keywords', () => {
   return expectParsedError(
     stripIndent`
     package = 5;
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: The keyword 'package' is reserved (1:0)"`)
 })
@@ -1264,12 +1271,12 @@ test('no assigning to reserved keywords', () => {
 test('no assigning to reserved keywords - verbose', () => {
   return expectParsedError(
     stripIndent`
-	"enable verbose";
+    "enable verbose";
     package = 5;
-  `,
+    `,
     { chapter: 100 }
   ).toMatchInlineSnapshot(`
-            "Line 2, Column 3: SyntaxError: The keyword 'package' is reserved (2:3)
+            "Line 2, Column 0: SyntaxError: The keyword 'package' is reserved (2:0)
             There is a syntax error in your program
             "
           `)
