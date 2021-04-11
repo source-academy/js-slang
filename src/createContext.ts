@@ -10,12 +10,13 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { Context, CustomBuiltIns, Value, Variant } from './types'
+import { Context, CustomBuiltIns, Environment, Value, Variant } from './types'
 import * as operators from './utils/operators'
 import * as gpu_lib from './gpu/lib'
 import { stringify } from './utils/stringify'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/typeChecker'
+
 export class LazyBuiltIn {
   func: (...arg0: any) => any
   evaluateArgs: boolean
@@ -24,10 +25,71 @@ export class LazyBuiltIn {
     this.evaluateArgs = evaluateArgs
   }
 }
+
+export class EnvTree {
+  private _root: EnvTreeNode | null = null
+  private map = new Map<Environment, EnvTreeNode>()
+
+  get root(): EnvTreeNode | null {
+    return this._root
+  }
+
+  public insert(environment: Environment): void {
+    const tailEnvironment = environment.tail
+    if (tailEnvironment === null) {
+      if (this._root === null) {
+        this._root = new EnvTreeNode(environment, null)
+        this.map.set(environment, this._root)
+      }
+    } else {
+      const parentNode = this.map.get(tailEnvironment)
+      if (parentNode) {
+        const childNode = new EnvTreeNode(environment, parentNode)
+        parentNode.addChild(childNode)
+        this.map.set(environment, childNode)
+      }
+    }
+  }
+
+  public getTreeNode(environment: Environment): EnvTreeNode | undefined {
+    return this.map.get(environment)
+  }
+}
+
+export class EnvTreeNode {
+  private _children: EnvTreeNode[] = []
+
+  constructor(readonly environment: Environment, public parent: EnvTreeNode | null) {}
+
+  get children(): EnvTreeNode[] {
+    return this._children
+  }
+
+  public resetChildren(newChildren: EnvTreeNode[]): void {
+    this.clearChildren()
+    this.addChildren(newChildren)
+    newChildren.forEach(c => (c.parent = this))
+  }
+
+  private clearChildren(): void {
+    this._children = []
+  }
+
+  private addChildren(newChildren: EnvTreeNode[]): void {
+    this._children.push(...newChildren)
+  }
+
+  public addChild(newChild: EnvTreeNode): EnvTreeNode {
+    this._children.push(newChild)
+    return newChild
+  }
+}
+
 const createEmptyRuntime = () => ({
   break: false,
   debuggerOn: true,
   isRunning: false,
+  environmentTree: new EnvTree(),
   environments: [],
   value: undefined,
   nodes: []
@@ -44,7 +106,7 @@ const createEmptyDebugger = () => ({
   }
 })
 
-const createGlobalEnvironment = () => ({
+export const createGlobalEnvironment = (): Environment => ({
   tail: null,
   name: 'global',
   head: {}
@@ -88,8 +150,13 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   if (!context.runtime.environments) {
     context.runtime.environments = []
   }
+  if (!context.runtime.environmentTree) {
+    context.runtime.environmentTree = new EnvTree()
+  }
   if (context.runtime.environments.length === 0) {
-    context.runtime.environments.push(createGlobalEnvironment())
+    const globalEnvironment = createGlobalEnvironment()
+    context.runtime.environments.push(globalEnvironment)
+    context.runtime.environmentTree.insert(globalEnvironment)
   }
 }
 
@@ -311,6 +378,7 @@ const defaultBuiltIns: CustomBuiltIns = {
   prompt: misc.rawDisplay,
   // See issue #11
   alert: misc.rawDisplay,
+  // TODO: 'v' is defined but never used
   visualiseList: (v: Value) => {
     throw new Error('List visualizer is not enabled')
   }
