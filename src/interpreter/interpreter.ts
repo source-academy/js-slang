@@ -77,7 +77,7 @@ const createEnvironment = (
   return environment
 }
 
-const createBlockEnvironment = (
+export const createBlockEnvironment = (
   context: Context,
   name = 'blockEnvironment',
   head: Frame = {}
@@ -173,8 +173,10 @@ const currentEnvironment = (context: Context) => context.runtime.environments[0]
 const replaceEnvironment = (context: Context, environment: Environment) =>
   (context.runtime.environments[0] = environment)
 const popEnvironment = (context: Context) => context.runtime.environments.shift()
-const pushEnvironment = (context: Context, environment: Environment) =>
+export const pushEnvironment = (context: Context, environment: Environment) => {
   context.runtime.environments.unshift(environment)
+  context.runtime.environmentTree.insert(environment)
+}
 
 const getVariable = (context: Context, name: string) => {
   let environment: Environment | null = context.runtime.environments[0]

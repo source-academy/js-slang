@@ -1,8 +1,9 @@
 import * as es from 'estree'
 
-import createContext from '../createContext'
+import createContext, { EnvTree } from '../createContext'
 import Closure from '../interpreter/closure'
-import { Context, Environment, Variant } from '../types'
+import { createBlockEnvironment } from '../interpreter/interpreter'
+import { Context, Environment, Frame, Variant } from '../types'
 
 export function mockContext(chapter = 1, variant: Variant = 'default'): Context {
   return createContext(chapter, variant)
@@ -14,6 +15,7 @@ export function mockRuntimeContext(): Context {
     break: false,
     debuggerOn: true,
     isRunning: true,
+    environmentTree: new EnvTree(),
     environments: [],
     nodes: [
       {
@@ -46,4 +48,12 @@ export function mockClosure(): Closure {
     {} as Environment,
     {} as Context
   )
+}
+
+export function mockEnvironment(
+  context: Context,
+  name = 'blockEnvironment',
+  head: Frame = {}
+): Environment {
+  return createBlockEnvironment(context, name, head)
 }
