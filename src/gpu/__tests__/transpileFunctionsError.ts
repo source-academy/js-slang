@@ -171,3 +171,69 @@ test('function assigning to external variable does not get transpiled', () => {
   const cnt = transpiled.match(/__createKernelSource/g)
   expect(cnt).toEqual(null)
 })
+
+test('function not defined in global scope does not get transpiled', () => {
+  const code = stripIndent`
+    {
+      function fun(x) {
+        return x;
+      }
+    }
+    let res = [];
+    for (let i = 0; i < 5; i = i + 1) {
+        res[i] = fun(i);
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
+
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
+})
+
+test('function using Source library does not get transpiled', () => {
+  const code = stripIndent`
+    function fun(x) {
+      return list(x);
+    }
+
+    let res = [];
+    for (let i = 0; i < 5; i = i + 1) {
+        res[i] = fun(i);
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
+
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
+})
+
+test('function calling an invalid function does not get transpiled', () => {
+  const code = stripIndent`
+    let j = 1;
+    function fun_invalid(x) {
+      return x + j;
+    }
+
+    function fun(x) {
+      return fun_invalid(x);
+    }
+
+    let res = [];
+    for (let i = 0; i < 5; i = i + 1) {
+        res[i] = fun(i);
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
+
+  const cnt = transpiled.match(/__createKernelSource/g)
+  expect(cnt).toEqual(null)
+})
