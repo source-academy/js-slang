@@ -2800,7 +2800,13 @@ export function isStepperOutput(output: any): output is IStepperPropContents {
 
 export function callee(content: substituterNodes): es.Expression | undefined | es.Super {
   if (content.type === 'CallExpression') {
-    return content.callee
+    let reducedArgs = true
+    for (const arg of content.arguments) {
+      if (!isIrreducible(arg)) {
+        reducedArgs = false
+      }
+    }
+    return reducedArgs ? content.callee : undefined
   } else {
     return undefined
   }
