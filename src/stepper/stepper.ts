@@ -2806,9 +2806,6 @@ export function callee(content: substituterNodes): es.Expression | undefined | e
         reducedArgs = false
       }
     }
-    if (reducedArgs) {
-      console.log(content.callee)
-    }
     return reducedArgs ? content.callee : undefined
   } else {
     return undefined
