@@ -16,7 +16,13 @@ import { parse, looseParse, parseAt, parseForNames } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { redexify, getEvaluationSteps, IStepperPropContents } from './stepper/stepper'
+import {
+  callee,
+  redexify,
+  getEvaluationSteps,
+  IStepperPropContents,
+  getRedex
+} from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
 import { transpileToGPU } from './gpu/gpu'
@@ -48,7 +54,7 @@ import { typeToString } from './utils/stringify'
 import { forceIt } from './utils/operators'
 import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 import { TimeoutError } from './errors/timeoutErrors'
-import { appendModuleTabsToContext } from './modules/moduleLoader'
+import { loadModuleTabs } from './modules/moduleLoader'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -381,6 +387,15 @@ export function getTypeInformation(
   }
 }
 
+function appendModulesToContext(program: Program, context: Context): void {
+  if (context.modules == null) context.modules = []
+  for (const node of program.body) {
+    if (node.type !== 'ImportDeclaration') break
+    const moduleName = (node.source.value as string).trim()
+    Array.prototype.push.apply(context.modules, loadModuleTabs(moduleName))
+  }
+}
+
 export async function runInContext(
   code: string,
   context: Context,
@@ -436,11 +451,13 @@ export async function runInContext(
     const steps = getEvaluationSteps(program, context, options.stepLimit)
     const redexedSteps: IStepperPropContents[] = []
     for (const step of steps) {
+      const redex = getRedex(step[0], step[1])
       const redexed = redexify(step[0], step[1])
       redexedSteps.push({
         code: redexed[0],
         redex: redexed[1],
-        explanation: step[2]
+        explanation: step[2],
+        function: callee(redex)
       })
     }
     return Promise.resolve({
@@ -472,7 +489,7 @@ export async function runInContext(
     let sourceMapJson: RawSourceMap | undefined
     let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
-      appendModuleTabsToContext(program, context)
+      appendModulesToContext(program, context)
       // Mutates program
       switch (context.variant) {
         case 'gpu':
@@ -543,7 +560,6 @@ export async function runInContext(
       )
     }
   } else {
-    appendModuleTabsToContext(program, context)
     let it = evaluate(program, context)
     let scheduler: Scheduler
     if (context.variant === 'non-det') {
