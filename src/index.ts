@@ -452,8 +452,6 @@ export async function runInContext(
     const redexedSteps: IStepperPropContents[] = []
     for (const step of steps) {
       const redex = getRedex(step[0], step[1])
-      console.log(redex)
-      console.log(callee(redex))
       const redexed = redexify(step[0], step[1])
       redexedSteps.push({
         code: redexed[0],
