@@ -912,7 +912,7 @@ function substituteMain(
       index: number
     ): es.ArrowFunctionExpression {
       // creates a copy of the parameters so that renaming only happens during substitution
-      const substedParams: es.Identifier[] = [];
+      const substedParams: es.Identifier[] = []
       for (let i = 0; i < target.params.length; i++) {
         const param = target.params[i] as es.Identifier
         substedParams.push(ast.identifier(param.name, param.loc))
@@ -935,7 +935,7 @@ function substituteMain(
         if (param.type === 'Identifier' && param.name === name.name) {
           substedArrow.body = target.body
           substedArrow.expression = target.body.type !== 'BlockStatement'
-          return substedArrow;
+          return substedArrow
         }
         const freeTarget = findMain(target)
         const boundTarget = scanOutBoundNames(target.body)
@@ -2211,13 +2211,13 @@ function treeifyMain(target: substituterNodes): substituterNodes {
     ): es.Identifier | es.ArrowFunctionExpression => {
       if (verboseCount < 5) {
         // here onwards is guarding against arrow turned function expressions
-          verboseCount++
-          const redacted = ast.arrowFunctionExpression(
-            target.params,
-            treeify(target.body) as es.BlockStatement
-          )
-          verboseCount = 0
-          return redacted
+        verboseCount++
+        const redacted = ast.arrowFunctionExpression(
+          target.params,
+          treeify(target.body) as es.BlockStatement
+        )
+        verboseCount = 0
+        return redacted
       } else {
         // shortens body after 5 iterations
         return ast.arrowFunctionExpression(target.params, ast.identifier('...'))
@@ -2808,7 +2808,7 @@ export function callee(content: substituterNodes): es.Expression | undefined | e
     }
     if (reducedArgs) {
       console.log(content.callee)
-    }    
+    }
     return reducedArgs ? content.callee : undefined
   } else {
     return undefined
