@@ -12,11 +12,17 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
-import { parse, parseAt, parseForNames } from './parser/parser'
+import { parse, looseParse, parseAt, parseForNames } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import { redexify, getEvaluationSteps, IStepperPropContents } from './stepper/stepper'
+import {
+  callee,
+  redexify,
+  getEvaluationSteps,
+  IStepperPropContents,
+  getRedex
+} from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
 import { transpileToGPU } from './gpu/gpu'
@@ -181,7 +187,7 @@ export function findDeclaration(
   context: Context,
   loc: { line: number; column: number }
 ): SourceLocation | null | undefined {
-  const program = parse(code, context, true)
+  const program = looseParse(code, context)
   if (!program) {
     return null
   }
@@ -201,7 +207,7 @@ export function getScope(
   context: Context,
   loc: { line: number; column: number }
 ): SourceLocation[] {
-  const program = parse(code, context, true)
+  const program = looseParse(code, context)
   if (!program) {
     return []
   }
@@ -222,7 +228,7 @@ export function getAllOccurrencesInScope(
   context: Context,
   loc: { line: number; column: number }
 ): SourceLocation[] {
-  const program = parse(code, context, true)
+  const program = looseParse(code, context)
   if (!program) {
     return []
   }
@@ -242,7 +248,7 @@ export function hasDeclaration(
   context: Context,
   loc: { line: number; column: number }
 ): boolean {
-  const program = parse(code, context, true)
+  const program = looseParse(code, context)
   if (!program) {
     return false
   }
@@ -277,7 +283,7 @@ export async function getNames(
 }
 
 function typedParse(code: any, context: Context) {
-  const program: Program | undefined = parse(code, context, true)
+  const program: Program | undefined = looseParse(code, context)
   if (program === undefined) {
     return null
   }
@@ -445,11 +451,13 @@ export async function runInContext(
     const steps = getEvaluationSteps(program, context, options.stepLimit)
     const redexedSteps: IStepperPropContents[] = []
     for (const step of steps) {
+      const redex = getRedex(step[0], step[1])
       const redexed = redexify(step[0], step[1])
       redexedSteps.push({
         code: redexed[0],
         redex: redexed[1],
-        explanation: step[2]
+        explanation: step[2],
+        function: callee(redex)
       })
     }
     return Promise.resolve({
@@ -497,7 +505,7 @@ export async function runInContext(
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
       lastStatementSourceMapJson = temp.evalMap
-      let value = sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
+      let value = await sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
       if (context.variant === 'lazy') {
         value = forceIt(value)
       }

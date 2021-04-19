@@ -14,6 +14,18 @@ export function oneLine(content: TemplateStringsArray | string, ...variables: an
     .trim()
 }
 
+// Strips the "minimum indent" from every line in content,
+// then trims whitespace at the beginning and end of the string.
+//
+// two spaces of "indent" removed from both lines:
+//   stripIndent('  a\n  b') == 'a\nb'
+// only one space of "indent" removed from both lines,
+// because the first line only contains a single space of indent:
+//   stripIndent(' a\n  b') == 'a\n b'
+// first trims one space of indent from both lines,
+// but later trims another space from the first line
+// as it's at the beginning of the string:
+//   stripIndent('  a\n b') == 'a\nb'
 export function stripIndent(content: TemplateStringsArray | string, ...variables: any[]): string {
   const result = templateToString(content, variables)
   const match = result.match(/^[^\S\n]*(?=\S)/gm)

@@ -72,7 +72,7 @@ $ js-slang -n --chapter=1 -e "$(< my_source_program.js)"
 Documentation
 =============
 
-Source is documented here: <https://sicp.comp.nus.edu.sg/source/>
+Source is documented here: <https://source-academy.github.io/source/>
 
 ## Requirements
 * `bash`: known working version: GNU bash, version 5.0.16
