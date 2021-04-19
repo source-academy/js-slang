@@ -623,7 +623,10 @@ test('buildArray with repeated counters performs correct assignment', () => {
   let end = [1, 2, 3]
   let idx = ['j', 'j', 'k']
   let ext: any = {}
-  let res: any = [[1, 1, 1], [1, 1, 1]]
+  let res: any = [
+    [1, 1, 1],
+    [1, 1, 1]
+  ]
   let arr: any = [
     [
       [2, 2, 2],
