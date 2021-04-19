@@ -89,7 +89,7 @@ test('gpuRuntimeTranspile update reference to counters not used as index', () =>
 
   const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx, new Set())
   let found = false
-  let checkId = (node: es.Node, id: string) => {
+  const checkId = (node: es.Node, id: string) => {
     // this.thread.id
     if (
       node.type === 'MemberExpression' &&
@@ -149,7 +149,7 @@ test('gpuRuntimeTranspile update references to counters used as index', () => {
 
   const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx, new Set())
   let found = false
-  let checkId = (node: es.Node, id: string) => {
+  const checkId = (node: es.Node, id: string) => {
     // this.thread.id
     if (
       node.type === 'MemberExpression' &&
@@ -208,7 +208,7 @@ test('gpuRuntimeTranspile update references to counters used as index out of ord
 
   const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx, new Set())
   let found = false
-  let checkId = (node: es.Node, id: string) => {
+  const checkId = (node: es.Node, id: string) => {
     // this.thread.id
     if (
       node.type === 'MemberExpression' &&
@@ -266,7 +266,7 @@ test('gpuRuntimeTranspile update references to counters used as index repeated',
 
   const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx, new Set())
   let found = false
-  let checkId = (node: es.Node, id: string) => {
+  const checkId = (node: es.Node, id: string) => {
     // this.thread.id
     if (
       node.type === 'MemberExpression' &&

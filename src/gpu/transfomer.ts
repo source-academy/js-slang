@@ -209,7 +209,7 @@ class GPUTransformer {
       // we now treat the untranspiled counters as external variables
       // if same name is encountered, the loop counter will override the
       // external variable in the outer scope
-      for (let c of untranspiledCounters) {
+      for (const c of untranspiledCounters) {
         for (let i = 0; i < externEntries.length; i++) {
           if (externEntries[i][0].value === c) {
             externEntries.splice(i, 1)
@@ -251,7 +251,7 @@ class GPUTransformer {
 
     // keep necessary outer indices
     let mem: es.MemberExpression | es.Identifier = this.outputArray
-    for (let m of toKeepIndices) {
+    for (const m of toKeepIndices) {
       mem = create.memberExpression(mem, m, true, node.loc)
     }
     // we need to assign GPU.js results to a subarray now
@@ -429,7 +429,7 @@ export function gpuRuntimeTranspile(
   // depending on ordering of indices, mapping will change
   // there is at most 3 counters as indices, guranteed by static transpile
   const counterIdx = []
-  for (let i of idx) {
+  for (const i of idx) {
     if (typeof i === 'string' && params.includes(i)) {
       counterIdx.push(i)
     }

@@ -619,15 +619,15 @@ test('buildArray with external variables performs correct assignment', () => {
 })
 
 test('buildArray with repeated counters performs correct assignment', () => {
-  let ctr = ['i', 'j', 'k']
-  let end = [1, 2, 3]
-  let idx = ['j', 'j', 'k']
-  let ext: any = {}
-  let res: any = [
+  const ctr = ['i', 'j', 'k']
+  const end = [1, 2, 3]
+  const idx = ['j', 'j', 'k']
+  const ext: any = {}
+  const res: any = [
     [1, 1, 1],
     [1, 1, 1]
   ]
-  let arr: any = [
+  const arr: any = [
     [
       [2, 2, 2],
       [2, 2, 2],
@@ -644,7 +644,7 @@ test('buildArray with repeated counters performs correct assignment', () => {
       [2, 2, 2]
     ]
   ]
-  let exp: any = [
+  const exp: any = [
     [
       [1, 1, 1],
       [2, 2, 2],

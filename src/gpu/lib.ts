@@ -17,7 +17,7 @@ export function getGPUKernelDimensions(ctr: string[], end: number[], idx: (strin
   }
   const used: string[] = []
   const dim: number[] = []
-  for (let m of idx) {
+  for (const m of idx) {
     if (typeof m === 'string' && m in endMap && !used.includes(m)) {
       dim.push(endMap[m])
       used.push(m)
@@ -39,7 +39,7 @@ export function checkArray(arr: any, ctr: any, end: any, idx: any, ext: any) {
 
   const checkArrLengths = (start: number, end: number) => {
     const newArrQueue = []
-    for (let a of arrQueue) {
+    for (const a of arrQueue) {
       if (!Array.isArray(a) || a.length < end) {
         ok = false
         break
@@ -85,7 +85,7 @@ export function checkArray(arr: any, ctr: any, end: any, idx: any, ext: any) {
 
   // for the last level of the array, we do not require it to be of a certain
   // length, since Source supports dynamic array resizing
-  for (let a of arrQueue) {
+  for (const a of arrQueue) {
     if (!Array.isArray(a)) {
       ok = false
       break
@@ -167,10 +167,10 @@ function checkValidGPU(f: any, end: any): boolean {
 function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
   // generate all variations of counters
   let variants: number[][] = [[]]
-  for (let e of end) {
+  for (const e of end) {
     const newVariant = []
     for (let i = 0; i < e; i++) {
-      for (let p of variants) {
+      for (const p of variants) {
         const t: number[] = [...p]
         t.push(i)
         newVariant.push(t)
@@ -180,7 +180,7 @@ function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
   }
 
   // we run the function for each variation of counters
-  for (let p of variants) {
+  for (const p of variants) {
     const value = f.apply({}, p)
 
     // we find the location to assign the result in the original array
