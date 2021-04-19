@@ -262,7 +262,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, '__clearKernelCache()', gpu_lib.__clearKernelCache)
       defineBuiltin(
         context,
-        '__createKernelSource(shape, extern, localNames, output, fun, kernelId)',
+        '__createKernelSource(shape, extern, localNames, output, fun, kernelId, customFunctions)',
         gpu_lib.__createKernelSource
       )
     }
