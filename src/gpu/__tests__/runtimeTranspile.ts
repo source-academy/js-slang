@@ -17,7 +17,7 @@ test('gpuRuntimeTranspile replaces math function identifiers', () => {
   const end = [1, 2, 3]
   const idx = ['i', 'j', 'k']
 
-  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx)
+  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx, new Set())
   let found = false
   simple(res, {
     Identifier(node: es.Identifier) {
@@ -51,7 +51,7 @@ test('gpuRuntimeTranspile replaces external identifiers', () => {
   const end = [1, 2, 3]
   const idx = ['i', 'j', 'k']
 
-  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx)
+  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx, new Set())
   let found = false
   simple(res, {
     Identifier(node: es.Identifier) {
@@ -87,7 +87,7 @@ test('gpuRuntimeTranspile update reference to counters not used as index', () =>
   const end = [1, 2, 3]
   const idx = ['i']
 
-  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx)
+  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx, new Set())
   let found = false
   let checkId = (node: es.Node, id: string) => {
     // this.thread.id
@@ -147,7 +147,7 @@ test('gpuRuntimeTranspile update references to counters used as index', () => {
   const end = [1, 2, 3]
   const idx = ['i', 'j']
 
-  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx)
+  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx, new Set())
   let found = false
   let checkId = (node: es.Node, id: string) => {
     // this.thread.id
@@ -206,7 +206,7 @@ test('gpuRuntimeTranspile update references to counters used as index out of ord
   const end = [1, 2, 3]
   const idx = ['j', 1, 'k', 'i']
 
-  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx)
+  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx, new Set())
   let found = false
   let checkId = (node: es.Node, id: string) => {
     // this.thread.id
@@ -264,7 +264,7 @@ test('gpuRuntimeTranspile update references to counters used as index repeated',
   const end = [1, 2, 3]
   const idx = ['i', 'j', 'k']
 
-  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx)
+  const res = gpuRuntimeTranspile(arrowFn, localNames, end, idx, new Set())
   let found = false
   let checkId = (node: es.Node, id: string) => {
     // this.thread.id

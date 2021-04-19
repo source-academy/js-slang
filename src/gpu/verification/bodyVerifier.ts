@@ -1,5 +1,6 @@
 import * as es from 'estree'
-import { simple, make } from '../../utils/walkers'
+import { simple, make, ancestor } from '../../utils/walkers'
+import GPUFunctionVerifier from './functionVerifier'
 
 /*
  * GPU Body verifier helps to ensure the body is parallelizable
@@ -18,6 +19,7 @@ class GPUBodyVerifier {
   counters: string[]
   indices: (string | number)[]
   outputArray: es.Identifier
+  customFunctions: Map<string, es.FunctionDeclaration>
 
   /**
    *
@@ -65,7 +67,8 @@ class GPUBodyVerifier {
       return
     }
 
-    // 2. check function calls are only to math_*
+    // 2. verify functions in body
+    const calledFunctions = new Set<string>()
     const mathFuncCheck = new RegExp(/^math_[a-z]+$/)
     simple(node, {
       CallExpression(nx: es.CallExpression) {
@@ -75,9 +78,10 @@ class GPUBodyVerifier {
         }
 
         const functionName = nx.callee.name
+        // Check if it is a math_* function
         if (!mathFuncCheck.test(functionName)) {
-          ok = false
-          return
+          // If not, must do extensive verification on it later
+          calledFunctions.add(functionName)
         }
       }
     })
@@ -85,6 +89,53 @@ class GPUBodyVerifier {
     if (!ok) {
       return
     }
+
+    // first create a map of all custom function names to their declarations (to help with later verification)
+    const customFunctions = new Map<string, es.FunctionDeclaration>()
+    // for now we only consider custom functions that are in the global scope
+    ancestor(this.program, {
+      FunctionDeclaration(nx: es.FunctionDeclaration, ancestors: Array<es.Node>) {
+        if (nx.id === null) {
+          return
+        }
+        if (ancestors.length == 2) {
+          // only add a custom function if it is in the global scope (ancestors are the Program and itself)
+          console.log(nx)
+          customFunctions.set(nx.id.name, nx)
+        }
+      }
+    })
+
+    // check if the non math_* functions are valid GPUFunctions
+    const verifiedFunctions = new Set<string>()
+    const unverifiedFunctions = new Set<string>()
+    for (const functionName of calledFunctions) {
+      const fun = customFunctions.get(functionName)
+      if (fun === undefined) {
+        // automatically invalid if function is not defined anywhere in program
+        ok = false
+        return
+      }
+      const functionVerifier = new GPUFunctionVerifier(
+        fun,
+        functionName,
+        verifiedFunctions,
+        unverifiedFunctions,
+        customFunctions
+      )
+      if (!functionVerifier.ok) {
+        ok = false
+        return
+      }
+    }
+
+    // keep track of what custom functions were actually called by the program, for use in transpilation later
+    for (const functionName of customFunctions.keys()) {
+      if (!verifiedFunctions.has(functionName)) {
+        customFunctions.delete(functionName)
+      }
+    }
+    this.customFunctions = customFunctions
 
     // 3. check there is only ONE assignment to a global result variable
 

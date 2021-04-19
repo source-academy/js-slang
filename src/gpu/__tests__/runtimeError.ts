@@ -16,7 +16,7 @@ test('__createKernel with uninitialized array throws error', () => {
   const f2 = function (i: any, j: any) {
     return i * j
   }
-  const f = () => __createKernel(ctr, bounds, idx, extern, f1, arr, f2)
+  const f = () => __createKernel(ctr, bounds, idx, extern, f1, arr, f2, [])
   expect(f).toThrow(TypeError)
 })
 
@@ -37,6 +37,6 @@ test('__createKernel with 2 loops + uninitialized array throws error', () => {
   const f2 = function (i: any, j: any, k: any) {
     return i * j * k
   }
-  const f = () => __createKernel(ctr, bounds, idx, extern, f1, arr, f2)
+  const f = () => __createKernel(ctr, bounds, idx, extern, f1, arr, f2, [])
   expect(f).toThrow(TypeError)
 })

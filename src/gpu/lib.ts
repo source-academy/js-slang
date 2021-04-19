@@ -3,7 +3,7 @@ import { TypeError } from '../utils/rttc'
 import { parse } from 'acorn'
 import { generate } from 'astring'
 import * as es from 'estree'
-import { gpuRuntimeTranspile } from './transfomer'
+import { gpuFunctionTranspile, gpuRuntimeTranspile } from './transfomer'
 import { ACORN_PARSE_OPTIONS } from '../constants'
 
 // Heuristic : Only use GPU if array is bigger than this
@@ -227,6 +227,7 @@ function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
  * @extern : external variable definitions {}
  * @f : function run as on GPU threads
  * @arr : array to be written to
+ * @customFunctions: custom functions to be passed to GPU
  */
 export function __createKernel(
   ctr: any,
@@ -235,7 +236,8 @@ export function __createKernel(
   extern: any,
   f: any,
   arr: any,
-  f2: any
+  f2: any,
+  customFunctions: any
 ) {
   const gpu = new GPU()
 
@@ -253,6 +255,10 @@ export function __createKernel(
 
   const kernelDim = getGPUKernelDimensions(ctr, end, idx)
 
+  // custom functions to be added to GPU
+  for (const customFunction of customFunctions) {
+    gpu.addFunction(customFunction)
+  }
   // external variables to be in the GPU
   const out = { constants: {} }
   out.constants = extern
@@ -283,23 +289,40 @@ export function __createKernelSource(
   localNames: string[],
   arr: any,
   f: any,
-  kernelId: number
+  kernelId: number,
+  functionEntries: [string, any][]
 ) {
   const extern = entriesToObject(externSource)
+  // Create a set of function names (used in transpilation methods)
+  const customFunctionNames = new Set<string>()
+  for (const entry of functionEntries) {
+    customFunctionNames.add(entry[0])
+  }
+
+  // Transpile custom functions into string form
+  const customFunctions: string[] = []
+  for (const entry of functionEntries) {
+    const code = (entry[1] as es.FunctionDeclaration).toString()
+    const ast = (parse(code, ACORN_PARSE_OPTIONS) as unknown) as es.Program
+    const fn = ast.body[0] as es.FunctionDeclaration
+    const fnTranspiled = gpuFunctionTranspile(fn)
+    const fnString = generate(fnTranspiled)
+    customFunctions.push(fnString)
+  }
 
   const memoizedf = kernels.get(kernelId)
   if (memoizedf !== undefined) {
-    return __createKernel(ctr, end, idx, extern, memoizedf, arr, f)
+    return __createKernel(ctr, end, idx, extern, memoizedf, arr, f, customFunctions)
   }
 
   const code = f.toString()
   // We don't need the full source parser here because it's already validated at transpile time.
   const ast = (parse(code, ACORN_PARSE_OPTIONS) as unknown) as es.Program
   const body = (ast.body[0] as es.ExpressionStatement).expression as es.ArrowFunctionExpression
-  const newBody = gpuRuntimeTranspile(body, new Set(localNames), end, idx)
+  const newBody = gpuRuntimeTranspile(body, new Set(localNames), end, idx, customFunctionNames)
   const kernel = new Function(generate(newBody))
 
   kernels.set(kernelId, kernel)
 
-  return __createKernel(ctr, end, idx, extern, kernel, arr, f)
+  return __createKernel(ctr, end, idx, extern, kernel, arr, f, customFunctions)
 }

@@ -11,9 +11,8 @@ test('__createKernelSource with 1 loop returns correct result', () => {
     return 1
   }
   const arr: number[] = []
-
   __clearKernelCache()
-  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0)
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([1, 1, 1, 1, 1])
 })
 
@@ -31,9 +30,8 @@ test('__createKernelSource with 2 loops returns correct result', () => {
   const f = (i: any, j: any) => {
     return i * j
   }
-
   __clearKernelCache()
-  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0)
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([
     [0, 0, 0, 0],
     [0, 1, 2, 3],
@@ -61,9 +59,8 @@ test('__createKernelSource with 3 loop returns correct result', () => {
   const f = (i: any, j: any, k: any) => {
     return i * j * k
   }
-
   __clearKernelCache()
-  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0)
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([
     [
       [0, 0, 0],
@@ -119,9 +116,8 @@ test('__createKernelSource with indices as counter combination returns correct r
   const f = (i: any, j: any, k: any) => {
     return i + k
   }
-
   __clearKernelCache()
-  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0)
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([
     [0, 1, 2, 3, 4],
     [1, 2, 3, 4, 5],
@@ -162,9 +158,8 @@ test('__createKernelSource with number constant as index returns correct result'
   const f = (i: any, j: any, k: any) => {
     return i + k
   }
-
   __clearKernelCache()
-  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0)
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([
     [
       [1, 1, 1, 1, 1],
@@ -211,9 +206,8 @@ test('__createKernelSource with counter not used in indices returns correct resu
   const f = (i: any, j: any, k: any, l: any) => {
     return i * j * k * l
   }
-
   __clearKernelCache()
-  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0)
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([
     [
       [0, 0, 0],
@@ -271,7 +265,7 @@ test('__createKernelSource with external variable as index returns correct resul
   }
 
   __clearKernelCache()
-  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0)
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([
     [
       [1, 1, 1],
@@ -329,7 +323,7 @@ test('__createKernelSource with repeated counter in indices returns correct resu
   }
 
   __clearKernelCache()
-  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0)
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([
     [6, [1, 1, 1], [1, 1, 1], [1, 1, 1]],
     [[1, 1, 1], 6, [1, 1, 1], [1, 1, 1]],
