@@ -1,36 +1,37 @@
 /* tslint:disable:only-arrow-functions */
-import { __createKernel } from '../lib'
+import { __clearKernelCache, __createKernelSource } from '../lib'
 
-test('__createKernel with 1 loop returns correct result', () => {
-  const bounds = [5]
-  const extern = {}
-  const f1 = function () {
+test('__createKernelSource with 1 loop returns correct result', () => {
+  const ctr = ['i']
+  const end = [5]
+  const idx = ['i']
+  const extern: [string, any][] = []
+  const local: string[] = []
+  const f = () => {
     return 1
   }
   const arr: number[] = []
-  const f2 = function (i: any) {
-    return 1
-  }
-  __createKernel(bounds, extern, f1, arr, f2, [])
+  __clearKernelCache()
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([1, 1, 1, 1, 1])
 })
 
-test('__createKernel with 2 loops returns correct result', () => {
-  const bounds = [5, 4]
-  const extern = {}
-  const f1 = function (this: any) {
-    return this.thread.y * this.thread.x
-  }
+test('__createKernelSource with 2 loops returns correct result', () => {
+  const ctr = ['i', 'j']
+  const end = [5, 4]
+  const idx = ['i', 'j']
+  const extern: [string, any][] = []
+  const local: string[] = []
 
   const arr: number[][] = []
   for (let i = 0; i < 5; i = i + 1) {
     arr[i] = []
   }
-
-  const f2 = function (i: any, j: any) {
+  const f = (i: any, j: any) => {
     return i * j
   }
-  __createKernel(bounds, extern, f1, arr, f2, [])
+  __clearKernelCache()
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([
     [0, 0, 0, 0],
     [0, 1, 2, 3],
@@ -40,12 +41,12 @@ test('__createKernel with 2 loops returns correct result', () => {
   ])
 })
 
-test('__createKernel with 3 loop returns correct result', () => {
-  const bounds = [5, 4, 3]
-  const extern = {}
-  const f1 = function (this: any) {
-    return this.thread.z * this.thread.y * this.thread.x
-  }
+test('__createKernelSource with 3 loop returns correct result', () => {
+  const ctr = ['i', 'j', 'k']
+  const end = [5, 4, 3]
+  const idx = ['i', 'j', 'k']
+  const extern: [string, any][] = []
+  const local: string[] = []
 
   const arr: number[][][] = []
   for (let i = 0; i < 5; i = i + 1) {
@@ -55,10 +56,11 @@ test('__createKernel with 3 loop returns correct result', () => {
     }
   }
 
-  const f2 = function (i: any, j: any, k: any) {
+  const f = (i: any, j: any, k: any) => {
     return i * j * k
   }
-  __createKernel(bounds, extern, f1, arr, f2, [])
+  __clearKernelCache()
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([
     [
       [0, 0, 0],
@@ -93,92 +95,245 @@ test('__createKernel with 3 loop returns correct result', () => {
   ])
 })
 
-test('__createKernel with 1 loop + return string returns correct result', () => {
-  const bounds = [5]
-  const extern = {}
-  const f1 = function () {
-    return 'a'
-  }
-  const arr: number[] = []
-  const f2 = function () {
-    return 'a'
-  }
-  __createKernel(bounds, extern, f1, arr, f2, [])
-  expect(arr).toEqual(['a', 'a', 'a', 'a', 'a'])
-})
+test('__createKernelSource with indices as counter combination returns correct result', () => {
+  const ctr = ['i', 'j', 'k']
+  const end = [5, 4, 3]
+  const idx = ['k', 'i']
+  const extern: [string, any][] = []
+  const local: string[] = []
 
-test('__createKernel with 1 loop + return number array returns correct result', () => {
-  const bounds = [5]
-  const extern = {}
-  const f1 = function () {
-    return [1, 2, 3]
+  const arr: number[][][] = []
+  for (let i = 0; i < 5; i = i + 1) {
+    arr[i] = []
+    for (let j = 0; j < 4; j = j + 1) {
+      arr[i][j] = []
+      for (let k = 0; k < 3; k = k + 1) {
+        arr[i][j][k] = 1
+      }
+    }
   }
-  const arr: number[] = []
-  const f2 = function () {
-    return [1, 2, 3]
+
+  const f = (i: any, j: any, k: any) => {
+    return i + k
   }
-  __createKernel(bounds, extern, f1, arr, f2, [])
+  __clearKernelCache()
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([
-    [1, 2, 3],
-    [1, 2, 3],
-    [1, 2, 3],
-    [1, 2, 3],
-    [1, 2, 3]
+    [0, 1, 2, 3, 4],
+    [1, 2, 3, 4, 5],
+    [2, 3, 4, 5, 6],
+    [
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1]
+    ],
+    [
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1]
+    ]
   ])
 })
 
-test('__createKernel with 1 loop + return string array returns correct result', () => {
-  const bounds = [5]
-  const extern = {}
-  const f1 = function () {
-    return ['a', 'a']
+test('__createKernelSource with number constant as index returns correct result', () => {
+  const ctr = ['i', 'j', 'k']
+  const end = [5, 4, 3]
+  const idx = ['k', 1, 'i']
+  const extern: [string, any][] = []
+  const local: string[] = []
+
+  const arr: number[][][] = []
+  for (let k = 0; k < 3; k = k + 1) {
+    arr[k] = []
+    for (let j = 0; j < 4; j = j + 1) {
+      arr[k][j] = []
+      for (let i = 0; i < 5; i = i + 1) {
+        arr[k][j][i] = 1
+      }
+    }
   }
-  const arr: number[] = []
-  const f2 = function () {
-    return ['a', 'a']
+
+  const f = (i: any, j: any, k: any) => {
+    return i + k
   }
-  __createKernel(bounds, extern, f1, arr, f2, [])
+  __clearKernelCache()
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
   expect(arr).toEqual([
-    ['a', 'a'],
-    ['a', 'a'],
-    ['a', 'a'],
-    ['a', 'a'],
-    ['a', 'a']
+    [
+      [1, 1, 1, 1, 1],
+      [0, 1, 2, 3, 4],
+      [1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1]
+    ],
+    [
+      [1, 1, 1, 1, 1],
+      [1, 2, 3, 4, 5],
+      [1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1]
+    ],
+    [
+      [1, 1, 1, 1, 1],
+      [2, 3, 4, 5, 6],
+      [1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1]
+    ]
   ])
 })
 
-test('__createKernel with 1 loop + external variable returns correct result', () => {
-  const bounds = [3]
-  const extern = { y: 100 }
-  const f1 = function (this: any) {
-    return this.constants.y + this.thread.x
-  }
-  const arr: number[] = []
-  const f2 = function () {
-    return 1 + y
+test('__createKernelSource with counter not used in indices returns correct result', () => {
+  const ctr = ['i', 'j', 'k', 'l']
+  const end = [5, 4, 3, 2]
+  const idx = ['i', 'j', 'k']
+  const extern: [string, any][] = []
+  const local: string[] = []
+
+  const arr: number[][][][] = []
+  for (let i = 0; i < 5; i = i + 1) {
+    arr[i] = []
+    for (let j = 0; j < 4; j = j + 1) {
+      arr[i][j] = []
+      for (let k = 0; k < 3; k = k + 1) {
+        arr[i][j][k] = []
+        for (let l = 0; l < 2; l = l + 1) {
+          arr[i][j][k][l] = 0
+        }
+      }
+    }
   }
 
-  const y = 100
-  __createKernel(bounds, extern, f1, arr, f2, [])
-  expect(arr).toEqual([101, 101, 101])
+  const f = (i: any, j: any, k: any, l: any) => {
+    return i * j * k * l
+  }
+  __clearKernelCache()
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
+  expect(arr).toEqual([
+    [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ],
+    [
+      [0, 0, 0],
+      [0, 1, 2],
+      [0, 2, 4],
+      [0, 3, 6]
+    ],
+    [
+      [0, 0, 0],
+      [0, 2, 4],
+      [0, 4, 8],
+      [0, 6, 12]
+    ],
+    [
+      [0, 0, 0],
+      [0, 3, 6],
+      [0, 6, 12],
+      [0, 9, 18]
+    ],
+    [
+      [0, 0, 0],
+      [0, 4, 8],
+      [0, 8, 16],
+      [0, 12, 24]
+    ]
+  ])
 })
 
-test('__createKernel with 1 loop + external variable + math function returns correct result', () => {
-  const bounds = [3]
-  const extern = { y: 100 }
-  const f1 = function (this: any) {
-    return Math.abs(-this.constants.y + this.thread.x)
+test('__createKernelSource with external variable as index returns correct result', () => {
+  const ctr = ['i', 'j', 'k']
+  const end = [5, 4, 3]
+  const idx = ['x', 'j', 'k']
+  const extern: [string, any][] = [['x', 4]]
+  const local: string[] = []
+
+  const arr: number[][][] = []
+  for (let i = 0; i < 5; i = i + 1) {
+    arr[i] = []
+    for (let j = 0; j < 4; j = j + 1) {
+      arr[i][j] = []
+      for (let k = 0; k < 3; k = k + 1) {
+        arr[i][j][k] = 1
+      }
+    }
   }
-  const arr: number[] = []
 
-  const y = 100
-
-  // tslint:disable-next-line
-  const math_abs = Math.abs
-  const f2 = function (i: any) {
-    return math_abs(-y + i)
+  const f = (i: any, j: any, k: any) => {
+    return j * k
   }
 
-  __createKernel(bounds, extern, f1, arr, f2, [])
-  expect(arr).toEqual([100, 99, 98])
+  __clearKernelCache()
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
+  expect(arr).toEqual([
+    [
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1]
+    ],
+    [
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1]
+    ],
+    [
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1]
+    ],
+    [
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1]
+    ],
+    [
+      [0, 0, 0],
+      [0, 1, 2],
+      [0, 2, 4],
+      [0, 3, 6]
+    ]
+  ])
+})
+
+test('__createKernelSource with repeated counter in indices returns correct result', () => {
+  const ctr = ['i', 'j', 'k']
+  const end = [5, 4, 3]
+  const idx = ['j', 'j']
+  const extern: [string, any][] = []
+  const local: string[] = []
+
+  const arr: number[][][] = []
+  for (let i = 0; i < 5; i = i + 1) {
+    arr[i] = []
+    for (let j = 0; j < 4; j = j + 1) {
+      arr[i][j] = []
+      for (let k = 0; k < 3; k = k + 1) {
+        arr[i][j][k] = 1
+      }
+    }
+  }
+
+  const f = (i: any, j: any, k: any) => {
+    return i + k
+  }
+
+  __clearKernelCache()
+  __createKernelSource(ctr, end, idx, extern, local, arr, f, 0, [])
+  expect(arr).toEqual([
+    [6, [1, 1, 1], [1, 1, 1], [1, 1, 1]],
+    [[1, 1, 1], 6, [1, 1, 1], [1, 1, 1]],
+    [[1, 1, 1], [1, 1, 1], 6, [1, 1, 1]],
+    [[1, 1, 1], [1, 1, 1], [1, 1, 1], 6],
+    [
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1]
+    ]
+  ])
 })

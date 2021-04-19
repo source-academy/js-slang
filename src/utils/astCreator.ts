@@ -22,15 +22,48 @@ export const literal = (
   loc
 })
 
+export const mutateToForStatement = (
+  node: es.Node,
+  init: es.VariableDeclaration | es.Expression | null | undefined,
+  test: es.Expression | null | undefined,
+  update: es.Expression | null | undefined,
+  body: es.BlockStatement
+) => {
+  node.type = 'ForStatement'
+  node = node as es.ForStatement
+  node.init = init
+  node.test = test
+  node.update = update
+  node.body = body
+}
+
+export const ForStatement = (
+  init: es.VariableDeclaration | es.Expression | null | undefined,
+  test: es.Expression | null | undefined,
+  update: es.Expression | null | undefined,
+  body: es.BlockStatement,
+  loc?: es.SourceLocation | null
+): es.ForStatement => ({
+  type: 'ForStatement',
+  init: init,
+  test: test,
+  update: update,
+  body: body,
+  loc: loc
+})
+
 export const memberExpression = (
   object: es.Expression,
-  property: string | number
+  property: string | number,
+  computed?: boolean,
+  loc?: es.SourceLocation | null
 ): es.MemberExpression => ({
   type: 'MemberExpression',
   object,
-  computed: typeof property === 'number',
+  computed: computed !== undefined ? computed : typeof property === 'number',
   optional: false,
-  property: typeof property === 'number' ? literal(property) : identifier(property)
+  property: typeof property === 'number' ? literal(property) : identifier(property),
+  loc
 })
 
 export const declaration = (
@@ -135,6 +168,15 @@ export const objectExpression = (properties: es.Property[]): es.ObjectExpression
   type: 'ObjectExpression',
   properties
 })
+
+export const mutateToLiteral = (
+  node: es.Node,
+  value: string | number | boolean | RegExp | null | undefined
+) => {
+  node.type = 'Literal'
+  node = node as es.Literal
+  node.value = value
+}
 
 export const mutateToCallExpression = (
   node: es.Node,

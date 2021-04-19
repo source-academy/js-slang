@@ -8,7 +8,11 @@ import { getIdentifiersInProgram } from '../utils/uniqueIds'
 // transpiles if possible and modifies program to a Source program that makes use of the GPU primitives
 export function transpileToGPU(program: es.Program) {
   const identifiers = getIdentifiersInProgram(program)
-  if (identifiers.has('__createKernelSource') || identifiers.has('__clearKernelCache')) {
+  if (
+    identifiers.has('__createKernelSource') ||
+    identifiers.has('__clearKernelCache') ||
+    identifiers.has('__arr')
+  ) {
     program.body.unshift(
       create.expressionStatement(
         create.callExpression(

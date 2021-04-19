@@ -29,6 +29,7 @@ class GPUTransformer {
   counters: string[]
   end: es.Expression[]
   state: number
+  indices: (string | number)[]
   localVar: Set<string>
   outerVariables: any
   targetBody: any
@@ -86,12 +87,12 @@ class GPUTransformer {
     }
 
     const verifier = new GPUBodyVerifier(this.program, this.innerBody, this.counters)
-    if (verifier.state === 0) {
+    if (!verifier.valid) {
       return 0
     }
 
-    this.state = verifier.state
     this.outputArray = verifier.outputArray
+    this.indices = verifier.indices
     this.localVar = verifier.localVar
 
     // 2. get external variables + the main body
@@ -140,12 +141,6 @@ class GPUTransformer {
       }
     })
 
-    // deep copy here (for runtime checks)
-    const params: es.Identifier[] = []
-    for (let i = 0; i < this.state; i++) {
-      params.push(create.identifier(this.counters[i]))
-    }
-
     // 5. get all custom functions used
     const functionEntries: [es.Literal, es.Expression][] = []
     for (const [functionName, functionDeclaration] of verifier.customFunctions) {
@@ -155,26 +150,124 @@ class GPUTransformer {
       ])
     }
 
-    // 6. we transpile the loop to a function call, __createKernelSource
-    const kernelFunction = create.blockArrowFunction(
-      this.counters.map(name => create.identifier(name)),
-      this.targetBody
-    )
-    const createKernelSourceCall = create.callExpression(
-      this.globalIds.__createKernelSource,
-      [
-        create.arrayExpression(this.end),
-        create.arrayExpression(externEntries.map(create.arrayExpression)),
-        create.arrayExpression(Array.from(locals.values()).map(v => create.literal(v))),
-        this.outputArray,
-        kernelFunction,
-        create.literal(currentKernelId++),
-        create.arrayExpression(functionEntries.map(create.arrayExpression))
-      ],
-      node.loc!
-    )
+    // 6. We need to keep the outer indices that will not be parallelized
+    const toParallelize: (string | number)[] = []
+    let countersUsed = 0
+    for (let i = this.indices.length - 1; i >= 0; i--) {
+      const m = this.indices[i]
+      if (typeof m === 'string' && this.counters.includes(m)) {
+        countersUsed++
+      }
+      if (countersUsed > 3) {
+        break
+      }
+      toParallelize.push(m)
+    }
+    toParallelize.reverse()
+    const toKeepIndices = []
+    for (let i = 0; i < this.indices.length - toParallelize.length; i++) {
+      toKeepIndices.push(this.indices[i])
+    }
 
-    create.mutateToExpressionStatement(node, createKernelSourceCall)
+    // 7. we need to keep the loops whose counters are not parallelized
+    const toKeepForStatements = []
+    const untranspiledCounters: string[] = []
+    let currForLoop = node
+    while (currForLoop.type === 'ForStatement') {
+      const init = currForLoop.init as es.VariableDeclaration
+      const ctr = init.declarations[0].id as es.Identifier
+
+      if (toKeepIndices.includes(ctr.name)) {
+        toKeepForStatements.push(currForLoop)
+        untranspiledCounters.push(ctr.name)
+      } else {
+        // tranpile away for statement
+        this.state++
+      }
+
+      if (currForLoop.body.type !== 'BlockStatement') {
+        break
+      }
+      if (currForLoop.body.body.length > 1 || currForLoop.body.body.length === 0) {
+        break
+      }
+
+      currForLoop = currForLoop.body.body[0] as any
+    }
+
+    // 8. we transpile the loop to a function call, __createKernelSource
+    const makeCreateKernelSourceCall = (arr: es.Identifier): es.CallExpression => {
+      const ctrToTranspile = []
+      const endToTranspile = []
+      for (let i = 0; i < this.counters.length; i++) {
+        if (!untranspiledCounters.includes(this.counters[i])) {
+          ctrToTranspile.push(this.counters[i])
+          endToTranspile.push(this.end[i])
+        }
+      }
+
+      // we now treat the untranspiled counters as external variables
+      // if same name is encountered, the loop counter will override the
+      // external variable in the outer scope
+      for (const c of untranspiledCounters) {
+        for (let i = 0; i < externEntries.length; i++) {
+          if (externEntries[i][0].value === c) {
+            externEntries.splice(i, 1)
+          }
+        }
+        const x: [es.Literal, es.Expression] = [
+          create.literal(c, node.loc),
+          create.identifier(c, node.loc)
+        ]
+        externEntries.push(x)
+      }
+
+      const kernelFunction = create.blockArrowFunction(
+        ctrToTranspile.map(x => create.identifier(x)),
+        this.targetBody
+      )
+      return create.callExpression(
+        this.globalIds.__createKernelSource,
+        [
+          create.arrayExpression(ctrToTranspile.map(x => create.literal(x))),
+          create.arrayExpression(endToTranspile),
+          create.arrayExpression(toParallelize.map(x => create.literal(x))),
+          create.arrayExpression(externEntries.map(create.arrayExpression)),
+          create.arrayExpression(Array.from(locals.values()).map(v => create.literal(v))),
+          arr,
+          kernelFunction,
+          create.literal(currentKernelId++),
+          create.arrayExpression(functionEntries.map(create.arrayExpression))
+        ],
+        node.loc!
+      )
+    }
+
+    // 8. we rebuild the node, keeping the necessary for statements
+    if (toKeepIndices.length === 0) {
+      create.mutateToExpressionStatement(node, makeCreateKernelSourceCall(this.outputArray))
+      return this.state
+    }
+
+    // keep necessary outer indices
+    let mem: es.MemberExpression | es.Identifier = this.outputArray
+    for (const m of toKeepIndices) {
+      mem = create.memberExpression(mem, m, true, node.loc)
+    }
+    // we need to assign GPU.js results to a subarray now
+    const subarr = create.constantDeclaration('__arr', mem)
+    const call = makeCreateKernelSourceCall(create.identifier('__arr'))
+
+    // keep necessary for statements
+    let body = create.blockStatement([subarr, create.expressionStatement(call)])
+    for (let i = toKeepForStatements.length - 1; i > 0; i--) {
+      const cur = toKeepForStatements[i]
+      body = create.blockStatement([
+        create.ForStatement(cur.init, cur.test, cur.update, body, cur.loc)
+      ])
+    }
+    const last = toKeepForStatements[0]
+    create.mutateToForStatement(node, last.init, last.test, last.update, body)
 
     return this.state
   }
@@ -222,7 +315,8 @@ class GPUTransformer {
    * }
    */
   getTargetBody(node: es.ForStatement) {
-    let mv = this.state
+    // get rid of all outer loops
+    let mv = this.counters.length
     this.targetBody = node
     while (mv > 1) {
       this.targetBody = this.targetBody.body.body[0]
@@ -281,6 +375,8 @@ export function gpuFunctionTranspile(node: es.FunctionDeclaration): es.FunctionD
 export function gpuRuntimeTranspile(
   node: es.ArrowFunctionExpression,
   localNames: Set<string>,
+  end: number[],
+  idx: (string | number)[],
   functionNames: Set<string>
 ): es.BlockStatement {
   // Contains counters
@@ -317,33 +413,45 @@ export function gpuRuntimeTranspile(
   // e.g. let res = 1 + i; where i is a counter
   // becomes let res = 1 + this.thread.x;
 
-  // depending on state the mappings will change
-  let threads = ['x']
-  if (params.length === 2) threads = ['y', 'x']
-  if (params.length === 3) threads = ['z', 'y', 'x']
+  // unused counters will simply be substitued with their end bounds
+  const endMap = {}
+  for (let i = 0; i < params.length; i++) {
+    endMap[params[i]] = end[i] - 1
+  }
+  simple(body, {
+    Identifier(nx: es.Identifier) {
+      if (params.includes(nx.name) && !idx.includes(nx.name)) {
+        create.mutateToLiteral(nx, endMap[nx.name])
+      }
+    }
+  })
 
-  const counters: string[] = params.slice()
+  // depending on ordering of indices, mapping will change
+  // there is at most 3 counters as indices, guranteed by static transpile
+  const counterIdx = []
+  for (const i of idx) {
+    if (typeof i === 'string' && params.includes(i)) {
+      counterIdx.push(i)
+    }
+  }
+  counterIdx.reverse()
+
+  const threads = ['x', 'y', 'z']
+  const counterMap = {}
+  for (let i = 0; i < counterIdx.length; i++) {
+    counterMap[counterIdx[i]] = threads[i]
+  }
 
   simple(body, {
     Identifier(nx: es.Identifier) {
-      let x = -1
-      for (let i = 0; i < counters.length; i = i + 1) {
-        if (nx.name === counters[i]) {
-          x = i
-          break
-        }
+      if (nx.name in counterMap) {
+        const id = counterMap[nx.name]
+        create.mutateToMemberExpression(
+          nx,
+          create.memberExpression(create.identifier('this'), 'thread'),
+          create.identifier(id)
+        )
       }
-
-      if (x === -1) {
-        return
-      }
-
-      const id = threads[x]
-      create.mutateToMemberExpression(
-        nx,
-        create.memberExpression(create.identifier('this'), 'thread'),
-        create.identifier(id)
-      )
     }
   })
 

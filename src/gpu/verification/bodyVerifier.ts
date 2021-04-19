@@ -14,9 +14,10 @@ class GPUBodyVerifier {
   program: es.Program
   node: es.Statement
 
-  state: number
+  valid: boolean
   localVar: Set<string>
   counters: string[]
+  indices: (string | number)[]
   outputArray: es.Identifier
   customFunctions: Map<string, es.FunctionDeclaration>
 
@@ -29,7 +30,7 @@ class GPUBodyVerifier {
     this.program = program
     this.node = node
     this.counters = counters
-    this.state = 0
+    this.valid = false
     this.checkBody(node)
   }
 
@@ -182,15 +183,15 @@ class GPUBodyVerifier {
       return
     }
 
-    // check res assignment and its counters
-    const res = this.getPropertyAccess(resultExpr[0].left)
-    if (res.length === 0 || res.length > this.counters.length) {
-      return
-    }
+    // retrieve indices
+    this.indices = this.getPropertyAccess(resultExpr[0].left)
 
     // check result variable is not used anywhere with wrong indices
+    // this prevents scenarios such as accessing the value of another cell in
+    // the array, which can lead to undefined behavior if parallelized
     const getProp = this.getPropertyAccess
     const resArr = this.outputArray
+    const members = this.indices
     simple(
       node,
       {
@@ -202,7 +203,7 @@ class GPUBodyVerifier {
 
           // get indices
           const indices = getProp(nx)
-          if (JSON.stringify(indices) === JSON.stringify(res)) {
+          if (JSON.stringify(indices) === JSON.stringify(members)) {
             return
           }
 
@@ -217,13 +218,7 @@ class GPUBodyVerifier {
       return
     }
 
-    for (let i = 0; i < this.counters.length; i++) {
-      if (res[i] !== this.counters[i]) break
-      this.state++
-    }
-
-    // we only can have upto 3 states
-    if (this.state > 3) this.state = 3
+    this.valid = true
   }
 
   getArrayName = (node: es.MemberExpression): es.Identifier => {
@@ -236,17 +231,19 @@ class GPUBodyVerifier {
 
   // helper function that helps to get indices accessed from array
   // e.g. returns i, j for res[i][j]
-  getPropertyAccess = (node: es.MemberExpression): string[] => {
-    const res: string[] = []
+  getPropertyAccess = (node: es.MemberExpression) => {
+    const res: (string | number)[] = []
     let ok: boolean = true
     let curr: any = node
     while (curr.type === 'MemberExpression') {
-      if (curr.property.type !== 'Identifier') {
+      if (curr.property.type === 'Literal' && typeof curr.property.value === 'number') {
+        res.push(curr.property.value)
+      } else if (curr.property.type === 'Identifier' && !(curr.property.name in this.localVar)) {
+        res.push(curr.property.name)
+      } else {
         ok = false
         break
       }
-
-      res.push(curr.property.name)
       curr = curr.object
     }
 
