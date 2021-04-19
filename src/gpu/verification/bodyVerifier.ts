@@ -100,7 +100,6 @@ class GPUBodyVerifier {
         }
         if (ancestors.length == 2) {
           // only add a custom function if it is in the global scope (ancestors are the Program and itself)
-          console.log(nx)
           customFunctions.set(nx.id.name, nx)
         }
       }

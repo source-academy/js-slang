@@ -15,7 +15,6 @@ test('simple 1 for-loop evaluation correct', done => {
   const context = mockContext(4, 'gpu')
   const res = runInContext(code, context)
   res.then(res => {
-    console.log(res)
     try {
       expect(res['value']).toEqual(expected)
       done()
