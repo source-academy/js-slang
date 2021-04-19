@@ -165,23 +165,22 @@ function checkValidGPU(f: any, end: any): boolean {
 
 // just run on js!
 function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
-  // generate all permutations of counters
-  console.log('Manual run')
-  let perm: number[][] = [[]]
+  // generate all variations of counters
+  let variants: number[][] = [[]]
   for (let e of end) {
-    const newPerm = []
+    const newVariant = []
     for (let i = 0; i < e; i++) {
-      for (let p of perm) {
+      for (let p of variants) {
         const t: number[] = [...p]
         t.push(i)
-        newPerm.push(t)
+        newVariant.push(t)
       }
     }
-    perm = newPerm
+    variants = newVariant
   }
 
-  // we run the function for each permutation of counters
-  for (let p of perm) {
+  // we run the function for each variation of counters
+  for (let p of variants) {
     const value = f.apply({}, p)
 
     // we find the location to assign the result in the original array
