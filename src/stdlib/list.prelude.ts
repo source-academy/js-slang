@@ -25,7 +25,7 @@ function equal(xs, ys) {
   : is_boolean(xs)
   ? (is_boolean(ys) && ((xs && ys) || (!xs && !ys)))
   : is_string(xs)
-  ? (is_string(xs) && xs === ys)
+  ? (is_string(ys) && xs === ys)
   : is_undefined(xs)
   ? is_undefined(ys)
   : // we know now that xs is a function

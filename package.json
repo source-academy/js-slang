@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.4.74",
+  "version": "0.4.79",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
@@ -89,7 +89,7 @@
     "testRegex": "/__tests__/.*\\.ts$",
     "testPathIgnorePatterns": [
       "/dist/",
-      "'.*benchmark.*'"
+      ".*benchmark.*"
     ],
     "coveragePathIgnorePatterns": [
       "/dist/",
