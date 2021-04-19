@@ -7,7 +7,7 @@ import { gpuRuntimeTranspile } from './transfomer'
 import { ACORN_PARSE_OPTIONS } from '../constants'
 
 // Heuristic : Only use GPU if array is bigger than this
-const MAX_SIZE = 1
+const MAX_SIZE = 200
 
 // helper function to get argument for setOutput function
 export function getGPUKernelDimensions(ctr: string[], end: number[], idx: (string | number)[]) {
