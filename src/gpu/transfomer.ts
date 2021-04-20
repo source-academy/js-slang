@@ -71,7 +71,10 @@ class GPUTransformer {
    * 3. Build a AST Node for (2) - this will be given to (8)
    * 4. Change assignment in body to a return statement
    * 5. Get all function expressions that are used in the body
-   * 6. Call __createKernelSource and assign it to our external variable
+   * 6. Get outer indices that are not going to be parallelised
+   * 7. Get loops which are not going to be parallelised
+   * 8. Call __createKernelSource
+   * 9. Reassign results from GPU.js into the array
    */
   gpuTranspile = (node: es.ForStatement): number => {
     // initialize our class variables
@@ -243,7 +246,7 @@ class GPUTransformer {
       )
     }
 
-    // 8. we rebuild the node, keeping the necessary for statements
+    // 9. we rebuild the node, keeping the necessary for statements
     if (toKeepIndices.length === 0) {
       create.mutateToExpressionStatement(node, makeCreateKernelSourceCall(this.outputArray))
       return this.state

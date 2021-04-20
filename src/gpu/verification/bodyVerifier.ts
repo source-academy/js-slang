@@ -37,7 +37,7 @@ class GPUBodyVerifier {
   /*
    * Checks if the GPU body is valid
    * 1. No return/function declarations/break/continue
-   * 2. No functions except math_*
+   * 2. Only math_* and suitable custom functions allowed
    * 3. Only ONE assignment to a global result variable
    * 4. Assigning to an array at specific indices (i, j, k from for loop counters)
    */
