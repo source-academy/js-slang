@@ -17,22 +17,6 @@ test('empty for loop does not get transpiled', () => {
   expect(cnt).toEqual(null)
 })
 
-test('simple for loop with different update does not get transpiled', () => {
-  const code = stripIndent`
-    let res = [];
-    for (let i = 0; i < 5; i = i + 2) {
-        res[i] = i;
-    }
-    `
-  const context = mockContext(4, 'gpu')
-  const program = parse(code, context)!
-  transpileToGPU(program)
-  const transpiled = generate(program)
-
-  const cnt = transpiled.match(/__createKernelSource/g)
-  expect(cnt).toEqual(null)
-})
-
 test('simple for loop with different loop variables does not get transpiled', () => {
   const code = stripIndent`
     let res = [];
@@ -55,22 +39,6 @@ test('simple for loop with const initialization does not get transpiled', () => 
     let res = [];
     let j = 0;
     for (const i = 0; i < 5; i = i + 1) {
-        res[i] = i;
-    }
-    `
-  const context = mockContext(4, 'gpu')
-  const program = parse(code, context)!
-  transpileToGPU(program)
-  const transpiled = generate(program)
-
-  const cnt = transpiled.match(/__createKernelSource/g)
-  expect(cnt).toEqual(null)
-})
-
-test('simple for loop with non-zero initialization does not get transpiled', () => {
-  const code = stripIndent`
-    let res = [];
-    for (let i = 1; i < 5; i = i + 1) {
         res[i] = i;
     }
     `

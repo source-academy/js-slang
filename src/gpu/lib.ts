@@ -10,16 +10,22 @@ import { ACORN_PARSE_OPTIONS } from '../constants'
 const MAX_SIZE = 200
 
 // helper function to get argument for setOutput function
-export function getGPUKernelDimensions(ctr: string[], end: number[], idx: (string | number)[]) {
-  const endMap = {}
+export function getGPUKernelDimensions(
+  ctr: string[],
+  end: number[],
+  initials: number[],
+  steps: number[],
+  idx: (string | number)[]
+) {
+  const dimMap = {}
   for (let i = 0; i < ctr.length; i++) {
-    endMap[ctr[i]] = end[i]
+    dimMap[ctr[i]] = Math.ceil((end[i] - initials[i]) / steps[i])
   }
   const used: string[] = []
   const dim: number[] = []
   for (const m of idx) {
-    if (typeof m === 'string' && m in endMap && !used.includes(m)) {
-      dim.push(endMap[m])
+    if (typeof m === 'string' && m in dimMap && !used.includes(m)) {
+      dim.push(dimMap[m])
       used.push(m)
     }
   }
@@ -96,13 +102,32 @@ export function checkArray(arr: any, ctr: any, end: any, idx: any, ext: any) {
 }
 
 // helper function to assign GPU.js results to original array
-export function buildArray(arr: any, ctr: any, end: any, idx: any, ext: any, res: any) {
-  buildArrayHelper(arr, ctr, end, idx, ext, res, {})
+export function buildArray(
+  arr: any,
+  ctr: any,
+  end: any,
+  initials: any,
+  steps: any,
+  idx: any,
+  ext: any,
+  res: any
+) {
+  buildArrayHelper(arr, ctr, end, initials, steps, idx, ext, res, {})
 }
 
 // this is a recursive helper function for buildArray
 // it recurses through the indices and determines which subarrays to reassign
-function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res: any, used: any) {
+function buildArrayHelper(
+  arr: any,
+  ctr: any,
+  end: any,
+  initials: any,
+  steps: any,
+  idx: any,
+  ext: any,
+  res: any,
+  used: any
+) {
   // we are guranteed the types are valid from checkArray
   if (idx.length === 0) {
     return arr
@@ -112,30 +137,48 @@ function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res:
   const cur = idx[0]
   if (typeof cur === 'number') {
     // we only need to modify one of the subarrays of res
-    res[cur] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[cur], used)
+    res[cur] = buildArrayHelper(arr, ctr, end, initials, steps, idx.slice(1), ext, res[cur], used)
   } else if (typeof cur === 'string' && cur in ext) {
     // index is an external variable, treat as a number constant
     const v = ext[cur]
-    res[v] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[v], used)
+    res[v] = buildArrayHelper(arr, ctr, end, initials, steps, idx.slice(1), ext, res[v], used)
   } else if (typeof cur === 'string' && ctr.includes(cur) && !(cur in used)) {
-    // index is a counter, we need to modify all subarrays of res from index 0
-    // to the end bound of the counter
+    // index is a counter, we need to modify all subarrays of res from index (initial)
+    // to the end bound of the counter, incrementing by a given step size
     let e = undefined
+    let initial = undefined
+    let step = undefined
     for (let i = 0; i < ctr.length; i++) {
       if (ctr[i] === cur) {
         e = end[i]
+        initial = initials[i]
+        step = steps[i]
         break
       }
     }
-    for (let i = 0; i < e; i++) {
+    // maintain an index for the GPU result array, which is different from the index for the array to be assigned to
+    // the GPU result array index always starts from 0 and increments by 1
+    let arr_i = 0
+    for (let i = initial; i < e; i = i + step) {
       const newUsed = { ...used }
       newUsed[cur] = i
-      res[i] = buildArrayHelper(arr[i], ctr, end, idx.slice(1), ext, res[i], newUsed)
+      res[i] = buildArrayHelper(
+        arr[arr_i],
+        ctr,
+        end,
+        initials,
+        steps,
+        idx.slice(1),
+        ext,
+        res[i],
+        newUsed
+      )
+      arr_i = arr_i + 1
     }
   } else if (typeof cur === 'string' && ctr.includes(cur) && cur in used) {
     // if the ctr was used as an index before, we need to take the same value
     const v = used[cur]
-    res[v] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[v], used)
+    res[v] = buildArrayHelper(arr, ctr, end, initials, steps, idx.slice(1), ext, res[v], used)
   }
   return res
 }
@@ -232,6 +275,8 @@ function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
 export function __createKernel(
   ctr: any,
   end: any,
+  initials: any,
+  steps: any,
   idx: any,
   extern: any,
   f: any,
@@ -253,7 +298,7 @@ export function __createKernel(
     return
   }
 
-  const kernelDim = getGPUKernelDimensions(ctr, end, idx)
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, idx)
 
   // custom functions to be added to GPU
   for (const customFunction of customFunctions) {
@@ -265,7 +310,7 @@ export function __createKernel(
 
   const gpuFunction = gpu.createKernel(f, out).setOutput(kernelDim)
   const res = gpuFunction() as any
-  buildArray(res, ctr, end, idx, extern, arr)
+  buildArray(res, ctr, end, initials, steps, idx, extern, arr)
 }
 
 function entriesToObject(entries: [string, any][]): any {
@@ -284,6 +329,8 @@ export function __clearKernelCache() {
 export function __createKernelSource(
   ctr: string[],
   end: number[],
+  initials: number[],
+  steps: number[],
   idx: (string | number)[],
   externSource: [string, any][],
   localNames: string[],
@@ -312,17 +359,36 @@ export function __createKernelSource(
 
   const memoizedf = kernels.get(kernelId)
   if (memoizedf !== undefined) {
-    return __createKernel(ctr, end, idx, extern, memoizedf, arr, f, customFunctions)
+    return __createKernel(
+      ctr,
+      end,
+      initials,
+      steps,
+      idx,
+      extern,
+      memoizedf,
+      arr,
+      f,
+      customFunctions
+    )
   }
 
   const code = f.toString()
   // We don't need the full source parser here because it's already validated at transpile time.
   const ast = (parse(code, ACORN_PARSE_OPTIONS) as unknown) as es.Program
   const body = (ast.body[0] as es.ExpressionStatement).expression as es.ArrowFunctionExpression
-  const newBody = gpuRuntimeTranspile(body, new Set(localNames), end, idx, customFunctionNames)
+  const newBody = gpuRuntimeTranspile(
+    body,
+    new Set(localNames),
+    end,
+    initials,
+    steps,
+    idx,
+    customFunctionNames
+  )
   const kernel = new Function(generate(newBody))
 
   kernels.set(kernelId, kernel)
 
-  return __createKernel(ctr, end, idx, extern, kernel, arr, f, customFunctions)
+  return __createKernel(ctr, end, initials, steps, idx, extern, kernel, arr, f, customFunctions)
 }

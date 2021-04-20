@@ -201,6 +201,19 @@ export const mutateToAssignmentExpression = (
   node.right = right
 }
 
+export const mutateToBinaryExpression = (
+  node: es.Node,
+  operator: es.BinaryOperator,
+  left: es.Expression,
+  right: es.Expression
+) => {
+  node.type = 'BinaryExpression'
+  node = node as es.BinaryExpression
+  node.operator = operator
+  node.left = left
+  node.right = right
+}
+
 export const mutateToExpressionStatement = (node: es.Node, expr: es.Expression) => {
   node.type = 'ExpressionStatement'
   node = node as es.ExpressionStatement

@@ -10,10 +10,14 @@ import * as es from 'estree'
 class GPULoopVerifier {
   // for loop that we are looking at
   node: es.ForStatement
-
-  counter: string
-  end: es.Expression
   ok: boolean
+
+  // info about the structure of the for loop
+  // for (let |counter| = |initial|; |counter| < |end|; |counter| = |counter| + |step|)
+  counter: string
+  initial: es.Expression
+  step: es.Expression
+  end: es.Expression
 
   constructor(node: es.ForStatement) {
     this.node = node
@@ -55,10 +59,11 @@ class GPULoopVerifier {
     this.counter = initializer.id.name
 
     const set: es.Expression = initializer.init
-    if (!set || set.type !== 'Literal' || set.value !== 0) {
+    if (!set || set.type !== 'Literal' || !this.isInteger(set.value)) {
       return false
     }
 
+    this.initial = set
     return true
   }
 
@@ -120,11 +125,20 @@ class GPULoopVerifier {
     const identifierLeft = rv.left.type === 'Identifier' && rv.left.name === this.counter
     const identifierRight = rv.right.type === 'Identifier' && rv.right.name === this.counter
 
-    const literalLeft = rv.left.type === 'Literal' && rv.left.value === 1
-    const literalRight = rv.right.type === 'Literal' && rv.right.value === 1
+    const literalLeft = rv.left.type === 'Literal' && this.isInteger(rv.left.value)
+    const literalRight = rv.right.type === 'Literal' && this.isInteger(rv.right.value)
+    if (literalLeft) {
+      this.step = rv.left
+    } else if (literalRight) {
+      this.step = rv.right
+    }
 
-    // we allow both i = i + 1 and i = 1 + i
+    // we allow both i = i + int and i = int + i
     return (identifierLeft && literalRight) || (identifierRight && literalLeft)
+  }
+
+  isInteger = (val: any): boolean => {
+    return typeof val === 'number' && Number.isInteger(val)
   }
 }
 
