@@ -3985,3 +3985,180 @@ test('external 4 for-loop evaluation correct', done => {
     }
   })
 })
+
+test('for-loop with different initial value correct', done => {
+  const code = stripIndent`
+    const N = 15;
+    const M = 15;
+    const arr = [];
+    for (let i = 0; i < N; i = i + 1) {
+        arr[i] = [];
+    }
+    for (let i = 5; i < N; i = i + 1) {
+        for (let j = 0; j < M; j = j + 1) {
+            arr[i][j] = 2 * i + j;
+        }
+    }
+    arr;
+    `
+  const expected = [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+    [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
+    [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+    [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+    [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32],
+    [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
+    [22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36],
+    [24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38],
+    [26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40],
+    [28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42]
+  ]
+
+  const context = mockContext(4, 'gpu')
+  const res = runInContext(code, context)
+  res.then(res => {
+    try {
+      expect(res['value']).toEqual(expected)
+      done()
+    } catch (error) {
+      done(error)
+    }
+  })
+})
+
+test('for-loop with different step size correct', done => {
+  const code = stripIndent`
+    const N = 15;
+    const M = 15;
+    const arr = [];
+    for (let i = 0; i < N; i = i + 1) {
+        arr[i] = [];
+    }
+    for (let i = 0; i < N; i = i + 2) {
+        for (let j = 0; j < M; j = j + 1) {
+            arr[i][j] = 2 * i + j;
+        }
+    }
+    arr;
+    `
+  const expected = [
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    [],
+    [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    [],
+    [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+    [],
+    [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
+    [],
+    [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+    [],
+    [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
+    [],
+    [24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38],
+    [],
+    [28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42]
+  ]
+  const context = mockContext(4, 'gpu')
+  const res = runInContext(code, context)
+  res.then(res => {
+    try {
+      expect(res['value']).toEqual(expected)
+      done()
+    } catch (error) {
+      done(error)
+    }
+  })
+})
+
+test('for-loop with different initial value and step size correct', done => {
+  const code = stripIndent`
+    const N = 15;
+    const M = 15;
+    const arr = [];
+    for (let i = 0; i < N; i = i + 1) {
+        arr[i] = [];
+    }
+    for (let i = 5; i < N; i = i + 2) {
+        for (let j = 0; j < M; j = j + 1) {
+            arr[i][j] = 2 * i + j;
+        }
+    }
+    arr;
+    `
+  const expected = [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+    [],
+    [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+    [],
+    [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32],
+    [],
+    [22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36],
+    [],
+    [26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40],
+    []
+  ]
+  const context = mockContext(4, 'gpu')
+  const res = runInContext(code, context)
+  res.then(res => {
+    try {
+      expect(res['value']).toEqual(expected)
+      done()
+    } catch (error) {
+      done(error)
+    }
+  })
+})
+
+test('nested for-loop with different initial values and step sizes correct', done => {
+  const code = stripIndent`
+    const N = 15;
+    const M = 15;
+    const arr = [];
+    for (let i = 0; i < N; i = i + 1) {
+        arr[i] = [];
+    }
+    for (let i = 1; i < N; i = i + 2) {
+        for (let j = 2; j < M; j = j + 3) {
+            arr[i][j] = 2 * i + j;
+        }
+    }
+    arr;
+    `
+  const expected = [
+    [],
+    [, , 4, , , 7, , , 10, , , 13, , , 16],
+    [],
+    [, , 8, , , 11, , , 14, , , 17, , , 20],
+    [],
+    [, , 12, , , 15, , , 18, , , 21, , , 24],
+    [],
+    [, , 16, , , 19, , , 22, , , 25, , , 28],
+    [],
+    [, , 20, , , 23, , , 26, , , 29, , , 32],
+    [],
+    [, , 24, , , 27, , , 30, , , 33, , , 36],
+    [],
+    [, , 28, , , 31, , , 34, , , 37, , , 40],
+    []
+  ]
+  const context = mockContext(4, 'gpu')
+  const res = runInContext(code, context)
+  res.then(res => {
+    try {
+      expect(res['value']).toEqual(expected)
+      done()
+    } catch (error) {
+      done(error)
+    }
+  })
+})
