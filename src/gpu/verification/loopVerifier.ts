@@ -59,7 +59,7 @@ class GPULoopVerifier {
     this.counter = initializer.id.name
 
     const set: es.Expression = initializer.init
-    if (!set || set.type !== 'Literal' || !this.isInteger(set.value)) {
+    if (!set || !this.isValidLoopVar(set)) {
       return false
     }
 
@@ -82,12 +82,12 @@ class GPULoopVerifier {
     }
 
     const lv: es.Expression = node.left
-    if (lv.type !== 'Identifier' || lv.name !== this.counter) {
+    if (!this.isCounter(lv)) {
       return false
     }
 
     const rv = node.right
-    if (!(rv.type === 'Identifier' || rv.type === 'Literal')) {
+    if (!this.isValidLoopVar(rv)) {
       return false
     }
 
@@ -109,7 +109,7 @@ class GPULoopVerifier {
       return false
     }
 
-    if (node.left.type !== 'Identifier' || node.left.name !== this.counter) {
+    if (!this.isCounter(node.left)) {
       return false
     }
 
@@ -122,23 +122,26 @@ class GPULoopVerifier {
       return false
     }
 
-    const identifierLeft = rv.left.type === 'Identifier' && rv.left.name === this.counter
-    const identifierRight = rv.right.type === 'Identifier' && rv.right.name === this.counter
-
-    const literalLeft = rv.left.type === 'Literal' && this.isInteger(rv.left.value)
-    const literalRight = rv.right.type === 'Literal' && this.isInteger(rv.right.value)
-    if (literalLeft) {
-      this.step = rv.left
-    } else if (literalRight) {
+    // we allow both i = i + step and i = step + i
+    if (this.isCounter(rv.left)) {
+      // if left is the counter, right must be the step size
       this.step = rv.right
+      return this.isValidLoopVar(rv.right)
+    } else if (this.isCounter(rv.right)) {
+      // if right is the counter, left must be the step size
+      this.step = rv.left
+      return this.isValidLoopVar(rv.left)
+    } else {
+      return false
     }
-
-    // we allow both i = i + int and i = int + i
-    return (identifierLeft && literalRight) || (identifierRight && literalLeft)
   }
 
-  isInteger = (val: any): boolean => {
-    return typeof val === 'number' && Number.isInteger(val)
+  isValidLoopVar = (expr: es.Node): boolean => {
+    return expr.type === 'Literal' || expr.type === 'Identifier'
+  }
+
+  isCounter = (expr: es.Node): boolean => {
+    return expr.type === 'Identifier' && expr.name === this.counter
   }
 }
 

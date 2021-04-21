@@ -184,6 +184,29 @@ function buildArrayHelper(
 }
 
 /*
+ * This helper function checks that the loops are valid
+ * 1. All initial values and step sizes are integers (then array indices will always be integers)
+ * 2. The array index is always non-negative from initial to end
+ */
+export function checkValidLoops(end: any, initials: any, steps: any): boolean {
+  for (let i = 0; i < end.length; i++) {
+    const e = end[i]
+    const initial = initials[i]
+    const step = steps[i]
+
+    // 1. All initial values and step sizes are integers
+    if (!Number.isInteger(initial) || !Number.isInteger(step)) {
+      return false
+    }
+
+    // 2. The array index is always non-negative from initial to end
+    if (initial < 0 || step <= 0 || (e - initial) / step < 0) {
+      return false
+    }
+  }
+  return true
+}
+/*
  * we only use the gpu if:
  * 1. we are working with numbers
  * 2. we have a large array (> 100 elements)
@@ -339,6 +362,10 @@ export function __createKernelSource(
   kernelId: number,
   functionEntries: [string, any][]
 ) {
+  if (!checkValidLoops(end, initials, steps)) {
+    throw 'Loop is invalid'
+  }
+
   const extern = entriesToObject(externSource)
   // Create a set of function names (used in transpilation methods)
   const customFunctionNames = new Set<string>()

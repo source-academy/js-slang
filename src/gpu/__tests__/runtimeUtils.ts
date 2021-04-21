@@ -1,4 +1,4 @@
-import { getGPUKernelDimensions, checkArray, buildArray } from '../lib'
+import { getGPUKernelDimensions, checkArray, buildArray, checkValidLoops } from '../lib'
 
 test('getGPUKernelDimensions with counter prefix returns correct dimensions', () => {
   const ctr = ['i', 'j', 'k']
@@ -701,4 +701,58 @@ test('buildArray with repeated counters performs correct assignment', () => {
   ]
   buildArray(res, ctr, end, initials, steps, idx, ext, arr)
   expect(arr).toEqual(exp)
+})
+
+test('checkValidLoops accepts standard loops', () => {
+  // let i = 0; i < 10; i = i + 1
+  const end = [10]
+  const initials = [0]
+  const steps = [1]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(true)
+})
+
+test('checkValidLoops accepts loops with non-standard initial/step size', () => {
+  // let i = 2; i < 10; i = i + 2
+  const end = [10]
+  const initials = [2]
+  const steps = [2]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(true)
+})
+
+test('checkValidLoops rejects loops with non-integer initial', () => {
+  // let i = 0.5; i < 10; i = i + 2
+  const end = [10]
+  const initials = [0.5]
+  const steps = [2]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(false)
+})
+
+test('checkValidLoops rejects loops with non-integer step size', () => {
+  // let i = 2; i < 10; i = i + 0.5
+  const end = [10]
+  const initials = [2]
+  const steps = [0.5]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(false)
+})
+
+test('checkValidLoops rejects loops with negative initial', () => {
+  // let i = -2; i < 10; i = i + 1
+  const end = [10]
+  const initials = [-2]
+  const steps = [1]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(false)
+})
+
+test('checkValidLoops rejects loops which end up with negative array indiices', () => {
+  // let i = 0; i < 10; i = i + (-1)
+  const end = [10]
+  const initials = [0]
+  const steps = [-1]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(false)
 })
