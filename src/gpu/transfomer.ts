@@ -32,6 +32,7 @@ class GPUTransformer {
   end: es.Expression[]
   steps: es.Expression[]
   initials: es.Expression[]
+  operators: es.BinaryOperator[]
 
   state: number
   indices: (string | number)[]
@@ -88,6 +89,7 @@ class GPUTransformer {
     this.end = []
     this.initials = []
     this.steps = []
+    this.operators = []
 
     // 1. verification of outer loops + body
     this.checkOuterLoops(node)
@@ -211,12 +213,14 @@ class GPUTransformer {
       const endToTranspile = []
       const initialToTranspile = []
       const stepToTranspile = []
+      const operatorToTranspile = []
       for (let i = 0; i < this.counters.length; i++) {
         if (!untranspiledCounters.includes(this.counters[i])) {
           ctrToTranspile.push(this.counters[i])
           endToTranspile.push(this.end[i])
           initialToTranspile.push(this.initials[i])
           stepToTranspile.push(this.steps[i])
+          operatorToTranspile.push(this.operators[i])
         }
       }
 
@@ -247,6 +251,7 @@ class GPUTransformer {
           create.arrayExpression(endToTranspile),
           create.arrayExpression(initialToTranspile),
           create.arrayExpression(stepToTranspile),
+          create.arrayExpression(operatorToTranspile.map(x => create.literal(x))),
           create.arrayExpression(toParallelize.map(x => create.literal(x))),
           create.arrayExpression(externEntries.map(create.arrayExpression)),
           create.arrayExpression(Array.from(locals.values()).map(v => create.literal(v))),
@@ -302,6 +307,7 @@ class GPUTransformer {
       this.end.push(detector.end)
       this.initials.push(detector.initial)
       this.steps.push(detector.step)
+      this.operators.push(detector.operator)
 
       if (this.innerBody.type !== 'BlockStatement') {
         break

@@ -15,11 +15,17 @@ export function getGPUKernelDimensions(
   end: number[],
   initials: number[],
   steps: number[],
+  operators: string[],
   idx: (string | number)[]
 ) {
   const dimMap = {}
   for (let i = 0; i < ctr.length; i++) {
-    dimMap[ctr[i]] = Math.ceil((end[i] - initials[i]) / steps[i])
+    let dimension = Math.ceil((end[i] - initials[i]) / steps[i])
+    // if operator is <=, dimension might be larger by 1
+    if (operators[i] === '<=' && initials[i] + steps[i] * dimension === end[i]) {
+      dimension += 1
+    }
+    dimMap[ctr[i]] = dimension
   }
   const used: string[] = []
   const dim: number[] = []
@@ -128,7 +134,7 @@ function buildArrayHelper(
   res: any,
   used: any
 ) {
-  // we are guranteed the types are valid from checkArray
+  // we are guaranteed the types are valid from checkArray
   if (idx.length === 0) {
     return arr
   }
@@ -145,35 +151,34 @@ function buildArrayHelper(
   } else if (typeof cur === 'string' && ctr.includes(cur) && !(cur in used)) {
     // index is a counter, we need to modify all subarrays of res from index (initial)
     // to the end bound of the counter, incrementing by a given step size
-    let e = undefined
     let initial = undefined
     let step = undefined
     for (let i = 0; i < ctr.length; i++) {
       if (ctr[i] === cur) {
-        e = end[i]
         initial = initials[i]
         step = steps[i]
         break
       }
     }
-    // maintain an index for the GPU result array, which is different from the index for the array to be assigned to
-    // the GPU result array index always starts from 0 and increments by 1
-    let arr_i = 0
-    for (let i = initial; i < e; i = i + step) {
+    // maintain an index for our output array (res), which is different from the index of the GPU result array
+    // the GPU result array index (i) starts from 0 and increments by 1
+    // our output array index (res_i) starts from initial and increments by step
+    let res_i = initial
+    for (let i = 0; i < arr.length; i++) {
       const newUsed = { ...used }
-      newUsed[cur] = i
-      res[i] = buildArrayHelper(
-        arr[arr_i],
+      newUsed[cur] = res_i
+      res[res_i] = buildArrayHelper(
+        arr[i],
         ctr,
         end,
         initials,
         steps,
         idx.slice(1),
         ext,
-        res[i],
+        res[res_i],
         newUsed
       )
-      arr_i = arr_i + 1
+      res_i += step
     }
   } else if (typeof cur === 'string' && ctr.includes(cur) && cur in used) {
     // if the ctr was used as an index before, we need to take the same value
@@ -229,16 +234,43 @@ function checkValidGPU(f: any, end: any): boolean {
   return cnt > MAX_SIZE
 }
 
+function compare(operator: any, left: any, right: any): boolean {
+  switch (operator) {
+    case '<': {
+      return left < right
+    }
+    case '<=': {
+      return left <= right
+    }
+  }
+  return false
+}
+
 // just run on js!
-function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
+function manualRun(
+  f: any,
+  ctr: any,
+  end: any,
+  initials: any,
+  steps: any,
+  operators: any,
+  idx: any,
+  ext: any,
+  res: any
+) {
   // generate all variations of counters
   let variants: number[][] = [[]]
-  for (const e of end) {
+  for (let i = 0; i < end.length; i++) {
+    const e = end[i]
+    const initial = initials[i]
+    const step = steps[i]
+    const operator = operators[i]
+
     const newVariant = []
-    for (let i = 0; i < e; i++) {
+    for (let j = initial; compare(operator, j, e); j += step) {
       for (const p of variants) {
         const t: number[] = [...p]
-        t.push(i)
+        t.push(j)
         newVariant.push(t)
       }
     }
@@ -248,7 +280,6 @@ function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
   // we run the function for each variation of counters
   for (const p of variants) {
     const value = f.apply({}, p)
-
     // we find the location to assign the result in the original array
     let arr = res
     for (let i = 0; i < idx.length - 1; i++) {
@@ -279,7 +310,7 @@ function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
       const v = ext[lastIdx]
       arr[v] = value
     } else {
-      // index should alreday be guranteed to be a counter, number or external
+      // index should alreday be guaranteed to be a counter, number or external
       // variable
       throw 'Index must be number, counter or external variable'
     }
@@ -300,6 +331,7 @@ export function __createKernel(
   end: any,
   initials: any,
   steps: any,
+  operators: any,
   idx: any,
   extern: any,
   f: any,
@@ -317,12 +349,11 @@ export function __createKernel(
   // check if program is valid to run on GPU
   const ok = checkValidGPU(f2, end)
   if (!ok) {
-    manualRun(f2, ctr, end, idx, extern, arr)
+    manualRun(f2, ctr, end, initials, steps, operators, idx, extern, arr)
     return
   }
 
-  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, idx)
-
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
   // custom functions to be added to GPU
   for (const customFunction of customFunctions) {
     gpu.addFunction(customFunction)
@@ -354,6 +385,7 @@ export function __createKernelSource(
   end: number[],
   initials: number[],
   steps: number[],
+  operators: string[],
   idx: (string | number)[],
   externSource: [string, any][],
   localNames: string[],
@@ -391,6 +423,7 @@ export function __createKernelSource(
       end,
       initials,
       steps,
+      operators,
       idx,
       extern,
       memoizedf,
@@ -417,5 +450,17 @@ export function __createKernelSource(
 
   kernels.set(kernelId, kernel)
 
-  return __createKernel(ctr, end, initials, steps, idx, extern, kernel, arr, f, customFunctions)
+  return __createKernel(
+    ctr,
+    end,
+    initials,
+    steps,
+    operators,
+    idx,
+    extern,
+    kernel,
+    arr,
+    f,
+    customFunctions
+  )
 }

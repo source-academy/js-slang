@@ -13,11 +13,12 @@ class GPULoopVerifier {
   ok: boolean
 
   // info about the structure of the for loop
-  // for (let |counter| = |initial|; |counter| < |end|; |counter| = |counter| + |step|)
+  // for (let |counter| = |initial|; |counter| |operator| |end|; |counter| = |counter| + |step|)
   counter: string
   initial: es.Expression
   step: es.Expression
   end: es.Expression
+  operator: es.BinaryOperator
 
   constructor(node: es.ForStatement) {
     this.node = node
@@ -80,6 +81,7 @@ class GPULoopVerifier {
     if (!(node.operator === '<' || node.operator === '<=')) {
       return false
     }
+    this.operator = node.operator
 
     const lv: es.Expression = node.left
     if (!this.isCounter(lv)) {
