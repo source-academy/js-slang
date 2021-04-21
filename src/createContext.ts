@@ -329,7 +329,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, '__clearKernelCache()', gpu_lib.__clearKernelCache)
       defineBuiltin(
         context,
-        '__createKernelSource(ctr, end, initials, steps, operators, idx, externSource, localNames, arr, f, kernelId, functionEntries)',
+        '__createKernelSource(ctr, end, initials, steps, operators, isIncrements, idx, externSource, localNames, arr, f, kernelId, functionEntries)',
         gpu_lib.__createKernelSource
       )
     }

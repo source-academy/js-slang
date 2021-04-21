@@ -14,11 +14,13 @@ class GPULoopVerifier {
 
   // info about the structure of the for loop
   // for (let |counter| = |initial|; |counter| |operator| |end|; |counter| = |counter| + |step|)
+  // isIncrement is true if the operator in gpu_for_assignment is +, and false if the operator is -
   counter: string
   initial: es.Expression
   step: es.Expression
   end: es.Expression
   operator: es.BinaryOperator
+  isIncrement: boolean
 
   constructor(node: es.ForStatement) {
     this.node = node
@@ -78,7 +80,14 @@ class GPULoopVerifier {
       return false
     }
 
-    if (!(node.operator === '<' || node.operator === '<=')) {
+    if (
+      !(
+        node.operator === '<' ||
+        node.operator === '<=' ||
+        node.operator === '>' ||
+        node.operator === '>='
+      )
+    ) {
       return false
     }
     this.operator = node.operator
@@ -120,7 +129,11 @@ class GPULoopVerifier {
     }
 
     const rv = node.right
-    if (rv.operator !== '+') {
+    if (rv.operator === '+') {
+      this.isIncrement = true
+    } else if (rv.operator === '-') {
+      this.isIncrement = false
+    } else {
       return false
     }
 

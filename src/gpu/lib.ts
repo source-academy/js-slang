@@ -5,6 +5,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import { gpuFunctionTranspile, gpuRuntimeTranspile } from './transfomer'
 import { ACORN_PARSE_OPTIONS } from '../constants'
+import { evaluateBinaryExpression } from '../utils/operators'
 
 // Heuristic : Only use GPU if array is bigger than this
 const MAX_SIZE = 200
@@ -21,8 +22,9 @@ export function getGPUKernelDimensions(
   const dimMap = {}
   for (let i = 0; i < ctr.length; i++) {
     let dimension = Math.ceil((end[i] - initials[i]) / steps[i])
-    // if operator is <=, dimension might be larger by 1
-    if (operators[i] === '<=' && initials[i] + steps[i] * dimension === end[i]) {
+    // handle the operators <= and >=, where the equality condition might cause dimension to be larger by 1
+    const finalVal = initials[i] + steps[i] * dimension
+    if (evaluateBinaryExpression(operators[i] as es.BinaryOperator, finalVal, end[i])) {
       dimension += 1
     }
     dimMap[ctr[i]] = dimension
@@ -188,6 +190,15 @@ function buildArrayHelper(
   return res
 }
 
+// If the counter is being decremented rather than incremented by step size, we flip the sign of the step
+function modifySteps(steps: any, isIncrements: any) {
+  for (let i = 0; i < steps.length; i++) {
+    if (!isIncrements[i]) {
+      steps[i] = -steps[i]
+    }
+  }
+}
+
 /*
  * This helper function checks that the loops are valid
  * 1. All initial values and step sizes are integers (then array indices will always be integers)
@@ -205,7 +216,12 @@ export function checkValidLoops(end: any, initials: any, steps: any): boolean {
     }
 
     // 2. The array index is always non-negative from initial to end
-    if (initial < 0 || step <= 0 || (e - initial) / step < 0) {
+    // The initial and end values must be non-negative
+    if (initial < 0 || e < 0) {
+      return false
+    }
+    // The counter must be moving in the direction from initial to end
+    if (step === 0 || Math.sign(e - initial) !== Math.sign(step)) {
       return false
     }
   }
@@ -214,9 +230,9 @@ export function checkValidLoops(end: any, initials: any, steps: any): boolean {
 /*
  * we only use the gpu if:
  * 1. we are working with numbers
- * 2. we have a large array (> 100 elements)
+ * 2. we have a large array (> MAX_SIZE elements)
  */
-function checkValidGPU(f: any, end: any): boolean {
+function checkValidGPU(f: any, end: any, dims: any): boolean {
   const args = end.map(() => 0)
   const res = f.apply({}, args)
 
@@ -227,23 +243,11 @@ function checkValidGPU(f: any, end: any): boolean {
   }
 
   let cnt = 1
-  for (const i of end) {
-    cnt = cnt * i
+  for (let i = 0; i < dims.length; i++) {
+    cnt *= dims[i]
   }
 
   return cnt > MAX_SIZE
-}
-
-function compare(operator: any, left: any, right: any): boolean {
-  switch (operator) {
-    case '<': {
-      return left < right
-    }
-    case '<=': {
-      return left <= right
-    }
-  }
-  return false
 }
 
 // just run on js!
@@ -267,7 +271,7 @@ function manualRun(
     const operator = operators[i]
 
     const newVariant = []
-    for (let j = initial; compare(operator, j, e); j += step) {
+    for (let j = initial; evaluateBinaryExpression(operator, j, e); j += step) {
       for (const p of variants) {
         const t: number[] = [...p]
         t.push(j)
@@ -346,14 +350,15 @@ export function __createKernel(
     throw new TypeError(arr, '', 'object or array', typeof arr)
   }
 
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
+
   // check if program is valid to run on GPU
-  const ok = checkValidGPU(f2, end)
+  const ok = checkValidGPU(f2, end, kernelDim)
   if (!ok) {
     manualRun(f2, ctr, end, initials, steps, operators, idx, extern, arr)
     return
   }
 
-  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
   // custom functions to be added to GPU
   for (const customFunction of customFunctions) {
     gpu.addFunction(customFunction)
@@ -386,6 +391,7 @@ export function __createKernelSource(
   initials: number[],
   steps: number[],
   operators: string[],
+  isIncrements: boolean[],
   idx: (string | number)[],
   externSource: [string, any][],
   localNames: string[],
@@ -394,6 +400,7 @@ export function __createKernelSource(
   kernelId: number,
   functionEntries: [string, any][]
 ) {
+  modifySteps(steps, isIncrements)
   if (!checkValidLoops(end, initials, steps)) {
     throw 'Loop is invalid'
   }

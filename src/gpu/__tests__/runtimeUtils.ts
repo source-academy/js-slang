@@ -764,6 +764,15 @@ test('checkValidLoops accepts loops with non-standard initial/step size', () => 
   expect(res).toEqual(true)
 })
 
+test('checkValidLoops acceps loops that decrement the counter', () => {
+  // let i = 10; i > 0; i = i + (-1) or i = i - 1
+  const end = [0]
+  const initials = [10]
+  const steps = [-1]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(true)
+})
+
 test('checkValidLoops rejects loops with non-integer initial', () => {
   // let i = 0.5; i < 10; i = i + 2
   const end = [10]
@@ -791,11 +800,25 @@ test('checkValidLoops rejects loops with negative initial', () => {
   expect(res).toEqual(false)
 })
 
-test('checkValidLoops rejects loops which end up with negative array indiices', () => {
-  // let i = 0; i < 10; i = i + (-1)
+test('checkValidLoops rejects loops which would not terminate', () => {
+  // let i = 0; i < 10; i = i + (-1) or i = i - 1
   const end = [10]
   const initials = [0]
   const steps = [-1]
   const res = checkValidLoops(end, initials, steps)
   expect(res).toEqual(false)
+
+  // let i = 10; i > 0; i = i + 1
+  const end2 = [0]
+  const initials2 = [10]
+  const steps2 = [1]
+  const res2 = checkValidLoops(end2, initials2, steps2)
+  expect(res2).toEqual(false)
+
+  // let i = 0; i < 10; i = i + 0
+  const end3 = [10]
+  const initials3 = [0]
+  const steps3 = [0]
+  const res3 = checkValidLoops(end3, initials3, steps3)
+  expect(res3).toEqual(false)
 })

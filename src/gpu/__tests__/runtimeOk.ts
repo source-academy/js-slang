@@ -7,6 +7,7 @@ test('__createKernelSource with 1 loop returns correct result', () => {
   const steps = [1]
   const end = [5]
   const operators = ['<']
+  const isIncrements = [true]
   const idx = ['i']
   const extern: [string, any][] = []
   const local: string[] = []
@@ -15,7 +16,21 @@ test('__createKernelSource with 1 loop returns correct result', () => {
   }
   const arr: number[] = []
   __clearKernelCache()
-  __createKernelSource(ctr, end, initials, steps, operators, idx, extern, local, arr, f, 0, [])
+  __createKernelSource(
+    ctr,
+    end,
+    initials,
+    steps,
+    operators,
+    isIncrements,
+    idx,
+    extern,
+    local,
+    arr,
+    f,
+    0,
+    []
+  )
   expect(arr).toEqual([1, 1, 1, 1, 1])
 })
 
@@ -25,6 +40,7 @@ test('__createKernelSource with 2 loops returns correct result', () => {
   const steps = [1, 1]
   const end = [5, 4]
   const operators = ['<', '<']
+  const isIncrements = [true, true]
   const idx = ['i', 'j']
   const extern: [string, any][] = []
   const local: string[] = []
@@ -37,7 +53,21 @@ test('__createKernelSource with 2 loops returns correct result', () => {
     return i * j
   }
   __clearKernelCache()
-  __createKernelSource(ctr, end, initials, steps, operators, idx, extern, local, arr, f, 0, [])
+  __createKernelSource(
+    ctr,
+    end,
+    initials,
+    steps,
+    operators,
+    isIncrements,
+    idx,
+    extern,
+    local,
+    arr,
+    f,
+    0,
+    []
+  )
   expect(arr).toEqual([
     [0, 0, 0, 0],
     [0, 1, 2, 3],
@@ -52,6 +82,7 @@ test('__createKernelSource with 3 loop returns correct result', () => {
   const initials = [0, 0, 0]
   const steps = [1, 1, 1]
   const operators = ['<', '<', '<']
+  const isIncrements = [true, true, true]
   const end = [5, 4, 3]
   const idx = ['i', 'j', 'k']
   const extern: [string, any][] = []
@@ -69,7 +100,21 @@ test('__createKernelSource with 3 loop returns correct result', () => {
     return i * j * k
   }
   __clearKernelCache()
-  __createKernelSource(ctr, end, initials, steps, operators, idx, extern, local, arr, f, 0, [])
+  __createKernelSource(
+    ctr,
+    end,
+    initials,
+    steps,
+    operators,
+    isIncrements,
+    idx,
+    extern,
+    local,
+    arr,
+    f,
+    0,
+    []
+  )
   expect(arr).toEqual([
     [
       [0, 0, 0],
@@ -109,6 +154,7 @@ test('__createKernelSource with indices as counter combination returns correct r
   const initials = [0, 0, 0]
   const steps = [1, 1, 1]
   const operators = ['<', '<', '<']
+  const isIncrements = [true, true, true]
   const end = [5, 4, 3]
   const idx = ['k', 'i']
   const extern: [string, any][] = []
@@ -129,7 +175,21 @@ test('__createKernelSource with indices as counter combination returns correct r
     return i + k
   }
   __clearKernelCache()
-  __createKernelSource(ctr, end, initials, steps, operators, idx, extern, local, arr, f, 0, [])
+  __createKernelSource(
+    ctr,
+    end,
+    initials,
+    steps,
+    operators,
+    isIncrements,
+    idx,
+    extern,
+    local,
+    arr,
+    f,
+    0,
+    []
+  )
   expect(arr).toEqual([
     [0, 1, 2, 3, 4],
     [1, 2, 3, 4, 5],
@@ -154,6 +214,7 @@ test('__createKernelSource with number constant as index returns correct result'
   const initials = [0, 0, 0]
   const steps = [1, 1, 1]
   const operators = ['<', '<', '<']
+  const isIncrements = [true, true, true]
   const end = [5, 4, 3]
   const idx = ['k', 1, 'i']
   const extern: [string, any][] = []
@@ -174,7 +235,21 @@ test('__createKernelSource with number constant as index returns correct result'
     return i + k
   }
   __clearKernelCache()
-  __createKernelSource(ctr, end, initials, steps, operators, idx, extern, local, arr, f, 0, [])
+  __createKernelSource(
+    ctr,
+    end,
+    initials,
+    steps,
+    operators,
+    isIncrements,
+    idx,
+    extern,
+    local,
+    arr,
+    f,
+    0,
+    []
+  )
   expect(arr).toEqual([
     [
       [1, 1, 1, 1, 1],
@@ -202,6 +277,7 @@ test('__createKernelSource with counter not used in indices returns correct resu
   const initials = [0, 0, 0, 0]
   const steps = [1, 1, 1, 1]
   const operators = ['<', '<', '<', '<']
+  const isIncrements = [true, true, true, true]
   const end = [5, 4, 3, 2]
   const idx = ['i', 'j', 'k']
   const extern: [string, any][] = []
@@ -225,7 +301,21 @@ test('__createKernelSource with counter not used in indices returns correct resu
     return i * j * k * l
   }
   __clearKernelCache()
-  __createKernelSource(ctr, end, initials, steps, operators, idx, extern, local, arr, f, 0, [])
+  __createKernelSource(
+    ctr,
+    end,
+    initials,
+    steps,
+    operators,
+    isIncrements,
+    idx,
+    extern,
+    local,
+    arr,
+    f,
+    0,
+    []
+  )
   expect(arr).toEqual([
     [
       [0, 0, 0],
@@ -265,6 +355,7 @@ test('__createKernelSource with external variable as index returns correct resul
   const initials = [0, 0, 0]
   const steps = [1, 1, 1]
   const operators = ['<', '<', '<']
+  const isIncrements = [true, true, true]
   const end = [5, 4, 3]
   const idx = ['x', 'j', 'k']
   const extern: [string, any][] = [['x', 4]]
@@ -286,7 +377,21 @@ test('__createKernelSource with external variable as index returns correct resul
   }
 
   __clearKernelCache()
-  __createKernelSource(ctr, end, initials, steps, operators, idx, extern, local, arr, f, 0, [])
+  __createKernelSource(
+    ctr,
+    end,
+    initials,
+    steps,
+    operators,
+    isIncrements,
+    idx,
+    extern,
+    local,
+    arr,
+    f,
+    0,
+    []
+  )
   expect(arr).toEqual([
     [
       [1, 1, 1],
@@ -326,6 +431,7 @@ test('__createKernelSource with repeated counter in indices returns correct resu
   const initials = [0, 0, 0]
   const steps = [1, 1, 1]
   const operators = ['<', '<', '<']
+  const isIncrements = [true, true, true]
   const end = [5, 4, 3]
   const idx = ['j', 'j']
   const extern: [string, any][] = []
@@ -347,7 +453,21 @@ test('__createKernelSource with repeated counter in indices returns correct resu
   }
 
   __clearKernelCache()
-  __createKernelSource(ctr, end, initials, steps, operators, idx, extern, local, arr, f, 0, [])
+  __createKernelSource(
+    ctr,
+    end,
+    initials,
+    steps,
+    operators,
+    isIncrements,
+    idx,
+    extern,
+    local,
+    arr,
+    f,
+    0,
+    []
+  )
   expect(arr).toEqual([
     [6, [1, 1, 1], [1, 1, 1], [1, 1, 1]],
     [[1, 1, 1], 6, [1, 1, 1], [1, 1, 1]],
