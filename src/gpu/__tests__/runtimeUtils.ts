@@ -74,7 +74,7 @@ test('getGPUKernelDimensions with external variables returns correct dimensions'
   const end2 = [3, 5, 1, 2]
   const initials2 = [0, 0, 0, 0]
   const steps2 = [1, 1, 1, 1]
-  const operators2 = ['<', '<', '<']
+  const operators2 = ['<', '<', '<', '<']
   const idx2 = ['l', 'test', 'k']
   const kernelDim2 = getGPUKernelDimensions(ctr2, end2, initials2, steps2, operators2, idx2)
   expect(kernelDim2).toEqual([1, 2])
@@ -131,6 +131,17 @@ test('getGPUKernelDimensions with <= operator and non-standard initial/step retu
   const idx = ['i', 'j', 'k']
   const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
   expect(kernelDim).toEqual([3, 4, 5])
+})
+
+test('getGPUKernelDimensions where the loop condition fails from the start returns 0 dimension', () => {
+  const ctr = ['i', 'j', 'k']
+  const end = [10, 11, 12]
+  const initials = [1, 2, 3]
+  const steps = [2, 3, 4]
+  const operators = ['<=', '>', '<=']
+  const idx = ['i', 'j', 'k']
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
+  expect(kernelDim).toEqual([3, 0, 5])
 })
 
 test('checkArray returns true when array is valid with counter prefix', () => {

@@ -21,13 +21,24 @@ export function getGPUKernelDimensions(
 ) {
   const dimMap = {}
   for (let i = 0; i < ctr.length; i++) {
-    let dimension = Math.ceil((end[i] - initials[i]) / steps[i])
-    // handle the operators <= and >=, where the equality condition might cause dimension to be larger by 1
-    const finalVal = initials[i] + steps[i] * dimension
-    if (evaluateBinaryExpression(operators[i] as es.BinaryOperator, finalVal, end[i])) {
-      dimension += 1
+    const op = operators[i] as es.BinaryOperator
+    const e = end[i]
+    const initial = initials[i]
+    const step = steps[i]
+    // handle the case where the condition already fails at the start of the loop (initial op end === false)
+    if (!evaluateBinaryExpression(op, initial, e)) {
+      // then the dimension will be 0
+      dimMap[ctr[i]] = 0
+    } else {
+      // calculate dimension based on step size
+      let dimension = Math.ceil((e - initial) / step)
+      // handle the operators <= and >=, where the equality condition might cause dimension to be larger by 1
+      const finalVal = initial + step * dimension
+      if (evaluateBinaryExpression(op, finalVal, e)) {
+        dimension += 1
+      }
+      dimMap[ctr[i]] = dimension
     }
-    dimMap[ctr[i]] = dimension
   }
   const used: string[] = []
   const dim: number[] = []
