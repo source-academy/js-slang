@@ -26,8 +26,15 @@ class GPUTransformer {
 
   outputArray: es.Identifier
   innerBody: any
+
+  // info about the for loops
   counters: string[]
   end: es.Expression[]
+  steps: es.Expression[]
+  initials: es.Expression[]
+  operators: es.BinaryOperator[]
+  isIncrements: boolean[]
+
   state: number
   indices: (string | number)[]
   localVar: Set<string>
@@ -81,6 +88,10 @@ class GPUTransformer {
     this.state = 0
     this.counters = []
     this.end = []
+    this.initials = []
+    this.steps = []
+    this.operators = []
+    this.isIncrements = []
 
     // 1. verification of outer loops + body
     this.checkOuterLoops(node)
@@ -202,10 +213,18 @@ class GPUTransformer {
     const makeCreateKernelSourceCall = (arr: es.Identifier): es.CallExpression => {
       const ctrToTranspile = []
       const endToTranspile = []
+      const initialToTranspile = []
+      const stepToTranspile = []
+      const operatorToTranspile = []
+      const isIncrementsToTranspile = []
       for (let i = 0; i < this.counters.length; i++) {
         if (!untranspiledCounters.includes(this.counters[i])) {
           ctrToTranspile.push(this.counters[i])
           endToTranspile.push(this.end[i])
+          initialToTranspile.push(this.initials[i])
+          stepToTranspile.push(this.steps[i])
+          operatorToTranspile.push(this.operators[i])
+          isIncrementsToTranspile.push(this.isIncrements[i])
         }
       }
 
@@ -234,6 +253,10 @@ class GPUTransformer {
         [
           create.arrayExpression(ctrToTranspile.map(x => create.literal(x))),
           create.arrayExpression(endToTranspile),
+          create.arrayExpression(initialToTranspile),
+          create.arrayExpression(stepToTranspile),
+          create.arrayExpression(operatorToTranspile.map(x => create.literal(x))),
+          create.arrayExpression(isIncrementsToTranspile.map(x => create.literal(x))),
           create.arrayExpression(toParallelize.map(x => create.literal(x))),
           create.arrayExpression(externEntries.map(create.arrayExpression)),
           create.arrayExpression(Array.from(locals.values()).map(v => create.literal(v))),
@@ -287,6 +310,10 @@ class GPUTransformer {
       this.innerBody = currForLoop.body
       this.counters.push(detector.counter)
       this.end.push(detector.end)
+      this.initials.push(detector.initial)
+      this.steps.push(detector.step)
+      this.operators.push(detector.operator)
+      this.isIncrements.push(detector.isIncrement)
 
       if (this.innerBody.type !== 'BlockStatement') {
         break
@@ -379,6 +406,8 @@ export function gpuRuntimeTranspile(
   node: es.ArrowFunctionExpression,
   localNames: Set<string>,
   end: number[],
+  initials: number[],
+  steps: number[],
   idx: (string | number)[],
   functionNames: Set<string>
 ): es.BlockStatement {
@@ -441,19 +470,40 @@ export function gpuRuntimeTranspile(
 
   const threads = ['x', 'y', 'z']
   const counterMap = {}
+  const initialMap = {}
+  const stepMap = {}
   for (let i = 0; i < counterIdx.length; i++) {
     counterMap[counterIdx[i]] = threads[i]
+    // initial and step are obtained in the reverse order
+    initialMap[counterIdx[i]] = initials[counterIdx.length - i - 1]
+    stepMap[counterIdx[i]] = steps[counterIdx.length - i - 1]
   }
 
   simple(body, {
     Identifier(nx: es.Identifier) {
       if (nx.name in counterMap) {
         const id = counterMap[nx.name]
-        create.mutateToMemberExpression(
-          nx,
+        const initial = initialMap[nx.name]
+        const step = stepMap[nx.name]
+
+        if (initial === 0 && step === 1) {
+          // if initial and step are standard, no need to mutate with arithmetic
+          create.mutateToMemberExpression(
+            nx,
+            create.memberExpression(create.identifier('this'), 'thread'),
+            create.identifier(id)
+          )
+          return
+        }
+        // map this.thread.x/y/z to the 'correct' value by accounting for initial and step
+        // initial + this.thread.x/y/z * step
+        const thisThreadExpr = create.memberExpression(
           create.memberExpression(create.identifier('this'), 'thread'),
-          create.identifier(id)
+          id
         )
+        const multiplyExpr = create.binaryExpression('*', thisThreadExpr, create.literal(step))
+
+        create.mutateToBinaryExpression(nx, '+', create.literal(initial), multiplyExpr)
       }
     }
   })

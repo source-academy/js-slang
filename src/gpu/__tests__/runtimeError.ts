@@ -4,6 +4,9 @@ import { TypeError } from '../../utils/rttc'
 
 test('__createKernel with uninitialized array throws error', () => {
   const ctr = ['i', 'j']
+  const initials = [0, 0]
+  const steps = [1, 1]
+  const operators = ['<', '<']
   const bounds = [5, 4]
   const idx = ['i', 'j']
   const extern = {}
@@ -16,12 +19,16 @@ test('__createKernel with uninitialized array throws error', () => {
   const f2 = function (i: any, j: any) {
     return i * j
   }
-  const f = () => __createKernel(ctr, bounds, idx, extern, f1, arr, f2, [])
+  const f = () =>
+    __createKernel(ctr, bounds, initials, steps, operators, idx, extern, f1, arr, f2, [])
   expect(f).toThrow(TypeError)
 })
 
 test('__createKernel with 2 loops + uninitialized array throws error', () => {
   const ctr = ['i', 'j', 'k']
+  const initials = [0, 0, 0]
+  const steps = [1, 1, 1]
+  const operators = ['<', '<', '<']
   const bounds = [5, 4, 3]
   const extern = {}
   const idx = ['i', 'j', 'k']
@@ -37,6 +44,7 @@ test('__createKernel with 2 loops + uninitialized array throws error', () => {
   const f2 = function (i: any, j: any, k: any) {
     return i * j * k
   }
-  const f = () => __createKernel(ctr, bounds, idx, extern, f1, arr, f2, [])
+  const f = () =>
+    __createKernel(ctr, bounds, initials, steps, operators, idx, extern, f1, arr, f2, [])
   expect(f).toThrow(TypeError)
 })

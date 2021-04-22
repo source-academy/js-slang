@@ -5,21 +5,46 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import { gpuFunctionTranspile, gpuRuntimeTranspile } from './transfomer'
 import { ACORN_PARSE_OPTIONS } from '../constants'
+import { evaluateBinaryExpression } from '../utils/operators'
 
 // Heuristic : Only use GPU if array is bigger than this
 const MAX_SIZE = 200
 
 // helper function to get argument for setOutput function
-export function getGPUKernelDimensions(ctr: string[], end: number[], idx: (string | number)[]) {
-  const endMap = {}
+export function getGPUKernelDimensions(
+  ctr: string[],
+  end: number[],
+  initials: number[],
+  steps: number[],
+  operators: string[],
+  idx: (string | number)[]
+) {
+  const dimMap = {}
   for (let i = 0; i < ctr.length; i++) {
-    endMap[ctr[i]] = end[i]
+    const op = operators[i] as es.BinaryOperator
+    const e = end[i]
+    const initial = initials[i]
+    const step = steps[i]
+    // handle the case where the condition already fails at the start of the loop (initial op end === false)
+    if (!evaluateBinaryExpression(op, initial, e)) {
+      // then the dimension will be 0
+      dimMap[ctr[i]] = 0
+    } else {
+      // calculate dimension based on step size
+      let dimension = Math.ceil((e - initial) / step)
+      // handle the operators <= and >=, where the equality condition might cause dimension to be larger by 1
+      const finalVal = initial + step * dimension
+      if (evaluateBinaryExpression(op, finalVal, e)) {
+        dimension += 1
+      }
+      dimMap[ctr[i]] = dimension
+    }
   }
   const used: string[] = []
   const dim: number[] = []
   for (const m of idx) {
-    if (typeof m === 'string' && m in endMap && !used.includes(m)) {
-      dim.push(endMap[m])
+    if (typeof m === 'string' && m in dimMap && !used.includes(m)) {
+      dim.push(dimMap[m])
       used.push(m)
     }
   }
@@ -96,14 +121,33 @@ export function checkArray(arr: any, ctr: any, end: any, idx: any, ext: any) {
 }
 
 // helper function to assign GPU.js results to original array
-export function buildArray(arr: any, ctr: any, end: any, idx: any, ext: any, res: any) {
-  buildArrayHelper(arr, ctr, end, idx, ext, res, {})
+export function buildArray(
+  arr: any,
+  ctr: any,
+  end: any,
+  initials: any,
+  steps: any,
+  idx: any,
+  ext: any,
+  res: any
+) {
+  buildArrayHelper(arr, ctr, end, initials, steps, idx, ext, res, {})
 }
 
 // this is a recursive helper function for buildArray
 // it recurses through the indices and determines which subarrays to reassign
-function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res: any, used: any) {
-  // we are guranteed the types are valid from checkArray
+function buildArrayHelper(
+  arr: any,
+  ctr: any,
+  end: any,
+  initials: any,
+  steps: any,
+  idx: any,
+  ext: any,
+  res: any,
+  used: any
+) {
+  // we are guaranteed the types are valid from checkArray
   if (idx.length === 0) {
     return arr
   }
@@ -112,40 +156,94 @@ function buildArrayHelper(arr: any, ctr: any, end: any, idx: any, ext: any, res:
   const cur = idx[0]
   if (typeof cur === 'number') {
     // we only need to modify one of the subarrays of res
-    res[cur] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[cur], used)
+    res[cur] = buildArrayHelper(arr, ctr, end, initials, steps, idx.slice(1), ext, res[cur], used)
   } else if (typeof cur === 'string' && cur in ext) {
     // index is an external variable, treat as a number constant
     const v = ext[cur]
-    res[v] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[v], used)
+    res[v] = buildArrayHelper(arr, ctr, end, initials, steps, idx.slice(1), ext, res[v], used)
   } else if (typeof cur === 'string' && ctr.includes(cur) && !(cur in used)) {
-    // index is a counter, we need to modify all subarrays of res from index 0
-    // to the end bound of the counter
-    let e = undefined
+    // index is a counter, we need to modify all subarrays of res from index (initial)
+    // to the end bound of the counter, incrementing by a given step size
+    let initial = undefined
+    let step = undefined
     for (let i = 0; i < ctr.length; i++) {
       if (ctr[i] === cur) {
-        e = end[i]
+        initial = initials[i]
+        step = steps[i]
         break
       }
     }
-    for (let i = 0; i < e; i++) {
+    // maintain an index for our output array (res), which is different from the index of the GPU result array
+    // the GPU result array index (i) starts from 0 and increments by 1
+    // our output array index (res_i) starts from initial and increments by step
+    let res_i = initial
+    for (let i = 0; i < arr.length; i++) {
       const newUsed = { ...used }
-      newUsed[cur] = i
-      res[i] = buildArrayHelper(arr[i], ctr, end, idx.slice(1), ext, res[i], newUsed)
+      newUsed[cur] = res_i
+      res[res_i] = buildArrayHelper(
+        arr[i],
+        ctr,
+        end,
+        initials,
+        steps,
+        idx.slice(1),
+        ext,
+        res[res_i],
+        newUsed
+      )
+      res_i += step
     }
   } else if (typeof cur === 'string' && ctr.includes(cur) && cur in used) {
     // if the ctr was used as an index before, we need to take the same value
     const v = used[cur]
-    res[v] = buildArrayHelper(arr, ctr, end, idx.slice(1), ext, res[v], used)
+    res[v] = buildArrayHelper(arr, ctr, end, initials, steps, idx.slice(1), ext, res[v], used)
   }
   return res
 }
 
+// If the counter is being decremented rather than incremented by step size, we flip the sign of the step
+function modifySteps(steps: any, isIncrements: any) {
+  for (let i = 0; i < steps.length; i++) {
+    if (!isIncrements[i]) {
+      steps[i] = -steps[i]
+    }
+  }
+}
+
+/*
+ * This helper function checks that the loops are valid
+ * 1. All initial values and step sizes are integers (then array indices will always be integers)
+ * 2. The array index is always non-negative from initial to end
+ */
+export function checkValidLoops(end: any, initials: any, steps: any): boolean {
+  for (let i = 0; i < end.length; i++) {
+    const e = end[i]
+    const initial = initials[i]
+    const step = steps[i]
+
+    // 1. All initial values and step sizes are integers
+    if (!Number.isInteger(initial) || !Number.isInteger(step)) {
+      return false
+    }
+
+    // 2. The array index is always non-negative from initial to end
+    // The initial and end values must be non-negative
+    if (initial < 0 || e < 0) {
+      return false
+    }
+    // The counter must be moving in the direction from initial to end
+    if (step === 0 || Math.sign(e - initial) !== Math.sign(step)) {
+      return false
+    }
+  }
+  return true
+}
 /*
  * we only use the gpu if:
  * 1. we are working with numbers
- * 2. we have a large array (> 100 elements)
+ * 2. we have a large array (> MAX_SIZE elements)
  */
-function checkValidGPU(f: any, end: any): boolean {
+function checkValidGPU(f: any, end: any, dims: any): boolean {
   const args = end.map(() => 0)
   const res = f.apply({}, args)
 
@@ -156,23 +254,38 @@ function checkValidGPU(f: any, end: any): boolean {
   }
 
   let cnt = 1
-  for (const i of end) {
-    cnt = cnt * i
+  for (let i = 0; i < dims.length; i++) {
+    cnt *= dims[i]
   }
 
   return cnt > MAX_SIZE
 }
 
 // just run on js!
-function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
+function manualRun(
+  f: any,
+  ctr: any,
+  end: any,
+  initials: any,
+  steps: any,
+  operators: any,
+  idx: any,
+  ext: any,
+  res: any
+) {
   // generate all variations of counters
   let variants: number[][] = [[]]
-  for (const e of end) {
+  for (let i = 0; i < end.length; i++) {
+    const e = end[i]
+    const initial = initials[i]
+    const step = steps[i]
+    const operator = operators[i]
+
     const newVariant = []
-    for (let i = 0; i < e; i++) {
+    for (let j = initial; evaluateBinaryExpression(operator, j, e); j += step) {
       for (const p of variants) {
         const t: number[] = [...p]
-        t.push(i)
+        t.push(j)
         newVariant.push(t)
       }
     }
@@ -182,7 +295,6 @@ function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
   // we run the function for each variation of counters
   for (const p of variants) {
     const value = f.apply({}, p)
-
     // we find the location to assign the result in the original array
     let arr = res
     for (let i = 0; i < idx.length - 1; i++) {
@@ -213,7 +325,7 @@ function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
       const v = ext[lastIdx]
       arr[v] = value
     } else {
-      // index should alreday be guranteed to be a counter, number or external
+      // index should alreday be guaranteed to be a counter, number or external
       // variable
       throw 'Index must be number, counter or external variable'
     }
@@ -232,6 +344,9 @@ function manualRun(f: any, ctr: any, end: any, idx: any, ext: any, res: any) {
 export function __createKernel(
   ctr: any,
   end: any,
+  initials: any,
+  steps: any,
+  operators: any,
   idx: any,
   extern: any,
   f: any,
@@ -246,14 +361,14 @@ export function __createKernel(
     throw new TypeError(arr, '', 'object or array', typeof arr)
   }
 
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
+
   // check if program is valid to run on GPU
-  const ok = checkValidGPU(f2, end)
+  const ok = checkValidGPU(f2, end, kernelDim)
   if (!ok) {
-    manualRun(f2, ctr, end, idx, extern, arr)
+    manualRun(f2, ctr, end, initials, steps, operators, idx, extern, arr)
     return
   }
-
-  const kernelDim = getGPUKernelDimensions(ctr, end, idx)
 
   // custom functions to be added to GPU
   for (const customFunction of customFunctions) {
@@ -265,7 +380,7 @@ export function __createKernel(
 
   const gpuFunction = gpu.createKernel(f, out).setOutput(kernelDim)
   const res = gpuFunction() as any
-  buildArray(res, ctr, end, idx, extern, arr)
+  buildArray(res, ctr, end, initials, steps, idx, extern, arr)
 }
 
 function entriesToObject(entries: [string, any][]): any {
@@ -284,6 +399,10 @@ export function __clearKernelCache() {
 export function __createKernelSource(
   ctr: string[],
   end: number[],
+  initials: number[],
+  steps: number[],
+  operators: string[],
+  isIncrements: boolean[],
   idx: (string | number)[],
   externSource: [string, any][],
   localNames: string[],
@@ -292,6 +411,11 @@ export function __createKernelSource(
   kernelId: number,
   functionEntries: [string, any][]
 ) {
+  modifySteps(steps, isIncrements)
+  if (!checkValidLoops(end, initials, steps)) {
+    throw 'Loop is invalid'
+  }
+
   const extern = entriesToObject(externSource)
   // Create a set of function names (used in transpilation methods)
   const customFunctionNames = new Set<string>()
@@ -312,17 +436,49 @@ export function __createKernelSource(
 
   const memoizedf = kernels.get(kernelId)
   if (memoizedf !== undefined) {
-    return __createKernel(ctr, end, idx, extern, memoizedf, arr, f, customFunctions)
+    return __createKernel(
+      ctr,
+      end,
+      initials,
+      steps,
+      operators,
+      idx,
+      extern,
+      memoizedf,
+      arr,
+      f,
+      customFunctions
+    )
   }
 
   const code = f.toString()
   // We don't need the full source parser here because it's already validated at transpile time.
   const ast = (parse(code, ACORN_PARSE_OPTIONS) as unknown) as es.Program
   const body = (ast.body[0] as es.ExpressionStatement).expression as es.ArrowFunctionExpression
-  const newBody = gpuRuntimeTranspile(body, new Set(localNames), end, idx, customFunctionNames)
+  const newBody = gpuRuntimeTranspile(
+    body,
+    new Set(localNames),
+    end,
+    initials,
+    steps,
+    idx,
+    customFunctionNames
+  )
   const kernel = new Function(generate(newBody))
 
   kernels.set(kernelId, kernel)
 
-  return __createKernel(ctr, end, idx, extern, kernel, arr, f, customFunctions)
+  return __createKernel(
+    ctr,
+    end,
+    initials,
+    steps,
+    operators,
+    idx,
+    extern,
+    kernel,
+    arr,
+    f,
+    customFunctions
+  )
 }

@@ -10,10 +10,17 @@ import * as es from 'estree'
 class GPULoopVerifier {
   // for loop that we are looking at
   node: es.ForStatement
-
-  counter: string
-  end: es.Expression
   ok: boolean
+
+  // info about the structure of the for loop
+  // for (let |counter| = |initial|; |counter| |operator| |end|; |counter| = |counter| + |step|)
+  // isIncrement is true if the operator in gpu_for_assignment is +, and false if the operator is -
+  counter: string
+  initial: es.Expression
+  step: es.Expression
+  end: es.Expression
+  operator: es.BinaryOperator
+  isIncrement: boolean
 
   constructor(node: es.ForStatement) {
     this.node = node
@@ -55,10 +62,11 @@ class GPULoopVerifier {
     this.counter = initializer.id.name
 
     const set: es.Expression = initializer.init
-    if (!set || set.type !== 'Literal' || set.value !== 0) {
+    if (!set || !this.isValidLoopVar(set)) {
       return false
     }
 
+    this.initial = set
     return true
   }
 
@@ -72,17 +80,25 @@ class GPULoopVerifier {
       return false
     }
 
-    if (!(node.operator === '<' || node.operator === '<=')) {
+    if (
+      !(
+        node.operator === '<' ||
+        node.operator === '<=' ||
+        node.operator === '>' ||
+        node.operator === '>='
+      )
+    ) {
       return false
     }
+    this.operator = node.operator
 
     const lv: es.Expression = node.left
-    if (lv.type !== 'Identifier' || lv.name !== this.counter) {
+    if (!this.isCounter(lv)) {
       return false
     }
 
     const rv = node.right
-    if (!(rv.type === 'Identifier' || rv.type === 'Literal')) {
+    if (!this.isValidLoopVar(rv)) {
       return false
     }
 
@@ -104,7 +120,7 @@ class GPULoopVerifier {
       return false
     }
 
-    if (node.left.type !== 'Identifier' || node.left.name !== this.counter) {
+    if (!this.isCounter(node.left)) {
       return false
     }
 
@@ -113,18 +129,34 @@ class GPULoopVerifier {
     }
 
     const rv = node.right
-    if (rv.operator !== '+') {
+    if (rv.operator === '+') {
+      this.isIncrement = true
+    } else if (rv.operator === '-') {
+      this.isIncrement = false
+    } else {
       return false
     }
 
-    const identifierLeft = rv.left.type === 'Identifier' && rv.left.name === this.counter
-    const identifierRight = rv.right.type === 'Identifier' && rv.right.name === this.counter
+    // we allow both i = i + step and i = step + i
+    if (this.isCounter(rv.left)) {
+      // if left is the counter, right must be the step size
+      this.step = rv.right
+      return this.isValidLoopVar(rv.right)
+    } else if (this.isCounter(rv.right)) {
+      // if right is the counter, left must be the step size
+      this.step = rv.left
+      return this.isValidLoopVar(rv.left)
+    } else {
+      return false
+    }
+  }
 
-    const literalLeft = rv.left.type === 'Literal' && rv.left.value === 1
-    const literalRight = rv.right.type === 'Literal' && rv.right.value === 1
+  isValidLoopVar = (expr: es.Node): boolean => {
+    return expr.type === 'Literal' || expr.type === 'Identifier'
+  }
 
-    // we allow both i = i + 1 and i = 1 + i
-    return (identifierLeft && literalRight) || (identifierRight && literalLeft)
+  isCounter = (expr: es.Node): boolean => {
+    return expr.type === 'Identifier' && expr.name === this.counter
   }
 }
 

@@ -341,3 +341,35 @@ test('resolve naming conflicts by disabling automatic optimizations', () => {
   )?.length
   expect(cntWarnings).toEqual(1)
 })
+
+test('simple for loop with different update gets transpiled', () => {
+  const code = stripIndent`
+    let res = [];
+    for (let i = 0; i < 5; i = i + 2) {
+        res[i] = i;
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
+
+  const cnt = transpiled.match(/__createKernelSource/g)?.length
+  expect(cnt).toEqual(1)
+})
+
+test('simple for loop with non-zero initialization gets transpiled', () => {
+  const code = stripIndent`
+    let res = [];
+    for (let i = 1; i < 5; i = i + 1) {
+        res[i] = i;
+    }
+    `
+  const context = mockContext(4, 'gpu')
+  const program = parse(code, context)!
+  transpileToGPU(program)
+  const transpiled = generate(program)
+
+  const cnt = transpiled.match(/__createKernelSource/g)?.length
+  expect(cnt).toEqual(1)
+})

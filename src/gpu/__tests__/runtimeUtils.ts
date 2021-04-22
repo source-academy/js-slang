@@ -1,73 +1,147 @@
-import { getGPUKernelDimensions, checkArray, buildArray } from '../lib'
+import { getGPUKernelDimensions, checkArray, buildArray, checkValidLoops } from '../lib'
 
 test('getGPUKernelDimensions with counter prefix returns correct dimensions', () => {
   const ctr = ['i', 'j', 'k']
   const end = [3, 5, 1]
+  const initials = [0, 0, 0]
+  const steps = [1, 1, 1]
+  const operators = ['<', '<', '<']
   const idx = ['i', 'j', 'k']
-  const kernelDim = getGPUKernelDimensions(ctr, end, idx)
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
   expect(kernelDim).toEqual([1, 5, 3])
 
   const ctr2 = ['i', 'j', 'k', 'l']
   const end2 = [3, 5, 1, 2]
+  const initials2 = [0, 0, 0, 0]
+  const steps2 = [1, 1, 1, 1]
+  const operators2 = ['<', '<', '<', '<']
   const idx2 = ['i', 'j']
-  const kernelDim2 = getGPUKernelDimensions(ctr2, end2, idx2)
+  const kernelDim2 = getGPUKernelDimensions(ctr2, end2, initials2, steps2, operators2, idx2)
   expect(kernelDim2).toEqual([5, 3])
 })
 
 test('getGPUKernlDimensions with counter combination returns correct dimensions', () => {
   const ctr = ['i', 'j', 'k']
   const end = [3, 2, 5]
+  const initials = [0, 0, 0]
+  const steps = [1, 1, 1]
+  const operators = ['<', '<', '<']
   const idx = ['j', 'k', 'i']
-  const kernelDim = getGPUKernelDimensions(ctr, end, idx)
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
   expect(kernelDim).toEqual([3, 5, 2])
 
   const ctr2 = ['i', 'j', 'k', 'l']
   const end2 = [3, 5, 1, 2]
+  const initials2 = [0, 0, 0, 0]
+  const steps2 = [1, 1, 1, 1]
+  const operators2 = ['<', '<', '<', '<']
   const idx2 = ['k', 'i']
-  const kernelDim2 = getGPUKernelDimensions(ctr2, end2, idx2)
+  const kernelDim2 = getGPUKernelDimensions(ctr2, end2, initials2, steps2, operators2, idx2)
   expect(kernelDim2).toEqual([3, 1])
 })
 
 test('getGPUKernlDimensions with numbers returns correct dimensions', () => {
   const ctr = ['i', 'j', 'k']
   const end = [3, 2, 5]
+  const initials = [0, 0, 0]
+  const steps = [1, 1, 1]
+  const operators = ['<', '<', '<']
   const idx = ['j', '1', 'i']
-  const kernelDim = getGPUKernelDimensions(ctr, end, idx)
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
   expect(kernelDim).toEqual([3, 2])
 
   const ctr2 = ['i', 'j', 'k', 'l']
   const end2 = [3, 5, 1, 2]
+  const initials2 = [0, 0, 0, 0]
+  const steps2 = [1, 1, 1, 1]
+  const operators2 = ['<', '<', '<']
   const idx2 = [3, 'i']
-  const kernelDim2 = getGPUKernelDimensions(ctr2, end2, idx2)
+  const kernelDim2 = getGPUKernelDimensions(ctr2, end2, initials2, steps2, operators2, idx2)
   expect(kernelDim2).toEqual([3])
 })
 
 test('getGPUKernelDimensions with external variables returns correct dimensions', () => {
   const ctr = ['i', 'j', 'k']
   const end = [3, 2, 5]
+  const initials = [0, 0, 0]
+  const steps = [1, 1, 1]
+  const operators = ['<', '<', '<']
   const idx = ['test', '1', 'i']
-  const kernelDim = getGPUKernelDimensions(ctr, end, idx)
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
   expect(kernelDim).toEqual([3])
 
   const ctr2 = ['i', 'j', 'k', 'l']
   const end2 = [3, 5, 1, 2]
+  const initials2 = [0, 0, 0, 0]
+  const steps2 = [1, 1, 1, 1]
+  const operators2 = ['<', '<', '<', '<']
   const idx2 = ['l', 'test', 'k']
-  const kernelDim2 = getGPUKernelDimensions(ctr2, end2, idx2)
+  const kernelDim2 = getGPUKernelDimensions(ctr2, end2, initials2, steps2, operators2, idx2)
   expect(kernelDim2).toEqual([1, 2])
 })
 
 test('getGPUKernelDimensions with repeated counters returns correct dimensions', () => {
   const ctr = ['i', 'j', 'k']
   const end = [3, 2, 5]
+  const initials = [0, 0, 0]
+  const steps = [1, 1, 1]
+  const operators = ['<', '<', '<']
   const idx = ['i', 'i', 'k']
-  const kernelDim = getGPUKernelDimensions(ctr, end, idx)
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
   expect(kernelDim).toEqual([5, 3])
 
   const ctr2 = ['i', 'j', 'k', 'l']
   const end2 = [3, 5, 1, 2]
+  const initials2 = [0, 0, 0, 0]
+  const steps2 = [1, 1, 1, 1]
+  const operators2 = ['<', '<', '<', '<']
   const idx2 = ['l', 'k', 'l']
-  const kernelDim2 = getGPUKernelDimensions(ctr2, end2, idx2)
+  const kernelDim2 = getGPUKernelDimensions(ctr2, end2, initials2, steps2, operators2, idx2)
   expect(kernelDim2).toEqual([1, 2])
+})
+
+test('getGPUKernelDimensions with non-standard initial/step returns correct dimensions', () => {
+  const ctr = ['i', 'j', 'k']
+  const end = [10, 11, 12]
+  const initials = [1, 2, 3]
+  const steps = [2, 3, 4]
+  const operators = ['<', '<', '<']
+  const idx = ['i', 'j', 'k']
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
+  expect(kernelDim).toEqual([3, 3, 5])
+})
+
+test('getGPUKernelDimensions with <= operator returns correct dimensions', () => {
+  const ctr = ['i', 'j', 'k']
+  const end = [3, 5, 1]
+  const initials = [0, 0, 0]
+  const steps = [1, 1, 1]
+  const operators = ['<=', '<=', '<=']
+  const idx = ['i', 'j', 'k']
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
+  expect(kernelDim).toEqual([2, 6, 4])
+})
+
+test('getGPUKernelDimensions with <= operator and non-standard initial/step returns correct dimensions', () => {
+  const ctr = ['i', 'j', 'k']
+  const end = [10, 11, 12]
+  const initials = [1, 2, 3]
+  const steps = [2, 3, 4]
+  const operators = ['<=', '<=', '<=']
+  const idx = ['i', 'j', 'k']
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
+  expect(kernelDim).toEqual([3, 4, 5])
+})
+
+test('getGPUKernelDimensions where the loop condition fails from the start returns 0 dimension', () => {
+  const ctr = ['i', 'j', 'k']
+  const end = [10, 11, 12]
+  const initials = [1, 2, 3]
+  const steps = [2, 3, 4]
+  const operators = ['<=', '>', '<=']
+  const idx = ['i', 'j', 'k']
+  const kernelDim = getGPUKernelDimensions(ctr, end, initials, steps, operators, idx)
+  expect(kernelDim).toEqual([3, 0, 5])
 })
 
 test('checkArray returns true when array is valid with counter prefix', () => {
@@ -266,6 +340,8 @@ test('checkArray returns false when array is invalid with repeated counters', ()
 test('buildArray with counter prefix performs correct assignment', () => {
   let ctr = ['i', 'j', 'k']
   let end = [3, 3, 2]
+  let initials = [0, 0, 0]
+  let steps = [1, 1, 1]
   let idx = ['i', 'j', 'k']
   let ext = {}
   let res: any = [
@@ -319,11 +395,13 @@ test('buildArray with counter prefix performs correct assignment', () => {
       [1, 1, 2]
     ]
   ]
-  buildArray(res, ctr, end, idx, ext, arr)
+  buildArray(res, ctr, end, initials, steps, idx, ext, arr)
   expect(arr).toEqual(exp)
 
   ctr = ['i', 'j', 'k', 'l']
   end = [1, 3, 2, 4]
+  initials = [0, 0, 0, 0]
+  steps = [1, 1, 1, 1]
   idx = ['i', 'j']
   ext = {}
   res = [[1, 1, 1]]
@@ -357,13 +435,15 @@ test('buildArray with counter prefix performs correct assignment', () => {
       [2, 2, 2]
     ]
   ]
-  buildArray(res, ctr, end, idx, ext, arr)
+  buildArray(res, ctr, end, initials, steps, idx, ext, arr)
   expect(arr).toEqual(exp)
 })
 
 test('buildArray with counter combination performs correct assignment', () => {
   let ctr = ['i', 'j', 'k']
   let end = [1, 3, 2]
+  let initials = [0, 0, 0]
+  let steps = [1, 1, 1]
   let idx = ['k', 'i', 'j']
   let ext = {}
   let res: any = [[[1, 1, 1]], [[1, 1, 1]]]
@@ -401,11 +481,13 @@ test('buildArray with counter combination performs correct assignment', () => {
       [2, 2, 2]
     ]
   ]
-  buildArray(res, ctr, end, idx, ext, arr)
+  buildArray(res, ctr, end, initials, steps, idx, ext, arr)
   expect(arr).toEqual(exp)
 
   ctr = ['i', 'j', 'k', 'l']
   end = [1, 3, 2, 4]
+  initials = [0, 0, 0, 0]
+  steps = [1, 1, 1, 1]
   idx = ['l', 'j']
   ext = {}
   res = [
@@ -442,13 +524,15 @@ test('buildArray with counter combination performs correct assignment', () => {
     [1, 1, 1],
     [1, 1, 1]
   ]
-  buildArray(res, ctr, end, idx, ext, arr)
+  buildArray(res, ctr, end, initials, steps, idx, ext, arr)
   expect(arr).toEqual(exp)
 })
 
 test('buildArray with numbers performs correct assignment', () => {
   let ctr = ['i', 'j', 'k']
   let end = [1, 2, 3]
+  let initials = [0, 0, 0]
+  let steps = [1, 1, 1]
   let idx = ['i', 1, 'j']
   let ext = {}
   let res: any = [[1, 1]]
@@ -486,11 +570,13 @@ test('buildArray with numbers performs correct assignment', () => {
       [2, 2, 2]
     ]
   ]
-  buildArray(res, ctr, end, idx, ext, arr)
+  buildArray(res, ctr, end, initials, steps, idx, ext, arr)
   expect(arr).toEqual(exp)
 
   ctr = ['i', 'j', 'k']
   end = [1, 2, 3]
+  initials = [0, 0, 0]
+  steps = [1, 1, 1]
   idx = [2, 1, 'k']
   ext = {}
   res = [1, 1, 1]
@@ -528,13 +614,15 @@ test('buildArray with numbers performs correct assignment', () => {
       [2, 2, 2]
     ]
   ]
-  buildArray(res, ctr, end, idx, ext, arr)
+  buildArray(res, ctr, end, initials, steps, idx, ext, arr)
   expect(arr).toEqual(exp)
 })
 
 test('buildArray with external variables performs correct assignment', () => {
   let ctr = ['i', 'j', 'k']
   let end = [1, 2, 3]
+  let initials = [0, 0, 0]
+  let steps = [1, 1, 1]
   let idx = ['i', 'x', 'j']
   let ext: any = { x: 1 }
   let res: any = [[1, 1]]
@@ -572,11 +660,13 @@ test('buildArray with external variables performs correct assignment', () => {
       [2, 2, 2]
     ]
   ]
-  buildArray(res, ctr, end, idx, ext, arr)
+  buildArray(res, ctr, end, initials, steps, idx, ext, arr)
   expect(arr).toEqual(exp)
 
   ctr = ['i', 'j', 'k']
   end = [1, 2, 3]
+  initials = [0, 0, 0]
+  steps = [1, 1, 1]
   idx = ['x', 'y', 'k']
   ext = { x: 2, y: 1 }
   res = [1, 1, 1]
@@ -614,13 +704,15 @@ test('buildArray with external variables performs correct assignment', () => {
       [2, 2, 2]
     ]
   ]
-  buildArray(res, ctr, end, idx, ext, arr)
+  buildArray(res, ctr, end, initials, steps, idx, ext, arr)
   expect(arr).toEqual(exp)
 })
 
 test('buildArray with repeated counters performs correct assignment', () => {
   const ctr = ['i', 'j', 'k']
   const end = [1, 2, 3]
+  const initials = [0, 0, 0]
+  const steps = [1, 1, 1]
   const idx = ['j', 'j', 'k']
   const ext: any = {}
   const res: any = [
@@ -661,6 +753,83 @@ test('buildArray with repeated counters performs correct assignment', () => {
       [2, 2, 2]
     ]
   ]
-  buildArray(res, ctr, end, idx, ext, arr)
+  buildArray(res, ctr, end, initials, steps, idx, ext, arr)
   expect(arr).toEqual(exp)
+})
+
+test('checkValidLoops accepts standard loops', () => {
+  // let i = 0; i < 10; i = i + 1
+  const end = [10]
+  const initials = [0]
+  const steps = [1]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(true)
+})
+
+test('checkValidLoops accepts loops with non-standard initial/step size', () => {
+  // let i = 2; i < 10; i = i + 2
+  const end = [10]
+  const initials = [2]
+  const steps = [2]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(true)
+})
+
+test('checkValidLoops acceps loops that decrement the counter', () => {
+  // let i = 10; i > 0; i = i + (-1) or i = i - 1
+  const end = [0]
+  const initials = [10]
+  const steps = [-1]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(true)
+})
+
+test('checkValidLoops rejects loops with non-integer initial', () => {
+  // let i = 0.5; i < 10; i = i + 2
+  const end = [10]
+  const initials = [0.5]
+  const steps = [2]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(false)
+})
+
+test('checkValidLoops rejects loops with non-integer step size', () => {
+  // let i = 2; i < 10; i = i + 0.5
+  const end = [10]
+  const initials = [2]
+  const steps = [0.5]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(false)
+})
+
+test('checkValidLoops rejects loops with negative initial', () => {
+  // let i = -2; i < 10; i = i + 1
+  const end = [10]
+  const initials = [-2]
+  const steps = [1]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(false)
+})
+
+test('checkValidLoops rejects loops which would not terminate', () => {
+  // let i = 0; i < 10; i = i + (-1) or i = i - 1
+  const end = [10]
+  const initials = [0]
+  const steps = [-1]
+  const res = checkValidLoops(end, initials, steps)
+  expect(res).toEqual(false)
+
+  // let i = 10; i > 0; i = i + 1
+  const end2 = [0]
+  const initials2 = [10]
+  const steps2 = [1]
+  const res2 = checkValidLoops(end2, initials2, steps2)
+  expect(res2).toEqual(false)
+
+  // let i = 0; i < 10; i = i + 0
+  const end3 = [10]
+  const initials3 = [0]
+  const steps3 = [0]
+  const res3 = checkValidLoops(end3, initials3, steps3)
+  expect(res3).toEqual(false)
 })
