@@ -8,15 +8,18 @@
     && \textit{gpu\_for\_let} 
     &&\quad ::= &\quad 
     && \textbf{\texttt{let}}\  \textit{name} \ 
-                                               \textbf{\texttt{=}}\  \textbf{\texttt{0}} \ \textbf{\texttt{;}} \\
+                                               \textbf{\texttt{=}}\  (\textit{number} \ | \ \textit{name}) \ \textbf{\texttt{;}} \\
     && \textit{gpu\_for\_condition} 
     &&\quad ::= &\quad 
     && \textit{name} \ 
     \textbf{\texttt{<}}\  (\textit{number} \ | \ \textit{name})\ \textbf{\texttt{;}} \\
     &&  && |    &\quad && \textit{name} \ \textbf{\texttt{<=}}\  (\textit{number} \ | \ \textit{name})\ \textbf{\texttt{;}} \\
+    &&  && |    &\quad && \textit{name} \ \textbf{\texttt{>}}\  (\textit{number} \ | \ \textit{name})\ \textbf{\texttt{;}} \\
+    &&  && |    &\quad && \textit{name} \ \textbf{\texttt{>=}}\  (\textit{number} \ | \ \textit{name})\ \textbf{\texttt{;}} \\
     && \textit{gpu\_for\_assignment} 
     &&\quad ::= &\quad 
-    && \textit{name} \ \textbf{\texttt{=}}\  \textit{name} \  \textbf{\texttt{+}} \ \textbf{\texttt{1}} \  \textbf{\texttt{;}} \\
+    && \textit{name} \ \textbf{\texttt{=}}\  \textit{name} \  \textbf{\texttt{+}} \ (\textit{number} \ | \ \textit{name}) \  \textbf{\texttt{;}} \\
+    && && |    &\quad && \textit{name} \ \textbf{\texttt{=}}\  \textit{name} \  \textbf{\texttt{-}} \ (\textit{number} \ | \ \textit{name}) \  \textbf{\texttt{;}} \\
     && \textit{gpu\_block} 
     &&\quad ::= &\quad 
     && \{ \ \textit{gpu\_statement} \ \} \ | \ \{ \ \textit{core\_statements} \ \} \\
@@ -30,7 +33,8 @@
     &&\quad ::= &\quad && \textit{name} \ | \
     \textit{gpu\_access} \textbf{\texttt{[}} \textit{gpu\_name} \textbf{\texttt{]}}\ \\
     && \textit{gpu\_result} 
-    &&\quad ::= &\quad && \textit{number} \\
+    &&\quad ::= &\quad && \textit{number} \ | \
+    \textbf{\texttt{[}}\ \textit{gpu\_result} {\ldots}\ \textbf{\texttt{]}}\ \\
     && \textit{core\_statement} 
     &&\quad ::= &\quad 
     && \textbf{\texttt{const}}\  \textit{name} \ 
@@ -68,3 +72,4 @@
     && \epsilon \ | \ \textit{gpu\_expression} \ ( \ \ , \ \textit{gpu\_expression} \ )
     \ {\ldots}
     \end{alignat*}
+    

@@ -2,7 +2,7 @@
 
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\docheader{2021}{Source}{\S 4 GPU}{Martin Henz, Rahul Rajesh, Zhang Yuntong}
+	\docheader{2021}{Source}{\S 4 GPU}{Martin Henz, Rahul Rajesh, Zhang Yuntong, Lim Ao Jun Joel, Lim Haw Jia}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input source_intro.tex
@@ -11,7 +11,7 @@
 
 Source \S 4 GPU allows for Source programs to be accelerated on the GPU if certain conditions are met.
 The exact specifications for this is outlined on page \pageref{gpu_supp}. Source \S 4 GPU  defines a formal specification 
-to identify areas in the program that are embarrssingly parallel (e.g. for loops etc.) . These will then
+to identify areas in the program that are embarrassingly parallel (e.g. for loops etc.) . These will then
 be run in parallel across GPU threads. Experimentation has shown that Source \S 4 GPU is orders of magnitude faster
 than Source \S 4 for heavy CPU bound tasks (matrix multiplication of large matrices)
 
@@ -84,17 +84,32 @@ In the BNF, we have special loops that take on this form:
 && \textit{gpu\_for\_assignment} \ \textbf{\texttt{)}} 
 \end{alignat*}
 
-These are the loops that will be taken into consideration for parallelization. However, on top of the BNF syntax, the below requirement must also be statisfied:
+These are the loops that will be taken into consideration for parallelization. However, on top of the BNF syntax, the below requirement must also be satisfied:
 
 \begin{itemize}
     \item{the names declared in each \textit{gpu\_for\_let} have to be different across the loops}
     \item{in each loop, the \textit{gpu\_condition} and the \textit{gpu\_for\_assignment} must use the name declared
     in the respective \textit{gpu\_for\_let} statement}
+    \item{the initial value of the counter in  \textit{gpu\_for\_let} and the value of the terminal value in \textit{gpu\_condition} must be non-negative}
+    \item{the counter must increment or decrement in the direction of the terminal value}
+    \item{the initial value of the counter in \textit{gpu\_for\_let} and the step size in \textit{gpu\_for\_assignment} must be integers}
 \end{itemize}
 
 \subsection*{GPU Function}
 
-A \textit{gpu\_function} has to be a \textit{math\_\texttt{*}} function
+A \textit{gpu\_function} can be a \textit{math\_\texttt{*}} function or a user-defined function.
+If it is a user-defined function, it must satisfy all of these constraints:
+
+\begin{itemize}
+    \item{the function name must not be one of the reserved keywords in the OpenGL Shading Language\footnote{See \href{ https://www.khronos.org/registry/OpenGL/specs/es/2.0/GLSL_ES_Specification_1.00.pdf}{OpenGL ES Shading Language specifications}, Section 3.7.}}
+    \item{there must not be any use of external variables defined outside of the function scope}
+    \item{the function must not be a higher-order function (it may not take any functions as arguments)}
+    \item{the function must not be recursive. This also includes the case of indirect recursion, so the function may not call itself, and it may not call a chain of functions that eventually calls itself (e.g. A calls B, B calls C, C calls A)}
+    \item{the function must not use any of Source's standard libraries (other than the math library)}
+    \item{the function must be declared in the global scope of the program}
+    \item{any function that is called within this function must also be a valid \textit{gpu\_function}}
+\end{itemize}
+
 
 \subsection*{Core Statement}
 
@@ -108,14 +123,12 @@ Within \textit{core\_statement}, there are some constraints:
 \subsection*{GPU Result Statement}
 
 The \textit{gpu\_result\_assignment} is the statement that stores a value calculated in core statements into a result array. 
-It access an array at a certain coordinate e.g. ${array[{i_1}][{i_2}][{i_3}]}$. For this:
+It access an array at a certain coordinate e.g. ${array[{i_1}][{i_2}][{i_3}]}$. For this: 
 
 \begin{itemize}
     \item{This result array has to be defined outside the \textit{gpu\_block}.}
-    \item{The sequence of coordinates which we access in the result array ${{i_1}, {i_2}, {i_3} ... i_{k}}$ must be a 
-        prefix of the special for loop counters ${[c_1,c_2 ... c_n]}$.}
-    \item{ If you have ${n}$ special for loops, the array expression can take on ${k}$ coordinates where ${0 < k \leq n}$. 
-    The order matters as well, it has to follow the same order as the special for loops: you cannot have ${name[c_2][c_1]}$.}
+    \item{ If you have ${n}$ special for loops, the array expression can take on ${k}$ coordinates where ${0 < k \leq n}$.} 
+    \item{ The coordinate values can be either a number, an external variable or a counter only. }
 \end{itemize}
 
 \section*{Examples}
@@ -131,15 +144,6 @@ for (let i = 0; i < N; i = i + 1) {
 }
 \end{verbatim}
 
-\textbf{Invalid} - Counter used is not a prefix of for loop counters:
-\begin{verbatim}
-for (let i = 0; i < N; i = i + 1) {
-    for (let k = 0; k < M; k = k + 1) {
-        res[k] = arr[i % 2] + 1;
-    }
-}
-\end{verbatim}
-
 \textbf{Valid} - Using first three loop counters (meaning the loop will be run across N*M*C threads, if available):
 \begin{verbatim}
 for (let i = 0; i < N; i = i + 1) {
@@ -147,31 +151,80 @@ for (let i = 0; i < N; i = i + 1) {
         for (let k = 0; k < C; k = k + 1) {
             let x = math_pow(2, 10);
             let y = x * (1000);
-            arr[i][j][k] = (x + y * 2);
+            arr[i][k][j] = (x + y * 2);
         }
     }
 }
 \end{verbatim}
 
-\textbf{Invalid} - Indices are in wrong order (must respect for loop counter orders):
+\textbf{Valid} - Using valid user-defined functions within the loop body:
 \begin{verbatim}
+function add(x, y) {
+    return x + y;
+}
+function multiply(x, y) {
+    return x * y;
+}
 for (let i = 0; i < N; i = i + 1) {
     for (let j = 0; j < M; j = j + 1) {
         for (let k = 0; k < C; k = k + 1) {
-            let x = math_pow(2, 10);
-            let y = x * (1000);
-            res[k][j][i] = (x + y * 2);
+             res[i][j][k] = multiply(add(i, j), k);
         }
     }
 }
 \end{verbatim}
 
-\textbf{Invalid} - Using an index that is not part of a special for loop (see above):
+\textbf{Invalid} - Using recursive functions within the loop body:
+\begin{verbatim}
+function f(x) {
+    if (x === 0) {
+        return 0;
+    } else {
+        return g(x - 1);
+    }
+}
+function g(x) {
+    if (x === 0) {
+        return 0;
+    } else {
+        return f(x - 1);
+    }
+}
+
+for (let i = 0; i < N; i = i + 1) {
+    res[i] = f(i);
+}
+\end{verbatim}
+
+\textbf{Invalid} - Using functions which access external variables:
+\begin{verbatim}
+let y = 1;
+function f(x) {
+    return x + y;
+}
+
+for (let i = 0; i < N; i = i + 1) {
+    res[i] = f(i);
+}
+\end{verbatim}
+
+\textbf{Valid} - Using a for loop where the counter starts as, and increments/decrements by an arbitrary integer value:
+\begin{verbatim}
+for (let i = 0; i < N; i = i + 1) {
+    for (let j = M; j >= 2; j = j - 3) {
+        for (let k = 1; k < C; k = k + 2) {
+            res[i][j][k] = i * j * k;
+        }
+    }
+}
+\end{verbatim}
+
+\textbf{Invalid} - Using a for loop where the terminal value is negative:
 \begin{verbatim}
 for (let i = 0; i < N; i = i + 1) {
     for (let j = 0; j < M; j = j + 1) {
-        for (let k = 1; k < C; k = k + 2) {
-            res[k] = arr1[i] + arr2[j];
+        for (let k = C; k >= -1 ; k = k - 2) {
+            res[i][j][k] = i * j * k;
         }
     }
 }
