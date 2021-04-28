@@ -1,13 +1,13 @@
 \begin{alignat*}{9}
-&& \textit{program}    &&\quad ::= &\quad && \textit{import-directive} \ \ldots\ \textit{statement} \ \ldots
+&& \textit{program}    &&\quad ::= &\quad && \textit{import-directives} \ \textit{statement} \ldots
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/3.1.1.html\#p6}{program}} \\[1mm]
-&& \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{import}}\ \textbf{\texttt{\{}}\ \textit{import-names} \ \textbf{\texttt{\}}}\ \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{;}}
-                                                           && \textrm{import directive} \\[1mm]
-&& \textit{import-names}  && ::= &\quad && \epsilon\ | \ \textit{name}\ (
+&& \textit{import-directives}  && ::= &\quad && \epsilon\ | \ \textit{import-directive}\ (
                                                                \ \textbf{\texttt{,}} \
-                                                                 \textit{name} \ 
-                                                                      )\ \ldots
-                                                            && \textrm{import name declarations} \\[1mm]
+                                                                 \textit{import-directive} \ 
+                                                                      ) \ldots \quad
+                                                            && \textrm{import directives} \\[1mm]
+&& \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{import}}\ \textbf{\texttt{\{}}\ \textit{names} \ \textbf{\texttt{\}}}\ \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{;}}
+                                                           && \textrm{import directive} \\[1mm]
 %&& \textit{import-name}  && ::= &\quad && \textit{name}\ | \ \textit{name}\ \textbf{\texttt{as}}\ \textit{name}
 %                                                            && \textrm{import name declaration}} \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
@@ -15,14 +15,8 @@
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.2.html\#p2}{constant declaration}} \\
 &&                       && |   &\quad && \textit{let} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/3.1.1.html\#p3}{variable declaration}} \\
-&&                       && |   &\quad && \textit{assignment} \ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/3.1.1.html\#p4}{variable assignment}} \\
-&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
-                                          \textit{expression} \textbf{\texttt{]}} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{array assignment} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
-                                   \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
+                                   \textbf{\texttt{(}}\  \textit{names} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p4}{function declaration}}\\
 &&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p4}{return statement}}\\
@@ -46,9 +40,9 @@
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.8.html\#p14}{block statement}}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.1.html\#p3}{expression statement}} \\[1mm]
-&& \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
-                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
-                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p4}{function parameters}} \\[1mm]
+&& \textit{names}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
+                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ ) \ldots
+                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p4}{name list}} \\[1mm]
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
                                    \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
                                    \textit{block} \\
@@ -57,7 +51,7 @@
                                           \ | \
                                           \textit{\href{https://source-academy.github.io/sicp/chapters/1.3.3.html\#footnote-1}{if-statement}} \ )
                                                             && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.3.2.html\#p12}{conditional statement}} \\[1mm]
-&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement}\ \ldots \ \textbf{\texttt{\}}} \quad
+&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement} \ldots \ \textbf{\texttt{\}}} \quad
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.8.html\#p14}{block statement}} \\[1mm]
 && \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
@@ -83,12 +77,12 @@
                                             \textbf{\texttt{)}}
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p5}{function application}} \\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
-                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                               \textbf{\texttt{(}}\ \textit{names}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.3.2.html}{lambda expression (expr. body)}} \\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
-                                               \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
+                                               \textbf{\texttt{(}}\ \textit{names}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{block}
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/2.2.4.html\#footnote-3}{lambda expression (block body)}} \\
@@ -97,9 +91,15 @@
                                             \ \textbf{\texttt{:}}\
                                             \textit{expression}\
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.6.html\#p1}{conditional expression}} \\
+&&                       && |   &\quad && \textit{assignment} 
+                                                           && \textrm{\href{https://source-academy.github.io/sicp/chapters/3.1.1.html\#p4}{variable assignment}} \\
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
                                                            && \textrm{array access} \\
+&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
+                                          \textit{expression} \textbf{\texttt{]}} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} 
+                                                           && \textrm{array assignment} \\
 &&                       && |   &\quad &&   \textbf{\texttt{[}}\ 
                                             \textit{expressions}\
                                             \textbf{\texttt{]}}
@@ -118,6 +118,6 @@
 && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
-                                                                      )\ \ldots
+                                                                      ) \ldots
                                                             && \textrm{\href{https://source-academy.github.io/sicp/chapters/1.1.4.html\#p5}{argument expressions}}
 \end{alignat*}
