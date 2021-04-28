@@ -1,11 +1,6 @@
 \begin{alignat*}{9}
-&& \textit{program}    &&\quad ::= &\quad && \textit{import-directives} \ \textit{statement} \ldots
+&& \textit{program}    &&\quad ::= &\quad && \textit{import-directive} \ldots \ \textit{statement} \ldots
                                                            && \textrm{\href{https://source-academy.github.io/sicp/chapters/3.1.1.html\#p6}{program}} \\[1mm]
-&& \textit{import-directives}  && ::= &\quad && \epsilon\ | \ \textit{import-directive}\ (
-                                                               \ \textbf{\texttt{,}} \
-                                                                 \textit{import-directive} \ 
-                                                                      ) \ldots \quad
-                                                            && \textrm{import directives} \\[1mm]
 && \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{import}}\ \textbf{\texttt{\{}}\ \textit{names} \ \textbf{\texttt{\}}}\ \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{;}}
                                                            && \textrm{import directive} \\[1mm]
 %&& \textit{import-name}  && ::= &\quad && \textit{name}\ | \ \textit{name}\ \textbf{\texttt{as}}\ \textit{name}
