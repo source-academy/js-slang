@@ -59,13 +59,23 @@ export function transformSingleImportDeclaration(
 ) {
   const result = []
   const tempNamespace = `__MODULE_${moduleCounter}__`
-  // const yyy = __MODULE_xxx__.yyy;
-  const neededSymbols = node.specifiers.map(specifier => specifier.local.name)
+  const neededSymbols = node.specifiers.map(specifier => {
+    if (specifier.type !== 'ImportSpecifier') {
+      throw new Error(
+        `I expected only ImportSpecifiers to be allowed, but encountered ${specifier.type}.`
+      )
+    }
+
+    return {
+      imported: specifier.imported.name,
+      local: specifier.local.name
+    }
+  })
   for (const symbol of neededSymbols) {
     result.push(
       create.constantDeclaration(
-        symbol,
-        create.memberExpression(create.identifier(tempNamespace), symbol)
+        symbol.local,
+        create.memberExpression(create.identifier(tempNamespace), symbol.imported)
       )
     )
   }
