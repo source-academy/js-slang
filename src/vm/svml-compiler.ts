@@ -9,7 +9,7 @@ import {
   CONSTANT_PRIMITIVES,
   INTERNAL_FUNCTIONS
 } from '../stdlib/vm.prelude'
-import { Context } from '../types'
+import { Context, ContiguousArrayElements } from '../types'
 import { parse } from '../parser/parser'
 import OpCodes from './opcodes'
 
@@ -773,7 +773,7 @@ const compilers = {
   ArrayExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.ArrayExpression
     addNullaryInstruction(OpCodes.NEWA)
-    const elements = node.elements
+    const elements = node.elements as ContiguousArrayElements
     let maxStackSize = 1
     for (let i = 0; i < elements.length; i++) {
       // special case when element wasnt specified

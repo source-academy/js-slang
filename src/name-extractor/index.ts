@@ -178,6 +178,11 @@ export function getProgramNames(
   return [Object.values(res), true]
 }
 
+function isNotNull<T>(x: T): x is Exclude<T, null> {
+  // This function exists to appease the mighty typescript type checker
+  return x !== null
+}
+
 function getNodeChildren(node: es.Node): es.Node[] {
   switch (node.type) {
     case 'Program':
@@ -228,7 +233,7 @@ function getNodeChildren(node: es.Node): es.Node[] {
     // case 'ContinueStatement':
     // case 'MemberPattern':
     case 'ArrayExpression':
-      return [...node.elements]
+      return node.elements.filter(isNotNull)
     case 'AssignmentExpression':
       return [node.left, node.right]
     case 'MemberExpression':
