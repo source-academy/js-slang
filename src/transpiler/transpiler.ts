@@ -171,13 +171,19 @@ function createStatementsToStoreCurrentlyDeclaredGlobals(
 ) {
   return program.body
     .filter(statement => statement.type === 'VariableDeclaration')
-    .map(({ declarations: { 0: { id } }, kind }: es.VariableDeclaration) =>
-      createStatementAstToStoreBackCurrentlyDeclaredGlobal(
-        (id as es.Identifier).name,
-        kind as AllowedDeclarations,
-        globalIds,
-        usedIdentifiers
-      )
+    .map(
+      ({
+        declarations: {
+          0: { id }
+        },
+        kind
+      }: es.VariableDeclaration) =>
+        createStatementAstToStoreBackCurrentlyDeclaredGlobal(
+          (id as es.Identifier).name,
+          kind as AllowedDeclarations,
+          globalIds,
+          usedIdentifiers
+        )
     )
 }
 
@@ -477,7 +483,8 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
            */
           if (!isConstant) {
             // if it is a constant, it will definitely not mutate so above change is not needed
-            const toExpression: es.AssignmentExpression = (identifier as unknown) as es.AssignmentExpression
+            const toExpression: es.AssignmentExpression =
+              identifier as unknown as es.AssignmentExpression
             toExpression.type = 'AssignmentExpression'
             toExpression.operator = '='
             toExpression.left = create.identifier(name)
@@ -732,10 +739,8 @@ export function transpile(
   )
   const statements = program.body as es.Statement[]
   const lastStatement = statements.pop() as es.Statement
-  const {
-    lastStatementStoredInResult,
-    evalMap
-  } = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement, globalIds)
+  const { lastStatementStoredInResult, evalMap } =
+    splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement, globalIds)
 
   const body = [
     wrapWithPreviouslyDeclaredGlobals(
