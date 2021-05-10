@@ -59,13 +59,23 @@ export function transformSingleImportDeclaration(
 ) {
   const result = []
   const tempNamespace = `__MODULE_${moduleCounter}__`
-  // const yyy = __MODULE_xxx__.yyy;
-  const neededSymbols = node.specifiers.map(specifier => specifier.local.name)
+  const neededSymbols = node.specifiers.map(specifier => {
+    if (specifier.type !== 'ImportSpecifier') {
+      throw new Error(
+        `I expected only ImportSpecifiers to be allowed, but encountered ${specifier.type}.`
+      )
+    }
+
+    return {
+      imported: specifier.imported.name,
+      local: specifier.local.name
+    }
+  })
   for (const symbol of neededSymbols) {
     result.push(
       create.constantDeclaration(
-        symbol,
-        create.memberExpression(create.identifier(tempNamespace), symbol)
+        symbol.local,
+        create.memberExpression(create.identifier(tempNamespace), symbol.imported)
       )
     )
   }
@@ -161,13 +171,19 @@ function createStatementsToStoreCurrentlyDeclaredGlobals(
 ) {
   return program.body
     .filter(statement => statement.type === 'VariableDeclaration')
-    .map(({ declarations: { 0: { id } }, kind }: es.VariableDeclaration) =>
-      createStatementAstToStoreBackCurrentlyDeclaredGlobal(
-        (id as es.Identifier).name,
-        kind as AllowedDeclarations,
-        globalIds,
-        usedIdentifiers
-      )
+    .map(
+      ({
+        declarations: {
+          0: { id }
+        },
+        kind
+      }: es.VariableDeclaration) =>
+        createStatementAstToStoreBackCurrentlyDeclaredGlobal(
+          (id as es.Identifier).name,
+          kind as AllowedDeclarations,
+          globalIds,
+          usedIdentifiers
+        )
     )
 }
 
@@ -467,7 +483,8 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
            */
           if (!isConstant) {
             // if it is a constant, it will definitely not mutate so above change is not needed
-            const toExpression: es.AssignmentExpression = (identifier as unknown) as es.AssignmentExpression
+            const toExpression: es.AssignmentExpression =
+              identifier as unknown as es.AssignmentExpression
             toExpression.type = 'AssignmentExpression'
             toExpression.operator = '='
             toExpression.left = create.identifier(name)
@@ -722,10 +739,8 @@ export function transpile(
   )
   const statements = program.body as es.Statement[]
   const lastStatement = statements.pop() as es.Statement
-  const {
-    lastStatementStoredInResult,
-    evalMap
-  } = splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement, globalIds)
+  const { lastStatementStoredInResult, evalMap } =
+    splitLastStatementIntoStorageOfResultAndAccessorPair(lastStatement, globalIds)
 
   const body = [
     wrapWithPreviouslyDeclaredGlobals(
