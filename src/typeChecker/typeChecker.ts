@@ -13,7 +13,8 @@ import {
   TypeAnnotatedFuncDecl,
   SourceError,
   AllowedDeclarations,
-  TypeEnvironment
+  TypeEnvironment,
+  ContiguousArrayElements
 } from '../types'
 import {
   TypeError,
@@ -169,7 +170,7 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       traverse(node.right, constraints)
       break
     case 'ArrayExpression':
-      node.elements.forEach(element => traverse(element, constraints))
+      ;(node.elements as ContiguousArrayElements).forEach(element => traverse(element, constraints))
       break
     case 'MemberExpression':
       traverse(node.object, constraints)

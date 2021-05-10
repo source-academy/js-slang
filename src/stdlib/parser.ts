@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import { parse as sourceParse } from '../parser/parser'
 import { libraryParserLanguage } from '../parser/syntaxBlacklist'
-import { Context, Value } from '../types'
+import { Context, ContiguousArrayElements, Value } from '../types'
 import { oneLine } from '../utils/formatters'
 import { vector_to_list } from './list'
 
@@ -217,7 +217,10 @@ const transformers: ASTTransformers = new Map([
   [
     'ArrayExpression',
     (node: es.ArrayExpression) => {
-      return vector_to_list(['array_expression', vector_to_list(node.elements.map(transform))])
+      return vector_to_list([
+        'array_expression',
+        vector_to_list((node.elements as ContiguousArrayElements).map(transform))
+      ])
     }
   ],
 

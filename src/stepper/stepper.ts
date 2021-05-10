@@ -2,7 +2,14 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import * as errors from '../errors/errors'
 import { parse } from '../parser/parser'
-import { BlockExpression, Context, FunctionDeclarationExpression, substituterNodes } from '../types'
+import {
+  BlockExpression,
+  Context,
+  ContiguousArrayElementExpression,
+  ContiguousArrayElements,
+  FunctionDeclarationExpression,
+  substituterNodes
+} from '../types'
 import * as ast from '../utils/astCreator'
 import {
   dummyBlockExpression,
@@ -1085,7 +1092,7 @@ function substituteMain(
       let arrIndex = -1
       substedArray.elements = target.elements.map(ele => {
         arrIndex++
-        return substitute(ele, arr[arrIndex]) as es.Expression
+        return substitute(ele as ContiguousArrayElementExpression, arr[arrIndex]) as es.Expression
       })
       return substedArray
     }
@@ -1236,7 +1243,11 @@ function reduceMain(
         ' declared and substituted into rest of block',
 
       ArrayExpression: (target: es.ArrayExpression): string =>
-        '[' + bodify(target.elements[0]) + ', ' + bodify(target.elements[1]) + ']'
+        '[' +
+        bodify(target.elements[0] as ContiguousArrayElementExpression) +
+        ', ' +
+        bodify(target.elements[1] as ContiguousArrayElementExpression) +
+        ']'
     }
 
     const bodifier = bodifiers[target.type]
@@ -2242,7 +2253,9 @@ function treeifyMain(target: substituterNodes): substituterNodes {
 
     // source 2
     ArrayExpression: (target: es.ArrayExpression): es.ArrayExpression => {
-      return ast.arrayExpression(target.elements.map(treeify) as es.Expression[])
+      return ast.arrayExpression(
+        (target.elements as ContiguousArrayElements).map(treeify) as es.Expression[]
+      )
     }
   }
 
@@ -2636,7 +2649,7 @@ function pathifyMain(
 
     // source 2
     ArrayExpression: (target: es.ArrayExpression): es.ArrayExpression => {
-      const eles = target.elements.map(treeifyMain) as es.Expression[]
+      const eles = (target.elements as ContiguousArrayElements).map(treeifyMain) as es.Expression[]
       let eleIndex
       const isEnd = pathIndex === endIndex
       for (let i = 0; i < target.elements.length; i++) {
@@ -2651,7 +2664,9 @@ function pathifyMain(
           eles[eleIndex] = redexMarker as es.Expression
         } else {
           pathIndex++
-          eles[eleIndex] = pathify(target.elements[eleIndex]) as es.Expression
+          eles[eleIndex] = pathify(
+            target.elements[eleIndex] as ContiguousArrayElementExpression
+          ) as es.Expression
         }
       }
       return ast.arrayExpression(eles)
