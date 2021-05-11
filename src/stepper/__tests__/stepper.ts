@@ -1329,3 +1329,16 @@ test(`renaming of outer parameter in lambda function`, () => {
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
+
+test(`correctly avoids capture by other parameter names`, () => {
+  const code = `
+  function f(g, x) {
+      return g(x);
+  }
+  f(y => x + 1, 2);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('x + 1;')
+})
