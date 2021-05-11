@@ -1211,14 +1211,68 @@ function apply(
   args: irreducibleNodes[]
 ): BlockExpression | es.Expression {
   let substedBody = callee.body
+  let substedParams = callee.params
   for (let i = 0; i < args.length; i++) {
     // source discipline requires parameters to be identifiers.
-    const param = callee.params[i] as es.Identifier
-    const arg = args[i] as es.Literal
+    const arg = args[i]
 
+    if (arg.type === 'ArrowFunctionExpression' || arg.type === 'FunctionExpression') {
+      const freeTarget: string[] = findMain(ast.arrowFunctionExpression(substedParams, substedBody))
+      const declaredIds: es.Identifier[] = substedParams as es.Identifier[]
+      const freeReplacement: string[] = findMain(arg)
+      const boundReplacement: es.Identifier[] = scanOutDeclarations(arg.body)
+      for (const declaredId of declaredIds) {
+        if (freeReplacement.includes(declaredId.name)) {
+          const re = /_\d+$/
+          let newNum
+          if (re.test(declaredId.name)) {
+            const num = declaredId.name.split('_')
+            newNum = Number(num[1]) + 1
+            const changedName: string = getFreshName(
+              num[0],
+              newNum,
+              freeTarget,
+              freeReplacement,
+              declaredIds,
+              [],
+              boundReplacement
+            )
+            const changed = ast.identifier(changedName + ' rename', declaredId.loc)
+            const newName = ast.identifier(declaredId.name + ' rename', declaredId.loc)
+            substedBody = substituteMain(newName, changed, substedBody, [
+              []
+            ])[0] as typeof substedBody
+            substedParams = substedParams.map(param =>
+              (param as es.Identifier).name === declaredId.name ? changed : param
+            )
+          } else {
+            newNum = 1
+            const changedName: string = getFreshName(
+              declaredId.name,
+              newNum,
+              freeTarget,
+              freeReplacement,
+              declaredIds,
+              [],
+              boundReplacement
+            )
+            const changed = ast.identifier(changedName + ' rename', declaredId.loc)
+            const newName = ast.identifier(declaredId.name + ' rename', declaredId.loc)
+            substedBody = substituteMain(newName, changed, substedBody, [
+              []
+            ])[0] as typeof substedBody
+            substedParams = substedParams.map(param =>
+              (param as es.Identifier).name === declaredId.name ? changed : param
+            )
+          }
+        }
+      }
+    }
+
+    // source discipline requires parameters to be identifiers.
+    const param = substedParams[i] as es.Identifier
     substedBody = substituteMain(param, arg, substedBody, [[]])[0] as typeof substedBody
   }
-
   if (callee.type === 'ArrowFunctionExpression' && callee.expression) {
     return substedBody as es.Expression
   }
