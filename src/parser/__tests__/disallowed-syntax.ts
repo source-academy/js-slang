@@ -1281,3 +1281,27 @@ test('no assigning to reserved keywords - verbose', () => {
             "
           `)
 })
+
+test('no holes in arrays', () => {
+  return expectParsedError(
+    stripIndent`
+    [1, , 3];
+    `,
+    { chapter: 100 }
+  ).toMatchInlineSnapshot(`"Line 1: No holes are allowed in array literals."`)
+})
+
+test('no assigning to reserved keywords - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+    "enable verbose";
+    [1, , 3];
+    `,
+    { chapter: 100 }
+  ).toMatchInlineSnapshot(`
+            "Line 2, Column 0: No holes are allowed in array literals.
+            No holes (empty slots with no content inside) are allowed in array literals.
+            You probably have an extra comma, which creates a hole.
+            "
+          `)
+})
