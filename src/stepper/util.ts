@@ -39,7 +39,9 @@ export function isAllowedLiterals(node: substituterNodes): boolean {
   return node.type === 'Identifier' && ['NaN', 'Infinity', 'undefined'].includes(node.name)
 }
 
-export function getDeclaredNames(node: es.BlockStatement | BlockExpression): Set<string> {
+export function getDeclaredNames(
+  node: es.BlockStatement | BlockExpression | es.Program
+): Set<string> {
   const declaredNames = new Set<string>()
   for (const stmt of node.body) {
     // if stmt is assignment or functionDeclaration

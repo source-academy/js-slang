@@ -88,7 +88,7 @@ export const blockArrowFunction = (
 })
 
 export const functionExpression = (
-  params: es.Identifier[],
+  params: es.Pattern[],
   body: es.Statement[] | es.BlockStatement,
   loc?: es.SourceLocation | null
 ): es.FunctionExpression => ({
