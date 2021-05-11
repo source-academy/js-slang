@@ -4,7 +4,7 @@ import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, Environment, Frame, Value } from '../types'
+import { Context, ContiguousArrayElements, Environment, Frame, Value } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -326,7 +326,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   ArrayExpression: function*(node: es.ArrayExpression, context: Context) {
     const res = []
-    for (const n of node.elements) {
+    for (const n of node.elements as ContiguousArrayElements) {
       res.push(yield* evaluate(n, context))
     }
     return res

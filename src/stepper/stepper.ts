@@ -2,7 +2,14 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import * as errors from '../errors/errors'
 import { parse } from '../parser/parser'
-import { BlockExpression, Context, FunctionDeclarationExpression, substituterNodes } from '../types'
+import {
+  BlockExpression,
+  Context,
+  ContiguousArrayElementExpression,
+  ContiguousArrayElements,
+  FunctionDeclarationExpression,
+  substituterNodes
+} from '../types'
 import * as ast from '../utils/astCreator'
 import {
   dummyBlockExpression,
@@ -78,10 +85,14 @@ function scanOutBoundNames(
 }
 
 function scanOutDeclarations(
-  node: es.BlockStatement | BlockExpression | es.Expression
+  node: es.BlockStatement | BlockExpression | es.Expression | es.Program
 ): es.Identifier[] {
   const declaredIds: es.Identifier[] = []
-  if (node.type == 'BlockExpression' || node.type == 'BlockStatement') {
+  if (
+    node.type === 'BlockExpression' ||
+    node.type === 'BlockStatement' ||
+    node.type === 'Program'
+  ) {
     for (const stmt of node.body) {
       // if stmt is assignment or functionDeclaration
       // add stmt into a set of identifiers
@@ -151,6 +162,7 @@ function findMain(
     | es.BlockStatement
     | BlockExpression
     | es.FunctionDeclaration
+    | es.Program
 ): string[] {
   const params: string[] = []
   if (
@@ -703,8 +715,69 @@ function substituteMain(
     },
 
     Program(target: es.Program, index: number): es.Program {
-      const substedProgram = ast.program(target.body.map(() => dummyStatement()))
+      const substedBody = target.body.map(() => dummyStatement())
+      const substedProgram = ast.program(substedBody)
       seenBefore.set(target, substedProgram)
+      const declaredNames: Set<string> = getDeclaredNames(target)
+      const re = / same/
+      // checks if the replacement is a functionExpression or arrowFunctionExpression and not from within the same block
+      if (
+        (replacement.type == 'FunctionExpression' ||
+          replacement.type == 'ArrowFunctionExpression') &&
+        !re.test(name.name)
+      ) {
+        const freeTarget: string[] = findMain(target)
+        const declaredIds: es.Identifier[] = scanOutDeclarations(target)
+        const freeReplacement: string[] = findMain(replacement)
+        const boundReplacement: es.Identifier[] = scanOutDeclarations(replacement.body)
+        for (const declaredId of declaredIds) {
+          if (freeReplacement.includes(declaredId.name)) {
+            const re = /_\d+$/
+            let newNum
+            if (re.test(declaredId.name)) {
+              const num = declaredId.name.split('_')
+              newNum = Number(num[1]) + 1
+              const changedName: string = getFreshName(
+                num[0],
+                newNum,
+                freeTarget,
+                freeReplacement,
+                declaredIds,
+                boundUpperScope,
+                boundReplacement
+              )
+              const changed = ast.identifier(changedName + ' rename', declaredId.loc)
+              const newName = ast.identifier(declaredId.name + ' rename', declaredId.loc)
+              target = substituteMain(newName, changed, target, [[]])[0] as es.Program
+            } else {
+              newNum = 1
+              const changedName: string = getFreshName(
+                declaredId.name,
+                newNum,
+                freeTarget,
+                freeReplacement,
+                declaredIds,
+                boundUpperScope,
+                boundReplacement
+              )
+              const changed = ast.identifier(changedName + ' rename', declaredId.loc)
+              const newName = ast.identifier(declaredId.name + ' rename', declaredId.loc)
+              target = substituteMain(newName, changed, target, [[]])[0] as es.Program
+            }
+          }
+        }
+      }
+
+      const re2 = / rename/
+      if (declaredNames.has(name.name) && !re2.test(name.name)) {
+        substedProgram.body = target.body
+        return substedProgram
+      }
+
+      // if it is from the same block then the name would be name + " same", hence need to remove " same"
+      // if not this statement does nothing as variable names should not have spaces
+      name.name = name.name.split(' ')[0]
+
       const arr: number[] = []
       let nextIndex = index
       for (let i = 1; i < target.body.length; i++) {
@@ -1085,7 +1158,7 @@ function substituteMain(
       let arrIndex = -1
       substedArray.elements = target.elements.map(ele => {
         arrIndex++
-        return substitute(ele, arr[arrIndex]) as es.Expression
+        return substitute(ele as ContiguousArrayElementExpression, arr[arrIndex]) as es.Expression
       })
       return substedArray
     }
@@ -1138,14 +1211,68 @@ function apply(
   args: irreducibleNodes[]
 ): BlockExpression | es.Expression {
   let substedBody = callee.body
+  let substedParams = callee.params
   for (let i = 0; i < args.length; i++) {
     // source discipline requires parameters to be identifiers.
-    const param = callee.params[i] as es.Identifier
-    const arg = args[i] as es.Literal
+    const arg = args[i]
 
+    if (arg.type === 'ArrowFunctionExpression' || arg.type === 'FunctionExpression') {
+      const freeTarget: string[] = findMain(ast.arrowFunctionExpression(substedParams, substedBody))
+      const declaredIds: es.Identifier[] = substedParams as es.Identifier[]
+      const freeReplacement: string[] = findMain(arg)
+      const boundReplacement: es.Identifier[] = scanOutDeclarations(arg.body)
+      for (const declaredId of declaredIds) {
+        if (freeReplacement.includes(declaredId.name)) {
+          const re = /_\d+$/
+          let newNum
+          if (re.test(declaredId.name)) {
+            const num = declaredId.name.split('_')
+            newNum = Number(num[1]) + 1
+            const changedName: string = getFreshName(
+              num[0],
+              newNum,
+              freeTarget,
+              freeReplacement,
+              declaredIds,
+              [],
+              boundReplacement
+            )
+            const changed = ast.identifier(changedName + ' rename', declaredId.loc)
+            const newName = ast.identifier(declaredId.name + ' rename', declaredId.loc)
+            substedBody = substituteMain(newName, changed, substedBody, [
+              []
+            ])[0] as typeof substedBody
+            substedParams = substedParams.map(param =>
+              (param as es.Identifier).name === declaredId.name ? changed : param
+            )
+          } else {
+            newNum = 1
+            const changedName: string = getFreshName(
+              declaredId.name,
+              newNum,
+              freeTarget,
+              freeReplacement,
+              declaredIds,
+              [],
+              boundReplacement
+            )
+            const changed = ast.identifier(changedName + ' rename', declaredId.loc)
+            const newName = ast.identifier(declaredId.name + ' rename', declaredId.loc)
+            substedBody = substituteMain(newName, changed, substedBody, [
+              []
+            ])[0] as typeof substedBody
+            substedParams = substedParams.map(param =>
+              (param as es.Identifier).name === declaredId.name ? changed : param
+            )
+          }
+        }
+      }
+    }
+
+    // source discipline requires parameters to be identifiers.
+    const param = substedParams[i] as es.Identifier
     substedBody = substituteMain(param, arg, substedBody, [[]])[0] as typeof substedBody
   }
-
   if (callee.type === 'ArrowFunctionExpression' && callee.expression) {
     return substedBody as es.Expression
   }
@@ -1236,7 +1363,11 @@ function reduceMain(
         ' declared and substituted into rest of block',
 
       ArrayExpression: (target: es.ArrayExpression): string =>
-        '[' + bodify(target.elements[0]) + ', ' + bodify(target.elements[1]) + ']'
+        '[' +
+        bodify(target.elements[0] as ContiguousArrayElementExpression) +
+        ', ' +
+        bodify(target.elements[1] as ContiguousArrayElementExpression) +
+        ']'
     }
 
     const bodifier = bodifiers[target.type]
@@ -1591,128 +1722,171 @@ function reduceMain(
       context: Context,
       paths: string[][]
     ): [substituterNodes, Context, string[][], string] {
-      const [firstStatement, ...otherStatements] = node.body
-      if (
-        firstStatement.type === 'ExpressionStatement' &&
-        isIrreducible(firstStatement.expression)
-      ) {
-        paths[0].push('body[0]')
-        paths.push([])
-        return [ast.program(otherStatements as es.Statement[]), context, paths, explain(node)]
-      } else if (firstStatement.type === 'FunctionDeclaration') {
-        let funDecExp = ast.functionDeclarationExpression(
-          firstStatement.id!,
-          firstStatement.params,
-          firstStatement.body
-        ) as FunctionDeclarationExpression
-        // substitute body
-        funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
-          []
-        ])[0] as FunctionDeclarationExpression
-        // substitute the rest of the program
-        const remainingProgram = ast.program(otherStatements as es.Statement[])
-        const subst = substituteMain(funDecExp.id, funDecExp, remainingProgram, paths)
-        // concats paths such that:
-        // paths[0] -> path to the program to be substituted, pre-redex
-        // paths[1...] -> path(s) to the parts of the remaining program
-        // that were substituted, post-redex
-        paths[0].push('body[0]')
-        const allPaths = paths.concat(subst[1])
-        if (subst[1].length === 0) {
-          allPaths.push([])
-        }
-        return [subst[0], context, allPaths, explain(node)]
-      } else if (firstStatement.type === 'VariableDeclaration') {
-        const { kind, declarations } = firstStatement
-        if (kind !== 'const') {
-          // TODO: cannot use let or var
-          return [dummyProgram(), context, paths, 'cannot use let or var']
-        } else if (
-          declarations.length <= 0 ||
-          declarations.length > 1 ||
-          declarations[0].type !== 'VariableDeclarator' ||
-          !declarations[0].init
-        ) {
-          // TODO: syntax error
-          return [dummyProgram(), context, paths, 'syntax error']
-        } else {
-          const declarator = declarations[0] as es.VariableDeclarator
-          const rhs = declarator.init!
-          if (declarator.id.type !== 'Identifier') {
-            // TODO: source does not allow destructuring
-            return [dummyProgram(), context, paths, 'source does not allow destructuring']
-          } else if (isIrreducible(rhs)) {
-            const remainingProgram = ast.program(otherStatements as es.Statement[])
-            // forced casting for some weird errors
-            const subst = substituteMain(
-              declarator.id,
-              rhs as es.ArrayExpression,
-              remainingProgram,
-              paths
-            )
-            // concats paths such that:
-            // paths[0] -> path to the program to be substituted, pre-redex
-            // paths[1...] -> path(s) to the parts of the remaining program
-            // that were substituted, post-redex
-            paths[0].push('body[0]')
-            const allPaths = paths.concat(subst[1])
-            if (subst[1].length === 0) {
-              allPaths.push([])
+      if (node.body.length === 0) {
+        return [ast.expressionStatement(ast.identifier('undefined')), context, paths, explain(node)]
+      } else {
+        const [firstStatement, ...otherStatements] = node.body
+        if (firstStatement.type === 'ReturnStatement') {
+          return [firstStatement, context, paths, explain(node)]
+        } else if (firstStatement.type === 'IfStatement') {
+          paths[0].push('body[0]')
+          const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
+          if (reduced.type === 'BlockStatement') {
+            const body = reduced.body as es.Statement[]
+            if (body.length > 1) {
+              path[1] = [...path[0].slice(0, path[0].length - 1)]
             }
-            return [subst[0], context, allPaths, explain(node)]
-          } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
-            let funDecExp = ast.functionDeclarationExpression(
-              declarator.id,
-              rhs.params,
-              rhs.body.type === 'BlockStatement'
-                ? rhs.body
-                : ast.blockStatement([ast.returnStatement(rhs.body)])
-            ) as FunctionDeclarationExpression
-            funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
-              []
-            ])[0] as FunctionDeclarationExpression
-            // substitute the rest of the program
-            const remainingProgram = ast.program(otherStatements as es.Statement[])
-            const subst = substituteMain(funDecExp.id, funDecExp, remainingProgram, paths)
-            // concats paths such that:
-            // paths[0] -> path to the program to be substituted, pre-redex
-            // paths[1...] -> path(s) to the parts of the remaining program
-            // that were substituted, post-redex
-            paths[0].push('body[0]')
-            const allPaths = paths.concat(subst[1])
-            if (subst[1].length === 0) {
-              allPaths.push([])
-            }
-            return [subst[0], context, allPaths, explain(node)]
+            const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
+            return [ast.program(wholeBlock), cont, path, str]
           } else {
-            paths[0].push('body[0]')
-            paths[0].push('declarations[0]')
-            paths[0].push('init')
-            const [reducedRhs, cont, path, str] = reduce(rhs, context, paths)
             return [
-              ast.program([
-                ast.declaration(
-                  declarator.id.name,
-                  'const',
-                  reducedRhs as es.Expression
-                ) as es.Statement,
-                ...(otherStatements as es.Statement[])
-              ]),
+              ast.program([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
               cont,
               path,
               str
             ]
           }
+        } else if (
+          firstStatement.type === 'ExpressionStatement' &&
+          isIrreducible(firstStatement.expression)
+        ) {
+          // let stmt
+          // if (otherStatements.length > 0) {
+          paths[0].push('body[0]')
+          paths.push([])
+          const stmt = ast.program(otherStatements as es.Statement[])
+          // } else {
+          //   stmt = ast.expressionStatement(firstStatement.expression)
+          // }
+          return [stmt, context, paths, explain(node)]
+        } else if (firstStatement.type === 'FunctionDeclaration') {
+          let funDecExp = ast.functionDeclarationExpression(
+            firstStatement.id!,
+            firstStatement.params,
+            firstStatement.body
+          ) as FunctionDeclarationExpression
+          // substitute body
+          funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+            []
+          ])[0] as FunctionDeclarationExpression
+          // substitute the rest of the program
+          const remainingProgram = ast.program(otherStatements as es.Statement[])
+          // substitution within the same program, add " same" so that substituter can differentiate between
+          // substitution within the program and substitution from outside the program
+          const newId = ast.identifier(funDecExp.id.name + ' same', funDecExp.id.loc)
+          const subst = substituteMain(newId, funDecExp, remainingProgram, paths)
+          // concats paths such that:
+          // paths[0] -> path to the program to be substituted, pre-redex
+          // paths[1...] -> path(s) to the parts of the remaining program
+          // that were substituted, post-redex
+          paths[0].push('body[0]')
+          const allPaths = paths.concat(subst[1])
+          if (subst[1].length === 0) {
+            allPaths.push([])
+          }
+          return [subst[0], context, allPaths, explain(node)]
+        } else if (firstStatement.type === 'VariableDeclaration') {
+          const { kind, declarations } = firstStatement
+          if (kind !== 'const') {
+            // TODO: cannot use let or var
+            return [dummyProgram(), context, paths, 'cannot use let or var']
+          } else if (
+            declarations.length <= 0 ||
+            declarations.length > 1 ||
+            declarations[0].type !== 'VariableDeclarator' ||
+            !declarations[0].init
+          ) {
+            // TODO: syntax error
+            return [dummyProgram(), context, paths, 'syntax error']
+          } else {
+            const declarator = declarations[0] as es.VariableDeclarator
+            const rhs = declarator.init!
+            if (declarator.id.type !== 'Identifier') {
+              // TODO: source does not allow destructuring
+              return [dummyProgram(), context, paths, 'source does not allow destructuring']
+            } else if (isIrreducible(rhs)) {
+              const remainingProgram = ast.program(otherStatements as es.Statement[])
+              // force casting for weird errors
+              // substitution within the same program, add " same" so that substituter can differentiate between
+              // substitution within the program and substitution from outside the program
+              const newId = ast.identifier(declarator.id.name + ' same', declarator.id.loc)
+              const subst = substituteMain(
+                newId,
+                rhs as es.ArrayExpression,
+                remainingProgram,
+                paths
+              )
+              // concats paths such that:
+              // paths[0] -> path to the program to be substituted, pre-redex
+              // paths[1...] -> path(s) to the parts of the remaining program
+              // that were substituted, post-redex
+              paths[0].push('body[0]')
+              const allPaths = paths.concat(subst[1])
+              if (subst[1].length === 0) {
+                allPaths.push([])
+              }
+              return [subst[0], context, allPaths, explain(node)]
+            } else if (
+              rhs.type === 'ArrowFunctionExpression' ||
+              rhs.type === 'FunctionExpression'
+            ) {
+              let funDecExp = ast.functionDeclarationExpression(
+                declarator.id,
+                rhs.params,
+                rhs.body.type === 'BlockStatement'
+                  ? rhs.body
+                  : ast.blockStatement([ast.returnStatement(rhs.body)])
+              ) as FunctionDeclarationExpression
+              // substitute body
+              funDecExp = substituteMain(funDecExp.id, funDecExp, funDecExp, [
+                []
+              ])[0] as FunctionDeclarationExpression
+              // substitute the rest of the program
+              const remainingProgram = ast.program(otherStatements as es.Statement[])
+              // substitution within the same block, add " same" so that substituter can differentiate between
+              // substitution within the block and substitution from outside the block
+              const newId = ast.identifier(funDecExp.id.name + ' same', funDecExp.id.loc)
+              const subst = substituteMain(newId, funDecExp, remainingProgram, paths)
+              // concats paths such that:
+              // paths[0] -> path to the program to be substituted, pre-redex
+              // paths[1...] -> path(s) to the parts of the remaining program
+              // that were substituted, post-redex
+              paths[0].push('body[0]')
+              const allPaths = paths.concat(subst[1])
+              if (subst[1].length === 0) {
+                allPaths.push([])
+              }
+              return [subst[0], context, allPaths, explain(node)]
+            } else {
+              paths[0].push('body[0]')
+              paths[0].push('declarations[0]')
+              paths[0].push('init')
+              const [reducedRhs, cont, path, str] = reduce(rhs, context, paths)
+              return [
+                ast.program([
+                  ast.declaration(
+                    declarator.id.name,
+                    'const',
+                    reducedRhs as es.Expression
+                  ) as es.Statement,
+                  ...(otherStatements as es.Statement[])
+                ]),
+                cont,
+                path,
+                str
+              ]
+            }
+          }
         }
+        paths[0].push('body[0]')
+        const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
+        return [
+          ast.program([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
+          cont,
+          path,
+          str
+        ]
       }
-      paths[0].push('body[0]')
-      const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
-      return [
-        ast.program([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
-        cont,
-        path,
-        str
-      ]
     },
 
     BlockStatement(
@@ -2242,7 +2416,9 @@ function treeifyMain(target: substituterNodes): substituterNodes {
 
     // source 2
     ArrayExpression: (target: es.ArrayExpression): es.ArrayExpression => {
-      return ast.arrayExpression(target.elements.map(treeify) as es.Expression[])
+      return ast.arrayExpression(
+        (target.elements as ContiguousArrayElements).map(treeify) as es.Expression[]
+      )
     }
   }
 
@@ -2636,7 +2812,7 @@ function pathifyMain(
 
     // source 2
     ArrayExpression: (target: es.ArrayExpression): es.ArrayExpression => {
-      const eles = target.elements.map(treeifyMain) as es.Expression[]
+      const eles = (target.elements as ContiguousArrayElements).map(treeifyMain) as es.Expression[]
       let eleIndex
       const isEnd = pathIndex === endIndex
       for (let i = 0; i < target.elements.length; i++) {
@@ -2651,7 +2827,9 @@ function pathifyMain(
           eles[eleIndex] = redexMarker as es.Expression
         } else {
           pathIndex++
-          eles[eleIndex] = pathify(target.elements[eleIndex]) as es.Expression
+          eles[eleIndex] = pathify(
+            target.elements[eleIndex] as ContiguousArrayElementExpression
+          ) as es.Expression
         }
       }
       return ast.arrayExpression(eles)

@@ -34170,6 +34170,31 @@ Array [
 ]
 `;
 
+exports[`correctly avoids capture by other parameter names 1`] = `
+"function f(g, x) {
+  return g(x);
+}
+f(y => x + 1, 2);
+
+function f(g, x) {
+  return g(x);
+}
+f(y => x + 1, 2);
+
+f(y => x + 1, 2);
+
+f(y => x + 1, 2);
+
+(y => x + 1)(2);
+
+(y => x + 1)(2);
+
+x + 1;
+
+x + 1;
+"
+`;
+
 exports[`even odd mutual 1`] = `
 Array [
   Array [

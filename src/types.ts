@@ -334,3 +334,7 @@ export {
   Offset as SVMOffset,
   SVMFunction
 } from './vm/svml-compiler'
+
+export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>
+
+export type ContiguousArrayElements = ContiguousArrayElementExpression[]
