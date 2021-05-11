@@ -85,7 +85,7 @@ export function HighlightRulesSelector(
     const ChapterKeywordSelector = () => {
       let output = ''
       if (id >= 1) {
-        output += 'const|else|if|return|function'
+        output += 'import|const|else|if|return|function'
       }
       if (id >= 3) {
         output += '|while|for|break|continue|let'
@@ -117,21 +117,13 @@ export function HighlightRulesSelector(
           'support.function': getAllNames('func'),
 
           'variable.language':
-            'Array|Boolean|Date|Function|Iterator|Number|Object|RegExp|String|Proxy|' + // Constructors
-            'Namespace|QName|XML|XMLList|' + // E4X
-            'ArrayBuffer|Float32Array|Float64Array|Int16Array|Int32Array|Int8Array|' +
-            'Uint16Array|Uint32Array|Uint8Array|Uint8ClampedArray|' +
-            'Error|EvalError|InternalError|RangeError|ReferenceError|StopIteration|' + // Errors
-            'SyntaxError|TypeError|URIError|' +
-            'decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|eval|isFinite|' + // Non-constructor functions
-            'isNaN|parseFloat|parseInt|' +
-            'JSON|Math|' + // Other
-            'this|arguments|prototype|window|document|' + // Pseudo
-            'var|yield|import|get|set|async|await|with|debugger|switch|throw|try|' + //forbidden words
-            'typeof|__parent__|__count__|escape|unescape|with|__proto__|' +
+            'this|arguments|' + // Pseudo
+            'debugger|' + // special features
+            'var|yield|async|await|with|switch|throw|try|' + // forbidden words
+            'typeof|' +
             'class|enum|extends|super|export|implements|private|public|' +
             'interface|package|protected|static|in|of|instanceof|new|' +
-            'case|catch|default|delete|do|finally|here|' +
+            'case|catch|default|delete|do|finally|' +
             ChapterForbbidenWordSelector()
         },
         'identifier'
