@@ -11,77 +11,8 @@ res;",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "pretranspiled": "const add = makeLazyFunction((x, y) => {
-  return forceIt(x) + forceIt(y);
-});
-const res = wrapLazyCallee(add)(delayIt(() => wrapLazyCallee(x => x)(delayIt(() => 5))), delayIt(() => wrapLazyCallee(x => forceIt(x) + forceIt(1))(delayIt(() => 9))));
-res;
-",
   "result": 15,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const add = callIfFuncAndRightArgs(makeLazyFunction, 1, 0, wrap((x, y) => {
-      return {
-        isTail: false,
-        value: binaryOp(\\"+\\", 1, callIfFuncAndRightArgs(forceIt, 2, 9, x), callIfFuncAndRightArgs(forceIt, 2, 13, y), 2, 9)
-      };
-    }, \\"(x, y) => {\\\\n  return forceIt(x) + forceIt(y);\\\\n}\\", native));
-    const res = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 4, 12, add), 4, 12, callIfFuncAndRightArgs(delayIt, 4, 16, wrap(() => ({
-      isTail: true,
-      function: callIfFuncAndRightArgs(wrapLazyCallee, 4, 17, wrap(x => ({
-        isTail: false,
-        value: x
-      }), \\"x => x\\", native)),
-      functionName: \\"<anonymous>\\",
-      arguments: [callIfFuncAndRightArgs(delayIt, 4, 27, wrap(() => ({
-        isTail: false,
-        value: 5
-      }), \\"() => 5\\", native))],
-      line: 4,
-      column: 16
-    }), \\"() => wrapLazyCallee(x => x)(delayIt(() => 5))\\", native)), callIfFuncAndRightArgs(delayIt, 4, 31, wrap(() => ({
-      isTail: true,
-      function: callIfFuncAndRightArgs(wrapLazyCallee, 4, 32, wrap(x => ({
-        isTail: false,
-        value: binaryOp(\\"+\\", 1, callIfFuncAndRightArgs(forceIt, 4, 39, x), callIfFuncAndRightArgs(forceIt, 4, 43, 1), 4, 39)
-      }), \\"x => forceIt(x) + forceIt(1)\\", native)),
-      functionName: \\"<anonymous>\\",
-      arguments: [callIfFuncAndRightArgs(delayIt, 4, 46, wrap(() => ({
-        isTail: false,
-        value: 9
-      }), \\"() => 9\\", native))],
-      line: 4,
-      column: 31
-    }), \\"() => wrapLazyCallee(x => forceIt(x) + forceIt(1))(delayIt(() => 9))\\", native)));
-    lastStatementResult = eval(\\"res;\\");
-    globals.variables.set(\\"add\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return add;
-      }
-    });
-    globals.variables.set(\\"res\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return res;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -98,90 +29,8 @@ res;",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "pretranspiled": "const f = makeLazyFunction((a, b) => {
-  return forceIt(forceIt(a) ? true : wrapLazyCallee(head)(delayIt(() => null))) && (!forceIt(b) ? true : wrapLazyCallee(head)(delayIt(() => null)));
-});
-const res = wrapLazyCallee(f)(delayIt(() => wrapLazyCallee(b => b)(delayIt(() => true))), delayIt(() => wrapLazyCallee(b => !forceIt(b))(delayIt(() => true))));
-res;
-",
   "result": true,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = callIfFuncAndRightArgs(makeLazyFunction, 1, 0, wrap((a, b) => {
-      return boolOrErr(callIfFuncAndRightArgs(forceIt, 2, 9, boolOrErr(callIfFuncAndRightArgs(forceIt, 2, 10, a), 2, 10) ? true : callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 2, 21, head), 2, 21, callIfFuncAndRightArgs(delayIt, 2, 26, wrap(() => ({
-        isTail: false,
-        value: null
-      }), \\"() => null\\", native)))), 2, 9) && (boolOrErr(unaryOp(\\"!\\", callIfFuncAndRightArgs(forceIt, 2, 38, b), 2, 37), 2, 37) ? {
-        isTail: false,
-        value: true
-      } : {
-        isTail: true,
-        function: callIfFuncAndRightArgs(wrapLazyCallee, 2, 49, head),
-        functionName: \\"<anonymous>\\",
-        arguments: [callIfFuncAndRightArgs(delayIt, 2, 54, wrap(() => ({
-          isTail: false,
-          value: null
-        }), \\"() => null\\", native))],
-        line: 2,
-        column: 49
-      });
-    }, \\"(a, b) => {\\\\n  return forceIt(forceIt(a) ? true : wrapLazyCallee(head)(delayIt(() => null))) && (!forceIt(b) ? true : wrapLazyCallee(head)(delayIt(() => null)));\\\\n}\\", native));
-    const res = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 5, 12, f), 5, 12, callIfFuncAndRightArgs(delayIt, 5, 14, wrap(() => ({
-      isTail: true,
-      function: callIfFuncAndRightArgs(wrapLazyCallee, 5, 15, wrap(b => ({
-        isTail: false,
-        value: b
-      }), \\"b => b\\", native)),
-      functionName: \\"<anonymous>\\",
-      arguments: [callIfFuncAndRightArgs(delayIt, 5, 25, wrap(() => ({
-        isTail: false,
-        value: true
-      }), \\"() => true\\", native))],
-      line: 5,
-      column: 14
-    }), \\"() => wrapLazyCallee(b => b)(delayIt(() => true))\\", native)), callIfFuncAndRightArgs(delayIt, 5, 32, wrap(() => ({
-      isTail: true,
-      function: callIfFuncAndRightArgs(wrapLazyCallee, 5, 33, wrap(b => ({
-        isTail: false,
-        value: unaryOp(\\"!\\", callIfFuncAndRightArgs(forceIt, 5, 41, b), 5, 40)
-      }), \\"b => !forceIt(b)\\", native)),
-      functionName: \\"<anonymous>\\",
-      arguments: [callIfFuncAndRightArgs(delayIt, 5, 44, wrap(() => ({
-        isTail: false,
-        value: true
-      }), \\"() => true\\", native))],
-      line: 5,
-      column: 32
-    }), \\"() => wrapLazyCallee(b => !forceIt(b))(delayIt(() => true))\\", native)));
-    lastStatementResult = eval(\\"res;\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-    globals.variables.set(\\"res\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return res;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -202,89 +51,8 @@ res;",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "pretranspiled": "const test = makeLazyFunction((a, b) => {
-  return forceIt(a) === forceIt(1) ? a : b;
-});
-const test2 = makeLazyFunction(a => {
-  return wrapLazyCallee(test)(delayIt(() => a), delayIt(() => wrapLazyCallee(head)(delayIt(() => null))));
-});
-const res = wrapLazyCallee(test2)(delayIt(() => 1));
-res;
-",
   "result": 1,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const test = callIfFuncAndRightArgs(makeLazyFunction, 1, 0, wrap((a, b) => {
-      return boolOrErr(binaryOp(\\"===\\", 2, callIfFuncAndRightArgs(forceIt, 2, 9, a), callIfFuncAndRightArgs(forceIt, 2, 15, 1), 2, 9), 2, 9) ? {
-        isTail: false,
-        value: a
-      } : {
-        isTail: false,
-        value: b
-      };
-    }, \\"(a, b) => {\\\\n  return forceIt(a) === forceIt(1) ? a : b;\\\\n}\\", native));
-    const test2 = callIfFuncAndRightArgs(makeLazyFunction, 5, 0, wrap(a => {
-      return {
-        isTail: true,
-        function: callIfFuncAndRightArgs(wrapLazyCallee, 6, 9, test),
-        functionName: \\"<anonymous>\\",
-        arguments: [callIfFuncAndRightArgs(delayIt, 6, 14, wrap(() => ({
-          isTail: false,
-          value: a
-        }), \\"() => a\\", native)), callIfFuncAndRightArgs(delayIt, 6, 17, wrap(() => ({
-          isTail: true,
-          function: callIfFuncAndRightArgs(wrapLazyCallee, 6, 17, head),
-          functionName: \\"<anonymous>\\",
-          arguments: [callIfFuncAndRightArgs(delayIt, 6, 22, wrap(() => ({
-            isTail: false,
-            value: null
-          }), \\"() => null\\", native))],
-          line: 6,
-          column: 17
-        }), \\"() => wrapLazyCallee(head)(delayIt(() => null))\\", native))],
-        line: 6,
-        column: 9
-      };
-    }, \\"a => {\\\\n  return wrapLazyCallee(test)(delayIt(() => a), delayIt(() => wrapLazyCallee(head)(delayIt(() => null))));\\\\n}\\", native));
-    const res = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 9, 12, test2), 9, 12, callIfFuncAndRightArgs(delayIt, 9, 18, wrap(() => ({
-      isTail: false,
-      value: 1
-    }), \\"() => 1\\", native)));
-    lastStatementResult = eval(\\"res;\\");
-    globals.variables.set(\\"test\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return test;
-      }
-    });
-    globals.variables.set(\\"test2\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return test2;
-      }
-    });
-    globals.variables.set(\\"res\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return res;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -308,86 +76,8 @@ res;",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "pretranspiled": "let x = 1;
-const incX = makeLazyFunction(() => {
-  x = forceIt(x) + forceIt(1);
-  return x;
-});
-const square = makeLazyFunction(n => {
-  return forceIt(n) * forceIt(n);
-});
-const res = wrapLazyCallee(square)(delayIt(() => wrapLazyCallee(incX)()));
-res;
-",
   "result": 4,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    let x = 1;
-    const incX = callIfFuncAndRightArgs(makeLazyFunction, 3, 0, wrap(() => {
-      x = binaryOp(\\"+\\", 3, callIfFuncAndRightArgs(forceIt, 4, 6, x), callIfFuncAndRightArgs(forceIt, 4, 10, 1), 4, 6);
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"() => {\\\\n  x = forceIt(x) + forceIt(1);\\\\n  return x;\\\\n}\\", native));
-    const square = callIfFuncAndRightArgs(makeLazyFunction, 8, 0, wrap(n => {
-      return {
-        isTail: false,
-        value: binaryOp(\\"*\\", 3, callIfFuncAndRightArgs(forceIt, 9, 9, n), callIfFuncAndRightArgs(forceIt, 9, 13, n), 9, 9)
-      };
-    }, \\"n => {\\\\n  return forceIt(n) * forceIt(n);\\\\n}\\", native));
-    const res = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 12, 12, square), 12, 12, callIfFuncAndRightArgs(delayIt, 12, 19, wrap(() => ({
-      isTail: true,
-      function: callIfFuncAndRightArgs(wrapLazyCallee, 12, 19, incX),
-      functionName: \\"<anonymous>\\",
-      arguments: [],
-      line: 12,
-      column: 19
-    }), \\"() => wrapLazyCallee(incX)()\\", native)));
-    lastStatementResult = eval(\\"res;\\");
-    globals.variables.set(\\"x\\", {
-      kind: \\"let\\",
-      getValue: () => {
-        return x;
-      },
-      assignNewValue: function (unique) {
-        return x = unique;
-      }
-    });
-    globals.variables.set(\\"incX\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return incX;
-      }
-    });
-    globals.variables.set(\\"square\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return square;
-      }
-    });
-    globals.variables.set(\\"res\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return res;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -407,70 +97,8 @@ res;",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "pretranspiled": "const addSome = makeLazyFunction(x => {
-  const y = forceIt(x) + forceIt(1);
-  return z => forceIt(y) + forceIt(z);
-});
-const addSome2 = wrapLazyCallee(addSome)(delayIt(() => 2));
-const res = wrapLazyCallee(addSome2)(delayIt(() => 3));
-res;
-",
   "result": 6,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const addSome = callIfFuncAndRightArgs(makeLazyFunction, 1, 0, wrap(x => {
-      const y = binaryOp(\\"+\\", 1, callIfFuncAndRightArgs(forceIt, 2, 12, x), callIfFuncAndRightArgs(forceIt, 2, 16, 1), 2, 12);
-      return {
-        isTail: false,
-        value: wrap(z => ({
-          isTail: false,
-          value: binaryOp(\\"+\\", 1, callIfFuncAndRightArgs(forceIt, 3, 14, y), callIfFuncAndRightArgs(forceIt, 3, 18, z), 3, 14)
-        }), \\"z => forceIt(y) + forceIt(z)\\", native)
-      };
-    }, \\"x => {\\\\n  const y = forceIt(x) + forceIt(1);\\\\n  return z => forceIt(y) + forceIt(z);\\\\n}\\", native));
-    const addSome2 = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 6, 17, addSome), 6, 17, callIfFuncAndRightArgs(delayIt, 6, 25, wrap(() => ({
-      isTail: false,
-      value: 2
-    }), \\"() => 2\\", native)));
-    const res = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 8, 12, addSome2), 8, 12, callIfFuncAndRightArgs(delayIt, 8, 21, wrap(() => ({
-      isTail: false,
-      value: 3
-    }), \\"() => 3\\", native)));
-    lastStatementResult = eval(\\"res;\\");
-    globals.variables.set(\\"addSome\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return addSome;
-      }
-    });
-    globals.variables.set(\\"addSome2\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return addSome2;
-      }
-    });
-    globals.variables.set(\\"res\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return res;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -486,64 +114,8 @@ res;",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "pretranspiled": "const neg = makeLazyFunction(b => {
-  return !forceIt(b);
-});
-const res = wrapLazyCallee(neg)(delayIt(() => wrapLazyCallee(x => x)(delayIt(() => false))));
-res;
-",
   "result": true,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const neg = callIfFuncAndRightArgs(makeLazyFunction, 1, 0, wrap(b => {
-      return {
-        isTail: false,
-        value: unaryOp(\\"!\\", callIfFuncAndRightArgs(forceIt, 2, 10, b), 2, 9)
-      };
-    }, \\"b => {\\\\n  return !forceIt(b);\\\\n}\\", native));
-    const res = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 4, 12, neg), 4, 12, callIfFuncAndRightArgs(delayIt, 4, 16, wrap(() => ({
-      isTail: true,
-      function: callIfFuncAndRightArgs(wrapLazyCallee, 4, 17, wrap(x => ({
-        isTail: false,
-        value: x
-      }), \\"x => x\\", native)),
-      functionName: \\"<anonymous>\\",
-      arguments: [callIfFuncAndRightArgs(delayIt, 4, 27, wrap(() => ({
-        isTail: false,
-        value: false
-      }), \\"() => false\\", native))],
-      line: 4,
-      column: 16
-    }), \\"() => wrapLazyCallee(x => x)(delayIt(() => false))\\", native)));
-    lastStatementResult = eval(\\"res;\\");
-    globals.variables.set(\\"neg\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return neg;
-      }
-    });
-    globals.variables.set(\\"res\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return res;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -559,90 +131,8 @@ res;",
   "displayResult": Array [],
   "errors": Array [],
   "parsedErrors": "",
-  "pretranspiled": "const test = makeLazyFunction((a, b, c, d, e, f) => {
-  return a;
-});
-const res = wrapLazyCallee(test)(delayIt(() => 1), delayIt(() => wrapLazyCallee(head)(delayIt(() => null))), delayIt(() => forceIt(1) + forceIt('')), delayIt(() => !forceIt(1)), delayIt(() => forceIt('') - forceIt(1)), delayIt(() => wrapLazyCallee(head)(delayIt(() => wrapLazyCallee(head)(delayIt(() => null))))));
-res;
-",
   "result": 1,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const test = callIfFuncAndRightArgs(makeLazyFunction, 1, 0, wrap((a, b, c, d, e, f) => {
-      return {
-        isTail: false,
-        value: a
-      };
-    }, \\"(a, b, c, d, e, f) => {\\\\n  return a;\\\\n}\\", native));
-    const res = callIfFuncAndRightArgs(callIfFuncAndRightArgs(wrapLazyCallee, 4, 12, test), 4, 12, callIfFuncAndRightArgs(delayIt, 4, 17, wrap(() => ({
-      isTail: false,
-      value: 1
-    }), \\"() => 1\\", native)), callIfFuncAndRightArgs(delayIt, 4, 20, wrap(() => ({
-      isTail: true,
-      function: callIfFuncAndRightArgs(wrapLazyCallee, 4, 20, head),
-      functionName: \\"<anonymous>\\",
-      arguments: [callIfFuncAndRightArgs(delayIt, 4, 25, wrap(() => ({
-        isTail: false,
-        value: null
-      }), \\"() => null\\", native))],
-      line: 4,
-      column: 20
-    }), \\"() => wrapLazyCallee(head)(delayIt(() => null))\\", native)), callIfFuncAndRightArgs(delayIt, 4, 32, wrap(() => ({
-      isTail: false,
-      value: binaryOp(\\"+\\", 2, callIfFuncAndRightArgs(forceIt, 4, 32, 1), callIfFuncAndRightArgs(forceIt, 4, 36, ''), 4, 32)
-    }), \\"() => forceIt(1) + forceIt('')\\", native)), callIfFuncAndRightArgs(delayIt, 4, 40, wrap(() => ({
-      isTail: false,
-      value: unaryOp(\\"!\\", callIfFuncAndRightArgs(forceIt, 4, 41, 1), 4, 40)
-    }), \\"() => !forceIt(1)\\", native)), callIfFuncAndRightArgs(delayIt, 4, 44, wrap(() => ({
-      isTail: false,
-      value: binaryOp(\\"-\\", 2, callIfFuncAndRightArgs(forceIt, 4, 44, ''), callIfFuncAndRightArgs(forceIt, 4, 49, 1), 4, 44)
-    }), \\"() => forceIt('') - forceIt(1)\\", native)), callIfFuncAndRightArgs(delayIt, 4, 52, wrap(() => ({
-      isTail: true,
-      function: callIfFuncAndRightArgs(wrapLazyCallee, 4, 52, head),
-      functionName: \\"<anonymous>\\",
-      arguments: [callIfFuncAndRightArgs(delayIt, 4, 57, wrap(() => ({
-        isTail: true,
-        function: callIfFuncAndRightArgs(wrapLazyCallee, 4, 57, head),
-        functionName: \\"<anonymous>\\",
-        arguments: [callIfFuncAndRightArgs(delayIt, 4, 62, wrap(() => ({
-          isTail: false,
-          value: null
-        }), \\"() => null\\", native))],
-        line: 4,
-        column: 57
-      }), \\"() => wrapLazyCallee(head)(delayIt(() => null))\\", native))],
-      line: 4,
-      column: 52
-    }), \\"() => wrapLazyCallee(head)(delayIt(() => wrapLazyCallee(head)(delayIt(() => null))))\\", native)));
-    lastStatementResult = eval(\\"res;\\");
-    globals.variables.set(\\"test\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return test;
-      }
-    });
-    globals.variables.set(\\"res\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return res;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
