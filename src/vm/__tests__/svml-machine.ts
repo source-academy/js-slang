@@ -418,7 +418,7 @@ describe('standard opcodes', () => {
 
   // NEWA, LDAG, STAG, DUP
   test('array opcodes work', () => {
-    return expectDisplayResult(`const x = [1,2,,1]; display(x[1]); display(x[8]);`, {
+    return expectDisplayResult(`const x = [1,2,3,1]; display(x[1]); display(x[8]);`, {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(`
