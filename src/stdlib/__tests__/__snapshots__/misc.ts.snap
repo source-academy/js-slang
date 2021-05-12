@@ -5,23 +5,7 @@ Object {
   "alertResult": Array [],
   "code": "char_at('', -1);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: char_at expects the second argument to be a nonnegative integer.],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 15,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: char_at expects the second argument to be a nonnegative integer.",
   "result": undefined,
   "resultStatus": "error",
@@ -34,23 +18,7 @@ Object {
   "alertResult": Array [],
   "code": "char_at('', \\"\\");",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: char_at expects the second argument to be a nonnegative integer.],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 15,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: char_at expects the second argument to be a nonnegative integer.",
   "result": undefined,
   "resultStatus": "error",
@@ -63,23 +31,7 @@ Object {
   "alertResult": Array [],
   "code": "char_at(42, 123);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: char_at expects the first argument to be a string.],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 16,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: char_at expects the first argument to be a string.",
   "result": undefined,
   "resultStatus": "error",
@@ -92,7 +44,7 @@ Object {
   "alertResult": Array [],
   "code": "char_at(\\"123\\", 3);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": undefined,
   "resultStatus": "finished",
@@ -105,7 +57,7 @@ Object {
   "alertResult": Array [],
   "code": "char_at(\\"123\\", 0);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": "1",
   "resultStatus": "finished",
@@ -118,23 +70,7 @@ Object {
   "alertResult": Array [],
   "code": "parse_int(42, 2.1);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 18,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
   "result": undefined,
   "resultStatus": "error",
@@ -147,23 +83,7 @@ Object {
   "alertResult": Array [],
   "code": "parse_int(42, 2);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 16,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
   "result": undefined,
   "resultStatus": "error",
@@ -176,23 +96,7 @@ Object {
   "alertResult": Array [],
   "code": "parse_int('10', 1);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 18,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
   "result": undefined,
   "resultStatus": "error",
@@ -205,23 +109,7 @@ Object {
   "alertResult": Array [],
   "code": "parse_int('10', 37);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 19,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
   "result": undefined,
   "resultStatus": "error",
@@ -234,23 +122,7 @@ Object {
   "alertResult": Array [],
   "code": "parse_int(42, '2');",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 18,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive.",
   "result": undefined,
   "resultStatus": "error",
@@ -263,7 +135,7 @@ Object {
   "alertResult": Array [],
   "code": "parse_int('uu1', 2);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": NaN,
   "resultStatus": "finished",
@@ -276,7 +148,7 @@ Object {
   "alertResult": Array [],
   "code": "parse_int('1100101010101', 2);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 6485,
   "resultStatus": "finished",
@@ -289,7 +161,7 @@ Object {
   "alertResult": Array [],
   "code": "parse_int('uu1', 36);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 39961,
   "resultStatus": "finished",

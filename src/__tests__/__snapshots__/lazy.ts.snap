@@ -9,7 +9,7 @@ Object {
 const res = add(((x) => x)(5), ((x) => x + 1)(9));
 res;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 15,
   "resultStatus": "finished",
@@ -27,7 +27,7 @@ Object {
 const res = f(((b) => b)(true), ((b) => !b)(true));
 res;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -49,7 +49,7 @@ function test2(a) {
 const res = test2(1);
 res;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -74,7 +74,7 @@ function square(n) {
 const res = square(incX());
 res;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 4,
   "resultStatus": "finished",
@@ -95,7 +95,7 @@ const addSome2 = addSome(2);
 const res = addSome2(3);
 res;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 6,
   "resultStatus": "finished",
@@ -112,7 +112,7 @@ Object {
 const res = neg(((x) => x)(false));
 res;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -129,7 +129,7 @@ Object {
 const res = test(1, head(null), 1 + '', !1, '' - 1, head(head(null)));
 res;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",

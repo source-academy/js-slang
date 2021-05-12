@@ -12,76 +12,7 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [
-    NoAssignmentToForVariable {
-      "node": Node {
-        "end": 84,
-        "inferredType": Object {
-          "kind": "primitive",
-          "name": "number",
-        },
-        "left": Node {
-          "end": 80,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 7,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 6,
-              "line": 4,
-            },
-          },
-          "name": "x",
-          "start": 79,
-          "typability": "Typed",
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 11,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 6,
-            "line": 4,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 84,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 4,
-            },
-          },
-          "raw": "1",
-          "start": 83,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": 1,
-        },
-        "start": 79,
-        "typability": "Typed",
-        "type": "AssignmentExpression",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 4: Assignment to a for loop variable in the for loop is not allowed.",
   "result": undefined,
   "resultStatus": "error",
@@ -99,23 +30,7 @@ function f() {
 }
 f();",
   "displayResult": Array [],
-  "errors": Array [
-    UnassignedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 11,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 10,
-          "line": 3,
-        },
-      },
-      "name": "a",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Name a declared later in current scope but not yet assigned",
   "result": undefined,
   "resultStatus": "error",
@@ -132,23 +47,7 @@ Object {
   const a = 10;
 }",
   "displayResult": Array [],
-  "errors": Array [
-    UnassignedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 3,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 3,
-        },
-      },
-      "name": "a",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Name a declared later in current scope but not yet assigned",
   "result": undefined,
   "resultStatus": "error",
@@ -165,23 +64,7 @@ function f() {
 }
 v;",
   "displayResult": Array [],
-  "errors": Array [
-    UnassignedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 11,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 10,
-          "line": 1,
-        },
-      },
-      "name": "f",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Name f declared later in current scope but not yet assigned",
   "result": undefined,
   "resultStatus": "error",
@@ -200,23 +83,7 @@ function test(){
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [
-    UndefinedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 16,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 3,
-        },
-      },
-      "name": "variable",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Name variable not declared.",
   "result": undefined,
   "resultStatus": "error",
@@ -238,7 +105,7 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -258,7 +125,7 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -277,7 +144,7 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -299,7 +166,7 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -319,7 +186,7 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -340,7 +207,7 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",

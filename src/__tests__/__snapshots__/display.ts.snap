@@ -7,7 +7,7 @@ Object {
   "displayResult": Array [
     "\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\"",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": "Tom's assisstant said: \\"tuna.\\"",
   "resultStatus": "finished",
@@ -22,7 +22,7 @@ Object {
   "displayResult": Array [
     "[1, 2, [4, 5]]",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     1,
@@ -45,7 +45,7 @@ Object {
     "x => x",
     "(x, y) => x + y",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": [Function],
   "resultStatus": "finished",
@@ -62,7 +62,7 @@ Object {
     "NaN",
     "Infinity",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Infinity,
   "resultStatus": "finished",
@@ -77,7 +77,7 @@ Object {
   "displayResult": Array [
     "[1, [2, null]]",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     1,
@@ -98,7 +98,7 @@ Object {
   "displayResult": Array [
     "0",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -113,7 +113,7 @@ Object {
   "displayResult": Array [
     "{\\"a\\": 1, \\"b\\": 2, \\"c\\": {\\"d\\": 3}}",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Object {
     "a": 1,
@@ -134,7 +134,7 @@ Object {
   "displayResult": Array [
     "my_first_String 31072020",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 31072020,
   "resultStatus": "finished",
@@ -147,23 +147,7 @@ Object {
   "alertResult": Array [],
   "code": "display(31072020, 0xDEADC0DE);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [TypeError: display expects the second argument to be a string],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 29,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: TypeError: display expects the second argument to be a string",
   "result": undefined,
   "resultStatus": "error",
@@ -178,7 +162,7 @@ Object {
   "displayResult": Array [
     "Tom's assisstant said: \\"tuna.\\"",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": "Tom's assisstant said: \\"tuna.\\"",
   "resultStatus": "finished",

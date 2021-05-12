@@ -9,76 +9,7 @@ Object {
   }
 }",
   "displayResult": Array [],
-  "errors": Array [
-    NoAssignmentToForVariable {
-      "node": Node {
-        "end": 64,
-        "inferredType": Object {
-          "kind": "primitive",
-          "name": "number",
-        },
-        "left": Node {
-          "end": 59,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 3,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 3,
-            },
-          },
-          "name": "i",
-          "start": 58,
-          "typability": "Typed",
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 3,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 3,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 64,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 3,
-            },
-            "start": Position {
-              "column": 8,
-              "line": 3,
-            },
-          },
-          "raw": "10",
-          "start": 62,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": 10,
-        },
-        "start": 58,
-        "typability": "Typed",
-        "type": "AssignmentExpression",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Assignment to a for loop variable in the for loop is not allowed.",
   "result": undefined,
   "resultStatus": "error",
@@ -93,76 +24,7 @@ Object {
   i = 10;
 }",
   "displayResult": Array [],
-  "errors": Array [
-    NoAssignmentToForVariable {
-      "node": Node {
-        "end": 45,
-        "inferredType": Object {
-          "kind": "primitive",
-          "name": "number",
-        },
-        "left": Node {
-          "end": 40,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 3,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 2,
-            },
-          },
-          "name": "i",
-          "start": 39,
-          "typability": "Typed",
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 8,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 2,
-            "line": 2,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 45,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 8,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 6,
-              "line": 2,
-            },
-          },
-          "raw": "10",
-          "start": 43,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": 10,
-        },
-        "start": 39,
-        "typability": "Typed",
-        "type": "AssignmentExpression",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Assignment to a for loop variable in the for loop is not allowed.",
   "result": undefined,
   "resultStatus": "error",

@@ -12,7 +12,7 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 10000,
   "resultStatus": "finished",
@@ -32,7 +32,7 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 10000,
   "resultStatus": "finished",
@@ -48,7 +48,7 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 10000,
   "resultStatus": "finished",
@@ -64,7 +64,7 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 10000,
   "resultStatus": "finished",
@@ -84,7 +84,7 @@ Object {
 };
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 10000,
   "resultStatus": "finished",
@@ -98,7 +98,7 @@ Object {
   "code": "const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 10000,
   "resultStatus": "finished",
@@ -118,7 +118,7 @@ Object {
 }
 f(5000, 5000, 2);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 15000,
   "resultStatus": "finished",
@@ -133,7 +133,7 @@ Object {
 const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 10000,
   "resultStatus": "finished",
@@ -160,7 +160,7 @@ function g(x, y) {
 }
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 10000,
   "resultStatus": "finished",

@@ -19,7 +19,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -46,7 +46,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -73,7 +73,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -97,7 +97,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -119,25 +119,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "number",
-      "got": "boolean",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 21,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 13,
-          "line": 3,
-        },
-      },
-      "severity": "Error",
-      "side": " on right hand side of operation",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Expected number on right hand side of operation, got boolean.",
   "result": undefined,
   "resultStatus": "error",
@@ -164,7 +146,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
@@ -194,7 +176,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
@@ -224,7 +206,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
@@ -251,7 +233,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
@@ -281,7 +263,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -311,7 +293,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -341,7 +323,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -368,7 +350,7 @@ Object {
     f();
   ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",

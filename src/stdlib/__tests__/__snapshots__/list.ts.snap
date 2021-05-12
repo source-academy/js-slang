@@ -5,23 +5,7 @@ Object {
   "alertResult": Array [],
   "code": "list_ref(list(1, 2, 3), 3);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered null],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 27,
-          "line": 163,
-        },
-        "start": Position {
-          "column": 19,
-          "line": 163,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 163: Error: head(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
@@ -34,23 +18,7 @@ Object {
   "alertResult": Array [],
   "code": "list_ref(list(1, 2, 3), -1);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: tail(xs) expects a pair as argument xs, but encountered null],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 47,
-          "line": 163,
-        },
-        "start": Position {
-          "column": 39,
-          "line": 163,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 163: Error: tail(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
@@ -63,23 +31,7 @@ Object {
   "alertResult": Array [],
   "code": "list_ref(list(1, 2, 3), 1.5);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: tail(xs) expects a pair as argument xs, but encountered null],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 47,
-          "line": 163,
-        },
-        "start": Position {
-          "column": 39,
-          "line": 163,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 163: Error: tail(xs) expects a pair as argument xs, but encountered null",
   "result": undefined,
   "resultStatus": "error",
@@ -92,25 +44,7 @@ Object {
   "alertResult": Array [],
   "code": "list_ref(list(1, 2, 3), '1');",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "string",
-      "got": "number",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 16,
-          "line": 163,
-        },
-        "start": Position {
-          "column": 9,
-          "line": 163,
-        },
-      },
-      "severity": "Error",
-      "side": " on right hand side of operation",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 163: Expected string on right hand side of operation, got number.",
   "result": undefined,
   "resultStatus": "error",
@@ -123,25 +57,7 @@ Object {
   "alertResult": Array [],
   "code": "build_list('1', x => x);",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "number",
-      "got": "string",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 20,
-          "line": 61,
-        },
-        "start": Position {
-          "column": 15,
-          "line": 61,
-        },
-      },
-      "severity": "Error",
-      "side": " on left hand side of operation",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 61: Expected number on left hand side of operation, got string.",
   "result": undefined,
   "resultStatus": "error",
@@ -154,25 +70,7 @@ Object {
   "alertResult": Array [],
   "code": "enum_list('1', '5');",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "string",
-      "got": "number",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 61,
-          "line": 155,
-        },
-        "start": Position {
-          "column": 52,
-          "line": 155,
-        },
-      },
-      "severity": "Error",
-      "side": " on right hand side of operation",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 155: Expected string on right hand side of operation, got number.",
   "result": undefined,
   "resultStatus": "error",
@@ -185,25 +83,7 @@ Object {
   "alertResult": Array [],
   "code": "enum_list('1', 5);",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "string",
-      "got": "number",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 20,
-          "line": 155,
-        },
-        "start": Position {
-          "column": 9,
-          "line": 155,
-        },
-      },
-      "severity": "Error",
-      "side": " on right hand side of operation",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 155: Expected string on right hand side of operation, got number.",
   "result": undefined,
   "resultStatus": "error",
@@ -216,25 +96,7 @@ Object {
   "alertResult": Array [],
   "code": "enum_list(1, '5');",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "number",
-      "got": "string",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 20,
-          "line": 155,
-        },
-        "start": Position {
-          "column": 9,
-          "line": 155,
-        },
-      },
-      "severity": "Error",
-      "side": " on right hand side of operation",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 155: Expected number on right hand side of operation, got string.",
   "result": undefined,
   "resultStatus": "error",
@@ -247,25 +109,7 @@ Object {
   "alertResult": Array [],
   "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "accumulate",
-      "expected": 3,
-      "got": 2,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 38,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Expected 3 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
@@ -278,25 +122,7 @@ Object {
   "alertResult": Array [],
   "code": "accumulate((x, y) => x + y, [1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "accumulate",
-      "expected": 3,
-      "got": 2,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 38,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Expected 3 arguments, but got 2.",
   "result": undefined,
   "resultStatus": "error",
@@ -309,23 +135,7 @@ Object {
   "alertResult": Array [],
   "code": "append([1, 2, 3], list(1, 2, 3));",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 41,
-          "line": 107,
-        },
-        "start": Position {
-          "column": 33,
-          "line": 107,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 107: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -338,23 +148,7 @@ Object {
   "alertResult": Array [],
   "code": "assoc(1, [1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    UndefinedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 5,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "name": "assoc",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Name assoc not declared.",
   "result": undefined,
   "resultStatus": "error",
@@ -367,23 +161,7 @@ Object {
   "alertResult": Array [],
   "code": "filter(x => true, [1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 19,
-          "line": 145,
-        },
-        "start": Position {
-          "column": 11,
-          "line": 145,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 145: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -396,23 +174,7 @@ Object {
   "alertResult": Array [],
   "code": "for_each(x=>x, [1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 16,
-          "line": 74,
-        },
-        "start": Position {
-          "column": 8,
-          "line": 74,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 74: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -425,23 +187,7 @@ Object {
   "alertResult": Array [],
   "code": "length([1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 46,
-          "line": 40,
-        },
-        "start": Position {
-          "column": 38,
-          "line": 40,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 40: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -454,23 +200,7 @@ Object {
   "alertResult": Array [],
   "code": "map(x=>x, [1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 45,
-          "line": 49,
-        },
-        "start": Position {
-          "column": 37,
-          "line": 49,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 49: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -483,23 +213,7 @@ Object {
   "alertResult": Array [],
   "code": "member(1, [1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 44,
-          "line": 116,
-        },
-        "start": Position {
-          "column": 36,
-          "line": 116,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 116: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -512,23 +226,7 @@ Object {
   "alertResult": Array [],
   "code": "remove(1, [1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 44,
-          "line": 124,
-        },
-        "start": Position {
-          "column": 36,
-          "line": 124,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 124: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -541,23 +239,7 @@ Object {
   "alertResult": Array [],
   "code": "remove_all(1, [1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 20,
-          "line": 133,
-        },
-        "start": Position {
-          "column": 12,
-          "line": 133,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 133: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -570,23 +252,7 @@ Object {
   "alertResult": Array [],
   "code": "reverse([1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 60,
-          "line": 96,
-        },
-        "start": Position {
-          "column": 46,
-          "line": 96,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 96: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -599,23 +265,7 @@ Object {
   "alertResult": Array [],
   "code": "set_head([1, 2, 3], 4);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 22,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -628,23 +278,7 @@ Object {
   "alertResult": Array [],
   "code": "set_tail([1, 2, 3], 4);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 22,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -657,7 +291,7 @@ Object {
   "alertResult": Array [],
   "code": "accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 10,
   "resultStatus": "finished",
@@ -670,7 +304,7 @@ Object {
   "alertResult": Array [],
   "code": "equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -683,7 +317,7 @@ Object {
   "alertResult": Array [],
   "code": "equal(build_list(5, x => x * x), list(0, 1, 4, 9, 16));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -713,7 +347,7 @@ Object {
                                              list(list(\\"application\\", list(\\"name\\", \\"f\\"), list(list(\\"name\\", \\"x\\")))))),
                                    list(\\"return_statement\\", list(\\"name\\", \\"two\\")))))))))",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -727,23 +361,7 @@ Object {
   "code": "display_list(build_list(5, i=>i), true);
 0; // suppress long result in snapshot",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [TypeError: display_list expects the second argument to be a string],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 39,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: TypeError: display_list expects the second argument to be a string",
   "result": undefined,
   "resultStatus": "error",
@@ -761,7 +379,7 @@ display_list(p);
   "displayResult": Array [
     "[1, [2, [3, ...<circular>]]]",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -790,7 +408,7 @@ display_list(build_inf(3, i => build_list(i, i => build_inf(i, i=>i))));
 [ list([0, ...<circular>], [0, [1, ...<circular>]], [0, [1, [2, ...<circular>]]]),
 ...<circular>]]]]",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -808,7 +426,7 @@ display_list(p);
   "displayResult": Array [
     "[1, ...<circular>]",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -835,7 +453,7 @@ display_list(build_list(3, i => build_inf(i, i => build_list(i, i=>i))));
      [null, [list(0), ...<circular>]],
      [null, [list(0), [list(0, 1), ...<circular>]]])",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -864,7 +482,7 @@ display_list(build_list(5, build_inf));
      [0, [1, [2, [3, ...<circular>]]]],
      [0, [1, [2, [3, [4, ...<circular>]]]]])",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -881,7 +499,7 @@ xs === display_list(xs);
   "displayResult": Array [
     "list(0, 1, 2, 3, 4)",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -907,7 +525,7 @@ xs === display_list(xs);
   "displayResult": Array [
     "[0, [1, [2, [3, [4, [5, ...<circular>]]]]]]",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -926,7 +544,7 @@ display_list(p3);
   "displayResult": Array [
     "list(list(1), list(2, 1))",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -945,7 +563,7 @@ display_list(p3);
   "displayResult": Array [
     "list(list(1), list(list(1), 1))",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -961,7 +579,7 @@ Object {
   "displayResult": Array [
     "list(null, list(0), list(0, 1), list(0, 1, 2), list(0, 1, 2, 3))",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -996,7 +614,7 @@ Object {
      list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17),
      list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18))",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -1016,7 +634,7 @@ Object {
      list([null, 0], [list(0), 1], [list(0, 1), 2]),
      list([null, 0], [list(0), 1], [list(0, 1), 2], [list(0, 1, 2), 3]))",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -1036,7 +654,7 @@ Object {
      list([0, 0], [1, 1], [2, 2]),
      list([0, 0], [1, 1], [2, 2], [3, 3]))",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -1052,7 +670,7 @@ Object {
   "displayResult": Array [
     "list(0, 1, 2, 3, 4)",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -1068,7 +686,7 @@ Object {
   "displayResult": Array [
     "build_list: list(0, 1, 2, 3, 4)",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -1081,7 +699,7 @@ Object {
   "alertResult": Array [],
   "code": "list();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": null,
   "resultStatus": "finished",
@@ -1094,7 +712,7 @@ Object {
   "alertResult": Array [],
   "code": "equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1107,7 +725,7 @@ Object {
   "alertResult": Array [],
   "code": "equal(enum_list(1, 5), list(1, 2, 3, 4, 5));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1120,7 +738,7 @@ Object {
   "alertResult": Array [],
   "code": "!equal(1, x => x) && !equal(x => x, 1);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1133,7 +751,7 @@ Object {
   "alertResult": Array [],
   "code": "equal(filter(x => x <= 4, list(2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000)), list(2, 1, 3, 4, 2));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1150,7 +768,7 @@ for_each(x => {
 }, list(1, 2, 3));
 sum;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 6,
   "resultStatus": "finished",
@@ -1163,7 +781,7 @@ Object {
   "alertResult": Array [],
   "code": "head(pair(1, 'a string \\"\\"'));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -1177,7 +795,7 @@ Object {
   "code": "function f() { return 1; }
 list(1, 'a string \\"\\"', () => f, f, true, 3.14);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     1,
@@ -1208,7 +826,7 @@ Object {
   "alertResult": Array [],
   "code": "list_ref(list(1, 2, 3, \\"4\\", 4), 4);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 4,
   "resultStatus": "finished",
@@ -1221,7 +839,7 @@ Object {
   "alertResult": Array [],
   "code": "list_to_string(list(1, 2, 3));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": "[1,[2,[3,null]]]",
   "resultStatus": "finished",
@@ -1234,7 +852,7 @@ Object {
   "alertResult": Array [],
   "code": "equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1249,7 +867,7 @@ Object {
   member(4, list(1, 2, 3, 4, 123, 456, 789)),
   list(4, 123, 456, 789));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1262,23 +880,7 @@ Object {
   "alertResult": Array [],
   "code": "head([1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 15,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -1291,23 +893,7 @@ Object {
   "alertResult": Array [],
   "code": "tail([1, 2, 3]);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 15,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]",
   "result": undefined,
   "resultStatus": "error",
@@ -1320,7 +906,7 @@ Object {
   "alertResult": Array [],
   "code": "pair(1, 'a string \\"\\"');",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     1,
@@ -1336,7 +922,7 @@ Object {
   "alertResult": Array [],
   "code": "remove(2, list(1));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     1,
@@ -1352,7 +938,7 @@ Object {
   "alertResult": Array [],
   "code": "remove(1, list(1));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": null,
   "resultStatus": "finished",
@@ -1365,7 +951,7 @@ Object {
   "alertResult": Array [],
   "code": "equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1378,7 +964,7 @@ Object {
   "alertResult": Array [],
   "code": "equal(remove_all(1, list(1, 2, 3, 4, 1, 1, 1, 5, 1, 1, 6)), list(2, 3, 4, 5, 6));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1391,7 +977,7 @@ Object {
   "alertResult": Array [],
   "code": "equal(reverse(list(\\"string\\", \\"null\\", \\"undefined\\", \\"null\\", 123)), list(123, \\"null\\", \\"undefined\\", \\"null\\", \\"string\\"));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1407,7 +993,7 @@ const q = p;
 set_head(p, 3);
 p === q && equal(p, pair(3, 2));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1423,7 +1009,7 @@ const q = p;
 set_tail(p, 3);
 p === q && equal(p, pair(1, 3));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1436,7 +1022,7 @@ Object {
   "alertResult": Array [],
   "code": "tail(list(1));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": null,
   "resultStatus": "finished",
@@ -1449,7 +1035,7 @@ Object {
   "alertResult": Array [],
   "code": "tail(pair(1, 'a string \\"\\"'));",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": "a string \\"\\"",
   "resultStatus": "finished",

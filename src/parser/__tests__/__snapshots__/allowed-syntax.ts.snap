@@ -5,7 +5,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -24,7 +24,7 @@ Object {
   "alertResult": Array [],
   "code": "",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": undefined,
   "resultStatus": "finished",
@@ -37,7 +37,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"function name(a, b) {\\\\n  const sum = a + b;\\\\n  if (sum > 1) {\\\\n    return sum;\\\\n  } else {\\\\n    if (a % 2 === 0) {\\\\n      return -1;\\\\n    } else if (b % 2 === 0) {\\\\n      return 1;\\\\n    } else {\\\\n      return a > b ? 0 : -2;\\\\n    }\\\\n  }\\\\n}\\\\nname(1, 2);\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -454,7 +454,7 @@ Object {
 }
 name(1, 2);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
@@ -467,7 +467,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"(() => true)();\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "application",
@@ -510,7 +510,7 @@ Object {
   "alertResult": Array [],
   "code": "(() => true)();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -523,7 +523,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"((x, y) => { return x + y; })(1, 2);\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "application",
@@ -620,7 +620,7 @@ Object {
   "alertResult": Array [],
   "code": "((x, y) => { return x + y; })(1, 2);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
@@ -633,7 +633,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"true;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "literal",
@@ -652,7 +652,7 @@ Object {
   "alertResult": Array [],
   "code": "true;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -665,7 +665,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"false;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "literal",
@@ -684,7 +684,7 @@ Object {
   "alertResult": Array [],
   "code": "false;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": false,
   "resultStatus": "finished",
@@ -697,7 +697,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"'a string \\\\\\"\\\\\\" \\\\\\\\'\\\\\\\\'';\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "literal",
@@ -716,7 +716,7 @@ Object {
   "alertResult": Array [],
   "code": "'a string \\"\\" \\\\'\\\\'';",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": "a string \\"\\" ''",
   "resultStatus": "finished",
@@ -729,7 +729,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"31.4 + (-3.14e10) * -1 % 2 / 1.5;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "binary_operator_combination",
@@ -838,7 +838,7 @@ Object {
   "alertResult": Array [],
   "code": "31.4 + (-3.14e10) * -1 % 2 / 1.5;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 31.4,
   "resultStatus": "finished",
@@ -851,7 +851,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"1 === 1 && 1 < 2 && 1 <= 2 && 2 >= 1 && 2 > 1 || false;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "logical_composition",
@@ -1050,7 +1050,7 @@ Object {
   "alertResult": Array [],
   "code": "1 === 1 && 1 < 2 && 1 <= 2 && 2 >= 1 && 2 > 1 || false;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -1063,7 +1063,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"true ? 1 : 2;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "conditional_expression",
@@ -1106,7 +1106,7 @@ Object {
   "alertResult": Array [],
   "code": "true ? 1 : 2;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -1119,29 +1119,7 @@ Object {
   "alertResult": Array [],
   "code": "null;",
   "displayResult": Array [],
-  "errors": Array [
-    NoNullError {
-      "node": Node {
-        "end": 4,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 4,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "raw": "null",
-        "start": 0,
-        "type": "Literal",
-        "value": null,
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: null literals are not allowed.",
   "result": undefined,
   "resultStatus": "error",
@@ -1154,7 +1132,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"null;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "literal",
@@ -1173,7 +1151,7 @@ Object {
   "alertResult": Array [],
   "code": "null;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": null,
   "resultStatus": "finished",
@@ -1186,29 +1164,7 @@ Object {
   "alertResult": Array [],
   "code": "pair(1, null);",
   "displayResult": Array [],
-  "errors": Array [
-    NoNullError {
-      "node": Node {
-        "end": 12,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 12,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 8,
-            "line": 1,
-          },
-        },
-        "raw": "null",
-        "start": 8,
-        "type": "Literal",
-        "value": null,
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: null literals are not allowed.",
   "result": undefined,
   "resultStatus": "error",
@@ -1221,7 +1177,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"pair(1, null);\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "application",
@@ -1267,7 +1223,7 @@ Object {
   "alertResult": Array [],
   "code": "pair(1, null);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     1,
@@ -1283,23 +1239,7 @@ Object {
   "alertResult": Array [],
   "code": "list(1);",
   "displayResult": Array [],
-  "errors": Array [
-    UndefinedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 4,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "name": "list",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Name list not declared.",
   "result": undefined,
   "resultStatus": "error",
@@ -1312,7 +1252,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"list(1);\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "application",
@@ -1349,7 +1289,7 @@ Object {
   "alertResult": Array [],
   "code": "list(1);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     1,
@@ -1369,346 +1309,7 @@ while (i < 5) {
 }
 i;",
   "displayResult": Array [],
-  "errors": Array [
-    NoDeclareMutableError {
-      "node": Node {
-        "declarations": Array [
-          Node {
-            "end": 9,
-            "id": Node {
-              "end": 5,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 1,
-                },
-              },
-              "name": "i",
-              "start": 4,
-              "type": "Identifier",
-            },
-            "init": Node {
-              "end": 9,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 8,
-              "type": "Literal",
-              "value": 1,
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 1,
-              },
-            },
-            "start": 4,
-            "type": "VariableDeclarator",
-          },
-        ],
-        "end": 10,
-        "kind": "let",
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "type": "VariableDeclaration",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 38,
-        "left": Node {
-          "end": 30,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 3,
-              "line": 3,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 3,
-            },
-          },
-          "name": "i",
-          "start": 29,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 11,
-            "line": 3,
-          },
-          "start": Position {
-            "column": 2,
-            "line": 3,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 38,
-          "left": Node {
-            "end": 34,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 7,
-                "line": 3,
-              },
-              "start": Position {
-                "column": 6,
-                "line": 3,
-              },
-            },
-            "name": "i",
-            "start": 33,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 3,
-            },
-            "start": Position {
-              "column": 6,
-              "line": 3,
-            },
-          },
-          "operator": "+",
-          "right": Node {
-            "end": 38,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 3,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 3,
-              },
-            },
-            "raw": "1",
-            "start": 37,
-            "type": "Literal",
-            "value": 1,
-          },
-          "start": 33,
-          "type": "BinaryExpression",
-        },
-        "start": 29,
-        "type": "AssignmentExpression",
-      },
-      "nodeType": "Assignment expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "body": Node {
-          "body": Array [
-            Node {
-              "end": 39,
-              "expression": Node {
-                "end": 38,
-                "left": Node {
-                  "end": 30,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 3,
-                      "line": 3,
-                    },
-                    "start": Position {
-                      "column": 2,
-                      "line": 3,
-                    },
-                  },
-                  "name": "i",
-                  "start": 29,
-                  "type": "Identifier",
-                },
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 3,
-                  },
-                  "start": Position {
-                    "column": 2,
-                    "line": 3,
-                  },
-                },
-                "operator": "=",
-                "right": Node {
-                  "end": 38,
-                  "left": Node {
-                    "end": 34,
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 7,
-                        "line": 3,
-                      },
-                      "start": Position {
-                        "column": 6,
-                        "line": 3,
-                      },
-                    },
-                    "name": "i",
-                    "start": 33,
-                    "type": "Identifier",
-                  },
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 11,
-                      "line": 3,
-                    },
-                    "start": Position {
-                      "column": 6,
-                      "line": 3,
-                    },
-                  },
-                  "operator": "+",
-                  "right": Node {
-                    "end": 38,
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 11,
-                        "line": 3,
-                      },
-                      "start": Position {
-                        "column": 10,
-                        "line": 3,
-                      },
-                    },
-                    "raw": "1",
-                    "start": 37,
-                    "type": "Literal",
-                    "value": 1,
-                  },
-                  "start": 33,
-                  "type": "BinaryExpression",
-                },
-                "start": 29,
-                "type": "AssignmentExpression",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 12,
-                  "line": 3,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 3,
-                },
-              },
-              "start": 29,
-              "type": "ExpressionStatement",
-            },
-          ],
-          "end": 41,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 14,
-              "line": 2,
-            },
-          },
-          "start": 25,
-          "type": "BlockStatement",
-        },
-        "end": 41,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 1,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "start": 11,
-        "test": Node {
-          "end": 23,
-          "left": Node {
-            "end": 19,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 8,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 7,
-                "line": 2,
-              },
-            },
-            "name": "i",
-            "start": 18,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 12,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 7,
-              "line": 2,
-            },
-          },
-          "operator": "<",
-          "right": Node {
-            "end": 23,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 12,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 11,
-                "line": 2,
-              },
-            },
-            "raw": "5",
-            "start": 22,
-            "type": "Literal",
-            "value": 5,
-          },
-          "start": 18,
-          "type": "BinaryExpression",
-        },
-        "type": "WhileStatement",
-      },
-      "nodeType": "While statements",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 3,
   "parsedErrors": "Line 1: Mutable variable declaration using keyword 'let' is not allowed.
 Line 3: Assignment expressions are not allowed
 Line 2: While statements are not allowed",
@@ -1723,7 +1324,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"let i = 1;\\\\nwhile (i < 5) {\\\\n  i = i + 1;\\\\n}\\\\ni;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -1854,7 +1455,7 @@ while (i < 5) {
 }
 i;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 5,
   "resultStatus": "finished",
@@ -1870,433 +1471,7 @@ for (i = 1; i < 5; i = i + 1) {
 }
 i;",
   "displayResult": Array [],
-  "errors": Array [
-    NoDeclareMutableError {
-      "node": Node {
-        "declarations": Array [
-          Node {
-            "end": 9,
-            "id": Node {
-              "end": 5,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 1,
-                },
-              },
-              "name": "i",
-              "start": 4,
-              "type": "Identifier",
-            },
-            "init": Node {
-              "end": 9,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 8,
-              "type": "Literal",
-              "value": 1,
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 1,
-              },
-            },
-            "start": 4,
-            "type": "VariableDeclarator",
-          },
-        ],
-        "end": 10,
-        "kind": "let",
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "type": "VariableDeclaration",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 21,
-        "left": Node {
-          "end": 17,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 6,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 5,
-              "line": 2,
-            },
-          },
-          "name": "i",
-          "start": 16,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 5,
-            "line": 2,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 21,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 9,
-              "line": 2,
-            },
-          },
-          "raw": "1",
-          "start": 20,
-          "type": "Literal",
-          "value": 1,
-        },
-        "start": 16,
-        "type": "AssignmentExpression",
-      },
-      "nodeType": "Assignment expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 39,
-        "left": Node {
-          "end": 31,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 20,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 19,
-              "line": 2,
-            },
-          },
-          "name": "i",
-          "start": 30,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 28,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 19,
-            "line": 2,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 39,
-          "left": Node {
-            "end": 35,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 24,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 23,
-                "line": 2,
-              },
-            },
-            "name": "i",
-            "start": 34,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 28,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 23,
-              "line": 2,
-            },
-          },
-          "operator": "+",
-          "right": Node {
-            "end": 39,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 28,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 27,
-                "line": 2,
-              },
-            },
-            "raw": "1",
-            "start": 38,
-            "type": "Literal",
-            "value": 1,
-          },
-          "start": 34,
-          "type": "BinaryExpression",
-        },
-        "start": 30,
-        "type": "AssignmentExpression",
-      },
-      "nodeType": "Assignment expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "body": Node {
-          "body": Array [],
-          "end": 44,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 3,
-            },
-            "start": Position {
-              "column": 30,
-              "line": 2,
-            },
-          },
-          "start": 41,
-          "type": "BlockStatement",
-        },
-        "end": 44,
-        "init": Node {
-          "end": 21,
-          "left": Node {
-            "end": 17,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 6,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 5,
-                "line": 2,
-              },
-            },
-            "name": "i",
-            "start": 16,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 5,
-              "line": 2,
-            },
-          },
-          "operator": "=",
-          "right": Node {
-            "end": 21,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 10,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 9,
-                "line": 2,
-              },
-            },
-            "raw": "1",
-            "start": 20,
-            "type": "Literal",
-            "value": 1,
-          },
-          "start": 16,
-          "type": "AssignmentExpression",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 1,
-            "line": 3,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "start": 11,
-        "test": Node {
-          "end": 28,
-          "left": Node {
-            "end": 24,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 13,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 2,
-              },
-            },
-            "name": "i",
-            "start": 23,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 17,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 12,
-              "line": 2,
-            },
-          },
-          "operator": "<",
-          "right": Node {
-            "end": 28,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 17,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 16,
-                "line": 2,
-              },
-            },
-            "raw": "5",
-            "start": 27,
-            "type": "Literal",
-            "value": 5,
-          },
-          "start": 23,
-          "type": "BinaryExpression",
-        },
-        "type": "ForStatement",
-        "update": Node {
-          "end": 39,
-          "left": Node {
-            "end": 31,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 20,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 19,
-                "line": 2,
-              },
-            },
-            "name": "i",
-            "start": 30,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 28,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 19,
-              "line": 2,
-            },
-          },
-          "operator": "=",
-          "right": Node {
-            "end": 39,
-            "left": Node {
-              "end": 35,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 24,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 23,
-                  "line": 2,
-                },
-              },
-              "name": "i",
-              "start": 34,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 28,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 23,
-                "line": 2,
-              },
-            },
-            "operator": "+",
-            "right": Node {
-              "end": 39,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 28,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 27,
-                  "line": 2,
-                },
-              },
-              "raw": "1",
-              "start": 38,
-              "type": "Literal",
-              "value": 1,
-            },
-            "start": 34,
-            "type": "BinaryExpression",
-          },
-          "start": 30,
-          "type": "AssignmentExpression",
-        },
-      },
-      "nodeType": "For statements",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 4,
   "parsedErrors": "Line 1: Mutable variable declaration using keyword 'let' is not allowed.
 Line 2: Assignment expressions are not allowed
 Line 2: Assignment expressions are not allowed
@@ -2312,7 +1487,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"let i = 1;\\\\nfor (i = 1; i < 5; i = i + 1) {\\\\n}\\\\ni;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -2475,7 +1650,7 @@ for (i = 1; i < 5; i = i + 1) {
 }
 i;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 5,
   "resultStatus": "finished",
@@ -2500,918 +1675,7 @@ for (let j = 0; j < 5; j = j + 1) {
 }
 i;",
   "displayResult": Array [],
-  "errors": Array [
-    NoDeclareMutableError {
-      "node": Node {
-        "declarations": Array [
-          Node {
-            "end": 9,
-            "id": Node {
-              "end": 5,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 1,
-                },
-              },
-              "name": "i",
-              "start": 4,
-              "type": "Identifier",
-            },
-            "init": Node {
-              "end": 9,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 8,
-              "type": "Literal",
-              "value": 1,
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 1,
-              },
-            },
-            "start": 4,
-            "type": "VariableDeclarator",
-          },
-        ],
-        "end": 10,
-        "kind": "let",
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "type": "VariableDeclaration",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    NoDeclareMutableError {
-      "node": Node {
-        "declarations": Array [
-          Node {
-            "end": 25,
-            "id": Node {
-              "end": 21,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 10,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 9,
-                  "line": 2,
-                },
-              },
-              "name": "j",
-              "start": 20,
-              "type": "Identifier",
-            },
-            "init": Node {
-              "end": 25,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 14,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 13,
-                  "line": 2,
-                },
-              },
-              "raw": "0",
-              "start": 24,
-              "type": "Literal",
-              "value": 0,
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 14,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 9,
-                "line": 2,
-              },
-            },
-            "start": 20,
-            "type": "VariableDeclarator",
-          },
-        ],
-        "end": 25,
-        "kind": "let",
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 5,
-            "line": 2,
-          },
-        },
-        "start": 16,
-        "type": "VariableDeclaration",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 43,
-        "left": Node {
-          "end": 35,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 24,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 23,
-              "line": 2,
-            },
-          },
-          "name": "j",
-          "start": 34,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 32,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 23,
-            "line": 2,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 43,
-          "left": Node {
-            "end": 39,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 28,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 27,
-                "line": 2,
-              },
-            },
-            "name": "j",
-            "start": 38,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 32,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 27,
-              "line": 2,
-            },
-          },
-          "operator": "+",
-          "right": Node {
-            "end": 43,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 32,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 31,
-                "line": 2,
-              },
-            },
-            "raw": "1",
-            "start": 42,
-            "type": "Literal",
-            "value": 1,
-          },
-          "start": 38,
-          "type": "BinaryExpression",
-        },
-        "start": 34,
-        "type": "AssignmentExpression",
-      },
-      "nodeType": "Assignment expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 75,
-        "label": null,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "start": 66,
-        "type": "ContinueStatement",
-      },
-      "nodeType": "Continue statements",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 100,
-        "left": Node {
-          "end": 92,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 6,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 6,
-            },
-          },
-          "name": "i",
-          "start": 91,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 6,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 6,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 100,
-          "left": Node {
-            "end": 96,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 6,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 6,
-              },
-            },
-            "name": "i",
-            "start": 95,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 13,
-              "line": 6,
-            },
-            "start": Position {
-              "column": 8,
-              "line": 6,
-            },
-          },
-          "operator": "+",
-          "right": Node {
-            "end": 100,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 13,
-                "line": 6,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 6,
-              },
-            },
-            "raw": "1",
-            "start": 99,
-            "type": "Literal",
-            "value": 1,
-          },
-          "start": 95,
-          "type": "BinaryExpression",
-        },
-        "start": 91,
-        "type": "AssignmentExpression",
-      },
-      "nodeType": "Assignment expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 131,
-        "label": null,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 12,
-            "line": 8,
-          },
-          "start": Position {
-            "column": 6,
-            "line": 8,
-          },
-        },
-        "start": 125,
-        "type": "BreakStatement",
-      },
-      "nodeType": "Break statements",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "body": Node {
-          "body": Array [
-            Node {
-              "alternate": Node {
-                "body": Array [
-                  Node {
-                    "end": 101,
-                    "expression": Node {
-                      "end": 100,
-                      "left": Node {
-                        "end": 92,
-                        "loc": SourceLocation {
-                          "end": Position {
-                            "column": 5,
-                            "line": 6,
-                          },
-                          "start": Position {
-                            "column": 4,
-                            "line": 6,
-                          },
-                        },
-                        "name": "i",
-                        "start": 91,
-                        "type": "Identifier",
-                      },
-                      "loc": SourceLocation {
-                        "end": Position {
-                          "column": 13,
-                          "line": 6,
-                        },
-                        "start": Position {
-                          "column": 4,
-                          "line": 6,
-                        },
-                      },
-                      "operator": "=",
-                      "right": Node {
-                        "end": 100,
-                        "left": Node {
-                          "end": 96,
-                          "loc": SourceLocation {
-                            "end": Position {
-                              "column": 9,
-                              "line": 6,
-                            },
-                            "start": Position {
-                              "column": 8,
-                              "line": 6,
-                            },
-                          },
-                          "name": "i",
-                          "start": 95,
-                          "type": "Identifier",
-                        },
-                        "loc": SourceLocation {
-                          "end": Position {
-                            "column": 13,
-                            "line": 6,
-                          },
-                          "start": Position {
-                            "column": 8,
-                            "line": 6,
-                          },
-                        },
-                        "operator": "+",
-                        "right": Node {
-                          "end": 100,
-                          "loc": SourceLocation {
-                            "end": Position {
-                              "column": 13,
-                              "line": 6,
-                            },
-                            "start": Position {
-                              "column": 12,
-                              "line": 6,
-                            },
-                          },
-                          "raw": "1",
-                          "start": 99,
-                          "type": "Literal",
-                          "value": 1,
-                        },
-                        "start": 95,
-                        "type": "BinaryExpression",
-                      },
-                      "start": 91,
-                      "type": "AssignmentExpression",
-                    },
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 14,
-                        "line": 6,
-                      },
-                      "start": Position {
-                        "column": 4,
-                        "line": 6,
-                      },
-                    },
-                    "start": 91,
-                    "type": "ExpressionStatement",
-                  },
-                  Node {
-                    "alternate": Node {
-                      "body": Array [],
-                      "end": 150,
-                      "loc": SourceLocation {
-                        "end": Position {
-                          "column": 5,
-                          "line": 10,
-                        },
-                        "start": Position {
-                          "column": 11,
-                          "line": 9,
-                        },
-                      },
-                      "start": 143,
-                      "type": "BlockStatement",
-                    },
-                    "consequent": Node {
-                      "body": Array [
-                        Node {
-                          "end": 131,
-                          "label": null,
-                          "loc": SourceLocation {
-                            "end": Position {
-                              "column": 12,
-                              "line": 8,
-                            },
-                            "start": Position {
-                              "column": 6,
-                              "line": 8,
-                            },
-                          },
-                          "start": 125,
-                          "type": "BreakStatement",
-                        },
-                      ],
-                      "end": 137,
-                      "loc": SourceLocation {
-                        "end": Position {
-                          "column": 5,
-                          "line": 9,
-                        },
-                        "start": Position {
-                          "column": 15,
-                          "line": 7,
-                        },
-                      },
-                      "start": 117,
-                      "type": "BlockStatement",
-                    },
-                    "end": 150,
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 5,
-                        "line": 10,
-                      },
-                      "start": Position {
-                        "column": 4,
-                        "line": 7,
-                      },
-                    },
-                    "start": 106,
-                    "test": Node {
-                      "end": 115,
-                      "left": Node {
-                        "end": 111,
-                        "loc": SourceLocation {
-                          "end": Position {
-                            "column": 9,
-                            "line": 7,
-                          },
-                          "start": Position {
-                            "column": 8,
-                            "line": 7,
-                          },
-                        },
-                        "name": "j",
-                        "start": 110,
-                        "type": "Identifier",
-                      },
-                      "loc": SourceLocation {
-                        "end": Position {
-                          "column": 13,
-                          "line": 7,
-                        },
-                        "start": Position {
-                          "column": 8,
-                          "line": 7,
-                        },
-                      },
-                      "operator": ">",
-                      "right": Node {
-                        "end": 115,
-                        "loc": SourceLocation {
-                          "end": Position {
-                            "column": 13,
-                            "line": 7,
-                          },
-                          "start": Position {
-                            "column": 12,
-                            "line": 7,
-                          },
-                        },
-                        "raw": "2",
-                        "start": 114,
-                        "type": "Literal",
-                        "value": 2,
-                      },
-                      "start": 110,
-                      "type": "BinaryExpression",
-                    },
-                    "type": "IfStatement",
-                  },
-                ],
-                "end": 154,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 3,
-                    "line": 11,
-                  },
-                  "start": Position {
-                    "column": 9,
-                    "line": 5,
-                  },
-                },
-                "start": 85,
-                "type": "BlockStatement",
-              },
-              "consequent": Node {
-                "body": Array [
-                  Node {
-                    "end": 75,
-                    "label": null,
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 13,
-                        "line": 4,
-                      },
-                      "start": Position {
-                        "column": 4,
-                        "line": 4,
-                      },
-                    },
-                    "start": 66,
-                    "type": "ContinueStatement",
-                  },
-                ],
-                "end": 79,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 3,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 13,
-                    "line": 3,
-                  },
-                },
-                "start": 60,
-                "type": "BlockStatement",
-              },
-              "end": 154,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 3,
-                  "line": 11,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 3,
-                },
-              },
-              "start": 49,
-              "test": Node {
-                "end": 58,
-                "left": Node {
-                  "end": 54,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 7,
-                      "line": 3,
-                    },
-                    "start": Position {
-                      "column": 6,
-                      "line": 3,
-                    },
-                  },
-                  "name": "j",
-                  "start": 53,
-                  "type": "Identifier",
-                },
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 3,
-                  },
-                  "start": Position {
-                    "column": 6,
-                    "line": 3,
-                  },
-                },
-                "operator": "<",
-                "right": Node {
-                  "end": 58,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 11,
-                      "line": 3,
-                    },
-                    "start": Position {
-                      "column": 10,
-                      "line": 3,
-                    },
-                  },
-                  "raw": "1",
-                  "start": 57,
-                  "type": "Literal",
-                  "value": 1,
-                },
-                "start": 53,
-                "type": "BinaryExpression",
-              },
-              "type": "IfStatement",
-            },
-          ],
-          "end": 156,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 12,
-            },
-            "start": Position {
-              "column": 34,
-              "line": 2,
-            },
-          },
-          "start": 45,
-          "type": "BlockStatement",
-        },
-        "end": 156,
-        "init": Node {
-          "declarations": Array [
-            Node {
-              "end": 25,
-              "id": Node {
-                "end": 21,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 10,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 9,
-                    "line": 2,
-                  },
-                },
-                "name": "j",
-                "start": 20,
-                "type": "Identifier",
-              },
-              "init": Node {
-                "end": 25,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 14,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 13,
-                    "line": 2,
-                  },
-                },
-                "raw": "0",
-                "start": 24,
-                "type": "Literal",
-                "value": 0,
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 14,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 9,
-                  "line": 2,
-                },
-              },
-              "start": 20,
-              "type": "VariableDeclarator",
-            },
-          ],
-          "end": 25,
-          "kind": "let",
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 5,
-              "line": 2,
-            },
-          },
-          "start": 16,
-          "type": "VariableDeclaration",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 1,
-            "line": 12,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "start": 11,
-        "test": Node {
-          "end": 32,
-          "left": Node {
-            "end": 28,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 17,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 16,
-                "line": 2,
-              },
-            },
-            "name": "j",
-            "start": 27,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 21,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 16,
-              "line": 2,
-            },
-          },
-          "operator": "<",
-          "right": Node {
-            "end": 32,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 21,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 20,
-                "line": 2,
-              },
-            },
-            "raw": "5",
-            "start": 31,
-            "type": "Literal",
-            "value": 5,
-          },
-          "start": 27,
-          "type": "BinaryExpression",
-        },
-        "type": "ForStatement",
-        "update": Node {
-          "end": 43,
-          "left": Node {
-            "end": 35,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 24,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 23,
-                "line": 2,
-              },
-            },
-            "name": "j",
-            "start": 34,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 32,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 23,
-              "line": 2,
-            },
-          },
-          "operator": "=",
-          "right": Node {
-            "end": 43,
-            "left": Node {
-              "end": 39,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 28,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 27,
-                  "line": 2,
-                },
-              },
-              "name": "j",
-              "start": 38,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 32,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 27,
-                "line": 2,
-              },
-            },
-            "operator": "+",
-            "right": Node {
-              "end": 43,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 32,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 31,
-                  "line": 2,
-                },
-              },
-              "raw": "1",
-              "start": 42,
-              "type": "Literal",
-              "value": 1,
-            },
-            "start": 38,
-            "type": "BinaryExpression",
-          },
-          "start": 34,
-          "type": "AssignmentExpression",
-        },
-      },
-      "nodeType": "For statements",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 7,
   "parsedErrors": "Line 1: Mutable variable declaration using keyword 'let' is not allowed.
 Line 2: Mutable variable declaration using keyword 'let' is not allowed.
 Line 2: Assignment expressions are not allowed
@@ -3430,7 +1694,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"let i = 1;\\\\nfor (let j = 0; j < 5; j = j + 1) {\\\\n  if (j < 1) {\\\\n    continue;\\\\n  } else {\\\\n    i = i + 1;\\\\n    if (j > 2) {\\\\n      break;\\\\n    } else {\\\\n    }\\\\n  }\\\\n}\\\\ni;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -3731,7 +1995,7 @@ for (let j = 0; j < 5; j = j + 1) {
 }
 i;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 4,
   "resultStatus": "finished",
@@ -3744,29 +2008,7 @@ Object {
   "alertResult": Array [],
   "code": "[];",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "elements": Array [],
-        "end": 2,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 2,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "type": "ArrayExpression",
-      },
-      "nodeType": "Array expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Array expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
@@ -3779,7 +2021,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"[];\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "array_expression",
@@ -3798,7 +2040,7 @@ Object {
   "alertResult": Array [],
   "code": "[];",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [],
   "resultStatus": "finished",
@@ -3811,81 +2053,7 @@ Object {
   "alertResult": Array [],
   "code": "[1, 2, 3];",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "elements": Array [
-          Node {
-            "end": 2,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 2,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 1,
-                "line": 1,
-              },
-            },
-            "raw": "1",
-            "start": 1,
-            "type": "Literal",
-            "value": 1,
-          },
-          Node {
-            "end": 5,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 1,
-              },
-            },
-            "raw": "2",
-            "start": 4,
-            "type": "Literal",
-            "value": 2,
-          },
-          Node {
-            "end": 8,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 8,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 7,
-                "line": 1,
-              },
-            },
-            "raw": "3",
-            "start": 7,
-            "type": "Literal",
-            "value": 3,
-          },
-        ],
-        "end": 9,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 9,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "type": "ArrayExpression",
-      },
-      "nodeType": "Array expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Array expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
@@ -3898,7 +2066,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"[1, 2, 3];\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "array_expression",
@@ -3944,7 +2112,7 @@ Object {
   "alertResult": Array [],
   "code": "[1, 2, 3];",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     1,
@@ -3961,187 +2129,7 @@ Object {
   "alertResult": Array [],
   "code": "[1, 2, 3][1];",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "elements": Array [
-          Node {
-            "end": 2,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 2,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 1,
-                "line": 1,
-              },
-            },
-            "raw": "1",
-            "start": 1,
-            "type": "Literal",
-            "value": 1,
-          },
-          Node {
-            "end": 5,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 1,
-              },
-            },
-            "raw": "2",
-            "start": 4,
-            "type": "Literal",
-            "value": 2,
-          },
-          Node {
-            "end": 8,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 8,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 7,
-                "line": 1,
-              },
-            },
-            "raw": "3",
-            "start": 7,
-            "type": "Literal",
-            "value": 3,
-          },
-        ],
-        "end": 9,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 9,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "type": "ArrayExpression",
-      },
-      "nodeType": "Array expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "computed": true,
-        "end": 12,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 12,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "object": Node {
-          "elements": Array [
-            Node {
-              "end": 2,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 1,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 1,
-              "type": "Literal",
-              "value": 1,
-            },
-            Node {
-              "end": 5,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 4,
-              "type": "Literal",
-              "value": 2,
-            },
-            Node {
-              "end": 8,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 7,
-                  "line": 1,
-                },
-              },
-              "raw": "3",
-              "start": 7,
-              "type": "Literal",
-              "value": 3,
-            },
-          ],
-          "end": 9,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 9,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 1,
-            },
-          },
-          "start": 0,
-          "type": "ArrayExpression",
-        },
-        "property": Node {
-          "end": 11,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 1,
-            },
-          },
-          "raw": "1",
-          "start": 10,
-          "type": "Literal",
-          "value": 1,
-        },
-        "start": 0,
-        "type": "MemberExpression",
-      },
-      "nodeType": "Member expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 2,
   "parsedErrors": "Line 1: Array expressions are not allowed
 Line 1: Member expressions are not allowed",
   "result": undefined,
@@ -4155,7 +2143,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"[1, 2, 3][1];\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "object_access",
@@ -4216,7 +2204,7 @@ Object {
   "alertResult": Array [],
   "code": "[1, 2, 3][1];",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 2,
   "resultStatus": "finished",
@@ -4230,256 +2218,7 @@ Object {
   "code": "let x = [1, 2, 3];
 x[1];",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "elements": Array [
-          Node {
-            "end": 10,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 10,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 9,
-                "line": 1,
-              },
-            },
-            "raw": "1",
-            "start": 9,
-            "type": "Literal",
-            "value": 1,
-          },
-          Node {
-            "end": 13,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 13,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 1,
-              },
-            },
-            "raw": "2",
-            "start": 12,
-            "type": "Literal",
-            "value": 2,
-          },
-          Node {
-            "end": 16,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 16,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 15,
-                "line": 1,
-              },
-            },
-            "raw": "3",
-            "start": 15,
-            "type": "Literal",
-            "value": 3,
-          },
-        ],
-        "end": 17,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 17,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 8,
-            "line": 1,
-          },
-        },
-        "start": 8,
-        "type": "ArrayExpression",
-      },
-      "nodeType": "Array expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    NoDeclareMutableError {
-      "node": Node {
-        "declarations": Array [
-          Node {
-            "end": 17,
-            "id": Node {
-              "end": 5,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 1,
-                },
-              },
-              "name": "x",
-              "start": 4,
-              "type": "Identifier",
-            },
-            "init": Node {
-              "elements": Array [
-                Node {
-                  "end": 10,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 10,
-                      "line": 1,
-                    },
-                    "start": Position {
-                      "column": 9,
-                      "line": 1,
-                    },
-                  },
-                  "raw": "1",
-                  "start": 9,
-                  "type": "Literal",
-                  "value": 1,
-                },
-                Node {
-                  "end": 13,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 13,
-                      "line": 1,
-                    },
-                    "start": Position {
-                      "column": 12,
-                      "line": 1,
-                    },
-                  },
-                  "raw": "2",
-                  "start": 12,
-                  "type": "Literal",
-                  "value": 2,
-                },
-                Node {
-                  "end": 16,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 16,
-                      "line": 1,
-                    },
-                    "start": Position {
-                      "column": 15,
-                      "line": 1,
-                    },
-                  },
-                  "raw": "3",
-                  "start": 15,
-                  "type": "Literal",
-                  "value": 3,
-                },
-              ],
-              "end": 17,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 17,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "start": 8,
-              "type": "ArrayExpression",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 17,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 1,
-              },
-            },
-            "start": 4,
-            "type": "VariableDeclarator",
-          },
-        ],
-        "end": 18,
-        "kind": "let",
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 18,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "type": "VariableDeclaration",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "computed": true,
-        "end": 23,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 4,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "object": Node {
-          "end": 20,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 2,
-            },
-          },
-          "name": "x",
-          "start": 19,
-          "type": "Identifier",
-        },
-        "property": Node {
-          "end": 22,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 3,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 2,
-            },
-          },
-          "raw": "1",
-          "start": 21,
-          "type": "Literal",
-          "value": 1,
-        },
-        "start": 19,
-        "type": "MemberExpression",
-      },
-      "nodeType": "Member expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 3,
   "parsedErrors": "Line 1: Array expressions are not allowed
 Line 1: Mutable variable declaration using keyword 'let' is not allowed.
 Line 2: Member expressions are not allowed",
@@ -4494,7 +2233,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = [1, 2, 3];\\\\nx[1];\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -4589,7 +2328,7 @@ Object {
   "code": "let x = [1, 2, 3];
 x[1];",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 2,
   "resultStatus": "finished",
@@ -4603,343 +2342,7 @@ Object {
   "code": "let x = [1, 2, 3];
 x[1] = 4;",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "elements": Array [
-          Node {
-            "end": 10,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 10,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 9,
-                "line": 1,
-              },
-            },
-            "raw": "1",
-            "start": 9,
-            "type": "Literal",
-            "value": 1,
-          },
-          Node {
-            "end": 13,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 13,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 1,
-              },
-            },
-            "raw": "2",
-            "start": 12,
-            "type": "Literal",
-            "value": 2,
-          },
-          Node {
-            "end": 16,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 16,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 15,
-                "line": 1,
-              },
-            },
-            "raw": "3",
-            "start": 15,
-            "type": "Literal",
-            "value": 3,
-          },
-        ],
-        "end": 17,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 17,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 8,
-            "line": 1,
-          },
-        },
-        "start": 8,
-        "type": "ArrayExpression",
-      },
-      "nodeType": "Array expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    NoDeclareMutableError {
-      "node": Node {
-        "declarations": Array [
-          Node {
-            "end": 17,
-            "id": Node {
-              "end": 5,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 1,
-                },
-              },
-              "name": "x",
-              "start": 4,
-              "type": "Identifier",
-            },
-            "init": Node {
-              "elements": Array [
-                Node {
-                  "end": 10,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 10,
-                      "line": 1,
-                    },
-                    "start": Position {
-                      "column": 9,
-                      "line": 1,
-                    },
-                  },
-                  "raw": "1",
-                  "start": 9,
-                  "type": "Literal",
-                  "value": 1,
-                },
-                Node {
-                  "end": 13,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 13,
-                      "line": 1,
-                    },
-                    "start": Position {
-                      "column": 12,
-                      "line": 1,
-                    },
-                  },
-                  "raw": "2",
-                  "start": 12,
-                  "type": "Literal",
-                  "value": 2,
-                },
-                Node {
-                  "end": 16,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 16,
-                      "line": 1,
-                    },
-                    "start": Position {
-                      "column": 15,
-                      "line": 1,
-                    },
-                  },
-                  "raw": "3",
-                  "start": 15,
-                  "type": "Literal",
-                  "value": 3,
-                },
-              ],
-              "end": 17,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 17,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "start": 8,
-              "type": "ArrayExpression",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 17,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 1,
-              },
-            },
-            "start": 4,
-            "type": "VariableDeclarator",
-          },
-        ],
-        "end": 18,
-        "kind": "let",
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 18,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "type": "VariableDeclaration",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "computed": true,
-        "end": 23,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 4,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "object": Node {
-          "end": 20,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 2,
-            },
-          },
-          "name": "x",
-          "start": 19,
-          "type": "Identifier",
-        },
-        "property": Node {
-          "end": 22,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 3,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 2,
-            },
-          },
-          "raw": "1",
-          "start": 21,
-          "type": "Literal",
-          "value": 1,
-        },
-        "start": 19,
-        "type": "MemberExpression",
-      },
-      "nodeType": "Member expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 27,
-        "left": Node {
-          "computed": true,
-          "end": 23,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 4,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 2,
-            },
-          },
-          "object": Node {
-            "end": 20,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 1,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 0,
-                "line": 2,
-              },
-            },
-            "name": "x",
-            "start": 19,
-            "type": "Identifier",
-          },
-          "property": Node {
-            "end": 22,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 3,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 2,
-              },
-            },
-            "raw": "1",
-            "start": 21,
-            "type": "Literal",
-            "value": 1,
-          },
-          "start": 19,
-          "type": "MemberExpression",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 8,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 27,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 8,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 7,
-              "line": 2,
-            },
-          },
-          "raw": "4",
-          "start": 26,
-          "type": "Literal",
-          "value": 4,
-        },
-        "start": 19,
-        "type": "AssignmentExpression",
-      },
-      "nodeType": "Assignment expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 4,
   "parsedErrors": "Line 1: Array expressions are not allowed
 Line 1: Mutable variable declaration using keyword 'let' is not allowed.
 Line 2: Member expressions are not allowed
@@ -4955,7 +2358,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = [1, 2, 3];\\\\nx[1] = 4;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -5065,7 +2468,7 @@ Object {
   "code": "let x = [1, 2, 3];
 x[1] = 4;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 4,
   "resultStatus": "finished",
@@ -5082,476 +2485,7 @@ let z = 5;
 x = y = z = 6;
 x;",
   "displayResult": Array [],
-  "errors": Array [
-    NoDeclareMutableError {
-      "node": Node {
-        "declarations": Array [
-          Node {
-            "end": 9,
-            "id": Node {
-              "end": 5,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 1,
-                },
-              },
-              "name": "x",
-              "start": 4,
-              "type": "Identifier",
-            },
-            "init": Node {
-              "end": 9,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "raw": "3",
-              "start": 8,
-              "type": "Literal",
-              "value": 3,
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 1,
-              },
-            },
-            "start": 4,
-            "type": "VariableDeclarator",
-          },
-        ],
-        "end": 10,
-        "kind": "let",
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "type": "VariableDeclaration",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    NoDeclareMutableError {
-      "node": Node {
-        "declarations": Array [
-          Node {
-            "end": 20,
-            "id": Node {
-              "end": 16,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 2,
-                },
-              },
-              "name": "y",
-              "start": 15,
-              "type": "Identifier",
-            },
-            "init": Node {
-              "end": 20,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 2,
-                },
-              },
-              "raw": "4",
-              "start": 19,
-              "type": "Literal",
-              "value": 4,
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 2,
-              },
-            },
-            "start": 15,
-            "type": "VariableDeclarator",
-          },
-        ],
-        "end": 21,
-        "kind": "let",
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "start": 11,
-        "type": "VariableDeclaration",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    NoDeclareMutableError {
-      "node": Node {
-        "declarations": Array [
-          Node {
-            "end": 31,
-            "id": Node {
-              "end": 27,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 3,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 3,
-                },
-              },
-              "name": "z",
-              "start": 26,
-              "type": "Identifier",
-            },
-            "init": Node {
-              "end": 31,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 3,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 3,
-                },
-              },
-              "raw": "5",
-              "start": 30,
-              "type": "Literal",
-              "value": 5,
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 3,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 3,
-              },
-            },
-            "start": 26,
-            "type": "VariableDeclarator",
-          },
-        ],
-        "end": 32,
-        "kind": "let",
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 3,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 3,
-          },
-        },
-        "start": 22,
-        "type": "VariableDeclaration",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 46,
-        "left": Node {
-          "end": 42,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 9,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 8,
-              "line": 4,
-            },
-          },
-          "name": "z",
-          "start": 41,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 8,
-            "line": 4,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 46,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 13,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 12,
-              "line": 4,
-            },
-          },
-          "raw": "6",
-          "start": 45,
-          "type": "Literal",
-          "value": 6,
-        },
-        "start": 41,
-        "type": "AssignmentExpression",
-      },
-      "nodeType": "Assignment expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 46,
-        "left": Node {
-          "end": 38,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "name": "y",
-          "start": 37,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 46,
-          "left": Node {
-            "end": 42,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 4,
-              },
-            },
-            "name": "z",
-            "start": 41,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 13,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 8,
-              "line": 4,
-            },
-          },
-          "operator": "=",
-          "right": Node {
-            "end": 46,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 13,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 4,
-              },
-            },
-            "raw": "6",
-            "start": 45,
-            "type": "Literal",
-            "value": 6,
-          },
-          "start": 41,
-          "type": "AssignmentExpression",
-        },
-        "start": 37,
-        "type": "AssignmentExpression",
-      },
-      "nodeType": "Assignment expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    DisallowedConstructError {
-      "node": Node {
-        "end": 46,
-        "left": Node {
-          "end": 34,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 4,
-            },
-          },
-          "name": "x",
-          "start": 33,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 4,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 46,
-          "left": Node {
-            "end": 38,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 4,
-              },
-            },
-            "name": "y",
-            "start": 37,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 13,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "operator": "=",
-          "right": Node {
-            "end": 46,
-            "left": Node {
-              "end": 42,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 4,
-                },
-              },
-              "name": "z",
-              "start": 41,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 13,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 4,
-              },
-            },
-            "operator": "=",
-            "right": Node {
-              "end": 46,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 4,
-                },
-              },
-              "raw": "6",
-              "start": 45,
-              "type": "Literal",
-              "value": 6,
-            },
-            "start": 41,
-            "type": "AssignmentExpression",
-          },
-          "start": 37,
-          "type": "AssignmentExpression",
-        },
-        "start": 33,
-        "type": "AssignmentExpression",
-      },
-      "nodeType": "Assignment expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 6,
   "parsedErrors": "Line 1: Mutable variable declaration using keyword 'let' is not allowed.
 Line 2: Mutable variable declaration using keyword 'let' is not allowed.
 Line 3: Mutable variable declaration using keyword 'let' is not allowed.
@@ -5569,7 +2503,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = 3;\\\\nlet y = 4;\\\\nlet z = 5;\\\\nx = y = z = 6;\\\\nx;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -5727,7 +2661,7 @@ let z = 5;
 x = y = z = 6;
 x;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 6,
   "resultStatus": "finished",
@@ -5740,29 +2674,7 @@ Object {
   "alertResult": Array [],
   "code": "({});",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 3,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 3,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 1,
-            "line": 1,
-          },
-        },
-        "properties": Array [],
-        "start": 1,
-        "type": "ObjectExpression",
-      },
-      "nodeType": "Object expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Object expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
@@ -5775,7 +2687,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"({});\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "object_expression",
@@ -5794,7 +2706,7 @@ Object {
   "alertResult": Array [],
   "code": "({});",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Object {},
   "resultStatus": "finished",
@@ -5807,134 +2719,7 @@ Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2});",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 13,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 1,
-            "line": 1,
-          },
-        },
-        "properties": Array [
-          Node {
-            "computed": false,
-            "end": 6,
-            "key": Node {
-              "end": 3,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 3,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-              },
-              "name": "a",
-              "start": 2,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 6,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 2,
-            "type": "Property",
-            "value": Node {
-              "end": 6,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 5,
-              "type": "Literal",
-              "value": 1,
-            },
-          },
-          Node {
-            "computed": false,
-            "end": 12,
-            "key": Node {
-              "end": 9,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "name": "b",
-              "start": 8,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 12,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 8,
-            "type": "Property",
-            "value": Node {
-              "end": 12,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 12,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 11,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 11,
-              "type": "Literal",
-              "value": 2,
-            },
-          },
-        ],
-        "start": 1,
-        "type": "ObjectExpression",
-      },
-      "nodeType": "Object expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Object expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
@@ -5947,7 +2732,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"({a: 1, b: 2});\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "object_expression",
@@ -6002,7 +2787,7 @@ Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2});",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Object {
     "a": 1,
@@ -6018,134 +2803,7 @@ Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2})['a'];",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 13,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 1,
-            "line": 1,
-          },
-        },
-        "properties": Array [
-          Node {
-            "computed": false,
-            "end": 6,
-            "key": Node {
-              "end": 3,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 3,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-              },
-              "name": "a",
-              "start": 2,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 6,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 2,
-            "type": "Property",
-            "value": Node {
-              "end": 6,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 5,
-              "type": "Literal",
-              "value": 1,
-            },
-          },
-          Node {
-            "computed": false,
-            "end": 12,
-            "key": Node {
-              "end": 9,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "name": "b",
-              "start": 8,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 12,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 8,
-            "type": "Property",
-            "value": Node {
-              "end": 12,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 12,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 11,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 11,
-              "type": "Literal",
-              "value": 2,
-            },
-          },
-        ],
-        "start": 1,
-        "type": "ObjectExpression",
-      },
-      "nodeType": "Object expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Object expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
@@ -6158,7 +2816,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"({a: 1, b: 2})['a'];\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "object_access",
@@ -6228,7 +2886,7 @@ Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2})['a'];",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -6241,291 +2899,7 @@ Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2}).a;",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 13,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 1,
-            "line": 1,
-          },
-        },
-        "properties": Array [
-          Node {
-            "computed": false,
-            "end": 6,
-            "key": Node {
-              "end": 3,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 3,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-              },
-              "name": "a",
-              "start": 2,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 6,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 2,
-            "type": "Property",
-            "value": Node {
-              "end": 6,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 5,
-              "type": "Literal",
-              "value": 1,
-            },
-          },
-          Node {
-            "computed": false,
-            "end": 12,
-            "key": Node {
-              "end": 9,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "name": "b",
-              "start": 8,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 12,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 8,
-            "type": "Property",
-            "value": Node {
-              "end": 12,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 12,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 11,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 11,
-              "type": "Literal",
-              "value": 2,
-            },
-          },
-        ],
-        "start": 1,
-        "type": "ObjectExpression",
-      },
-      "nodeType": "Object expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    NoDotAbbreviationError {
-      "node": Node {
-        "computed": false,
-        "end": 16,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "object": Node {
-          "end": 13,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 13,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 1,
-              "line": 1,
-            },
-          },
-          "properties": Array [
-            Node {
-              "computed": false,
-              "end": 6,
-              "key": Node {
-                "end": 3,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 3,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 2,
-                    "line": 1,
-                  },
-                },
-                "name": "a",
-                "start": 2,
-                "type": "Identifier",
-              },
-              "kind": "init",
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-              },
-              "method": false,
-              "shorthand": false,
-              "start": 2,
-              "type": "Property",
-              "value": Node {
-                "end": 6,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 6,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 5,
-                    "line": 1,
-                  },
-                },
-                "raw": "1",
-                "start": 5,
-                "type": "Literal",
-                "value": 1,
-              },
-            },
-            Node {
-              "computed": false,
-              "end": 12,
-              "key": Node {
-                "end": 9,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 9,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 8,
-                    "line": 1,
-                  },
-                },
-                "name": "b",
-                "start": 8,
-                "type": "Identifier",
-              },
-              "kind": "init",
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 12,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "method": false,
-              "shorthand": false,
-              "start": 8,
-              "type": "Property",
-              "value": Node {
-                "end": 12,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 12,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 11,
-                    "line": 1,
-                  },
-                },
-                "raw": "2",
-                "start": 11,
-                "type": "Literal",
-                "value": 2,
-              },
-            },
-          ],
-          "start": 1,
-          "type": "ObjectExpression",
-        },
-        "property": Node {
-          "end": 16,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 15,
-              "line": 1,
-            },
-          },
-          "name": "a",
-          "start": 15,
-          "type": "Identifier",
-        },
-        "start": 0,
-        "type": "MemberExpression",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 2,
   "parsedErrors": "Line 1: Object expressions are not allowed
 Line 1: Dot abbreviations are not allowed.",
   "result": undefined,
@@ -6539,7 +2913,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"({a: 1, b: 2}).a;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "object_access",
@@ -6609,7 +2983,7 @@ Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2}).a;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -6622,295 +2996,7 @@ Object {
   "alertResult": Array [],
   "code": "({'a': 1, 'b': 2}).a;",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 17,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 17,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 1,
-            "line": 1,
-          },
-        },
-        "properties": Array [
-          Node {
-            "computed": false,
-            "end": 8,
-            "key": Node {
-              "end": 5,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-              },
-              "raw": "'a'",
-              "start": 2,
-              "type": "Literal",
-              "value": "a",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 8,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 2,
-            "type": "Property",
-            "value": Node {
-              "end": 8,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 7,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 7,
-              "type": "Literal",
-              "value": 1,
-            },
-          },
-          Node {
-            "computed": false,
-            "end": 16,
-            "key": Node {
-              "end": 13,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 10,
-                  "line": 1,
-                },
-              },
-              "raw": "'b'",
-              "start": 10,
-              "type": "Literal",
-              "value": "b",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 16,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 10,
-            "type": "Property",
-            "value": Node {
-              "end": 16,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 16,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 15,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 15,
-              "type": "Literal",
-              "value": 2,
-            },
-          },
-        ],
-        "start": 1,
-        "type": "ObjectExpression",
-      },
-      "nodeType": "Object expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    NoDotAbbreviationError {
-      "node": Node {
-        "computed": false,
-        "end": 20,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 20,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "object": Node {
-          "end": 17,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 17,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 1,
-              "line": 1,
-            },
-          },
-          "properties": Array [
-            Node {
-              "computed": false,
-              "end": 8,
-              "key": Node {
-                "end": 5,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 5,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 2,
-                    "line": 1,
-                  },
-                },
-                "raw": "'a'",
-                "start": 2,
-                "type": "Literal",
-                "value": "a",
-              },
-              "kind": "init",
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-              },
-              "method": false,
-              "shorthand": false,
-              "start": 2,
-              "type": "Property",
-              "value": Node {
-                "end": 8,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 8,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 7,
-                    "line": 1,
-                  },
-                },
-                "raw": "1",
-                "start": 7,
-                "type": "Literal",
-                "value": 1,
-              },
-            },
-            Node {
-              "computed": false,
-              "end": 16,
-              "key": Node {
-                "end": 13,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 10,
-                    "line": 1,
-                  },
-                },
-                "raw": "'b'",
-                "start": 10,
-                "type": "Literal",
-                "value": "b",
-              },
-              "kind": "init",
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 16,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 10,
-                  "line": 1,
-                },
-              },
-              "method": false,
-              "shorthand": false,
-              "start": 10,
-              "type": "Property",
-              "value": Node {
-                "end": 16,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 16,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 15,
-                    "line": 1,
-                  },
-                },
-                "raw": "2",
-                "start": 15,
-                "type": "Literal",
-                "value": 2,
-              },
-            },
-          ],
-          "start": 1,
-          "type": "ObjectExpression",
-        },
-        "property": Node {
-          "end": 20,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 20,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 19,
-              "line": 1,
-            },
-          },
-          "name": "a",
-          "start": 19,
-          "type": "Identifier",
-        },
-        "start": 0,
-        "type": "MemberExpression",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 2,
   "parsedErrors": "Line 1: Object expressions are not allowed
 Line 1: Dot abbreviations are not allowed.",
   "result": undefined,
@@ -6924,7 +3010,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"({'a': 1, 'b': 2}).a;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "object_access",
@@ -6982,7 +3068,7 @@ Object {
   "alertResult": Array [],
   "code": "({'a': 1, 'b': 2}).a;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -6995,136 +3081,7 @@ Object {
   "alertResult": Array [],
   "code": "({1: 1, 2: 2})['1'];",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 13,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 1,
-            "line": 1,
-          },
-        },
-        "properties": Array [
-          Node {
-            "computed": false,
-            "end": 6,
-            "key": Node {
-              "end": 3,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 3,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 2,
-              "type": "Literal",
-              "value": 1,
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 6,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 2,
-            "type": "Property",
-            "value": Node {
-              "end": 6,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 5,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 5,
-              "type": "Literal",
-              "value": 1,
-            },
-          },
-          Node {
-            "computed": false,
-            "end": 12,
-            "key": Node {
-              "end": 9,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 8,
-              "type": "Literal",
-              "value": 2,
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 12,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 8,
-            "type": "Property",
-            "value": Node {
-              "end": 12,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 12,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 11,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 11,
-              "type": "Literal",
-              "value": 2,
-            },
-          },
-        ],
-        "start": 1,
-        "type": "ObjectExpression",
-      },
-      "nodeType": "Object expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Object expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
@@ -7137,7 +3094,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"({1: 1, 2: 2})['1'];\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "object_access",
@@ -7195,7 +3152,7 @@ Object {
   "alertResult": Array [],
   "code": "({1: 1, 2: 2})['1'];",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -7209,134 +3166,7 @@ Object {
   "code": "const key = 'a';
 ({a: 1, b: 2})[key];",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 30,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 1,
-            "line": 2,
-          },
-        },
-        "properties": Array [
-          Node {
-            "computed": false,
-            "end": 23,
-            "key": Node {
-              "end": 20,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 3,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 2,
-                },
-              },
-              "name": "a",
-              "start": 19,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 6,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 2,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 19,
-            "type": "Property",
-            "value": Node {
-              "end": 23,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 5,
-                  "line": 2,
-                },
-              },
-              "raw": "1",
-              "start": 22,
-              "type": "Literal",
-              "value": 1,
-            },
-          },
-          Node {
-            "computed": false,
-            "end": 29,
-            "key": Node {
-              "end": 26,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 2,
-                },
-              },
-              "name": "b",
-              "start": 25,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 12,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 2,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 25,
-            "type": "Property",
-            "value": Node {
-              "end": 29,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 12,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 11,
-                  "line": 2,
-                },
-              },
-              "raw": "2",
-              "start": 28,
-              "type": "Literal",
-              "value": 2,
-            },
-          },
-        ],
-        "start": 18,
-        "type": "ObjectExpression",
-      },
-      "nodeType": "Object expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Object expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
@@ -7349,7 +3179,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"const key = 'a';\\\\n({a: 1, b: 2})[key];\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -7453,7 +3283,7 @@ Object {
   "code": "const key = 'a';
 ({a: 1, b: 2})[key];",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -7467,186 +3297,7 @@ Object {
   "code": "let x = {a: 1, b: 2};
 x.a = 3;",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 20,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 20,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 8,
-            "line": 1,
-          },
-        },
-        "properties": Array [
-          Node {
-            "computed": false,
-            "end": 13,
-            "key": Node {
-              "end": 10,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 10,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-              },
-              "name": "a",
-              "start": 9,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 13,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 9,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 9,
-            "type": "Property",
-            "value": Node {
-              "end": 13,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 12,
-              "type": "Literal",
-              "value": 1,
-            },
-          },
-          Node {
-            "computed": false,
-            "end": 19,
-            "key": Node {
-              "end": 16,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 16,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 15,
-                  "line": 1,
-                },
-              },
-              "name": "b",
-              "start": 15,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 19,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 15,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 15,
-            "type": "Property",
-            "value": Node {
-              "end": 19,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 19,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 18,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 18,
-              "type": "Literal",
-              "value": 2,
-            },
-          },
-        ],
-        "start": 8,
-        "type": "ObjectExpression",
-      },
-      "nodeType": "Object expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-    NoDotAbbreviationError {
-      "node": Node {
-        "computed": false,
-        "end": 25,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 3,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "object": Node {
-          "end": 23,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 2,
-            },
-          },
-          "name": "x",
-          "start": 22,
-          "type": "Identifier",
-        },
-        "property": Node {
-          "end": 25,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 3,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 2,
-            },
-          },
-          "name": "a",
-          "start": 24,
-          "type": "Identifier",
-        },
-        "start": 22,
-        "type": "MemberExpression",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 2,
   "parsedErrors": "Line 1: Object expressions are not allowed
 Line 2: Dot abbreviations are not allowed.",
   "result": undefined,
@@ -7660,7 +3311,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = {a: 1, b: 2};\\\\nx.a = 3;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -7779,7 +3430,7 @@ Object {
   "code": "let x = {a: 1, b: 2};
 x.a = 3;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
@@ -7793,134 +3444,7 @@ Object {
   "code": "let x = {a: 1, b: 2};
 x['a'] = 3;",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 20,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 20,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 8,
-            "line": 1,
-          },
-        },
-        "properties": Array [
-          Node {
-            "computed": false,
-            "end": 13,
-            "key": Node {
-              "end": 10,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 10,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-              },
-              "name": "a",
-              "start": 9,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 13,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 9,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 9,
-            "type": "Property",
-            "value": Node {
-              "end": 13,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 12,
-              "type": "Literal",
-              "value": 1,
-            },
-          },
-          Node {
-            "computed": false,
-            "end": 19,
-            "key": Node {
-              "end": 16,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 16,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 15,
-                  "line": 1,
-                },
-              },
-              "name": "b",
-              "start": 15,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 19,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 15,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 15,
-            "type": "Property",
-            "value": Node {
-              "end": 19,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 19,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 18,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 18,
-              "type": "Literal",
-              "value": 2,
-            },
-          },
-        ],
-        "start": 8,
-        "type": "ObjectExpression",
-      },
-      "nodeType": "Object expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Object expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
@@ -7933,7 +3457,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = {a: 1, b: 2};\\\\nx['a'] = 3;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -8052,7 +3576,7 @@ Object {
   "code": "let x = {a: 1, b: 2};
 x['a'] = 3;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
@@ -8067,134 +3591,7 @@ Object {
 const key = 'a';
 x[key] = 3;",
   "displayResult": Array [],
-  "errors": Array [
-    DisallowedConstructError {
-      "node": Node {
-        "end": 20,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 20,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 8,
-            "line": 1,
-          },
-        },
-        "properties": Array [
-          Node {
-            "computed": false,
-            "end": 13,
-            "key": Node {
-              "end": 10,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 10,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 9,
-                  "line": 1,
-                },
-              },
-              "name": "a",
-              "start": 9,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 13,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 9,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 9,
-            "type": "Property",
-            "value": Node {
-              "end": 13,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 12,
-              "type": "Literal",
-              "value": 1,
-            },
-          },
-          Node {
-            "computed": false,
-            "end": 19,
-            "key": Node {
-              "end": 16,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 16,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 15,
-                  "line": 1,
-                },
-              },
-              "name": "b",
-              "start": 15,
-              "type": "Identifier",
-            },
-            "kind": "init",
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 19,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 15,
-                "line": 1,
-              },
-            },
-            "method": false,
-            "shorthand": false,
-            "start": 15,
-            "type": "Property",
-            "value": Node {
-              "end": 19,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 19,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 18,
-                  "line": 1,
-                },
-              },
-              "raw": "2",
-              "start": 18,
-              "type": "Literal",
-              "value": 2,
-            },
-          },
-        ],
-        "start": 8,
-        "type": "ObjectExpression",
-      },
-      "nodeType": "Object expressions",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Object expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
@@ -8207,7 +3604,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = {a: 1, b: 2};\\\\nconst key = 'a';\\\\nx[key] = 3;\\");",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Array [
     "sequence",
@@ -8351,7 +3748,7 @@ Object {
 const key = 'a';
 x[key] = 3;",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 3,
   "resultStatus": "finished",
