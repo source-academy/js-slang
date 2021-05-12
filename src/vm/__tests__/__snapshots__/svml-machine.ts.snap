@@ -1438,6 +1438,38 @@ g(true);",
 }
 `;
 
+exports[`standard program execution block scoping works, part 2: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "{
+  let i = 5;
+}
+display(i);",
+  "displayResult": Array [],
+  "errors": Array [
+    UndefinedVariable {
+      "location": SourceLocation {
+        "end": Position {
+          "column": 9,
+          "line": 4,
+        },
+        "start": Position {
+          "column": 8,
+          "line": 4,
+        },
+      },
+      "name": "i",
+      "severity": "Error",
+      "type": "Runtime",
+    },
+  ],
+  "parsedErrors": "Line 4: Name i not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard program execution block scoping works: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
