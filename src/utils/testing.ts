@@ -25,7 +25,8 @@ interface TestResult {
   displayResult: string[]
   alertResult: string[]
   visualiseListResult: any[]
-  errors: SourceError[]
+  errors?: SourceError[]
+  numErrors: number
   parsedErrors: string
   resultStatus: string
   result: Value
@@ -38,6 +39,7 @@ interface TestOptions {
   testBuiltins?: TestBuiltins
   native?: boolean
   showTranspiledCode?: boolean
+  showErrorJSON?: boolean
 }
 
 export function createTestContext({
@@ -85,16 +87,22 @@ export function createTestContext({
 async function testInContext(code: string, options: TestOptions): Promise<TestResult> {
   const interpretedTestContext = createTestContext(options)
   const scheduler = 'preemptive'
-  const getTestResult = (context: TestContext, result: Result) => ({
-    code,
-    displayResult: context.displayResult,
-    alertResult: context.alertResult,
-    visualiseListResult: context.visualiseListResult,
-    errors: context.errors,
-    parsedErrors: parseError(context.errors),
-    resultStatus: result.status,
-    result: result.status === 'finished' ? result.value : undefined
-  })
+  const getTestResult = (context: TestContext, result: Result) => {
+    const testResult = {
+      code,
+      displayResult: context.displayResult,
+      alertResult: context.alertResult,
+      visualiseListResult: context.visualiseListResult,
+      numErrors: context.errors.length,
+      parsedErrors: parseError(context.errors),
+      resultStatus: result.status,
+      result: result.status === 'finished' ? result.value : undefined
+    }
+    if (options.showErrorJSON) {
+      testResult['errors'] = context.errors
+    }
+    return testResult
+  }
   const interpretedResult = getTestResult(
     interpretedTestContext,
     await runInContext(code, interpretedTestContext, {
@@ -169,7 +177,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
 
 export async function testSuccess(code: string, options: TestOptions = { native: false }) {
   const testResult = await testInContext(code, options)
-  expect(testResult.errors).toEqual([])
+  expect(testResult.numErrors).toEqual(0)
   expect(testResult.resultStatus).toBe('finished')
   return testResult
 }
@@ -179,14 +187,14 @@ export async function testSuccessWithErrors(
   options: TestOptions = { native: false }
 ) {
   const testResult = await testInContext(code, options)
-  expect(testResult.errors).not.toEqual([])
+  expect(testResult.numErrors).not.toEqual(0)
   expect(testResult.resultStatus).toBe('finished')
   return testResult
 }
 
 export async function testFailure(code: string, options: TestOptions = { native: false }) {
   const testResult = await testInContext(code, options)
-  expect(testResult.errors).not.toEqual([])
+  expect(testResult.numErrors).not.toEqual(0)
   expect(testResult.resultStatus).toBe('error')
   return testResult
 }
@@ -195,7 +203,7 @@ export function snapshot<T extends { [P in keyof TestResult]: any }>(
   propertyMatchers: Partial<T>,
   snapshotName?: string
 ): (testResult: TestResult) => TestResult
-export function snapshot<T extends { [P in keyof TestResult]: any }>(
+export function snapshot(
   snapshotName?: string,
   arg2?: string
 ): (testResult: TestResult) => TestResult
@@ -251,16 +259,10 @@ export function expectResult(code: string, options: TestOptions = {}) {
 }
 
 export function expectParsedErrorNoErrorSnapshot(code: string, options: TestOptions = {}) {
+  options.showErrorJSON = false
   return expect(
     testFailure(code, options)
-      .then(
-        snapshot(
-          {
-            errors: expect.any(Array)
-          },
-          'expectParsedErrorNoErrorSnapshot'
-        )
-      )
+      .then(snapshot('expectParsedErrorNoErrorSnapshot'))
       .then(testResult => testResult.parsedErrors)
   ).resolves
 }
