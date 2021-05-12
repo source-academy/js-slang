@@ -109,6 +109,7 @@ export function HighlightRulesSelector(
           builtinconsts: getAllNames('const'),
 
           'constant.language.boolean': 'true|false',
+          'constant.language.null': 'null',
 
           keyword: ChapterKeywordSelector(),
 
@@ -119,10 +120,10 @@ export function HighlightRulesSelector(
           'variable.language':
             'this|arguments|' + // Pseudo
             'debugger|' + // special features
-            'var|yield|async|await|with|switch|throw|try|' + // forbidden words
+            'var|yield|async|await|with|switch|throw|try|eval|' + // forbidden words
             'typeof|' +
             'class|enum|extends|super|export|implements|private|public|' +
-            'interface|package|protected|static|in|of|instanceof|new|' +
+            'void|interface|package|protected|static|in|of|instanceof|new|' +
             'case|catch|default|delete|do|finally|' +
             ChapterForbbidenWordSelector()
         },
