@@ -1352,7 +1352,7 @@ Object {
 exports[`standard opcodes array opcodes work: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const x = [1,2,,1]; display(x[1]); display(x[8]);",
+  "code": "const x = [1,2,3,1]; display(x[1]); display(x[8]);",
   "displayResult": Array [
     "2",
     "undefined",

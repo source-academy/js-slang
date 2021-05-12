@@ -9,6 +9,7 @@ import forStatementMustHaveAllParts from './forStatementMustHaveAllParts'
 import noDeclareMutable from './noDeclareMutable'
 import noDotAbbreviation from './noDotAbbreviation'
 import noEval from './noEval'
+import noHolesInArrays from './noHolesInArrays'
 import noIfWithoutElse from './noIfWithoutElse'
 import noImplicitDeclareUndefined from './noImplicitDeclareUndefined'
 import noImplicitReturnUndefined from './noImplicitReturnUndefined'
@@ -37,6 +38,7 @@ const rules: Rule<es.Node>[] = [
   noVar,
   singleVariableDeclaration,
   noEval,
+  noHolesInArrays,
   noTemplateExpression
 ]
 
