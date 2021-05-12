@@ -37,6 +37,7 @@ interface TestOptions {
   variant?: Variant
   testBuiltins?: TestBuiltins
   native?: boolean
+  showTranspiledCode?: boolean
 }
 
 export function createTestContext({
@@ -156,7 +157,11 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
         diff[property] = `native:${nativeValue}\ninterpreted:${interpretedValue}`
       }
     }
-    return { ...interpretedResult, ...diff, pretranspiled, transpiled } as TestResult
+    if (options.showTranspiledCode) {
+      return { ...interpretedResult, ...diff, pretranspiled, transpiled } as TestResult
+    } else {
+      return { ...interpretedResult, ...diff } as TestResult
+    }
   } else {
     return interpretedResult
   }
