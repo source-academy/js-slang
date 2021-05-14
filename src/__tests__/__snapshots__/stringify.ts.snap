@@ -1,5 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Correctly handles circular structures with multiple entry points: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const x = enum_list(1, 3);
+set_tail(tail(tail(x)), x);
+stringify(list(x, tail(x), tail(tail(x))));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "[ [1, [2, [3, ...<circular>]]],
+[[2, [3, [1, ...<circular>]]], [[3, [1, [2, ...<circular>]]], null]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`String representation of arrays are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -481,21 +497,6 @@ Object {
 }
 `;
 
-exports[`String representation with custom indent: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "stringify(parse('x=>x;'), ' ... ');",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "[... \\"lambda_expression\\",
-[... [[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`String representation with default (2 space) indent: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -505,21 +506,6 @@ Object {
   "parsedErrors": "",
   "result": "[ \\"lambda_expression\\",
 [ [[\\"name\\", [\\"x\\", null]], null],
-[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`String representation with long custom indent gets trimmed to 10 characters: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "stringify(parse('x=>x;'), '.................................');",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "[.........\\"lambda_expression\\",
-[.........[[\\"name\\", [\\"x\\", null]], null],
 [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
@@ -548,7 +534,9 @@ Object {
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
-  "result": "[\\"lambda_expression\\", [[[\\"name\\", [\\"x\\", null]], null], [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
+  "result": "[\\"lambda_expression\\",
+[[[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
