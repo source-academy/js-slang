@@ -569,7 +569,7 @@ function getDeclarationsToAccessTranspilerInternals(
 ): es.VariableDeclaration[] {
   return Object.entries(globalIds).map(([key, { name }]) => {
     let value: es.Expression
-    let kind: AllowedDeclarations = 'const'
+    const kind: AllowedDeclarations = 'const'
     if (key === 'native') {
       value = create.identifier(NATIVE_STORAGE_ID)
     } else if (key === 'globals') {
