@@ -487,7 +487,6 @@ export async function runInContext(
     }
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
-    let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
       appendModulesToContext(program, context)
       // Mutates program
@@ -500,11 +499,10 @@ export async function runInContext(
           break
       }
 
-      const temp = transpile(program, context, false)
+      const temp = transpile(program, context)
       // some issues with formatting and semicolons and tslint so no destructure
       transpiled = temp.transpiled
       sourceMapJson = temp.codeMap
-      lastStatementSourceMapJson = temp.evalMap
       let value = await sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
       if (context.variant === 'lazy') {
         value = forceIt(value)
@@ -542,24 +540,20 @@ export async function runInContext(
       }
       const line = Number(match![1])
       const column = Number(match![2])
-      return SourceMapConsumer.with(
-        line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
-        null,
-        consumer => {
-          const {
-            line: originalLine,
-            column: originalColumn,
-            name
-          } = consumer.originalPositionFor({
-            line,
-            column
-          })
-          context.errors.push(
-            convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
-          )
-          return resolvedErrorPromise
-        }
-      )
+      return SourceMapConsumer.with(sourceMapJson!, null, consumer => {
+        const {
+          line: originalLine,
+          column: originalColumn,
+          name
+        } = consumer.originalPositionFor({
+          line,
+          column
+        })
+        context.errors.push(
+          convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
+        )
+        return resolvedErrorPromise
+      })
     }
   } else {
     let it = evaluate(program, context)

@@ -130,12 +130,10 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
           break
       }
       try {
-        transpiled = transpile(parsed, nativeTestContext, true).transpiled
+        transpiled = transpile(parsed, nativeTestContext).transpiled
         // replace declaration of builtins since they're repetitive
-        transpiled = transpiled.replace(
-          /\n  const \w+ = globals\.(previousScope.)+variables.get\("\w+"\)\.getValue\(\);/g,
-          ''
-        )
+        transpiled = transpiled.replace(/\n  const \w+ = nativeStorage\..*;/g, '')
+        transpiled = transpiled.replace(/\n\s*const \w+ = .*\.operators\..*;/g, '')
       } catch {
         transpiled = 'parseError'
       }
