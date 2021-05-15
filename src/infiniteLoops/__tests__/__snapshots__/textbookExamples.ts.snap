@@ -100,7 +100,7 @@ Object {
 
           ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1024,
   "resultStatus": "finished",
@@ -202,7 +202,7 @@ Object {
         is_prime(42);
           ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": false,
   "resultStatus": "finished",
@@ -489,7 +489,7 @@ Object {
   "displayResult": Array [
     "\\" *** \\"",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -529,7 +529,7 @@ Object {
     count_change(10);
           ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 4,
   "resultStatus": "finished",

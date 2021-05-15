@@ -14,90 +14,7 @@ Object {
   f(1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": 1,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 15,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 11,
-          "line": 3,
-        },
-      },
-      "node": Node {
-        "arguments": Array [
-          Node {
-            "end": 33,
-            "inferredType": Object {
-              "kind": "primitive",
-              "name": "number",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 14,
-                "line": 3,
-              },
-              "start": Position {
-                "column": 13,
-                "line": 3,
-              },
-            },
-            "raw": "2",
-            "start": 32,
-            "typability": "Typed",
-            "type": "Literal",
-            "value": 2,
-          },
-        ],
-        "callee": Node {
-          "end": 31,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 12,
-              "line": 3,
-            },
-            "start": Position {
-              "column": 11,
-              "line": 3,
-            },
-          },
-          "raw": "1",
-          "start": 30,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": 1,
-        },
-        "end": 34,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T6",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 15,
-            "line": 3,
-          },
-          "start": Position {
-            "column": 11,
-            "line": 3,
-          },
-        },
-        "start": 30,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Calling non-function value 1.",
   "result": undefined,
   "resultStatus": "error",
@@ -115,90 +32,7 @@ Object {
   f(1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": 1,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 15,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 11,
-          "line": 3,
-        },
-      },
-      "node": Node {
-        "arguments": Array [
-          Node {
-            "end": 33,
-            "inferredType": Object {
-              "kind": "primitive",
-              "name": "number",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 14,
-                "line": 3,
-              },
-              "start": Position {
-                "column": 13,
-                "line": 3,
-              },
-            },
-            "raw": "2",
-            "start": 32,
-            "typability": "Typed",
-            "type": "Literal",
-            "value": 2,
-          },
-        ],
-        "callee": Node {
-          "end": 31,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 12,
-              "line": 3,
-            },
-            "start": Position {
-              "column": 11,
-              "line": 3,
-            },
-          },
-          "raw": "1",
-          "start": 30,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": 1,
-        },
-        "end": 34,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T6",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 15,
-            "line": 3,
-          },
-          "start": Position {
-            "column": 11,
-            "line": 3,
-          },
-        },
-        "start": 30,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Calling non-function value 1.",
   "result": undefined,
   "resultStatus": "error",
@@ -218,23 +52,7 @@ Object {
   f(1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 3,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 2,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -258,7 +76,7 @@ Object {
   fac(-2);
       ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": true,
   "resultStatus": "finished",
@@ -276,23 +94,7 @@ Object {
   f(-1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 38,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 32,
-          "line": 2,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -318,23 +120,7 @@ Object {
   CD_fac_2(5);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 30,
-          "line": 6,
-        },
-        "start": Position {
-          "column": 17,
-          "line": 6,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -354,23 +140,7 @@ Object {
   CD_fac_cond(-1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 37,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 21,
-          "line": 3,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -395,23 +165,7 @@ Object {
   CD_fac_log(-1,\\"\\");
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 61,
-          "line": 7,
-        },
-        "start": Position {
-          "column": 11,
-          "line": 7,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 7: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -433,23 +187,7 @@ Object {
   CD_fac(-1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 28,
-          "line": 6,
-        },
-        "start": Position {
-          "column": 17,
-          "line": 6,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -473,23 +211,7 @@ Object {
   CD_fib(-1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?"],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 40,
-          "line": 6,
-        },
-        "start": Position {
-          "column": 29,
-          "line": 6,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -511,23 +233,7 @@ Object {
   NBC_fac_log(1,\\"\\");
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 3,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 2,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -545,23 +251,7 @@ Object {
   NBC_fac(1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 3,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 2,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -581,23 +271,7 @@ Object {
   NBC_fib(1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Did you forget your base case?"],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 3,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 2,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Error: \\"Infinite recursion (or runtime error) detected. Did you forget your base case?\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -619,23 +293,7 @@ Object {
   NSC_fac_cond(1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 36,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 21,
-          "line": 3,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -660,23 +318,7 @@ Object {
   NSC_fac_log(1, \\"\\");
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 60,
-          "line": 7,
-        },
-        "start": Position {
-          "column": 11,
-          "line": 7,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 7: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -698,23 +340,7 @@ Object {
   NSC_fac(1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 27,
-          "line": 6,
-        },
-        "start": Position {
-          "column": 17,
-          "line": 6,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -738,23 +364,7 @@ Object {
   NSC_fib(1);
       ",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: "Infinite recursion (or runtime error) detected. Check your recursive function calls."],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 38,
-          "line": 6,
-        },
-        "start": Position {
-          "column": 28,
-          "line": 6,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 6: Error: \\"Infinite recursion (or runtime error) detected. Check your recursive function calls.\\"",
   "result": undefined,
   "resultStatus": "error",
@@ -781,23 +391,7 @@ Object {
 
       ",
   "displayResult": Array [],
-  "errors": Array [
-    UndefinedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 14,
-          "line": 9,
-        },
-        "start": Position {
-          "column": 10,
-          "line": 9,
-        },
-      },
-      "name": "list",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 9: Name list not declared.",
   "result": undefined,
   "resultStatus": "error",
@@ -815,23 +409,7 @@ Object {
   NBC_sum(list(1,2)); //terminates (error)
       ",
   "displayResult": Array [],
-  "errors": Array [
-    UndefinedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 14,
-          "line": 5,
-        },
-        "start": Position {
-          "column": 10,
-          "line": 5,
-        },
-      },
-      "name": "list",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 5: Name list not declared.",
   "result": undefined,
   "resultStatus": "error",
@@ -899,7 +477,7 @@ Object {
   "displayResult": Array [
     "\\"\\"",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 6,
   "resultStatus": "finished",
@@ -917,7 +495,7 @@ Object {
   }
   f((x)=>x);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -942,7 +520,7 @@ Object {
   fac(1,0);
       ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 0,
   "resultStatus": "finished",
@@ -963,7 +541,7 @@ Object {
   f();
       ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",
@@ -984,7 +562,7 @@ Object {
   f();
       ",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
   "resultStatus": "finished",

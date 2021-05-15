@@ -12,52 +12,10 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 10000,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap((x, y) => {
-      if (boolOrErr(binaryOp(\\"<=\\", 1, x, 0, 2, 6), 2, 2)) {
-        return {
-          isTail: false,
-          value: y
-        };
-      } else {
-        return {
-          isTail: true,
-          function: f,
-          functionName: \\"f\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, 1, 5, 18)],
-          line: 5,
-          column: 11
-        };
-      }
-    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -74,52 +32,10 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 10000,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap((x, y) => {
-      if (boolOrErr(binaryOp(\\"<=\\", 1, x, 0, 2, 6), 2, 2)) {
-        return {
-          isTail: false,
-          value: y
-        };
-      } else {
-        return boolOrErr(false, 5, 11) || ({
-          isTail: true,
-          function: f,
-          functionName: \\"f\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 22), binaryOp(\\"+\\", 1, y, 1, 5, 27)],
-          line: 5,
-          column: 20
-        });
-      }
-    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return false || f(x - 1, y + 1);\\\\n  }\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -132,48 +48,10 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 10000,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap((x, y) => {
-      return boolOrErr(binaryOp(\\"<=\\", 1, x, 0, 2, 9), 2, 9) ? {
-        isTail: false,
-        value: y
-      } : {
-        isTail: true,
-        function: f,
-        functionName: \\"f\\",
-        arguments: [binaryOp(\\"-\\", 1, x, 1, 2, 24), binaryOp(\\"+\\", 1, y, 1, 2, 29)],
-        line: 2,
-        column: 22
-      };
-    }, \\"function f(x, y) {\\\\n  return x <= 0 ? y : f(x - 1, y + 1);\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 5000, 5000);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -186,51 +64,10 @@ Object {
 }
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 10000,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap((x, y) => {
-      return boolOrErr(binaryOp(\\"<=\\", 1, x, 0, 2, 9), 2, 9) ? {
-        isTail: false,
-        value: y
-      } : boolOrErr(boolOrErr(false, 2, 22) || binaryOp(\\">\\", 1, x, 0, 2, 31), 2, 22) ? {
-        isTail: true,
-        function: f,
-        functionName: \\"f\\",
-        arguments: [binaryOp(\\"-\\", 1, x, 1, 2, 41), binaryOp(\\"+\\", 1, y, 1, 2, 46)],
-        line: 2,
-        column: 39
-      } : {
-        isTail: false,
-        value: 'unreachable'
-      };
-    }, \\"function f(x, y) {\\\\n  return x <= 0 ? y : false || x > 0 ? f(x - 1, y + 1) : 'unreachable';\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 5000, 5000);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -247,52 +84,10 @@ Object {
 };
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 10000,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap((x, y) => {
-      if (boolOrErr(binaryOp(\\"<=\\", 1, x, 0, 2, 6), 2, 2)) {
-        return {
-          isTail: false,
-          value: y
-        };
-      } else {
-        return {
-          isTail: true,
-          function: f,
-          functionName: \\"f\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, 1, 5, 18)],
-          line: 5,
-          column: 11
-        };
-      }
-    }, \\"(x, y) => {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -303,46 +98,10 @@ Object {
   "code": "const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 10000,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap((x, y) => boolOrErr(binaryOp(\\"<=\\", 1, x, 0, 1, 20), 1, 20) ? {
-      isTail: false,
-      value: y
-    } : {
-      isTail: true,
-      function: f,
-      functionName: \\"f\\",
-      arguments: [binaryOp(\\"-\\", 1, x, 1, 1, 35), binaryOp(\\"+\\", 1, y, 1, 1, 40)],
-      line: 1,
-      column: 33
-    }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 5000, 5000);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -359,52 +118,10 @@ Object {
 }
 f(5000, 5000, 2);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 15000,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap((x, y, z) => {
-      if (boolOrErr(binaryOp(\\"<=\\", 1, x, 0, 2, 6), 2, 2)) {
-        return {
-          isTail: false,
-          value: y
-        };
-      } else {
-        return {
-          isTail: true,
-          function: f,
-          functionName: \\"f\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, callIfFuncAndRightArgs(f, 5, 20, 0, z, 0), 5, 18), z],
-          line: 5,
-          column: 11
-        };
-      }
-    }, \\"function f(x, y, z) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + f(0, z, 0), z);\\\\n  }\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 8, 0, 5000, 5000, 2);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -416,63 +133,10 @@ Object {
 const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 10000,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap((x, y) => boolOrErr(binaryOp(\\"<=\\", 1, x, 0, 1, 20), 1, 20) ? {
-      isTail: false,
-      value: y
-    } : {
-      isTail: true,
-      function: g,
-      functionName: \\"g\\",
-      arguments: [binaryOp(\\"-\\", 1, x, 1, 1, 35), binaryOp(\\"+\\", 1, y, 1, 1, 40)],
-      line: 1,
-      column: 33
-    }, \\"(x, y) => x <= 0 ? y : g(x - 1, y + 1)\\", native);
-    const g = wrap((x, y) => boolOrErr(binaryOp(\\"<=\\", 1, x, 0, 2, 20), 2, 20) ? {
-      isTail: false,
-      value: y
-    } : {
-      isTail: true,
-      function: f,
-      functionName: \\"f\\",
-      arguments: [binaryOp(\\"-\\", 1, x, 1, 2, 35), binaryOp(\\"+\\", 1, y, 1, 2, 40)],
-      line: 2,
-      column: 33
-    }, \\"(x, y) => x <= 0 ? y : f(x - 1, y + 1)\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 5000, 5000);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-    globals.variables.set(\\"g\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return g;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -496,75 +160,10 @@ function g(x, y) {
 }
 f(5000, 5000);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 10000,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap((x, y) => {
-      if (boolOrErr(binaryOp(\\"<=\\", 1, x, 0, 2, 6), 2, 2)) {
-        return {
-          isTail: false,
-          value: y
-        };
-      } else {
-        return {
-          isTail: true,
-          function: g,
-          functionName: \\"g\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 5, 13), binaryOp(\\"+\\", 1, y, 1, 5, 18)],
-          line: 5,
-          column: 11
-        };
-      }
-    }, \\"function f(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return g(x - 1, y + 1);\\\\n  }\\\\n}\\", native);
-    const g = wrap((x, y) => {
-      if (boolOrErr(binaryOp(\\"<=\\", 1, x, 0, 9, 6), 9, 2)) {
-        return {
-          isTail: false,
-          value: y
-        };
-      } else {
-        return {
-          isTail: true,
-          function: f,
-          functionName: \\"f\\",
-          arguments: [binaryOp(\\"-\\", 1, x, 1, 12, 13), binaryOp(\\"+\\", 1, y, 1, 12, 18)],
-          line: 12,
-          column: 11
-        };
-      }
-    }, \\"function g(x, y) {\\\\n  if (x <= 0) {\\\\n    return y;\\\\n  } else {\\\\n    return f(x - 1, y + 1);\\\\n  }\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 15, 0, 5000, 5000);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-    globals.variables.set(\\"g\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return g;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;

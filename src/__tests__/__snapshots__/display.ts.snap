@@ -7,29 +7,10 @@ Object {
   "displayResult": Array [
     "\\"Tom's assisstant said: \\\\\\"tuna.\\\\\\"\\"",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": "Tom's assisstant said: \\"tuna.\\"",
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, \\\\\\"Tom's assisstant said: \\\\\\\\\\\\\\"tuna.\\\\\\\\\\\\\\"\\\\\\");\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -41,9 +22,8 @@ Object {
   "displayResult": Array [
     "[1, 2, [4, 5]]",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": Array [
     1,
     2,
@@ -53,24 +33,6 @@ Object {
     ],
   ],
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, [1, 2, [4, 5]]);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -83,7 +45,7 @@ Object {
     "x => x",
     "(x, y) => x + y",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": [Function],
   "resultStatus": "finished",
@@ -100,31 +62,10 @@ Object {
     "NaN",
     "Infinity",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": Infinity,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    callIfFuncAndRightArgs(display, 1, 0, 1e38);
-    callIfFuncAndRightArgs(display, 1, 15, NaN);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 29, Infinity);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -136,9 +77,8 @@ Object {
   "displayResult": Array [
     "[1, [2, null]]",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": Array [
     1,
     Array [
@@ -147,24 +87,6 @@ Object {
     ],
   ],
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, callIfFuncAndRightArgs(list, 1, 8, 1, 2));\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -176,29 +98,10 @@ Object {
   "displayResult": Array [
     "0",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 0,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -210,7 +113,7 @@ Object {
   "displayResult": Array [
     "{\\"a\\": 1, \\"b\\": 2, \\"c\\": {\\"d\\": 3}}",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
   "result": Object {
     "a": 1,
@@ -231,29 +134,10 @@ Object {
   "displayResult": Array [
     "my_first_String 31072020",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 31072020,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 1, 0, 31072020, \\\\\\"my_first_String\\\\\\");\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -263,23 +147,7 @@ Object {
   "alertResult": Array [],
   "code": "display(31072020, 0xDEADC0DE);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [TypeError: display expects the second argument to be a string],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 29,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: TypeError: display expects the second argument to be a string",
   "result": undefined,
   "resultStatus": "error",
@@ -294,29 +162,10 @@ Object {
   "displayResult": Array [
     "Tom's assisstant said: \\"tuna.\\"",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": "Tom's assisstant said: \\"tuna.\\"",
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(raw_display, 1, 0, \\\\\\"Tom's assisstant said: \\\\\\\\\\\\\\"tuna.\\\\\\\\\\\\\\"\\\\\\");\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
