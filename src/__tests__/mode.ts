@@ -114,7 +114,7 @@ test('forbidden keywords', () => {
 })
 
 test('forbidden JavaScript reserved words', () => {
-  const code = `private \nArray \nthis`
+  const code = `private \npackage \nthis`
 
   setSession(4, defaultVariant, defaultExternal, code)
 
