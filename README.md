@@ -176,7 +176,7 @@ Using your js-slang as a package
 
 To install this package
 ``` {.}
-npm install js-slang-sicp-lib-hung-test
+npm install js-slang
 ```
 
 For example to use function `display`, `list`, `head` and `tail` in chaper 3,
