@@ -170,3 +170,28 @@ $ yarn link "js-slang"
 ```
 
 Then start the frontend and the new js-slang will be used. 
+
+Using your js-slang as a package
+===========================================
+
+To install this package
+``` {.}
+npm install js-slang-sicp-lib-hung-test
+```
+
+For example to use function `display`, `list`, `head` and `tail` in chaper 3,
+
+``` {.}
+const sicp = require('js-slang/dist/sicp-module');
+sicp.createContext(3);
+
+const display = sicp.dict["display"];
+const list = sicp.dict["list"];
+const head = sicp.dict["head"];
+const tail = sicp.dict["tail"];
+
+
+const p = list("I", "love", "sicp", "module", 2021);
+display(head(tail(p)));
+```
+
