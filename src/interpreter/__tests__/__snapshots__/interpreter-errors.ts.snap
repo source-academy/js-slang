@@ -5,29 +5,10 @@ Object {
   "alertResult": Array [],
   "code": "({a: 0})[\\"a\\"];",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 0,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"getProp({   a: 0 }, \\\\\\"a\\\\\\", 1, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -40,23 +21,7 @@ Object {
 }
 map(f, list(1, 2));",
   "displayResult": Array [],
-  "errors": Array [
-    UndefinedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 10,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 9,
-          "line": 2,
-        },
-      },
-      "name": "a",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Name a not declared.",
   "result": undefined,
   "resultStatus": "error",
@@ -80,101 +45,10 @@ function negate_whole_stream(stream) {
 const ones = pair(1, () => ones);
 eval_stream(make_alternating_stream(enum_stream(1, 9)), 9);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered null],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 29,
-          "line": 8,
-        },
-        "start": Position {
-          "column": 17,
-          "line": 8,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 8: Error: head(xs) expects a pair as argument xs, but encountered null",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const make_alternating_stream = wrap(stream => {
-      return {
-        isTail: true,
-        function: pair,
-        functionName: \\"pair\\",
-        arguments: [callIfFuncAndRightArgs(head, 2, 14, stream), wrap(() => ({
-          isTail: true,
-          function: make_alternating_stream,
-          functionName: \\"make_alternating_stream\\",
-          arguments: [callIfFuncAndRightArgs(negate_whole_stream, 3, 36, callIfFuncAndRightArgs(stream_tail, 4, 40, stream))],
-          line: 2,
-          column: 34
-        }), \\"() => make_alternating_stream(negate_whole_stream(stream_tail(stream)))\\", native)],
-        line: 2,
-        column: 9
-      };
-    }, \\"function make_alternating_stream(stream) {\\\\n  return pair(head(stream), () => make_alternating_stream(negate_whole_stream(stream_tail(stream))));\\\\n}\\", native);
-    const negate_whole_stream = wrap(stream => {
-      return {
-        isTail: true,
-        function: pair,
-        functionName: \\"pair\\",
-        arguments: [unaryOp(\\"-\\", callIfFuncAndRightArgs(head, 8, 17, stream), 8, 16), wrap(() => ({
-          isTail: true,
-          function: negate_whole_stream,
-          functionName: \\"negate_whole_stream\\",
-          arguments: [callIfFuncAndRightArgs(stream_tail, 8, 57, stream)],
-          line: 8,
-          column: 37
-        }), \\"() => negate_whole_stream(stream_tail(stream))\\", native)],
-        line: 8,
-        column: 11
-      };
-    }, \\"function negate_whole_stream(stream) {\\\\n  return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));\\\\n}\\", native);
-    const ones = callIfFuncAndRightArgs(pair, 11, 13, 1, wrap(() => ({
-      isTail: false,
-      value: ones
-    }), \\"() => ones\\", native));
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(eval_stream, 12, 0, callIfFuncAndRightArgs(make_alternating_stream, 12, 12, callIfFuncAndRightArgs(enum_stream, 12, 36, 1, 9)), 9);\\");
-    globals.variables.set(\\"make_alternating_stream\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return make_alternating_stream;
-      }
-    });
-    globals.variables.set(\\"negate_whole_stream\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return negate_whole_stream;
-      }
-    });
-    globals.variables.set(\\"ones\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return ones;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -188,61 +62,10 @@ Object {
 
 h(null);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [Error: head(xs) expects a pair as argument xs, but encountered null],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 16,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 9,
-          "line": 2,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Error: head(xs) expects a pair as argument xs, but encountered null",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const h = wrap(p => {
-      return {
-        isTail: true,
-        function: head,
-        functionName: \\"head\\",
-        arguments: [p],
-        line: 2,
-        column: 9
-      };
-    }, \\"function h(p) {\\\\n  return head(p);\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(h, 5, 0, null);\\");
-    globals.variables.set(\\"h\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return h;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -252,46 +75,10 @@ Object {
   "alertResult": Array [],
   "code": "({}).valueOf;",
   "displayResult": Array [],
-  "errors": Array [
-    GetInheritedPropertyError {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 12,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "obj": Object {},
-      "prop": "valueOf",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Cannot read inherited property valueOf of {}.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"getProp({}, \\\\\\"valueOf\\\\\\", 1, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -302,23 +89,7 @@ Object {
   "code": "\\"enable verbose\\";
 map = 5;",
   "displayResult": Array [],
-  "errors": Array [
-    ConstAssignment {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 7,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "name": "map",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map.
 As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
 ",
@@ -334,23 +105,7 @@ Object {
   "code": "\\"enable verbose\\";
 undefined = 5;",
   "displayResult": Array [],
-  "errors": Array [
-    ConstAssignment {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 13,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "name": "undefined",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant undefined.
 As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
 ",
@@ -365,23 +120,7 @@ Object {
   "alertResult": Array [],
   "code": "map = 5;",
   "displayResult": Array [],
-  "errors": Array [
-    ConstAssignment {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 7,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "name": "map",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Cannot assign new value to constant map.",
   "result": undefined,
   "resultStatus": "error",
@@ -394,23 +133,7 @@ Object {
   "alertResult": Array [],
   "code": "undefined = 5;",
   "displayResult": Array [],
-  "errors": Array [
-    ConstAssignment {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 13,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "name": "undefined",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Cannot assign new value to constant undefined.",
   "result": undefined,
   "resultStatus": "error",
@@ -426,25 +149,7 @@ const g = () => 1;
 const f = x => g(x);
 f(1);",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "g",
-      "expected": 0,
-      "got": 1,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 19,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 15,
-          "line": 3,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3, Column 15: Expected 0 arguments, but got 1.
 Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
 ",
@@ -461,71 +166,10 @@ Object {
 const f = x => g(x);
 f(1);",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "g",
-      "expected": 0,
-      "got": 1,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 19,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 15,
-          "line": 2,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Expected 0 arguments, but got 1.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const g = wrap(() => ({
-      isTail: false,
-      value: 1
-    }), \\"() => 1\\", native);
-    const f = wrap(x => ({
-      isTail: true,
-      function: g,
-      functionName: \\"g\\",
-      arguments: [x],
-      line: 2,
-      column: 15
-    }), \\"x => g(x)\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 3, 0, 1);\\");
-    globals.variables.set(\\"g\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return g;
-      }
-    });
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -537,25 +181,7 @@ Object {
   const f = x => x;
   f();",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "f",
-      "expected": 1,
-      "got": 0,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 5,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 3,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 0.
 Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
@@ -571,57 +197,10 @@ Object {
   "code": "const f = x => x;
 f();",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "f",
-      "expected": 1,
-      "got": 0,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 3,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Expected 1 arguments, but got 0.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap(x => ({
-      isTail: false,
-      value: x
-    }), \\"x => x\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -633,25 +212,7 @@ Object {
   const f = x => x;
   f(1, 2);",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "f",
-      "expected": 1,
-      "got": 2,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 9,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 3,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
 Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
@@ -667,57 +228,10 @@ Object {
   "code": "const f = x => x;
 f(1, 2);",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "f",
-      "expected": 1,
-      "got": 2,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 7,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap(x => ({
-      isTail: false,
-      value: x
-    }), \\"x => x\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 2, 0, 1, 2);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -727,47 +241,10 @@ Object {
   "alertResult": Array [],
   "code": "parse_int(\\"\\");",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "parse_int",
-      "expected": 2,
-      "got": 1,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 13,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Expected 2 arguments, but got 1.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(parse_int, 1, 0, \\\\\\"\\\\\\");\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -777,47 +254,10 @@ Object {
   "alertResult": Array [],
   "code": "is_number(1, 2, 3);",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "is_number",
-      "expected": 1,
-      "got": 3,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 18,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Expected 1 arguments, but got 3.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(is_number, 1, 0, 1, 2, 3);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -829,25 +269,7 @@ Object {
   const f = [x => x];
   f[0](1, 2);",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "f[0]",
-      "expected": 1,
-      "got": 2,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 12,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 3,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
 Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
@@ -863,57 +285,10 @@ Object {
   "code": "const f = [x => x];
 f[0](1, 2);",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "f[0]",
-      "expected": 1,
-      "got": 2,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 10,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = [wrap(x => ({
-      isTail: false,
-      value: x
-    }), \\"x => x\\", native)];
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(getProp(f, 0, 2, 0), 2, 0, 1, 2);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -927,25 +302,7 @@ Object {
   }
   f();",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "f",
-      "expected": 1,
-      "got": 0,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 5,
-          "line": 5,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 5,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 0.
 Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
@@ -963,59 +320,10 @@ Object {
 }
 f();",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "f",
-      "expected": 1,
-      "got": 0,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 3,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 4,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 4: Expected 1 arguments, but got 0.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function f(x) {\\\\n  return x;\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -1029,25 +337,7 @@ Object {
   }
   f(1, 2);",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "f",
-      "expected": 1,
-      "got": 2,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 9,
-          "line": 5,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 5,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 2.
 Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
 ",
@@ -1065,59 +355,10 @@ Object {
 }
 f(1, 2);",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "f",
-      "expected": 1,
-      "got": 2,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 7,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 4,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 4: Expected 1 arguments, but got 2.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap(x => {
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function f(x) {\\\\n  return x;\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(f, 4, 0, 1, 2);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -1128,67 +369,7 @@ Object {
   "code": "\\"enable verbose\\";
   'string'();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": "string",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 12,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 2,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "end": 28,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "string",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 2,
-            },
-          },
-          "raw": "'string'",
-          "start": 20,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": "string",
-        },
-        "end": 30,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T4",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 12,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 2,
-            "line": 2,
-          },
-        },
-        "start": 20,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 2: Calling non-function value \\"string\\".
 Because \\"string\\" is not a function, you cannot run \\"string\\"().
 ",
@@ -1203,89 +384,10 @@ Object {
   "alertResult": Array [],
   "code": "'string'();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": "string",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 10,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "end": 8,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "string",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 8,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 1,
-            },
-          },
-          "raw": "'string'",
-          "start": 0,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": "string",
-        },
-        "end": 10,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T2",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Calling non-function value \\"string\\".",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs('string', 1, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -1296,67 +398,7 @@ Object {
   "code": "\\"enable verbose\\";
   0();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": 0,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 5,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 2,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "end": 21,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 3,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 2,
-            },
-          },
-          "raw": "0",
-          "start": 20,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": 0,
-        },
-        "end": 23,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T4",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 5,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 2,
-            "line": 2,
-          },
-        },
-        "start": 20,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 2: Calling non-function value 0.
 Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
 ",
@@ -1371,89 +413,10 @@ Object {
   "alertResult": Array [],
   "code": "0();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": 0,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 3,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "end": 1,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 1,
-            },
-          },
-          "raw": "0",
-          "start": 0,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": 0,
-        },
-        "end": 3,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T2",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 3,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Calling non-function value 0.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(0, 1, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -1464,94 +427,7 @@ Object {
   "code": "\\"enable verbose\\";
 [1]();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": Array [
-        1,
-      ],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 5,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "elements": Array [
-            Node {
-              "end": 20,
-              "inferredType": Object {
-                "kind": "primitive",
-                "name": "number",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 2,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 1,
-                  "line": 2,
-                },
-              },
-              "raw": "1",
-              "start": 19,
-              "typability": "Typed",
-              "type": "Literal",
-              "value": 1,
-            },
-          ],
-          "end": 21,
-          "inferredType": Object {
-            "elementType": Object {
-              "kind": "primitive",
-              "name": "number",
-            },
-            "kind": "array",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 3,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 2,
-            },
-          },
-          "start": 18,
-          "typability": "Typed",
-          "type": "ArrayExpression",
-        },
-        "end": 23,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T4",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 5,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "start": 18,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 0: Calling non-function value [1].
 Because [1] is not a function, you cannot run [1]().
 ",
@@ -1566,116 +442,10 @@ Object {
   "alertResult": Array [],
   "code": "[1]();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": Array [
-        1,
-      ],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 5,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "elements": Array [
-            Node {
-              "end": 2,
-              "inferredType": Object {
-                "kind": "primitive",
-                "name": "number",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 1,
-                  "line": 1,
-                },
-              },
-              "raw": "1",
-              "start": 1,
-              "typability": "Typed",
-              "type": "Literal",
-              "value": 1,
-            },
-          ],
-          "end": 3,
-          "inferredType": Object {
-            "elementType": Object {
-              "kind": "primitive",
-              "name": "number",
-            },
-            "kind": "array",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 3,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 1,
-            },
-          },
-          "start": 0,
-          "typability": "Typed",
-          "type": "ArrayExpression",
-        },
-        "end": 5,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T2",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 5,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Calling non-function value [1].",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs([1], 1, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -1686,29 +456,7 @@ Object {
   "code": "\\"enable verbose\\";
   null();",
   "displayResult": Array [],
-  "errors": Array [
-    NoNullError {
-      "node": Node {
-        "end": 24,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 6,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 2,
-            "line": 2,
-          },
-        },
-        "raw": "null",
-        "start": 20,
-        "type": "Literal",
-        "value": null,
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 2: null literals are not allowed.
 They're not part of the Source §1 specs.
 ",
@@ -1723,29 +471,7 @@ Object {
   "alertResult": Array [],
   "code": "null();",
   "displayResult": Array [],
-  "errors": Array [
-    NoNullError {
-      "node": Node {
-        "end": 4,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 4,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "raw": "null",
-        "start": 0,
-        "type": "Literal",
-        "value": null,
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: null literals are not allowed.",
   "result": undefined,
   "resultStatus": "error",
@@ -1759,121 +485,7 @@ Object {
   "code": "\\"enable verbose\\";
 ({a: 1})();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": Object {
-        "a": 1,
-      },
-      "location": SourceLocation {
-        "end": Position {
-          "column": 10,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "end": 25,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "undefined",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 7,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 1,
-              "line": 2,
-            },
-          },
-          "properties": Array [
-            Node {
-              "computed": false,
-              "end": 24,
-              "key": Node {
-                "end": 21,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 3,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 2,
-                    "line": 2,
-                  },
-                },
-                "name": "a",
-                "start": 20,
-                "type": "Identifier",
-              },
-              "kind": "init",
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 2,
-                },
-              },
-              "method": false,
-              "shorthand": false,
-              "start": 20,
-              "type": "Property",
-              "value": Node {
-                "end": 24,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 6,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 5,
-                    "line": 2,
-                  },
-                },
-                "raw": "1",
-                "start": 23,
-                "type": "Literal",
-                "value": 1,
-              },
-            },
-          ],
-          "start": 19,
-          "typability": "Typed",
-          "type": "ObjectExpression",
-        },
-        "end": 28,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T4",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "start": 18,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
 Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
 ",
@@ -1889,121 +501,7 @@ Object {
   "code": "\\"enable verbose\\";
 ({a: 1})();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": Object {
-        "a": 1,
-      },
-      "location": SourceLocation {
-        "end": Position {
-          "column": 10,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "end": 25,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "undefined",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 7,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 1,
-              "line": 2,
-            },
-          },
-          "properties": Array [
-            Node {
-              "computed": false,
-              "end": 24,
-              "key": Node {
-                "end": 21,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 3,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 2,
-                    "line": 2,
-                  },
-                },
-                "name": "a",
-                "start": 20,
-                "type": "Identifier",
-              },
-              "kind": "init",
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 2,
-                },
-              },
-              "method": false,
-              "shorthand": false,
-              "start": 20,
-              "type": "Property",
-              "value": Node {
-                "end": 24,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 6,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 5,
-                    "line": 2,
-                  },
-                },
-                "raw": "1",
-                "start": 23,
-                "type": "Literal",
-                "value": 1,
-              },
-            },
-          ],
-          "start": 19,
-          "typability": "Typed",
-          "type": "ObjectExpression",
-        },
-        "end": 28,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T4",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 2,
-          },
-        },
-        "start": 18,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
 Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
 ",
@@ -2018,121 +516,7 @@ Object {
   "alertResult": Array [],
   "code": "({a: 1})();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": Object {
-        "a": 1,
-      },
-      "location": SourceLocation {
-        "end": Position {
-          "column": 10,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "end": 7,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "undefined",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 7,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 1,
-              "line": 1,
-            },
-          },
-          "properties": Array [
-            Node {
-              "computed": false,
-              "end": 6,
-              "key": Node {
-                "end": 3,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 3,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 2,
-                    "line": 1,
-                  },
-                },
-                "name": "a",
-                "start": 2,
-                "type": "Identifier",
-              },
-              "kind": "init",
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 6,
-                  "line": 1,
-                },
-                "start": Position {
-                  "column": 2,
-                  "line": 1,
-                },
-              },
-              "method": false,
-              "shorthand": false,
-              "start": 2,
-              "type": "Property",
-              "value": Node {
-                "end": 6,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 6,
-                    "line": 1,
-                  },
-                  "start": Position {
-                    "column": 5,
-                    "line": 1,
-                  },
-                },
-                "raw": "1",
-                "start": 5,
-                "type": "Literal",
-                "value": 1,
-              },
-            },
-          ],
-          "start": 1,
-          "typability": "Typed",
-          "type": "ObjectExpression",
-        },
-        "end": 10,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T2",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 10,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Calling non-function value {\\"a\\": 1}.",
   "result": undefined,
   "resultStatus": "error",
@@ -2146,67 +530,7 @@ Object {
   "code": "\\"enable verbose\\";
   true();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": true,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 8,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 2,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "end": 24,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "boolean",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 6,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 2,
-            },
-          },
-          "raw": "true",
-          "start": 20,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": true,
-        },
-        "end": 26,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T4",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 8,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 2,
-            "line": 2,
-          },
-        },
-        "start": 20,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 2: Calling non-function value true.
 Because true is not a function, you cannot run true().
 ",
@@ -2221,89 +545,10 @@ Object {
   "alertResult": Array [],
   "code": "true();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": true,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 6,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "end": 4,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "boolean",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 4,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 1,
-            },
-          },
-          "raw": "true",
-          "start": 0,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": true,
-        },
-        "end": 6,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T2",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 6,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Calling non-function value true.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(true, 1, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -2314,66 +559,7 @@ Object {
   "code": "\\"enable verbose\\";
   undefined();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": undefined,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 13,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 2,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "end": 29,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "undefined",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 2,
-            },
-          },
-          "name": "undefined",
-          "start": 20,
-          "typability": "Typed",
-          "type": "Identifier",
-        },
-        "end": 31,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T4",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 13,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 2,
-            "line": 2,
-          },
-        },
-        "start": 20,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
 Because undefined is not a function, you cannot run undefined().
 ",
@@ -2389,111 +575,7 @@ Object {
   "code": "\\"enable verbose\\";
   undefined(1, true);",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": undefined,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 20,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 2,
-        },
-      },
-      "node": Node {
-        "arguments": Array [
-          Node {
-            "end": 31,
-            "inferredType": Object {
-              "kind": "primitive",
-              "name": "number",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 13,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 2,
-              },
-            },
-            "raw": "1",
-            "start": 30,
-            "typability": "Typed",
-            "type": "Literal",
-            "value": 1,
-          },
-          Node {
-            "end": 37,
-            "inferredType": Object {
-              "kind": "primitive",
-              "name": "boolean",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 19,
-                "line": 2,
-              },
-              "start": Position {
-                "column": 15,
-                "line": 2,
-              },
-            },
-            "raw": "true",
-            "start": 33,
-            "typability": "Typed",
-            "type": "Literal",
-            "value": true,
-          },
-        ],
-        "callee": Node {
-          "end": 29,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "undefined",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 2,
-            },
-          },
-          "name": "undefined",
-          "start": 20,
-          "typability": "Typed",
-          "type": "Identifier",
-        },
-        "end": 38,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T4",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 20,
-            "line": 2,
-          },
-          "start": Position {
-            "column": 2,
-            "line": 2,
-          },
-        },
-        "start": 20,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
 Because undefined is not a function, you cannot run undefined(1, true).
 ",
@@ -2508,111 +590,7 @@ Object {
   "alertResult": Array [],
   "code": "undefined(1, true);",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": undefined,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 18,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "node": Node {
-        "arguments": Array [
-          Node {
-            "end": 11,
-            "inferredType": Object {
-              "kind": "primitive",
-              "name": "number",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 1,
-              },
-            },
-            "raw": "1",
-            "start": 10,
-            "typability": "Typed",
-            "type": "Literal",
-            "value": 1,
-          },
-          Node {
-            "end": 17,
-            "inferredType": Object {
-              "kind": "primitive",
-              "name": "boolean",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 17,
-                "line": 1,
-              },
-              "start": Position {
-                "column": 13,
-                "line": 1,
-              },
-            },
-            "raw": "true",
-            "start": 13,
-            "typability": "Typed",
-            "type": "Literal",
-            "value": true,
-          },
-        ],
-        "callee": Node {
-          "end": 9,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "undefined",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 9,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 1,
-            },
-          },
-          "name": "undefined",
-          "start": 0,
-          "typability": "Typed",
-          "type": "Identifier",
-        },
-        "end": 18,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T2",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 18,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Calling non-function value undefined.",
   "result": undefined,
   "resultStatus": "error",
@@ -2625,88 +603,10 @@ Object {
   "alertResult": Array [],
   "code": "undefined();",
   "displayResult": Array [],
-  "errors": Array [
-    CallingNonFunctionValue {
-      "callee": undefined,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 11,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "node": Node {
-        "arguments": Array [],
-        "callee": Node {
-          "end": 9,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "undefined",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 9,
-              "line": 1,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 1,
-            },
-          },
-          "name": "undefined",
-          "start": 0,
-          "typability": "Typed",
-          "type": "Identifier",
-        },
-        "end": 11,
-        "inferredType": Object {
-          "constraint": "none",
-          "kind": "variable",
-          "name": "T2",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 11,
-            "line": 1,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 1,
-          },
-        },
-        "start": 0,
-        "typability": "Typed",
-        "type": "CallExpression",
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Calling non-function value undefined.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(undefined, 1, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -2718,30 +618,12 @@ Object {
 function f() {}
 const f = x => x;",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 7,
-          "line": 3,
-        },
-        "start": Object {
-          "column": 6,
-          "line": 3,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (3:6)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3, Column 6: SyntaxError: Identifier 'f' has already been declared (3:6)
 There is a syntax error in your program
 ",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -2752,28 +634,10 @@ Object {
   "code": "function f() {}
 const f = x => x;",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 7,
-          "line": 2,
-        },
-        "start": Object {
-          "column": 6,
-          "line": 2,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -2784,28 +648,10 @@ Object {
   "code": "const f = x => x;
 let f = x => x;",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 5,
-          "line": 2,
-        },
-        "start": Object {
-          "column": 4,
-          "line": 2,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -2816,28 +662,10 @@ Object {
   "code": "const f = x => x;
 const f = x => x;",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 7,
-          "line": 2,
-        },
-        "start": Object {
-          "column": 6,
-          "line": 2,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -2849,30 +677,12 @@ Object {
 const f = x => x;
 function f() {}",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 10,
-          "line": 3,
-        },
-        "start": Object {
-          "column": 9,
-          "line": 3,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
 There is a syntax error in your program
 ",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -2883,28 +693,10 @@ Object {
   "code": "const f = x => x;
 function f() {}",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 10,
-          "line": 2,
-        },
-        "start": Object {
-          "column": 9,
-          "line": 2,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -2916,30 +708,12 @@ Object {
 function f() {}
 function f() {}",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 10,
-          "line": 3,
-        },
-        "start": Object {
-          "column": 9,
-          "line": 3,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
 There is a syntax error in your program
 ",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -2950,28 +724,10 @@ Object {
   "code": "function f() {}
 function f() {}",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 10,
-          "line": 2,
-        },
-        "start": Object {
-          "column": 9,
-          "line": 2,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -2983,30 +739,12 @@ Object {
 let f = x => x;
 function f() {}",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 10,
-          "line": 3,
-        },
-        "start": Object {
-          "column": 9,
-          "line": 3,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (3:9)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
 There is a syntax error in your program
 ",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -3017,28 +755,10 @@ Object {
   "code": "let f = x => x;
 function f() {}",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 10,
-          "line": 2,
-        },
-        "start": Object {
-          "column": 9,
-          "line": 2,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:9)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -3050,30 +770,12 @@ Object {
 function f() {}
 let f = x => x;",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 5,
-          "line": 3,
-        },
-        "start": Object {
-          "column": 4,
-          "line": 3,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (3:4)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3, Column 4: SyntaxError: Identifier 'f' has already been declared (3:4)
 There is a syntax error in your program
 ",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -3084,28 +786,10 @@ Object {
   "code": "function f() {}
 let f = x => x;",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 5,
-          "line": 2,
-        },
-        "start": Object {
-          "column": 4,
-          "line": 2,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -3116,28 +800,10 @@ Object {
   "code": "let f = x => x;
 const f = x => x;",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 7,
-          "line": 2,
-        },
-        "start": Object {
-          "column": 6,
-          "line": 2,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:6)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -3148,28 +814,10 @@ Object {
   "code": "let f = x => x;
 let f = x => x;",
   "displayResult": Array [],
-  "errors": Array [
-    FatalSyntaxError {
-      "location": Object {
-        "end": Object {
-          "column": 5,
-          "line": 2,
-        },
-        "start": Object {
-          "column": 4,
-          "line": 2,
-        },
-      },
-      "message": "SyntaxError: Identifier 'f' has already been declared (2:4)",
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "parseError",
   "visualiseListResult": Array [],
 }
 `;
@@ -3179,25 +827,7 @@ Object {
   "alertResult": Array [],
   "code": "parse_int(\\"10\\");",
   "displayResult": Array [],
-  "errors": Array [
-    InvalidNumberOfArguments {
-      "calleeStr": "parse_int",
-      "expected": 2,
-      "got": 1,
-      "location": SourceLocation {
-        "end": Position {
-          "column": 15,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Expected 2 arguments, but got 1.",
   "result": undefined,
   "resultStatus": "error",
@@ -3210,23 +840,7 @@ Object {
   "alertResult": Array [],
   "code": "parse(\\"'\\");",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [ParseError: SyntaxError: Unterminated string constant (1:0)],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 10,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)",
   "result": undefined,
   "resultStatus": "error",
@@ -3245,31 +859,10 @@ display(1, \\"test\\");",
     "1",
     "test 1",
   ],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    callIfFuncAndRightArgs(display, 1, 0);
-    callIfFuncAndRightArgs(display, 2, 0, 1);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(display, 3, 0, 1, \\\\\\"test\\\\\\");\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3282,9 +875,8 @@ list(1);
 list(1, 2, 3);
 list(1, 2, 3, 4, 5, 6, 6);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": Array [
     1,
     Array [
@@ -3308,27 +900,6 @@ list(1, 2, 3, 4, 5, 6, 6);",
     ],
   ],
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    callIfFuncAndRightArgs(list, 1, 0);
-    callIfFuncAndRightArgs(list, 2, 0, 1);
-    callIfFuncAndRightArgs(list, 3, 0, 1, 2, 3);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(list, 4, 0, 1, 2, 3, 4, 5, 6, 6);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3340,31 +911,10 @@ Object {
 math_max(1, 2);
 math_max(1, 2, 3);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 3,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    callIfFuncAndRightArgs(math_max, 1, 0);
-    callIfFuncAndRightArgs(math_max, 2, 0, 1, 2);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(math_max, 3, 0, 1, 2, 3);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3376,31 +926,10 @@ Object {
 math_min(1, 2);
 math_min(1, 2, 3);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    callIfFuncAndRightArgs(math_min, 1, 0);
-    callIfFuncAndRightArgs(math_min, 2, 0, 1, 2);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(math_min, 3, 0, 1, 2, 3);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3412,31 +941,10 @@ Object {
 stringify(1, 2);
 stringify(1, 2, 3);",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": "1",
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    callIfFuncAndRightArgs(stringify, 1, 0);
-    callIfFuncAndRightArgs(stringify, 2, 0, 1, 2);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(stringify, 3, 0, 1, 2, 3);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3449,59 +957,10 @@ Object {
 }
 f.prototype;",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "object or array",
-      "got": "function",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 11,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 4,
-        },
-      },
-      "severity": "Error",
-      "side": "",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 4: Expected object or array, got function.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap(() => {
-      return {
-        isTail: false,
-        value: 1
-      };
-    }, \\"function f() {\\\\n  return 1;\\\\n}\\", native);
-    lastStatementResult = eval(\\"getProp(f, \\\\\\"prototype\\\\\\", 4, 0);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3511,47 +970,10 @@ Object {
   "alertResult": Array [],
   "code": "null.prop;",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "object or array",
-      "got": "null",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 9,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "side": "",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Expected object or array, got null.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"getProp(null, \\\\\\"prop\\\\\\", 1, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3561,47 +983,10 @@ Object {
   "alertResult": Array [],
   "code": "'hi'.length;",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "object or array",
-      "got": "string",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 11,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "side": "",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Expected object or array, got string.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"getProp('hi', \\\\\\"length\\\\\\", 1, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3614,59 +999,10 @@ Object {
 }
 f.prop = 5;",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "object or array",
-      "got": "function",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 10,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 4,
-        },
-      },
-      "severity": "Error",
-      "side": "",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 4: Expected object or array, got function.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const f = wrap(() => {
-      return {
-        isTail: false,
-        value: 1
-      };
-    }, \\"function f() {\\\\n  return 1;\\\\n}\\", native);
-    lastStatementResult = eval(\\"setProp(f, \\\\\\"prop\\\\\\", 5, 4, 0);\\");
-    globals.variables.set(\\"f\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return f;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3676,47 +1012,10 @@ Object {
   "alertResult": Array [],
   "code": "'hi'.prop = 5;",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "object or array",
-      "got": "string",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 13,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "side": "",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Expected object or array, got string.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"setProp('hi', \\\\\\"prop\\\\\\", 5, 1, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3728,47 +1027,10 @@ Object {
 *
 'string';",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "number",
-      "got": "string",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 8,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "side": " on right hand side of operation",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Expected number on right hand side of operation, got string.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"binaryOp(\\\\\\"*\\\\\\", 1, 12, 'string', 1, 0);\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3782,47 +1044,10 @@ Object {
   2;
 } else {}",
   "displayResult": Array [],
-  "errors": Array [
-    TypeError {
-      "expected": "boolean",
-      "got": "number",
-      "location": SourceLocation {
-        "end": Position {
-          "column": 9,
-          "line": 5,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "side": " as condition",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Expected boolean as condition, got number.",
-  "pretranspiled": "",
   "result": undefined,
   "resultStatus": "error",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    lastStatementResult = eval(\\"if (boolOrErr(1, 1, 0)) {   2; } else {}\\");
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -3833,23 +1058,7 @@ Object {
   "code": "\\"enable verbose\\";
 im_undefined;",
   "displayResult": Array [],
-  "errors": Array [
-    UndefinedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 12,
-          "line": 2,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 2,
-        },
-      },
-      "name": "im_undefined",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 2, Column 0: Name im_undefined not declared.
 Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
 ",
@@ -3864,23 +1073,7 @@ Object {
   "alertResult": Array [],
   "code": "im_undefined;",
   "displayResult": Array [],
-  "errors": Array [
-    UndefinedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 12,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "name": "im_undefined",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Name im_undefined not declared.",
   "result": undefined,
   "resultStatus": "error",

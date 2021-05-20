@@ -5,23 +5,7 @@ Object {
   "alertResult": Array [],
   "code": "stringify(parse(\\"function* f() { yield 1; } f();\\"), undefined, 2);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [ParseError: Yield expressions are not allowed],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 50,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 10,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: ParseError: Yield expressions are not allowed",
   "result": undefined,
   "resultStatus": "error",
@@ -34,23 +18,7 @@ Object {
   "alertResult": Array [],
   "code": "stringify(parse(\\"'\\"), undefined, 2);",
   "displayResult": Array [],
-  "errors": Array [
-    ExceptionError {
-      "error": [ParseError: SyntaxError: Unterminated string constant (1:0)],
-      "location": SourceLocation {
-        "end": Position {
-          "column": 20,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 10,
-          "line": 1,
-        },
-      },
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)",
   "result": undefined,
   "resultStatus": "error",

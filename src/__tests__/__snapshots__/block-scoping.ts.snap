@@ -12,76 +12,7 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [
-    NoAssignmentToForVariable {
-      "node": Node {
-        "end": 84,
-        "inferredType": Object {
-          "kind": "primitive",
-          "name": "number",
-        },
-        "left": Node {
-          "end": 80,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 7,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 6,
-              "line": 4,
-            },
-          },
-          "name": "x",
-          "start": 79,
-          "typability": "Typed",
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 11,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 6,
-            "line": 4,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 84,
-          "inferredType": Object {
-            "kind": "primitive",
-            "name": "number",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 4,
-            },
-          },
-          "raw": "1",
-          "start": 83,
-          "typability": "Typed",
-          "type": "Literal",
-          "value": 1,
-        },
-        "start": 79,
-        "typability": "Typed",
-        "type": "AssignmentExpression",
-      },
-      "severity": "Error",
-      "type": "Syntax",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 4: Assignment to a for loop variable in the for loop is not allowed.",
   "result": undefined,
   "resultStatus": "error",
@@ -99,23 +30,7 @@ function f() {
 }
 f();",
   "displayResult": Array [],
-  "errors": Array [
-    UnassignedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 11,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 10,
-          "line": 3,
-        },
-      },
-      "name": "a",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Name a declared later in current scope but not yet assigned",
   "result": undefined,
   "resultStatus": "error",
@@ -132,23 +47,7 @@ Object {
   const a = 10;
 }",
   "displayResult": Array [],
-  "errors": Array [
-    UnassignedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 3,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 3,
-        },
-      },
-      "name": "a",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Name a declared later in current scope but not yet assigned",
   "result": undefined,
   "resultStatus": "error",
@@ -165,23 +64,7 @@ function f() {
 }
 v;",
   "displayResult": Array [],
-  "errors": Array [
-    UnassignedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 11,
-          "line": 1,
-        },
-        "start": Position {
-          "column": 10,
-          "line": 1,
-        },
-      },
-      "name": "f",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 1: Name f declared later in current scope but not yet assigned",
   "result": undefined,
   "resultStatus": "error",
@@ -200,23 +83,7 @@ function test(){
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [
-    UndefinedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 16,
-          "line": 3,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 3,
-        },
-      },
-      "name": "variable",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 3: Name variable not declared.",
   "result": undefined,
   "resultStatus": "error",
@@ -238,47 +105,10 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const test = wrap(() => {
-      const x = true;
-      if (boolOrErr(true, 3, 2)) {
-        const x = false;
-      } else {
-        const x = false;
-      }
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function test() {\\\\n  const x = true;\\\\n  if (true) {\\\\n    const x = false;\\\\n  } else {\\\\n    const x = false;\\\\n  }\\\\n  return x;\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 10, 0);\\");
-    globals.variables.set(\\"test\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return test;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -295,54 +125,10 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": 1,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const test = wrap(() => {
-      let z = [];
-      const startTime = get_time();
-      for (let x = 0; boolOrErr(binaryOp(\\"<\\", 4, x, 10, 3, 18), 3, 2); x = binaryOp(\\"+\\", 4, x, 1, 3, 30)) {
-        throwIfTimeout(native, startTime, get_time(), 3, 2);
-        setProp(z, x, wrap(() => ({
-          isTail: false,
-          value: x
-        }), \\"() => x\\", native), 4, 4);
-      }
-      return {
-        isTail: true,
-        function: getProp(z, 1, 6, 9),
-        functionName: \\"<anonymous>\\",
-        arguments: [],
-        line: 6,
-        column: 9
-      };
-    }, \\"function test() {\\\\n  let z = [];\\\\n  for (let x = 0; x < 10; x = x + 1) {\\\\n    z[x] = () => x;\\\\n  }\\\\n  return z[1]();\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 8, 0);\\");
-    globals.variables.set(\\"test\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return test;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -358,46 +144,10 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const test = wrap(() => {
-      let x = true;
-      const startTime = get_time();
-      for (let x = 1; boolOrErr(binaryOp(\\">\\", 3, x, 0, 3, 18), 3, 2); x = binaryOp(\\"-\\", 3, x, 1, 3, 29)) {
-        throwIfTimeout(native, startTime, get_time(), 3, 2);
-      }
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function test() {\\\\n  let x = true;\\\\n  for (let x = 1; x > 0; x = x - 1) {}\\\\n  return x;\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 7, 0);\\");
-    globals.variables.set(\\"test\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return test;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -416,47 +166,10 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const test = wrap(() => {
-      let x = true;
-      if (boolOrErr(true, 3, 2)) {
-        let x = false;
-      } else {
-        let x = false;
-      }
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function test() {\\\\n  let x = true;\\\\n  if (true) {\\\\n    let x = false;\\\\n  } else {\\\\n    let x = false;\\\\n  }\\\\n  return x;\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 10, 0);\\");
-    globals.variables.set(\\"test\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return test;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -473,45 +186,10 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const test = wrap(() => {
-      const x = true;
-      {
-        const x = false;
-      }
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function test() {\\\\n  const x = true;\\\\n  {\\\\n    const x = false;\\\\n  }\\\\n  return x;\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 8, 0);\\");
-    globals.variables.set(\\"test\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return test;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
@@ -529,48 +207,10 @@ Object {
 }
 test();",
   "displayResult": Array [],
-  "errors": Array [],
+  "numErrors": 0,
   "parsedErrors": "",
-  "pretranspiled": "",
   "result": true,
   "resultStatus": "finished",
-  "transpiled": "const native = nativeStorage;
-const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
-const boolOrErr = native.operators.get(\\"boolOrErr\\");
-const wrap = native.operators.get(\\"wrap\\");
-const unaryOp = native.operators.get(\\"unaryOp\\");
-const binaryOp = native.operators.get(\\"binaryOp\\");
-const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");
-const setProp = native.operators.get(\\"setProp\\");
-const getProp = native.operators.get(\\"getProp\\");
-let lastStatementResult = undefined;
-const globals = native.globals;
-{
-  {
-    const test = wrap(() => {
-      let x = true;
-      const startTime = get_time();
-      while (boolOrErr(true, 3, 2)) {
-        throwIfTimeout(native, startTime, get_time(), 3, 2);
-        let x = false;
-        break;
-      }
-      return {
-        isTail: false,
-        value: x
-      };
-    }, \\"function test() {\\\\n  let x = true;\\\\n  while (true) {\\\\n    let x = false;\\\\n    break;\\\\n  }\\\\n  return x;\\\\n}\\", native);
-    lastStatementResult = eval(\\"callIfFuncAndRightArgs(test, 9, 0);\\");
-    globals.variables.set(\\"test\\", {
-      kind: \\"const\\",
-      getValue: () => {
-        return test;
-      }
-    });
-  }
-}
-lastStatementResult;
-",
   "visualiseListResult": Array [],
 }
 `;
