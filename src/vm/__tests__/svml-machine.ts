@@ -1053,6 +1053,18 @@ describe('standard program execution', () => {
             `)
   })
 
+  test('block scoping works, part 2', () => {
+    return expectParsedError(
+      stripIndent`
+        {
+          let i = 5;
+        }
+        display(i);
+      `,
+      { chapter: 3, variant: 'concurrent' }
+    ).toMatchInlineSnapshot(`"Line 4: Name i not declared."`)
+  })
+
   test('return in loop throws error', () => {
     return expectParsedError(
       stripIndent`
