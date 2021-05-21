@@ -1110,23 +1110,7 @@ Object {
 }
 display(i);",
   "displayResult": Array [],
-  "errors": Array [
-    UndefinedVariable {
-      "location": SourceLocation {
-        "end": Position {
-          "column": 9,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 8,
-          "line": 4,
-        },
-      },
-      "name": "i",
-      "severity": "Error",
-      "type": "Runtime",
-    },
-  ],
+  "numErrors": 1,
   "parsedErrors": "Line 4: Name i not declared.",
   "result": undefined,
   "resultStatus": "error",
