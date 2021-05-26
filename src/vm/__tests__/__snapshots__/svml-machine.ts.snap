@@ -1102,6 +1102,22 @@ g(true);",
 }
 `;
 
+exports[`standard program execution block scoping works, part 2: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "{
+  let i = 5;
+}
+display(i);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 4: Name i not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard program execution block scoping works: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
