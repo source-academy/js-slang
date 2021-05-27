@@ -1,0 +1,24 @@
+{
+  "name": "sicp",
+  "version": "1.0.0",
+  "description": "SICP library",
+  "dependencies": {
+    "@types/estree": "0.0.47",
+    "acorn": "^8.0.3",
+    "acorn-loose": "^8.0.0",
+    "acorn-walk": "^8.0.0",
+    "astring": "^1.4.3",
+    "gpu.js": "^2.10.4",
+    "lodash": "^4.17.20",
+    "node-getopt": "^0.3.2",
+    "source-map": "^0.7.3",
+    "xmlhttprequest-ts": "^1.0.1"
+  },
+  "main": "dist/sicp",
+  "types": "dist/sicp",
+  "files": [
+    "dist"
+  ],
+  "author": "Source Academy",
+  "license": "Apache-2.0"
+}

@@ -160,7 +160,11 @@ export const ensureGlobalEnvironmentExist = (context: Context) => {
   }
 }
 
+export const dict = {};
+
 export const defineSymbol = (context: Context, name: string, value: Value) => {
+  dict[name] = value;
+  
   const globalEnvironment = context.runtime.environments[0]
   Object.defineProperty(globalEnvironment.head, name, {
     value,
