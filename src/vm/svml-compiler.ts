@@ -198,15 +198,16 @@ interface EnvEntry {
   type?: 'primitive' | 'internal' // for functions
 }
 
-// extracts all name declarations within a function, and renames all shadowed names
-// if parent scope has name, rename to name_line_col
-// then recursively rename identifiers in ast if no same scope declaration
+// extracts all name declarations within a function or block,
+// renaming every declaration if rename is true.
+// if rename is true, rename to name_line_col and recursively rename identifiers in ast if no same scope declaration
 // (check for variable, function declaration in each block. Check for params in each function call)
 // for any duplicates, rename recursively within scope
-// recurse for any blocks
+// recurse for any blocks with rename = true
 function extractAndRenameNames(
   baseNode: es.BlockStatement | es.Program,
-  names: Map<string, EnvEntry>
+  names: Map<string, EnvEntry>,
+  rename: boolean = true
 ) {
   // get all declared names of current scope and keep track of names to rename
   const namesToRename = new Map<string, string>()
@@ -214,10 +215,12 @@ function extractAndRenameNames(
     if (stmt.type === 'VariableDeclaration') {
       const node = stmt as es.VariableDeclaration
       let name = (node.declarations[0].id as es.Identifier).name
-      if (names.has(name)) {
+      if (rename) {
         const loc = node.loc!.start // should be present
         const oldName = name
-        name = `${name}-${loc.line}-${loc.column}`
+        do {
+          name = `${name}-${loc.line}-${loc.column}`
+        } while (names.has(name))
         namesToRename.set(oldName, name)
       }
       const isVar = node.kind === 'let'
@@ -226,10 +229,12 @@ function extractAndRenameNames(
     } else if (stmt.type === 'FunctionDeclaration') {
       const node = stmt as es.FunctionDeclaration
       let name = (node.id as es.Identifier).name
-      if (names.has(name)) {
+      if (rename) {
         const loc = node.loc!.start // should be present
         const oldName = name
-        name = `${name}-${loc.line}-${loc.column}`
+        do {
+          name = `${name}-${loc.line}-${loc.column}`
+        } while (names.has(name))
         namesToRename.set(oldName, name)
       }
       const isVar = false
@@ -245,21 +250,21 @@ function extractAndRenameNames(
   for (const stmt of baseNode.body) {
     if (stmt.type === 'BlockStatement') {
       const node = stmt as es.BlockStatement
-      extractAndRenameNames(node, names)
+      extractAndRenameNames(node, names, true)
     }
     if (stmt.type === 'IfStatement') {
       let nextAlt = stmt as es.IfStatement | es.BlockStatement
       while (nextAlt.type === 'IfStatement') {
         // if else if...
         const { consequent, alternate } = nextAlt as es.IfStatement
-        extractAndRenameNames(consequent as es.BlockStatement, names)
+        extractAndRenameNames(consequent as es.BlockStatement, names, true)
         // Source spec must have alternate
         nextAlt = alternate as es.IfStatement | es.BlockStatement
       }
-      extractAndRenameNames(nextAlt as es.BlockStatement, names)
+      extractAndRenameNames(nextAlt as es.BlockStatement, names, true)
     }
     if (stmt.type === 'WhileStatement') {
-      extractAndRenameNames(stmt.body as es.BlockStatement, names)
+      extractAndRenameNames(stmt.body as es.BlockStatement, names, true)
     }
   }
   return names
@@ -334,7 +339,7 @@ function renameVariables(
       c(node.test, inactive)
       let nextAlt = node as es.IfStatement | es.BlockStatement
       while (nextAlt.type === 'IfStatement') {
-        const { consequent, alternate } = node
+        const { consequent, alternate } = nextAlt
         recurseBlock(consequent as es.BlockStatement, inactive, c)
         c(nextAlt.test, inactive)
         nextAlt = alternate as es.IfStatement | es.BlockStatement
@@ -951,11 +956,32 @@ function compile(
 
 export function compileForConcurrent(program: es.Program, context: Context) {
   // assume vmPrelude is always a correct program
-  const prelude = compileToIns(parse(vmPrelude, context)!)
+  const prelude = compilePreludeToIns(parse(vmPrelude, context)!)
   generatePrimitiveFunctionCode(prelude)
   const vmInternalFunctions = INTERNAL_FUNCTIONS.map(([name]) => name)
 
   return compileToIns(program, prelude, vmInternalFunctions)
+}
+
+export function compilePreludeToIns(program: es.Program): Program {
+  // reset variables
+  SVMFunctions = []
+  functionCode = []
+  toCompile = []
+  loopTracker = []
+  toplevel = true
+
+  transformForLoopsToWhileLoops(program)
+  // don't rename names at the top level, because we need them for linking
+  const locals = extractAndRenameNames(program, new Map<string, EnvEntry>(), false)
+  const topFunction: SVMFunction = [NaN, locals.size, 0, []]
+  const topFunctionIndex = 0 // GE + # primitive func
+  SVMFunctions[topFunctionIndex] = topFunction
+
+  const extendedTable = extendIndexTable(makeIndexTableWithPrimitivesAndInternals(), locals)
+  pushToCompile(makeToCompileTask(program, [topFunctionIndex], extendedTable))
+  continueToCompile()
+  return [0, SVMFunctions]
 }
 
 export function compileToIns(
