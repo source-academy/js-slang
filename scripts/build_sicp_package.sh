@@ -6,13 +6,40 @@ SICPFILE=src/sicp.ts
 main() {
     clean
     declare -a NAMES
-    getnames
-    writesicp
-    delete
-    writeglobal
-    cleanUp
+    getNames
+    writeSicp
+    deleteSomeNames
+    writeGlobal
+    finish
+    clean
 }
-delete() {
+
+clean() {
+    rm -f $SICPFILE
+    rm -f $GLOBALFILE
+    rm -f sicp_publish/names.txt
+}
+
+# Get names of all functions
+getNames() {
+    yarn build
+    node dist/sicp-prepare.js
+    LINE=0
+    while read -r CURRENT_LINE
+    do 
+        NAMES[$LINE]=$CURRENT_LINE
+        ((LINE++))
+    done < "sicp_publish/names.txt"
+}
+
+writeSicp() {
+    echo "import { dict, default as createContext } from \"./createContext\";" >> $SICPFILE
+
+    echo "createContext(4);" >> $SICPFILE
+}
+
+# Since several variables are declared globally initially
+deleteSomeNames() {
     delete=(prompt undefined NaN Infinity)
     for target in "${delete[@]}"; do
         for i in "${!NAMES[@]}"; do
@@ -23,13 +50,7 @@ delete() {
     done
 }
 
-writesicp() {
-    echo "import { dict, default as createContext } from \"./createContext\";" >> $SICPFILE
-
-    echo "createContext(4);" >> $SICPFILE
-}
-
-writeglobal() {
+writeGlobal() {
     for NAME in "${NAMES[@]}"
     do
         echo "global.$NAME = dict[\"$NAME\"];" >> $SICPFILE
@@ -53,31 +74,15 @@ writeglobal() {
     
 }
 
-clean() {
-    rm -f $SICPFILE
-    rm -f $GLOBALFILE
-    rm -r sicp_publish/dist
-    rm -f sicp_publish/names.txt
-}
-
-getnames() {
-    yarn build
-    node dist/sicp-prepare.js
-    LINE=0
-    while read -r CURRENT_LINE
-    do 
-        NAMES[$LINE]=$CURRENT_LINE
-        ((LINE++))
-    done < "sicp_publish/names.txt"
-}
-
-cleanUp() {
+finish() {
     yarn tsc
+    rm -rf sicp_publish/dist
     cp -r dist sicp_publish
-    rm -f src/globals.d.ts
-    rm -f src/sicp.ts
-    rm -f sicp_publish/names.txt
+    cd sicp_publish/dist
+    find . -type f ! -name '*.js' -delete
+    rm -r __tests__ editors lazy mocks name-extractor repl stepper validator vm
+    rm finder.js index.js scope-refactoring.js sicp-prepare.js
+    cd ../..
 }
 
 main
-

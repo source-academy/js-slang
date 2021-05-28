@@ -1,25 +1,18 @@
-import { dict, default as createContext } from "./createContext";
-var fs = require('fs');
+import { dict, default as createContext } from './createContext'
+import * as fs from 'fs'
 
-createContext(4);
+createContext(4)
 
-let a = Object.getOwnPropertyNames(dict);
+let a = Object.getOwnPropertyNames(dict)
 
-var file = fs.createWriteStream('sicp_publish/names.txt');
-file.on('error', function(e: Error) {
-     console.log(e) 
-    }
-);
+let file = fs.createWriteStream('sicp_publish/names.txt')
 
-a.forEach(
-    function(v) {
-        file.write(v + '\n');
-    }
-);
+file.on('error', function (e: Error) {
+  console.log(e)
+})
 
-file.end();
+a.forEach(function (v) {
+  file.write(v + '\n')
+})
 
-// global.display = dict["display"];
-// global.list = dict["list"];
-// global.head = dict["head"];
-// global.tail = dict["tail"];
+file.end()
