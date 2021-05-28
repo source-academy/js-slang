@@ -3,9 +3,9 @@ import * as fs from 'fs'
 
 createContext(4)
 
-let a = Object.getOwnPropertyNames(dict)
+const a = Object.getOwnPropertyNames(dict)
 
-let file = fs.createWriteStream('sicp_publish/names.txt')
+const file = fs.createWriteStream('sicp_publish/names.txt')
 
 file.on('error', function (e: Error) {
   console.log(e)

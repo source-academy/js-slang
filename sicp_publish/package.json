@@ -19,6 +19,9 @@
   "files": [
     "dist"
   ],
-  "author": "Source Academy",
+  "author": {
+    "name": "Source Academy",
+    "url": "https://github.com/source-academy/"
+  },
   "license": "Apache-2.0"
 }
