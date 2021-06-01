@@ -1,81 +1,23 @@
 #! /bin/bash
 
-GLOBALFILE=src/globals.d.ts
-SICPFILE=src/sicp.ts
+SICPJSPATH=sicp_publish/dist/sicp.js
 
 main() {
     clean
-    declare -a NAMES
-    getNames
-    writeSicp
-    deleteSomeNames
-    writeGlobal
-    finish
-    clean
+    yarn build
+    prepare
+    node dist/sicp-prepare.js
+    write
 }
 
 clean() {
-    rm -f $SICPFILE
-    rm -f $GLOBALFILE
+    # Prepare to write sicp_publish/dist/sicp.js again
+    rm -f sicp_publish/prelude.txt
     rm -f sicp_publish/names.txt
 }
 
-# Get names of all functions
-getNames() {
-    yarn build
-    node dist/sicp-prepare.js
-    LINE=0
-    while read -r CURRENT_LINE
-    do 
-        NAMES[$LINE]=$CURRENT_LINE
-        ((LINE++))
-    done < "sicp_publish/names.txt"
-}
-
-writeSicp() {
-    echo "import { dict, default as createContext } from \"./createContext\";" >> $SICPFILE
-
-    echo "createContext(4);" >> $SICPFILE
-}
-
-# Since several variables are declared globally initially
-deleteSomeNames() {
-    delete=(prompt undefined NaN Infinity)
-    for target in "${delete[@]}"; do
-        for i in "${!NAMES[@]}"; do
-            if [[ ${NAMES[i]} = $target ]]; then
-            unset 'NAMES[i]'
-        fi
-    done
-    done
-}
-
-writeGlobal() {
-    for NAME in "${NAMES[@]}"
-    do
-        echo "global.$NAME = dict[\"$NAME\"];" >> $SICPFILE
-    done
-
-    echo "declare module NodeJS {" >> $GLOBALFILE
-    echo "interface Global {" >> $GLOBALFILE
-
-    for NAME in "${NAMES[@]}"
-    do
-        echo "$NAME: any," >> $GLOBALFILE
-    done
-
-    echo "}" >> $GLOBALFILE
-    echo "}" >> $GLOBALFILE
-
-    for NAME in "${NAMES[@]}"
-    do 
-        echo "declare let $NAME: any;" >> $GLOBALFILE
-    done
-    
-}
-
-finish() {
-    yarn tsc
+prepare() {
+    # Copy and keep only necessary files
     rm -rf sicp_publish/dist
     cp -r dist sicp_publish
     cd sicp_publish/dist
@@ -83,6 +25,55 @@ finish() {
     rm -r __tests__ editors lazy mocks name-extractor repl stepper validator vm
     rm finder.js index.js scope-refactoring.js sicp-prepare.js
     cd ../..
+}
+
+write() {
+    echo "\"use strict\";" >> $SICPJSPATH
+    echo "Object.defineProperty(exports, \"__esModule\", { value: true });" >> $SICPJSPATH
+    echo "const createContext_1 = require(\"./createContext\");" >> $SICPJSPATH
+    echo "createContext_1.default(4);" >> $SICPJSPATH
+    echo "const dict = createContext_1.dict;" >> $SICPJSPATH
+
+    cat sicp_publish/prelude.txt >> $SICPJSPATH
+
+    # Write Prelude
+    COUNT=0
+
+    while read -r CURRENT_LINE
+    do 
+        IFS=' ' read -r -a array <<< "$CURRENT_LINE"
+
+        if [ "${array[0]}" == "function" ]
+        then
+            if [ $COUNT -le 0 ]
+            then
+                IFS='(' read -r -a name <<< "${array[1]}"
+                echo "global.${name[0]} = ${name[0]};" >> $SICPJSPATH
+            fi
+        fi
+
+        if [ ${#array[@]} != 0 ]
+        then
+            if [ "${array[${#array[@]} - 1]}" == "{" ]
+            then 
+            ((COUNT++))
+            fi
+        fi
+
+        if [ "${array[0]}" == "}" ]
+        then
+            ((COUNT--))
+        fi
+    done < "sicp_publish/prelude.txt"
+
+    #Write Functions
+    while read -r CURRENT_LINE
+    do 
+        if [ "$CURRENT_LINE" != "undefined" -a "$CURRENT_LINE" != "NaN" -a "$CURRENT_LINE" != "Infinity" ]
+        then
+            echo "global.$CURRENT_LINE = dict[\"$CURRENT_LINE\"];" >> $SICPJSPATH
+        fi
+    done < "sicp_publish/names.txt"
 }
 
 main

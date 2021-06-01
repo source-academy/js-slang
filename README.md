@@ -170,20 +170,3 @@ $ yarn link "js-slang"
 ```
 
 Then start the frontend and the new js-slang will be used. 
-
-Building and publishing SICP package
-====================================
-
-To build SICP package
-``` {.}
-$ cd js-slang
-$ yarn
-$ yarn build_sicp_package
-```
-
-To publish SICP package
-``` {.}
-$ yarn publish_sicp_package
-```
-
-The version will automatically update the patch.
