@@ -11,16 +11,22 @@ Remember to create file `package.json` first if you have not by
 ``` {.}
 $ npm init
 ```
+A new file called `package.json` will be created. Add `"type": "module"` into the end of this file to be able to use SICP library. After added, the end your `package.json` file will look somehow like this
+```{.}
+  "license": "ISC",
+  "type": "module"
+}
+```
 
 To use SICP library, you need to import by 
 ``` {.}
-import './node_modules/sicp/dist/sicp.js';
+import 'sicp';
 ```
 For example,
 ``` {.}
-import './node_modules/sicp/dist/sicp.js';
+import 'sicp';
 
 const p = list("I", "love", "sicp");
 display(head(tail(p)));
 ```
-
+Constants and functions to use can be found here: <https://source-academy.github.io/source/source_4/global.html>
