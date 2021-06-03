@@ -1,6 +1,6 @@
 {
   "name": "sicp",
-  "version": "1.0.12",
+  "version": "1.0.15",
   "description": "SICP Library",
   "dependencies": {
     "@types/estree": "0.0.47",
@@ -9,9 +9,6 @@
     "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
     "gpu.js": "^2.10.4",
-    "lodash": "^4.17.20",
-    "node-getopt": "^0.3.2",
-    "source-map": "^0.7.3",
     "xmlhttprequest-ts": "^1.0.1"
   },
   "main": "dist/sicp",

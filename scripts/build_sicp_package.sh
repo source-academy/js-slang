@@ -20,9 +20,10 @@ prepare() {
     # Copy and keep only necessary files
     rm -rf sicp_publish/dist
     cp -r dist sicp_publish
+    mkdir -p sicp_publish/dist
     cd sicp_publish/dist
     find . -type f ! -name '*.js' -delete
-    rm -r __tests__ editors lazy mocks name-extractor repl stepper validator vm
+    rm -r __tests__ editors lazy mocks name-extractor repl stepper validator vm transpiler
     rm finder.js index.js scope-refactoring.js sicp-prepare.js
     cd ../..
 }

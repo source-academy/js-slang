@@ -1,8 +1,4 @@
-Open-source implementations of the programming language *Source*. Source
-is a series of small subsets of JavaScript, designed for teaching
-university-level programming courses for computer science majors,
-following Structure and Interpretation of Computer Programs, JavaScript
-Adaptation (<https://source-academy.github.io/sicp/>).
+This JavaScript npm package provides all functions and constants that are assumed to be predeclared in the textbook Structure and Interpretation of Computer Programs, JavaScript Adaptation (<https://source-academy.github.io/sicp/>. This package therefore allows readers of the textbook to run and experiment with all JavaScript programs that appear in the textbook, using Node.js.
 
 Setting up and Using SICP library
 =================================
