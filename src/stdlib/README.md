@@ -1,0 +1,2 @@
+* By convention, we are including files with the name ...prelude...js literally in the sicp package.
+* We are extracting names that need to be globally defined by looking for lines that start with "function". So these prelude libraries can only declare functions, not other constants.
