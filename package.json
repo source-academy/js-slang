@@ -46,7 +46,9 @@
     "jsdoc": "./scripts/jsdoc.sh",
     "autocomplete": "node ./scripts/updateAutocompleteDocs.js",
     "docs": "yarn jsdoc && yarn autocomplete",
-    "build": "yarn docs && yarn tsc"
+    "build": "yarn docs && yarn tsc",
+    "build_sicp_package": "./scripts/build_sicp_package.sh",
+    "publish_sicp_package": "./scripts/publish_sicp_package.sh"
   },
   "repository": {
     "type": "git",
@@ -60,7 +62,7 @@
     "@types/jest": "^26.0.14",
     "@types/lodash.assignin": "^4.2.6",
     "@types/lodash.clonedeep": "^4.5.6",
-    "@types/node": "^15.0.2",
+    "@types/node": "^15.6.1",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",
     "ace-builds": "^1.4.12",

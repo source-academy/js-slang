@@ -1,4 +1,5 @@
 <!-- changed by MH on 1/7/2019 from default template. See "MH" below -->
+<!-- changed by MH on 3/6/2021 from default template. See "MH" below -->
 
 <?js
     var self = this;
@@ -13,6 +14,38 @@
         isGlobalPage = (doc.kind === 'globalobj');
     }
 ?>
+
+
+<?js if (isGlobalPage) {
+
+    var functions = self.find({kind: 'function', memberof: {isUndefined: true}});
+    functions.forEach(function(func) { 
+        if (func.id == "parse") { ?>
+
+    <section>
+        <article>
+	<p>
+  	  Below you find all constants and functions used in the textbook
+	  <a href="https://source-academy.github.io/sicp">Structure and Interpretation
+	  of Computer Programs, JavaScript Adaptation</a> (SICP JS).
+	  These constants and functions are predeclared in the language
+	  Source §4, a JavaScript sublanguage implemented in the
+	  <a href="https://source-academy.github.io">Source Academy</a>.
+	</p>
+	<h2>Can I use these constants and functions without the Source Academy ?</h2>
+	<p>
+	  Yes, these constants and functions are provided by the
+	  NPM package <a href="https://www.npmjs.com/package/sicp">sicp</a>. You can
+	  use this package to run the JavaScript programs of SICP JS in any JavaScript
+	  system that is based on Node.js. Follow the
+	  link for installation instructions. 
+	</p>
+	</article>
+   </section>
+
+<?js }})}?>
+
+
 <?js if (doc.kind === 'mainpage' || (doc.kind === 'package')) { ?>
     <?js= self.partial('mainpage.tmpl', doc) ?>
 <?js } else if (doc.kind === 'source') { ?>
