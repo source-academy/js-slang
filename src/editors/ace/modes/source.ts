@@ -85,7 +85,7 @@ export function HighlightRulesSelector(
     const ChapterKeywordSelector = () => {
       let output = ''
       if (id >= 1) {
-        output += 'import|const|else|if|return|function'
+        output += 'import|const|else|if|return|function|debugger'
       }
       if (id >= 3) {
         output += '|while|for|break|continue|let'
@@ -119,7 +119,6 @@ export function HighlightRulesSelector(
 
           'variable.language':
             'this|arguments|' + // Pseudo
-            'debugger|' + // special features
             'var|yield|async|await|with|switch|throw|try|eval|' + // forbidden words
             'typeof|' +
             'class|enum|extends|super|export|implements|private|public|' +
