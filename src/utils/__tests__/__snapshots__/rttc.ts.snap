@@ -54,8 +54,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 6`] = `
 Object {
-  "elaborate": "Expected number on right hand side of operation, got array.",
-  "explain": "Expected number on right hand side of operation, got array.",
+  "elaborate": "Expected number on right hand side of operation, got compound data.",
+  "explain": "Expected number on right hand side of operation, got compound data.",
   "left": 0,
   "operator": "<",
   "right": Array [
@@ -232,8 +232,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 23`] = `
 Object {
-  "elaborate": "Expected string on right hand side of operation, got array.",
-  "explain": "Expected string on right hand side of operation, got array.",
+  "elaborate": "Expected string on right hand side of operation, got compound data.",
+  "explain": "Expected string on right hand side of operation, got compound data.",
   "left": " ",
   "operator": "<",
   "right": Array [
@@ -564,8 +564,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 53`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -576,8 +576,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 54`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -588,8 +588,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 55`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -600,8 +600,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 56`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -612,8 +612,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 57`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -624,8 +624,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 58`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -638,8 +638,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 59`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -652,8 +652,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 60`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -664,8 +664,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 61`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -916,8 +916,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 85`] = `
 Object {
-  "elaborate": "Expected number on right hand side of operation, got array.",
-  "explain": "Expected number on right hand side of operation, got array.",
+  "elaborate": "Expected number on right hand side of operation, got compound data.",
+  "explain": "Expected number on right hand side of operation, got compound data.",
   "left": 0,
   "operator": ">",
   "right": Array [
@@ -1094,8 +1094,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 102`] = `
 Object {
-  "elaborate": "Expected string on right hand side of operation, got array.",
-  "explain": "Expected string on right hand side of operation, got array.",
+  "elaborate": "Expected string on right hand side of operation, got compound data.",
+  "explain": "Expected string on right hand side of operation, got compound data.",
   "left": " ",
   "operator": ">",
   "right": Array [
@@ -1426,8 +1426,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 132`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -1438,8 +1438,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 133`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -1450,8 +1450,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 134`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -1462,8 +1462,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 135`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -1474,8 +1474,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 136`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -1486,8 +1486,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 137`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -1500,8 +1500,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 138`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -1514,8 +1514,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 139`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -1526,8 +1526,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 140`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -1778,8 +1778,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 164`] = `
 Object {
-  "elaborate": "Expected number on right hand side of operation, got array.",
-  "explain": "Expected number on right hand side of operation, got array.",
+  "elaborate": "Expected number on right hand side of operation, got compound data.",
+  "explain": "Expected number on right hand side of operation, got compound data.",
   "left": 0,
   "operator": "<=",
   "right": Array [
@@ -1956,8 +1956,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 181`] = `
 Object {
-  "elaborate": "Expected string on right hand side of operation, got array.",
-  "explain": "Expected string on right hand side of operation, got array.",
+  "elaborate": "Expected string on right hand side of operation, got compound data.",
+  "explain": "Expected string on right hand side of operation, got compound data.",
   "left": " ",
   "operator": "<=",
   "right": Array [
@@ -2288,8 +2288,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 211`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -2300,8 +2300,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 212`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -2312,8 +2312,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 213`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -2324,8 +2324,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 214`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -2336,8 +2336,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 215`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -2348,8 +2348,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 216`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -2362,8 +2362,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 217`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -2376,8 +2376,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 218`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -2388,8 +2388,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 219`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -2640,8 +2640,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 243`] = `
 Object {
-  "elaborate": "Expected number on right hand side of operation, got array.",
-  "explain": "Expected number on right hand side of operation, got array.",
+  "elaborate": "Expected number on right hand side of operation, got compound data.",
+  "explain": "Expected number on right hand side of operation, got compound data.",
   "left": 0,
   "operator": ">=",
   "right": Array [
@@ -2818,8 +2818,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 260`] = `
 Object {
-  "elaborate": "Expected string on right hand side of operation, got array.",
-  "explain": "Expected string on right hand side of operation, got array.",
+  "elaborate": "Expected string on right hand side of operation, got compound data.",
+  "explain": "Expected string on right hand side of operation, got compound data.",
   "left": " ",
   "operator": ">=",
   "right": Array [
@@ -3150,8 +3150,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 290`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -3162,8 +3162,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 291`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -3174,8 +3174,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 292`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -3186,8 +3186,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 293`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -3198,8 +3198,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 294`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -3210,8 +3210,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 295`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -3224,8 +3224,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 296`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -3238,8 +3238,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 297`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -3250,8 +3250,8 @@ Object {
 
 exports[`Binary (<|>|<=|>=) type combinations: Invalid type combinations return TypeError 298`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -3502,8 +3502,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 6`] = `
 Object {
-  "elaborate": "Expected number on right hand side of operation, got array.",
-  "explain": "Expected number on right hand side of operation, got array.",
+  "elaborate": "Expected number on right hand side of operation, got compound data.",
+  "explain": "Expected number on right hand side of operation, got compound data.",
   "left": 0,
   "operator": "-",
   "right": Array [
@@ -4022,8 +4022,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 54`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4034,8 +4034,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 55`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4046,8 +4046,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 56`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4058,8 +4058,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 57`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4070,8 +4070,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 58`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4082,8 +4082,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 59`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4096,8 +4096,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 60`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4110,8 +4110,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 61`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4122,8 +4122,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 62`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4374,8 +4374,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 86`] = `
 Object {
-  "elaborate": "Expected number on right hand side of operation, got array.",
-  "explain": "Expected number on right hand side of operation, got array.",
+  "elaborate": "Expected number on right hand side of operation, got compound data.",
+  "explain": "Expected number on right hand side of operation, got compound data.",
   "left": 0,
   "operator": "*",
   "right": Array [
@@ -4894,8 +4894,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 134`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4906,8 +4906,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 135`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4918,8 +4918,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 136`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4930,8 +4930,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 137`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4942,8 +4942,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 138`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4954,8 +4954,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 139`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4968,8 +4968,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 140`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4982,8 +4982,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 141`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -4994,8 +4994,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 142`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -5246,8 +5246,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 166`] = `
 Object {
-  "elaborate": "Expected number on right hand side of operation, got array.",
-  "explain": "Expected number on right hand side of operation, got array.",
+  "elaborate": "Expected number on right hand side of operation, got compound data.",
+  "explain": "Expected number on right hand side of operation, got compound data.",
   "left": 0,
   "operator": "/",
   "right": Array [
@@ -5766,8 +5766,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 214`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -5778,8 +5778,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 215`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -5790,8 +5790,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 216`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -5802,8 +5802,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 217`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -5814,8 +5814,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 218`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -5826,8 +5826,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 219`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -5840,8 +5840,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 220`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -5854,8 +5854,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 221`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -5866,8 +5866,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 222`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -6118,8 +6118,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 246`] = `
 Object {
-  "elaborate": "Expected number on right hand side of operation, got array.",
-  "explain": "Expected number on right hand side of operation, got array.",
+  "elaborate": "Expected number on right hand side of operation, got compound data.",
+  "explain": "Expected number on right hand side of operation, got compound data.",
   "left": 0,
   "operator": "%",
   "right": Array [
@@ -6638,8 +6638,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 294`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -6650,8 +6650,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 295`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -6662,8 +6662,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 296`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -6674,8 +6674,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 297`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -6686,8 +6686,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 298`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -6698,8 +6698,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 299`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -6712,8 +6712,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 300`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -6726,8 +6726,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 301`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -6738,8 +6738,8 @@ Object {
 
 exports[`Binary (-|*|/|%) type combinations: Invalid type combinations return TypeError 302`] = `
 Object {
-  "elaborate": "Expected number on left hand side of operation, got array.",
-  "explain": "Expected number on left hand side of operation, got array.",
+  "elaborate": "Expected number on left hand side of operation, got compound data.",
+  "explain": "Expected number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -6990,8 +6990,8 @@ Object {
 
 exports[`Binary + type combinations: Invalid type combinations return TypeError 6`] = `
 Object {
-  "elaborate": "Expected number on right hand side of operation, got array.",
-  "explain": "Expected number on right hand side of operation, got array.",
+  "elaborate": "Expected number on right hand side of operation, got compound data.",
+  "explain": "Expected number on right hand side of operation, got compound data.",
   "left": 0,
   "operator": "+",
   "right": Array [
@@ -7168,8 +7168,8 @@ Object {
 
 exports[`Binary + type combinations: Invalid type combinations return TypeError 23`] = `
 Object {
-  "elaborate": "Expected string on right hand side of operation, got array.",
-  "explain": "Expected string on right hand side of operation, got array.",
+  "elaborate": "Expected string on right hand side of operation, got compound data.",
+  "explain": "Expected string on right hand side of operation, got compound data.",
   "left": " ",
   "operator": "+",
   "right": Array [
@@ -7500,8 +7500,8 @@ Object {
 
 exports[`Binary + type combinations: Invalid type combinations return TypeError 53`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -7512,8 +7512,8 @@ Object {
 
 exports[`Binary + type combinations: Invalid type combinations return TypeError 54`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -7524,8 +7524,8 @@ Object {
 
 exports[`Binary + type combinations: Invalid type combinations return TypeError 55`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -7536,8 +7536,8 @@ Object {
 
 exports[`Binary + type combinations: Invalid type combinations return TypeError 56`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -7548,8 +7548,8 @@ Object {
 
 exports[`Binary + type combinations: Invalid type combinations return TypeError 57`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -7560,8 +7560,8 @@ Object {
 
 exports[`Binary + type combinations: Invalid type combinations return TypeError 58`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -7574,8 +7574,8 @@ Object {
 
 exports[`Binary + type combinations: Invalid type combinations return TypeError 59`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -7588,8 +7588,8 @@ Object {
 
 exports[`Binary + type combinations: Invalid type combinations return TypeError 60`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -7600,8 +7600,8 @@ Object {
 
 exports[`Binary + type combinations: Invalid type combinations return TypeError 61`] = `
 Object {
-  "elaborate": "Expected string or number on left hand side of operation, got array.",
-  "explain": "Expected string or number on left hand side of operation, got array.",
+  "elaborate": "Expected string or number on left hand side of operation, got compound data.",
+  "explain": "Expected string or number on left hand side of operation, got compound data.",
   "left": Array [
     2,
   ],
@@ -8282,8 +8282,8 @@ Object {
 
 exports[`Member expression type combinations: Invalid type combinations return TypeError 51`] = `
 Object {
-  "elaborate": "Expected string as prop, got array.",
-  "explain": "Expected string as prop, got array.",
+  "elaborate": "Expected string as prop, got compound data.",
+  "explain": "Expected string as prop, got compound data.",
   "left": Object {
     "a": 1,
   },
@@ -8374,8 +8374,8 @@ Object {
 
 exports[`Member expression type combinations: Invalid type combinations return TypeError 59`] = `
 Object {
-  "elaborate": "Expected array index as prop, got array.",
-  "explain": "Expected array index as prop, got array.",
+  "elaborate": "Expected array index as prop, got compound data.",
+  "explain": "Expected array index as prop, got compound data.",
   "left": Array [
     2,
   ],
@@ -8654,8 +8654,8 @@ Object {
 
 exports[`Ternary/if test expression type combinations: Invalid type combinations return TypeError 6`] = `
 Object {
-  "elaborate": "Expected boolean as condition, got array.",
-  "explain": "Expected boolean as condition, got array.",
+  "elaborate": "Expected boolean as condition, got compound data.",
+  "explain": "Expected boolean as condition, got compound data.",
   "value": Array [
     2,
   ],
@@ -8727,8 +8727,8 @@ Object {
 
 exports[`Unary type combinations: Invalid type combinations return TypeError 6`] = `
 Object {
-  "elaborate": "Expected boolean, got array.",
-  "explain": "Expected boolean, got array.",
+  "elaborate": "Expected boolean, got compound data.",
+  "explain": "Expected boolean, got compound data.",
   "operator": "!",
   "value": Array [
     2,
@@ -8803,8 +8803,8 @@ Object {
 
 exports[`Unary type combinations: Invalid type combinations return TypeError 14`] = `
 Object {
-  "elaborate": "Expected number, got array.",
-  "explain": "Expected number, got array.",
+  "elaborate": "Expected number, got compound data.",
+  "explain": "Expected number, got compound data.",
   "operator": "+",
   "value": Array [
     2,
@@ -8879,8 +8879,8 @@ Object {
 
 exports[`Unary type combinations: Invalid type combinations return TypeError 22`] = `
 Object {
-  "elaborate": "Expected number, got array.",
-  "explain": "Expected number, got array.",
+  "elaborate": "Expected number, got compound data.",
+  "explain": "Expected number, got compound data.",
   "operator": "-",
   "value": Array [
     2,
