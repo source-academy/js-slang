@@ -1,13 +1,15 @@
 \input source_header.tex
 
+\usepackage{CJKutf8}
+
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% copied and adapted ffrom source_header.tex
   \thispagestyle{empty}
   
-\markright{SICP, JavaScript Adaptation, Source Style Guide, Version 1.0}
+\markright{SICP, JavaScript Adaptation, Source Style Guide, Version 2.0}
 \begin{center}
-  {\Large {\bf Source Style Guide}---Version 1.0}\\[10mm]
+  {\Large {\bf Source Style Guide}---Version 2.0}\\[10mm]
 
   {\large Martin Henz}\\[5mm]
 
@@ -19,106 +21,225 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This is the style guide for the language Source,
-the official language of the book \emph{Structure and Interpretation
-of Computer Programs}, JavaScript Adaptation.
-You have never heard of Source? No worries! It was invented
-it just for the purpose of the book. Source is a sublanguage of 
-\href{http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf}{
-ECMAScript 2016 ($7^{\textrm{th}}$ Edition)}. This style guide is a compilation
-of commonly accepted rules, with the possible exception of conditional expressions
-on page~\pageref{condex}.
-        
-\section*{Indentation}
-  Use a four space indent. This means that if a line $L$ ends with \verb#{#, then 
-the following line starts with four more spaces than required to reach the keyword
-\lstinline{function}, \lstinline{if} or \lstinline{else} in $L$.
+the JavaScript sublanguage used the book \emph{Structure and Interpretation
+of Computer Programs}, JavaScript Adaptation (SICP JS). 
+In a first-year course, instructors may encourage adherence to a style in the beginning,
+and gradually enforce adherence in order to improve communication
+between learners and staff.
+
+\section*{Line Length and tabs}
+  Newline characters should be indented such that lines
+  should not be longer than 80 characters. The book uses at most
+  70 characters per line.
+
+Tabs count as four characters and begin at a column number that is divisible by 4.
+The Source Academy automatically replaces each set of four characters at the beginning
+of a line into a tab.
+
+\section*{Blocks}
+
+The body of blocks are indented by four characters more than their surrounding program.
+\begin{lstlisting}
+// good example
+const x = 1;
+{
+    const y = 2;
+    display(x + y);
+    {
+        const z = 3;
+        display(x + y + z);
+    }
+}
+\end{lstlisting}
+
+\vspace{-4mm}
+
+\section*{Function declarations}
+
+The brace that starts the body of a function declaration is placed at the end of the line that
+starts with the keyword \lstinline{function}. It is separated from the parameter list by one
+space.
 Example:
 \begin{lstlisting}
+function make_adder(x) {
+    function the_adder(y) {
+        return x >= 0 ? x + y : - x + y;
+    }
+    return the_adder;
+}
+\end{lstlisting}
+%
+JavaScript syntax enforces that there cannot be a newline in a return statement
+between the keyword \lstinline{return} and the return expression.
+
+\begin{lstlisting}
+// illegal JavaScript
+function square(x) {
+    return
+        x * x;
+}
+\end{lstlisting}
+
+\section*{Conditional Statements}
+
+The brace that starts the consequent block of a conditional statement
+is placed at the end of the line that starts with the keyword \lstinline{if}.
+The keyword \lstinline{else} is in the same line as the brace that ends the
+consequent block and has one space before and after the keyword, followed by
+the brace that starts the alternative block.
+%
+\begin{lstlisting}
+// good example
 function make_abs_adder(x) {
     function the_adder(y) {
         if (x >= 0) {
             return x + y;
         } else {
-            return -x + y;
+            return - x + y;
         }
     }
     return the_adder;
 }
 \end{lstlisting}
-Note the four spaces before \lstinline{return}, and then indentation of the \lstinline{if}
-statement four spaces to the right of the preceding \lstinline{function}.
 
-Four space indent also applies when individual lines get too long and
-need to be broken at convenient places. Example:
-\begin{lstlisting}
-function frac_sum(a, b) {
-    return (a > b) ? 0
-        : 1 / (a * (a + 2))
-            +
-            frac_sum(a + 4, b);
-}
-\end{lstlisting}
-
-\section*{Line Length}
-  Lines should be truncated such that they do not require excessive horizontal scrolling.
-  As a guide, it should be \emph{no more than 80 characters}.
-  
-\section*{Curly Braces}
-  Curly braces should \emph{open on the same line and close on a new line}.
-  Statements within the curly braces should be indented one more level.
+\paragraph{Always use braces...} even if the block consists of only 
+  one statement. This is required in Source, and recommended in JavaScript.
 
 \begin{lstlisting}
-// function declaration
-function my_function(<parameters>) {
-    <statements here should be indented>
-}
-
-// if-else
-if (<predicate>) {
-    ...
-} else if (<predicate>) {
-    ...
-} else {
-    ...
-}
-
-// nested-if
-if (<predicate>) {
-    ...
-    if (<some other predicate>) {
-        ...
-    }
-    ...
-}
-\end{lstlisting}
-
-\paragraph{Always use curly braces.} Even if the block consists of only 
-  one statement.
-  This is required in Source, and recommended in JavaScript.
-
-\begin{lstlisting}
-// correct Source
+// good example
 if (<predicate>) {
     return x + y;
 } else {
     return x * y;
 }
 
-// incorrect Source
+// bad example (illegal in Source)
 if (<predicate>) 
     return x + y;
 else 
     return x * y;
 
-// worse
+// even worse
 if (<predicate>) return x + y;
 else return x * y;
 \end{lstlisting}
 
-\section*{Whitespace}
+\paragraph{Always use \lstinline{else}...} even if the alternative block
+is empty. This is required in Source, and recommended in JavaScript.
+An empty block is written as \lstinline~{}~ with no space or newline between the
+braces.
 
-  \subsection*{Operators}
-    Leave a single space between binary and ternary operators.
+\begin{lstlisting}
+// good example
+function signal_error(p, x) {
+    if (p) {
+        error(x, "fatal error, bad value found:");
+    } else {}
+}
+
+// bad example (space in empty block)
+function signal_error(p, x) {
+    if (p) {
+        error(x, "fatal error, bad value found:");
+    } else {
+    }
+}
+\end{lstlisting}
+\newpage
+\begin{lstlisting}
+// bad example: missing else (illegal in Source)
+function signal_error(p, x) {
+    if (p) {
+        error(x, "fatal error, bad value found:");
+    }
+}
+\end{lstlisting}
+
+\vspace{-4mm}
+
+\section*{Conditional expressions}
+
+The consequent and alternative expressions of conditional expressions are either
+in the same line as the predicate (if they fit),
+or they are aligned under the beginning of the predicate.
+Examples:
+\begin{lstlisting}
+// good style
+function abs(x) {
+    return x >= 0 ? x : - x;
+}
+
+// good style
+function abs(x) {
+    return x > 0
+           ? x
+           : x === 0
+           ? 0
+           : - x;
+}
+\end{lstlisting}
+\begin{lstlisting}
+// good style
+const aspect_ratio = landscape ? 4 / 3 : 3 / 4;
+
+// bad style: wasted lines
+const aspect_ratio = landscape
+                     ? 4 / 3
+                     : 3 / 4;
+\end{lstlisting}
+
+Avoid parentheses around the predicate. Note that conditional expressions have lower
+precedence than all other operators in Source (except the assignment operator
+\lstinline{=}, so parentheses around the predicate are rarely needed.
+
+\begin{lstlisting}
+// good style
+function abs(x) {
+    return x >= 0 ? x : - x;
+}
+
+// bad style
+function abs(x) {
+    return (x >= 0) ? x : - x;
+}
+\end{lstlisting}
+
+If the \textit{consequent-expression} or \textit{alternative-expression} are lengthy, use
+indentation, but align all clauses of a conditional expression without further indentation.
+%
+\begin{lstlisting}
+// good style
+function A(x,y) {
+    return y === 0
+           ? 0
+           : x === 0
+           ? 2 * y
+           : y === 1
+           ? 2
+           : A(x - 1, A(x, y - 1));
+
+// bad style: line too long
+function A(x,y) {
+    return y === 0 ? 0 : x === 0 ? 2 * y : y === 1 ? 2 : A(x - 1, A(x, y - 1));
+}
+
+// bad style: too much indentation
+function A(x,y) {
+    return y === 0
+           ? 0
+           : x === 0
+             ? 2 * y
+             : y === 1
+               ? 2
+               : A(x - 1, A(x, y - 1));
+}
+\end{lstlisting}
+
+\vspace{-4mm}
+
+\section*{Operator combinations}
+
+Leave a single space between operators and their operands.
 	
 \begin{lstlisting}
 // good style
@@ -132,145 +253,93 @@ return x === 0 ? "zero" : "not zero";
 
 // bad style
 return x === 0?"zero":"not zero";
-\end{lstlisting}
-	
-	Do not leave a space between unary operators and the variable involved.
 
-\begin{lstlisting}
 // good style
-const negative_x = -x;
-
-// bad style
 const negative_x = - x;
-\end{lstlisting}
-
-\subsection*{Function Definition Expressions}
-
-Keep the parameters and the body expression of a function definition expression
-in one line, if they are short enough.
-
-If they are lengthy, use
-indentation. The indentation starts four characters after first character of
-the \textit{parameter}, if there is only one,
-or four characters after the open parenthesis,
-if there are multiple parameters. If the body expression does not
-fit in one line, use indentation following the first line of the body
-expression. 
-
-\begin{lstlisting}
-// good style
-function count_buttons(garment) {
-    return accumulate((sleaves, total) => sleaves + total,
-        0, 
-        map(jacket =>
-            is_checkered(jacket)
-                ? count_buttons(jacket)
-                : 1,
-                garment));
-}
-
-// good style
-function count_buttons(garment) {
-    return accumulate(
-        (sleaves, total) =>
-            delicate_calculation(sleaves + total),
-        0,
-        map(jacket =>
-            is_checkered(jacket)
-                ? count_buttons(jacket)
-                : 1,
-            garment));
-}
-
-// bad style: too much indentation
-function count_buttons(garment) {
-    return accumulate((sleaves, total) =>
-                      delicate_calculation(sleaves + total),
-                      0, 
-		      map(jacket =>
-                          is_checkered(jacket)
-                          ? count_buttons(jacket)
-                          : 1,
-                          garment));
-}
-
-// no newline allowed between parameters and =>
-function count_buttons(garment) {
-    return accumulate(
-        (sleaves, total) 
-            => delicate_calculation(sleaves + total),
-        0,
-        map(jacket 
-            => is_checkered(jacket)
-                ? count_buttons(jacket)
-                : 1,
-            garment));
-}
-\end{lstlisting}
-
-
-  \subsection*{Conditional Expressions}
-\label{condex}
-Keep the three components of a conditional expression in one line, if they are short enough.
-
-\begin{lstlisting}
-// good style
-const aspect_ratio = landscape ? 4 / 3 : 3 / 4;
 
 // bad style
-const aspect_ratio = landscape
-    ? 4 / 3
-    : 3 / 4;
+const negative_x = -x;
 \end{lstlisting}
 
-If the \textit{consequent-expression} or \textit{alternative-expression} are lengthy, use
-indentation. The indentation is as usual four characters longer
-than the indentation of the previous line.
+\vspace{-4mm}
+
+\section*{Arguments and parameters}
+
+The arguments of function applications and the parameters of function declarations
+and lambda expressions are aligned either horizontally (if they fit in one line) or vertically
+(if they don't fit in one line). The first argument of of a function application either
+appears immediately after the open parenthesis that encloses the arguments or is
+indented by four characters compared to the beginning of the function expression.
+\newpage
+\begin{lstlisting}
+// good example:
+// note how arguments are aligned vertically when necessary
+// indented below the first argument or by four characters
+function execute_application(fun, args, succeed, fail) {
+    return is_primitive_function(fun)
+           ? succeed(apply_primitive_function(fun, args),
+                     fail)
+           : is_compound_function(fun) 
+           ? function_body(fun)(
+                 extend_environment(
+                     function_parameters(fun),
+                     args,
+                     function_environment(fun)),
+                 (body_result, fail2) => 
+                   succeed(is_return_value(body_result) 
+                           ? return_value_content(body_result)
+                           : undefined,
+                           fail2),
+                 fail)
+           : error(fun, "unknown function type -- execute_application");
+}
+\end{lstlisting}
 
 \begin{lstlisting}
-// good style
-function A(x,y) {
-    return y === 0
-        ? 0
-        : x === 0
-            ? 2 * y
-            : y === 1
-                ? 2
-                : A(x - 1, A(x, y - 1));
-
-// bad style: line too long
-function A(x,y) {
-    return y === 0 ? 0 : x === 0 ? 2 * y : y === 1 ? 2 : A(x - 1, A(x, y - 1));
-}
-
-// bad style: too much indentation
-function A(x,y) {
-    return y === 0
-               ? 0
-               : x === 0
-                     ? 2 * y
-                     : y === 1
-                           ? 2
-                           : A(x - 1, A(x, y - 1));
+// good example:
+// the arguments of make_execution_function
+// are ok here; five newlines would be excessive here
+function update_insts(insts, labels, machine) {
+    const pc = get_register(machine, "pc");
+    const flag = get_register(machine, "flag");
+    const stack = machine("stack");
+    const ops = machine("operations");
+    return for_each(inst => set_instruction_execution_fun(
+                                inst,
+                                make_execution_function(
+                                    instruction_source(inst),
+                                    labels, machine, pc,
+                                    flag, stack, ops)),
+                    insts);
 }
 \end{lstlisting}
-
-  \subsection*{Conditional Statements and Functions}
-  Leave a single space between the \lstinline{if} statement and the first parenthesis and before every opening curly brace.
-  Start your \lstinline{else} statement on the same line as the closing curly brace, with a single space between them.
 
 \begin{lstlisting}
-if (<predicate>) {
-    ...
-} else if (<predicate>) {
-    ...
-} else {
-    ...
+// good example:
+// the parameters of make_execution_function 
+// are ok here; six newlines would be excessive here
+function make_execution_function(inst, labels, machine, 
+                                 pc, flag, stack, ops) {
+    return type(inst) === "assign"
+           ? make_assign_ef(inst, machine, labels, ops, pc)
+           : type(inst) === "test"
+           ? make_test_ef(inst, machine, labels, ops, flag, pc)
+           : type(inst) === "branch"
+           ? make_branch_ef(inst, machine, labels, flag, pc)
+           : type(inst) === "go_to"
+           ? make_go_to_ef(inst, machine, labels, pc)
+           : type(inst) === "save"
+           ? make_save_ef(inst, machine, stack, pc)
+           : type(inst) === "restore"
+           ? make_restore_ef(inst, machine, stack, pc)
+           : type(inst) === "perform"
+           ? make_perform_ef(inst, machine, labels, ops, pc)
+           : error(inst, "unknown instruction type -- assemble");
 }
 \end{lstlisting}
 
-  When calling or declaring a function with multiple parameters, leave a space after each comma.
-  There should also be no spaces before your parameter list.
+When calling or declaring a function with multiple parameters, leave a space after each comma.
+There should be no spaces before your parameter list.
 
 \begin{lstlisting}
 // good style
@@ -293,22 +362,9 @@ my_function(1,2,3);
 my_function (1, 2, 3);
 \end{lstlisting}
 
-  There should be no spaces after your opening parenthesis and before your closing parenthesis.
+There should be no spaces after opening parentheses and before closing parentheses.
   
 \begin{lstlisting}
-// bad style
-function my_function( arg1, arg2, arg3 ) {
-    ...
-}
-
-// bad style
-my_function( 1, 2, 3 );
-
-// bad style
-if ( x === 1 ) {
-    ...
-}
-
 // good style
 function my_function(arg1, arg2, arg3) {
     ...
@@ -320,19 +376,145 @@ my_function(1, 2, 3);
 // good style
 if (x === 1) {
     ...
+} else {}
+
+// bad style
+function my_function( arg1, arg2, arg3 ) {
+    ...
+}
+
+// bad style
+my_function( 1, 2, 3 );
+
+// bad style
+if ( x === 1 ) {
+    ...
+\end{lstlisting}
+
+\vspace{-4mm}
+
+\section*{Lambda expressions}
+
+Keep the parameters and the body expression of a lambda expression
+in one line, if they are short enough.
+
+If they are lengthy, use
+indentation. The indentation of lambda expressions with expression bodies is
+two characters and the indentation of lambda expressions with block bodies is
+four characters.
+
+JavaScript does not allow a newline between the parameters and the \lstinline{=>}
+symbol.
+\newpage
+
+\begin{lstlisting}
+// good style
+function count_buttons(garment) {
+    return accumulate((sleaves, total) => sleaves + total,
+                      0, 
+                      map(jacket =>
+                            is_checkered(jacket)
+                            ? count_buttons(jacket)
+                            : 1,
+                          garment));
+}
+\end{lstlisting}
+\begin{lstlisting}
+// good style
+function count_buttons(garment) {
+    return accumulate(
+               (sleaves, total) =>
+                 delicate_calculation(sleaves + total),
+               0,
+               map(jacket =>
+                     is_checkered(jacket)
+                     ? count_buttons(jacket)
+                     : 1,
+                   garment));
+}
+
+// good style
+function count_buttons(garment) {
+    return accumulate((sleaves, total) => {
+                          return sleaves + total;
+                      },
+                      0, 
+                      map(jacket => {
+                              return is_checkered(jacket)
+                                     ? count_buttons(jacket)
+                                     : 1;
+                          },
+                          garment));
+}
+
+// good style
+function count_buttons(garment) {
+    return accumulate(
+               (sleaves, total) => {
+                   return delicate_calculation(sleaves + total);
+               },
+               0,
+               map(jacket => {
+                       return is_checkered(jacket)
+                              ? count_buttons(jacket)
+                              : 1;
+                   },
+                   garment));
+}
+\end{lstlisting}
+\newpage
+\begin{lstlisting}
+// bad style: too little indentation
+function count_buttons(garment) {
+    return accumulate((sleaves, total) =>
+               delicate_calculation(sleaves + total),
+               0, 
+               map(jacket =>
+               is_checkered(jacket)
+               ? count_buttons(jacket)
+               : 1,
+               garment));
+}
+\end{lstlisting}
+\begin{lstlisting}
+// illegal JavaScript: no newline allowed between parameters and =>
+function count_buttons(garment) {
+    return accumulate(
+        (sleaves, total) 
+            => delicate_calculation(sleaves + total),
+        0,
+        map(jacket 
+            => is_checkered(jacket)
+                ? count_buttons(jacket)
+                : 1,
+            garment));
 }
 \end{lstlisting}
 
-  Clean up \emph{all trailing whitespace} before submitting your program.
+\section*{Trailing whitespace}
+
+There should be no whitespace (spaces or tabs) before a newline.
+Clean up all such \emph{trailing whitespace} before submitting your program.
 
 \section*{Names}
-\subsection*{Choice of names}
-When naming constants or variables,
-use \emph{underscores} to separate words.
-Examples: \lstinline{my_variable}, \lstinline{x}, \lstinline{rcross_bb}.
 
-\subsection*{Nesting}
-Do not use the same name for nested scope. Examples:
+When naming constants or variables, use names that are meaningful to your
+reader and that make sense in the application domain.
+
+Use \emph{underscores} to separate words. Names should start with
+a lower case letter of the roman alphabet and should not contain upper case letters or
+letters from other alphabets. They can contain digits where appropriate.
+
+Good examples: \lstinline{my_variable}, \lstinline{x_1}, \lstinline{x1},
+\lstinline{draw_connected_proportional}
+
+Bad examples: $\pi$, \lstinline{myVariable}, \lstinline{Draw_Connected_Proportional},
+\begin{CJK*}{UTF8}{gbsn}
+神秘的名字
+\end{CJK*}
+
+\subsection*{Nested scope}
+Do not use the same name in a nested scope. Examples:
 \begin{lstlisting}
 // bad program
 const x = 1;
@@ -364,19 +546,21 @@ function f(x) {
 Finally, the worst case would be a (surely accidental) 
 use of the same variable name for two parameters of a function.
 In this case, the second variable is not visible; it is ``shadowed''
-by the first.
+by the first. This is illegal in Source and JavaScript (strict mode).
 \begin{lstlisting}
-// worse than the above
+// illegal in Source and JavaScript strict mode
 function f(x, x) {
     ...
 }
 \end{lstlisting}
 
+\vspace{-4mm}
+
 \section*{Comments}
 Comments should be used to describe and explain statements 
 that might not be obvious to a reader.
-Redundant comments should be avoided. The comment in the following program is useful
-because it explains what \lstinline{x} and \lstinline{y} stands for and what type of
+Redundant comments should be avoided. The comment in the following program might be
+useful because it explains what \lstinline{x} and \lstinline{y} stands for and what type of
 object is meant. 
 \begin{lstlisting}
 // area of rectangle with sides x and y
@@ -388,7 +572,7 @@ The programmer has decided to use the short word \lstinline{area} as the name of
 which is ok, as long as it is clear that the geometric objects that the program deals with
 are always rectangles.
 
-An example for bad style as a result of a redundant comment follows here:
+An example for bad commenting (no added information):
 \begin{lstlisting}
 // square computes the square of the argument x
 function square(x) {
@@ -398,6 +582,10 @@ function square(x) {
 %
 For multi-line comments, use \lstinline{/* ... */} and for single line comments, use \lstinline{//}.
 
+As in any technical writing, comments should be precise and concise. Put yourself in the
+shoes of the reader of the program. What information would be helpful to the reader to
+understand your program? Ideally, the program should be written such that little comment is
+needed. Use comments to explain ideas that are not obvious when just reading the program.
 \end{document}
 
       
