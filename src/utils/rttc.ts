@@ -15,16 +15,14 @@ export class TypeError extends RuntimeSourceError {
     public side: string,
     public expected: string,
     public got: string,
-    public chapter: number = 4) {
+    public chapter: number = 4
+  ) {
     super(node)
   }
 
   public explain() {
-    const displayGot = this.got === 'array'
-                       ? (this.chapter <= 2
-		          ? 'pair'
-			  : 'compound data')
-		       : this.got
+    const displayGot =
+      this.got === 'array' ? (this.chapter <= 2 ? 'pair' : 'compound data') : this.got
     return `Expected ${this.expected}${this.side}, got ${displayGot}.`
   }
 
@@ -58,7 +56,8 @@ export const checkUnaryExpression = (
   node: es.Node,
   operator: es.UnaryOperator,
   value: Value,
-  chapter: number = 4) => {
+  chapter: number = 4
+) => {
   if ((operator === '+' || operator === '-') && !isNumber(value)) {
     return new TypeError(node, '', 'number', typeOf(value), chapter)
   } else if (operator === '!' && !isBool(value)) {
@@ -98,9 +97,13 @@ export const checkBinaryExpression = (
         return
       }
       if (isNumber(left)) {
-        return isNumber(right) ? undefined : new TypeError(node, RHS, 'number', typeOf(right), chapter)
+        return isNumber(right)
+          ? undefined
+          : new TypeError(node, RHS, 'number', typeOf(right), chapter)
       } else if (isString(left)) {
-        return isString(right) ? undefined : new TypeError(node, RHS, 'string', typeOf(right), chapter)
+        return isString(right)
+          ? undefined
+          : new TypeError(node, RHS, 'string', typeOf(right), chapter)
       } else {
         return new TypeError(node, LHS, 'string or number', typeOf(left), chapter)
       }
@@ -110,7 +113,9 @@ export const checkBinaryExpression = (
 }
 
 export const checkIfStatement = (node: es.Node, test: Value, chapter: number = 4) => {
-  return isBool(test) ? undefined : new TypeError(node, ' as condition', 'boolean', typeOf(test), chapter)
+  return isBool(test)
+    ? undefined
+    : new TypeError(node, ' as condition', 'boolean', typeOf(test), chapter)
 }
 
 export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
