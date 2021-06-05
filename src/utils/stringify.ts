@@ -509,7 +509,7 @@ export function stringDagToLineTree(
       if (
         dag.length - 2 > splitlineThreshold ||
         headTree.type !== 'line' ||
-        headTree.type !== 'line'
+        tailTree.type !== 'line'
       ) {
         result = {
           type: 'block',
