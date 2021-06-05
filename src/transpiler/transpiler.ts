@@ -261,7 +261,8 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program, globalId
 export function checkForUndefinedVariables(
   program: es.Program,
   nativeStorage: NativeStorage,
-  globalIds: NativeIds
+  globalIds: NativeIds,
+  skipUndefined: boolean
 ) {
   const builtins = nativeStorage.builtins
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
@@ -330,7 +331,7 @@ export function checkForUndefinedVariables(
       continue
     }
     const isNativeId = nativeInternalNames.has(name)
-    if (!isNativeId) {
+    if (!isNativeId && !skipUndefined) {
       throw new UndefinedVariable(name, identifier)
     }
   }
@@ -512,56 +513,51 @@ function wrapWithBuiltins(
   return create.blockStatement([...initialisingStatements, create.blockStatement(statements)])
 }
 
-export function transpile(program: es.Program, context: Context) {
-  try {
-    const usedIdentifiers = new Set<string>([
-      ...getIdentifiersInProgram(program),
-      ...getIdentifiersInNativeStorage(context.nativeStorage)
-    ])
-    const globalIds = getNativeIds(program, usedIdentifiers)
-    if (program.body.length === 0) {
-      return { transpiled: '' }
-    }
-
-    const functionsToStringMap = generateFunctionsToStringMap(program)
-
-    transformReturnStatementsToAllowProperTailCalls(program)
-    transformCallExpressionsToCheckIfFunction(program, globalIds)
-    transformUnaryAndBinaryOperationsToFunctionCalls(program, globalIds, context.chapter)
-    transformSomeExpressionsToCheckIfBoolean(program, globalIds)
-    transformPropertyAssignment(program, globalIds)
-    transformPropertyAccess(program, globalIds)
-    checkForUndefinedVariables(program, context.nativeStorage, globalIds)
-    transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
-    wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
-    addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
-
-    const modulePrefix = prefixModule(program)
-    transformImportDeclarations(program)
-    getGloballyDeclaredIdentifiers(program).forEach(id =>
-      context.nativeStorage.previousProgramsIdentifiers.add(id)
-    )
-    const statements = program.body as es.Statement[]
-    const newStatements = [
-      ...getDeclarationsToAccessTranspilerInternals(globalIds),
-      evallerReplacer(globalIds),
-      create.expressionStatement(create.identifier('undefined')),
-      ...statements
-    ]
-
-    program.body =
-      context.nativeStorage.evaller === null
-        ? [wrapWithBuiltins(newStatements, context.nativeStorage, globalIds)]
-        : [create.blockStatement(newStatements)]
-
-    const map = new SourceMapGenerator({ file: 'source' })
-    const transpiled = modulePrefix + generate(program, { sourceMap: map })
-    const codeMap = map.toJSON()
-    return { transpiled, codeMap }
-  } catch (e) {
-    console.log(e)
+export function transpile(program: es.Program, context: Context, skipUndefined = false) {
+  const usedIdentifiers = new Set<string>([
+    ...getIdentifiersInProgram(program),
+    ...getIdentifiersInNativeStorage(context.nativeStorage)
+  ])
+  const globalIds = getNativeIds(program, usedIdentifiers)
+  if (program.body.length === 0) {
+    return { transpiled: '' }
   }
-  return undefined as any
+
+  const functionsToStringMap = generateFunctionsToStringMap(program)
+
+  transformReturnStatementsToAllowProperTailCalls(program)
+  transformCallExpressionsToCheckIfFunction(program, globalIds)
+  transformUnaryAndBinaryOperationsToFunctionCalls(program, globalIds, context.chapter)
+  transformSomeExpressionsToCheckIfBoolean(program, globalIds)
+  transformPropertyAssignment(program, globalIds)
+  transformPropertyAccess(program, globalIds)
+  checkForUndefinedVariables(program, context.nativeStorage, globalIds, skipUndefined)
+  transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
+  wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
+  addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
+
+  const modulePrefix = prefixModule(program)
+  transformImportDeclarations(program)
+  getGloballyDeclaredIdentifiers(program).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  )
+  const statements = program.body as es.Statement[]
+  const newStatements = [
+    ...getDeclarationsToAccessTranspilerInternals(globalIds),
+    evallerReplacer(globalIds),
+    create.expressionStatement(create.identifier('undefined')),
+    ...statements
+  ]
+
+  program.body =
+    context.nativeStorage.evaller === null
+      ? [wrapWithBuiltins(newStatements, context.nativeStorage, globalIds)]
+      : [create.blockStatement(newStatements)]
+
+  const map = new SourceMapGenerator({ file: 'source' })
+  const transpiled = modulePrefix + generate(program, { sourceMap: map })
+  const codeMap = map.toJSON()
+  return { transpiled, codeMap }
 }
 
 function getDeclarationsToAccessTranspilerInternals(

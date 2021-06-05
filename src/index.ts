@@ -499,10 +499,7 @@ export async function runInContext(
           break
       }
 
-      const temp = transpile(program, context)
-      // some issues with formatting and semicolons and tslint so no destructure
-      transpiled = temp.transpiled
-      sourceMapJson = temp.codeMap
+      ;({ transpiled, codeMap: sourceMapJson } = transpile(program, context))
       let value = await sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
       if (context.variant === 'lazy') {
         value = forceIt(value)
