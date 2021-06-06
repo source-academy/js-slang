@@ -2,6 +2,8 @@
 
 \usepackage{CJKutf8}
 
+\parindent=20pt
+
 \begin{document}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% copied and adapted ffrom source_header.tex
@@ -9,7 +11,7 @@
   
 \markright{SICP, JavaScript Adaptation, Source Style Guide, Version 2.0}
 \begin{center}
-  {\Large {\bf Source Style Guide}---Version 2.0}\\[10mm]
+  {\Large {\bf Source Style Guide}---Version 2.1}\\[10mm]
 
   {\large Martin Henz}\\[5mm]
 
@@ -19,22 +21,18 @@
   {\large \today}\\[10mm]
 \end{center}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\noindent
 This is the style guide for the language Source,
-the JavaScript sublanguage used the book \emph{Structure and Interpretation
+the JavaScript sublanguage used in the book \emph{Structure and Interpretation
 of Computer Programs}, JavaScript Adaptation (SICP JS). 
-In a first-year course, instructors may encourage adherence to a style in the beginning,
-and gradually enforce adherence in order to improve communication
-between learners and staff.
+In the beginning of a first-year course, instructors may just \emph{encourage}
+adherence to the style, and then gradually enforce adherence in order to
+improve communication between learners and staff.
 
 \section*{Line Length and tabs}
   Newline characters should be indented such that lines
   should not be longer than 80 characters. The book uses at most
   70 characters per line.
-
-Tabs count as four characters and begin at a column number that is divisible by 4.
-The Source Academy automatically replaces each set of four characters at the beginning
-of a line into a tab.
 
 \section*{Blocks}
 
@@ -124,10 +122,9 @@ if (<predicate>) return x + y;
 else return x * y;
 \end{lstlisting}
 
-\paragraph{Always use \lstinline{else}...} even if the alternative block
-is empty. This is required in Source, and recommended in JavaScript.
-An empty block is written as \lstinline~{}~ with no space or newline between the
-braces.
+SICP JS always uses \lstinline{else}... even if the alternative block
+is empty. An empty block is written as \lstinline~{}~ with no space or newline
+between the braces.
 
 \begin{lstlisting}
 // good example
@@ -142,15 +139,6 @@ function signal_error(p, x) {
     if (p) {
         error(x, "fatal error, bad value found:");
     } else {
-    }
-}
-\end{lstlisting}
-\newpage
-\begin{lstlisting}
-// bad example: missing else (illegal in Source)
-function signal_error(p, x) {
-    if (p) {
-        error(x, "fatal error, bad value found:");
     }
 }
 \end{lstlisting}
@@ -222,7 +210,9 @@ function A(x,y) {
 function A(x,y) {
     return y === 0 ? 0 : x === 0 ? 2 * y : y === 1 ? 2 : A(x - 1, A(x, y - 1));
 }
-
+\end{lstlisting}
+\newpage
+\begin{lstlisting}
 // bad style: too much indentation
 function A(x,y) {
     return y === 0
@@ -244,20 +234,12 @@ Leave a single space between operators and their operands.
 \begin{lstlisting}
 // good style
 const x = 1 + 1;
-
-// bad style
-const x=1+1;
-
-// good style
 return x === 0 ? "zero" : "not zero";
-
-// bad style
-return x === 0?"zero":"not zero";
-
-// good style
 const negative_x = - x;
 
 // bad style
+const x=1+1;
+return x === 0?"zero":"not zero";
 const negative_x = -x;
 \end{lstlisting}
 
@@ -270,7 +252,6 @@ and lambda expressions are aligned either horizontally (if they fit in one line)
 (if they don't fit in one line). The first argument of of a function application either
 appears immediately after the open parenthesis that encloses the arguments or is
 indented by four characters compared to the beginning of the function expression.
-\newpage
 \begin{lstlisting}
 // good example:
 // note how arguments are aligned vertically when necessary
@@ -294,7 +275,7 @@ function execute_application(fun, args, succeed, fail) {
            : error(fun, "unknown function type -- execute_application");
 }
 \end{lstlisting}
-
+\newpage
 \begin{lstlisting}
 // good example:
 // the arguments of make_execution_function
@@ -405,8 +386,6 @@ four characters.
 
 JavaScript does not allow a newline between the parameters and the \lstinline{=>}
 symbol.
-\newpage
-
 \begin{lstlisting}
 // good style
 function count_buttons(garment) {
@@ -432,7 +411,9 @@ function count_buttons(garment) {
                      : 1,
                    garment));
 }
-
+\end{lstlisting}
+\newpage
+\begin{lstlisting}
 // good style
 function count_buttons(garment) {
     return accumulate((sleaves, total) => {
@@ -462,7 +443,6 @@ function count_buttons(garment) {
                    garment));
 }
 \end{lstlisting}
-\newpage
 \begin{lstlisting}
 // bad style: too little indentation
 function count_buttons(garment) {
@@ -498,12 +478,11 @@ Clean up all such \emph{trailing whitespace} before submitting your program.
 
 \section*{Names}
 
-When naming constants or variables, use names that are meaningful to your
+When naming constants or variables, choose names that are meaningful to your
 reader and that make sense in the application domain.
-
-Use \emph{underscores} to separate words. Names should start with
-a lower case letter of the roman alphabet and should not contain upper case letters or
-letters from other alphabets. They can contain digits where appropriate.
+Names should only contain
+lower case letter of the roman alphabet, digits, and
+underscores. Use underscores to separate words. 
 
 Good examples: \lstinline{my_variable}, \lstinline{x_1}, \lstinline{x1},
 \lstinline{draw_connected_proportional}
@@ -513,7 +492,7 @@ Bad examples: $\pi$, \lstinline{myVariable}, \lstinline{Draw_Connected_Proportio
 神秘的名字
 \end{CJK*}
 
-\subsection*{Nested scope}
+\section*{Nested scope}
 Do not use the same name in a nested scope. Examples:
 \begin{lstlisting}
 // bad program
@@ -535,11 +514,11 @@ function f(x) {
 \end{lstlisting}
 
 \begin{lstlisting}
-// a third bad program
+// illegal in JavaScript (and therefore Source)
 function f(x) {
     const x = 1;
-    // in the following, the formal parameter x of f
-    // is ``shadowed'' by the const declaration of x.
+    // in JavaScript, a parameter of a function cannot be 
+    // redeclared in the body block of the function
     ...
 }
 \end{lstlisting}
