@@ -538,18 +538,7 @@ function f(x, x) {
 \section*{Comments}
 Comments should be used to describe and explain statements 
 that might not be obvious to a reader.
-Redundant comments should be avoided. The comment in the following program might be
-useful because it explains what \lstinline{x} and \lstinline{y} stands for and what type of
-object is meant. 
-\begin{lstlisting}
-// area of rectangle with sides x and y
-function area(x, y) {
-    return x * y;
-}
-\end{lstlisting}
-The programmer has decided to use the short word \lstinline{area} as the name of the function,
-which is ok, as long as it is clear that the geometric objects that the program deals with
-are always rectangles.
+Redundant comments should be avoided. 
 
 An example for bad commenting (no added information):
 \begin{lstlisting}
@@ -565,6 +554,28 @@ As in any technical writing, comments should be precise and concise. Put yoursel
 shoes of the reader of the program. What information would be helpful to the reader to
 understand your program? Ideally, the program should be written such that little comment is
 needed. Use comments to explain ideas that are not obvious when just reading the program.
+
+\subsection*{Comments and names}
+
+The comment in the following program might be
+useful because it explains what \lstinline{x} and \lstinline{y} stands for and what type of
+object is meant. 
+\begin{lstlisting}
+// area of rectangle with sides x and y
+function area(x, y) {
+    return x * y;
+}
+\end{lstlisting}
+The programmer has decided to use the short word \lstinline{area} as the name of the function,
+which is ok, as long as it is clear that the geometric objects that the program deals with
+are always rectangles. Alternatively, a longer name of the function makes the comment
+unnecessary.
+\begin{lstlisting}
+function area_of_rectangle(x, y) {
+    return x * y;
+}
+\end{lstlisting}
+
 \end{document}
 
       
