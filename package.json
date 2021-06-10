@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
