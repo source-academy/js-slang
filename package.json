@@ -40,7 +40,7 @@
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
     "test": "jest",
-    "benchmark": "jest --testPathPattern='.*benchmark.*'",
+    "benchmark": "jest --runInBand --testPathPattern='.*benchmark.*' --testPathIgnorePatterns='/dist/'",
     "test-coverage": "jest --coverage",
     "eslint": "eslint --ext \".ts,.tsx\" src",
     "jsdoc": "./scripts/jsdoc.sh",

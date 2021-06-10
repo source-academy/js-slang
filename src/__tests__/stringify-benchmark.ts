@@ -1,14 +1,49 @@
-import { stripIndent } from '../../utils/formatters'
-import { testSuccess } from '../../utils/testing'
-import * as list from '../list'
+import { stripIndent } from '../utils/formatters'
+import { testSuccess } from '../utils/testing'
+import * as list from '../stdlib/list'
+import { stringify } from '../utils/stringify'
 
-test('display_list is linear runtime', () => {
+test('stringify is fast', () => {
+  return expect(
+    testSuccess(
+      stripIndent`
+        function make_k_list(k, d) {
+            const degree = k;
+            const depth = d;
+            let repeat = 0;
+            function helper(k, d, to_repeat) {
+                if (d === 0 && k === 0) {
+                    return null;
+                } else if (k === 0) {
+                    return helper(degree, d - 1, repeat);
+                } else {
+                    repeat = pair(to_repeat, helper(k - 1, d, to_repeat));
+                    return pair(to_repeat, helper(k - 1, d, to_repeat));
+                }
+            }
+            return helper(k, d, 0);
+        }
+
+        const bigstructure = make_k_list(2,2);
+        const start = get_time();
+        stringify(bigstructure);
+        const end = get_time();
+        end - start;
+        `,
+      { chapter: 3, native: false }
+    ).then(testResult => testResult.result)
+  ).resolves.toBeLessThan(2000)
+  // This benchmark takes 100ms on my machine,
+  // but less than 2 seconds should be good enough on the test servers.
+})
+
+test('display_list with stringify is linear runtime', () => {
   const placeholder = Symbol('placeholder')
   const noDisplayList = (v: any, s: any = placeholder) => {
     if (s !== placeholder && typeof s !== 'string') {
       throw new TypeError('display_list expects the second argument to be a string')
     }
-    return list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s)
+    return stringify(list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s))
   }
 
   return expect(
