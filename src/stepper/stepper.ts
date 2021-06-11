@@ -1550,7 +1550,7 @@ function reduceMain(
       if (isIrreducible(argument)) {
         // tslint:disable-next-line
         const argumentValue = nodeToValue(argument)
-        const error = rttc.checkUnaryExpression(node, operator, argumentValue)
+        const error = rttc.checkUnaryExpression(node, operator, argumentValue, context.chapter)
         if (error === undefined) {
           const result = evaluateUnaryExpression(operator, argumentValue)
           return [valueToExpression(result, context), context, paths, explain(node)]
@@ -1576,7 +1576,7 @@ function reduceMain(
     ): [substituterNodes, Context, string[][], string] {
       const { test, consequent, alternate } = node
       if (test.type === 'Literal') {
-        const error = rttc.checkIfStatement(node, test.value)
+        const error = rttc.checkIfStatement(node, test.value, context.chapter)
         if (error === undefined) {
           return [
             (test.value ? consequent : alternate) as es.Expression,
@@ -2235,7 +2235,7 @@ function reduceMain(
     ): [substituterNodes, Context, string[][], string] {
       const { test, consequent, alternate } = node
       if (test.type === 'Literal') {
-        const error = rttc.checkIfStatement(node, test.value)
+        const error = rttc.checkIfStatement(node, test.value, context.chapter)
         if (error === undefined) {
           return [
             (test.value ? consequent : alternate) as es.Statement,
