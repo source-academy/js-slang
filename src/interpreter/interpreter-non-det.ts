@@ -256,7 +256,7 @@ function* reduceIf(
 ): IterableIterator<es.Node> {
   const testGenerator = evaluate(node.test, context)
   for (const test of testGenerator) {
-    const error = rttc.checkIfStatement(node, test)
+    const error = rttc.checkIfStatement(node, test, context.chapter)
     if (error) {
       return handleRuntimeError(context, error)
     }
@@ -373,7 +373,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
     const argGenerator = evaluate(node.argument, context)
     for (const argValue of argGenerator) {
-      const error = rttc.checkUnaryExpression(node, node.operator, argValue)
+      const error = rttc.checkUnaryExpression(node, node.operator, argValue, context.chapter)
       if (error) {
         return handleRuntimeError(context, error)
       }
@@ -497,7 +497,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     function* loop(): Value {
       const testGenerator = evaluate(node.test, context)
       for (const test of testGenerator) {
-        const error = rttc.checkIfStatement(node.test, test)
+        const error = rttc.checkIfStatement(node.test, test, context.chapter)
         if (error) return handleRuntimeError(context, error)
 
         if (test &&
@@ -527,7 +527,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     function* loop(): Value {
       const testGenerator = evaluate(node.test!, context)
       for (const test of testGenerator) {
-        const error = rttc.checkIfStatement(node.test!, test)
+        const error = rttc.checkIfStatement(node.test!, test, context.chapter)
         if (error) return handleRuntimeError(context, error)
 
         if (test &&
