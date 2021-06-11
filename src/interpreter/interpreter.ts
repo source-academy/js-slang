@@ -270,7 +270,7 @@ function* reduceIf(
 ): IterableIterator<es.Node> {
   const test = yield* actualValue(node.test, context)
 
-  const error = rttc.checkIfStatement(node, test)
+  const error = rttc.checkIfStatement(node, test, context.chapter)
   if (error) {
     return handleRuntimeError(context, error)
   }
@@ -380,7 +380,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   UnaryExpression: function*(node: es.UnaryExpression, context: Context) {
     const value = yield* actualValue(node.argument, context)
 
-    const error = rttc.checkUnaryExpression(node, node.operator, value)
+    const error = rttc.checkUnaryExpression(node, node.operator, value, context.chapter)
     if (error) {
       return handleRuntimeError(context, error)
     }
