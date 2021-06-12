@@ -98,7 +98,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for +."`
+      `"Error: execution aborted: Expected string and string or number and number, got number and undefined for +."`
     )
   })
 
@@ -116,7 +116,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected number and number, got number and undefined for -."`
+      `"Error: execution aborted: Expected number and number, got number and undefined for -."`
     )
   })
 
@@ -134,7 +134,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected number and number, got number and undefined for *."`
+      `"Error: execution aborted: Expected number and number, got number and undefined for *."`
     )
   })
 
@@ -149,7 +149,7 @@ describe('standard opcodes', () => {
 
   test('DIVG fails for division by 0', () => {
     return expectParsedError('128/0;', { chapter: 3, variant: 'concurrent' }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: division by 0"`
+      `"Error: execution aborted: division by 0"`
     )
   })
 
@@ -158,7 +158,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected number and number, got number and undefined for /."`
+      `"Error: execution aborted: Expected number and number, got number and undefined for /."`
     )
   })
 
@@ -176,7 +176,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected undefined, got undefined for undefined."`
+      `"Error: execution aborted: Expected undefined, got undefined for undefined."`
     )
   })
 
@@ -196,9 +196,7 @@ describe('standard opcodes', () => {
     return expectParsedError('-"hi";', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected number, got string for -."`
-    )
+    }).toMatchInlineSnapshot(`"Error: execution aborted: Expected number, got string for -."`)
   })
 
   test('NOTG works', () => {
@@ -217,9 +215,7 @@ describe('standard opcodes', () => {
     return expectParsedError('!1;', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected boolean, got number for !."`
-    )
+    }).toMatchInlineSnapshot(`"Error: execution aborted: Expected boolean, got number for !."`)
   })
 
   test('LTG works for numbers', () => {
@@ -251,7 +247,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for <."`
+      `"Error: execution aborted: Expected string and string or number and number, got number and undefined for <."`
     )
   })
 
@@ -284,7 +280,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for >."`
+      `"Error: execution aborted: Expected string and string or number and number, got number and undefined for >."`
     )
   })
 
@@ -333,7 +329,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for <=."`
+      `"Error: execution aborted: Expected string and string or number and number, got number and undefined for <=."`
     )
   })
 
@@ -382,7 +378,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected string and string or number and number, got number and undefined for >=."`
+      `"Error: execution aborted: Expected string and string or number and number, got number and undefined for >=."`
     )
   })
 
@@ -434,7 +430,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected array, got number for array access."`
+      `"Error: execution aborted: Expected array, got number for array access."`
     )
   })
 
@@ -443,7 +439,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected number, got string for array index."`
+      `"Error: execution aborted: Expected number, got string for array index."`
     )
   })
 
@@ -452,7 +448,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected array, got number for array access."`
+      `"Error: execution aborted: Expected array, got number for array access."`
     )
   })
 
@@ -461,7 +457,7 @@ describe('standard opcodes', () => {
       chapter: 3,
       variant: 'concurrent'
     }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected number, got string for array index."`
+      `"Error: execution aborted: Expected number, got string for array index."`
     )
   })
 
@@ -615,7 +611,7 @@ describe('primitive opcodes', () => {
         chapter: 3,
         variant: 'concurrent'
       }).toMatchInlineSnapshot(
-        `"Line -1: Error: execution aborted: Expected array, got number for array_length."`
+        `"Error: execution aborted: Expected array, got number for array_length."`
       )
     })
 
@@ -623,7 +619,7 @@ describe('primitive opcodes', () => {
       return expectParsedError('error(123);', {
         chapter: 3,
         variant: 'concurrent'
-      }).toMatchInlineSnapshot(`"Line -1: Error: 123"`)
+      }).toMatchInlineSnapshot(`"Error: 123"`)
     })
 
     test('IS_ARRAY works', () => {
@@ -772,7 +768,7 @@ describe('primitive opcodes', () => {
       `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(
-        `"Line -1: Error: \\"stream_tail(xs) expects a pair as argument xs, but encountered 1\\""`
+        `"Error: \\"stream_tail(xs) expects a pair as argument xs, but encountered 1\\""`
       )
     })
   })
@@ -847,7 +843,7 @@ describe('primitive opcodes', () => {
       `,
         { chapter: 3, variant: 'concurrent' }
       ).toMatchInlineSnapshot(
-        `"Line -1: Error: execution aborted: Expected array, got number for test_and_set."`
+        `"Error: execution aborted: Expected array, got number for test_and_set."`
       )
     })
 
@@ -874,9 +870,7 @@ describe('primitive opcodes', () => {
         clear(1);
       `,
         { chapter: 3, variant: 'concurrent' }
-      ).toMatchInlineSnapshot(
-        `"Line -1: Error: execution aborted: Expected array, got number for clear."`
-      )
+      ).toMatchInlineSnapshot(`"Error: execution aborted: Expected array, got number for clear."`)
     })
   })
 })
@@ -1008,7 +1002,7 @@ describe('standard program execution', () => {
   test('program times out', () => {
     return expectParsedError('while(true) {}', { chapter: 3, variant: 'concurrent' })
       .toMatchInlineSnapshot(`
-              "Line -1: Potential infinite loop detected.
+              "Potential infinite loop detected.
                   If you are certain your program is correct, press run again without editing your program.
                     The time limit will be increased from 1 to 10 seconds.
                     This page may be unresponsive for up to 10 seconds if you do so."
@@ -1076,7 +1070,7 @@ describe('standard program execution', () => {
           f();
         `,
       { chapter: 3, variant: 'concurrent' }
-    ).toMatchInlineSnapshot(`"Line -1: Error: return not allowed in loops"`)
+    ).toMatchInlineSnapshot(`"Error: return not allowed in loops"`)
   })
 
   test('continue and break works', () => {
@@ -1149,32 +1143,28 @@ describe('standard program execution', () => {
         test_and_set(x, 1);
       `,
       { chapter: 3, variant: 'concurrent' }
-    ).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: Expected 1 arguments, but got 2."`)
+    ).toMatchInlineSnapshot(`"Error: execution aborted: Expected 1 arguments, but got 2."`)
   })
 
   test('wrong number of arguments for normal functions throws error', () => {
     return expectParsedError('((x, y) => 1)(1);', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected 2 arguments, but got 1."`
-    )
+    }).toMatchInlineSnapshot(`"Error: execution aborted: Expected 2 arguments, but got 1."`)
   })
 
   test('wrong number of arguments for primitive functions throws error', () => {
     return expectParsedError('math_sin(1,2);', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(
-      `"Line -1: Error: execution aborted: Expected 1 arguments, but got 2."`
-    )
+    }).toMatchInlineSnapshot(`"Error: execution aborted: Expected 1 arguments, but got 2."`)
   })
 
   test('call non function value throws error', () => {
     return expectParsedError('let x = 0; x(1,2);', {
       chapter: 3,
       variant: 'concurrent'
-    }).toMatchInlineSnapshot(`"Line -1: Error: execution aborted: calling non-function value 0."`)
+    }).toMatchInlineSnapshot(`"Error: execution aborted: calling non-function value 0."`)
   })
 
   test('tail call for internal functions work', () => {
