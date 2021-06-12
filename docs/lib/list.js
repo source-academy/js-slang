@@ -145,10 +145,10 @@ function map(f, xs) {
 /** 
  * Makes a list with <CODE>n</CODE>
  * elements by applying the unary function <CODE>f</CODE>
- * to the numbers 0 to <CODE>n - 1</CODE>, assumed to be a non-negative integer.
+ * to the numbers 0 to <CODE>n - 1</CODE>, assumed to be a nonnegative integer.
  * Recursive process; time: <CODE>O(n)</CODE>, space: <CODE>O(n)</CODE>.
  * @param {function} f - unary function
- * @param {number} n - given non-negative integer
+ * @param {number} n - given nonnegative integer
  * @returns {list} resulting list
  */
 function build_list(f, n) {

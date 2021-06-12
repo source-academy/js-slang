@@ -6,7 +6,7 @@ Function declarations may be annotated with attributes.  Attributes are a key-va
 
 \begin{itemize}
 
-\item \lstinline{direct}:  This attribute key should be specified without a value.  If present, the function declaration it is applied to shall not capture any non top-level variables, and shall behave as if it is declared as the first statement of the scope that it is in.  Such functions are called \textit{direct} functions.  Implementations are encouraged to emit direct calls instead of indirect calls.
+\item \lstinline{direct}:  This attribute key should be specified without a value.  If present, the function declaration it is applied to shall not capture any non-toplevel variables, and shall behave as if it is declared as the first statement of the scope that it is in.  Such functions are called \textit{direct} functions.  Implementations are encouraged to emit direct calls instead of indirect calls.
 
 \item \lstinline{constraint}:  The value shall be a map that specifies the signature of the function declaration that it is applied to (for example \lstinline{x:number,y:number} specifies that the parameters \lstinline{x} and \lstinline{y} are both numbers).  If a parameter is not mentioned in this attribute value, the type defaults to \lstinline{any}, meaning that there is no constraint on the parameter value.  A function declaration with a \lstinline{constraint} attribute must also be a direct function.  Implementations are required to raise a runtime error if such a function is called with wrong actual argument types.
 

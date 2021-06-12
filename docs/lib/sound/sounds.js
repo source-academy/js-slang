@@ -118,7 +118,7 @@ function raw_to_audio(_data) {
 
 /**
  * Makes a Sound from a wave and a duration.
- * The wave is a function from a non-negative time (in seconds)
+ * The wave is a function from a nonnegative time (in seconds)
  * to an amplitude value that should lie between
  * -1 and 1. The duration is given in seconds.
  * @param {function} wave - given wave function
@@ -131,7 +131,7 @@ function make_sound(wave, duration) {
 
 /**
  * Accesses the wave of a Sound.
- * The wave is a function from a non-negative time (in seconds)
+ * The wave is a function from a nonnegative time (in seconds)
  * to an amplitude value that should lie between
  * -1 and 1.
  * @param {Sound} sound - given sound

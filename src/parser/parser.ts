@@ -209,7 +209,7 @@ function createWalkers(
     })
   })
 
-  // Provide callbacks checking for rule violations, e.g. no block arrow funcs, non-empty lists...
+  // Provide callbacks checking for rule violations, e.g. no block arrow funcs, nonempty lists...
   parserRules.forEach(rule => {
     const checkers = rule.checkers
     const syntaxCheckerPair = Object.entries(checkers)
