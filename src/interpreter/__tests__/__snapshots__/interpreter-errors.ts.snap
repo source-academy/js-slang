@@ -43,7 +43,7 @@ function negate_whole_stream(stream) {
 }
 
 const ones = pair(1, () => ones);
-eval_stream(make_alternating_stream(enum_stream(1, 9)), 9);",
+eval_stream(make_alternating_stream(enum_stream(1, 9)), 10);",
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 8: Error: head(xs) expects a pair as argument xs, but encountered null",
