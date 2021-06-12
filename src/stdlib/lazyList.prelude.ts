@@ -48,7 +48,7 @@ function map(f, xs) {
 // build_list returns a list of n elements, that results from
 // applying fun to the numbers from 0 to n-1.
 
-function build_list(n, fun) {
+function build_list(fun, n) {
   function build(i, fun, already_built) {
     return i < 0 ? already_built : build(i - 1, fun, pair(fun(i), already_built));
   }

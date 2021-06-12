@@ -54,13 +54,13 @@ function stream_map(f, s) {
       () => stream_map(f, stream_tail(s)));
 }
 
-// build_stream takes a non-negative integer n as first argument,
-// and a function fun as second argument.
-// build_list returns a stream of n elements, that results from
+// build_stream takes a function fun as first argument, 
+// and a non-negative integer n as second argument,
+// build_stream returns a stream of n elements, that results from
 // applying fun to the numbers from 0 to n-1.
 // Lazy? Yes: The result stream forces the applications of fun
 //            for the next element
-function build_stream(n, fun) {
+function build_stream(fun, n) {
   function build(i) {
     return i >= n
       ? null

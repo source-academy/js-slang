@@ -118,7 +118,7 @@ test('filter', () => {
 test('build_list', () => {
   return expectResult(
     stripIndent`
-    equal(stream_to_list(build_stream(5, x => x * x)), list(0, 1, 4, 9, 16));
+    equal(stream_to_list(build_stream(x => x * x, 5)), list(0, 1, 4, 9, 16));
   `,
     { chapter: 3, native: true }
   ).toMatchInlineSnapshot(`true`)
