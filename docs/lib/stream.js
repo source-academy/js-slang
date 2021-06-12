@@ -142,12 +142,12 @@ function stream_map(f, s) {
  * to the numbers 0 to <CODE>n - 1</CODE>, assumed to be a non-negative integer.
  * Lazy? Yes: The result stream forces the application of <CODE>f</CODE>
  *           for the next element
- * @param {number} n - given non-negative integer
  * @param {function} f - unary function
+ * @param {number} n - given non-negative integer
  * @returns {stream} resulting stream
  */
 
-function build_stream(n, fun) {
+function build_stream(fun, n) {
     function build(i) {
         return i >= n
             ? null
