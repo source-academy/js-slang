@@ -1,4 +1,5 @@
 import { stripIndent } from '../utils/formatters'
+import { lineTreeToString, stringDagToLineTree, valueToStringDag } from '../utils/stringify'
 import { expectResult } from '../utils/testing'
 
 test('String representation of numbers are nice', () => {
@@ -91,6 +92,20 @@ test('String representation of lists are nice', () => {
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`"[1, [2, [3, [4, [5, [6, [7, [8, [9, [10, null]]]]]]]]]]"`)
+})
+
+test('Correctly handles circular structures with multiple entry points', () => {
+  return expectResult(
+    stripIndent`
+  const x = enum_list(1, 3);
+  set_tail(tail(tail(x)), x);
+  stringify(list(x, tail(x), tail(tail(x))));
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`
+            "[ [1, [2, [3, ...<circular>]]],
+            [[2, [3, [1, ...<circular>]]], [[3, [1, [2, ...<circular>]]], null]]]"
+          `)
 })
 
 // The interpreter runs into a MaximumStackLimitExceeded error on 1000, so reduced it to 100.
@@ -413,9 +428,11 @@ test('String representation with no indent', () => {
   stringify(parse('x=>x;'), 0);
   `,
     { chapter: 4, native: true }
-  ).toMatchInlineSnapshot(
-    `"[\\"lambda_expression\\", [[[\\"name\\", [\\"x\\", null]], null], [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"`
-  )
+  ).toMatchInlineSnapshot(`
+            "[\\"lambda_expression\\",
+            [[[\\"name\\", [\\"x\\", null]], null],
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
+          `)
 })
 
 test('String representation with 1 space indent', () => {
@@ -456,30 +473,197 @@ test('String representation with more than 10 space indent should trim to 10 spa
             [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
           `)
 })
-
-test('String representation with custom indent', () => {
-  return expectResult(
-    stripIndent`
-  stringify(parse('x=>x;'), ' ... ');
-  `,
-    { chapter: 4, native: true }
-  ).toMatchInlineSnapshot(`
-            "[... \\"lambda_expression\\",
-            [... [[\\"name\\", [\\"x\\", null]], null],
-            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
-          `)
-})
-
-test('String representation with long custom indent gets trimmed to 10 characters', () => {
-  return expectResult(
-    stripIndent`
-  stringify(parse('x=>x;'), '.................................');
-  `,
-    { chapter: 4, native: true }
-  ).toMatchInlineSnapshot(`
-            "[.........\\"lambda_expression\\",
-            [.........[[\\"name\\", [\\"x\\", null]], null],
-            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
-          `)
-})
 // tslint:enable:max-line-length
+
+test('lineTreeToString', () => {
+  return expect(
+    lineTreeToString({
+      type: 'block',
+      prefixFirst: '[ ',
+      prefixRest: '  ',
+      block: [
+        {
+          type: 'block',
+          prefixFirst: '[ ',
+          prefixRest: '  ',
+          block: [
+            { type: 'line', line: { type: 'terminal', str: 'why', length: 3 } },
+            { type: 'line', line: { type: 'terminal', str: 'hello', length: 5 } }
+          ],
+          suffixRest: ',',
+          suffixLast: ' ]'
+        },
+        { type: 'line', line: { type: 'terminal', str: 'there', length: 5 } },
+        { type: 'line', line: { type: 'terminal', str: 'sethbling here', length: 42 } }
+      ],
+      suffixRest: ',',
+      suffixLast: ' ]'
+    })
+  ).toMatchInlineSnapshot(`
+            "[ [ why,
+                hello ],
+              there,
+              sethbling here ]"
+          `)
+})
+
+test('stringDagToLineTree', () => {
+  return expect(
+    lineTreeToString(
+      stringDagToLineTree(
+        {
+          type: 'multiline',
+          lines: ['hello world', 'why hello there', "it's a", '  multiline', 'string!'],
+          length: 42
+        },
+        2,
+        80
+      )
+    )
+  ).toMatchInlineSnapshot(`
+            "hello world
+            why hello there
+            it's a
+              multiline
+            string!"
+          `)
+})
+
+test('stringDagToLineTree part 2', () => {
+  return expect(
+    stringDagToLineTree(
+      {
+        type: 'pair',
+        head: { type: 'terminal', str: '42', length: 2 },
+        tail: {
+          type: 'pair',
+          head: { type: 'terminal', str: '69', length: 2 },
+          tail: { type: 'terminal', str: 'null', length: 4 },
+          length: 42
+        },
+        length: 42
+      },
+      2,
+      80
+    )
+  ).toMatchInlineSnapshot(`
+            Object {
+              "line": Object {
+                "head": Object {
+                  "length": 2,
+                  "str": "42",
+                  "type": "terminal",
+                },
+                "length": 42,
+                "tail": Object {
+                  "head": Object {
+                    "length": 2,
+                    "str": "69",
+                    "type": "terminal",
+                  },
+                  "length": 42,
+                  "tail": Object {
+                    "length": 4,
+                    "str": "null",
+                    "type": "terminal",
+                  },
+                  "type": "pair",
+                },
+                "type": "pair",
+              },
+              "type": "line",
+            }
+          `)
+})
+
+test('stringDagToLineTree part 3', () => {
+  return expect(
+    lineTreeToString(
+      stringDagToLineTree(
+        {
+          type: 'pair',
+          head: { type: 'terminal', str: '42', length: 2 },
+          tail: {
+            type: 'pair',
+            head: { type: 'terminal', str: '69', length: 2 },
+            tail: { type: 'terminal', str: 'null', length: 4 },
+            length: 42
+          },
+          length: 42
+        },
+        2,
+        80
+      )
+    )
+  ).toMatchInlineSnapshot(`"[42, [69, null]]"`)
+})
+
+test('stringDagToLineTree part 4', () => {
+  return expect(
+    lineTreeToString(
+      stringDagToLineTree(
+        {
+          type: 'pair',
+          head: { type: 'terminal', str: '42', length: 2 },
+          tail: {
+            type: 'pair',
+            head: { type: 'terminal', str: '69', length: 2 },
+            tail: { type: 'terminal', str: 'null', length: 4 },
+            length: 42
+          },
+          length: 99
+        },
+        2,
+        80
+      )
+    )
+  ).toMatchInlineSnapshot(`
+            "[ 42,
+            [69, null]]"
+          `)
+})
+
+test('value to StringDag', () => {
+  return expect(
+    lineTreeToString(
+      stringDagToLineTree(
+        valueToStringDag([
+          1,
+          [
+            2,
+            [
+              3,
+              [
+                4,
+                [
+                  5,
+                  [
+                    6,
+                    [
+                      7,
+                      [
+                        8,
+                        [9, [10, [11, [12, [13, [14, [15, [16, [17, [18, [19, [20, null]]]]]]]]]]]]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]),
+        2,
+        80
+      )
+    )
+  ).toMatchInlineSnapshot(`
+            "[ 1,
+            [ 2,
+            [ 3,
+            [ 4,
+            [ 5,
+            [ 6,
+            [ 7,
+            [8, [9, [10, [11, [12, [13, [14, [15, [16, [17, [18, [19, [20, null]]]]]]]]]]]]]]]]]]]]"
+          `)
+})

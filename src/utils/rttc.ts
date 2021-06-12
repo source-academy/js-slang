@@ -10,12 +10,20 @@ export class TypeError extends RuntimeSourceError {
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
-  constructor(node: es.Node, public side: string, public expected: string, public got: string) {
+  constructor(
+    node: es.Node,
+    public side: string,
+    public expected: string,
+    public got: string,
+    public chapter: number = 4
+  ) {
     super(node)
   }
 
   public explain() {
-    return `Expected ${this.expected}${this.side}, got ${this.got}.`
+    const displayGot =
+      this.got === 'array' ? (this.chapter <= 2 ? 'pair' : 'compound data') : this.got
+    return `Expected ${this.expected}${this.side}, got ${displayGot}.`
   }
 
   public elaborate() {
@@ -44,11 +52,16 @@ const isBool = (v: Value) => typeOf(v) === 'boolean'
 const isObject = (v: Value) => typeOf(v) === 'object'
 const isArray = (v: Value) => typeOf(v) === 'array'
 
-export const checkUnaryExpression = (node: es.Node, operator: es.UnaryOperator, value: Value) => {
+export const checkUnaryExpression = (
+  node: es.Node,
+  operator: es.UnaryOperator,
+  value: Value,
+  chapter: number = 4
+) => {
   if ((operator === '+' || operator === '-') && !isNumber(value)) {
-    return new TypeError(node, '', 'number', typeOf(value))
+    return new TypeError(node, '', 'number', typeOf(value), chapter)
   } else if (operator === '!' && !isBool(value)) {
-    return new TypeError(node, '', 'boolean', typeOf(value))
+    return new TypeError(node, '', 'boolean', typeOf(value), chapter)
   } else {
     return undefined
   }
@@ -67,9 +80,9 @@ export const checkBinaryExpression = (
     case '/':
     case '%':
       if (!isNumber(left)) {
-        return new TypeError(node, LHS, 'number', typeOf(left))
+        return new TypeError(node, LHS, 'number', typeOf(left), chapter)
       } else if (!isNumber(right)) {
-        return new TypeError(node, RHS, 'number', typeOf(right))
+        return new TypeError(node, RHS, 'number', typeOf(right), chapter)
       } else {
         return
       }
@@ -84,19 +97,25 @@ export const checkBinaryExpression = (
         return
       }
       if (isNumber(left)) {
-        return isNumber(right) ? undefined : new TypeError(node, RHS, 'number', typeOf(right))
+        return isNumber(right)
+          ? undefined
+          : new TypeError(node, RHS, 'number', typeOf(right), chapter)
       } else if (isString(left)) {
-        return isString(right) ? undefined : new TypeError(node, RHS, 'string', typeOf(right))
+        return isString(right)
+          ? undefined
+          : new TypeError(node, RHS, 'string', typeOf(right), chapter)
       } else {
-        return new TypeError(node, LHS, 'string or number', typeOf(left))
+        return new TypeError(node, LHS, 'string or number', typeOf(left), chapter)
       }
     default:
       return
   }
 }
 
-export const checkIfStatement = (node: es.Node, test: Value) => {
-  return isBool(test) ? undefined : new TypeError(node, ' as condition', 'boolean', typeOf(test))
+export const checkIfStatement = (node: es.Node, test: Value, chapter: number = 4) => {
+  return isBool(test)
+    ? undefined
+    : new TypeError(node, ' as condition', 'boolean', typeOf(test), chapter)
 }
 
 export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
