@@ -101,9 +101,11 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
       // TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
       // way to display it.
       const elaboration = error.elaborate()
-      return `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
+      return line < 1
+        ? explanation
+        : `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
     } else {
-      return `Line ${line}: ${explanation}`
+      return line < 1 ? explanation : `Line ${line}: ${explanation}`
     }
   })
   return errorMessagesArr.join('\n')

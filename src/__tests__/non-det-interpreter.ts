@@ -69,7 +69,7 @@ test('Re-assignment to constant should cause error', async () => {
 })
 
 test('Accessing un-declared variable should cause error', async () => {
-  await testDeterministicCode(`let g = 100; f;`, 'Line -1: Name f not declared.', true)
+  await testDeterministicCode(`let g = 100; f;`, 'Name f not declared.', true)
 })
 
 test('If-else and conditional expressions with non deterministic terms', async () => {
@@ -336,7 +336,7 @@ test('Block statements', async () => {
     }
     v;
     `,
-    'Line -1: Name f declared later in current scope but not yet assigned',
+    'Name f declared later in current scope but not yet assigned',
     true
   )
 
@@ -349,7 +349,7 @@ test('Block statements', async () => {
     }
     f();
     `,
-    'Line -1: Name a declared later in current scope but not yet assigned',
+    'Name a declared later in current scope but not yet assigned',
     true
   )
 
@@ -361,7 +361,7 @@ test('Block statements', async () => {
       const a = 10;
     }
     `,
-    'Line -1: Name a declared later in current scope but not yet assigned',
+    'Name a declared later in current scope but not yet assigned',
     true
   )
 
@@ -375,7 +375,7 @@ test('Block statements', async () => {
     }
     test();
     `,
-    'Line -1: Name variable not declared.',
+    'Name variable not declared.',
     true
   )
 })
@@ -550,7 +550,7 @@ test('Let statement should be block scoped in body of while loop', async () => {
       let x = 5;
     }
     x;`,
-    'Line -1: Name x not declared.',
+    'Name x not declared.',
     true
   )
 })
@@ -728,7 +728,7 @@ test('Let statement should be block scoped in head of for loop', async () => {
     }
     i;
   `,
-    'Line -1: Name i not declared.',
+    'Name i not declared.',
     true
   )
 })
@@ -751,7 +751,7 @@ test('Let statement should be block scoped in body of for loop', async () => {
     }
     x;
   `,
-    'Line -1: Name x not declared.',
+    'Name x not declared.',
     true
   )
 })
