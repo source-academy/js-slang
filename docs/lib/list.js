@@ -147,11 +147,11 @@ function map(f, xs) {
  * elements by applying the unary function <CODE>f</CODE>
  * to the numbers 0 to <CODE>n - 1</CODE>, assumed to be a non-negative integer.
  * Recursive process; time: <CODE>O(n)</CODE>, space: <CODE>O(n)</CODE>.
- * @param {number} n - given non-negative integer
  * @param {function} f - unary function
+ * @param {number} n - given non-negative integer
  * @returns {list} resulting list
  */
-function build_list(n, f) {
+function build_list(f, n) {
     function build(i, f, already_built) {
         return i < 0
             ? already_built
