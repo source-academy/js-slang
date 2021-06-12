@@ -1,7 +1,7 @@
-The functions in NON-DET provide useful functions for non-deterministic programs,
+The functions in NON-DET provide useful functions for nondeterministic programs,
 as introduced in
 <a href="https://sicp.comp.nus.edu.sg/chapters/85">section
-4.3 Non-Deterministic computing</a>
+4.3 Nondeterministic computing</a>
 of the textbook
 <a href="https://sicp.comp.nus.edu.sg">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS). 
