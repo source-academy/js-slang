@@ -80,7 +80,7 @@ test('filter', () => {
 test('build_list', () => {
   return expectResult(
     stripIndent`
-    equal(build_list(5, x => x * x), list(0, 1, 4, 9, 16));
+    equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));
     `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(`true`)
@@ -198,7 +198,7 @@ test('list_to_string', () => {
 test('bad number error build_list', () => {
   return expectParsedError(
     stripIndent`
-    build_list('1', x => x);
+    build_list(x => x, '1');
     `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(`"Line 55: Expected number on left hand side of operation, got string."`)

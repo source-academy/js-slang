@@ -55,7 +55,7 @@ Object {
 exports[`These tests are reporting weird line numbers, as list functions are now implemented in Source. bad number error build_list: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "build_list('1', x => x);",
+  "code": "build_list(x => x, '1');",
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 61: Expected number on left hand side of operation, got string.",
@@ -315,7 +315,7 @@ Object {
 exports[`build_list: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "equal(build_list(5, x => x * x), list(0, 1, 4, 9, 16));",
+  "code": "equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -358,7 +358,7 @@ Object {
 exports[`display_list checks prepend type: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "display_list(build_list(5, i=>i), true);
+  "code": "display_list(build_list(i => i, 5), true);
 0; // suppress long result in snapshot",
   "displayResult": Array [],
   "numErrors": 1,
@@ -399,7 +399,7 @@ Object {
   set_tail(t, p);
   return p;
 };
-display_list(build_inf(3, i => build_list(i, i => build_inf(i, i=>i))));
+display_list(build_inf(3, i => build_list(i => build_inf(i, i=>i), i)));
 0; // suppress long result in snapshot",
   "displayResult": Array [
     "[ null,
@@ -446,7 +446,7 @@ Object {
   set_tail(t, p);
   return p;
 };
-display_list(build_list(3, i => build_inf(i, i => build_list(i, i=>i))));
+display_list(build_list(i => build_inf(i, i => build_list(i => i, i)), 3));
 0; // suppress long result in snapshot",
   "displayResult": Array [
     "list([null, ...<circular>],
@@ -473,7 +473,7 @@ Object {
   set_tail(t, p);
   return p;
 };
-display_list(build_list(5, build_inf));
+display_list(build_list(build_inf, 5));
 0; // suppress long result in snapshot",
   "displayResult": Array [
     "list([0, ...<circular>],
@@ -493,7 +493,7 @@ display_list(build_list(5, build_inf));
 exports[`display_list returns argument: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "const xs = build_list(5, i=>i);
+  "code": "const xs = build_list(i => i, 5);
 xs === display_list(xs);
 // Note reference equality",
   "displayResult": Array [
@@ -574,7 +574,7 @@ display_list(p3);
 exports[`display_list standard acyclic 2: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "display_list(build_list(5, i=>build_list(i, j=>j)));
+  "code": "display_list(build_list(i => build_list(j => j, i), 5));
 0; // suppress long result in snapshot",
   "displayResult": Array [
     "list(null, list(0), list(0, 1), list(0, 1, 2), list(0, 1, 2, 3))",
@@ -590,7 +590,7 @@ Object {
 exports[`display_list standard acyclic multiline: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "display_list(build_list(20, i=>build_list(i, j=>j)));
+  "code": "display_list(build_list(i => build_list(j => j, i), 20));
 0; // suppress long result in snapshot",
   "displayResult": Array [
     "list(null,
@@ -625,7 +625,7 @@ Object {
 exports[`display_list standard acyclic with pairs 2: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "display_list(build_list(5, i=>build_list(i, j=>pair(build_list(j, k=>k), j))));
+  "code": "display_list(build_list(i => build_list(j => pair(build_list(k => k, j), j), i), 5));
 0; // suppress long result in snapshot",
   "displayResult": Array [
     "list(null,
@@ -645,7 +645,7 @@ Object {
 exports[`display_list standard acyclic with pairs: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "display_list(build_list(5, i=>build_list(i, j=>pair(j, j))));
+  "code": "display_list(build_list(i => build_list(j => pair(j, j), i), 5));
 0; // suppress long result in snapshot",
   "displayResult": Array [
     "list(null,
@@ -665,7 +665,7 @@ Object {
 exports[`display_list standard acyclic: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "display_list(build_list(5, i=>i));
+  "code": "display_list(build_list(i => i, 5));
 0; // suppress long result in snapshot",
   "displayResult": Array [
     "list(0, 1, 2, 3, 4)",
@@ -681,7 +681,7 @@ Object {
 exports[`display_list supports prepend string: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "display_list(build_list(5, i=>i), \\"build_list:\\");
+  "code": "display_list(build_list(i => i, 5), \\"build_list:\\");
 0; // suppress long result in snapshot",
   "displayResult": Array [
     "build_list: list(0, 1, 2, 3, 4)",

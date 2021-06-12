@@ -137,7 +137,7 @@ Object {
 exports[`bad number error build_list: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "build_list('1', x => x);",
+  "code": "build_list(x => x, '1');",
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 55: Expected number on left hand side of operation, got string.",
@@ -189,7 +189,7 @@ Object {
 exports[`build_list: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "equal(build_list(5, x => x * x), list(0, 1, 4, 9, 16));",
+  "code": "equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",

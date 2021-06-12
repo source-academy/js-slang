@@ -49,8 +49,8 @@ function map(f, xs) {
   return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));
 }
 
-// build_list takes a non-negative integer n as first argument,
-// and a function fun as second argument.
+// build_list takes a a function fun as first argument, 
+// and a non-negative integer n as second argument,
 // build_list returns a list of n elements, that results from
 // applying fun to the numbers from 0 to n-1.
 
