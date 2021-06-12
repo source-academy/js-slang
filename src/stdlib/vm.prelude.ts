@@ -23,7 +23,7 @@ function _append(xs, ys) {
 function _array_length(arr) {}
 
 // 3
-function _build_list(n, fun) {
+function _build_list(fun, n) {
   function build(i, fun, already_built) {
     return i < 0 ? already_built : build(i - 1, fun, pair(fun(i), already_built));
   }

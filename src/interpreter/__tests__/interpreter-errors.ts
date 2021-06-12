@@ -1076,7 +1076,7 @@ test('Cascading js errors work properly 1', () => {
     }
 
     const ones = pair(1, () => ones);
-    eval_stream(make_alternating_stream(enum_stream(1, 9)), 9);
+    eval_stream(make_alternating_stream(enum_stream(1, 9)), 10);
     `,
     { chapter: 3, native: true }
   ).toMatchInlineSnapshot(
