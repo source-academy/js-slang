@@ -192,11 +192,15 @@ function integers_from(n) {
 //                the first n elements, and leaves the rest of
 //                the stream untouched.
 function eval_stream(s, n) {
-  return n === 0
-    ? null
-    : pair(head(s),
-      eval_stream(stream_tail(s),
-        n - 1));
+    function es(s, n) {
+        return n === 1 
+               ? list(head(s))
+               : pair(head(s), 
+                      es(stream_tail(s), n - 1));
+    }
+    return n === 0 
+           ? null
+           : es(s, n);
 }
 
 // Returns the item in stream s at index n (the first item is at position 0)
