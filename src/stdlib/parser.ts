@@ -80,7 +80,9 @@ const transformers: ASTTransformers = new Map([
         'conditional_statement',
         transform(node.test),
         transform(node.consequent),
-        transform(node.alternate as es.Statement)
+        node.alternate === null
+          ? makeSequenceIfNeeded([])
+          : transform(node.alternate as es.Statement)
       ])
     }
   ],
@@ -417,9 +419,7 @@ const transformers: ASTTransformers = new Map([
 ])
 
 function transform(node: es.Node) {
-  if (node === null) {
-    return null
-  } else if (transformers.has(node.type)) {
+  if (transformers.has(node.type)) {
     const transformer = transformers.get(node.type) as (n: es.Node) => Value
     const transformed = transformer(node)
     // Attach location information

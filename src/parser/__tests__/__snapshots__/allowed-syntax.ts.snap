@@ -1929,7 +1929,13 @@ Object {
                                             null,
                                           ],
                                           Array [
-                                            null,
+                                            Array [
+                                              "sequence",
+                                              Array [
+                                                null,
+                                                null,
+                                              ],
+                                            ],
                                             null,
                                           ],
                                         ],
