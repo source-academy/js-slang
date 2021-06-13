@@ -124,7 +124,7 @@ test('filter', () => {
 test('build_list', () => {
   return expectResult(
     stripIndent`
-    equal(build_list(5, x => x * x), list(0, 1, 4, 9, 16));
+    equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));
   `,
     { chapter: 2, native: true }
   ).toMatchInlineSnapshot(`true`)
@@ -463,11 +463,11 @@ describe('These tests are reporting weird line numbers, as list functions are no
   test.skip('bad number error build_list', () => {
     return expectParsedError(
       stripIndent`
-    build_list(-1, x => x);
+    build_list(x => x, -1);
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 1: Error: build_list(n, fun) expects a positive integer as argument n, but encountered -1"`
+      `"Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered -1"`
     )
   })
 
@@ -475,18 +475,18 @@ describe('These tests are reporting weird line numbers, as list functions are no
   test.skip('bad number error build_list', () => {
     return expectParsedError(
       stripIndent`
-    build_list(1.5, x => x);
+    build_list(x => x, 1.5);
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 1: Error: build_list(n, fun) expects a positive integer as argument n, but encountered 1.5"`
+      `"Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered 1.5"`
     )
   })
 
   test('bad number error build_list', () => {
     return expectParsedError(
       stripIndent`
-    build_list('1', x => x);
+    build_list(x => x, '1');
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
@@ -576,7 +576,7 @@ describe('display_list', () => {
   test('standard acyclic', () => {
     return expectDisplayResult(
       stripIndent`
-        display_list(build_list(5, i=>i));
+        display_list(build_list(i => i, 5));
         0; // suppress long result in snapshot
       `,
       { chapter: 2, native: true }
@@ -590,7 +590,7 @@ describe('display_list', () => {
   test('standard acyclic 2', () => {
     return expectDisplayResult(
       stripIndent`
-        display_list(build_list(5, i=>build_list(i, j=>j)));
+        display_list(build_list(i => build_list(j => j, i), 5));
         0; // suppress long result in snapshot
       `,
       { chapter: 2, native: true }
@@ -604,7 +604,7 @@ describe('display_list', () => {
   test('standard acyclic with pairs', () => {
     return expectDisplayResult(
       stripIndent`
-        display_list(build_list(5, i=>build_list(i, j=>pair(j, j))));
+        display_list(build_list(i => build_list(j => pair(j, j), i), 5));
         0; // suppress long result in snapshot
       `,
       { chapter: 2, native: true }
@@ -622,7 +622,7 @@ describe('display_list', () => {
   test('standard acyclic with pairs 2', () => {
     return expectDisplayResult(
       stripIndent`
-        display_list(build_list(5, i=>build_list(i, j=>pair(build_list(j, k=>k), j))));
+        display_list(build_list(i => build_list(j => pair(build_list(k => k, j), j), i), 5));
         0; // suppress long result in snapshot
       `,
       { chapter: 2, native: true }
@@ -640,7 +640,7 @@ describe('display_list', () => {
   test('returns argument', () => {
     return expectResult(
       stripIndent`
-        const xs = build_list(5, i=>i);
+        const xs = build_list(i => i, 5);
         xs === display_list(xs);
         // Note reference equality
       `,
@@ -671,7 +671,7 @@ describe('display_list', () => {
   test('supports prepend string', () => {
     return expectDisplayResult(
       stripIndent`
-        display_list(build_list(5, i=>i), "build_list:");
+        display_list(build_list(i => i, 5), "build_list:");
         0; // suppress long result in snapshot
       `,
       { chapter: 2, native: true }
@@ -685,7 +685,7 @@ describe('display_list', () => {
   test('checks prepend type', () => {
     return expectParsedError(
       stripIndent`
-        display_list(build_list(5, i=>i), true);
+        display_list(build_list(i => i, 5), true);
         0; // suppress long result in snapshot
       `,
       { chapter: 2, native: true }
@@ -729,7 +729,7 @@ describe('display_list', () => {
   test('standard acyclic multiline', () => {
     return expectDisplayResult(
       stripIndent`
-        display_list(build_list(20, i=>build_list(i, j=>j)));
+        display_list(build_list(i => build_list(j => j, i), 20));
         0; // suppress long result in snapshot
       `,
       { chapter: 2, native: true }
@@ -836,7 +836,7 @@ describe('display_list', () => {
           set_tail(t, p);
           return p;
         };
-        display_list(build_list(5, build_inf));
+        display_list(build_list(build_inf, 5));
         0; // suppress long result in snapshot
       `,
       { chapter: 3, native: true }
@@ -863,7 +863,7 @@ describe('display_list', () => {
           set_tail(t, p);
           return p;
         };
-        display_list(build_list(3, i => build_inf(i, i => build_list(i, i=>i))));
+        display_list(build_list(i => build_inf(i, i => build_list(i => i, i)), 3));
         0; // suppress long result in snapshot
       `,
       { chapter: 3, native: true }
@@ -888,7 +888,7 @@ describe('display_list', () => {
           set_tail(t, p);
           return p;
         };
-        display_list(build_inf(3, i => build_list(i, i => build_inf(i, i=>i))));
+        display_list(build_inf(3, i => build_list(i => build_inf(i, i=>i), i)));
         0; // suppress long result in snapshot
       `,
       { chapter: 3, native: true }

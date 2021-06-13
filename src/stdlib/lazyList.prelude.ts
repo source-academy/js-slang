@@ -43,12 +43,12 @@ function map(f, xs) {
   return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));
 }
 
-// build_list takes a non-negative integer n as first argument,
+// build_list takes a nonnegative integer n as first argument,
 // and a function fun as second argument.
 // build_list returns a list of n elements, that results from
 // applying fun to the numbers from 0 to n-1.
 
-function build_list(n, fun) {
+function build_list(fun, n) {
   function build(i, fun, already_built) {
     return i < 0 ? already_built : build(i - 1, fun, pair(fun(i), already_built));
   }
@@ -151,7 +151,7 @@ function enum_list(start, end) {
 }
 
 // Returns the item in xs (assumed to be a list) at index n,
-// assumed to be a non-negative integer.
+// assumed to be a nonnegative integer.
 // Note: the first item is at position 0
 
 function list_ref(xs, n) {

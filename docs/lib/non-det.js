@@ -66,7 +66,7 @@ function bi_implication(P, Q) {
 }
 
 /**
- * Non-deterministically returns an element from a given list.
+ * Nondeterministically returns an element from a given list.
  * @param {list} xs - given list
  * @returns {value} - an element from <CODE>xs</CODE>
  */
@@ -76,7 +76,7 @@ function an_element_of(xs) {
 }
 
 /**
- * Non-deterministically returns an integer between <CODE>n</CODE> and
+ * Nondeterministically returns an integer between <CODE>n</CODE> and
  * <CODE>m</CODE> (inclusively).
  * @param {number} n - lower bound
  * @param {number} m - upper bound

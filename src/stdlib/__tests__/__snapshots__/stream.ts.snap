@@ -17,7 +17,7 @@ Object {
 exports[`build_list: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "equal(stream_to_list(build_stream(5, x => x * x)), list(0, 1, 4, 9, 16));",
+  "code": "equal(stream_to_list(build_stream(x => x * x, 5)), list(0, 1, 4, 9, 16));",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",

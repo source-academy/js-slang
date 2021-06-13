@@ -139,15 +139,15 @@ function stream_map(f, s) {
 /** 
  * Makes a stream with <CODE>n</CODE>
  * elements by applying the unary function <CODE>f</CODE>
- * to the numbers 0 to <CODE>n - 1</CODE>, assumed to be a non-negative integer.
+ * to the numbers 0 to <CODE>n - 1</CODE>, assumed to be a nonnegative integer.
  * Lazy? Yes: The result stream forces the application of <CODE>f</CODE>
  *           for the next element
- * @param {number} n - given non-negative integer
  * @param {function} f - unary function
+ * @param {number} n - given nonnegative integer
  * @returns {stream} resulting stream
  */
 
-function build_stream(n, fun) {
+function build_stream(fun, n) {
     function build(i) {
         return i >= n
             ? null
@@ -350,17 +350,21 @@ function integers_from(n) {
  * Lazy? Sort-of: <CODE>eval_stream</CODE> only forces the computation of
  * the first <CODE>n</CODE> elements, and leaves the rest of
  * the stream untouched.
- * @param {stream} s - starting number
- * @param {number} n - number of elements to place in result list
+ * @param {stream} s - given stream
+ * @param {number} n - nonnegative number of elements to place in result list
  * @returns {list} result list
  */
 
 function eval_stream(s, n) {
-    return n === 0
-        ? null
-        : pair(head(s),
-            eval_stream(stream_tail(s),
-                n - 1));
+    function es(s, n) {
+        return n === 1 
+               ? list(head(s))
+               : pair(head(s), 
+                      es(stream_tail(s), n - 1));
+    }
+    return n === 0 
+           ? null
+           : es(s, n);
 }
 
 /** 

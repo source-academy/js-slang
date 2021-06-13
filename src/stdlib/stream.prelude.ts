@@ -43,7 +43,7 @@ function stream_length(xs) {
 // stream_map(f,list_to_stream(list(1,2)) results in
 // the same as list_to_stream(list(f(1),f(2)))
 // stream_map throws an exception if the second argument is not a
-// stream, and if the second argument is a non-empty stream and the
+// stream, and if the second argument is a nonempty stream and the
 // first argument is not a function.
 // Lazy? Yes: The argument stream is only explored as forced by
 //            the result stream.
@@ -54,13 +54,13 @@ function stream_map(f, s) {
       () => stream_map(f, stream_tail(s)));
 }
 
-// build_stream takes a non-negative integer n as first argument,
-// and a function fun as second argument.
-// build_list returns a stream of n elements, that results from
+// build_stream takes a function fun as first argument, 
+// and a nonnegative integer n as second argument,
+// build_stream returns a stream of n elements, that results from
 // applying fun to the numbers from 0 to n-1.
 // Lazy? Yes: The result stream forces the applications of fun
 //            for the next element
-function build_stream(n, fun) {
+function build_stream(fun, n) {
   function build(i) {
     return i >= n
       ? null
@@ -76,7 +76,7 @@ function build_stream(n, fun) {
 // and fun(2).
 // stream_for_each returns true.
 // stream_for_each throws an exception if the second argument is not a
-// stream, and if the second argument is a non-empty stream and the
+// stream, and if the second argument is a nonempty stream and the
 // first argument is not a function.
 // Lazy? No: stream_for_each forces the exploration of the entire stream
 function stream_for_each(fun, xs) {
@@ -192,11 +192,15 @@ function integers_from(n) {
 //                the first n elements, and leaves the rest of
 //                the stream untouched.
 function eval_stream(s, n) {
-  return n === 0
-    ? null
-    : pair(head(s),
-      eval_stream(stream_tail(s),
-        n - 1));
+    function es(s, n) {
+        return n === 1 
+               ? list(head(s))
+               : pair(head(s), 
+                      es(stream_tail(s), n - 1));
+    }
+    return n === 0 
+           ? null
+           : es(s, n);
 }
 
 // Returns the item in stream s at index n (the first item is at position 0)
