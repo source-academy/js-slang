@@ -80,7 +80,9 @@ const transformers: ASTTransformers = new Map([
         'conditional_statement',
         transform(node.test),
         transform(node.consequent),
-        transform(node.alternate as es.Statement)
+        node.alternate === null
+          ? makeSequenceIfNeeded([])
+          : transform(node.alternate as es.Statement)
       ])
     }
   ],
