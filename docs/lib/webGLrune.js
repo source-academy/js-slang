@@ -711,7 +711,7 @@ function make_cross(rune) {
 
 /**
  * applies a given function n times to an initial value
- * @param {number} n - a non-negative integer
+ * @param {number} n - a nonnegative integer
  * @param {function} f - unary function from t to t
  * @param {t} initial - argument
  * @return {t} - result of n times application of 

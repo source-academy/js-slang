@@ -145,7 +145,7 @@ export interface Context<T = any> {
 
   /**
    * Describes the strategy / paradigm to be used for evaluation
-   * Examples: lazy, concurrent or non-deterministic
+   * Examples: lazy, concurrent or nondeterministic
    */
   variant: Variant
 

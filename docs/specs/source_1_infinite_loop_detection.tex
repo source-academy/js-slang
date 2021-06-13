@@ -56,7 +56,7 @@ The sets will then be used by the {\it analyzer} to prove the existence of an in
 \section{Objectives}
 Our main goal for this project is to create a tool to detect infinite loops for students in the NUS module CS1101S, where students learn basic programming skills and CS fundamentals.
 
-Due to Turing's theorem, it is impossible to create a program that detects every instance of non-termination. To circumvent this issue, we can make use of the fact that programs students write for this module are fairly simplistic.
+Due to Turing's theorem, it is impossible to create a program that detects every instance of nontermination. To circumvent this issue, we can make use of the fact that programs students write for this module are fairly simplistic.
 
 Typical programs students write that encounter infinite loops tend to have a fairly simple control-flow structure that lends itself smoothly to analysis.
 We conducted a small survey and curated a list of common infinite loops. You can find them here: https://tinyurl.com/source-infloops
@@ -297,7 +297,7 @@ For convenience we define $T_{name}=\{<f,g,q,p>\in T~|~f=name\}$
 \section{Implementation}
 
 Now that we have a mathematical foundation for our analysis of infinite loops, we only need to link it to the syntax of Source programs.
-Our goal will be to first obtain the function transition set of the program, then test it for non-termination.
+Our goal will be to first obtain the function transition set of the program, then test it for nontermination.
 
 The implementation will consist of 3 stages: the symbolic executor, the serializer and the analyzer.
 
@@ -850,7 +850,7 @@ The idea on how to handle this is to split the computation up into 2 sequences, 
 \end{enumerate}
 Notice that if we can prove that neither of the sequences terminate, the original sequence will also not
 terminate (since it will not contain the * symbol).
-We can also prove the non-termination of each sequence using the theorem on countdown functions.
+We can also prove the nontermination of each sequence using the theorem on countdown functions.
 
 However, implementing this involves a lot of work and book keeping, and unfortunately, we did not have
 time to complete this before the project deadline. The next section elaborates on how this can be improved.

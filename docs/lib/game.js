@@ -401,7 +401,7 @@
 
   /**
    * Play the sound associated with the key.
-   * Throws error if key is non-existent.
+   * Throws error if key is nonexistent.
    *
    * @param {string} key key to the sound to be played
    * @param {config} config sound config to be used
