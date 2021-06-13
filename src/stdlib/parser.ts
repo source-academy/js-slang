@@ -417,7 +417,9 @@ const transformers: ASTTransformers = new Map([
 ])
 
 function transform(node: es.Node) {
-  if (transformers.has(node.type)) {
+  if (node === null) {
+    return null
+  } else if (transformers.has(node.type)) {
     const transformer = transformers.get(node.type) as (n: es.Node) => Value
     const transformed = transformer(node)
     // Attach location information
