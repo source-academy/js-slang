@@ -134,7 +134,6 @@ test.each([
         i = i + 1;
         if (j > 2) {
           break;
-        } else {
         }
       }
     }

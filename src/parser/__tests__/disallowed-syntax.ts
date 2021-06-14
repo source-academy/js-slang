@@ -186,22 +186,22 @@ test('Cannot have incomplete statements - verbose', () => {
           `)
 })
 
-test('Cannot have if without else', () => {
+test('Cannot have if without else in chapter <= 2', () => {
   return expectParsedError(
     stripIndent`
     if (true) { 5; }
     `,
-    { chapter: 100 }
+    { chapter: 2 }
   ).toMatchInlineSnapshot(`"Line 1: Missing \\"else\\" in \\"if-else\\" statement."`)
 })
 
-test('Cannot have if without else - verbose', () => {
+test('Cannot have if without else in chapter <= 2 - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
     if (true) { 5; }
     `,
-    { chapter: 100 }
+    { chapter: 2 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Missing \\"else\\" in \\"if-else\\" statement.
             This \\"if\\" block requires corresponding \\"else\\" block which will be

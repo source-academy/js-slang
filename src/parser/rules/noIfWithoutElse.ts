@@ -31,7 +31,7 @@ export class NoIfWithoutElseError implements SourceError {
 
 const noIfWithoutElse: Rule<es.IfStatement> = {
   name: 'no-if-without-else',
-
+  disableOn: 3,
   checkers: {
     IfStatement(node: es.IfStatement, ancestors: [es.Node]) {
       if (!node.alternate) {
