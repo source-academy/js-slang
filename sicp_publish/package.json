@@ -1,6 +1,6 @@
 {
   "name": "sicp",
-  "version": "1.0.17",
+  "version": "1.0.20",
   "description": "SICP Library",
   "dependencies": {
     "@types/estree": "0.0.47",

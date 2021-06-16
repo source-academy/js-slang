@@ -1,9 +1,12 @@
-import { dict, default as createContext } from './createContext'
+import { default as createContext } from './createContext'
 import * as fs from 'fs'
+import { Program, FunctionDeclaration } from 'estree'
+import { parse } from 'acorn'
 
 const context = createContext(4)
 
-const a = Object.getOwnPropertyNames(dict)
+// Generate names.txt
+const a = context.nativeStorage.globals!.variables.keys()
 
 const names_file = fs.createWriteStream('sicp_publish/names.txt')
 
@@ -11,12 +14,13 @@ names_file.on('error', function (e: Error) {
   console.log(e)
 })
 
-a.forEach(function (v) {
-  names_file.write(v + '\n')
-})
+for (const name of a) {
+  names_file.write(name + '\n')
+}
 
 names_file.end()
 
+// Generate prelude.txt
 const prelude_file = fs.createWriteStream('sicp_publish/prelude.txt')
 
 prelude_file.on('error', function (e: Error) {
@@ -26,3 +30,18 @@ prelude_file.on('error', function (e: Error) {
 prelude_file.write(context.prelude)
 
 prelude_file.end()
+
+// Generate prelude_names.txt
+const b = parse(context.prelude || '', { ecmaVersion: 2020 }) as unknown as Program
+
+const prelude_names = fs.createWriteStream('sicp_publish/prelude_names.txt')
+
+prelude_names.on('error', function (e: Error) {
+  console.log(e)
+})
+
+b.body
+  .map(node => (node as FunctionDeclaration).id?.name)
+  .map(name => prelude_names.write(name + '\n'))
+
+prelude_names.end()
