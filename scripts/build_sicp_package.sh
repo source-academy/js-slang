@@ -32,7 +32,7 @@ write() {
     echo "\"use strict\";" >> $SICPJSPATH
     echo "Object.defineProperty(exports, \"__esModule\", { value: true });" >> $SICPJSPATH
     echo "const createContext_1 = require(\"./createContext\");" >> $SICPJSPATH
-    echo "const dict = createContext_1.default(4).nativeStorage.globals.variables;" >> $SICPJSPATH
+    echo "const dict = createContext_1.default(4).nativeStorage.builtins;" >> $SICPJSPATH
 
     cat sicp_publish/prelude.txt >> $SICPJSPATH
 
@@ -48,7 +48,7 @@ write() {
     do 
         if [ "$CURRENT_LINE" != "undefined" -a "$CURRENT_LINE" != "NaN" -a "$CURRENT_LINE" != "Infinity" ]
         then
-            echo "global.$CURRENT_LINE = dict.get(\"$CURRENT_LINE\").getValue();" >> $SICPJSPATH
+            echo "global.$CURRENT_LINE = dict.get(\"$CURRENT_LINE\");" >> $SICPJSPATH
         fi
     done < "sicp_publish/names.txt"
 }
