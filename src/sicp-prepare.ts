@@ -6,7 +6,7 @@ import { parse } from 'acorn'
 const context = createContext(4)
 
 // Generate names.txt
-const a = context.nativeStorage.builtins.keys();
+const a = context.nativeStorage.builtins.keys()
 
 const names_file = fs.createWriteStream('sicp_publish/names.txt')
 
