@@ -29,7 +29,7 @@ function transpileCode(chapter = 1, variant: Variant = 'default', code = '', pre
   if (pretranspile) {
     return generate(program)
   } else {
-    return transpile(program as Program, context, false).transpiled
+    return transpile(program as Program, context).transpiled
   }
 }
 

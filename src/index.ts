@@ -101,9 +101,11 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
       // TODO currently elaboration is just tagged on to a new line after the error message itself. find a better
       // way to display it.
       const elaboration = error.elaborate()
-      return `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
+      return line < 1
+        ? explanation
+        : `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
     } else {
-      return `Line ${line}: ${explanation}`
+      return line < 1 ? explanation : `Line ${line}: ${explanation}`
     }
   })
   return errorMessagesArr.join('\n')
@@ -487,7 +489,6 @@ export async function runInContext(
     }
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
-    let lastStatementSourceMapJson: RawSourceMap | undefined
     try {
       appendModulesToContext(program, context)
       // Mutates program
@@ -500,11 +501,7 @@ export async function runInContext(
           break
       }
 
-      const temp = transpile(program, context, false)
-      // some issues with formatting and semicolons and tslint so no destructure
-      transpiled = temp.transpiled
-      sourceMapJson = temp.codeMap
-      lastStatementSourceMapJson = temp.evalMap
+      ;({ transpiled, codeMap: sourceMapJson } = transpile(program, context))
       let value = await sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
       if (context.variant === 'lazy') {
         value = forceIt(value)
@@ -542,24 +539,20 @@ export async function runInContext(
       }
       const line = Number(match![1])
       const column = Number(match![2])
-      return SourceMapConsumer.with(
-        line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
-        null,
-        consumer => {
-          const {
-            line: originalLine,
-            column: originalColumn,
-            name
-          } = consumer.originalPositionFor({
-            line,
-            column
-          })
-          context.errors.push(
-            convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
-          )
-          return resolvedErrorPromise
-        }
-      )
+      return SourceMapConsumer.with(sourceMapJson!, null, consumer => {
+        const {
+          line: originalLine,
+          column: originalColumn,
+          name
+        } = consumer.originalPositionFor({
+          line,
+          column
+        })
+        context.errors.push(
+          convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
+        )
+        return resolvedErrorPromise
+      })
     }
   } else {
     let it = evaluate(program, context)

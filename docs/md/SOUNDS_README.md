@@ -1,8 +1,8 @@
 To describe a Sound, you need a wave function, and the duration of the Sound in seconds.
-The wave function takes a non-negative time *t* (in seconds) as argument and returns the amplitude
+The wave function takes a nonnegative time *t* (in seconds) as argument and returns the amplitude
 of the wave
 (a number between -1 and 1) at time *t*. In this library, we assume that as duration of a sound
-a non-negative number is given. An example wave function `my_wave` has this type:
+a nonnegative number is given. An example wave function `my_wave` has this type:
 
 `my_wave` : Number → Number
 

@@ -78,16 +78,18 @@ export interface ConstWrapper {
   getValue: () => Value
 }
 
-export interface Globals {
-  variables: Map<string, ValueWrapper>
-  previousScope: Globals | null
-}
-
 export interface NativeStorage {
-  globals: Globals | null
+  builtins: Map<string, Value>
+  previousProgramsIdentifiers: Set<string>
   operators: Map<string, (...operands: Value[]) => Value>
   gpu: Map<string, (...operands: Value[]) => Value>
   maxExecTime: number
+  evaller: null | ((program: string) => Value)
+  /*
+  the first time evaller is used, it must be used directly like `eval(code)` to inherit
+  surrounding scope, so we cannot set evaller to `eval` directly. subsequent assignments to evaller will
+  close in the surrounding values, so no problem
+   */
 }
 
 export interface Context<T = any> {
@@ -145,7 +147,7 @@ export interface Context<T = any> {
 
   /**
    * Describes the strategy / paradigm to be used for evaluation
-   * Examples: lazy, concurrent or non-deterministic
+   * Examples: lazy, concurrent or nondeterministic
    */
   variant: Variant
 

@@ -1669,19 +1669,19 @@ for (let j = 0; j < 5; j = j + 1) {
     i = i + 1;
     if (j > 2) {
       break;
-    } else {
     }
   }
 }
 i;",
   "displayResult": Array [],
-  "numErrors": 7,
+  "numErrors": 8,
   "parsedErrors": "Line 1: Mutable variable declaration using keyword 'let' is not allowed.
 Line 2: Mutable variable declaration using keyword 'let' is not allowed.
 Line 2: Assignment expressions are not allowed
 Line 4: Continue statements are not allowed
 Line 6: Assignment expressions are not allowed
 Line 8: Break statements are not allowed
+Line 7: Missing \\"else\\" in \\"if-else\\" statement.
 Line 2: For statements are not allowed",
   "result": undefined,
   "resultStatus": "error",
@@ -1692,7 +1692,7 @@ Line 2: For statements are not allowed",
 exports[`Syntaxes are allowed in the chapter they are introduced 15: parse passes 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "parse(\\"let i = 1;\\\\nfor (let j = 0; j < 5; j = j + 1) {\\\\n  if (j < 1) {\\\\n    continue;\\\\n  } else {\\\\n    i = i + 1;\\\\n    if (j > 2) {\\\\n      break;\\\\n    } else {\\\\n    }\\\\n  }\\\\n}\\\\ni;\\");",
+  "code": "parse(\\"let i = 1;\\\\nfor (let j = 0; j < 5; j = j + 1) {\\\\n  if (j < 1) {\\\\n    continue;\\\\n  } else {\\\\n    i = i + 1;\\\\n    if (j > 2) {\\\\n      break;\\\\n    }\\\\n  }\\\\n}\\\\ni;\\");",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -1989,7 +1989,6 @@ for (let j = 0; j < 5; j = j + 1) {
     i = i + 1;
     if (j > 2) {
       break;
-    } else {
     }
   }
 }

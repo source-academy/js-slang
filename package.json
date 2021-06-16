@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.5.0",
+  "version": "0.5.3",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
@@ -40,7 +40,7 @@
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "tsc",
     "test": "jest",
-    "benchmark": "jest --testPathPattern='.*benchmark.*'",
+    "benchmark": "jest --runInBand --testPathPattern='.*benchmark.*' --testPathIgnorePatterns='/dist/'",
     "test-coverage": "jest --coverage",
     "eslint": "eslint --ext \".ts,.tsx\" src",
     "jsdoc": "./scripts/jsdoc.sh",
@@ -73,7 +73,7 @@
     "husky": "^6.0.0",
     "jest": "^26.4.2",
     "jest-html-reporter": "^3.2.0",
-    "jsdoc": "3.6.6",
+    "jsdoc": "3.6.7",
     "jsdom": "^16.4.0",
     "prettier": "^2.1.2",
     "ts-jest": "^26.4.1",

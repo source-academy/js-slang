@@ -3,7 +3,7 @@ of the textbook
 <a href="https://sicp.comp.nus.edu.sg">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 
-## What is non-deterministic programming?
+## What is nondeterministic programming?
 Source 3 Non-Det is a version of Source 3 with a built-in search mechanism.
 Programmers can specify sets of values, and requirements that the values must satisfy.
 The program evaluator then automatically identifies the values that meet the requirements.
@@ -32,7 +32,7 @@ order. Click on a name to see how it is used.
       <a href="../STREAMS/index.html">STREAMS</a>: Support for streams
     </li>
     <li>
-      <a href="../NON-DET/index.html">NON-DET</a>: Support for non-determinism
+      <a href="../NON-DET/index.html">NON-DET</a>: Support for nondeterminism
     </li>
   </ul>
 
@@ -88,11 +88,11 @@ The <CODE>implication</CODE> function can be used to model logical implication b
 The <CODE>bi_implication</CODE> function can be used to model logical bi-implication between two boolean expressions.
 
 ### an_element_of function
-The <CODE>an_element_of</CODE> function can be used to non-deterministically obtain an element from a list.<br>
+The <CODE>an_element_of</CODE> function can be used to nondeterministically obtain an element from a list.<br>
 It functions similarly to <CODE>amb</CODE> but takes in a list of choices as argument instead of the choices being arguments themselves.
 
 ### an_integer_between function
-The <CODE>an_integer_between</CODE> function can be used to non-deterministically obtain an integer between a specified range (inclusively).
+The <CODE>an_integer_between</CODE> function can be used to nondeterministically obtain an integer between a specified range (inclusively).
 
 ## You want the definitive specs?
 

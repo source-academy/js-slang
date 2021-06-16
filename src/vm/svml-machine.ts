@@ -1770,7 +1770,7 @@ export function runWithProgram(p: Program, context: Context): any {
   // setup externalBuiltins
   // certain functions are imported from cadet-frontend
   // so import them first every time
-  const externals = context.nativeStorage.globals!.variables
+  const externals = context.nativeStorage.builtins
   if (externals.size > 0) {
     EXTERNAL_PRIMITIVES.forEach(func => extractExternalBuiltin(func, externals))
   }
@@ -1834,5 +1834,5 @@ const externalFunctions = new Map<number, any>()
 function extractExternalBuiltin(func: [string, number], externals: Map<string, any>) {
   const name = func[0]
   const opcode = func[1]
-  externalFunctions.set(opcode, externals.get(name).getValue())
+  externalFunctions.set(opcode, externals.get(name))
 }

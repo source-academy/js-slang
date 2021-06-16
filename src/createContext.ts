@@ -10,7 +10,7 @@ import * as misc from './stdlib/misc'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { Context, CustomBuiltIns, Environment, Value, Variant } from './types'
+import { Context, CustomBuiltIns, Environment, NativeStorage, Value, Variant } from './types'
 import * as operators from './utils/operators'
 import * as gpu_lib from './gpu/lib'
 import { stringify } from './utils/stringify'
@@ -112,11 +112,13 @@ export const createGlobalEnvironment = (): Environment => ({
   head: {}
 })
 
-const createNativeStorage = () => ({
-  globals: { variables: new Map(), previousScope: null },
+const createNativeStorage = (): NativeStorage => ({
+  builtins: new Map(),
+  previousProgramsIdentifiers: new Set(),
   operators: new Map(Object.entries(operators)),
   gpu: new Map(Object.entries(gpu_lib)),
-  maxExecTime: JSSLANG_PROPERTIES.maxExecTime
+  maxExecTime: JSSLANG_PROPERTIES.maxExecTime,
+  evaller: null
 })
 
 export const createEmptyContext = <T>(
@@ -167,10 +169,7 @@ export const defineSymbol = (context: Context, name: string, value: Value) => {
     writable: false,
     enumerable: true
   })
-  context.nativeStorage.globals!.variables.set(name, {
-    kind: 'const',
-    getValue: () => value
-  })
+  context.nativeStorage.builtins.set(name, value)
   const typeEnv = context.typeEnvironment[0]
   // if the global type env doesn't already have the imported symbol,
   // we set it to a type var T that can typecheck with anything.

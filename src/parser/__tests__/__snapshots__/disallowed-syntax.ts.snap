@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Cannot have if without else - verbose: expectParsedError 1`] = `
+exports[`Cannot have if without else in chapter <= 2 - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "\\"enable verbose\\";
@@ -20,7 +20,7 @@ else.
 }
 `;
 
-exports[`Cannot have if without else: expectParsedError 1`] = `
+exports[`Cannot have if without else in chapter <= 2: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "if (true) { 5; }",
