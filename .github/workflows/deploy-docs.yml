@@ -40,4 +40,3 @@ jobs:
           external_repository: source-academy/source
           publish_branch: master
           force_orphan: true
-          cname: source.sourceacademy.org
