@@ -37,7 +37,7 @@ jobs:
         with:
           deploy_key: ${{ secrets.DOCS_DEPLOY_SSH_KEY }}
           publish_dir: docs/source
-          external_repository: source-academy/source
+          external_repository: source-academy/docs.sourceacademy.org
           publish_branch: master
           force_orphan: true
           cname: docs.sourceacademy.org
