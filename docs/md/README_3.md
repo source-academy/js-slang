@@ -1,7 +1,7 @@
 Source §3 is a small programming language, designed for the third chapter
 of the textbook
-<a href="https://sicp.comp.nus.edu.sg">Structure and Interpretation
-of Computer Programs, JavaScript Adaptation</a> (SICP JS). 
+<a href="https://sourceacademy.org/interactive-sicp">Structure and Interpretation
+of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 
 ## What names are predeclared in Source §3?
 
@@ -28,8 +28,8 @@ order. Click on a name to see how it is used. They come in these two groups:
     </li>
   </ul>
 
-The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>,
-a learning environment that uses SICP JS and Source, comes with the following 
+The <a href="https://sourceacademy.org"">Source Academy</a>,
+a learning environment that uses SICP JS and Source, comes with the following
 <a href="../External libraries/">external libraries</a>:
   <ul>
     <li>
@@ -60,7 +60,7 @@ a learning environment that uses SICP JS and Source, comes with the following
 You can use all features of
 <a href="../source_2/">Source §2</a> and all
 features that are introduced in
-<a href="https://sicp.comp.nus.edu.sg/chapters/47">chapter 3</a> of the
+<a href="https://sourceacademy.org/interactive-sicp/3">chapter 3</a> of the
 textbook.
 Below are the features that Source §3 adds to Source §2.
 
@@ -84,7 +84,7 @@ display(x); // x is still 1
 x = x + 1;
 diplay(x);  // now x is 2</CODE></PRE>
 Read more on variable declaration and assignment in
-<a href="https://sicp.comp.nus.edu.sg/chapters/49">section 3.1.1 Local State Variables</a>
+<a href="https://sourceacademy.org/interactive-sicp/3.1.1">section 3.1.1 Local State Variables</a>
 of the textbook.
 
 ### While loops
