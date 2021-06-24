@@ -1,6 +1,6 @@
 Source §3 Non-Det is a small programming language, designed for the fourth chapter
 of the textbook
-<a href="https://sourceacademy.org/interactive-sicp">Structure and Interpretation
+<a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 
 ## What is nondeterministic programming?
@@ -41,7 +41,7 @@ order. Click on a name to see how it is used.
 You can use all features of
 <a href="../source_3/">Source §3</a> and all
 features that are introduced in
-<a href="https://sourceacademy.org/interactive-sicp/4.3">chapter 4.3</a> of the
+<a href="https://sourceacademy.org/sicpjs/4.3">chapter 4.3</a> of the
 textbook.
 
 Below are the features that Source §3 Non-Det adds to Source §3.

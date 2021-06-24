@@ -1,4 +1,4 @@
-This JavaScript npm package provides all functions and constants that are assumed to be predeclared in the textbook [Structure and Interpretation of Computer Programs, JavaScript Adaptation](https://sourceacademy.org/interactive-sicp). This package therefore allows readers of the textbook to run and experiment with all JavaScript programs that appear in the textbook, using Node.js.
+This JavaScript npm package provides all functions and constants that are assumed to be predeclared in the textbook [Structure and Interpretation of Computer Programs, JavaScript Adaptation](https://sourceacademy.org/sicpjs). This package therefore allows readers of the textbook to run and experiment with all JavaScript programs that appear in the textbook, using Node.js.
 
 Setting up and Using SICP library
 =================================

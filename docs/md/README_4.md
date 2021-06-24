@@ -1,6 +1,6 @@
 Source §4 is a small programming language, designed for the fourth chapter
 of the textbook
-<a href="https://sourceacademy.org/interactive-sicp">Structure and Interpretation
+<a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS). 
 
 ## What names are predeclared in Source §4?
@@ -63,7 +63,7 @@ a learning environment that uses SICP JS and Source, comes with the following
 You can use all features of
 <a href="../source_3/">Source §3</a> and 
 the two functions that are introduced in chapter 4
-<a href="https://sourceacademy.org/interactive-sicp">of the textbook</a>,
+<a href="https://sourceacademy.org/sicpjs">of the textbook</a>,
 given in  <a href="../MCE/index.html">MCE</a>.
 
 ## You want the definitive specs?

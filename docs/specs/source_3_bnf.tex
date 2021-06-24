@@ -1,95 +1,95 @@
 \begin{alignat*}{9}
 && \textit{program}    &&\quad ::= &\quad && \textit{import-directive} \ldots \ \textit{statement} \ldots
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/3.1.1\#p6}{program}} \\[1mm]
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p6}{program}} \\[1mm]
 && \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{import}}\ \textbf{\texttt{\{}}\ \textit{names} \ \textbf{\texttt{\}}}\ \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{;}}
                                                            && \textrm{import directive} \\[1mm]
 %&& \textit{import-name}  && ::= &\quad && \textit{name}\ | \ \textit{name}\ \textbf{\texttt{as}}\ \textit{name}
 %                                                            && \textrm{import name declaration}} \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.2\#p2}{constant declaration}} \\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.2\#p2}{constant declaration}} \\
 &&                       && |   &\quad && \textit{let} \ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/3.1.1\#p3}{variable declaration}} \\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p3}{variable declaration}} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
                                    \textbf{\texttt{(}}\  \textit{names} \ \textbf{\texttt{)}}\ \textit{block} \quad
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.4\#p4}{function declaration}}\\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{function declaration}}\\
 &&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.4\#p4}{return statement}}\\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{return statement}}\\
 &&                       && |   &\quad && \textit{if-statement} \quad
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.3.2\#p13}{conditional statement}}\\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.3.2\#p13}{conditional statement}}\\
 &&                       && |   &\quad && \textbf{\texttt{while}}\  
                                    \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}} \
                                    \textit{block}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/4.1.2\#ex_4.7}{while loop}}\\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.7}{while loop}}\\
 &&                       && |   &\quad && \textbf{\texttt{for}}\ \textbf{\texttt{(}} \ 
-                                          (\ \textit{\href{https://sourceacademy.org/interactive-sicp/4.1.2\#ex_4.8}{assignment}} \ | \  \textit{\href{https://sourceacademy.org/interactive-sicp/4.1.2\#ex_4.9}{let}}\ ) \textbf{\texttt{;}} \\
+                                          (\ \textit{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.8}{assignment}} \ | \  \textit{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.9}{let}}\ ) \textbf{\texttt{;}} \\
 &&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression} \ \textbf{\texttt{;}} \\
 &&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{assignment} \ \textbf{\texttt{)}} \ 
                                             \textit{block}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/4.1.2\#ex_4.8}{for loop}}\\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.8}{for loop}}\\
 &&                       && |   &\quad && \textbf{\texttt{break}}\ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/4.1.2\#ex_4.7}{break statement}}\\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.7}{break statement}}\\
 &&                       && |   &\quad && \textbf{\texttt{continue}}\ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/4.1.2\#ex_4.7}{continue statement}}\\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.7}{continue statement}}\\
 &&                       && |   &\quad &&  \textit{block} 
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.8\#p14}{block statement}}\\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.8\#p14}{block statement}}\\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.1\#p3}{expression statement}} \\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p3}{expression statement}} \\
 &&                       && |   &\quad &&  \textbf{\texttt{debugger}} \ \textbf{\texttt{;}}
                                                            && \textrm{breakpoint} \\[1mm]
 && \textit{names}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ ) \ldots
-                                                            && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.4\#p4}{name list}} \\[1mm]
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{name list}} \\[1mm]
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
                                    \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
                                    \textit{block} \\
 &&                       &&     &      && [ \ \textbf{\texttt{else}}\
                                           (\ \textit{block}
                                           \ | \
-                                          \textit{\href{https://sourceacademy.org/interactive-sicp/1.3.3\#footnote-1}{if-statement}} \ )\ ]
-                                                            && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.3.2\#p12}{conditional statement}} \\[1mm]
+                                          \textit{\href{https://sourceacademy.org/sicpjs/1.3.3\#footnote-1}{if-statement}} \ )\ ]
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.3.2\#p12}{conditional statement}} \\[1mm]
 && \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement} \ldots \ \textbf{\texttt{\}}} \quad
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.8\#p14}{block statement}} \\[1mm]
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.8\#p14}{block statement}} \\[1mm]
 && \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
-                                                            && \textrm{\href{https://sourceacademy.org/interactive-sicp/3.1.1\#p3}{variable declaration}} \\[1mm]
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p3}{variable declaration}} \\[1mm]
 && \textit{assignment}   && ::= &\quad &&  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
-                                                            && \textrm{\href{https://sourceacademy.org/interactive-sicp/3.1.1\#p4}{variable assignment}} \\[1mm]
-&& \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.1\#p3}{primitive number expression}}\\
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p4}{variable assignment}} \\[1mm]
+&& \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p3}{primitive number expression}}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.6\#p1}{primitive boolean expression}}\\
-&&                       && |   &\quad &&  \textit{string}   && \textrm{\href{https://sourceacademy.org/interactive-sicp/2.3.1}{primitive string expression}} \\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p1}{primitive boolean expression}}\\
+&&                       && |   &\quad &&  \textit{string}   && \textrm{\href{https://sourceacademy.org/sicpjs/2.3.1}{primitive string expression}} \\
 &&                       && |   &\quad && \textbf{\texttt{null}}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/2.2.1\#p1}{primitive list expression}} \\
-&&                       && |   &\quad &&  \textit{name}   && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.2}{name expression}} \\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/2.2.1\#p1}{primitive list expression}} \\
+&&                       && |   &\quad &&  \textit{name}   && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.2}{name expression}} \\
 &&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
                                             \textit{expression} \qquad
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.1\#p5}{binary operator combination}} \\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p5}{binary operator combination}} \\
 &&                       && |   &\quad &&   \textit{unary-operator} \ 
                                             \textit{expression}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.6\#p4}{unary operator combination}}\\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p4}{unary operator combination}}\\
 &&                       && |   &\quad &&   \textit{expression} \ 
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.4\#p5}{function application}} \\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{function application}} \\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{names}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.3.2}{lambda expression (expr. body)}} \\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.3.2}{lambda expression (expr. body)}} \\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{names}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{block}
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/2.2.4\#footnote-3}{lambda expression (block body)}} \\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/2.2.4\#footnote-3}{lambda expression (block body)}} \\
 &&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{?}}\ 
                                             \textit{expression}
                                             \ \textbf{\texttt{:}}\
                                             \textit{expression}\
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.6\#p1}{conditional expression}} \\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p1}{conditional expression}} \\
 &&                       && |   &\quad && \textit{assignment} 
-                                                           && \textrm{\href{https://sourceacademy.org/interactive-sicp/3.1.1\#p4}{variable assignment}} \\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p4}{variable assignment}} \\
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
                                                            && \textrm{array access} \\
@@ -102,19 +102,19 @@
                                             \textbf{\texttt{]}}
                                                            && \textrm{literal array expression}\\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
-                                            \textbf{\texttt{)}} && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.1\#p6}{parenthesised expression}}\\[1mm]
+                                            \textbf{\texttt{)}} && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p6}{parenthesised expression}}\\[1mm]
 && \textit{binary-operator}    \ 
                         && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
                                    \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
 &&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
                                           |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
-                                          && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.1\#p4}{binary operator}}\\[1mm]
+                                          && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p4}{binary operator}}\\[1mm]
 && \textit{unary-operator}    
                         && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}
-                        && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.6\#p4}{unary operator}}\\[1mm]                        
+                        && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p4}{unary operator}}\\[1mm]                        
 && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
                                                                       ) \ldots
-                                                            && \textrm{\href{https://sourceacademy.org/interactive-sicp/1.1.4\#p5}{argument expressions}}
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{argument expressions}}
 \end{alignat*}
