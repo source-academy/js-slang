@@ -1,6 +1,6 @@
 Source §2 is a small programming language, designed for the second chapter
 of the textbook
-<a href="https://sourceacademy.org/interactive-sicp">Structure and Interpretation
+<a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 
 ## What names are predeclared in Source §2?
@@ -49,7 +49,7 @@ a learning environment that uses SICP JS and Source, comes with the following
 You can use all features of
 <a href="../source_1/">Source §1</a> and all
 features that are introduced in
-<a href="https://sourceacademy.org/interactive-sicp/2">chapter 2</a> of the
+<a href="https://sourceacademy.org/sicpjs/2">chapter 2</a> of the
 textbook.
 Below are the features that Source §2 adds to Source §1.
 

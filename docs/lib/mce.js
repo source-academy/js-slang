@@ -3,7 +3,7 @@
  * the string <CODE>str</CODE> as a Source program. The format
  * of the parse tree is described in chapter 4 of 
  * the textbook 
- * in <a href="https://sourceacademy.org/interactive-sicp/">Structure and
+ * in <a href="https://sourceacademy.org/sicpjs/">Structure and
  * Interpretation of Computer Programs, JavaScript Adaptation</a> (SICP).
  * @param {string} x - given program as a string
  * @returns {value} parse tree

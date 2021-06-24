@@ -1,6 +1,6 @@
 /**
  * checks whether a given value is a number.
- * See also <a href="https://sourceacademy.org/interactive-sicp/2.3.2">textbook example</a>.
+ * See also <a href="https://sourceacademy.org/sicpjs/2.3.2">textbook example</a>.
  * @param {value} v to be checked
  * @returns {boolean} indicating whether the value is a number
  */
@@ -17,7 +17,7 @@ function is_boolean(v) {
 
 /**
  * checks whether a given value is a string.
- * See also <a href="https://sourceacademy.org/interactive-sicp/2.3.2">textbook example</a>.
+ * See also <a href="https://sourceacademy.org/sicpjs/2.3.2">textbook example</a>.
  * @param {value} v to be checked
  * @returns {boolean} indicating whether the value is a string
  */
@@ -42,7 +42,7 @@ function is_undefined(v) {
 
 /**
  * Returns number of milliseconds elapsed since January 1, 1970 00:00:00 UTC.
- * See also <a href="https://sourceacademy.org/interactive-sicp/1.2.6#ex-1.21">textbook example</a>.
+ * See also <a href="https://sourceacademy.org/sicpjs/1.2.6#ex-1.21">textbook example</a>.
  * @returns {number} current time in milliseconds
  */
 export function get_time() {
@@ -65,7 +65,7 @@ function parse_int(s, i) {}
 
 /**
  * The name <CODE>undefined</CODE> refers to the special value <CODE>undefined</CODE>.
- * See also <a href="https://sourceacademy.org/interactive-sicp/4.1.1#h5">textbook explanation in section 4.1.1</a>.
+ * See also <a href="https://sourceacademy.org/sicpjs/4.1.1#h5">textbook explanation in section 4.1.1</a>.
  * @const {undefined}
  */
 const undefined = (() => {})();
@@ -139,7 +139,7 @@ function error(v, s) {
  * notation that is is consistent with
  * <a href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">JSON</a>,
  * but also displays <CODE>undefined</CODE>, <CODE>NaN</CODE>, <CODE>Infinity</CODE>, and function objects.
- * See also <a href="https://sourceacademy.org/interactive-sicp/3.3.5">textbook example</a>.
+ * See also <a href="https://sourceacademy.org/sicpjs/3.3.5">textbook example</a>.
  * @param {value} v the argument value
  * @returns {string} string representation of v
  */
