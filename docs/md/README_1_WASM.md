@@ -1,7 +1,7 @@
 
 Source §1 is a small programming language, designed for the first chapter
 of the textbook
-<a href="https://sicp.comp.nus.edu.sg">Structure and Interpretation
+<a href="https://sourceacademy.org/interactive-sicp">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS).   Source §1 WebAssembly is an experimental implementation of Source §1 that compiles Source §1 to WebAssembly.
 
 

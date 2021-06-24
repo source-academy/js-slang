@@ -1,7 +1,7 @@
 Source §3 Concurrent is a small programming language, designed for the third chapter
 of the textbook
-<a href="https://sicp.comp.nus.edu.sg">Structure and Interpretation
-of Computer Programs, JavaScript Adaptation</a> (SICP JS). 
+<a href="https://sourceacademy.org/interactive-sicp">Structure and Interpretation
+of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 
 ## What names are predeclared in Source §3 Concurrent?
 
@@ -36,7 +36,7 @@ order. Click on a name to see how it is used.
 You can use all features of
 <a href="../source_3/">Source §3</a> and all
 features that are introduced in
-<a href="https://sicp.comp.nus.edu.sg/chapters/65">chapter 3.4</a> of the
+<a href="https://sourceacademy.org/interactive-sicp/3.4">chapter 3.4</a> of the
 textbook.
 Below are the features that Source §3 Concurrent adds to Source §3.
 
