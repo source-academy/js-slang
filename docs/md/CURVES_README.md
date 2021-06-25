@@ -34,7 +34,7 @@ We can represent the *types* of these functions as follows:
 ## Examples
 
 A very simple curve is one that always returns the same point:
-<a href="https://source-academy.github.io/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABABzjMUD6EQCcBuApgBRQCUiA3gFCJ2K6FR5IC2AhgNaGarpTEADADoArABpEI0WQDc1AL7UAJrnYB3XmgwBnTAmIBGQYLLE%2BGbHiJygA">
+<a href="https://sourceacademy.org/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABABzjMUD6EQCcBuApgBRQCUiA3gFCJ2K6FR5IC2AhgNaGarpTEADADoArABpEI0WQDc1AL7UAJrnYB3XmgwBnTAmIBGQYLLE%2BGbHiJygA">
 ```
 function point_curve(t) {
     return make_point(0.5, 0.5);
@@ -43,7 +43,7 @@ function point_curve(t) {
 </a>
 
 We define the Curve `unit_circle` and draw it as follows:
-<a href="https://source-academy.github.io/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABOGUD6EYCcIBsCmAFFAJSIDeAUIjYlvlCFkgLYCGA1vmgA5wxgohdlAAWaAM4DCAJkQAqRCPEAFAJILEpADTVa%2Bg4drKMcCbM0n1m0iQDclAL6UAJljYB3U2DD5o%2BFzRQXFw0ADcYfA9CAEYABjiSQhR0TBwCeyA">
+<a href="https://sourceacademy.org/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABOGUD6EYCcIBsCmAFFAJSIDeAUIjYlvlCFkgLYCGA1vmgA5wxgohdlAAWaAM4DCAJkQAqRCPEAFAJILEpADTVa%2Bg4drKMcCbM0n1m0iQDclAL6UAJljYB3U2DD5o%2BFzRQXFw0ADcYfA9CAEYABjiSQhR0TBwCeyA">
 ```
 function unit_circle(t) {
     return make_point(math_cos(2 * math_PI * t),
@@ -68,7 +68,7 @@ displays it graphically, in a window, instead of textually.
 The functions returned by `draw_connected_full_view` stretch or shrink
 the given Curve to show the full curve and maximize its width and height,
 with some padding.
-<a href="https://source-academy.github.io/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABOGUD6AbGYCmaCGUAFAJ4CUiA3gFCJ2IBOOUIDSUiAvAHyIC2%2BANZ4ADnGzEoAGkQlEAakQAGRAHoAjEqVkA3NQC%2B1ACYN8AdzQQEuaDiNFN2oinRZcBYkoB0AVjK6gA">
+<a href="https://sourceacademy.org/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABOGUD6AbGYCmaCGUAFAJ4CUiA3gFCJ2IBOOUIDSUiAvAHyIC2%2BANZ4ADnGzEoAGkQlEAakQAGRAHoAjEqVkA3NQC%2B1ACYN8AdzQQEuaDiNFN2oinRZcBYkoB0AVjK6gA">
 ```
 function unit_line_at(y) {
     return t => make_point(t, y);
@@ -80,7 +80,7 @@ This function takes a number as argument, the y position, and
 returns a Curve that is a horizontal line at the level given by y.
 
 The Curve `haf_way_line`
-<a href="https://source-academy.github.io/playground#chap=2&ext=CURVES&prgrm=MYewdgzgLgBAFgQwDYDMD6B3BBPNSCWYApjALwwCuY%2BUehRaCUAFAAwB0ArAJQDcAUABMATggxpQYYsChFBzAIytW3ZolSYcdYnyA">
+<a href="https://sourceacademy.org/playground#chap=2&ext=CURVES&prgrm=MYewdgzgLgBAFgQwDYDMD6B3BBPNSCWYApjALwwCuY%2BUehRaCUAFAAwB0ArAJQDcAUABMATggxpQYYsChFBzAIytW3ZolSYcdYnyA">
 ```
 const half_way_line = unit_line_at(0.5);
 ```
@@ -101,7 +101,7 @@ Number → (Number → Point)
 A Curve transformation is a function that takes a curve as argument and returns
 a Curve. The following function `up_a_bit` is a Curve transformation that moves
 a given curve up by 0.3.
-<a href="https://source-academy.github.io/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABCADgfQIZoEYygCghACcA3AUwEpEBvAKEUcWPKhKSkQF4A%2BRAWwwBrcmhRwYYAgA80cYIRIV8USpQA0iBkx269%2BxAE85ComXIq1iANSIADADoAzJQDcdAL50ICAM6cACwwAG2A0AHcMY2DJcm5kMDw0GLBRDAJHAFY3bz9OVPDk2PjUTBw8fCDQiKii1JyAE2IMQp8wVOhyBvwARjs7SnwCuqpXIA">
+<a href="https://sourceacademy.org/playground#chap=2&ext=CURVES&prgrm=GYVwdgxgLglg9mABCADgfQIZoEYygCghACcA3AUwEpEBvAKEUcWPKhKSkQF4A%2BRAWwwBrcmhRwYYAgA80cYIRIV8USpQA0iBkx269%2BxAE85ComXIq1iANSIADADoAzJQDcdAL50ICAM6cACwwAG2A0AHcMY2DJcm5kMDw0GLBRDAJHAFY3bz9OVPDk2PjUTBw8fCDQiKii1JyAE2IMQp8wVOhyBvwARjs7SnwCuqpXIA">
 ```
 function up_a_bit(curve) {
     return t => make_point(x_of(curve(t)), 

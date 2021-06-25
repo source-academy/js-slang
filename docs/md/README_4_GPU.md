@@ -29,7 +29,7 @@ order. Click on a name to see how it is used. They come in these two groups:
     </li>
   </ul>
 
-The <a href="https://sourceacademy.nus.edu.sg">Source Academy</a>,
+The <a href="https://sourceacademy.org"">Source Academy</a>,
 a learning environment that uses SICP JS and Source, comes with the following 
 <a href="External libraries/">external libraries</a>:
   <ul>

@@ -1,9 +1,9 @@
 import { ancestor, simple } from '../utils/walkers'
 import { generate } from 'astring'
 import * as es from 'estree'
-import { RawSourceMap, SourceMapGenerator } from 'source-map'
-import { AllowedDeclarations, Context, NativeStorage, ValueWrapper } from '../types'
-import { ConstAssignment, UndefinedVariable } from '../errors/errors'
+import { SourceMapGenerator } from 'source-map'
+import { AllowedDeclarations, Context, NativeStorage } from '../types'
+import { UndefinedVariable } from '../errors/errors'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
 import * as create from '../utils/astCreator'
 import {
@@ -29,8 +29,7 @@ const globalIdNames = [
   'throwIfTimeout',
   'setProp',
   'getProp',
-  'lastStatementResult',
-  'globals'
+  'builtins'
 ] as const
 
 export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
@@ -96,81 +95,10 @@ export function transformImportDeclarations(program: es.Program) {
   program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
 }
 
-function createStatementAstToStoreBackCurrentlyDeclaredGlobal(
-  name: string,
-  kind: AllowedDeclarations,
-  globalIds: NativeIds,
-  usedIdentifiers: Set<string>
-): es.ExpressionStatement {
-  const paramName = create.identifier(getUniqueId(usedIdentifiers))
-  const variableIdentifier = create.identifier(name)
-  const properties = [
-    create.property('kind', create.literal(kind)),
-    create.property(
-      'getValue',
-      create.blockArrowFunction([], [create.returnStatement(variableIdentifier)])
-    )
-  ]
-  if (kind === 'let') {
-    properties.push(
-      create.property(
-        'assignNewValue',
-        create.functionExpression(
-          [paramName],
-          [create.returnStatement(create.assignmentExpression(variableIdentifier, paramName))]
-        )
-      )
-    )
-  }
-  return create.expressionStatement(
-    create.callExpression(
-      create.memberExpression(create.memberExpression(globalIds.globals, 'variables'), 'set'),
-      [create.literal(name), create.objectExpression(properties)]
-    )
-  )
-}
-
-function wrapWithPreviouslyDeclaredGlobals(
-  statements: es.Statement[],
-  nativeStorage: NativeStorage,
-  globalIds: NativeIds
-) {
-  let currentVariableScope = nativeStorage.globals!.previousScope
-  let timesToGoUp = 1
-  let wrapped = create.blockStatement(statements)
-  while (currentVariableScope !== null) {
-    const initialisingStatements: es.Statement[] = []
-    currentVariableScope.variables.forEach(({ kind }: ValueWrapper, name: string) => {
-      let unwrappedValueAst: es.Expression = globalIds.globals
-      for (let i = 0; i < timesToGoUp; i += 1) {
-        unwrappedValueAst = create.memberExpression(unwrappedValueAst, 'previousScope')
-      }
-      unwrappedValueAst = create.callExpression(
-        create.memberExpression(
-          create.callExpression(
-            create.memberExpression(create.memberExpression(unwrappedValueAst, 'variables'), 'get'),
-            [create.literal(name)]
-          ),
-          'getValue'
-        ),
-        []
-      )
-      initialisingStatements.push(create.declaration(name, kind, unwrappedValueAst))
-    })
-    timesToGoUp += 1
-    currentVariableScope = currentVariableScope.previousScope
-    wrapped = create.blockStatement([...initialisingStatements, wrapped])
-  }
-  return wrapped
-}
-
-function createStatementsToStoreCurrentlyDeclaredGlobals(
-  program: es.Program,
-  globalIds: NativeIds,
-  usedIdentifiers: Set<string>
-) {
+function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
   return program.body
     .filter(statement => statement.type === 'VariableDeclaration')
+<<<<<<< HEAD
     .map(({ declarations: { 0: { id } }, kind }: es.VariableDeclaration) =>
       createStatementAstToStoreBackCurrentlyDeclaredGlobal(
         (id as es.Identifier).name,
@@ -178,6 +106,15 @@ function createStatementsToStoreCurrentlyDeclaredGlobals(
         globalIds,
         usedIdentifiers
       )
+=======
+    .map(
+      ({
+        declarations: {
+          0: { id }
+        },
+        kind
+      }: es.VariableDeclaration) => (id as es.Identifier).name
+>>>>>>> 0fb2c076a46971c046caf1b89299ad9667ab3a38
     )
 }
 
@@ -331,46 +268,13 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program, globalId
   })
 }
 
-export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
+export function checkForUndefinedVariables(
   program: es.Program,
-  skipErrors = false,
   nativeStorage: NativeStorage,
-  globalIds: NativeIds
+  globalIds: NativeIds,
+  skipUndefined: boolean
 ) {
-  const globalEnvironment = nativeStorage.globals
-  const previousVariablesToAst = new Map<
-    string,
-    { isConstant: boolean; variableLocationId: es.Expression }
-  >()
-  let variableScope = globalEnvironment
-  let variableScopeId: es.Expression = globalIds.globals
-  while (variableScope !== null) {
-    for (const [name, { kind }] of variableScope.variables) {
-      if (!previousVariablesToAst.has(name)) {
-        previousVariablesToAst.set(name, {
-          isConstant: kind === 'const',
-          variableLocationId: create.callExpression(
-            create.memberExpression(create.memberExpression(variableScopeId, 'variables'), 'get'),
-            [create.literal(name)]
-          )
-        })
-      }
-    }
-    variableScope = variableScope.previousScope
-    variableScopeId = create.memberExpression(variableScopeId, 'previousScope')
-  }
-  for (const node of program.body) {
-    if (node.type !== 'ImportDeclaration') {
-      break
-    }
-    const symbols = node.specifiers.map(specifier => specifier.local.name)
-    for (const symbol of symbols) {
-      previousVariablesToAst.set(symbol, {
-        isConstant: true,
-        variableLocationId: create.literal(-1)
-      })
-    }
-  }
+  const builtins = nativeStorage.builtins
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
   function processBlock(node: es.Program | es.BlockStatement) {
     const identifiers = new Set<string>()
@@ -385,7 +289,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   }
   function processFunction(
     node: es.FunctionDeclaration | es.ArrowFunctionExpression,
-    ancestors: es.Node[]
+    _ancestors: es.Node[]
   ) {
     identifiersIntroducedByNode.set(
       node,
@@ -425,6 +329,7 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
   for (const [identifier, ancestors] of identifiersToAncestors) {
     const name = identifier.name
     const isCurrentlyDeclared = ancestors.some(a => identifiersIntroducedByNode.get(a)?.has(name))
+<<<<<<< HEAD
     if (!isCurrentlyDeclared) {
       if (previousVariablesToAst.has(name)) {
         const lastAncestor: es.Node = ancestors[ancestors.length - 2]
@@ -492,6 +397,22 @@ export function checkForUndefinedVariablesAndTransformAssignmentsToPropagateBack
           throw new UndefinedVariable(name, identifier)
         }
       }
+=======
+    if (isCurrentlyDeclared) {
+      continue
+    }
+    const isPreviouslyDeclared = nativeStorage.previousProgramsIdentifiers.has(name)
+    if (isPreviouslyDeclared) {
+      continue
+    }
+    const isBuiltin = builtins.has(name)
+    if (isBuiltin) {
+      continue
+    }
+    const isNativeId = nativeInternalNames.has(name)
+    if (!isNativeId && !skipUndefined) {
+      throw new UndefinedVariable(name, identifier)
+>>>>>>> 0fb2c076a46971c046caf1b89299ad9667ab3a38
     }
   }
 }
@@ -529,55 +450,6 @@ function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): Native
     globalIds[identifier] = create.identifier(getUniqueId(usedIdentifiers, identifier))
   }
   return globalIds as NativeIds
-}
-
-/**
- * statement1;
- * statement2;
- * ...
- * const a = 1; //lastStatement example 1 (should give undefined)
- * 1 + 1; //lastStatement example 2 (should give 2)
- * b = fun(5); //lastStatement example 3 (should set b to fun(5))
- * if (true) { true; } else { false; } //lastStatement example 4 (should give true)
- * for (let i = 0; i < 5; i = i + 1) { i; } //lastStatement example 5 (should give 4)
- *
- * We want to preserve the last evaluated statement's result to return back, so
- * for const/let declarations we simply don't change anything, and return undefined
- * at the end.
- *
- * For others, we will convert it into a string, wrap it in an eval, and store
- * the result in a temporary variable. e.g.
- *
- * const tempVar = eval("1+1;");
- * const tempVar = eval("if (true) { true; } else { false; }");
- * etc etc...
- * now at the end of all the appended statements we can do
- * return tempVar;
- */
-
-function splitLastStatementIntoStorageOfResultAndAccessorPair(
-  lastStatement: es.Statement,
-  globalIds: NativeIds
-): { lastStatementStoredInResult: es.Statement; evalMap?: RawSourceMap } {
-  if (lastStatement.type === 'VariableDeclaration') {
-    return {
-      lastStatementStoredInResult: lastStatement
-    }
-  }
-  const map = new SourceMapGenerator({ file: 'lastline' })
-  const lastStatementAsCode = generate(lastStatement, { lineEnd: ' ', sourceMap: map, version: 3 })
-  const uniqueDeclarationToStoreLastStatementResult = create.expressionStatement(
-    create.assignmentExpression(
-      globalIds.lastStatementResult,
-      create.callExpression(create.identifier('eval'), [
-        create.literal(lastStatementAsCode, lastStatement.loc!)
-      ])
-    )
-  )
-  return {
-    lastStatementStoredInResult: uniqueDeclarationToStoreLastStatementResult,
-    evalMap: map.toJSON()
-  }
 }
 
 function transformUnaryAndBinaryOperationsToFunctionCalls(
@@ -687,20 +559,46 @@ function addInfiniteLoopProtection(
   })
 }
 
-export function transpile(
-  program: es.Program,
-  context: Context,
-  skipUndefinedVariableErrors = false
+function evallerReplacer(globalIds: NativeIds): es.ExpressionStatement {
+  const arg = create.identifier('program')
+  return create.expressionStatement(
+    create.assignmentExpression(
+      create.memberExpression(globalIds.native, 'evaller'),
+      create.arrowFunctionExpression([arg], create.callExpression(create.identifier('eval'), [arg]))
+    )
+  )
+}
+
+function wrapWithBuiltins(
+  statements: es.Statement[],
+  nativeStorage: NativeStorage,
+  globalIds: NativeIds
 ) {
+  const initialisingStatements: es.Statement[] = []
+  nativeStorage.builtins.forEach((_unused, name: string) => {
+    initialisingStatements.push(
+      create.declaration(
+        name,
+        'const',
+        create.callExpression(
+          create.memberExpression(
+            create.memberExpression(create.identifier(NATIVE_STORAGE_ID), 'builtins'),
+            'get'
+          ),
+          [create.literal(name)]
+        )
+      )
+    )
+  })
+  return create.blockStatement([...initialisingStatements, create.blockStatement(statements)])
+}
+
+export function transpile(program: es.Program, context: Context, skipUndefined = false) {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage)
   ])
   const globalIds = getNativeIds(program, usedIdentifiers)
-  context.nativeStorage.globals = {
-    variables: new Map(),
-    previousScope: context.nativeStorage.globals
-  }
   if (program.body.length === 0) {
     return { transpiled: '' }
   }
@@ -713,24 +611,18 @@ export function transpile(
   transformSomeExpressionsToCheckIfBoolean(program, globalIds)
   transformPropertyAssignment(program, globalIds)
   transformPropertyAccess(program, globalIds)
-  checkForUndefinedVariablesAndTransformAssignmentsToPropagateBackNewValue(
-    program,
-    skipUndefinedVariableErrors,
-    context.nativeStorage,
-    globalIds
-  )
+  checkForUndefinedVariables(program, context.nativeStorage, globalIds, skipUndefined)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
 
   const modulePrefix = prefixModule(program)
   transformImportDeclarations(program)
-  const statementsToSaveDeclaredGlobals = createStatementsToStoreCurrentlyDeclaredGlobals(
-    program,
-    globalIds,
-    usedIdentifiers
+  getGloballyDeclaredIdentifiers(program).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id)
   )
   const statements = program.body as es.Statement[]
+<<<<<<< HEAD
   const lastStatement = statements.pop() as es.Statement
   const {
     lastStatementStoredInResult,
@@ -744,14 +636,24 @@ export function transpile(
       globalIds
     ),
     create.expressionStatement(globalIds.lastStatementResult)
+=======
+  const newStatements = [
+    ...getDeclarationsToAccessTranspilerInternals(globalIds),
+    evallerReplacer(globalIds),
+    create.expressionStatement(create.identifier('undefined')),
+    ...statements
+>>>>>>> 0fb2c076a46971c046caf1b89299ad9667ab3a38
   ]
 
-  program.body = [...getDeclarationsToAccessTranspilerInternals(globalIds), ...body]
+  program.body =
+    context.nativeStorage.evaller === null
+      ? [wrapWithBuiltins(newStatements, context.nativeStorage, globalIds)]
+      : [create.blockStatement(newStatements)]
 
   const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = modulePrefix + generate(program, { sourceMap: map })
   const codeMap = map.toJSON()
-  return { transpiled, codeMap, evalMap }
+  return { transpiled, codeMap }
 }
 
 function getDeclarationsToAccessTranspilerInternals(
@@ -759,12 +661,9 @@ function getDeclarationsToAccessTranspilerInternals(
 ): es.VariableDeclaration[] {
   return Object.entries(globalIds).map(([key, { name }]) => {
     let value: es.Expression
-    let kind: AllowedDeclarations = 'const'
+    const kind: AllowedDeclarations = 'const'
     if (key === 'native') {
       value = create.identifier(NATIVE_STORAGE_ID)
-    } else if (key === 'lastStatementResult') {
-      value = create.primitive(undefined)
-      kind = 'let'
     } else if (key === 'globals') {
       value = create.memberExpression(globalIds.native, 'globals')
     } else {

@@ -1,9 +1,9 @@
 RUNES is a library for realising the picture language of
-<a href="https://sicp.comp.nus.edu.sg/chapters/33">section
+<a href="https://sourceacademy.org/sicpjs/2.2.4">section
 2.2.4 Example: A Picture Language</a>
 of the textbook
-<a href="https://sicp.comp.nus.edu.sg">Structure and Interpretation
-of Computer Programs, JavaScript Adaptation</a> (SICP JS). 
+<a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
+of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 It provides primitive values, called runes, such
 as `heart` and `circle`, operations such as `beside`
 to construct more complex runes from simpler ones, and ways
