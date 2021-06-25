@@ -170,8 +170,10 @@ function* leave(context: Context) {
 }
 
 const currentEnvironment = (context: Context) => context.runtime.environments[0]
-const replaceEnvironment = (context: Context, environment: Environment) =>
-  (context.runtime.environments[0] = environment)
+const replaceEnvironment = (context: Context, environment: Environment) => {
+  context.runtime.environments[0] = environment
+  context.runtime.environmentTree.insert(environment)
+}
 const popEnvironment = (context: Context) => context.runtime.environments.shift()
 export const pushEnvironment = (context: Context, environment: Environment) => {
   context.runtime.environments.unshift(environment)
