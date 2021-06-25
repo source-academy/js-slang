@@ -407,7 +407,7 @@ export async function runInContext(
     const theProgramFirstExpression = parseAt(theCode, 0)
 
     if (theProgramFirstExpression && theProgramFirstExpression.type === 'Literal') {
-      return (theProgramFirstExpression as unknown as Literal).value
+      return ((theProgramFirstExpression as unknown) as Literal).value
     }
 
     return undefined
@@ -548,14 +548,12 @@ export async function runInContext(
         line === 1 ? lastStatementSourceMapJson! : sourceMapJson!,
         null,
         consumer => {
-          const {
-            line: originalLine,
-            column: originalColumn,
-            name
-          } = consumer.originalPositionFor({
-            line,
-            column
-          })
+          const { line: originalLine, column: originalColumn, name } = consumer.originalPositionFor(
+            {
+              line,
+              column
+            }
+          )
           context.errors.push(
             convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
           )

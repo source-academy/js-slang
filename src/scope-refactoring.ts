@@ -124,7 +124,9 @@ export function scopeVariableDeclaration(node: es.VariableDeclaration): Definiti
  * Thus, despite the node's loc property being within the BlockFrame's enclosingLoc, ]
  * we treat it as if it is not in there.
  */
-function scopeFunctionDeclaration(node: es.FunctionDeclaration): {
+function scopeFunctionDeclaration(
+  node: es.FunctionDeclaration
+): {
   definition: DefinitionNode
   body: BlockFrame
 } {

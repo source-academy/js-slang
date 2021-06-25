@@ -828,11 +828,9 @@ function _infer(
         }
       })
       const lastNode = node.body[returnValNodeIndex] as TypeAnnotatedNode<es.Node>
-      const lastNodeType = (
-        isTopLevelAndLastValStmt && lastNode.type === 'ExpressionStatement'
-          ? (lastNode.expression as TypeAnnotatedNode<es.Node>).inferredType
-          : lastNode.inferredType
-      ) as Variable
+      const lastNodeType = (isTopLevelAndLastValStmt && lastNode.type === 'ExpressionStatement'
+        ? (lastNode.expression as TypeAnnotatedNode<es.Node>).inferredType
+        : lastNode.inferredType) as Variable
       let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
       for (let i = 0; i <= lastDeclNodeIndex; i++) {
         if (i === returnValNodeIndex) {
