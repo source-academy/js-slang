@@ -407,7 +407,7 @@ export async function runInContext(
     const theProgramFirstExpression = parseAt(theCode, 0)
 
     if (theProgramFirstExpression && theProgramFirstExpression.type === 'Literal') {
-      return ((theProgramFirstExpression as unknown) as Literal).value
+      return (theProgramFirstExpression as unknown as Literal).value
     }
 
     return undefined
@@ -540,7 +540,11 @@ export async function runInContext(
       const line = Number(match![1])
       const column = Number(match![2])
       return SourceMapConsumer.with(sourceMapJson!, null, consumer => {
-        const { line: originalLine, column: originalColumn, name } = consumer.originalPositionFor({
+        const {
+          line: originalLine,
+          column: originalColumn,
+          name
+        } = consumer.originalPositionFor({
           line,
           column
         })

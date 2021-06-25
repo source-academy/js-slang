@@ -112,7 +112,7 @@ export function parseAt(source: string, num: number) {
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
-    program = (acornParse(source, createAcornParserOptions(context)) as unknown) as es.Program
+    program = acornParse(source, createAcornParserOptions(context)) as unknown as es.Program
     ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
     if (error instanceof SyntaxError) {
@@ -170,7 +170,7 @@ export function parseForNames(source: string): [es.Program, acorn.Comment[]] {
   }
   let program: es.Program | undefined
   try {
-    program = (acornParse(source, options) as unknown) as es.Program
+    program = acornParse(source, options) as unknown as es.Program
   } catch {
     comments = []
     program = acornLooseParse(source, options)
@@ -180,10 +180,10 @@ export function parseForNames(source: string): [es.Program, acorn.Comment[]] {
 }
 
 export function looseParse(source: string, context: Context) {
-  const program = (acornLooseParse(
+  const program = acornLooseParse(
     source,
     createAcornParserOptions(context)
-  ) as unknown) as es.Program
+  ) as unknown as es.Program
   return program
 }
 
