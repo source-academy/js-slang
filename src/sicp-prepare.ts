@@ -32,7 +32,7 @@ prelude_file.write(context.prelude)
 prelude_file.end()
 
 // Generate prelude_names.txt
-const b = parse(context.prelude || '', { ecmaVersion: 2020 }) as unknown as Program
+const b = (parse(context.prelude || '', { ecmaVersion: 2020 }) as unknown) as Program
 
 const prelude_names = fs.createWriteStream('sicp_publish/prelude_names.txt')
 
