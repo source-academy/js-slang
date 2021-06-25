@@ -1,6 +1,6 @@
 Source §1 Lazy is a small programming language, designed for the first chapter
 of the textbook
-<a href="https://sicp.comp.nus.edu.sg">Structure and Interpretation
+<a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
 of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 Instead of the more common evaluation order of applicative order reduction
 employed by Source §1, the language Source §1 Lazy uses a variant of
@@ -9,9 +9,9 @@ normal order reduction called <EM>lazy evaluation</EM>.
 ## What is lazy  evaluation?
 
 In most programming languages, the arguments of primitive operations
-or functions are fully evaluated before the operation or the 
+or functions are fully evaluated before the operation or the
 the function is applied. This is called <EM>applicative order reduction</EM>.
-<a href="https://sicp.comp.nus.edu.sg/chapters/84">Section 1.1.5</a>
+<a href="https://sourceacademy.org/sicpjs/1.1.5">Section 1.1.5</a>
 of Structure and Interpretation of Computer Programs, JavaScript Adaptation
 (SICP JS), introduces an alternative, called normal order reduction. In
 this scheme, the argument expressions of functions are passed un-evaluated
@@ -28,8 +28,8 @@ whenever it is required again.
 
 You can use all features of
 <a href="../source_1/">Source §1</a>, but with the added
-benefit of lazy evaluation. See 
-<a href="https://sicp.comp.nus.edu.sg/chapters/7">Section 1.1.5</a>
+benefit of lazy evaluation. See
+<a href="https://sourceacademy.org/sicpjs/1.1.5">Section 1.1.5</a>
 of Structure and Interpretation of Computer Programs, JavaScript Adaptation
 (SICP JS) for examples.
 

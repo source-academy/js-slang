@@ -25,7 +25,7 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 \begin{alignat*}{9}
 && \textit{program}    &&\quad ::= &\quad && \textit{statement} \ \ldots
                                                            && \texttt{list("sequence", list of  } \langle \textit{statement}\rangle \textit{)} \\[1mm]
-&& \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
+&& \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \texttt{list("constant\_declaration",  } \langle \textit{name}\rangle \textit{,  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad && \textit{let} \ \textbf{\texttt{;}}
@@ -33,21 +33,21 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 &&                       && |   &\quad && \textit{assignment} \ \textbf{\texttt{;}}
                                                            && \textrm{see below}\\
 &&                       && |   &\quad && \textit{expression}_1 \textbf{\texttt{[}}
-                                          \textit{expression}_2 \textbf{\texttt{]}} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression}_3  \textbf{\texttt{;}}\ 
+                                          \textit{expression}_2 \textbf{\texttt{]}} \
+                                           \textbf{\texttt{=}}\  \textit{expression}_3  \textbf{\texttt{;}}\
                                                            && \texttt{list("object\_assignment", } \langle \textit{expression}_1 \textbf{\texttt{[}} \textit{expression}_2 \textbf{\texttt{]}}  \rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)} \\
-&&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
+&&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \
                                    \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            &&  \texttt{list("function\_declaration",  } \langle \textit{name}\rangle \textit{, } \langle \textit{parameters}\rangle \textit{,}\ \langle \textit{block}\rangle \textit{)} \\
 &&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \texttt{list("return\_statement",  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad && \textit{if-statement} \quad
                                                            && \textrm{see below}\\
-&&                       && |   &\quad && \textbf{\texttt{while}}\  
+&&                       && |   &\quad && \textbf{\texttt{while}}\
                                    \textbf{\texttt{(}}\  \textit{expression} \ \textbf{\texttt{)}} \
                                    \textit{block}
                                                            && \texttt{list("while\_loop",  } \langle \textit{expression}\rangle \textit{,  } \langle \textit{block}\rangle \textit{)} \\
-&&                       && |   &\quad && \textbf{\texttt{for}}\ \textbf{\texttt{(}} \ 
+&&                       && |   &\quad && \textbf{\texttt{for}}\ \textbf{\texttt{(}} \
                                           (\ \textit{\hyperlink{for}{assignment}}_1 \ | \  \textit{\hyperlink{for2}{let}}\ ) \textbf{\texttt{;}} \\
 &&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression} \ \textbf{\texttt{;}} && \texttt{list("for\_loop",  } \langle \textit{assignment}_1\rangle\ \textrm{or}\ \langle \textit{let}\rangle \textit{,  } \langle \textit{expression}\rangle \textit{,  } \langle \textit{assignment}_2\rangle \textit{,}\\
 &&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{assignment}_2 \ \textbf{\texttt{)}} \  \textit{block}
@@ -56,7 +56,7 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
                                                            && \texttt{list("break\_statement")} \\
 &&                       && |   &\quad && \textbf{\texttt{continue}}\ \textbf{\texttt{;}}
                                                            && \texttt{list("continue\_statement")} \\
-&&                       && |   &\quad &&  \textit{block} 
+&&                       && |   &\quad &&  \textit{block}
                                                            && \textrm{see below}\\
 &&                       && |   &\quad &&  \textbf{\texttt{try}}\ \textit{block}_1 \ \textbf{\texttt{catch (}}\ \textit{name}\ \textbf{\texttt{)}}\ \textit{block}_2
                                                            && \texttt{list("try\_statement",}\ \langle  \textit{block}_1 \rangle \texttt{,}\ \langle  \textit{name} \rangle \texttt{,}\ \langle  \textit{block}_2 \rangle \texttt{)} \\
@@ -64,30 +64,30 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
                                                            && \texttt{list("throw\_statement",}\ \langle  \textit{expression} \rangle \texttt{)} \\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{see below}\\[1mm]
-&& \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
+&& \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ )\ \ldots
                                                             && \texttt{list of  } \langle \textit{name}\rangle  \\
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
-                                   \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
+                                   \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\
                                    \textit{block}_1 \\
 &&                       &&     &      && \textbf{\texttt{else}}\
                                           (\ \textit{block}_2
                                           \ | \
-                                          \textit{\href{https://sicp.comp.nus.edu.sg/chapters/21\#footnote-1}{if-statement}} \ )
+                                          \textit{\href{https://sourceacademy.org/sicpjs/1.3.3\#footnote-1}{if-statement}} \ )
                                           && \texttt{list("conditional\_statement",  } \langle \textit{expression}\rangle \textit{, } \\
                                             &&&&&&&&&\ \ \ \ \ \ \texttt{ } \langle \textit{block}_1\rangle \textit{,  } \langle \textit{block}_2\rangle \ \textrm{or}\ \langle \textit{if-statement} \rangle \texttt{)} \\
 && \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{program}   \ \textbf{\texttt{\}}} \quad
                                                            && \texttt{list("block",  } \langle \textit{program}\rangle \textit{)} \\
-&& \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} 
+&& \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \
+                                           \textbf{\texttt{=}}\  \textit{expression}
                                                             && \texttt{list("variable\_declaration",  } \langle \textit{name}\rangle \textit{,  } \langle \textit{expression}\rangle \textit{)} \\
-&& \textit{assignment}   && ::= &\quad &&  \textit{name} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} 
+&& \textit{assignment}   && ::= &\quad &&  \textit{name} \
+                                           \textbf{\texttt{=}}\  \textit{expression}
                                                             && \texttt{list("assignment",  } \langle \textit{name}\rangle \textit{,  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad && \textit{expression}_1 \textbf{\texttt{[}}
-                                          \textit{expression}_2 \textbf{\texttt{]}} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression}_3  \textbf{\texttt{;}}\ 
-                                                           && \texttt{list("object\_assignment", } \langle \textit{expression}_1 \textbf{\texttt{[}} \textit{expression}_2 \textbf{\texttt{]}}  \rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)} 
+                                          \textit{expression}_2 \textbf{\texttt{]}} \
+                                           \textbf{\texttt{=}}\  \textit{expression}_3  \textbf{\texttt{;}}\
+                                                           && \texttt{list("object\_assignment", } \langle \textit{expression}_1 \textbf{\texttt{[}} \textit{expression}_2 \textbf{\texttt{]}}  \rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)}
 \end{alignat*}
 
 \begin{alignat*}{9}
@@ -102,31 +102,31 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 &&                       && |   &\quad &&  \textit{string}
                                                            && \texttt{list("literal",}\ \textit{string}\texttt{)} \\
 &&                       && |   &\quad &&  \textit{name}   && \texttt{list("name", string)}  \\
-&&                       && |   &\quad &&  \textit{expression}_1 \  \textit{log-op} \ 
+&&                       && |   &\quad &&  \textit{expression}_1 \  \textit{log-op} \
                                             \textit{expression}_2 \qquad
                                                            && \texttt{list("logical\_composition",  } \langle \textit{log-op}\rangle \textit{, } \langle \textit{expression}_1\rangle \textit{, } \langle \textit{expression}_2\rangle \textit{)} \\
-&&                       && |   &\quad &&  \textit{expression}_1 \  \textit{bin-op} \ 
+&&                       && |   &\quad &&  \textit{expression}_1 \  \textit{bin-op} \
                                             \textit{expression}_2 \qquad
                                                            && \texttt{list("binary\_operator\_combination",  } \langle \textit{bin-op}\rangle \textit{, } \langle \textit{expression}_1\rangle \textit{, } \langle \textit{expression}_2\rangle \textit{)} \\
-&&                       && |   &\quad &&   \textit{un-op} \ 
+&&                       && |   &\quad &&   \textit{un-op} \
                                             \textit{expression}
                                                            && \texttt{list("unary\_operator\_combination",  } \langle \textit{un-op}\rangle \textit{, } \langle \textit{expression}\rangle \textit{)} \\
-&&                       && |   &\quad &&   \textit{expression} \ 
+&&                       && |   &\quad &&   \textit{expression} \
                                             \textbf{\texttt{(}}\ \textit{expressions}\
                                             \textbf{\texttt{)}}
                                                            && \texttt{list("application",  } \langle \textit{expression}\rangle \textit{, list of  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
-                                            )\    
+                                            )\
                                             \texttt{\textbf{=>}}\ \textit{expression}
                                             && \texttt{list("lambda\_expression",  } \langle \textit{parameters}\rangle \textit{,}  \\
                                               && && & && && \texttt{list("return\_statement",  } \langle \textit{expression}\rangle \textit{))} \\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{parameters}\ \textbf{\texttt{)}}\
-                                            )\    
+                                            )\
                                             \texttt{\textbf{=>}}\ \textit{block}
                                                            && \texttt{list("lambda\_expression",  } \langle \textit{parameters}\rangle \textit{,  } \langle \textit{statement}\rangle \textit{)} \\
-&&                       && |   &\quad &&   \textit{expression}_1 \ \textbf{\texttt{?}}\ 
+&&                       && |   &\quad &&   \textit{expression}_1 \ \textbf{\texttt{?}}\
                                             \textit{expression}_2
                                             \ \textbf{\texttt{:}}\
                                             \textit{expression}_3\
@@ -135,7 +135,7 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 &&                       && |   &\quad && \textit{expression}_1 \textbf{\texttt{[}}
                                           \textit{expression}_2 \textbf{\texttt{]}}
                                                            && \texttt{list("object\_access",  } \langle \textit{expression}_1\rangle \textit{,  } \langle \textit{expression}_2\rangle \textit{)} \\
-&&                       && |   &\quad &&   \textbf{\texttt{[}}\ 
+&&                       && |   &\quad &&   \textbf{\texttt{[}}\
                                             \textit{expressions}\
                                             \textbf{\texttt{]}}
                                                            && \texttt{list("array\_expression", list of  } \langle \textit{expression}\rangle \textit{)} \\
@@ -143,25 +143,25 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
                                                            && \texttt{list("new\_expression",}\ \langle  \textit{expression} \rangle \texttt{)} \\
 &&                       && |   &\quad &&  \textit{expression}\ \textbf{\texttt{.}}\ \textit{name}
                                                            && \textrm{treat as}:\ \textit{expression}\ \textbf{\texttt{[ "}}\textit{name}\textbf{\texttt{" ]}}  \\
-&&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
+&&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \
                                             \textbf{\texttt{)}} && \textrm{treat as:}\ \textit{expression} \\[1mm]
-&& \textit{log-op}    
+&& \textit{log-op}
                         &&\quad  ::= &\quad && \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
                                           && \textit{string representing operator} \\[1mm]
-&& \textit{bin-op}     
-                        &&\quad  ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
+&& \textit{bin-op}
+                        &&\quad  ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\
                                    \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}  && \textit{string representing operator} \\
 &&                       && |  &\quad &&  \texttt{\textbf{<}}\ |\ \texttt{\textbf{>}}\ |\ \texttt{\textbf{<=}}\ |\ \texttt{\textbf{>=}}
                                           && \textit{string representing operator} \\[1mm]
-&& \textit{un-op}    
+&& \textit{un-op}
                         &&\quad  ::= &\quad && \textbf{\texttt{!}}
                         && \texttt{"!"} \\
-&& 
+&&
                         && | &\quad && \textbf{\texttt{-}}
                         && \texttt{"-unary"} \\
 && \textit{expressions}  &&\quad  ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
-                                                                 \textit{expression} \ 
+                                                                 \textit{expression} \
                                                                       )\ \ldots
                                                             && \texttt{list of  } \langle \textit{expression}\rangle  \\
 \end{alignat*}

@@ -13,6 +13,10 @@ export const sandboxedEval: Evaler = new Function(
   NATIVE_STORAGE_ID,
   MODULE_PARAMS_ID,
   `
-return eval(code)
+  if (${NATIVE_STORAGE_ID}.evaller === null) {
+    return eval(code);
+  } else {
+    return ${NATIVE_STORAGE_ID}.evaller(code);
+  }
 `
 ) as Evaler

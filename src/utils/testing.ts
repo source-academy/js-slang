@@ -115,9 +115,10 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     const nativeTestContext = createTestContext(options)
     let pretranspiled: string = ''
     let transpiled: string = ''
-    let parsed
-    try {
-      parsed = parse(code, nativeTestContext)!
+    const parsed = parse(code, nativeTestContext)!
+    if (parsed === undefined) {
+      pretranspiled = 'parseError'
+    } else {
       // Mutates program
       switch (options.variant) {
         case 'gpu':
@@ -132,15 +133,11 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       try {
         transpiled = transpile(parsed, nativeTestContext, true).transpiled
         // replace declaration of builtins since they're repetitive
-        transpiled = transpiled.replace(
-          /\n  const \w+ = globals\.(previousScope.)+variables.get\("\w+"\)\.getValue\(\);/g,
-          ''
-        )
+        transpiled = transpiled.replace(/\n  const \w+ = nativeStorage\..*;/g, '')
+        transpiled = transpiled.replace(/\n\s*const \w+ = .*\.operators\..*;/g, '')
       } catch {
         transpiled = 'parseError'
       }
-    } catch {
-      pretranspiled = 'parseError'
     }
     const nativeResult = getTestResult(
       nativeTestContext,

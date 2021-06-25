@@ -1,10 +1,10 @@
 The functions in STREAMS provide useful functions for stream processing,
 as introduced on
-<a href="https://sicp.comp.nus.edu.sg/chapters/66">section
+<a href="https://sourceacademy.org/sicpjs/3.5">section
 3.5 Stream Processing</a>
 of the textbook
-<a href="https://sicp.comp.nus.edu.sg">Structure and Interpretation
-of Computer Programs, JavaScript Adaptation</a> (SICP JS). 
+<a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
+of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 
 On the right, you see all predeclared STREAMS functions,
 in alphabetical
