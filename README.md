@@ -2,7 +2,7 @@ Open-source implementations of the programming language *Source*. Source
 is a series of small subsets of JavaScript, designed for teaching
 university-level programming courses for computer science majors,
 following Structure and Interpretation of Computer Programs, JavaScript
-Adaptation (<https://source-academy.github.io/sicp/>).
+Adaptation (<https://sourceacademy.org/sicpjs/>).
 
 Usage
 =====
@@ -72,7 +72,7 @@ $ js-slang -n --chapter=1 -e "$(< my_source_program.js)"
 Documentation
 =============
 
-Source is documented here: <https://source-academy.github.io/source/>
+Source is documented here: <https://docs.sourceacademy.org/>
 
 ## Requirements
 * `bash`: known working version: GNU bash, version 5.0.16
