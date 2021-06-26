@@ -97,12 +97,7 @@ Note: The documentation may not build on Windows, depending on your bash setup, 
 Documentation on the Source libraries are generated from inline
 documentation in the library sources, a copy of which are kept in
 `docs/lib/*.js`. The command `yarn jsdoc` generates the 
-documentation and places it in the folder `docs/source`. The script
-`jsdoc` provides an installation command to deploy the
-documentation via `scp` to a web server:
-``` {.}
-$ yarn jsdoc install
-```
+documentation and places it in the folder `docs/source`. 
 You can test the documentation using a local server:
 ``` {.}
 $ cd docs/source;  python -m http.server 8000

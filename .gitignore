@@ -9,6 +9,7 @@ coverage/
 
 # emacs backup files
 *~
+.DS_Store
 
 .vscode/
 tsconfig.tsbuildinfo
