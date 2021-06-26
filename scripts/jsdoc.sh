@@ -9,14 +9,10 @@ SPECS="docs/specs"
 
 main() {
 
-    if [ "$1" == "install" ]; then
-	install
-    elif [ "$1" == "prepare" ]; then
+    if [ "$1" == "prepare" ]; then
 	prepare
     elif [ "$1" == "clean" ]; then
 	clean
-    elif [ "$1" == "via" ]; then
-	via
     elif [[ "$(git rev-parse --show-toplevel 2> /dev/null)" -ef "$PWD" ]]; then
         run
     else
@@ -299,18 +295,6 @@ prepare() {
     run
     cp -r docs/images ${DST} ; \
     cd ${SPECS}; make; cp *.pdf ../source; cd ../..
-}
-
-install() {
-    prepare
-    cd docs; scp -r ${DST} sicp@web1.comp.nus.edu.sg:public_html/.
-}
-
-via() {
-    prepare 
-    cd docs/source; scp -r * henz@suna.comp.nus.edu.sg:source; \
-    echo "next: ssh henz@suna.comp.nus.edu.sg"; \
-    echo "finally: cd source; scp -p -r * sicp@web1.comp.nus.edu.sg:public_html/staging/source"
 }
 
 clean() {
