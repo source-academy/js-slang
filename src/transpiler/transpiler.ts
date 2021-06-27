@@ -273,6 +273,10 @@ export function checkForUndefinedVariables(
         identifiers.add((statement.declarations[0].id as es.Identifier).name)
       } else if (statement.type === 'FunctionDeclaration') {
         identifiers.add((statement.id as es.Identifier).name)
+      } else if (statement.type === 'ImportDeclaration') {
+        for (const specifier of statement.specifiers) {
+          identifiers.add(specifier.local.name)
+        }
       }
     }
     identifiersIntroducedByNode.set(node, identifiers)

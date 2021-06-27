@@ -1,8 +1,17 @@
-import { transformSingleImportDeclaration, transformImportDeclarations } from '../transpiler'
+import {
+  transformSingleImportDeclaration,
+  transformImportDeclarations,
+  transpile
+} from '../transpiler'
 import { stripIndent } from '../../utils/formatters'
 import { parse } from '../../parser/parser'
 import { mockContext } from '../../mocks/context'
 import { ImportDeclaration, Identifier } from 'estree'
+
+jest.mock('../../modules/moduleLoader', () => ({
+  ...jest.requireActual('../../modules/moduleLoader'),
+  memoizedGetModuleFile: () => 'undefined;'
+}))
 
 test('Transform single import decalration', () => {
   const code = `import { foo, bar } from "test/one_module";`
@@ -25,4 +34,14 @@ test('Transform import decalrations variable decalarations', () => {
   transformImportDeclarations(program)
   expect(program.body[0].type).toBe('VariableDeclaration')
   expect(program.body[1].type).toBe('VariableDeclaration')
+})
+
+test('checkForUndefinedVariables accounts for import statements', () => {
+  const code = stripIndent`
+    import { hello } from "module";
+    hello;
+  `
+  const context = mockContext(4)
+  const program = parse(code, context)!
+  transpile(program, context, false)
 })
