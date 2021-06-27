@@ -1,6 +1,7 @@
   Source is a family of languages, designed for the textbook
-  <a href="https://sourceacademy.org/interactive-sicp/">Structure and Interpretation
-  of Computer Programs, JavaScript Adaptation</a> (SICP JS).  The languages are
+  <a href="https://sourceacademy.org/sicpjs">Structure and Interpretation
+  of Computer Programs, JavaScript Adaptation</a> (SICP JS) and supported by the
+  <a href="https://sourceacademy.org">Source Academy</a> system.  The languages are
   called Source §1, Source §2, Source §3 and Source §4, corresponding to the
   respective chapters 1, 2, 3 and 4 of the textbook. Each previous Source
   language is a sublanguage of the next, and all Source languages are
