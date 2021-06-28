@@ -157,7 +157,7 @@ Using your js-slang in your local Source Academy
 
 A common issue when developing modifications to js-slang is how to test
 it using your own local frontend. Assume that you have built your own
-cadet-frontend locally, here is how you can make it use your own
+frontend locally, here is how you can make it use your own
 js-slang, instead of the one that the Source Academy team has deployed
 to npm.
 
@@ -167,9 +167,9 @@ $ cd js-slang
 $ yarn build
 $ yarn link
 ```
-Then, from your local copy of cadet-frontend:
+Then, from your local copy of frontend:
 ``` {.}
-$ cd cadet-frontend
+$ cd frontend
 $ yarn link "js-slang"
 ```
 
