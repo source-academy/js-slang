@@ -473,12 +473,13 @@ export async function runInContext(
     })
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
-  if (context.prelude !== null) {
-    const prelude = context.prelude
-    context.prelude = null
-    await runInContext(prelude, context, { ...options, isPrelude: true })
-    return runInContext(code, context, options)
-  }
+  if (context.nativeStorage.evaller === null || context.numberOfOuterEnvironments)
+    if (context.prelude !== null) {
+      const prelude = context.prelude
+      context.prelude = null
+      await runInContext(prelude, context, { ...options, isPrelude: true })
+      return runInContext(code, context, options)
+    }
   if (isNativeRunnable) {
     if (previousCode === code && isPreviousCodeTimeoutError) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy

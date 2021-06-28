@@ -604,3 +604,9 @@ export {
   FunctionNames as InfiniteLoopRuntimeFunctions,
   globalIds as InfiniteLoopRuntimeObjectNames
 }
+
+export {
+  instrument,
+  FunctionNames as InfiniteLoopRuntimeFunctions,
+  globalIds as InfiniteLoopRuntimeObjectNames
+}
