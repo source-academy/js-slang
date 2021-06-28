@@ -52,9 +52,10 @@ import * as es from 'estree'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
 import { forceIt } from './utils/operators'
-import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 import { TimeoutError } from './errors/timeoutErrors'
 import { loadModuleTabs } from './modules/moduleLoader'
+import { testForInfiniteLoop } from './infiniteLoops/runtime'
+import { isPotentialInfiniteLoop } from './infiniteLoops/errors'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -65,6 +66,7 @@ export interface IOptions {
   originalMaxExecTime: number
   useSubst: boolean
   isPrelude: boolean
+  throwInfiniteLoops: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
@@ -75,7 +77,8 @@ const DEFAULT_OPTIONS: IOptions = {
   variant: 'default',
   originalMaxExecTime: 1000,
   useSubst: false,
-  isPrelude: false
+  isPrelude: false,
+  throwInfiniteLoops: true
 }
 
 // needed to work on browsers
@@ -153,7 +156,7 @@ function convertNativeErrorToSourceError(
   }
 }
 
-let previousCode = ''
+const previousCodeStack: string[] = []
 let isPreviousCodeTimeoutError = false
 
 function determineExecutionMethod(theOptions: IOptions, context: Context, program: Program) {
@@ -428,12 +431,12 @@ export async function runInContext(
   }
 
   if (context.variant === 'concurrent') {
-    if (previousCode === code) {
+    if (previousCodeStack[0] === code) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {
       context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
-    previousCode = code
+    previousCodeStack.unshift(code)
     try {
       return Promise.resolve({
         status: 'finished',
@@ -468,9 +471,6 @@ export async function runInContext(
       value: redexedSteps
     })
   }
-  if (context.chapter <= 2) {
-    addInfiniteLoopProtection(program, context.chapter === 2)
-  }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
     const prelude = context.prelude
@@ -479,13 +479,13 @@ export async function runInContext(
     return runInContext(code, context, options)
   }
   if (isNativeRunnable) {
-    if (previousCode === code && isPreviousCodeTimeoutError) {
+    if (previousCodeStack[0] === code && isPreviousCodeTimeoutError) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else if (!options.isPrelude) {
       context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
     if (!options.isPrelude) {
-      previousCode = code
+      previousCodeStack.unshift(code)
     }
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
@@ -515,6 +515,22 @@ export async function runInContext(
         value
       })
     } catch (error) {
+      const isDefaultVariant = options.variant === undefined || options.variant === 'default'
+      if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
+        const detectedInfiniteLoop = testForInfiniteLoop(code, previousCodeStack.slice(1))
+        if (detectedInfiniteLoop !== undefined) {
+          detectedInfiniteLoop.codeStack = previousCodeStack
+          if (theOptions.throwInfiniteLoops) {
+            context.errors.push(detectedInfiniteLoop)
+            return resolvedErrorPromise
+          } else {
+            error.infiniteLoopError = detectedInfiniteLoop
+            if (error instanceof ExceptionError) {
+              ;(error.error as any).infiniteLoopError = detectedInfiniteLoop
+            }
+          }
+        }
+      }
       if (error instanceof RuntimeSourceError) {
         context.errors.push(error)
         if (error instanceof TimeoutError) {
