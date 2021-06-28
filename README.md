@@ -143,8 +143,17 @@ Please remember to write test cases to reflect your added
 functionalities. The god of this repository is self-professed to be very
 particular about test cases.
 
-Using your js-slang in local Source Academy
-===========================================
+Using your js-slang in Source Academy
+=====================================
+
+js-slang is used by the [Source Academy](https://sourceacademy.org),
+the  immersive online experiential environment for learning programming.
+For this, js-slang is [deployed as an NPM package](https://www.npmjs.com/package/js-slang).
+The frontend of the Source Academy then includes the js-slang package in its deployment
+bundle.
+
+Using your js-slang in your local Source Academy
+================================================
 
 A common issue when developing modifications to js-slang is how to test
 it using your own local frontend. Assume that you have built your own
