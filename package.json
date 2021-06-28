@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.5.4",
+  "version": "0.5.8",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
@@ -19,6 +19,7 @@
     "acorn": "^8.0.3",
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",
+    "alt-ergo-modified": "file:./alt-ergo-modified/",
     "astring": "^1.4.3",
     "gpu.js": "^2.10.4",
     "lodash": "^4.17.20",

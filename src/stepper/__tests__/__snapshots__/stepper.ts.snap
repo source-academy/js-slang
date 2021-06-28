@@ -5748,7 +5748,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], is_null([null, null]) ? null : pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), [null, null], null));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5756,7 +5756,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], is_null([null, null]) ? null : pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), [null, null], null));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5764,7 +5764,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], false ? null : pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], is_null([null, null]) ? reverse(null) : $map(x => pair(head([3, null]), x), tail([null, null]), pair((x => pair(head([3, null]), x))(head([null, null])), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5772,7 +5772,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], false ? null : pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], is_null([null, null]) ? reverse(null) : $map(x => pair(head([3, null]), x), tail([null, null]), pair((x => pair(head([3, null]), x))(head([null, null])), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5780,7 +5780,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], false ? reverse(null) : $map(x => pair(head([3, null]), x), tail([null, null]), pair((x => pair(head([3, null]), x))(head([null, null])), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5788,7 +5788,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair((x => pair(head([3, null]), x))(head([null, null])), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], false ? reverse(null) : $map(x => pair(head([3, null]), x), tail([null, null]), pair((x => pair(head([3, null]), x))(head([null, null])), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5796,7 +5796,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair((x => pair(head([3, null]), x))(null), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), tail([null, null]), pair((x => pair(head([3, null]), x))(head([null, null])), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5804,7 +5804,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair((x => pair(head([3, null]), x))(null), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), tail([null, null]), pair((x => pair(head([3, null]), x))(head([null, null])), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5812,7 +5812,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair(pair(head([3, null]), null), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, pair((x => pair(head([3, null]), x))(head([null, null])), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5820,7 +5820,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair(pair(head([3, null]), null), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, pair((x => pair(head([3, null]), x))(head([null, null])), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5828,7 +5828,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair(pair(3, null), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, pair((x => pair(head([3, null]), x))(null), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5836,7 +5836,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair(pair(3, null), map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, pair((x => pair(head([3, null]), x))(null), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5844,7 +5844,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair([3, null], map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, pair(pair(head([3, null]), null), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5852,7 +5852,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair([3, null], map(x => pair(head([3, null]), x), tail([null, null]))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, pair(pair(head([3, null]), null), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5860,7 +5860,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair([3, null], map(x => pair(head([3, null]), x), null)));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, pair(pair(3, null), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5868,7 +5868,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair([3, null], map(x => pair(head([3, null]), x), null)));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, pair(pair(3, null), null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5876,7 +5876,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair([3, null], is_null(null) ? null : pair((x => pair(head([3, null]), x))(head(null)), map(x => pair(head([3, null]), x), tail(null)))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, pair([3, null], null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5884,7 +5884,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair([3, null], is_null(null) ? null : pair((x => pair(head([3, null]), x))(head(null)), map(x => pair(head([3, null]), x), tail(null)))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, pair([3, null], null)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5892,7 +5892,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair([3, null], true ? null : pair((x => pair(head([3, null]), x))(head(null)), map(x => pair(head([3, null]), x), tail(null)))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, [[3, null], null]));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5900,7 +5900,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair([3, null], true ? null : pair((x => pair(head([3, null]), x))(head(null)), map(x => pair(head([3, null]), x), tail(null)))));
+    const rest = append([null, null], $map(x => pair(head([3, null]), x), null, [[3, null], null]));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5908,7 +5908,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair([3, null], null));
+    const rest = append([null, null], is_null(null) ? reverse([[3, null], null]) : $map(x => pair(head([3, null]), x), tail(null), pair((x => pair(head([3, null]), x))(head(null)), [[3, null], null])));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5916,7 +5916,183 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = append([null, null], pair([3, null], null));
+    const rest = append([null, null], is_null(null) ? reverse([[3, null], null]) : $map(x => pair(head([3, null]), x), tail(null), pair((x => pair(head([3, null]), x))(head(null)), [[3, null], null])));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], true ? reverse([[3, null], null]) : $map(x => pair(head([3, null]), x), tail(null), pair((x => pair(head([3, null]), x))(head(null)), [[3, null], null])));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], true ? reverse([[3, null], null]) : $map(x => pair(head([3, null]), x), tail(null), pair((x => pair(head([3, null]), x))(head(null)), [[3, null], null])));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], reverse([[3, null], null]));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], reverse([[3, null], null]));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], $reverse([[3, null], null], null));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], $reverse([[3, null], null], null));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], is_null([[3, null], null]) ? null : $reverse(tail([[3, null], null]), pair(head([[3, null], null]), null)));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], is_null([[3, null], null]) ? null : $reverse(tail([[3, null], null]), pair(head([[3, null], null]), null)));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], false ? null : $reverse(tail([[3, null], null]), pair(head([[3, null], null]), null)));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], false ? null : $reverse(tail([[3, null], null]), pair(head([[3, null], null]), null)));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], $reverse(tail([[3, null], null]), pair(head([[3, null], null]), null)));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], $reverse(tail([[3, null], null]), pair(head([[3, null], null]), null)));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], $reverse(null, pair(head([[3, null], null]), null)));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], $reverse(null, pair(head([[3, null], null]), null)));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], $reverse(null, pair([3, null], null)));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], $reverse(null, pair([3, null], null)));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], $reverse(null, [[3, null], null]));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], $reverse(null, [[3, null], null]));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], is_null(null) ? [[3, null], null] : $reverse(tail(null), pair(head(null), [[3, null], null])));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], is_null(null) ? [[3, null], null] : $reverse(tail(null), pair(head(null), [[3, null], null])));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], true ? [[3, null], null] : $reverse(tail(null), pair(head(null), [[3, null], null])));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = append([null, null], true ? [[3, null], null] : $reverse(tail(null), pair(head(null), [[3, null], null])));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5940,7 +6116,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = is_null([null, null]) ? [[3, null], null] : pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
+    const rest = $append([null, null], [[3, null], null], xs => xs);
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5948,7 +6124,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = is_null([null, null]) ? [[3, null], null] : pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
+    const rest = $append([null, null], [[3, null], null], xs => xs);
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5956,7 +6132,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = false ? [[3, null], null] : pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
+    const rest = is_null([null, null]) ? (xs => xs)([[3, null], null]) : $append(tail([null, null]), [[3, null], null], zs => (xs => xs)(pair(head([null, null]), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5964,7 +6140,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = false ? [[3, null], null] : pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
+    const rest = is_null([null, null]) ? (xs => xs)([[3, null], null]) : $append(tail([null, null]), [[3, null], null], zs => (xs => xs)(pair(head([null, null]), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5972,7 +6148,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
+    const rest = false ? (xs => xs)([[3, null], null]) : $append(tail([null, null]), [[3, null], null], zs => (xs => xs)(pair(head([null, null]), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5980,7 +6156,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(head([null, null]), append(tail([null, null]), [[3, null], null]));
+    const rest = false ? (xs => xs)([[3, null], null]) : $append(tail([null, null]), [[3, null], null], zs => (xs => xs)(pair(head([null, null]), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5988,7 +6164,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(null, append(tail([null, null]), [[3, null], null]));
+    const rest = $append(tail([null, null]), [[3, null], null], zs => (xs => xs)(pair(head([null, null]), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -5996,7 +6172,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(null, append(tail([null, null]), [[3, null], null]));
+    const rest = $append(tail([null, null]), [[3, null], null], zs => (xs => xs)(pair(head([null, null]), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -6004,7 +6180,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(null, append(null, [[3, null], null]));
+    const rest = $append(null, [[3, null], null], zs => (xs => xs)(pair(head([null, null]), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -6012,7 +6188,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(null, append(null, [[3, null], null]));
+    const rest = $append(null, [[3, null], null], zs => (xs => xs)(pair(head([null, null]), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -6020,7 +6196,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(null, is_null(null) ? [[3, null], null] : pair(head(null), append(tail(null), [[3, null], null])));
+    const rest = is_null(null) ? (zs => (xs => xs)(pair(head([null, null]), zs)))([[3, null], null]) : $append(tail(null), [[3, null], null], zs => (zs => (xs => xs)(pair(head([null, null]), zs)))(pair(head(null), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -6028,7 +6204,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(null, is_null(null) ? [[3, null], null] : pair(head(null), append(tail(null), [[3, null], null])));
+    const rest = is_null(null) ? (zs => (xs => xs)(pair(head([null, null]), zs)))([[3, null], null]) : $append(tail(null), [[3, null], null], zs => (zs => (xs => xs)(pair(head([null, null]), zs)))(pair(head(null), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -6036,7 +6212,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(null, true ? [[3, null], null] : pair(head(null), append(tail(null), [[3, null], null])));
+    const rest = true ? (zs => (xs => xs)(pair(head([null, null]), zs)))([[3, null], null]) : $append(tail(null), [[3, null], null], zs => (zs => (xs => xs)(pair(head([null, null]), zs)))(pair(head(null), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -6044,7 +6220,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(null, true ? [[3, null], null] : pair(head(null), append(tail(null), [[3, null], null])));
+    const rest = true ? (zs => (xs => xs)(pair(head([null, null]), zs)))([[3, null], null]) : $append(tail(null), [[3, null], null], zs => (zs => (xs => xs)(pair(head([null, null]), zs)))(pair(head(null), zs)));
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -6052,7 +6228,7 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(null, [[3, null], null]);
+    const rest = (zs => (xs => xs)(pair(head([null, null]), zs)))([[3, null], null]);
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -6060,7 +6236,55 @@ subsets([1, [2, [3, null]]]);
 
 {
   const rest = {
-    const rest = pair(null, [[3, null], null]);
+    const rest = (zs => (xs => xs)(pair(head([null, null]), zs)))([[3, null], null]);
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = (xs => xs)(pair(head([null, null]), [[3, null], null]));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = (xs => xs)(pair(head([null, null]), [[3, null], null]));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = (xs => xs)(pair(null, [[3, null], null]));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = (xs => xs)(pair(null, [[3, null], null]));
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = (xs => xs)([null, [[3, null], null]]);
+    return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
+  };
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = {
+    const rest = (xs => xs)([null, [[3, null], null]]);
     return append(rest, map(x => pair(head([2, [3, null]]), x), rest));
   };
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
@@ -6107,202 +6331,372 @@ subsets([1, [2, [3, null]]]);
 };
 
 {
-  const rest = append([null, [[3, null], null]], is_null([null, [[3, null], null]]) ? null : pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [null, [[3, null], null]], null));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], is_null([null, [[3, null], null]]) ? null : pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [null, [[3, null], null]], null));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], false ? null : pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], is_null([null, [[3, null], null]]) ? reverse(null) : $map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]), pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], false ? null : pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], is_null([null, [[3, null], null]]) ? reverse(null) : $map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]), pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], false ? reverse(null) : $map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]), pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], false ? reverse(null) : $map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]), pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair((x => pair(head([2, [3, null]]), x))(null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]), pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair((x => pair(head([2, [3, null]]), x))(null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]), pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair(pair(head([2, [3, null]]), null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair(pair(head([2, [3, null]]), null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], pair((x => pair(head([2, [3, null]]), x))(head([null, [[3, null], null]])), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair(pair(2, null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], pair((x => pair(head([2, [3, null]]), x))(null), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair(pair(2, null), map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], pair((x => pair(head([2, [3, null]]), x))(null), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], pair(pair(head([2, [3, null]]), null), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], map(x => pair(head([2, [3, null]]), x), tail([null, [[3, null], null]]))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], pair(pair(head([2, [3, null]]), null), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], map(x => pair(head([2, [3, null]]), x), [[3, null], null])));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], pair(pair(2, null), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], map(x => pair(head([2, [3, null]]), x), [[3, null], null])));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], pair(pair(2, null), null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], is_null([[3, null], null]) ? null : pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], pair([2, null], null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], is_null([[3, null], null]) ? null : pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], pair([2, null], null)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], false ? null : pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], [[2, null], null]));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], false ? null : pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), [[3, null], null], [[2, null], null]));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], is_null([[3, null], null]) ? reverse([[2, null], null]) : $map(x => pair(head([2, [3, null]]), x), tail([[3, null], null]), pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], is_null([[3, null], null]) ? reverse([[2, null], null]) : $map(x => pair(head([2, [3, null]]), x), tail([[3, null], null]), pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair((x => pair(head([2, [3, null]]), x))([3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], false ? reverse([[2, null], null]) : $map(x => pair(head([2, [3, null]]), x), tail([[3, null], null]), pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair((x => pair(head([2, [3, null]]), x))([3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], false ? reverse([[2, null], null]) : $map(x => pair(head([2, [3, null]]), x), tail([[3, null], null]), pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair(pair(head([2, [3, null]]), [3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), tail([[3, null], null]), pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair(pair(head([2, [3, null]]), [3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), tail([[3, null], null]), pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair(pair(2, [3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair(pair(2, [3, null]), map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, pair((x => pair(head([2, [3, null]]), x))(head([[3, null], null])), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, pair((x => pair(head([2, [3, null]]), x))([3, null]), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], map(x => pair(head([2, [3, null]]), x), tail([[3, null], null])))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, pair((x => pair(head([2, [3, null]]), x))([3, null]), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], map(x => pair(head([2, [3, null]]), x), null))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, pair(pair(head([2, [3, null]]), [3, null]), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], map(x => pair(head([2, [3, null]]), x), null))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, pair(pair(head([2, [3, null]]), [3, null]), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], is_null(null) ? null : pair((x => pair(head([2, [3, null]]), x))(head(null)), map(x => pair(head([2, [3, null]]), x), tail(null))))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, pair(pair(2, [3, null]), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], is_null(null) ? null : pair((x => pair(head([2, [3, null]]), x))(head(null)), map(x => pair(head([2, [3, null]]), x), tail(null))))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, pair(pair(2, [3, null]), [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], true ? null : pair((x => pair(head([2, [3, null]]), x))(head(null)), map(x => pair(head([2, [3, null]]), x), tail(null))))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, pair([2, [3, null]], [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], true ? null : pair((x => pair(head([2, [3, null]]), x))(head(null)), map(x => pair(head([2, [3, null]]), x), tail(null))))));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, pair([2, [3, null]], [[2, null], null])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], null)));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, [[2, [3, null]], [[2, null], null]]));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], pair([2, [3, null]], null)));
+  const rest = append([null, [[3, null], null]], $map(x => pair(head([2, [3, null]]), x), null, [[2, [3, null]], [[2, null], null]]));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], [[2, [3, null]], null]));
+  const rest = append([null, [[3, null], null]], is_null(null) ? reverse([[2, [3, null]], [[2, null], null]]) : $map(x => pair(head([2, [3, null]]), x), tail(null), pair((x => pair(head([2, [3, null]]), x))(head(null)), [[2, [3, null]], [[2, null], null]])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = append([null, [[3, null], null]], pair([2, null], [[2, [3, null]], null]));
+  const rest = append([null, [[3, null], null]], is_null(null) ? reverse([[2, [3, null]], [[2, null], null]]) : $map(x => pair(head([2, [3, null]]), x), tail(null), pair((x => pair(head([2, [3, null]]), x))(head(null)), [[2, [3, null]], [[2, null], null]])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], true ? reverse([[2, [3, null]], [[2, null], null]]) : $map(x => pair(head([2, [3, null]]), x), tail(null), pair((x => pair(head([2, [3, null]]), x))(head(null)), [[2, [3, null]], [[2, null], null]])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], true ? reverse([[2, [3, null]], [[2, null], null]]) : $map(x => pair(head([2, [3, null]]), x), tail(null), pair((x => pair(head([2, [3, null]]), x))(head(null)), [[2, [3, null]], [[2, null], null]])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], reverse([[2, [3, null]], [[2, null], null]]));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], reverse([[2, [3, null]], [[2, null], null]]));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse([[2, [3, null]], [[2, null], null]], null));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse([[2, [3, null]], [[2, null], null]], null));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], is_null([[2, [3, null]], [[2, null], null]]) ? null : $reverse(tail([[2, [3, null]], [[2, null], null]]), pair(head([[2, [3, null]], [[2, null], null]]), null)));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], is_null([[2, [3, null]], [[2, null], null]]) ? null : $reverse(tail([[2, [3, null]], [[2, null], null]]), pair(head([[2, [3, null]], [[2, null], null]]), null)));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], false ? null : $reverse(tail([[2, [3, null]], [[2, null], null]]), pair(head([[2, [3, null]], [[2, null], null]]), null)));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], false ? null : $reverse(tail([[2, [3, null]], [[2, null], null]]), pair(head([[2, [3, null]], [[2, null], null]]), null)));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse(tail([[2, [3, null]], [[2, null], null]]), pair(head([[2, [3, null]], [[2, null], null]]), null)));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse(tail([[2, [3, null]], [[2, null], null]]), pair(head([[2, [3, null]], [[2, null], null]]), null)));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse([[2, null], null], pair(head([[2, [3, null]], [[2, null], null]]), null)));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse([[2, null], null], pair(head([[2, [3, null]], [[2, null], null]]), null)));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse([[2, null], null], pair([2, [3, null]], null)));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse([[2, null], null], pair([2, [3, null]], null)));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse([[2, null], null], [[2, [3, null]], null]));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse([[2, null], null], [[2, [3, null]], null]));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], is_null([[2, null], null]) ? [[2, [3, null]], null] : $reverse(tail([[2, null], null]), pair(head([[2, null], null]), [[2, [3, null]], null])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], is_null([[2, null], null]) ? [[2, [3, null]], null] : $reverse(tail([[2, null], null]), pair(head([[2, null], null]), [[2, [3, null]], null])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], false ? [[2, [3, null]], null] : $reverse(tail([[2, null], null]), pair(head([[2, null], null]), [[2, [3, null]], null])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], false ? [[2, [3, null]], null] : $reverse(tail([[2, null], null]), pair(head([[2, null], null]), [[2, [3, null]], null])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse(tail([[2, null], null]), pair(head([[2, null], null]), [[2, [3, null]], null])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse(tail([[2, null], null]), pair(head([[2, null], null]), [[2, [3, null]], null])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse(null, pair(head([[2, null], null]), [[2, [3, null]], null])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse(null, pair(head([[2, null], null]), [[2, [3, null]], null])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse(null, pair([2, null], [[2, [3, null]], null])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse(null, pair([2, null], [[2, [3, null]], null])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse(null, [[2, null], [[2, [3, null]], null]]));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], $reverse(null, [[2, null], [[2, [3, null]], null]]));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], is_null(null) ? [[2, null], [[2, [3, null]], null]] : $reverse(tail(null), pair(head(null), [[2, null], [[2, [3, null]], null]])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], is_null(null) ? [[2, null], [[2, [3, null]], null]] : $reverse(tail(null), pair(head(null), [[2, null], [[2, [3, null]], null]])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], true ? [[2, null], [[2, [3, null]], null]] : $reverse(tail(null), pair(head(null), [[2, null], [[2, [3, null]], null]])));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = append([null, [[3, null], null]], true ? [[2, null], [[2, [3, null]], null]] : $reverse(tail(null), pair(head(null), [[2, null], [[2, [3, null]], null]])));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
@@ -6317,142 +6711,182 @@ subsets([1, [2, [3, null]]]);
 };
 
 {
-  const rest = is_null([null, [[3, null], null]]) ? [[2, null], [[2, [3, null]], null]] : pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
+  const rest = $append([null, [[3, null], null]], [[2, null], [[2, [3, null]], null]], xs => xs);
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = is_null([null, [[3, null], null]]) ? [[2, null], [[2, [3, null]], null]] : pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
+  const rest = $append([null, [[3, null], null]], [[2, null], [[2, [3, null]], null]], xs => xs);
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = false ? [[2, null], [[2, [3, null]], null]] : pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
+  const rest = is_null([null, [[3, null], null]]) ? (xs => xs)([[2, null], [[2, [3, null]], null]]) : $append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]], zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = false ? [[2, null], [[2, [3, null]], null]] : pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
+  const rest = is_null([null, [[3, null], null]]) ? (xs => xs)([[2, null], [[2, [3, null]], null]]) : $append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]], zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
+  const rest = false ? (xs => xs)([[2, null], [[2, [3, null]], null]]) : $append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]], zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(head([null, [[3, null], null]]), append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
+  const rest = false ? (xs => xs)([[2, null], [[2, [3, null]], null]]) : $append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]], zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
+  const rest = $append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]], zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]]));
+  const rest = $append(tail([null, [[3, null], null]]), [[2, null], [[2, [3, null]], null]], zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, append([[3, null], null], [[2, null], [[2, [3, null]], null]]));
+  const rest = $append([[3, null], null], [[2, null], [[2, [3, null]], null]], zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, append([[3, null], null], [[2, null], [[2, [3, null]], null]]));
+  const rest = $append([[3, null], null], [[2, null], [[2, [3, null]], null]], zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, is_null([[3, null], null]) ? [[2, null], [[2, [3, null]], null]] : pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
+  const rest = is_null([[3, null], null]) ? (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))([[2, null], [[2, [3, null]], null]]) : $append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, is_null([[3, null], null]) ? [[2, null], [[2, [3, null]], null]] : pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
+  const rest = is_null([[3, null], null]) ? (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))([[2, null], [[2, [3, null]], null]]) : $append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, false ? [[2, null], [[2, [3, null]], null]] : pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
+  const rest = false ? (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))([[2, null], [[2, [3, null]], null]]) : $append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, false ? [[2, null], [[2, [3, null]], null]] : pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
+  const rest = false ? (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))([[2, null], [[2, [3, null]], null]]) : $append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
+  const rest = $append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair(head([[3, null], null]), append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
+  const rest = $append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair([3, null], append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
+  const rest = $append(null, [[2, null], [[2, [3, null]], null]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair([3, null], append(tail([[3, null], null]), [[2, null], [[2, [3, null]], null]])));
+  const rest = $append(null, [[2, null], [[2, [3, null]], null]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair([3, null], append(null, [[2, null], [[2, [3, null]], null]])));
+  const rest = is_null(null) ? (zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)))([[2, null], [[2, [3, null]], null]]) : $append(tail(null), [[2, null], [[2, [3, null]], null]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)))(pair(head(null), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair([3, null], append(null, [[2, null], [[2, [3, null]], null]])));
+  const rest = is_null(null) ? (zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)))([[2, null], [[2, [3, null]], null]]) : $append(tail(null), [[2, null], [[2, [3, null]], null]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)))(pair(head(null), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair([3, null], is_null(null) ? [[2, null], [[2, [3, null]], null]] : pair(head(null), append(tail(null), [[2, null], [[2, [3, null]], null]]))));
+  const rest = true ? (zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)))([[2, null], [[2, [3, null]], null]]) : $append(tail(null), [[2, null], [[2, [3, null]], null]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)))(pair(head(null), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair([3, null], is_null(null) ? [[2, null], [[2, [3, null]], null]] : pair(head(null), append(tail(null), [[2, null], [[2, [3, null]], null]]))));
+  const rest = true ? (zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)))([[2, null], [[2, [3, null]], null]]) : $append(tail(null), [[2, null], [[2, [3, null]], null]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)))(pair(head(null), zs)));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair([3, null], true ? [[2, null], [[2, [3, null]], null]] : pair(head(null), append(tail(null), [[2, null], [[2, [3, null]], null]]))));
+  const rest = (zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)))([[2, null], [[2, [3, null]], null]]);
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair([3, null], true ? [[2, null], [[2, [3, null]], null]] : pair(head(null), append(tail(null), [[2, null], [[2, [3, null]], null]]))));
+  const rest = (zs => (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), zs)))([[2, null], [[2, [3, null]], null]]);
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair([3, null], [[2, null], [[2, [3, null]], null]]));
+  const rest = (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), [[2, null], [[2, [3, null]], null]]));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, pair([3, null], [[2, null], [[2, [3, null]], null]]));
+  const rest = (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair(head([[3, null], null]), [[2, null], [[2, [3, null]], null]]));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, [[3, null], [[2, null], [[2, [3, null]], null]]]);
+  const rest = (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair([3, null], [[2, null], [[2, [3, null]], null]]));
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
 {
-  const rest = pair(null, [[3, null], [[2, null], [[2, [3, null]], null]]]);
+  const rest = (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))(pair([3, null], [[2, null], [[2, [3, null]], null]]));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))([[3, null], [[2, null], [[2, [3, null]], null]]]);
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = (zs => (xs => xs)(pair(head([null, [[3, null], null]]), zs)))([[3, null], [[2, null], [[2, [3, null]], null]]]);
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = (xs => xs)(pair(head([null, [[3, null], null]]), [[3, null], [[2, null], [[2, [3, null]], null]]]));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = (xs => xs)(pair(head([null, [[3, null], null]]), [[3, null], [[2, null], [[2, [3, null]], null]]]));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = (xs => xs)(pair(null, [[3, null], [[2, null], [[2, [3, null]], null]]]));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = (xs => xs)(pair(null, [[3, null], [[2, null], [[2, [3, null]], null]]]));
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = (xs => xs)([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]);
+  return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
+};
+
+{
+  const rest = (xs => xs)([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]);
   return append(rest, map(x => pair(head([1, [2, [3, null]]]), x), rest));
 };
 
@@ -6478,265 +6912,405 @@ append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], map(x => pair(h
 
 append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], map(x => pair(head([1, [2, [3, null]]]), x), [null, [[3, null], [[2, null], [[2, [3, null]], null]]]]));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [null, [[3, null], [[2, null], [[2, [3, null]], null]]]], null));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [null, [[3, null], [[2, null], [[2, [3, null]], null]]]], null));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? reverse(null) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? reverse(null) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? reverse(null) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? reverse(null) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair((x => pair(head([1, [2, [3, null]]]), x))(null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair((x => pair(head([1, [2, [3, null]]]), x))(null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(pair(head([1, [2, [3, null]]]), null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(pair(head([1, [2, [3, null]]]), null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]])), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(pair(1, null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], pair((x => pair(head([1, [2, [3, null]]]), x))(null), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair(pair(1, null), map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], pair((x => pair(head([1, [2, [3, null]]]), x))(null), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], pair(pair(head([1, [2, [3, null]]]), null), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], map(x => pair(head([1, [2, [3, null]]]), x), tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], pair(pair(head([1, [2, [3, null]]]), null), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]])));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], pair(pair(1, null), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]])));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], pair(pair(1, null), null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], pair([1, null], null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], pair([1, null], null)));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], [[1, null], null]));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[3, null], [[2, null], [[2, [3, null]], null]]], [[1, null], null]));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? reverse([[1, null], null]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? reverse([[1, null], null]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair((x => pair(head([1, [2, [3, null]]]), x))([3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? reverse([[1, null], null]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair((x => pair(head([1, [2, [3, null]]]), x))([3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? reverse([[1, null], null]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(pair(head([1, [2, [3, null]]]), [3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(pair(head([1, [2, [3, null]]]), [3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(pair(1, [3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair(pair(1, [3, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[3, null], [[2, null], [[2, [3, null]], null]]])), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], pair((x => pair(head([1, [2, [3, null]]]), x))([3, null]), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[3, null], [[2, null], [[2, [3, null]], null]]])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], pair((x => pair(head([1, [2, [3, null]]]), x))([3, null]), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], pair(pair(head([1, [2, [3, null]]]), [3, null]), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], pair(pair(head([1, [2, [3, null]]]), [3, null]), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], is_null([[2, null], [[2, [3, null]], null]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], pair(pair(1, [3, null]), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], is_null([[2, null], [[2, [3, null]], null]]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], pair(pair(1, [3, null]), [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], pair([1, [3, null]], [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], pair([1, [3, null]], [[1, null], null])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], [[1, [3, null]], [[1, null], null]]));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, null], [[2, [3, null]], null]], [[1, [3, null]], [[1, null], null]]));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair((x => pair(head([1, [2, [3, null]]]), x))([2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[2, null], [[2, [3, null]], null]]) ? reverse([[1, [3, null]], [[1, null], null]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair((x => pair(head([1, [2, [3, null]]]), x))([2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[2, null], [[2, [3, null]], null]]) ? reverse([[1, [3, null]], [[1, null], null]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(pair(head([1, [2, [3, null]]]), [2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? reverse([[1, [3, null]], [[1, null], null]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(pair(head([1, [2, [3, null]]]), [2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? reverse([[1, [3, null]], [[1, null], null]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(pair(1, [2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair(pair(1, [2, null]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, null], [[2, [3, null]], null]]))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, null], [[2, [3, null]], null]])), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], pair((x => pair(head([1, [2, [3, null]]]), x))([2, null]), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null])))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], pair((x => pair(head([1, [2, [3, null]]]), x))([2, null]), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], is_null([[2, [3, null]], null]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], pair(pair(head([1, [2, [3, null]]]), [2, null]), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], is_null([[2, [3, null]], null]) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], pair(pair(head([1, [2, [3, null]]]), [2, null]), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], pair(pair(1, [2, null]), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], false ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], pair(pair(1, [2, null]), [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], pair([1, [2, null]], [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], pair([1, [2, null]], [[1, [3, null]], [[1, null], null]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair((x => pair(head([1, [2, [3, null]]]), x))([2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair((x => pair(head([1, [2, [3, null]]]), x))([2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), [[2, [3, null]], null], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(pair(head([1, [2, [3, null]]]), [2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[2, [3, null]], null]) ? reverse([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(pair(head([1, [2, [3, null]]]), [2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[2, [3, null]], null]) ? reverse([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(pair(1, [2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? reverse([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair(pair(1, [2, [3, null]]), map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? reverse([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null])))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), tail([[2, [3, null]], null]), pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], map(x => pair(head([1, [2, [3, null]]]), x), null))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], map(x => pair(head([1, [2, [3, null]]]), x), null))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, pair((x => pair(head([1, [2, [3, null]]]), x))(head([[2, [3, null]], null])), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], is_null(null) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), map(x => pair(head([1, [2, [3, null]]]), x), tail(null))))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, pair((x => pair(head([1, [2, [3, null]]]), x))([2, [3, null]]), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], is_null(null) ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), map(x => pair(head([1, [2, [3, null]]]), x), tail(null))))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, pair((x => pair(head([1, [2, [3, null]]]), x))([2, [3, null]]), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], true ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), map(x => pair(head([1, [2, [3, null]]]), x), tail(null))))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, pair(pair(head([1, [2, [3, null]]]), [2, [3, null]]), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], true ? null : pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), map(x => pair(head([1, [2, [3, null]]]), x), tail(null))))))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, pair(pair(head([1, [2, [3, null]]]), [2, [3, null]]), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], null)))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, pair(pair(1, [2, [3, null]]), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], pair([1, [2, [3, null]]], null)))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, pair(pair(1, [2, [3, null]]), [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], [[1, [2, [3, null]]], null]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, pair([1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], pair([1, [2, null]], [[1, [2, [3, null]]], null]))));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, pair([1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, [[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], pair([1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $map(x => pair(head([1, [2, [3, null]]]), x), null, [[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null(null) ? reverse([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail(null), pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), [[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]])));
 
-append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], pair([1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]));
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null(null) ? reverse([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail(null), pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), [[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], true ? reverse([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail(null), pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), [[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], true ? reverse([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]) : $map(x => pair(head([1, [2, [3, null]]]), x), tail(null), pair((x => pair(head([1, [2, [3, null]]]), x))(head(null)), [[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], reverse([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], reverse([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]], null));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]], null));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]) ? null : $reverse(tail([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), pair(head([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), null)));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]) ? null : $reverse(tail([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), pair(head([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), null)));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? null : $reverse(tail([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), pair(head([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), null)));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? null : $reverse(tail([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), pair(head([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), null)));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(tail([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), pair(head([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), null)));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(tail([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), pair(head([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), null)));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [2, null]], [[1, [3, null]], [[1, null], null]]], pair(head([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), null)));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [2, null]], [[1, [3, null]], [[1, null], null]]], pair(head([[1, [2, [3, null]]], [[1, [2, null]], [[1, [3, null]], [[1, null], null]]]]), null)));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [2, null]], [[1, [3, null]], [[1, null], null]]], pair([1, [2, [3, null]]], null)));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [2, null]], [[1, [3, null]], [[1, null], null]]], pair([1, [2, [3, null]]], null)));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [2, null]], [[1, [3, null]], [[1, null], null]]], [[1, [2, [3, null]]], null]));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [2, null]], [[1, [3, null]], [[1, null], null]]], [[1, [2, [3, null]]], null]));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]) ? [[1, [2, [3, null]]], null] : $reverse(tail([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), pair(head([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), [[1, [2, [3, null]]], null])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]) ? [[1, [2, [3, null]]], null] : $reverse(tail([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), pair(head([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), [[1, [2, [3, null]]], null])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? [[1, [2, [3, null]]], null] : $reverse(tail([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), pair(head([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), [[1, [2, [3, null]]], null])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? [[1, [2, [3, null]]], null] : $reverse(tail([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), pair(head([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), [[1, [2, [3, null]]], null])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(tail([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), pair(head([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), [[1, [2, [3, null]]], null])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(tail([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), pair(head([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), [[1, [2, [3, null]]], null])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [3, null]], [[1, null], null]], pair(head([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), [[1, [2, [3, null]]], null])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [3, null]], [[1, null], null]], pair(head([[1, [2, null]], [[1, [3, null]], [[1, null], null]]]), [[1, [2, [3, null]]], null])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [3, null]], [[1, null], null]], pair([1, [2, null]], [[1, [2, [3, null]]], null])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [3, null]], [[1, null], null]], pair([1, [2, null]], [[1, [2, [3, null]]], null])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [3, null]], [[1, null], null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, [3, null]], [[1, null], null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[1, [3, null]], [[1, null], null]]) ? [[1, [2, null]], [[1, [2, [3, null]]], null]] : $reverse(tail([[1, [3, null]], [[1, null], null]]), pair(head([[1, [3, null]], [[1, null], null]]), [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[1, [3, null]], [[1, null], null]]) ? [[1, [2, null]], [[1, [2, [3, null]]], null]] : $reverse(tail([[1, [3, null]], [[1, null], null]]), pair(head([[1, [3, null]], [[1, null], null]]), [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? [[1, [2, null]], [[1, [2, [3, null]]], null]] : $reverse(tail([[1, [3, null]], [[1, null], null]]), pair(head([[1, [3, null]], [[1, null], null]]), [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? [[1, [2, null]], [[1, [2, [3, null]]], null]] : $reverse(tail([[1, [3, null]], [[1, null], null]]), pair(head([[1, [3, null]], [[1, null], null]]), [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(tail([[1, [3, null]], [[1, null], null]]), pair(head([[1, [3, null]], [[1, null], null]]), [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(tail([[1, [3, null]], [[1, null], null]]), pair(head([[1, [3, null]], [[1, null], null]]), [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, null], null], pair(head([[1, [3, null]], [[1, null], null]]), [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, null], null], pair(head([[1, [3, null]], [[1, null], null]]), [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, null], null], pair([1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, null], null], pair([1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, null], null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse([[1, null], null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[1, null], null]) ? [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]] : $reverse(tail([[1, null], null]), pair(head([[1, null], null]), [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null([[1, null], null]) ? [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]] : $reverse(tail([[1, null], null]), pair(head([[1, null], null]), [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]] : $reverse(tail([[1, null], null]), pair(head([[1, null], null]), [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], false ? [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]] : $reverse(tail([[1, null], null]), pair(head([[1, null], null]), [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(tail([[1, null], null]), pair(head([[1, null], null]), [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(tail([[1, null], null]), pair(head([[1, null], null]), [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(null, pair(head([[1, null], null]), [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(null, pair(head([[1, null], null]), [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(null, pair([1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(null, pair([1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(null, [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], $reverse(null, [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null(null) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : $reverse(tail(null), pair(head(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], is_null(null) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : $reverse(tail(null), pair(head(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], true ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : $reverse(tail(null), pair(head(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+
+append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], true ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : $reverse(tail(null), pair(head(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
 
 append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]);
 
 append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]);
 
-is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+$append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], xs => xs);
 
-is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+$append([null, [[3, null], [[2, null], [[2, [3, null]], null]]]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], xs => xs);
 
-false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? (xs => xs)([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)));
 
-false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+is_null([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]) ? (xs => xs)([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)));
 
-pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+false ? (xs => xs)([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)));
 
-pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+false ? (xs => xs)([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)));
 
-pair(null, append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+$append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)));
 
-pair(null, append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+$append(tail([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)));
 
-pair(null, append([[3, null], [[2, null], [[2, [3, null]], null]]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+$append([[3, null], [[2, null], [[2, [3, null]], null]]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)));
 
-pair(null, append([[3, null], [[2, null], [[2, [3, null]], null]]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
+$append([[3, null], [[2, null], [[2, [3, null]], null]]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)));
 
-pair(null, is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)));
 
-pair(null, is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+is_null([[3, null], [[2, null], [[2, [3, null]], null]]]) ? (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)));
 
-pair(null, false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+false ? (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)));
 
-pair(null, false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+false ? (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)));
 
-pair(null, pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+$append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)));
 
-pair(null, pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+$append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)));
 
-pair(null, pair([3, null], append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+$append([[2, null], [[2, [3, null]], null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)));
 
-pair(null, pair([3, null], append(tail([[3, null], [[2, null], [[2, [3, null]], null]]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+$append([[2, null], [[2, [3, null]], null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)));
 
-pair(null, pair([3, null], append([[2, null], [[2, [3, null]], null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+is_null([[2, null], [[2, [3, null]], null]]) ? (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)));
 
-pair(null, pair([3, null], append([[2, null], [[2, [3, null]], null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])));
+is_null([[2, null], [[2, [3, null]], null]]) ? (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)));
 
-pair(null, pair([3, null], is_null([[2, null], [[2, [3, null]], null]]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, null], [[2, [3, null]], null]]), append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+false ? (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)));
 
-pair(null, pair([3, null], is_null([[2, null], [[2, [3, null]], null]]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, null], [[2, [3, null]], null]]), append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+false ? (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)));
 
-pair(null, pair([3, null], false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, null], [[2, [3, null]], null]]), append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+$append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)));
 
-pair(null, pair([3, null], false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, null], [[2, [3, null]], null]]), append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+$append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)));
 
-pair(null, pair([3, null], pair(head([[2, null], [[2, [3, null]], null]]), append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+$append([[2, [3, null]], null], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)));
 
-pair(null, pair([3, null], pair(head([[2, null], [[2, [3, null]], null]]), append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+$append([[2, [3, null]], null], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)));
 
-pair(null, pair([3, null], pair([2, null], append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+is_null([[2, [3, null]], null]) ? (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)));
 
-pair(null, pair([3, null], pair([2, null], append(tail([[2, null], [[2, [3, null]], null]]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+is_null([[2, [3, null]], null]) ? (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)));
 
-pair(null, pair([3, null], pair([2, null], append([[2, [3, null]], null], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+false ? (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)));
 
-pair(null, pair([3, null], pair([2, null], append([[2, [3, null]], null], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+false ? (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)));
 
-pair(null, pair([3, null], pair([2, null], is_null([[2, [3, null]], null]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, [3, null]], null]), append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
+$append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)));
 
-pair(null, pair([3, null], pair([2, null], is_null([[2, [3, null]], null]) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, [3, null]], null]), append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
+$append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)));
 
-pair(null, pair([3, null], pair([2, null], false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, [3, null]], null]), append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
+$append(null, [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)));
 
-pair(null, pair([3, null], pair([2, null], false ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head([[2, [3, null]], null]), append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
+$append(null, [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)));
 
-pair(null, pair([3, null], pair([2, null], pair(head([[2, [3, null]], null]), append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
+is_null(null) ? (zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (zs => (xs => ...)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)))(pair(head(null), zs)));
 
-pair(null, pair([3, null], pair([2, null], pair(head([[2, [3, null]], null]), append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
+is_null(null) ? (zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (zs => (xs => ...)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)))(pair(head(null), zs)));
 
-pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
+true ? (zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (zs => (xs => ...)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)))(pair(head(null), zs)));
 
-pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], append(tail([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
+true ? (zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]) : $append(tail(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]], zs => (zs => (zs => (zs => (zs => (xs => ...)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)))(pair(head(null), zs)));
 
-pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], append(null, [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
+(zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]);
 
-pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], append(null, [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]])))));
+(zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), zs)))([[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]);
 
-pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], is_null(null) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head(null), append(tail(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))))));
+(zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
 
-pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], is_null(null) ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head(null), append(tail(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))))));
+(zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair(head([[2, [3, null]], null]), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
 
-pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], true ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head(null), append(tail(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))))));
+(zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair([2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
 
-pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], true ? [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]] : pair(head(null), append(tail(null), [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))))));
+(zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))(pair([2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]));
 
-pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+(zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))([[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]);
 
-pair(null, pair([3, null], pair([2, null], pair([2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]))));
+(zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), zs)))([[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]);
 
-pair(null, pair([3, null], pair([2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]])));
+(zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]));
 
-pair(null, pair([3, null], pair([2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]])));
+(zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair(head([[2, null], [[2, [3, null]], null]]), [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]));
 
-pair(null, pair([3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]));
+(zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair([2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]));
 
-pair(null, pair([3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]));
+(zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))(pair([2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]));
 
-pair(null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]);
+(zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))([[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]);
 
-pair(null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]);
+(zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), zs)))([[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]);
+
+(zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]));
+
+(zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair(head([[3, null], [[2, null], [[2, [3, null]], null]]]), [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]));
+
+(zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair([3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]));
+
+(zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))(pair([3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]));
+
+(zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))([[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]);
+
+(zs => (xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), zs)))([[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]);
+
+(xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]));
+
+(xs => xs)(pair(head([null, [[3, null], [[2, null], [[2, [3, null]], null]]]]), [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]));
+
+(xs => xs)(pair(null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]));
+
+(xs => xs)(pair(null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]));
+
+(xs => xs)([null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]]);
+
+(xs => xs)([null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]]);
 
 [null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]];
 
