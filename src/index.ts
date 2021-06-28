@@ -52,7 +52,6 @@ import * as es from 'estree'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
 import { forceIt } from './utils/operators'
-import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 import { TimeoutError } from './errors/timeoutErrors'
 import { loadModuleTabs } from './modules/moduleLoader'
 
@@ -467,9 +466,6 @@ export async function runInContext(
       context,
       value: redexedSteps
     })
-  }
-  if (context.chapter <= 2) {
-    addInfiniteLoopProtection(program, context.chapter === 2)
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
