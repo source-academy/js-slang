@@ -33,7 +33,7 @@ export function hybridizeNamed(name: string, value: any): Hybrid {
     }
 }
 
-function isHybrid(value: any): value is Hybrid {
+export function isHybrid(value: any): value is Hybrid {
     return typeof value === 'object' && value !== null && value.hasOwnProperty('symbolic')
 }
 
@@ -201,6 +201,7 @@ export const stdlibReplace = {
         tail.listHeads.push(newHybrid)
         return newHybrid
     },
+    // TODO: add some kind of wrapper for this for stream mode
     is_null: function(value: any) {
         const conc = shallowConcretize(value)
         const concResult = stdList.is_null(conc)
