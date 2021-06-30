@@ -1,77 +1,9 @@
 import * as sym from './symbolic'
 import * as create from '../utils/astCreator'
-import { generate } from 'astring'
-import * as es from 'estree'
+import * as st from './state'
+import { checkForInfinite } from './detect'
 
-
-// Object + functions called during runtime to check for infinite loops
-
-type CacheId = number
-type CachedExpression = [CacheId, es.Expression]
-
-type Path = CacheId[]
-type Transition = [string, any, CacheId][]
-type Iteration = [Path, Transition]
-type Positions = [number, number] | undefined
-type IterationsInfo = [Positions, number[]] // TODO rename this
-
-export interface State {
-    variablesModified: Map<string, sym.Hybrid>
-    variablesToReset: Set<string>
-    expressionCache: [Map<string, CachedExpression>, string[]]
-    mixedStack: Iteration[] // TODO: add a skip or sth
-    stackPointer: number
-    // Position, pointer to prev, pointer to each iteration of loop
-    loopStack: IterationsInfo[]
-    functionInfo: Map<string, IterationsInfo>
-    lastFunction: string
-    // TODO: threshold??
-}
-
-export const initState = () => ({
-    variablesModified: new Map(),
-    variablesToReset: new Set(),
-    expressionCache: [new Map(), []],
-    mixedStack: [[[],[]]],
-    stackPointer: 0,
-    loopStack: [],
-    functionInfo: new Map(),
-    lastFunction: ""
-}) as State
-
-function toCached(expr: es.Expression, state: State){
-    // TODO undefined here as something something
-    const asString = generate(expr)
-    const [forward, backward] = state.expressionCache
-    let item = forward.get(asString)
-    if (item === undefined) {
-        const id = forward.size
-        forward.set(asString, [id, expr])
-        backward[id] = asString
-        return id
-    } else {
-        return item[0]
-    }
-}
-
-function savePath(expr: es.Expression, state: State) {
-    const id = toCached(expr, state)
-    state.mixedStack[state.stackPointer][0].push(id)
-}
-
-function saveTransition(name: string, value: sym.Hybrid, state: State) {
-    const concrete = value.concrete
-    const id = toCached(value.symbolic, state)
-    state.mixedStack[state.stackPointer][1].push([name, concrete, id])
-}
-
-function newStackFrame(state: State) {
-    // put skipframes here. if current frame = frame behind it, change the behind one to skip (for resuming later)
-    state.mixedStack.push([[],[]])
-    return ++ state.stackPointer
-}
-
-function hybridize(name: string, originalValue: any, state: State) {
+function hybridize(name: string, originalValue: any, state: st.State) {
     let value = originalValue
     if (state.variablesToReset.has(name)) {
         value = sym.deepConcretizeInplace(value)
@@ -79,7 +11,7 @@ function hybridize(name: string, originalValue: any, state: State) {
     return sym.hybridizeNamed(name, value)
 }
 
-function saveVarIfHybrid(name: string, value: any, state: State) {
+function saveVarIfHybrid(name: string, value: any, state: st.State) {
     state.variablesToReset.delete(name)
     if (sym.isHybrid(value)) {
         state.variablesModified.set(name, value)
@@ -87,19 +19,19 @@ function saveVarIfHybrid(name: string, value: any, state: State) {
     return value
 }
 
-function saveBoolIfHybrid(value: any, state: State) {
+function saveBoolIfHybrid(value: any, state: st.State) {
     if (sym.isHybrid(value)) {
-        savePath(value.symbolic, state)
+        st.savePath(value.symbolic, state)
         return sym.shallowConcretize(value)
     }
     return value
 }
 
-function cachedUndefined(state: State) {
-    return toCached(create.identifier('undefined'), state)
+function cachedUndefined(state: st.State) {
+    return st.toCached(create.identifier('undefined'), state)
 }
 
-function preFunction(name: string, positions: Positions, args: [string, any][], state: State) {
+function preFunction(name: string, positions: st.Positions, args: [string, any][], state: st.State) {
     let info = state.functionInfo.get(name)
     if (info === undefined) {
         info = [positions, []]
@@ -107,25 +39,23 @@ function preFunction(name: string, positions: Positions, args: [string, any][], 
     } else {
         cleanUpVariables(state)
         const prevPointer = info[1][info[1].length - 1]
-        const transitions: Transition = []
+        const transitions: st.Transition = []
         for (const [name, val] of args) {
             if (sym.isHybrid(val)) {
-                transitions.push([name, val.concrete, toCached(val.symbolic, state)])
+                transitions.push([name, val.concrete, st.toCached(val.symbolic, state)])
             } else {
                 transitions.push([name, val.concrete, cachedUndefined(state)])
             }
             state.variablesToReset.add(name)
         }
         state.mixedStack[prevPointer][1].push(...transitions)
+        dispatchIfMeetsThreshold(info[1].slice(0, info[1].length-1), state, info, name)
     }
-    if (meetsThreshold(info[1].length, state)) {
-        dispatch(info[1])
-    }
-    info[1].push(newStackFrame(state))
+    info[1].push(st.newStackFrame(state))
     
 }
 
-function returnFunction(value: any, state: State) {
+function returnFunction(value: any, state: st.State) {
     let info = state.functionInfo.get(state.lastFunction)
     cleanUpVariables(state)
     // both should always happen but
@@ -138,39 +68,38 @@ function returnFunction(value: any, state: State) {
     return value
 }
 
-function enterLoop(positions: Positions, state: State) {
-    state.loopStack.unshift([positions, [newStackFrame(state)]])
+function enterLoop(positions: st.Positions, state: st.State) {
+    state.loopStack.unshift([positions, [st.newStackFrame(state)]])
 }
 
-function postLoop(state: State, ignoreMe?: any) {
+function postLoop(state: st.State, ignoreMe?: any) {
     // ignoreMe: hack to squeeze this in for statements
     const stackPositions = state.loopStack[0][1]
-    if(meetsThreshold(stackPositions.length, state)) {
-        dispatch(stackPositions)
-    }
+    dispatchIfMeetsThreshold(stackPositions.slice(1), state, state.loopStack[0])
     cleanUpVariables(state)
-    stackPositions.push(newStackFrame(state))
+    stackPositions.push(st.newStackFrame(state))
     return ignoreMe
 }
 
-function exitLoop(state: State) {
+function exitLoop(state: st.State) {
     cleanUpVariables(state)
     state.stackPointer = state.loopStack[0][1][0] - 1
     state.loopStack.shift()
 }
 
-function dispatch(stackPositions: number[]) {
-    const withoutFirst = stackPositions.slice(1)
-    return withoutFirst
+function dispatchIfMeetsThreshold(stackPositions: number[], state: st.State, info: st.IterationsInfo, functionName?: string) {
+    let checkpoint = state.threshold
+    while (checkpoint <= stackPositions.length) {
+        if (stackPositions.length === checkpoint) {
+            checkForInfinite(stackPositions, state, info, functionName)
+        }
+        checkpoint = checkpoint * 2
+    }
 }
 
-function meetsThreshold(n: number, state: State) {
-    return false
-}
-
-function cleanUpVariables(state: State) {
+function cleanUpVariables(state: st.State) {
     for (const [name, value] of state.variablesModified) {
-        saveTransition(name, value, state)
+        st.saveTransition(name, value, state)
         state.variablesToReset.add(name)
     }
 }

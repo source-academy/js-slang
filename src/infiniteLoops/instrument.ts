@@ -255,6 +255,7 @@ function trackFunctions(program: es.Node, functionsId: string, stateId: string) 
 // TODO naming? way to standardize/link w runtime names
 // TODO: add timeout stuff (same as transpiler, take note of system time)
 // TODO: add tail recursion
+// TODO: transform logical?
 // TODO: tests
 
 export function instrument(program: es.Node): [string, string, string] {
@@ -267,6 +268,5 @@ export function instrument(program: es.Node): [string, string, string] {
     trackLoops(program, functionsId, stateId)
     trackFunctions(program, functionsId, stateId)
     const code = generate(program)
-    console.log(code)
     return [code, functionsId, stateId]
 }
