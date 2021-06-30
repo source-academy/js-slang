@@ -6,6 +6,76 @@ import { simple, recursive, WalkerCallback } from '../utils/walkers'
 // Philosophy/idea/design here: minimal(?) interference w the syntax. Only
 // add necessary details/vars and leave most of the heavy lifing to the runtime
 
+function unshadowVariables(program: es.Node) {
+    const seenIds = new Set()
+    const env = [{}]
+    const genId = (name: string) => {
+        let count = 0
+        while(seenIds.has(`${name}_${count}`)) count++
+        const newName = `${name}_${count}`
+        seenIds.add(newName)
+        env[0][name] = newName
+        return newName
+    }
+    const unshadowFunctionInner = (node: es.FunctionDeclaration | es.ArrowFunctionExpression | es.FunctionExpression, s: undefined, callback: WalkerCallback<undefined>) => {
+        env.unshift({...env[0]})
+        for (const id of node.params as es.Identifier[]) {
+            id.name = genId(id.name)
+        }
+        callback(node.body, undefined)
+        env.shift()
+    }
+    recursive(program, [{}], {
+        BlockStatement(node: es.BlockStatement, s: undefined, callback: WalkerCallback<undefined>) {
+            env.unshift({...env[0]})
+            for (const stmt of node.body) {
+                callback(stmt, s)
+            }
+            env.shift()
+        },
+        VariableDeclarator(node: es.VariableDeclarator, s: undefined, callback: WalkerCallback<undefined>) {
+            node.id = node.id as es.Identifier
+            const newName = genId(node.id.name)
+            node.id.name = newName
+        },
+        FunctionDeclaration(node: es.FunctionDeclaration, s: undefined, callback: WalkerCallback<undefined>) {
+            node.id = node.id as es.Identifier
+            node.id.name = genId(node.id.name)
+            // note: params can shadow function name
+            env.unshift({...env[0]})
+            for (const id of node.params as es.Identifier[]) {
+                id.name = genId(id.name)
+            }
+            callback(node.body, undefined)
+            env.shift()
+        },
+        ForStatement(node: es.ForStatement, s: undefined, callback: WalkerCallback<undefined>) {
+            env.unshift({...env[0]})
+            if (node.init) callback(node.init, s)
+            if (node.test) callback(node.test, s)
+            if (node.update) callback(node.update, s)
+            callback(node.body, s)
+            env.shift()
+        },
+        ArrowFunctionExpression: unshadowFunctionInner,
+        FunctionExpression: unshadowFunctionInner,
+        Identifier(node: es.Identifier, s: undefined, callback: WalkerCallback<undefined>) {
+            node.name = env[0][node.name]
+        },
+        AssignmentExpression(node: es.AssignmentExpression, s: undefined, callback: WalkerCallback<undefined>) {
+            callback(node.left, s)
+            callback(node.right, s)
+        },
+
+    })
+}
+
+export function getOriginalName(name: string) {
+    let cutAt = name.length - 1
+    while(name.charAt(cutAt) !== '_') cutAt--
+    return name.slice(0, cutAt)
+}
+
 function findFunctionAndStateIds(program: es.Node) {
     // In the (unlikely) case the default ids are declared as variables in the code
     const seenIds = new Set()
@@ -26,7 +96,7 @@ function findFunctionAndStateIds(program: es.Node) {
                 }
             }
             // something fishy is going on. TODO how to handle
-            return ""
+            return "_"
         }
     }
     const baseFunId = "__InfLoopFns" // TODO change?
@@ -130,19 +200,19 @@ function savePositionAsExpression(position: es.SourceLocation | undefined | null
 }
 
 function trackLoops(program: es.Node, functionsId: string, stateId: string) {
-    const makeCallStatement = (name: string) => create.expressionStatement(create.callExpression(callFunction(name, functionsId), [create.identifier(stateId)]))
-    const loopWalker = (node: es.WhileStatement | es.ForStatement) => {
-        saveTheTest(node, functionsId, stateId)
-        const preLoop = create.expressionStatement(create.callExpression(callFunction("preLoop", functionsId), [savePositionAsExpression(node.loc), create.identifier(stateId)]))
-        const postLoop = makeCallStatement("postLoop")
-        inPlaceEnclose(node.body, preLoop, postLoop)
-        inPlaceEnclose(node, undefined, makeCallStatement("exitLoop"))
-    }
+    const makeCallStatement = (name: string, args: es.Expression[]) => create.expressionStatement(create.callExpression(callFunction(name, functionsId), args))
+    const stateExpr = create.identifier(stateId)
     simple(program, {
-        WhileStatement: loopWalker,
-        ForStatement: loopWalker,
-        BreakStatement(node: es.BreakStatement) {
-            inPlaceEnclose(node, makeCallStatement("breakLoop"))
+        WhileStatement: (node: es.WhileStatement) => {
+            saveTheTest(node, functionsId, stateId)
+            inPlaceEnclose(node.body, undefined, makeCallStatement("postLoop", [stateExpr]))
+            inPlaceEnclose(node, makeCallStatement("enterLoop", [savePositionAsExpression(node.loc), stateExpr]), makeCallStatement("exitLoop", [stateExpr]))
+        },
+        ForStatement: (node: es.ForStatement) => {
+            saveTheTest(node, functionsId, stateId)
+            const theUpdate = node.update? node.update : create.identifier('undefined')
+            node.update = create.callExpression(callFunction("postLoop", functionsId), [stateExpr, theUpdate])
+            inPlaceEnclose(node, makeCallStatement("enterLoop", [savePositionAsExpression(node.loc), stateExpr]), makeCallStatement("exitLoop", [stateExpr]))
         }
     })
 }
@@ -188,6 +258,7 @@ function trackFunctions(program: es.Node, functionsId: string, stateId: string) 
 // TODO: tests
 
 export function instrument(program: es.Node): [string, string, string] {
+    unshadowVariables(program) // TODO big test this
     const [functionsId, stateId] = findFunctionAndStateIds(program)
     hybridizeBinaryUnaryOperations(program, functionsId)
     trackVariableRetrieval(program, functionsId, stateId)

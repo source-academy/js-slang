@@ -65,6 +65,16 @@ export function makeDummyHybrid(concrete: any): HybridValue {
     return val
 }
 
+export function getBooleanResult(value: HybridValue) {
+    if (value.concrete) return value.symbolic
+
+    if (value.negation !== undefined) {
+        return value.negation
+    } else {
+        return create.unaryExpression('!', value.symbolic)
+    }
+}
+
 const hybridArrayConstructor = (concrete: any, symbolic: es.Expression, listHeads = [] as HybridArray[]) => ({ type: 'array',
     concrete: concrete,
     symbolic: symbolic,
@@ -112,7 +122,7 @@ export function deepConcretizeInplace(value: any) {
     }
 }
 
-function shallowConcretize(value: any) {
+export function shallowConcretize(value: any) {
     if (isHybrid(value)) {
         return value.concrete
     } else {
