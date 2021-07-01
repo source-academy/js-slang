@@ -20,8 +20,13 @@ function saveVarIfHybrid(name: string, value: any, state: st.State) {
 }
 
 function saveBoolIfHybrid(value: any, state: st.State) {
-    if (sym.isHybrid(value)) {
-        st.savePath(value.symbolic, state)
+    if (sym.isHybrid(value) && value.type === 'value') {
+        // BIG TODO: invalid?
+        let theExpr = value.symbolic
+        if (!value.concrete) {
+            theExpr = value.negation ? value.negation : create.unaryExpression('!', theExpr)
+        }
+        st.savePath(theExpr, state)
         return sym.shallowConcretize(value)
     }
     return value

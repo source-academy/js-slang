@@ -153,6 +153,12 @@ export function evaluateHybridBinary(op: es.BinaryOperator, lhs: any, rhs: any) 
         if (neg !== undefined) {
             res.negation = neg
         }
+        if (op === '!==' || op === '===') {
+            const concIsNumber = (x:any) => typeof shallowConcretize(x) === 'number'
+            if (!(concIsNumber(lhs) && concIsNumber(rhs))) {
+                res.invalid = true
+            }
+        }
         return res
     } else {
         return evaluateBinaryExpression(op, lhs, rhs)
