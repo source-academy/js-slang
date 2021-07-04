@@ -19,11 +19,15 @@ export class State {
   // Position, pointer to prev, pointer to each iteration of loop
   loopStack: IterationsInfo[]
   functionInfo: Map<string, IterationsInfo>
-  lastFunction: string
+  functionNameStack: string[]
   threshold: number
+  streamThreshold: number
   startTime: number
   timeout: number
-  constructor(timeout = 4000, threshold = 20) {
+  streamMode: boolean
+  streamLastFunction: string | undefined
+  streamCounts: Map<string, number>
+  constructor(timeout = 4000, threshold = 20, streamThreshold = threshold * 2) {
     // arbitrary defaults
     this.variablesModified = new Map()
     this.variablesToReset = new Set()
@@ -32,10 +36,14 @@ export class State {
     this.stackPointer = 0
     this.loopStack = []
     this.functionInfo = new Map()
-    this.lastFunction = ''
+    this.functionNameStack = []
     this.threshold = threshold
+    this.streamThreshold = streamThreshold
     this.startTime = Date.now()
     this.timeout = timeout
+    this.streamMode = false
+    this.streamLastFunction = undefined
+    this.streamCounts = new Map()
   }
   static isInvalidPath(path: Path) {
     return path.length === 1 && path[0] === -1
@@ -95,13 +103,11 @@ export class State {
     }
   }
   public returnLastFunction() {
-    const info = this.functionInfo.get(this.lastFunction)
-    // should always happen but
-    if (info !== undefined) {
-      const lastPosn = info[1].pop()
-      if (lastPosn !== undefined) {
-        this.stackPointer = lastPosn - 1
-      }
+    const lastFunction = this.functionNameStack.pop()
+    const info = this.functionInfo.get(lastFunction as string) as IterationsInfo
+    const lastPosn = info[1].pop()
+    if (lastPosn !== undefined) {
+      this.stackPointer = lastPosn - 1
     }
   }
   public hasTimedOut() {

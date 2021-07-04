@@ -2,6 +2,7 @@ import * as sym from './symbolic'
 import * as create from '../utils/astCreator'
 import * as st from './state'
 import * as es from 'estree'
+import * as stdList from '../stdlib/list'
 import { checkForInfinite, InfiniteLoopReportingError } from './detect'
 import { instrument } from './instrument'
 import { parse } from '../parser/parser'
@@ -44,8 +45,10 @@ function saveBoolIfHybrid(value: any, state: st.State) {
     }
     state.savePath(theExpr)
     return sym.shallowConcretize(value)
+  } else {
+    state.setInvalidPath()
+    return value
   }
-  return value
 }
 
 function cachedUndefined(state: st.State) {
@@ -54,9 +57,9 @@ function cachedUndefined(state: st.State) {
 
 function preFunction(name: string, line: number, args: [string, any][], state: st.State) {
   // TODO: big cleanup, 'hide' st.Transition in some function there
-  // also for positions (might just decide to record line number, discard col.)
   // feature not bug: don't put line numbers for calls so student has to trace the code themselves
   checkTimeout(state)
+  state.functionNameStack.push(name)
   let info = state.functionInfo.get(name)
   if (info === undefined) {
     info = [line, []]
@@ -73,15 +76,17 @@ function preFunction(name: string, line: number, args: [string, any][], state: s
       state.variablesToReset.add(name)
     }
     const prevPointer = info[1][info[1].length - 1]
-    state.mixedStack[prevPointer][1].push(...transitions)
-    dispatchIfMeetsThreshold(info[1].slice(0, info[1].length - 1), state, info, name)
+    if (prevPointer > -1) {
+      state.mixedStack[prevPointer][1].push(...transitions)
+      dispatchIfMeetsThreshold(info[1].slice(0, info[1].length - 1), state, info, name)
+    }
   }
   info[1].push(state.newStackFrame())
 }
 
 function returnFunction(value: any, state: st.State) {
   state.cleanUpVariables()
-  state.returnLastFunction()
+  if (!state.streamMode) state.returnLastFunction()
   return value
 }
 
@@ -119,7 +124,42 @@ function dispatchIfMeetsThreshold(
   }
 }
 
-const builtinSpecialCases = {}
+const builtinSpecialCases = {
+  is_null(maybeHybrid: any, state?: st.State) {
+    const xs = sym.shallowConcretize(maybeHybrid)
+    const conc = stdList.is_null(xs)
+    const theTail = stdList.is_pair(xs) ? xs[1] : undefined
+    const isStream = typeof theTail === 'function'
+    if (state && isStream) {
+      const lastFunction = state.functionNameStack[state.functionNameStack.length - 1]
+      if (state.streamMode === true && state.streamLastFunction === lastFunction) {
+        let next = theTail()
+        for (let i = 0; i < state.threshold; i++) {
+          if (stdList.is_null(next)) {
+            break
+          } else {
+            const nextTail = stdList.is_pair(next) ? next[1] : undefined
+            next = nextTail()
+          }
+        }
+        return InfiniteLoopReportingError.timeout()
+      } else {
+        let count = state.streamCounts.get(lastFunction)
+        if (count === undefined) {
+          count = 1
+        }
+        if (count > state.streamThreshold) {
+          state.streamMode = true
+          state.streamLastFunction = lastFunction
+        }
+        state.streamCounts.set(lastFunction, count + 1)
+      }
+    } else {
+      return conc
+    }
+  },
+  display: nothingFunction
+}
 
 function prepareBuiltins(oldBuiltins: Map<string, any>) {
   const newBuiltins = new Map<string, any>()
@@ -187,6 +227,7 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
   try {
     sandboxedRun(instrumentedCode, functions, state, newBuiltins)
   } catch (e) {
+    console.log(e)
     if (e instanceof InfiniteLoopReportingError) {
       return [e.message, e.type, Date.now() - startTime]
     }

@@ -1,7 +1,6 @@
 import * as create from '../utils/astCreator'
 import * as es from 'estree'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
-import * as stdList from '../stdlib/list'
 
 // data structure for symbolic + hybrid values
 
@@ -17,7 +16,6 @@ export type HybridArray = {
   type: 'array'
   concrete: any
   symbolic: es.Expression
-  listHeads: HybridArray[] // for set_tail stuff
   invalid: boolean
 }
 
@@ -37,15 +35,11 @@ export function isHybrid(value: any): value is Hybrid {
   return typeof value === 'object' && value !== null && value.hasOwnProperty('symbolic')
 }
 
-function isHybridArray(value: any): value is HybridArray {
-  return isHybrid(value) && value.type === 'array'
-}
-
 function isConcreteValue(value: any) {
   return !(isHybrid(value) || Array.isArray(value))
 }
 
-const hybridValueConstructor = (concrete: any, symbolic: es.Expression, invalid = false) =>
+export const hybridValueConstructor = (concrete: any, symbolic: es.Expression, invalid = false) =>
   ({
     type: 'value',
     concrete: concrete,
@@ -76,7 +70,7 @@ export function getBooleanResult(value: HybridValue) {
   }
 }
 
-const hybridArrayConstructor = (
+export const hybridArrayConstructor = (
   concrete: any,
   symbolic: es.Expression,
   listHeads = [] as HybridArray[]
@@ -113,7 +107,8 @@ function makeHybridArray(name: string, concrete: any[]): HybridArray {
     }
   }
   innerInplace(concrete)
-  return hybridArrayConstructor(concrete, create.identifier(`${name}'len`))
+  // NOTE: below symbolic value won't be used in SMT
+  return hybridArrayConstructor(concrete, create.identifier(`${name}'array`))
 }
 
 export function deepConcretizeInplace(value: any) {
@@ -203,62 +198,5 @@ export function evaluateHybridUnary(op: es.UnaryOperator, val: any) {
     return hybridValueConstructor(evaluateUnaryExpression(op, shallowConcretize(val)), getAST(val))
   } else {
     return evaluateUnaryExpression(op, val)
-  }
-}
-
-export const stdlibReplace = {
-  tail: function (value: any) {
-    const conc = shallowConcretize(value)
-    const concResult = stdList.tail(conc)
-    if (!isHybridArray(value)) {
-      return concResult
-    }
-
-    const newExpr = create.binaryExpression('-', value.symbolic, create.literal(1))
-    const newHeads = value.listHeads.concat([value])
-    return hybridArrayConstructor(concResult, newExpr, newHeads)
-  },
-  pair: function (head: any, tail: any) {
-    const concHead = shallowConcretize(head)
-    const concTail = shallowConcretize(tail)
-    const concResult = stdList.pair(concHead, concTail)
-    if (!isHybridArray(tail)) {
-      return concResult
-    }
-
-    const newExpr = create.binaryExpression('+', tail.symbolic, create.literal(1))
-    const newHeads = tail.listHeads
-    const newHybrid = hybridArrayConstructor(concResult, newExpr, newHeads)
-    tail.listHeads.push(newHybrid)
-    return newHybrid
-  },
-  // TODO: add some kind of wrapper for this for stream mode
-  is_null: function (value: any) {
-    const conc = shallowConcretize(value)
-    const concResult = stdList.is_null(conc)
-    if (!isHybridArray(value)) {
-      return concResult
-    }
-    if (value.invalid) {
-      const result = hybridValueConstructor(concResult, create.literal(concResult))
-      result.invalid = true
-      return result
-    } else {
-      const newExpr = create.binaryExpression('===', value.symbolic, create.literal(0))
-      const negation = create.binaryExpression('>', value.symbolic, create.literal(0))
-      const result = hybridValueConstructor(concResult, newExpr)
-      result.negation = negation
-      return
-    }
-  },
-  set_tail: function (original: any, newTail: any) {
-    const concHead = shallowConcretize(original)
-    const concTail = shallowConcretize(newTail)
-    stdList.set_tail(concHead, concTail)
-    if (isHybridArray(original)) {
-      for (const item of [original].concat(original.listHeads)) {
-        item.invalid = true
-      }
-    }
   }
 }

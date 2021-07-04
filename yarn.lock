@@ -1515,7 +1515,7 @@ ajv@^8.0.1:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-"alt-ergo-modified@file:./altErgo/":
+"alt-ergo-modified@file:./alt-ergo-modified/":
   version "1.0.0"
 
 ansi-colors@^4.1.1:

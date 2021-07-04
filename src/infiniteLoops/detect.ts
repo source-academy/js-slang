@@ -37,10 +37,17 @@ export class InfiniteLoopReportingError extends Error {
   }
 }
 
-function messageHeader(itInfo: st.IterationsInfo, functionName: string | undefined) {
+function messageHeader(
+  itInfo: st.IterationsInfo,
+  functionName: string | undefined,
+  streamMode: boolean
+) {
   const entityName = functionName ? `function ${getOriginalName(functionName)}` : 'loop'
   const positionString = itInfo[0] !== -1 ? `declared at line ${itInfo[0]}` : 'unknown position'
-  return `The ${entityName} at ${positionString} has encountered an infinite loop.`
+  // TODO stream mode
+  return streamMode
+    ? `Forcing an infinite stream: ${entityName}.`
+    : `The ${entityName} at ${positionString} has encountered an infinite loop.`
 }
 
 export function checkForInfinite(
@@ -52,23 +59,30 @@ export function checkForInfinite(
   // TODO: check if this is correct
   // TODO: small stacktrace
   if (state.mixedStack[stackPositions[0]][0].length === 0) {
-    const message = messageHeader(itInfo, functionName) + '\nIt has no base case.'
+    const message = messageHeader(itInfo, functionName, state.streamMode) + '\nIt has no base case.'
     InfiniteLoopReportingError.report(message, InfiniteLoopErrorType.NoBaseCase)
   }
   // arbitrarily using same threshold
-  const circular = checkForCycle(
-    stackPositions.slice(stackPositions.length - state.threshold),
-    state
-  )
+  let circular
+  try {
+    circular = checkForCycle(stackPositions.slice(stackPositions.length - state.threshold), state)
+  } catch (e) {
+    circular = false
+  }
   if (circular) {
-    const message = messageHeader(itInfo, functionName) + '\nIt has the infinite cycle: ' + circular
+    const message =
+      messageHeader(itInfo, functionName, state.streamMode) +
+      '\nIt has the infinite cycle: ' +
+      circular
     InfiniteLoopReportingError.report(message, InfiniteLoopErrorType.Cycle)
   } else {
     const code = codeToDispatch(stackPositions, state)
     const pass = runUntilValid(code)
     if (pass) {
       const message =
-        messageHeader(itInfo, functionName) + '\nIn particular, when the variables ' + pass
+        messageHeader(itInfo, functionName, state.streamMode) +
+        '\nIn particular, when the variables ' +
+        pass
       InfiniteLoopReportingError.report(message, InfiniteLoopErrorType.FromSmt)
     }
   }

@@ -513,7 +513,7 @@ export async function runInContext(
       })
     } catch (error) {
       // TODO: only when infinite loop related errors
-      testForInfiniteLoop(code, previousCodeStack)
+      console.log(testForInfiniteLoop(code, previousCodeStack.slice(1)))
       if (error instanceof RuntimeSourceError) {
         context.errors.push(error)
         if (error instanceof TimeoutError) {

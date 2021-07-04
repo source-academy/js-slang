@@ -8,7 +8,7 @@ import { simple, recursive, WalkerCallback } from '../utils/walkers'
 
 function unshadowVariables(program: es.Node, functionsId: string, predefined = {}) {
   const seenIds = new Set()
-  const env = [predefined] // TODO this etc
+  const env = [predefined]
   const genId = (name: string) => {
     let count = 0
     while (seenIds.has(`${name}_${count}`)) count++
@@ -111,6 +111,16 @@ export function getOriginalName(name: string) {
   let cutAt = name.length - 1
   while (name.charAt(cutAt) !== '_') cutAt--
   return name.slice(0, cutAt)
+}
+
+function addStateToIsNull(program: es.Node, stateId: string) {
+  simple(program, {
+    CallExpression(node: es.CallExpression) {
+      if (node.callee.type === 'Identifier' && node.callee.name === 'is_null_0') {
+        node.arguments.push(create.identifier(stateId))
+      }
+    }
+  })
 }
 
 function callFunction(fun: string, functionsId: string) {
@@ -306,10 +316,21 @@ function builtinsToStmts(builtinsName: string, builtins: IterableIterator<string
   return [...builtins].map(makeDecl)
 }
 
+function toVarDeclaration(stmt: es.Statement) {
+  simple(stmt, {
+    VariableDeclaration(node: es.VariableDeclaration) {
+      node.kind = 'var'
+    }
+  })
+}
+
 function wrapOldCode(current: es.Program, toWrap: es.Statement[]) {
+  for (const stmt of toWrap) {
+    toVarDeclaration(stmt)
+  }
   const tryStmt: es.TryStatement = {
     type: 'TryStatement',
-    block: create.blockStatement([...(toWrap as es.Statement[])]),
+    block: create.blockStatement([...toWrap]),
     handler: {
       type: 'CatchClause',
       param: create.identifier('e'),
@@ -344,6 +365,7 @@ export function instrument(
   trackIfStatements(program, functionsId, stateId)
   trackLoops(program, functionsId, stateId)
   trackFunctions(program, functionsId, stateId)
+  addStateToIsNull(program, stateId)
   const code = generate(program)
   return [code, functionsId, stateId, builtinsId]
 }
