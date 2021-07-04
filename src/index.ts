@@ -54,6 +54,7 @@ import { typeToString } from './utils/stringify'
 import { forceIt } from './utils/operators'
 import { TimeoutError } from './errors/timeoutErrors'
 import { loadModuleTabs } from './modules/moduleLoader'
+import { testForInfiniteLoop } from './infiniteLoops/runtime'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -152,7 +153,7 @@ function convertNativeErrorToSourceError(
   }
 }
 
-let previousCode = ''
+const previousCodeStack: string[] = []
 let isPreviousCodeTimeoutError = false
 
 function determineExecutionMethod(theOptions: IOptions, context: Context, program: Program) {
@@ -427,12 +428,12 @@ export async function runInContext(
   }
 
   if (context.variant === 'concurrent') {
-    if (previousCode === code) {
+    if (previousCodeStack[0] === code) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {
       context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
-    previousCode = code
+    previousCodeStack.unshift(code)
     try {
       return Promise.resolve({
         status: 'finished',
@@ -475,13 +476,13 @@ export async function runInContext(
     return runInContext(code, context, options)
   }
   if (isNativeRunnable) {
-    if (previousCode === code && isPreviousCodeTimeoutError) {
+    if (previousCodeStack[0] === code && isPreviousCodeTimeoutError) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else if (!options.isPrelude) {
       context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
     if (!options.isPrelude) {
-      previousCode = code
+      previousCodeStack.unshift(code)
     }
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
@@ -511,6 +512,8 @@ export async function runInContext(
         value
       })
     } catch (error) {
+      // TODO: only when infinite loop related errors
+      testForInfiniteLoop(code, previousCodeStack)
       if (error instanceof RuntimeSourceError) {
         context.errors.push(error)
         if (error instanceof TimeoutError) {

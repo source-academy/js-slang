@@ -1,70 +1,110 @@
-import * as sym from './symbolic';
-import { generate } from 'astring';
-import * as es from 'estree';
+import * as sym from './symbolic'
+import { generate } from 'astring'
+import * as es from 'estree'
 
 // Object + functions called during runtime to check for infinite loops
-type CacheId = number;
-type CachedExpression = [CacheId, es.Expression];
-type Path = CacheId[];
-export type Transition = [string, any, CacheId][];
-type Iteration = [Path, Transition];
-export type Positions = [number, number] | undefined;
-export type IterationsInfo = [Positions, number[]]; // TODO rename this
+type CacheId = number
+type CachedExpression = [CacheId, es.Expression]
+type Path = CacheId[]
+export type Transition = [string, any, CacheId][]
+type Iteration = [Path, Transition]
+export type IterationsInfo = [number, number[]] // TODO rename this
 
+export class State {
+  variablesModified: Map<string, sym.Hybrid>
+  variablesToReset: Set<string>
+  expressionCache: [Map<string, CachedExpression>, string[]]
+  mixedStack: Iteration[] // TODO: add a skip or sth
+  stackPointer: number
+  // Position, pointer to prev, pointer to each iteration of loop
+  loopStack: IterationsInfo[]
+  functionInfo: Map<string, IterationsInfo>
+  lastFunction: string
+  threshold: number
+  startTime: number
+  timeout: number
+  constructor(timeout = 4000, threshold = 20) {
+    // arbitrary defaults
+    this.variablesModified = new Map()
+    this.variablesToReset = new Set()
+    this.expressionCache = [new Map(), []]
+    this.mixedStack = [[[], []]]
+    this.stackPointer = 0
+    this.loopStack = []
+    this.functionInfo = new Map()
+    this.lastFunction = ''
+    this.threshold = threshold
+    this.startTime = Date.now()
+    this.timeout = timeout
+  }
+  static isInvalidPath(path: Path) {
+    return path.length === 1 && path[0] === -1
+  }
 
-export interface State {
-    variablesModified: Map<string, sym.Hybrid>;
-    variablesToReset: Set<string>;
-    expressionCache: [Map<string, CachedExpression>, string[]];
-    mixedStack: Iteration[]; // TODO: add a skip or sth
-    stackPointer: number;
-    // Position, pointer to prev, pointer to each iteration of loop
-    loopStack: IterationsInfo[];
-    functionInfo: Map<string, IterationsInfo>;
-    lastFunction: string;
-    threshold: number;
-}
-
-export const initState = () => ({
-    variablesModified: new Map(),
-    variablesToReset: new Set(),
-    expressionCache: [new Map(), []],
-    mixedStack: [[[], []]],
-    stackPointer: 0,
-    loopStack: [],
-    functionInfo: new Map(),
-    lastFunction: "",
-    threshold: 20 // arbitrary?
-}) as State;
-export function toCached(expr: es.Expression, state: State) {
-    // TODO undefined here as something something
-    const asString = generate(expr);
-    const [forward, backward] = state.expressionCache;
-    let item = forward.get(asString);
+  public getMaybeConc(at: number) {
+    return this.mixedStack[at][1].map(x => [x[0], x[1]])
+  }
+  public exitLoop() {
+    this.stackPointer = this.loopStack[0][1][0] - 1
+    this.loopStack.shift()
+  }
+  public toCached(expr: es.Expression) {
+    const asString = generate(expr)
+    const [forward, backward] = this.expressionCache
+    const item = forward.get(asString)
     if (item === undefined) {
-        const id = forward.size;
-        forward.set(asString, [id, expr]);
-        backward[id] = asString;
-        return id;
+      const id = forward.size
+      forward.set(asString, [id, expr])
+      backward[id] = asString
+      return id
     } else {
-        return item[0];
+      return item[0]
     }
-}
-export function savePath(expr: es.Expression, state: State) {
-    const id = toCached(expr, state);
-    state.mixedStack[state.stackPointer][0].push(id);
-}
-export function saveTransition(name: string, value: sym.Hybrid, state: State) {
-    const concrete = value.concrete;
-    const id = toCached(value.symbolic, state);
-    state.mixedStack[state.stackPointer][1].push([name, concrete, id]);
-}
-export function newStackFrame(state: State) {
+  }
+  public savePath(expr: es.Expression) {
+    const currentPath = this.mixedStack[this.stackPointer][0]
+    if (!State.isInvalidPath(currentPath)) {
+      const id = this.toCached(expr)
+      currentPath.push(id)
+    }
+  }
+  public setInvalidPath() {
+    this.mixedStack[this.stackPointer][0] = [-1]
+  }
+  public saveTransition(name: string, value: sym.Hybrid) {
+    const concrete = value.concrete
+    const id = this.toCached(value.symbolic)
+    this.mixedStack[this.stackPointer][1].push([name, concrete, id])
+  }
+  public newStackFrame() {
     // put skipframes here. if current frame = frame behind it, change the behind one to skip (for resuming later)
-    state.mixedStack.push([[], []]);
-    return ++state.stackPointer;
-}
-
-export function getMaybeConc(iteration: Iteration) {
-    return iteration[1].map(x=>[x[0], x[1]])
+    this.mixedStack.push([[], []])
+    return ++this.stackPointer
+  }
+  public getCachedString(id: number) {
+    return this.expressionCache[1][id]
+  }
+  public getCachedExprFromString(str: string) {
+    const val = this.expressionCache[0].get(str)
+    return (val as [number, es.Expression])[1]
+  }
+  public cleanUpVariables() {
+    for (const [name, value] of this.variablesModified) {
+      this.saveTransition(name, value)
+      this.variablesToReset.add(name)
+    }
+  }
+  public returnLastFunction() {
+    const info = this.functionInfo.get(this.lastFunction)
+    // should always happen but
+    if (info !== undefined) {
+      const lastPosn = info[1].pop()
+      if (lastPosn !== undefined) {
+        this.stackPointer = lastPosn - 1
+      }
+    }
+  }
+  public hasTimedOut() {
+    return Date.now() - this.startTime > this.timeout
+  }
 }

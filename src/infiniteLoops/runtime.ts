@@ -1,123 +1,195 @@
 import * as sym from './symbolic'
 import * as create from '../utils/astCreator'
 import * as st from './state'
-import { checkForInfinite } from './detect'
+import * as es from 'estree'
+import { checkForInfinite, InfiniteLoopReportingError } from './detect'
+import { instrument } from './instrument'
+import { parse } from '../parser/parser'
+import { createContext } from '../index'
+
+function checkTimeout(state: st.State) {
+  if (state.hasTimedOut()) {
+    InfiniteLoopReportingError.timeout()
+  }
+}
 
 function hybridize(name: string, originalValue: any, state: st.State) {
-    let value = originalValue
-    if (state.variablesToReset.has(name)) {
-        value = sym.deepConcretizeInplace(value)
-    }
-    return sym.hybridizeNamed(name, value)
+  if (typeof originalValue === 'function') {
+    return originalValue
+  }
+  let value = originalValue
+  if (state.variablesToReset.has(name)) {
+    value = sym.deepConcretizeInplace(value)
+  }
+  return sym.hybridizeNamed(name, value)
 }
 
 function saveVarIfHybrid(name: string, value: any, state: st.State) {
-    state.variablesToReset.delete(name)
-    if (sym.isHybrid(value)) {
-        state.variablesModified.set(name, value)
-    }
-    return value
+  state.variablesToReset.delete(name)
+  if (sym.isHybrid(value)) {
+    state.variablesModified.set(name, value)
+  }
+  return value
 }
 
 function saveBoolIfHybrid(value: any, state: st.State) {
-    if (sym.isHybrid(value) && value.type === 'value') {
-        // BIG TODO: invalid?
-        let theExpr = value.symbolic
-        if (!value.concrete) {
-            theExpr = value.negation ? value.negation : create.unaryExpression('!', theExpr)
-        }
-        st.savePath(theExpr, state)
-        return sym.shallowConcretize(value)
+  if (sym.isHybrid(value) && value.type === 'value') {
+    if (value.invalid) {
+      state.setInvalidPath()
+      return sym.shallowConcretize(value)
     }
-    return value
+    let theExpr = value.symbolic
+    if (!value.concrete) {
+      theExpr = value.negation ? value.negation : create.unaryExpression('!', theExpr)
+    }
+    state.savePath(theExpr)
+    return sym.shallowConcretize(value)
+  }
+  return value
 }
 
 function cachedUndefined(state: st.State) {
-    return st.toCached(create.identifier('undefined'), state)
+  return state.toCached(create.identifier('undefined'))
 }
 
-function preFunction(name: string, positions: st.Positions, args: [string, any][], state: st.State) {
-    let info = state.functionInfo.get(name)
-    if (info === undefined) {
-        info = [positions, []]
-        state.functionInfo.set(name, info)
-    } else {
-        cleanUpVariables(state)
-        const prevPointer = info[1][info[1].length - 1]
-        const transitions: st.Transition = []
-        for (const [name, val] of args) {
-            if (sym.isHybrid(val)) {
-                transitions.push([name, val.concrete, st.toCached(val.symbolic, state)])
-            } else {
-                transitions.push([name, val.concrete, cachedUndefined(state)])
-            }
-            state.variablesToReset.add(name)
-        }
-        state.mixedStack[prevPointer][1].push(...transitions)
-        dispatchIfMeetsThreshold(info[1].slice(0, info[1].length-1), state, info, name)
+function preFunction(name: string, line: number, args: [string, any][], state: st.State) {
+  // TODO: big cleanup, 'hide' st.Transition in some function there
+  // also for positions (might just decide to record line number, discard col.)
+  // feature not bug: don't put line numbers for calls so student has to trace the code themselves
+  checkTimeout(state)
+  let info = state.functionInfo.get(name)
+  if (info === undefined) {
+    info = [line, []]
+    state.functionInfo.set(name, info)
+  } else {
+    state.cleanUpVariables()
+    const transitions: st.Transition = []
+    for (const [name, val] of args) {
+      if (sym.isHybrid(val)) {
+        transitions.push([name, val.concrete, state.toCached(val.symbolic)])
+      } else {
+        transitions.push([name, val, cachedUndefined(state)])
+      }
+      state.variablesToReset.add(name)
     }
-    info[1].push(st.newStackFrame(state))
-    
+    const prevPointer = info[1][info[1].length - 1]
+    state.mixedStack[prevPointer][1].push(...transitions)
+    dispatchIfMeetsThreshold(info[1].slice(0, info[1].length - 1), state, info, name)
+  }
+  info[1].push(state.newStackFrame())
 }
 
 function returnFunction(value: any, state: st.State) {
-    let info = state.functionInfo.get(state.lastFunction)
-    cleanUpVariables(state)
-    // both should always happen but
-    if (info !== undefined) {
-        const lastPosn = info[1].pop()
-        if (lastPosn !== undefined) {
-            state.stackPointer = lastPosn - 1
-        }
-    }
-    return value
+  state.cleanUpVariables()
+  state.returnLastFunction()
+  return value
 }
 
-function enterLoop(positions: st.Positions, state: st.State) {
-    state.loopStack.unshift([positions, [st.newStackFrame(state)]])
+function enterLoop(line: number, state: st.State) {
+  state.loopStack.unshift([line, [state.newStackFrame()]])
 }
 
 function postLoop(state: st.State, ignoreMe?: any) {
-    // ignoreMe: hack to squeeze this in for statements
-    const stackPositions = state.loopStack[0][1]
-    dispatchIfMeetsThreshold(stackPositions.slice(1), state, state.loopStack[0])
-    cleanUpVariables(state)
-    stackPositions.push(st.newStackFrame(state))
-    return ignoreMe
+  // ignoreMe: hack to squeeze this inside the 'update' of for statements
+  checkTimeout(state)
+  const stackPositions = state.loopStack[0][1]
+  dispatchIfMeetsThreshold(stackPositions.slice(1), state, state.loopStack[0])
+  state.cleanUpVariables()
+  stackPositions.push(state.newStackFrame())
+  return ignoreMe
 }
 
 function exitLoop(state: st.State) {
-    cleanUpVariables(state)
-    state.stackPointer = state.loopStack[0][1][0] - 1
-    state.loopStack.shift()
+  state.cleanUpVariables()
+  state.exitLoop()
 }
 
-function dispatchIfMeetsThreshold(stackPositions: number[], state: st.State, info: st.IterationsInfo, functionName?: string) {
-    let checkpoint = state.threshold
-    while (checkpoint <= stackPositions.length) {
-        if (stackPositions.length === checkpoint) {
-            checkForInfinite(stackPositions, state, info, functionName)
-        }
-        checkpoint = checkpoint * 2
+function dispatchIfMeetsThreshold(
+  stackPositions: number[],
+  state: st.State,
+  info: st.IterationsInfo,
+  functionName?: string
+) {
+  let checkpoint = state.threshold
+  while (checkpoint <= stackPositions.length) {
+    if (stackPositions.length === checkpoint) {
+      checkForInfinite(stackPositions, state, info, functionName)
     }
+    checkpoint = checkpoint * 2
+  }
 }
 
-function cleanUpVariables(state: st.State) {
-    for (const [name, value] of state.variablesModified) {
-        st.saveTransition(name, value, state)
-        state.variablesToReset.add(name)
+const builtinSpecialCases = {}
+
+function prepareBuiltins(oldBuiltins: Map<string, any>) {
+  const newBuiltins = new Map<string, any>()
+  for (const [name, fun] of oldBuiltins) {
+    const specialCase = builtinSpecialCases[name]
+    if (specialCase !== undefined) {
+      newBuiltins.set(name, specialCase)
+    } else {
+      newBuiltins.set(name, (...args: any[]) => fun(...args.map(sym.shallowConcretize)))
     }
+  }
+  return newBuiltins
 }
 
-export const functions = {
-    hybridize: hybridize,
-    saveBool: saveBoolIfHybrid,
-    saveVar: saveVarIfHybrid,
-    preFunction: preFunction,
-    returnFunction: returnFunction,
-    postLoop: postLoop,
-    enterLoop: enterLoop,
-    exitLoop: exitLoop,
-    evalB: sym.evaluateHybridBinary,
-    evalU: sym.evaluateHybridUnary,
+function nothingFunction(...args: any[]) {
+  return nothingFunction
+}
+
+const functions = {
+  nothingFunction: nothingFunction,
+  hybridize: hybridize,
+  saveBool: saveBoolIfHybrid,
+  saveVar: saveVarIfHybrid,
+  preFunction: preFunction,
+  returnFunction: returnFunction,
+  postLoop: postLoop,
+  enterLoop: enterLoop,
+  exitLoop: exitLoop,
+  evalB: sym.evaluateHybridBinary,
+  evalU: sym.evaluateHybridUnary
+}
+
+export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
+  const startTime = Date.now()
+  const context = createContext(4, 'default', undefined, undefined)
+  const prelude = parse(context.prelude as string, context) as es.Program
+  const previous: es.Program[] = []
+  context.prelude = null
+  for (const code of previousCodeStack) {
+    const ast = parse(code, context)
+    if (ast !== undefined) previous.push(ast)
+  }
+  previous.push(prelude)
+  const program = parse(code, context)
+  if (program === undefined) return
+  const newBuiltins = prepareBuiltins(context.nativeStorage.builtins)
+  const [instrumentedCode, functionsId, stateId, builtinsId] = instrument(
+    previous,
+    program,
+    newBuiltins.keys()
+  )
+
+  const state = new st.State()
+
+  const sandboxedRun = new Function(
+    'code',
+    functionsId,
+    stateId,
+    builtinsId,
+    `
+        return eval(code)
+        `
+  )
+
+  try {
+    sandboxedRun(instrumentedCode, functions, state, newBuiltins)
+  } catch (e) {
+    if (e instanceof InfiniteLoopReportingError) {
+      return [e.message, e.type, Date.now() - startTime]
+    }
+  }
+  return undefined
 }
