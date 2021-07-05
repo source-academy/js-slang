@@ -55,6 +55,7 @@ import { forceIt } from './utils/operators'
 import { TimeoutError } from './errors/timeoutErrors'
 import { loadModuleTabs } from './modules/moduleLoader'
 import { testForInfiniteLoop } from './infiniteLoops/runtime'
+import { isPotentialInfiniteLoop } from './infiniteLoops/errorMessages'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -512,8 +513,13 @@ export async function runInContext(
         value
       })
     } catch (error) {
-      // TODO: only when infinite loop related errors
-      console.log(testForInfiniteLoop(code, previousCodeStack.slice(1)))
+      if (isPotentialInfiniteLoop(error)) {
+        const detectedInfiniteLoop = testForInfiniteLoop(code, previousCodeStack.slice(1))
+        if (detectedInfiniteLoop !== undefined) {
+          context.errors.push(detectedInfiniteLoop)
+          return resolvedErrorPromise
+        }
+      }
       if (error instanceof RuntimeSourceError) {
         context.errors.push(error)
         if (error instanceof TimeoutError) {

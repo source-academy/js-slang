@@ -1,24 +1,26 @@
 import * as sym from './symbolic'
 import { generate } from 'astring'
 import * as es from 'estree'
+import { identifier } from '../utils/astCreator'
 
 // Object + functions called during runtime to check for infinite loops
-type CacheId = number
-type CachedExpression = [CacheId, es.Expression]
-type Path = CacheId[]
-export type Transition = [string, any, CacheId][]
-type Iteration = [Path, Transition]
-export type IterationsInfo = [number, number[]] // TODO rename this
+type CachedExpression = [number, es.Expression]
+type Path = number[]
+type Transition = [string, any, number][]
+type Iteration = {
+  paths: Path
+  transitions: Transition
+}
+type IterationsTracker = number[]
 
 export class State {
   variablesModified: Map<string, sym.Hybrid>
   variablesToReset: Set<string>
   expressionCache: [Map<string, CachedExpression>, string[]]
-  mixedStack: Iteration[] // TODO: add a skip or sth
+  mixedStack: Iteration[]
   stackPointer: number
-  // Position, pointer to prev, pointer to each iteration of loop
-  loopStack: IterationsInfo[]
-  functionInfo: Map<string, IterationsInfo>
+  loopStack: IterationsTracker[]
+  functionTrackers: Map<string, IterationsTracker>
   functionNameStack: string[]
   threshold: number
   streamThreshold: number
@@ -27,15 +29,16 @@ export class State {
   streamMode: boolean
   streamLastFunction: string | undefined
   streamCounts: Map<string, number>
+  lastLocation: es.SourceLocation | undefined
   constructor(timeout = 4000, threshold = 20, streamThreshold = threshold * 2) {
     // arbitrary defaults
     this.variablesModified = new Map()
     this.variablesToReset = new Set()
     this.expressionCache = [new Map(), []]
-    this.mixedStack = [[[], []]]
+    this.mixedStack = [{ paths: [], transitions: [] }]
     this.stackPointer = 0
     this.loopStack = []
-    this.functionInfo = new Map()
+    this.functionTrackers = new Map()
     this.functionNameStack = []
     this.threshold = threshold
     this.streamThreshold = streamThreshold
@@ -50,10 +53,10 @@ export class State {
   }
 
   public getMaybeConc(at: number) {
-    return this.mixedStack[at][1].map(x => [x[0], x[1]])
+    return this.mixedStack[at].transitions.map(x => [x[0], x[1]])
   }
   public exitLoop() {
-    this.stackPointer = this.loopStack[0][1][0] - 1
+    this.stackPointer = this.loopStack[0][0] - 1
     this.loopStack.shift()
   }
   public toCached(expr: es.Expression) {
@@ -70,23 +73,22 @@ export class State {
     }
   }
   public savePath(expr: es.Expression) {
-    const currentPath = this.mixedStack[this.stackPointer][0]
+    const currentPath = this.mixedStack[this.stackPointer].paths
     if (!State.isInvalidPath(currentPath)) {
       const id = this.toCached(expr)
       currentPath.push(id)
     }
   }
   public setInvalidPath() {
-    this.mixedStack[this.stackPointer][0] = [-1]
+    this.mixedStack[this.stackPointer].paths = [-1]
   }
   public saveTransition(name: string, value: sym.Hybrid) {
     const concrete = value.concrete
     const id = this.toCached(value.symbolic)
-    this.mixedStack[this.stackPointer][1].push([name, concrete, id])
+    this.mixedStack[this.stackPointer].transitions.push([name, concrete, id])
   }
   public newStackFrame() {
-    // put skipframes here. if current frame = frame behind it, change the behind one to skip (for resuming later)
-    this.mixedStack.push([[], []])
+    this.mixedStack.push({ paths: [], transitions: [] })
     return ++this.stackPointer
   }
   public getCachedString(id: number) {
@@ -102,15 +104,44 @@ export class State {
       this.variablesToReset.add(name)
     }
   }
+  public enterFunction(name: string): [IterationsTracker, boolean] {
+    this.functionNameStack.push(name)
+    let tracker = this.functionTrackers.get(name)
+    let firstIteration = false
+    if (tracker === undefined) {
+      tracker = []
+      this.functionTrackers.set(name, tracker)
+      firstIteration = true
+    }
+    return [tracker, firstIteration]
+  }
   public returnLastFunction() {
     const lastFunction = this.functionNameStack.pop()
-    const info = this.functionInfo.get(lastFunction as string) as IterationsInfo
-    const lastPosn = info[1].pop()
+    const tracker = this.functionTrackers.get(lastFunction as string) as IterationsTracker
+    const lastPosn = tracker.pop()
     if (lastPosn !== undefined) {
       this.stackPointer = lastPosn - 1
     }
   }
   public hasTimedOut() {
     return Date.now() - this.startTime > this.timeout
+  }
+  public getLastFunction() {
+    return this.functionNameStack[this.functionNameStack.length - 1]
+  }
+  public saveArgsInTransition(args: any[], tracker: IterationsTracker) {
+    const transitions: Transition = []
+    for (const [name, val] of args) {
+      if (sym.isHybrid(val)) {
+        transitions.push([name, val.concrete, this.toCached(val.symbolic)])
+      } else {
+        transitions.push([name, val, this.toCached(identifier('undefined'))])
+      }
+      this.variablesToReset.add(name)
+    }
+    const prevPointer = tracker[tracker.length - 1]
+    if (prevPointer > -1) {
+      this.mixedStack[prevPointer].transitions.push(...transitions)
+    }
   }
 }

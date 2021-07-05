@@ -3,6 +3,7 @@ import { generate } from 'astring'
 import * as st from './state'
 import { simple } from '../utils/walkers'
 import * as es from 'estree'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 
 const runAltErgo: any = require('alt-ergo-modified')
 
@@ -17,50 +18,47 @@ const options = JSON.stringify({
 })
 
 enum InfiniteLoopErrorType {
-  Timeout,
   NoBaseCase,
   Cycle,
   FromSmt
 }
 
-export class InfiniteLoopReportingError extends Error {
-  public type = InfiniteLoopErrorType.Timeout
-  constructor(message: string, type: InfiniteLoopErrorType) {
-    super(message)
-    this.type = type
+export class InfiniteLoopReportingError extends RuntimeSourceError {
+  public infiniteLoopType: InfiniteLoopErrorType
+  public message: string
+  public functionName: string | undefined
+  public streamMode: boolean
+  constructor(
+    functionName: string | undefined,
+    streamMode: boolean,
+    message: string,
+    infiniteLoopType: InfiniteLoopErrorType
+  ) {
+    super()
+    this.message = message
+    this.infiniteLoopType = infiniteLoopType
+    this.functionName = functionName
+    this.streamMode = streamMode
   }
-  public static report(message: string, type: InfiniteLoopErrorType) {
-    throw new InfiniteLoopReportingError(message, type)
+  public explain() {
+    const entityName = this.functionName ? `function ${getOriginalName(this.functionName)}` : 'loop'
+    const header = this.streamMode
+      ? `Forcing an infinite stream: ${entityName}.`
+      : `The ${entityName} at has encountered an infinite loop.`
+    return header + ' ' + this.message
   }
-  public static timeout() {
-    throw new InfiniteLoopReportingError('timeout', InfiniteLoopErrorType.Timeout)
-  }
-}
-
-function messageHeader(
-  itInfo: st.IterationsInfo,
-  functionName: string | undefined,
-  streamMode: boolean
-) {
-  const entityName = functionName ? `function ${getOriginalName(functionName)}` : 'loop'
-  const positionString = itInfo[0] !== -1 ? `declared at line ${itInfo[0]}` : 'unknown position'
-  // TODO stream mode
-  return streamMode
-    ? `Forcing an infinite stream: ${entityName}.`
-    : `The ${entityName} at ${positionString} has encountered an infinite loop.`
 }
 
 export function checkForInfinite(
   stackPositions: number[],
   state: st.State,
-  itInfo: st.IterationsInfo,
   functionName: string | undefined
 ) {
-  // TODO: check if this is correct
-  // TODO: small stacktrace
-  if (state.mixedStack[stackPositions[0]][0].length === 0) {
-    const message = messageHeader(itInfo, functionName, state.streamMode) + '\nIt has no base case.'
-    InfiniteLoopReportingError.report(message, InfiniteLoopErrorType.NoBaseCase)
+  const report = (message: string, type: InfiniteLoopErrorType) => {
+    throw new InfiniteLoopReportingError(functionName, state.streamMode, message, type)
+  }
+  if (state.mixedStack[stackPositions[0]].paths.length === 0) {
+    report('It has no base case', InfiniteLoopErrorType.NoBaseCase)
   }
   // arbitrarily using same threshold
   let circular
@@ -70,20 +68,14 @@ export function checkForInfinite(
     circular = false
   }
   if (circular) {
-    const message =
-      messageHeader(itInfo, functionName, state.streamMode) +
-      '\nIt has the infinite cycle: ' +
-      circular
-    InfiniteLoopReportingError.report(message, InfiniteLoopErrorType.Cycle)
+    const message = 'It has the infinite cycle: ' + circular
+    report(message, InfiniteLoopErrorType.Cycle)
   } else {
     const code = codeToDispatch(stackPositions, state)
     const pass = runUntilValid(code)
     if (pass) {
-      const message =
-        messageHeader(itInfo, functionName, state.streamMode) +
-        '\nIn particular, when the variables ' +
-        pass
-      InfiniteLoopReportingError.report(message, InfiniteLoopErrorType.FromSmt)
+      const message = 'In particular, ' + pass
+      report(message, InfiniteLoopErrorType.FromSmt)
     }
   }
 }
@@ -135,17 +127,15 @@ function codeToDispatch(stackPositions: number[], state: st.State) {
   const toCheckNested = closedCycles.map(([from, to]) =>
     toSmtSyntax(firstSeen.slice(from, to + 1), state)
   )
-  // TODO: + corresponding error messages for each smt program
   return flatten(toCheckNested)
 }
 
 function getFirstSeen(stackPositions: number[], state: st.State) {
   const firstSeen: Triple[] = []
   let prev = state.mixedStack[stackPositions[0]]
-  // TODO: check if this approach is sound
   for (const pos of stackPositions.slice(1)) {
     const next = state.mixedStack[pos]
-    const triple: Triple = [prev[0], next[0], prev[1]]
+    const triple: Triple = [prev.paths, next.paths, prev.transitions]
     prev = next
     let wasSeen = false
     for (const seen of firstSeen) {
@@ -247,13 +237,38 @@ function smtTemplate(mode: string, decls: string, line1: string, line2: string, 
         ${line1} ->
         ${line2} ->
         ${line3}`
-  return str.replace(/===/, '=')
+  return str.replace(/===/g, '=')
 }
 
-function errorMessageMaker(ids: es.Identifier[], pathExprs: es.Expression[][]) {
+function errorMessageMaker(
+  ids: es.Identifier[],
+  pathExprs: es.Expression[][],
+  transitions: [string, number, string][][],
+  state: st.State
+) {
+  const getOriginalExpr = (s: string) => generate(state.getCachedExprFromString(s))
   return () => {
+    const idsOfTransitions = getIds(
+      transitions.map(x => x.map(y => state.getCachedExprFromString(y[2])))
+    )
+    ids = ids.concat(idsOfTransitions)
     ids.map(x => (x.name = getOriginalName(x.name)))
-    return joiner(pathExprs.map(x => x.map(generate)))
+    const pathPart: string[][] = pathExprs.map(x => x.map(generate))
+    const transitionPart = transitions.map(x =>
+      x.map(([n, v, s]) =>
+        s === 'undefined'
+          ? `${getOriginalName(n)} <- ${v}`
+          : `${getOriginalName(n)} <- ${getOriginalExpr(s)}`
+      )
+    )
+    let result = ''
+    for (let i = 0; i < transitionPart.length; i++) {
+      if (i > 0) result += ' And in a subsequent iteration, '
+      result += `when (${pathPart[i].join(' and ')}), the variables are updated (${transitionPart[
+        i
+      ].join(', ')}).`
+    }
+    return result
   }
 }
 
@@ -279,7 +294,7 @@ function toSmtSyntax(toInclude: Triple[], state: st.State): [string, () => strin
   const allNames = flatten(transitions.map(x => x.map(y => y[0]))).concat(ids.map(x => x.name))
   const decls = [...new Set(allNames)].map(x => `${x},${x}'`).join(',')
   const [newLine1, newLine3] = getConstantsAndSigns(line1, line2, transitions)
-  const message = errorMessageMaker(ids, pathExprs)
+  const message = errorMessageMaker(ids, pathExprs, transitions, state)
   const template1: [string, () => string] = [
     smtTemplate('int', decls, line1, line2, line3),
     message
@@ -301,7 +316,7 @@ function checkForCycle(stackPositions: number[], state: st.State) {
       if (typeof val === 'function') {
         return
       }
-      innerStr.push(`(${getOriginalName(name)}: ${stringifyCircular(val)})`) // TODO: functions in arrays?
+      innerStr.push(`(${getOriginalName(name)}: ${stringifyCircular(val)})`)
     }
     concStr.push(innerStr.join(', '))
   }

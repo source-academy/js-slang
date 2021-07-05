@@ -61,8 +61,9 @@ export function makeDummyHybrid(concrete: any): HybridValue {
 }
 
 export function getBooleanResult(value: HybridValue) {
-  if (value.concrete) return value.symbolic
-
+  if (value.concrete) {
+    return value.symbolic
+  }
   if (value.negation !== undefined) {
     return value.negation
   } else {

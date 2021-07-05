@@ -3,8 +3,7 @@ import { generate } from 'astring'
 import * as create from '../utils/astCreator'
 import { simple, recursive, WalkerCallback } from '../utils/walkers'
 // transforms AST of program
-// Philosophy/idea/design here: minimal(?) interference w the syntax. Only
-// add necessary details/vars and leave most of the heavy lifing to the runtime
+// TODO: implement tail recursion
 
 function unshadowVariables(program: es.Node, functionsId: string, predefined = {}) {
   const seenIds = new Set()
@@ -113,11 +112,23 @@ export function getOriginalName(name: string) {
   return name.slice(0, cutAt)
 }
 
-function addStateToIsNull(program: es.Node, stateId: string) {
+function addStateToIsNull(program: es.Program, stateId: string) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
       if (node.callee.type === 'Identifier' && node.callee.name === 'is_null_0') {
         node.arguments.push(create.identifier(stateId))
+      }
+    }
+  })
+}
+
+function transformLogicalExpressions(program: es.Program) {
+  simple(program, {
+    LogicalExpression(node: es.LogicalExpression) {
+      if (node.operator === '&&') {
+        create.mutateToConditionalExpression(node, node.left, node.right, create.literal(false))
+      } else {
+        create.mutateToConditionalExpression(node, node.left, create.literal(true), node.right)
       }
     }
   })
@@ -215,14 +226,6 @@ function trackIfStatements(program: es.Node, functionsId: string, stateId: strin
   simple(program, { IfStatement: theFunction, ConditionalExpression: theFunction })
 }
 
-function savePositionAsExpression(position: es.SourceLocation | undefined | null) {
-  if (position !== undefined && position !== null) {
-    return create.literal(position.start.line)
-  } else {
-    return create.literal(-1)
-  }
-}
-
 function trackLoops(program: es.Node, functionsId: string, stateId: string) {
   const makeCallStatement = (name: string, args: es.Expression[]) =>
     create.expressionStatement(create.callExpression(callFunction(name, functionsId), args))
@@ -233,7 +236,7 @@ function trackLoops(program: es.Node, functionsId: string, stateId: string) {
       inPlaceEnclose(node.body, undefined, makeCallStatement('postLoop', [stateExpr]))
       inPlaceEnclose(
         node,
-        makeCallStatement('enterLoop', [savePositionAsExpression(node.loc), stateExpr]),
+        makeCallStatement('enterLoop', [stateExpr]),
         makeCallStatement('exitLoop', [stateExpr])
       )
     },
@@ -246,7 +249,7 @@ function trackLoops(program: es.Node, functionsId: string, stateId: string) {
       ])
       inPlaceEnclose(
         node,
-        makeCallStatement('enterLoop', [savePositionAsExpression(node.loc), stateExpr]),
+        makeCallStatement('enterLoop', [stateExpr]),
         makeCallStatement('exitLoop', [stateExpr])
       )
     }
@@ -254,11 +257,7 @@ function trackLoops(program: es.Node, functionsId: string, stateId: string) {
 }
 
 function trackFunctions(program: es.Node, functionsId: string, stateId: string) {
-  const preFunction = (
-    name: string,
-    params: es.Pattern[],
-    position: es.SourceLocation | undefined | null
-  ) => {
+  const preFunction = (name: string, params: es.Pattern[]) => {
     const args = params
       .filter(x => x.type === 'Identifier')
       .map(x => (x as es.Identifier).name)
@@ -267,7 +266,6 @@ function trackFunctions(program: es.Node, functionsId: string, stateId: string) 
     return create.expressionStatement(
       create.callExpression(callFunction('preFunction', functionsId), [
         create.literal(name),
-        savePositionAsExpression(position),
         create.arrayExpression(args),
         create.identifier(stateId)
       ])
@@ -278,14 +276,14 @@ function trackFunctions(program: es.Node, functionsId: string, stateId: string) 
   const anonFunction = (node: es.ArrowFunctionExpression | es.FunctionExpression) => {
     const bodyAsStatement =
       node.body.type === 'BlockStatement' ? node.body : create.expressionStatement(node.body)
-    inPlaceEnclose(bodyAsStatement, preFunction(`anon${counter++}`, node.params, node.loc))
+    inPlaceEnclose(bodyAsStatement, preFunction(`anon${counter++}`, node.params))
   }
   simple(program, {
     ArrowFunctionExpression: anonFunction,
     FunctionExpression: anonFunction,
     FunctionDeclaration(node: es.FunctionDeclaration) {
       const name = (node.id as es.Identifier).name
-      inPlaceEnclose(node.body, preFunction(name, node.params, node.loc))
+      inPlaceEnclose(node.body, preFunction(name, node.params))
     },
     ReturnStatement(node: es.ReturnStatement) {
       const arg =
@@ -299,10 +297,6 @@ function trackFunctions(program: es.Node, functionsId: string, stateId: string) 
     }
   })
 }
-
-// TODO: add tail recursion
-// TODO: transform logical?
-// TODO: tests
 
 function builtinsToStmts(builtinsName: string, builtins: IterableIterator<string>) {
   const makeDecl = (name: string) =>
@@ -341,6 +335,55 @@ function wrapOldCode(current: es.Program, toWrap: es.Statement[]) {
   current.body = [tryStmt]
 }
 
+function makePositions(position: es.Position) {
+  return create.objectExpression([
+    create.property('line', create.literal(position.line)),
+    create.property('column', create.literal(position.column))
+  ])
+}
+
+function savePositionAsExpression(loc: es.SourceLocation | undefined | null) {
+  if (loc !== undefined && loc !== null) {
+    return create.objectExpression([
+      create.property('start', makePositions(loc.start)),
+      create.property('end', makePositions(loc.end))
+    ])
+  } else {
+    return create.identifier('undefined')
+  }
+}
+
+function trackLocations(program: es.Program, functionsId: string, stateId: string) {
+  // Note: only add locations for most recently entered code
+  const trackerFn = create.memberExpression(create.identifier(functionsId), 'trackLoc')
+  const stateExpr = create.identifier(stateId)
+  const doLoops = (
+    node: es.ForStatement | es.WhileStatement,
+    state: undefined,
+    callback: WalkerCallback<undefined>
+  ) => {
+    inPlaceEnclose(
+      node.body,
+      create.expressionStatement(
+        create.callExpression(trackerFn, [savePositionAsExpression(node.loc), stateExpr])
+      )
+    )
+  }
+  recursive(program, undefined, {
+    CallExpression(node: es.CallExpression, state: undefined, callback: WalkerCallback<undefined>) {
+      const copy: es.CallExpression = { ...node }
+      const lazyCall = create.arrowFunctionExpression([], copy)
+      create.mutateToCallExpression(node, trackerFn, [
+        savePositionAsExpression(node.loc),
+        stateExpr,
+        lazyCall
+      ])
+    },
+    ForStatement: doLoops,
+    WhileStatement: doLoops
+  })
+}
+
 // previous: most recent first (at ix 0)
 export function instrument(
   previous: es.Program[],
@@ -354,15 +397,18 @@ export function instrument(
   predefined[builtinsId] = builtinsId
   predefined[functionsId] = functionsId
   predefined[stateId] = stateId
+  const innerProgram = { ...program }
   for (const toWrap of previous) {
     wrapOldCode(program, toWrap.body as es.Statement[])
   }
   wrapOldCode(program, builtinsToStmts(builtinsId, builtins))
   unshadowVariables(program, functionsId, predefined)
+  transformLogicalExpressions(program)
   hybridizeBinaryUnaryOperations(program, functionsId)
   trackVariableRetrieval(program, functionsId, stateId)
   trackVariableAssignment(program, functionsId, stateId)
   trackIfStatements(program, functionsId, stateId)
+  trackLocations(innerProgram, functionsId, stateId)
   trackLoops(program, functionsId, stateId)
   trackFunctions(program, functionsId, stateId)
   addStateToIsNull(program, stateId)

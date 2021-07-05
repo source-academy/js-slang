@@ -10,7 +10,7 @@ import { createContext } from '../index'
 
 function checkTimeout(state: st.State) {
   if (state.hasTimedOut()) {
-    InfiniteLoopReportingError.timeout()
+    throw new Error('timeout')
   }
 }
 
@@ -51,56 +51,37 @@ function saveBoolIfHybrid(value: any, state: st.State) {
   }
 }
 
-function cachedUndefined(state: st.State) {
-  return state.toCached(create.identifier('undefined'))
-}
-
-function preFunction(name: string, line: number, args: [string, any][], state: st.State) {
-  // TODO: big cleanup, 'hide' st.Transition in some function there
-  // feature not bug: don't put line numbers for calls so student has to trace the code themselves
+function preFunction(name: string, args: [string, any][], state: st.State) {
   checkTimeout(state)
-  state.functionNameStack.push(name)
-  let info = state.functionInfo.get(name)
-  if (info === undefined) {
-    info = [line, []]
-    state.functionInfo.set(name, info)
-  } else {
+  const [tracker, firstIteration] = state.enterFunction(name)
+  if (!firstIteration) {
     state.cleanUpVariables()
-    const transitions: st.Transition = []
-    for (const [name, val] of args) {
-      if (sym.isHybrid(val)) {
-        transitions.push([name, val.concrete, state.toCached(val.symbolic)])
-      } else {
-        transitions.push([name, val, cachedUndefined(state)])
-      }
-      state.variablesToReset.add(name)
-    }
-    const prevPointer = info[1][info[1].length - 1]
-    if (prevPointer > -1) {
-      state.mixedStack[prevPointer][1].push(...transitions)
-      dispatchIfMeetsThreshold(info[1].slice(0, info[1].length - 1), state, info, name)
-    }
+    state.saveArgsInTransition(args, tracker)
+    const previousIterations = tracker.slice(0, tracker.length - 1)
+    dispatchIfMeetsThreshold(previousIterations, state, name)
   }
-  info[1].push(state.newStackFrame())
+  tracker.push(state.newStackFrame())
 }
 
 function returnFunction(value: any, state: st.State) {
   state.cleanUpVariables()
-  if (!state.streamMode) state.returnLastFunction()
+  const lastFunction = state.getLastFunction()
+  const watchingThisStream = state.streamMode && state.streamLastFunction === lastFunction
+  if (!watchingThisStream) state.returnLastFunction()
   return value
 }
 
-function enterLoop(line: number, state: st.State) {
-  state.loopStack.unshift([line, [state.newStackFrame()]])
+function enterLoop(state: st.State) {
+  state.loopStack.unshift([state.newStackFrame()])
 }
 
 function postLoop(state: st.State, ignoreMe?: any) {
   // ignoreMe: hack to squeeze this inside the 'update' of for statements
   checkTimeout(state)
-  const stackPositions = state.loopStack[0][1]
-  dispatchIfMeetsThreshold(stackPositions.slice(1), state, state.loopStack[0])
+  const previousIterations = state.loopStack[0]
+  dispatchIfMeetsThreshold(previousIterations.slice(1), state)
   state.cleanUpVariables()
-  stackPositions.push(state.newStackFrame())
+  previousIterations.push(state.newStackFrame())
   return ignoreMe
 }
 
@@ -112,13 +93,12 @@ function exitLoop(state: st.State) {
 function dispatchIfMeetsThreshold(
   stackPositions: number[],
   state: st.State,
-  info: st.IterationsInfo,
   functionName?: string
 ) {
   let checkpoint = state.threshold
   while (checkpoint <= stackPositions.length) {
     if (stackPositions.length === checkpoint) {
-      checkForInfinite(stackPositions, state, info, functionName)
+      checkForInfinite(stackPositions, state, functionName)
     }
     checkpoint = checkpoint * 2
   }
@@ -131,7 +111,7 @@ const builtinSpecialCases = {
     const theTail = stdList.is_pair(xs) ? xs[1] : undefined
     const isStream = typeof theTail === 'function'
     if (state && isStream) {
-      const lastFunction = state.functionNameStack[state.functionNameStack.length - 1]
+      const lastFunction = state.getLastFunction()
       if (state.streamMode === true && state.streamLastFunction === lastFunction) {
         let next = theTail()
         for (let i = 0; i < state.threshold; i++) {
@@ -142,7 +122,7 @@ const builtinSpecialCases = {
             next = nextTail()
           }
         }
-        return InfiniteLoopReportingError.timeout()
+        throw new Error('timeout')
       } else {
         let count = state.streamCounts.get(lastFunction)
         if (count === undefined) {
@@ -157,6 +137,7 @@ const builtinSpecialCases = {
     } else {
       return conc
     }
+    return
   },
   display: nothingFunction
 }
@@ -178,6 +159,13 @@ function nothingFunction(...args: any[]) {
   return nothingFunction
 }
 
+function trackLoc(loc: es.SourceLocation | undefined, state: st.State, ignoreMe?: () => any) {
+  state.lastLocation = loc
+  if (ignoreMe !== undefined) {
+    return ignoreMe()
+  }
+}
+
 const functions = {
   nothingFunction: nothingFunction,
   hybridize: hybridize,
@@ -188,12 +176,12 @@ const functions = {
   postLoop: postLoop,
   enterLoop: enterLoop,
   exitLoop: exitLoop,
+  trackLoc: trackLoc,
   evalB: sym.evaluateHybridBinary,
   evalU: sym.evaluateHybridUnary
 }
 
 export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
-  const startTime = Date.now()
   const context = createContext(4, 'default', undefined, undefined)
   const prelude = parse(context.prelude as string, context) as es.Program
   const previous: es.Program[] = []
@@ -226,10 +214,12 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
 
   try {
     sandboxedRun(instrumentedCode, functions, state, newBuiltins)
-  } catch (e) {
-    console.log(e)
-    if (e instanceof InfiniteLoopReportingError) {
-      return [e.message, e.type, Date.now() - startTime]
+  } catch (error) {
+    if (error instanceof InfiniteLoopReportingError) {
+      if (state.lastLocation !== undefined) {
+        error.location = state.lastLocation
+      }
+      return error
     }
   }
   return undefined
