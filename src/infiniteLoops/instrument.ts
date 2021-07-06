@@ -5,6 +5,12 @@ import { simple, recursive, WalkerCallback } from '../utils/walkers'
 // transforms AST of program
 // TODO: implement tail recursion
 
+/**
+ * Renames all variables in the program to differentiate shadowed variables and
+ * variables declared with the same name but in different scopes.
+ * E.g. "function f(f)..." -> "function f_0(f_1)..."
+ * @param predefined A table of [key: string, value:string], where variables named 'key' will be renamed to 'value'
+ */
 function unshadowVariables(program: es.Node, functionsId: string, predefined = {}) {
   const seenIds = new Set()
   const env = [predefined]
@@ -106,12 +112,20 @@ function unshadowVariables(program: es.Node, functionsId: string, predefined = {
   })
 }
 
+/**
+ * Returns the original name of the variable before
+ * it was changed during the code instrumentation process.
+ */
 export function getOriginalName(name: string) {
   let cutAt = name.length - 1
   while (name.charAt(cutAt) !== '_') cutAt--
   return name.slice(0, cutAt)
 }
 
+/**
+ * We turn all "is_null(x)" calls to "is_null(x, stateId)" to
+ * facilitate checking of infinite streams in stream mode.
+ */
 function addStateToIsNull(program: es.Program, stateId: string) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
@@ -122,6 +136,11 @@ function addStateToIsNull(program: es.Program, stateId: string) {
   })
 }
 
+/**
+ * Changes logical expressions to the corresponding conditional.
+ * Reduces the number of types of expressions we have to consider
+ * for the rest of the code transformations.
+ */
 function transformLogicalExpressions(program: es.Program) {
   simple(program, {
     LogicalExpression(node: es.LogicalExpression) {
@@ -138,6 +157,10 @@ function callFunction(fun: string, functionsId: string) {
   return create.memberExpression(create.identifier(functionsId), fun)
 }
 
+/**
+ * Changes -ary operations to functions that accept hybrid values as arguments.
+ * E.g. "1+1" -> "functions.evalB('+',1,1)"
+ */
 function hybridizeBinaryUnaryOperations(program: es.Node, functionsId: string) {
   simple(program, {
     BinaryExpression(node: es.BinaryExpression) {
@@ -158,7 +181,7 @@ function hybridizeBinaryUnaryOperations(program: es.Node, functionsId: string) {
   })
 }
 
-function trackVariableRetrieval(program: es.Node, functionsId: string, stateId: string) {
+function hybridizeVariablesAndLiterals(program: es.Node, functionsId: string, stateId: string) {
   recursive(program, undefined, {
     Identifier(node: es.Identifier, state: undefined, callback: WalkerCallback<undefined>) {
       create.mutateToCallExpression(node, callFunction('hybridize', functionsId), [
@@ -166,6 +189,13 @@ function trackVariableRetrieval(program: es.Node, functionsId: string, stateId: 
         create.identifier(node.name),
         create.identifier(stateId)
       ])
+    },
+    Literal(node: es.Literal, state: undefined, callback: WalkerCallback<undefined>) {
+      if (typeof node.value === 'boolean' || typeof node.value === 'number') {
+        create.mutateToCallExpression(node, callFunction('dummify', functionsId), [
+          create.literal(node.value)
+        ])
+      }
     },
     CallExpression(node: es.CallExpression, state: undefined, callback: WalkerCallback<undefined>) {
       // ignore callee
@@ -298,7 +328,7 @@ function trackFunctions(program: es.Node, functionsId: string, stateId: string) 
   })
 }
 
-function builtinsToStmts(builtinsName: string, builtins: IterableIterator<string>) {
+function builtinsToStmts(builtinsName: string, builtins: Iterable<string>) {
   const makeDecl = (name: string) =>
     create.declaration(
       name,
@@ -310,6 +340,10 @@ function builtinsToStmts(builtinsName: string, builtins: IterableIterator<string
   return [...builtins].map(makeDecl)
 }
 
+/**
+ * Make all variables in the 'try' block function-scoped so they
+ * can be accessed in the 'finally' block
+ */
 function toVarDeclaration(stmt: es.Statement) {
   simple(stmt, {
     VariableDeclaration(node: es.VariableDeclaration) {
@@ -318,6 +352,14 @@ function toVarDeclaration(stmt: es.Statement) {
   })
 }
 
+/**
+ * There may have been other programs run in the REPL. This hack
+ * 'combines' the other programs and the current program into a single
+ * large program by enclosing the past programs in 'try' blocks, and the
+ * current program in a 'finally' block. Any errors (including detected
+ * infinite loops) in the past code will be ignored in the empty 'catch'
+ * block.
+ */
 function wrapOldCode(current: es.Program, toWrap: es.Statement[]) {
   for (const stmt of toWrap) {
     toVarDeclaration(stmt)
@@ -388,7 +430,7 @@ function trackLocations(program: es.Program, functionsId: string, stateId: strin
 export function instrument(
   previous: es.Program[],
   program: es.Program,
-  builtins: IterableIterator<string>
+  builtins: Iterable<string>
 ): [string, string, string, string] {
   const builtinsId = 'builtins'
   const functionsId = '__InfLoopFns'
@@ -405,10 +447,12 @@ export function instrument(
   unshadowVariables(program, functionsId, predefined)
   transformLogicalExpressions(program)
   hybridizeBinaryUnaryOperations(program, functionsId)
-  trackVariableRetrieval(program, functionsId, stateId)
+  hybridizeVariablesAndLiterals(program, functionsId, stateId)
+  // tracking functions: add functions to record runtime data.
+
   trackVariableAssignment(program, functionsId, stateId)
-  trackIfStatements(program, functionsId, stateId)
   trackLocations(innerProgram, functionsId, stateId)
+  trackIfStatements(program, functionsId, stateId)
   trackLoops(program, functionsId, stateId)
   trackFunctions(program, functionsId, stateId)
   addStateToIsNull(program, stateId)

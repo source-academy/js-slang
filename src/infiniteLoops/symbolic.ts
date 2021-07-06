@@ -113,10 +113,14 @@ function makeHybridArray(name: string, concrete: any[]): HybridArray {
 }
 
 export function deepConcretizeInplace(value: any) {
+  const seen = new WeakSet()
   function innerInplace(x: any[]) {
+    seen.add(x)
     for (let i = 0; i < x.length; i++) {
       if (Array.isArray(x[i])) {
-        innerInplace(x[i])
+        if (!seen.has(x[i])) {
+          innerInplace(x[i])
+        }
       } else {
         x[i] = shallowConcretize(x[i])
       }
@@ -176,6 +180,10 @@ export function evaluateHybridBinary(op: es.BinaryOperator, lhs: any, rhs: any) 
   }
 }
 
+/**
+ * To provide more information to the SMT solver, whenever '!==' is encountered
+ * comparing 2 numbers, we replace it with '>' or '<' accordingly.
+ */
 function neqRefine(lhs: any, rhs: any) {
   const op: es.BinaryOperator = shallowConcretize(lhs) < shallowConcretize(rhs) ? '<' : '>'
   return create.binaryExpression(op, getAST(lhs), getAST(rhs))
@@ -196,7 +204,17 @@ function getNegation(op: es.BinaryOperator, lhs: any, rhs: any) {
 
 export function evaluateHybridUnary(op: es.UnaryOperator, val: any) {
   if (isHybrid(val)) {
-    return hybridValueConstructor(evaluateUnaryExpression(op, shallowConcretize(val)), getAST(val))
+    const conc = evaluateUnaryExpression(op, shallowConcretize(val))
+    if (val.symbolic.type === 'Literal') {
+      const newSym = { ...val.symbolic, val: conc }
+      return hybridValueConstructor(conc, newSym)
+    } else if (op === '!' && val.type === 'value' && val.negation !== undefined) {
+      const result = hybridValueConstructor(conc, val.negation)
+      result.negation = val.symbolic
+      return result
+    } else {
+      return hybridValueConstructor(conc, create.unaryExpression(op, getAST(val)))
+    }
   } else {
     return evaluateUnaryExpression(op, val)
   }

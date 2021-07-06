@@ -4,6 +4,7 @@ import * as st from './state'
 import { simple } from '../utils/walkers'
 import * as es from 'estree'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { shallowConcretize } from './symbolic'
 
 const runAltErgo: any = require('alt-ergo-modified')
 
@@ -17,13 +18,13 @@ const options = JSON.stringify({
   file: 'smt-file'
 })
 
-enum InfiniteLoopErrorType {
+export enum InfiniteLoopErrorType {
   NoBaseCase,
   Cycle,
   FromSmt
 }
 
-export class InfiniteLoopReportingError extends RuntimeSourceError {
+export class InfiniteLoopError extends RuntimeSourceError {
   public infiniteLoopType: InfiniteLoopErrorType
   public message: string
   public functionName: string | undefined
@@ -49,13 +50,18 @@ export class InfiniteLoopReportingError extends RuntimeSourceError {
   }
 }
 
+/**
+ * Checks if the program is stuck in an infinite loop.
+ * @throws InfiniteLoopError if so.
+ * @returns void otherwise.
+ */
 export function checkForInfinite(
   stackPositions: number[],
   state: st.State,
   functionName: string | undefined
 ) {
   const report = (message: string, type: InfiniteLoopErrorType) => {
-    throw new InfiniteLoopReportingError(functionName, state.streamMode, message, type)
+    throw new InfiniteLoopError(functionName, state.streamMode, message, type)
   }
   if (state.mixedStack[stackPositions[0]].paths.length === 0) {
     report('It has no base case', InfiniteLoopErrorType.NoBaseCase)
@@ -65,10 +71,15 @@ export function checkForInfinite(
   try {
     circular = checkForCycle(stackPositions.slice(stackPositions.length - state.threshold), state)
   } catch (e) {
-    circular = false
+    circular = undefined
   }
   if (circular) {
-    const message = 'It has the infinite cycle: ' + circular
+    let message
+    if (circular[0] === circular[1] && circular[0] === '') {
+      message = 'None of the variables are being updated.'
+    } else {
+      message = 'It has the infinite cycle: ' + circular
+    }
     report(message, InfiniteLoopErrorType.Cycle)
   } else {
     const code = codeToDispatch(stackPositions, state)
@@ -130,6 +141,10 @@ function codeToDispatch(stackPositions: number[], state: st.State) {
   return flatten(toCheckNested)
 }
 
+/**
+ * Get triples from the stackPositions, ignoring duplicates.
+ * Preserves order in which the triples are first seen in stackPositions.
+ */
 function getFirstSeen(stackPositions: number[], state: st.State) {
   const firstSeen: Triple[] = []
   let prev = state.mixedStack[stackPositions[0]]
@@ -151,6 +166,9 @@ function getFirstSeen(stackPositions: number[], state: st.State) {
   return firstSeen
 }
 
+/**
+ * Remove iterations with invalid paths, and all iterations before it.
+ */
 function removeInvalid(firstSeen: Triple[]) {
   let cutFrom = 0
   for (let i = firstSeen.length - 1; i >= 0; i--) {
@@ -162,6 +180,10 @@ function removeInvalid(firstSeen: Triple[]) {
   return firstSeen.slice(cutFrom)
 }
 
+/**
+ * Get closed sets of Triples where each iteration will
+ * transition into another in the set.
+ */
 function getClosed(firstSeen: Triple[]) {
   const indices: [number, number][] = []
   for (let i = 0; i < firstSeen.length; i++) {
@@ -192,7 +214,7 @@ function getIds(nodes: es.Expression[][]) {
   return [...new Set(result)]
 }
 
-function getConstantsAndSigns(
+function addConstantsAndSigns(
   line1: string,
   line3: string,
   transitions: [string, number, string][][]
@@ -293,7 +315,7 @@ function toSmtSyntax(toInclude: Triple[], state: st.State): [string, () => strin
   )
   const allNames = flatten(transitions.map(x => x.map(y => y[0]))).concat(ids.map(x => x.name))
   const decls = [...new Set(allNames)].map(x => `${x},${x}'`).join(',')
-  const [newLine1, newLine3] = getConstantsAndSigns(line1, line2, transitions)
+  const [newLine1, newLine3] = addConstantsAndSigns(line1, line3, transitions)
   const message = errorMessageMaker(ids, pathExprs, transitions, state)
   const template1: [string, () => string] = [
     smtTemplate('int', decls, line1, line2, line3),
@@ -306,8 +328,10 @@ function toSmtSyntax(toInclude: Triple[], state: st.State): [string, () => strin
   return [template1, template2]
 }
 
-function checkForCycle(stackPositions: number[], state: st.State) {
-  // maybeConc because arrays may still contain hybrid stuff
+/**
+ * @returns if a cycle was detected, string array describing the cycle. Otherwise returns undefined.
+ */
+function checkForCycle(stackPositions: number[], state: st.State): string[] | undefined {
   const maybeConc = stackPositions.map(i => state.getMaybeConc(i))
   const concStr = []
   for (const item of maybeConc) {
@@ -320,7 +344,7 @@ function checkForCycle(stackPositions: number[], state: st.State) {
     }
     concStr.push(innerStr.join(', '))
   }
-  return getCycle(concStr)?.join(' -> ')
+  return getCycle(concStr)
 }
 
 function getCycle(temp: any[]) {
@@ -348,7 +372,7 @@ function stringifyCircular(x: any) {
         }
         seen.add(value)
       }
-      return value
+      return shallowConcretize(value)
     }
   }
 

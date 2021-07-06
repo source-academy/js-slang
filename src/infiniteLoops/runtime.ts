@@ -3,7 +3,7 @@ import * as create from '../utils/astCreator'
 import * as st from './state'
 import * as es from 'estree'
 import * as stdList from '../stdlib/list'
-import { checkForInfinite, InfiniteLoopReportingError } from './detect'
+import { checkForInfinite, InfiniteLoopError } from './detect'
 import { instrument } from './instrument'
 import { parse } from '../parser/parser'
 import { createContext } from '../index'
@@ -14,6 +14,11 @@ function checkTimeout(state: st.State) {
   }
 }
 
+/**
+ * This function is run whenever a variable is being accessed.
+ * If a variable has been added to state.variablesToReset, it will
+ * be lazily 'reset' (concretized and re-hybridized) here.
+ */
 function hybridize(name: string, originalValue: any, state: st.State) {
   if (typeof originalValue === 'function') {
     return originalValue
@@ -33,17 +38,25 @@ function saveVarIfHybrid(name: string, value: any, state: st.State) {
   return value
 }
 
+/**
+ * Saves the boolean value if it is a hybrid, else set the
+ * path to invalid.
+ * Does not save in the path if the value is a boolean literal to
+ * reduce noise.
+ */
 function saveBoolIfHybrid(value: any, state: st.State) {
   if (sym.isHybrid(value) && value.type === 'value') {
     if (value.invalid) {
       state.setInvalidPath()
       return sym.shallowConcretize(value)
     }
-    let theExpr = value.symbolic
-    if (!value.concrete) {
-      theExpr = value.negation ? value.negation : create.unaryExpression('!', theExpr)
+    if (value.symbolic.type !== 'Literal') {
+      let theExpr: es.Expression = value.symbolic
+      if (!value.concrete) {
+        theExpr = value.negation ? value.negation : create.unaryExpression('!', theExpr)
+      }
+      state.savePath(theExpr)
     }
-    state.savePath(theExpr)
     return sym.shallowConcretize(value)
   } else {
     state.setInvalidPath()
@@ -65,9 +78,7 @@ function preFunction(name: string, args: [string, any][], state: st.State) {
 
 function returnFunction(value: any, state: st.State) {
   state.cleanUpVariables()
-  const lastFunction = state.getLastFunction()
-  const watchingThisStream = state.streamMode && state.streamLastFunction === lastFunction
-  if (!watchingThisStream) state.returnLastFunction()
+  if (!state.streamMode) state.returnLastFunction()
   return value
 }
 
@@ -75,8 +86,8 @@ function enterLoop(state: st.State) {
   state.loopStack.unshift([state.newStackFrame()])
 }
 
+// ignoreMe: hack to squeeze this inside the 'update' of for statements
 function postLoop(state: st.State, ignoreMe?: any) {
-  // ignoreMe: hack to squeeze this inside the 'update' of for statements
   checkTimeout(state)
   const previousIterations = state.loopStack[0]
   dispatchIfMeetsThreshold(previousIterations.slice(1), state)
@@ -114,7 +125,7 @@ const builtinSpecialCases = {
       const lastFunction = state.getLastFunction()
       if (state.streamMode === true && state.streamLastFunction === lastFunction) {
         let next = theTail()
-        for (let i = 0; i < state.threshold; i++) {
+        for (let i = 0; i <= state.threshold; i++) {
           if (stdList.is_null(next)) {
             break
           } else {
@@ -169,6 +180,7 @@ function trackLoc(loc: es.SourceLocation | undefined, state: st.State, ignoreMe?
 const functions = {
   nothingFunction: nothingFunction,
   hybridize: hybridize,
+  dummify: sym.makeDummyHybrid,
   saveBool: saveBoolIfHybrid,
   saveVar: saveVarIfHybrid,
   preFunction: preFunction,
@@ -215,7 +227,7 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
   try {
     sandboxedRun(instrumentedCode, functions, state, newBuiltins)
   } catch (error) {
-    if (error instanceof InfiniteLoopReportingError) {
+    if (error instanceof InfiniteLoopError) {
       if (state.lastLocation !== undefined) {
         error.location = state.lastLocation
       }
