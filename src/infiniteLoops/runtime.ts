@@ -64,16 +64,33 @@ function saveBoolIfHybrid(value: any, state: st.State) {
   }
 }
 
+function wrapArgIfFunction(arg: any, state: st.State) {
+  if (typeof arg === 'function') {
+    return (...args: any) => {
+      state.functionWasPassedAsArgument = true
+      return arg(...args)
+    }
+  }
+  return arg
+}
+
 function preFunction(name: string, args: [string, any][], state: st.State) {
   checkTimeout(state)
-  const [tracker, firstIteration] = state.enterFunction(name)
+  // track functions which were passed as arguments in a different tracker
+  const newName = state.functionWasPassedAsArgument ? '*' + name : name
+  const [tracker, firstIteration] = state.enterFunction(newName)
   if (!firstIteration) {
     state.cleanUpVariables()
     state.saveArgsInTransition(args, tracker)
-    const previousIterations = tracker.slice(0, tracker.length - 1)
-    dispatchIfMeetsThreshold(previousIterations, state, name)
+    if (!state.functionWasPassedAsArgument) {
+      const previousIterations = tracker.slice(0, tracker.length - 1)
+      dispatchIfMeetsThreshold(previousIterations, state, name)
+    }
   }
   tracker.push(state.newStackFrame())
+
+  // do not consider these functions for dispatch.
+  state.functionWasPassedAsArgument = false
 }
 
 function returnFunction(value: any, state: st.State) {
@@ -90,7 +107,7 @@ function enterLoop(state: st.State) {
 function postLoop(state: st.State, ignoreMe?: any) {
   checkTimeout(state)
   const previousIterations = state.loopStack[0]
-  dispatchIfMeetsThreshold(previousIterations.slice(1), state)
+  dispatchIfMeetsThreshold(previousIterations.slice(0, previousIterations.length - 1), state)
   state.cleanUpVariables()
   previousIterations.push(state.newStackFrame())
   return ignoreMe
@@ -117,6 +134,7 @@ function dispatchIfMeetsThreshold(
 
 const builtinSpecialCases = {
   is_null(maybeHybrid: any, state?: st.State) {
+    // TODO cleanup
     const xs = sym.shallowConcretize(maybeHybrid)
     const conc = stdList.is_null(xs)
     const theTail = stdList.is_pair(xs) ? xs[1] : undefined
@@ -124,13 +142,17 @@ const builtinSpecialCases = {
     if (state && isStream) {
       const lastFunction = state.getLastFunction()
       if (state.streamMode === true && state.streamLastFunction === lastFunction) {
-        let next = theTail()
+        let next = sym.shallowConcretize(theTail())
         for (let i = 0; i <= state.threshold; i++) {
           if (stdList.is_null(next)) {
             break
           } else {
             const nextTail = stdList.is_pair(next) ? next[1] : undefined
-            next = nextTail()
+            if (typeof nextTail === 'function') {
+              next = sym.shallowConcretize(nextTail())
+            } else {
+              break
+            }
           }
         }
         throw new Error('timeout')
@@ -150,7 +172,8 @@ const builtinSpecialCases = {
     }
     return
   },
-  display: nothingFunction
+  display: nothingFunction,
+  display_list: nothingFunction
 }
 
 function prepareBuiltins(oldBuiltins: Map<string, any>) {
@@ -163,6 +186,7 @@ function prepareBuiltins(oldBuiltins: Map<string, any>) {
       newBuiltins.set(name, (...args: any[]) => fun(...args.map(sym.shallowConcretize)))
     }
   }
+  newBuiltins.set('undefined', undefined)
   return newBuiltins
 }
 
@@ -179,7 +203,9 @@ function trackLoc(loc: es.SourceLocation | undefined, state: st.State, ignoreMe?
 
 const functions = {
   nothingFunction: nothingFunction,
+  concretize: sym.shallowConcretize,
   hybridize: hybridize,
+  wrapArg: wrapArgIfFunction,
   dummify: sym.makeDummyHybrid,
   saveBool: saveBoolIfHybrid,
   saveVar: saveVarIfHybrid,

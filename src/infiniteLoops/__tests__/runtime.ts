@@ -110,3 +110,27 @@ test('detect forcing infinite streams', () => {
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.NoBaseCase)
   expect(result?.streamMode).toBe(true)
 })
+
+test('detect mutual recursion', () => {
+  const code = `function e(x){
+    return x===0?1:1-o(x-1);
+    }
+    function o(x){
+        return x===1?0:1-e(x-1);
+    }
+    e(9);`
+  const result = testForInfiniteLoop(code, [])
+  expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.FromSmt)
+  expect(result?.streamMode).toBe(false)
+})
+
+test('functions passed as arguments not checked', () => {
+  // if they are checked -> this will throw no base case
+  const code = `const twice = f => x => f(f(x));
+  const thrice = f => x => f(f(f(x)));
+  const add = x => x + 1;
+  
+  (thrice)(twice(twice))(twice(add))(0);`
+  const result = testForInfiniteLoop(code, [])
+  expect(result).toBeUndefined()
+})

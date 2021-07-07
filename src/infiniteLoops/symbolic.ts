@@ -22,7 +22,7 @@ export type HybridArray = {
 export type Hybrid = HybridValue | HybridArray
 
 export function hybridizeNamed(name: string, value: any): Hybrid {
-  if (isHybrid(value)) {
+  if (isHybrid(value) || value === undefined || typeof value === 'function') {
     return value
   } else if (Array.isArray(value)) {
     return makeHybridArray(name, value)

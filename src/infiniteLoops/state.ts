@@ -30,6 +30,7 @@ export class State {
   streamLastFunction: string | undefined
   streamCounts: Map<string, number>
   lastLocation: es.SourceLocation | undefined
+  functionWasPassedAsArgument: boolean
   constructor(timeout = 4000, threshold = 20, streamThreshold = threshold * 2) {
     // arbitrary defaults
     this.variablesModified = new Map()
@@ -47,6 +48,7 @@ export class State {
     this.streamMode = false
     this.streamLastFunction = undefined
     this.streamCounts = new Map()
+    this.functionWasPassedAsArgument = false
   }
   static isInvalidPath(path: Path) {
     return path.length === 1 && path[0] === -1
@@ -60,9 +62,19 @@ export class State {
   public getMaybeConc(at: number) {
     return this.mixedStack[at].transitions.map(x => [x[0], x[1]])
   }
+  public popStackToStackPointer() {
+    if (this.mixedStack.length !== this.stackPointer) {
+      this.mixedStack = this.mixedStack.slice(0, this.stackPointer + 1)
+    }
+  }
   public exitLoop() {
-    this.stackPointer = this.loopStack[0][0] - 1
+    const tracker = this.loopStack[0]
+    const lastPosn = tracker.pop()
+    if (lastPosn !== undefined) {
+      this.stackPointer = lastPosn - 1
+    }
     this.loopStack.shift()
+    this.popStackToStackPointer()
   }
 
   /**
@@ -97,15 +109,25 @@ export class State {
   public saveTransition(name: string, value: sym.Hybrid) {
     const concrete = value.concrete
     const id = this.toCached(value.symbolic)
-    this.mixedStack[this.stackPointer].transitions.push([name, concrete, id])
+    const transitions = this.mixedStack[this.stackPointer].transitions
+    for (const transition of transitions) {
+      if (transition[0] === name) {
+        transition[1] = concrete
+        transition[2] = id
+        return
+      }
+    }
+    // no entry with the same name
+    transitions.push([name, concrete, id])
   }
   /**
    * Creates a new stack frame.
    * @returns pointer to the new stack frame.
    */
   public newStackFrame() {
+    this.stackPointer++
     this.mixedStack.push({ paths: [], transitions: [] })
-    return ++this.stackPointer
+    return this.stackPointer
   }
   public getCachedString(id: number) {
     return this.expressionCache[1][id]
@@ -138,7 +160,7 @@ export class State {
       this.functionTrackers.set(name, tracker)
       firstIteration = true
     }
-    firstIteration = tracker.length > 0
+    firstIteration = tracker.length === 0
     return [tracker, firstIteration]
   }
 
@@ -152,6 +174,7 @@ export class State {
     if (lastPosn !== undefined) {
       this.stackPointer = lastPosn - 1
     }
+    this.popStackToStackPointer()
   }
 
   public hasTimedOut() {

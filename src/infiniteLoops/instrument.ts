@@ -4,6 +4,7 @@ import * as create from '../utils/astCreator'
 import { simple, recursive, WalkerCallback } from '../utils/walkers'
 // transforms AST of program
 // TODO: implement tail recursion
+// TODO: functions/stateid -> global?
 
 /**
  * Renames all variables in the program to differentiate shadowed variables and
@@ -34,12 +35,28 @@ function unshadowVariables(program: es.Node, functionsId: string, predefined = {
     callback(node.body, undefined)
     env.shift()
   }
+  const doStatements = (stmts: es.Statement[], callback: WalkerCallback<undefined>) => {
+    for (const stmt of stmts) {
+      if (stmt.type === 'FunctionDeclaration') {
+        // do hoisting first
+        stmt.id = stmt.id as es.Identifier
+        stmt.id.name = genId(stmt.id.name)
+      } else if (stmt.type === 'VariableDeclaration') {
+        for (const decl of stmt.declarations) {
+          decl.id = decl.id as es.Identifier
+          const newName = genId(decl.id.name)
+          decl.id.name = newName
+        }
+      }
+    }
+    for (const stmt of stmts) {
+      callback(stmt, undefined)
+    }
+  }
   recursive(program, [{}], {
     BlockStatement(node: es.BlockStatement, s: undefined, callback: WalkerCallback<undefined>) {
       env.unshift({ ...env[0] })
-      for (const stmt of node.body) {
-        callback(stmt, s)
-      }
+      doStatements(node.body, callback)
       env.shift()
     },
     VariableDeclarator(
@@ -48,8 +65,6 @@ function unshadowVariables(program: es.Node, functionsId: string, predefined = {
       callback: WalkerCallback<undefined>
     ) {
       node.id = node.id as es.Identifier
-      const newName = genId(node.id.name)
-      node.id.name = newName
       if (node.init) {
         callback(node.init, s)
       }
@@ -59,8 +74,6 @@ function unshadowVariables(program: es.Node, functionsId: string, predefined = {
       s: undefined,
       callback: WalkerCallback<undefined>
     ) {
-      node.id = node.id as es.Identifier
-      node.id.name = genId(node.id.name)
       // note: params can shadow function name
       env.unshift({ ...env[0] })
       for (const id of node.params as es.Identifier[]) {
@@ -71,7 +84,7 @@ function unshadowVariables(program: es.Node, functionsId: string, predefined = {
     },
     ForStatement(node: es.ForStatement, s: undefined, callback: WalkerCallback<undefined>) {
       env.unshift({ ...env[0] })
-      if (node.init) callback(node.init, s)
+      if (node.init?.type === 'VariableDeclaration') doStatements([node.init], callback)
       if (node.test) callback(node.test, s)
       if (node.update) callback(node.update, s)
       callback(node.body, s)
@@ -101,12 +114,8 @@ function unshadowVariables(program: es.Node, functionsId: string, predefined = {
     TryStatement(node: es.TryStatement, s: undefined, callback: WalkerCallback<undefined>) {
       if (!node.finalizer) return // should not happen
       env.unshift({ ...env[0] })
-      for (const stmt of node.block.body) {
-        callback(stmt, s)
-      }
-      for (const stmt of node.finalizer.body) {
-        callback(stmt, s)
-      }
+      doStatements(node.block.body, callback)
+      doStatements(node.finalizer.body, callback)
       env.shift()
     }
   })
@@ -117,13 +126,34 @@ function unshadowVariables(program: es.Node, functionsId: string, predefined = {
  * it was changed during the code instrumentation process.
  */
 export function getOriginalName(name: string) {
+  if (/^anon[0-9]+$/.exec(name)) {
+    return '(anonymous)'
+  }
   let cutAt = name.length - 1
   while (name.charAt(cutAt) !== '_') cutAt--
   return name.slice(0, cutAt)
 }
 
+function callFunction(fun: string, functionsId: string) {
+  return create.memberExpression(create.identifier(functionsId), fun)
+}
+
+function wrapCallArguments(program: es.Program, functionsId: string, stateId: string) {
+  simple(program, {
+    CallExpression(node: es.CallExpression) {
+      if (node.callee.type === 'MemberExpression') return
+      for (const arg of node.arguments) {
+        create.mutateToCallExpression(arg, callFunction('wrapArg', functionsId), [
+          { ...(arg as es.Expression) },
+          create.identifier(stateId)
+        ])
+      }
+    }
+  })
+}
+
 /**
- * We turn all "is_null(x)" calls to "is_null(x, stateId)" to
+ * Turn all "is_null(x)" calls to "is_null(x, stateId)" to
  * facilitate checking of infinite streams in stream mode.
  */
 function addStateToIsNull(program: es.Program, stateId: string) {
@@ -153,10 +183,6 @@ function transformLogicalExpressions(program: es.Program) {
   })
 }
 
-function callFunction(fun: string, functionsId: string) {
-  return create.memberExpression(create.identifier(functionsId), fun)
-}
-
 /**
  * Changes -ary operations to functions that accept hybrid values as arguments.
  * E.g. "1+1" -> "functions.evalB('+',1,1)"
@@ -182,26 +208,39 @@ function hybridizeBinaryUnaryOperations(program: es.Node, functionsId: string) {
 }
 
 function hybridizeVariablesAndLiterals(program: es.Node, functionsId: string, stateId: string) {
-  recursive(program, undefined, {
-    Identifier(node: es.Identifier, state: undefined, callback: WalkerCallback<undefined>) {
-      create.mutateToCallExpression(node, callFunction('hybridize', functionsId), [
-        create.literal(node.name),
-        create.identifier(node.name),
-        create.identifier(stateId)
-      ])
+  recursive(program, true, {
+    Identifier(node: es.Identifier, state: boolean, callback: WalkerCallback<boolean>) {
+      if (state) {
+        create.mutateToCallExpression(node, callFunction('hybridize', functionsId), [
+          create.literal(node.name),
+          create.identifier(node.name),
+          create.identifier(stateId)
+        ])
+      }
     },
-    Literal(node: es.Literal, state: undefined, callback: WalkerCallback<undefined>) {
-      if (typeof node.value === 'boolean' || typeof node.value === 'number') {
+    Literal(node: es.Literal, state: boolean, callback: WalkerCallback<boolean>) {
+      if (state && (typeof node.value === 'boolean' || typeof node.value === 'number')) {
         create.mutateToCallExpression(node, callFunction('dummify', functionsId), [
           create.literal(node.value)
         ])
       }
     },
-    CallExpression(node: es.CallExpression, state: undefined, callback: WalkerCallback<undefined>) {
+    CallExpression(node: es.CallExpression, state: boolean, callback: WalkerCallback<boolean>) {
       // ignore callee
       for (const arg of node.arguments) {
         callback(arg, state)
       }
+    },
+    MemberExpression(node: es.MemberExpression, state: boolean, callback: WalkerCallback<boolean>) {
+      if (node.object.type === 'Identifier' && node.object.name === functionsId) return
+      callback(node.object, false)
+      callback(node.property, false)
+      create.mutateToCallExpression(node.object, callFunction('concretize', functionsId), [
+        { ...node.object } as es.Expression
+      ])
+      create.mutateToCallExpression(node.property, callFunction('concretize', functionsId), [
+        { ...node.property } as es.Expression
+      ])
     }
   })
 }
@@ -304,9 +343,10 @@ function trackFunctions(program: es.Node, functionsId: string, stateId: string) 
 
   let counter = 0
   const anonFunction = (node: es.ArrowFunctionExpression | es.FunctionExpression) => {
-    const bodyAsStatement =
-      node.body.type === 'BlockStatement' ? node.body : create.expressionStatement(node.body)
-    inPlaceEnclose(bodyAsStatement, preFunction(`anon${counter++}`, node.params))
+    if (node.body.type !== 'BlockStatement') {
+      create.mutateToReturnStatement(node.body, { ...node.body })
+    }
+    inPlaceEnclose(node.body as es.Statement, preFunction(`anon${counter++}`, node.params))
   }
   simple(program, {
     ArrowFunctionExpression: anonFunction,
@@ -314,16 +354,17 @@ function trackFunctions(program: es.Node, functionsId: string, stateId: string) 
     FunctionDeclaration(node: es.FunctionDeclaration) {
       const name = (node.id as es.Identifier).name
       inPlaceEnclose(node.body, preFunction(name, node.params))
-    },
+    }
+  })
+  simple(program, {
     ReturnStatement(node: es.ReturnStatement) {
-      const arg =
-        node.argument === null || node.argument === undefined
-          ? create.identifier('undefined')
-          : node.argument
-      node.argument = create.callExpression(callFunction('returnFunction', functionsId), [
-        arg,
-        create.identifier(stateId)
-      ])
+      const hasNoArgs = node.argument === null || node.argument === undefined
+      const arg = hasNoArgs ? create.identifier('undefined') : (node.argument as es.Expression)
+      const argsForCall = [arg, create.identifier(stateId)]
+      node.argument = create.callExpression(
+        callFunction('returnFunction', functionsId),
+        argsForCall
+      )
     }
   })
 }
@@ -413,6 +454,7 @@ function trackLocations(program: es.Program, functionsId: string, stateId: strin
   }
   recursive(program, undefined, {
     CallExpression(node: es.CallExpression, state: undefined, callback: WalkerCallback<undefined>) {
+      if (node.callee.type === 'MemberExpression') return
       const copy: es.CallExpression = { ...node }
       const lazyCall = create.arrowFunctionExpression([], copy)
       create.mutateToCallExpression(node, trackerFn, [
@@ -451,11 +493,12 @@ export function instrument(
   // tracking functions: add functions to record runtime data.
 
   trackVariableAssignment(program, functionsId, stateId)
-  trackLocations(innerProgram, functionsId, stateId)
   trackIfStatements(program, functionsId, stateId)
   trackLoops(program, functionsId, stateId)
   trackFunctions(program, functionsId, stateId)
+  trackLocations(innerProgram, functionsId, stateId)
   addStateToIsNull(program, stateId)
+  wrapCallArguments(program, functionsId, stateId)
   const code = generate(program)
   return [code, functionsId, stateId, builtinsId]
 }

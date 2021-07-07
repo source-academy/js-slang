@@ -63,10 +63,11 @@ export function checkForInfinite(
   const report = (message: string, type: InfiniteLoopErrorType) => {
     throw new InfiniteLoopError(functionName, state.streamMode, message, type)
   }
-  if (state.mixedStack[stackPositions[0]].paths.length === 0) {
+  if (hasNoBaseCase(stackPositions, state)) {
     report('It has no base case', InfiniteLoopErrorType.NoBaseCase)
   }
   // arbitrarily using same threshold
+
   let circular
   try {
     circular = checkForCycle(stackPositions.slice(stackPositions.length - state.threshold), state)
@@ -78,7 +79,7 @@ export function checkForInfinite(
     if (circular[0] === circular[1] && circular[0] === '') {
       message = 'None of the variables are being updated.'
     } else {
-      message = 'It has the infinite cycle: ' + circular
+      message = 'It has the infinite cycle: ' + circular.join(' -> ')
     }
     report(message, InfiniteLoopErrorType.Cycle)
   } else {
@@ -89,6 +90,11 @@ export function checkForInfinite(
       report(message, InfiniteLoopErrorType.FromSmt)
     }
   }
+}
+
+function hasNoBaseCase(stackPositions: number[], state: st.State) {
+  const thePaths = state.mixedStack.slice(stackPositions[0], stackPositions[1]).map(x => x.paths)
+  return flatten(thePaths).length === 0
 }
 
 function runUntilValid(items: [string, () => string][]) {
@@ -133,8 +139,7 @@ function tripleEquals(t1: Triple, t2: Triple) {
 
 function codeToDispatch(stackPositions: number[], state: st.State) {
   const firstSeen = getFirstSeen(stackPositions, state)
-  const withoutInvalids = removeInvalid(firstSeen)
-  const closedCycles = getClosed(withoutInvalids)
+  const closedCycles = getClosed(firstSeen)
   const toCheckNested = closedCycles.map(([from, to]) =>
     toSmtSyntax(firstSeen.slice(from, to + 1), state)
   )
@@ -146,12 +151,20 @@ function codeToDispatch(stackPositions: number[], state: st.State) {
  * Preserves order in which the triples are first seen in stackPositions.
  */
 function getFirstSeen(stackPositions: number[], state: st.State) {
-  const firstSeen: Triple[] = []
-  let prev = state.mixedStack[stackPositions[0]]
-  for (const pos of stackPositions.slice(1)) {
-    const next = state.mixedStack[pos]
-    const triple: Triple = [prev.paths, next.paths, prev.transitions]
-    prev = next
+  let firstSeen: Triple[] = []
+  for (let i = 1; i < stackPositions.length - 1; i++) {
+    const prev = stackPositions[i - 1]
+    const current = stackPositions[i]
+    const next = stackPositions[i + 1]
+    const prevPaths = state.mixedStack.slice(prev, current).map(x => x.paths)
+    const nextPaths = state.mixedStack.slice(current, next).map(x => x.paths)
+    if (prevPaths.concat(nextPaths).some(st.State.isInvalidPath)) {
+      // if any path is invalid
+      firstSeen = []
+      continue
+    }
+    const transitions = state.mixedStack.slice(prev, current).map(x => x.transitions)
+    const triple: Triple = [flatten(prevPaths), flatten(nextPaths), flatten(transitions)]
     let wasSeen = false
     for (const seen of firstSeen) {
       if (tripleEquals(triple, seen)) {
@@ -164,20 +177,6 @@ function getFirstSeen(stackPositions: number[], state: st.State) {
     }
   }
   return firstSeen
-}
-
-/**
- * Remove iterations with invalid paths, and all iterations before it.
- */
-function removeInvalid(firstSeen: Triple[]) {
-  let cutFrom = 0
-  for (let i = firstSeen.length - 1; i >= 0; i--) {
-    if (st.State.isInvalidPath(firstSeen[i][0]) || st.State.isInvalidPath(firstSeen[i][1])) {
-      cutFrom = i + 1
-      break
-    }
-  }
-  return firstSeen.slice(cutFrom)
 }
 
 /**
@@ -249,7 +248,7 @@ function addConstantsAndSigns(
     newLine1 = `${line1} and ${innerJoiner(signs1)}`
     newLine3 = `${line3} and ${innerJoiner(signs3)}`
   }
-  if (consts.length > 0) newLine1 = `${innerJoiner(consts)} -> ${line1}`
+  if (consts.length > 0) newLine1 = `${innerJoiner(consts)} -> ${newLine1}`
   return [newLine1, newLine3]
 }
 
