@@ -4,7 +4,30 @@ import * as create from '../utils/astCreator'
 import { simple, recursive, WalkerCallback } from '../utils/walkers'
 // transforms AST of program
 // TODO: implement tail recursion
-// TODO: functions/stateid -> global?
+
+const globalIds = {
+  builtinsId: 'builtins',
+  functionsId: '__InfLoopFns',
+  stateId: '__InfLoopState'
+}
+
+enum FunctionNames {
+  nothingFunction,
+  concretize,
+  hybridize,
+  wrapArg,
+  dummify,
+  saveBool,
+  saveVar,
+  preFunction,
+  returnFunction,
+  postLoop,
+  enterLoop,
+  exitLoop,
+  trackLoc,
+  evalB,
+  evalU
+}
 
 /**
  * Renames all variables in the program to differentiate shadowed variables and
@@ -12,7 +35,10 @@ import { simple, recursive, WalkerCallback } from '../utils/walkers'
  * E.g. "function f(f)..." -> "function f_0(f_1)..."
  * @param predefined A table of [key: string, value:string], where variables named 'key' will be renamed to 'value'
  */
-function unshadowVariables(program: es.Node, functionsId: string, predefined = {}) {
+function unshadowVariables(program: es.Node, predefined = {}) {
+  for (const name of Object.values(globalIds)) {
+    predefined[name] = name
+  }
   const seenIds = new Set()
   const env = [predefined]
   const genId = (name: string) => {
@@ -98,8 +124,8 @@ function unshadowVariables(program: es.Node, functionsId: string, predefined = {
       } else {
         create.mutateToMemberExpression(
           node,
-          create.identifier(functionsId),
-          create.identifier('nothingFunction')
+          create.identifier(globalIds.functionsId),
+          create.literal(FunctionNames.nothingFunction)
         )
       }
     },
@@ -134,18 +160,18 @@ export function getOriginalName(name: string) {
   return name.slice(0, cutAt)
 }
 
-function callFunction(fun: string, functionsId: string) {
-  return create.memberExpression(create.identifier(functionsId), fun)
+function callFunction(fun: FunctionNames) {
+  return create.memberExpression(create.identifier(globalIds.functionsId), fun)
 }
 
-function wrapCallArguments(program: es.Program, functionsId: string, stateId: string) {
+function wrapCallArguments(program: es.Program) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
       if (node.callee.type === 'MemberExpression') return
       for (const arg of node.arguments) {
-        create.mutateToCallExpression(arg, callFunction('wrapArg', functionsId), [
+        create.mutateToCallExpression(arg, callFunction(FunctionNames.wrapArg), [
           { ...(arg as es.Expression) },
-          create.identifier(stateId)
+          create.identifier(globalIds.stateId)
         ])
       }
     }
@@ -156,11 +182,11 @@ function wrapCallArguments(program: es.Program, functionsId: string, stateId: st
  * Turn all "is_null(x)" calls to "is_null(x, stateId)" to
  * facilitate checking of infinite streams in stream mode.
  */
-function addStateToIsNull(program: es.Program, stateId: string) {
+function addStateToIsNull(program: es.Program) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
       if (node.callee.type === 'Identifier' && node.callee.name === 'is_null_0') {
-        node.arguments.push(create.identifier(stateId))
+        node.arguments.push(create.identifier(globalIds.stateId))
       }
     }
   })
@@ -187,11 +213,11 @@ function transformLogicalExpressions(program: es.Program) {
  * Changes -ary operations to functions that accept hybrid values as arguments.
  * E.g. "1+1" -> "functions.evalB('+',1,1)"
  */
-function hybridizeBinaryUnaryOperations(program: es.Node, functionsId: string) {
+function hybridizeBinaryUnaryOperations(program: es.Node) {
   simple(program, {
     BinaryExpression(node: es.BinaryExpression) {
       const { operator, left, right } = node
-      create.mutateToCallExpression(node, callFunction('evalB', functionsId), [
+      create.mutateToCallExpression(node, callFunction(FunctionNames.evalB), [
         create.literal(operator),
         left,
         right
@@ -199,7 +225,7 @@ function hybridizeBinaryUnaryOperations(program: es.Node, functionsId: string) {
     },
     UnaryExpression(node: es.UnaryExpression) {
       const { operator, argument } = node as es.UnaryExpression
-      create.mutateToCallExpression(node, callFunction('evalU', functionsId), [
+      create.mutateToCallExpression(node, callFunction(FunctionNames.evalU), [
         create.literal(operator),
         argument
       ])
@@ -207,20 +233,20 @@ function hybridizeBinaryUnaryOperations(program: es.Node, functionsId: string) {
   })
 }
 
-function hybridizeVariablesAndLiterals(program: es.Node, functionsId: string, stateId: string) {
+function hybridizeVariablesAndLiterals(program: es.Node) {
   recursive(program, true, {
     Identifier(node: es.Identifier, state: boolean, callback: WalkerCallback<boolean>) {
       if (state) {
-        create.mutateToCallExpression(node, callFunction('hybridize', functionsId), [
-          create.literal(node.name),
+        create.mutateToCallExpression(node, callFunction(FunctionNames.hybridize), [
           create.identifier(node.name),
-          create.identifier(stateId)
+          create.literal(node.name),
+          create.identifier(globalIds.stateId)
         ])
       }
     },
     Literal(node: es.Literal, state: boolean, callback: WalkerCallback<boolean>) {
       if (state && (typeof node.value === 'boolean' || typeof node.value === 'number')) {
-        create.mutateToCallExpression(node, callFunction('dummify', functionsId), [
+        create.mutateToCallExpression(node, callFunction(FunctionNames.dummify), [
           create.literal(node.value)
         ])
       }
@@ -232,46 +258,46 @@ function hybridizeVariablesAndLiterals(program: es.Node, functionsId: string, st
       }
     },
     MemberExpression(node: es.MemberExpression, state: boolean, callback: WalkerCallback<boolean>) {
-      if (node.object.type === 'Identifier' && node.object.name === functionsId) return
+      if (node.object.type === 'Identifier' && node.object.name === globalIds.functionsId) return
       callback(node.object, false)
       callback(node.property, false)
-      create.mutateToCallExpression(node.object, callFunction('concretize', functionsId), [
+      create.mutateToCallExpression(node.object, callFunction(FunctionNames.concretize), [
         { ...node.object } as es.Expression
       ])
-      create.mutateToCallExpression(node.property, callFunction('concretize', functionsId), [
+      create.mutateToCallExpression(node.property, callFunction(FunctionNames.concretize), [
         { ...node.property } as es.Expression
       ])
     }
   })
 }
 
-function trackVariableAssignment(program: es.Node, functionsId: string, stateId: string) {
+function trackVariableAssignment(program: es.Node) {
   simple(program, {
     AssignmentExpression(node: es.AssignmentExpression) {
       if (node.left.type === 'Identifier') {
-        node.right = create.callExpression(callFunction('saveVar', functionsId), [
-          create.literal(node.left.name),
+        node.right = create.callExpression(callFunction(FunctionNames.saveVar), [
           node.right,
-          create.identifier(stateId)
+          create.literal(node.left.name),
+          create.identifier(globalIds.stateId)
         ])
       } else if (node.left.type === 'MemberExpression') {
-        // BIG TODO
+        node.right = create.callExpression(callFunction(FunctionNames.concretize), [
+          { ...node.right }
+        ])
       }
     }
   })
 }
 
 function saveTheTest(
-  node: es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement,
-  functionsId: string,
-  stateId: string
+  node: es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
 ) {
   if (node.test === null || node.test === undefined) {
     return
   }
-  const newTest = create.callExpression(callFunction('saveBool', functionsId), [
+  const newTest = create.callExpression(callFunction(FunctionNames.saveBool), [
     node.test,
-    create.identifier(stateId)
+    create.identifier(globalIds.stateId)
   ])
   node.test = newTest
 }
@@ -289,43 +315,42 @@ function inPlaceEnclose(node: es.Statement, prepend?: es.Statement, append?: es.
   }
 }
 
-function trackIfStatements(program: es.Node, functionsId: string, stateId: string) {
-  const theFunction = (node: es.IfStatement | es.ConditionalExpression) =>
-    saveTheTest(node, functionsId, stateId)
+function trackIfStatements(program: es.Node) {
+  const theFunction = (node: es.IfStatement | es.ConditionalExpression) => saveTheTest(node)
   simple(program, { IfStatement: theFunction, ConditionalExpression: theFunction })
 }
 
-function trackLoops(program: es.Node, functionsId: string, stateId: string) {
-  const makeCallStatement = (name: string, args: es.Expression[]) =>
-    create.expressionStatement(create.callExpression(callFunction(name, functionsId), args))
-  const stateExpr = create.identifier(stateId)
+function trackLoops(program: es.Node) {
+  const makeCallStatement = (name: FunctionNames, args: es.Expression[]) =>
+    create.expressionStatement(create.callExpression(callFunction(name), args))
+  const stateExpr = create.identifier(globalIds.stateId)
   simple(program, {
     WhileStatement: (node: es.WhileStatement) => {
-      saveTheTest(node, functionsId, stateId)
-      inPlaceEnclose(node.body, undefined, makeCallStatement('postLoop', [stateExpr]))
+      saveTheTest(node)
+      inPlaceEnclose(node.body, undefined, makeCallStatement(FunctionNames.postLoop, [stateExpr]))
       inPlaceEnclose(
         node,
-        makeCallStatement('enterLoop', [stateExpr]),
-        makeCallStatement('exitLoop', [stateExpr])
+        makeCallStatement(FunctionNames.enterLoop, [stateExpr]),
+        makeCallStatement(FunctionNames.exitLoop, [stateExpr])
       )
     },
     ForStatement: (node: es.ForStatement) => {
-      saveTheTest(node, functionsId, stateId)
+      saveTheTest(node)
       const theUpdate = node.update ? node.update : create.identifier('undefined')
-      node.update = create.callExpression(callFunction('postLoop', functionsId), [
+      node.update = create.callExpression(callFunction(FunctionNames.postLoop), [
         stateExpr,
         theUpdate
       ])
       inPlaceEnclose(
         node,
-        makeCallStatement('enterLoop', [stateExpr]),
-        makeCallStatement('exitLoop', [stateExpr])
+        makeCallStatement(FunctionNames.enterLoop, [stateExpr]),
+        makeCallStatement(FunctionNames.exitLoop, [stateExpr])
       )
     }
   })
 }
 
-function trackFunctions(program: es.Node, functionsId: string, stateId: string) {
+function trackFunctions(program: es.Node) {
   const preFunction = (name: string, params: es.Pattern[]) => {
     const args = params
       .filter(x => x.type === 'Identifier')
@@ -333,10 +358,10 @@ function trackFunctions(program: es.Node, functionsId: string, stateId: string) 
       .map(x => create.arrayExpression([create.literal(x), create.identifier(x)]))
 
     return create.expressionStatement(
-      create.callExpression(callFunction('preFunction', functionsId), [
+      create.callExpression(callFunction(FunctionNames.preFunction), [
         create.literal(name),
         create.arrayExpression(args),
-        create.identifier(stateId)
+        create.identifier(globalIds.stateId)
       ])
     )
   }
@@ -360,23 +385,21 @@ function trackFunctions(program: es.Node, functionsId: string, stateId: string) 
     ReturnStatement(node: es.ReturnStatement) {
       const hasNoArgs = node.argument === null || node.argument === undefined
       const arg = hasNoArgs ? create.identifier('undefined') : (node.argument as es.Expression)
-      const argsForCall = [arg, create.identifier(stateId)]
-      node.argument = create.callExpression(
-        callFunction('returnFunction', functionsId),
-        argsForCall
-      )
+      const argsForCall = [arg, create.identifier(globalIds.stateId)]
+      node.argument = create.callExpression(callFunction(FunctionNames.returnFunction), argsForCall)
     }
   })
 }
 
-function builtinsToStmts(builtinsName: string, builtins: Iterable<string>) {
+function builtinsToStmts(builtins: Iterable<string>) {
   const makeDecl = (name: string) =>
     create.declaration(
       name,
       'const',
-      create.callExpression(create.memberExpression(create.identifier(builtinsName), 'get'), [
-        create.literal(name)
-      ])
+      create.callExpression(
+        create.memberExpression(create.identifier(globalIds.builtinsId), 'get'),
+        [create.literal(name)]
+      )
     )
   return [...builtins].map(makeDecl)
 }
@@ -436,10 +459,10 @@ function savePositionAsExpression(loc: es.SourceLocation | undefined | null) {
   }
 }
 
-function trackLocations(program: es.Program, functionsId: string, stateId: string) {
+function trackLocations(program: es.Program) {
   // Note: only add locations for most recently entered code
-  const trackerFn = create.memberExpression(create.identifier(functionsId), 'trackLoc')
-  const stateExpr = create.identifier(stateId)
+  const trackerFn = callFunction(FunctionNames.trackLoc)
+  const stateExpr = create.identifier(globalIds.stateId)
   const doLoops = (
     node: es.ForStatement | es.WhileStatement,
     state: undefined,
@@ -469,14 +492,12 @@ function trackLocations(program: es.Program, functionsId: string, stateId: strin
 }
 
 // previous: most recent first (at ix 0)
-export function instrument(
+function instrument(
   previous: es.Program[],
   program: es.Program,
   builtins: Iterable<string>
 ): [string, string, string, string] {
-  const builtinsId = 'builtins'
-  const functionsId = '__InfLoopFns'
-  const stateId = '__InfLoopState'
+  const { builtinsId, functionsId, stateId } = globalIds
   const predefined = {}
   predefined[builtinsId] = builtinsId
   predefined[functionsId] = functionsId
@@ -485,20 +506,22 @@ export function instrument(
   for (const toWrap of previous) {
     wrapOldCode(program, toWrap.body as es.Statement[])
   }
-  wrapOldCode(program, builtinsToStmts(builtinsId, builtins))
-  unshadowVariables(program, functionsId, predefined)
+  wrapOldCode(program, builtinsToStmts(builtins))
+  unshadowVariables(program, predefined)
   transformLogicalExpressions(program)
-  hybridizeBinaryUnaryOperations(program, functionsId)
-  hybridizeVariablesAndLiterals(program, functionsId, stateId)
+  hybridizeBinaryUnaryOperations(program)
+  hybridizeVariablesAndLiterals(program)
   // tracking functions: add functions to record runtime data.
 
-  trackVariableAssignment(program, functionsId, stateId)
-  trackIfStatements(program, functionsId, stateId)
-  trackLoops(program, functionsId, stateId)
-  trackFunctions(program, functionsId, stateId)
-  trackLocations(innerProgram, functionsId, stateId)
-  addStateToIsNull(program, stateId)
-  wrapCallArguments(program, functionsId, stateId)
+  trackVariableAssignment(program)
+  trackIfStatements(program)
+  trackLoops(program)
+  trackFunctions(program)
+  trackLocations(innerProgram)
+  addStateToIsNull(program)
+  wrapCallArguments(program)
   const code = generate(program)
   return [code, functionsId, stateId, builtinsId]
 }
+
+export { instrument, FunctionNames as InfiniteLoopRuntimeFunctions }

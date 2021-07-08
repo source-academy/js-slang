@@ -4,7 +4,7 @@ import * as st from './state'
 import * as es from 'estree'
 import * as stdList from '../stdlib/list'
 import { checkForInfinite, InfiniteLoopError } from './detect'
-import { instrument } from './instrument'
+import { instrument, InfiniteLoopRuntimeFunctions as functionNames } from './instrument'
 import { parse } from '../parser/parser'
 import { createContext } from '../index'
 
@@ -19,7 +19,7 @@ function checkTimeout(state: st.State) {
  * If a variable has been added to state.variablesToReset, it will
  * be lazily 'reset' (concretized and re-hybridized) here.
  */
-function hybridize(name: string, originalValue: any, state: st.State) {
+function hybridize(originalValue: any, name: string, state: st.State) {
   if (typeof originalValue === 'function') {
     return originalValue
   }
@@ -30,7 +30,7 @@ function hybridize(name: string, originalValue: any, state: st.State) {
   return sym.hybridizeNamed(name, value)
 }
 
-function saveVarIfHybrid(name: string, value: any, state: st.State) {
+function saveVarIfHybrid(value: any, name: string, state: st.State) {
   state.variablesToReset.delete(name)
   if (sym.isHybrid(value)) {
     state.variablesModified.set(name, value)
@@ -201,23 +201,22 @@ function trackLoc(loc: es.SourceLocation | undefined, state: st.State, ignoreMe?
   }
 }
 
-const functions = {
-  nothingFunction: nothingFunction,
-  concretize: sym.shallowConcretize,
-  hybridize: hybridize,
-  wrapArg: wrapArgIfFunction,
-  dummify: sym.makeDummyHybrid,
-  saveBool: saveBoolIfHybrid,
-  saveVar: saveVarIfHybrid,
-  preFunction: preFunction,
-  returnFunction: returnFunction,
-  postLoop: postLoop,
-  enterLoop: enterLoop,
-  exitLoop: exitLoop,
-  trackLoc: trackLoc,
-  evalB: sym.evaluateHybridBinary,
-  evalU: sym.evaluateHybridUnary
-}
+const functions = {}
+functions[functionNames.nothingFunction] = nothingFunction
+functions[functionNames.concretize] = sym.shallowConcretize
+functions[functionNames.hybridize] = hybridize
+functions[functionNames.wrapArg] = wrapArgIfFunction
+functions[functionNames.dummify] = sym.makeDummyHybrid
+functions[functionNames.saveBool] = saveBoolIfHybrid
+functions[functionNames.saveVar] = saveVarIfHybrid
+functions[functionNames.preFunction] = preFunction
+functions[functionNames.returnFunction] = returnFunction
+functions[functionNames.postLoop] = postLoop
+functions[functionNames.enterLoop] = enterLoop
+functions[functionNames.exitLoop] = exitLoop
+functions[functionNames.trackLoc] = trackLoc
+functions[functionNames.evalB] = sym.evaluateHybridBinary
+functions[functionNames.evalU] = sym.evaluateHybridUnary
 
 export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
   const context = createContext(4, 'default', undefined, undefined)
