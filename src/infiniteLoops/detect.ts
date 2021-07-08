@@ -43,10 +43,9 @@ export class InfiniteLoopError extends RuntimeSourceError {
   }
   public explain() {
     const entityName = this.functionName ? `function ${getOriginalName(this.functionName)}` : 'loop'
-    const header = this.streamMode
-      ? `Forcing an infinite stream: ${entityName}.`
-      : `The ${entityName} at has encountered an infinite loop.`
-    return header + ' ' + this.message
+    return this.streamMode
+      ? `The error may have arisen from forcing the infinite stream: ${entityName}.`
+      : `The ${entityName} at has encountered an infinite loop. ` + this.message
   }
 }
 
@@ -55,7 +54,7 @@ export class InfiniteLoopError extends RuntimeSourceError {
  * @throws InfiniteLoopError if so.
  * @returns void otherwise.
  */
-export function checkForInfinite(
+export function checkForInfiniteLoop(
   stackPositions: number[],
   state: st.State,
   functionName: string | undefined
@@ -95,6 +94,57 @@ export function checkForInfinite(
 function hasNoBaseCase(stackPositions: number[], state: st.State) {
   const thePaths = state.mixedStack.slice(stackPositions[0], stackPositions[1]).map(x => x.paths)
   return flatten(thePaths).length === 0
+}
+
+/**
+ * @returns if a cycle was detected, string array describing the cycle. Otherwise returns undefined.
+ */
+function checkForCycle(stackPositions: number[], state: st.State): string[] | undefined {
+  const maybeConc = stackPositions.map(i => state.getMaybeConc(i))
+  const concStr = []
+  for (const item of maybeConc) {
+    const innerStr = []
+    for (const [name, val] of item) {
+      if (typeof val === 'function') {
+        return
+      }
+      innerStr.push(`(${getOriginalName(name)}: ${stringifyCircular(val)})`)
+    }
+    concStr.push(innerStr.join(', '))
+  }
+  return getCycle(concStr)
+}
+
+function getCycle(temp: any[]) {
+  const last = temp[temp.length - 1]
+  const ix1 = temp.lastIndexOf(last, -2)
+  if (ix1 === -1) return undefined
+  const period = temp.length - ix1 - 1
+  const s1 = temp.slice(ix1 - period, ix1)
+  const s2 = temp.slice(ix1, -1)
+  if (s1.length != period) return undefined
+  for (let i = 0; i < period; i++) {
+    if (s1[i] != s2[i]) return undefined
+  }
+  return s1.concat(s1[0])
+}
+
+function stringifyCircular(x: any) {
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value#examples
+  const getCircularReplacer = () => {
+    const seen = new WeakSet()
+    return (key: string, value: any) => {
+      if (typeof value === 'object' && value !== null) {
+        if (seen.has(value)) {
+          return '(CIRCULAR)'
+        }
+        seen.add(value)
+      }
+      return shallowConcretize(value)
+    }
+  }
+
+  return JSON.stringify(x, getCircularReplacer())
 }
 
 function runUntilValid(items: [string, () => string][]) {
@@ -285,9 +335,8 @@ function errorMessageMaker(
     let result = ''
     for (let i = 0; i < transitionPart.length; i++) {
       if (i > 0) result += ' And in a subsequent iteration, '
-      result += `when (${pathPart[i].join(' and ')}), the variables are updated (${transitionPart[
-        i
-      ].join(', ')}).`
+      result += `when (${pathPart[i].join(' and ')}), `
+      result += `the variables are updated (${transitionPart[i].join(', ')}).`
     }
     return result
   }
@@ -325,55 +374,4 @@ function toSmtSyntax(toInclude: Triple[], state: st.State): [string, () => strin
     message
   ]
   return [template1, template2]
-}
-
-/**
- * @returns if a cycle was detected, string array describing the cycle. Otherwise returns undefined.
- */
-function checkForCycle(stackPositions: number[], state: st.State): string[] | undefined {
-  const maybeConc = stackPositions.map(i => state.getMaybeConc(i))
-  const concStr = []
-  for (const item of maybeConc) {
-    const innerStr = []
-    for (const [name, val] of item) {
-      if (typeof val === 'function') {
-        return
-      }
-      innerStr.push(`(${getOriginalName(name)}: ${stringifyCircular(val)})`)
-    }
-    concStr.push(innerStr.join(', '))
-  }
-  return getCycle(concStr)
-}
-
-function getCycle(temp: any[]) {
-  const last = temp[temp.length - 1]
-  const ix1 = temp.lastIndexOf(last, -2)
-  if (ix1 === -1) return undefined
-  const period = temp.length - ix1 - 1
-  const s1 = temp.slice(ix1 - period, ix1)
-  const s2 = temp.slice(ix1, -1)
-  if (s1.length != period) return undefined
-  for (let i = 0; i < period; i++) {
-    if (s1[i] != s2[i]) return undefined
-  }
-  return s1.concat(s1[0])
-}
-
-function stringifyCircular(x: any) {
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value#examples
-  const getCircularReplacer = () => {
-    const seen = new WeakSet()
-    return (key: string, value: any) => {
-      if (typeof value === 'object' && value !== null) {
-        if (seen.has(value)) {
-          return '(CIRCULAR)'
-        }
-        seen.add(value)
-      }
-      return shallowConcretize(value)
-    }
-  }
-
-  return JSON.stringify(x, getCircularReplacer())
 }

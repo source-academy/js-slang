@@ -134,3 +134,90 @@ test('functions passed as arguments not checked', () => {
   const result = testForInfiniteLoop(code, [])
   expect(result).toBeUndefined()
 })
+
+test('detect complicated cycle example', () => {
+  const code = `function permutations(s) {
+    return is_null(s)
+    ? list(null)
+    : accumulate(append, null,
+    map(x => map(p => pair(x, p),
+    permutations(remove(x, s))),
+    s));
+   }
+   
+   function remove_duplicate(xs) {
+     return is_null(xs)
+       ? xs
+       : pair(head(xs),
+         remove_duplicate(filter(x => x !== equal(head(xs),x), xs)));
+   }
+   
+   remove_duplicate(list(list(1,2,3), list(1,2,3)));
+   `
+  const result = testForInfiniteLoop(code, [])
+  expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
+  expect(result?.streamMode).toBe(false)
+})
+
+test('detect complicated cycle example 2', () => {
+  const code = `function make_big_int_from_number(num){
+    let output = num;
+    while(output !== 0){
+        const digits = num % 10;
+        output = math_floor(num / 10);
+        
+    }
+}
+make_big_int_from_number(1234);
+   `
+  const result = testForInfiniteLoop(code, [])
+  expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
+  expect(result?.streamMode).toBe(false)
+})
+
+test('detect complicated fromSMT example', () => {
+  const code = `function super_bunny(n){
+    function helper(total_steps_left, steps_available) {
+        if (total_steps_left < 0 || steps_available === 0) {
+            return 0;
+        } else if (total_steps_left === 1) {
+            return 1;
+        } else {
+            return 1 + helper(total_steps_left-1, steps_available-1) + helper(5, steps_available-3);
+        }
+    }
+    return helper(n, n);
+  }
+  super_bunny(5);
+   `
+  const result = testForInfiniteLoop(code, [])
+  expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.FromSmt)
+  expect(result?.streamMode).toBe(false)
+})
+
+test('detect complicated fromSMT example 2', () => {
+  const code = `function fast_power(b,n){
+    if (n % 2 === 0){
+        return b* fast_power(b, n-2);
+    } else { 
+        return b * fast_power(b, n-2);
+    }
+
+  }
+  fast_power(2,3);`
+  const result = testForInfiniteLoop(code, [])
+  expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.FromSmt)
+  expect(result?.streamMode).toBe(false)
+})
+
+test('detect complicated stream example', () => {
+  const code = `function up(a, b) {
+    return (a > b)
+            ? up(1, 1 + b)
+            : pair(a, () => stream_reverse(up(a + 1, b)));
+  }
+  eval_stream(up(1,1), 22);`
+  const result = testForInfiniteLoop(code, [])
+  expect(result).toBeDefined()
+  expect(result?.streamMode).toBe(true)
+})

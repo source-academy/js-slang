@@ -3,7 +3,7 @@ import * as create from '../utils/astCreator'
 import * as st from './state'
 import * as es from 'estree'
 import * as stdList from '../stdlib/list'
-import { checkForInfinite, InfiniteLoopError } from './detect'
+import { checkForInfiniteLoop, InfiniteLoopError } from './detect'
 import { instrument, InfiniteLoopRuntimeFunctions as functionNames } from './instrument'
 import { parse } from '../parser/parser'
 import { createContext } from '../index'
@@ -126,36 +126,44 @@ function dispatchIfMeetsThreshold(
   let checkpoint = state.threshold
   while (checkpoint <= stackPositions.length) {
     if (stackPositions.length === checkpoint) {
-      checkForInfinite(stackPositions, state, functionName)
+      checkForInfiniteLoop(stackPositions, state, functionName)
     }
     checkpoint = checkpoint * 2
   }
 }
 
+/**
+ * Test if stream is infinite. May destructively change the program
+ * environment. If it is not infinite, throw a timeout error.
+ */
+function testIfInfiniteStream(stream: any, state: st.State) {
+  let next = stream
+  for (let i = 0; i <= state.threshold; i++) {
+    if (stdList.is_null(next)) {
+      break
+    } else {
+      const nextTail = stdList.is_pair(next) ? next[1] : undefined
+      if (typeof nextTail === 'function') {
+        next = sym.shallowConcretize(nextTail())
+      } else {
+        break
+      }
+    }
+  }
+  throw new Error('timeout')
+}
+
 const builtinSpecialCases = {
   is_null(maybeHybrid: any, state?: st.State) {
-    // TODO cleanup
     const xs = sym.shallowConcretize(maybeHybrid)
     const conc = stdList.is_null(xs)
     const theTail = stdList.is_pair(xs) ? xs[1] : undefined
     const isStream = typeof theTail === 'function'
     if (state && isStream) {
-      const lastFunction = state.getLastFunction()
+      const lastFunction = state.getLastFunctionName()
       if (state.streamMode === true && state.streamLastFunction === lastFunction) {
-        let next = sym.shallowConcretize(theTail())
-        for (let i = 0; i <= state.threshold; i++) {
-          if (stdList.is_null(next)) {
-            break
-          } else {
-            const nextTail = stdList.is_pair(next) ? next[1] : undefined
-            if (typeof nextTail === 'function') {
-              next = sym.shallowConcretize(nextTail())
-            } else {
-              break
-            }
-          }
-        }
-        throw new Error('timeout')
+        // heuristic to make sure we are at the same is_null call
+        testIfInfiniteStream(sym.shallowConcretize(theTail()), state)
       } else {
         let count = state.streamCounts.get(lastFunction)
         if (count === undefined) {

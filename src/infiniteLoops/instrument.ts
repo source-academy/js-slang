@@ -3,7 +3,6 @@ import { generate } from 'astring'
 import * as create from '../utils/astCreator'
 import { simple, recursive, WalkerCallback } from '../utils/walkers'
 // transforms AST of program
-// TODO: implement tail recursion
 
 const globalIds = {
   builtinsId: 'builtins',
@@ -127,6 +126,7 @@ function unshadowVariables(program: es.Node, predefined = {}) {
           create.identifier(globalIds.functionsId),
           create.literal(FunctionNames.nothingFunction)
         )
+        ;(node as any).computed = true
       }
     },
     AssignmentExpression(

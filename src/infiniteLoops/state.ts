@@ -21,7 +21,7 @@ export class State {
   stackPointer: number
   loopStack: IterationsTracker[]
   functionTrackers: Map<string, IterationsTracker>
-  functionNameStack: string[]
+  functionStack: [string, Transition][]
   threshold: number
   streamThreshold: number
   startTime: number
@@ -40,7 +40,7 @@ export class State {
     this.stackPointer = 0
     this.loopStack = []
     this.functionTrackers = new Map()
-    this.functionNameStack = []
+    this.functionStack = []
     this.threshold = threshold
     this.streamThreshold = streamThreshold
     this.startTime = Date.now()
@@ -152,7 +152,8 @@ export class State {
    * @returns [tracker, firstIteration] where firstIteration is true if this is the functions first iteration.
    */
   public enterFunction(name: string): [IterationsTracker, boolean] {
-    this.functionNameStack.push(name)
+    const transitions = this.mixedStack[this.stackPointer].transitions
+    this.functionStack.push([name, [...transitions]])
     let tracker = this.functionTrackers.get(name)
     let firstIteration = false
     if (tracker === undefined) {
@@ -164,28 +165,6 @@ export class State {
     return [tracker, firstIteration]
   }
 
-  /**
-   * Records in the state that the last function has returned.
-   */
-  public returnLastFunction() {
-    const lastFunction = this.functionNameStack.pop()
-    const tracker = this.functionTrackers.get(lastFunction as string) as IterationsTracker
-    const lastPosn = tracker.pop()
-    if (lastPosn !== undefined) {
-      this.stackPointer = lastPosn - 1
-    }
-    this.popStackToStackPointer()
-  }
-
-  public hasTimedOut() {
-    return Date.now() - this.startTime > this.timeout
-  }
-  /**
-   * @returns the name of the last function in the stack.
-   */
-  public getLastFunction() {
-    return this.functionNameStack[this.functionNameStack.length - 1]
-  }
   /**
    * Saves args into the last transition in the tracker.
    */
@@ -203,5 +182,29 @@ export class State {
     if (prevPointer > -1) {
       this.mixedStack[prevPointer].transitions.push(...transitions)
     }
+  }
+
+  /**
+   * Records in the state that the last function has returned.
+   */
+  public returnLastFunction() {
+    const [lastFunction, transitions] = this.functionStack.pop() as [string, Transition]
+    const tracker = this.functionTrackers.get(lastFunction as string) as IterationsTracker
+    const lastPosn = tracker.pop()
+    if (lastPosn !== undefined) {
+      this.stackPointer = lastPosn - 1
+    }
+    this.popStackToStackPointer()
+    this.mixedStack[this.stackPointer].transitions = transitions
+  }
+
+  public hasTimedOut() {
+    return Date.now() - this.startTime > this.timeout
+  }
+  /**
+   * @returns the name of the last function in the stack.
+   */
+  public getLastFunctionName() {
+    return this.functionStack[this.functionStack.length - 1][0]
   }
 }
