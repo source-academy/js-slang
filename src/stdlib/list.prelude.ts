@@ -36,11 +36,11 @@ function equal(xs, ys) {
 // returns the length of a given argument list
 // assumes that the argument is a list
 
-function length_iter(xs, acc) {
-    return is_null(xs) ? acc : length_iter(tail(xs), acc + 1);
+function $length(xs, acc) {
+    return is_null(xs) ? acc : $length(tail(xs), acc + 1);
 }
 function length(xs) {
-  return length_iter(xs, 0);
+  return $length(xs, 0);
 }
 
 // map applies first arg f, assumed to be a unary function,
@@ -48,13 +48,13 @@ function length(xs) {
 // f is applied element-by-element:
 // map(f, list(1, 2)) results in list(f(1), f(2))
 
-function map_iter(f, xs, acc) {
-    return is_null(xs) 
-           ? reverse(acc) 
-           : map_iter(f, tail(xs), pair(f(head(xs)), acc));
+function $map(f, xs, acc) {
+    return is_null(xs)
+           ? reverse(acc)
+           : $map(f, tail(xs), pair(f(head(xs)), acc));
 }
 function map(f, xs) {
-    return map_iter(f, xs, null);
+    return $map(f, xs, null);
 }
 
 // build_list takes a a function fun as first argument, 
@@ -62,11 +62,12 @@ function map(f, xs) {
 // build_list returns a list of n elements, that results from
 // applying fun to the numbers from 0 to n-1.
 
+function $build_list(i, fun, already_built) {
+    return i < 0 ? already_built : $build_list(i - 1, fun, pair(fun(i), already_built));
+}
+
 function build_list(fun, n) {
-  function build(i, fun, already_built) {
-    return i < 0 ? already_built : build(i - 1, fun, pair(fun(i), already_built));
-  }
-  return build(n - 1, fun, null);
+  return $build_list(n - 1, fun, null);
 }
 
 // for_each applies first arg fun, assumed to be a unary function,
@@ -88,22 +89,32 @@ function for_each(fun, xs) {
 // It applies itself recursively on the elements of the given list.
 // When it encounters a non-list, it applies to_string to it.
 
-function list_to_string(xs) {
+function $list_to_string(xs, cont) {
     return is_null(xs)
-        ? "null"
+        ? cont("null")
         : is_pair(xs)
-            ? "[" + list_to_string(head(xs)) + "," +
-                list_to_string(tail(xs)) + "]"
-            : stringify(xs);
+        ? $list_to_string(
+              head(xs),
+              x => $list_to_string(
+                       tail(xs),
+                       y => cont("[" + x + "," + y + "]")))
+        : cont(stringify(xs));
+}
+
+function list_to_string(xs) {
+    return $list_to_string(xs, x => x);
 }
 
 // reverse reverses the argument, assumed to be a list
 
+function $reverse(original, reversed) {
+    return is_null(original)
+           ? reversed
+           : $reverse(tail(original), pair(head(original), reversed));
+}
+
 function reverse(xs) {
-  function rev(original, reversed) {
-    return is_null(original) ? reversed : rev(tail(original), pair(head(original), reversed));
-  }
-  return rev(xs, null);
+    return $reverse(xs, null);
 }
 
 // append first argument, assumed to be a list, to the second argument.
@@ -111,14 +122,14 @@ function reverse(xs) {
 // is replaced by the second argument, regardless what the second
 // argument consists of.
 
-function append_cps(xs, ys, cont) {
+function $append(xs, ys, cont) {
     return is_null(xs)
            ? cont(ys)
-	       : append_cps(tail(xs), ys, zs => cont(pair(head(xs), zs)));
+           : $append(tail(xs), ys, zs => cont(pair(head(xs), zs)));
 }
 
 function append(xs, ys) {
-  return append_cps(xs, ys, xs => xs);
+    return $append(xs, ys, xs => xs);
 }
 
 // member looks for a given first-argument element in the
@@ -127,56 +138,72 @@ function append(xs, ys) {
 // element does not occur in the list
 
 function member(v, xs) {
-  return is_null(xs) ? null : v === head(xs) ? xs : member(v, tail(xs));
+  return is_null(xs)
+         ? null
+	 : v === head(xs)
+	 ? xs
+	 : member(v, tail(xs));
 }
 
 // removes the first occurrence of a given first-argument element
 // in second-argument, assmed to be a list. Returns the original
 // list if there is no occurrence.
 
+function $remove(v, xs, acc) {
+  return is_null(xs)
+         ? append(reverse(acc), xs)
+         : v === head(xs)
+         ? append(reverse(acc), tail(xs))
+         : $remove(v, tail(xs), pair(head(xs), acc));
+}
+
 function remove(v, xs) {
-  return is_null(xs) ? null : v === head(xs) ? tail(xs) : pair(head(xs), remove(v, tail(xs)));
+    return $remove(v, xs, null);
 }
 
 // Similar to remove, but removes all instances of v
 // instead of just the first
 
-function remove_all(v, xs) {
+function $remove_all(v, xs, acc) {
   return is_null(xs)
-    ? null
-    : v === head(xs)
-    ? remove_all(v, tail(xs))
-    : pair(head(xs), remove_all(v, tail(xs)));
+         ? append(reverse(acc), xs)
+         : v === head(xs)
+         ? $remove_all(v, tail(xs), acc)
+         : $remove_all(v, tail(xs), pair(head(xs), acc));
+}
+
+function remove_all(v, xs) {
+    return $remove_all(v, xs, null);
 }
 
 // filter returns the sublist of elements of the second argument
 // (assumed to be a list), for which the given predicate function
 // returns true.
 
-function filter_iter(pred, xs, acc) {
+function $filter(pred, xs, acc) {
   return is_null(xs)
     ? reverse(acc)
     : pred(head(xs))
-    ? filter_iter(pred, tail(xs), pair(head(xs), acc))
-    : filter_iter(pred, tail(xs), acc);
+    ? $filter(pred, tail(xs), pair(head(xs), acc))
+    : $filter(pred, tail(xs), acc);
 }
 
 function filter(pred, xs) {
-    return filter_iter(pred, xs, null);
+    return $filter(pred, xs, null);
 }
 
 // enumerates numbers starting from start, assumed to be a number,
 // using a step size of 1, until the number exceeds end, assumed
 // to be a number
 
-function enum_list_iter(start, end, acc) {
+function $enum_list(start, end, acc) {
   return start > end
          ? reverse(acc)
-         : enum_list_iter(start + 1, end, pair(start, acc));
+         : $enum_list(start + 1, end, pair(start, acc));
 }
 
 function enum_list(start, end) {
-    return enum_list_iter(start, end, null);
+    return $enum_list(start, end, null);
 }
 
 // Returns the item in xs (assumed to be a list) at index n,
@@ -184,7 +211,9 @@ function enum_list(start, end) {
 // Note: the first item is at position 0
 
 function list_ref(xs, n) {
-  return n === 0 ? head(xs) : list_ref(tail(xs), n - 1);
+  return n === 0
+         ? head(xs)
+         : list_ref(tail(xs), n - 1);
 }
 
 // accumulate applies an operation op (assumed to be a binary function)
@@ -196,7 +225,13 @@ function list_ref(xs, n) {
 // accumulate(op, zero, list(1, 2, 3)) results in
 // op(1, op(2, op(3, zero)))
 
+function $accumulate(f, initial, xs, cont) {
+    return is_null(xs)
+           ? cont(initial)
+           : $accumulate(f, initial, tail(xs), x => cont(f(head(xs), x)));
+}
+
 function accumulate(f, initial, xs) {
-  return is_null(xs) ? initial : f(head(xs), accumulate(f, initial, tail(xs)));
+  return $accumulate(f, initial, xs, x => x);
 }
 `
