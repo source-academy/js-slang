@@ -211,7 +211,9 @@ function enum_list(start, end) {
 // Note: the first item is at position 0
 
 function list_ref(xs, n) {
-  return n === 0 ? head(xs) : list_ref(tail(xs), n - 1);
+  return n === 0
+         ? head(xs)
+         : list_ref(tail(xs), n - 1);
 }
 
 // accumulate applies an operation op (assumed to be a binary function)
