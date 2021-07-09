@@ -36,8 +36,11 @@ function equal(xs, ys) {
 // returns the length of a given argument list
 // assumes that the argument is a list
 
+function length_iter(xs, acc) {
+    return is_null(xs) ? acc : length_iter(tail(xs), acc + 1);
+}
 function length(xs) {
-  return is_null(xs) ? 0 : 1 + length(tail(xs));
+  return length_iter(xs, 0);
 }
 
 // map applies first arg f, assumed to be a unary function,
@@ -45,8 +48,13 @@ function length(xs) {
 // f is applied element-by-element:
 // map(f, list(1, 2)) results in list(f(1), f(2))
 
+function map_iter(f, xs, acc) {
+    return is_null(xs) 
+           ? reverse(acc) 
+           : map_iter(f, tail(xs), pair(f(head(xs)), acc));
+}
 function map(f, xs) {
-  return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));
+    return map_iter(f, xs, null);
 }
 
 // build_list takes a a function fun as first argument, 
@@ -103,8 +111,14 @@ function reverse(xs) {
 // is replaced by the second argument, regardless what the second
 // argument consists of.
 
+function append_cps(xs, ys, cont) {
+    return is_null(xs)
+           ? cont(ys)
+	       : append_cps(tail(xs), ys, zs => cont(pair(head(xs), zs)));
+}
+
 function append(xs, ys) {
-  return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
+  return append_cps(xs, ys, xs => xs);
 }
 
 // member looks for a given first-argument element in the
@@ -139,20 +153,30 @@ function remove_all(v, xs) {
 // (assumed to be a list), for which the given predicate function
 // returns true.
 
-function filter(pred, xs) {
+function filter_iter(pred, xs, acc) {
   return is_null(xs)
-    ? xs
+    ? reverse(acc)
     : pred(head(xs))
-    ? pair(head(xs), filter(pred, tail(xs)))
-    : filter(pred, tail(xs));
+    ? filter_iter(pred, tail(xs), pair(head(xs), acc))
+    : filter_iter(pred, tail(xs), acc);
+}
+
+function filter(pred, xs) {
+    return filter_iter(pred, xs, null);
 }
 
 // enumerates numbers starting from start, assumed to be a number,
 // using a step size of 1, until the number exceeds end, assumed
 // to be a number
 
+function enum_list_iter(start, end, acc) {
+  return start > end
+         ? reverse(acc)
+         : enum_list_iter(start + 1, end, pair(start, acc));
+}
+
 function enum_list(start, end) {
-  return start > end ? null : pair(start, enum_list(start + 1, end));
+    return enum_list_iter(start, end, null);
 }
 
 // Returns the item in xs (assumed to be a list) at index n,
