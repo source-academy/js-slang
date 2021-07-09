@@ -329,7 +329,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 3, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 49: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
+      `"Line 54: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
@@ -340,7 +340,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 3, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 74: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
+      `"Line 82: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
@@ -351,7 +351,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 3, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 96: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
+      `"Line 104: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
@@ -362,7 +362,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 3, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 107: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
+      `"Line 117: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
@@ -373,7 +373,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 3, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 116: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
+      `"Line 130: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
@@ -384,7 +384,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 3, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 124: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
+      `"Line 138: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
@@ -395,7 +395,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 3, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 133: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
+      `"Line 147: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
@@ -415,7 +415,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 3, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 145: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
+      `"Line 159: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
   })
 
@@ -490,7 +490,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 61: Expected number on left hand side of operation, got string."`
+      `"Line 69: Expected number on left hand side of operation, got string."`
     )
   })
 
@@ -501,7 +501,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 155: Expected string on right hand side of operation, got number."`
+      `"Line 175: Expected string on right hand side of operation, got number."`
     )
   })
 
@@ -512,7 +512,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 155: Expected string on right hand side of operation, got number."`
+      `"Line 173: Expected string on right hand side of operation, got number."`
     )
   })
 
@@ -523,7 +523,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 155: Expected number on right hand side of operation, got string."`
+      `"Line 173: Expected number on right hand side of operation, got string."`
     )
   })
 
@@ -534,7 +534,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 163: Error: head(xs) expects a pair as argument xs, but encountered null"`
+      `"Line 187: Error: head(xs) expects a pair as argument xs, but encountered null"`
     )
   })
 
@@ -545,7 +545,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 163: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+      `"Line 187: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`
     )
   })
 
@@ -556,7 +556,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 163: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+      `"Line 187: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`
     )
   })
 
@@ -567,7 +567,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 163: Expected string on right hand side of operation, got number."`
+      `"Line 187: Expected string on right hand side of operation, got number."`
     )
   })
 })
