@@ -117,18 +117,16 @@ function equal(xs, ys) {
  * @returns {number} length of <CODE>xs</CODE>
  */
 function length(xs) {
-    function iter(ys, acc) {
-       return is_null(ys)
-           ? acc
-           : iter(tail(ys), acc + 1);
-    }
-    return iter(xs, 0);
+  return $length(xs, 0);
+}
+function $length(xs, acc) {
+    return is_null(xs) ? acc : $length(tail(xs), acc + 1);
 }
 
 /**
  * Returns a list that results from list
  * <CODE>xs</CODE> by element-wise application of unary function <CODE>f</CODE>. 
- * Recursive process; time: <CODE>O(n)</CODE>,
+ * Iterative process; time: <CODE>O(n)</CODE>,
  * space: <CODE>O(n)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
  * <CODE>f</CODE> is applied element-by-element:
  * <CODE>map(f, list(1, 2))</CODE> results in <CODE>list(f(1), f(2))</CODE>.
@@ -137,28 +135,29 @@ function length(xs) {
  * @returns {list} result of mapping
  */
 function map(f, xs) {
-    return is_null(xs)
-        ? null
-        : pair(f(head(xs)), map(f, tail(xs)));
+    return $map(f, xs, null);
 }
+function $map(f, xs, acc) {
+    return is_null(xs)
+           ? reverse(acc)
+           : $map(f, tail(xs), pair(f(head(xs)), acc));
+}
+
 
 /** 
  * Makes a list with <CODE>n</CODE>
  * elements by applying the unary function <CODE>f</CODE>
  * to the numbers 0 to <CODE>n - 1</CODE>, assumed to be a nonnegative integer.
- * Recursive process; time: <CODE>O(n)</CODE>, space: <CODE>O(n)</CODE>.
+ * Iterative process; time: <CODE>O(n)</CODE>, space: <CODE>O(n)</CODE>.
  * @param {function} f - unary function
  * @param {number} n - given nonnegative integer
  * @returns {list} resulting list
  */
-function build_list(f, n) {
-    function build(i, f, already_built) {
-        return i < 0
-            ? already_built
-            : build(i - 1, f, pair(f(i),
-                already_built));
-    }
-    return build(n - 1, f, null);
+function build_list(fun, n) {
+  return $build_list(n - 1, fun, null);
+}
+function $build_list(i, fun, already_built) {
+    return i < 0 ? already_built : $build_list(i - 1, fun, pair(fun(i), already_built));
 }
 
 /**
@@ -174,14 +173,15 @@ function build_list(f, n) {
  * @returns {boolean} true
  */
 
-function for_each(f, xs) {
-    if (is_null(xs)) {
-        return true;
-    } else {
-        f(head(xs));
-        return for_each(f, tail(xs));
-    }
+function for_each(fun, xs) {
+  if (is_null(xs)) {
+    return true;
+  } else {
+    fun(head(xs));
+    return for_each(fun, tail(xs));
+  }
 }
+
 
 /**
  * Returns a string that represents
@@ -191,12 +191,18 @@ function for_each(f, xs) {
  * @returns {string} <CODE>xs</CODE> converted to string
  */
 function list_to_string(xs) {
+    return $list_to_string(xs, x => x);
+}
+function $list_to_string(xs, cont) {
     return is_null(xs)
-        ? "null"
+        ? cont("null")
         : is_pair(xs)
-            ? "[" + list_to_string(head(xs)) + "," +
-                list_to_string(tail(xs)) + "]"
-            : stringify(xs);
+        ? $list_to_string(
+              head(xs),
+              x => $list_to_string(
+                       tail(xs),
+                       y => cont("[" + x + "," + y + "]")))
+        : cont(stringify(xs));
 }
 
 /**
@@ -209,19 +215,18 @@ function list_to_string(xs) {
  * @returns {list} <CODE>xs</CODE> in reverse
  */
 function reverse(xs) {
-    function rev(original, reversed) {
-        return is_null(original)
-            ? reversed
-            : rev(tail(original),
-                pair(head(original), reversed));
-    }
-    return rev(xs, null);
+    return $reverse(xs, null);
+}
+function $reverse(original, reversed) {
+    return is_null(original)
+           ? reversed
+           : $reverse(tail(original), pair(head(original), reversed));
 }
 
 /**
  * Returns a list that results from 
  * appending the list <CODE>ys</CODE> to the list <CODE>xs</CODE>.
- * Recursive process; time: <CODE>O(n)</CODE>, space:
+ * Iterative process; time: <CODE>O(n)</CODE>, space:
  * <CODE>O(n)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
  * In the result, null at the end of the first argument list
  * is replaced by the second argument, regardless what the second
@@ -231,10 +236,12 @@ function reverse(xs) {
  * @returns {list} result of appending <CODE>xs</CODE> and <CODE>ys</CODE>
  */
 function append(xs, ys) {
+    return $append(xs, ys, xs => xs);
+}
+function $append(xs, ys, cont) {
     return is_null(xs)
-        ? ys
-        : pair(head(xs),
-            append(tail(xs), ys));
+           ? cont(ys)
+           : $append(tail(xs), ys, zs => cont(pair(head(xs), zs)));
 }
 
 /**
@@ -250,17 +257,17 @@ function append(xs, ys) {
  */
 function member(v, xs) {
     return is_null(xs)
-        ? null
-        : (v === head(xs))
-            ? xs
-            : member(v, tail(xs));
+           ? null
+           : (v === head(xs))
+           ? xs
+           : member(v, tail(xs));
 }
 
 /** Returns a list that results from
  * <CODE>xs</CODE> by removing the first item from <CODE>xs</CODE> that
  * is identical (<CODE>===</CODE>) to <CODE>v</CODE>.
  * Returns the original
- * list if there is no occurrence. Recursive process;
+ * list if there is no occurrence. Iterative process;
  * time: <CODE>O(n)</CODE>, space: <CODE>O(n)</CODE>, where <CODE>n</CODE>
  * is the length of <CODE>xs</CODE>.
  * @param {value} v - given value
@@ -268,12 +275,14 @@ function member(v, xs) {
  * @returns {list} <CODE>xs</CODE> with first occurrence of <CODE>v</CODE> removed
  */
 function remove(v, xs) {
-    return is_null(xs)
-        ? null
-        : v === head(xs)
-            ? tail(xs)
-            : pair(head(xs),
-                remove(v, tail(xs)));
+    return $remove(v, xs, null);
+}
+function $remove(v, xs, acc) {
+  return is_null(xs)
+         ? append(reverse(acc), xs)
+         : v === head(xs)
+         ? append(reverse(acc), tail(xs))
+         : $remove(v, tail(xs), pair(head(xs), acc));
 }
 
 /**
@@ -282,7 +291,7 @@ function remove(v, xs) {
  * are identical (<CODE>===</CODE>) to <CODE>v</CODE>.
  * Returns the original
  * list if there is no occurrence.  
- * Recursive process;
+ * Iterative process;
  * time: <CODE>O(n)</CODE>, space: <CODE>O(n)</CODE>, where <CODE>n</CODE>
  * is the length of <CODE>xs</CODE>.
  * @param {value} v - given value
@@ -290,12 +299,14 @@ function remove(v, xs) {
  * @returns {list} <CODE>xs</CODE> with all occurrences of <CODE>v</CODE> removed
  */
 function remove_all(v, xs) {
-    return is_null(xs)
-        ? null
-        : v === head(xs)
-            ? remove_all(v, tail(xs))
-            : pair(head(xs),
-                remove_all(v, tail(xs)));
+    return $remove_all(v, xs, null);
+}
+function $remove_all(v, xs, acc) {
+  return is_null(xs)
+         ? append(reverse(acc), xs)
+         : v === head(xs)
+         ? $remove_all(v, tail(xs), acc)
+         : $remove_all(v, tail(xs), pair(head(xs), acc));
 }
 
 /**
@@ -303,7 +314,7 @@ function remove_all(v, xs) {
  * only those elements for which the one-argument function
  * <CODE>pred</CODE>
  * returns <CODE>true</CODE>.
- * Recursive process;
+ * Iterative process;
  * time: <CODE>O(n)</CODE>, space: <CODE>O(n)</CODE>,
  * where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
  * @param {function} pred - unary function returning boolean value
@@ -311,19 +322,21 @@ function remove_all(v, xs) {
  * @returns {list} list with those elements of <CODE>xs</CODE> for which <CODE>pred</CODE> holds.
  */
 function filter(pred, xs) {
-    return is_null(xs)
-        ? xs
-        : pred(head(xs))
-            ? pair(head(xs),
-                filter(pred, tail(xs)))
-            : filter(pred, tail(xs));
+    return $filter(pred, xs, null);
+}
+function $filter(pred, xs, acc) {
+  return is_null(xs)
+    ? reverse(acc)
+    : pred(head(xs))
+    ? $filter(pred, tail(xs), pair(head(xs), acc))
+    : $filter(pred, tail(xs), acc);
 }
 
 /**
  * Returns a list that enumerates
  * numbers starting from <CODE>start</CODE> using a step size of 1, until
  * the number exceeds (<CODE>&gt;</CODE>) <CODE>end</CODE>.
- * Recursive process;
+ * Iterative process;
  * time: <CODE>O(n)</CODE>, space: <CODE>O(n)</CODE>,
  * where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
  * @param {number} start - starting number
@@ -331,10 +344,12 @@ function filter(pred, xs) {
  * @returns {list} list from <CODE>start</CODE> to <CODE>end</CODE>
  */
 function enum_list(start, end) {
-    return start > end
-        ? null
-        : pair(start,
-            enum_list(start + 1, end));
+    return $enum_list(start, end, null);
+}
+function $enum_list(start, end, acc) {
+  return start > end
+         ? reverse(acc)
+         : $enum_list(start + 1, end, pair(start, acc));
 }
 
 /** 
@@ -350,8 +365,8 @@ function enum_list(start, end) {
  */
 function list_ref(xs, n) {
     return n === 0
-        ? head(xs)
-        : list_ref(tail(xs), n - 1);
+           ? head(xs)
+           : list_ref(tail(xs), n - 1);
 }
 
 /** Applies binary
@@ -366,7 +381,7 @@ function list_ref(xs, n) {
  * <CODE>n</CODE> is the length of the
  * list. Thus, <CODE>accumulate(f,zero,list(1,2,3))</CODE> results in
  * <CODE>f(1, f(2, f(3, zero)))</CODE>.
- * Recursive process;
+ * Iterative process;
  * time: <CODE>O(n)</CODE>, space: <CODE>O(n)</CODE>,
  * where <CODE>n</CODE> is the length of <CODE>xs</CODE>
  * assuming <CODE>f</CODE> takes constant time.
@@ -376,11 +391,14 @@ function list_ref(xs, n) {
  * @returns {value} result of accumulating <CODE>xs</CODE> using <CODE>f</CODE> starting with <CODE>initial</CODE>
  */
 function accumulate(f, initial, xs) {
-    return is_null(xs)
-        ? initial
-        : f(head(xs),
-            accumulate(f, initial, tail(xs)));
+  return $accumulate(f, initial, xs, x => x);
 }
+function $accumulate(f, initial, xs, cont) {
+    return is_null(xs)
+           ? cont(initial)
+           : $accumulate(f, initial, tail(xs), x => cont(f(head(xs), x)));
+}
+
 
 /**
  *  Optional second argument.
