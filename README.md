@@ -192,11 +192,10 @@ $ yarn publish_sicp_package
 
 The version will automatically update the patch.
 
-## License
+License
+=======
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-All JavaScript and TypeScript programs that generate the SICP (JS) versions are licensed
-under the 
-[Apache License Version 2][apache2].
+All sources in this repository are licensed under the [Apache License Version 2][apache2].
 
 [apache2]: https://www.apache.org/licenses/LICENSE-2.0.txt
