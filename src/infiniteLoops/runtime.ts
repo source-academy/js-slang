@@ -247,15 +247,7 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
 
   const state = new st.State()
 
-  const sandboxedRun = new Function(
-    'code',
-    functionsId,
-    stateId,
-    builtinsId,
-    `
-        return eval(code)
-        `
-  )
+  const sandboxedRun = new Function('code', functionsId, stateId, builtinsId, 'return eval(code)')
 
   try {
     sandboxedRun(instrumentedCode, functions, state, newBuiltins)

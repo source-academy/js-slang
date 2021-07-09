@@ -66,6 +66,7 @@ export interface IOptions {
   originalMaxExecTime: number
   useSubst: boolean
   isPrelude: boolean
+  throwInfiniteLoops: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
@@ -76,7 +77,8 @@ const DEFAULT_OPTIONS: IOptions = {
   variant: 'default',
   originalMaxExecTime: 1000,
   useSubst: false,
-  isPrelude: false
+  isPrelude: false,
+  throwInfiniteLoops: true
 }
 
 // needed to work on browsers
@@ -516,8 +518,12 @@ export async function runInContext(
       if (isPotentialInfiniteLoop(error)) {
         const detectedInfiniteLoop = testForInfiniteLoop(code, previousCodeStack.slice(1))
         if (detectedInfiniteLoop !== undefined) {
-          context.errors.push(detectedInfiniteLoop)
-          return resolvedErrorPromise
+          if (theOptions.throwInfiniteLoops) {
+            context.errors.push(detectedInfiniteLoop)
+            return resolvedErrorPromise
+          } else {
+            error.infiniteLoopError = detectedInfiniteLoop
+          }
         }
       }
       if (error instanceof RuntimeSourceError) {
