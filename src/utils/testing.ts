@@ -335,7 +335,8 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   const context = mockContext(4)
   const promise = runInContext(code, context, {
     scheduler: 'preemptive',
-    executionMethod: 'native'
+    executionMethod: 'native',
+    throwInfiniteLoops: false
   })
   await promise
   const timeTaken = Date.now() - start

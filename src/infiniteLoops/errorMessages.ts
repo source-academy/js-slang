@@ -1,35 +1,29 @@
-export enum InfiniteLoopErrorMessage {
-  no_base_case = 'Did you forget your base case?',
-  input_out_of_domain = 'Did you call a value that is outside the range of your function?',
-  no_state_change = 'Check your recursive function calls.',
-  source_protection_loop = 'Potential infinite loop detected',
-  source_protection_recursion = 'Potential infinite recursion detected'
-}
+import { ExceptionError } from '../errors/errors'
+import { TimeoutError } from '../errors/timeoutErrors'
 
 export enum StackOverflowMessages {
   firefox = 'InternalError: too much recursion',
-  // webkit: chrome + safari
+  // webkit: chrome + safari. Also works for node
   webkit = 'RangeError: Maximum call stack size exceeded',
   edge = 'Error: Out of stack space'
 }
 
 /**
- * Parses the error and determines whether it is an infinite loop and
- * if so, what kind of infinite loop.
+ * Checks if the error is a TimeoutError or Stack Overflow.
  *
- * @returns {string} string containing the infinite loop classification.
- * @returns {string} empty string, if the error is not an infinite loop.
+ * @returns {true} if the error is a TimeoutError or Stack Overflow.
+ * @returns {false} otherwise.
  */
-export function infiniteLoopErrorType(
-  errorString: string
-): keyof typeof InfiniteLoopErrorMessage | 'stack_overflow' | '' {
-  const infiniteLoopTypes = Object.entries(InfiniteLoopErrorMessage)
-  const stackOverflowStrings = Object.values(StackOverflowMessages)
-  for (const [type, message] of infiniteLoopTypes) {
-    if (errorString.includes(message)) return type as keyof typeof InfiniteLoopErrorMessage
+export function isPotentialInfiniteLoop(error: any) {
+  if (error instanceof TimeoutError) {
+    return true
+  } else if (error instanceof ExceptionError) {
+    const message = error.explain()
+    for (const toMatch of Object.values(StackOverflowMessages)) {
+      if (message.includes(toMatch)) {
+        return true
+      }
+    }
   }
-  for (const message of stackOverflowStrings) {
-    if (errorString === message) return 'stack_overflow'
-  }
-  return ''
+  return false
 }

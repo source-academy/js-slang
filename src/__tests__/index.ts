@@ -239,9 +239,7 @@ test('Function infinite recursion with different args represents CallExpression 
     function f(i) { return f(i+1) - 1; }
     f(0);
   `).toEqual(
-    expect.stringMatching(
-      /^Line 1: Error: \"Infinite recursion \(or runtime error\) detected. Did you forget your base case\?\"/
-    )
+    expect.stringMatching(/^Line 1: Maximum call stack size exceeded\n\ *(f\(\d*\)[^f]{2,4}){3}/)
   )
 }, 30000)
 
