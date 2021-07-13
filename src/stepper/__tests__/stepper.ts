@@ -1377,3 +1377,30 @@ test(`correctly avoids capture by other parameter names`, () => {
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('x + 1;')
 })
+
+describe(`redeclaration of predeclared functions work`, () => {
+  test('control', () => {
+    const code = `
+    length(list(1, 2, 3));
+    `
+    const context = mockContext(2)
+    const program = parse(code, context)!
+    const steps = getEvaluationSteps(program, context, 1000)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('3;')
+  })
+
+  test('test', () => {
+    const code = `
+    function length(xs) {
+      return 0;
+    }
+    length(list(1, 2, 3));
+    `
+    const context = mockContext(2)
+    const program = parse(code, context)!
+    const steps = getEvaluationSteps(program, context, 1000)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('0;')
+  })
+})
