@@ -45,7 +45,7 @@ export class InfiniteLoopError extends RuntimeSourceError {
     const entityName = this.functionName ? `function ${getOriginalName(this.functionName)}` : 'loop'
     return this.streamMode
       ? `The error may have arisen from forcing the infinite stream: ${entityName}.`
-      : `The ${entityName} at has encountered an infinite loop. ` + this.message
+      : `The ${entityName} has encountered an infinite loop. ` + this.message
   }
 }
 
