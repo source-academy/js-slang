@@ -63,7 +63,7 @@ export function checkForInfiniteLoop(
     throw new InfiniteLoopError(functionName, state.streamMode, message, type)
   }
   if (hasNoBaseCase(stackPositions, state)) {
-    report('It has no base case', InfiniteLoopErrorType.NoBaseCase)
+    report('It has no base case.', InfiniteLoopErrorType.NoBaseCase)
   }
   // arbitrarily using same threshold
 
@@ -78,7 +78,7 @@ export function checkForInfiniteLoop(
     if (circular[0] === circular[1] && circular[0] === '') {
       message = 'None of the variables are being updated.'
     } else {
-      message = 'It has the infinite cycle: ' + circular.join(' -> ')
+      message = 'It has the infinite cycle: ' + circular.join(' -> ') + '.'
     }
     report(message, InfiniteLoopErrorType.Cycle)
   } else {
