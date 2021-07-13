@@ -91,6 +91,9 @@ export function checkForInfiniteLoop(
   }
 }
 
+/**
+ * If no if statement/conditional was encountered between iterations, there is no base case.
+ */
 function hasNoBaseCase(stackPositions: number[], state: st.State) {
   const thePaths = state.mixedStack.slice(stackPositions[0], stackPositions[1]).map(x => x.paths)
   return flatten(thePaths).length === 0
@@ -130,7 +133,7 @@ function getCycle(temp: any[]) {
 }
 
 function stringifyCircular(x: any) {
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value#examples
+  // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value#examples
   const getCircularReplacer = () => {
     const seen = new WeakSet()
     return (key: string, value: any) => {
@@ -143,7 +146,6 @@ function stringifyCircular(x: any) {
       return shallowConcretize(value)
     }
   }
-
   return JSON.stringify(x, getCircularReplacer())
 }
 
@@ -263,6 +265,94 @@ function getIds(nodes: es.Expression[][]) {
   return [...new Set(result)]
 }
 
+/**
+ * Creates a default error message using the pathExprs and transitions.
+ * May destructively modify the transitions.
+ */
+function errorMessageMaker(
+  ids: es.Identifier[],
+  pathExprs: es.Expression[][],
+  transitions: [string, number, string][][],
+  state: st.State
+) {
+  const getOriginalExpr = (s: string) => generate(state.getCachedExprFromString(s))
+  return () => {
+    const idsOfTransitions = getIds(
+      transitions.map(x => x.map(y => state.getCachedExprFromString(y[2])))
+    )
+    ids = ids.concat(idsOfTransitions)
+    ids.map(x => (x.name = getOriginalName(x.name)))
+    const pathPart: string[][] = pathExprs.map(x => x.map(generate))
+    const transitionPart = transitions.map(x =>
+      x.map(([n, v, s]) =>
+        s === 'undefined'
+          ? `${getOriginalName(n)} <- ${v}`
+          : `${getOriginalName(n)} <- ${getOriginalExpr(s)}`
+      )
+    )
+    let result = ''
+    for (let i = 0; i < transitionPart.length; i++) {
+      if (i > 0) result += ' And in a subsequent iteration, '
+      result += `when (${pathPart[i].join(' and ')}), `
+      result += `the variables are updated (${transitionPart[i].join(', ')}).`
+    }
+    return result
+  }
+}
+
+function smtTemplate(mode: string, decls: string, line1: string, line2: string, line3: string) {
+  const str = `goal g_1:
+    forall ${decls}:${mode}.
+        ${line1} ->
+        ${line2} ->
+        ${line3}`
+  return str.replace(/===/g, '=')
+}
+
+/**
+ * Substitutes path and transition expressions into a template to be executed
+ * by the SMT solver.
+ * @returns list of templated code.
+ */
+function toSmtSyntax(toInclude: Triple[], state: st.State): [string, () => string][] {
+  const pathStr = toInclude.map(x => x[0].map(i => state.getCachedString(i)))
+  const line1 = joiner(pathStr)
+  const pathExprs = pathStr.map(x => x.map(str => state.getCachedExprFromString(str)))
+  const ids = getIds(pathExprs)
+  // primify
+  ids.map(x => (x.name = x.name + "'"))
+  const line3 = joiner(pathExprs.map(x => x.map(generate)))
+  // unprimify
+  ids.map(x => (x.name = x.name.slice(0, -1)))
+
+  const transitions = toInclude
+    .map(x => x[2].map(([n, v, ix]) => [n, v, state.getCachedString(ix)]))
+    .map(x => x.filter(y => typeof y[1] === 'number') as [string, number, string][])
+  const line2 = joiner(
+    transitions.map(x =>
+      x.map(([n, v, s]) => (s === 'undefined' ? `${n}' = ${v}` : `${n}' = ${s}`))
+    )
+  )
+  const allNames = flatten(transitions.map(x => x.map(y => y[0]))).concat(ids.map(x => x.name))
+  const decls = [...new Set(allNames)].map(x => `${x},${x}'`).join(',')
+  const [newLine1, newLine3] = addConstantsAndSigns(line1, line3, transitions)
+  const message = errorMessageMaker(ids, pathExprs, transitions, state)
+  const template1: [string, () => string] = [
+    smtTemplate('int', decls, line1, line2, line3),
+    message
+  ]
+  const template2: [string, () => string] = [
+    smtTemplate('int', decls, newLine1, line2, newLine3),
+    message
+  ]
+  return [template1, template2]
+}
+
+/**
+ * Using information from transitions, add information on constants
+ * and signs of variables into a new template for lines 1 and 3.
+ * @returns line 1 and line 3
+ */
 function addConstantsAndSigns(
   line1: string,
   line3: string,
@@ -300,78 +390,4 @@ function addConstantsAndSigns(
   }
   if (consts.length > 0) newLine1 = `${innerJoiner(consts)} -> ${newLine1}`
   return [newLine1, newLine3]
-}
-
-function smtTemplate(mode: string, decls: string, line1: string, line2: string, line3: string) {
-  const str = `goal g_1:
-    forall ${decls}:${mode}.
-        ${line1} ->
-        ${line2} ->
-        ${line3}`
-  return str.replace(/===/g, '=')
-}
-
-function errorMessageMaker(
-  ids: es.Identifier[],
-  pathExprs: es.Expression[][],
-  transitions: [string, number, string][][],
-  state: st.State
-) {
-  const getOriginalExpr = (s: string) => generate(state.getCachedExprFromString(s))
-  return () => {
-    const idsOfTransitions = getIds(
-      transitions.map(x => x.map(y => state.getCachedExprFromString(y[2])))
-    )
-    ids = ids.concat(idsOfTransitions)
-    ids.map(x => (x.name = getOriginalName(x.name)))
-    const pathPart: string[][] = pathExprs.map(x => x.map(generate))
-    const transitionPart = transitions.map(x =>
-      x.map(([n, v, s]) =>
-        s === 'undefined'
-          ? `${getOriginalName(n)} <- ${v}`
-          : `${getOriginalName(n)} <- ${getOriginalExpr(s)}`
-      )
-    )
-    let result = ''
-    for (let i = 0; i < transitionPart.length; i++) {
-      if (i > 0) result += ' And in a subsequent iteration, '
-      result += `when (${pathPart[i].join(' and ')}), `
-      result += `the variables are updated (${transitionPart[i].join(', ')}).`
-    }
-    return result
-  }
-}
-
-function toSmtSyntax(toInclude: Triple[], state: st.State): [string, () => string][] {
-  const pathStr = toInclude.map(x => x[0].map(i => state.getCachedString(i)))
-  const line1 = joiner(pathStr)
-  const pathExprs = pathStr.map(x => x.map(str => state.getCachedExprFromString(str)))
-  const ids = getIds(pathExprs)
-  // primify
-  ids.map(x => (x.name = x.name + "'"))
-  const line3 = joiner(pathExprs.map(x => x.map(generate)))
-  // unprimify
-  ids.map(x => (x.name = x.name.slice(0, -1)))
-
-  const transitions = toInclude
-    .map(x => x[2].map(([n, v, ix]) => [n, v, state.getCachedString(ix)]))
-    .map(x => x.filter(y => typeof y[1] === 'number') as [string, number, string][])
-  const line2 = joiner(
-    transitions.map(x =>
-      x.map(([n, v, s]) => (s === 'undefined' ? `${n}' = ${v}` : `${n}' = ${s}`))
-    )
-  )
-  const allNames = flatten(transitions.map(x => x.map(y => y[0]))).concat(ids.map(x => x.name))
-  const decls = [...new Set(allNames)].map(x => `${x},${x}'`).join(',')
-  const [newLine1, newLine3] = addConstantsAndSigns(line1, line3, transitions)
-  const message = errorMessageMaker(ids, pathExprs, transitions, state)
-  const template1: [string, () => string] = [
-    smtTemplate('int', decls, line1, line2, line3),
-    message
-  ]
-  const template2: [string, () => string] = [
-    smtTemplate('int', decls, newLine1, line2, newLine3),
-    message
-  ]
-  return [template1, template2]
 }

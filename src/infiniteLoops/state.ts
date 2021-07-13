@@ -138,7 +138,8 @@ export class State {
   }
   /**
    * Saves variables that were modified to the current transition.
-   * Also adds the variable to this.variablesToReset.
+   * Also adds the variable to this.variablesToReset. These variables
+   * will be lazily reset (concretized and re-hybridized) in runtime.hybridize.
    */
   public cleanUpVariables() {
     for (const [name, value] of this.variablesModified) {
@@ -166,7 +167,7 @@ export class State {
   }
 
   /**
-   * Saves args into the last transition in the tracker.
+   * Saves args into the last iteration's transition in the tracker.
    */
   public saveArgsInTransition(args: any[], tracker: IterationsTracker) {
     const transitions: Transition = []

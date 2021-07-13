@@ -31,6 +31,7 @@ enum FunctionNames {
 /**
  * Renames all variables in the program to differentiate shadowed variables and
  * variables declared with the same name but in different scopes.
+ *
  * E.g. "function f(f)..." -> "function f_0(f_1)..."
  * @param predefined A table of [key: string, value:string], where variables named 'key' will be renamed to 'value'
  */
@@ -164,6 +165,13 @@ function callFunction(fun: FunctionNames) {
   return create.memberExpression(create.identifier(globalIds.functionsId), fun)
 }
 
+/**
+ * Wrap each argument in every call expression.
+ *
+ * E.g. "f(x,y)" -> "f(wrap(x), wrap(y))".
+ * Ensures we do not test functions passed as arguments
+ * for infinite loops.
+ */
 function wrapCallArguments(program: es.Program) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
@@ -196,6 +204,8 @@ function addStateToIsNull(program: es.Program) {
  * Changes logical expressions to the corresponding conditional.
  * Reduces the number of types of expressions we have to consider
  * for the rest of the code transformations.
+ *
+ * E.g. "x && y" -> "x ? y : false"
  */
 function transformLogicalExpressions(program: es.Program) {
   simple(program, {
@@ -271,6 +281,14 @@ function hybridizeVariablesAndLiterals(program: es.Node) {
   })
 }
 
+/**
+ * Wraps the RHS of variable assignment with a function to track it.
+ * E.g. "x = x + 1;" -> "x = saveVar(x + 1, 'x', state)".
+ * saveVar should return the result of "x + 1".
+ *
+ * For assignments to elements of arrays we concretize the RHS.
+ * E.g. "a[1] = y;" -> "a[1] = concretize(y);"
+ */
 function trackVariableAssignment(program: es.Node) {
   simple(program, {
     AssignmentExpression(node: es.AssignmentExpression) {
@@ -289,6 +307,12 @@ function trackVariableAssignment(program: es.Node) {
   })
 }
 
+/**
+ * Replaces the test of the node with a function to track the result in the state.
+ *
+ * E.g. "x===0 ? 1 : 0;" -> "saveBool(x === 0, state) ? 1 : 0;".
+ * saveBool should return the result of "x === 0"
+ */
 function saveTheTest(
   node: es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
 ) {
@@ -302,6 +326,12 @@ function saveTheTest(
   node.test = newTest
 }
 
+/**
+ * Mutates a node in-place, turning it into a block statement.
+ * @param node Node to mutate.
+ * @param prepend Optional statement to prepend in the result.
+ * @param append Optional statement to append in the result.
+ */
 function inPlaceEnclose(node: es.Statement, prepend?: es.Statement, append?: es.Statement) {
   const shallowCopy = { ...node }
   node.type = 'BlockStatement'
@@ -315,11 +345,25 @@ function inPlaceEnclose(node: es.Statement, prepend?: es.Statement, append?: es.
   }
 }
 
+/**
+ * Add tracking to if statements and conditional expressions in the state using saveTheTest.
+ */
 function trackIfStatements(program: es.Node) {
   const theFunction = (node: es.IfStatement | es.ConditionalExpression) => saveTheTest(node)
   simple(program, { IfStatement: theFunction, ConditionalExpression: theFunction })
 }
 
+/**
+ * Tracks loop iterations by adding saveTheTest, postLoop functions.
+ * postLoop will be executed after the body (and the update if it is a for loop).
+ * Also adds enter/exitLoop before/after the loop.
+ *
+ * E.g. "for(let i=0;i<10;i=i+1) {display(i);}"
+ *      -> "enterLoop(state);
+ *          for(let i=0;i<10; postLoop(state, i=i+1)) {display(i);};
+ *          exitLoop(state);"
+ * Where postLoop should return the value of its (optional) second argument.
+ */
 function trackLoops(program: es.Node) {
   const makeCallStatement = (name: FunctionNames, args: es.Expression[]) =>
     create.expressionStatement(create.callExpression(callFunction(name), args))
@@ -350,6 +394,18 @@ function trackLoops(program: es.Node) {
   })
 }
 
+/**
+ * Tracks function iterations by adding preFunction and returnFunction functions.
+ * preFunction is prepended to every function body, and returnFunction is used to
+ * wrap the argument of return statements.
+ *
+ * E.g. "function f(x) {return x;}"
+ *      -> "function f(x) {
+ *            preFunction('f',[x], state);
+ *            return returnFunction(x, state);
+ *         }"
+ * where returnFunction should return its first argument 'x'.
+ */
 function trackFunctions(program: es.Node) {
   const preFunction = (name: string, params: es.Pattern[]) => {
     const args = params
@@ -459,6 +515,15 @@ function savePositionAsExpression(loc: es.SourceLocation | undefined | null) {
   }
 }
 
+/**
+ * Wraps every callExpression and prepends every loop body
+ * with a function that saves the callExpression/loop's SourceLocation
+ * (line number etc) in the state. This location will be used in the
+ * error given to the user.
+ *
+ * E.g. "f(x);" -> "trackLoc({position object}, state, ()=>f(x))".
+ * where trackLoc should return the result of "(()=>f(x))();".
+ */
 function trackLocations(program: es.Program) {
   // Note: only add locations for most recently entered code
   const trackerFn = callFunction(FunctionNames.trackLoc)
@@ -491,12 +556,19 @@ function trackLocations(program: es.Program) {
   })
 }
 
-// previous: most recent first (at ix 0)
+/**
+ * Instruments the given code with functions that track the state of the program.
+ *
+ * @param previous programs that were previously executed in the REPL, most recent first (at ix 0).
+ * @param program most recent program executed.
+ * @param builtins Names of builtin functions.
+ * @returns code with instrumentations.
+ */
 function instrument(
   previous: es.Program[],
   program: es.Program,
   builtins: Iterable<string>
-): [string, string, string, string] {
+): string {
   const { builtinsId, functionsId, stateId } = globalIds
   const predefined = {}
   predefined[builtinsId] = builtinsId
@@ -521,7 +593,11 @@ function instrument(
   addStateToIsNull(program)
   wrapCallArguments(program)
   const code = generate(program)
-  return [code, functionsId, stateId, builtinsId]
+  return code
 }
 
-export { instrument, FunctionNames as InfiniteLoopRuntimeFunctions }
+export {
+  instrument,
+  FunctionNames as InfiniteLoopRuntimeFunctions,
+  globalIds as InfiniteLoopRuntimeObjectNames
+}

@@ -4,7 +4,11 @@ import * as st from './state'
 import * as es from 'estree'
 import * as stdList from '../stdlib/list'
 import { checkForInfiniteLoop, InfiniteLoopError } from './detect'
-import { instrument, InfiniteLoopRuntimeFunctions as functionNames } from './instrument'
+import {
+  instrument,
+  InfiniteLoopRuntimeFunctions as FunctionNames,
+  InfiniteLoopRuntimeObjectNames
+} from './instrument'
 import { parse } from '../parser/parser'
 import { createContext } from '../index'
 
@@ -17,7 +21,7 @@ function checkTimeout(state: st.State) {
 /**
  * This function is run whenever a variable is being accessed.
  * If a variable has been added to state.variablesToReset, it will
- * be lazily 'reset' (concretized and re-hybridized) here.
+ * be 'reset' (concretized and re-hybridized) here.
  */
 function hybridize(originalValue: any, name: string, state: st.State) {
   if (typeof originalValue === 'function') {
@@ -30,6 +34,9 @@ function hybridize(originalValue: any, name: string, state: st.State) {
   return sym.hybridizeNamed(name, value)
 }
 
+/**
+ * Function to keep track of assignment expressions.
+ */
 function saveVarIfHybrid(value: any, name: string, state: st.State) {
   state.variablesToReset.delete(name)
   if (sym.isHybrid(value)) {
@@ -41,8 +48,7 @@ function saveVarIfHybrid(value: any, name: string, state: st.State) {
 /**
  * Saves the boolean value if it is a hybrid, else set the
  * path to invalid.
- * Does not save in the path if the value is a boolean literal to
- * reduce noise.
+ * Does not save in the path if the value is a boolean literal.
  */
 function saveBoolIfHybrid(value: any, state: st.State) {
   if (sym.isHybrid(value) && value.type === 'value') {
@@ -64,6 +70,11 @@ function saveBoolIfHybrid(value: any, state: st.State) {
   }
 }
 
+/**
+ * If a function was passed as an argument we do not
+ * check it for infinite loops. Wraps those functions
+ * with a decorator that activates a flag in the state.
+ */
 function wrapArgIfFunction(arg: any, state: st.State) {
   if (typeof arg === 'function') {
     return (...args: any) => {
@@ -84,12 +95,12 @@ function preFunction(name: string, args: [string, any][], state: st.State) {
     state.saveArgsInTransition(args, tracker)
     if (!state.functionWasPassedAsArgument) {
       const previousIterations = tracker.slice(0, tracker.length - 1)
-      dispatchIfMeetsThreshold(previousIterations, state, name)
+      checkForInfiniteLoopIfMeetsThreshold(previousIterations, state, name)
     }
   }
   tracker.push(state.newStackFrame())
 
-  // do not consider these functions for dispatch.
+  // reset the flag
   state.functionWasPassedAsArgument = false
 }
 
@@ -99,6 +110,10 @@ function returnFunction(value: any, state: st.State) {
   return value
 }
 
+/**
+ * Executed before the loop is entered to create a new iteration
+ * tracker.
+ */
 function enterLoop(state: st.State) {
   state.loopStack.unshift([state.newStackFrame()])
 }
@@ -107,18 +122,30 @@ function enterLoop(state: st.State) {
 function postLoop(state: st.State, ignoreMe?: any) {
   checkTimeout(state)
   const previousIterations = state.loopStack[0]
-  dispatchIfMeetsThreshold(previousIterations.slice(0, previousIterations.length - 1), state)
+  checkForInfiniteLoopIfMeetsThreshold(
+    previousIterations.slice(0, previousIterations.length - 1),
+    state
+  )
   state.cleanUpVariables()
   previousIterations.push(state.newStackFrame())
   return ignoreMe
 }
 
+/**
+ * Always executed after a loop terminates, or breaks, to clean up
+ * variables and pop the last iteration tracker.
+ */
 function exitLoop(state: st.State) {
   state.cleanUpVariables()
   state.exitLoop()
 }
 
-function dispatchIfMeetsThreshold(
+/**
+ * If the number of iterations (given by the length
+ * of stackPositions) is equal to a power of 2 times
+ * the threshold, check these iterations for infinite loop.
+ */
+function checkForInfiniteLoopIfMeetsThreshold(
   stackPositions: number[],
   state: st.State,
   functionName?: string
@@ -210,22 +237,28 @@ function trackLoc(loc: es.SourceLocation | undefined, state: st.State, ignoreMe?
 }
 
 const functions = {}
-functions[functionNames.nothingFunction] = nothingFunction
-functions[functionNames.concretize] = sym.shallowConcretize
-functions[functionNames.hybridize] = hybridize
-functions[functionNames.wrapArg] = wrapArgIfFunction
-functions[functionNames.dummify] = sym.makeDummyHybrid
-functions[functionNames.saveBool] = saveBoolIfHybrid
-functions[functionNames.saveVar] = saveVarIfHybrid
-functions[functionNames.preFunction] = preFunction
-functions[functionNames.returnFunction] = returnFunction
-functions[functionNames.postLoop] = postLoop
-functions[functionNames.enterLoop] = enterLoop
-functions[functionNames.exitLoop] = exitLoop
-functions[functionNames.trackLoc] = trackLoc
-functions[functionNames.evalB] = sym.evaluateHybridBinary
-functions[functionNames.evalU] = sym.evaluateHybridUnary
+functions[FunctionNames.nothingFunction] = nothingFunction
+functions[FunctionNames.concretize] = sym.shallowConcretize
+functions[FunctionNames.hybridize] = hybridize
+functions[FunctionNames.wrapArg] = wrapArgIfFunction
+functions[FunctionNames.dummify] = sym.makeDummyHybrid
+functions[FunctionNames.saveBool] = saveBoolIfHybrid
+functions[FunctionNames.saveVar] = saveVarIfHybrid
+functions[FunctionNames.preFunction] = preFunction
+functions[FunctionNames.returnFunction] = returnFunction
+functions[FunctionNames.postLoop] = postLoop
+functions[FunctionNames.enterLoop] = enterLoop
+functions[FunctionNames.exitLoop] = exitLoop
+functions[FunctionNames.trackLoc] = trackLoc
+functions[FunctionNames.evalB] = sym.evaluateHybridBinary
+functions[FunctionNames.evalU] = sym.evaluateHybridUnary
 
+/**
+ * Tests the given program for infinite loops.
+ * @param code Program to test.
+ * @param previousCodeStack Any code previously entered in the REPL.
+ * @returns SourceError if an infinite loop was detected, undefined otherwise.
+ */
 export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
   const context = createContext(4, 'default', undefined, undefined)
   const prelude = parse(context.prelude as string, context) as es.Program
@@ -239,11 +272,9 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
   const program = parse(code, context)
   if (program === undefined) return
   const newBuiltins = prepareBuiltins(context.nativeStorage.builtins)
-  const [instrumentedCode, functionsId, stateId, builtinsId] = instrument(
-    previous,
-    program,
-    newBuiltins.keys()
-  )
+  const { builtinsId, functionsId, stateId } = InfiniteLoopRuntimeObjectNames
+
+  const instrumentedCode = instrument(previous, program, newBuiltins.keys())
 
   const state = new st.State()
 
