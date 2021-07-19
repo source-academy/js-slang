@@ -2876,22 +2876,18 @@ export const getRedex = (node: substituterNodes, path: string[][]): substituterN
 //   has number of statement === original program
 // then we return it to the getEvaluationSteps
 function substPredefinedFns(program: es.Program, context: Context): [es.Program, Context] {
-  const originalStatementCount = program.body.length
-  let combinedProgram = program
   if (context.prelude) {
     // evaluate the list prelude first
     const listPreludeProgram = parse(context.prelude, context)!
-    combinedProgram.body = listPreludeProgram.body.concat(program.body)
+    const origBody = program.body as es.Statement[]
+    program.body = listPreludeProgram.body
+    program.body.push(ast.blockStatement(origBody))
+    while (program.body.length > 1) {
+      program = reduceMain(program, context)[0] as es.Program
+    }
+    program.body = (program.body[0] as es.BlockStatement).body
   }
-  while (combinedProgram.body.length > originalStatementCount) {
-    // some bug with no semis
-    // tslint:disable-next-line
-    ;[combinedProgram] = [
-      reduceMain(combinedProgram, context)[0],
-      reduceMain(combinedProgram, context)[1]
-    ] as [es.Program, Context]
-  }
-  return [combinedProgram, context]
+  return [program, context]
 }
 
 function substPredefinedConstants(program: es.Program): es.Program {

@@ -3,7 +3,7 @@ import * as es from 'estree'
 import { SourceLanguage } from './types'
 
 export const CUT = 'cut' // cut operator for Source 4.3
-export const TRY_AGAIN = 'try_again' // command for Source 4.3
+export const TRY_AGAIN = 'retry' // command for Source 4.3
 export const GLOBAL = typeof window === 'undefined' ? global : window
 export const NATIVE_STORAGE_ID = 'nativeStorage'
 export const MODULE_PARAMS_ID = 'moduleParams'

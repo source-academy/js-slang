@@ -84,9 +84,10 @@ test('test proper setting of variables in an outer scope', async () => {
 
 test('using internal names still work', async () => {
   const context = mockContext(3)
-  const result = await runInContext(
+  let result = await runInContext(
     stripIndent`
     const boolOrErr = 1;
+    const program = 2;
     function wrap() {
       return boolOrErr;
     }
@@ -96,6 +97,9 @@ test('using internal names still work', async () => {
   )
   expect(result.status).toBe('finished')
   expect((result as Finished).value).toBe(1)
+  result = await runInContext('program;', context)
+  expect(result.status).toBe('finished')
+  expect((result as Finished).value).toBe(2)
 })
 
 test('assigning a = b where b was from a previous program call works', async () => {
