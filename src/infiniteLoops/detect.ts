@@ -3,7 +3,7 @@ import { generate } from 'astring'
 import * as st from './state'
 import { simple } from '../utils/walkers'
 import * as es from 'estree'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { InfiniteLoopError, InfiniteLoopErrorType } from './errors'
 import { shallowConcretize } from './symbolic'
 
 const runAltErgo: any = require('alt-ergo-modified')
@@ -17,37 +17,6 @@ const options = JSON.stringify({
   sat_solver: 'Tableaux',
   file: 'smt-file'
 })
-
-export enum InfiniteLoopErrorType {
-  NoBaseCase,
-  Cycle,
-  FromSmt
-}
-
-export class InfiniteLoopError extends RuntimeSourceError {
-  public infiniteLoopType: InfiniteLoopErrorType
-  public message: string
-  public functionName: string | undefined
-  public streamMode: boolean
-  constructor(
-    functionName: string | undefined,
-    streamMode: boolean,
-    message: string,
-    infiniteLoopType: InfiniteLoopErrorType
-  ) {
-    super()
-    this.message = message
-    this.infiniteLoopType = infiniteLoopType
-    this.functionName = functionName
-    this.streamMode = streamMode
-  }
-  public explain() {
-    const entityName = this.functionName ? `function ${getOriginalName(this.functionName)}` : 'loop'
-    return this.streamMode
-      ? `The error may have arisen from forcing the infinite stream: ${entityName}.`
-      : `The ${entityName} has encountered an infinite loop. ` + this.message
-  }
-}
 
 /**
  * Checks if the program is stuck in an infinite loop.

@@ -55,7 +55,7 @@ import { forceIt } from './utils/operators'
 import { TimeoutError } from './errors/timeoutErrors'
 import { loadModuleTabs } from './modules/moduleLoader'
 import { testForInfiniteLoop } from './infiniteLoops/runtime'
-import { isPotentialInfiniteLoop } from './infiniteLoops/errorMessages'
+import { isPotentialInfiniteLoop } from './infiniteLoops/errors'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -515,14 +515,19 @@ export async function runInContext(
         value
       })
     } catch (error) {
-      if (isPotentialInfiniteLoop(error)) {
+      const isDefaultVariant = options.variant === undefined || options.variant === 'default'
+      if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
         const detectedInfiniteLoop = testForInfiniteLoop(code, previousCodeStack.slice(1))
         if (detectedInfiniteLoop !== undefined) {
+          detectedInfiniteLoop.codeStack = previousCodeStack
           if (theOptions.throwInfiniteLoops) {
             context.errors.push(detectedInfiniteLoop)
             return resolvedErrorPromise
           } else {
             error.infiniteLoopError = detectedInfiniteLoop
+            if (error instanceof ExceptionError) {
+              ;(error.error as any).infiniteLoopError = detectedInfiniteLoop
+            }
           }
         }
       }

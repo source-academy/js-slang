@@ -157,7 +157,10 @@ export function getOriginalName(name: string) {
     return '(anonymous)'
   }
   let cutAt = name.length - 1
-  while (name.charAt(cutAt) !== '_') cutAt--
+  while (name.charAt(cutAt) !== '_') {
+    cutAt--
+    if (cutAt < 0) return '(error)'
+  }
   return name.slice(0, cutAt)
 }
 

@@ -3,7 +3,8 @@ import * as create from '../utils/astCreator'
 import * as st from './state'
 import * as es from 'estree'
 import * as stdList from '../stdlib/list'
-import { checkForInfiniteLoop, InfiniteLoopError } from './detect'
+import { checkForInfiniteLoop } from './detect'
+import { InfiniteLoopError } from './errors'
 import {
   instrument,
   InfiniteLoopRuntimeFunctions as FunctionNames,

@@ -1,5 +1,36 @@
 import { testForInfiniteLoop } from '../runtime'
-import { InfiniteLoopErrorType } from '../detect'
+import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
+import { mockContext } from '../../mocks/context'
+import { runInContext } from '../..'
+
+test('works in runInContext when throwInfiniteLoops is true', async () => {
+  const code = `function fib(x) {
+    return fib(x-1) + fib(x-2);
+  }
+  fib(100000);`
+  const context = mockContext(4)
+  await runInContext(code, context, { throwInfiniteLoops: true })
+  const lastError = context.errors[context.errors.length - 1]
+  expect(lastError instanceof InfiniteLoopError).toBe(true)
+  const result: InfiniteLoopError = lastError as InfiniteLoopError
+  expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.NoBaseCase)
+  expect(result?.streamMode).toBe(false)
+})
+
+test('works in runInContext when throwInfiniteLoops is false', async () => {
+  const code = `function fib(x) {
+    return fib(x-1) + fib(x-2);
+  }
+  fib(100000);`
+  const context = mockContext(4)
+  await runInContext(code, context, { throwInfiniteLoops: false })
+  const lastError: any = context.errors[context.errors.length - 1]
+  expect(lastError instanceof InfiniteLoopError).toBe(false)
+  const result = getInfiniteLoopData(context.errors)
+  expect(result).toBeDefined()
+  expect(result?.[0]).toBe(InfiniteLoopErrorType.NoBaseCase)
+  expect(result?.[1]).toBe(false)
+})
 
 test('non-infinite recursion not detected', () => {
   const code = `function fib(x) {
