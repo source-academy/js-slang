@@ -483,8 +483,11 @@ function addInfiniteLoopProtection(
   })
 }
 
-function evallerReplacer(globalIds: NativeIds): es.ExpressionStatement {
-  const arg = create.identifier('program')
+function evallerReplacer(
+  globalIds: NativeIds,
+  usedIdentifiers: Set<string>
+): es.ExpressionStatement {
+  const arg = create.identifier(getUniqueId(usedIdentifiers, 'program'))
   return create.expressionStatement(
     create.assignmentExpression(
       create.memberExpression(globalIds.native, 'evaller'),
@@ -548,7 +551,7 @@ export function transpile(program: es.Program, context: Context, skipUndefined =
   const statements = program.body as es.Statement[]
   const newStatements = [
     ...getDeclarationsToAccessTranspilerInternals(globalIds),
-    evallerReplacer(globalIds),
+    evallerReplacer(globalIds, usedIdentifiers),
     create.expressionStatement(create.identifier('undefined')),
     ...statements
   ]
