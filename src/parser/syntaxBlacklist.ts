@@ -39,6 +39,8 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   AssignmentExpression: 3,
   MemberExpression: 3,
   Property: 3,
+  SpreadElement: 3,
+  RestElement: 3,
 
   // we allow more features
   // in the library parser
@@ -67,7 +69,6 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   SwitchCase: Infinity,
   YieldExpression: Infinity,
   AwaitExpression: Infinity,
-  SpreadElement: Infinity,
   DoWhileStatement: Infinity,
   ForInStatement: Infinity,
   ForOfStatement: Infinity,
@@ -75,7 +76,6 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   Function: Infinity,
   Pattern: Infinity,
   VariablePattern: Infinity,
-  RestElement: Infinity,
   ArrayPattern: Infinity,
   ObjectPattern: Infinity,
   Expression: Infinity,

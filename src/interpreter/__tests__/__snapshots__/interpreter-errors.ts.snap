@@ -822,6 +822,20 @@ let f = x => x;",
 }
 `;
 
+exports[`Error with too few arguments passed to rest parameters: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function rest(a, b, ...c) {}
+rest(1);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Expected 2 or more arguments, but got 1.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Nice errors when errors occur inside builtins: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -851,11 +865,9 @@ Object {
 exports[`No error when calling display function in with variable arguments: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "display();
-display(1);
+  "code": "display(1);
 display(1, \\"test\\");",
   "displayResult": Array [
-    "undefined",
     "1",
     "test 1",
   ],
@@ -937,8 +949,7 @@ math_min(1, 2, 3);",
 exports[`No error when calling stringify function in with variable arguments: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "stringify();
-stringify(1, 2);
+  "code": "stringify(1, 2);
 stringify(1, 2, 3);",
   "displayResult": Array [],
   "numErrors": 0,

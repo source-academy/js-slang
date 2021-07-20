@@ -511,76 +511,6 @@ Object {
 }
 `;
 
-exports[`No rest pattern - verbose: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "\\"enable verbose\\";
-function f(...rest) {
-return rest;
-}
-f(1, 2);",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 2, Column 11: Rest elements are not allowed
-You are trying to use Rest elements, which is not allowed (yet).
-",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`No rest pattern: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "function f(...rest) {
-  return rest;
-}
-f(1, 2);",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 1: Rest elements are not allowed",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`No spread operator - verbose: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "\\"enable verbose\\";
-function f(x, y) {
-  return x + y;
-}
-f(...[1, 2]);",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 5, Column 2: Spread elements are not allowed
-You are trying to use Spread elements, which is not allowed (yet).
-",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`No spread operator: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "function f(x, y) {
-  return x + y;
-}
-f(...[1, 2]);",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 4: Spread elements are not allowed",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`No trailing commas in arrays - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -1391,16 +1321,13 @@ function f(x, y) {
   return x + y;
 }
 try {
-  f(...[1, 2]);
+  f([1, 2]);
 } catch (e) {
   display(e);
 }",
   "displayResult": Array [],
-  "numErrors": 3,
-  "parsedErrors": "Line 6, Column 4: Spread elements are not allowed
-You are trying to use Spread elements, which is not allowed (yet).
-
-Line 7, Column 2: Catch clauses are not allowed
+  "numErrors": 2,
+  "parsedErrors": "Line 7, Column 2: Catch clauses are not allowed
 You are trying to use Catch clauses, which is not allowed (yet).
 
 Line 5, Column 0: Try statements are not allowed
@@ -1419,14 +1346,13 @@ Object {
   return x + y;
 }
 try {
-  f(...[1, 2]);
+  f([1, 2]);
 } catch (e) {
   display(e);
 }",
   "displayResult": Array [],
-  "numErrors": 3,
-  "parsedErrors": "Line 5: Spread elements are not allowed
-Line 6: Catch clauses are not allowed
+  "numErrors": 2,
+  "parsedErrors": "Line 6: Catch clauses are not allowed
 Line 4: Try statements are not allowed",
   "result": undefined,
   "resultStatus": "error",
