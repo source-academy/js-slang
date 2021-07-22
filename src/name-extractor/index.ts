@@ -280,11 +280,12 @@ function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean):
 function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDeclaration[] {
   switch (node.type) {
     case 'ImportDeclaration':
-      const importDelcarations: NameDeclaration[] = [];
-      node.specifiers.map(spec => spec.local.name)
-                          .filter(na => !isDummyName(na))
-                          .forEach(na => importDelcarations.push({ name: na, meta: KIND_IMPORT }));
-      return importDelcarations;
+      const importDelcarations: NameDeclaration[] = []
+      node.specifiers
+        .map(spec => spec.local.name)
+        .filter(na => !isDummyName(na))
+        .forEach(na => importDelcarations.push({ name: na, meta: KIND_IMPORT }))
+      return importDelcarations
     case 'VariableDeclaration':
       const delcarations: NameDeclaration[] = []
       for (const decl of node.declarations) {

@@ -1,4 +1,11 @@
-import { ancestor, findNodeAt, recursive, WalkerCallback, base, FullWalkerCallback } from './utils/walkers'
+import {
+  ancestor,
+  findNodeAt,
+  recursive,
+  WalkerCallback,
+  base,
+  FullWalkerCallback
+} from './utils/walkers'
 import {
   ArrowFunctionExpression,
   BlockStatement,
@@ -86,7 +93,7 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
         if ((node.imported as Identifier).name === identifier.name) {
           declarations.push(node.imported)
         }
-      },
+      }
     })
     if (declarations.length > 0) {
       return declarations.shift()
@@ -133,30 +140,34 @@ export function isInLoc(line: number, col: number, location: SourceLocation): bo
 
 export function findAncestors(root: Node, identifier: Identifier): Node[] | undefined {
   let foundAncestors: Node[] = []
-  ancestor(root, {
-    Identifier: (node: Identifier, ancestors: [Node]) => {
-      if (identifier.name === node.name && identifier.loc === node.loc) {
-        foundAncestors = Object.assign([], ancestors).reverse()
-        foundAncestors.shift() // Remove the identifier node
-      }
-    },
-    /* We need a separate visitor for VariablePattern because
+  ancestor(
+    root,
+    {
+      Identifier: (node: Identifier, ancestors: [Node]) => {
+        if (identifier.name === node.name && identifier.loc === node.loc) {
+          foundAncestors = Object.assign([], ancestors).reverse()
+          foundAncestors.shift() // Remove the identifier node
+        }
+      },
+      /* We need a separate visitor for VariablePattern because
     acorn walk ignores Identifers on the left side of expressions.
     Here is a github issue in acorn-walk related to this:
     https://github.com/acornjs/acorn/issues/686
     */
-    VariablePattern: (node: any, ancestors: [Node]) => {
-      if (identifier.name === node.name && identifier.loc === node.loc) {
-        foundAncestors = Object.assign([], ancestors).reverse()
+      VariablePattern: (node: any, ancestors: [Node]) => {
+        if (identifier.name === node.name && identifier.loc === node.loc) {
+          foundAncestors = Object.assign([], ancestors).reverse()
+        }
       }
-    }
-  }, customWalker)
+    },
+    customWalker
+  )
   return foundAncestors
 }
 
 const customWalker = {
   ...base,
   ImportSpecifier(node: ImportSpecifier, st: never, c: FullWalkerCallback<never>) {
-    c(node.imported, st, "Expression");
+    c(node.imported, st, 'Expression')
   }
 }
