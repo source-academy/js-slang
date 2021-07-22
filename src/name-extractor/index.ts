@@ -9,10 +9,15 @@ export interface NameDeclaration {
   score?: number
 }
 
+const KIND_IMPORT = 'import'
 const KIND_FUNCTION = 'func'
 // const KIND_LET = 'let'
 const KIND_PARAM = 'param'
 const KIND_CONST = 'const'
+
+function isImportDeclaration(node: es.Node): boolean {
+  return node.type === 'ImportDeclaration'
+}
 
 function isDeclaration(node: es.Node): boolean {
   return node.type === 'VariableDeclaration' || node.type === 'FunctionDeclaration'
@@ -151,6 +156,10 @@ export function getProgramNames(
 
     const body = getNodeChildren(node)
     for (const child of body) {
+      if (isImportDeclaration(child)) {
+        nameQueue.push(child)
+      }
+
       if (isDeclaration(child)) {
         nameQueue.push(child)
       }
@@ -270,6 +279,12 @@ function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean):
 // locTest is a callback that returns whether cursor is in location of node
 function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDeclaration[] {
   switch (node.type) {
+    case 'ImportDeclaration':
+      const importDelcarations: NameDeclaration[] = [];
+      node.specifiers.map(spec => spec.local.name)
+                          .filter(na => !isDummyName(na))
+                          .forEach(na => importDelcarations.push({ name: na, meta: KIND_IMPORT }));
+      return importDelcarations;
     case 'VariableDeclaration':
       const delcarations: NameDeclaration[] = []
       for (const decl of node.declarations) {

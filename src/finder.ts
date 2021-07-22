@@ -5,6 +5,7 @@ import {
   ForStatement,
   FunctionDeclaration,
   Identifier,
+  ImportSpecifier,
   Node,
   SourceLocation,
   VariableDeclarator
@@ -80,7 +81,12 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
         if ((node.id as Identifier).name === identifier.name) {
           declarations.push(node.id)
         }
-      }
+      },
+      ImportSpecifier(node: ImportSpecifier, state: any, callback: WalkerCallback<any>) {
+        if ((node.imported as Identifier).name === identifier.name) {
+          declarations.push(node.imported)
+        }
+      },
     })
     if (declarations.length > 0) {
       return declarations.shift()
