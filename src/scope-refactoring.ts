@@ -42,7 +42,7 @@ export function scopeVariables(
   if (program.body == null) {
     return block
   }
-  const importStatements = getImportStatements(program.body)
+
   const definitionStatements = getDefinitionStatements(program.body)
   const blockStatements = getBlockStatements(program.body)
   const forStatements = getForStatements(program.body)
@@ -61,9 +61,6 @@ export function scopeVariables(
     }
   })
 
-  const importStatementNodes = importStatements.reduce((acc, declaration) => 
-    acc.concat(declaration.specifiers.map(statement =>
-    scopeImportSpecifier(statement as es.ImportSpecifier))), [] as DefinitionNode[])
   const ifStatementNodes = scopeIfStatements(ifStatements)
   const whileStatementNodes = scopeWhileStatements(whileStatements)
   const forStatementNodes = forStatements.map(statement => scopeForStatement(statement))
@@ -96,7 +93,6 @@ export function scopeVariables(
   )
 
   block.children = [
-    ...importStatementNodes,
     ...variableDefinitionNodes,
     ...functionDefinitionNodes,
     ...functionBodyNodes,
@@ -109,14 +105,6 @@ export function scopeVariables(
   block.children.sort(sortByLoc)
 
   return block
-}
-
-function scopeImportSpecifier(node: es.ImportSpecifier): DefinitionNode {
-  return {
-    name: (node.imported as es.Identifier).name,
-    type: 'DefinitionNode',
-    loc: node.loc
-  }
 }
 
 export function scopeVariableDeclaration(node: es.VariableDeclaration): DefinitionNode {
@@ -399,10 +387,6 @@ export function getAllIdentifiers(program: es.Program, target: string): es.Ident
 // Helper functions to filter nodes
 function getBlockStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.BlockStatement[] {
   return nodes.filter(statement => statement.type === 'BlockStatement') as es.BlockStatement[]
-}
-
-function getImportStatements(nodes: (es.Statement | es.ModuleDeclaration)[]): es.ImportDeclaration[] {
-  return nodes.filter(statement => statement.type === 'ImportDeclaration') as es.ImportDeclaration[]
 }
 
 function getDefinitionStatements(
