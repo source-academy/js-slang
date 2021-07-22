@@ -1,4 +1,4 @@
-import { ancestor, findNodeAt, recursive, WalkerCallback } from './utils/walkers'
+import { ancestor, findNodeAt, recursive, WalkerCallback, base, FullWalkerCallback } from './utils/walkers'
 import {
   ArrowFunctionExpression,
   BlockStatement,
@@ -32,7 +32,7 @@ export function findIdentifierNode(
     return false
   }
 
-  const found = findNodeAt(root, undefined, undefined, findByLocationPredicate)
+  const found = findNodeAt(root, undefined, undefined, findByLocationPredicate, customWalker)
   return found?.node as Identifier
 }
 
@@ -150,6 +150,13 @@ export function findAncestors(root: Node, identifier: Identifier): Node[] | unde
         foundAncestors = Object.assign([], ancestors).reverse()
       }
     }
-  })
+  }, customWalker)
   return foundAncestors
+}
+
+const customWalker = {
+  ...base,
+  ImportSpecifier(node: ImportSpecifier, st: never, c: FullWalkerCallback<never>) {
+    c(node.imported, st, "Expression");
+  }
 }
