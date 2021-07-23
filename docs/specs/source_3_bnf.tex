@@ -40,8 +40,8 @@
 && \textit{names}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ ) \ldots
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{name list}} \\[1mm]
-&& \textit{rest-names}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
-                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ ) \ldots\ [\texttt{...}\textit{name}]
+&& \textit{rest-names}   && ::= &\quad &&  \textit{names} \ 
+                                           [\texttt{...}\textit{name}]
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{name list} (\href{https://sourceacademy.org/sicpjs/3.4.2\#p17}{rest})} \\[1mm]
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
                                    \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
@@ -120,10 +120,7 @@
                                                                  \textit{expression} \ 
                                                                       ) \ldots
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{argument expressions}}\\[1mm]
-&& \textit{spread-expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
-                                                               \ \textbf{\texttt{,}} \
-                                                                 \textit{expression} \ 
-                                                                 ) \ldots \\
-&&                              &&     &      && \qquad [\texttt{...}\textit{expression}]
+&& \textit{spread-expressions}  && ::= &\quad && \textit{expressions} \ 
+                                               [\texttt{...}\textit{expression}]
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{argument expressions} (\href{https://sourceacademy.org/sicpjs/3.4.2\#p17}{spread})}
 \end{alignat*}
