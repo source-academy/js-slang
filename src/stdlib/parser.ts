@@ -415,6 +415,18 @@ const transformers: ASTTransformers = new Map([
     (node: es.ThrowStatement) => {
       return vector_to_list(['throw_statement', transform(node.argument)])
     }
+  ],
+  [
+    'SpreadElement',
+    (node: es.SpreadElement) => {
+      return vector_to_list(['spread_element', transform(node.argument)])
+    }
+  ],
+  [
+    'RestElement',
+    (node: es.RestElement) => {
+      return vector_to_list(['rest_element', transform(node.argument)])
+    }
   ]
 ])
 

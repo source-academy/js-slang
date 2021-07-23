@@ -169,6 +169,8 @@ function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
         create.mutateToCallExpression(node, globalIds.wrap, [
           { ...node },
           create.literal(functionsToStringMap.get(node)!),
+          create.literal(node.params[node.params.length - 1]?.type === 'RestElement'),
+
           globalIds.native
         ])
       }
@@ -287,7 +289,13 @@ export function checkForUndefinedVariables(
   ) {
     identifiersIntroducedByNode.set(
       node,
-      new Set((node.params as es.Identifier[]).map(id => id.name))
+      new Set(
+        node.params.map(id =>
+          id.type === 'Identifier'
+            ? id.name
+            : ((id as es.RestElement).argument as es.Identifier).name
+        )
+      )
     )
   }
   const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
@@ -496,11 +504,7 @@ function evallerReplacer(
   )
 }
 
-function wrapWithBuiltins(
-  statements: es.Statement[],
-  nativeStorage: NativeStorage,
-  globalIds: NativeIds
-) {
+function wrapWithBuiltins(statements: es.Statement[], nativeStorage: NativeStorage) {
   const initialisingStatements: es.Statement[] = []
   nativeStorage.builtins.forEach((_unused, name: string) => {
     initialisingStatements.push(
@@ -558,7 +562,7 @@ export function transpile(program: es.Program, context: Context, skipUndefined =
 
   program.body =
     context.nativeStorage.evaller === null
-      ? [wrapWithBuiltins(newStatements, context.nativeStorage, globalIds)]
+      ? [wrapWithBuiltins(newStatements, context.nativeStorage)]
       : [create.blockStatement(newStatements)]
 
   const map = new SourceMapGenerator({ file: 'source' })
