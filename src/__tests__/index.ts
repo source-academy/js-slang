@@ -431,6 +431,23 @@ test('test || shortcircuiting', () => {
   return expectToMatchJS('true || 1();', { native: true })
 })
 
+test('Rest parameters work', () => {
+  return expectResult(
+    stripIndent`
+    function rest(a, b, ...c) {
+      let sum = a + b;
+      for (let i = 0; i < array_length(c); i = i + 1) {
+        sum = sum + c[i];
+      }
+      return sum;
+    }
+    rest(1, 2); // no error
+    rest(1, 2, ...[3, 4, 5],  ...[6, 7], ...[]);
+  `,
+    { native: true, chapter: 3 }
+  ).toMatchInlineSnapshot(`28`)
+})
+
 test('Test context reuse', async () => {
   const context = createTestContext({ chapter: 4 })
   const init = stripIndent`

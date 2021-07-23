@@ -239,6 +239,7 @@ export function expectDisplayResult(code: string, options: TestOptions = {}) {
     testSuccess(code, options)
       .then(snapshot('expectDisplayResult'))
       .then(testResult => testResult.displayResult!)
+      .catch(e => console.log(e))
   ).resolves
 }
 
