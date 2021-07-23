@@ -1,6 +1,7 @@
 import { ExceptionError } from '../../errors/errors'
 import { RuntimeSourceError } from '../../errors/runtimeSourceError'
 import { TimeoutError } from '../../errors/timeoutErrors'
+import { mockContext } from '../../mocks/context'
 import {
   getInfiniteLoopData,
   InfiniteLoopError,
@@ -34,23 +35,38 @@ test('other errors are not potential infinite loops', () => {
 })
 
 test('getInfiniteLoopData works when error is directly reported', () => {
-  const result = getInfiniteLoopData([noBaseCaseError])
+  const context = mockContext(4)
+  context.errors.push(noBaseCaseError)
+  context.previousCode.push('test')
+  const result = getInfiniteLoopData(context)
   expect(result).toBeDefined()
   expect(result?.[0]).toBe(InfiniteLoopErrorType.NoBaseCase)
+  expect(result?.[3].length).toBe(1)
+  expect(result?.[3]).toContain('test')
 })
 
 test('getInfiniteLoopData works when error hidden in timeout', () => {
   const error: any = new TimeoutError()
   error.infiniteLoopError = noBaseCaseError
-  const result = getInfiniteLoopData([error])
+  const context = mockContext(4)
+  context.errors.push(error)
+  context.previousCode.push('test')
+  const result = getInfiniteLoopData(context)
   expect(result).toBeDefined()
   expect(result?.[0]).toBe(InfiniteLoopErrorType.NoBaseCase)
+  expect(result?.[3].length).toBe(1)
+  expect(result?.[3]).toContain('test')
 })
 
 test('getInfiniteLoopData works when error hidden in exceptionError', () => {
   const innerError: any = new Error()
   innerError.infiniteLoopError = noBaseCaseError
-  const result = getInfiniteLoopData([new ExceptionError(innerError, fakePos)])
+  const context = mockContext(4)
+  context.errors.push(new ExceptionError(innerError, fakePos))
+  context.previousCode.push('test')
+  const result = getInfiniteLoopData(context)
   expect(result).toBeDefined()
   expect(result?.[0]).toBe(InfiniteLoopErrorType.NoBaseCase)
+  expect(result?.[3].length).toBe(1)
+  expect(result?.[3]).toContain('test')
 })

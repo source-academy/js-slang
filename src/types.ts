@@ -157,6 +157,11 @@ export interface Context<T = any> {
    * The side content components to be displayed after the evaluation
    */
   modules?: any[]
+
+  /**
+   * Code previously executed in this context
+   */
+  previousCode: string[]
 }
 
 export interface BlockFrame {

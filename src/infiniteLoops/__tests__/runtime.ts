@@ -26,7 +26,7 @@ test('works in runInContext when throwInfiniteLoops is false', async () => {
   await runInContext(code, context, { throwInfiniteLoops: false })
   const lastError: any = context.errors[context.errors.length - 1]
   expect(lastError instanceof InfiniteLoopError).toBe(false)
-  const result = getInfiniteLoopData(context.errors)
+  const result = getInfiniteLoopData(context)
   expect(result).toBeDefined()
   expect(result?.[0]).toBe(InfiniteLoopErrorType.NoBaseCase)
   expect(result?.[1]).toBe(false)
