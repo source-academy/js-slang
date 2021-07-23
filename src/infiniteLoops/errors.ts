@@ -1,7 +1,7 @@
+import { Context } from '..'
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
-import { SourceError } from '../types'
 import { getOriginalName } from './instrument'
 
 export enum StackOverflowMessages {
@@ -67,16 +67,17 @@ export class InfiniteLoopError extends RuntimeSourceError {
  * Determines whether the error is an infinite loop, and returns a tuple of
  * [error type, is stream, error message, previous code].
  *  *
- * @param {SourceError[]} errors - Errors from the runtime context
+ * @param {Context} - The context being used.
  *
  * @returns [error type, is stream, error message, previous code] if the error was an infinite loop
  * @returns {undefined} otherwise
  */
 export function getInfiniteLoopData(
-  errors: SourceError[]
+  context: Context
 ): undefined | [InfiniteLoopErrorType, boolean, string, string[]] {
   // return error type/string, prevCodeStack
   // cast as any to access infiniteLoopError property later
+  const errors = context.errors
   let latestError: any = errors[errors.length - 1]
   if (latestError instanceof ExceptionError) {
     latestError = latestError.error
@@ -92,7 +93,7 @@ export function getInfiniteLoopData(
       infiniteLoopError.infiniteLoopType,
       infiniteLoopError.streamMode,
       infiniteLoopError.explain(),
-      infiniteLoopError.codeStack
+      context.previousCode
     ]
   } else {
     return undefined

@@ -607,6 +607,27 @@ Object {
 }
 `;
 
+exports[`Rest parameters work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function rest(a, b, ...c) {
+  let sum = a + b;
+  for (let i = 0; i < array_length(c); i = i + 1) {
+    sum = sum + c[i];
+  }
+  return sum;
+}
+rest(1, 2); // no error
+rest(1, 2, ...[3, 4, 5],  ...[6, 7], ...[]);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 28,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Simple arrow function infinite recursion represents CallExpression well: expectParsedErrorNoErrorSnapshot 1`] = `
 Object {
   "alertResult": Array [],

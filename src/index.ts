@@ -156,7 +156,7 @@ function convertNativeErrorToSourceError(
   }
 }
 
-const previousCodeStack: string[] = []
+let previousCode = ''
 let isPreviousCodeTimeoutError = false
 
 function determineExecutionMethod(theOptions: IOptions, context: Context, program: Program) {
@@ -431,12 +431,13 @@ export async function runInContext(
   }
 
   if (context.variant === 'concurrent') {
-    if (previousCodeStack[0] === code) {
+    if (previousCode === code) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else {
       context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
-    previousCodeStack.unshift(code)
+    context.previousCode.unshift(code)
+    previousCode = code
     try {
       return Promise.resolve({
         status: 'finished',
@@ -472,20 +473,22 @@ export async function runInContext(
     })
   }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
-  if (context.prelude !== null) {
-    const prelude = context.prelude
-    context.prelude = null
-    await runInContext(prelude, context, { ...options, isPrelude: true })
-    return runInContext(code, context, options)
-  }
+  if (context.nativeStorage.evaller === null || context.numberOfOuterEnvironments)
+    if (context.prelude !== null) {
+      const prelude = context.prelude
+      context.prelude = null
+      await runInContext(prelude, context, { ...options, isPrelude: true })
+      return runInContext(code, context, options)
+    }
   if (isNativeRunnable) {
-    if (previousCodeStack[0] === code && isPreviousCodeTimeoutError) {
+    if (previousCode === code && isPreviousCodeTimeoutError) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
     } else if (!options.isPrelude) {
       context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
     if (!options.isPrelude) {
-      previousCodeStack.unshift(code)
+      context.previousCode.unshift(code)
+      previousCode = code
     }
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
@@ -517,9 +520,8 @@ export async function runInContext(
     } catch (error) {
       const isDefaultVariant = options.variant === undefined || options.variant === 'default'
       if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-        const detectedInfiniteLoop = testForInfiniteLoop(code, previousCodeStack.slice(1))
+        const detectedInfiniteLoop = testForInfiniteLoop(code, context.previousCode.slice(1))
         if (detectedInfiniteLoop !== undefined) {
-          detectedInfiniteLoop.codeStack = previousCodeStack
           if (theOptions.throwInfiniteLoops) {
             context.errors.push(detectedInfiniteLoop)
             return resolvedErrorPromise
