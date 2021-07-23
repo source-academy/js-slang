@@ -71,8 +71,11 @@ const createEnvironment = (
     }
   }
   closure.node.params.forEach((param, index) => {
-    const ident = param as es.Identifier
-    environment.head[ident.name] = args[index]
+    if (param.type === 'RestElement') {
+      environment.head[(param.argument as es.Identifier).name] = args.slice(index)
+    } else {
+      environment.head[(param as es.Identifier).name] = args[index]
+    }
   })
   return environment
 }
@@ -229,17 +232,30 @@ const checkNumberOfArguments = (
   exp: es.CallExpression
 ) => {
   if (callee instanceof Closure) {
-    if (callee.node.params.length !== args.length) {
+    const params = callee.node.params
+    const hasVarArgs = params[params.length - 1]?.type === 'RestElement'
+    if (hasVarArgs ? params.length - 1 > args.length : params.length !== args.length) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArguments(exp, callee.node.params.length, args.length)
+        new errors.InvalidNumberOfArguments(
+          exp,
+          hasVarArgs ? params.length - 1 : params.length,
+          args.length,
+          hasVarArgs
+        )
       )
     }
   } else {
-    if (callee.hasVarArgs === false && callee.length !== args.length) {
+    const hasVarArgs = callee.minArgsNeeded != undefined
+    if (hasVarArgs ? callee.minArgsNeeded > args.length : callee.length !== args.length) {
       return handleRuntimeError(
         context,
-        new errors.InvalidNumberOfArguments(exp, callee.length, args.length)
+        new errors.InvalidNumberOfArguments(
+          exp,
+          hasVarArgs ? callee.minArgsNeeded : callee.length,
+          args.length,
+          hasVarArgs
+        )
       )
     }
   }
@@ -249,10 +265,12 @@ const checkNumberOfArguments = (
 function* getArgs(context: Context, call: es.CallExpression) {
   const args = []
   for (const arg of call.arguments) {
-    if (context.variant !== 'lazy') {
-      args.push(yield* actualValue(arg, context))
-    } else {
+    if (context.variant === 'lazy') {
       args.push(delayIt(arg, currentEnvironment(context)))
+    } else if (arg.type === 'SpreadElement') {
+      args.push(...(yield* actualValue(arg.argument, context)))
+    } else {
+      args.push(yield* actualValue(arg, context))
     }
   }
   return args

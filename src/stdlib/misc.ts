@@ -14,8 +14,8 @@ export function rawDisplay(value: Value, str: string, externalContext: any) {
   return value
 }
 
-export function error_message(value: Value, str?: string) {
-  const output = (str === undefined ? '' : str + ' ') + stringify(value)
+export function error_message(value: Value, ...strs: string[]) {
+  const output = (strs[0] === undefined ? '' : strs[0] + ' ') + stringify(value)
   throw new Error(output)
 }
 

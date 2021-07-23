@@ -15,7 +15,7 @@ import * as create from './astCreator'
 import * as rttc from './rttc'
 import { LazyBuiltIn } from '../createContext'
 import { NativeStorage, Thunk } from '../types'
-import { makeWrapper } from '../utils/makeWrapper'
+import { makeWrapper } from './makeWrapper'
 
 export function throwIfTimeout(
   nativeStorage: NativeStorage,
@@ -96,30 +96,31 @@ export function callIfFuncAndRightArgs(
   })
 
   if (typeof candidate === 'function') {
-    if (candidate.transformedFunction === undefined) {
-      const expectedLength = candidate.length
-      const receivedLength = args.length
-      if (candidate.hasVarArgs === false && expectedLength !== receivedLength) {
-        throw new InvalidNumberOfArguments(dummy, expectedLength, receivedLength)
+    const originalCandidate = candidate
+    if (candidate.transformedFunction !== undefined) {
+      candidate = candidate.transformedFunction
+    }
+    const expectedLength = candidate.length
+    const receivedLength = args.length
+    const hasVarArgs = candidate.minArgsNeeded !== undefined
+    if (hasVarArgs ? candidate.minArgsNeeded > receivedLength : expectedLength !== receivedLength) {
+      throw new InvalidNumberOfArguments(
+        dummy,
+        hasVarArgs ? candidate.minArgsNeeded : expectedLength,
+        receivedLength,
+        hasVarArgs
+      )
+    }
+    try {
+      const forcedArgs = args.map(forceIt)
+      return originalCandidate(...forcedArgs)
+    } catch (error) {
+      // if we already handled the error, simply pass it on
+      if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
+        throw new ExceptionError(error, dummy.loc!)
+      } else {
+        throw error
       }
-      try {
-        const forcedArgs = args.map(forceIt)
-        return candidate(...forcedArgs)
-      } catch (error) {
-        // if we already handled the error, simply pass it on
-        if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
-          throw new ExceptionError(error, dummy.loc!)
-        } else {
-          throw error
-        }
-      }
-    } else {
-      const expectedLength = candidate.transformedFunction.length
-      const receivedLength = args.length
-      if (expectedLength !== receivedLength) {
-        throw new InvalidNumberOfArguments(dummy, expectedLength, receivedLength)
-      }
-      return candidate(...args)
     }
   } else if (candidate instanceof LazyBuiltIn) {
     try {
@@ -245,31 +246,20 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
     if (typeof f === 'function') {
       if (f.transformedFunction !== undefined) {
         f = f.transformedFunction
-        const expectedLength = f.length
-        const receivedLength = args.length
-        if (expectedLength !== receivedLength) {
-          throw new InvalidNumberOfArguments(
-            callExpression(dummy, args, {
-              start: { line, column },
-              end: { line, column }
-            }),
-            expectedLength,
-            receivedLength
-          )
-        }
-      } else {
-        const expectedLength = f.length
-        const receivedLength = args.length
-        if (f.hasVarArgs === false && expectedLength !== receivedLength) {
-          throw new InvalidNumberOfArguments(
-            callExpression(dummy, args, {
-              start: { line, column },
-              end: { line, column }
-            }),
-            expectedLength,
-            receivedLength
-          )
-        }
+      }
+      const expectedLength = f.length
+      const receivedLength = args.length
+      const hasVarArgs = f.minArgsNeeded !== undefined
+      if (hasVarArgs ? f.minArgsNeeded > receivedLength : expectedLength !== receivedLength) {
+        throw new InvalidNumberOfArguments(
+          callExpression(dummy, args, {
+            start: { line, column },
+            end: { line, column }
+          }),
+          hasVarArgs ? f.minArgsNeeded : expectedLength,
+          receivedLength,
+          hasVarArgs
+        )
       }
     } else if (f instanceof LazyBuiltIn) {
       if (f.evaluateArgs) {
@@ -312,8 +302,13 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
 export const wrap = (
   f: (...args: any[]) => any,
   stringified: string,
+  hasVarArgs: boolean,
   nativeStorage: NativeStorage
 ) => {
+  if (hasVarArgs) {
+    // @ts-ignore
+    f.minArgsNeeded = f.length
+  }
   const wrapped = (...args: any[]) => callIteratively(f, nativeStorage, ...args)
   makeWrapper(f, wrapped)
   wrapped.transformedFunction = f

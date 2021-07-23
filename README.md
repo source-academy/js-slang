@@ -4,6 +4,11 @@ university-level programming courses for computer science majors,
 following Structure and Interpretation of Computer Programs, JavaScript
 Adaptation (<https://sourceacademy.org/sicpjs/>).
 
+Requirements
+============
+
+* node: known working version: v14.17.2
+
 Usage
 =====
 

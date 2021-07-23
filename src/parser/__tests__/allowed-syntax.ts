@@ -6,7 +6,7 @@ test.each([
 
   [
     1,
-    stripIndent`
+    `
     function name(a, b) {
       const sum = a + b;
       if (sum > 1) {
@@ -27,84 +27,84 @@ test.each([
 
   [
     1,
-    stripIndent`
+    `
     (() => true)();
     `
   ],
 
   [
     1,
-    stripIndent`
+    `
     ((x, y) => { return x + y; })(1, 2);
     `
   ],
 
   [
     1,
-    stripIndent`
+    `
     true;
     `
   ],
 
   [
     1,
-    stripIndent`
+    `
     false;
     `
   ],
 
   [
     1,
-    stripIndent`
+    `
     'a string "" \\'\\'';
     `
   ],
 
   [
     1,
-    stripIndent`
+    `
     31.4 + (-3.14e10) * -1 % 2 / 1.5;
     `
   ],
 
   [
     1,
-    stripIndent`
+    `
     1 === 1 && 1 < 2 && 1 <= 2 && 2 >= 1 && 2 > 1 || false;
     `
   ],
 
   [
     1,
-    stripIndent`
+    `
     true ? 1 : 2;
     `
   ],
 
   [
     2,
-    stripIndent`
+    `
     null;
     `
   ],
 
   [
     2,
-    stripIndent`
+    `
     pair(1, null);
     `
   ],
 
   [
     2,
-    stripIndent`
+    `
     list(1);
     `
   ],
 
   [
     3,
-    stripIndent`
+    `
     let i = 1;
     while (i < 5) {
       i = i + 1;
@@ -115,7 +115,7 @@ test.each([
 
   [
     3,
-    stripIndent`
+    `
     let i = 1;
     for (i = 1; i < 5; i = i + 1) {
     }
@@ -125,7 +125,7 @@ test.each([
 
   [
     3,
-    stripIndent`
+    `
     let i = 1;
     for (let j = 0; j < 5; j = j + 1) {
       if (j < 1) {
@@ -143,28 +143,28 @@ test.each([
 
   [
     3,
-    stripIndent`
+    `
     [];
     `
   ],
 
   [
     3,
-    stripIndent`
+    `
     [1, 2, 3];
     `
   ],
 
   [
     3,
-    stripIndent`
+    `
     [1, 2, 3][1];
     `
   ],
 
   [
     3,
-    stripIndent`
+    `
     let x = [1, 2, 3];
     x[1];
     `
@@ -172,7 +172,7 @@ test.each([
 
   [
     3,
-    stripIndent`
+    `
     let x = [1, 2, 3];
     x[1] = 4;
     `
@@ -180,7 +180,7 @@ test.each([
 
   [
     3,
-    stripIndent`
+    `
     let x = 3;
     let y = 4;
     let z = 5;
@@ -188,52 +188,60 @@ test.each([
     x;
     `
   ],
-
+  [
+    3,
+    `
+    function f(x, y, ...z) {
+      return x + y;
+    }
+    f(...[1, 2]);
+    `
+  ],
   [
     100,
-    stripIndent`
+    `
     ({});
     `
   ],
 
   [
     100,
-    stripIndent`
+    `
     ({a: 1, b: 2});
     `
   ],
 
   [
     100,
-    stripIndent`
+    `
     ({a: 1, b: 2})['a'];
     `
   ],
 
   [
     100,
-    stripIndent`
+    `
     ({a: 1, b: 2}).a;
     `
   ],
 
   [
     100,
-    stripIndent`
+    `
     ({'a': 1, 'b': 2}).a;
     `
   ],
 
   [
     100,
-    stripIndent`
+    `
     ({1: 1, 2: 2})['1'];
     `
   ],
 
   [
     100,
-    stripIndent`
+    `
     const key = 'a';
     ({a: 1, b: 2})[key];
     `
@@ -241,7 +249,7 @@ test.each([
 
   [
     100,
-    stripIndent`
+    `
     let x = {a: 1, b: 2};
     x.a = 3;
     `
@@ -249,7 +257,7 @@ test.each([
 
   [
     100,
-    stripIndent`
+    `
     let x = {a: 1, b: 2};
     x['a'] = 3;
     `
@@ -257,7 +265,7 @@ test.each([
 
   [
     100,
-    stripIndent`
+    `
     let x = {a: 1, b: 2};
     const key = 'a';
     x[key] = 3;
