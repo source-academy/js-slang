@@ -511,6 +511,19 @@ Object {
 }
 `;
 
+exports[`No spread in array expressions: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "[...[]];",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Spread syntax is not allowed in arrays.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`No trailing commas in arrays - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
