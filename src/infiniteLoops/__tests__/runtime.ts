@@ -214,7 +214,8 @@ test('detect complicated fromSMT example', () => {
         } else if (total_steps_left === 1) {
             return 1;
         } else {
-            return 1 + helper(total_steps_left-1, steps_available-1) + helper(5, steps_available-3);
+            return 1 + helper(total_steps_left-1, steps_available-1)
+             + helper(5, steps_available-3);
         }
     }
     return helper(n, n);
