@@ -22,7 +22,7 @@
     && \{ \ \textit{gpu\_statement} \ \} \ | \ \{ \ \textit{core\_statements} \ \} \\
     && \textit{core\_statements} 
     &&\quad ::= &\quad 
-    && \textit{core\_statement} {\ldots} \ \textit{gpu\_result\_assignment} \\
+    && \textit{core\_statement} {...} \ \textit{gpu\_result\_assignment} \\
     && \textit{gpu\_result\_assignment} 
     &&\quad ::= &\quad 
     && \textit{gpu\_access} \textbf{\texttt{[}} \textit{gpu\_name} \textbf{\texttt{]}}\ \textbf{\texttt{=}}\  \textit{gpu\_result} \ \textbf{\texttt{;}} \\
@@ -66,5 +66,5 @@
     && \textit{gpu\_expressions} 
     &&\quad ::= &\quad 
     && \epsilon \ | \ \textit{gpu\_expression} \ ( \ \ , \ \textit{gpu\_expression} \ )
-    \ {\ldots}
+    \ {...}
     \end{alignat*}

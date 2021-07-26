@@ -1,7 +1,9 @@
 \begin{alignat*}{9}
-&& \textit{program}    &&\quad ::= &\quad && \textit{statement} \ldots
+&& \textit{program}    &&\quad ::= &\quad && \textit{import-directive} ... \ \textit{statement} ...
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p6}{program}} \\[1mm]
-&& \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
+&& \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{import}}\ \textbf{\texttt{\{}}\ \textit{names} \ \textbf{\texttt{\}}}\ \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{;}}
+                                                           && \textrm{import directive} \\[1mm]
+&& \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \  
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.2\#p2}{constant declaration}} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
@@ -11,7 +13,7 @@
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p3}{expression statement}} \\[1mm]
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
-                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ ) \ldots
+                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ ) ...
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{function parameters}}   \\[1mm]
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p3}{primitive number expression}}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
@@ -46,6 +48,6 @@
 && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
-                                                                      ) \ldots
+                                                                      ) ...
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{argument expressions}} 
 \end{alignat*}
