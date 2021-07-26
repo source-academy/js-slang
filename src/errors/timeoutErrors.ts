@@ -6,7 +6,6 @@ import { stringify } from '../utils/stringify'
 import { ErrorSeverity, ErrorType } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { RuntimeSourceError } from './runtimeSourceError'
-import { InfiniteLoopErrorMessage } from '../infiniteLoops/errorMessages'
 
 function getWarningMessage(maxExecTime: number) {
   const from = maxExecTime / 1000
@@ -27,7 +26,7 @@ export class PotentialInfiniteLoopError extends TimeoutError {
   }
 
   public explain() {
-    return stripIndent`${InfiniteLoopErrorMessage.source_protection_loop}.
+    return stripIndent`${'Potential infinite loop detected'}.
     ${getWarningMessage(this.maxExecTime)}`
   }
 
@@ -50,9 +49,7 @@ export class PotentialInfiniteRecursionError extends TimeoutError {
       ([executedName, executedArguments]) =>
         `${executedName}(${executedArguments.map(arg => stringify(arg)).join(', ')})`
     )
-    return stripIndent`${
-      InfiniteLoopErrorMessage.source_protection_recursion
-    }: ${formattedCalls.join(' ... ')}.
+    return stripIndent`${'Potential infinite recursion detected'}: ${formattedCalls.join(' ... ')}.
       ${getWarningMessage(this.maxExecTime)}`
   }
 
