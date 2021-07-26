@@ -20,6 +20,7 @@ import noUpdateAssignment from './noUpdateAssignment'
 import noVar from './noVar'
 import singleVariableDeclaration from './singleVariableDeclaration'
 import noTemplateExpression from './noTemplateExpression'
+import noSpreadInArray from './noSpreadInArray'
 
 const rules: Rule<es.Node>[] = [
   bracesAroundFor,
@@ -39,7 +40,8 @@ const rules: Rule<es.Node>[] = [
   singleVariableDeclaration,
   noEval,
   noHolesInArrays,
-  noTemplateExpression
+  noTemplateExpression,
+  noSpreadInArray
 ]
 
 export default rules

@@ -616,6 +616,15 @@ test('No array expressions in chapter 2 - verbose', () => {
           `)
 })
 
+test('No spread in array expressions', () => {
+  return expectParsedError(
+    stripIndent`
+    [...[]];
+    `,
+    { chapter: 3 }
+  ).toMatchInlineSnapshot(`"Line 1: Spread syntax is not allowed in arrays."`)
+})
+
 test('No trailing commas in arrays', () => {
   return expectParsedError(
     stripIndent`

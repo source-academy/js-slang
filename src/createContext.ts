@@ -180,6 +180,18 @@ export const defineSymbol = (context: Context, name: string, value: Value) => {
   }
 }
 
+export function defineBuiltin(
+  context: Context,
+  name: `${string}${'=' | '...'}${string}`, // enforce minArgsNeeded
+  value: Value,
+  minArgsNeeded: number
+): void
+export function defineBuiltin(
+  context: Context,
+  name: string,
+  value: Value,
+  minArgsNeeded?: number
+): void
 // Defines a builtin in the given context
 // If the builtin is a function, wrap it such that its toString hides the implementation
 export function defineBuiltin(
