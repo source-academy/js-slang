@@ -6,9 +6,9 @@ import * as es from 'estree'
 import { InfiniteLoopError, InfiniteLoopErrorType } from './errors'
 import { shallowConcretize } from './symbolic'
 
-const runAltErgo: any = require('alt-ergo-modified')
+const runAltErgo: any = require('@joeychenofficial/alt-ergo-modified')
 
-const options = JSON.stringify({
+const options = {
   answers_with_loc: false,
   input_format: 'Native',
   interpretation: 1,
@@ -16,7 +16,7 @@ const options = JSON.stringify({
   verbose: false,
   sat_solver: 'Tableaux',
   file: 'smt-file'
-})
+}
 
 /**
  * Checks if the program is stuck in an infinite loop.
@@ -128,7 +128,7 @@ function runUntilValid(items: [string, () => string][]) {
 
 function runSMT(code: string): string {
   try {
-    const input = JSON.stringify({ content: [code] })
+    const input = { content: [code] }
     const out = JSON.parse(runAltErgo(input, options))
     return out.results[0]
   } catch (e) {
