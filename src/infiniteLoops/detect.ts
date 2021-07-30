@@ -136,6 +136,11 @@ function runSMT(code: string): string {
   }
 }
 
+/**
+ * Triple[0]: [Path from previous to current iteration]
+ * Triple[1]: [Path from current to next iteration]
+ * Triple[2]: [Transition from previous to current iteration]
+ */
 type Triple = [number[], number[], [string, any, number][]]
 
 function flatten<T>(arr: T[][]): T[] {
