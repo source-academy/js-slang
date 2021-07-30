@@ -142,7 +142,8 @@ export const createEmptyContext = <T>(
     nativeStorage: createNativeStorage(),
     executionMethod: 'auto',
     variant,
-    typeEnvironment: createTypeEnvironment(chapter)
+    typeEnvironment: createTypeEnvironment(chapter),
+    previousCode: []
   }
 }
 

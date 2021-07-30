@@ -196,6 +196,19 @@ export const logicalExpression = (
   loc
 })
 
+export const mutateToConditionalExpression = (
+  node: es.Node,
+  test: es.Expression,
+  consequent: es.Expression,
+  alternate: es.Expression
+) => {
+  node.type = 'ConditionalExpression'
+  node = node as es.ConditionalExpression
+  node.test = test
+  node.consequent = consequent
+  node.alternate = alternate
+}
+
 export const conditionalExpression = (
   test: es.Expression,
   consequent: es.Expression,
