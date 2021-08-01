@@ -133,6 +133,15 @@ test('multidimentional arrays work', () => {
   expect(runWithMock(main)).toBe(2)
 })
 
+test('if statements work as expected', () => {
+  const main = `let x = 1;
+  if (x===1) {
+    x = x + 1;
+  } else {}
+  output(x);`
+  expect(runWithMock(main)).toBe(2)
+})
+
 test('combination of loops and functions run as expected', () => {
   const main = `function test(x) {
     return x===0;
