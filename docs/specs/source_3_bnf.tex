@@ -1,17 +1,21 @@
+\addtolength{\jot}{-0.5mm}
 \begin{alignat*}{9}
-&& \textit{program}    &&\quad ::= &\quad && \textit{import-directive} \ldots \ \textit{statement} \ldots
+&& \textit{program}    &&\quad ::= &\quad && \textit{import-directive} ... \ \textit{statement} ...
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p6}{program}} \\[1mm]
-&& \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{import}}\ \textbf{\texttt{\{}}\ \textit{names} \ \textbf{\texttt{\}}}\ \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{;}}
+&& \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{import}}\ \textbf{\texttt{\{}}\ \textit{import-names} \ \textbf{\texttt{\}}}\ \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{;}}
                                                            && \textrm{import directive} \\[1mm]
-%&& \textit{import-name}  && ::= &\quad && \textit{name}\ | \ \textit{name}\ \textbf{\texttt{as}}\ \textit{name}
-%                                                            && \textrm{import name declaration}} \\[1mm]
+&& \textit{import-names}   && ::= &\quad &&  \epsilon\ | \  \textit{import-name} \ 
+                                                   (\ \textbf{\texttt{,}} \ \textit{import-name}\ ) ...
+                                                            && \textrm{import name list}   \\[1mm]
+&& \textit{import-name}   && ::= &\quad &&  \textit{name}\ | \  \textit{name} \ \textbf{\texttt{as}}\ \textit{name} 
+                                                            && \textrm{import name}   \\[1mm]
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.2\#p2}{constant declaration}} \\
 &&                       && |   &\quad && \textit{let} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p3}{variable declaration}} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
-                                   \textbf{\texttt{(}}\  \textit{names} \ \textbf{\texttt{)}}\ \textit{block} \quad
+                                   \textbf{\texttt{(}}\  \textit{rest-names} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{function declaration}}\\
 &&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{return statement}}\\
@@ -38,8 +42,11 @@
 &&                       && |   &\quad &&  \textbf{\texttt{debugger}} \ \textbf{\texttt{;}}
                                                            && \textrm{breakpoint} \\[1mm]
 && \textit{names}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
-                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ ) \ldots
+                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ ) ...
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{name list}} \\[1mm]
+&& \textit{rest-names}   && ::= &\quad &&  \textit{names} \ 
+                                           [\texttt{...}\ \textit{name}]
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{name list} (\href{https://sourceacademy.org/sicpjs/3.4.2\#p17}{rest})} \\[1mm]
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
                                    \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
                                    \textit{block} \\
@@ -48,7 +55,7 @@
                                           \ | \
                                           \textit{\href{https://sourceacademy.org/sicpjs/1.3.3\#footnote-1}{if-statement}} \ )\ ]
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.3.2\#p12}{conditional statement}} \\[1mm]
-&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement} \ldots \ \textbf{\texttt{\}}} \quad
+&& \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement} ... \ \textbf{\texttt{\}}} \quad
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.8\#p14}{block statement}} \\[1mm]
 && \textit{let}          && ::= &\quad &&  \textbf{\texttt{let}}\  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
@@ -70,16 +77,16 @@
                                             \textit{expression}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p4}{unary operator combination}}\\
 &&                       && |   &\quad &&   \textit{expression} \ 
-                                            \textbf{\texttt{(}}\ \textit{expressions}\
+                                            \textbf{\texttt{(}}\ \textit{spread-expressions}\
                                             \textbf{\texttt{)}}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{function application}} \\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
-                                               \textbf{\texttt{(}}\ \textit{names}\ \textbf{\texttt{)}}\
+                                               \textbf{\texttt{(}}\ \textit{rest-names}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{expression}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.3.2}{lambda expression (expr. body)}} \\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
-                                               \textbf{\texttt{(}}\ \textit{names}\ \textbf{\texttt{)}}\
+                                               \textbf{\texttt{(}}\ \textit{rest-names}\ \textbf{\texttt{)}}\
                                             )\    
                                             \texttt{\textbf{=>}}\ \textit{block}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/2.2.4\#footnote-3}{lambda expression (block body)}} \\
@@ -115,6 +122,14 @@
 && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
-                                                                      ) \ldots
-                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{argument expressions}}
+                                                                      ) ...
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{element expressions}}\\[1mm]
+&& \textit{spread-expressions}  && ::= &\quad && \epsilon\ | \ \textit{spread-expression}\ (
+                                                               \ \textbf{\texttt{,}} \
+                                                                 \textit{spread-expression} \ 
+                                                                      ) ...\quad
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{argument expressions}}\\[1mm]
+&& \textit{spread-expression}  && ::= &\quad && \textit{expression} \ |\ 
+                                               \texttt{...}\ \textit{expression}
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{argument expression} (\href{https://sourceacademy.org/sicpjs/3.4.2\#p17}{spread})}
 \end{alignat*}

@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "0.5.8",
+  "version": "0.5.13",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
@@ -15,6 +15,7 @@
     "url": "https://github.com/source-academy/"
   },
   "dependencies": {
+    "@joeychenofficial/alt-ergo-modified": "^2.4.0",
     "@types/estree": "0.0.47",
     "acorn": "^8.0.3",
     "acorn-loose": "^8.0.0",

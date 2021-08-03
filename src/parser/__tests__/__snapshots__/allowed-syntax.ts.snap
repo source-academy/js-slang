@@ -2671,6 +2671,194 @@ x;",
 exports[`Syntaxes are allowed in the chapter they are introduced 22: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
+  "code": "function f(x, y, ...z) {
+  return x + y;
+}
+f(...[1, 2]);",
+  "displayResult": Array [],
+  "numErrors": 3,
+  "parsedErrors": "Line 1: Rest elements are not allowed
+Line 4: Array expressions are not allowed
+Line 4: Spread elements are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 22: parse passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse(\\"function f(x, y, ...z) {\\\\n  return x + y;\\\\n}\\\\nf(...[1, 2]);\\");",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": Array [
+    "sequence",
+    Array [
+      Array [
+        Array [
+          "function_declaration",
+          Array [
+            Array [
+              "name",
+              Array [
+                "f",
+                null,
+              ],
+            ],
+            Array [
+              Array [
+                Array [
+                  "name",
+                  Array [
+                    "x",
+                    null,
+                  ],
+                ],
+                Array [
+                  Array [
+                    "name",
+                    Array [
+                      "y",
+                      null,
+                    ],
+                  ],
+                  Array [
+                    Array [
+                      "rest_element",
+                      Array [
+                        Array [
+                          "name",
+                          Array [
+                            "z",
+                            null,
+                          ],
+                        ],
+                        null,
+                      ],
+                    ],
+                    null,
+                  ],
+                ],
+              ],
+              Array [
+                Array [
+                  "return_statement",
+                  Array [
+                    Array [
+                      "binary_operator_combination",
+                      Array [
+                        "+",
+                        Array [
+                          Array [
+                            "name",
+                            Array [
+                              "x",
+                              null,
+                            ],
+                          ],
+                          Array [
+                            Array [
+                              "name",
+                              Array [
+                                "y",
+                                null,
+                              ],
+                            ],
+                            null,
+                          ],
+                        ],
+                      ],
+                    ],
+                    null,
+                  ],
+                ],
+                null,
+              ],
+            ],
+          ],
+        ],
+        Array [
+          Array [
+            "application",
+            Array [
+              Array [
+                "name",
+                Array [
+                  "f",
+                  null,
+                ],
+              ],
+              Array [
+                Array [
+                  Array [
+                    "spread_element",
+                    Array [
+                      Array [
+                        "array_expression",
+                        Array [
+                          Array [
+                            Array [
+                              "literal",
+                              Array [
+                                1,
+                                null,
+                              ],
+                            ],
+                            Array [
+                              Array [
+                                "literal",
+                                Array [
+                                  2,
+                                  null,
+                                ],
+                              ],
+                              null,
+                            ],
+                          ],
+                          null,
+                        ],
+                      ],
+                      null,
+                    ],
+                  ],
+                  null,
+                ],
+                null,
+              ],
+            ],
+          ],
+          null,
+        ],
+      ],
+      null,
+    ],
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 22: passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x, y, ...z) {
+  return x + y;
+}
+f(...[1, 2]);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 23: fails a chapter below 1`] = `
+Object {
+  "alertResult": Array [],
   "code": "({});",
   "displayResult": Array [],
   "numErrors": 1,
@@ -2681,7 +2869,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 22: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 23: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"({});\\");",
@@ -2700,7 +2888,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 22: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 23: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({});",
@@ -2713,7 +2901,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 23: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 24: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2});",
@@ -2726,7 +2914,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 23: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 24: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"({a: 1, b: 2});\\");",
@@ -2781,7 +2969,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 23: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 24: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2});",
@@ -2797,7 +2985,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 24: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 25: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2})['a'];",
@@ -2810,7 +2998,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 24: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 25: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"({a: 1, b: 2})['a'];\\");",
@@ -2880,7 +3068,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 24: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 25: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2})['a'];",
@@ -2893,7 +3081,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 25: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 26: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2}).a;",
@@ -2907,7 +3095,7 @@ Line 1: Dot abbreviations are not allowed.",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 25: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 26: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"({a: 1, b: 2}).a;\\");",
@@ -2977,7 +3165,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 25: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 26: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({a: 1, b: 2}).a;",
@@ -2990,7 +3178,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 26: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 27: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({'a': 1, 'b': 2}).a;",
@@ -3004,7 +3192,7 @@ Line 1: Dot abbreviations are not allowed.",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 26: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 27: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"({'a': 1, 'b': 2}).a;\\");",
@@ -3062,7 +3250,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 26: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 27: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({'a': 1, 'b': 2}).a;",
@@ -3075,7 +3263,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 27: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 28: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({1: 1, 2: 2})['1'];",
@@ -3088,7 +3276,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 27: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 28: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"({1: 1, 2: 2})['1'];\\");",
@@ -3146,7 +3334,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 27: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 28: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "({1: 1, 2: 2})['1'];",
@@ -3159,7 +3347,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 28: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 29: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "const key = 'a';
@@ -3173,7 +3361,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 28: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 29: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"const key = 'a';\\\\n({a: 1, b: 2})[key];\\");",
@@ -3276,7 +3464,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 28: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 29: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "const key = 'a';
@@ -3290,7 +3478,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 29: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 30: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};
@@ -3305,7 +3493,7 @@ Line 2: Dot abbreviations are not allowed.",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 29: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 30: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = {a: 1, b: 2};\\\\nx.a = 3;\\");",
@@ -3423,7 +3611,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 29: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 30: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};
@@ -3437,7 +3625,7 @@ x.a = 3;",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 30: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 31: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};
@@ -3451,7 +3639,7 @@ x['a'] = 3;",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 30: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 31: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = {a: 1, b: 2};\\\\nx['a'] = 3;\\");",
@@ -3569,7 +3757,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 30: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 31: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};
@@ -3583,7 +3771,7 @@ x['a'] = 3;",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 31: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 32: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};
@@ -3598,7 +3786,7 @@ x[key] = 3;",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 31: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 32: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"let x = {a: 1, b: 2};\\\\nconst key = 'a';\\\\nx[key] = 3;\\");",
@@ -3740,7 +3928,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 31: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 32: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "let x = {a: 1, b: 2};

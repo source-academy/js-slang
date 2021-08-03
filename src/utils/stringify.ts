@@ -355,6 +355,10 @@ export function valueToStringDag(value: Value): StringDag {
     let length = prefix.length + suffix.length + Math.max(0, converted.length - 1) * 2
     let isCircular = false
     for (let i = 0; i < converted.length; i++) {
+      if (converted[i] == null) {
+        // the `elems.map` above preserves the sparseness of the array
+        converted[i] = convert(undefined)
+      }
       length += converted[i][0].length
       isCircular ||= converted[i][1]
     }

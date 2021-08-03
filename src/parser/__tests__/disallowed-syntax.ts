@@ -616,6 +616,15 @@ test('No array expressions in chapter 2 - verbose', () => {
           `)
 })
 
+test('No spread in array expressions', () => {
+  return expectParsedError(
+    stripIndent`
+    [...[]];
+    `,
+    { chapter: 3 }
+  ).toMatchInlineSnapshot(`"Line 1: Spread syntax is not allowed in arrays."`)
+})
+
 test('No trailing commas in arrays', () => {
   return expectParsedError(
     stripIndent`
@@ -651,64 +660,6 @@ test('No trailing commas in objects', () => {
   ).toMatchInlineSnapshot(`"Line 3: Trailing comma"`)
 })
 
-test('No rest pattern', () => {
-  return expectParsedError(
-    stripIndent`
-    function f(...rest) {
-      return rest;
-    }
-    f(1, 2);
-    `,
-    { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 1: Rest elements are not allowed"`)
-})
-
-test('No rest pattern - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-    "enable verbose";
-    function f(...rest) {
-    return rest;
-    }
-    f(1, 2);
-    `,
-    { chapter: 100 }
-  ).toMatchInlineSnapshot(`
-            "Line 2, Column 11: Rest elements are not allowed
-            You are trying to use Rest elements, which is not allowed (yet).
-            "
-          `)
-})
-
-test('No spread operator', () => {
-  return expectParsedError(
-    stripIndent`
-    function f(x, y) {
-      return x + y;
-    }
-    f(...[1, 2]);
-    `,
-    { chapter: 100 }
-  ).toMatchInlineSnapshot(`"Line 4: Spread elements are not allowed"`)
-})
-
-test('No spread operator - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-    "enable verbose";
-    function f(x, y) {
-      return x + y;
-    }
-    f(...[1, 2]);
-    `,
-    { chapter: 100 }
-  ).toMatchInlineSnapshot(`
-            "Line 5, Column 2: Spread elements are not allowed
-            You are trying to use Spread elements, which is not allowed (yet).
-            "
-          `)
-})
-
 test('no try statements', () => {
   return expectParsedError(
     stripIndent`
@@ -716,15 +667,14 @@ test('no try statements', () => {
       return x + y;
     }
     try {
-      f(...[1, 2]);
+      f([1, 2]);
     } catch (e) {
       display(e);
     }
     `,
     { chapter: 3 }
   ).toMatchInlineSnapshot(`
-            "Line 5: Spread elements are not allowed
-            Line 6: Catch clauses are not allowed
+            "Line 6: Catch clauses are not allowed
             Line 4: Try statements are not allowed"
           `)
 })
@@ -737,17 +687,14 @@ test('no try statements - verbose', () => {
       return x + y;
     }
     try {
-      f(...[1, 2]);
+      f([1, 2]);
     } catch (e) {
       display(e);
     }
     `,
     { chapter: 3 }
   ).toMatchInlineSnapshot(`
-            "Line 6, Column 4: Spread elements are not allowed
-            You are trying to use Spread elements, which is not allowed (yet).
-
-            Line 7, Column 2: Catch clauses are not allowed
+            "Line 7, Column 2: Catch clauses are not allowed
             You are trying to use Catch clauses, which is not allowed (yet).
 
             Line 5, Column 0: Try statements are not allowed

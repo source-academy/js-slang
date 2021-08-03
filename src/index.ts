@@ -52,9 +52,10 @@ import * as es from 'estree'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
 import { forceIt } from './utils/operators'
-import { addInfiniteLoopProtection } from './infiniteLoops/InfiniteLoops'
 import { TimeoutError } from './errors/timeoutErrors'
 import { loadModuleTabs } from './modules/moduleLoader'
+import { testForInfiniteLoop } from './infiniteLoops/runtime'
+import { isPotentialInfiniteLoop } from './infiniteLoops/errors'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -65,6 +66,7 @@ export interface IOptions {
   originalMaxExecTime: number
   useSubst: boolean
   isPrelude: boolean
+  throwInfiniteLoops: boolean
 }
 
 const DEFAULT_OPTIONS: IOptions = {
@@ -75,7 +77,8 @@ const DEFAULT_OPTIONS: IOptions = {
   variant: 'default',
   originalMaxExecTime: 1000,
   useSubst: false,
-  isPrelude: false
+  isPrelude: false,
+  throwInfiniteLoops: true
 }
 
 // needed to work on browsers
@@ -433,6 +436,7 @@ export async function runInContext(
     } else {
       context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
+    context.previousCode.unshift(code)
     previousCode = code
     try {
       return Promise.resolve({
@@ -468,9 +472,6 @@ export async function runInContext(
       value: redexedSteps
     })
   }
-  if (context.chapter <= 2) {
-    addInfiniteLoopProtection(program, context.chapter === 2)
-  }
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
     const prelude = context.prelude
@@ -485,6 +486,7 @@ export async function runInContext(
       context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
     }
     if (!options.isPrelude) {
+      context.previousCode.unshift(code)
       previousCode = code
     }
     let transpiled
@@ -515,6 +517,21 @@ export async function runInContext(
         value
       })
     } catch (error) {
+      const isDefaultVariant = options.variant === undefined || options.variant === 'default'
+      if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
+        const detectedInfiniteLoop = testForInfiniteLoop(code, context.previousCode.slice(1))
+        if (detectedInfiniteLoop !== undefined) {
+          if (theOptions.throwInfiniteLoops) {
+            context.errors.push(detectedInfiniteLoop)
+            return resolvedErrorPromise
+          } else {
+            error.infiniteLoopError = detectedInfiniteLoop
+            if (error instanceof ExceptionError) {
+              ;(error.error as any).infiniteLoopError = detectedInfiniteLoop
+            }
+          }
+        }
+      }
       if (error instanceof RuntimeSourceError) {
         context.errors.push(error)
         if (error instanceof TimeoutError) {

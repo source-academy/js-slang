@@ -16,6 +16,7 @@ import * as gpu_lib from './gpu/lib'
 import { stringify } from './utils/stringify'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/typeChecker'
+import { makeWrapper } from './utils/makeWrapper'
 
 export class LazyBuiltIn {
   func: (...arg0: any) => any
@@ -141,7 +142,8 @@ export const createEmptyContext = <T>(
     nativeStorage: createNativeStorage(),
     executionMethod: 'auto',
     variant,
-    typeEnvironment: createTypeEnvironment(chapter)
+    typeEnvironment: createTypeEnvironment(chapter),
+    previousCode: []
   }
 }
 
@@ -179,14 +181,31 @@ export const defineSymbol = (context: Context, name: string, value: Value) => {
   }
 }
 
+export function defineBuiltin(
+  context: Context,
+  name: `${string}${'=' | '...'}${string}`, // enforce minArgsNeeded
+  value: Value,
+  minArgsNeeded: number
+): void
+export function defineBuiltin(
+  context: Context,
+  name: string,
+  value: Value,
+  minArgsNeeded?: number
+): void
 // Defines a builtin in the given context
 // If the builtin is a function, wrap it such that its toString hides the implementation
-export const defineBuiltin = (context: Context, name: string, value: Value) => {
+export function defineBuiltin(
+  context: Context,
+  name: string,
+  value: Value,
+  minArgsNeeded: undefined | number = undefined
+) {
   if (typeof value === 'function') {
     const funName = name.split('(')[0].trim()
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
     value.toString = () => repr
-    value.hasVarArgs = name.includes('...') || name.includes('=')
+    value.minArgsNeeded = minArgsNeeded
 
     defineSymbol(context, funName, value)
   } else if (value instanceof LazyBuiltIn) {
@@ -194,6 +213,7 @@ export const defineBuiltin = (context: Context, name: string, value: Value) => {
     const funName = name.split('(')[0].trim()
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
     wrapped.toString = () => repr
+    makeWrapper(value.func, wrapped)
     defineSymbol(context, funName, new LazyBuiltIn(wrapped, value.evaluateArgs))
   } else {
     defineSymbol(context, name, value)
@@ -213,20 +233,19 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
  */
 export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIns) => {
   ensureGlobalEnvironmentExist(context)
-  const placeholder = Symbol()
-  const rawDisplay = (v: Value, s: string) =>
-    externalBuiltIns.rawDisplay(v, s, context.externalContext)
-  const display = (v: Value, s: any = placeholder) => {
-    if (s !== placeholder && typeof s !== 'string') {
+  const rawDisplay = (v: Value, ...s: string[]) =>
+    externalBuiltIns.rawDisplay(v, s[0], context.externalContext)
+  const display = (v: Value, ...s: string[]) => {
+    if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
       throw new TypeError('display expects the second argument to be a string')
     }
-    return rawDisplay(stringify(v), s === placeholder ? undefined : s), v
+    return rawDisplay(stringify(v), s[0]), v
   }
-  const displayList = (v: Value, s: any = placeholder) => {
-    if (s !== placeholder && typeof s !== 'string') {
+  const displayList = (v: Value, ...s: string[]) => {
+    if (s.length === 1 && s[0] !== undefined && typeof s[0] !== 'string') {
       throw new TypeError('display_list expects the second argument to be a string')
     }
-    return list.rawDisplayList(display, v, s === placeholder ? undefined : s)
+    return list.rawDisplayList(display, v, s[0])
   }
   const prompt = (v: Value) => {
     const start = Date.now()
@@ -243,10 +262,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
   if (context.chapter >= 1) {
     defineBuiltin(context, 'get_time()', misc.get_time)
-    defineBuiltin(context, 'display(val, prepend = undefined)', display)
-    defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay)
-    defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify)
-    defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message)
+    defineBuiltin(context, 'display(val, prepend = undefined)', display, 1)
+    defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay, 1)
+    defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify, 1)
+    defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message, 1)
     defineBuiltin(context, 'prompt(str)', prompt)
     defineBuiltin(context, 'is_number(val)', misc.is_number)
     defineBuiltin(context, 'is_string(val)', misc.is_string)
@@ -266,12 +285,14 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       const value = Math[name]
       if (typeof value === 'function') {
         let paramString: string
+        let minArgsNeeded = undefined
         if (name === 'max' || 'min') {
           paramString = '...values'
+          minArgsNeeded = 0
         } else {
           paramString = parameterNames.slice(0, value.length).join(', ')
         }
-        defineBuiltin(context, `math_${name}(${paramString})`, value)
+        defineBuiltin(context, `math_${name}(${paramString})`, value, minArgsNeeded)
       } else {
         defineBuiltin(context, `math_${name}`, value)
       }
@@ -283,21 +304,21 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
     if (context.variant === 'lazy') {
       defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair, false))
-      defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list, false))
+      defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list, false), 0)
       defineBuiltin(context, 'is_pair(val)', new LazyBuiltIn(list.is_pair, true))
       defineBuiltin(context, 'head(xs)', new LazyBuiltIn(list.head, true))
       defineBuiltin(context, 'tail(xs)', new LazyBuiltIn(list.tail, true))
       defineBuiltin(context, 'is_null(val)', new LazyBuiltIn(list.is_null, true))
-      defineBuiltin(context, 'draw_data(...xs)', new LazyBuiltIn(visualiseList, true))
+      defineBuiltin(context, 'draw_data(...xs)', new LazyBuiltIn(visualiseList, true), 0)
     } else {
       defineBuiltin(context, 'pair(left, right)', list.pair)
       defineBuiltin(context, 'is_pair(val)', list.is_pair)
       defineBuiltin(context, 'head(xs)', list.head)
       defineBuiltin(context, 'tail(xs)', list.tail)
       defineBuiltin(context, 'is_null(val)', list.is_null)
-      defineBuiltin(context, 'list(...values)', list.list)
-      defineBuiltin(context, 'draw_data(...xs)', visualiseList)
-      defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList)
+      defineBuiltin(context, 'list(...values)', list.list, 0)
+      defineBuiltin(context, 'draw_data(...xs)', visualiseList, 0)
+      defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList, 0)
     }
   }
 
@@ -309,7 +330,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
     // Stream library
     defineBuiltin(context, 'stream_tail(stream)', stream.stream_tail)
-    defineBuiltin(context, 'stream(...values)', stream.stream)
+    defineBuiltin(context, 'stream(...values)', stream.stream, 0)
     defineBuiltin(context, 'list_to_stream(xs)', stream.list_to_stream)
   }
 

@@ -545,7 +545,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 216: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`
+      `"Line 216: Error: tail(xs) expects a pair as argument xs, but encountered null"`
     )
   })
 
@@ -556,7 +556,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 216: Error: \\"Infinite recursion (or runtime error) detected. Did you call a value that is outside the range of your function?\\""`
+      `"Line 216: Error: tail(xs) expects a pair as argument xs, but encountered null"`
     )
   })
 
@@ -567,7 +567,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
   `,
       { chapter: 2, native: true }
     ).toMatchInlineSnapshot(
-      `"Line 216: Expected string on right hand side of operation, got number."`
+      `"Line 214: Expected string on right hand side of operation, got number."`
     )
   })
 })

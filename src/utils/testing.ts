@@ -239,6 +239,7 @@ export function expectDisplayResult(code: string, options: TestOptions = {}) {
     testSuccess(code, options)
       .then(snapshot('expectDisplayResult'))
       .then(testResult => testResult.displayResult!)
+      .catch(e => console.log(e))
   ).resolves
 }
 
@@ -335,7 +336,8 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   const context = mockContext(4)
   const promise = runInContext(code, context, {
     scheduler: 'preemptive',
-    executionMethod: 'native'
+    executionMethod: 'native',
+    throwInfiniteLoops: false
   })
   await promise
   const timeTaken = Date.now() - start

@@ -678,7 +678,6 @@ Array [
 test('No error when calling display function in with variable arguments', () => {
   return expectResult(
     stripIndent`
-    display();
     display(1);
     display(1, "test");
   `,
@@ -689,7 +688,6 @@ test('No error when calling display function in with variable arguments', () => 
 test('No error when calling stringify function in with variable arguments', () => {
   return expectResult(
     stripIndent`
-    stringify();
     stringify(1, 2);
     stringify(1, 2, 3);
   `,
@@ -717,6 +715,16 @@ test('No error when calling math_min function in with variable arguments', () =>
   `,
     { native: true, chapter: 2 }
   ).toMatchInlineSnapshot(`1`)
+})
+
+test('Error with too few arguments passed to rest parameters', () => {
+  return expectParsedError(
+    stripIndent`
+    function rest(a, b, ...c) {}
+    rest(1);
+  `,
+    { chapter: 3, native: true }
+  ).toMatchInlineSnapshot(`"Line 2: Expected 2 or more arguments, but got 1."`)
 })
 
 test('Error when redeclaring constant', () => {

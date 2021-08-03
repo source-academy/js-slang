@@ -239,9 +239,7 @@ test('Function infinite recursion with different args represents CallExpression 
     function f(i) { return f(i+1) - 1; }
     f(0);
   `).toEqual(
-    expect.stringMatching(
-      /^Line 1: Error: \"Infinite recursion \(or runtime error\) detected. Did you forget your base case\?\"/
-    )
+    expect.stringMatching(/^Line 1: Maximum call stack size exceeded\n\ *(f\(\d*\)[^f]{2,4}){3}/)
   )
 }, 30000)
 
@@ -429,6 +427,23 @@ test('test true || true', () => {
 
 test('test || shortcircuiting', () => {
   return expectToMatchJS('true || 1();', { native: true })
+})
+
+test('Rest parameters work', () => {
+  return expectResult(
+    stripIndent`
+    function rest(a, b, ...c) {
+      let sum = a + b;
+      for (let i = 0; i < array_length(c); i = i + 1) {
+        sum = sum + c[i];
+      }
+      return sum;
+    }
+    rest(1, 2); // no error
+    rest(1, 2, ...[3, 4, 5],  ...[6, 7], ...[]);
+  `,
+    { native: true, chapter: 3 }
+  ).toMatchInlineSnapshot(`28`)
 })
 
 test('Test context reuse', async () => {
