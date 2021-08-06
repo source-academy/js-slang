@@ -18,7 +18,7 @@ function parse(str) {}
  * apply_in_underlying_javascript(times, list(2, 3)); // returns 6</CODE></PRE>
  * @param {function} f - function to be applied
  * @param {list} xs - arguments given in list
- * @returns {boolean} whatever <CODE>f</CODE> returns
+ * @returns {whatever} whatever <CODE>f</CODE> returns
  */
 function apply_in_underlying_javascript(f, xs) {}
 
