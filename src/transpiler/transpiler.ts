@@ -427,7 +427,7 @@ function transformPropertyAssignment(program: es.Program, globalIds: NativeIds) 
         const { line, column } = loc!.start
         create.mutateToCallExpression(node, globalIds.setProp, [
           object as es.Expression,
-          getComputedProperty(computed, property),
+          getComputedProperty(computed, property as es.Expression),
           node.right,
           create.literal(line),
           create.literal(column)
@@ -444,7 +444,7 @@ function transformPropertyAccess(program: es.Program, globalIds: NativeIds) {
       const { line, column } = loc!.start
       create.mutateToCallExpression(node, globalIds.getProp, [
         object as es.Expression,
-        getComputedProperty(computed, property),
+        getComputedProperty(computed, property as es.Expression),
         create.literal(line),
         create.literal(column)
       ])

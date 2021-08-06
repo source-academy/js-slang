@@ -419,7 +419,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   MemberExpression: function*(node: es.MemberExpression, context: Context) {
-    const pairGenerator = cartesianProduct(context, [node.property, node.object as es.Expression], [])
+    // es.PrivateIdentifier is a ES2022 feature
+    const pairGenerator = cartesianProduct(context, [node.property as es.Expression, node.object as es.Expression], [])
     for (const pair of pairGenerator) {
       const prop = pair[0]
       const obj = pair[1]
@@ -437,7 +438,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   AssignmentExpression: function*(node: es.AssignmentExpression, context: Context) {
     if (node.left.type === 'MemberExpression') {
-      const tripleGenerator = cartesianProduct(context, [node.right, node.left.property, node.left.object as es.Expression], [])
+      // es.PrivateIdentifier is a ES2022 feature
+      const tripleGenerator = cartesianProduct(context, [node.right, node.left.property as es.Expression, node.left.object as es.Expression], [])
       for (const triple of tripleGenerator) {
         const val = triple[0]
         const prop = triple[1]
