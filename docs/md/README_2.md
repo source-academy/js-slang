@@ -19,31 +19,6 @@ order. Click on a name to see how it is used. They come in these three groups:
     </li>
   </ul>
 
-The <a href="https://sourceacademy.org"">Source Academy</a>,
-a learning environment that uses SICP JS and Source, comes with the following
-<a href="../External libraries/">external libraries</a> for Source §2:
-  <ul>
-    <li>
-      <a href="../RUNES/index.html">RUNES</a>: Library for runes graphics
-    </li>
-    <li>
-      <a href="../CURVES/index.html">CURVES</a>: Library for curve graphics
-    </li>
-    <li>
-      <a href="../SOUNDS/index.html">SOUNDS</a>: Library for sound processing
-    </li>
-    <li>
-      <a href="../BINARYTREES/index.html">BINARYTREES</a>: Library for binary trees
-    </li>
-    <li>
-      <a href="../GAME/index.html">GAME</a>: Library for Source Academy game
-    </li>
-    <li>
-      <a href="../EV3/index.html">EV3</a>: Library for EV3 Lego Mindstorms robots
-    </li>
-
-  </ul>
-
 ## What can you do in Source §2?
 
 You can use all features of

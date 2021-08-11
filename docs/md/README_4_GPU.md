@@ -29,33 +29,6 @@ order. Click on a name to see how it is used. They come in these two groups:
     </li>
   </ul>
 
-The <a href="https://sourceacademy.org"">Source Academy</a>,
-a learning environment that uses SICP JS and Source, comes with the following 
-<a href="External libraries/">external libraries</a>:
-  <ul>
-    <li>
-      <a href="../RUNES/index.html">RUNES</a>: Library for runes graphics
-    </li>
-    <li>
-      <a href="../CURVES/index.html">CURVES</a>: Library for curve graphics
-    </li>
-    <li>
-      <a href="../SOUNDS/index.html">SOUNDS</a>: Library for sound processing
-    </li>
-    <li>
-      <a href="../BINARYTREES/index.html">BINARYTREES</a>: Library for binary trees
-    </li>
-    <li>
-    <a href="../PIXNFLIX/index.html">PIXNFLIX</a>: image and video processing
-    </li>
-    <li>
-      <a href="../GAME/index.html">GAME</a>: Library for Source Academy game
-    </li>
-    <li>
-      <a href="../EV3/index.html">EV3</a>: Library for EV3 Lego Mindstorms robots
-    </li>
-  </ul>
-
 ## What can you do in Source §4 GPU?
 
 You can write for loops as per normal source and if certain conditions are met, the GPU will 
