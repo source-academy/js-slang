@@ -17,25 +17,6 @@ These names come in two groups:
     </li>
   </ul>
 
-The <a href="https://sourceacademy.org"">Source Academy</a>,
-a learning environment that uses SICP JS and Source, comes with the following
-<a href="../External libraries/">external libraries</a> suitable for Source §1:
-  <ul>
-    <li>
-      <a href="../RUNES/index.html">RUNES</a>: Library for runes graphics
-    </li>
-    <li>
-      <a href="../CURVES/index.html">CURVES</a>: Library for curve graphics
-    </li>
-    <li>
-      <a href="../GAME/index.html">GAME</a>: Library for Source Academy game
-    </li>
-    <li>
-      <a href="../EV3/index.html">EV3</a>: Library for EV3 Lego Mindstorms robots
-    </li>
-
-  </ul>
-
 ## What can you do in Source §1?
 
 You can use all features that are introduced in
