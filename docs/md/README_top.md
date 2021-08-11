@@ -17,35 +17,6 @@
 
 ## <a href="source_4/">Source §4</a>
 
-### External libraries
-
-The <a href="https://sourceacademy.org">Source Academy</a>
-comes with the following <a href="External libraries/">external libraries</a>:
-
-<ul>
-<li>
-<a href="RUNES/index.html">RUNES</a>: programming with rune graphics
-</li>
-<li>
-<a href="CURVES/index.html">CURVES</a>: programming with curve graphics
-</li>
-<li>
-<a href="SOUNDS/index.html">SOUNDS</a>: sound processing
-</li>
-<li>
-<a href="BINARYTREES/index.html">BINARYTREES</a>: binary trees
-</li>
-<li>
-<a href="PIXNFLIX/index.html">PIXNFLIX</a>: image and video processing
-</li>
-<li>
-<a href="GAME/index.html">GAME</a>: Library for Source Academy game
-</li>
-<li>
-<a href="EV3/index.html">EV3</a>: Library for EV3 Lego Mindstorms robots
-</li>
-</ul>
-
 ### Style guide
 
 The <a href="source_styleguide.pdf">Source Style Guide</a> gives general
