@@ -65,9 +65,13 @@ function theme(acequire, exports, module) {
                         }\
                         .ace-source .ace_constant,\
                         .ace-source .ace_constant.ace_character,\
-                        .ace-source .ace_constant.ace_character.ace_escape,\
-                        .ace-source .ace_constant.ace_other {\
+                        .ace-source .ace_constant.ace_other,\
+                        .ace-source .ace_string,\
+                        .ace-source .ace_string.ace_regexp {\
                         color: #FF628C\
+                        }\
+                        .ace-source .ace_constant.ace_character.ace_escape {\
+                        color: #FFFFFF\
                         }\
                         .ace-source .ace_invalid {\
                         color: #F8F8F8;\
@@ -94,12 +98,6 @@ function theme(acequire, exports, module) {
                         }\
                         .ace-source .ace_entity {\
                         color: #FFDD00\
-                        }\
-                        .ace-source .ace_string {\
-                        color: #3AD900\
-                        }\
-                        .ace-source .ace_string.ace_regexp {\
-                        color: #80FFC2\
                         }\
                         .ace-source .ace_comment {\
                         font-style: italic;\
