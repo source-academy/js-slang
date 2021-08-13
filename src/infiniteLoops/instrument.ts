@@ -28,6 +28,10 @@ enum FunctionNames {
   evalU
 }
 
+function removeImports(program: es.Program) {
+  program.body = program.body.filter(x => x.type !== 'ImportDeclaration')
+}
+
 /**
  * Renames all variables in the program to differentiate shadowed variables and
  * variables declared with the same name but in different scopes.
@@ -577,8 +581,10 @@ function instrument(
   predefined[builtinsId] = builtinsId
   predefined[functionsId] = functionsId
   predefined[stateId] = stateId
+  removeImports(program)
   const innerProgram = { ...program }
   for (const toWrap of previous) {
+    removeImports(toWrap)
     wrapOldCode(program, toWrap.body as es.Statement[])
   }
   wrapOldCode(program, builtinsToStmts(builtins))
