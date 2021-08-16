@@ -158,11 +158,3 @@ test('combination of loops and functions run as expected', () => {
   output(z);`
   expect(runWithMock(main)).toBe(100)
 })
-
-test('import statements are removed', () => {
-  const main = `
-  import {turn_upside_down,beside} from 'rune';
-  output(1);`
-  // eval will throw an error if import is still present
-  expect(runWithMock(main)).toBe(1)
-})
