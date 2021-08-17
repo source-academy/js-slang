@@ -37,6 +37,7 @@ import {
   CallingNonFunctionType
 } from '../errors/typeErrors'
 import { typeToString } from '../utils/stringify'
+import { typedParse } from '../parser/parser'
 
 /** Name of Unary negative builtin operator */
 const NEGATIVE_OP = '-_1'
@@ -215,27 +216,38 @@ export function typeCheck(
   program: TypeAnnotatedNode<es.Program>,
   context: Context
 ): [TypeAnnotatedNode<es.Program>, SourceError[]] {
-  typeIdCounter = 0
-  typeErrors = []
-  const env: Env = context.typeEnvironment
-  if (context.chapter >= 3 && env.length === 3) {
-    // TODO: this is a hack since we don't infer streams properly yet
-    // if chapter is 3 and the prelude was just loaded, we change all the stream functions
-    const latestEnv = env[2].typeMap
-    for (const [name, type] of temporaryStreamFuncs) {
-      latestEnv.set(name, type)
+  function typeCheck_(
+    program: TypeAnnotatedNode<es.Program>
+  ): [TypeAnnotatedNode<es.Program>, SourceError[]] {
+    typeIdCounter = 0
+    typeErrors = []
+    const env: Env = context.typeEnvironment
+    if (context.chapter >= 3 && env.length === 3) {
+      // TODO: this is a hack since we don't infer streams properly yet
+      // if chapter is 3 and the prelude was just loaded, we change all the stream functions
+      const latestEnv = env[2].typeMap
+      for (const [name, type] of temporaryStreamFuncs) {
+        latestEnv.set(name, type)
+      }
     }
+    const constraints: Constraint[] = []
+    traverse(program)
+    try {
+      infer(program, env, constraints, true)
+    } catch {
+      // we ignore the errors here since
+      // they would have already been processed
+    }
+    traverse(program, constraints)
+    return [program, typeErrors]
   }
-  const constraints: Constraint[] = []
-  traverse(program)
-  try {
-    infer(program, env, constraints, true)
-  } catch {
-    // we ignore the errors here since
-    // they would have already been processed
+
+  for (const code of context.unTypecheckedCode) {
+    typeCheck_(typedParse(code, context)!)
   }
-  traverse(program, constraints)
-  return [program, typeErrors]
+
+  context.unTypecheckedCode = []
+  return typeCheck_(program)
 }
 
 /**
