@@ -53,7 +53,7 @@ function saveVarIfHybrid(value: any, name: string, state: st.State) {
  */
 function saveBoolIfHybrid(value: any, state: st.State) {
   if (sym.isHybrid(value) && value.type === 'value') {
-    if (value.invalid) {
+    if (value.validity !== sym.Validity.Valid) {
       state.setInvalidPath()
       return sym.shallowConcretize(value)
     }
@@ -213,10 +213,10 @@ const builtinSpecialCases = {
   display_list: (...x: any[]) => x[0]
 }
 
-function returnInvalidIfNumeric(val: any) {
+function returnInvalidIfNumeric(val: any, validity = sym.Validity.NoSmt) {
   if (typeof val === 'number') {
     const result = sym.makeDummyHybrid(val)
-    result.invalid = true
+    result.validity = validity
     return result
   } else {
     return val
@@ -224,14 +224,16 @@ function returnInvalidIfNumeric(val: any) {
 }
 
 function prepareBuiltins(oldBuiltins: Map<string, any>) {
+  const nonDetFunctions = ['get_time', 'math_random']
   const newBuiltins = new Map<string, any>()
   for (const [name, fun] of oldBuiltins) {
     const specialCase = builtinSpecialCases[name]
     if (specialCase !== undefined) {
       newBuiltins.set(name, specialCase)
     } else {
+      const validity = nonDetFunctions.includes(name) ? sym.Validity.NoCycle : sym.Validity.NoSmt
       newBuiltins.set(name, (...args: any[]) =>
-        returnInvalidIfNumeric(fun(...args.map(sym.shallowConcretize)))
+        returnInvalidIfNumeric(fun(...args.map(sym.shallowConcretize)), validity)
       )
     }
   }

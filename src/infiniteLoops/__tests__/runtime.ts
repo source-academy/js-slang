@@ -190,6 +190,22 @@ test('detect complicated cycle example', () => {
   expect(result?.streamMode).toBe(false)
 })
 
+test('detect complicated cycle example 2', () => {
+  const code = `function make_big_int_from_number(num){
+    let output = num;
+    while(output !== 0){
+        const digits = num % 10;
+        output = math_floor(num / 10);
+        
+    }
+}
+make_big_int_from_number(1234);
+   `
+  const result = testForInfiniteLoop(code, [])
+  expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
+  expect(result?.streamMode).toBe(false)
+})
+
 test('detect complicated fromSMT example', () => {
   const code = `function super_bunny(n){
     function helper(total_steps_left, steps_available) {
@@ -238,12 +254,37 @@ test('detect complicated stream example', () => {
   expect(result?.streamMode).toBe(true)
 })
 
-test('math functions are disabled', () => {
+test('math functions are disabled in smt solver', () => {
   const code = `
   function f(x) {
     return x===1 ? x: f(math_floor(x));
   }
   f(2);`
+  const result = testForInfiniteLoop(code, [])
+  expect(result).toBeUndefined()
+})
+
+test('math functions are disabled', () => {
+  const code = `
+  function cc(n) {
+    return n===0
+        ? "hi"
+        : n % 2 === 0
+        ? cc(math_floor(n/2))
+        : cc(n*3+1);
+}
+
+cc(99);`
+  const result = testForInfiniteLoop(code, [])
+  expect(result).toBeUndefined()
+})
+
+test('cycle detection ignores non deterministic functions', () => {
+  const code = `
+  function f(x) {
+    return x===0?0:f(math_floor(math_random()/2) + 1);
+  }
+  f(1);`
   const result = testForInfiniteLoop(code, [])
   expect(result).toBeUndefined()
 })

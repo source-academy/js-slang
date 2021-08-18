@@ -73,7 +73,7 @@ function hasNoBaseCase(stackPositions: number[], state: st.State) {
  */
 function checkForCycle(stackPositions: number[], state: st.State): string[] | undefined {
   const hasInvalidTransition = stackPositions.some(x =>
-    st.State.isInvalidTransition(state.mixedStack[x].transitions)
+    st.State.isNonDetTransition(state.mixedStack[x].transitions)
   )
   if (hasInvalidTransition) {
     return undefined

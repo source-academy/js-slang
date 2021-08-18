@@ -12,7 +12,8 @@ type Iteration = {
   transitions: Transition
 }
 type IterationsTracker = number[]
-const invalidTransitionId = -1
+const noSmtTransitionId = -1
+const nonDetTransitionId = -2
 
 export class State {
   variablesModified: Map<string, sym.Hybrid>
@@ -54,8 +55,14 @@ export class State {
   static isInvalidPath(path: Path) {
     return path.length === 1 && path[0] === -1
   }
+  static isNonDetTransition(transition: Transition) {
+    return transition.some(([_1, _2, x]) => x === nonDetTransitionId)
+  }
   static isInvalidTransition(transition: Transition) {
-    return transition.some(([_1, _2, x]) => x === invalidTransitionId)
+    return (
+      State.isNonDetTransition(transition) ||
+      transition.some(([_1, _2, x]) => x === noSmtTransitionId)
+    )
   }
   /**
    * Returns the names and values of transitions at the given location
@@ -111,7 +118,14 @@ export class State {
   }
   public saveTransition(name: string, value: sym.Hybrid) {
     const concrete = value.concrete
-    const id = value.invalid ? invalidTransitionId : this.toCached(value.symbolic)
+    let id
+    if (value.validity === sym.Validity.Valid) {
+      id = this.toCached(value.symbolic)
+    } else if (value.validity === sym.Validity.NoSmt) {
+      id = noSmtTransitionId
+    } else {
+      id = nonDetTransitionId
+    }
     const transitions = this.mixedStack[this.stackPointer].transitions
     for (let i = 0; i < transitions.length; i++) {
       const transition = transitions[i]
@@ -177,10 +191,12 @@ export class State {
     const transitions: Transition = []
     for (const [name, val] of args) {
       if (sym.isHybrid(val)) {
-        if (!val.invalid) {
+        if (val.validity === sym.Validity.Valid) {
           transitions.push([name, val.concrete, this.toCached(val.symbolic)])
+        } else if (val.validity === sym.Validity.NoCycle) {
+          transitions.push([name, val.concrete, noSmtTransitionId])
         } else {
-          transitions.push([name, val.concrete, invalidTransitionId])
+          transitions.push([name, val.concrete, nonDetTransitionId])
         }
       } else {
         transitions.push([name, val, this.toCached(identifier('undefined'))])
