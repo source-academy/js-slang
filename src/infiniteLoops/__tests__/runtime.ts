@@ -253,3 +253,11 @@ test('detect complicated stream example', () => {
   expect(result).toBeDefined()
   expect(result?.streamMode).toBe(true)
 })
+
+test('handle imports properly', () => {
+  const code = `import {thrice} from "repeat";
+  function f(x) { return is_number(x) ? f(x) : 42; }
+  display(f(thrice(x=>x+1)(0)));`
+  const result = testForInfiniteLoop(code, [])
+  expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
+})
