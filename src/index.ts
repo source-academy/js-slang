@@ -12,7 +12,7 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { evaluate } from './interpreter/interpreter'
-import { parse, looseParse, parseAt, parseForNames } from './parser/parser'
+import { parse, looseParse, typedParse, parseAt, parseForNames } from './parser/parser'
 import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
@@ -287,14 +287,6 @@ export async function getNames(
   return [progNames.concat(keywords), displaySuggestions]
 }
 
-function typedParse(code: any, context: Context) {
-  const program: Program | undefined = looseParse(code, context)
-  if (program === undefined) {
-    return null
-  }
-  return validateAndAnnotate(program, context)
-}
-
 export function getTypeInformation(
   code: string,
   context: Context,
@@ -425,7 +417,7 @@ export async function runInContext(
     return resolvedErrorPromise
   }
   validateAndAnnotate(program as Program, context)
-  typeCheck(program, context)
+  context.unTypecheckedCode.push(code)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
