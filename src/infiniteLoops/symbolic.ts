@@ -158,6 +158,11 @@ export function evaluateHybridBinary(op: es.BinaryOperator, lhs: any, rhs: any) 
     )
   } else if (isHybrid(lhs) || isHybrid(rhs)) {
     const val = evaluateBinaryExpression(op, shallowConcretize(lhs), shallowConcretize(rhs))
+    if (lhs.invalid || rhs.invalid) {
+      const result = makeDummyHybrid(val)
+      result.invalid = true
+      return result
+    }
     let res
     if (op === '!==') {
       res = hybridValueConstructor(val, neqRefine(lhs, rhs))
@@ -205,6 +210,11 @@ function getNegation(op: es.BinaryOperator, lhs: any, rhs: any) {
 export function evaluateHybridUnary(op: es.UnaryOperator, val: any) {
   if (isHybrid(val)) {
     const conc = evaluateUnaryExpression(op, shallowConcretize(val))
+    if (val.invalid) {
+      const result = makeDummyHybrid(val)
+      result.invalid = true
+      return result
+    }
     if (val.symbolic.type === 'Literal') {
       const newSym = { ...val.symbolic, val: conc }
       return hybridValueConstructor(conc, newSym)

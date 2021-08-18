@@ -72,6 +72,12 @@ function hasNoBaseCase(stackPositions: number[], state: st.State) {
  * @returns if a cycle was detected, string array describing the cycle. Otherwise returns undefined.
  */
 function checkForCycle(stackPositions: number[], state: st.State): string[] | undefined {
+  const hasInvalidTransition = stackPositions.some(x =>
+    st.State.isInvalidTransition(state.mixedStack[x].transitions)
+  )
+  if (hasInvalidTransition) {
+    return undefined
+  }
   const maybeConc = stackPositions.map(i => state.getMaybeConc(i))
   const concStr = []
   for (const item of maybeConc) {
@@ -184,12 +190,14 @@ function getFirstSeen(stackPositions: number[], state: st.State) {
     const next = stackPositions[i + 1]
     const prevPaths = state.mixedStack.slice(prev, current).map(x => x.paths)
     const nextPaths = state.mixedStack.slice(current, next).map(x => x.paths)
-    if (prevPaths.concat(nextPaths).some(st.State.isInvalidPath)) {
-      // if any path is invalid
+    const transitions = state.mixedStack.slice(prev, current).map(x => x.transitions)
+    const hasInvalidPath = prevPaths.concat(nextPaths).some(st.State.isInvalidPath)
+    const hasInvalidTransition = transitions.some(st.State.isInvalidTransition)
+    if (hasInvalidPath || hasInvalidTransition) {
+      // if any path or transition is invalid
       firstSeen = []
       continue
     }
-    const transitions = state.mixedStack.slice(prev, current).map(x => x.transitions)
     const triple: Triple = [flatten(prevPaths), flatten(nextPaths), flatten(transitions)]
     let wasSeen = false
     for (const seen of firstSeen) {

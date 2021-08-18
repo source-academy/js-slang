@@ -208,8 +208,19 @@ const builtinSpecialCases = {
     }
     return
   },
-  display: nothingFunction,
-  display_list: nothingFunction
+  // mimic behaviour without printing
+  display: (...x: any[]) => x[0],
+  display_list: (...x: any[]) => x[0]
+}
+
+function returnInvalidIfNumeric(val: any) {
+  if (typeof val === 'number') {
+    const result = sym.makeDummyHybrid(val)
+    result.invalid = true
+    return result
+  } else {
+    return val
+  }
 }
 
 function prepareBuiltins(oldBuiltins: Map<string, any>) {
@@ -219,7 +230,9 @@ function prepareBuiltins(oldBuiltins: Map<string, any>) {
     if (specialCase !== undefined) {
       newBuiltins.set(name, specialCase)
     } else {
-      newBuiltins.set(name, (...args: any[]) => fun(...args.map(sym.shallowConcretize)))
+      newBuiltins.set(name, (...args: any[]) =>
+        returnInvalidIfNumeric(fun(...args.map(sym.shallowConcretize)))
+      )
     }
   }
   newBuiltins.set('undefined', undefined)

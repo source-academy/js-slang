@@ -190,22 +190,6 @@ test('detect complicated cycle example', () => {
   expect(result?.streamMode).toBe(false)
 })
 
-test('detect complicated cycle example 2', () => {
-  const code = `function make_big_int_from_number(num){
-    let output = num;
-    while(output !== 0){
-        const digits = num % 10;
-        output = math_floor(num / 10);
-        
-    }
-}
-make_big_int_from_number(1234);
-   `
-  const result = testForInfiniteLoop(code, [])
-  expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
-  expect(result?.streamMode).toBe(false)
-})
-
 test('detect complicated fromSMT example', () => {
   const code = `function super_bunny(n){
     function helper(total_steps_left, steps_available) {
@@ -252,4 +236,14 @@ test('detect complicated stream example', () => {
   const result = testForInfiniteLoop(code, [])
   expect(result).toBeDefined()
   expect(result?.streamMode).toBe(true)
+})
+
+test('math functions are disabled', () => {
+  const code = `
+  function f(x) {
+    return x===1 ? x: f(math_floor(x));
+  }
+  f(2);`
+  const result = testForInfiniteLoop(code, [])
+  expect(result).toBeUndefined()
 })

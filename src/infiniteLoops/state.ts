@@ -12,6 +12,7 @@ type Iteration = {
   transitions: Transition
 }
 type IterationsTracker = number[]
+const invalidTransitionId = -1
 
 export class State {
   variablesModified: Map<string, sym.Hybrid>
@@ -53,7 +54,9 @@ export class State {
   static isInvalidPath(path: Path) {
     return path.length === 1 && path[0] === -1
   }
-
+  static isInvalidTransition(transition: Transition) {
+    return transition.some(([_1, _2, x]) => x === invalidTransitionId)
+  }
   /**
    * Returns the names and values of transitions at the given location
    * in the stack. Note that the values may be arrays containing hybrid
@@ -108,9 +111,10 @@ export class State {
   }
   public saveTransition(name: string, value: sym.Hybrid) {
     const concrete = value.concrete
-    const id = this.toCached(value.symbolic)
+    const id = value.invalid ? invalidTransitionId : this.toCached(value.symbolic)
     const transitions = this.mixedStack[this.stackPointer].transitions
-    for (const transition of transitions) {
+    for (let i = 0; i < transitions.length; i++) {
+      const transition = transitions[i]
       if (transition[0] === name) {
         transition[1] = concrete
         transition[2] = id
@@ -173,7 +177,11 @@ export class State {
     const transitions: Transition = []
     for (const [name, val] of args) {
       if (sym.isHybrid(val)) {
-        transitions.push([name, val.concrete, this.toCached(val.symbolic)])
+        if (!val.invalid) {
+          transitions.push([name, val.concrete, this.toCached(val.symbolic)])
+        } else {
+          transitions.push([name, val.concrete, invalidTransitionId])
+        }
       } else {
         transitions.push([name, val, this.toCached(identifier('undefined'))])
       }
