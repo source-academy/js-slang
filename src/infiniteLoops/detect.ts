@@ -78,15 +78,15 @@ function checkForCycle(stackPositions: number[], state: st.State): string[] | un
   if (hasInvalidTransition) {
     return undefined
   }
-  const maybeConc = stackPositions.map(i => state.getMaybeConc(i))
+  const transitions = stackPositions.map(i => state.mixedStack[i].transitions)
   const concStr = []
-  for (const item of maybeConc) {
+  for (const item of transitions) {
     const innerStr = []
-    for (const [name, val] of item) {
-      if (typeof val === 'function') {
+    for (const transition of item) {
+      if (typeof transition.value === 'function') {
         return
       }
-      innerStr.push(`(${getOriginalName(name)}: ${stringifyCircular(val)})`)
+      innerStr.push(`(${getOriginalName(transition.name)}: ${stringifyCircular(transition.value)})`)
     }
     concStr.push(innerStr.join(', '))
   }
@@ -142,12 +142,11 @@ function runSMT(code: string): string {
   }
 }
 
-/**
- * Triple[0]: [Path from previous to current iteration]
- * Triple[1]: [Path from current to next iteration]
- * Triple[2]: [Transition from previous to current iteration]
- */
-type Triple = [number[], number[], [string, any, number][]]
+type Triple = {
+  prevPaths: number[]
+  nextPaths: number[]
+  transition: st.Transition[]
+}
 
 function flatten<T>(arr: T[][]): T[] {
   return [].concat(...(arr as any[]))
@@ -163,9 +162,13 @@ function arrEquals<T>(a1: T[], a2: T[], cmp = (x: T, y: T) => x === y) {
 
 function tripleEquals(t1: Triple, t2: Triple) {
   return (
-    arrEquals(t1[0], t2[0]) &&
-    arrEquals(t1[1], t2[1]) &&
-    arrEquals(t1[2], t2[2], (x, y) => x[0] === y[0] && x[2] === y[2])
+    arrEquals(t1.prevPaths, t2.prevPaths) &&
+    arrEquals(t1.nextPaths, t2.nextPaths) &&
+    arrEquals(
+      t1.transition,
+      t2.transition,
+      (x, y) => x.name === y.name && x.cachedSymbolicValue === y.cachedSymbolicValue
+    )
   )
 }
 
@@ -198,7 +201,11 @@ function getFirstSeen(stackPositions: number[], state: st.State) {
       firstSeen = []
       continue
     }
-    const triple: Triple = [flatten(prevPaths), flatten(nextPaths), flatten(transitions)]
+    const triple: Triple = {
+      prevPaths: flatten(prevPaths),
+      nextPaths: flatten(nextPaths),
+      transition: flatten(transitions)
+    }
     let wasSeen = false
     for (const seen of firstSeen) {
       if (tripleEquals(triple, seen)) {
@@ -221,7 +228,7 @@ function getClosed(firstSeen: Triple[]) {
   const indices: [number, number][] = []
   for (let i = 0; i < firstSeen.length; i++) {
     for (let j = 0; j <= i; j++) {
-      if (arrEquals(firstSeen[i][1], firstSeen[j][0])) {
+      if (arrEquals(firstSeen[i].nextPaths, firstSeen[j].prevPaths)) {
         // closed
         indices.push([j, i])
       }
@@ -247,6 +254,18 @@ function getIds(nodes: es.Expression[][]) {
   return [...new Set(result)]
 }
 
+function formatTransitionForMessage(transition: st.Transition, state: st.State) {
+  // this will be run after ids are reverted to their original names
+  const symbolic = state.idToStringCache[transition.cachedSymbolicValue]
+  if (symbolic === 'undefined') {
+    // set as a constant
+    return `${getOriginalName(transition.name)}' = ${transition.value}`
+  } else {
+    const originalExpr = generate(state.idToExprCache[transition.cachedSymbolicValue])
+    return `${getOriginalName(transition.name)}' = ${originalExpr}`
+  }
+}
+
 /**
  * Creates a default error message using the pathExprs and transitions.
  * May destructively modify the transitions.
@@ -254,24 +273,17 @@ function getIds(nodes: es.Expression[][]) {
 function errorMessageMaker(
   ids: es.Identifier[],
   pathExprs: es.Expression[][],
-  transitions: [string, number, string][][],
+  transitions: st.Transition[][],
   state: st.State
 ) {
-  const getOriginalExpr = (s: string) => generate(state.getCachedExprFromString(s))
   return () => {
     const idsOfTransitions = getIds(
-      transitions.map(x => x.map(y => state.getCachedExprFromString(y[2])))
+      transitions.map(x => x.map(t => state.idToExprCache[t.cachedSymbolicValue]))
     )
     ids = ids.concat(idsOfTransitions)
     ids.map(x => (x.name = getOriginalName(x.name)))
     const pathPart: string[][] = pathExprs.map(x => x.map(generate))
-    const transitionPart = transitions.map(x =>
-      x.map(([n, v, s]) =>
-        s === 'undefined'
-          ? `${getOriginalName(n)} <- ${v}`
-          : `${getOriginalName(n)} <- ${getOriginalExpr(s)}`
-      )
-    )
+    const transitionPart = transitions.map(x => x.map(t => formatTransitionForMessage(t, state)))
     let result = ''
     for (let i = 0; i < transitionPart.length; i++) {
       if (i > 0) result += ' And in a subsequent iteration, '
@@ -291,15 +303,25 @@ function smtTemplate(mode: string, decls: string, line1: string, line2: string, 
   return str.replace(/===/g, '=')
 }
 
+function formatTransition(transition: st.Transition, state: st.State) {
+  const symbolic = state.idToStringCache[transition.cachedSymbolicValue]
+  if (symbolic === 'undefined') {
+    // set as a constant
+    return `${transition.name}' = ${transition.value}`
+  } else {
+    return `${transition.name}' = ${symbolic}`
+  }
+}
+
 /**
  * Substitutes path and transition expressions into a template to be executed
  * by the SMT solver.
  * @returns list of templated code.
  */
 function toSmtSyntax(toInclude: Triple[], state: st.State): [string, () => string][] {
-  const pathStr = toInclude.map(x => x[0].map(i => state.getCachedString(i)))
+  const pathStr = toInclude.map(x => x.prevPaths.map(i => state.idToStringCache[i]))
   const line1 = joiner(pathStr)
-  const pathExprs = pathStr.map(x => x.map(str => state.getCachedExprFromString(str)))
+  const pathExprs = toInclude.map(x => x.prevPaths.map(i => state.idToExprCache[i]))
   const ids = getIds(pathExprs)
   // primify
   ids.map(x => (x.name = x.name + "'"))
@@ -307,17 +329,11 @@ function toSmtSyntax(toInclude: Triple[], state: st.State): [string, () => strin
   // unprimify
   ids.map(x => (x.name = x.name.slice(0, -1)))
 
-  const transitions = toInclude
-    .map(x => x[2].map(([n, v, ix]) => [n, v, state.getCachedString(ix)]))
-    .map(x => x.filter(y => typeof y[1] === 'number') as [string, number, string][])
-  const line2 = joiner(
-    transitions.map(x =>
-      x.map(([n, v, s]) => (s === 'undefined' ? `${n}' = ${v}` : `${n}' = ${s}`))
-    )
-  )
-  const allNames = flatten(transitions.map(x => x.map(y => y[0]))).concat(ids.map(x => x.name))
+  const transitions = toInclude.map(x => x.transition.filter(t => typeof t.value === 'number'))
+  const line2 = joiner(transitions.map(x => x.map(t => formatTransition(t, state))))
+  const allNames = flatten(transitions.map(x => x.map(y => y.name))).concat(ids.map(x => x.name))
   const decls = [...new Set(allNames)].map(x => `${x},${x}'`).join(',')
-  const [newLine1, newLine3] = addConstantsAndSigns(line1, line3, transitions)
+  const [newLine1, newLine3] = addConstantsAndSigns(line1, line3, transitions, state)
   const message = errorMessageMaker(ids, pathExprs, transitions, state)
   const template1: [string, () => string] = [
     smtTemplate('int', decls, line1, line2, line3),
@@ -338,27 +354,34 @@ function toSmtSyntax(toInclude: Triple[], state: st.State): [string, () => strin
 function addConstantsAndSigns(
   line1: string,
   line3: string,
-  transitions: [string, number, string][][]
+  transitions: st.Transition[][],
+  state: st.State
 ) {
-  const values = new Map<string, [boolean, number][]>()
-  for (const [name, val, next] of flatten(transitions)) {
-    let item = values.get(name)
+  type TransitionVariable = {
+    isConstant: boolean
+    value: number
+  }
+  const values = new Map<string, TransitionVariable[]>()
+  for (const transition of flatten(transitions)) {
+    let item = values.get(transition.name)
+    const symbolicValue = state.idToStringCache[transition.cachedSymbolicValue]
     if (item === undefined) {
       item = []
-      values.set(name, item)
+      values.set(transition.name, item)
     }
-    item.push([name === next, val])
+    // if var is constant, then transition will be (name)=(name), e.g. "c=c"
+    item.push({ isConstant: transition.name === symbolicValue, value: transition.value })
   }
   const consts = []
   const signs1 = []
   const signs3 = []
   for (const [name, item] of values.entries()) {
-    if (item.every(x => x[0])) {
-      consts.push(`${name} = ${item[0][1]}`)
-    } else if (item.every(x => x[1] > 0)) {
+    if (item.every(x => x.isConstant)) {
+      consts.push(`${name} = ${item[0].value}`)
+    } else if (item.every(x => x.value > 0)) {
       signs1.push(`${name} > 0`)
       signs3.push(`${name}' > 0`)
-    } else if (item.every(x => x[1] < 0)) {
+    } else if (item.every(x => x.value < 0)) {
       signs1.push(`${name} < 0`)
       signs3.push(`${name}' > 0`)
     }

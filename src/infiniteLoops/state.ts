@@ -4,12 +4,24 @@ import * as es from 'estree'
 import { identifier } from '../utils/astCreator'
 
 // Object + functions called during runtime to check for infinite loops
-type CachedExpression = [number, es.Expression]
+
 type Path = number[]
-type Transition = [string, any, number][]
+export type Transition = {
+  name: string
+  value: any
+  cachedSymbolicValue: number
+}
+const makeTransition = (name: string, value: any, id: number) =>
+  ({ name: name, value: value, cachedSymbolicValue: id } as Transition)
+type FunctionStackFrame = {
+  name: string
+  transitions: Transition[]
+}
+const makeFunctionStackFrame = (name: string, transitions: Transition[]) =>
+  ({ name: name, transitions: transitions } as FunctionStackFrame)
 type Iteration = {
   paths: Path
-  transitions: Transition
+  transitions: Transition[]
 }
 type IterationsTracker = number[]
 const noSmtTransitionId = -1
@@ -18,12 +30,14 @@ const nonDetTransitionId = -2
 export class State {
   variablesModified: Map<string, sym.Hybrid>
   variablesToReset: Set<string>
-  expressionCache: [Map<string, CachedExpression>, string[]]
+  stringToIdCache: Map<string, number>
+  idToStringCache: string[]
+  idToExprCache: es.Expression[]
   mixedStack: Iteration[]
   stackPointer: number
   loopStack: IterationsTracker[]
   functionTrackers: Map<string, IterationsTracker>
-  functionStack: [string, Transition][]
+  functionStack: FunctionStackFrame[]
   threshold: number
   streamThreshold: number
   startTime: number
@@ -37,7 +51,9 @@ export class State {
     // arbitrary defaults
     this.variablesModified = new Map()
     this.variablesToReset = new Set()
-    this.expressionCache = [new Map(), []]
+    this.stringToIdCache = new Map()
+    this.idToStringCache = []
+    this.idToExprCache = []
     this.mixedStack = [{ paths: [], transitions: [] }]
     this.stackPointer = 0
     this.loopStack = []
@@ -55,22 +71,30 @@ export class State {
   static isInvalidPath(path: Path) {
     return path.length === 1 && path[0] === -1
   }
-  static isNonDetTransition(transition: Transition) {
-    return transition.some(([_1, _2, x]) => x === nonDetTransitionId)
+  static isNonDetTransition(transition: Transition[]) {
+    return transition.some(x => x.cachedSymbolicValue === nonDetTransitionId)
   }
-  static isInvalidTransition(transition: Transition) {
+  static isInvalidTransition(transition: Transition[]) {
     return (
       State.isNonDetTransition(transition) ||
-      transition.some(([_1, _2, x]) => x === noSmtTransitionId)
+      transition.some(x => x.cachedSymbolicValue === noSmtTransitionId)
     )
   }
   /**
-   * Returns the names and values of transitions at the given location
-   * in the stack. Note that the values may be arrays containing hybrid
-   * values (hence the maybe).
+   * Takes in an expression and returns its cached representation.
    */
-  public getMaybeConc(at: number) {
-    return this.mixedStack[at].transitions.map(x => [x[0], x[1]])
+  public toCached(expr: es.Expression) {
+    const asString = generate(expr)
+    const item = this.stringToIdCache.get(asString)
+    if (item === undefined) {
+      const id = this.stringToIdCache.size
+      this.stringToIdCache.set(asString, id)
+      this.idToExprCache[id] = expr
+      this.idToStringCache[id] = asString
+      return id
+    } else {
+      return item
+    }
   }
   public popStackToStackPointer() {
     if (this.mixedStack.length !== this.stackPointer) {
@@ -87,22 +111,6 @@ export class State {
     this.popStackToStackPointer()
   }
 
-  /**
-   * Takes in an expression and returns its cached representation.
-   */
-  public toCached(expr: es.Expression) {
-    const asString = generate(expr)
-    const [forward, backward] = this.expressionCache
-    const item = forward.get(asString)
-    if (item === undefined) {
-      const id = forward.size
-      forward.set(asString, [id, expr])
-      backward[id] = asString
-      return id
-    } else {
-      return item[0]
-    }
-  }
   public savePath(expr: es.Expression) {
     const currentPath = this.mixedStack[this.stackPointer].paths
     if (!State.isInvalidPath(currentPath)) {
@@ -136,7 +144,7 @@ export class State {
       }
     }
     // no entry with the same name
-    transitions.push([name, concrete, id])
+    transitions.push(makeTransition(name, concrete, id))
   }
   /**
    * Creates a new stack frame.
@@ -146,13 +154,6 @@ export class State {
     this.stackPointer++
     this.mixedStack.push({ paths: [], transitions: [] })
     return this.stackPointer
-  }
-  public getCachedString(id: number) {
-    return this.expressionCache[1][id]
-  }
-  public getCachedExprFromString(str: string) {
-    const val = this.expressionCache[0].get(str)
-    return (val as [number, es.Expression])[1]
   }
   /**
    * Saves variables that were modified to the current transition.
@@ -172,7 +173,7 @@ export class State {
    */
   public enterFunction(name: string): [IterationsTracker, boolean] {
     const transitions = this.mixedStack[this.stackPointer].transitions
-    this.functionStack.push([name, [...transitions]])
+    this.functionStack.push(makeFunctionStackFrame(name, transitions))
     let tracker = this.functionTrackers.get(name)
     let firstIteration = false
     if (tracker === undefined) {
@@ -188,18 +189,18 @@ export class State {
    * Saves args into the last iteration's transition in the tracker.
    */
   public saveArgsInTransition(args: any[], tracker: IterationsTracker) {
-    const transitions: Transition = []
+    const transitions: Transition[] = []
     for (const [name, val] of args) {
       if (sym.isHybrid(val)) {
         if (val.validity === sym.Validity.Valid) {
-          transitions.push([name, val.concrete, this.toCached(val.symbolic)])
+          transitions.push(makeTransition(name, val.concrete, this.toCached(val.symbolic)))
         } else if (val.validity === sym.Validity.NoCycle) {
-          transitions.push([name, val.concrete, noSmtTransitionId])
+          transitions.push(makeTransition(name, val.concrete, noSmtTransitionId))
         } else {
-          transitions.push([name, val.concrete, nonDetTransitionId])
+          transitions.push(makeTransition(name, val.concrete, nonDetTransitionId))
         }
       } else {
-        transitions.push([name, val, this.toCached(identifier('undefined'))])
+        transitions.push(makeTransition(name, val, this.toCached(identifier('undefined'))))
       }
       this.variablesToReset.add(name)
     }
@@ -213,14 +214,14 @@ export class State {
    * Records in the state that the last function has returned.
    */
   public returnLastFunction() {
-    const [lastFunction, transitions] = this.functionStack.pop() as [string, Transition]
-    const tracker = this.functionTrackers.get(lastFunction as string) as IterationsTracker
+    const lastFunctionFrame = this.functionStack.pop() as FunctionStackFrame
+    const tracker = this.functionTrackers.get(lastFunctionFrame.name) as IterationsTracker
     const lastPosn = tracker.pop()
     if (lastPosn !== undefined) {
       this.stackPointer = lastPosn - 1
     }
     this.popStackToStackPointer()
-    this.mixedStack[this.stackPointer].transitions = transitions
+    this.mixedStack[this.stackPointer].transitions = lastFunctionFrame.transitions
   }
 
   public hasTimedOut() {
