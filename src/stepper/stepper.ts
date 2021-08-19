@@ -2910,12 +2910,10 @@ function substPredefinedConstants(program: es.Program): es.Program {
 function removeDebuggerStatements(program: es.Program): es.Program {
   // recursively detect and remove debugger statements
   function remove(statement: es.Program | es.Statement | es.Expression) {
-    if (statement.type === 'BlockStatement' ||
-        statement.type === 'Program'
-    ) {
-      statement.body = statement.body.filter(s => s.type !== "DebuggerStatement")
+    if (statement.type === 'BlockStatement' || statement.type === 'Program') {
+      statement.body = statement.body.filter(s => s.type !== 'DebuggerStatement')
       statement.body.forEach(s => remove(s as es.Statement))
-    } else if (statement.type === "VariableDeclaration") {
+    } else if (statement.type === 'VariableDeclaration') {
       statement.declarations.forEach(s => remove(s.init as es.Expression))
     } else if (statement.type === 'FunctionDeclaration') {
       remove(statement.body)
