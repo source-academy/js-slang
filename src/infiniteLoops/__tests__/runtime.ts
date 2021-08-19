@@ -257,24 +257,9 @@ test('detect complicated stream example', () => {
 test('math functions are disabled in smt solver', () => {
   const code = `
   function f(x) {
-    return x===1 ? x: f(math_floor(x));
+    return x===0? x: f(math_floor(x+1));
   }
-  f(2);`
-  const result = testForInfiniteLoop(code, [])
-  expect(result).toBeUndefined()
-})
-
-test('math functions are disabled', () => {
-  const code = `
-  function cc(n) {
-    return n===0
-        ? "hi"
-        : n % 2 === 0
-        ? cc(math_floor(n/2))
-        : cc(n*3+1);
-}
-
-cc(99);`
+  f(1);`
   const result = testForInfiniteLoop(code, [])
   expect(result).toBeUndefined()
 })

@@ -194,7 +194,7 @@ export class State {
       if (sym.isHybrid(val)) {
         if (val.validity === sym.Validity.Valid) {
           transitions.push(makeTransition(name, val.concrete, this.toCached(val.symbolic)))
-        } else if (val.validity === sym.Validity.NoCycle) {
+        } else if (val.validity === sym.Validity.NoSmt) {
           transitions.push(makeTransition(name, val.concrete, noSmtTransitionId))
         } else {
           transitions.push(makeTransition(name, val.concrete, nonDetTransitionId))

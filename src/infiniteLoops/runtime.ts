@@ -232,10 +232,14 @@ function prepareBuiltins(oldBuiltins: Map<string, any>) {
     if (specialCase !== undefined) {
       newBuiltins.set(name, specialCase)
     } else {
-      const validity = nonDetFunctions.includes(name) ? sym.Validity.NoCycle : sym.Validity.NoSmt
-      newBuiltins.set(name, (...args: any[]) =>
-        returnInvalidIfNumeric(fun(...args.map(sym.shallowConcretize)), validity)
-      )
+      const functionValidity = nonDetFunctions.includes(name)
+        ? sym.Validity.NoCycle
+        : sym.Validity.NoSmt
+      newBuiltins.set(name, (...args: any[]) => {
+        const validityOfArgs = args.filter(sym.isHybrid).map(x => x.validity)
+        const mostInvalid = Math.max(functionValidity, ...validityOfArgs)
+        return returnInvalidIfNumeric(fun(...args.map(sym.shallowConcretize)), mostInvalid)
+      })
     }
   }
   newBuiltins.set('undefined', undefined)
