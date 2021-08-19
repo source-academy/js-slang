@@ -288,3 +288,11 @@ test('cycle detection ignores non deterministic functions', () => {
   const result = testForInfiniteLoop(code, [])
   expect(result).toBeUndefined()
 })
+
+test('handle imports properly', () => {
+  const code = `import {thrice} from "repeat";
+  function f(x) { return is_number(x) ? f(x) : 42; }
+  display(f(thrice(x=>x+1)(0)));`
+  const result = testForInfiniteLoop(code, [])
+  expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
+})

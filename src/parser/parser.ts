@@ -13,6 +13,7 @@ import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 import { stripIndent } from '../utils/formatters'
 import rules from './rules'
 import syntaxBlacklist from './syntaxBlacklist'
+import { validateAndAnnotate } from '../validator/validator'
 
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -185,6 +186,14 @@ export function looseParse(source: string, context: Context) {
     createAcornParserOptions(context)
   ) as unknown as es.Program
   return program
+}
+
+export function typedParse(code: any, context: Context) {
+  const program: es.Program | undefined = looseParse(code, context)
+  if (program === undefined) {
+    return null
+  }
+  return validateAndAnnotate(program, context)
 }
 
 function createWalkers(

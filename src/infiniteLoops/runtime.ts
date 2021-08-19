@@ -12,6 +12,7 @@ import {
 } from './instrument'
 import { parse } from '../parser/parser'
 import { createContext } from '../index'
+import { MODULE_PARAMS_ID } from '../constants'
 
 function checkTimeout(state: st.State) {
   if (state.hasTimedOut()) {
@@ -294,10 +295,18 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
 
   const state = new st.State()
 
-  const sandboxedRun = new Function('code', functionsId, stateId, builtinsId, 'return eval(code)')
+  const sandboxedRun = new Function(
+    'code',
+    functionsId,
+    stateId,
+    builtinsId,
+    MODULE_PARAMS_ID,
+    // redeclare window so modules don't do anything funny like play sounds
+    '{let window = {}; return eval(code)}'
+  )
 
   try {
-    sandboxedRun(instrumentedCode, functions, state, newBuiltins)
+    sandboxedRun(instrumentedCode, functions, state, newBuiltins, context.moduleParams)
   } catch (error) {
     if (error instanceof InfiniteLoopError) {
       if (state.lastLocation !== undefined) {

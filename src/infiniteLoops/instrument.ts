@@ -2,6 +2,9 @@ import * as es from 'estree'
 import { generate } from 'astring'
 import * as create from '../utils/astCreator'
 import { simple, recursive, WalkerCallback } from '../utils/walkers'
+import { transformSingleImportDeclaration } from '../transpiler/transpiler'
+import { MODULE_PARAMS_ID } from '../constants'
+import { memoizedGetModuleFile } from '../modules/moduleLoader'
 // transforms AST of program
 
 const globalIds = {
@@ -271,7 +274,7 @@ function hybridizeVariablesAndLiterals(program: es.Node) {
       }
     },
     MemberExpression(node: es.MemberExpression, state: boolean, callback: WalkerCallback<boolean>) {
-      if (node.object.type === 'Identifier' && node.object.name === globalIds.functionsId) return
+      if (!node.computed) return
       callback(node.object, false)
       callback(node.property, false)
       create.mutateToCallExpression(node.object, callFunction(FunctionNames.concretize), [
@@ -559,6 +562,44 @@ function trackLocations(program: es.Program) {
   })
 }
 
+function transformImportDeclarations(programs: es.Program[]) {
+  let moduleCounter = 0
+  let allImports: es.ImportDeclaration[] = []
+  for (const program of programs) {
+    const imports = []
+    let result: es.VariableDeclaration[] = []
+    while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
+      imports.push(program.body.shift() as es.ImportDeclaration)
+    }
+    for (const node of imports) {
+      result = transformSingleImportDeclaration(moduleCounter, node).concat(result)
+      moduleCounter++
+    }
+    program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
+    allImports = allImports.concat(imports)
+  }
+  return allImports
+}
+
+function handleImports(programs: es.Program[]) {
+  const imports = transformImportDeclarations(programs)
+  let moduleCounter = 0
+  let prefix = ''
+  const names = []
+  for (const node of imports) {
+    const moduleText = memoizedGetModuleFile(node.source.value as string, 'bundle').trim()
+    // remove ; from moduleText
+    const name = `__MODULE_${moduleCounter}__`
+    prefix += `const ${name} = (${moduleText.substring(
+      0,
+      moduleText.length - 1
+    )})(${MODULE_PARAMS_ID});\n`
+    moduleCounter++
+    names.push(name)
+  }
+  return [prefix, names]
+}
+
 /**
  * Instruments the given code with functions that track the state of the program.
  *
@@ -578,6 +619,10 @@ function instrument(
   predefined[functionsId] = functionsId
   predefined[stateId] = stateId
   const innerProgram = { ...program }
+  const [prefix, moduleNames] = handleImports([program].concat(previous))
+  for (const name of moduleNames) {
+    predefined[name] = name
+  }
   for (const toWrap of previous) {
     wrapOldCode(program, toWrap.body as es.Statement[])
   }
@@ -596,7 +641,7 @@ function instrument(
   addStateToIsNull(program)
   wrapCallArguments(program)
   const code = generate(program)
-  return code
+  return prefix + code
 }
 
 export {
