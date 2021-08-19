@@ -4,19 +4,29 @@ import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/oper
 
 // data structure for symbolic + hybrid values
 
+export enum Validity {
+  Valid,
+  NoSmt,
+  NoCycle
+}
+
+function isInvalid(status: Validity) {
+  return status !== Validity.Valid
+}
+
 export type HybridValue = {
   type: 'value'
   concrete: any
   symbolic: es.Expression
   negation?: es.Expression
-  invalid: boolean
+  validity: Validity
 }
 
 export type HybridArray = {
   type: 'array'
   concrete: any
   symbolic: es.Expression
-  invalid: boolean
+  validity: Validity
 }
 
 export type Hybrid = HybridValue | HybridArray
@@ -39,12 +49,16 @@ function isConcreteValue(value: any) {
   return !(isHybrid(value) || Array.isArray(value))
 }
 
-export const hybridValueConstructor = (concrete: any, symbolic: es.Expression, invalid = false) =>
+export const hybridValueConstructor = (
+  concrete: any,
+  symbolic: es.Expression,
+  validity = Validity.Valid
+) =>
   ({
     type: 'value',
     concrete: concrete,
     symbolic: symbolic,
-    invalid: invalid
+    validity: validity
   } as HybridValue)
 
 export function makeDummyHybrid(concrete: any): HybridValue {
@@ -55,7 +69,7 @@ export function makeDummyHybrid(concrete: any): HybridValue {
     type: 'value',
     concrete: concrete,
     symbolic: create.literal(concrete),
-    invalid: false
+    validity: Validity.Valid
   }
   return val
 }
@@ -81,7 +95,7 @@ export const hybridArrayConstructor = (
     concrete: concrete,
     symbolic: symbolic,
     listHeads: listHeads,
-    invalid: false
+    validity: Validity.Valid
   } as HybridArray)
 
 function makeHybridArray(name: string, concrete: any[]): HybridArray {
@@ -158,6 +172,11 @@ export function evaluateHybridBinary(op: es.BinaryOperator, lhs: any, rhs: any) 
     )
   } else if (isHybrid(lhs) || isHybrid(rhs)) {
     const val = evaluateBinaryExpression(op, shallowConcretize(lhs), shallowConcretize(rhs))
+    if (isInvalid(lhs.validity) || isInvalid(rhs.validity)) {
+      const result = makeDummyHybrid(val)
+      result.validity = Math.max(lhs.validity, rhs.validity)
+      return result
+    }
     let res
     if (op === '!==') {
       res = hybridValueConstructor(val, neqRefine(lhs, rhs))
@@ -171,7 +190,7 @@ export function evaluateHybridBinary(op: es.BinaryOperator, lhs: any, rhs: any) 
     if (op === '!==' || op === '===') {
       const concIsNumber = (x: any) => typeof shallowConcretize(x) === 'number'
       if (!(concIsNumber(lhs) && concIsNumber(rhs))) {
-        res.invalid = true
+        res.validity = Validity.NoSmt
       }
     }
     return res
@@ -205,6 +224,11 @@ function getNegation(op: es.BinaryOperator, lhs: any, rhs: any) {
 export function evaluateHybridUnary(op: es.UnaryOperator, val: any) {
   if (isHybrid(val)) {
     const conc = evaluateUnaryExpression(op, shallowConcretize(val))
+    if (isInvalid(val.validity)) {
+      const result = makeDummyHybrid(val)
+      result.validity = val.validity
+      return result
+    }
     if (val.symbolic.type === 'Literal') {
       const newSym = { ...val.symbolic, val: conc }
       return hybridValueConstructor(conc, newSym)
