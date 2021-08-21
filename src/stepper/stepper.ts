@@ -2909,19 +2909,19 @@ function substPredefinedConstants(program: es.Program): es.Program {
 
 function removeDebuggerStatements(program: es.Program): es.Program {
   // recursively detect and remove debugger statements
-  function remove(statement: es.Program | es.Statement | es.Expression) {
-    if (statement.type === 'BlockStatement' || statement.type === 'Program') {
-      statement.body = statement.body.filter(s => s.type !== 'DebuggerStatement')
-      statement.body.forEach(s => remove(s as es.Statement))
-    } else if (statement.type === 'VariableDeclaration') {
-      statement.declarations.forEach(s => remove(s.init as es.Expression))
-    } else if (statement.type === 'FunctionDeclaration') {
-      remove(statement.body)
-    } else if (statement.type === 'IfStatement') {
-      remove(statement.consequent)
-      remove(statement.alternate as es.Statement)
-    } else if (statement.type === 'ArrowFunctionExpression') {
-      remove(statement.body)
+  function remove(removee: es.Program | es.Statement | es.Expression) {
+    if (removee.type === 'BlockStatement' || removee.type === 'Program') {
+      removee.body = removee.body.filter(s => s.type !== 'DebuggerStatement')
+      removee.body.forEach(s => remove(s as es.Statement))
+    } else if (removee.type === 'VariableDeclaration') {
+      removee.declarations.forEach(s => remove(s.init as es.Expression))
+    } else if (removee.type === 'FunctionDeclaration') {
+      remove(removee.body)
+    } else if (removee.type === 'IfStatement') {
+      remove(removee.consequent)
+      remove(removee.alternate as es.Statement)
+    } else if (removee.type === 'ArrowFunctionExpression') {
+      remove(removee.body)
     }
   }
   remove(program)
