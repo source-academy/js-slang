@@ -2942,7 +2942,7 @@ export function getEvaluationSteps(
     // and predefined fns
     start = substPredefinedFns(start, context)[0]
     // and remove debugger statements.
-    start = removeDebuggerStatements(program)
+    start = removeDebuggerStatements(start)
 
     // then add in path and explanation string
     let reducedWithPath: [substituterNodes, Context, string[][], string] = [
