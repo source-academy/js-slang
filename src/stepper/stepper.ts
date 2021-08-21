@@ -2907,6 +2907,27 @@ function substPredefinedConstants(program: es.Program): es.Program {
   return substed
 }
 
+function removeDebuggerStatements(program: es.Program): es.Program {
+  // recursively detect and remove debugger statements
+  function remove(removee: es.Program | es.Statement | es.Expression) {
+    if (removee.type === 'BlockStatement' || removee.type === 'Program') {
+      removee.body = removee.body.filter(s => s.type !== 'DebuggerStatement')
+      removee.body.forEach(s => remove(s as es.Statement))
+    } else if (removee.type === 'VariableDeclaration') {
+      removee.declarations.forEach(s => remove(s.init as es.Expression))
+    } else if (removee.type === 'FunctionDeclaration') {
+      remove(removee.body)
+    } else if (removee.type === 'IfStatement') {
+      remove(removee.consequent)
+      remove(removee.alternate as es.Statement)
+    } else if (removee.type === 'ArrowFunctionExpression') {
+      remove(removee.body)
+    }
+  }
+  remove(program)
+  return program
+}
+
 // the context here is for builtins
 export function getEvaluationSteps(
   program: es.Program,
@@ -2918,8 +2939,11 @@ export function getEvaluationSteps(
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
-    // and predefined fns.
+    // and predefined fns
     start = substPredefinedFns(start, context)[0]
+    // and remove debugger statements.
+    start = removeDebuggerStatements(start)
+
     // then add in path and explanation string
     let reducedWithPath: [substituterNodes, Context, string[][], string] = [
       start,
