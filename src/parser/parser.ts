@@ -2,6 +2,7 @@
 import {
   Options as AcornOptions,
   parse as acornParse,
+  tokenizer as acornTokenizer,
   parseExpressionAt as acornParseAt,
   Position
 } from 'acorn'
@@ -134,6 +135,10 @@ export function parse(source: string, context: Context) {
   } else {
     return undefined
   }
+}
+
+export function tokenize(source: string, context: Context) {
+  return [...acornTokenizer(source, createAcornParserOptions(context))]
 }
 
 const createAcornParserOptions = (context: Context): AcornOptions => ({

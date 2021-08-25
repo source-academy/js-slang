@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { parse as sourceParse } from '../parser/parser'
+import { parse as sourceParse, tokenize as sourceTokenize } from '../parser/parser'
 import { libraryParserLanguage } from '../parser/syntaxBlacklist'
 import { Context, ContiguousArrayElements, Value } from '../types'
 import { oneLine } from '../utils/formatters'
@@ -463,4 +463,9 @@ export function parse(x: string, context: Context): Value {
     unreachable()
     throw new ParseError('Invalid parse')
   }
+}
+
+export function tokenize(x: string, context: Context): Value {
+  const tokensArr = sourceTokenize(x, context).map(tok => x.substring(tok.start, tok.end))
+  return vector_to_list(tokensArr)
 }

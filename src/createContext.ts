@@ -339,6 +339,9 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'parse(program_string)', (str: string) =>
       parser.parse(str, createContext(context.chapter))
     )
+    defineBuiltin(context, 'tokenize(program_string)', (str: string) =>
+      parser.tokenize(str, createContext(context.chapter))
+    )
     defineBuiltin(
       context,
       'apply_in_underlying_javascript(fun, args)',
