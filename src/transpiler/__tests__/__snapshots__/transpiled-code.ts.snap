@@ -77,6 +77,7 @@ exports[`Ensure no name clashes 1`] = `
   const stream = nativeStorage.builtins.get(\\"stream\\");
   const list_to_stream = nativeStorage.builtins.get(\\"list_to_stream\\");
   const parse = nativeStorage.builtins.get(\\"parse\\");
+  const tokenize = nativeStorage.builtins.get(\\"tokenize\\");
   const apply_in_underlying_javascript = nativeStorage.builtins.get(\\"apply_in_underlying_javascript\\");
   {
     const native0 = nativeStorage;
@@ -191,6 +192,7 @@ Object {
   const stream = nativeStorage.builtins.get(\\"stream\\");
   const list_to_stream = nativeStorage.builtins.get(\\"list_to_stream\\");
   const parse = nativeStorage.builtins.get(\\"parse\\");
+  const tokenize = nativeStorage.builtins.get(\\"tokenize\\");
   const apply_in_underlying_javascript = nativeStorage.builtins.get(\\"apply_in_underlying_javascript\\");
   {
     const native = nativeStorage;
