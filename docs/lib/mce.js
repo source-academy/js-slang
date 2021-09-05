@@ -11,6 +11,13 @@
 function parse(str) {}
 
 /**
+ * returns the list of tokens that results from lexing the string <CODE>str</CODE>
+ * @param {string} x - given program as a string
+ * @returns {list} list of tokens
+ */
+function tokenize(str) {}
+
+/**
  * calls the function <CODE>f</CODE>
  * with arguments given in list <CODE>xs</CODE>. For example: <PRE><CODE>function times(x, y) {
  * return x * y;

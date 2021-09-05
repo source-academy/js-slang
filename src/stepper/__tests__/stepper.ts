@@ -1378,6 +1378,21 @@ test(`correctly avoids capture by other parameter names`, () => {
   expect(getLastStepAsString(steps)).toEqual('x + 1;')
 })
 
+test(`removes debugger statements`, () => {
+  const code = `
+  function f(n) {
+    debugger;
+    return n === 0 ? 1 : n * f(n - 1);
+  }
+  debugger;
+  f(3);
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('6;')
+})
+
 describe(`redeclaration of predeclared functions work`, () => {
   test('control', () => {
     const code = `
