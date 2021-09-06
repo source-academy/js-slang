@@ -254,6 +254,26 @@ test('detect complicated stream example', () => {
   expect(result?.streamMode).toBe(true)
 })
 
+test('math functions are disabled in smt solver', () => {
+  const code = `
+  function f(x) {
+    return x===0? x: f(math_floor(x+1));
+  }
+  f(1);`
+  const result = testForInfiniteLoop(code, [])
+  expect(result).toBeUndefined()
+})
+
+test('cycle detection ignores non deterministic functions', () => {
+  const code = `
+  function f(x) {
+    return x===0?0:f(math_floor(math_random()/2) + 1);
+  }
+  f(1);`
+  const result = testForInfiniteLoop(code, [])
+  expect(result).toBeUndefined()
+})
+
 test('handle imports properly', () => {
   const code = `import {thrice} from "repeat";
   function f(x) { return is_number(x) ? f(x) : 42; }
