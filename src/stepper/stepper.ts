@@ -2453,8 +2453,8 @@ function pathifyMain(
   let path = paths[0]
   let redex = ast.program([]) as substituterNodes
   let endIndex = path === undefined ? 0 : path.length - 1
-  const redexMarker = ast.identifier('$redex') as substituterNodes
-  const withBrackets = ast.identifier('($redex)') as substituterNodes
+  const redexMarker = ast.identifier('@redex') as substituterNodes
+  const withBrackets = ast.identifier('(@redex)') as substituterNodes
 
   const pathifiers = {
     ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
