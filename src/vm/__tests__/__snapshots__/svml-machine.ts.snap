@@ -386,6 +386,41 @@ Object {
 }
 `;
 
+exports[`standard opcodes BRF works, no else 2: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "if (false) {
+  display(\\"should not show\\");
+}
+display(\\"should show\\");",
+  "displayResult": Array [
+    "\\"should show\\"",
+  ],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "all threads terminated",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`standard opcodes BRF works, no else: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "if (true) {
+  display('did not BRF');
+}",
+  "displayResult": Array [
+    "\\"did not BRF\\"",
+  ],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "all threads terminated",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`standard opcodes BRF works: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],

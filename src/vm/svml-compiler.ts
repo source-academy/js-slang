@@ -997,6 +997,7 @@ export function compileToIns(
   toplevel = true
 
   transformForLoopsToWhileLoops(program)
+  insertEmptyElseBlocks(program)
   const locals = extractAndRenameNames(program, new Map<string, EnvEntry>())
   const topFunction: SVMFunction = [NaN, locals.size, 0, []]
   if (prelude) {
@@ -1050,6 +1051,21 @@ function transformForLoopsToWhileLoops(program: es.Program) {
       node = node as es.BlockStatement
       node.body = newBlockBody
       node.type = 'BlockStatement'
+    }
+  })
+}
+
+function insertEmptyElseBlocks(program: es.Program) {
+  simple(program, {
+    IfStatement(node) {
+      if (node.type !== 'IfStatement') {
+        return
+      }
+
+      node.alternate ??= {
+        type: 'BlockStatement',
+        body: []
+      }
     }
   })
 }
