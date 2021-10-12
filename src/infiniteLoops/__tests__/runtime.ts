@@ -206,27 +206,6 @@ make_big_int_from_number(1234);
   expect(result?.streamMode).toBe(false)
 })
 
-test('detect complicated fromSMT example', () => {
-  const code = `function super_bunny(n){
-    function helper(total_steps_left, steps_available) {
-        if (total_steps_left < 0 || steps_available === 0) {
-            return 0;
-        } else if (total_steps_left === 1) {
-            return 1;
-        } else {
-            return 1 + helper(total_steps_left-1, steps_available-1)
-             + helper(5, steps_available-3);
-        }
-    }
-    return helper(n, n);
-  }
-  super_bunny(5);
-   `
-  const result = testForInfiniteLoop(code, [])
-  expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.FromSmt)
-  expect(result?.streamMode).toBe(false)
-})
-
 test('detect complicated fromSMT example 2', () => {
   const code = `function fast_power(b,n){
     if (n % 2 === 0){

@@ -87,10 +87,32 @@ function wrapArgIfFunction(arg: any, state: st.State) {
   return arg
 }
 
+/**
+ * For higher-order functions, we add the names of its parameters
+ * that are functions to differentiate different combinations of
+ * function invocations + parameters.
+ *
+ * e.g.
+ * const f = x=>x;
+ * const g = x=>x+1;
+ * const h = f=>f(1);
+ *
+ * h(f) will have a different oracle name from h(g).
+ */
+function makeOracleName(name: string, args: [string, any][]) {
+  let result = name
+  for (const [n, v] of args) {
+    if (typeof v === 'function') {
+      result = `${result}_${n}:${v.name}`
+    }
+  }
+  return result
+}
+
 function preFunction(name: string, args: [string, any][], state: st.State) {
   checkTimeout(state)
   // track functions which were passed as arguments in a different tracker
-  const newName = state.functionWasPassedAsArgument ? '*' + name : name
+  const newName = state.functionWasPassedAsArgument ? '*' + name : makeOracleName(name, args)
   const [tracker, firstIteration] = state.enterFunction(newName)
   if (!firstIteration) {
     state.cleanUpVariables()
@@ -100,7 +122,7 @@ function preFunction(name: string, args: [string, any][], state: st.State) {
       checkForInfiniteLoopIfMeetsThreshold(previousIterations, state, name)
     }
   }
-  tracker.push(state.newStackFrame())
+  tracker.push(state.newStackFrame(newName))
 
   // reset the flag
   state.functionWasPassedAsArgument = false
@@ -117,7 +139,7 @@ function returnFunction(value: any, state: st.State) {
  * tracker.
  */
 function enterLoop(state: st.State) {
-  state.loopStack.unshift([state.newStackFrame()])
+  state.loopStack.unshift([state.newStackFrame('loopRoot')])
 }
 
 // ignoreMe: hack to squeeze this inside the 'update' of for statements
@@ -129,7 +151,7 @@ function postLoop(state: st.State, ignoreMe?: any) {
     state
   )
   state.cleanUpVariables()
-  previousIterations.push(state.newStackFrame())
+  previousIterations.push(state.newStackFrame('loop'))
   return ignoreMe
 }
 

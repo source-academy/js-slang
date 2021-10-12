@@ -20,6 +20,7 @@ type FunctionStackFrame = {
 const makeFunctionStackFrame = (name: string, transitions: Transition[]) =>
   ({ name: name, transitions: transitions } as FunctionStackFrame)
 type Iteration = {
+  loc: string
   paths: Path
   transitions: Transition[]
 }
@@ -54,7 +55,7 @@ export class State {
     this.stringToIdCache = new Map()
     this.idToStringCache = []
     this.idToExprCache = []
-    this.mixedStack = [{ paths: [], transitions: [] }]
+    this.mixedStack = [{ loc: '(ROOT)', paths: [], transitions: [] }]
     this.stackPointer = 0
     this.loopStack = []
     this.functionTrackers = new Map()
@@ -150,9 +151,9 @@ export class State {
    * Creates a new stack frame.
    * @returns pointer to the new stack frame.
    */
-  public newStackFrame() {
+  public newStackFrame(loc: string) {
     this.stackPointer++
-    this.mixedStack.push({ paths: [], transitions: [] })
+    this.mixedStack.push({ loc: loc, paths: [], transitions: [] })
     return this.stackPointer
   }
   /**
@@ -222,6 +223,7 @@ export class State {
     }
     this.popStackToStackPointer()
     this.mixedStack[this.stackPointer].transitions = lastFunctionFrame.transitions
+    this.setInvalidPath()
   }
 
   public hasTimedOut() {
