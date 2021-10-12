@@ -1057,11 +1057,7 @@ function transformForLoopsToWhileLoops(program: es.Program) {
 
 function insertEmptyElseBlocks(program: es.Program) {
   simple(program, {
-    IfStatement(node) {
-      if (node.type !== 'IfStatement') {
-        return
-      }
-
+    IfStatement(node: es.IfStatement) {
       node.alternate ??= {
         type: 'BlockStatement',
         body: []
