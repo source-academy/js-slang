@@ -253,20 +253,15 @@ function extractAndRenameNames(
       extractAndRenameNames(node, names, true)
     }
     if (stmt.type === 'IfStatement') {
-      let nextAlt: es.IfStatement | es.BlockStatement | null | undefined = stmt
-      while (nextAlt && nextAlt.type === 'IfStatement') {
+      let nextAlt = stmt as es.IfStatement | es.BlockStatement
+      while (nextAlt.type === 'IfStatement') {
         // if else if...
-        const {
-          consequent,
-          alternate
-        }: { consequent: es.IfStatement['consequent']; alternate?: es.IfStatement['alternate'] } =
-          nextAlt
+        const { consequent, alternate } = nextAlt as es.IfStatement
         extractAndRenameNames(consequent as es.BlockStatement, names, true)
-        nextAlt = alternate && (alternate as es.IfStatement | es.BlockStatement)
+        // Source spec must have alternate
+        nextAlt = alternate as es.IfStatement | es.BlockStatement
       }
-      if (nextAlt) {
-        extractAndRenameNames(nextAlt, names, true)
-      }
+      extractAndRenameNames(nextAlt as es.BlockStatement, names, true)
     }
     if (stmt.type === 'WhileStatement') {
       extractAndRenameNames(stmt.body as es.BlockStatement, names, true)
@@ -342,20 +337,14 @@ function renameVariables(
     },
     IfStatement(node: es.IfStatement, inactive, c) {
       c(node.test, inactive)
-      let nextAlt: es.IfStatement | es.BlockStatement | null | undefined = node
-      while (nextAlt && nextAlt.type === 'IfStatement') {
-        const {
-          consequent,
-          alternate
-        }: { consequent: es.IfStatement['consequent']; alternate?: es.IfStatement['alternate'] } =
-          nextAlt
+      let nextAlt = node as es.IfStatement | es.BlockStatement
+      while (nextAlt.type === 'IfStatement') {
+        const { consequent, alternate } = nextAlt
         recurseBlock(consequent as es.BlockStatement, inactive, c)
         c(nextAlt.test, inactive)
-        nextAlt = alternate && (alternate as es.IfStatement | es.BlockStatement)
+        nextAlt = alternate as es.IfStatement | es.BlockStatement
       }
-      if (nextAlt) {
-        recurseBlock(nextAlt, inactive, c)
-      }
+      recurseBlock(nextAlt! as es.BlockStatement, inactive, c)
     },
     Function(node: es.Function, inactive, c) {
       if (node.type === 'FunctionDeclaration') {
@@ -506,20 +495,12 @@ const compilers = {
     addUnaryInstruction(OpCodes.BRF, NaN)
     const BRFIndex = functionCode.length - 1
     const { maxStackSize: m2 } = compile(consequent, indexTable, false)
-
-    if (alternate) {
-      addUnaryInstruction(OpCodes.BR, NaN)
-    }
+    addUnaryInstruction(OpCodes.BR, NaN)
     const BRIndex = functionCode.length - 1
-
-    let m3 = 0
     functionCode[BRFIndex][1] = functionCode.length - BRFIndex
-    if (alternate) {
-      const { maxStackSize } = compile(alternate, indexTable, false)
-      m3 = maxStackSize
-      functionCode[BRIndex][1] = functionCode.length - BRIndex
-    }
-
+    // source spec: must have alternate
+    const { maxStackSize: m3 } = compile(alternate!, indexTable, false)
+    functionCode[BRIndex][1] = functionCode.length - BRIndex
     const maxStackSize = Math.max(m1, m2, m3)
     return { maxStackSize, insertFlag }
   },

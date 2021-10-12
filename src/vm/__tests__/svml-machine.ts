@@ -535,21 +535,6 @@ describe('standard opcodes', () => {
             `)
   })
 
-  test('BRF works, no else', () => {
-    return expectDisplayResult(
-      stripIndent`
-        if (true) {
-          display('did not BRF');
-        }
-      `,
-      { chapter: 3, variant: 'concurrent' }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "\\"did not BRF\\"",
-              ]
-            `)
-  })
-
   // BR, NEWENV, POPENV
   test('while loops works', () => {
     return expectDisplayResult(
