@@ -2453,8 +2453,8 @@ function pathifyMain(
   let path = paths[0]
   let redex = ast.program([]) as substituterNodes
   let endIndex = path === undefined ? 0 : path.length - 1
-  const redexMarker = ast.identifier('$') as substituterNodes
-  const withBrackets = ast.identifier('($)') as substituterNodes
+  const redexMarker = ast.identifier('@redex') as substituterNodes
+  const withBrackets = ast.identifier('(@redex)') as substituterNodes
 
   const pathifiers = {
     ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
@@ -2877,6 +2877,9 @@ export const getRedex = (node: substituterNodes, path: string[][]): substituterN
 // then we return it to the getEvaluationSteps
 function substPredefinedFns(program: es.Program, context: Context): [es.Program, Context] {
   if (context.prelude) {
+    // replace all occurences of '$' with 'helper_' to
+    // prevent collision with redex (temporary solution)
+    // context.prelude = context.prelude.replace(/\$/gi, 'helper_')
     // evaluate the list prelude first
     const listPreludeProgram = parse(context.prelude, context)!
     const origBody = program.body as es.Statement[]
