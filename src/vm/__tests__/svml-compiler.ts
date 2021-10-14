@@ -17,7 +17,7 @@ test('handles if without else', () => {
             ],
             Array [
               61,
-              4,
+              5,
             ],
             Array [
               2,
@@ -29,6 +29,13 @@ test('handles if without else', () => {
             ],
             Array [
               17,
+            ],
+            Array [
+              62,
+              2,
+            ],
+            Array [
+              11,
             ],
             Array [
               70,

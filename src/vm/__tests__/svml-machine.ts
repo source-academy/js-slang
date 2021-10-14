@@ -550,6 +550,22 @@ describe('standard opcodes', () => {
             `)
   })
 
+  test('BRF works, no else 2', () => {
+    return expectDisplayResult(
+      stripIndent`
+        if (false) {
+          display("should not show");
+        }
+        display("should show");
+      `,
+      { chapter: 3, variant: 'concurrent' }
+    ).toMatchInlineSnapshot(`
+              Array [
+                "\\"should show\\"",
+              ]
+            `)
+  })
+
   // BR, NEWENV, POPENV
   test('while loops works', () => {
     return expectDisplayResult(
