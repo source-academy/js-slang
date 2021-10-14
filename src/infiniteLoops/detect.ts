@@ -142,7 +142,8 @@ function runSMT(code: string): string {
   }
 }
 
-type Triple = {
+type IterationFrame = {
+  name: string
   prevPaths: number[]
   nextPaths: number[]
   transition: st.Transition[]
@@ -160,7 +161,7 @@ function arrEquals<T>(a1: T[], a2: T[], cmp = (x: T, y: T) => x === y) {
   return true
 }
 
-function tripleEquals(t1: Triple, t2: Triple) {
+function iterationFrameEquals(t1: IterationFrame, t2: IterationFrame) {
   return (
     arrEquals(t1.prevPaths, t2.prevPaths) &&
     arrEquals(t1.nextPaths, t2.nextPaths) &&
@@ -168,7 +169,8 @@ function tripleEquals(t1: Triple, t2: Triple) {
       t1.transition,
       t2.transition,
       (x, y) => x.name === y.name && x.cachedSymbolicValue === y.cachedSymbolicValue
-    )
+    ) &&
+    t1.name === t2.name
   )
 }
 
@@ -182,11 +184,11 @@ function codeToDispatch(stackPositions: number[], state: st.State) {
 }
 
 /**
- * Get triples from the stackPositions, ignoring duplicates.
- * Preserves order in which the triples are first seen in stackPositions.
+ * Get iteration frames from the stackPositions, ignoring duplicates.
+ * Preserves order in which the iterations frames are first seen in stackPositions.
  */
 function getFirstSeen(stackPositions: number[], state: st.State) {
-  let firstSeen: Triple[] = []
+  let firstSeen: IterationFrame[] = []
   for (let i = 1; i < stackPositions.length - 1; i++) {
     const prev = stackPositions[i - 1]
     const current = stackPositions[i]
@@ -201,30 +203,31 @@ function getFirstSeen(stackPositions: number[], state: st.State) {
       firstSeen = []
       continue
     }
-    const triple: Triple = {
+    const frame: IterationFrame = {
+      name: state.mixedStack[current].loc,
       prevPaths: flatten(prevPaths),
       nextPaths: flatten(nextPaths),
       transition: flatten(transitions)
     }
     let wasSeen = false
     for (const seen of firstSeen) {
-      if (tripleEquals(triple, seen)) {
+      if (iterationFrameEquals(frame, seen)) {
         wasSeen = true
         break
       }
     }
     if (!wasSeen) {
-      firstSeen.push(triple)
+      firstSeen.push(frame)
     }
   }
   return firstSeen
 }
 
 /**
- * Get closed sets of Triples where each iteration will
+ * Get closed sets of Iteration Frames where each iteration will
  * transition into another in the set.
  */
-function getClosed(firstSeen: Triple[]) {
+function getClosed(firstSeen: IterationFrame[]) {
   const indices: [number, number][] = []
   for (let i = 0; i < firstSeen.length; i++) {
     for (let j = 0; j <= i; j++) {
@@ -318,7 +321,7 @@ function formatTransition(transition: st.Transition, state: st.State) {
  * by the SMT solver.
  * @returns list of templated code.
  */
-function toSmtSyntax(toInclude: Triple[], state: st.State): [string, () => string][] {
+function toSmtSyntax(toInclude: IterationFrame[], state: st.State): [string, () => string][] {
   const pathStr = toInclude.map(x => x.prevPaths.map(i => state.idToStringCache[i]))
   const line1 = joiner(pathStr)
   const pathExprs = toInclude.map(x => x.prevPaths.map(i => state.idToExprCache[i]))
