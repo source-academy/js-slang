@@ -836,6 +836,19 @@ rest(1);",
 }
 `;
 
+exports[`Error with too many arguments passed to math_min: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "math_sin(7,8);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Nice errors when errors occur inside builtins: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
