@@ -296,7 +296,9 @@ export class UndefinedIdentifierError implements SourceError {
 
   public explain() {
     return stripIndent`
-    Undeclared name '${this.name}' detected
+    One or more undeclared names detected (e.g. '${this.name}').
+    If there aren't actually any undeclared names, then is either a Source or misconfiguration bug.
+    Please report this to the administrators!
     `
   }
 

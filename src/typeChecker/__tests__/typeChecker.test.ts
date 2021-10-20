@@ -2,6 +2,7 @@
 import { parse as __parse } from '../../parser/parser'
 import { typeCheck } from '../typeChecker'
 import { mockContext } from '../../mocks/context'
+import createContext from '../../createContext'
 import { validateAndAnnotate } from '../../validator/validator'
 import { TypeAnnotatedNode, TypeAnnotatedFuncDecl, Context } from '../../types'
 import { typeToString } from '../../utils/stringify'
@@ -264,7 +265,11 @@ describe('type checking functions', () => {
     `
     const [program, errors] = parseAndTypeCheck(code, 2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: (T0, T1) -> number"`)
-    expect(parseError(errors)).toMatchInlineSnapshot(`"Line 3: Undeclared name 'append' detected"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 3: One or more undeclared names detected (e.g. 'append').
+      If there aren't actually any undeclared names, then is either a Source or misconfiguration bug.
+      Please report this to the administrators!"
+    `)
   })
 })
 
@@ -2035,8 +2040,43 @@ describe('imported vars have any type', () => {
       b: T0
       c: T0"
     `)
-    expect(parseError(errors)).toMatchInlineSnapshot(
-      `"Line 7: Undeclared name 'not_imported' detected"`
-    )
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 7: One or more undeclared names detected (e.g. 'not_imported').
+      If there aren't actually any undeclared names, then is either a Source or misconfiguration bug.
+      Please report this to the administrators!"
+    `)
+  })
+})
+
+describe('external symbols have any type', () => {
+  it('no missing external symbols', () => {
+    const code1 = `
+      const c = console;
+    `
+    const context = createContext(1, 'default', ['console'])
+    const parsedProgram: any = __parse(code1, context)
+    expect(parsedProgram).not.toBeUndefined()
+    const validatedProgram = validateAndAnnotate(parsedProgram, context)
+    const [program, errors] = typeCheck(validatedProgram, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"c: T0"`)
+    expect(parseError(errors)).toBe('')
+  })
+
+  it('missing external symbols', () => {
+    const code1 = `
+      // error
+      const c = not_imported;
+    `
+    const context = createContext(1, 'default', ['console'])
+    const parsedProgram: any = __parse(code1, context)
+    expect(parsedProgram).not.toBeUndefined()
+    const validatedProgram = validateAndAnnotate(parsedProgram, context)
+    const [program, errors] = typeCheck(validatedProgram, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"c: T0"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 3: One or more undeclared names detected (e.g. 'not_imported').
+      If there aren't actually any undeclared names, then is either a Source or misconfiguration bug.
+      Please report this to the administrators!"
+    `)
   })
 })

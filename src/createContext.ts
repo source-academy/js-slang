@@ -143,7 +143,7 @@ export const createEmptyContext = <T>(
     executionMethod: 'auto',
     variant,
     unTypecheckedCode: [],
-    typeEnvironment: createTypeEnvironment(chapter),
+    typeEnvironment: createTypeEnvironment(chapter, externalSymbols),
     previousCode: []
   }
 }
