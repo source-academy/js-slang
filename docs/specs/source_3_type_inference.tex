@@ -4,6 +4,10 @@
 
 \newcommand{\TruE}{\textbf{\texttt{true}}}
 \newcommand{\FalsE}{\textbf{\texttt{false}}}
+\newcommand{\AndOp}{\texttt{\&\&}}
+\newcommand{\OrOp}{\texttt{||}}
+\newcommand{\ThenOp}{\texttt{?}}
+\newcommand{\ElseOp}{\texttt{:}}
 \newcommand{\Rc}{\texttt{\}}}
 \newcommand{\Lc}{\texttt{\{}}
 \newcommand{\Rp}{\texttt{)}}
@@ -21,8 +25,14 @@
 \newcommand{\List}{\textit{List}}
 \newcommand{\Array}{\textit{Array}}
 \newcommand{\Pair}{\textit{Pair}}
+\newcommand{\Pred}{\textit{Pred}}
 \newcommand{\head}{\textit{head}}
 \newcommand{\tail}{\textit{tail}}
+\newcommand{\type}{\textit{type}}
+\newcommand{\polytype}{\textit{polytype}}
+\newcommand{\predtype}{\textit{predtype}}
+\newcommand{\ExtractPos}{\ensuremath{\textit{Extract}^+}}
+\newcommand{\ExtractNeg}{\ensuremath{\textit{Extract}^-}}
 
 \newtheorem{definition}{Definition}[section]
 
@@ -190,31 +200,36 @@ are treated as abbreviations for the following
 We introduce the following language of types for type inference:
 
 \[
-\Rule{}{T_i}
+\Rule{}{T_i\ \type}
 \qquad
-\Rule{}{A_i}
+\Rule{}{A_i\ \type}
 \]
 
 \[
-\Rule{}{\Number}
+\Rule{}{\Number\ \type}
 \qquad
-\Rule{}{\Bool}
+\Rule{}{\Bool\ \type}
 \qquad
-\Rule{}{\String}
+\Rule{}{\String\ \type}
 \qquad
-\Rule{}{\Undefined}
+\Rule{}{\Undefined\ \type}
 \]
 
-\[ \Rule{t_1 \quad \cdots\quad t_n\quad t}{(t_1, \ldots t_n) \rightarrow t}
-\qquad
-\Rule{t_{head} \quad t_{tail}}{\Pair(t_\head,t_\tail)}
-\qquad
-\Rule{t}{\List(t)}
-\qquad
-\Rule{t}{\Array(t)}
+\[ \Rule{t_1\ \type \quad \cdots\quad t_n\ \type \quad t\ \type}{(t_1, \ldots t_n) \rightarrow t\ \type}
+\quad
+\Rule{t_{head}\ \type \quad t_{tail}\ \type}{\Pair(t_\head,t_\tail)\ \type}
+\quad
+\Rule{t}{\List(t)\ \type}
+\quad
+\Rule{t}{\Array(t)\ \type}
 \]
 \[
-\Rule{t}{\forall ( t )} \]
+\Rule{t\ \type}{\forall ( t )\ \polytype}
+\qquad
+\Rule{t\ \polytype}{\Pred(t)\ \predtype}
+\qquad
+\Rule{t\ \type}{\Pred(t)\ \predtype}
+\]
 
 \noindent
 where $n \geq 1$, and $T_i$ and $A_i$ represent type variables. We will capitalize 
@@ -225,8 +240,10 @@ that \emph{are} types.
 As usual, parentheses can be used in practice for grouping.
 Examples of valid types are $\Number$ and
 $(\Number, () \rightarrow \Bool, \Undefined, T_1) \rightarrow (\Bool \rightarrow A_2)$.
-Types of the form $\forall ( t )$ are called \emph{polymorphic types}, whereas
-all other are called \emph{monomorphic types}.
+
+Types of the form $\Pred ( t )$ are called \emph{predicate types},
+types of the form $\forall ( t )$ are called \emph{polymorphic types},
+and all other are called \emph{monomorphic types}.
 
 We distinguish two kinds of type variables, $T_i$ and $A_i$, to be able to handle
 the overloading of operators such as \texttt{+} (for numbers and strings).
@@ -274,8 +291,8 @@ type environment $\Gamma_0$ as follows:
 && \hspace{2mm} [ * \leftarrow  (\Number, \Number) \rightarrow \Number]\\
 && \hspace{2mm} [ / \leftarrow  (\Number, \Number) \rightarrow \Number]\\
 && \hspace{2mm} [ \% \leftarrow (\Number, \Number) \rightarrow \Number]\\
-&& \hspace{2mm} [ \&\& \leftarrow \forall((\Bool, T) \rightarrow T)]\\
-&& \hspace{2mm} [ || \leftarrow   \forall((\Bool, T) \rightarrow T)]\\
+&& \hspace{2mm} [ \&\& \leftarrow \forall((\Bool, \Bool) \rightarrow \Bool)]\\
+&& \hspace{2mm} [ || \leftarrow   \forall((\Bool, \Bool) \rightarrow \Bool)]\\
 && \hspace{2mm} [ ! \leftarrow \Bool \rightarrow \Bool]\\
 && \hspace{2mm} [ -_1 \leftarrow \Number \rightarrow \Number]\Gamma_{-2}
 \end{eqnarray*}
@@ -286,8 +303,8 @@ The overloaded binary primitive are handled as follows:
  & &
       \Gamma_{-2}
                  [ \texttt{+} \leftarrow \forall((A, A) \rightarrow A)] \\
-&& \hspace{6mm}  [ \texttt{===} \leftarrow \forall((T1, T2) \rightarrow \Bool)] \\
-&& \hspace{6mm}  [ \texttt{!==} \leftarrow \forall((T1, T2) \rightarrow \Bool)] \\
+&& \hspace{6mm}  [ \texttt{===} \leftarrow \forall((T_1, T_2) \rightarrow \Bool)] \\
+&& \hspace{6mm}  [ \texttt{!==} \leftarrow \forall((T_1, T_2) \rightarrow \Bool)] \\
 && \hspace{6mm}  [ \texttt{>} \leftarrow \forall((A, A) \rightarrow \Bool)]\\
 && \hspace{6mm}  [ \texttt{>=} \leftarrow \forall((A, A) \rightarrow \Bool)]\\
 && \hspace{6mm}  [ \texttt{<} \leftarrow \forall((A, A) \rightarrow \Bool)] \\
@@ -299,11 +316,11 @@ $\Gamma_{-1}$
 & $[$ & \texttt{display}      & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
 & $[$ & \texttt{error}      & $\leftarrow$  & $\forall(T)$ & & & $]$ \\
 & $[$ & \texttt{Infinity}      & $\leftarrow$  & $\Number$ & & & $]$ \\
-& $[$ & \texttt{is\_boolean}      & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
-& $[$ & \texttt{is\_function} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
-& $[$ & \texttt{is\_number} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
-& $[$ & \texttt{is\_string} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
-& $[$ & \texttt{is\_undefined} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\Bool)$ & $]$ \\
+& $[$ & \texttt{is\_boolean}   & $\leftarrow$  & $\Pred(\Bool)$ & & & $]$ \\
+& $[$ & \texttt{is\_function}  & $\leftarrow$  & $\Pred(\forall(T_1$ & $\rightarrow$ & $T_2))$ & $]$ \\
+& $[$ & \texttt{is\_number}    & $\leftarrow$  & $\Pred(\Number)$ & & & $]$ \\
+& $[$ & \texttt{is\_string}    & $\leftarrow$  & $\Pred(\String)$ & & & $]$ \\
+& $[$ & \texttt{is\_undefined} & $\leftarrow$  & $\Pred(\Undefined)$ & & & $]$ \\
 & $[$ & \texttt{math\_abs} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_acos} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_acosh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
@@ -352,13 +369,21 @@ $\Gamma_{-1}$
 & $[$ & \texttt{runtime} & $\leftarrow$  & $()$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{stringify} & $\leftarrow$  & $\forall(T$ & $\rightarrow$ & $\String)$ & $]$ \\
 & $[$ & \texttt{undefined} & $\leftarrow$  & $\Undefined$ & & & $]$ & \\
-& $[$ & \texttt{null}      & $\leftarrow$  & $\forall(List(T)$ & & & $]$ \\
+& \end{tabular}
+
+\begin{tabular}[fragile]{lllllllll}
+& $[$ & \texttt{null}      & $\leftarrow$  & $\forall(List(T))$ & & & $]$ \\
 & $[$ & \texttt{pair} & $\leftarrow$  & $\forall((T_1,T_2)$ & $\rightarrow$ & $Pair(T_1,T_2))$ & $]$ \\
 & $[$ & \texttt{head} & $\leftarrow$  & $\forall(Pair(T_1,T_2)$ & $\rightarrow$ & $T_1)$ & $]$ \\
 & $[$ & \texttt{tail} & $\leftarrow$  & $\forall(Pair(T_1,T_2)$ & $\rightarrow$ & $T_2)$ & $]$ \\
 & $[$ & \texttt{list} & $\leftarrow$  & $\forall(T_1,T_2,\dots,T_n$ & $\rightarrow$ & $\List(T_{n+1}))$ & $]$ \\
+& $[$ & \texttt{is\_pair} & $\leftarrow$  & $\Pred(\forall(\Pair(T_1, T_2)))$ & & & $]$ \\
+& $[$ & \texttt{is\_null} & $\leftarrow$  & $\Pred(\forall(\List(T)))$ & & & $]$ \\
+& $[$ & \texttt{is\_list} & $\leftarrow$  & $\Pred(\forall(\List(T)))$ & & & $]$ \\
 & $[$ & \texttt{set\_head} & $\leftarrow$  & $\forall(Pair(T_1,T_2)$ & $\rightarrow$ & $\Undefined)$ & $]$ \\
-& $[$ & \texttt{set\_tail} & $\leftarrow$  & $\forall(Pair(T_1,T_2)$ & $\rightarrow$ & $\Undefined)$ & $]$ $\Gamma_0$ \\
+& $[$ & \texttt{set\_tail} & $\leftarrow$  & $\forall(Pair(T_1,T_2)$ & $\rightarrow$ & $\Undefined)$ & $]$ \\
+& $[$ & \texttt{is\_array} & $\leftarrow$  & $\Pred(\forall(\Array(T)))$ & & & $]$ \\
+& $[$ & \texttt{array\_length} & $\leftarrow$  & $\forall(\Array(T) \rightarrow \Number)$ & & & $]$ $\Gamma_0$ \\
 & \end{tabular}
  
 \subsection{Preparing Programs for Type Inference}
@@ -538,14 +563,14 @@ The type of a name needs to be provided by the type environment. The first rule
 applies when $\Gamma(x)$ is monomorphic, i.e. $\Gamma(x) \neq \forall t'$.
 
 \noindent
-$\Rule{\Gamma(x) \neq \forall t' \qquad
+$\Rule{\Gamma(x)\ \type \qquad
   (\Sigma \wedge t = \Gamma(x)) = \Sigma'}{\Sigma, \Gamma \vdash x^t : \Sigma'}$
 
 If $\Gamma(x)$ is polymorphic,  i.e. $\Gamma(x) = \forall t'$, we replace all type variables in
 $t'$ with fresh type variables:
 
 \noindent
-$\Rule{\Gamma(x) = \forall t' \qquad
+$\Rule{\Gamma(x)\ \polytype \qquad
   (\Sigma \wedge t = \textit{fresh}(t')) = \Sigma'}{\Sigma, \Gamma \vdash x^t : \Sigma'}$
 
 \noindent
@@ -555,7 +580,17 @@ fresh type variables.
 Example: $\textit{fresh}(\Bool \rightarrow (T_1 \rightarrow (T_2 \rightarrow T_2)))$
 might return $\Bool \rightarrow (T_{77} \rightarrow (T_{88} \rightarrow T_{88})))$.
 
-If $\Gamma(x)$ is not defined, then neither rule is applicable.
+If $\Gamma(x)$ is a predicate type,  i.e. $\Gamma(x) = \Pred(t')$,
+we treat $x$ as if it had the type $\forall (t_0 \rightarrow \Bool)$ instead:
+
+\noindent
+$\Rule{\Gamma(x)\ \predtype \qquad
+  (\Sigma \wedge t = \textit{fresh}(t_0) \rightarrow Bool) = \Sigma'}{\Sigma, \Gamma \vdash x^t : \Sigma'}$
+
+\noindent
+where $\textit{fresh}(t_0)$ is some fresh type variable.
+
+If $\Gamma(x)$ is not defined, then none of the rules are applicable.
 In this case, we say that
 there is no type for $x$ derivable from the type environment $\Gamma$. 
 
@@ -575,21 +610,6 @@ where $n$ denotes any literal number $s$ denotes any literal string.
   \Rule{(\Sigma \wedge t = \Bool) = \Sigma'}{\Sigma, \Gamma \vdash \TruE^t : \Sigma'}
   \quad
   \Rule{(\Sigma \wedge t = \Bool) = \Sigma'}{\Sigma, \Gamma \vdash \FalsE^t : \Sigma'}  
-\]
-
-\noindent
-Important for typing conditionals is that the consequent and alternative
-expressions get the same type. 
-
-\noindent
-\[
-  \Rule{(\Sigma_0 \wedge t = t_1),
-  \Gamma \vdash E_0^{t_0} : \Sigma_1 \quad
-  (\Sigma_1 \wedge t_0 = \Bool) = \Sigma_2 \quad
-  \Sigma_2, \Gamma \vdash E_1^{t_1} : \Sigma_3 \quad
-  \Sigma_3, \Gamma \vdash E_2^{t_2} : \Sigma_4 \quad
-  (\Sigma_4 \wedge t_1 = t_2) = \Sigma_{5} }{
-  \Sigma_0, \Gamma \vdash ( E_0^{t_0}\ \texttt{?}\ E_1^{t_1}\ \texttt{:}\ E_2^{t_2})^t\ :\ \Sigma_5}  
 \]
 
 We have the following rule for function application.
@@ -822,18 +842,6 @@ Return statements are typed as follows.
 \]
 
 \noindent
-The type of conditional statements is similar to the type of conditional expressions.
-\[\Rule{(\Sigma_0 \wedge t = t_1),
-          \Gamma \vdash E^{t_0} : \Sigma_1 \quad
-          (\Sigma_1 \wedge t_0 = \Bool) = \Sigma_2 \quad
-\Sigma_2, \Gamma \vdash \{S_1\}^{t_1} : \Sigma_3 \quad
-\Sigma_3, \Gamma \vdash \{S_2\}^{t_2} : \Sigma_4 \quad
-(\Sigma_4 \wedge t_1 = t_2) = \Sigma_5 }{
-  \Sigma_0, \Gamma \vdash (\If\ \texttt{(}\ E^{t_0}\ \texttt{)\ \{}\ S_1\ \texttt{\}}^{t_1}\ \Else\ \texttt{\{}\ S_2\texttt{ \}}^{t_2})^t\ :\ \Sigma_5}
-\]
-
-
-\noindent
 The type of expression statements is $\Undefined$. Note that expression statements
 at toplevel get a return placed in front of them by the toplevel-transformation described above.
 \[
@@ -921,6 +929,277 @@ statement, with the addition of checking the init and update nodes before checki
     \end{minipage}}{
   \Sigma_0, \Gamma \vdash (\textbf{\texttt{for }} \texttt{( }assign_1^{t_0}\texttt{;}\ E^{t_1}\texttt{;}\ assign_2^{t_2}\texttt{) \{}\ S\ \texttt{\}}^{t_3})^t\ :\ \Sigma_5}
 \]
+
+
+\subsection{Typing Relation on Conditionals}
+
+For the typing of conditional expressions and conditional statements,
+the idea is that if the condition is a ``predicate test'',
+then in the consequent branch, we should assert that the variable has the appropriate type.
+It's easier to understand with an example:
+
+\begin{lstlisting}
+function id(xs) {
+    if (is_pair(xs)) {
+        return pair(head(xs), tail(xs));
+    } else {
+        return xs;
+    }
+}
+\end{lstlisting}
+
+In the above example,
+we are allowed to give the type $\forall((T_0) \to T_0)$ to the function \texttt{id},
+even though the subexpression \texttt{head(xs)} on line 3
+would normally impose a type constraint on \texttt{xs}
+to be of the form $\Pair(t_{head}, t_{tail})$.
+
+This is because line 3 is ``protected'' by the predicate test \texttt{is\_pair(xs)},
+which allows the variable \texttt{xs} on line 3
+to have the more specific type $\Pair(t_{head}, t_{tail})$.
+
+To make this tractable for type checking,
+``predicate tests'' can only be of the form
+\[ x(y) \]
+where both $x$ and $y$ are identifiers.
+Furthermore, $x$ must be of a predicate type in the current type environment.
+
+We can make this idea more concrete with the following rule for illustration purposes.
+The actual rules we will use are a little more complex.
+
+\noindent
+\[
+  \Rule{
+  \begin{array}{c}
+  \Gamma(x) = \Pred(t_{check})
+  \\
+  x \text{ and } y \text{ are names}
+  \\
+  (\Sigma_0 \wedge t_{ynew} = \textit{fresh}(t_{check})) = \Sigma_1 \qquad
+  \Sigma_1, \Gamma [ y \leftarrow t_{ynew} ] \vdash E_1^{t_1} : \Sigma_2
+  \\
+  \Sigma_2, \Gamma \vdash E_2^{t_2} : \Sigma_3
+  \\
+  (\Sigma_3 \wedge t_1 = t_2 \wedge t_2 = t) = \Sigma_{4}
+  \end{array}
+  }{
+  \Sigma_0, \Gamma \vdash ( (x^{t_x}(y^{t_y}))^{t_0}\ \ThenOp\ E_1^{t_1}\ \ElseOp\ E_2^{t_2})^t\ :\ \Sigma_4}
+  \begin{array}{l}
+  \text{ (for illustration} \\
+  \text{purposes only)}
+  \end{array}
+\]
+
+This rule is only able to handle expressions of the form
+$x(y)\ \ThenOp\ E_1\ \ElseOp\ E_2$,
+but we would like to be able to also handle
+conjunctions of predicate tests
+(possibly with other arbitrary boolean expressions)
+such as
+$x_1(y_1)\ \AndOp\ E_0\ \AndOp\ x_2(y_2)\ \AndOp\ x_3(y_3)\ \ThenOp\ E_1\ \ElseOp\ E_2$.
+
+In such cases, we know that whenever the entire condition evaluates to true,
+then the 3 predicate tests nested within all necessarily evaluate to true.
+Thus, we should be able to apply all 3 predicate tests to the type environment
+when type checking $E_1$.
+
+It is worth noting that the special handling of
+certain boolean expressions of predicate tests
+we're about to define
+have only been added for programmer convenience,
+as there are usually ways to ``desugar''
+these more complex boolean expressions into nested conditional expressions
+in a way that results in the same predicate tests being applied.
+
+To facilitate this, we define two functions,
+\ExtractPos\ and \ExtractNeg,
+which given an expression and type environment,
+will each return a set of predicate tests.
+\ExtractPos\ will return all predicate tests that necessarily evaluate to true
+whenever the given expression evaluates to true.
+\ExtractNeg\ will instead return all predicate tests that necessarily evaluate to true
+whenever the given expression evaluates to false.
+
+\[
+\Rule
+{}
+{\ExtractPos_\Gamma(E) = \emptyset}
+\begin{array}{c}
+\text{where $E$ is neither} \\
+\text{of the form $E1$ \AndOp\ $E2$} \\
+\text{nor of the form \texttt{!}$E1$} \\
+\text{nor a predicate test in the type environment $\Gamma$}
+\end{array}
+\]
+
+\[
+\Rule
+{}
+{\ExtractNeg_\Gamma(E) = \emptyset}
+\begin{array}{c}
+\text{where $E$ is neither} \\
+\text{of the form $E1$ \OrOp\ $E2$} \\
+\text{nor of the form \texttt{!}$E1$} \\
+\end{array}
+\]
+
+\[
+\Rule
+{\Gamma(x) = \Pred(t_{check}) \qquad x \text{ and } y \text{ are names}}
+{\ExtractPos_\Gamma(x(y)) = \{(y, t_{check})\}}
+\]
+
+Note that the rule above defines what is meant by predicate test.
+
+\[
+\Rule
+{\ExtractPos_\Gamma(E_0) = S_0 \qquad \ExtractPos_\Gamma(E_1) = S_1 \qquad S_0 \cup S_1 = S}
+{\ExtractPos_\Gamma(E_0\ \AndOp\ E_1) = S}
+\]
+
+\[
+\Rule
+{\ExtractNeg_\Gamma(E_0) = S_0 \qquad \ExtractNeg_\Gamma(E_1) = S_1 \qquad S_0 \cup S_1 = S}
+{\ExtractNeg_\Gamma(E_0\ \OrOp\ E_1) = S}
+\]
+
+\[
+\Rule
+{\ExtractNeg_\Gamma(E) = S}
+{\ExtractPos_\Gamma(\texttt{!}\ \texttt{(}\ E\ \texttt{)}) = S}
+\qquad
+\Rule
+{\ExtractPos_\Gamma(E) = S}
+{\ExtractNeg_\Gamma(\texttt{!}\ \texttt{(}\ E\ \texttt{)}) = S}
+\]
+
+Now we may define the following rule for conditional expressions involving predicate tests.
+
+\[
+  \Rule{
+  \begin{array}{c}
+  \ExtractPos_\Gamma(E_0) = \{ (y_0, t_{check_0}), (y_1, t_{check_1}), \ldots \}
+  \text{ is nonempty}
+  \\
+  (\Sigma_0
+  \wedge t_0 = \Bool
+  ) = \Sigma_1
+  \qquad
+  \Sigma_1, \Gamma \vdash E_0^{t_0} : \Sigma_2
+  \\
+  (\Sigma_2
+  \wedge t_{newy_0} = \textit{fresh}(t_{check_0})
+  \wedge t_{newy_1} = \textit{fresh}(t_{check_1})
+  \wedge \ldots
+  ) = \Sigma_3
+  \\
+  \Sigma_3, \Gamma [ y_0 \leftarrow t_{newy_0} ][ y_1 \leftarrow t_{newy_1} ]\ldots \vdash E_1^{t_1} : \Sigma_4
+  \\
+  \Sigma_4, \Gamma \vdash E_2^{t_2} : \Sigma_5
+  \\
+  (\Sigma_5 \wedge t_1 = t_2 \wedge t_2 = t) = \Sigma_{6}
+  \end{array}
+  }{
+  \Sigma_0, \Gamma \vdash ( E_0^{t_0}\ \ThenOp\ E_1^{t_1}\ \ElseOp\ E_2^{t_2})^t\ :\ \Sigma_6}
+\]
+
+To handle situations where the condition expression has been negated,
+rather than giving up immediately due to having no extractable predicate tests,
+we will attempt to typecheck it with the consequent and alternate flipped.
+
+\[
+\Rule{
+  \ExtractPos_\Gamma(E_0) \text{ is nonempty}
+  \qquad
+  \Sigma_0, \Gamma \vdash ( E_0^{t_0}\ \ThenOp\ E_2^{t_2}\ \ElseOp\ E_1^{t_1})^t\ :\ \Sigma_1
+}{
+  \Sigma_0, \Gamma \vdash ( \texttt{!}\ \texttt{(}\ E_0^{t_0}\ \texttt{)}\ \ThenOp\ E_1^{t_1}\ \ElseOp\ E_2^{t_2})^t\ :\ \Sigma_1
+}
+\]
+
+In the event that a conditional expression involves no predicate tests,
+we will type it the usual way with the following rule:
+
+\[
+\Rule
+{
+  \begin{array}{c}
+  \ExtractPos_\Gamma(E_0) \text{ is empty}
+  \qquad
+  \ExtractNeg_\Gamma(E_0) \text{ is empty}
+  \\
+  (\Sigma_0 \wedge t = t_1), \Gamma \vdash E_0^{t_0} : \Sigma_1 \qquad
+  (\Sigma_1 \wedge t_0 = \Bool) = \Sigma_2
+  \\
+  \Sigma_2, \Gamma \vdash E_1^{t_1} : \Sigma_3 \qquad
+  \Sigma_3, \Gamma \vdash E_2^{t_2} : \Sigma_4 \qquad
+  (\Sigma_4 \wedge t_1 = t_2) = \Sigma_5
+  \end{array}
+}{
+  \Sigma_0, \Gamma \vdash (E_0^{t_0}\ \ThenOp\ E_1^{t_1}\ \ElseOp\ E_2^{t_2})^t\ :\ \Sigma_5
+}
+\]
+
+\noindent
+The type of conditional statements is similar to the type of conditional expressions.
+\[
+  \Rule{
+  \begin{array}{c}
+  \ExtractPos_\Gamma(E_0) = \{ (y_0, t_{check_0}), (y_1, t_{check_1}), \ldots \}
+  \text{ is nonempty}
+  \\
+  (\Sigma_0
+  \wedge t_0 = \Bool
+  ) = \Sigma_1
+  \qquad
+  \Sigma_1, \Gamma \vdash E_0^{t_0} : \Sigma_2
+  \\
+  (\Sigma_2
+  \wedge t_{newy_0} = \textit{fresh}(t_{check_0})
+  \wedge t_{newy_1} = \textit{fresh}(t_{check_1})
+  \wedge \ldots
+  ) = \Sigma_3
+  \\
+  \Sigma_3, \Gamma [ y_0 \leftarrow t_{newy_0} ][ y_1 \leftarrow t_{newy_1} ]\ldots \vdash \{S_1\}^{t_1} : \Sigma_4
+  \\
+  \Sigma_4, \Gamma \vdash \{S_2\}^{t_2} : \Sigma_5
+  \\
+  (\Sigma_5 \wedge t_1 = t_2 \wedge t_2 = t) = \Sigma_{6}
+  \end{array}
+  }{
+  \Sigma_0, \Gamma \vdash (\If\ \texttt{(}\ E_0^{t_0}\ \texttt{)\ \{}\ S_1\ \texttt{\}}^{t_1}\ \Else\ \texttt{\{}\ S_2\texttt{ \}}^{t_2})^t\ :\ \Sigma_6}
+\]
+
+\[
+\Rule{
+  \ExtractPos_\Gamma(E_0) \text{ is nonempty}
+  \qquad
+  \Sigma_0, \Gamma \vdash (\If\ \texttt{(}\ E_0^{t_0}\ \texttt{) \{}\ S_1\ \texttt{\}}^{t_1}\ \Else\ \texttt{\{}\ S_2\texttt{ \}}^{t_2})^t\ :\ \Sigma_1
+}{
+  \Sigma_0, \Gamma \vdash (\If\ \texttt{(\ !\ (}\ E_0^{t_0}\ \texttt{)\ )\ \{}\ S_1\ \texttt{\}}^{t_1}\ \Else\ \texttt{\{}\ S_2\texttt{ \}}^{t_2})^t\ :\ \Sigma_1
+}
+\]
+
+\[
+\Rule
+{
+  \begin{array}{c}
+  \ExtractPos_\Gamma(E_0) \text{ is empty}
+  \qquad
+  \ExtractNeg_\Gamma(E_0) \text{ is empty}
+  \\
+  (\Sigma_0 \wedge t = t_1), \Gamma \vdash E_0^{t_0} : \Sigma_1 \qquad
+  (\Sigma_1 \wedge t_0 = \Bool) = \Sigma_2
+  \\
+  \Sigma_2, \Gamma \vdash \{S_1\}^{t_1} : \Sigma_3 \qquad
+  \Sigma_3, \Gamma \vdash \{S_2\}^{t_2} : \Sigma_4 \qquad
+  (\Sigma_4 \wedge t_1 = t_2) = \Sigma_5
+  \end{array}
+}{
+  \Sigma_0, \Gamma \vdash (\If\ \texttt{(}\ E^{t_0}\ \texttt{)\ \{}\ S_1\ \texttt{\}}^{t_1}\ \Else\ \texttt{\{}\ S_2\texttt{ \}}^{t_2})^t\ :\ \Sigma_5
+}
+\]
+
 
 \section{Type Safety of Source}
 \label{simplsafe}

@@ -90,7 +90,7 @@ describe('type checking pairs and lists', () => {
       const xs = pair(1, pair(2, null));
       const ys = pair(true, pair(true, null));
       accumulate((x,y)=>x+y,0,xs);
-      accumulate((x,y)=>x||y,0,ys);
+      accumulate((x,y)=>x||y,false,ys);
     `
     const [program, errors] = parseAndTypeCheck(code, 2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
@@ -109,7 +109,7 @@ describe('type checking pairs and lists', () => {
       const xs = pair(1, pair(2, null));
       const ys = pair(true, pair(true, null));
       const a = accumulate((x,y)=>x+y,0,xs);
-      const b = accumulate((x,y)=>x||y,0,ys);
+      const b = accumulate((x,y)=>x||y,false,ys);
     `
 
     const [program, errors] = parseAndTypeCheck(code, 2)
@@ -122,25 +122,25 @@ describe('type checking pairs and lists', () => {
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 8: A type mismatch was detected in the function call:
-        accumulate((x, ...  y) => x || y, 0, ys)
+        accumulate((x, ...  y) => x || y, false, ys)
       The function expected 3 arguments of types:
         (number, number) -> number, number, List<number>
       but instead received 3 arguments of types:
-        (boolean, T0) -> T0, number, List<boolean>"
+        (boolean, boolean) -> boolean, boolean, List<boolean>"
     `)
     expect(parseError(errors, true)).toMatchInlineSnapshot(`
       "Line 8, Column 16: A type mismatch was detected in the function call:
-        accumulate((x, ...  y) => x || y, 0, ys)
+        accumulate((x, ...  y) => x || y, false, ys)
       The function expected 3 arguments of types:
         (number, number) -> number, number, List<number>
       but instead received 3 arguments of types:
-        (boolean, T0) -> T0, number, List<boolean>
+        (boolean, boolean) -> boolean, boolean, List<boolean>
       A type mismatch was detected in the function call:
-        accumulate((x, ...  y) => x || y, 0, ys)
+        accumulate((x, ...  y) => x || y, false, ys)
       The function expected 3 arguments of types:
         (number, number) -> number, number, List<number>
       but instead received 3 arguments of types:
-        (boolean, T0) -> T0, number, List<boolean>
+        (boolean, boolean) -> boolean, boolean, List<boolean>
       "
     `)
   })
@@ -988,13 +988,19 @@ describe('type checking for loops', () => {
       "Line 3: A type mismatch was detected in the binary expression:
         a || false
       The binary operator (||) expected two operands with types:
-        boolean || T0
+        boolean || boolean
       but instead it received two operands of types:
         number || boolean
+      Line 3: Expected assignment of a:
+        a || false
+      to get a value of type:
+        number
+      but got a value of type:
+        boolean
       Line 4: A type mismatch was detected in the binary expression:
         a && a
       The binary operator (&&) expected two operands with types:
-        boolean && T0
+        boolean && boolean
       but instead it received two operands of types:
         number && number"
     `)
@@ -1076,7 +1082,7 @@ describe('type checking arrays', () => {
       Line 18: A type mismatch was detected in the binary expression:
         arr1[1] || false
       The binary operator (||) expected two operands with types:
-        boolean || T0
+        boolean || boolean
       but instead it received two operands of types:
         number || boolean
       Line 23: A type mismatch was detected in the unary expression:
@@ -1535,6 +1541,7 @@ describe('typing some SICP Chapter 2 programs', () => {
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
+
   it('2.2.2', () => {
     const code = `
       function count_leaves(x) {
@@ -1556,18 +1563,26 @@ describe('typing some SICP Chapter 2 programs', () => {
     const [program, errors] = parseAndTypeCheck(code, 2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "count_leaves: List<T0> -> addable
-      scale_tree: (List<T0>, T1) -> List<T2>
+      scale_tree: (number, number) -> List<T0>
       x: T0"
     `)
     // note: our type inferencer simply doesn't work for trees, because of the way we store
     // list internally
     expect(parseError(errors)).toMatchInlineSnapshot(`
-      "Line 10: A type mismatch was detected in the binary expression:
-        tree * factor
-      The binary operator (*) expected two operands with types:
-        number * number
-      but instead it received two operands of types:
-        [T0, T1] * T0
+      "Line 9: The two branches of the conditional expression:
+        !is_pair(tree) ? ... : ...
+      produce different types!
+      The true branch has type:
+        number
+      but the false branch has type:
+        [T0, T0]
+      Line 7: The two branches of the conditional expression:
+        is_null(tree) ? ... : ...
+      produce different types!
+      The true branch has type:
+        List<T0>
+      but the false branch has type:
+        number
       Line 14: A type mismatch was detected in the function call:
         pair(pair(1, p ... air(2, null)), pair(3, pair(4, null)))
       The function expected 2 arguments of types:
@@ -1972,9 +1987,16 @@ describe('Type context from previous executions get saved', () => {
       "xs: List<boolean>
       a: List<number>
       len: number
-      err: boolean"
+      err: T0"
     `)
-    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 6: A type mismatch was detected in the function call:
+        equal(xs, null ... )
+      The function expected 2 arguments of types:
+        addable, T0
+      but instead received 2 arguments of types:
+        List<boolean>, List<T0>"
+    `)
   })
 
   it('source 3 stream functions', async () => {
@@ -2043,6 +2065,116 @@ describe('imported vars have any type', () => {
       "Line 7: One or more undeclared names detected (e.g. 'not_imported').
       If there aren't actually any undeclared names, then is either a Source or misconfiguration bug.
       Please report this to the administrators!"
+    `)
+  })
+})
+
+describe('predicate tests work as expected', () => {
+  it('predicate tests shield outer type environment from stricter type constraints', () => {
+    const code = `
+      function is_number_pair(xs) {
+        if (is_pair(xs)) {
+          return is_number(head(xs)) && is_number(tail(xs));
+        } else {
+          return false;
+        }
+      }
+
+      function is_number_pair2(xs) {
+        return is_pair(xs) && is_number(head(xs)) && is_number(tail(xs));
+      }
+    `
+    const context = mockContext(2)
+    const [program, errors] = parseAndTypeCheck(code, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
+      "is_number_pair: T0 -> boolean
+      is_number_pair2: T0 -> boolean"
+    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('predicate tests occurring in positive positions of boolean expressions are detected', () => {
+    const code = `
+      function is_number_pair(xs) {
+        if (!!(!(!is_pair(xs) || !is_pair(xs) || 1 === 2) && 1 === 1)) {
+          return is_number(head(xs)) && is_number(tail(xs));
+        } else {
+          return false;
+        }
+      }
+    `
+    const context = mockContext(2)
+    const [program, errors] = parseAndTypeCheck(code, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"is_number_pair: T0 -> boolean"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('predicate tests occurring in negative positions of boolean expressions are detected', () => {
+    const code = `
+      function is_number_pair(xs) {
+        if (!!!(!(!is_pair(xs) || !is_pair(xs) || 1 === 2) && 1 === 1)) {
+          return false;
+        } else {
+          return is_number(head(xs)) && is_number(tail(xs));
+        }
+      }
+    `
+    const context = mockContext(2)
+    const [program, errors] = parseAndTypeCheck(code, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"is_number_pair: T0 -> boolean"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('inconsistent predicate tests raise type error', () => {
+    const code = `
+      function fails(xs) {
+        if (is_pair(xs) && is_number(xs)) {
+          return is_number(head(xs)) && is_number(tail(xs));
+        } else {
+          return false;
+        }
+      }
+    `
+    const context = mockContext(2)
+    const [program, errors] = parseAndTypeCheck(code, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"fails: T0 -> boolean"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 3: Inconsistent type constraints when trying to apply the predicate test
+        is_number(xs)
+      It is inconsistent with the predicate tests applied before it.
+      The variable xs has type
+        [T0, T1]
+      but could not unify with type
+        number"
+    `)
+  })
+
+  it('body inconsistent with predicate raises type error', () => {
+    const code = `
+      function fails(xs) {
+        if (is_number(xs)) {
+          return is_number(head(xs)) && is_number(tail(xs));
+        } else {
+          return false;
+        }
+      }
+    `
+    const context = mockContext(2)
+    const [program, errors] = parseAndTypeCheck(code, context)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"fails: T0 -> boolean"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 4: A type mismatch was detected in the function call:
+        head(xs)
+      The function expected an argument of type:
+        [T0, T1]
+      but instead received an argument of type:
+        number
+      Line 4: A type mismatch was detected in the function call:
+        tail(xs)
+      The function expected an argument of type:
+        [T0, T1]
+      but instead received an argument of type:
+        number"
     `)
   })
 })

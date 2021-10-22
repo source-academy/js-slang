@@ -364,3 +364,36 @@ export class CallingNonFunctionType implements SourceError {
     return this.explain()
   }
 }
+
+export class InconsistentPredicateTestError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(
+    public node: TypeAnnotatedNode<es.CallExpression>,
+    public argVarName: string,
+    public preUnifyType: Type,
+    public predicateType: Type
+  ) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    const exprString = generate(this.node)
+    return stripIndent`
+    Inconsistent type constraints when trying to apply the predicate test
+      ${exprString}
+    It is inconsistent with the predicate tests applied before it.
+    The variable ${this.argVarName} has type
+      ${typeToString(this.preUnifyType)}
+    but could not unify with type
+      ${typeToString(this.predicateType)}
+    `
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}

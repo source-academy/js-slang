@@ -311,6 +311,11 @@ export interface FunctionType {
   returnType: Type
 }
 
+export interface PredicateType {
+  kind: 'predicate'
+  ifTrueType: Type | ForAll
+}
+
 export interface List {
   kind: 'list'
   elementType: Type
@@ -332,10 +337,18 @@ export interface ForAll {
   polyType: Type
 }
 
+export type BindableType = Type | ForAll | PredicateType
+
 export type TypeEnvironment = {
-  typeMap: Map<string, Type | ForAll>
+  typeMap: Map<string, BindableType>
   declKindMap: Map<string, AllowedDeclarations>
 }[]
+
+export type PredicateTest = {
+  node: TypeAnnotatedNode<es.CallExpression>
+  ifTrueType: Type | ForAll
+  argVarName: string
+}
 
 export {
   Instruction as SVMInstruction,

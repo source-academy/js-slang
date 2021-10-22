@@ -10,11 +10,14 @@ import {
   SArray,
   Type,
   FunctionType,
+  PredicateType,
+  BindableType,
   TypeAnnotatedFuncDecl,
   SourceError,
   AllowedDeclarations,
   TypeEnvironment,
-  ContiguousArrayElements
+  ContiguousArrayElements,
+  PredicateTest
 } from '../types'
 import {
   TypeError,
@@ -25,6 +28,7 @@ import {
 } from './internalTypeErrors'
 import {
   ConsequentAlternateMismatchError,
+  InconsistentPredicateTestError,
   InvalidTestConditionError,
   DifferentNumberArgumentsError,
   InvalidArgumentTypesError,
@@ -245,9 +249,26 @@ export function typeCheck(
     traverse(program)
     try {
       infer(program, env, constraints, true)
-    } catch {
-      // we ignore the errors here since
-      // they would have already been processed
+    } catch (e) {
+      // any errors here are either UX bugs or some actual logical bug
+      // we should have either processed them from a InternalTypeError into a SourceError with better explanations
+      // or the error is some other issue and we should add a generic runtime error to say something has gone wrong
+      if (isInternalTypeError(e)) {
+        addTypeError(
+          new TypeError(
+            program,
+            'Uncaught internal type error during typechecking, report this to the adminstrators!\n' +
+              e.message
+          )
+        )
+      } else {
+        addTypeError(
+          new TypeError(
+            program,
+            'Uncaught error during typechecking, report this to the adminstrators!\n' + e.message
+          )
+        )
+      }
     }
     traverse(program, constraints)
     return [program, typeErrors]
@@ -474,7 +495,20 @@ function cannotBeResolvedIfAddable(LHS: Variable, RHS: Type): boolean {
   )
 }
 
+function downgradePredicateToFunction(type: PredicateType): FunctionType {
+  return {
+    kind: 'function',
+    parameterTypes: [freshTypeVar(tVar('T'))],
+    returnType: tBool
+  }
+}
+
+function genFreshPredicateType(): FunctionType {
+  return tFunc(freshTypeVar(tVar('T')), tBool)
+}
+
 function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]): Constraint[] {
+  // First handle primitives and variables, which don't require structural unification
   if (LHS.kind === 'primitive' && RHS.kind === 'primitive' && LHS.name === RHS.name) {
     // if t is base type and t' also base type of the same kind, do nothing
     return constraints
@@ -541,6 +575,91 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
   throw new UnifyError(LHS, RHS)
 }
 
+// Type checks consequent and alternate in a nested type environment as opposed to the current one.
+function addPredicateTestToConstraintList(
+  node: TypeAnnotatedNode<es.Node>,
+  tests: PredicateTest[],
+  consequent: TypeAnnotatedNode<es.Node>,
+  isTopLevelAndLastValStmt: boolean,
+  env: TypeEnvironment,
+  constraints: Constraint[]
+): Constraint[] {
+  // Add the constraints coming from the cons node,
+  // but we first have to temporarily replace the type variable for the predicated variable
+  // with a new one
+  pushEnv(env)
+
+  // first create new type variables for every variable hidden in a test
+  // note we do this in two passes in case multiple type tests share the same variable
+  // in those cases, we want to combine all constraints together, which is done in the second pass
+  for (const test of tests) {
+    setType(test.argVarName, freshTypeVar(tVar('PredicatedT')), env)
+  }
+
+  // next apply the constraints from each type test
+  for (const test of tests) {
+    const argVarType = lookupType(test.argVarName, env) as Type
+    const preUnifyType = applyConstraints(argVarType, constraints)
+    const predicateTestType =
+      test.ifTrueType.kind === 'forall'
+        ? extractFreeVariablesAndGenFresh(test.ifTrueType)
+        : test.ifTrueType
+    try {
+      constraints = addToConstraintList(constraints, [argVarType, predicateTestType])
+    } catch (e) {
+      if (e instanceof UnifyError) {
+        addTypeError(
+          new InconsistentPredicateTestError(
+            test.node,
+            test.argVarName,
+            preUnifyType,
+            predicateTestType
+          )
+        )
+      }
+    }
+  }
+
+  constraints = infer(consequent, env, constraints, isTopLevelAndLastValStmt)
+  env.pop()
+
+  return constraints
+}
+
+// Type checks consequent and alternate in a nested type environment as opposed to the current one.
+function addPredicateTestConditionalToConstraintList(
+  node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>,
+  tests: PredicateTest[],
+  consequent: TypeAnnotatedNode<es.Node>,
+  alternate: TypeAnnotatedNode<es.Node> | undefined,
+  isTopLevelAndLastValStmt: boolean,
+  env: TypeEnvironment,
+  constraints: Constraint[]
+): Constraint[] {
+  constraints = addPredicateTestToConstraintList(
+    node,
+    tests,
+    consequent,
+    isTopLevelAndLastValStmt,
+    env,
+    constraints
+  )
+
+  // Add the constraints coming from the alt node,
+  // which have no additional constraints coming from the predicate
+  if (alternate !== undefined) {
+    try {
+      constraints = infer(alternate, env, constraints, isTopLevelAndLastValStmt)
+    } catch (e) {
+      if (e instanceof UnifyError) {
+        addTypeError(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
+      }
+    }
+  }
+
+  return constraints
+}
+
 function statementHasReturn(node: es.Node): boolean {
   switch (node.type) {
     case 'IfStatement': {
@@ -586,6 +705,74 @@ function stmtHasValueReturningStmt(node: es.Node): boolean {
   }
 }
 
+// Helper function to extract all predicate tests in a "positive position".
+//
+// Predicate tests in a positive position
+// necessarily evaluate to true whenever the entire expression evaluates to true.
+// For example, in the expression
+//   (TEST1 && TEST2 && ... && TESTn)
+// TEST1, TEST2, ... would all necessarily evaluate to true if the entire expression evaluates to true.
+// Of these expressions, those that are also predicate tests are returned.
+// For another example, in the expression
+//   !(TEST1 || TEST2)
+// TEST1 and TEST2 necessarily evaluate to false if the entire expression evaluates to true,
+// and thus predicate tests in the "negative positions" of those expressions
+// are extracted as well.
+function extractPositiveTypeTests(
+  node: TypeAnnotatedNode<es.Node>,
+  env: TypeEnvironment,
+  result: PredicateTest[] = []
+): PredicateTest[] {
+  if (node.type === 'LogicalExpression' && node.operator === '&&') {
+    result = extractPositiveTypeTests(node.left, env, result)
+    return extractPositiveTypeTests(node.right, env, result)
+  } else if (node.type === 'UnaryExpression' && node.operator === '!') {
+    return extractNegativeTypeTests(node.argument, env, result)
+  } else if (
+    node.type === 'CallExpression' &&
+    node.callee.type === 'Identifier' &&
+    node.arguments.length === 1 &&
+    node.arguments[0].type === 'Identifier'
+  ) {
+    // Check that it's a proper predicate test,
+    // i.e. callee is a type predicate, exactly one argument, and argument names an identifier.
+    const calleeType = lookupType(node.callee.name, env)
+    if (calleeType !== undefined && calleeType.kind === 'predicate') {
+      // It is a proper predicate test
+      result.push({ node, ifTrueType: calleeType.ifTrueType, argVarName: node.arguments[0].name })
+      return result
+    }
+  }
+  return result
+}
+
+// Helper function to extract all predicate tests in a "negative position".
+//
+// Predicate tests in a negative position
+// necessarily evaluate to true whenever the entire expression evaluates to false.
+// For example, in the expression
+//   (!TEST1 || !TEST2 || ... || !TESTn)
+// TEST1, TEST2, ... would all necessarily evaluate to true if the entire expression evaluates to false.
+// Of these expressions, those that are also predicate tests are returned.
+// For another example, in the expression
+//   !(TEST1 && TEST2)
+// TEST1 and TEST2 necessarily evaluate to true if the entire expression evaluates to false,
+// and thus predicate tests in the "positive positions" of those expressions
+// are extracted as well.
+function extractNegativeTypeTests(
+  node: TypeAnnotatedNode<es.Node>,
+  env: TypeEnvironment,
+  result: PredicateTest[] = []
+): PredicateTest[] {
+  if (node.type === 'LogicalExpression' && node.operator === '||') {
+    result = extractNegativeTypeTests(node.left, env, result)
+    return extractNegativeTypeTests(node.right, env, result)
+  } else if (node.type === 'UnaryExpression' && node.operator === '!') {
+    return extractPositiveTypeTests(node.argument, env, result)
+  }
+  return result
+}
+
 /**
  * The following is the index of the node whose value will be the value of the block itself.
  * At the top level and if we are currently in the last value returning stmt of the parent block stmt,
@@ -613,7 +800,7 @@ function returnBlockValueNodeIndexFor(
   }
 }
 
-function lookupType(name: string, env: Env): Type | ForAll | undefined {
+function lookupType(name: string, env: Env): BindableType | undefined {
   for (let i = env.length - 1; i >= 0; i--) {
     if (env[i].typeMap.has(name)) {
       return env[i].typeMap.get(name)
@@ -631,7 +818,7 @@ function lookupDeclKind(name: string, env: Env): AllowedDeclarations | undefined
   return undefined
 }
 
-function setType(name: string, type: Type | ForAll, env: Env) {
+function setType(name: string, type: BindableType, env: Env) {
   env[env.length - 1].typeMap.set(name, type)
 }
 
@@ -689,10 +876,103 @@ function _infer(
       }
       return newConstraints
     }
-    case 'LogicalExpression': // both cases are the same
+    case 'LogicalExpression': {
+      // We specially handle the cases where
+      //  - the LHS of an && operator contains predicate tests in positive positions
+      //  - the LHS of an || operator contains predicate tests in negative positions
+      // For the following examples,
+      //   (TEST1 && TEST2 && ... && TESTn) && CONS
+      //   !(TEST1 && TEST2 && ... && TESTn) || CONS
+      // TEST1 to TESTn are all in positive positions and negative positions respectively,
+      // so if there are predicate tests in those positions,
+      // we will type check CONS in a more specific type context
+      // with the predicate tests "applied".
+
+      // Basics that apply to both predicate test logical expressions as well as standard binary expressions:
+      // node type = lhs type = rhs type = boolean
+      // Note that this doesn't really follow the informal typing in the Source 3 documentation,
+      // but we have no choice since we don't have union types, and every logical expression
+      // always has a chance of returning the LHS, which is a boolean.
+      const leftNode = node.left as TypeAnnotatedNode<es.Node>
+      const leftType = leftNode.inferredType as Variable
+      const rightNode = node.right as TypeAnnotatedNode<es.Node>
+      const rightType = rightNode.inferredType as Variable
+
+      let newConstraints = constraints
+
+      newConstraints = addToConstraintList(constraints, [storedType, tBool])
+
+      newConstraints = infer(leftNode, env, newConstraints)
+      const receivedLeftType = applyConstraints(leftNode.inferredType!, newConstraints)
+
+      // Handle predicate test cases
+      // In this case, it only affects how we infer the right type.
+      let receivedRightType: Type | undefined = undefined
+
+      if (node.operator === '&&') {
+        // e.g. (TEST1 && TEST2 && ... && TESTn) && CONS
+        const positiveTypeTests = extractPositiveTypeTests(node.left, env)
+        if (positiveTypeTests.length > 0) {
+          newConstraints = addPredicateTestToConstraintList(
+            node,
+            positiveTypeTests,
+            node.right,
+            isTopLevelAndLastValStmt,
+            env,
+            newConstraints
+          )
+          receivedRightType = applyConstraints(rightNode.inferredType!, newConstraints)
+        }
+      } else if (node.operator === '||') {
+        // e.g. (!TEST1 || !TEST2 || ... || !TESTn) || CONS
+        const negativeTypeTests = extractNegativeTypeTests(node.left, env)
+        if (negativeTypeTests.length > 0) {
+          newConstraints = addPredicateTestToConstraintList(
+            node,
+            negativeTypeTests,
+            node.right,
+            isTopLevelAndLastValStmt,
+            env,
+            newConstraints
+          )
+          receivedRightType = applyConstraints(rightNode.inferredType!, newConstraints)
+        }
+      }
+
+      if (receivedRightType === undefined) {
+        // Handle normal binary expression case
+        newConstraints = infer(rightNode, env, newConstraints)
+        receivedRightType = applyConstraints(rightNode.inferredType!, newConstraints)
+      }
+
+      // Now left and right types have been computed.
+      // Assert that they match
+      try {
+        newConstraints = addToConstraintList(constraints, [leftType, tBool])
+        newConstraints = addToConstraintList(constraints, [rightType, tBool])
+      } catch (e) {
+        if (e instanceof UnifyError) {
+          addTypeError(
+            new InvalidArgumentTypesError(
+              node,
+              [leftNode, rightNode],
+              [tBool, tBool],
+              [receivedLeftType, receivedRightType]
+            )
+          )
+        }
+      }
+
+      return newConstraints
+    }
     case 'BinaryExpression': {
       const envType = lookupType(node.operator, env)!
-      const opType = envType.kind === 'forall' ? extractFreeVariablesAndGenFresh(envType) : envType
+      const opType =
+        envType.kind === 'forall'
+          ? extractFreeVariablesAndGenFresh(envType)
+          : envType.kind === 'predicate'
+          ? downgradePredicateToFunction(envType)
+          : envType
       const leftNode = node.left as TypeAnnotatedNode<es.Node>
       const leftType = leftNode.inferredType as Variable
       const rightNode = node.right as TypeAnnotatedNode<es.Node>
@@ -922,6 +1202,8 @@ function _infer(
             storedType,
             extractFreeVariablesAndGenFresh(envType)
           ])
+        } else if (envType.kind === 'predicate') {
+          return addToConstraintList(constraints, [storedType, genFreshPredicateType()])
         } else {
           return addToConstraintList(constraints, [storedType, envType])
         }
@@ -931,13 +1213,39 @@ function _infer(
     }
     case 'ConditionalExpression': // both cases are the same
     case 'IfStatement': {
+      // We specially handle the cases where the condition expression
+      // either contains predicate tests in positive positions or in negative positions.
+      // For the following example,
+      //   (TEST1 && TEST2 && ... && TESTn) ? CONS : ALT
+      // TEST1 to TESTn are all in positive positions,
+      // so if there are predicate tests in those positions,
+      // we will type check CONS in a more specific type context respectively
+      // with the predicate tests "applied".
+      // For the example
+      //   (!TEST1 || !TEST2 || ... || !TESTn) ? CONS : ALT
+      // TEST1 to TESTn are all in negative positions,
+      // so if there are predicate tests in those positions,
+      // we will type check ALT in a more specific type context respectively
+      // with the predicate tests "applied".
+      //
+      // If the condition expression has no predicate tests in either positive nor negative positions,
+      // then type checking proceeds as usual:
+      //  - the type constraints of CONS and ALT,
+      //  - an equality constraint between the return types of CONS and ALT,
+      //  - an equality constraint between the return type of the condition expression and boolean
+      // is added to the constraint set.
+
       const testNode = node.test as TypeAnnotatedNode<es.Node>
       const testType = testNode.inferredType as Variable
       const consNode = node.consequent as TypeAnnotatedNode<es.Node>
       const consType = consNode.inferredType as Variable
       const altNode = node.alternate as TypeAnnotatedNode<es.Node>
       const altType = altNode.inferredType as Variable
-      let newConstraints = addToConstraintList(constraints, [storedType, consType])
+
+      // The basics, these apply to both predicate tests as well as standard conditionals
+
+      let newConstraints = constraints
+      // test type = boolean
       try {
         newConstraints = infer(testNode, env, newConstraints)
         newConstraints = addToConstraintList(newConstraints, [testType, tBool])
@@ -946,10 +1254,48 @@ function _infer(
           addTypeError(new InvalidTestConditionError(node, e.RHS))
         }
       }
-      newConstraints = infer(consNode, env, newConstraints, isTopLevelAndLastValStmt)
+
+      // Handle predicate test cases
+
+      const positiveTypeTests = extractPositiveTypeTests(testNode, env)
+      const negativeTypeTests = extractNegativeTypeTests(testNode, env)
+      if (positiveTypeTests.length > 0) {
+        newConstraints = addPredicateTestConditionalToConstraintList(
+          node,
+          positiveTypeTests,
+          consNode,
+          altNode,
+          isTopLevelAndLastValStmt,
+          env,
+          newConstraints
+        )
+      } else if (negativeTypeTests.length > 0) {
+        newConstraints = addPredicateTestConditionalToConstraintList(
+          node,
+          negativeTypeTests,
+          altNode, // Note consNode and altNode are flipped as these are negative predicate tests
+          consNode,
+          isTopLevelAndLastValStmt,
+          env,
+          newConstraints
+        )
+      } else {
+        // This is a standard conditional, simply add cons and alt constraints to the set
+        newConstraints = infer(consNode, env, newConstraints, isTopLevelAndLastValStmt)
+        try {
+          newConstraints = infer(altNode, env, newConstraints, isTopLevelAndLastValStmt)
+        } catch (e) {
+          if (e instanceof UnifyError) {
+            addTypeError(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
+          }
+        }
+      }
+
+      // Now both left and right side have their types inferred
+      // Assert that they agree
       try {
-        newConstraints = infer(altNode, env, newConstraints, isTopLevelAndLastValStmt)
-        newConstraints = addToConstraintList(newConstraints, [consType, altType])
+        newConstraints = addToConstraintList(newConstraints, [storedType, consType])
+        newConstraints = addToConstraintList(newConstraints, [storedType, altType])
       } catch (e) {
         if (e instanceof UnifyError) {
           addTypeError(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
@@ -1117,10 +1463,31 @@ function _infer(
       // Check that property is of type number
       // type in env can be either var or forall
       const envType = lookupType(objName, env)!
-      const arrayType =
-        envType.kind === 'forall'
-          ? extractFreeVariablesAndGenFresh(envType)
-          : applyConstraints(envType, newConstraints)
+
+      // ensure envType is a monotype.
+      // polytype arrays are not supported (or make sense, tbh), and they can't be predicates either.
+      if (envType.kind === 'predicate') {
+        if (envType.ifTrueType.kind === 'forall') {
+          throw new InternalTypeError(
+            `Expected ${objName} to be an array, got ${typeToString(
+              extractFreeVariablesAndGenFresh(envType.ifTrueType)
+            )}`
+          )
+        } else {
+          throw new InternalTypeError(
+            `Expected ${objName} to be an array, got ${typeToString(envType.ifTrueType)}`
+          )
+        }
+      } else if (envType.kind === 'forall') {
+        throw new InternalTypeError(
+          `Expected ${objName} to be an array, got ${typeToString(
+            extractFreeVariablesAndGenFresh(envType)
+          )}`
+        )
+      }
+
+      // ensure that the type is actually an array after unification
+      const arrayType = applyConstraints(envType, newConstraints)
       if (arrayType.kind !== 'array')
         throw new InternalTypeError(
           `Expected ${objName} to be an array, got ${typeToString(arrayType)}`
@@ -1214,7 +1581,14 @@ function tFunc(...types: Type[]): FunctionType {
   }
 }
 
-const predeclaredNames: [string, Type | ForAll][] = [
+function tPred(ifTrueType: Type | ForAll): PredicateType {
+  return {
+    kind: 'predicate',
+    ifTrueType
+  }
+}
+
+const predeclaredNames: [string, BindableType][] = [
   // constants
   ['Infinity', tNumber],
   ['NaN', tNumber],
@@ -1228,10 +1602,11 @@ const predeclaredNames: [string, Type | ForAll][] = [
   ['math_SQRT1_2', tNumber],
   ['math_SQRT2', tNumber],
   // is something functions
-  ['is_boolean', tForAll(tFunc(tVar('T'), tBool))],
-  ['is_number', tForAll(tFunc(tVar('T'), tBool))],
-  ['is_string', tForAll(tFunc(tVar('T'), tBool))],
-  ['is_undefined', tForAll(tFunc(tVar('T'), tBool))],
+  ['is_boolean', tPred(tBool)],
+  ['is_number', tPred(tNumber)],
+  ['is_string', tPred(tString)],
+  ['is_undefined', tPred(tUndef)],
+  ['is_function', tPred(tForAll(tFunc(tVar('T'), tVar('U'))))],
   // math functions
   ['math_abs', tFunc(tNumber, tNumber)],
   ['math_acos', tFunc(tNumber, tNumber)],
@@ -1280,27 +1655,27 @@ const predeclaredNames: [string, Type | ForAll][] = [
 const headType = tVar('headType')
 const tailType = tVar('tailType')
 
-const pairFuncs: [string, Type | ForAll][] = [
+const pairFuncs: [string, BindableType][] = [
   ['pair', tForAll(tFunc(headType, tailType, tPair(headType, tailType)))],
   ['head', tForAll(tFunc(tPair(headType, tailType), headType))],
   ['tail', tForAll(tFunc(tPair(headType, tailType), tailType))],
-  ['is_pair', tForAll(tFunc(tVar('T'), tBool))],
-  ['is_null', tForAll(tFunc(tPair(headType, tailType), tBool))]
+  ['is_pair', tPred(tForAll(tPair(headType, tailType)))],
+  ['is_null', tPred(tForAll(tList(tVar('T'))))]
 ]
 
-const mutatingPairFuncs: [string, Type | ForAll][] = [
+const mutatingPairFuncs: [string, BindableType][] = [
   ['set_head', tForAll(tFunc(tPair(headType, tailType), headType, tUndef))],
   ['set_tail', tForAll(tFunc(tPair(headType, tailType), tailType, tUndef))]
 ]
 
-const arrayFuncs: [string, Type | ForAll][] = [
-  ['is_array', tForAll(tFunc(tVar('T'), tBool))],
+const arrayFuncs: [string, BindableType][] = [
+  ['is_array', tPred(tForAll(tArray(tVar('T'))))],
   ['array_length', tForAll(tFunc(tArray(tVar('T')), tNumber))]
 ]
 
-const listFuncs: [string, Type | ForAll][] = [['list', tForAll(tVar('T1'))]]
+const listFuncs: [string, BindableType][] = [['list', tForAll(tVar('T1'))]]
 
-const primitiveFuncs: [string, Type | ForAll][] = [
+const primitiveFuncs: [string, BindableType][] = [
   [NEGATIVE_OP, tFunc(tNumber, tNumber)],
   ['!', tFunc(tBool, tBool)],
   ['&&', tForAll(tFunc(tBool, tVar('T'), tVar('T')))],
@@ -1317,18 +1692,18 @@ const primitiveFuncs: [string, Type | ForAll][] = [
 ]
 
 // Source 2 and below restricts === to addables
-const preS3equalityFuncs: [string, ForAll][] = [
+const preS3equalityFuncs: [string, BindableType][] = [
   ['===', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
   ['!==', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))]
 ]
 
 // Source 3 and above allows any values as arguments for ===
-const postS3equalityFuncs: [string, ForAll][] = [
+const postS3equalityFuncs: [string, BindableType][] = [
   ['===', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))],
   ['!==', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))]
 ]
 
-const temporaryStreamFuncs: [string, ForAll][] = [
+const temporaryStreamFuncs: [string, BindableType][] = [
   ['is_stream', tForAll(tFunc(tVar('T1'), tBool))],
   ['list_to_stream', tForAll(tFunc(tList(tVar('T1')), tVar('T2')))],
   ['stream_to_list', tForAll(tFunc(tVar('T1'), tList(tVar('T2'))))],
