@@ -287,7 +287,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       if (typeof value === 'function') {
         let paramString: string
         let minArgsNeeded = undefined
-        if (name === 'max' || 'min') {
+        if (name === 'max' || name === 'min') {
           paramString = '...values'
           minArgsNeeded = 0
         } else {
