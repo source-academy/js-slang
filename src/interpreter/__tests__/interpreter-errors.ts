@@ -715,7 +715,7 @@ test('No error when calling math_min function in with variable arguments', () =>
   ).toMatchInlineSnapshot(`1`)
 })
 
-test('Error with too many arguments passed to math_min', () => {
+test('Error with too many arguments passed to math_sin', () => {
   return expectParsedError(
     stripIndent`
     math_sin(7,8);
