@@ -50,9 +50,7 @@ function is_null(x) {}
  * @param {value} xs - given candidate
  * @returns whether {xs} is a list
  */
-function is_list(xs) {
-    return is_null(xs) || (is_pair(xs) && is_list(tail(xs)));
-}
+function is_list(xs) {}
 
 /**
  * Given <CODE>n</CODE> values, returns a list of length <CODE>n</CODE>.

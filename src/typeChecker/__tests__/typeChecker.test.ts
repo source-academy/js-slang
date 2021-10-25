@@ -115,8 +115,7 @@ describe('type checking pairs and lists', () => {
     // which can cause the inferred library function types to change.
     const [program1, errors1] = parseAndTypeCheck(context.prelude!, context)
     expect(topLevelTypesToString(program1)).toMatchInlineSnapshot(`
-      "is_list: T0 -> boolean
-      equal: (T0, T1) -> boolean
+      "equal: (T0, T1) -> boolean
       $length: (List<T0>, number) -> number
       length: List<T0> -> number
       $map: (T0 -> T1, List<T0>, List<T1>) -> List<T1>
@@ -144,7 +143,7 @@ describe('type checking pairs and lists', () => {
       accumulate: ((T0, T1) -> T1, T1, List<T0>) -> T1"
     `)
     expect(parseError(errors1)).toMatchInlineSnapshot(`
-      "Line 34: A type mismatch was detected in the binary expression:
+      "Line 24: A type mismatch was detected in the binary expression:
         xs === ys
       The binary operator (===) expected two operands with types:
         addable === addable

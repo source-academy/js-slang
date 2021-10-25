@@ -69,6 +69,7 @@ exports[`Ensure no name clashes 1`] = `
   const list = nativeStorage.builtins.get(\\"list\\");
   const draw_data = nativeStorage.builtins.get(\\"draw_data\\");
   const display_list = nativeStorage.builtins.get(\\"display_list\\");
+  const is_list = nativeStorage.builtins.get(\\"is_list\\");
   const set_head = nativeStorage.builtins.get(\\"set_head\\");
   const set_tail = nativeStorage.builtins.get(\\"set_tail\\");
   const array_length = nativeStorage.builtins.get(\\"array_length\\");
@@ -184,6 +185,7 @@ Object {
   const list = nativeStorage.builtins.get(\\"list\\");
   const draw_data = nativeStorage.builtins.get(\\"draw_data\\");
   const display_list = nativeStorage.builtins.get(\\"display_list\\");
+  const is_list = nativeStorage.builtins.get(\\"is_list\\");
   const set_head = nativeStorage.builtins.get(\\"set_head\\");
   const set_tail = nativeStorage.builtins.get(\\"set_tail\\");
   const array_length = nativeStorage.builtins.get(\\"array_length\\");

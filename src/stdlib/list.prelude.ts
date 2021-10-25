@@ -1,15 +1,5 @@
 export const listPrelude = `
 
-/**
- * recurses down the list and checks that it ends with the empty list null
- * @param {value} xs - given candidate
- * @returns {boolean} indicating whether {xs} is a list
- */
-
-function is_list(xs) {
-  return is_null(xs) || (is_pair(xs) && is_list(tail(xs)));
-}
-
 // equal computes the structural equality
 // over its arguments
 

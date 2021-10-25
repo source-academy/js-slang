@@ -1660,7 +1660,8 @@ const pairFuncs: [string, BindableType][] = [
   ['head', tForAll(tFunc(tPair(headType, tailType), headType))],
   ['tail', tForAll(tFunc(tPair(headType, tailType), tailType))],
   ['is_pair', tPred(tForAll(tPair(headType, tailType)))],
-  ['is_null', tPred(tForAll(tList(tVar('T'))))]
+  ['is_null', tPred(tForAll(tList(tVar('T'))))],
+  ['is_list', tPred(tForAll(tList(tVar('T'))))]
 ]
 
 const mutatingPairFuncs: [string, BindableType][] = [
