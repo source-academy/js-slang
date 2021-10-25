@@ -28,8 +28,11 @@ function equal(xs, ys) {
   ? (is_string(ys) && xs === ys)
   : is_undefined(xs)
   ? is_undefined(ys)
-  : // we know now that xs is a function
-    (is_function(ys) && xs === ys);
+  : is_function(xs)
+    // we know now that xs is a function,
+    // but we use an if check anyway to make use of the type predicate
+  ? (is_function(ys) && xs === ys)
+  : false;
 }
 
 

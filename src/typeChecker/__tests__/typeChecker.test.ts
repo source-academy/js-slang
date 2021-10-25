@@ -1987,16 +1987,9 @@ describe('Type context from previous executions get saved', () => {
       "xs: List<boolean>
       a: List<number>
       len: number
-      err: T0"
+      err: boolean"
     `)
-    expect(parseError(errors)).toMatchInlineSnapshot(`
-      "Line 6: A type mismatch was detected in the function call:
-        equal(xs, null ... )
-      The function expected 2 arguments of types:
-        addable, T0
-      but instead received 2 arguments of types:
-        List<boolean>, List<T0>"
-    `)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
 
   it('source 3 stream functions', async () => {
@@ -2176,5 +2169,18 @@ describe('predicate tests work as expected', () => {
       but instead received an argument of type:
         number"
     `)
+  })
+})
+
+describe('equal has correct type', () => {
+  it('import', async () => {
+    const code1 = `
+      const f = equal;
+    `
+    const context = mockContext(2)
+    await runInContext('', context) // we run an empty program to simulate execution of prelude
+    const [program, errors] = parseAndTypeCheck(code1, context)
+    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"f: (T0, T1) -> boolean"`)
   })
 })
