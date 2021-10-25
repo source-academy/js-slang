@@ -48,38 +48,119 @@ function topLevelTypesToString(program: TypeAnnotatedNode<es.Program>) {
 
 describe('type checking pairs and lists', () => {
   it('happy paths for list functions', () => {
-    const code1 = `
-      function accumulate(op, init, xs) {
-        return is_null(xs) ? init : op(head(xs), accumulate(op, init, tail(xs)));
-      }
-      function map(f, xs) {
-        return is_null(xs) ? null : pair(f(head(xs)), map(f, tail(xs)));
-      }
-      function append(xs, ys) {
-        return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
-      }
-      function remove(v, xs) {
-        return is_null(xs) ? null : v === head(xs) ? tail(xs) : pair(head(xs), remove(v, tail(xs)));
-      }
+    // const code1 = `
+    //   function $accumulate(f, initial, xs, cont) {
+    //       return is_null(xs)
+    //              ? cont(initial)
+    //              : $accumulate(f, initial, tail(xs), x => cont(f(head(xs), x)));
+    //   }
+    //   function accumulate(f, initial, xs) {
+    //     return $accumulate(f, initial, xs, x => x);
+    //   }
+
+    //   function $append(xs, ys, cont) {
+    //       return is_null(xs)
+    //              ? cont(ys)
+    //              : $append(tail(xs), ys, zs => cont(pair(head(xs), zs)));
+    //   }
+    //   function append(xs, ys) {
+    //       return $append(xs, ys, xs => xs);
+    //   }
+
+    //   function $remove(v, xs, acc) {
+    //     // Ensure that typechecking of append and reverse are done independently of remove
+    //     const app = append;
+    //     const rev = reverse;
+    //     return is_null(xs)
+    //            ? app(rev(acc), xs)
+    //            : v === head(xs)
+    //            ? app(rev(acc), tail(xs))
+    //            : $remove(v, tail(xs), pair(head(xs), acc));
+    //   }
+    //   function remove(v, xs) {
+    //       return $remove(v, xs, null);
+    //   }
+
+    //   function $reverse(original, reversed) {
+    //       return is_null(original)
+    //              ? reversed
+    //              : $reverse(tail(original), pair(head(original), reversed));
+    //   }
+    //   function reverse(xs) {
+    //       return $reverse(xs, null);
+    //   }
+
+    //   function $map(f, xs, acc) {
+    //       return is_null(xs)
+    //              ? reverse(acc)
+    //              : $map(f, tail(xs), pair(f(head(xs)), acc));
+    //   }
+    //   function map(f, xs) {
+    //       return $map(f, xs, null);
+    //   }
+    // `
+
+    const code2 = `
       const xs = pair(1, pair(2, null));
-      const y = accumulate((x,y)=>x+y,0,xs);
-      const xs1 = map(x => x<4 ? true : false, xs);
-      const xs2 = map(x => x>4 ? true : false, xs);
+      const y = accumulate((x, y) => x + y, 0, xs);
+      const xs1 = map(x => x < 4 ? true : false, xs);
+      const xs2 = map(x => x > 4 ? true : false, xs);
       const xs3 = append(xs1, xs2);
     `
-    const [program, errors] = parseAndTypeCheck(code1, 2)
-    expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
-      "accumulate: ((number, number) -> number, number, List<number>) -> number
-      map: (number -> boolean, List<number>) -> List<boolean>
-      append: (List<boolean>, List<boolean>) -> List<boolean>
+
+    const context = mockContext(2)
+
+    // we must avoid typechecking library code and user code in the same context
+    // else all declarations will be interpreted as one big letrec
+    // which can cause the inferred library function types to change.
+    const [program1, errors1] = parseAndTypeCheck(context.prelude!, context)
+    expect(topLevelTypesToString(program1)).toMatchInlineSnapshot(`
+      "is_list: T0 -> boolean
+      equal: (T0, T1) -> boolean
+      $length: (List<T0>, number) -> number
+      length: List<T0> -> number
+      $map: (T0 -> T1, List<T0>, List<T1>) -> List<T1>
+      map: (T0 -> T1, List<T0>) -> List<T1>
+      $build_list: (number, number -> T0, List<T0>) -> List<T0>
+      build_list: (number -> T0, number) -> List<T0>
+      for_each: (T0 -> T1, List<T0>) -> boolean
+      $list_to_string: (T0, string -> string) -> string
+      list_to_string: T0 -> string
+      $reverse: (List<T0>, List<T0>) -> List<T0>
+      reverse: List<T0> -> List<T0>
+      $append: (List<T0>, List<T0>, List<T0> -> List<T0>) -> List<T0>
+      append: (List<T0>, List<T0>) -> List<T0>
+      member: (addable, List<addable>) -> List<addable>
+      $remove: (addable, List<addable>, List<addable>) -> List<addable>
       remove: (addable, List<addable>) -> List<addable>
-      xs: List<number>
+      $remove_all: (addable, List<addable>, List<addable>) -> List<addable>
+      remove_all: (addable, List<addable>) -> List<addable>
+      $filter: (T0 -> boolean, List<T0>, List<T0>) -> List<T0>
+      filter: (T0 -> boolean, List<T0>) -> List<T0>
+      $enum_list: (number, number, List<number>) -> List<number>
+      enum_list: (number, number) -> List<number>
+      list_ref: (List<T0>, number) -> T0
+      $accumulate: ((T0, T1) -> T1, T1, List<T0>, T1 -> T1) -> T1
+      accumulate: ((T0, T1) -> T1, T1, List<T0>) -> T1"
+    `)
+    expect(parseError(errors1)).toMatchInlineSnapshot(`
+      "Line 34: A type mismatch was detected in the binary expression:
+        xs === ys
+      The binary operator (===) expected two operands with types:
+        addable === addable
+      but instead it received two operands of types:
+        T0 -> T1 === T0 -> T1"
+    `)
+
+    const [program2, errors2] = parseAndTypeCheck(code2, context)
+    expect(topLevelTypesToString(program2)).toMatchInlineSnapshot(`
+      "xs: List<number>
       y: number
       xs1: List<boolean>
       xs2: List<boolean>
       xs3: List<boolean>"
     `)
-    expect(parseError(errors)).toMatchInlineSnapshot(`""`)
+    expect(parseError(errors2)).toMatchInlineSnapshot(`""`)
   })
 
   it('works for accumulate used with different kinds of pairs', () => {

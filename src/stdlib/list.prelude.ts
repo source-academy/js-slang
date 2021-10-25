@@ -153,10 +153,13 @@ function member(v, xs) {
 // list if there is no occurrence.
 
 function $remove(v, xs, acc) {
+  // Ensure that typechecking of append and reverse are done independently
+  const app = append;
+  const rev = reverse;
   return is_null(xs)
-         ? append(reverse(acc), xs)
+         ? app(rev(acc), xs)
          : v === head(xs)
-         ? append(reverse(acc), tail(xs))
+         ? app(rev(acc), tail(xs))
          : $remove(v, tail(xs), pair(head(xs), acc));
 }
 
@@ -168,8 +171,11 @@ function remove(v, xs) {
 // instead of just the first
 
 function $remove_all(v, xs, acc) {
+  // Ensure that typechecking of append and reverse are done independently
+  const app = append;
+  const rev = reverse;
   return is_null(xs)
-         ? append(reverse(acc), xs)
+         ? app(rev(acc), xs)
          : v === head(xs)
          ? $remove_all(v, tail(xs), acc)
          : $remove_all(v, tail(xs), pair(head(xs), acc));
@@ -200,8 +206,10 @@ function filter(pred, xs) {
 // to be a number
 
 function $enum_list(start, end, acc) {
+  // Ensure that typechecking of reverse are done independently
+  const rev = reverse;
   return start > end
-         ? reverse(acc)
+         ? rev(acc)
          : $enum_list(start + 1, end, pair(start, acc));
 }
 
