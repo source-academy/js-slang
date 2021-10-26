@@ -264,7 +264,11 @@ describe('type checking functions', () => {
     `
     const [program, errors] = parseAndTypeCheck(code, 2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: (T0, T1) -> number"`)
-    expect(parseError(errors)).toMatchInlineSnapshot(`"Line 3: Undeclared name 'append' detected"`)
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 3: One or more undeclared names detected (e.g. 'append').
+      If there aren't actually any undeclared names, then is either a Source or misconfiguration bug.
+      Please report this to the administrators!"
+    `)
   })
 })
 
@@ -2035,8 +2039,10 @@ describe('imported vars have any type', () => {
       b: T0
       c: T0"
     `)
-    expect(parseError(errors)).toMatchInlineSnapshot(
-      `"Line 7: Undeclared name 'not_imported' detected"`
-    )
+    expect(parseError(errors)).toMatchInlineSnapshot(`
+      "Line 7: One or more undeclared names detected (e.g. 'not_imported').
+      If there aren't actually any undeclared names, then is either a Source or misconfiguration bug.
+      Please report this to the administrators!"
+    `)
   })
 })

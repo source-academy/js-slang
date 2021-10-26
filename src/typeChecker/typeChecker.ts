@@ -62,7 +62,7 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       node.typability = 'Typed'
     } catch (e) {
       if (isInternalTypeError(e) && !(e instanceof InternalCyclicReferenceError)) {
-        typeErrors.push(new TypeError(node, e))
+        addTypeError(new TypeError(node, e))
       }
     }
   } else {
@@ -151,9 +151,9 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
           )
         } catch (e) {
           if (e instanceof InternalCyclicReferenceError) {
-            typeErrors.push(new CyclicReferenceError(node))
+            addTypeError(new CyclicReferenceError(node))
           } else if (isInternalTypeError(e)) {
-            typeErrors.push(new TypeError(node, e))
+            addTypeError(new TypeError(node, e))
           }
         }
       } else {
@@ -207,7 +207,17 @@ function isInternalTypeError(error: any) {
 type Env = TypeEnvironment
 
 type Constraint = [Variable, Type]
+let hasUndefinedIdentifierError = false
 let typeErrors: SourceError[] = []
+
+function addTypeError(err: SourceError) {
+  if (err instanceof UndefinedIdentifierError && hasUndefinedIdentifierError) {
+    return
+  }
+  hasUndefinedIdentifierError = true
+  typeErrors.push(err)
+}
+
 /**
  * An additional layer of typechecking to be done right after parsing.
  * @param program Parsed Program
@@ -220,6 +230,7 @@ export function typeCheck(
     program: TypeAnnotatedNode<es.Program>
   ): [TypeAnnotatedNode<es.Program>, SourceError[]] {
     typeIdCounter = 0
+    hasUndefinedIdentifierError = false
     typeErrors = []
     const env: Env = context.typeEnvironment
     if (context.chapter >= 3 && env.length === 3) {
@@ -643,7 +654,7 @@ function infer(
     return _infer(node, env, constraints, isTopLevelAndLastValStmt)
   } catch (e) {
     if (e instanceof InternalCyclicReferenceError) {
-      typeErrors.push(new CyclicReferenceError(node))
+      addTypeError(new CyclicReferenceError(node))
       return constraints
     }
     throw e
@@ -672,9 +683,7 @@ function _infer(
       } catch (e) {
         if (e instanceof UnifyError) {
           const expectedTypes = funcType.parameterTypes
-          typeErrors.push(
-            new InvalidArgumentTypesError(node, [argNode], expectedTypes, receivedTypes)
-          )
+          addTypeError(new InvalidArgumentTypesError(node, [argNode], expectedTypes, receivedTypes))
           return newConstraints
         }
       }
@@ -704,9 +713,7 @@ function _infer(
       } catch (e) {
         if (e instanceof UnifyError) {
           const expectedTypes = (opType as FunctionType).parameterTypes
-          typeErrors.push(
-            new InvalidArgumentTypesError(node, argNodes, expectedTypes, receivedTypes)
-          )
+          addTypeError(new InvalidArgumentTypesError(node, argNodes, expectedTypes, receivedTypes))
         }
       }
       return newConstraints
@@ -733,7 +740,7 @@ function _infer(
         newConstraints = addToConstraintList(newConstraints, [testType, tBool])
       } catch (e) {
         if (e instanceof UnifyError) {
-          typeErrors.push(new InvalidTestConditionError(node, e.RHS))
+          addTypeError(new InvalidTestConditionError(node, e.RHS))
         }
       }
       return infer(bodyNode, env, newConstraints, isTopLevelAndLastValStmt)
@@ -781,7 +788,7 @@ function _infer(
         newConstraints = addToConstraintList(newConstraints, [testType, tBool])
       } catch (e) {
         if (e instanceof UnifyError) {
-          typeErrors.push(new InvalidTestConditionError(node, e.RHS))
+          addTypeError(new InvalidTestConditionError(node, e.RHS))
         }
       }
       newConstraints = infer(updateNode, env, newConstraints)
@@ -919,7 +926,7 @@ function _infer(
           return addToConstraintList(constraints, [storedType, envType])
         }
       }
-      typeErrors.push(new UndefinedIdentifierError(node, identifierName))
+      addTypeError(new UndefinedIdentifierError(node, identifierName))
       return constraints
     }
     case 'ConditionalExpression': // both cases are the same
@@ -936,7 +943,7 @@ function _infer(
         newConstraints = addToConstraintList(newConstraints, [testType, tBool])
       } catch (e) {
         if (e instanceof UnifyError) {
-          typeErrors.push(new InvalidTestConditionError(node, e.RHS))
+          addTypeError(new InvalidTestConditionError(node, e.RHS))
         }
       }
       newConstraints = infer(consNode, env, newConstraints, isTopLevelAndLastValStmt)
@@ -945,9 +952,10 @@ function _infer(
         newConstraints = addToConstraintList(newConstraints, [consType, altType])
       } catch (e) {
         if (e instanceof UnifyError) {
-          typeErrors.push(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
+          addTypeError(new ConsequentAlternateMismatchError(node, e.RHS, e.LHS))
         }
       }
+
       return newConstraints
     }
     case 'ArrowFunctionExpression': {
@@ -1013,14 +1021,14 @@ function _infer(
         if (e instanceof UnifyError) {
           if (calledFunctionType.kind === 'function') {
             const expectedTypes = calledFunctionType.parameterTypes
-            typeErrors.push(
+            addTypeError(
               new InvalidArgumentTypesError(node, argNodes, expectedTypes, receivedTypes)
             )
           } else {
-            typeErrors.push(new CallingNonFunctionType(node, calledFunctionType))
+            addTypeError(new CallingNonFunctionType(node, calledFunctionType))
           }
         } else if (e instanceof InternalDifferentNumberArgumentsError) {
-          typeErrors.push(new DifferentNumberArgumentsError(node, e.numExpectedArgs, e.numReceived))
+          addTypeError(new DifferentNumberArgumentsError(node, e.numExpectedArgs, e.numReceived))
         }
       }
       return newConstraints
@@ -1039,7 +1047,7 @@ function _infer(
       let newConstraints = addToConstraintList(constraints, [storedType, rightType])
       newConstraints = infer(rightNode, env, newConstraints)
       if (leftNode.type === 'Identifier' && lookupDeclKind(leftNode.name, env) === 'const') {
-        typeErrors.push(new ReassignConstError(node))
+        addTypeError(new ReassignConstError(node))
         return newConstraints
       }
       newConstraints = infer(leftNode, env, newConstraints)
@@ -1048,7 +1056,7 @@ function _infer(
       } catch (e) {
         if (e instanceof UnifyError) {
           if (leftNode.type === 'Identifier') {
-            typeErrors.push(
+            addTypeError(
               new DifferentAssignmentError(
                 node,
                 applyConstraints(leftType, newConstraints),
@@ -1056,7 +1064,7 @@ function _infer(
               )
             )
           } else {
-            typeErrors.push(
+            addTypeError(
               new ArrayAssignmentError(
                 node,
                 tArray(applyConstraints(leftType, newConstraints)),
@@ -1085,7 +1093,7 @@ function _infer(
           ])
         } catch (e) {
           if (e instanceof UnifyError) {
-            typeErrors.push(
+            addTypeError(
               new ArrayAssignmentError(
                 node,
                 applyConstraints(node.inferredType!, newConstraints) as SArray,
@@ -1117,12 +1125,13 @@ function _infer(
         throw new InternalTypeError(
           `Expected ${objName} to be an array, got ${typeToString(arrayType)}`
         )
+
       const expectedElementType = arrayType.elementType
       try {
         newConstraints = addToConstraintList(constraints, [propertyType, tNumber])
       } catch (e) {
         if (e instanceof UnifyError) {
-          typeErrors.push(
+          addTypeError(
             new InvalidArrayIndexType(node, applyConstraints(propertyType, newConstraints))
           )
         }

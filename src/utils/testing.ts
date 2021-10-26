@@ -174,7 +174,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
 
 export async function testSuccess(code: string, options: TestOptions = { native: false }) {
   const testResult = await testInContext(code, options)
-  expect(testResult.numErrors).toEqual(0)
+  expect(testResult.parsedErrors).toBe('')
   expect(testResult.resultStatus).toBe('finished')
   return testResult
 }
