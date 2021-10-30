@@ -7,7 +7,7 @@ import { Environment, Result } from '../types'
 // we need to tame the environments for snapshotting,
 // so we remove the tail part that is a copy of the previous environment
 // and we remove the first global environment
-function flattenEnvironments(result: Result) {
+function flattenEnvironments(result: Result): Environment[] {
   return (result as any)
     .context!.runtime.environments.slice(0, -1)
     .map((env: Environment) => ({ ...env, tail: null }))
@@ -23,7 +23,11 @@ test('debugger; statement basic test', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -42,7 +46,11 @@ test('debugger; statement in function', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -61,7 +69,11 @@ test('debugger; statement execution sequence', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('finished')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -91,7 +103,11 @@ test('debugger; statement test function scope', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -113,7 +129,11 @@ test('debugger; statement hoisting', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -133,7 +153,11 @@ test('debugger; pauses for', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -154,7 +178,11 @@ test('debugger; pauses while', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -181,7 +209,11 @@ test('setBreakpointAtLine basic', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -202,7 +234,11 @@ test('setBreakpointAtLine function 1', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -223,7 +259,11 @@ test('setBreakpointAtLine function 2', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -246,7 +286,11 @@ test('setBreakpointAtLine function 3', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('finished')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -267,7 +311,11 @@ test('setBreakpointAtLine function 4', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
   })
@@ -294,7 +342,11 @@ test('setBreakpointAtLine granularity 1', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
@@ -332,7 +384,11 @@ test('setBreakpointAtLine granularity 2', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
@@ -362,7 +418,11 @@ test('setBreakpointAtLine granularity 3', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
@@ -394,7 +454,11 @@ test('setBreakpointAtLine for loops', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
@@ -437,7 +501,11 @@ test('setBreakpointAtLine while loops', () => {
     scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
-    expect(flattenEnvironments(obj1)).toMatchSnapshot()
+    flattenEnvironments(obj1).forEach(environment => {
+      expect(environment).toMatchSnapshot({
+        id: expect.any(String)
+      })
+    })
     expect(obj1.status).toBe('suspended')
     expect(parseError(context.errors)).toMatchSnapshot()
     return (resume(obj1) as Promise<Result>).then(obj2 => {
