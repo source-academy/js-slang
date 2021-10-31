@@ -8,7 +8,7 @@ import { primitive, conditionalExpression, literal } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, uniqueId } from 'lodash'
 import { CUT } from '../constants'
 
 class BreakValue {}
@@ -27,7 +27,8 @@ const createEnvironment = (
   const environment: Environment = {
     name: closure.functionName, // TODO: Change this
     tail: closure.environment,
-    head: {}
+    head: {},
+    id: uniqueId()
   }
   if (callExpression) {
     environment.callExpression = {
@@ -51,7 +52,8 @@ const createBlockEnvironment = (
     name,
     tail: currentEnvironment(context),
     head,
-    thisContext: context
+    thisContext: context,
+    id: uniqueId()
   }
 }
 

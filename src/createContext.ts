@@ -110,7 +110,8 @@ const createEmptyDebugger = () => ({
 export const createGlobalEnvironment = (): Environment => ({
   tail: null,
   name: 'global',
-  head: {}
+  head: {},
+  id: '-1'
 })
 
 const createNativeStorage = (): NativeStorage => ({
