@@ -11,6 +11,7 @@ import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import { LazyBuiltIn } from '../createContext'
 import { loadModuleBundle } from '../modules/moduleLoader'
+import { uniqueId, isEmpty } from 'lodash'
 
 class BreakValue {}
 
@@ -62,7 +63,8 @@ const createEnvironment = (
   const environment: Environment = {
     name: closure.functionName, // TODO: Change this
     tail: closure.environment,
-    head: {}
+    head: {},
+    id: uniqueId()
   }
   if (callExpression) {
     environment.callExpression = {
@@ -88,7 +90,8 @@ export const createBlockEnvironment = (
   return {
     name,
     tail: currentEnvironment(context),
-    head
+    head,
+    id: uniqueId()
   }
 }
 
@@ -142,7 +145,7 @@ function declareFunctionsAndVariables(context: Context, node: es.BlockStatement)
 }
 
 function defineVariable(context: Context, name: string, value: Value, constant = false) {
-  const environment = context.runtime.environments[0]
+  const environment = currentEnvironment(context)
 
   if (environment.head[name] !== DECLARED_BUT_NOT_YET_ASSIGNED) {
     return handleRuntimeError(
@@ -184,7 +187,7 @@ export const pushEnvironment = (context: Context, environment: Environment) => {
 }
 
 const getVariable = (context: Context, name: string) => {
-  let environment: Environment | null = context.runtime.environments[0]
+  let environment: Environment | null = currentEnvironment(context)
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
       if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
@@ -203,7 +206,7 @@ const getVariable = (context: Context, name: string) => {
 }
 
 const setVariable = (context: Context, name: string, value: any) => {
-  let environment: Environment | null = context.runtime.environments[0]
+  let environment: Environment | null = currentEnvironment(context)
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
       if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
@@ -341,7 +344,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ThisExpression: function*(node: es.ThisExpression, context: Context) {
-    return context.runtime.environments[0].thisContext
+    return currentEnvironment(context).thisContext
   },
 
   ArrayExpression: function*(node: es.ArrayExpression, context: Context) {
@@ -677,10 +680,41 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 }
 // tslint:enable:object-literal-shorthand
 
+// TODO: move to util
+/**
+ * Checks if `env` is empty (that is, head of env is an empty object)
+ */
+function isEmptyEnvironment(env: Environment) {
+  return isEmpty(env.head)
+}
+
+/**
+ * Extracts the non-empty tail environment from the given environment and
+ * returns current environment if tail environment is a null.
+ */
+function getNonEmptyEnv(environment: Environment): Environment {
+  if (isEmptyEnvironment(environment)) {
+    const tailEnvironment = environment.tail
+    if (tailEnvironment === null) {
+      return environment
+    }
+    return getNonEmptyEnv(tailEnvironment)
+  } else {
+    return environment
+  }
+}
+
 export function* evaluate(node: es.Node, context: Context) {
   yield* visit(context, node)
   const result = yield* evaluators[node.type](node, context)
   yield* leave(context)
+  if (result instanceof Closure) {
+    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(), {
+      value: result,
+      writable: false,
+      enumerable: true
+    })
+  }
   return result
 }
 

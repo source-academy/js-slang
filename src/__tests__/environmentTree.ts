@@ -10,14 +10,20 @@ test('EnvTree root should be null upon instantiation', () => {
 test('EnvTree::insert should insert the globalEnvironment as the root', () => {
   const envTree = new EnvTree()
   envTree.insert(createGlobalEnvironment())
-  expect(envTree.root).toMatchSnapshot()
+  expect(envTree.root).toMatchSnapshot({
+    environment: {
+      id: expect.any(String)
+    }
+  })
 })
 
 test('EnvTree::getTreeNode should return the tree node that contains a pointer to the given environment', () => {
   const envTree = new EnvTree()
   const globalEnvironment = createGlobalEnvironment()
   envTree.insert(globalEnvironment)
-  expect(envTree.getTreeNode(globalEnvironment)?.environment).toMatchSnapshot()
+  expect(envTree.getTreeNode(globalEnvironment)?.environment).toMatchSnapshot({
+    id: expect.any(String)
+  })
 })
 
 test('EnvTreeNode::resetChildren should reset the children of the node to the given children', () => {
@@ -47,13 +53,25 @@ test('EnvTreeNode::resetChildren should reset the children of the node to the gi
   expect(grandChildNode1).not.toBeNull()
   expect(grandChildNode2).not.toBeNull()
   expect(grandChildNode3).not.toBeNull()
-  expect(parentNode?.children).toMatchSnapshot()
+  parentNode?.children.forEach(child => {
+    expect(child).toMatchSnapshot({
+      environment: {
+        id: expect.any(String)
+      }
+    })
+  })
   parentNode?.resetChildren([
     grandChildNode1 as EnvTreeNode,
     grandChildNode2 as EnvTreeNode,
     grandChildNode3 as EnvTreeNode
   ])
-  expect(parentNode?.children).toMatchSnapshot()
+  parentNode?.children.forEach(child => {
+    expect(child).toMatchSnapshot({
+      environment: {
+        id: expect.any(String)
+      }
+    })
+  })
 })
 
 test('EnvTreeNode::addChild should add the given child node to the tree node', () => {
@@ -62,5 +80,11 @@ test('EnvTreeNode::addChild should add the given child node to the tree node', (
   const envTreeRoot = context.runtime.environmentTree.root
   expect(envTreeRoot).not.toBeNull()
   envTreeRoot?.addChild(new EnvTreeNode(programEnv, envTreeRoot))
-  expect(envTreeRoot?.children).toMatchSnapshot()
+  envTreeRoot?.children.forEach(child => {
+    expect(child).toMatchSnapshot({
+      environment: {
+        id: expect.any(String)
+      }
+    })
+  })
 })
