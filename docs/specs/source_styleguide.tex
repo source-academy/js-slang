@@ -471,6 +471,20 @@ function count_buttons(garment) {
 }
 \end{lstlisting}
 
+\section*{Import directives}
+
+Import directives enclose the declared names in braces \lstinline*{* $\ldots$ \lstinline*}*, and the names are indented by four characters.
+
+\begin{lstlisting}
+// good style
+import {
+    beside, heart,
+    show
+} from "rune";
+
+show(beside(heart, heart));
+\end{lstlisting}
+
 \section*{Trailing whitespace}
 
 There should be no whitespace (spaces or tabs) before a newline, because they
