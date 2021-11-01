@@ -46,7 +46,11 @@ function stream_tail(xs) {
  */
 
 function is_stream(xs) {
-    return is_null(xs) || (is_pair(xs) && is_stream(stream_tail(xs)));
+    return is_null(xs) ||
+        (is_pair(xs) &&
+        is_function(tail(xs)) &&
+        array_length(tail(xs)) === 0 &&
+        is_stream(stream_tail(xs)));
 }
 
 /**
