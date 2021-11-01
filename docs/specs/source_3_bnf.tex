@@ -44,8 +44,8 @@
 && \textit{names}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}\ ) ...
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{name list}} \\[1mm]
-&& \textit{rest-names}   && ::= &\quad &&  \textit{names} \ 
-                                           [\texttt{...}\ \textit{name}]
+&& \textit{rest-names}   && ::= &\quad &&  \epsilon\ | \  \texttt{...} \textit{name} \ |  \ \textit{name} \ 
+                                           (\texttt{,}\ \textit{name}) ...\ [\texttt{, ...}\textit{name}]
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{name list} (\href{https://sourceacademy.org/sicpjs/3.4.2\#p17}{rest})} \\[1mm]
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
                                    \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
