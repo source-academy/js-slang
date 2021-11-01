@@ -338,7 +338,7 @@ function $filter(pred, xs, acc) {
  * the number exceeds (<CODE>&gt;</CODE>) <CODE>end</CODE>.
  * Iterative process;
  * time: <CODE>O(n)</CODE>, space: <CODE>O(n)</CODE>,
- * where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+ * where <CODE>n</CODE> is <CODE>end - start</CODE>.
  * @param {number} start - starting number
  * @param {number} end - ending number
  * @returns {list} list from <CODE>start</CODE> to <CODE>end</CODE>
