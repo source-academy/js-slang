@@ -1,9 +1,11 @@
-This JavaScript npm package provides all functions and constants that are assumed to be predeclared in the textbook [Structure and Interpretation of Computer Programs, JavaScript Adaptation](https://sourceacademy.org/sicpjs). This package therefore allows readers of the textbook to run and experiment with all JavaScript programs that appear in the textbook, using Node.js.
+This JavaScript npm package provides all functions and constants that are assumed to be predeclared in the textbook [Structure and Interpretation of Computer Programs, JavaScript Edition](https://sourceacademy.org/sicpjs) (SICP JS). This package therefore allows readers of the textbook to run and experiment with all JavaScript programs that appear in the textbook, using Node.js.
 
-Setting up and Using SICP library
+Alternatively, you can use the [Source Academy](https://sourceacademy.org), which has all necessary functions and constants predeclared.
+
+Setting up and Using SICP package
 =================================
 
-Create the file `package.json` first if you have not by
+Create the file `package.json` first if you have not done that, by running
 ``` {.}
 $ npm init
 ```
@@ -18,7 +20,7 @@ Next, install the package
 ``` {.}
 $ npm i sicp
 ```
-To use SICP library, you need to import by 
+To use SICP package, you need to import it in your program by writing
 ``` {.}
 import 'sicp';
 ```
