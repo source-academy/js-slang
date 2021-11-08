@@ -312,6 +312,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'tail(xs)', new LazyBuiltIn(list.tail, true))
       defineBuiltin(context, 'is_null(val)', new LazyBuiltIn(list.is_null, true))
       defineBuiltin(context, 'draw_data(...xs)', new LazyBuiltIn(visualiseList, true), 0)
+      defineBuiltin(context, 'is_list(val)', new LazyBuiltIn(list.is_list, true))
     } else {
       defineBuiltin(context, 'pair(left, right)', list.pair)
       defineBuiltin(context, 'is_pair(val)', list.is_pair)
@@ -321,6 +322,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'list(...values)', list.list, 0)
       defineBuiltin(context, 'draw_data(...xs)', visualiseList, 0)
       defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList, 0)
+      defineBuiltin(context, 'is_list(val)', list.is_list)
     }
   }
 

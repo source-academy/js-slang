@@ -201,7 +201,7 @@ test('bad number error build_list', () => {
     build_list(x => x, '1');
     `,
     { chapter: 2, native: true, variant: 'lazy' }
-  ).toMatchInlineSnapshot(`"Line 55: Expected number on left hand side of operation, got string."`)
+  ).toMatchInlineSnapshot(`"Line 45: Expected number on left hand side of operation, got string."`)
 })
 
 test('bad number error enum_list', () => {
@@ -211,7 +211,7 @@ test('bad number error enum_list', () => {
     `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 149: Expected string on right hand side of operation, got number."`
+    `"Line 139: Expected string on right hand side of operation, got number."`
   )
 })
 
@@ -222,7 +222,7 @@ test('bad number error enum_list', () => {
     `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 149: Expected string on right hand side of operation, got number."`
+    `"Line 139: Expected string on right hand side of operation, got number."`
   )
 })
 
@@ -233,7 +233,7 @@ test('bad number error enum_list', () => {
     `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 150: Expected number on right hand side of operation, got string."`
+    `"Line 140: Expected number on right hand side of operation, got string."`
   )
 })
 
@@ -244,7 +244,7 @@ test('bad index error list_ref', () => {
     `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
   )
 })
 
@@ -255,7 +255,7 @@ test('bad index error list_ref', () => {
     `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
   )
 })
 
@@ -266,7 +266,7 @@ test('bad index error list_ref', () => {
     `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 158: Error: tail(xs) expects a pair as argument xs, but encountered null"`
+    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
   )
 })
 
@@ -277,7 +277,7 @@ test('bad index error list_ref', () => {
     `,
     { chapter: 2, native: true, variant: 'lazy' }
   ).toMatchInlineSnapshot(
-    `"Line 159: Expected string on right hand side of operation, got number."`
+    `"Line 149: Expected string on right hand side of operation, got number."`
   )
 })
 

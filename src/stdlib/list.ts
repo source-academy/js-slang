@@ -69,6 +69,15 @@ export function list(...elements: any[]): List {
   return theList
 }
 
+// recurses down the list and checks that it ends with the empty list null
+// LOW-LEVEL FUNCTION, NOT SOURCE
+export function is_list(xs: List) {
+  while (is_pair(xs)) {
+    xs = tail(xs)
+  }
+  return is_null(xs)
+}
+
 // list_to_vector returns vector that contains the elements of the argument list
 // in the given order.
 // list_to_vector throws an exception if the argument is not a list

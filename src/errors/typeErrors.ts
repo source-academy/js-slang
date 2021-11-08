@@ -296,7 +296,9 @@ export class UndefinedIdentifierError implements SourceError {
 
   public explain() {
     return stripIndent`
-    Undeclared name '${this.name}' detected
+    One or more undeclared names detected (e.g. '${this.name}').
+    If there aren't actually any undeclared names, then is either a Source or misconfiguration bug.
+    Please report this to the administrators!
     `
   }
 
@@ -355,6 +357,39 @@ export class CallingNonFunctionType implements SourceError {
       ${simplify(generate(this.node.callee))}
     to be a function type, but instead it is type:
       ${typeToString(this.callerType)}
+    `
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class InconsistentPredicateTestError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(
+    public node: TypeAnnotatedNode<es.CallExpression>,
+    public argVarName: string,
+    public preUnifyType: Type,
+    public predicateType: Type
+  ) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    const exprString = generate(this.node)
+    return stripIndent`
+    Inconsistent type constraints when trying to apply the predicate test
+      ${exprString}
+    It is inconsistent with the predicate tests applied before it.
+    The variable ${this.argVarName} has type
+      ${typeToString(this.preUnifyType)}
+    but could not unify with type
+      ${typeToString(this.predicateType)}
     `
   }
 

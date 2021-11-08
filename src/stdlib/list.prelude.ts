@@ -1,15 +1,5 @@
 export const listPrelude = `
 
-/**
- * recurses down the list and checks that it ends with the empty list null
- * @param {value} xs - given candidate
- * @returns {boolean} indicating whether {xs} is a list
- */
-
-function is_list(xs) {
-  return is_null(xs) || (is_pair(xs) && is_list(tail(xs)));
-}
-
 // equal computes the structural equality
 // over its arguments
 
@@ -28,8 +18,11 @@ function equal(xs, ys) {
   ? (is_string(ys) && xs === ys)
   : is_undefined(xs)
   ? is_undefined(ys)
-  : // we know now that xs is a function
-    (is_function(ys) && xs === ys);
+  : is_function(xs)
+    // we know now that xs is a function,
+    // but we use an if check anyway to make use of the type predicate
+  ? (is_function(ys) && xs === ys)
+  : false;
 }
 
 
@@ -150,10 +143,13 @@ function member(v, xs) {
 // list if there is no occurrence.
 
 function $remove(v, xs, acc) {
+  // Ensure that typechecking of append and reverse are done independently
+  const app = append;
+  const rev = reverse;
   return is_null(xs)
-         ? append(reverse(acc), xs)
+         ? app(rev(acc), xs)
          : v === head(xs)
-         ? append(reverse(acc), tail(xs))
+         ? app(rev(acc), tail(xs))
          : $remove(v, tail(xs), pair(head(xs), acc));
 }
 
@@ -165,8 +161,11 @@ function remove(v, xs) {
 // instead of just the first
 
 function $remove_all(v, xs, acc) {
+  // Ensure that typechecking of append and reverse are done independently
+  const app = append;
+  const rev = reverse;
   return is_null(xs)
-         ? append(reverse(acc), xs)
+         ? app(rev(acc), xs)
          : v === head(xs)
          ? $remove_all(v, tail(xs), acc)
          : $remove_all(v, tail(xs), pair(head(xs), acc));
@@ -197,8 +196,10 @@ function filter(pred, xs) {
 // to be a number
 
 function $enum_list(start, end, acc) {
+  // Ensure that typechecking of reverse are done independently
+  const rev = reverse;
   return start > end
-         ? reverse(acc)
+         ? rev(acc)
          : $enum_list(start + 1, end, pair(start, acc));
 }
 
