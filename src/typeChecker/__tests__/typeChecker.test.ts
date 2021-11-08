@@ -48,66 +48,6 @@ function topLevelTypesToString(program: TypeAnnotatedNode<es.Program>) {
 
 describe('type checking pairs and lists', () => {
   it('happy paths for list functions', () => {
-    // const code1 = `
-    //   function $accumulate(f, initial, xs, cont) {
-    //       return is_null(xs)
-    //              ? cont(initial)
-    //              : $accumulate(f, initial, tail(xs), x => cont(f(head(xs), x)));
-    //   }
-    //   function accumulate(f, initial, xs) {
-    //     return $accumulate(f, initial, xs, x => x);
-    //   }
-
-    //   function $append(xs, ys, cont) {
-    //       return is_null(xs)
-    //              ? cont(ys)
-    //              : $append(tail(xs), ys, zs => cont(pair(head(xs), zs)));
-    //   }
-    //   function append(xs, ys) {
-    //       return $append(xs, ys, xs => xs);
-    //   }
-
-    //   function $remove(v, xs, acc) {
-    //     // Ensure that typechecking of append and reverse are done independently of remove
-    //     const app = append;
-    //     const rev = reverse;
-    //     return is_null(xs)
-    //            ? app(rev(acc), xs)
-    //            : v === head(xs)
-    //            ? app(rev(acc), tail(xs))
-    //            : $remove(v, tail(xs), pair(head(xs), acc));
-    //   }
-    //   function remove(v, xs) {
-    //       return $remove(v, xs, null);
-    //   }
-
-    //   function $reverse(original, reversed) {
-    //       return is_null(original)
-    //              ? reversed
-    //              : $reverse(tail(original), pair(head(original), reversed));
-    //   }
-    //   function reverse(xs) {
-    //       return $reverse(xs, null);
-    //   }
-
-    //   function $map(f, xs, acc) {
-    //       return is_null(xs)
-    //              ? reverse(acc)
-    //              : $map(f, tail(xs), pair(f(head(xs)), acc));
-    //   }
-    //   function map(f, xs) {
-    //       return $map(f, xs, null);
-    //   }
-    // `
-
-    const code2 = `
-      const xs = pair(1, pair(2, null));
-      const y = accumulate((x, y) => x + y, 0, xs);
-      const xs1 = map(x => x < 4 ? true : false, xs);
-      const xs2 = map(x => x > 4 ? true : false, xs);
-      const xs3 = append(xs1, xs2);
-    `
-
     const context = mockContext(2)
 
     // we must avoid typechecking library code and user code in the same context
@@ -151,7 +91,15 @@ describe('type checking pairs and lists', () => {
         T0 -> T1 === T0 -> T1"
     `)
 
-    const [program2, errors2] = parseAndTypeCheck(code2, context)
+    const code = `
+      const xs = pair(1, pair(2, null));
+      const y = accumulate((x, y) => x + y, 0, xs);
+      const xs1 = map(x => x < 4 ? true : false, xs);
+      const xs2 = map(x => x > 4 ? true : false, xs);
+      const xs3 = append(xs1, xs2);
+    `
+
+    const [program2, errors2] = parseAndTypeCheck(code, context)
     expect(topLevelTypesToString(program2)).toMatchInlineSnapshot(`
       "xs: List<number>
       y: number
