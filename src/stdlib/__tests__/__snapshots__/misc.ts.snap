@@ -62,8 +62,23 @@ arity(test);",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
-  "result": "native:2
-interpreted:0",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`arity with user-made function with rest parameter is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function test(...xs) {
+  return xs;
+}
+arity(test);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -76,8 +91,20 @@ Object {
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
-  "result": "native:1
-interpreted:0",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`arity with user-made nullary function is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "arity(() => undefined);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

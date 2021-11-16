@@ -154,6 +154,27 @@ test('arity with user-made lambda function is ok', () => {
   ).toBe(1)
 })
 
+test('arity with user-made nullary function is ok', () => {
+  return expectResult(
+    stripIndent`
+    arity(() => undefined);
+  `,
+    { chapter: 1, native: true }
+  ).toBe(0)
+})
+
+test('arity with user-made function with rest parameter is ok', () => {
+  return expectResult(
+    stripIndent`
+    function test(...xs) {
+      return xs;
+    }
+    arity(test);
+  `,
+    { chapter: 3, native: true }
+  ).toBe(0)
+})
+
 test('arity with non-function arg f throws error', () => {
   return expectParsedError(
     stripIndent`
