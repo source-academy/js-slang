@@ -160,5 +160,5 @@ test('arity with non-function arg f throws error', () => {
     arity('function');
   `,
     { chapter: 1, native: true }
-  ).toMatchInlineSnapshot()
+  ).toMatchInlineSnapshot(`"Line 1: Error: arity expects a function as argument"`)
 })
