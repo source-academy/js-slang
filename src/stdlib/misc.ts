@@ -109,6 +109,21 @@ export function char_at(str: string, index: number) {
   return str[index]
 }
 
+/**
+ * arity returns the number of parameters a given function `f` expects.
+ *
+ * @param f Function whose arity is to be found. Required.
+ *
+ * An error is thrown if `f` is not a function.
+ */
+export function arity(f: Function) {
+  if (typeof f === 'function') {
+    return f.length
+  } else {
+    throw new Error('arity expects a function as argument')
+  }
+}
+
 export function get_time() {
   return new Date().getTime()
 }
