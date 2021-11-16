@@ -155,7 +155,8 @@ test('arity with user-made lambda function is ok', () => {
 })
 
 test('arity with non-function arg f throws error', () => {
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     arity('function');
   `,
     { chapter: 1, native: true }
