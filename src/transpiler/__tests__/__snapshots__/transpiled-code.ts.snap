@@ -15,6 +15,7 @@ exports[`Ensure no name clashes 1`] = `
   const is_undefined = nativeStorage.builtins.get(\\"is_undefined\\");
   const parse_int = nativeStorage.builtins.get(\\"parse_int\\");
   const char_at = nativeStorage.builtins.get(\\"char_at\\");
+  const arity = nativeStorage.builtins.get(\\"arity\\");
   const undefined = nativeStorage.builtins.get(\\"undefined\\");
   const NaN = nativeStorage.builtins.get(\\"NaN\\");
   const Infinity = nativeStorage.builtins.get(\\"Infinity\\");
@@ -131,6 +132,7 @@ Object {
   const is_undefined = nativeStorage.builtins.get(\\"is_undefined\\");
   const parse_int = nativeStorage.builtins.get(\\"parse_int\\");
   const char_at = nativeStorage.builtins.get(\\"char_at\\");
+  const arity = nativeStorage.builtins.get(\\"arity\\");
   const undefined = nativeStorage.builtins.get(\\"undefined\\");
   const NaN = nativeStorage.builtins.get(\\"NaN\\");
   const Infinity = nativeStorage.builtins.get(\\"Infinity\\");
