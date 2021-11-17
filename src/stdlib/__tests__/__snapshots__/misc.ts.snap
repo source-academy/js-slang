@@ -1,5 +1,115 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`arity ignores the rest parameter: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "arity(display);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`arity with function with parameters is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "arity(arity);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`arity with non-function arg f throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "arity('function');",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Error: arity expects a function as argument",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`arity with nullary function is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "arity(math_random);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`arity with user-made function is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function test(x, y) {
+  return x + y;
+}
+arity(test);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`arity with user-made function with rest parameter is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function test(...xs) {
+  return xs;
+}
+arity(test);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`arity with user-made lambda function is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "arity(x => x);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`arity with user-made nullary function is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "arity(() => undefined);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`char_at with non nonnegative integer second argument errors: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],

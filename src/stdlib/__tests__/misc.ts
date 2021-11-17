@@ -105,3 +105,81 @@ test('char_at with valid args (but index out of bounds) returns undefined', () =
   `
   ).toBe(undefined)
 })
+
+test('arity with nullary function is ok', () => {
+  return expectResult(
+    stripIndent`
+    arity(math_random);
+  `,
+    { chapter: 1, native: true }
+  ).toBe(0)
+})
+
+test('arity with function with parameters is ok', () => {
+  return expectResult(
+    stripIndent`
+    arity(arity);
+  `,
+    { chapter: 1, native: true }
+  ).toBe(1)
+})
+
+test('arity ignores the rest parameter', () => {
+  return expectResult(
+    stripIndent`
+    arity(display);
+  `,
+    { chapter: 1, native: true }
+  ).toBe(1)
+})
+
+test('arity with user-made function is ok', () => {
+  return expectResult(
+    stripIndent`
+    function test(x, y) {
+      return x + y;
+    }
+    arity(test);
+  `,
+    { chapter: 1, native: true }
+  ).toBe(2)
+})
+
+test('arity with user-made lambda function is ok', () => {
+  return expectResult(
+    stripIndent`
+    arity(x => x);
+  `,
+    { chapter: 1, native: true }
+  ).toBe(1)
+})
+
+test('arity with user-made nullary function is ok', () => {
+  return expectResult(
+    stripIndent`
+    arity(() => undefined);
+  `,
+    { chapter: 1, native: true }
+  ).toBe(0)
+})
+
+test('arity with user-made function with rest parameter is ok', () => {
+  return expectResult(
+    stripIndent`
+    function test(...xs) {
+      return xs;
+    }
+    arity(test);
+  `,
+    { chapter: 3, native: true }
+  ).toBe(0)
+})
+
+test('arity with non-function arg f throws error', () => {
+  return expectParsedError(
+    stripIndent`
+    arity('function');
+  `,
+    { chapter: 1, native: true }
+  ).toMatchInlineSnapshot(`"Line 1: Error: arity expects a function as argument"`)
+})

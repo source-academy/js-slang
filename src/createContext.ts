@@ -276,6 +276,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'is_undefined(val)', misc.is_undefined)
     defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
     defineBuiltin(context, 'char_at(str, index)', misc.char_at)
+    defineBuiltin(context, 'arity(f)', misc.arity)
     defineBuiltin(context, 'undefined', undefined)
     defineBuiltin(context, 'NaN', NaN)
     defineBuiltin(context, 'Infinity', Infinity)

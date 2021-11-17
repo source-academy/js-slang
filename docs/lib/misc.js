@@ -159,3 +159,11 @@ function stringify(v) {
  */
 function char_at(s, i) {}
 
+/**
+ * Returns the number of parameters the given function <CODE>f</CODE> expects,
+ * excluding the rest parameter.
+ * @param {function} f - given function
+ * @returns {number} number of parameters f expects
+ */
+ function arity(f) {
+ }
