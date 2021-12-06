@@ -1,6 +1,6 @@
 import { SVMFunction, Program } from '../vm/svml-compiler'
 import OpCodes from '../vm/opcodes'
-import { get_time, parse_int } from './misc'
+import { char_at, get_time, parse_int } from './misc'
 
 // functions should be sorted in alphabetical order. Refer to SVML spec on wiki
 // placeholders should be manually replaced with the correct machine code.
@@ -550,7 +550,10 @@ function _display_list(args) {
   return args[0] % args[1];
 }
 
-// hack to make the call to Program easier, just replace the index 93 (number of primitive functions + 2)
+// 93 placeholder
+function _char_at(str,index) {}
+
+// hack to make the call to Program easier, just replace the index 94 (number of primitive functions + 2)
 (() => 0)();
 `
 
@@ -651,7 +654,8 @@ export const PRIMITIVE_FUNCTION_NAMES = [
   'tail',
   'stringify',
   'prompt',
-  'display_list'
+  'display_list',
+  'char_at'
 ]
 
 export const VARARGS_NUM_ARGS = -1
@@ -727,7 +731,8 @@ export const BINARY_PRIMITIVES: [string, number, any?][] = [
   ['math_atan2', OpCodes.MATH_ATAN2, Math.atan2],
   ['math_imul', OpCodes.MATH_IMUL, Math.imul],
   ['math_pow', OpCodes.MATH_POW, Math.pow],
-  ['parse_int', OpCodes.PARSE_INT, parse_int]
+  ['parse_int', OpCodes.PARSE_INT, parse_int],
+  ['char_at', OpCodes.CHAR_AT, char_at]
 ]
 
 export const EXTERNAL_PRIMITIVES: [string, number][] = [

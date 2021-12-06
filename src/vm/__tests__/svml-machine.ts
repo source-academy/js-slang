@@ -793,6 +793,19 @@ describe('primitive opcodes', () => {
               `)
     })
 
+    test('CHAR_AT works', () => {
+      return expectDisplayResult(
+        stripIndent`
+          display(char_at("test", 1));
+        `,
+        { chapter: 3, variant: 'concurrent' }
+      ).toMatchInlineSnapshot(`
+                Array [
+                  "\\"e\\"",
+                ]
+              `)
+    })
+
     // variadic test
     test('list works', () => {
       return expectDisplayResult(

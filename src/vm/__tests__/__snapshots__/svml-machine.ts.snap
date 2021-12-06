@@ -134,6 +134,21 @@ display(array_length(p));",
 }
 `;
 
+exports[`primitive opcodes self-implemented CHAR_AT works: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display(char_at(\\"test\\", 1));",
+  "displayResult": Array [
+    "\\"e\\"",
+  ],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "all threads terminated",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`primitive opcodes self-implemented DISPLAY works for circular references: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],

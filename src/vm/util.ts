@@ -145,6 +145,7 @@ const OPCODES_STR = {
   [OpCodes.STRINGIFY]: 'STRINGIFY',
   [OpCodes.PROMPT]: 'PROMPT',
   [OpCodes.DISPLAY_LIST]: 'DISPLAY_LIST',
+  [OpCodes.CHAR_AT]: 'CHAR_AT',
 
   // Concurrency Opcodes
   [OpCodes.EXECUTE]: 'EXEC  ',
