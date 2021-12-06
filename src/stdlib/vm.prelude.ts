@@ -541,7 +541,16 @@ function _prompt(args) {
   }
 }
 
-// hack to make the call to Program easier, just replace the index 92 (number of primitive functions + 2)
+// 92 custom
+// replace MODG opcode (25) with display_list opcode
+// change number of arguments to varargs (-1)
+function _display_list(args) {
+  // display_list(args[0], args[1]);
+  // compile this instead for easier replacing
+  return args[0] % args[1];
+}
+
+// hack to make the call to Program easier, just replace the index 93 (number of primitive functions + 2)
 (() => 0)();
 `
 
@@ -641,7 +650,8 @@ export const PRIMITIVE_FUNCTION_NAMES = [
   'stream_to_list',
   'tail',
   'stringify',
-  'prompt'
+  'prompt',
+  'display_list'
 ]
 
 export const VARARGS_NUM_ARGS = -1
@@ -663,7 +673,8 @@ const VARARG_PRIMITIVES: [string, number?, number?][] = [
   ['list'],
   ['draw_data'],
   ['stream'],
-  ['prompt', OpCodes.NOTG, OpCodes.PROMPT]
+  ['prompt', OpCodes.NOTG, OpCodes.PROMPT],
+  ['display_list', OpCodes.MODG, OpCodes.DISPLAY_LIST]
 ]
 
 // primitives without a function should be manually implemented
@@ -722,7 +733,8 @@ export const BINARY_PRIMITIVES: [string, number, any?][] = [
 export const EXTERNAL_PRIMITIVES: [string, number][] = [
   ['display', OpCodes.DISPLAY],
   ['error', OpCodes.ERROR],
-  ['prompt', OpCodes.PROMPT]
+  ['prompt', OpCodes.PROMPT],
+  ['display_list', OpCodes.DISPLAY_LIST]
 ]
 
 export const CONSTANT_PRIMITIVES: [string, any][] = [

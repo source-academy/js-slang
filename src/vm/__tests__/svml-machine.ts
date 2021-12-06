@@ -778,6 +778,21 @@ describe('primitive opcodes', () => {
               `)
     })
 
+    test('DISPLAY_LIST works', () => {
+      return expectDisplayResult(
+        stripIndent`
+          display_list(pair(1, null));
+          display_list(pair(1, pair(2, null)), "test");
+        `,
+        { chapter: 3, variant: 'concurrent' }
+      ).toMatchInlineSnapshot(`
+                Array [
+                  "list(1)",
+                  "test list(1, 2)",
+                ]
+              `)
+    })
+
     // variadic test
     test('list works', () => {
       return expectDisplayResult(

@@ -153,6 +153,23 @@ display(p);",
 }
 `;
 
+exports[`primitive opcodes self-implemented DISPLAY_LIST works: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display_list(pair(1, null));
+display_list(pair(1, pair(2, null)), \\"test\\");",
+  "displayResult": Array [
+    "list(1)",
+    "test list(1, 2)",
+  ],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "all threads terminated",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`primitive opcodes self-implemented ERROR works: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],

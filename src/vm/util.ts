@@ -144,6 +144,7 @@ const OPCODES_STR = {
   [OpCodes.STREAM]: 'STREAM',
   [OpCodes.STRINGIFY]: 'STRINGIFY',
   [OpCodes.PROMPT]: 'PROMPT',
+  [OpCodes.DISPLAY_LIST]: 'DISPLAY_LIST',
 
   // Concurrency Opcodes
   [OpCodes.EXECUTE]: 'EXEC  ',

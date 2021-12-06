@@ -1523,6 +1523,17 @@ M[OpCodes.PROMPT] = () => {
   PC = PC + 1
 }
 
+M[OpCodes.DISPLAY_LIST] = () => {
+  POP_OS()
+  C = RES
+  POP_OS()
+  D = RES
+  externalFunctions.get(OpCodes.DISPLAY_LIST)(convertToJsFormat(D), convertToJsFormat(C))
+  A = D
+  PUSH_OS()
+  PC = PC + 1
+}
+
 addPrimitiveOpCodeHandlers()
 
 // Internal functions. They are called directly in internal function calls
