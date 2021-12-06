@@ -96,6 +96,43 @@ display(NaN);",
 }
 `;
 
+exports[`primitive opcodes self-implemented ARITY fails for ill-typed argument: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "arity(1);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Error: execution aborted: Expected closure, got number for arity.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`primitive opcodes self-implemented ARITY works: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display(arity(math_random));
+display(arity(accumulate));
+display(arity(display));
+display(arity((x, y) => x));
+function f() {}
+display(arity(f));",
+  "displayResult": Array [
+    "0",
+    "3",
+    "0",
+    "2",
+    "0",
+  ],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "all threads terminated",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`primitive opcodes self-implemented ARRAY_LEN fails for ill-typed argument: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],

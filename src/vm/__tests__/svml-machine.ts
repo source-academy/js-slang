@@ -806,6 +806,37 @@ describe('primitive opcodes', () => {
               `)
     })
 
+    test('ARITY works', () => {
+      return expectDisplayResult(
+        stripIndent`
+          display(arity(math_random));
+          display(arity(accumulate));
+          display(arity(display));
+          display(arity((x, y) => x));
+          function f() {}
+          display(arity(f));
+        `,
+        { chapter: 3, variant: 'concurrent' }
+      ).toMatchInlineSnapshot(`
+                Array [
+                  "0",
+                  "3",
+                  "0",
+                  "2",
+                  "0",
+                ]
+              `)
+    })
+
+    test('ARITY fails for ill-typed argument', () => {
+      return expectParsedError('arity(1);', {
+        chapter: 3,
+        variant: 'concurrent'
+      }).toMatchInlineSnapshot(
+        `"Error: execution aborted: Expected closure, got number for arity."`
+      )
+    })
+
     // variadic test
     test('list works', () => {
       return expectDisplayResult(

@@ -1534,6 +1534,30 @@ M[OpCodes.DISPLAY_LIST] = () => {
   PC = PC + 1
 }
 
+M[OpCodes.ARITY] = () => {
+  POP_OS()
+  D = RES
+  G = HEAP[D + TAG_SLOT] === CLOSURE_TAG
+  if (G) {
+    H = HEAP[D + CLOSURE_FUNC_INDEX_SLOT]
+    H = FUNC[H]
+    A = H[FUNC_NUM_ARGS_OFFSET]
+    if (A === VARARGS_NUM_ARGS) {
+      A = 0
+    }
+    NEW_NUMBER()
+    A = RES
+    PUSH_OS()
+    PC = PC + 1
+  } else {
+    STATE = TYPE_ERROR
+    ERROR_MSG_ARGS[0] = 'closure'
+    ERROR_MSG_ARGS[1] = `${node_kind(HEAP[D + TAG_SLOT])}`
+    ERROR_MSG_ARGS[2] = 'arity'
+    RUNNING = false
+  }
+}
+
 addPrimitiveOpCodeHandlers()
 
 // Internal functions. They are called directly in internal function calls

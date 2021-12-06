@@ -553,7 +553,10 @@ function _display_list(args) {
 // 93 placeholder
 function _char_at(str,index) {}
 
-// hack to make the call to Program easier, just replace the index 94 (number of primitive functions + 2)
+// 94 placeholder
+function _arity(f) {}
+
+// hack to make the call to Program easier, just replace the index 95 (number of primitive functions + 2)
 (() => 0)();
 `
 
@@ -655,7 +658,8 @@ export const PRIMITIVE_FUNCTION_NAMES = [
   'stringify',
   'prompt',
   'display_list',
-  'char_at'
+  'char_at',
+  'arity'
 ]
 
 export const VARARGS_NUM_ARGS = -1
@@ -724,7 +728,8 @@ export const UNARY_PRIMITIVES: [string, number, any?][] = [
   ['math_tan', OpCodes.MATH_TAN, Math.tan],
   ['math_tanh', OpCodes.MATH_TANH, Math.tanh],
   ['math_trunc', OpCodes.MATH_TRUNC, Math.trunc],
-  ['stringify', OpCodes.STRINGIFY]
+  ['stringify', OpCodes.STRINGIFY],
+  ['arity', OpCodes.ARITY]
 ]
 
 export const BINARY_PRIMITIVES: [string, number, any?][] = [
