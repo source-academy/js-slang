@@ -150,7 +150,11 @@ function _is_pair(x) {
 
 // 23
 function _is_stream(xs) {
-  return is_null(xs) || (is_pair(xs) && is_stream(stream_tail(xs)));
+  return is_null(xs) ||
+    (is_pair(xs) &&
+    is_function(tail(xs)) &&
+    arity(tail(xs)) === 0 &&
+    is_stream(stream_tail(xs)));
 }
 
 // 24 placeholder
