@@ -646,6 +646,27 @@ describe('primitive opcodes', () => {
       )
     })
 
+    // Also note the result in visualiseListResult in the .snap file
+    test('DRAW_DATA works', () => {
+      return expectDisplayResult(
+        stripIndent`
+          display(draw_data(pair(true, [1])));
+          display(draw_data());
+          display(draw_data(null, list(undefined, 2), "3"));
+        `,
+        {
+          chapter: 3,
+          variant: 'concurrent'
+        }
+      ).toMatchInlineSnapshot(`
+                Array [
+                  "[true, [1]]",
+                  "[]",
+                  "[null, [undefined, [2, null]], \\"3\\"]",
+                ]
+              `)
+    })
+
     test('ERROR works', () => {
       return expectParsedError('error(123);', {
         chapter: 3,

@@ -222,6 +222,46 @@ display_list(pair(1, pair(2, null)), \\"test\\");",
 }
 `;
 
+exports[`primitive opcodes self-implemented DRAW_DATA works: expectDisplayResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display(draw_data(pair(true, [1])));
+display(draw_data());
+display(draw_data(null, list(undefined, 2), \\"3\\"));",
+  "displayResult": Array [
+    "[true, [1]]",
+    "[]",
+    "[null, [undefined, [2, null]], \\"3\\"]",
+  ],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "all threads terminated",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [
+    Array [
+      Array [
+        true,
+        Array [
+          1,
+        ],
+      ],
+    ],
+    Array [],
+    Array [
+      null,
+      Array [
+        undefined,
+        Array [
+          2,
+          null,
+        ],
+      ],
+      "3",
+    ],
+  ],
+}
+`;
+
 exports[`primitive opcodes self-implemented ERROR works: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],

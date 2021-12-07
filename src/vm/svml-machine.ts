@@ -1412,10 +1412,9 @@ M[OpCodes.DISPLAY] = () => {
   PC = PC + 1
 }
 
-// only works with lists and numbers
 M[OpCodes.DRAW_DATA] = () => {
   POP_OS()
-  externalFunctions.get(OpCodes.DRAW_DATA)(convertToJsFormat(RES))
+  externalFunctions.get(OpCodes.DRAW_DATA)(...convertToJsFormat(RES))
   A = RES
   PUSH_OS()
   PC = PC + 1
