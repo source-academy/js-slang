@@ -1,7 +1,7 @@
 \begin{alignat*}{9}
 && \textit{program}    &&\quad ::= &\quad && \textit{import-directive} ... \ \textit{statement} ...
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p6}{program}} \\[1mm]
-&& \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{import}}\ \textbf{\texttt{\{}}\ \textit{import-names} \ \textbf{\texttt{\}}}\ \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{;}}
+&& \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{import}}\ \textbf{\texttt{\{}}\ \textit{import-names} \ \textbf{\texttt{\}}}\ \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{;}} \quad
                                                            && \textrm{import directive} \\[1mm]
 && \textit{import-names}   && ::= &\quad &&  \epsilon\ | \  \textit{import-name} \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{import-name}\ ) ...
@@ -48,9 +48,10 @@
 &&                       && |   &\quad &&   \textit{unary-operator} \ 
                                             \textit{expression}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p4}{unary operator combination}}\\
-&&                       && |   &\quad &&   \textit{expression} \ 
-                                            \textbf{\texttt{(}}\ \textit{expressions}\
-                                            \textbf{\texttt{)}}
+&&                       && |   &\quad &&  \textit{expression} \  \textit{binary-logical} \ 
+                                            \textit{expression} \qquad
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p5}{logical composition}}\\
+&&                       && |   &\quad &&   \textit{expression}\ \textbf{\texttt{(}}\ \textit{expressions}\ \textbf{\texttt{)}}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{function application}}\\
 &&                       && |   &\quad &&   (\ \textit{name}\ | \
                                                \textbf{\texttt{(}}\ \textit{names}\ \textbf{\texttt{)}}\
@@ -69,15 +70,15 @@
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p1}{conditional expression}}\\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
                                             \textbf{\texttt{)}} && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p6}{parenthesised expression}}\\[1mm]
-&& \textit{binary-operator}    \ 
+&& \textit{binary-operator}   
                         && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
-                                   \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}}\ \\
-&&                       && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}\
-                                          |\ \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
-                                          && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p4}{binary operator}}\\[1mm]
+                                            \textbf{\texttt{===}}\ |\ \textbf{\texttt{!==}} \\
+&&                      && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}     && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p4}{binary operator}}\\[1mm]
 && \textit{unary-operator}    
                         && ::= &\quad && \textbf{\texttt{!}}\ |\ \textbf{\texttt{-}}
                         && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p4}{unary operator}}\\[1mm]
+&& \textit{binary-logical}   && ::=  &\quad &&  \textbf{\texttt{\&\&}}\ |\ \texttt{\textbf{||}}
+                                          && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p5}{logical composition symbol}}\\[1mm]
 && \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
                                                                \ \textbf{\texttt{,}} \
                                                                  \textit{expression} \ 
