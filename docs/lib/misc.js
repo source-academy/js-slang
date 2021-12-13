@@ -101,7 +101,7 @@ function prompt(s) {
 /**
  * Optional second argument. If present,
  * displays the given string <CODE>s</CODE>, followed by a space character, followed by the
- * value <CODE>v</CODE> in the console.
+ * value <CODE>v</CODE> in the console. Arguments after the second argument are ignored.
  * If second argument not present,
  * just displays the value <CODE>v</CODE> in the console.
  * The notation used for the display of values
@@ -112,14 +112,14 @@ function prompt(s) {
  * @param {string} s to be displayed, preceding <CODE>v</CODE>, optional argument
  * @returns {value} v, the first argument value
  */
-function display(v, s) {
+function display(v, s, ...ignore) {
 }
 
 /**
  * Optional second argument.
  * If present,
  * displays the given string <CODE>s</CODE>, followed by a space character, followed by the
- * value <CODE>v</CODE> in the console with error flag.
+ * value <CODE>v</CODE> in the console with error flag. Arguments after the second argument are ignored.
  * If second argument not present,
  * just displays the value <CODE>v</CODE> in the console with error flag.
  * The evaluation
@@ -131,7 +131,7 @@ function display(v, s) {
  * @param {value} v to be displayed
  * @param {string} s to be displayed, preceding <CODE>v</CODE>
  */
-function error(v, s) {
+function error(v, s, ...ignore) {
 }
 
 /**
