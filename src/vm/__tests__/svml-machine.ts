@@ -1,6 +1,7 @@
 import {
   expectParsedError,
   expectDisplayResult,
+  expectVisualiseListResult,
   expectResult,
   getDisplayResult,
   snapshotSuccess
@@ -648,11 +649,11 @@ describe('primitive opcodes', () => {
 
     // Also note the result in visualiseListResult in the .snap file
     test('DRAW_DATA works', () => {
-      return expectDisplayResult(
+      return expectVisualiseListResult(
         stripIndent`
-          display(draw_data(pair(true, [1])));
-          display(draw_data());
-          display(draw_data(null, list(undefined, 2), "3"));
+          draw_data(pair(true, [1]));
+          draw_data();
+          draw_data(null, list(undefined, 2), "3");
         `,
         {
           chapter: 3,
@@ -660,9 +661,26 @@ describe('primitive opcodes', () => {
         }
       ).toMatchInlineSnapshot(`
                 Array [
-                  "[true, [1]]",
-                  "[]",
-                  "[null, [undefined, [2, null]], \\"3\\"]",
+                  Array [
+                    Array [
+                      true,
+                      Array [
+                        1,
+                      ],
+                    ],
+                  ],
+                  Array [],
+                  Array [
+                    null,
+                    Array [
+                      undefined,
+                      Array [
+                        2,
+                        null,
+                      ],
+                    ],
+                    "3",
+                  ],
                 ]
               `)
     })
