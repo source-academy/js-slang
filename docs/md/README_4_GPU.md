@@ -4,7 +4,7 @@ by making use of their GPUs!
 ## What names are predeclared in Source §4 GPU?
 
 On the right, you see all predeclared names of Source §4, in alphabetical
-order. Click on a name to see how it is used. They come in these two groups:
+order. Click on a name to see how it is defined and used. They come in these groups:
   <ul>
     <li>
       <a href="../MISC/index.html">MISC</a>: Miscellaneous constants and functions

@@ -11,7 +11,7 @@ The program evaluator then automatically identifies the values that meet the req
 ## What names are predeclared in Source §3 Non-Det?
 
 On the right, you see all predeclared names of Source §3 Non-Det, in alphabetical
-order. Click on a name to see how it is used.
+order. Click on a name to see how it is defined and used. They come in these groups:
   <ul>
     <li>
       <a href="../MISC/index.html">MISC</a>: Miscellaneous constants and functions
