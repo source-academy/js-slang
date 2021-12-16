@@ -6,7 +6,8 @@ of Computer Programs, JavaScript Adaptation</a> (SICP JS).
 ## What names are predeclared in Source §2?
 
 On the right, you see all predeclared names of Source §2, in alphabetical
-order. Click on a name to see how it is used. They come in these three groups:
+order. Click on a name to see how it is defined and used. They come in
+these groups:
   <ul>
     <li>
       <a href="../MISC/">MISC</a>: Miscellaneous constants and functions
