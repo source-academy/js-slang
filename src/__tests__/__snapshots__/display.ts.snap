@@ -155,6 +155,19 @@ Object {
 }
 `;
 
+exports[`display with no arguments throws an error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected 1 or more arguments, but got 0.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`raw_display can be used to display (unescaped) strings directly: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],

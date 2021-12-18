@@ -260,7 +260,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     externalBuiltIns.alert(v, '', context.externalContext)
     context.nativeStorage.maxExecTime += Date.now() - start
   }
-  const visualiseList = (...v: Value) => externalBuiltIns.visualiseList(v, context.externalContext)
+  const visualiseList = (...v: Value) => {
+    externalBuiltIns.visualiseList(v, context.externalContext)
+    return v[0]
+  }
 
   if (context.chapter >= 1) {
     defineBuiltin(context, 'get_time()', misc.get_time)
@@ -312,7 +315,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'head(xs)', new LazyBuiltIn(list.head, true))
       defineBuiltin(context, 'tail(xs)', new LazyBuiltIn(list.tail, true))
       defineBuiltin(context, 'is_null(val)', new LazyBuiltIn(list.is_null, true))
-      defineBuiltin(context, 'draw_data(...xs)', new LazyBuiltIn(visualiseList, true), 0)
+      defineBuiltin(context, 'draw_data(...xs)', new LazyBuiltIn(visualiseList, true), 1)
       defineBuiltin(context, 'is_list(val)', new LazyBuiltIn(list.is_list, true))
     } else {
       defineBuiltin(context, 'pair(left, right)', list.pair)
@@ -321,7 +324,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'tail(xs)', list.tail)
       defineBuiltin(context, 'is_null(val)', list.is_null)
       defineBuiltin(context, 'list(...values)', list.list, 0)
-      defineBuiltin(context, 'draw_data(...xs)', visualiseList, 0)
+      defineBuiltin(context, 'draw_data(...xs)', visualiseList, 1)
       defineBuiltin(context, 'display_list(val, prepend = undefined)', displayList, 0)
       defineBuiltin(context, 'is_list(val)', list.is_list)
     }

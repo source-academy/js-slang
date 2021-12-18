@@ -1,6 +1,6 @@
 import { SVMFunction, Program } from '../vm/svml-compiler'
 import OpCodes from '../vm/opcodes'
-import { get_time, parse_int } from './misc'
+import { char_at, get_time, parse_int } from './misc'
 
 // functions should be sorted in alphabetical order. Refer to SVML spec on wiki
 // placeholders should be manually replaced with the correct machine code.
@@ -47,11 +47,26 @@ function _build_stream(n, fun) {
 function _display(args) {
   // display(args[0], args[1]);
   // compile this instead for easier replacing
-  return args[0] % args[1];
+  if (array_length(args) === 0) {
+    error('Expected 1 or more arguments, but got ' + stringify(array_length(args)) + '.');
+  } else {
+    return args[0] % args[1];
+  }
 }
 
-// 6 placeholder
-function _draw_data(args) {}
+// 6 custom
+// following math_hypot's implementation style
+// using the ... operator on the machine
+// change number of arguments to varargs (-1)
+// replace NOTG opcode with DRAW_DATA opcode
+function _draw_data(args) {
+  if (array_length(args) === 0) {
+    error('Expected 1 or more arguments, but got ' + stringify(array_length(args)) + '.');
+  } else {
+    !args;
+    return args[0];
+  }
+}
 
 // 7
 function _enum_list(start, end) {
@@ -150,7 +165,11 @@ function _is_pair(x) {
 
 // 23
 function _is_stream(xs) {
-  return is_null(xs) || (is_pair(xs) && is_stream(stream_tail(xs)));
+  return is_null(xs) ||
+    (is_pair(xs) &&
+    is_function(tail(xs)) &&
+    arity(tail(xs)) === 0 &&
+    is_stream(stream_tail(xs)));
 }
 
 // 24 placeholder
@@ -541,7 +560,22 @@ function _prompt(args) {
   }
 }
 
-// hack to make the call to Program easier, just replace the index 92 (number of primitive functions + 2)
+// 92 custom
+// replace MODG opcode (25) with display_list opcode
+// change number of arguments to varargs (-1)
+function _display_list(args) {
+  // display_list(args[0], args[1]);
+  // compile this instead for easier replacing
+  return args[0] % args[1];
+}
+
+// 93 placeholder
+function _char_at(str,index) {}
+
+// 94 placeholder
+function _arity(f) {}
+
+// hack to make the call to Program easier, just replace the index 95 (number of primitive functions + 2)
 (() => 0)();
 `
 
@@ -641,7 +675,10 @@ export const PRIMITIVE_FUNCTION_NAMES = [
   'stream_to_list',
   'tail',
   'stringify',
-  'prompt'
+  'prompt',
+  'display_list',
+  'char_at',
+  'arity'
 ]
 
 export const VARARGS_NUM_ARGS = -1
@@ -661,9 +698,10 @@ const VARARG_PRIMITIVES: [string, number?, number?][] = [
   ['math_min', OpCodes.MODG, OpCodes.MATH_MIN],
   ['math_hypot', OpCodes.NOTG, OpCodes.MATH_HYPOT],
   ['list'],
-  ['draw_data'],
+  ['draw_data', OpCodes.NOTG, OpCodes.DRAW_DATA],
   ['stream'],
-  ['prompt', OpCodes.NOTG, OpCodes.PROMPT]
+  ['prompt', OpCodes.NOTG, OpCodes.PROMPT],
+  ['display_list', OpCodes.MODG, OpCodes.DISPLAY_LIST]
 ]
 
 // primitives without a function should be manually implemented
@@ -709,20 +747,24 @@ export const UNARY_PRIMITIVES: [string, number, any?][] = [
   ['math_tan', OpCodes.MATH_TAN, Math.tan],
   ['math_tanh', OpCodes.MATH_TANH, Math.tanh],
   ['math_trunc', OpCodes.MATH_TRUNC, Math.trunc],
-  ['stringify', OpCodes.STRINGIFY]
+  ['stringify', OpCodes.STRINGIFY],
+  ['arity', OpCodes.ARITY]
 ]
 
 export const BINARY_PRIMITIVES: [string, number, any?][] = [
   ['math_atan2', OpCodes.MATH_ATAN2, Math.atan2],
   ['math_imul', OpCodes.MATH_IMUL, Math.imul],
   ['math_pow', OpCodes.MATH_POW, Math.pow],
-  ['parse_int', OpCodes.PARSE_INT, parse_int]
+  ['parse_int', OpCodes.PARSE_INT, parse_int],
+  ['char_at', OpCodes.CHAR_AT, char_at]
 ]
 
 export const EXTERNAL_PRIMITIVES: [string, number][] = [
   ['display', OpCodes.DISPLAY],
+  ['draw_data', OpCodes.DRAW_DATA],
   ['error', OpCodes.ERROR],
-  ['prompt', OpCodes.PROMPT]
+  ['prompt', OpCodes.PROMPT],
+  ['display_list', OpCodes.DISPLAY_LIST]
 ]
 
 export const CONSTANT_PRIMITIVES: [string, any][] = [

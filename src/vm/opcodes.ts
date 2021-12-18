@@ -137,6 +137,9 @@ export enum OpCodes {
   STREAM = 1048,
   STRINGIFY = 1049,
   PROMPT = 1050,
+  DISPLAY_LIST = 1051,
+  CHAR_AT = 1052,
+  ARITY = 1053,
 
   // Source 3 Concurrenct Opcodes
   EXECUTE = 2000,

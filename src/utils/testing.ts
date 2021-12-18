@@ -243,6 +243,15 @@ export function expectDisplayResult(code: string, options: TestOptions = {}) {
   ).resolves
 }
 
+export function expectVisualiseListResult(code: string, options: TestOptions = {}) {
+  return expect(
+    testSuccess(code, options)
+      .then(snapshot('expectVisualiseListResult'))
+      .then(testResult => testResult.visualiseListResult)
+      .catch(e => console.log(e))
+  ).resolves
+}
+
 // for use in concurrent testing
 export async function getDisplayResult(code: string, options: TestOptions = {}) {
   return await testSuccess(code, options).then(testResult => testResult.displayResult!)

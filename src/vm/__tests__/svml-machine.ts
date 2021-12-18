@@ -1,6 +1,7 @@
 import {
   expectParsedError,
   expectDisplayResult,
+  expectVisualiseListResult,
   expectResult,
   getDisplayResult,
   snapshotSuccess
@@ -614,6 +615,18 @@ describe('primitive opcodes', () => {
               `)
     })
 
+    test('DISPLAY throws error if no argumentns', () => {
+      return expectParsedError(
+        stripIndent`
+          display();
+        `,
+        {
+          chapter: 3,
+          variant: 'concurrent'
+        }
+      ).toMatchInlineSnapshot(`"Error: \\"Expected 1 or more arguments, but got 0.\\""`)
+    })
+
     test('ARRAY_LEN works', () => {
       return expectDisplayResult(
         stripIndent`
@@ -644,6 +657,71 @@ describe('primitive opcodes', () => {
       }).toMatchInlineSnapshot(
         `"Error: execution aborted: Expected array, got number for array_length."`
       )
+    })
+
+    test('DRAW_DATA works', () => {
+      return expectVisualiseListResult(
+        stripIndent`
+          draw_data(pair(true, [1]));
+          draw_data(null, list(undefined, 2), "3");
+        `,
+        {
+          chapter: 3,
+          variant: 'concurrent'
+        }
+      ).toMatchInlineSnapshot(`
+                Array [
+                  Array [
+                    Array [
+                      true,
+                      Array [
+                        1,
+                      ],
+                    ],
+                  ],
+                  Array [
+                    null,
+                    Array [
+                      undefined,
+                      Array [
+                        2,
+                        null,
+                      ],
+                    ],
+                    "3",
+                  ],
+                ]
+              `)
+    })
+
+    test('DRAW_DATA returns correct values', () => {
+      return expectDisplayResult(
+        stripIndent`
+          display(draw_data(pair(true, [1])));
+          display(draw_data(null, list(undefined, 2), "3"));
+        `,
+        {
+          chapter: 3,
+          variant: 'concurrent'
+        }
+      ).toMatchInlineSnapshot(`
+                Array [
+                  "[true, [1]]",
+                  "null",
+                ]
+              `)
+    })
+
+    test('DRAW_DATA throws error if no argumentns', () => {
+      return expectParsedError(
+        stripIndent`
+          draw_data();
+        `,
+        {
+          chapter: 3,
+          variant: 'concurrent'
+        }
+      ).toMatchInlineSnapshot(`"Error: \\"Expected 1 or more arguments, but got 0.\\""`)
     })
 
     test('ERROR works', () => {
@@ -776,6 +854,65 @@ describe('primitive opcodes', () => {
                   "5",
                 ]
               `)
+    })
+
+    test('DISPLAY_LIST works', () => {
+      return expectDisplayResult(
+        stripIndent`
+          display_list(pair(1, null));
+          display_list(pair(1, pair(2, null)), "test");
+        `,
+        { chapter: 3, variant: 'concurrent' }
+      ).toMatchInlineSnapshot(`
+                Array [
+                  "list(1)",
+                  "test list(1, 2)",
+                ]
+              `)
+    })
+
+    test('CHAR_AT works', () => {
+      return expectDisplayResult(
+        stripIndent`
+          display(char_at("test", 1));
+        `,
+        { chapter: 3, variant: 'concurrent' }
+      ).toMatchInlineSnapshot(`
+                Array [
+                  "\\"e\\"",
+                ]
+              `)
+    })
+
+    test('ARITY works', () => {
+      return expectDisplayResult(
+        stripIndent`
+          display(arity(math_random));
+          display(arity(accumulate));
+          display(arity(display));
+          display(arity((x, y) => x));
+          function f() {}
+          display(arity(f));
+        `,
+        { chapter: 3, variant: 'concurrent' }
+      ).toMatchInlineSnapshot(`
+                Array [
+                  "0",
+                  "3",
+                  "0",
+                  "2",
+                  "0",
+                ]
+              `)
+    })
+
+    test('ARITY fails for ill-typed argument', () => {
+      return expectParsedError('arity(1);', {
+        chapter: 3,
+        variant: 'concurrent'
+      }).toMatchInlineSnapshot(
+        `"Error: execution aborted: Expected closure, got number for arity."`
+      )
     })
 
     // variadic test

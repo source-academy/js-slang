@@ -148,6 +148,10 @@ export function list(...values: substituterNodes[]): es.ArrayExpression {
   return ret as es.ArrayExpression
 }
 //   defineBuiltin(context, 'draw_data(xs)', visualiseList)
-export function draw_data(...xs: substituterNodes[]): es.Identifier {
-  return ast.primitive(undefined) as es.Identifier
+export function draw_data(...xs: substituterNodes[]): substituterNodes {
+  if (xs.length === 0) {
+    return ast.primitive(undefined)
+  } else {
+    return xs[0]
+  }
 }
