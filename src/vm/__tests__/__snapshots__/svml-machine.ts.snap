@@ -186,7 +186,7 @@ Object {
 }
 `;
 
-exports[`primitive opcodes self-implemented DISPLAY throws error if no argumentns: expectParsedError 1`] = `
+exports[`primitive opcodes self-implemented DISPLAY throws error if no arguments: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "display();",
@@ -272,7 +272,7 @@ display(draw_data(null, list(undefined, 2), \\"3\\"));",
 }
 `;
 
-exports[`primitive opcodes self-implemented DRAW_DATA throws error if no argumentns: expectParsedError 1`] = `
+exports[`primitive opcodes self-implemented DRAW_DATA throws error if no arguments: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
   "code": "draw_data();",
