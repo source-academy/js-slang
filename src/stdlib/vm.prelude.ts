@@ -47,7 +47,11 @@ function _build_stream(n, fun) {
 function _display(args) {
   // display(args[0], args[1]);
   // compile this instead for easier replacing
-  return args[0] % args[1];
+  if (array_length(args) === 0) {
+    error('Expected 1 or more arguments, but got ' + stringify(array_length(args)) + '.');
+  } else {
+    return args[0] % args[1];
+  }
 }
 
 // 6 custom
@@ -56,11 +60,11 @@ function _display(args) {
 // change number of arguments to varargs (-1)
 // replace NOTG opcode with DRAW_DATA opcode
 function _draw_data(args) {
-  !args;
-  if (array_length(args) === 1) {
-    return args[0]; // Return argument without array container
+  if (array_length(args) === 0) {
+    error('Expected 1 or more arguments, but got ' + stringify(array_length(args)) + '.');
   } else {
-    return args; // If 0 args or more than 1 args, keep array container
+    !args;
+    return args[0];
   }
 }
 

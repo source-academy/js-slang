@@ -615,6 +615,18 @@ describe('primitive opcodes', () => {
               `)
     })
 
+    test('DISPLAY throws error if no argumentns', () => {
+      return expectParsedError(
+        stripIndent`
+          display();
+        `,
+        {
+          chapter: 3,
+          variant: 'concurrent'
+        }
+      ).toMatchInlineSnapshot(`"Error: \\"Expected 1 or more arguments, but got 0.\\""`)
+    })
+
     test('ARRAY_LEN works', () => {
       return expectDisplayResult(
         stripIndent`
@@ -647,12 +659,10 @@ describe('primitive opcodes', () => {
       )
     })
 
-    // Also note the result in visualiseListResult in the .snap file
     test('DRAW_DATA works', () => {
       return expectVisualiseListResult(
         stripIndent`
           draw_data(pair(true, [1]));
-          draw_data();
           draw_data(null, list(undefined, 2), "3");
         `,
         {
@@ -669,7 +679,6 @@ describe('primitive opcodes', () => {
                       ],
                     ],
                   ],
-                  Array [],
                   Array [
                     null,
                     Array [
@@ -683,6 +692,36 @@ describe('primitive opcodes', () => {
                   ],
                 ]
               `)
+    })
+
+    test('DRAW_DATA returns correct values', () => {
+      return expectDisplayResult(
+        stripIndent`
+          display(draw_data(pair(true, [1])));
+          display(draw_data(null, list(undefined, 2), "3"));
+        `,
+        {
+          chapter: 3,
+          variant: 'concurrent'
+        }
+      ).toMatchInlineSnapshot(`
+                Array [
+                  "[true, [1]]",
+                  "null",
+                ]
+              `)
+    })
+
+    test('DRAW_DATA throws error if no argumentns', () => {
+      return expectParsedError(
+        stripIndent`
+          draw_data();
+        `,
+        {
+          chapter: 3,
+          variant: 'concurrent'
+        }
+      ).toMatchInlineSnapshot(`"Error: \\"Expected 1 or more arguments, but got 0.\\""`)
     })
 
     test('ERROR works', () => {

@@ -87,3 +87,9 @@ Array [
 ]
 `)
 })
+
+test('display with no arguments throws an error', () => {
+  return expectParsedError(`display();`, { chapter: 100 }).toMatchInlineSnapshot(
+    `"Line 1: Expected 1 or more arguments, but got 0."`
+  )
+})
