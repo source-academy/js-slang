@@ -615,7 +615,7 @@ describe('primitive opcodes', () => {
               `)
     })
 
-    test('DISPLAY throws error if no argumentns', () => {
+    test('DISPLAY throws error if no arguments', () => {
       return expectParsedError(
         stripIndent`
           display();
@@ -712,7 +712,7 @@ describe('primitive opcodes', () => {
               `)
     })
 
-    test('DRAW_DATA throws error if no argumentns', () => {
+    test('DRAW_DATA throws error if no arguments', () => {
       return expectParsedError(
         stripIndent`
           draw_data();
