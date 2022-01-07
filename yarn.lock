@@ -1101,7 +1101,7 @@
     source-map "^0.6.1"
     write-file-atomic "^3.0.0"
 
-"@jest/types@^25.1.0", "@jest/types@^25.5.0":
+"@jest/types@^25.5.0":
   version "25.5.0"
   resolved "https://registry.yarnpkg.com/@jest/types/-/types-25.5.0.tgz#4d6a4793f7b9599fc3680877b856a97dbccf2a9d"
   integrity sha512-OXD0RgQ86Tu3MazKo8bnrkDRaDXXMGUqd+kTtLtK1Zb7CRzQcaSRPPPV37SvYTdevXEBVxe0HXylEjs8ibkmCw==
@@ -1111,7 +1111,7 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
-"@jest/types@^26.6.2":
+"@jest/types@^26.0.23", "@jest/types@^26.6.2":
   version "26.6.2"
   resolved "https://registry.yarnpkg.com/@jest/types/-/types-26.6.2.tgz#bef5a532030e1d88a2f5a6d933f84e97226ed48e"
   integrity sha512-fC6QCp7Sc5sX6g8Tvbmj4XUTbyrik0akgRy03yjXbQaBWWNWGE7SGtJk98m0N8nzegD/7SggrUlivxo5ax4KWQ==
@@ -3638,16 +3638,16 @@ jest-haste-map@^26.6.2:
     fsevents "^2.1.2"
 
 jest-html-reporter@^3.2.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/jest-html-reporter/-/jest-html-reporter-3.3.0.tgz#5900e16742bc4d209b47185a8b7d47eb77027121"
-  integrity sha512-C3pV625+Zy0ly0KQLDj2VDFNfiFYHrOkIh/AV20jZptbYfSlxtqEDOKGW5OKUxnxdBPj+73fGMgnLysxenNBYA==
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/jest-html-reporter/-/jest-html-reporter-3.4.2.tgz#0c63935d239312065d0d63940c6f0b4c951cf6e1"
+  integrity sha512-2dA4oJdLP2+rewakwLdBhBCdk50zqzgD6Wk0fvsbdS0C9WwpuePwd0kQWRRdfLzNJM5CgC4O98wkK1lBFqJVrw==
   dependencies:
     "@babel/core" "^7.9.0"
     "@babel/preset-env" "^7.8.7"
     "@babel/preset-typescript" "^7.8.3"
     "@jest/console" "^25.1.0"
     "@jest/test-result" "^25.1.0"
-    "@jest/types" "^25.1.0"
+    "@jest/types" "^26.0.23"
     "@types/dateformat" "^3.0.1"
     "@types/jest" "^25.1.4"
     "@types/mkdirp" "^1.0.0"
@@ -3656,7 +3656,7 @@ jest-html-reporter@^3.2.0:
     dateformat "3.0.2"
     mkdirp "^1.0.3"
     sinon "^9.0.1"
-    strip-ansi "6.0.0"
+    strip-ansi "6.0.1"
     xmlbuilder "15.0.0"
 
 jest-jasmine2@^26.6.3:
@@ -5510,12 +5510,12 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-strip-ansi@6.0.0, strip-ansi@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.0.tgz#0b1571dd7669ccd4f3e06e14ef1eed26225ae532"
-  integrity sha512-AuvKTrTfQNYNIctbR1K/YGTR1756GycPsg7b9bdV9Duqur4gv6aKqHXah67Z8ImS7WEz5QVcOtlfW2rZEugt6w==
+strip-ansi@6.0.1, strip-ansi@^6.0.0:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
   dependencies:
-    ansi-regex "^5.0.0"
+    ansi-regex "^5.0.1"
 
 strip-ansi@^3.0.0, strip-ansi@^3.0.1:
   version "3.0.1"
