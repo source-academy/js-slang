@@ -23,7 +23,9 @@ prepare() {
     mkdir -p sicp_publish/dist
     cd sicp_publish/dist
     find . -type f ! -name '*.js' -delete
-    rm -r __tests__ editors lazy mocks name-extractor repl stepper validator vm transpiler
+
+    # Remove unnecessary dependencies
+    rm -r __tests__ editors lazy mocks name-extractor repl stepper vm transpiler
     rm finder.js index.js scope-refactoring.js sicp-prepare.js
     cd ../..
 }

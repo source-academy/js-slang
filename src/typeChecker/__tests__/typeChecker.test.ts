@@ -2069,21 +2069,23 @@ describe('Type context from previous executions get saved', () => {
 describe('imported vars have any type', () => {
   it('import', () => {
     const code1 = `
-      import {show, heart} from 'runes';
+      import {show, heart, nova as supernova} from 'runes';
       const a = show;
       const b = heart;
+      const c = supernova;
 
       // error
-      const c = not_imported;
+      const illegal = not_imported;
     `
     const [program, errors] = parseAndTypeCheck(code1, 1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "a: T0
       b: T0
-      c: T0"
+      c: T0
+      illegal: T0"
     `)
     expect(parseError(errors)).toMatchInlineSnapshot(`
-      "Line 7: One or more undeclared names detected (e.g. 'not_imported').
+      "Line 8: One or more undeclared names detected (e.g. 'not_imported').
       If there aren't actually any undeclared names, then is either a Source or misconfiguration bug.
       Please report this to the administrators!"
     `)

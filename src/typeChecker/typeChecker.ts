@@ -1082,9 +1082,9 @@ function _infer(
       for (const statement of node.body) {
         if (statement.type === 'ImportDeclaration') {
           for (const specifier of statement.specifiers) {
-            if (specifier.type === 'ImportSpecifier' && specifier.imported.type === 'Identifier') {
-              setType(specifier.imported.name, tForAll(tVar('T1')), env)
-              setDeclKind(specifier.imported.name, 'const', env)
+            if (specifier.type === 'ImportSpecifier' && specifier.local.type === 'Identifier') {
+              setType(specifier.local.name, tForAll(tVar('T1')), env)
+              setDeclKind(specifier.local.name, 'const', env)
             }
           }
         }
