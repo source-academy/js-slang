@@ -1,5 +1,10 @@
 import { stripIndent } from '../utils/formatters'
-import { lineTreeToString, stringDagToLineTree, valueToStringDag } from '../utils/stringify'
+import {
+  lineTreeToString,
+  stringDagToLineTree,
+  valueToStringDag,
+  stringify
+} from '../utils/stringify'
 import { expectResult } from '../utils/testing'
 
 test('String representation of numbers are nice', () => {
@@ -388,6 +393,37 @@ test('String representation of nested objects are nice', () => {
   `,
     { chapter: 100, native: true }
   ).toMatchInlineSnapshot(`"{\\"o\\": ...<circular>}"`)
+})
+
+test('String representation of non literal objects is nice', () => {
+  const errorMsg: string = 'This is an error'
+  const errorObj: Error = new Error(errorMsg)
+  return expect(stringify(errorObj)).toMatchInlineSnapshot(`"${errorObj.toString()}"`)
+})
+
+test('String representation of non literal objects in nested object is nice', () => {
+  const errorMsg: string = 'This is an error'
+  const errorObj: Error = new Error(errorMsg)
+  const nestedObj: Object = {
+    data: [1, [2, errorObj], 3]
+  }
+  return expect(stringify(nestedObj)).toMatchInlineSnapshot(
+    `"{\\"data\\": [1, [2, ${errorObj.toString()}], 3]}"`
+  )
+})
+
+test('String representation of instances is nice', () => {
+  class TestClass {
+    data: string
+    constructor(data: string) {
+      this.data = data
+    }
+    toString() {
+      return `testClass instance: ${this.data}`
+    }
+  }
+  const testClassInst = new TestClass('test1')
+  return expect(stringify(testClassInst)).toMatchInlineSnapshot(`"${testClassInst.toString()}"`)
 })
 
 test('String representation of builtins are nice', () => {

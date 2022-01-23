@@ -412,6 +412,13 @@ export function valueToStringDag(value: Value): StringDag {
     return [result, isCircular]
   }
 
+  function convertRepr(repr: string): [StringDag, boolean] {
+    const lines: string[] = repr.split('\n')
+    return lines.length === 1
+      ? [{ type: 'terminal', str: lines[0], length: lines[0].length }, false]
+      : [{ type: 'multiline', lines, length: Infinity }, false]
+  }
+
   function convert(v: Value): [StringDag, boolean] {
     if (v === null) {
       return [{ type: 'terminal', str: 'null', length: 4 }, false]
@@ -420,31 +427,16 @@ export function valueToStringDag(value: Value): StringDag {
     } else if (ancestors.has(v)) {
       return [{ type: 'terminal', str: '...<circular>', length: 13 }, true]
     } else if (v instanceof Closure) {
-      const lines = v.toString().split('\n')
-      if (lines.length === 1) {
-        return [{ type: 'terminal', str: lines[0], length: lines[0].length }, false]
-      } else {
-        return [{ type: 'multiline', lines: lines, length: Infinity }, false]
-      }
+      return convertRepr(v.toString())
     } else if (typeof v === 'string') {
       const str = JSON.stringify(v)
       return [{ type: 'terminal', str: str, length: str.length }, false]
     } else if (typeof v !== 'object') {
-      const lines = v.toString().split('\n')
-      if (lines.length === 1) {
-        return [{ type: 'terminal', str: lines[0], length: lines[0].length }, false]
-      } else {
-        return [{ type: 'multiline', lines: lines, length: Infinity }, false]
-      }
+      return convertRepr(v.toString())
     } else if (ancestors.size > MAX_LIST_DISPLAY_LENGTH) {
       return [{ type: 'terminal', str: '...<truncated>', length: 14 }, false]
     } else if (typeof v.toReplString === 'function') {
-      const lines = v.toReplString().split('\n')
-      if (lines.length === 1) {
-        return [{ type: 'terminal', str: lines[0], length: lines[0].length }, false]
-      } else {
-        return [{ type: 'multiline', lines: lines, length: Infinity }, false]
-      }
+      return convertRepr(v.toReplString())
     } else if (Array.isArray(v)) {
       if (v.length === 2) {
         return convertPair(v)
@@ -454,7 +446,10 @@ export function valueToStringDag(value: Value): StringDag {
     } else if (isArrayLike(v)) {
       return convertArrayLike(v, v.replArrayContents(), v.replPrefix, v.replSuffix)
     } else {
-      return convertObject(v)
+      // use prototype chain to check if it is literal object
+      return Object.getPrototypeOf(v) === Object.prototype
+        ? convertObject(v)
+        : convertRepr(v.toString())
     }
   }
 
