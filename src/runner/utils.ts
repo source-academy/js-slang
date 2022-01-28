@@ -43,7 +43,7 @@ export function determineExecutionMethod(
       } else if (areBreakpointsSet()) {
         isNativeRunnable = false
       } else {
-        let hasDeuggerStatement = false;
+        let hasDeuggerStatement = false
         simple(program, {
           DebuggerStatement(node: DebuggerStatement) {
             hasDeuggerStatement = true

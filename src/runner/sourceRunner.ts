@@ -30,10 +30,7 @@ import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
 import { determineExecutionMethod } from '.'
 import { toSourceError } from './errors'
-import {
-  appendModulesToContext,
-  determineVariant,
-} from './utils'
+import { appendModulesToContext, determineVariant } from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
   scheduler: 'async',
@@ -235,7 +232,12 @@ export async function sourceRunner(
     return runSubstitution(program, context, theOptions)
   }
 
-  const isNativeRunnable: boolean = determineExecutionMethod(theOptions, context, program, verboseErrors);
+  const isNativeRunnable: boolean = determineExecutionMethod(
+    theOptions,
+    context,
+    program,
+    verboseErrors
+  )
   // Handle preludes
   if (context.prelude !== null) {
     const prelude = context.prelude
