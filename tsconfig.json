@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
-    "module": "CommonJS",
+    "module": "es2015",
     "declaration": true,
     "target": "es2016",
     "lib": [
@@ -31,7 +31,8 @@
     "src/stdlib/metacircular-interpreter",
     "src/stdlib/**/*.js",
     "node_modules",
-    "dist"
+    "dist",
+    "sicp_publish"
   ],
   "types": [
     "typePatches",
