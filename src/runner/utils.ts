@@ -1,6 +1,6 @@
 import { DebuggerStatement, Literal, Program } from 'estree'
 
-import { IOptions } from '..'
+import { IOptions, Result } from '..'
 import { loadModuleTabs } from '../modules/moduleLoader'
 import { parseAt } from '../parser/parser'
 import { areBreakpointsSet } from '../stdlib/inspector'
@@ -88,3 +88,5 @@ export function hasVerboseErrors(theCode: string): boolean {
 
   return false
 }
+
+export const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)

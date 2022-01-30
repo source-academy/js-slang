@@ -34,7 +34,7 @@ const globalIdNames = [
 
 export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
 
-function prefixModule(program: es.Program): string {
+export function prefixModule(program: es.Program): string {
   let moduleCounter = 0
   let prefix = ''
   for (const node of program.body) {
@@ -95,7 +95,7 @@ export function transformImportDeclarations(program: es.Program) {
   program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
 }
 
-function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
+export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
   return program.body
     .filter(statement => statement.type === 'VariableDeclaration')
     .map(

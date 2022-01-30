@@ -30,7 +30,7 @@ import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
 import { determineExecutionMethod } from '.'
 import { toSourceError } from './errors'
-import { appendModulesToContext, determineVariant } from './utils'
+import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
   scheduler: 'async',
@@ -43,8 +43,6 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   isPrelude: false,
   throwInfiniteLoops: true
 }
-
-const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)
 
 let previousCode = ''
 let isPreviousCodeTimeoutError = false

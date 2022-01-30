@@ -141,7 +141,7 @@ export function tokenize(source: string, context: Context) {
   return [...acornTokenizer(source, createAcornParserOptions(context))]
 }
 
-const createAcornParserOptions = (context: Context): AcornOptions => ({
+export const createAcornParserOptions = (context: Context): AcornOptions => ({
   sourceType: 'module',
   ecmaVersion: 6,
   locations: true,
