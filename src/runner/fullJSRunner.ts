@@ -22,9 +22,9 @@ export function isFullJSChapter(context: Context): boolean {
 
 function simpleEval(code: string, nativeStorage: NativeStorage, moduleParams: any) {
   if (nativeStorage.evaller === null) {
-    return eval(code);
+    return eval(code)
   } else {
-    return nativeStorage.evaller(code);
+    return nativeStorage.evaller(code)
   }
 }
 
@@ -36,7 +36,12 @@ export async function fullJSRunner(
   const map = new SourceMapGenerator({ file: 'source' })
   try {
     // used 'acorn' instead of 'acorn-loose' to get `SyntaxError`s reported
-    const program = parse(code, { ecmaVersion: 2015, sourceType: "module", locations: true, allowImportExportEverywhere: true, }) as unknown as es.Program
+    const program = parse(code, {
+      ecmaVersion: 2015,
+      sourceType: 'module',
+      locations: true,
+      allowImportExportEverywhere: true
+    }) as unknown as es.Program
     appendModulesToContext(program, context)
     appendModuleTabsToContext(program, context)
     if (context.prelude !== null) {
@@ -54,7 +59,9 @@ export async function fullJSRunner(
     const value = await simpleEval(transpiled, context.nativeStorage, options)
     return Promise.resolve({ status: 'finished', context, value: value })
   } catch (error) {
-    context.errors.push(new ExceptionError(error, (await toSourceError(error, map.toJSON())).location))
+    context.errors.push(
+      new ExceptionError(error, (await toSourceError(error, map.toJSON())).location)
+    )
     return resolvedErrorPromise
   }
 }

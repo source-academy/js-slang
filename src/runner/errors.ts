@@ -47,9 +47,9 @@ export async function toSourceError(error: Error, sourceMap?: RawSourceMap): Pro
       line === -1 || column === -1
         ? UNKNOWN_LOCATION
         : {
-          start: { line, column },
-          end: { line: -1, column: -1 }
-        }
+            start: { line, column },
+            end: { line: -1, column: -1 }
+          }
     return new ExceptionError(error, location)
   }
 }
