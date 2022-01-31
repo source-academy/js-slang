@@ -1419,3 +1419,33 @@ describe(`redeclaration of predeclared functions work`, () => {
     expect(getLastStepAsString(steps)).toEqual('0;')
   })
 })
+
+describe(`#1109: Empty function bodies don't break execution`, () => {
+  test('Function declaration', () => {
+    const code = `
+    function a() {}
+    "other statement";
+    a();
+    "Gets returned by normal run";
+    `
+    const context = mockContext(2)
+    const program = parse(code, context)!
+    const steps = getEvaluationSteps(program, context, 1000)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('"Gets returned by normal run";')
+  })
+
+  test('Constant declaration of lambda', () => {
+    const code = `
+    const a = () => {};
+    "other statement";
+    a();
+    "Gets returned by normal run";
+    `
+    const context = mockContext(2)
+    const program = parse(code, context)!
+    const steps = getEvaluationSteps(program, context, 1000)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('"Gets returned by normal run";')
+  })
+})
