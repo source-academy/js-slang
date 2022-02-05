@@ -32,6 +32,7 @@ function getModuleObj(program: es.Program, moduleParams?: any): Object {
     prefix[`__MODULE_${moduleCounter}__`] = eval(
       `(${moduleText.substring(0, moduleText.length - 1)})(${MODULE_PARAMS_ID});`
     )
+    moduleCounter++
   }
   return prefix
 }
