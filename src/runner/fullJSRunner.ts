@@ -4,11 +4,11 @@ import * as es from 'estree'
 import { SourceMapGenerator } from 'source-map'
 
 import { IOptions, Result } from '..'
+import { MODULE_PARAMS_ID } from '../constants'
 import { ExceptionError } from '../errors/errors'
-import { appendModuleTabsToContext } from '../modules/moduleLoader'
+import { appendModuleTabsToContext, memoizedGetModuleFile } from '../modules/moduleLoader'
 import {
   getGloballyDeclaredIdentifiers,
-  prefixModule,
   transformImportDeclarations
 } from '../transpiler/transpiler'
 import { Context } from '../types'
@@ -18,6 +18,22 @@ import { appendModulesToContext, resolvedErrorPromise } from './utils'
 
 export function isFullJSChapter(context: Context): boolean {
   return context.chapter === -1
+}
+
+function getModuleObj(program: es.Program, moduleParams?: any): Object {
+  let moduleCounter = 0
+  const prefix = {}
+  for (const node of program.body) {
+    if (node.type !== 'ImportDeclaration') {
+      break
+    }
+    const moduleText = memoizedGetModuleFile(node.source.value as string, 'bundle').trim()
+    // remove ; from moduleText
+    prefix[`__MODULE_${moduleCounter}__`] = eval(
+      `(${moduleText.substring(0, moduleText.length - 1)})(${MODULE_PARAMS_ID});`
+    )
+  }
+  return prefix
 }
 
 function simpleEval(code: string, nativeStorage: NativeStorage, moduleParams: any) {
@@ -39,25 +55,28 @@ export async function fullJSRunner(
     const program = parse(code, {
       ecmaVersion: 2015,
       sourceType: 'module',
-      locations: true,
-      allowImportExportEverywhere: true
+      locations: true
     }) as unknown as es.Program
+
     appendModulesToContext(program, context)
     appendModuleTabsToContext(program, context)
+
     if (context.prelude !== null) {
       const prelude = context.prelude
       context.prelude = null
       await fullJSRunner(prelude, context, { ...options, isPrelude: true })
       return fullJSRunner(code, context, options)
     }
-    const modulePrefix = prefixModule(program)
-    transformImportDeclarations(program)
+
+    const prefixobj = getModuleObj(program, options)
+    transformImportDeclarations(program, true)
     getGloballyDeclaredIdentifiers(program).forEach(id =>
       context.nativeStorage.previousProgramsIdentifiers.add(id)
     )
-    const transpiled = modulePrefix + generate(program, { sourceMap: map })
-    const value = await simpleEval(transpiled, context.nativeStorage, options)
-    return Promise.resolve({ status: 'finished', context, value: value })
+
+    const transpiled = generate(program, { sourceMap: map })
+    const value = await simpleEval.call(prefixobj, transpiled, context.nativeStorage, options)
+    return Promise.resolve({ status: 'finished', context, value })
   } catch (error) {
     context.errors.push(
       new ExceptionError(error, (await toSourceError(error, map.toJSON())).location)

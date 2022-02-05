@@ -54,10 +54,11 @@ export function prefixModule(program: es.Program): string {
 
 export function transformSingleImportDeclaration(
   moduleCounter: number,
-  node: es.ImportDeclaration
+  node: es.ImportDeclaration,
+  useThis = false
 ) {
   const result = []
-  const tempNamespace = `__MODULE_${moduleCounter}__`
+  const tempNamespace = (useThis ? 'this.' : '') + `__MODULE_${moduleCounter}__`
   const neededSymbols = node.specifiers.map(specifier => {
     if (specifier.type !== 'ImportSpecifier') {
       throw new Error(
@@ -81,7 +82,8 @@ export function transformSingleImportDeclaration(
   return result
 }
 
-export function transformImportDeclarations(program: es.Program) {
+// `useThis` is a temporary indicator used by fullJS
+export function transformImportDeclarations(program: es.Program, useThis = false) {
   const imports = []
   let result: es.VariableDeclaration[] = []
   let moduleCounter = 0
@@ -89,7 +91,7 @@ export function transformImportDeclarations(program: es.Program) {
     imports.push(program.body.shift() as es.ImportDeclaration)
   }
   for (const node of imports) {
-    result = transformSingleImportDeclaration(moduleCounter, node).concat(result)
+    result = transformSingleImportDeclaration(moduleCounter, node, useThis).concat(result)
     moduleCounter++
   }
   program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
