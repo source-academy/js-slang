@@ -1,12 +1,12 @@
+import { stripIndent } from '../../utils/formatters'
 import {
-  expectParsedError,
   expectDisplayResult,
-  expectVisualiseListResult,
+  expectParsedError,
   expectResult,
+  expectVisualiseListResult,
   getDisplayResult,
   snapshotSuccess
 } from '../../utils/testing'
-import { stripIndent } from '../../utils/formatters'
 
 // concurrent programs return undefined so use display
 // for tests instead

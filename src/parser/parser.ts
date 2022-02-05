@@ -2,19 +2,20 @@
 import {
   Options as AcornOptions,
   parse as acornParse,
-  tokenizer as acornTokenizer,
   parseExpressionAt as acornParseAt,
-  Position
+  Position,
+  tokenizer as acornTokenizer
 } from 'acorn'
 import { parse as acornLooseParse } from 'acorn-loose'
-import { ancestor, AncestorWalkerFn } from '../utils/walkers'
 import * as es from 'estree'
+
 import { ACORN_PARSE_OPTIONS } from '../constants'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 import { stripIndent } from '../utils/formatters'
+import { ancestor, AncestorWalkerFn } from '../utils/walkers'
+import { validateAndAnnotate } from '../validator/validator'
 import rules from './rules'
 import syntaxBlacklist from './syntaxBlacklist'
-import { validateAndAnnotate } from '../validator/validator'
 
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX

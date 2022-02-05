@@ -1,13 +1,14 @@
 import es from 'estree'
 import { memoize } from 'lodash'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
-import {
-  ModuleNotFoundError,
-  ModuleInternalError,
-  ModuleConnectionError
-} from '../errors/moduleErrors'
-import { Modules, ModuleBundle, ModuleFunctions } from './moduleTypes'
+
 import { Context } from '..'
+import {
+  ModuleConnectionError,
+  ModuleInternalError,
+  ModuleNotFoundError
+} from '../errors/moduleErrors'
+import { ModuleBundle, ModuleFunctions, Modules } from './moduleTypes'
 
 // Supports both JSDom (Web Browser) environment and Node environment
 export const newHttpRequest = () =>

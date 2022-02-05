@@ -1,5 +1,5 @@
-import { stringify, ArrayLike } from '../utils/stringify'
 import { Value } from '../types'
+import { ArrayLike, stringify } from '../utils/stringify'
 
 // list.ts: Supporting lists in the Scheme style, using pairs made
 //          up of two-element JavaScript array (vector)

@@ -1,17 +1,18 @@
-import { ancestor, simple } from '../utils/walkers'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { SourceMapGenerator } from 'source-map'
-import { AllowedDeclarations, Context, NativeStorage } from '../types'
+
+import { MODULE_PARAMS_ID, NATIVE_STORAGE_ID } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
+import { AllowedDeclarations, Context, NativeStorage } from '../types'
 import * as create from '../utils/astCreator'
 import {
-  getUniqueId,
+  getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
-  getIdentifiersInNativeStorage
+  getUniqueId
 } from '../utils/uniqueIds'
-import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
+import { ancestor, simple } from '../utils/walkers'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.

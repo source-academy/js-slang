@@ -1,17 +1,18 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
+import { isEmpty, uniqueId } from 'lodash'
+
 import * as constants from '../constants'
+import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { loadModuleBundle } from '../modules/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import { LazyBuiltIn } from '../createContext'
-import { loadModuleBundle } from '../modules/moduleLoader'
-import { uniqueId, isEmpty } from 'lodash'
 
 class BreakValue {}
 

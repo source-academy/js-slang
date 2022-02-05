@@ -1,7 +1,7 @@
 // stream_tail returns the second component of the given pair
 // throws an exception if the argument is not a pair
 
-import { head, is_null, is_pair, List, list, pair, Pair, tail } from './list'
+import { head, is_null, is_pair, List, list, Pair, pair, tail } from './list'
 
 type Stream = null | Pair<any, () => Stream>
 

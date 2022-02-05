@@ -1,5 +1,6 @@
 import * as ace from 'ace-builds'
 import DefaultMode from 'ace-builds/src-noconflict/mode-javascript'
+
 import { HighlightRulesSelector, ModeSelector } from '../editors/ace/modes/source'
 import { Variant } from '../types'
 
