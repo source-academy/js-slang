@@ -49,7 +49,8 @@
     "docs": "yarn jsdoc && yarn autocomplete",
     "build": "yarn docs && yarn tsc",
     "build_sicp_package": "./scripts/build_sicp_package.sh",
-    "publish_sicp_package": "./scripts/publish_sicp_package.sh"
+    "publish_sicp_package": "./scripts/publish_sicp_package.sh",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
