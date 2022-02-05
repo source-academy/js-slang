@@ -1,5 +1,5 @@
-import { SVMFunction, Program } from '../vm/svml-compiler'
 import OpCodes from '../vm/opcodes'
+import { Program, SVMFunction } from '../vm/svml-compiler'
 import { char_at, get_time, parse_int } from './misc'
 
 // functions should be sorted in alphabetical order. Refer to SVML spec on wiki

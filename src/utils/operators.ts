@@ -1,4 +1,6 @@
 import { BinaryOperator, UnaryOperator } from 'estree'
+
+import { LazyBuiltIn } from '../createContext'
 import {
   CallingNonFunctionValue,
   ExceptionError,
@@ -10,12 +12,11 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
+import { NativeStorage, Thunk } from '../types'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
-import * as rttc from './rttc'
-import { LazyBuiltIn } from '../createContext'
-import { NativeStorage, Thunk } from '../types'
 import { makeWrapper } from './makeWrapper'
+import * as rttc from './rttc'
 
 export function throwIfTimeout(
   nativeStorage: NativeStorage,

@@ -7,6 +7,7 @@
 
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
+
 import { EnvTree } from './createContext'
 
 /**
@@ -352,12 +353,12 @@ export type PredicateTest = {
 }
 
 export {
-  Instruction as SVMInstruction,
-  Program as SVMProgram,
   Address as SVMAddress,
   Argument as SVMArgument,
+  SVMFunction,
+  Instruction as SVMInstruction,
   Offset as SVMOffset,
-  SVMFunction
+  Program as SVMProgram
 } from './vm/svml-compiler'
 
 export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>

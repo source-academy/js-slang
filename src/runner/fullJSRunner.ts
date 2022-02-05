@@ -21,7 +21,7 @@ export function isFullJSChapter(context: Context): boolean {
 }
 
 function getModuleObj(program: es.Program, moduleParams?: any): Object {
-  let moduleCounter = 0
+  const moduleCounter = 0
   const prefix = {}
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') {

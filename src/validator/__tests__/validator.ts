@@ -1,11 +1,12 @@
-import { simple } from '../../utils/walkers'
 import * as es from 'estree'
+
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { TypeAnnotatedNode } from '../../types'
 import { getVariableDecarationName } from '../../utils/astCreator'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
+import { simple } from '../../utils/walkers'
 import { validateAndAnnotate } from '../validator'
 
 export function toValidatedAst(code: string) {

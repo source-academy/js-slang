@@ -311,4 +311,4 @@ export function compile(
   }
 }
 
-export { createContext, Context, Result, setBreakpointAtLine, assemble }
+export { assemble, Context, createContext, Result, setBreakpointAtLine }

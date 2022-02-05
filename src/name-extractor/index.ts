@@ -1,6 +1,7 @@
 import * as es from 'estree'
-import { findIdentifierNode, findAncestors } from '../finder'
+
 import { Context } from '../'
+import { findAncestors, findIdentifierNode } from '../finder'
 import syntaxBlacklist from '../parser/syntaxBlacklist'
 
 export interface NameDeclaration {

@@ -1,8 +1,9 @@
 import * as es from 'estree'
-import { ancestor, simple, make } from '../utils/walkers'
+
 import * as create from '../utils/astCreator'
-import GPULoopVerifier from './verification/loopVerifier'
+import { ancestor, make, simple } from '../utils/walkers'
 import GPUBodyVerifier from './verification/bodyVerifier'
+import GPULoopVerifier from './verification/loopVerifier'
 
 let currentKernelId = 0
 /*

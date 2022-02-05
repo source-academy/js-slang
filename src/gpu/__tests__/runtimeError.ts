@@ -1,6 +1,6 @@
 /* tslint:disable:only-arrow-functions */
-import { __createKernel } from '../lib'
 import { TypeError } from '../../utils/rttc'
+import { __createKernel } from '../lib'
 
 test('__createKernel with uninitialized array throws error', () => {
   const bounds = [5, 4]

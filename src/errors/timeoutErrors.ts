@@ -1,10 +1,10 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { JSSLANG_PROPERTIES } from '../constants'
-import { stringify } from '../utils/stringify'
 
+import { JSSLANG_PROPERTIES } from '../constants'
 import { ErrorSeverity, ErrorType } from '../types'
 import { stripIndent } from '../utils/formatters'
+import { stringify } from '../utils/stringify'
 import { RuntimeSourceError } from './runtimeSourceError'
 
 function getWarningMessage(maxExecTime: number) {

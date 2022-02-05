@@ -1,10 +1,11 @@
-import * as es from 'estree'
 import { generate } from 'astring'
-import * as create from '../utils/astCreator'
-import { simple, recursive, WalkerCallback } from '../utils/walkers'
-import { transformSingleImportDeclaration } from '../transpiler/transpiler'
+import * as es from 'estree'
+
 import { MODULE_PARAMS_ID } from '../constants'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
+import { transformSingleImportDeclaration } from '../transpiler/transpiler'
+import * as create from '../utils/astCreator'
+import { recursive, simple, WalkerCallback } from '../utils/walkers'
 // transforms AST of program
 
 const globalIds = {
@@ -645,7 +646,7 @@ function instrument(
 }
 
 export {
-  instrument,
   FunctionNames as InfiniteLoopRuntimeFunctions,
-  globalIds as InfiniteLoopRuntimeObjectNames
+  globalIds as InfiniteLoopRuntimeObjectNames,
+  instrument
 }
