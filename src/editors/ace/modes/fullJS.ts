@@ -1,138 +1,52 @@
-import { isFullJSChapter } from '../../../runner/fullJSRunner'
-import { Variant } from '../../../types'
-import { SourceDocumentation } from '../docTooltip'
-
-/* tslint:disable */
-
-/**
- * Source Mode for Ace Editor
- * (Modified from javascript mode in default brace package)
- * The link to the original JavaScript mode can be found here:
- * https://github.com/ajaxorg/ace-builds/blob/master/src/mode-javascript.js
- *
- * Changes includes:
- * 1) change code styles so that it passes tslint test
- * 2) refactor some code to ES2015 class syntax
- * 3) Encapsulate the orginal mode and higlightrules in two selectors so as to change according to source chapter
- * 4) changed regex to mark certain operators in pink
- * 5) use SourceDocumentation to include all library functions and constants from source
- * 6) include all external libraries
- */
-
-export function HighlightRulesSelector(
-  id: number,
-  variant: Variant = 'default',
-  external: String = 'NONE',
-  externalLibraries: (
-    | {
-        caption: string
-        value: string
-        meta: any
-        docHTML: any
-      }
-    | {
-        caption: string
-        value: string
-        meta: string
-        docHTML?: undefined
-      }
-  )[] = []
-) {
+/* eslint-disable */
+// Till now, this highlighting mode is a naive modification of `source.ts`. Rewriting is clearly needed in the future :/
+import * as ace from 'ace-builds/src-noconflict/ace'
+export function SelectFullJSHighlightRules() {
   // @ts-ignore
-  function _SourceHighlightRules(acequire, exports, module) {
-    'use strict'
-
+  function FullJSHighlightRules(acequire, exports, module) {
     const oop = acequire('../lib/oop')
-    const DocCommentHighlightRules = acequire(
-      './doc_comment_highlight_rules'
-    ).DocCommentHighlightRules
-    const TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules
+    const { DocCommentHighlightRules } = acequire('./doc_comment_highlight_rules')
+    const { TextHighlightRules } = acequire('./text_highlight_rules')
     const identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
-
-    const chapter = variant === 'default' ? id.toString() : id.toString() + '_' + variant
-    const builtin_lib = SourceDocumentation.builtins[chapter]
-
-    function addFromBuiltinLibrary(meta: string) {
-      if (builtin_lib === null) {
-        return ''
-      }
-      let func = ''
-      for (const name in builtin_lib) {
-        if (builtin_lib[name]['meta'] === meta) {
-          func += '|' + name
-        }
-      }
-      return func
-    }
-
-    function addFromExternalLibrary(meta: string) {
-      if (externalLibraries === null) {
-        return ''
-      }
-      let func = ''
-      externalLibraries.forEach(node => {
-        if (node.meta === meta) {
-          func += '|' + node.caption
-        }
-      })
-      return func
-    }
-
-    function getAllNames(meta: string) {
-      const concat = addFromBuiltinLibrary(meta) + addFromExternalLibrary(meta)
-      return concat.substr(1)
-    }
-
-    const ChapterKeywordSelector = () => {
-      let output = ''
-      if (id >= 1) {
-        output += 'import|const|else|if|return|function|debugger'
-      }
-      if (id >= 3) {
-        output += '|while|for|break|continue|let'
-      }
-      return output
-    }
-
-    const ChapterForbbidenWordSelector = () => {
-      if (id < 3) {
-        return 'while|for|break|continue|let'
-      } else {
-        return ''
-      }
-    }
-
     // @ts-ignore
-    const SourceHighlightRules = function (options) {
+    const FullJSHighlightRules = function (options) {
+      // Copied from https://github.com/ajaxorg/ace-builds/blob/master/src/mode-javascript.js
       // @ts-ignore
       const keywordMapper = this.createKeywordMapper(
         {
-          builtinconsts: getAllNames('const'),
-
-          'constant.language.boolean': 'true|false',
-          'constant.language.null': 'null',
-
-          keyword: ChapterKeywordSelector(),
-
-          'storage.type': 'const|let|function',
-
-          'support.function': getAllNames('func'),
-
           'variable.language':
-            'this|arguments|' + // Pseudo
-            'var|yield|async|await|with|switch|throw|try|eval|' + // forbidden words
-            'typeof|' +
-            'class|enum|extends|super|export|implements|private|public|' +
-            'void|interface|package|protected|static|in|of|instanceof|new|' +
-            'case|catch|default|delete|do|finally|' +
-            ChapterForbbidenWordSelector()
+            // Purple: for disallowed words
+            'implements|interface|package|private|protected|public|static|',
+          keyword:
+            // Orange: for normal keywords
+            'Array|Boolean|Date|Function|Iterator|Number|Object|RegExp|String|Proxy|' + // Constructors
+            'Namespace|QName|XML|XMLList|' + // E4X
+            'ArrayBuffer|Float32Array|Float64Array|Int16Array|Int32Array|Int8Array|' +
+            'Uint16Array|Uint32Array|Uint8Array|Uint8ClampedArray|' +
+            'Error|EvalError|InternalError|RangeError|ReferenceError|StopIteration|' + // Errors
+            'SyntaxError|TypeError|URIError|' +
+            'decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|isFinite|' + // Non-constructor functions
+            'isNaN|parseFloat|parseInt|' +
+            'Math|' +
+            'this|arguments|prototype' +
+            'yield|get|set|async|await|' +
+            'enum|eval|' +
+            'true|false|' +
+            'null|Infinity|NaN|undefined|' +
+            'break|case|continue|default|delete|do|else|finally|for|' +
+            'if|in|of|instanceof|new|return|switch|throw|try|typeof|while|with|debugger|' +
+            'escape|with|' +
+            'extends|super|export',
+          'storage.type':
+            // Yellow: for declarations
+            'const|let|var|function|import|class|catch',
+          'support.function': 'alert'
+          // "constant.language.boolean": "true|false"
         },
         'identifier'
       )
-
-      // origiinal keywordBeforeRegex = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
-      const keywordBeforeRegex = 'else|return'
-
+      const keywordBeforeRegex =
+        'case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void'
       const escapedRegex =
         '\\\\(?:x[0-9a-fA-F]{2}|' + // hex
         'u[0-9a-fA-F]{4}|' + // unicode
@@ -141,7 +55,6 @@ export function HighlightRulesSelector(
         '3[0-7][0-7]?|' + // oct
         '[4-7][0-7]?|' + //oct
         '.)'
-
       // @ts-ignore
       this.$rules = {
         no_regex: [
@@ -158,11 +71,11 @@ export function HighlightRulesSelector(
             next: 'qqstring'
           },
           {
-            token: 'constant.numeric', // hexadecimal, octal and binary
+            token: 'constant.numeric',
             regex: /0(?:[xX][0-9a-fA-F]+|[oO][0-7]+|[bB][01]+)\b/
           },
           {
-            token: 'constant.numeric', // decimal integers and floats
+            token: 'constant.numeric',
             regex: /(?:\d\d*(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+\b)?/
           },
           {
@@ -271,10 +184,6 @@ export function HighlightRulesSelector(
             regex: /that\b/
           },
           {
-            token: ['variable.language'],
-            regex: /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]|[^\|]*\|[^\|]/
-          },
-          {
             token: keywordMapper,
             regex: identifierRegex
           },
@@ -289,7 +198,7 @@ export function HighlightRulesSelector(
           },
           {
             token: 'keyword.operator',
-            regex: /===|=|!==|<+=?|>+=?|!|&&|\|\||[%*+-\/]/,
+            regex: /--|\+\+|\.{3}|===|==|=|!=|!==|<+=?|>+=?|!|&&|\|\||\?:|[!$%&*+\-~\/^]=?/,
             next: 'start'
           },
           {
@@ -503,7 +412,6 @@ export function HighlightRulesSelector(
           }
         ]
       }
-
       if (!options || !options.noES6) {
         // @ts-ignore
         this.$rules.no_regex.unshift(
@@ -548,7 +456,6 @@ export function HighlightRulesSelector(
             ]
           }
         )
-
         if (!options || options.jsx != false)
           // @ts-ignore
           JSX.call(this)
@@ -560,9 +467,7 @@ export function HighlightRulesSelector(
       // @ts-ignore
       this.normalizeRules()
     }
-
-    oop.inherits(SourceHighlightRules, TextHighlightRules)
-
+    oop.inherits(FullJSHighlightRules, TextHighlightRules)
     function JSX() {
       const tagRegex = identifierRegex.replace('\\d', '\\d\\-')
       const jsxTag = {
@@ -670,12 +575,11 @@ export function HighlightRulesSelector(
         }
       ]
     }
-
     // @ts-ignore
     function comments(next) {
       return [
         {
-          token: 'comment', // multi line comment
+          token: 'comment',
           regex: /\/\*/,
           next: [
             DocCommentHighlightRules.getTagRule(),
@@ -694,14 +598,11 @@ export function HighlightRulesSelector(
         }
       ]
     }
-    exports.SourceHighlightRules = SourceHighlightRules
+    exports.FullJSHighlightRules = FullJSHighlightRules
   }
-
-  const name = id.toString() + variant + external
-
   // @ts-ignore
   ace.define(
-    'ace/mode/source_highlight_rules' + name,
+    'ace/mode/fullJS_highlight_rules',
     [
       'require',
       'exports',
@@ -710,139 +611,6 @@ export function HighlightRulesSelector(
       'ace/mode/doc_comment_highlight_rules',
       'ace/mode/text_highlight_rules'
     ],
-    _SourceHighlightRules
-  )
-}
-
-//source mode
-export function ModeSelector(id: number, variant: Variant = 'default', external: string = 'NONE') {
-  const name = id.toString() + variant + external
-
-  // @ts-ignore
-  function _Mode(acequire, exports, module) {
-    'use strict'
-
-    const oop = acequire('../lib/oop')
-    const TextMode = acequire('./text').Mode
-    const HighlightRules = isFullJSChapter(id)
-      ? acequire('./fullJS_highlight_rules').FullJSHighlightRules
-      : acequire('./source_highlight_rules' + name).SourceHighlightRules
-    const MatchingBraceOutdent = acequire('./matching_brace_outdent').MatchingBraceOutdent
-    // For JSHint background worker
-    // const WorkerClient = acequire('../worker/worker_client').WorkerClient
-    const CstyleBehaviour = acequire('./behaviour/cstyle').CstyleBehaviour
-    const CStyleFoldMode = acequire('./folding/cstyle').FoldMode
-
-    const Mode = function () {
-      // @ts-ignore
-      this.HighlightRules = HighlightRules
-      // @ts-ignore
-      this.$outdent = new MatchingBraceOutdent()
-      // @ts-ignore
-      this.$behaviour = new CstyleBehaviour()
-      // @ts-ignore
-      this.foldingRules = new CStyleFoldMode()
-    }
-    oop.inherits(Mode, TextMode)
-    ;(function () {
-      // @ts-ignore
-      this.lineCommentStart = '//'
-      // @ts-ignore
-      this.blockComment = { start: '/*', end: '*/' }
-      // @ts-ignore
-      this.$quotes = { '"': '"', "'": "'", '`': '`' }
-
-      // @ts-ignore
-      this.getNextLineIndent = function (state, line, tab) {
-        let indent = this.$getIndent(line)
-
-        const tokenizedLine = this.getTokenizer().getLineTokens(line, state)
-        const tokens = tokenizedLine.tokens
-        const endState = tokenizedLine.state
-
-        if (tokens.length && tokens[tokens.length - 1].type == 'comment') {
-          return indent
-        }
-
-        if (state == 'start' || state == 'no_regex') {
-          const match = line.match(/^.*(?:\bcase\b.*:|[\{\(\[])\s*$/)
-          if (match) {
-            indent += tab
-          }
-        } else if (state == 'doc-start') {
-          if (endState == 'start' || endState == 'no_regex') {
-            return ''
-          }
-          const match = line.match(/^\s*(\/?)\*/)
-          if (match) {
-            if (match[1]) {
-              indent += ' '
-            }
-            indent += '* '
-          }
-        }
-
-        return indent
-      }
-
-      // @ts-ignore
-      this.checkOutdent = function (state, line, input) {
-        return this.$outdent.checkOutdent(line, input)
-      }
-
-      // @ts-ignore
-      this.autoOutdent = function (state, doc, row) {
-        this.$outdent.autoOutdent(doc, row)
-      }
-
-      // This is the JSHint background worker. Disabled because it is of little
-      // utility to Source, and produced many false positives.
-      // If this is ever enabled again: the *frontend* needs to provide the URL of
-      // the worker to Ace:
-      //
-      // import jsWorkerUrl from "file-loader!ace-builds/src-noconflict/javascript_worker";
-      // ace.config.setModuleUrl("ace/mode/javascript_worker", jsWorkerUrl)
-      //
-      // Note: some lint disabling may be needed for the above
-
-      // // @ts-ignore
-      // this.createWorker = function (session) {
-      //   const worker = new WorkerClient(["ace"], "ace/mode/javascript_worker", "JavaScriptWorker");
-      //   worker.attachToDocument(session.getDocument())
-      //
-      //   // @ts-ignore
-      //   worker.on('annotate', function (results) {
-      //     session.setAnnotations(results.data)
-      //   })
-      //
-      //   worker.on('terminate', function () {
-      //     session.clearAnnotations()
-      //   })
-      //
-      //   return worker
-      // }
-
-      // @ts-ignore
-      this.$id = 'ace/mode/source' + name
-    }.call(Mode.prototype))
-
-    exports.Mode = Mode
-  }
-  // @ts-ignore
-  ace.define(
-    'ace/mode/source' + name,
-    [
-      'require',
-      'exports',
-      'module',
-      'ace/lib/oop',
-      'ace/mode/text',
-      'ace/mode/source_highlight_rules1',
-      'ace/mode/matching_brace_outdent',
-      'ace/worker/worker_client',
-      'ace/mode/behaviour/cstyle',
-      'ace/mode/folding/cstyle'
-    ],
-    _Mode
+    FullJSHighlightRules
   )
 }

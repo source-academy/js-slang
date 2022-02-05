@@ -16,8 +16,8 @@ import { NativeStorage } from './../types'
 import { toSourceError } from './errors'
 import { appendModulesToContext, resolvedErrorPromise } from './utils'
 
-export function isFullJSChapter(context: Context): boolean {
-  return context.chapter === -1
+export function isFullJSChapter(chaptNum: number): boolean {
+  return chaptNum === -1
 }
 
 function getModuleObj(program: es.Program, moduleParams?: any): Object {
