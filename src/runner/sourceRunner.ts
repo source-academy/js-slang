@@ -144,7 +144,7 @@ async function runNative(
         break
     }
 
-    ;({ transpiled, codeMap: sourceMapJson } = transpile(program, context))
+    ;({ transpiled, sourceMapJson } = transpile(program, context))
     let value = await sandboxedEval(transpiled, context.nativeStorage, options)
 
     if (context.variant === 'lazy') {
@@ -245,7 +245,8 @@ export async function sourceRunner(
   }
 
   if (isNativeRunnable) {
-    return runNative(code, program, context, theOptions)
+    const result = await runNative(code, program, context, theOptions)
+    return result;
   }
 
   return runInterpreter(program, context, theOptions)

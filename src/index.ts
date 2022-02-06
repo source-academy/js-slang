@@ -26,7 +26,7 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
 import { getKeywords, getProgramNames } from './name-extractor'
-import { hasVerboseErrors, sourceRunner } from './runner'
+import { fullJSRunner, hasVerboseErrors, isFullJSContext, sourceRunner } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
 
@@ -274,6 +274,10 @@ export async function runInContext(
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
+  if (isFullJSContext(context)) {
+    return fullJSRunner(code, context, options);
+  }
+
   verboseErrors = hasVerboseErrors(code)
   return sourceRunner(code, context, verboseErrors, options)
 }
@@ -311,4 +315,4 @@ export function compile(
   }
 }
 
-export { createContext, Context, Result, setBreakpointAtLine, assemble }
+export { assemble,Context, createContext, Result, setBreakpointAtLine }
