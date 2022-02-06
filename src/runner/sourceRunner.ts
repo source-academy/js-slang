@@ -245,8 +245,7 @@ export async function sourceRunner(
   }
 
   if (isNativeRunnable) {
-    const result = await runNative(code, program, context, theOptions)
-    return result;
+    return runNative(code, program, context, theOptions)
   }
 
   return runInterpreter(program, context, theOptions)

@@ -10,13 +10,12 @@ import { simple } from '../utils/walkers'
 
 // Context Utils
 
-/**
- * 
- * @param context The context of the program
- * @returns 
- */
-export function isFullJSContext (context: Context): boolean {
-  return context.chapter === -1;
+export function isFullJSContext(context: Context): boolean {
+  return isFullJSChapter(context.chapter)
+}
+
+export function isFullJSChapter(chapter: number): boolean {
+  return chapter === -1
 }
 
 /**

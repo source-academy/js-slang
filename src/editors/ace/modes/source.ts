@@ -1,4 +1,4 @@
-import { isFullJSChapter } from '../../../runner/fullJSRunner'
+import { isFullJSChapter } from '../../../runner'
 import { Variant } from '../../../types'
 import { SourceDocumentation } from '../docTooltip'
 

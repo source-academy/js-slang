@@ -275,7 +275,7 @@ export async function runInContext(
   options: Partial<IOptions> = {}
 ): Promise<Result> {
   if (isFullJSContext(context)) {
-    return fullJSRunner(code, context, options);
+    return fullJSRunner(code, context, options)
   }
 
   verboseErrors = hasVerboseErrors(code)
@@ -315,4 +315,4 @@ export function compile(
   }
 }
 
-export { assemble,Context, createContext, Result, setBreakpointAtLine }
+export { assemble, Context, createContext, Result, setBreakpointAtLine }

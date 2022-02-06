@@ -431,15 +431,15 @@ const createContext = <T>(
     externalContext,
     moduleParams
   )
-  
+
   // TEMP hacks
   // TODO restructure createContext to allow better extensibility
   if (isFullJSContext(context)) {
-    context.chapter = 4; 
+    context.chapter = 4
     importBuiltins(context, externalBuiltIns)
     importPrelude(context)
     importExternalSymbols(context, externalSymbols)
-    context.chapter = -1;
+    context.chapter = -1
   } else {
     importBuiltins(context, externalBuiltIns)
     importPrelude(context)

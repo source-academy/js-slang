@@ -22,9 +22,9 @@ const FULL_JS_PARSER_OPTIONS: Options = {
 /**
  * Parse code string into AST
  * - any errors in the process of parsing will be added to the context
- * 
- * @param code 
- * @param context 
+ *
+ * @param code
+ * @param context
  * @returns AST of code if there are no syntax errors, otherwise undefined
  */
 function parseFullJS(code: string, context: Context): es.Program | undefined {
