@@ -1,4 +1,3 @@
-import { isFullJSChapter } from '../../../runner'
 import { Variant } from '../../../types'
 import { SourceDocumentation } from '../docTooltip'
 
@@ -724,9 +723,7 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
 
     const oop = acequire('../lib/oop')
     const TextMode = acequire('./text').Mode
-    const HighlightRules = isFullJSChapter(id)
-      ? acequire('./fullJS_highlight_rules').FullJSHighlightRules
-      : acequire('./source_highlight_rules' + name).SourceHighlightRules
+    const SourceHighlightRules = acequire('./source_highlight_rules' + name).SourceHighlightRules
     const MatchingBraceOutdent = acequire('./matching_brace_outdent').MatchingBraceOutdent
     // For JSHint background worker
     // const WorkerClient = acequire('../worker/worker_client').WorkerClient
@@ -735,7 +732,7 @@ export function ModeSelector(id: number, variant: Variant = 'default', external:
 
     const Mode = function () {
       // @ts-ignore
-      this.HighlightRules = HighlightRules
+      this.HighlightRules = SourceHighlightRules
       // @ts-ignore
       this.$outdent = new MatchingBraceOutdent()
       // @ts-ignore
