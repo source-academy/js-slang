@@ -1,22 +1,23 @@
 // Variable determining chapter of Source is contained in this file.
 
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
+import * as gpu_lib from './gpu/lib'
+import { isFullJSContext } from './runner'
 import { AsyncScheduler } from './schedulers'
+import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
-import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as misc from './stdlib/misc'
+import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { Context, CustomBuiltIns, Environment, NativeStorage, Value, Variant } from './types'
-import * as operators from './utils/operators'
-import * as gpu_lib from './gpu/lib'
-import { stringify } from './utils/stringify'
-import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/typeChecker'
+import { Context, CustomBuiltIns, Environment, NativeStorage, Value, Variant } from './types'
 import { makeWrapper } from './utils/makeWrapper'
+import * as operators from './utils/operators'
+import { stringify } from './utils/stringify'
 
 export class LazyBuiltIn {
   func: (...arg0: any) => any
@@ -430,10 +431,20 @@ const createContext = <T>(
     externalContext,
     moduleParams
   )
-
-  importBuiltins(context, externalBuiltIns)
-  importPrelude(context)
-  importExternalSymbols(context, externalSymbols)
+  
+  // TEMP hacks
+  // TODO restructure createContext to allow better extensibility
+  if (isFullJSContext(context)) {
+    context.chapter = 4; 
+    importBuiltins(context, externalBuiltIns)
+    importPrelude(context)
+    importExternalSymbols(context, externalSymbols)
+    context.chapter = -1;
+  } else {
+    importBuiltins(context, externalBuiltIns)
+    importPrelude(context)
+    importExternalSymbols(context, externalSymbols)
+  }
 
   return context
 }

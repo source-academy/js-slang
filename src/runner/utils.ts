@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { DebuggerStatement, Literal, Program } from 'estree'
 
 import { IOptions, Result } from '..'
@@ -8,6 +9,15 @@ import { Context, Variant } from '../types'
 import { simple } from '../utils/walkers'
 
 // Context Utils
+
+/**
+ * 
+ * @param context The context of the program
+ * @returns 
+ */
+export function isFullJSContext (context: Context): boolean {
+  return context.chapter === -1;
+}
 
 /**
  * Small function to determine the variant to be used
