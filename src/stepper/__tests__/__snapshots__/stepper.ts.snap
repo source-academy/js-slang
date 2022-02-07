@@ -1,5 +1,91 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`#1109: Empty function bodies don't break execution Constant declaration of lambda 1`] = `
+"const a = () => {};
+\\"other statement\\";
+a();
+\\"Gets returned by normal run\\";
+
+const a = () => {};
+\\"other statement\\";
+a();
+\\"Gets returned by normal run\\";
+
+\\"other statement\\";
+(() => {})();
+\\"Gets returned by normal run\\";
+
+\\"other statement\\";
+(() => {})();
+\\"Gets returned by normal run\\";
+
+(() => {})();
+\\"Gets returned by normal run\\";
+
+(() => {})();
+\\"Gets returned by normal run\\";
+
+{};
+\\"Gets returned by normal run\\";
+
+{};
+\\"Gets returned by normal run\\";
+
+undefined;
+\\"Gets returned by normal run\\";
+
+undefined;
+\\"Gets returned by normal run\\";
+
+\\"Gets returned by normal run\\";
+
+\\"Gets returned by normal run\\";
+"
+`;
+
+exports[`#1109: Empty function bodies don't break execution Function declaration 1`] = `
+"function a() {}
+\\"other statement\\";
+a();
+\\"Gets returned by normal run\\";
+
+function a() {}
+\\"other statement\\";
+a();
+\\"Gets returned by normal run\\";
+
+\\"other statement\\";
+a();
+\\"Gets returned by normal run\\";
+
+\\"other statement\\";
+a();
+\\"Gets returned by normal run\\";
+
+a();
+\\"Gets returned by normal run\\";
+
+a();
+\\"Gets returned by normal run\\";
+
+{};
+\\"Gets returned by normal run\\";
+
+{};
+\\"Gets returned by normal run\\";
+
+undefined;
+\\"Gets returned by normal run\\";
+
+undefined;
+\\"Gets returned by normal run\\";
+
+\\"Gets returned by normal run\\";
+
+\\"Gets returned by normal run\\";
+"
+`;
+
 exports[`Infinite recursion 1`] = `
 "function f() {
   return f();

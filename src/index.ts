@@ -1,6 +1,6 @@
-import { simple, findNodeAt } from './utils/walkers'
 import { DebuggerStatement, Literal, Program, SourceLocation } from 'estree'
 import { RawSourceMap, SourceMapConsumer } from 'source-map'
+
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
 import {
@@ -11,22 +11,23 @@ import {
 } from './errors/errors'
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
+import { transpileToGPU } from './gpu/gpu'
 import { evaluate } from './interpreter/interpreter'
-import { parse, looseParse, typedParse, parseAt, parseForNames } from './parser/parser'
-import { AsyncScheduler, PreemptiveScheduler, NonDetScheduler } from './schedulers'
+import { nonDetEvaluate } from './interpreter/interpreter-non-det'
+import { transpileToLazy } from './lazy/lazy'
+import { looseParse, parse, parseAt, parseForNames, typedParse } from './parser/parser'
+import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from './schedulers'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
 import {
   callee,
-  redexify,
   getEvaluationSteps,
+  getRedex,
   IStepperPropContents,
-  getRedex
+  redexify
 } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
 import { transpile } from './transpiler/transpiler'
-import { transpileToGPU } from './gpu/gpu'
-import { transpileToLazy } from './lazy/lazy'
 import {
   Context,
   Error as ResultError,
@@ -35,27 +36,28 @@ import {
   Result,
   Scheduler,
   SourceError,
-  Variant,
-  TypeAnnotatedNode,
   SVMProgram,
-  TypeAnnotatedFuncDecl
+  TypeAnnotatedFuncDecl,
+  TypeAnnotatedNode,
+  Variant
 } from './types'
-import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { locationDummyNode } from './utils/astCreator'
+import { findNodeAt, simple } from './utils/walkers'
 import { validateAndAnnotate } from './validator/validator'
-import { compileForConcurrent, compileToIns } from './vm/svml-compiler'
 import { assemble } from './vm/svml-assembler'
+import { compileForConcurrent, compileToIns } from './vm/svml-compiler'
 import { runWithProgram } from './vm/svml-machine'
 export { SourceDocumentation } from './editors/ace/docTooltip'
-import { getProgramNames, getKeywords } from './name-extractor'
 import * as es from 'estree'
-import { typeCheck } from './typeChecker/typeChecker'
-import { typeToString } from './utils/stringify'
-import { forceIt } from './utils/operators'
+
 import { TimeoutError } from './errors/timeoutErrors'
-import { loadModuleTabs } from './modules/moduleLoader'
-import { testForInfiniteLoop } from './infiniteLoops/runtime'
 import { isPotentialInfiniteLoop } from './infiniteLoops/errors'
+import { testForInfiniteLoop } from './infiniteLoops/runtime'
+import { loadModuleTabs } from './modules/moduleLoader'
+import { getKeywords, getProgramNames } from './name-extractor'
+import { typeCheck } from './typeChecker/typeChecker'
+import { forceIt } from './utils/operators'
+import { typeToString } from './utils/stringify'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'

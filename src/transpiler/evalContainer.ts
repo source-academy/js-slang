@@ -1,5 +1,5 @@
+import { MODULE_PARAMS_ID, NATIVE_STORAGE_ID } from '../constants'
 import { NativeStorage } from '../types'
-import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
 
 type Evaler = (code: string, nativeStorage: NativeStorage, moduleParams: any) => any
 

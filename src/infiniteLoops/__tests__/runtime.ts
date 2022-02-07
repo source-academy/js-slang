@@ -1,7 +1,7 @@
-import { testForInfiniteLoop } from '../runtime'
-import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
-import { mockContext } from '../../mocks/context'
 import { runInContext } from '../..'
+import { mockContext } from '../../mocks/context'
+import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
+import { testForInfiniteLoop } from '../runtime'
 
 test('works in runInContext when throwInfiniteLoops is true', async () => {
   const code = `function fib(x) {

@@ -1,7 +1,7 @@
-import { stripIndent } from '../utils/formatters'
-import { testSuccess } from '../utils/testing'
 import * as list from '../stdlib/list'
+import { stripIndent } from '../utils/formatters'
 import { stringify } from '../utils/stringify'
+import { testSuccess } from '../utils/testing'
 
 test('stringify is fast', () => {
   return expect(

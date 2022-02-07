@@ -1,3 +1,7 @@
+import { Position } from 'acorn/dist/acorn'
+import { SourceLocation } from 'estree'
+
+import { findDeclaration, getScope } from '../index'
 import { Value } from '../types'
 import { stripIndent } from '../utils/formatters'
 import {
@@ -9,9 +13,6 @@ import {
   expectToLooselyMatchJS,
   expectToMatchJS
 } from '../utils/testing'
-import { findDeclaration, getScope } from '../index'
-import { Position } from 'acorn/dist/acorn'
-import { SourceLocation } from 'estree'
 
 const toString = (x: Value) => '' + x
 

@@ -21,6 +21,7 @@
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
     "gpu.js": "^2.10.4",
     "lodash": "^4.17.20",
     "node-getopt": "^0.3.2",
@@ -49,7 +50,8 @@
     "docs": "yarn jsdoc && yarn autocomplete",
     "build": "yarn docs && yarn tsc",
     "build_sicp_package": "./scripts/build_sicp_package.sh",
-    "publish_sicp_package": "./scripts/publish_sicp_package.sh"
+    "publish_sicp_package": "./scripts/publish_sicp_package.sh",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",

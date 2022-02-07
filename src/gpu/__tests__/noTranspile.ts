@@ -1,8 +1,9 @@
 import { generate } from 'astring'
+
+import { transpileToGPU } from '../../gpu/gpu'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { stripIndent } from '../../utils/formatters'
-import { transpileToGPU } from '../../gpu/gpu'
 
 test('empty for loop does not get transpiled', () => {
   const code = stripIndent`

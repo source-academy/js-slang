@@ -1,14 +1,15 @@
 #!/usr/bin/env node
-import { createContext, parseError } from '../index'
-import { Variant } from '../types'
+import { generate } from 'astring'
+import { Program } from 'estree'
+
 import { sourceLanguages } from '../constants'
+import { transpileToGPU } from '../gpu/gpu'
+import { createContext, parseError } from '../index'
+import { transpileToLazy } from '../lazy/lazy'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { transpileToGPU } from '../gpu/gpu'
-import { transpileToLazy } from '../lazy/lazy'
+import { Variant } from '../types'
 import { validateAndAnnotate } from '../validator/validator'
-import { Program } from 'estree'
-import { generate } from 'astring'
 
 function transpileCode(chapter = 1, variant: Variant = 'default', code = '', pretranspile = false) {
   // use defaults for everything
