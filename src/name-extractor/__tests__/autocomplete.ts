@@ -1,7 +1,7 @@
 // import { parse } from '../../parser/parser'
+import { createContext } from '../..'
 import { getNames } from '../../index'
 import { NameDeclaration } from '../index'
-import { createContext } from '../..'
 
 test('Test empty program does not generate names', async () => {
   const code: string = 'f'

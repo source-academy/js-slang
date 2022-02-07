@@ -1,4 +1,5 @@
 import { BinaryOperator, UnaryOperator } from 'estree'
+
 import { mockClosure, mockRuntimeContext } from '../../mocks/context'
 import { Value } from '../../types'
 import * as rttc from '../rttc'

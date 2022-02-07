@@ -1,7 +1,7 @@
 /* tslint:disable:max-line-length */
-import { runInContext, resume, IOptions, Result, parseError } from '../index'
+import { IOptions, parseError, Result, resume, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
-import { SuspendedNonDet, Finished, Context } from '../types'
+import { Context, Finished, SuspendedNonDet } from '../types'
 
 test('Empty code returns undefined', async () => {
   await testDeterministicCode('', undefined)

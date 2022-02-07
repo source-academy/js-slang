@@ -1,7 +1,8 @@
-import GPUTransformer from './transfomer'
-import * as create from '../utils/astCreator'
 import * as es from 'estree'
+
+import * as create from '../utils/astCreator'
 import { getIdentifiersInProgram } from '../utils/uniqueIds'
+import GPUTransformer from './transfomer'
 
 // top-level gpu functions that call our code
 

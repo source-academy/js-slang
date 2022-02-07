@@ -1,7 +1,8 @@
-import { default as createContext } from './createContext'
-import * as fs from 'fs'
-import { Program, FunctionDeclaration } from 'estree'
 import { parse } from 'acorn'
+import { FunctionDeclaration, Program } from 'estree'
+import * as fs from 'fs'
+
+import { default as createContext } from './createContext'
 
 const context = createContext(4)
 

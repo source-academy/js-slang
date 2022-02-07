@@ -1,12 +1,13 @@
 /* tslint:disable:object-literal-key-quotes no-string-literal */
-import { parse as __parse } from '../../parser/parser'
-import { typeCheck } from '../typeChecker'
-import { mockContext } from '../../mocks/context'
-import { validateAndAnnotate } from '../../validator/validator'
-import { TypeAnnotatedNode, TypeAnnotatedFuncDecl, Context } from '../../types'
-import { typeToString } from '../../utils/stringify'
-import { parseError, runInContext } from '../../index'
 import * as es from 'estree'
+
+import { parseError, runInContext } from '../../index'
+import { mockContext } from '../../mocks/context'
+import { parse as __parse } from '../../parser/parser'
+import { Context, TypeAnnotatedFuncDecl, TypeAnnotatedNode } from '../../types'
+import { typeToString } from '../../utils/stringify'
+import { validateAndAnnotate } from '../../validator/validator'
+import { typeCheck } from '../typeChecker'
 
 function parseAndTypeCheck(code: string, chapterOrContext: number | Context = 1) {
   const context =

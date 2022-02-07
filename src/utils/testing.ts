@@ -1,13 +1,14 @@
+import { generate } from 'astring'
+
 import { default as createContext, defineBuiltin } from '../createContext'
+import { transpileToGPU } from '../gpu/gpu'
 import { parseError, Result, runInContext } from '../index'
+import { transpileToLazy } from '../lazy/lazy'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { transpileToGPU } from '../gpu/gpu'
-import { transpileToLazy } from '../lazy/lazy'
-import { Context, CustomBuiltIns, Variant, SourceError, Value } from '../types'
+import { Context, CustomBuiltIns, SourceError, Value, Variant } from '../types'
 import { stringify } from './stringify'
-import { generate } from 'astring'
 
 export interface TestContext extends Context {
   displayResult: string[]

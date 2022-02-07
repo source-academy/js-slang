@@ -1,9 +1,10 @@
-import { getOriginalName } from './instrument'
 import { generate } from 'astring'
-import * as st from './state'
-import { simple } from '../utils/walkers'
 import * as es from 'estree'
+
+import { simple } from '../utils/walkers'
 import { InfiniteLoopError, InfiniteLoopErrorType } from './errors'
+import { getOriginalName } from './instrument'
+import * as st from './state'
 import { shallowConcretize } from './symbolic'
 
 const runAltErgo: any = require('@joeychenofficial/alt-ergo-modified')

@@ -7,6 +7,7 @@
 
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
+
 import { EnvTree } from './createContext'
 
 /**

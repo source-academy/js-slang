@@ -1,5 +1,6 @@
 import * as es from 'estree'
-import { simple, make } from '../../utils/walkers'
+
+import { make, simple } from '../../utils/walkers'
 
 /*
  * GPU Body verifier helps to ensure the body is parallelizable

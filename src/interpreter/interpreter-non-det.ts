@@ -1,15 +1,16 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
+import { cloneDeep, uniqueId } from 'lodash'
+
 import * as constants from '../constants'
+import { CUT } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { Context, Environment, Frame, Value } from '../types'
-import { primitive, conditionalExpression, literal } from '../utils/astCreator'
+import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import { cloneDeep, uniqueId } from 'lodash'
-import { CUT } from '../constants'
 
 class BreakValue {}
 
