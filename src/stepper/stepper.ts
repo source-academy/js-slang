@@ -2086,7 +2086,10 @@ function reduceMain(
             return [ast.blockExpression(wholeBlock), cont, path, str]
           } else {
             return [
-              ast.blockExpression([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
+              ast.blockExpression([
+                reduced as es.Statement,
+                ...(otherStatements as es.Statement[])
+              ]),
               cont,
               path,
               str
@@ -2151,7 +2154,9 @@ function reduceMain(
               // TODO: source does not allow destructuring
               return [dummyBlockExpression(), context, paths, 'source does not allow destructuring']
             } else if (isIrreducible(rhs)) {
-              const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
+              const remainingBlockExpression = ast.blockExpression(
+                otherStatements as es.Statement[]
+              )
               // forced casting for some weird errors
               // substitution within the same block, add " same" so that substituter can differentiate between
               // substitution within the block and substitution from outside the block
@@ -2172,7 +2177,10 @@ function reduceMain(
                 allPaths.push([])
               }
               return [subst[0], context, allPaths, explain(node)]
-            } else if (rhs.type === 'ArrowFunctionExpression' || rhs.type === 'FunctionExpression') {
+            } else if (
+              rhs.type === 'ArrowFunctionExpression' ||
+              rhs.type === 'FunctionExpression'
+            ) {
               let funDecExp = ast.functionDeclarationExpression(
                 declarator.id,
                 rhs.params,
@@ -2185,7 +2193,9 @@ function reduceMain(
                 []
               ])[0] as FunctionDeclarationExpression
               // substitute the rest of the blockExpression
-              const remainingBlockExpression = ast.blockExpression(otherStatements as es.Statement[])
+              const remainingBlockExpression = ast.blockExpression(
+                otherStatements as es.Statement[]
+              )
               // substitution within the same block, add " same" so that substituter can differentiate between
               // substitution within the block and substitution from outside the block
               const newId = ast.identifier(funDecExp.id.name + ' same', funDecExp.id.loc)
