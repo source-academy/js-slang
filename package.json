@@ -26,6 +26,7 @@
     "lodash": "^4.17.20",
     "node-getopt": "^0.3.2",
     "source-map": "^0.7.3",
+    "xi": "^0.0.1",
     "xmlhttprequest-ts": "^1.0.1"
   },
   "main": "dist/index",

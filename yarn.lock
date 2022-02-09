@@ -6127,6 +6127,11 @@ ws@^8.2.3:
   resolved "https://registry.npmjs.org/ws/-/ws-8.2.3.tgz"
   integrity sha512-wBuoj1BDpC6ZQ1B7DWQBYVLphPWkm8i9Y0/3YdHjHKHiohOJ1ws+3OccDWtH+PoC9DZD5WOTrJvNbWvjS6JWaA==
 
+xi@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/xi/-/xi-0.0.1.tgz#27a97902d3796c815d77bbe87c379c4883698435"
+  integrity sha1-J6l5AtN5bIFdd7vofDecSINphDU=
+
 xml-name-validator@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/xml-name-validator/-/xml-name-validator-3.0.0.tgz"
