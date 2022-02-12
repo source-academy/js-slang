@@ -26,7 +26,7 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
 import { getKeywords, getProgramNames } from './name-extractor'
-import { fullJSRunner, hasVerboseErrors, isFullJSContext, sourceRunner } from './runner'
+import { fullJSRunner, hasVerboseErrors, isFullJSChapter, sourceRunner } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
 
@@ -274,7 +274,7 @@ export async function runInContext(
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
-  if (isFullJSContext(context)) {
+  if (isFullJSChapter(context.chapter)) {
     return fullJSRunner(code, context, options)
   }
 

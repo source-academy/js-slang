@@ -10,12 +10,8 @@ import { simple } from '../utils/walkers'
 
 // Context Utils
 
-export function isFullJSContext(context: Context): boolean {
-  return isFullJSChapter(context.chapter)
-}
-
 export function isFullJSChapter(chapter: number): boolean {
-  return chapter === -1
+  return chapter == -1
 }
 
 /**
