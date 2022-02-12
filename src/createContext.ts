@@ -340,7 +340,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     // Stream library
     defineBuiltin(context, 'stream_tail(stream)', stream.stream_tail)
     defineBuiltin(context, 'stream(...values)', stream.stream, 0)
-    defineBuiltin(context, 'list_to_stream(xs)', stream.list_to_stream)
   }
 
   if (context.chapter >= 4) {
