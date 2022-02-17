@@ -2,7 +2,7 @@ import es from 'estree'
 import { memoize } from 'lodash'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
 
-import { Context, ModuleContext } from '..'
+import { Context } from '..'
 import {
   ModuleConnectionError,
   ModuleInternalError,
@@ -53,6 +53,7 @@ function getModuleManifest(): Modules {
  * Send a HTTP GET request to the modules endpoint to retrieve the specified file
  * @return String of module file contents
  */
+
 export const memoizedGetModuleFile = memoize(getModuleFile)
 function getModuleFile(name: string, type: 'tab' | 'bundle'): string {
   return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js`)
@@ -66,18 +67,20 @@ function getModuleFile(name: string, type: 'tab' | 'bundle'): string {
  * @returns the module's functions object
  */
 export function loadModuleBundle(path: string, context: Context, node?: es.Node): ModuleFunctions {
-  if (context.modules != null) context.modules = new Map<string, ModuleContext>();
-
+  // if (context.modules == null) context.modules = new Map<string, ModuleContext>();
   const modules = memoizedGetModuleManifest()
+
   // Check if the module exists
   const moduleList = Object.keys(modules)
   if (moduleList.includes(path) === false) throw new ModuleNotFoundError(path, node)
+
   // Get module file
   const moduleText = memoizedGetModuleFile(path, 'bundle')
   try {
+    // For some reason eval calls the inner function i
+    // have no idea what's going on
     const moduleBundle: ModuleBundle = eval(moduleText)
-    const moduleFunctions = moduleBundle(context)
-    return moduleFunctions
+    return moduleBundle(context)
   } catch (error) {
     throw new ModuleInternalError(path, node)
   }

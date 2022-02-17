@@ -12,7 +12,7 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { transpileToGPU } from './gpu/gpu'
-import { evaluate } from './interpreter/interpreter'
+import { appendModulesToContextUpdated, evaluate } from './interpreter/interpreter'
 import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { transpileToLazy } from './lazy/lazy'
 import { looseParse, parse, parseAt, parseForNames, typedParse } from './parser/parser'
@@ -55,7 +55,7 @@ import * as es from 'estree'
 import { TimeoutError } from './errors/timeoutErrors'
 import { isPotentialInfiniteLoop } from './infiniteLoops/errors'
 import { testForInfiniteLoop } from './infiniteLoops/runtime'
-import { loadModuleTabs } from './modules/moduleLoader'
+// import { loadModuleTabs } from './modules/moduleLoader'
 import { getKeywords, getProgramNames } from './name-extractor'
 import { typeCheck } from './typeChecker/typeChecker'
 import { forceIt } from './utils/operators'
@@ -388,6 +388,7 @@ export function getTypeInformation(
   }
 }
 
+/*
 function appendModulesToContext(program: Program, context: Context): void {
   if (context.modules == null) context.modules = new Map<string, ModuleContext>();
 
@@ -395,6 +396,7 @@ function appendModulesToContext(program: Program, context: Context): void {
     if (node.type !== 'ImportDeclaration') break
     const moduleName = (node.source.value as string).trim()
     
+    // Load the module's tabs
     if (!context.modules.has(moduleName)) {
       let moduleContext = {
         state: null,
@@ -403,7 +405,7 @@ function appendModulesToContext(program: Program, context: Context): void {
       context.modules.set(moduleName, moduleContext)
     }
   }
-}
+} */
 
 export async function runInContext(
   code: string,
@@ -477,8 +479,7 @@ export async function runInContext(
     })
   }
 
-  determineExecutionMethod(theOptions, context, program)
-  const isNativeRunnable = false; // determineExecutionMethod(theOptions, context, program)
+  const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
@@ -498,7 +499,7 @@ export async function runInContext(
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
     try {
-      appendModulesToContext(program, context)
+      appendModulesToContextUpdated(program, context)
       // Mutates program
       switch (context.variant) {
         case 'gpu':
@@ -509,7 +510,7 @@ export async function runInContext(
           break
       }
 
-      ;({ transpiled, codeMap: sourceMapJson } = transpile(program, context))
+      ({ transpiled, codeMap: sourceMapJson } = transpile(program, context))
       let value = await sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
       if (context.variant === 'lazy') {
         value = forceIt(value)

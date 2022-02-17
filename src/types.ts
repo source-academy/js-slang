@@ -9,7 +9,7 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
-import { ModuleBundle } from './modules/moduleTypes'
+// import { ModuleBundle } from './modules/moduleTypes'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -178,7 +178,6 @@ export interface ModuleState {}
  */
 export type ModuleContext = {
   tabs: any
-  //bundle: ModuleBundle
   state?: ModuleState | null
 }
 
