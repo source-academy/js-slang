@@ -9,6 +9,7 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
+import { ModuleBundle } from './modules/moduleTypes'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -161,12 +162,24 @@ export interface Context<T = any> {
   /**
    * The side content components to be displayed after the evaluation
    */
-  modules?: any[]
+  modules?: Map<string, ModuleContext>
 
   /**
    * Code previously executed in this context
    */
   previousCode: string[]
+}
+
+export interface ModuleState {}
+
+/**
+ * Used to store state and contextual information for
+ * each module
+ */
+export type ModuleContext = {
+  tabs: any
+  //bundle: ModuleBundle
+  state?: ModuleState | null
 }
 
 export interface BlockFrame {

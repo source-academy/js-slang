@@ -2,7 +2,7 @@ import es from 'estree'
 import { memoize } from 'lodash'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
 
-import { Context } from '..'
+import { Context, ModuleContext } from '..'
 import {
   ModuleConnectionError,
   ModuleInternalError,
@@ -66,6 +66,8 @@ function getModuleFile(name: string, type: 'tab' | 'bundle'): string {
  * @returns the module's functions object
  */
 export function loadModuleBundle(path: string, context: Context, node?: es.Node): ModuleFunctions {
+  if (context.modules != null) context.modules = new Map<string, ModuleContext>();
+
   const modules = memoizedGetModuleManifest()
   // Check if the module exists
   const moduleList = Object.keys(modules)
@@ -98,6 +100,7 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   // Check if the module exists
   const moduleList = Object.keys(modules)
   if (moduleList.includes(path) === false) throw new ModuleNotFoundError(path, node)
+
   // Retrieves the tabs the module has from modules.json
   const sideContentTabPaths: string[] = modules[path].tabs
   // Load the tabs for the current module
@@ -112,10 +115,12 @@ export function loadModuleTabs(path: string, node?: es.Node) {
 }
 
 /**
+ * Remove this function since it is not used anywhere
+ * 
  * Retrieves and appends the imported modules' tabs to the context
  * @param program
  * @param context
- */
+ *
 export function appendModuleTabsToContext(program: es.Program, context: Context): void {
   // Rest the modules to empty array everytime
   context.modules = []
@@ -128,4 +133,4 @@ export function appendModuleTabsToContext(program: es.Program, context: Context)
       Array.prototype.push.apply(context.modules, moduleTab)
     }
   }
-}
+}*/

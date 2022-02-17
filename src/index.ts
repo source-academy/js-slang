@@ -33,6 +33,8 @@ import {
   Error as ResultError,
   ExecutionMethod,
   Finished,
+  ModuleContext,
+  ModuleState,
   Result,
   Scheduler,
   SourceError,
@@ -387,11 +389,19 @@ export function getTypeInformation(
 }
 
 function appendModulesToContext(program: Program, context: Context): void {
-  if (context.modules == null) context.modules = []
+  if (context.modules == null) context.modules = new Map<string, ModuleContext>();
+
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') break
     const moduleName = (node.source.value as string).trim()
-    Array.prototype.push.apply(context.modules, loadModuleTabs(moduleName))
+    
+    if (!context.modules.has(moduleName)) {
+      let moduleContext = {
+        state: null,
+        tabs: loadModuleTabs(moduleName)
+      }
+      context.modules.set(moduleName, moduleContext)
+    }
   }
 }
 
@@ -466,7 +476,9 @@ export async function runInContext(
       value: redexedSteps
     })
   }
-  const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
+
+  determineExecutionMethod(theOptions, context, program)
+  const isNativeRunnable = false; // determineExecutionMethod(theOptions, context, program)
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
@@ -633,4 +645,4 @@ export function compile(
   }
 }
 
-export { createContext, Context, Result, setBreakpointAtLine, assemble }
+export { createContext, Context, ModuleContext, ModuleState, Result, setBreakpointAtLine, assemble }
