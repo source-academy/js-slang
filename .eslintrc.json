@@ -43,7 +43,6 @@
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/unbound-method": "off",
     "prefer-rest-params": "off",
-    "simple-import-sort/imports": "warn",
-    "simple-import-sort/exports": "warn"
+    "simple-import-sort/imports": "warn"
   }
 }

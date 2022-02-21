@@ -1,8 +1,9 @@
+import { generate } from 'astring'
 import * as es from 'estree'
-import { ErrorSeverity, ErrorType, SourceError, SArray, Type, TypeAnnotatedNode } from '../types'
+
+import { ErrorSeverity, ErrorType, SArray, SourceError, Type, TypeAnnotatedNode } from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
-import { generate } from 'astring'
 
 // tslint:disable:max-classes-per-file
 

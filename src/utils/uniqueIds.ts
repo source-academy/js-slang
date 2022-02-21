@@ -1,6 +1,7 @@
-import { simple } from '../utils/walkers'
 import * as es from 'estree'
+
 import { NativeStorage } from '../types'
+import { simple } from '../utils/walkers'
 
 export function getUniqueId(usedIdentifiers: Set<string>, uniqueId = 'unique') {
   while (usedIdentifiers.has(uniqueId)) {

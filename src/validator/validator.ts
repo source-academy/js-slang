@@ -1,9 +1,10 @@
-import { ancestor, base, FullWalkerCallback } from '../utils/walkers'
 import * as es from 'estree'
+
 import { ConstAssignment } from '../errors/errors'
 import { NoAssignmentToForVariable } from '../errors/validityErrors'
 import { Context, TypeAnnotatedNode } from '../types'
 import { getVariableDecarationName } from '../utils/astCreator'
+import { ancestor, base, FullWalkerCallback } from '../utils/walkers'
 
 class Declaration {
   public accessedBeforeDeclaration: boolean = false

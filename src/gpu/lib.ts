@@ -1,10 +1,11 @@
-import { GPU } from 'gpu.js'
-import { TypeError } from '../utils/rttc'
 import { parse } from 'acorn'
 import { generate } from 'astring'
 import * as es from 'estree'
-import { gpuRuntimeTranspile } from './transfomer'
+import { GPU } from 'gpu.js'
+
 import { ACORN_PARSE_OPTIONS } from '../constants'
+import { TypeError } from '../utils/rttc'
+import { gpuRuntimeTranspile } from './transfomer'
 
 // Heuristic : Only use GPU if array is bigger than this
 const MAX_SIZE = 200

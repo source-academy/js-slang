@@ -1,20 +1,20 @@
-import { Program, Instruction, SVMFunction, Address } from './svml-compiler'
-import { ThreadId, RoundRobinScheduler, Scheduler } from './svml-scheduler'
-import { getName } from './util'
-import OpCodes from './opcodes'
+import { JSSLANG_PROPERTIES } from '../constants'
+import { PotentialInfiniteLoopError } from '../errors/timeoutErrors'
 import {
-  NULLARY_PRIMITIVES,
-  UNARY_PRIMITIVES,
   BINARY_PRIMITIVES,
   EXTERNAL_PRIMITIVES,
-  VARARGS_NUM_ARGS,
-  INTERNAL_FUNCTIONS
+  INTERNAL_FUNCTIONS,
+  NULLARY_PRIMITIVES,
+  UNARY_PRIMITIVES,
+  VARARGS_NUM_ARGS
 } from '../stdlib/vm.prelude'
 import { Context } from '../types'
-import { JSSLANG_PROPERTIES } from '../constants'
-import { stringify } from '../utils/stringify'
-import { PotentialInfiniteLoopError } from '../errors/timeoutErrors'
 import { locationDummyNode } from '../utils/astCreator'
+import { stringify } from '../utils/stringify'
+import OpCodes from './opcodes'
+import { Address, Instruction, Program, SVMFunction } from './svml-compiler'
+import { RoundRobinScheduler, Scheduler, ThreadId } from './svml-scheduler'
+import { getName } from './util'
 
 const LDCI_VALUE_OFFSET = 1
 const LDCF32_VALUE_OFFSET = 1

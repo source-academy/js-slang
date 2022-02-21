@@ -1,47 +1,48 @@
 import * as es from 'estree'
+
 import {
-  Context,
-  TypeAnnotatedNode,
-  Primitive,
-  Variable,
-  Pair,
-  List,
-  ForAll,
-  SArray,
-  Type,
-  FunctionType,
-  PredicateType,
-  BindableType,
-  TypeAnnotatedFuncDecl,
-  SourceError,
-  AllowedDeclarations,
-  TypeEnvironment,
-  ContiguousArrayElements,
-  PredicateTest
-} from '../types'
-import {
-  TypeError,
-  InternalTypeError,
-  UnifyError,
-  InternalDifferentNumberArgumentsError,
-  InternalCyclicReferenceError
-} from './internalTypeErrors'
-import {
+  ArrayAssignmentError,
+  CallingNonFunctionType,
   ConsequentAlternateMismatchError,
-  InconsistentPredicateTestError,
-  InvalidTestConditionError,
-  DifferentNumberArgumentsError,
-  InvalidArgumentTypesError,
   CyclicReferenceError,
   DifferentAssignmentError,
-  ReassignConstError,
-  ArrayAssignmentError,
+  DifferentNumberArgumentsError,
+  InconsistentPredicateTestError,
+  InvalidArgumentTypesError,
   InvalidArrayIndexType,
-  UndefinedIdentifierError,
-  CallingNonFunctionType
+  InvalidTestConditionError,
+  ReassignConstError,
+  UndefinedIdentifierError
 } from '../errors/typeErrors'
-import { typeToString } from '../utils/stringify'
 import { typedParse } from '../parser/parser'
+import {
+  AllowedDeclarations,
+  BindableType,
+  Context,
+  ContiguousArrayElements,
+  ForAll,
+  FunctionType,
+  List,
+  Pair,
+  PredicateTest,
+  PredicateType,
+  Primitive,
+  SArray,
+  SourceError,
+  Type,
+  TypeAnnotatedFuncDecl,
+  TypeAnnotatedNode,
+  TypeEnvironment,
+  Variable
+} from '../types'
+import { typeToString } from '../utils/stringify'
+import {
+  InternalCyclicReferenceError,
+  InternalDifferentNumberArgumentsError,
+  InternalTypeError,
+  TypeError,
+  UnifyError
+} from './internalTypeErrors'
 
 /** Name of Unary negative builtin operator */
 const NEGATIVE_OP = '-_1'

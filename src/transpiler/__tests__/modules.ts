@@ -1,12 +1,13 @@
+import { Identifier, ImportDeclaration } from 'estree'
+
+import { mockContext } from '../../mocks/context'
+import { parse } from '../../parser/parser'
+import { stripIndent } from '../../utils/formatters'
 import {
-  transformSingleImportDeclaration,
   transformImportDeclarations,
+  transformSingleImportDeclaration,
   transpile
 } from '../transpiler'
-import { stripIndent } from '../../utils/formatters'
-import { parse } from '../../parser/parser'
-import { mockContext } from '../../mocks/context'
-import { ImportDeclaration, Identifier } from 'estree'
 
 jest.mock('../../modules/moduleLoader', () => ({
   ...jest.requireActual('../../modules/moduleLoader'),

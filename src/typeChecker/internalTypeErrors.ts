@@ -1,5 +1,6 @@
 import * as es from 'estree'
-import { Type, TypeAnnotatedNode, SourceError, ErrorType, ErrorSeverity } from '../types'
+
+import { ErrorSeverity, ErrorType, SourceError, Type, TypeAnnotatedNode } from '../types'
 import { typeToString } from '../utils/stringify'
 
 // tslint:disable:max-classes-per-file

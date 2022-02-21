@@ -1,7 +1,7 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../interpreter/closure'
+import { Type, Value } from '../types'
 import { forceIt } from './operators'
-import { Value, Type } from '../types'
 
 export interface ArrayLike {
   replPrefix: string
