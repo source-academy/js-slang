@@ -2,7 +2,7 @@
 import { generate } from 'astring'
 import { Program } from 'estree'
 
-import { sourceLanguages } from '../constants'
+import { sublanguagePairs } from '../constants'
 import { transpileToGPU } from '../gpu/gpu'
 import { createContext, parseError } from '../index'
 import { transpileToLazy } from '../lazy/lazy'
@@ -38,7 +38,7 @@ function transpileCode(chapter = 1, variant: Variant = 'default', code = '', pre
  * Returns true iff the given chapter and variant combination is supported.
  */
 function validChapterVariant(chapter: any, variant: any) {
-  for (const lang of sourceLanguages) {
+  for (const lang of sublanguagePairs) {
     if (lang.chapter === chapter && lang.variant === variant) return true
   }
 

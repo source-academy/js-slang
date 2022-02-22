@@ -1,6 +1,6 @@
 // Variable determining chapter of Source is contained in this file.
 
-import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
+import { fullJSLanguage, GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import * as gpu_lib from './gpu/lib'
 import { isFullJSChapter } from './runner'
 import { AsyncScheduler } from './schedulers'
@@ -434,7 +434,7 @@ const createContext = <T>(
         externalBuiltIns,
         moduleParams
       ),
-      chapter: -1
+      chapter: fullJSLanguage.chapter
     } as Context
   }
 

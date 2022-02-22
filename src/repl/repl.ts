@@ -2,7 +2,7 @@
 import { start } from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
 
-import { sourceLanguages } from '../constants'
+import { sublanguagePairs } from '../constants'
 import { createContext, IOptions, parseError, runInContext } from '../index'
 import Closure from '../interpreter/closure'
 import { ExecutionMethod, Variant } from '../types'
@@ -69,7 +69,7 @@ function validChapterVariant(chapter: any, variant: any) {
   if (variant === 'substituter' && (chapter === 1 || chapter === 2)) {
     return true
   }
-  for (const lang of sourceLanguages) {
+  for (const lang of sublanguagePairs) {
     if (lang.chapter === chapter && lang.variant === variant) return true
   }
 

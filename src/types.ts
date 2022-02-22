@@ -64,6 +64,7 @@ export type Variant = 'wasm' | 'lazy' | 'non-det' | 'concurrent' | 'gpu' | 'defa
 export interface SourceLanguage {
   chapter: number
   variant: Variant
+  displayName: string
 }
 
 export type ValueWrapper = LetWrapper | ConstWrapper

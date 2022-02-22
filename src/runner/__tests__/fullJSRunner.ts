@@ -1,4 +1,5 @@
 import { Context, runInContext } from '../..'
+import { fullJSLanguage } from '../../constants'
 import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../mocks/context'
 import { FatalSyntaxError } from '../../parser/parser'
@@ -16,7 +17,7 @@ test('Source builtins are accessible in fullJS program', async () => {
   const fullJSProgram: string = `
     parse('head(list(1,2,3));');
     `
-  const fullJSContext: Context = mockContext(-1, 'default')
+  const fullJSContext: Context = mockContext(fullJSLanguage.chapter, 'default')
   await runInContext(fullJSProgram, fullJSContext)
 
   expect(fullJSContext.errors.length).toBeLessThanOrEqual(0)
@@ -74,7 +75,7 @@ describe('Native javascript programs are valid in fullJSRunner', () => {
   it.each([LITERAL_OBJECT, OOP, ARRAY_FILTER, ARRAY_MAP, OOP])(
     `%p`,
     async ({ snippet, value, errors }: CodeSnippetTestCase) => {
-      const fullJSContext: Context = mockContext(-1, 'default')
+      const fullJSContext: Context = mockContext(fullJSLanguage.chapter, 'default')
       const result = await runInContext(snippet, fullJSContext)
 
       expect(result.status).toStrictEqual('finished')
@@ -109,7 +110,7 @@ describe('Error locations are handled well in fullJS', () => {
   it.each([UNDEFINED_VARIABLE, SYNTAX_ERROR])(
     `%p`,
     async ({ snippet, value, errors }: CodeSnippetTestCase) => {
-      const fullJSContext: Context = mockContext(-1, 'default')
+      const fullJSContext: Context = mockContext(fullJSLanguage.chapter, 'default')
       const result = await runInContext(snippet, fullJSContext)
 
       expect(result.status).toStrictEqual('error')

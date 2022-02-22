@@ -2,6 +2,7 @@
 import { DebuggerStatement, Literal, Program } from 'estree'
 
 import { IOptions, Result } from '..'
+import { fullJSLanguage, variantDisplay } from '../constants'
 import { loadModuleTabs } from '../modules/moduleLoader'
 import { parseAt } from '../parser/parser'
 import { areBreakpointsSet } from '../stdlib/inspector'
@@ -11,7 +12,13 @@ import { simple } from '../utils/walkers'
 // Context Utils
 
 export function isFullJSChapter(chapter: number): boolean {
-  return chapter == -1
+  return chapter == fullJSLanguage.chapter
+}
+
+export const styliseSublanguage = (chapter: number, variant: Variant = 'default') => {
+  return isFullJSChapter(chapter)
+    ? fullJSLanguage.displayName
+    : `Source \xa7${chapter}${variantDisplay.has(variant) ? ` ${variantDisplay.get(variant)}` : ''}`
 }
 
 /**
