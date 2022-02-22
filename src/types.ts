@@ -114,8 +114,6 @@ export interface Context<T = any> {
     nodes: es.Node[]
   }
 
-  moduleParams?: any
-
   numberOfOuterEnvironments: number
 
   prelude: string | null
@@ -160,9 +158,14 @@ export interface Context<T = any> {
   typeEnvironment: TypeEnvironment
 
   /**
-   * The side content components to be displayed after the evaluation
+   * Parameters to pass to a module during module initialization
    */
-  modules?: Map<string, ModuleContext>
+  moduleParams: Map<string, any>
+  
+  /**
+   * Storage container for module specific information and state
+   */
+  moduleContexts: Map<string, ModuleContext>
 
   /**
    * Code previously executed in this context

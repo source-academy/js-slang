@@ -6,9 +6,9 @@ import * as constants from '../constants'
 import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
+import { loadModuleBundle } from '../modules/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Environment, Frame, ModuleContext, Value } from '../types'
+import { Context, ContiguousArrayElements, Environment, Frame, Value } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -818,43 +818,4 @@ export function* apply(
     popEnvironment(context)
   }
   return result
-}
-
-export function appendModulesToContextUpdated(program: es.Program, context: Context): void {
-  if (context.modules == null) context.modules = new Map<string, ModuleContext>();
-
-  for (const node of program.body) {
-    if (node.type !== 'ImportDeclaration') break
-    const moduleName = (node.source.value as string).trim()
-    
-    if (!context.modules.has(moduleName)) {
-      // Load the module's tabs
-      let moduleContext = {
-        state: null,
-        tabs: loadModuleTabs(moduleName)
-      }
-      context.modules.set(moduleName, moduleContext)
-    }
-
-    // Figure out what needs to be imported
-    const neededSymbols = node.specifiers.map(spec => {
-      if (spec.type !== 'ImportSpecifier') {
-        throw new Error(
-          `I expected only ImportSpecifiers to be allowed, but encountered ${spec.type}.`
-        )
-      }
-
-      return {
-        imported: spec.imported.name,
-        local: spec.local.name
-      }
-    })
-
-    // Load the module's bundle
-    const functions = loadModuleBundle(moduleName, context, node)
-    declareImports(context, node)
-    for (const name of neededSymbols) {
-      defineVariable(context, name.local, functions[name.imported], true);
-    }
-  }
 }

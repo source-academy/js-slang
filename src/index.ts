@@ -12,7 +12,7 @@ import {
 import { RuntimeSourceError } from './errors/runtimeSourceError'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { transpileToGPU } from './gpu/gpu'
-import { appendModulesToContextUpdated, evaluate } from './interpreter/interpreter'
+import { evaluate } from './interpreter/interpreter'
 import { nonDetEvaluate } from './interpreter/interpreter-non-det'
 import { transpileToLazy } from './lazy/lazy'
 import { looseParse, parse, parseAt, parseForNames, typedParse } from './parser/parser'
@@ -60,6 +60,7 @@ import { getKeywords, getProgramNames } from './name-extractor'
 import { typeCheck } from './typeChecker/typeChecker'
 import { forceIt } from './utils/operators'
 import { typeToString } from './utils/stringify'
+import { appendModuleTabsToContext } from './modules/moduleLoader'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -499,7 +500,7 @@ export async function runInContext(
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
     try {
-      appendModulesToContextUpdated(program, context)
+      appendModuleTabsToContext(program, context)
       // Mutates program
       switch (context.variant) {
         case 'gpu':
@@ -511,10 +512,12 @@ export async function runInContext(
       }
 
       ({ transpiled, codeMap: sourceMapJson } = transpile(program, context))
-      let value = await sandboxedEval(transpiled, context.nativeStorage, context.moduleParams)
+      let value = await sandboxedEval(transpiled, context.nativeStorage, context.moduleParams, context.moduleContexts)
+
       if (context.variant === 'lazy') {
         value = forceIt(value)
       }
+
       if (!options.isPrelude) {
         isPreviousCodeTimeoutError = false
       }
