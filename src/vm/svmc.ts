@@ -1,5 +1,5 @@
-import fs = require('fs')
-import util = require('util')
+import * as fs from 'fs'
+import * as util from 'util'
 
 import { createEmptyContext } from '../createContext'
 import { parse } from '../parser/parser'
