@@ -634,7 +634,7 @@ export function reduceImportDeclarations(program: es.Program) {
     const baseNode = baseNodes.get(key)!;
     return {
       ...baseNode,
-      specfiers: specifiers.get(key)!
+      specifiers: specifiers.get(key)!
     } as es.ModuleDeclaration;
   });
 
