@@ -27,7 +27,7 @@ import {
   redexify
 } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
-import { transpile } from './transpiler/transpiler'
+import { reduceImportDeclarations, transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
@@ -500,7 +500,9 @@ export async function runInContext(
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
     try {
+      reduceImportDeclarations(program);
       appendModuleTabsToContext(program, context)
+      
       // Mutates program
       switch (context.variant) {
         case 'gpu':

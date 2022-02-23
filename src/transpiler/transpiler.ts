@@ -591,3 +591,53 @@ function getDeclarationsToAccessTranspilerInternals(
     return create.declaration(name, kind, value)
   })
 }
+
+/**
+ * Collates multiple import statements importing from the same module into
+ * a single import statement for that module
+ * 
+ * @param program Program to parse
+ */
+export function reduceImportDeclarations(program: es.Program) {
+  const specifiers = new Map<string, es.ImportSpecifier[]>();
+  const baseNodes = new Map<string, es.ImportDeclaration>();
+
+  let nodeCount = 0;
+
+  for (const node of program.body) {
+    if (node.type !== 'ImportDeclaration') break
+    nodeCount++;
+
+    const moduleName = (node.source.value as string).trim()
+
+    if(!specifiers.has(moduleName)) {
+      specifiers.set(moduleName, []);
+      baseNodes.set(moduleName, node);
+    }
+
+    for (const specifier of node.specifiers) {
+      if (specifier.type !== 'ImportSpecifier') {
+        throw new Error(
+          `I expected only ImportSpecifiers to be allowed, but encountered ${specifier.type}.`
+        )
+      }
+      
+      specifiers.get(moduleName)!.push(specifier);
+    }
+  }
+
+  // Remove all previous import specifiers
+  program.body = program.body.slice(nodeCount);
+
+  // Create new collated import specifiers
+  const newImports = Array.from(specifiers.keys()).map((key) => {
+    const baseNode = baseNodes.get(key)!;
+    return {
+      ...baseNode,
+      specfiers: specifiers.get(key)!
+    } as es.ModuleDeclaration;
+  });
+
+  // Insert the import specifiers at the top of the program
+  program.body = (newImports as (es.ModuleDeclaration | es.Statement | es.Declaration)[]).concat(program.body);
+}
