@@ -1,13 +1,12 @@
 import es from 'estree'
 import { memoize } from 'lodash'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
-
-import { Context, ModuleContext } from '..'
 import {
   ModuleConnectionError,
   ModuleInternalError,
   ModuleNotFoundError
 } from '../errors/moduleErrors'
+import { Context } from '../types'
 import { ModuleBundle, ModuleFunctions, Modules } from './moduleTypes'
 
 // Supports both JSDom (Web Browser) environment and Node environment
@@ -67,7 +66,6 @@ function getModuleFile(name: string, type: 'tab' | 'bundle'): string {
  * @returns the module's functions object
  */
 export function loadModuleBundle(path: string, context: Context, node?: es.Node): ModuleFunctions {
-  // if (context.modules == null) context.modules = new Map<string, ModuleContext>();
   const modules = memoizedGetModuleManifest()
 
   // Check if the module exists
@@ -77,8 +75,6 @@ export function loadModuleBundle(path: string, context: Context, node?: es.Node)
   // Get module file
   const moduleText = memoizedGetModuleFile(path, 'bundle')
   try {
-    // For some reason eval calls the inner function i
-    // have no idea what's going on
     const moduleBundle: ModuleBundle = eval(moduleText)
     return moduleBundle(context)
   } catch (error) {
@@ -123,19 +119,19 @@ export function loadModuleTabs(path: string, node?: es.Node) {
  * @param context
  */
 export function appendModuleTabsToContext(program: es.Program, context: Context): void {
-  if (context.moduleContexts == null) context.moduleContexts = new Map<string, ModuleContext>();
-
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') break
     const moduleName = (node.source.value as string).trim()
     
+    // Load the module's tabs
     if (!context.moduleContexts.has(moduleName)) {
-      // Load the module's tabs
       let moduleContext = {
         state: null,
         tabs: loadModuleTabs(moduleName)
       }
       context.moduleContexts.set(moduleName, moduleContext)
+    } else {
+      context.moduleContexts.get(moduleName)!.tabs = loadModuleTabs(moduleName);
     }
   }
 }

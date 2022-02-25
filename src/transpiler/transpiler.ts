@@ -593,21 +593,19 @@ function getDeclarationsToAccessTranspilerInternals(
 }
 
 /**
- * Collates multiple import statements importing from the same module into
- * a single import statement for that module
+ * Hoists all import declarations to the top of the program,
+ * and also collates different import statements from the same 
+ * module as a single import statement
  * 
  * @param program Program to parse
  */
-export function reduceImportDeclarations(program: es.Program) {
+export function hoistImportDeclarations(program: es.Program) {
+  const importNodes = (program.body.filter(node => node.type === "ImportDeclaration") as es.ImportDeclaration[]);
+
   const specifiers = new Map<string, es.ImportSpecifier[]>();
   const baseNodes = new Map<string, es.ImportDeclaration>();
 
-  let nodeCount = 0;
-
-  for (const node of program.body) {
-    if (node.type !== 'ImportDeclaration') break
-    nodeCount++;
-
+  for (const node of importNodes) {
     const moduleName = (node.source.value as string).trim()
 
     if(!specifiers.has(moduleName)) {
@@ -626,9 +624,6 @@ export function reduceImportDeclarations(program: es.Program) {
     }
   }
 
-  // Remove all previous import specifiers
-  program.body = program.body.slice(nodeCount);
-
   // Create new collated import specifiers
   const newImports = Array.from(specifiers.keys()).map((key) => {
     const baseNode = baseNodes.get(key)!;
@@ -639,5 +634,5 @@ export function reduceImportDeclarations(program: es.Program) {
   });
 
   // Insert the import specifiers at the top of the program
-  program.body = (newImports as (es.ModuleDeclaration | es.Statement | es.Declaration)[]).concat(program.body);
+  program.body = (newImports as (es.ModuleDeclaration | es.Statement | es.Declaration)[]).concat(program.body.filter(node => node.type !== "ImportDeclaration"));
 }

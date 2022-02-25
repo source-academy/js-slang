@@ -27,13 +27,12 @@ import {
   redexify
 } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
-import { reduceImportDeclarations, transpile } from './transpiler/transpiler'
+import { hoistImportDeclarations, transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
   ExecutionMethod,
   Finished,
-  ModuleContext,
   ModuleState,
   Result,
   Scheduler,
@@ -500,7 +499,7 @@ export async function runInContext(
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
     try {
-      reduceImportDeclarations(program);
+      hoistImportDeclarations(program);
       appendModuleTabsToContext(program, context)
       
       // Mutates program
@@ -651,4 +650,4 @@ export function compile(
   }
 }
 
-export { createContext, Context, ModuleContext, ModuleState, Result, setBreakpointAtLine, assemble }
+export { createContext, Context, ModuleState, Result, setBreakpointAtLine, assemble }
