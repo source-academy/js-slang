@@ -478,18 +478,18 @@ export async function runInContext(
       value: redexedSteps
     })
   }
-  
+
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
-
-  hoistImportDeclarations(program);
-  appendModuleTabsToContext(program, context)
-
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
     await runInContext(prelude, context, { ...options, isPrelude: true })
     return runInContext(code, context, options)
   }
+  
+  hoistImportDeclarations(program);
+  appendModuleTabsToContext(program, context)
+
   if (isNativeRunnable) {
     if (previousCode === code && isPreviousCodeTimeoutError) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
