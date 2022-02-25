@@ -6,7 +6,7 @@ export type Modules = {
   }
 }
 
-export type ModuleBundle = (params: Map<string, any>, context: Map<string, ModuleContext>) => ModuleFunctions
+export type ModuleBundle = (params: any, context: Map<string, ModuleContext>) => ModuleFunctions
 
 export type ModuleFunctions = {
   [functionName: string]: Function
