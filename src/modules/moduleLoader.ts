@@ -112,26 +112,3 @@ export function loadModuleTabs(path: string, node?: es.Node) {
     }
   })
 }
-
-/**
- * Retrieves and appends the imported modules' tabs to the context
- * @param program
- * @param context
- */
-export function appendModuleTabsToContext(program: es.Program, context: Context): void {
-  for (const node of program.body) {
-    if (node.type !== 'ImportDeclaration') break
-    const moduleName = (node.source.value as string).trim()
-    
-    // Load the module's tabs
-    if (!context.moduleContexts.has(moduleName)) {
-      let moduleContext = {
-        state: null,
-        tabs: loadModuleTabs(moduleName)
-      }
-      context.moduleContexts.set(moduleName, moduleContext)
-    } else {
-      context.moduleContexts.get(moduleName)!.tabs = loadModuleTabs(moduleName);
-    }
-  }
-}
