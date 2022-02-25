@@ -639,7 +639,8 @@ export async function runInContext(
   });
 
   // Insert the import specifiers at the top of the program
-  program.body = (newImports as (es.ModuleDeclaration | es.Statement | es.Declaration)[]).concat(program.body.filter(node => node.type !== "ImportDeclaration"));
+  program.body = (newImports as (es.ModuleDeclaration | es.Statement | es.Declaration)[])
+                  .concat(program.body.filter(node => node.type !== "ImportDeclaration"));
 }
 
 /**
