@@ -27,7 +27,7 @@ import {
   redexify
 } from './stepper/stepper'
 import { sandboxedEval } from './transpiler/evalContainer'
-import { hoistImportDeclarations, transpile } from './transpiler/transpiler'
+import { appendModuleTabsToContext, transpile } from './transpiler/transpiler'
 import {
   Context,
   Error as ResultError,
@@ -60,7 +60,6 @@ import { getKeywords, getProgramNames } from './name-extractor'
 import { typeCheck } from './typeChecker/typeChecker'
 import { forceIt } from './utils/operators'
 import { typeToString } from './utils/stringify'
-import { appendModuleTabsToContext } from './modules/moduleLoader'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -486,11 +485,9 @@ export async function runInContext(
     context.prelude = null
     await runInContext(prelude, context, { ...options, isPrelude: true })
     return runInContext(code, context, options)
-  }
-  
-  hoistImportDeclarations(program);
-  appendModuleTabsToContext(program, context)
+  }  
 
+  hoistImportDeclarations(program);
   if (isNativeRunnable) {
     if (previousCode === code && isPreviousCodeTimeoutError) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
@@ -504,6 +501,7 @@ export async function runInContext(
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
     try {      
+      appendModuleTabsToContext(program, context)
       // Mutates program
       switch (context.variant) {
         case 'gpu':
@@ -597,6 +595,51 @@ export async function runInContext(
     }
     return scheduler.run(it, context)
   }
+}
+
+/**
+ * Hoists all import declarations to the top of the program,
+ * and also collates different import statements from the same 
+ * module as a single import statement
+ * 
+ * @param program Program to parse
+ */
+ export function hoistImportDeclarations(program: es.Program) {
+  const importNodes = (program.body.filter(node => node.type === "ImportDeclaration") as es.ImportDeclaration[]);
+
+  const specifiers = new Map<string, es.ImportSpecifier[]>();
+  const baseNodes = new Map<string, es.ImportDeclaration>();
+
+  for (const node of importNodes) {
+    const moduleName = (node.source.value as string).trim()
+
+    if(!specifiers.has(moduleName)) {
+      specifiers.set(moduleName, []);
+      baseNodes.set(moduleName, node);
+    }
+
+    for (const specifier of node.specifiers) {
+      if (specifier.type !== 'ImportSpecifier') {
+        throw new Error(
+          `I expected only ImportSpecifiers to be allowed, but encountered ${specifier.type}.`
+        )
+      }
+      
+      specifiers.get(moduleName)!.push(specifier);
+    }
+  }
+
+  // Create new collated import specifiers
+  const newImports = Array.from(specifiers.keys()).map((key) => {
+    const baseNode = baseNodes.get(key)!;
+    return {
+      ...baseNode,
+      specifiers: specifiers.get(key)!
+    } as es.ModuleDeclaration;
+  });
+
+  // Insert the import specifiers at the top of the program
+  program.body = (newImports as (es.ModuleDeclaration | es.Statement | es.Declaration)[]).concat(program.body.filter(node => node.type !== "ImportDeclaration"));
 }
 
 /**

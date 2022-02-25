@@ -4,7 +4,7 @@ import { SourceMapGenerator } from 'source-map'
 
 import { MODULE_PARAMS_ID, MODULE_STATE_ID, NATIVE_STORAGE_ID } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
-import { memoizedGetModuleFile } from '../modules/moduleLoader'
+import { loadModuleTabs, memoizedGetModuleFile } from '../modules/moduleLoader'
 import { AllowedDeclarations, Context, NativeStorage } from '../types'
 import * as create from '../utils/astCreator'
 import {
@@ -635,4 +635,28 @@ export function hoistImportDeclarations(program: es.Program) {
 
   // Insert the import specifiers at the top of the program
   program.body = (newImports as (es.ModuleDeclaration | es.Statement | es.Declaration)[]).concat(program.body.filter(node => node.type !== "ImportDeclaration"));
+}
+
+/**
+ * Retrieves and appends the imported modules' tabs to the context.
+ * Used only by the transpiler
+ * @param program
+ * @param context
+ */
+ export function appendModuleTabsToContext(program: es.Program, context: Context): void {
+  for (const node of program.body) {
+    if (node.type !== 'ImportDeclaration') break
+    const moduleName = (node.source.value as string).trim()
+    
+    // Load the module's tabs
+    if (!context.moduleContexts.has(moduleName)) {
+      let moduleContext = {
+        state: null,
+        tabs: loadModuleTabs(moduleName)
+      }
+      context.moduleContexts.set(moduleName, moduleContext)
+    } else {
+      context.moduleContexts.get(moduleName)!.tabs = loadModuleTabs(moduleName);
+    }
+  }
 }
