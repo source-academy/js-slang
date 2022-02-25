@@ -160,7 +160,7 @@ export interface Context<T = any> {
   /**
    * Parameters to pass to a module during module initialization
    */
-  moduleParams: Map<string, any>
+  moduleParams: any
   
   /**
    * Storage container for module specific information and state
@@ -180,7 +180,7 @@ export interface ModuleState {}
  * each module
  */
 export type ModuleContext = {
-  tabs: any
+  tabs: any[]
   state?: ModuleState | null
 }
 

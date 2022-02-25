@@ -128,12 +128,8 @@ export const createEmptyContext = <T>(
   variant: Variant = 'default',
   externalSymbols: string[],
   externalContext?: T,
-  moduleParams?: Map<string, any>
+  moduleParams?: any
 ): Context<T> => {
-
-  if (moduleParams == null) {
-    moduleParams = new Map<string, any>();
-  }
 
   return {
     chapter,
