@@ -478,8 +478,12 @@ export async function runInContext(
       value: redexedSteps
     })
   }
-
+  
   const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
+
+  hoistImportDeclarations(program);
+  appendModuleTabsToContext(program, context)
+
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
@@ -498,10 +502,7 @@ export async function runInContext(
     }
     let transpiled
     let sourceMapJson: RawSourceMap | undefined
-    try {
-      hoistImportDeclarations(program);
-      appendModuleTabsToContext(program, context)
-      
+    try {      
       // Mutates program
       switch (context.variant) {
         case 'gpu':
