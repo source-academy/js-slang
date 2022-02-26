@@ -47,7 +47,12 @@ function parseFullJS(code: string, context: Context): es.Program | undefined {
   return program
 }
 
-function fullJSEval(code: string, nativeStorage: NativeStorage, moduleParams: any, moduleContexts: Map<string, ModuleContext>): any {
+function fullJSEval(
+  code: string,
+  nativeStorage: NativeStorage,
+  moduleParams: any,
+  moduleContexts: Map<string, ModuleContext>
+): any {
   if (nativeStorage.evaller) {
     return nativeStorage.evaller(code)
   } else {
@@ -77,7 +82,7 @@ export async function fullJSRunner(
     return resolvedErrorPromise
   }
 
-  hoistImportDeclarations(program);
+  hoistImportDeclarations(program)
 
   // prelude & builtins
   // TODO resolve repeated declaration in prelude and builtins
@@ -93,11 +98,11 @@ export async function fullJSRunner(
     appendModulesToContext(program, context)
   } catch (error) {
     if (error instanceof RuntimeSourceError) {
-      context.errors.push(error);
-      return resolvedErrorPromise;
+      context.errors.push(error)
+      return resolvedErrorPromise
     }
-    throw error;
-  };
+    throw error
+  }
 
   const modulePrefix: string = prefixModule(program)
 

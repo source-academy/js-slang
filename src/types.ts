@@ -160,7 +160,7 @@ export interface Context<T = any> {
    * Parameters to pass to a module during module initialization
    */
   moduleParams: any
-  
+
   /**
    * Storage container for module specific information and state
    */

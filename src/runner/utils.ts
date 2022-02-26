@@ -1,5 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { DebuggerStatement, Declaration, ImportDeclaration, ImportDefaultSpecifier, ImportNamespaceSpecifier, ImportSpecifier, Literal, ModuleDeclaration, Program, Statement } from 'estree'
+import {
+  DebuggerStatement,
+  Declaration,
+  ImportDeclaration,
+  ImportDefaultSpecifier,
+  ImportNamespaceSpecifier,
+  ImportSpecifier,
+  Literal,
+  ModuleDeclaration,
+  Program,
+  Statement
+} from 'estree'
 
 import { IOptions, Result } from '..'
 import { loadModuleTabs } from '../modules/moduleLoader'
@@ -77,7 +88,7 @@ export function appendModulesToContext(program: Program, context: Context): void
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') break
     const moduleName = (node.source.value as string).trim()
-    
+
     // Load the module's tabs
     if (!context.moduleContexts.has(moduleName)) {
       let moduleContext = {
@@ -86,7 +97,7 @@ export function appendModulesToContext(program: Program, context: Context): void
       }
       context.moduleContexts.set(moduleName, moduleContext)
     } else {
-      context.moduleContexts.get(moduleName)!.tabs = loadModuleTabs(moduleName);
+      context.moduleContexts.get(moduleName)!.tabs = loadModuleTabs(moduleName)
     }
   }
 }
@@ -97,19 +108,24 @@ export function appendModulesToContext(program: Program, context: Context): void
  * a single statement
  */
 export function hoistImportDeclarations(program: Program) {
-  const importNodes = program.body.filter(node => node.type === "ImportDeclaration") as ImportDeclaration[];
-  const specifiers = new Map<string, (ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier)[]>();
-  const baseNodes = new Map<string, ImportDeclaration>();
+  const importNodes = program.body.filter(
+    node => node.type === 'ImportDeclaration'
+  ) as ImportDeclaration[]
+  const specifiers = new Map<
+    string,
+    (ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier)[]
+  >()
+  const baseNodes = new Map<string, ImportDeclaration>()
 
   for (const node of importNodes) {
-    const moduleName = node.source.value as string;
+    const moduleName = node.source.value as string
 
     if (!specifiers.has(moduleName)) {
-      specifiers.set(moduleName, node.specifiers);
-      baseNodes.set(moduleName, node);
+      specifiers.set(moduleName, node.specifiers)
+      baseNodes.set(moduleName, node)
     } else {
       for (const specifier of node.specifiers) {
-        specifiers.get(moduleName)!.push(specifier);
+        specifiers.get(moduleName)!.push(specifier)
       }
     }
   }
@@ -118,10 +134,10 @@ export function hoistImportDeclarations(program: Program) {
     return {
       ...node,
       specifiers: specifiers.get(module)
-    };
-  }) as (ModuleDeclaration | Statement | Declaration)[];
+    }
+  }) as (ModuleDeclaration | Statement | Declaration)[]
 
-  program.body = newImports.concat(program.body.filter(node => node.type !== "ImportDeclaration"));
+  program.body = newImports.concat(program.body.filter(node => node.type !== 'ImportDeclaration'))
 }
 
 // AST Utils
