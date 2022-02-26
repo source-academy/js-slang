@@ -1,33 +1,12 @@
-import { DebuggerStatement, Literal, Program, SourceLocation } from 'estree'
-import { RawSourceMap, SourceMapConsumer } from 'source-map'
+import { SourceLocation } from 'estree'
+import { SourceMapConsumer } from 'source-map'
 
-import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from './constants'
 import createContext from './createContext'
-import {
-  ConstAssignment,
-  ExceptionError,
-  InterruptedError,
-  UndefinedVariable
-} from './errors/errors'
-import { RuntimeSourceError } from './errors/runtimeSourceError'
+import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import { transpileToGPU } from './gpu/gpu'
-import { evaluate } from './interpreter/interpreter'
-import { nonDetEvaluate } from './interpreter/interpreter-non-det'
-import { transpileToLazy } from './lazy/lazy'
-import { looseParse, parse, parseAt, parseForNames, typedParse } from './parser/parser'
-import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from './schedulers'
+import { looseParse, parse, parseForNames, typedParse } from './parser/parser'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
-import { areBreakpointsSet, setBreakpointAtLine } from './stdlib/inspector'
-import {
-  callee,
-  getEvaluationSteps,
-  getRedex,
-  IStepperPropContents,
-  redexify
-} from './stepper/stepper'
-import { sandboxedEval } from './transpiler/evalContainer'
-import { appendModuleTabsToContext, transpile } from './transpiler/transpiler'
+import { setBreakpointAtLine } from './stdlib/inspector'
 import {
   Context,
   Error as ResultError,
@@ -36,29 +15,21 @@ import {
   ModuleContext,
   ModuleState,
   Result,
-  Scheduler,
   SourceError,
   SVMProgram,
   TypeAnnotatedFuncDecl,
   TypeAnnotatedNode,
   Variant
 } from './types'
-import { locationDummyNode } from './utils/astCreator'
-import { findNodeAt, simple } from './utils/walkers'
-import { validateAndAnnotate } from './validator/validator'
+import { findNodeAt } from './utils/walkers'
 import { assemble } from './vm/svml-assembler'
-import { compileForConcurrent, compileToIns } from './vm/svml-compiler'
-import { runWithProgram } from './vm/svml-machine'
+import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
-import { TimeoutError } from './errors/timeoutErrors'
-import { isPotentialInfiniteLoop } from './infiniteLoops/errors'
-import { testForInfiniteLoop } from './infiniteLoops/runtime'
-// import { loadModuleTabs } from './modules/moduleLoader'
 import { getKeywords, getProgramNames } from './name-extractor'
+import { fullJSRunner, hasVerboseErrors, isFullJSChapter, sourceRunner } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
-import { forceIt } from './utils/operators'
 import { typeToString } from './utils/stringify'
 
 export interface IOptions {
@@ -73,18 +44,6 @@ export interface IOptions {
   throwInfiniteLoops: boolean
 }
 
-const DEFAULT_OPTIONS: IOptions = {
-  scheduler: 'async',
-  steps: 1000,
-  stepLimit: 1000,
-  executionMethod: 'auto',
-  variant: 'default',
-  originalMaxExecTime: 1000,
-  useSubst: false,
-  isPrelude: false,
-  throwInfiniteLoops: true
-}
-
 // needed to work on browsers
 if (typeof window !== 'undefined') {
   // @ts-ignore
@@ -93,10 +52,7 @@ if (typeof window !== 'undefined') {
   })
 }
 
-// deals with parsing error objects and converting them to strings (for repl at least)
-
-let verboseErrors = false
-const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)
+let verboseErrors: boolean = false
 
 export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
@@ -116,79 +72,6 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
     }
   })
   return errorMessagesArr.join('\n')
-}
-
-function convertNativeErrorToSourceError(
-  error: Error,
-  line: number | null,
-  column: number | null,
-  name: string | null
-) {
-  // brute-forced from MDN website for phrasing of errors from different browsers
-  // FWIW node and chrome uses V8 so they'll have the same error messages
-  // unable to test on other engines
-  const assignmentToConst = [
-    'invalid assignment to const',
-    'Assignment to constant variable',
-    'Assignment to const',
-    'Redeclaration of const'
-  ]
-  const undefinedVariable = ['is not defined']
-
-  const message = error.message
-  if (name === null) {
-    name = 'UNKNOWN'
-  }
-
-  function messageContains(possibleErrorMessages: string[]) {
-    return possibleErrorMessages.some(errorMessage => message.includes(errorMessage))
-  }
-
-  if (messageContains(assignmentToConst)) {
-    return new ConstAssignment(locationDummyNode(line!, column!), name)
-  } else if (messageContains(undefinedVariable)) {
-    return new UndefinedVariable(name, locationDummyNode(line!, column!))
-  } else {
-    const location =
-      line === null || column === null
-        ? UNKNOWN_LOCATION
-        : {
-            start: { line, column },
-            end: { line: -1, column: -1 }
-          }
-    return new ExceptionError(error, location)
-  }
-}
-
-let previousCode = ''
-let isPreviousCodeTimeoutError = false
-
-function determineExecutionMethod(theOptions: IOptions, context: Context, program: Program) {
-  let isNativeRunnable
-  if (theOptions.executionMethod === 'auto') {
-    if (context.executionMethod === 'auto') {
-      if (verboseErrors) {
-        isNativeRunnable = false
-      } else if (areBreakpointsSet()) {
-        isNativeRunnable = false
-      } else {
-        let hasDeuggerStatement = false
-        simple(program, {
-          DebuggerStatement(node: DebuggerStatement) {
-            hasDeuggerStatement = true
-          }
-        })
-        isNativeRunnable = !hasDeuggerStatement
-      }
-      context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
-    } else {
-      isNativeRunnable = context.executionMethod === 'native'
-    }
-  } else {
-    isNativeRunnable = theOptions.executionMethod === 'native'
-    context.executionMethod = theOptions.executionMethod
-  }
-  return isNativeRunnable
 }
 
 export function findDeclaration(
@@ -388,279 +271,17 @@ export function getTypeInformation(
   }
 }
 
-/*
-function appendModulesToContext(program: Program, context: Context): void {
-  if (context.modules == null) context.modules = new Map<string, ModuleContext>();
-
-  for (const node of program.body) {
-    if (node.type !== 'ImportDeclaration') break
-    const moduleName = (node.source.value as string).trim()
-    
-    // Load the module's tabs
-    if (!context.modules.has(moduleName)) {
-      let moduleContext = {
-        state: null,
-        tabs: loadModuleTabs(moduleName)
-      }
-      context.modules.set(moduleName, moduleContext)
-    }
-  }
-} */
-
 export async function runInContext(
   code: string,
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
-  function getFirstLine(theCode: string) {
-    const theProgramFirstExpression = parseAt(theCode, 0)
-
-    if (theProgramFirstExpression && theProgramFirstExpression.type === 'Literal') {
-      return (theProgramFirstExpression as unknown as Literal).value
-    }
-
-    return undefined
-  }
-  const theOptions: IOptions = { ...DEFAULT_OPTIONS, ...options }
-  context.variant = determineVariant(context, options)
-  context.errors = []
-
-  verboseErrors = getFirstLine(code) === 'enable verbose'
-  const program = parse(code, context)
-  if (!program) {
-    return resolvedErrorPromise
-  }
-  validateAndAnnotate(program as Program, context)
-  context.unTypecheckedCode.push(code)
-  if (context.errors.length > 0) {
-    return resolvedErrorPromise
+  if (isFullJSChapter(context.chapter)) {
+    return fullJSRunner(code, context, options)
   }
 
-  if (context.variant === 'concurrent') {
-    if (previousCode === code) {
-      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-    } else {
-      context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
-    }
-    context.previousCode.unshift(code)
-    previousCode = code
-    try {
-      return Promise.resolve({
-        status: 'finished',
-        context,
-        value: runWithProgram(compileForConcurrent(program, context), context)
-      })
-    } catch (error) {
-      if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
-        context.errors.push(error) // use ExceptionErrors for non Source Errors
-        return resolvedErrorPromise
-      }
-      context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
-      return resolvedErrorPromise
-    }
-  }
-  if (options.useSubst) {
-    const steps = getEvaluationSteps(program, context, options.stepLimit)
-    const redexedSteps: IStepperPropContents[] = []
-    for (const step of steps) {
-      const redex = getRedex(step[0], step[1])
-      const redexed = redexify(step[0], step[1])
-      redexedSteps.push({
-        code: redexed[0],
-        redex: redexed[1],
-        explanation: step[2],
-        function: callee(redex)
-      })
-    }
-    return Promise.resolve({
-      status: 'finished',
-      context,
-      value: redexedSteps
-    })
-  }
-
-  const isNativeRunnable = determineExecutionMethod(theOptions, context, program)
-  if (context.prelude !== null) {
-    const prelude = context.prelude
-    context.prelude = null
-    await runInContext(prelude, context, { ...options, isPrelude: true })
-    return runInContext(code, context, options)
-  }  
-
-  hoistImportDeclarations(program);
-  if (isNativeRunnable) {
-    if (previousCode === code && isPreviousCodeTimeoutError) {
-      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-    } else if (!options.isPrelude) {
-      context.nativeStorage.maxExecTime = theOptions.originalMaxExecTime
-    }
-    if (!options.isPrelude) {
-      context.previousCode.unshift(code)
-      previousCode = code
-    }
-    let transpiled
-    let sourceMapJson: RawSourceMap | undefined
-    try {      
-      appendModuleTabsToContext(program, context)
-      // Mutates program
-      switch (context.variant) {
-        case 'gpu':
-          transpileToGPU(program)
-          break
-        case 'lazy':
-          transpileToLazy(program)
-          break
-      }
-
-      ({ transpiled, codeMap: sourceMapJson } = transpile(program, context))
-      let value = await sandboxedEval(transpiled, context.nativeStorage, context.moduleParams, context.moduleContexts)
-
-      if (context.variant === 'lazy') {
-        value = forceIt(value)
-      }
-
-      if (!options.isPrelude) {
-        isPreviousCodeTimeoutError = false
-      }
-      return Promise.resolve({
-        status: 'finished',
-        context,
-        value
-      })
-    } catch (error) {
-      const isDefaultVariant = options.variant === undefined || options.variant === 'default'
-      if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-        const detectedInfiniteLoop = testForInfiniteLoop(code, context.previousCode.slice(1))
-        if (detectedInfiniteLoop !== undefined) {
-          if (theOptions.throwInfiniteLoops) {
-            context.errors.push(detectedInfiniteLoop)
-            return resolvedErrorPromise
-          } else {
-            error.infiniteLoopError = detectedInfiniteLoop
-            if (error instanceof ExceptionError) {
-              ;(error.error as any).infiniteLoopError = detectedInfiniteLoop
-            }
-          }
-        }
-      }
-      if (error instanceof RuntimeSourceError) {
-        context.errors.push(error)
-        if (error instanceof TimeoutError) {
-          isPreviousCodeTimeoutError = true
-        }
-        return resolvedErrorPromise
-      }
-      if (error instanceof ExceptionError) {
-        // if we know the location of the error, just throw it
-        if (error.location.start.line !== -1) {
-          context.errors.push(error)
-          return resolvedErrorPromise
-        } else {
-          error = error.error // else we try to get the location from source map
-        }
-      }
-      const errorStack = error.stack
-      const match = /<anonymous>:(\d+):(\d+)/.exec(errorStack)
-      if (match === null) {
-        context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
-        return resolvedErrorPromise
-      }
-      const line = Number(match![1])
-      const column = Number(match![2])
-      return SourceMapConsumer.with(sourceMapJson!, null, consumer => {
-        const {
-          line: originalLine,
-          column: originalColumn,
-          name
-        } = consumer.originalPositionFor({
-          line,
-          column
-        })
-        context.errors.push(
-          convertNativeErrorToSourceError(error, originalLine, originalColumn, name)
-        )
-        return resolvedErrorPromise
-      })
-    }
-  } else {
-    let it = evaluate(program, context)
-    let scheduler: Scheduler
-    if (context.variant === 'non-det') {
-      it = nonDetEvaluate(program, context)
-      scheduler = new NonDetScheduler()
-    } else if (theOptions.scheduler === 'async') {
-      scheduler = new AsyncScheduler()
-    } else {
-      scheduler = new PreemptiveScheduler(theOptions.steps)
-    }
-    return scheduler.run(it, context)
-  }
-}
-
-/**
- * Hoists all import declarations to the top of the program,
- * and also collates different import statements from the same 
- * module as a single import statement
- * 
- * @param program Program to parse
- */
- export function hoistImportDeclarations(program: es.Program) {
-  const importNodes = (program.body.filter(node => node.type === "ImportDeclaration") as es.ImportDeclaration[]);
-
-  const specifiers = new Map<string, es.ImportSpecifier[]>();
-  const baseNodes = new Map<string, es.ImportDeclaration>();
-
-  for (const node of importNodes) {
-    const moduleName = (node.source.value as string).trim()
-
-    if(!specifiers.has(moduleName)) {
-      specifiers.set(moduleName, []);
-      baseNodes.set(moduleName, node);
-    }
-
-    for (const specifier of node.specifiers) {
-      if (specifier.type !== 'ImportSpecifier') {
-        throw new Error(
-          `I expected only ImportSpecifiers to be allowed, but encountered ${specifier.type}.`
-        )
-      }
-      
-      specifiers.get(moduleName)!.push(specifier);
-    }
-  }
-
-  // Create new collated import specifiers
-  const newImports = Array.from(specifiers.keys()).map((key) => {
-    const baseNode = baseNodes.get(key)!;
-    return {
-      ...baseNode,
-      specifiers: specifiers.get(key)!
-    } as es.ModuleDeclaration;
-  });
-
-  // Insert the import specifiers at the top of the program
-  program.body = (newImports as (es.ModuleDeclaration | es.Statement | es.Declaration)[])
-                  .concat(program.body.filter(node => node.type !== "ImportDeclaration"));
-}
-
-/**
- * Small function to determine the variant to be used
- * by a program, as both context and options can have
- * a variant. The variant provided in options will
- * have precedence over the variant provided in context.
- *
- * @param context The context of the program.
- * @param options Options to be used when
- *                running the program.
- *
- * @returns The variant that the program is to be run in
- */
-function determineVariant(context: Context, options: Partial<IOptions>): Variant {
-  if (options.variant) {
-    return options.variant
-  } else {
-    return context.variant
-  }
+  verboseErrors = hasVerboseErrors(code)
+  return sourceRunner(code, context, verboseErrors, options)
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {

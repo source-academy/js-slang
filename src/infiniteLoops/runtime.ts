@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { MODULE_PARAMS_ID } from '../constants'
-import { createContext } from '../index'
+import createContext from '../createContext'
 import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
 import * as create from '../utils/astCreator'

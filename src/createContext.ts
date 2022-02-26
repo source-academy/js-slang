@@ -2,6 +2,7 @@
 
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import * as gpu_lib from './gpu/lib'
+import { isFullJSChapter } from './runner'
 import { AsyncScheduler } from './schedulers'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
@@ -341,7 +342,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     // Stream library
     defineBuiltin(context, 'stream_tail(stream)', stream.stream_tail)
     defineBuiltin(context, 'stream(...values)', stream.stream, 0)
-    defineBuiltin(context, 'list_to_stream(xs)', stream.list_to_stream)
   }
 
   if (context.chapter >= 4) {
@@ -424,7 +424,22 @@ const createContext = <T>(
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
   moduleParams?: any
-) => {
+): Context => {
+  if (isFullJSChapter(chapter)) {
+    // fullJS will include all builtins and preludes of source 4
+    return {
+      ...createContext(
+        4,
+        variant,
+        externalSymbols,
+        externalContext,
+        externalBuiltIns,
+        moduleParams
+      ),
+      chapter: -1
+    } as Context
+  }
+
   const context = createEmptyContext(
     chapter,
     variant,

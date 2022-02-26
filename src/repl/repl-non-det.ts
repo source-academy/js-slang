@@ -1,5 +1,5 @@
-import fs = require('fs')
-import repl = require('repl') // 'repl' here refers to the module named 'repl' in index.d.ts
+import * as fs from 'fs'
+import * as repl from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
 
 import { CUT, TRY_AGAIN } from '../constants'
