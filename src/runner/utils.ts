@@ -91,7 +91,7 @@ export function appendModulesToContext(program: Program, context: Context): void
 
     // Load the module's tabs
     if (!context.moduleContexts.has(moduleName)) {
-      let moduleContext = {
+      const moduleContext = {
         state: null,
         tabs: loadModuleTabs(moduleName)
       }

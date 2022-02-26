@@ -1,6 +1,7 @@
 import es from 'estree'
 import { memoize } from 'lodash'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
+
 import {
   ModuleConnectionError,
   ModuleInternalError,

@@ -3,7 +3,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
-import { MODULE_PARAMS_ID, MODULE_CONTEXTS_ID, NATIVE_STORAGE_ID } from '../constants'
+import { MODULE_CONTEXTS_ID, MODULE_PARAMS_ID, NATIVE_STORAGE_ID } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
 import { isFullJSChapter } from '../runner'

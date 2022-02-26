@@ -1,5 +1,5 @@
 import { ModuleContext } from '..'
-import { MODULE_PARAMS_ID, MODULE_CONTEXTS_ID, NATIVE_STORAGE_ID } from '../constants'
+import { MODULE_CONTEXTS_ID, MODULE_PARAMS_ID, NATIVE_STORAGE_ID } from '../constants'
 import { NativeStorage } from '../types'
 
 type Evaler = (

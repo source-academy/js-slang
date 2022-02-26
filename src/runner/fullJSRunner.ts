@@ -2,7 +2,6 @@
 import { Options, parse } from 'acorn'
 import { generate } from 'astring'
 import * as es from 'estree'
-import { hoistImportDeclarations } from '.'
 
 import { IOptions, ModuleContext, Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
@@ -12,6 +11,7 @@ import { evallerReplacer, getBuiltins, prefixModule, transpile } from '../transp
 import { Context } from '../types'
 import * as create from '../utils/astCreator'
 import { NativeStorage } from './../types'
+import { hoistImportDeclarations } from '.'
 import { toSourceError } from './errors'
 import { appendModulesToContext, resolvedErrorPromise } from './utils'
 
