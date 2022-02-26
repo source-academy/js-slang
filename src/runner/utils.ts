@@ -74,11 +74,20 @@ export function determineExecutionMethod(
  * @param context The context of the program
  */
 export function appendModulesToContext(program: Program, context: Context): void {
-  if (context.modules == null) context.modules = []
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') break
     const moduleName = (node.source.value as string).trim()
-    Array.prototype.push.apply(context.modules, loadModuleTabs(moduleName))
+    
+    // Load the module's tabs
+    if (!context.moduleContexts.has(moduleName)) {
+      let moduleContext = {
+        state: null,
+        tabs: loadModuleTabs(moduleName)
+      }
+      context.moduleContexts.set(moduleName, moduleContext)
+    } else {
+      context.moduleContexts.get(moduleName)!.tabs = loadModuleTabs(moduleName);
+    }
   }
 }
 
