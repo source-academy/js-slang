@@ -8,7 +8,7 @@ export const TRY_AGAIN = 'retry' // command for Source 4.3
 export const GLOBAL = typeof window === 'undefined' ? global : window
 export const NATIVE_STORAGE_ID = 'nativeStorage'
 export const MODULE_PARAMS_ID = 'moduleParams'
-export const MODULE_STATE_ID = 'moduleContext'
+export const MODULE_CONTEXTS_ID = 'moduleContexts'
 export const MAX_LIST_DISPLAY_LENGTH = 100
 export const UNKNOWN_LOCATION: es.SourceLocation = {
   start: {
