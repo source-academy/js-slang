@@ -1,5 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { DebuggerStatement, Literal, Program } from 'estree'
+import {
+  DebuggerStatement,
+  Declaration,
+  ImportDeclaration,
+  ImportDefaultSpecifier,
+  ImportNamespaceSpecifier,
+  ImportSpecifier,
+  Literal,
+  ModuleDeclaration,
+  Program,
+  Statement
+} from 'estree'
 
 import { IOptions, Result } from '..'
 import { loadModuleTabs } from '../modules/moduleLoader'
@@ -74,12 +85,59 @@ export function determineExecutionMethod(
  * @param context The context of the program
  */
 export function appendModulesToContext(program: Program, context: Context): void {
-  if (context.modules == null) context.modules = []
   for (const node of program.body) {
     if (node.type !== 'ImportDeclaration') break
     const moduleName = (node.source.value as string).trim()
-    Array.prototype.push.apply(context.modules, loadModuleTabs(moduleName))
+
+    // Load the module's tabs
+    if (!context.moduleContexts.has(moduleName)) {
+      const moduleContext = {
+        state: null,
+        tabs: loadModuleTabs(moduleName)
+      }
+      context.moduleContexts.set(moduleName, moduleContext)
+    } else {
+      context.moduleContexts.get(moduleName)!.tabs = loadModuleTabs(moduleName)
+    }
   }
+}
+
+/**
+ * Hoists import statements in the program to the top
+ * Also collates multiple import statements to a module into
+ * a single statement
+ */
+export function hoistImportDeclarations(program: Program) {
+  const importNodes = program.body.filter(
+    node => node.type === 'ImportDeclaration'
+  ) as ImportDeclaration[]
+  const specifiers = new Map<
+    string,
+    (ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier)[]
+  >()
+  const baseNodes = new Map<string, ImportDeclaration>()
+
+  for (const node of importNodes) {
+    const moduleName = node.source.value as string
+
+    if (!specifiers.has(moduleName)) {
+      specifiers.set(moduleName, node.specifiers)
+      baseNodes.set(moduleName, node)
+    } else {
+      for (const specifier of node.specifiers) {
+        specifiers.get(moduleName)!.push(specifier)
+      }
+    }
+  }
+
+  const newImports = Array.from(baseNodes.entries()).map(([module, node]) => {
+    return {
+      ...node,
+      specifiers: specifiers.get(module)
+    }
+  }) as (ModuleDeclaration | Statement | Declaration)[]
+
+  program.body = newImports.concat(program.body.filter(node => node.type !== 'ImportDeclaration'))
 }
 
 // AST Utils

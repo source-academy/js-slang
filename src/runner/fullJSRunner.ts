@@ -3,13 +3,15 @@ import { Options, parse } from 'acorn'
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { IOptions, Result } from '..'
+import { IOptions, ModuleContext, Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { FatalSyntaxError } from '../parser/parser'
 import { evallerReplacer, getBuiltins, prefixModule, transpile } from '../transpiler/transpiler'
 import { Context } from '../types'
 import * as create from '../utils/astCreator'
 import { NativeStorage } from './../types'
+import { hoistImportDeclarations } from '.'
 import { toSourceError } from './errors'
 import { appendModulesToContext, resolvedErrorPromise } from './utils'
 
@@ -45,7 +47,12 @@ function parseFullJS(code: string, context: Context): es.Program | undefined {
   return program
 }
 
-function fullJSEval(code: string, nativeStorage: NativeStorage, moduleParams: any): any {
+function fullJSEval(
+  code: string,
+  nativeStorage: NativeStorage,
+  moduleParams: any,
+  moduleContexts: Map<string, ModuleContext>
+): any {
   if (nativeStorage.evaller) {
     return nativeStorage.evaller(code)
   } else {
@@ -79,6 +86,8 @@ export async function fullJSRunner(
     return resolvedErrorPromise
   }
 
+  hoistImportDeclarations(program)
+
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context
   const preludeBuiltInStatements: es.Statement[] = containsPrevEval(context)
@@ -86,7 +95,16 @@ export async function fullJSRunner(
     : [...getBuiltins(context.nativeStorage), ...preparePrelude(context)]
 
   // modules
-  appendModulesToContext(program, context)
+  try {
+    appendModulesToContext(program, context)
+  } catch (error) {
+    if (error instanceof RuntimeSourceError) {
+      context.errors.push(error)
+      return resolvedErrorPromise
+    }
+    throw error
+  }
+
   const modulePrefix: string = prefixModule(program)
 
   const preEvalProgram: es.Program = create.program([
@@ -94,14 +112,14 @@ export async function fullJSRunner(
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set())
   ])
   const preEvalCode: string = generate(preEvalProgram) + modulePrefix
-  await fullJSEval(preEvalCode, context.nativeStorage, options)
+  await fullJSEval(preEvalCode, context.nativeStorage, options, context.moduleContexts)
 
   const { transpiled, sourceMapJson } = transpile(program, context)
   try {
     return Promise.resolve({
       status: 'finished',
       context,
-      value: await fullJSEval(transpiled, context.nativeStorage, options)
+      value: await fullJSEval(transpiled, context.nativeStorage, options, context.moduleContexts)
     })
   } catch (error) {
     context.errors.push(await toSourceError(error, sourceMapJson))

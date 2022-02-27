@@ -28,7 +28,7 @@ import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
-import { determineExecutionMethod } from '.'
+import { determineExecutionMethod, hoistImportDeclarations } from '.'
 import { toSourceError } from './errors'
 import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
 
@@ -145,7 +145,12 @@ async function runNative(
     }
 
     ;({ transpiled, sourceMapJson } = transpile(program, context))
-    let value = await sandboxedEval(transpiled, context.nativeStorage, options)
+    let value = await sandboxedEval(
+      transpiled,
+      context.nativeStorage,
+      options,
+      context.moduleContexts
+    )
 
     if (context.variant === 'lazy') {
       value = forceIt(value)
@@ -221,6 +226,8 @@ export async function sourceRunner(
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
+
+  hoistImportDeclarations(program)
 
   if (context.variant === 'concurrent') {
     return runConcurrent(code, program, context, theOptions)
