@@ -64,6 +64,10 @@ function preparePrelude(context: Context): es.Statement[] {
   return program.body as es.Statement[]
 }
 
+function containsPrevEval(context: Context): boolean {
+  return context.nativeStorage.evaller != null
+}
+
 export async function fullJSRunner(
   code: string,
   context: Context,
@@ -76,19 +80,19 @@ export async function fullJSRunner(
   }
 
   // prelude & builtins
-  // TODO resolve repeated declaration in prelude and builtins
-  context.nativeStorage.builtins.delete('list_to_stream')
-  const preludeBuiltInStatements: es.Statement[] = [
-    ...getBuiltins(context.nativeStorage),
-    ...preparePrelude(context),
-    evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set())
-  ]
+  // only process builtins and preludes if it is a fresh eval context
+  const preludeBuiltInStatements: es.Statement[] = containsPrevEval(context)
+    ? []
+    : [...getBuiltins(context.nativeStorage), ...preparePrelude(context)]
 
   // modules
   appendModulesToContext(program, context)
   const modulePrefix: string = prefixModule(program)
 
-  const preEvalProgram: es.Program = create.program(preludeBuiltInStatements)
+  const preEvalProgram: es.Program = create.program([
+    ...preludeBuiltInStatements,
+    evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set())
+  ])
   const preEvalCode: string = generate(preEvalProgram) + modulePrefix
   await fullJSEval(preEvalCode, context.nativeStorage, options)
 

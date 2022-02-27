@@ -609,9 +609,14 @@ function transpileToSource(
 
 function transpileToFullJS(program: es.Program): TranspiledResult {
   transformImportDeclarations(program)
+  const transpiledProgram: es.Program = create.program([
+    evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
+    create.expressionStatement(create.identifier('undefined')),
+    ...(program.body as es.Statement[])
+  ])
 
   const sourceMap = new SourceMapGenerator({ file: 'source' })
-  const transpiled = generate(program, { sourceMap })
+  const transpiled = generate(transpiledProgram, { sourceMap })
   const sourceMapJson = sourceMap.toJSON()
 
   return { transpiled, sourceMapJson }
