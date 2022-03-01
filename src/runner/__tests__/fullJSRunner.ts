@@ -1,4 +1,4 @@
-import { Context, runInContext } from '../..'
+import { Context, Result, runInContext } from '../..'
 import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../mocks/context'
 import { FatalSyntaxError } from '../../parser/parser'
@@ -20,6 +20,24 @@ test('Source builtins are accessible in fullJS program', async () => {
   await runInContext(fullJSProgram, fullJSContext)
 
   expect(fullJSContext.errors.length).toBeLessThanOrEqual(0)
+})
+
+test('Simulate fullJS REPL', async () => {
+  const fullJSContext: Context = mockContext(-1, 'default')
+  const replStatements: [string, any][] = [
+    ['const x = 1;', undefined],
+    ['x;', 1],
+    ['const y = x + 1;', undefined],
+    ['y;', 2]
+  ]
+
+  for (const replStatement of replStatements) {
+    const [statement, expectedResult] = replStatement
+    const result: Result = await runInContext(statement, fullJSContext)
+    expect(result.status).toStrictEqual('finished')
+    expect((result as any).value).toStrictEqual(expectedResult)
+    expect(fullJSContext.errors).toStrictEqual([])
+  }
 })
 
 describe('Native javascript programs are valid in fullJSRunner', () => {

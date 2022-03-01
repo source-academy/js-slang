@@ -55,6 +55,44 @@ export function prefixModule(program: es.Program): string {
   return prefix
 }
 
+/*
+ * Hoists import statements in the program to the top
+ * Also collates multiple import statements to a module into
+ * a single statement
+ */
+export function hoistImportDeclarations(program: es.Program) {
+  const importNodes = program.body.filter(
+    node => node.type === 'ImportDeclaration'
+  ) as es.ImportDeclaration[]
+  const specifiers = new Map<
+    string,
+    (es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier)[]
+  >()
+  const baseNodes = new Map<string, es.ImportDeclaration>()
+
+  for (const node of importNodes) {
+    const moduleName = node.source.value as string
+
+    if (!specifiers.has(moduleName)) {
+      specifiers.set(moduleName, node.specifiers)
+      baseNodes.set(moduleName, node)
+    } else {
+      for (const specifier of node.specifiers) {
+        specifiers.get(moduleName)!.push(specifier)
+      }
+    }
+  }
+
+  const newImports = Array.from(baseNodes.entries()).map(([module, node]) => {
+    return {
+      ...node,
+      specifiers: specifiers.get(module)
+    }
+  }) as (es.ModuleDeclaration | es.Statement | es.Declaration)[]
+
+  program.body = newImports.concat(program.body.filter(node => node.type !== 'ImportDeclaration'))
+}
+
 export function transformSingleImportDeclaration(
   moduleCounter: number,
   node: es.ImportDeclaration,
@@ -609,9 +647,14 @@ function transpileToSource(
 
 function transpileToFullJS(program: es.Program): TranspiledResult {
   transformImportDeclarations(program)
+  const transpiledProgram: es.Program = create.program([
+    evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
+    create.expressionStatement(create.identifier('undefined')),
+    ...(program.body as es.Statement[])
+  ])
 
   const sourceMap = new SourceMapGenerator({ file: 'source' })
-  const transpiled = generate(program, { sourceMap })
+  const transpiled = generate(transpiledProgram, { sourceMap })
   const sourceMapJson = sourceMap.toJSON()
 
   return { transpiled, sourceMapJson }
