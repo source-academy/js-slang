@@ -7,11 +7,16 @@ import { IOptions, ModuleContext, Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { FatalSyntaxError } from '../parser/parser'
-import { evallerReplacer, getBuiltins, prefixModule, transpile } from '../transpiler/transpiler'
+import {
+  evallerReplacer,
+  getBuiltins,
+  hoistImportDeclarations,
+  prefixModule,
+  transpile
+} from '../transpiler/transpiler'
 import { Context } from '../types'
 import * as create from '../utils/astCreator'
 import { NativeStorage } from './../types'
-import { hoistImportDeclarations } from '.'
 import { toSourceError } from './errors'
 import { appendModulesToContext, resolvedErrorPromise } from './utils'
 
@@ -86,29 +91,25 @@ export async function fullJSRunner(
     return resolvedErrorPromise
   }
 
-  hoistImportDeclarations(program)
-
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context
-  const preludeBuiltInStatements: es.Statement[] = containsPrevEval(context)
+  const preludeAndBuiltins: es.Statement[] = containsPrevEval(context)
     ? []
     : [...getBuiltins(context.nativeStorage), ...preparePrelude(context)]
 
   // modules
+  hoistImportDeclarations(program)
+  let modulePrefix: string
   try {
     appendModulesToContext(program, context)
+    modulePrefix = prefixModule(program)
   } catch (error) {
-    if (error instanceof RuntimeSourceError) {
-      context.errors.push(error)
-      return resolvedErrorPromise
-    }
-    throw error
+    context.errors.push(error instanceof RuntimeSourceError ? error : await toSourceError(error))
+    return resolvedErrorPromise
   }
 
-  const modulePrefix: string = prefixModule(program)
-
   const preEvalProgram: es.Program = create.program([
-    ...preludeBuiltInStatements,
+    ...preludeAndBuiltins,
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set())
   ])
   const preEvalCode: string = generate(preEvalProgram) + modulePrefix
