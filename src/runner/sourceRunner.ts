@@ -22,13 +22,13 @@ import {
   redexify
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
-import { transpile } from '../transpiler/transpiler'
+import { hoistImportDeclarations, transpile } from '../transpiler/transpiler'
 import { Context, Scheduler, SourceError } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
-import { determineExecutionMethod, hoistImportDeclarations } from '.'
+import { determineExecutionMethod } from '.'
 import { toSourceError } from './errors'
 import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
 
