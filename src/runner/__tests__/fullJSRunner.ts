@@ -89,11 +89,28 @@ describe('Native javascript programs are valid in fullJSRunner', () => {
     errors: []
   }
 
-  it.each([LITERAL_OBJECT, OOP, ARRAY_FILTER, ARRAY_MAP, OOP])(
+  const TRY_CATCH: CodeSnippetTestCase = {
+    name: 'TRY CATCH',
+    snippet: `
+            let a = 0;
+            try {
+              nonExistentFunction();
+            } catch (error) {
+              // catch error
+            } finally {
+              a++;
+            }
+            a;
+           ` ,
+    value: 1,
+    errors: []
+  }
+
+  it.each([LITERAL_OBJECT, OOP, ARRAY_FILTER, ARRAY_MAP, OOP, TRY_CATCH])(
     `%p`,
     async ({ snippet, value, errors }: CodeSnippetTestCase) => {
       const fullJSContext: Context = mockContext(-1, 'default')
-      const result = await runInContext(snippet, fullJSContext)
+      const result = await runInContext(snippet, fullJSContext) 
 
       expect(result.status).toStrictEqual('finished')
       expect((result as any).value).toStrictEqual(value)
