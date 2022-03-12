@@ -101,7 +101,7 @@ describe('Native javascript programs are valid in fullJSRunner', () => {
               a++;
             }
             a;
-           ` ,
+           `,
     value: 1,
     errors: []
   }
@@ -110,7 +110,7 @@ describe('Native javascript programs are valid in fullJSRunner', () => {
     `%p`,
     async ({ snippet, value, errors }: CodeSnippetTestCase) => {
       const fullJSContext: Context = mockContext(-1, 'default')
-      const result = await runInContext(snippet, fullJSContext) 
+      const result = await runInContext(snippet, fullJSContext)
 
       expect(result.status).toStrictEqual('finished')
       expect((result as any).value).toStrictEqual(value)

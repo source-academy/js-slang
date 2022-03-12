@@ -30,6 +30,7 @@ import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
 import { determineExecutionMethod } from '.'
 import { toSourceError } from './errors'
+import { fullJSRunner } from './fullJSRunner'
 import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
@@ -231,6 +232,10 @@ export async function sourceRunner(
 
   if (context.variant === 'concurrent') {
     return runConcurrent(code, program, context, theOptions)
+  }
+
+  if (context.variant === 'native') {
+    return fullJSRunner(code, context, theOptions)
   }
 
   if (theOptions.useSubst) {
