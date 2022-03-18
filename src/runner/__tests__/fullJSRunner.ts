@@ -124,7 +124,19 @@ describe('Error locations are handled well in fullJS', () => {
     ]
   }
 
-  it.each([UNDEFINED_VARIABLE, SYNTAX_ERROR])(
+  const REFERENCE_ERROR: CodeSnippetTestCase = {
+    name: 'REFERENCE ERROR',
+    snippet: `
+            function h() {
+              g();
+            }
+            h();
+            `,
+    value: undefined,
+    errors: [new UndefinedVariable('g', locationDummyNode(3, 14))]
+  }
+
+  it.each([UNDEFINED_VARIABLE, SYNTAX_ERROR, REFERENCE_ERROR])(
     `%p`,
     async ({ snippet, value, errors }: CodeSnippetTestCase) => {
       const fullJSContext: Context = mockContext(-1, 'default')
