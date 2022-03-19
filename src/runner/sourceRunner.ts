@@ -234,10 +234,6 @@ export async function sourceRunner(
     return runConcurrent(code, program, context, theOptions)
   }
 
-  if (context.variant === 'native') {
-    return fullJSRunner(code, context, theOptions)
-  }
-
   if (theOptions.useSubst) {
     return runSubstitution(program, context, theOptions)
   }
@@ -248,6 +244,11 @@ export async function sourceRunner(
     program,
     verboseErrors
   )
+
+  if (isNativeRunnable && context.variant === 'native') {
+    return await fullJSRunner(code, context, theOptions)
+  }
+
   // Handle preludes
   if (context.prelude !== null) {
     const prelude = context.prelude
