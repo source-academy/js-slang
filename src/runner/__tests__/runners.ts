@@ -87,6 +87,17 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
         'SyntaxError: Unexpected token (1:8)'
       )
     ]
+  },
+  {
+    name: 'REFERENCE ERROR',
+    snippet: `
+            function h() {
+              g();
+            }
+            h();
+            `,
+    value: undefined,
+    errors: [new UndefinedVariable('g', locationDummyNode(3, 14))]
   }
 ]
 
