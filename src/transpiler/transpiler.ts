@@ -665,7 +665,7 @@ export function transpile(
   context: Context,
   skipUndefined = false
 ): TranspiledResult {
-  if (isFullJSChapter(context.chapter)) {
+  if (isFullJSChapter(context.chapter) || context.variant == 'native') {
     return transpileToFullJS(program)
   }
 

@@ -30,6 +30,7 @@ import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
 import { determineExecutionMethod } from '.'
 import { toSourceError } from './errors'
+import { fullJSRunner } from './fullJSRunner'
 import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
@@ -243,6 +244,11 @@ export async function sourceRunner(
     program,
     verboseErrors
   )
+
+  if (isNativeRunnable && context.variant === 'native') {
+    return await fullJSRunner(code, context, theOptions)
+  }
+
   // Handle preludes
   if (context.prelude !== null) {
     const prelude = context.prelude
