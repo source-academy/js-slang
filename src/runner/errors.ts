@@ -17,7 +17,7 @@ interface EvalErrorLocator {
 }
 
 const ChromeEvalErrorLocator = {
-  regex: /at eval.+<anonymous>:(\d+):(\d+)/gm,
+  regex: /eval at.+<anonymous>:(\d+):(\d+)/gm,
   browser: BrowserType.Chrome
 }
 
