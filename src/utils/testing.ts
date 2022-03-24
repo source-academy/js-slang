@@ -10,6 +10,13 @@ import { transpile } from '../transpiler/transpiler'
 import { Context, CustomBuiltIns, SourceError, Value, Variant } from '../types'
 import { stringify } from './stringify'
 
+export interface CodeSnippetTestCase {
+  name: string
+  snippet: string
+  value: any
+  errors: SourceError[]
+}
+
 export interface TestContext extends Context {
   displayResult: string[]
   promptResult: string[]
