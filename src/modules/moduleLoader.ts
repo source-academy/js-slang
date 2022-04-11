@@ -86,7 +86,7 @@ export function loadModuleBundle(path: string, context: Context, node?: es.Node)
 export function convertRawTabToFunction(rawTabString: string): string {
   rawTabString = rawTabString.trim()
   const lastBracket = rawTabString.lastIndexOf('(')
-  return rawTabString.substring(0, lastBracket) + ')';
+  return rawTabString.substring(0, lastBracket) + ')'
 }
 
 /**
