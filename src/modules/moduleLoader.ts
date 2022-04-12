@@ -54,8 +54,9 @@ function getModuleManifest(): Modules {
  * @return String of module file contents
  */
 
-export const memoizedGetModuleFile = memoize(getModuleFile)
-function getModuleFile(name: string, type: 'tab' | 'bundle'): string {
+const memoizedGetModuleFileInternal = memoize(getModuleFile)
+export const memoizedGetModuleFile = (name: string, type: 'tab' | 'bundle') => memoizedGetModuleFileInternal({name, type})
+function getModuleFile({name, type}: {name: string, type: 'tab' | 'bundle'}): string {
   return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js`)
 }
 
