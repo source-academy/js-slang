@@ -316,7 +316,7 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
 
           const doc = docs.children.find((x: any) => x.name === spec.local.name)
           if (!doc) return undefined
-          
+
           if (doc.kindString === 'Function') {
             // If the documentation is for a function
             if (!doc.signatures) return undefined
