@@ -326,14 +326,14 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
             if (!signature) return undefined
 
             // Form the parameter string for the function
-            let paramStr: string;
-            if (!signature.parameters) paramStr = `()`;
+            let paramStr: string
+            if (!signature.parameters) paramStr = `()`
             else paramStr = `(${signature.parameters.map((param: any) => param.name).join(', ')})`
 
             // Form the result representation for the function
-            let resultStr: string;
-            if (!signature.type) resultStr = `void`;
-            else resultStr = signature.type.name;
+            let resultStr: string
+            if (!signature.type) resultStr = `void`
+            else resultStr = signature.type.name
 
             const desc = signature.comment?.shortText
 
@@ -343,8 +343,8 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
             const desc = doc.comment?.shortText
             if (!desc) return undefined
 
-            const typeStr = doc.type?.name !== undefined ? `:${doc.type.name}` : '';
-            
+            const typeStr = doc.type?.name !== undefined ? `:${doc.type.name}` : ''
+
             return `<div><h4>${spec.local.name}${typeStr}</h4><div class="description">${desc}</div></div>`
           } else {
             // Unknown type
