@@ -4,7 +4,7 @@ import { SourceMapConsumer } from 'source-map'
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import { looseParse, parse, parseForNames, typedParse } from './parser/parser'
+import { looseParse, parse, parseWithComments, typedParse } from './parser/parser'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
@@ -27,7 +27,7 @@ import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
-import { getKeywords, getProgramNames } from './name-extractor'
+import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { fullJSRunner, hasVerboseErrors, isFullJSChapter, sourceRunner } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
@@ -156,16 +156,24 @@ export function hasDeclaration(
   return true
 }
 
+/**
+ * Gets names present within a string of code
+ * @param code Code to parse
+ * @param line Line position of the cursor
+ * @param col Column position of the cursor
+ * @param context Evaluation context
+ * @returns `[NameDeclaration[], true]` if suggestions should be displayed, `[[], false]` otherwise
+ */
 export async function getNames(
   code: string,
   line: number,
   col: number,
   context: Context
-): Promise<any> {
-  const [program, comments] = parseForNames(code)
+): Promise<[NameDeclaration[], boolean]> {
+  const [program, comments] = parseWithComments(code)
 
   if (!program) {
-    return []
+    return [[], false]
   }
   const cursorLoc: es.Position = { line, column: col }
 

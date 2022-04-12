@@ -55,7 +55,8 @@ function getModuleManifest(): Modules {
  */
 
 export const memoizedGetModuleFile = memoize(getModuleFile)
-function getModuleFile(name: string, type: 'tab' | 'bundle'): string {
+function getModuleFile(name: string, type: 'tab' | 'bundle' | 'docs'): string {
+  if (type === 'docs') return httpGet(`${MODULES_STATIC_URL}/documentation/jsons/${name}.json`)
   return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js`)
 }
 
@@ -113,4 +114,13 @@ export function loadModuleTabs(path: string, node?: es.Node) {
       throw new ModuleInternalError(path, node)
     }
   })
+}
+
+export function loadModuleDocs(path: string, node?: es.Node) {
+  const modules = memoizedGetModuleManifest()
+  // Check if the module exists
+  const moduleList = Object.keys(modules)
+  if (!moduleList.includes(path)) throw new ModuleNotFoundError(path, node)
+
+  return JSON.parse(memoizedGetModuleFile(path, 'docs'))
 }

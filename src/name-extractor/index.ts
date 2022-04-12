@@ -1,7 +1,9 @@
 import * as es from 'estree'
 
 import { Context } from '../'
+import { ModuleNotFoundError } from '../errors/moduleErrors'
 import { findAncestors, findIdentifierNode } from '../finder'
+import { loadModuleDocs } from '../modules/moduleLoader'
 import syntaxBlacklist from '../parser/syntaxBlacklist'
 
 export interface NameDeclaration {
@@ -65,6 +67,15 @@ const keywordsInFunction: { [key: string]: NameDeclaration[] } = {
   ReturnStatement: [{ name: 'return', meta: 'keyword', score: KEYWORD_SCORE }]
 }
 
+/**
+ * Retrieves keyword suggestions based on what node the cursor is currently over.
+ * For example, only suggest `let` when the cursor is over the init part of a for
+ * statement
+ * @param prog Program to parse
+ * @param cursorLoc Current location of the cursor
+ * @param context Evaluation context
+ * @returns A list of keywords as suggestions
+ */
 export function getKeywords(
   prog: es.Node,
   cursorLoc: es.Position,
@@ -117,8 +128,16 @@ export function getKeywords(
   return keywordSuggestions
 }
 
-// Returns [suggestions, shouldPrompt].
-// Don't prompt if user is typing comments, declaring a variable or declaring function arguments
+/**
+ * Retrieve the list of names present within the program. If the cursor is within a comment,
+ * or when the user is declaring a variable or function arguments, suggestions should not be displayed,
+ * indicated by the second part of the return value of this function.
+ * @param prog Program to parse for names
+ * @param comments Comments found within the program
+ * @param cursorLoc Current location of the cursor
+ * @returns Tuple consisting of the list of suggestions, and a boolean value indicating if
+ * suggestions should be displayed, i.e. `[suggestions, shouldPrompt]`
+ */
 export function getProgramNames(
   prog: es.Node,
   comments: acorn.Comment[],
@@ -278,17 +297,50 @@ function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean):
 }
 
 // locTest is a callback that returns whether cursor is in location of node
+/**
+ * Gets a list of `NameDeclarations` from thte given node
+ * @param node Node to search for names
+ * @param locTest Callback of type `(node: es.Node) => boolean`. Should return true if the cursor
+ * is located within the node, false otherwise
+ * @returns List of found names
+ */
 function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDeclaration[] {
   switch (node.type) {
     case 'ImportDeclaration':
-      const importDelcarations: NameDeclaration[] = []
-      node.specifiers
-        .map(spec => spec.local.name)
-        .filter(na => !isDummyName(na))
-        .forEach(na => importDelcarations.push({ name: na, meta: KIND_IMPORT }))
-      return importDelcarations
+      const specs = node.specifiers.filter(x => !isDummyName(x.local.name));
+
+      try {
+        const docs = loadModuleDocs(node.source.value as string, node);
+        const getDocs = (spec: es.ImportSpecifier) => {
+          if (!docs || !docs.children) return undefined;
+
+          const doc = docs.children.find((x: any) => x.name === spec.local.name)
+          if (!doc || !doc.signatures) return undefined;
+
+          return doc.signatures[0]?.comment?.shortText;
+        }
+
+        return specs.map(spec => {
+          if (spec.type !== 'ImportSpecifier') {
+            throw new Error(`Expected ImportSpecifier, got ${spec.type}`)
+          }
+
+          return {
+            name: spec.local.name,
+            meta: KIND_IMPORT,
+            docHTML: getDocs(spec)
+          }
+        })
+      } catch (err) {
+        if (!(err instanceof ModuleNotFoundError)) throw err;
+
+        return specs.map(spec => ({
+          name: spec.local.name,
+          meta: KIND_IMPORT,
+        }))
+      }
     case 'VariableDeclaration':
-      const delcarations: NameDeclaration[] = []
+      const declarations: NameDeclaration[] = []
       for (const decl of node.declarations) {
         const id = decl.id
         const name = (id as es.Identifier).name
@@ -302,12 +354,12 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
 
         if (node.kind === KIND_CONST && decl.init && isFunction(decl.init)) {
           // constant initialized with arrow function will always be a function
-          delcarations.push({ name, meta: KIND_FUNCTION })
+          declarations.push({ name, meta: KIND_FUNCTION })
         } else {
-          delcarations.push({ name, meta: node.kind })
+          declarations.push({ name, meta: node.kind })
         }
       }
-      return delcarations
+      return declarations
     case 'FunctionDeclaration':
       return node.id && !isDummyName(node.id.name)
         ? [{ name: node.id.name, meta: KIND_FUNCTION }]
