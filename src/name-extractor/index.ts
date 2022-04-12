@@ -321,10 +321,31 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
             // If the documentation is for a function
             if (!doc.signatures) return undefined
 
-            return doc.signatures[0]?.comment?.shortText
+            // In source all functions should only have one signature
+            const signature = doc.signatures[0]
+            if (!signature) return undefined
+
+            // Form the parameter string for the function
+            let paramStr: string;
+            if (!signature.parameters) paramStr = `()`;
+            else paramStr = `(${signature.parameters.map((param: any) => param.name).join(', ')})`
+
+            // Form the result representation for the function
+            let resultStr: string;
+            if (!signature.type) resultStr = `void`;
+            else resultStr = signature.type.name;
+
+            const desc = signature.comment?.shortText
+
+            return `<div><h4>${spec.local.name}${paramStr} → {${resultStr}}</h4><div class="description">${desc}</div></div>`
           } else if (doc.kindString === 'Variable') {
             // If the documentation is for a variable
-            return doc.comment?.shortText
+            const desc = doc.comment?.shortText
+            if (!desc) return undefined
+
+            const typeStr = doc.type?.name !== undefined ? `:${doc.type.name}` : '';
+            
+            return `<div><h4>${spec.local.name}${typeStr}</h4><div class="description">${desc}</div></div>`
           } else {
             // Unknown type
             return undefined
