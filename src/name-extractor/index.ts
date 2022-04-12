@@ -307,17 +307,17 @@ function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean):
 function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDeclaration[] {
   switch (node.type) {
     case 'ImportDeclaration':
-      const specs = node.specifiers.filter(x => !isDummyName(x.local.name));
+      const specs = node.specifiers.filter(x => !isDummyName(x.local.name))
 
       try {
-        const docs = loadModuleDocs(node.source.value as string, node);
+        const docs = loadModuleDocs(node.source.value as string, node)
         const getDocs = (spec: es.ImportSpecifier) => {
-          if (!docs || !docs.children) return undefined;
+          if (!docs || !docs.children) return undefined
 
           const doc = docs.children.find((x: any) => x.name === spec.local.name)
-          if (!doc || !doc.signatures) return undefined;
+          if (!doc || !doc.signatures) return undefined
 
-          return doc.signatures[0]?.comment?.shortText;
+          return doc.signatures[0]?.comment?.shortText
         }
 
         return specs.map(spec => {
@@ -332,11 +332,11 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
           }
         })
       } catch (err) {
-        if (!(err instanceof ModuleNotFoundError)) throw err;
+        if (!(err instanceof ModuleNotFoundError)) throw err
 
         return specs.map(spec => ({
           name: spec.local.name,
-          meta: KIND_IMPORT,
+          meta: KIND_IMPORT
         }))
       }
     case 'VariableDeclaration':
