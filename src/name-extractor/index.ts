@@ -315,9 +315,20 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
           if (!docs || !docs.children) return undefined
 
           const doc = docs.children.find((x: any) => x.name === spec.local.name)
-          if (!doc || !doc.signatures) return undefined
+          if (!doc) return undefined
+          
+          if (doc.kindString === 'Function') {
+            // If the documentation is for a function
+            if (!doc.signatures) return undefined
 
-          return doc.signatures[0]?.comment?.shortText
+            return doc.signatures[0]?.comment?.shortText
+          } else if (doc.kindString === 'Variable') {
+            // If the documentation is for a variable
+            return doc.comment?.shortText
+          } else {
+            // Unknown type
+            return undefined
+          }
         }
 
         return specs.map(spec => {
