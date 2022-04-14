@@ -55,11 +55,10 @@ function getModuleManifest(): Modules {
  */
 
 const memoizedGetModuleFileInternal = memoize(getModuleFile)
-export const memoizedGetModuleFile = (name: string, type: 'tab' | 'bundle' | 'docs') =>
+export const memoizedGetModuleFile = (name: string, type: 'tab' | 'bundle' | 'json') =>
   memoizedGetModuleFileInternal({ name, type })
-function getModuleFile({ name, type }: { name: string; type: 'tab' | 'bundle' | 'docs' }): string {
-  if (type === 'docs') return httpGet(`${MODULES_STATIC_URL}/documentation/jsons/${name}.json`)
-  return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js`)
+function getModuleFile({ name, type }: { name: string; type: 'tab' | 'bundle' | 'json' }): string {
+  return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js${type === 'json' ? 'on' : ''}`)
 }
 
 /**
@@ -124,5 +123,5 @@ export function loadModuleDocs(path: string, node?: es.Node) {
   const moduleList = Object.keys(modules)
   if (!moduleList.includes(path)) throw new ModuleNotFoundError(path, node)
 
-  return JSON.parse(memoizedGetModuleFile(path, 'docs'))
+  return JSON.parse(memoizedGetModuleFile(path, 'json'))
 }
