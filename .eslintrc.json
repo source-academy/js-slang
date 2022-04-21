@@ -14,7 +14,10 @@
     "project": "tsconfig.json",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": [
+    "@typescript-eslint",
+    "simple-import-sort"
+  ],
   "rules": {
     "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/ban-types": "off",
@@ -39,6 +42,7 @@
     "@typescript-eslint/restrict-plus-operands": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/unbound-method": "off",
-    "prefer-rest-params": "off"
+    "prefer-rest-params": "off",
+    "simple-import-sort/imports": "warn"
   }
 }

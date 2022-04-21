@@ -2,8 +2,8 @@ import { stripIndent } from '../utils/formatters'
 import {
   lineTreeToString,
   stringDagToLineTree,
-  valueToStringDag,
-  stringify
+  stringify,
+  valueToStringDag
 } from '../utils/stringify'
 import { expectResult } from '../utils/testing'
 

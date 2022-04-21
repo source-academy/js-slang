@@ -1,6 +1,6 @@
-import * as moduleLoader from '../moduleLoader'
-import { ModuleInternalError, ModuleConnectionError } from '../../errors/moduleErrors'
 import { createEmptyContext } from '../../createContext'
+import { ModuleConnectionError, ModuleInternalError } from '../../errors/moduleErrors'
+import * as moduleLoader from '../moduleLoader'
 
 // Mock memoize function from lodash
 jest.mock('lodash', () => ({ memoize: jest.fn(func => func) }))

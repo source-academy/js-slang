@@ -1,17 +1,20 @@
-import { ancestor, simple } from '../utils/walkers'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
 import * as es from 'estree'
-import { SourceMapGenerator } from 'source-map'
-import { AllowedDeclarations, Context, NativeStorage } from '../types'
+import { RawSourceMap, SourceMapGenerator } from 'source-map'
+
+import { MODULE_CONTEXTS_ID, MODULE_PARAMS_ID, NATIVE_STORAGE_ID } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
+import { isFullJSChapter } from '../runner'
+import { AllowedDeclarations, Context, NativeStorage } from '../types'
 import * as create from '../utils/astCreator'
 import {
-  getUniqueId,
+  getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
-  getIdentifiersInNativeStorage
+  getUniqueId
 } from '../utils/uniqueIds'
-import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
+import { ancestor, simple } from '../utils/walkers'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -34,7 +37,7 @@ const globalIdNames = [
 
 export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
 
-function prefixModule(program: es.Program): string {
+export function prefixModule(program: es.Program): string {
   let moduleCounter = 0
   let prefix = ''
   for (const node of program.body) {
@@ -46,18 +49,57 @@ function prefixModule(program: es.Program): string {
     prefix += `const __MODULE_${moduleCounter}__ = (${moduleText.substring(
       0,
       moduleText.length - 1
-    )})(${MODULE_PARAMS_ID});\n`
+    )})(${MODULE_PARAMS_ID}, ${MODULE_CONTEXTS_ID});\n`
     moduleCounter++
   }
   return prefix
 }
 
+/*
+ * Hoists import statements in the program to the top
+ * Also collates multiple import statements to a module into
+ * a single statement
+ */
+export function hoistImportDeclarations(program: es.Program) {
+  const importNodes = program.body.filter(
+    node => node.type === 'ImportDeclaration'
+  ) as es.ImportDeclaration[]
+  const specifiers = new Map<
+    string,
+    (es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier)[]
+  >()
+  const baseNodes = new Map<string, es.ImportDeclaration>()
+
+  for (const node of importNodes) {
+    const moduleName = node.source.value as string
+
+    if (!specifiers.has(moduleName)) {
+      specifiers.set(moduleName, node.specifiers)
+      baseNodes.set(moduleName, node)
+    } else {
+      for (const specifier of node.specifiers) {
+        specifiers.get(moduleName)!.push(specifier)
+      }
+    }
+  }
+
+  const newImports = Array.from(baseNodes.entries()).map(([module, node]) => {
+    return {
+      ...node,
+      specifiers: specifiers.get(module)
+    }
+  }) as (es.ModuleDeclaration | es.Statement | es.Declaration)[]
+
+  program.body = newImports.concat(program.body.filter(node => node.type !== 'ImportDeclaration'))
+}
+
 export function transformSingleImportDeclaration(
   moduleCounter: number,
-  node: es.ImportDeclaration
+  node: es.ImportDeclaration,
+  useThis = false
 ) {
   const result = []
-  const tempNamespace = `__MODULE_${moduleCounter}__`
+  const tempNamespace = (useThis ? 'this.' : '') + `__MODULE_${moduleCounter}__`
   const neededSymbols = node.specifiers.map(specifier => {
     if (specifier.type !== 'ImportSpecifier') {
       throw new Error(
@@ -81,7 +123,8 @@ export function transformSingleImportDeclaration(
   return result
 }
 
-export function transformImportDeclarations(program: es.Program) {
+// `useThis` is a temporary indicator used by fullJS
+export function transformImportDeclarations(program: es.Program, useThis = false) {
   const imports = []
   let result: es.VariableDeclaration[] = []
   let moduleCounter = 0
@@ -89,13 +132,13 @@ export function transformImportDeclarations(program: es.Program) {
     imports.push(program.body.shift() as es.ImportDeclaration)
   }
   for (const node of imports) {
-    result = transformSingleImportDeclaration(moduleCounter, node).concat(result)
+    result = transformSingleImportDeclaration(moduleCounter, node, useThis).concat(result)
     moduleCounter++
   }
   program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
 }
 
-function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
+export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
   return program.body
     .filter(statement => statement.type === 'VariableDeclaration')
     .map(
@@ -106,6 +149,40 @@ function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
         kind
       }: es.VariableDeclaration) => (id as es.Identifier).name
     )
+}
+
+export function getBuiltins(nativeStorage: NativeStorage): es.Statement[] {
+  const builtinsStatements: es.Statement[] = []
+  nativeStorage.builtins.forEach((_unused, name: string) => {
+    builtinsStatements.push(
+      create.declaration(
+        name,
+        'const',
+        create.callExpression(
+          create.memberExpression(
+            create.memberExpression(create.identifier(NATIVE_STORAGE_ID), 'builtins'),
+            'get'
+          ),
+          [create.literal(name)]
+        )
+      )
+    )
+  })
+
+  return builtinsStatements
+}
+
+export function evallerReplacer(
+  nativeStorageId: NativeIds['native'],
+  usedIdentifiers: Set<string>
+): es.ExpressionStatement {
+  const arg = create.identifier(getUniqueId(usedIdentifiers, 'program'))
+  return create.expressionStatement(
+    create.assignmentExpression(
+      create.memberExpression(nativeStorageId, 'evaller'),
+      create.arrowFunctionExpression([arg], create.callExpression(create.identifier('eval'), [arg]))
+    )
+  )
 }
 
 function generateFunctionsToStringMap(program: es.Program) {
@@ -491,40 +568,37 @@ function addInfiniteLoopProtection(
   })
 }
 
-function evallerReplacer(
-  globalIds: NativeIds,
-  usedIdentifiers: Set<string>
-): es.ExpressionStatement {
-  const arg = create.identifier(getUniqueId(usedIdentifiers, 'program'))
-  return create.expressionStatement(
-    create.assignmentExpression(
-      create.memberExpression(globalIds.native, 'evaller'),
-      create.arrowFunctionExpression([arg], create.callExpression(create.identifier('eval'), [arg]))
-    )
-  )
-}
-
 function wrapWithBuiltins(statements: es.Statement[], nativeStorage: NativeStorage) {
-  const initialisingStatements: es.Statement[] = []
-  nativeStorage.builtins.forEach((_unused, name: string) => {
-    initialisingStatements.push(
-      create.declaration(
-        name,
-        'const',
-        create.callExpression(
-          create.memberExpression(
-            create.memberExpression(create.identifier(NATIVE_STORAGE_ID), 'builtins'),
-            'get'
-          ),
-          [create.literal(name)]
-        )
-      )
-    )
-  })
-  return create.blockStatement([...initialisingStatements, create.blockStatement(statements)])
+  return create.blockStatement([...getBuiltins(nativeStorage), create.blockStatement(statements)])
 }
 
-export function transpile(program: es.Program, context: Context, skipUndefined = false) {
+function getDeclarationsToAccessTranspilerInternals(
+  globalIds: NativeIds
+): es.VariableDeclaration[] {
+  return Object.entries(globalIds).map(([key, { name }]) => {
+    let value: es.Expression
+    const kind: AllowedDeclarations = 'const'
+    if (key === 'native') {
+      value = create.identifier(NATIVE_STORAGE_ID)
+    } else if (key === 'globals') {
+      value = create.memberExpression(globalIds.native, 'globals')
+    } else {
+      value = create.callExpression(
+        create.memberExpression(create.memberExpression(globalIds.native, 'operators'), 'get'),
+        [create.literal(key)]
+      )
+    }
+    return create.declaration(name, kind, value)
+  })
+}
+
+export type TranspiledResult = { transpiled: string; sourceMapJson?: RawSourceMap }
+
+function transpileToSource(
+  program: es.Program,
+  context: Context,
+  skipUndefined: boolean
+): TranspiledResult {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage)
@@ -555,7 +629,7 @@ export function transpile(program: es.Program, context: Context, skipUndefined =
   const statements = program.body as es.Statement[]
   const newStatements = [
     ...getDeclarationsToAccessTranspilerInternals(globalIds),
-    evallerReplacer(globalIds, usedIdentifiers),
+    evallerReplacer(globalIds.native, usedIdentifiers),
     create.expressionStatement(create.identifier('undefined')),
     ...statements
   ]
@@ -567,26 +641,33 @@ export function transpile(program: es.Program, context: Context, skipUndefined =
 
   const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = modulePrefix + generate(program, { sourceMap: map })
-  const codeMap = map.toJSON()
-  return { transpiled, codeMap }
+  const sourceMapJson = map.toJSON()
+  return { transpiled, sourceMapJson }
 }
 
-function getDeclarationsToAccessTranspilerInternals(
-  globalIds: NativeIds
-): es.VariableDeclaration[] {
-  return Object.entries(globalIds).map(([key, { name }]) => {
-    let value: es.Expression
-    const kind: AllowedDeclarations = 'const'
-    if (key === 'native') {
-      value = create.identifier(NATIVE_STORAGE_ID)
-    } else if (key === 'globals') {
-      value = create.memberExpression(globalIds.native, 'globals')
-    } else {
-      value = create.callExpression(
-        create.memberExpression(create.memberExpression(globalIds.native, 'operators'), 'get'),
-        [create.literal(key)]
-      )
-    }
-    return create.declaration(name, kind, value)
-  })
+function transpileToFullJS(program: es.Program): TranspiledResult {
+  transformImportDeclarations(program)
+  const transpiledProgram: es.Program = create.program([
+    evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
+    create.expressionStatement(create.identifier('undefined')),
+    ...(program.body as es.Statement[])
+  ])
+
+  const sourceMap = new SourceMapGenerator({ file: 'source' })
+  const transpiled = generate(transpiledProgram, { sourceMap })
+  const sourceMapJson = sourceMap.toJSON()
+
+  return { transpiled, sourceMapJson }
+}
+
+export function transpile(
+  program: es.Program,
+  context: Context,
+  skipUndefined = false
+): TranspiledResult {
+  if (isFullJSChapter(context.chapter) || context.variant == 'native') {
+    return transpileToFullJS(program)
+  }
+
+  return transpileToSource(program, context, skipUndefined)
 }

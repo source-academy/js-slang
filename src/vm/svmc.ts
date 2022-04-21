@@ -1,12 +1,12 @@
-import fs = require('fs')
-import util = require('util')
+import * as fs from 'fs'
+import * as util from 'util'
 
-import { parse } from '../parser/parser'
 import { createEmptyContext } from '../createContext'
-import { compileToIns } from './svml-compiler'
-import { assemble } from './svml-assembler'
-import { stringifyProgram } from './util'
+import { parse } from '../parser/parser'
 import { INTERNAL_FUNCTIONS as concurrentInternalFunctions } from '../stdlib/vm.prelude'
+import { assemble } from './svml-assembler'
+import { compileToIns } from './svml-compiler'
+import { stringifyProgram } from './util'
 
 interface CliOptions {
   compileTo: 'debug' | 'json' | 'binary' | 'ast'

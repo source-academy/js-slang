@@ -1,17 +1,18 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
+import { isEmpty, uniqueId } from 'lodash'
+
 import * as constants from '../constants'
+import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
-import { LazyBuiltIn } from '../createContext'
-import { loadModuleBundle } from '../modules/moduleLoader'
-import { uniqueId, isEmpty } from 'lodash'
 
 class BreakValue {}
 
@@ -303,7 +304,7 @@ function* reduceIf(
 
 export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
 
-function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
+function* evaluateBlockStatement(context: Context, node: es.BlockStatement) {
   declareFunctionsAndVariables(context, node)
   let result
   for (const statement of node.body) {
@@ -643,38 +644,51 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     // Create a new environment (block scoping)
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     pushEnvironment(context, environment)
-    const result: Value = yield* evaluateBlockSatement(context, node)
+    const result: Value = yield* evaluateBlockStatement(context, node)
     popEnvironment(context)
     return result
   },
 
   ImportDeclaration: function*(node: es.ImportDeclaration, context: Context) {
-    const moduleName = node.source.value as string
-    const neededSymbols = node.specifiers.map(spec => {
-      if (spec.type !== 'ImportSpecifier') {
-        throw new Error(
-          `I expected only ImportSpecifiers to be allowed, but encountered ${spec.type}.`
-        )
+    try {
+      const moduleName = node.source.value as string
+      const neededSymbols = node.specifiers.map(spec => {
+        if (spec.type !== 'ImportSpecifier') {
+          throw new Error(
+            `I expected only ImportSpecifiers to be allowed, but encountered ${spec.type}.`
+          )
+        }
+
+        return {
+          imported: spec.imported.name,
+          local: spec.local.name
+        }
+      })
+      
+      if (!context.moduleContexts.has(moduleName)) {
+        context.moduleContexts.set(moduleName, {
+          state: null,
+          tabs: loadModuleTabs(moduleName, node)
+        });
       }
 
-      return {
-        imported: spec.imported.name,
-        local: spec.local.name
+      const functions = loadModuleBundle(moduleName, context, node)
+      declareImports(context, node)
+      for (const name of neededSymbols) {
+        defineVariable(context, name.local, functions[name.imported], true);
       }
-    })
-    const functions = loadModuleBundle(moduleName, context, node)
-    declareImports(context, node)
-    for (const name of neededSymbols) {
-      defineVariable(context, name.local, functions[name.imported], true);
+
+      return undefined
+    } catch(error) {
+      return handleRuntimeError(context, error)
     }
-    return undefined
   },
 
   Program: function*(node: es.BlockStatement, context: Context) {
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
     pushEnvironment(context, environment)
-    const result = yield *forceIt(yield* evaluateBlockSatement(context, node), context);
+    const result = yield *forceIt(yield* evaluateBlockStatement(context, node), context);
     return result;
   }
 }
@@ -741,7 +755,7 @@ export function* apply(
       const bodyEnvironment = createBlockEnvironment(context, 'functionBodyEnvironment')
       bodyEnvironment.thisContext = thisContext
       pushEnvironment(context, bodyEnvironment)
-      result = yield* evaluateBlockSatement(context, fun.node.body as es.BlockStatement)
+      result = yield* evaluateBlockStatement(context, fun.node.body as es.BlockStatement)
       popEnvironment(context)
       if (result instanceof TailCallReturnValue) {
         fun = result.callee

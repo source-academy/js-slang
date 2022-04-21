@@ -1,22 +1,31 @@
 // Variable determining chapter of Source is contained in this file.
 
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
+import * as gpu_lib from './gpu/lib'
+import { isFullJSChapter } from './runner'
 import { AsyncScheduler } from './schedulers'
+import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
-import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as misc from './stdlib/misc'
+import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { Context, CustomBuiltIns, Environment, NativeStorage, Value, Variant } from './types'
-import * as operators from './utils/operators'
-import * as gpu_lib from './gpu/lib'
-import { stringify } from './utils/stringify'
-import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/typeChecker'
+import {
+  Context,
+  CustomBuiltIns,
+  Environment,
+  ModuleContext,
+  NativeStorage,
+  Value,
+  Variant
+} from './types'
 import { makeWrapper } from './utils/makeWrapper'
+import * as operators from './utils/operators'
+import { stringify } from './utils/stringify'
 
 export class LazyBuiltIn {
   func: (...arg0: any) => any
@@ -135,7 +144,6 @@ export const createEmptyContext = <T>(
     externalSymbols,
     errors: [],
     externalContext,
-    moduleParams,
     runtime: createEmptyRuntime(),
     numberOfOuterEnvironments: 1,
     prelude: null,
@@ -143,6 +151,8 @@ export const createEmptyContext = <T>(
     nativeStorage: createNativeStorage(),
     executionMethod: 'auto',
     variant,
+    moduleParams,
+    moduleContexts: new Map<string, ModuleContext>(),
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
     previousCode: []
@@ -339,7 +349,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     // Stream library
     defineBuiltin(context, 'stream_tail(stream)', stream.stream_tail)
     defineBuiltin(context, 'stream(...values)', stream.stream, 0)
-    defineBuiltin(context, 'list_to_stream(xs)', stream.list_to_stream)
   }
 
   if (context.chapter >= 4) {
@@ -422,7 +431,22 @@ const createContext = <T>(
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
   moduleParams?: any
-) => {
+): Context => {
+  if (isFullJSChapter(chapter)) {
+    // fullJS will include all builtins and preludes of source 4
+    return {
+      ...createContext(
+        4,
+        variant,
+        externalSymbols,
+        externalContext,
+        externalBuiltIns,
+        moduleParams
+      ),
+      chapter: -1
+    } as Context
+  }
+
   const context = createEmptyContext(
     chapter,
     variant,

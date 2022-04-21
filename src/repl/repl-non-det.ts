@@ -1,10 +1,11 @@
-import fs = require('fs')
-import repl = require('repl') // 'repl' here refers to the module named 'repl' in index.d.ts
-import { createContext, IOptions, parseError, runInContext, resume, Result } from '../index'
-import { SuspendedNonDet, Context } from '../types'
-import { CUT, TRY_AGAIN } from '../constants'
+import * as fs from 'fs'
+import * as repl from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
+
+import { CUT, TRY_AGAIN } from '../constants'
+import { createContext, IOptions, parseError, Result, resume, runInContext } from '../index'
 import Closure from '../interpreter/closure'
+import { Context, SuspendedNonDet } from '../types'
 
 const NO_MORE_VALUES_MESSAGE: string = 'There are no more values of: '
 let previousInput: string | undefined // stores the input which is then shown when there are no more values for the program

@@ -1,16 +1,17 @@
-import { recursive, simple } from '../utils/walkers'
 import * as es from 'estree'
-import * as create from '../utils/astCreator'
-import { UndefinedVariable, ConstAssignment } from '../errors/errors'
+
+import { ConstAssignment, UndefinedVariable } from '../errors/errors'
+import { parse } from '../parser/parser'
 import {
-  vmPrelude,
-  generatePrimitiveFunctionCode,
-  PRIMITIVE_FUNCTION_NAMES,
   CONSTANT_PRIMITIVES,
-  INTERNAL_FUNCTIONS
+  generatePrimitiveFunctionCode,
+  INTERNAL_FUNCTIONS,
+  PRIMITIVE_FUNCTION_NAMES,
+  vmPrelude
 } from '../stdlib/vm.prelude'
 import { Context, ContiguousArrayElements } from '../types'
-import { parse } from '../parser/parser'
+import * as create from '../utils/astCreator'
+import { recursive, simple } from '../utils/walkers'
 import OpCodes from './opcodes'
 
 const VALID_UNARY_OPERATORS = new Map([

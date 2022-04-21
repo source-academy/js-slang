@@ -7,6 +7,7 @@
 
 import { SourceLocation } from 'acorn'
 import * as es from 'estree'
+
 import { EnvTree } from './createContext'
 
 /**
@@ -58,7 +59,7 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
-export type Variant = 'wasm' | 'lazy' | 'non-det' | 'concurrent' | 'gpu' | 'default' // this might replace EvaluationMethod
+export type Variant = 'native' | 'wasm' | 'lazy' | 'non-det' | 'concurrent' | 'gpu' | 'default' // this might replace EvaluationMethod
 
 export interface SourceLanguage {
   chapter: number
@@ -112,8 +113,6 @@ export interface Context<T = any> {
     nodes: es.Node[]
   }
 
-  moduleParams?: any
-
   numberOfOuterEnvironments: number
 
   prelude: string | null
@@ -158,14 +157,31 @@ export interface Context<T = any> {
   typeEnvironment: TypeEnvironment
 
   /**
-   * The side content components to be displayed after the evaluation
+   * Parameters to pass to a module during module initialization
    */
-  modules?: any[]
+  moduleParams: any
+
+  /**
+   * Storage container for module specific information and state
+   */
+  moduleContexts: Map<string, ModuleContext>
 
   /**
    * Code previously executed in this context
    */
   previousCode: string[]
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ModuleState {}
+
+/**
+ * Used to store state and contextual information for
+ * each module
+ */
+export type ModuleContext = {
+  tabs: any[]
+  state?: ModuleState | null
 }
 
 export interface BlockFrame {

@@ -1,18 +1,19 @@
-import * as sym from './symbolic'
-import * as create from '../utils/astCreator'
-import * as st from './state'
 import * as es from 'estree'
+
+import { MODULE_PARAMS_ID } from '../constants'
+import createContext from '../createContext'
+import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
+import * as create from '../utils/astCreator'
 import { checkForInfiniteLoop } from './detect'
 import { InfiniteLoopError } from './errors'
 import {
-  instrument,
   InfiniteLoopRuntimeFunctions as FunctionNames,
-  InfiniteLoopRuntimeObjectNames
+  InfiniteLoopRuntimeObjectNames,
+  instrument
 } from './instrument'
-import { parse } from '../parser/parser'
-import { createContext } from '../index'
-import { MODULE_PARAMS_ID } from '../constants'
+import * as st from './state'
+import * as sym from './symbolic'
 
 function checkTimeout(state: st.State) {
   if (state.hasTimedOut()) {

@@ -1,7 +1,13 @@
+import { ModuleContext } from '..'
+import { MODULE_CONTEXTS_ID, MODULE_PARAMS_ID, NATIVE_STORAGE_ID } from '../constants'
 import { NativeStorage } from '../types'
-import { NATIVE_STORAGE_ID, MODULE_PARAMS_ID } from '../constants'
 
-type Evaler = (code: string, nativeStorage: NativeStorage, moduleParams: any) => any
+type Evaler = (
+  code: string,
+  nativeStorage: NativeStorage,
+  moduleParams: any,
+  moduleContexts: Map<string, ModuleContext>
+) => any
 
 /*
   We need to use new Function here to ensure that the parameter names do not get
@@ -12,6 +18,7 @@ export const sandboxedEval: Evaler = new Function(
   'code',
   NATIVE_STORAGE_ID,
   MODULE_PARAMS_ID,
+  MODULE_CONTEXTS_ID,
   `
   if (${NATIVE_STORAGE_ID}.evaller === null) {
     return eval(code);

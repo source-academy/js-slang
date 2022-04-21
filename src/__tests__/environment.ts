@@ -1,4 +1,5 @@
 import { Program } from 'estree'
+
 import { evaluate } from '../interpreter/interpreter'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'

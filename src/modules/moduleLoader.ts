@@ -1,13 +1,14 @@
 import es from 'estree'
 import { memoize } from 'lodash'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
+
 import {
-  ModuleNotFoundError,
+  ModuleConnectionError,
   ModuleInternalError,
-  ModuleConnectionError
+  ModuleNotFoundError
 } from '../errors/moduleErrors'
-import { Modules, ModuleBundle, ModuleFunctions } from './moduleTypes'
-import { Context } from '..'
+import { Context } from '../types'
+import { ModuleBundle, ModuleFunctions, Modules } from './moduleTypes'
 
 // Supports both JSDom (Web Browser) environment and Node environment
 export const newHttpRequest = () =>
@@ -52,6 +53,7 @@ function getModuleManifest(): Modules {
  * Send a HTTP GET request to the modules endpoint to retrieve the specified file
  * @return String of module file contents
  */
+
 export const memoizedGetModuleFile = memoize(getModuleFile)
 function getModuleFile(name: string, type: 'tab' | 'bundle'): string {
   return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js`)
@@ -66,15 +68,16 @@ function getModuleFile(name: string, type: 'tab' | 'bundle'): string {
  */
 export function loadModuleBundle(path: string, context: Context, node?: es.Node): ModuleFunctions {
   const modules = memoizedGetModuleManifest()
+
   // Check if the module exists
   const moduleList = Object.keys(modules)
   if (moduleList.includes(path) === false) throw new ModuleNotFoundError(path, node)
+
   // Get module file
   const moduleText = memoizedGetModuleFile(path, 'bundle')
   try {
     const moduleBundle: ModuleBundle = eval(moduleText)
-    const moduleFunctions = moduleBundle(context)
-    return moduleFunctions
+    return moduleBundle(context.moduleParams, context.moduleContexts)
   } catch (error) {
     throw new ModuleInternalError(path, node)
   }
@@ -97,6 +100,7 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   // Check if the module exists
   const moduleList = Object.keys(modules)
   if (moduleList.includes(path) === false) throw new ModuleNotFoundError(path, node)
+
   // Retrieves the tabs the module has from modules.json
   const sideContentTabPaths: string[] = modules[path].tabs
   // Load the tabs for the current module
@@ -108,23 +112,4 @@ export function loadModuleTabs(path: string, node?: es.Node) {
       throw new ModuleInternalError(path, node)
     }
   })
-}
-
-/**
- * Retrieves and appends the imported modules' tabs to the context
- * @param program
- * @param context
- */
-export function appendModuleTabsToContext(program: es.Program, context: Context): void {
-  // Rest the modules to empty array everytime
-  context.modules = []
-  for (const node of program.body) {
-    if (node.type === 'ImportDeclaration') {
-      if (!node.source.value) throw new ModuleNotFoundError('', node)
-      const moduleName = node.source.value.toString()
-      const moduleTab = loadModuleTabs(moduleName, node)
-      console.log(moduleName, moduleTab)
-      Array.prototype.push.apply(context.modules, moduleTab)
-    }
-  }
 }

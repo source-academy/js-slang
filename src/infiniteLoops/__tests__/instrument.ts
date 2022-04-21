@@ -1,12 +1,13 @@
-import { evaluateBinaryExpression, evaluateUnaryExpression } from '../../utils/operators'
-import {
-  instrument,
-  InfiniteLoopRuntimeFunctions as functionNames,
-  InfiniteLoopRuntimeObjectNames
-} from '../instrument'
+import { Program } from 'estree'
+
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
-import { Program } from 'estree'
+import { evaluateBinaryExpression, evaluateUnaryExpression } from '../../utils/operators'
+import {
+  InfiniteLoopRuntimeFunctions as functionNames,
+  InfiniteLoopRuntimeObjectNames,
+  instrument
+} from '../instrument'
 
 function mockFunctionsAndState() {
   const theState = undefined
