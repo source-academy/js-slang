@@ -1,3 +1,5 @@
+\input source_2_stepper_style.tex
+
 \section*{Reduction}
 
 The \emph{reducer} $\Rightarrow$ is a partial function from
@@ -12,12 +14,18 @@ program $q$ such that $p_n \Rightarrow q$.
 Here, the program $p_n$ is called the \emph{result
 of reducing} $p_1$.
 
+If $p_n$, the result of reducing a program, is of the form \sCode{\sVar{v};}, 
+we call \sVar{v} the result of the program evaluation. If $p_n$ is the empty
+sequence of statements, we declare the result of the program evaluation to be
+the value undefined. Reduction can get "stuck": the result can be a program
+that has neither of these two forms, which corresponds to a runtime error.
+
 A \emph{value} is a primitive number expression,
 primitive boolean expression,
 a primitive string expression, a function definition
 expression or a function declaration statement.
 
-The \emph{substitution} function 
+The \emph{substitution} function
 $p [ n := v ]$ on programs/statements/expressions
 replaces every free occurrence of the name $n$
 in statement $p$ by value $v$. Care must be taken to introduce
@@ -31,59 +39,73 @@ to the node at which the replacement happens.
 
 \subsection*{Programs}
 
-
-\textbf{First-statement}: In a sequence of statements, we can always
-reduce the first one.
-\[
-\frac{
-  \textit{statement}\ \Rightarrow\ \textit{statement}'
-}{  
-  \textit{statement} \ldots
-  \Rightarrow 
-  \textit{statement}' \ldots
+\sEntry{Program-intro}{In a sequence of statements, we can always reduce the
+    first one that isn't a value statement.}
+\gentzen{
+    \sVar{statement} \rightarrow \sVar{statement}'
+}{
+    [\sVar{value}\sKw{;}]\sKw{ }\sVar{statement}\ldots \Rightarrow
+    [\sVar{value}\sKw{;}]\sKw{ }\sVar{statement}'\ldots
 }
-\]
+
+\sEntry{Program-reduce}{When the first two statements in a program are value
+    statements, the first one can be removed.}
+\gentzen{
+    \sVar{v1}, \sVar{v2} \mbox{ are values}
+}{
+    \sVar{v1}\sKw{; }\sVar{v2}\sKw{; }\sVar{statement}\ldots \Rightarrow
+    \sVar{v2}\sKw{; }\sVar{statement}\ldots
+}
 
 \vspace{10mm}
 
-\textbf{Eliminate-function-declaration}: Function declarations as first
-statements are substituted in the remaining statements.
+% Weird corner case: Doesn't affect output, but if the leading value is a
+% lambda, we prob should substitute the fn/constant in that lambda as well?
+\textbf{Eliminate-function-declaration}: Function declarations as the first
+    statement optionally after one value statement are substituted in the
+    remaining statements.
 \[
 \frac{
              f = \textbf{\texttt{function}}\  \textit{name} \ 
                  \textbf{\texttt{(}}\  \textit{parameters}
                  \ \textbf{\texttt{)}}\ \textit{block}
 }{
-f\ \textit{statement} \ldots\ 
+  [ \sVar{value} \sKw{;} ] \sKw{ }
+  f\ \textit{statement} \ldots\ 
   \Rightarrow\ 
+  [ \sVar{value} \sKw{;} ] \sKw{ }
   \textit{statement} \ldots[\textit{name} := f]
 }
 \]
 
-\vspace{10mm}
-\textbf{Eliminate-constant-declaration}: Constant declarations as first
-statements are substituted in the remaining statements.
+% See weird corner case above
+\sEntry{Eliminate-constant-declaration}{Constant declarations as the first
+    statement optionally after one value statement are substituted in the
+    remaining statements.}
 \[
 \frac{
              c = \textbf{\texttt{const}}\  \textit{name} \ 
              \textbf{\texttt{=}}\  \textit{v}
 }{
-c\ \textit{statement} \ldots\ 
+  [ \sVar{value} \sKw{;} ] \sKw{ }
+  c\ \textit{statement} \ldots\ 
   \Rightarrow \ 
+  [ \sVar{value} \sKw{;} ] \sKw{ }
   \textit{statement} \ldots[\textit{name} := v]
 }
 \]
 
-\vspace{10mm}
-\textbf{Eliminate-Values}: Values as first statemments are discarded, if
-they are preceding one or more statements in a statement sequence.
+\subsection*{Statements: Expression statements}
+
+\textbf{Expression-statement-reduce}: An expression statement
+is reducible if its expression is reducible.
 \[
 \frac{
-v \ \mbox{is a value}  
-}{
-v \textbf{\texttt{;}} \textit{statement}+\ 
-   \Rightarrow  \ 
-  \textit{statement}+
+  e\ \Rightarrow\ e'
+}{  
+  e \textbf{\texttt{;}}
+  \ \Rightarrow \ 
+  e' \textbf{\texttt{;}}
 }
 \]
 
@@ -119,11 +141,11 @@ is reducible if its predicate is reducible.
   e \ 
   \textbf{\texttt{)}} \ 
   \textbf{\texttt{\{}} \
-  \cdots  
+  \cdots
   \textbf{\texttt{\}}} \ 
   \textbf{\texttt{else}} \ 
   \textbf{\texttt{\{}} \
-  \cdots  
+  \cdots
   \textbf{\texttt{\}}}
 \ 
   \Rightarrow \ 
@@ -132,19 +154,24 @@ is reducible if its predicate is reducible.
   e' \ 
   \textbf{\texttt{)}} \ 
   \textbf{\texttt{\{}} \
-  \cdots  
+  \cdots
   \textbf{\texttt{\}}} \ 
   \textbf{\texttt{else}} \ 
   \textbf{\texttt{\{}} \
-  \cdots  
+  \cdots
   \textbf{\texttt{\}}}
 }
 \]
 
 \vspace{10mm}
 
-\textbf{Conditional-statement-consequent}: A conditional statement
-whose predicate is true reduces to the consequent block.
+SICP-JS Exercise 4.8 specifies that a conditional statement where the taken
+branch is non-value-producing is value-producing, with its value being
+\sKw{undefined}.
+
+\sEntry{Conditional-statement-consequent}{Immediately within a program or block
+    statement, a conditional statement whose predicate is true reduces to the
+    consequent block.}
 \[
 \frac{
 }{  
@@ -153,22 +180,24 @@ whose predicate is true reduces to the consequent block.
   \textbf{\texttt{true}} \ 
   \textbf{\texttt{)}} \ 
   \textbf{\texttt{\{}} \
-  \textit{statement}_1
+  \textit{program}_1 
   \textbf{\texttt{\}}} \ 
   \textbf{\texttt{else}} \ 
   \textbf{\texttt{\{}} \
-\textit{statement}_2  
+\textit{program}_2 
   \textbf{\texttt{\}}}
   \ 
   \Rightarrow  \ 
   \textbf{\texttt{\{}} \
-  \textit{statement}_1  
+  \textbf{\texttt{undefined; }} \
+  \textit{program}_1 
   \textbf{\texttt{\}}}
 }
 \]
 
-\textbf{Conditional-statement-alternative}: A conditional statement
-whose predicate is false reduces to the alternative block.
+\sEntry{Conditional-statement-alternative}{Immediately within a program or block
+    statement, a conditional statement whose predicate is false reduces to the
+    alternative block.}
 \[
 \frac{
 }{  
@@ -177,115 +206,207 @@ whose predicate is false reduces to the alternative block.
   \textbf{\texttt{false}} \ 
   \textbf{\texttt{)}} \ 
   \textbf{\texttt{\{}} \
-  \textit{statement}_1
+  \textit{program}_1
   \textbf{\texttt{\}}} \ 
   \textbf{\texttt{else}} \ 
   \textbf{\texttt{\{}} \
-\textit{statement}_2  
+\textit{program}_2  
   \textbf{\texttt{\}}}
 \ \Rightarrow \ 
   \textbf{\texttt{\{}} \
-  \textit{statement}_2 
+  \textbf{\texttt{undefined; }} \
+  \textit{program}_2 
+  \textbf{\texttt{\}}}
+}
+\]
+
+We can remove the \sCode{undefined;} if the conditional statement is in a block
+expression without affecting the return value of the block expression. This is
+performed to reduce the surprise factor.
+
+\sEntry{Conditional-statement-blockexpr-consequent}{Immediately within a block
+    expression, a conditional statement whose predicate is true reduces to the
+    consequent block.}
+\[
+\frac{
+}{  
+  \textbf{\texttt{\{}}\ 
+  [
+  \textit{value}
+  \textbf{\texttt{;}}
+  ]\ 
+  \textbf{\texttt{if}}\ 
+  \textbf{\texttt{(}}\ 
+  \textbf{\texttt{true}} \ 
+  \textbf{\texttt{)}} \ 
+  \textbf{\texttt{\{}} \
+  \textit{program}_1 
+  \textbf{\texttt{\}}} \ 
+  \textbf{\texttt{else}} \ 
+  \textbf{\texttt{\{}} \ 
+  \textit{program}_2
+  \textbf{\texttt{\}}}\ 
+  \textbf{\texttt{\}}}
+  \ 
+  \Rightarrow  \ 
+  \textbf{\texttt{\{}}
+  [
+  \textit{value}
+  \textbf{\texttt{;}}
+  ]\ 
+  \textbf{\texttt{\{}}\ 
+  \textit{program}_1
+  \textbf{\texttt{\}}}
+  \textbf{\texttt{\}}}
+}
+\]
+
+\sEntry{Conditional-statement-blockexpr-alternative}{Immediately within a block
+    expression, a conditional statement whose predicate is false reduces to the
+    alternative block.}
+\[
+\frac{
+}{  
+  \textbf{\texttt{\{}}\ 
+  [
+  \textit{value}
+  \textbf{\texttt{;}}
+  ]\ 
+  \textbf{\texttt{if}}\ 
+  \textbf{\texttt{(}}\ 
+  \textbf{\texttt{false}} \ 
+  \textbf{\texttt{)}} \ 
+  \textbf{\texttt{\{}} \
+  \textit{program}_1
+  \textbf{\texttt{\}}} \ 
+  \textbf{\texttt{else}} \ 
+  \textbf{\texttt{\{}} \
+  \textit{program}_2
+  \textbf{\texttt{\}}}\ 
+  \textbf{\texttt{\}}}
+  \ \Rightarrow \ 
+  \textbf{\texttt{\{}}
+  [
+  \textit{value}
+  \textbf{\texttt{;}}
+  ]\ 
+  \textbf{\texttt{\{}}\ 
+  \textit{program}_2
+  \textbf{\texttt{\}}}
   \textbf{\texttt{\}}}
 }
 \]
 
 \subsection*{Statements: Blocks}
 
-\textbf{Block-statement-reduce}: A block statement is
-reducible if its program is reducible.
+\textbf{Block-statement-intro}: A block statement is
+reducible if its body is reducible.
 \[
 \frac{
-  \textit{program} 
+  \sVar{program}
 \ \Rightarrow \ 
-  \textit{program}'
+  \sVar{program}'
 }{  
   \textbf{\texttt{\{}} \
-  \textit{program} \ 
+  \sVar{program} \ 
   \textbf{\texttt{\}}}
 \  \Rightarrow \ 
   \textbf{\texttt{\{}} \
-  \textit{program}' \ 
+  \sVar{program}' \ 
   \textbf{\texttt{\}}}
 }
 \]
 
 \vspace{10mm}
 
-\textbf{Block-statement-undefined}: A block statement 
-whose body only contains a single value statement reduces to
-the value 
-\textbf{\texttt{undefined}}.
-
-\[
-\frac{
-}{  
-  \textbf{\texttt{\{}} \
-  v \ 
-  \textbf{\texttt{;}} \ 
-  \textbf{\texttt{\}}}
-\  \Rightarrow \ 
-  \textbf{\texttt{undefined}}
+\sEntry{Block-statement-single-reduce}{A block statement consisting of a single
+    value statement reduces to that value statement.}
+\gentzen{}{
+    \sKw{\{}\sVar{value}\sKw{;\}} \Rightarrow \sVar{value}\sKw{;}
 }
-\]
 
-\vspace{10mm}
+\sEntry{Block-statement-empty-reduce}{An empty block statement (or a non-value-
+    producing one, which will reduce to the empty block statement) is
+    non-value-producing, i.e. reduces to $\varepsilon$.}
+\gentzen{}{
+    \sKw{\{} \sKw{\}} \Rightarrow \varepsilon
+}
 
-\textbf{Block-statement-reduce-return}: A block statement 
-whose body only contains a single return statement can 
-be reduced by reducing the return expression.
+\subsection*{Expresssions: Blocks}
 
+\textbf{Block-expression-intro}: A block expression is
+reducible if its body is reducible.
 \[
 \frac{
-  e
+  \sVar{program} 
 \ \Rightarrow \ 
-  e'
+  \sVar{program}'
 }{  
   \textbf{\texttt{\{}} \
-  \textbf{\texttt{return}} \ e \ 
-  \textbf{\texttt{;}} \ 
+  \sVar{program} \ 
   \textbf{\texttt{\}}}
 \  \Rightarrow \ 
   \textbf{\texttt{\{}} \
-  \textbf{\texttt{return}} \ e' \ 
-  \textbf{\texttt{;}} \ 
+  \sVar{program}' \ 
   \textbf{\texttt{\}}}
 }
 \]
 
 \vspace{10mm}
 
-\textbf{Block-statement-eliminate-return}: A block statement 
-whose body only contains a single return value reduces to
-that value.
-
-\[
-\frac{
-}{  
-  \textbf{\texttt{\{}} \
-  \textbf{\texttt{return}} \ v \ 
-  \textbf{\texttt{;}} \ 
-  \textbf{\texttt{\}}}
-\  \Rightarrow \ 
-  v
+\sEntry{Block-expression-single-reduce}{A block expression consisting of a
+    single value statement reduces to \sKw{undefined}.}
+\gentzen{}{
+    \sCode{\{\sVar{value};\}} \Rightarrow \sCode{undefined}
 }
-\]
 
-
-\subsection*{Statements: Expression statements}
-
-\textbf{Expression-statement-reduce}: An expression statement
-is reducible if its expression is reducible.
-\[
-\frac{
-  e\ \Rightarrow\ e'
-}{  
-  e \textbf{\texttt{;}}
-  \ \Rightarrow \ 
-  e' \textbf{\texttt{;}}
+\sEntry{Block-expression-empty-reduce}{An empty block expression reduces to
+    \sKw{undefined}.}
+\gentzen{}{
+    \sCode{\{\}} \Rightarrow \sCode{undefined}
 }
-\]
 
+\sEntry{Block-expression-return-reduce-1}{In a block expression starting with
+    a value statement and then a return statement, the value statement can be
+    removed.}
+
+\gentzen{}{
+    \sCode{
+        \{\sVar{value};
+        return \sVar{return-expression}; 
+        \sVar{statement}$\ldots$\}
+    }
+    \rightarrow
+    \sCode{
+        \{return \sVar{return-expression}; \sVar{statement}$\ldots$\}
+    }
+}
+
+\sEntry{Block-expression-return-reduce-2}{A return statement as the first
+    statement in a block expression can be reduced by reducing the return
+    expression.}
+\gentzen{
+  \sVar{return-expression}
+\ \Rightarrow \ 
+  \sVar{return-expression}'
+}{
+  \sKw{\{} \sKw{return } \sVar{return-expression} \sKw{; }
+  \sVar{statement\ldots} \sKw{\}}
+  \Rightarrow
+  \sKw{\{} \sKw{return } \sVar{return-expression}' \sKw{; }
+  \sVar{statement\ldots} \sKw{\}}
+}
+
+\sEntry{Block-expression-return-reduce-3}{A block expression starting with a
+    return statement reduces to the value of the return statement.}
+\gentzen{}{
+    \sKw{\{} \sKw{return } \sVar{value} \sKw{; }
+    \sVar{statement\ldots} \sKw{\}}
+    \rightarrow
+    \sVar{value}
+}
+
+Block expressions are currently used only as expanded forms of functions.
 
 \subsection*{Expressions: Binary operators}
 
