@@ -122,9 +122,13 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
   })
 
   test("Convert a module tab's raw JavaScript file into React function", () => {
-    const sampleRawTab = `(function (React) {})(React);`
-    const correctTab = `(function (React) {})`
-    expect(moduleLoader.convertRawTabToFunction(sampleRawTab)).toEqual(correctTab)
+    const sampleReactTab = `(function (React) {}(React));`
+    const correctReactTab = `(function (React) {})`
+    expect(moduleLoader.convertRawTabToFunction(sampleReactTab)).toEqual(correctReactTab)
+
+    const sampleDomTab = `(function (React, ReactDOM) {}(React, ReactDOM));`
+    const correctDomTab = `(function (React, ReactDOM) {})`
+    expect(moduleLoader.convertRawTabToFunction(sampleDomTab)).toEqual(correctDomTab)
   })
 
   test('Loading module tabs correctly', () => {
@@ -132,10 +136,10 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     const sampleResponse = `{ "${validModule}": { "tabs": ["Tab1", "Tab2"] } }`
     const mockedXMLHttpRequest1 = mockXMLHttpRequest({ responseText: sampleResponse })
     const mockedXMLHttpRequest2 = mockXMLHttpRequest({
-      responseText: '(function (React) {})(React);'
+      responseText: '(function (React) {}(React));'
     })
     const mockedXMLHttpRequest3 = mockXMLHttpRequest({
-      responseText: '(function (React) {})(React);'
+      responseText: '(function (React) {}(React));'
     })
     const sideContentTabs = moduleLoader.loadModuleTabs(validModule)
     const correctUrl1 = moduleLoader.MODULES_STATIC_URL + `/modules.json`
@@ -161,7 +165,7 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     const sampleResponse = `{ "${validModule}": { "tabs": ["Tab1", "Tab2"] } }`
     const mockedXMLHttpRequest1 = mockXMLHttpRequest({ responseText: sampleResponse })
     const mockedXMLHttpRequest2 = mockXMLHttpRequest({
-      responseText: '(function (React) {})(React);'
+      responseText: '(function (React) {}(React));'
     })
     const mockedXMLHttpRequest3 = mockXMLHttpRequest({
       responseText: '(function (React) {})'
