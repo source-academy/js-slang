@@ -1,0 +1,20 @@
+% Some helper macros for writing the stepper specs in a more idiomatic way
+
+\newcommand{\gentzen}[2]{\[
+\frac{
+  #1
+}{  
+  #2
+}
+\]}
+
+% Entry header
+\newcommand{\sEntry}[2]{\paragraph{#1:} #2}
+
+% Template variables
+\newcommand{\sVar}[1]{\textnormal{\textit{#1}}}
+% Template fixed values ("keywords")
+\newcommand{\sKw}[1]{\textbf{\texttt{#1}}}
+% Quickahhh
+\newcommand{\sCode}[1]{\textbf{\texttt{#1}}}
+% \newcommand{\sGentzen}[2]{\gentzen{\sCode{#1}}{\sCode{#2}}}
