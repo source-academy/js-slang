@@ -7,7 +7,7 @@ Adaptation (<https://sourceacademy.org/sicpjs/>).
 Requirements
 ============
 
-* node: known working version: v14.17.2
+* node: known working version: v16.14.0
 
 Usage
 =====
