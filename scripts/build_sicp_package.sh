@@ -25,7 +25,7 @@ prepare() {
     find . -type f ! -name '*.js' -delete
 
     # Remove unnecessary dependencies
-    rm -r __tests__ editors lazy mocks name-extractor repl stepper vm transpiler
+    rm -r __tests__
     rm finder.js index.js scope-refactoring.js sicp-prepare.js
     cd ../..
 }
