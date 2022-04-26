@@ -328,7 +328,8 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
 
         return specs.map(spec => ({
           name: spec.local.name,
-          meta: KIND_IMPORT
+          meta: KIND_IMPORT,
+          docHTML: `Unable to retrieve documentation for ${spec.local.name} from ${node.source.value}`
         }))
       }
     case 'VariableDeclaration':
