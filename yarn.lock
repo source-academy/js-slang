@@ -1326,6 +1326,11 @@
   resolved "https://registry.npmjs.org/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
 
+"@types/offscreencanvas@^2019.7.0":
+  version "2019.7.0"
+  resolved "https://registry.yarnpkg.com/@types/offscreencanvas/-/offscreencanvas-2019.7.0.tgz#e4a932069db47bb3eabeb0b305502d01586fa90d"
+  integrity sha512-PGcyveRIpL1XIqK8eBsmRBt76eFgtzuPiSTyKHZxnGemp2yzGzWpjYKAfK3wIMiU7eH+851yEpiuP8JZerTmWg==
+
 "@types/prettier@^2.0.0":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@types/prettier/-/prettier-2.1.5.tgz"
@@ -2964,14 +2969,15 @@ gpu-mock.js@^1.3.0:
   integrity sha512-+lbp8rQ0p1nTa6Gk6HoLiw4yM6JTpql82U+nCF3sZbX4FJWP9PzzF1018dW8K+pbmqRmhLHbn6Bjc6i6tgUpbA==
 
 gpu.js@^2.10.4:
-  version "2.11.4"
-  resolved "https://registry.npmjs.org/gpu.js/-/gpu.js-2.11.4.tgz"
-  integrity sha512-unsqKVkWy/fBd9WNfH5aWE4hEMrnsttxwGpn0wRWCk0gl2JdI69FolMYLrwg/ixaEAnyb3iYONYLor3BOFweWA==
+  version "2.15.2"
+  resolved "https://registry.yarnpkg.com/gpu.js/-/gpu.js-2.15.2.tgz#481d389cd984fcd3f88d9dd5b2fce08c1505443c"
+  integrity sha512-tgTRoWEE0X2PE3OgTNub9OwadXND2K7qwOW/VwhIiedY/mbiT93jJIrgWAKBgdhQR0JmyN4ObkSu0/vjSpbuiQ==
   dependencies:
     acorn "^7.1.1"
     gl "^4.5.2"
     gl-wiretap "^0.6.2"
     gpu-mock.js "^1.3.0"
+    webgpu "^0.1.16"
 
 graceful-fs@^4.2.3, graceful-fs@^4.2.4:
   version "4.2.6"
@@ -5882,6 +5888,11 @@ walker@^1.0.7, walker@~1.0.5:
   integrity sha1-L3+bj9ENZ3JisYqITijRlhjgKPs=
   dependencies:
     makeerror "1.0.x"
+
+webgpu@^0.1.16:
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/webgpu/-/webgpu-0.1.16.tgz#dec416373e308181b28864b58c8a914461d7ceee"
+  integrity sha512-KAXn/f8lnL8o4B718zzdfi1l0nEWQpuoWlC1L5WM/svAbeHjShCEI0l5ZcZBEEUm9FF3ZTgRjWk8iwbJfnGKTA==
 
 webidl-conversions@^5.0.0:
   version "5.0.0"
