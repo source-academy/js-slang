@@ -1227,11 +1227,6 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
-"@types/dateformat@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.npmjs.org/@types/dateformat/-/dateformat-3.0.1.tgz"
-  integrity sha512-KlPPdikagvL6ELjWsljbyDIPzNCeliYkqRpI+zea99vBBbCIA5JNshZAwQKTON139c87y9qvTFVgkFd14rtS4g==
-
 "@types/estree@0.0.51":
   version "0.0.51"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.51.tgz#cfd70924a25a3fd32b218e5e420e6897e1ac4f40"
@@ -1270,14 +1265,6 @@
   integrity sha512-nwKNbvnwJ2/mndE9ItP/zc2TCzw6uuodnF4EHYWD+gCQDVBuRQL5UzbZD0/ezy1iKsFU2ZQiDqg4M9dN4+wZgA==
   dependencies:
     "@types/istanbul-lib-report" "*"
-
-"@types/jest@^25.1.4":
-  version "25.2.3"
-  resolved "https://registry.npmjs.org/@types/jest/-/jest-25.2.3.tgz"
-  integrity sha512-JXc1nK/tXHiDhV55dvfzqtmP4S3sy3T3ouV2tkViZgxY/zeUkcpQcQPGRlgF4KmWzWW5oiWYSZwtCB+2RsE4Fw==
-  dependencies:
-    jest-diff "^25.2.1"
-    pretty-format "^25.2.1"
 
 "@types/jest@^27.0.2":
   version "27.4.1"
@@ -1329,22 +1316,10 @@
   resolved "https://registry.npmjs.org/@types/mdurl/-/mdurl-1.0.2.tgz"
   integrity sha512-eC4U9MlIcu2q0KQmXszyn5Akca/0jrQmwDRgpAMJai7qBWq4amIQhZyNau4VYGtCeALvW1/NtjzJJ567aZxfKA==
 
-"@types/mkdirp@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@types/mkdirp/-/mkdirp-1.0.1.tgz"
-  integrity sha512-HkGSK7CGAXncr8Qn/0VqNtExEE+PHMWb+qlR1faHMao7ng6P3tAaoWWBMdva0gL5h4zprjIO89GJOLXsMcDm1Q==
-  dependencies:
-    "@types/node" "*"
-
 "@types/node@*", "@types/node@^17.0.5":
   version "17.0.35"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.35.tgz#635b7586086d51fb40de0a2ec9d1014a5283ba4a"
   integrity sha512-vu1SrqBjbbZ3J6vwY17jBs8Sr/BKA+/a/WtjRG+whKg1iuLFOosq872EXS0eXWILdO36DHQQeku/ZcL6hz2fpg==
-
-"@types/node@^12.12.7":
-  version "12.19.3"
-  resolved "https://registry.npmjs.org/@types/node/-/node-12.19.3.tgz"
-  integrity sha512-8Jduo8wvvwDzEVJCOvS/G6sgilOLvvhn1eMmK3TW8/T217O7u1jdrK6ImKLv80tVryaPSVeKu6sjDEiFjd4/eg==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -1355,11 +1330,6 @@
   version "2.1.5"
   resolved "https://registry.npmjs.org/@types/prettier/-/prettier-2.1.5.tgz"
   integrity sha512-UEyp8LwZ4Dg30kVU2Q3amHHyTn1jEdhCIE59ANed76GaT1Vp76DD3ZWSAxgCrw6wJ0TqeoBpqmfUHiUDPs//HQ==
-
-"@types/sinon@^7.5.2":
-  version "7.5.2"
-  resolved "https://registry.npmjs.org/@types/sinon/-/sinon-7.5.2.tgz"
-  integrity sha512-T+m89VdXj/eidZyejvmoP9jivXgBDdkOSBVQjU9kF349NEx10QdPNGxHeZUaj1IlJ32/ewdyXJjnJxyxJroYwg==
 
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
@@ -2299,11 +2269,6 @@ detect-newline@^3.0.0:
   version "3.1.0"
   resolved "https://registry.npmjs.org/detect-newline/-/detect-newline-3.1.0.tgz"
   integrity sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==
-
-diff-sequences@^25.2.6:
-  version "25.2.6"
-  resolved "https://registry.npmjs.org/diff-sequences/-/diff-sequences-25.2.6.tgz"
-  integrity sha512-Hq8o7+6GaZeoFjtpgvRBUknSXNeJiCx7V9Fr94ZMljNiCr9n9L8H8aJqgWOQiDDGdyn29fRNcDdRVJ5fdyihfg==
 
 diff-sequences@^26.6.2:
   version "26.6.2"
@@ -3518,16 +3483,6 @@ jest-config@^26.6.3:
     micromatch "^4.0.2"
     pretty-format "^26.6.2"
 
-jest-diff@^25.2.1:
-  version "25.5.0"
-  resolved "https://registry.npmjs.org/jest-diff/-/jest-diff-25.5.0.tgz"
-  integrity sha512-z1kygetuPiREYdNIumRpAHY6RXiGmp70YHptjdaxTWGmA085W3iCnXNx0DhflK3vwrKmrRWyY1wUpkPMVxMK7A==
-  dependencies:
-    chalk "^3.0.0"
-    diff-sequences "^25.2.6"
-    jest-get-type "^25.2.6"
-    pretty-format "^25.5.0"
-
 jest-diff@^26.6.2:
   version "26.6.2"
   resolved "https://registry.npmjs.org/jest-diff/-/jest-diff-26.6.2.tgz"
@@ -3591,11 +3546,6 @@ jest-environment-node@^26.6.2:
     jest-mock "^26.6.2"
     jest-util "^26.6.2"
 
-jest-get-type@^25.2.6:
-  version "25.2.6"
-  resolved "https://registry.npmjs.org/jest-get-type/-/jest-get-type-25.2.6.tgz"
-  integrity sha512-DxjtyzOHjObRM+sM1knti6or+eOgcGU4xVSb2HNP1TqO4ahsT+rqZg+nyqHWJSvWgKC5cG3QjGFBqxLghiF/Ig==
-
 jest-get-type@^26.3.0:
   version "26.3.0"
   resolved "https://registry.npmjs.org/jest-get-type/-/jest-get-type-26.3.0.tgz"
@@ -3628,9 +3578,9 @@ jest-haste-map@^26.6.2:
     fsevents "^2.1.2"
 
 jest-html-reporter@^3.2.0:
-  version "3.4.2"
-  resolved "https://registry.npmjs.org/jest-html-reporter/-/jest-html-reporter-3.4.2.tgz"
-  integrity sha512-2dA4oJdLP2+rewakwLdBhBCdk50zqzgD6Wk0fvsbdS0C9WwpuePwd0kQWRRdfLzNJM5CgC4O98wkK1lBFqJVrw==
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/jest-html-reporter/-/jest-html-reporter-3.5.0.tgz#1c3039ae948e988532a6188a542594df55f0a164"
+  integrity sha512-Kg2zacV9D1PNrugOl9wYicbEePlskJrdQa3VgswQFJPIjIeA5/dyysTBSpqoprl1fAeI1Az66fEPW060B2VNAw==
   dependencies:
     "@babel/core" "^7.9.0"
     "@babel/preset-env" "^7.8.7"
@@ -3638,11 +3588,6 @@ jest-html-reporter@^3.2.0:
     "@jest/console" "^25.1.0"
     "@jest/test-result" "^25.1.0"
     "@jest/types" "^26.0.23"
-    "@types/dateformat" "^3.0.1"
-    "@types/jest" "^25.1.4"
-    "@types/mkdirp" "^1.0.0"
-    "@types/node" "^12.12.7"
-    "@types/sinon" "^7.5.2"
     dateformat "3.0.2"
     mkdirp "^1.0.3"
     sinon "^9.0.1"
@@ -4814,16 +4759,6 @@ prettier@^2.1.2:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.6.2.tgz#e26d71a18a74c3d0f0597f55f01fb6c06c206032"
   integrity sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==
 
-pretty-format@^25.2.1, pretty-format@^25.5.0:
-  version "25.5.0"
-  resolved "https://registry.npmjs.org/pretty-format/-/pretty-format-25.5.0.tgz"
-  integrity sha512-kbo/kq2LQ/A/is0PQwsEHM7Ca6//bGPPvU6UnsdDRSKTWxT/ru/xb88v4BJf6a69H+uTytOEsTusT9ksd/1iWQ==
-  dependencies:
-    "@jest/types" "^25.5.0"
-    ansi-regex "^5.0.0"
-    ansi-styles "^4.0.0"
-    react-is "^16.12.0"
-
 pretty-format@^26.6.2:
   version "26.6.2"
   resolved "https://registry.npmjs.org/pretty-format/-/pretty-format-26.6.2.tgz"
@@ -4898,11 +4833,6 @@ rc@^1.2.7:
     ini "~1.3.0"
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
-
-react-is@^16.12.0:
-  version "16.13.1"
-  resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
-  integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 react-is@^17.0.1:
   version "17.0.2"
