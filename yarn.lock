@@ -1439,9 +1439,9 @@ abbrev@1:
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
 
 ace-builds@^1.4.12:
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.5.3.tgz#05f81d3464a9ea19696e5e6fd0f924d37dab442f"
-  integrity sha512-WN5BKR2aTSuBmisO8jo3Fytk6sOmJGki82v/Boeic81IgYN8pFHNkXq2anDF0XkmfDWMqLbRoW9sjc/GtKzQbQ==
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.7.1.tgz#be796fbd98610dda5e138aed98d309cac2ab0872"
+  integrity sha512-1mcbP5kXvr729sJ9dA/8tul0pjuvKbma0LF/ZMRwPEwjoNWNpe/x0OXpaPJo36aRpZCjRZMl5zsME3hAKTiaNw==
 
 acorn-globals@^6.0.0:
   version "6.0.0"
