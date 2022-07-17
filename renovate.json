@@ -3,5 +3,8 @@
   "extends": [
     "config:base", ":dependencyDashboard", ":preserveSemverRanges", "group:allNonMajor"
   ],
+  "major": {
+    "dependencyDashboardApproval": true
+  },
   "enabledManagers": ["npm"]
 }
