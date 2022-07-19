@@ -1,10 +1,16 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base", ":dependencyDashboard", ":preserveSemverRanges", "group:allNonMajor"
+    "config:base", ":dependencyDashboard", "group:allNonMajor", ":label(dependencies)"
   ],
   "major": {
     "dependencyDashboardApproval": true
   },
+  "packageRules": [
+	  {
+		  "matchPackagePatterns": ["*"],
+		  "rangeStrategy": "update-lockfile"
+	  }
+  ],
   "enabledManagers": ["npm"]
 }
