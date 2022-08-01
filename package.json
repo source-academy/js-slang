@@ -91,7 +91,7 @@
     ],
     "transform": {
       "\\.ts$": "<rootDir>/node_modules/ts-jest",
-      "\\.js$": "<rootDir>/node_modules/babel-jest"
+      "\\.js$": "babel-jest"
     },
     "testRegex": "/__tests__/.*\\.ts$",
     "testPathIgnorePatterns": [
