@@ -91,7 +91,7 @@
       "js"
     ],
     "transform": {
-      "\\.ts$": "<rootDir>/node_modules/ts-jest",
+      "\\.ts$": "ts-jest",
       "\\.js$": "babel-jest"
     },
     "testEnvironment": "jsdom",
