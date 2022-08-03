@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@joeychenofficial/alt-ergo-modified": "^2.4.0",
-    "@types/estree": "0.0.51",
+    "@types/estree": "0.0.52",
     "acorn": "^8.0.3",
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",
@@ -79,7 +79,7 @@
     "jest": "^28.0.0",
     "jest-environment-jsdom": "^28.1.3",
     "jest-html-reporter": "^3.2.0",
-    "jsdoc": "3.6.10",
+    "jsdoc": "3.6.11",
     "jsdom": "^19.0.0",
     "prettier": "^2.1.2",
     "ts-jest": "^28.0.0",
