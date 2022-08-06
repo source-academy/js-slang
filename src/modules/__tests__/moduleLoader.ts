@@ -88,7 +88,7 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
 
   test('Http GET module tab correctly', () => {
     const validModuleTab = 'ModuleTab'
-    const sampleResponse = `(function (React) {})(React);`
+    const sampleResponse = `(function (React) {});`
     const correctUrl = moduleLoader.MODULES_STATIC_URL + `/tabs/${validModuleTab}.js`
     const mockedXMLHttpRequest = mockXMLHttpRequest({ responseText: sampleResponse })
     const response = moduleLoader.memoizedGetModuleFile(validModuleTab, 'tab')
@@ -126,10 +126,10 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     const sampleResponse = `{ "${validModule}": { "tabs": ["Tab1", "Tab2"] } }`
     const mockedXMLHttpRequest1 = mockXMLHttpRequest({ responseText: sampleResponse })
     const mockedXMLHttpRequest2 = mockXMLHttpRequest({
-      responseText: '(function (React) {}(React));'
+      responseText: '(function (React) {});'
     })
     const mockedXMLHttpRequest3 = mockXMLHttpRequest({
-      responseText: '(function (React) {}(React));'
+      responseText: '(function (React) {});'
     })
     const sideContentTabs = moduleLoader.loadModuleTabs(validModule)
     const correctUrl1 = moduleLoader.MODULES_STATIC_URL + `/modules.json`
@@ -155,10 +155,10 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     const sampleResponse = `{ "${validModule}": { "tabs": ["Tab1", "Tab2"] } }`
     const mockedXMLHttpRequest1 = mockXMLHttpRequest({ responseText: sampleResponse })
     const mockedXMLHttpRequest2 = mockXMLHttpRequest({
-      responseText: '(function (React) {}(React));'
+      responseText: '(function (React) {});'
     })
     const mockedXMLHttpRequest3 = mockXMLHttpRequest({
-      responseText: '(function (React) {})'
+      responseText: '(function (React) {}))'
     })
     expect(() => moduleLoader.loadModuleTabs(validModule)).toThrow(ModuleInternalError)
     const correctUrl1 = moduleLoader.MODULES_STATIC_URL + `/modules.json`
