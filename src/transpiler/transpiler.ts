@@ -55,7 +55,7 @@ export function prefixModule(program: es.Program): string {
   return prefix
 }
 
-/*
+/**
  * Hoists import statements in the program to the top
  * Also collates multiple import statements to a module into
  * a single statement

@@ -1,9 +1,9 @@
 import * as es from 'estree'
 
 import { Context } from '../'
-import { ModuleNotFoundError } from '../errors/moduleErrors'
+import { ModuleConnectionError, ModuleNotFoundError } from '../errors/moduleErrors'
 import { findAncestors, findIdentifierNode } from '../finder'
-import { loadModuleDocs } from '../modules/moduleLoader'
+import { memoizedloadModuleDocs } from '../modules/moduleLoader'
 import syntaxBlacklist from '../parser/syntaxBlacklist'
 
 export interface NameDeclaration {
@@ -298,7 +298,7 @@ function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean):
 
 // locTest is a callback that returns whether cursor is in location of node
 /**
- * Gets a list of `NameDeclarations` from thte given node
+ * Gets a list of `NameDeclarations` from the given node
  * @param node Node to search for names
  * @param locTest Callback of type `(node: es.Node) => boolean`. Should return true if the cursor
  * is located within the node, false otherwise
@@ -310,26 +310,34 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))
 
       try {
-        const docs = loadModuleDocs(node.source.value as string, node)
+        const docs = memoizedloadModuleDocs(node.source.value as string, node)
 
         return specs.map(spec => {
           if (spec.type !== 'ImportSpecifier') {
             throw new Error(`Expected ImportSpecifier, got ${spec.type}`)
           }
 
-          return {
-            name: spec.local.name,
-            meta: KIND_IMPORT,
-            docHTML: docs[spec.local.name] 
+          if (docs[spec.local.name] === undefined) {
+            return {
+              name: spec.local.name,
+              meta: KIND_IMPORT,
+              docHTML: `No documentation available for <code>${spec.local.name}</code> from ${node.source.value} module`
+            }
+          } else {
+            return {
+              name: spec.local.name,
+              meta: KIND_IMPORT,
+              docHTML: docs[spec.local.name]
+            }
           }
         })
       } catch (err) {
-        if (!(err instanceof ModuleNotFoundError)) throw err
+        if (!(err instanceof ModuleNotFoundError || err instanceof ModuleConnectionError)) throw err
 
         return specs.map(spec => ({
           name: spec.local.name,
           meta: KIND_IMPORT,
-          docHTML: `Unable to retrieve documentation for ${spec.local.name} from ${node.source.value}`
+          docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${node.source.value} module`
         }))
       }
     case 'VariableDeclaration':
