@@ -117,7 +117,7 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   })
 }
 
-export const memoizedloadModuleDocs = memoize(loadModuleDocs);
+export const memoizedloadModuleDocs = memoize(loadModuleDocs)
 export function loadModuleDocs(path: string, node?: es.Node) {
   const modules = memoizedGetModuleManifest()
   // Check if the module exists
