@@ -81,7 +81,7 @@ export function loadModuleBundle(path: string, context: Context, node?: es.Node)
     const moduleBundle: ModuleBundle = eval(moduleText)
     return moduleBundle(context.moduleParams, context.moduleContexts)
   } catch (error) {
-    console.error(error);
+    console.error(error)
     throw new ModuleInternalError(path, node)
   }
 }
