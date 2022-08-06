@@ -121,16 +121,6 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     ).toThrow(ModuleInternalError)
   })
 
-  test("Convert a module tab's raw JavaScript file into React function", () => {
-    const sampleReactTab = `(function (React) {}(React));`
-    const correctReactTab = `(function (React) {})`
-    expect(moduleLoader.convertRawTabToFunction(sampleReactTab)).toEqual(correctReactTab)
-
-    const sampleDomTab = `(function (React, ReactDOM) {}(React, ReactDOM));`
-    const correctDomTab = `(function (React, ReactDOM) {})`
-    expect(moduleLoader.convertRawTabToFunction(sampleDomTab)).toEqual(correctDomTab)
-  })
-
   test('Loading module tabs correctly', () => {
     const validModule = 'valid_module'
     const sampleResponse = `{ "${validModule}": { "tabs": ["Tab1", "Tab2"] } }`

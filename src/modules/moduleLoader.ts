@@ -81,14 +81,9 @@ export function loadModuleBundle(path: string, context: Context, node?: es.Node)
     const moduleBundle: ModuleBundle = eval(moduleText)
     return moduleBundle(context.moduleParams, context.moduleContexts)
   } catch (error) {
+    console.error(error);
     throw new ModuleInternalError(path, node)
   }
-}
-
-export function convertRawTabToFunction(rawTabString: string): string {
-  rawTabString = rawTabString.trim()
-  const lastBracket = rawTabString.lastIndexOf('(')
-  return rawTabString.substring(0, lastBracket) + ')'
 }
 
 /**
@@ -110,7 +105,7 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   return sideContentTabPaths.map(path => {
     const rawTabFile = memoizedGetModuleFile(path, 'tab')
     try {
-      return eval(convertRawTabToFunction(rawTabFile))
+      return eval(rawTabFile)
     } catch (error) {
       throw new ModuleInternalError(path, node)
     }
