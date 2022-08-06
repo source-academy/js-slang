@@ -7,7 +7,7 @@ Adaptation (<https://sourceacademy.org/sicpjs/>).
 Requirements
 ============
 
-* node: known working version: v14.17.2
+* node: known working version: v16.14.0
 
 Usage
 =====
@@ -190,12 +190,11 @@ $ yarn
 $ yarn build_sicp_package
 ```
 
-To publish SICP package
+To publish SICP package, update version number in `sicp_publish/package.json`
 ``` {.}
-$ yarn publish_sicp_package
+$ cd js-slang/sicp_publish
+$ npm publish
 ```
-
-The version will automatically update the patch.
 
 License
 =======

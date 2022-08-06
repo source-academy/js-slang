@@ -195,7 +195,7 @@ export const defineSymbol = (context: Context, name: string, value: Value) => {
 
 export function defineBuiltin(
   context: Context,
-  name: `${string}${'=' | '...'}${string}`, // enforce minArgsNeeded
+  name: string, // enforce minArgsNeeded
   value: Value,
   minArgsNeeded: number
 ): void
