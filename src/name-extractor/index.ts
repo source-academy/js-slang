@@ -312,6 +312,14 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
       try {
         const docs = memoizedloadModuleDocs(node.source.value as string, node)
 
+        if (!docs) {
+          return specs.map(spec => ({
+            name: spec.local.name,
+            meta: KIND_IMPORT,
+            docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${node.source.value} module`
+          }))
+        }
+
         return specs.map(spec => {
           if (spec.type !== 'ImportSpecifier') {
             throw new Error(`Expected ImportSpecifier, got ${spec.type}`)

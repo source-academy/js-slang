@@ -112,12 +112,21 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   })
 }
 
+type Documentation = {
+  [name: string]: string
+}
+
 export const memoizedloadModuleDocs = memoize(loadModuleDocs)
 export function loadModuleDocs(path: string, node?: es.Node) {
-  const modules = memoizedGetModuleManifest()
-  // Check if the module exists
-  const moduleList = Object.keys(modules)
-  if (!moduleList.includes(path)) throw new ModuleNotFoundError(path, node)
-
-  return JSON.parse(memoizedGetModuleFile(path, 'json'))
+  try {
+    const modules = memoizedGetModuleManifest()
+    // Check if the module exists
+    const moduleList = Object.keys(modules)
+    if (!moduleList.includes(path)) throw new ModuleNotFoundError(path, node)
+    const result = getModuleFile({ name: path, type: 'json' })
+    return JSON.parse(result) as Documentation
+  } catch (error) {
+    console.warn('Failed to load module documentation')
+    return null
+  }
 }
