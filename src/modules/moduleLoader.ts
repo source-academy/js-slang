@@ -79,9 +79,10 @@ export function loadModuleBundle(path: string, context: Context, node?: es.Node)
   const moduleText = memoizedGetModuleFile(path, 'bundle')
   try {
     const moduleBundle: ModuleBundle = eval(moduleText)
-    return moduleBundle(context.moduleParams, context.moduleContexts)
+    const result = moduleBundle(context.moduleParams, context.moduleContexts)
+    return result;
   } catch (error) {
-    console.error(error)
+    // console.error("bundle error: ", error)
     throw new ModuleInternalError(path, node)
   }
 }
@@ -107,6 +108,7 @@ export function loadModuleTabs(path: string, node?: es.Node) {
     try {
       return eval(rawTabFile)
     } catch (error) {
+      // console.error('tab error:', error);
       throw new ModuleInternalError(path, node)
     }
   })
