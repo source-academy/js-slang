@@ -149,7 +149,7 @@ async function runNative(
     let value = await sandboxedEval(
       transpiled,
       context.nativeStorage,
-      options,
+      context.moduleParams,
       context.moduleContexts
     )
 
