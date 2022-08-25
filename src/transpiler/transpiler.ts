@@ -6,7 +6,7 @@ import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { MODULE_CONTEXTS_ID, MODULE_PARAMS_ID, NATIVE_STORAGE_ID } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
-import { isFullJSChapter } from '../runner'
+import { isFullJSLanguage } from '../runner'
 import { AllowedDeclarations, Context, NativeStorage } from '../types'
 import * as create from '../utils/astCreator'
 import {
@@ -665,7 +665,7 @@ export function transpile(
   context: Context,
   skipUndefined = false
 ): TranspiledResult {
-  if (isFullJSChapter(context.chapter) || context.variant == 'native') {
+  if (isFullJSLanguage(context.chapter, context.variant) || context.variant == 'native') {
     return transpileToFullJS(program)
   }
 

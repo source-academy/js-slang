@@ -10,8 +10,12 @@ import { simple } from '../utils/walkers'
 
 // Context Utils
 
-export function isFullJSChapter(chapter: number): boolean {
-  return chapter == -1
+export const isOtherLanguage = (chapter: number) => {
+  return chapter === -1
+}
+
+export const isFullJSLanguage = (chapter: number, variant: Variant) => {
+  return isOtherLanguage(chapter) && variant === 'js'
 }
 
 /**

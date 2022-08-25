@@ -59,8 +59,19 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
-export type Variant = 'native' | 'wasm' | 'lazy' | 'non-det' | 'concurrent' | 'gpu' | 'default' // this might replace EvaluationMethod
 
+// Includes languages that are not part of Source (e.g. full JS)
+export type Variant =
+  | 'native'
+  | 'wasm'
+  | 'lazy'
+  | 'non-det'
+  | 'concurrent'
+  | 'gpu'
+  | 'default'
+  | 'js'
+
+// Languages that are not part of Source have chapter set to -1
 export interface SourceLanguage {
   chapter: number
   variant: Variant

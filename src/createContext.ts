@@ -2,7 +2,7 @@
 
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import * as gpu_lib from './gpu/lib'
-import { isFullJSChapter } from './runner'
+import { isFullJSLanguage } from './runner'
 import { AsyncScheduler } from './schedulers'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
@@ -432,18 +432,19 @@ const createContext = <T>(
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
   moduleParams?: any
 ): Context => {
-  if (isFullJSChapter(chapter)) {
+  if (isFullJSLanguage(chapter, variant)) {
     // fullJS will include all builtins and preludes of source 4
     return {
       ...createContext(
         4,
-        variant,
+        'default',
         externalSymbols,
         externalContext,
         externalBuiltIns,
         moduleParams
       ),
-      chapter: -1
+      chapter: -1,
+      variant: 'js'
     } as Context
   }
 
