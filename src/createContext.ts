@@ -14,15 +14,7 @@ import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/typeChecker'
-import {
-  Context,
-  CustomBuiltIns,
-  Environment,
-  ModuleContext,
-  NativeStorage,
-  Value,
-  Variant
-} from './types'
+import { Context, CustomBuiltIns, Environment, NativeStorage, Value, Variant } from './types'
 import { makeWrapper } from './utils/makeWrapper'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
@@ -152,7 +144,7 @@ export const createEmptyContext = <T>(
     executionMethod: 'auto',
     variant,
     moduleParams,
-    moduleContexts: new Map<string, ModuleContext>(),
+    moduleContexts: {},
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
     previousCode: []

@@ -79,14 +79,14 @@ export function appendModulesToContext(program: Program, context: Context): void
     const moduleName = (node.source.value as string).trim()
 
     // Load the module's tabs
-    if (!context.moduleContexts.has(moduleName)) {
+    if (!(moduleName in context.moduleContexts)) {
       const moduleContext = {
         state: null,
         tabs: loadModuleTabs(moduleName)
       }
-      context.moduleContexts.set(moduleName, moduleContext)
+      context.moduleContexts[moduleName] = moduleContext
     } else {
-      context.moduleContexts.get(moduleName)!.tabs = loadModuleTabs(moduleName)
+      context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName)
     }
   }
 }

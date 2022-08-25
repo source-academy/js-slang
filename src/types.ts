@@ -164,7 +164,9 @@ export interface Context<T = any> {
   /**
    * Storage container for module specific information and state
    */
-  moduleContexts: Map<string, ModuleContext>
+  moduleContexts: {
+    [name: string]: ModuleContext
+  }
 
   /**
    * Code previously executed in this context
@@ -172,16 +174,9 @@ export interface Context<T = any> {
   previousCode: string[]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ModuleState {}
-
-/**
- * Used to store state and contextual information for
- * each module
- */
 export type ModuleContext = {
+  state: any
   tabs: any[]
-  state?: ModuleState | null
 }
 
 export interface BlockFrame {

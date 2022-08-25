@@ -665,11 +665,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         }
       })
       
-      if (!context.moduleContexts.has(moduleName)) {
-        context.moduleContexts.set(moduleName, {
+      if (!(moduleName in context.moduleContexts)) {
+        context.moduleContexts[moduleName] = {
           state: null,
           tabs: loadModuleTabs(moduleName, node)
-        });
+        };
       }
 
       const functions = loadModuleBundle(moduleName, context, node)
