@@ -32,7 +32,7 @@ test('Transform import decalrations variable decalarations', () => {
   `
   const context = mockContext(4)
   const program = parse(code, context)!
-  transformImportDeclarations(program)
+  transformImportDeclarations(program, new Set<string>(['foo', 'bar']))
   expect(program.body[0].type).toBe('VariableDeclaration')
   expect(program.body[1].type).toBe('VariableDeclaration')
 })

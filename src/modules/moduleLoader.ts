@@ -79,7 +79,7 @@ export function loadModuleBundle(path: string, context: Context, node?: es.Node)
   const moduleText = memoizedGetModuleFile(path, 'bundle')
   try {
     const moduleBundle: ModuleBundle = eval(moduleText)
-    return moduleBundle({}, { context })
+    return moduleBundle({ context })
   } catch (error) {
     // console.error("bundle error: ", error)
     throw new ModuleInternalError(path, node)

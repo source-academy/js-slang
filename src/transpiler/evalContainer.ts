@@ -1,7 +1,7 @@
 import { NATIVE_STORAGE_ID } from '../constants'
-import type { Context, NativeStorage } from '../types'
+import type { Context } from '../types'
 
-type Evaler = (code: string, nativeStorage: NativeStorage, context: Context) => any
+type Evaler = (code: string, context: Context) => any
 
 /*
   We need to use new Function here to ensure that the parameter names do not get
@@ -10,9 +10,9 @@ type Evaler = (code: string, nativeStorage: NativeStorage, context: Context) => 
 
 export const sandboxedEval: Evaler = new Function(
   'code',
-  NATIVE_STORAGE_ID,
   'ctx',
   `
+  ({ ${NATIVE_STORAGE_ID}, ...ctx } = ctx);
   if (${NATIVE_STORAGE_ID}.evaller === null) {
     return eval(code);
   } else {

@@ -6,7 +6,7 @@ export type Modules = {
   }
 }
 
-export type ModuleBundle = (exports: {}, context: { context: Context }) => ModuleFunctions
+export type ModuleBundle = (context: { context: Context }) => ModuleFunctions
 
 export type ModuleFunctions = {
   [functionName: string]: Function

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
 import * as es from 'estree'
+import { partition } from 'lodash';
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID } from '../constants'
@@ -37,22 +38,49 @@ const globalIdNames = [
 
 export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
 
-export function prefixModule(program: es.Program): string {
-  let moduleCounter = 0
-  let prefix = ''
-  for (const node of program.body) {
-    if (node.type !== 'ImportDeclaration') {
-      break
+export function transformImportDeclarations(program: es.Program, usedIdentifiers: Set<string>, useThis: boolean = false): string {
+  const prefix: string[] = [];
+  const [importNodes, otherNodes] = partition(program.body, node => node.type === 'ImportDeclaration');
+  const moduleNames = new Map<string, string>();
+  let moduleCount = 0;
+
+  const declNodes = (importNodes as es.ImportDeclaration[]).flatMap(node => {
+    const moduleName = node.source.value as string;
+
+    let moduleNamespace: string;
+    if (!moduleNames.has(moduleName)) {
+      // Increment module count until we reach an unused identifier
+      let namespaced = `__MODULE_${moduleCount}__`;
+      while (usedIdentifiers.has(namespaced)) {
+        namespaced = `__MODULE_${moduleCount}__`;
+        moduleCount++;
+      }
+
+      // The module hasn't been added to the prefix yet, so do that
+      moduleNames.set(moduleName, namespaced);
+      moduleCount++;
+      const moduleText = memoizedGetModuleFile(moduleName, 'bundle').trim()
+      prefix.push(`const ${namespaced} = ${moduleText}({ context: ctx });\n`);
+      moduleNamespace = namespaced;
+    } else {
+      moduleNamespace = moduleNames.get(moduleName)!;
     }
-    const moduleText = memoizedGetModuleFile(node.source.value as string, 'bundle').trim()
-    // remove ; from moduleText
-    prefix += `const __MODULE_${moduleCounter}__ = (${moduleText.substring(
-      0,
-      moduleText.length - 1
-    )})({}, { context: ctx });\n`
-    moduleCounter++
-  }
-  return prefix
+
+    return node.specifiers.map(specifier => {
+      if (specifier.type !== 'ImportSpecifier') {
+        throw new Error(`Expected import specifier, found: ${node.type}`);
+      }
+
+      // Convert each import specifier to its corresponding local variable declaration
+      return create.constantDeclaration(
+        specifier.local.name,
+        create.memberExpression(create.identifier(`${useThis ? 'this.' : ''}${moduleNamespace}`), specifier.imported.name)
+      );
+    })
+  }) as (es.Directive | es.Statement | es.ModuleDeclaration)[];
+
+  program.body = declNodes.concat(otherNodes);
+  return prefix.join('');
 }
 
 /**
@@ -124,19 +152,19 @@ export function transformSingleImportDeclaration(
 }
 
 // `useThis` is a temporary indicator used by fullJS
-export function transformImportDeclarations(program: es.Program, useThis = false) {
-  const imports = []
-  let result: es.VariableDeclaration[] = []
-  let moduleCounter = 0
-  while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
-    imports.push(program.body.shift() as es.ImportDeclaration)
-  }
-  for (const node of imports) {
-    result = transformSingleImportDeclaration(moduleCounter, node, useThis).concat(result)
-    moduleCounter++
-  }
-  program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
-}
+// export function transformImportDeclarations(program: es.Program, useThis = false) {
+//   const imports = []
+//   let result: es.VariableDeclaration[] = []
+//   let moduleCounter = 0
+//   while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
+//     imports.push(program.body.shift() as es.ImportDeclaration)
+//   }
+//   for (const node of imports) {
+//     result = transformSingleImportDeclaration(moduleCounter, node, useThis).concat(result)
+//     moduleCounter++
+//   }
+//   program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
+// }
 
 export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
   return program.body
@@ -621,8 +649,7 @@ function transpileToSource(
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
 
-  const modulePrefix = prefixModule(program)
-  transformImportDeclarations(program)
+  const modulePrefix = transformImportDeclarations(program, usedIdentifiers)
   getGloballyDeclaredIdentifiers(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)
   )
@@ -646,7 +673,9 @@ function transpileToSource(
 }
 
 function transpileToFullJS(program: es.Program): TranspiledResult {
-  transformImportDeclarations(program)
+  const usedIdentifiers = new Set<string>(getIdentifiersInProgram(program))
+
+  const modulePrefix = transformImportDeclarations(program, usedIdentifiers)
   const transpiledProgram: es.Program = create.program([
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
     create.expressionStatement(create.identifier('undefined')),
@@ -654,7 +683,7 @@ function transpileToFullJS(program: es.Program): TranspiledResult {
   ])
 
   const sourceMap = new SourceMapGenerator({ file: 'source' })
-  const transpiled = generate(transpiledProgram, { sourceMap })
+  const transpiled = modulePrefix + generate(transpiledProgram, { sourceMap })
   const sourceMapJson = sourceMap.toJSON()
 
   return { transpiled, sourceMapJson }

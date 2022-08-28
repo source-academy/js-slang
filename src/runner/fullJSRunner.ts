@@ -11,7 +11,6 @@ import {
   evallerReplacer,
   getBuiltins,
   hoistImportDeclarations,
-  prefixModule,
   transpile
 } from '../transpiler/transpiler'
 import type { Context } from '../types'
@@ -93,10 +92,9 @@ export async function fullJSRunner(
 
   // modules
   hoistImportDeclarations(program)
-  let modulePrefix: string
   try {
     appendModulesToContext(program, context)
-    modulePrefix = prefixModule(program)
+    // modulePrefix = prefixModule(program)
   } catch (error) {
     context.errors.push(error instanceof RuntimeSourceError ? error : await toSourceError(error))
     return resolvedErrorPromise
@@ -106,10 +104,11 @@ export async function fullJSRunner(
     ...preludeAndBuiltins,
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set())
   ])
-  const preEvalCode: string = generate(preEvalProgram) + modulePrefix
+  const preEvalCode: string = generate(preEvalProgram); // + modulePrefix
   await fullJSEval(preEvalCode, context)
 
   const { transpiled, sourceMapJson } = transpile(program, context)
+  // console.log(transpiled);
   try {
     return Promise.resolve({
       status: 'finished',
