@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { ErrorSeverity, ErrorType, Value } from '../types'
+import { Chapter, ErrorSeverity, ErrorType, Value } from '../types'
 
 const LHS = ' on left hand side of operation'
 const RHS = ' on right hand side of operation'
@@ -16,7 +16,7 @@ export class TypeError extends RuntimeSourceError {
     public side: string,
     public expected: string,
     public got: string,
-    public chapter: number = 4
+    public chapter: Chapter = Chapter.SOURCE_4
   ) {
     super(node)
   }
@@ -57,7 +57,7 @@ export const checkUnaryExpression = (
   node: es.Node,
   operator: es.UnaryOperator,
   value: Value,
-  chapter: number = 4
+  chapter: Chapter = Chapter.SOURCE_4
 ) => {
   if ((operator === '+' || operator === '-') && !isNumber(value)) {
     return new TypeError(node, '', 'number', typeOf(value), chapter)
@@ -71,7 +71,7 @@ export const checkUnaryExpression = (
 export const checkBinaryExpression = (
   node: es.Node,
   operator: es.BinaryOperator,
-  chapter: number,
+  chapter: Chapter,
   left: Value,
   right: Value
 ) => {
@@ -113,7 +113,11 @@ export const checkBinaryExpression = (
   }
 }
 
-export const checkIfStatement = (node: es.Node, test: Value, chapter: number = 4) => {
+export const checkIfStatement = (
+  node: es.Node,
+  test: Value,
+  chapter: Chapter = Chapter.SOURCE_4
+) => {
   return isBool(test)
     ? undefined
     : new TypeError(node, ' as condition', 'boolean', typeOf(test), chapter)

@@ -2,7 +2,7 @@
 import { parseError, resume, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
 import { setBreakpointAtLine } from '../stdlib/inspector'
-import { Environment, Result } from '../types'
+import { Chapter, Environment, Result } from '../types'
 
 // we need to tame the environments for snapshotting,
 // so we remove the tail part that is a copy of the previous environment
@@ -18,7 +18,7 @@ test('debugger; statement basic test', () => {
   let a = 2;
   debugger;
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
     scheduler: 'preemptive',
     executionMethod: 'auto'
@@ -41,7 +41,7 @@ test('debugger; statement in function', () => {
   }
   a(10);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
     scheduler: 'preemptive',
     executionMethod: 'auto'
@@ -64,7 +64,7 @@ test('debugger; statement execution sequence', () => {
   }
   a(10);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
     scheduler: 'preemptive',
     executionMethod: 'auto'
@@ -98,7 +98,7 @@ test('debugger; statement test function scope', () => {
   }
   a(10);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
     scheduler: 'preemptive',
     executionMethod: 'auto'
@@ -124,7 +124,7 @@ test('debugger; statement hoisting', () => {
   }
   a(10);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
     scheduler: 'preemptive',
     executionMethod: 'auto'
@@ -148,7 +148,7 @@ test('debugger; pauses for', () => {
   }
   a(10);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
     scheduler: 'preemptive',
     executionMethod: 'auto'
@@ -173,7 +173,7 @@ test('debugger; pauses while', () => {
   }
   a(10);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
     scheduler: 'preemptive',
     executionMethod: 'auto'
@@ -203,7 +203,7 @@ test('setBreakpointAtLine basic', () => {
   const a = 10;
   const b = 20;
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   setBreakpointAtLine(['helloworld'])
   return runInContext(code1, context, {
     scheduler: 'preemptive',
@@ -226,7 +226,7 @@ test('setBreakpointAtLine function 1', () => {
   }
   a(10);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   const breakline = []
   breakline[1] = 'asd'
   setBreakpointAtLine(breakline)
@@ -251,7 +251,7 @@ test('setBreakpointAtLine function 2', () => {
   }
   a("bob");
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   const breakline = []
   breakline[2] = 'asd'
   setBreakpointAtLine(breakline)
@@ -278,7 +278,7 @@ test('setBreakpointAtLine function 3', () => {
   }
   a(20);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   const breakline = []
   breakline[3] = 'asd'
   setBreakpointAtLine(breakline)
@@ -303,7 +303,7 @@ test('setBreakpointAtLine function 4', () => {
   }
   a(123345898);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   const breakline = []
   breakline[4] = 'asd'
   setBreakpointAtLine(breakline)
@@ -331,7 +331,7 @@ test('setBreakpointAtLine granularity 1', () => {
   }
   a(1);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   const breakline = []
   breakline[2] = 'a'
   setBreakpointAtLine(breakline)
@@ -376,7 +376,7 @@ test('setBreakpointAtLine granularity 2', () => {
   }
   a(1);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   const breakline = []
   breakline[3] = 'a'
   setBreakpointAtLine(breakline)
@@ -409,7 +409,7 @@ test('setBreakpointAtLine granularity 3', () => {
   }
   a(1);
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   const breakline = []
   breakline[4] = 'a'
   setBreakpointAtLine(breakline)
@@ -445,7 +445,7 @@ test('setBreakpointAtLine for loops', () => {
     const b = i;
   }
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   const breakline = []
   breakline[2] = '2'
   setBreakpointAtLine(breakline)
@@ -492,7 +492,7 @@ test('setBreakpointAtLine while loops', () => {
     a = a - 3;
   }
   `
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   const breakline = []
   breakline[3] = '3'
   setBreakpointAtLine(breakline)

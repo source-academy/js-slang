@@ -1,7 +1,7 @@
 import { BinaryOperator, UnaryOperator } from 'estree'
 
 import { mockClosure, mockRuntimeContext } from '../../mocks/context'
-import { Value } from '../../types'
+import { Chapter, Value } from '../../types'
 import * as rttc from '../rttc'
 
 const num = 0
@@ -83,7 +83,7 @@ describe('Binary + type combinations:', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, 4, left, right)
+      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
       expect(error).toBeUndefined()
     })
   })
@@ -92,7 +92,7 @@ describe('Binary + type combinations:', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, 4, left, right)
+      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         operator,
@@ -134,7 +134,7 @@ describe('Binary (-|*|/|%) type combinations:', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, 4, left, right)
+      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
       expect(error).toBeUndefined()
     })
   })
@@ -143,7 +143,7 @@ describe('Binary (-|*|/|%) type combinations:', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, 4, left, right)
+      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         operator,
@@ -174,7 +174,7 @@ describe('Binary (===|!==) type combinations:', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, 4, left, right)
+      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
       expect(error).toBeUndefined()
     })
   })
@@ -183,7 +183,7 @@ describe('Binary (===|!==) type combinations:', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, 4, left, right)
+      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         operator,
@@ -229,7 +229,7 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
     valid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, 4, left, right)
+      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
       expect(error).toBeUndefined()
     })
   })
@@ -238,7 +238,7 @@ describe('Binary (<|>|<=|>=) type combinations:', () => {
     invalid.forEach(([operator, left, right]: [BinaryOperator, Value, Value]) => {
       const context = mockRuntimeContext()
       const node = context.runtime.nodes[0]
-      const error = rttc.checkBinaryExpression(node, operator, 4, left, right)
+      const error = rttc.checkBinaryExpression(node, operator, Chapter.SOURCE_4, left, right)
       expect(error).toBeInstanceOf(rttc.TypeError)
       expect({
         operator,

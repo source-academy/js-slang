@@ -1,3 +1,4 @@
+import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
 
@@ -8,7 +9,7 @@ test('Cannot leave blank init in for loop', () => {
       break;
     }
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Missing init expression in for statement."`)
 })
 
@@ -20,7 +21,7 @@ test('Cannot leave blank init in for loop - verbose', () => {
       break;
     }
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Missing init expression in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
@@ -35,7 +36,7 @@ test('Cannot leave blank test in for loop', () => {
       break;
     }
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Missing test expression in for statement."`)
 })
 
@@ -47,7 +48,7 @@ test('Cannot leave blank test in for loop - verbose', () => {
       break;
     }
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Missing test expression in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
@@ -62,7 +63,7 @@ test('Cannot leave blank update in for loop', () => {
       break;
     }
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Missing update expression in for statement."`)
 })
 
@@ -74,7 +75,7 @@ test('Cannot leave blank update in for loop - verbose', () => {
       break;
     }
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Missing update expression in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
@@ -89,7 +90,7 @@ test('Cannot leave blank expressions in for loop', () => {
       break;
     }
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Missing init, test, update expressions in for statement."`)
 })
 
@@ -101,7 +102,7 @@ test('Cannot leave blank expressions in for loop - verbose', () => {
     break;
     }
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Missing init, test, update expressions in for statement.
             This for statement requires all three parts (initialiser, test, update) to be present.
@@ -116,7 +117,7 @@ test('Cannot leave while loop predicate blank', () => {
       x;
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: Unexpected token (1:7)"`)
 })
 
@@ -128,7 +129,7 @@ test('Cannot leave while loop predicate blank - verbose', () => {
       x;
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 7: SyntaxError: Unexpected token (2:7)
             There is a syntax error in your program
@@ -143,7 +144,7 @@ test('Cannot use update expressions', () => {
     x++;
     x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: Update expressions are not allowed"`)
 })
 
@@ -155,7 +156,7 @@ test('Cannot use update expressions - verbose', () => {
     x++;
     x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 0: Update expressions are not allowed
             You are trying to use Update expressions, which is not allowed (yet).
@@ -168,7 +169,7 @@ test('Cannot have incomplete statements', () => {
     stripIndent`
     5
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Missing semicolon at the end of statement"`)
 })
 
@@ -178,7 +179,7 @@ test('Cannot have incomplete statements - verbose', () => {
     "enable verbose";
     5
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 1: Missing semicolon at the end of statement
             Every statement must be terminated by a semicolon.
@@ -191,7 +192,7 @@ test('Cannot have if without else in chapter <= 2', () => {
     stripIndent`
     if (true) { 5; }
     `,
-    { chapter: 2 }
+    { chapter: Chapter.SOURCE_2 }
   ).toMatchInlineSnapshot(`"Line 1: Missing \\"else\\" in \\"if-else\\" statement."`)
 })
 
@@ -201,7 +202,7 @@ test('Cannot have if without else in chapter <= 2 - verbose', () => {
     "enable verbose";
     if (true) { 5; }
     `,
-    { chapter: 2 }
+    { chapter: Chapter.SOURCE_2 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Missing \\"else\\" in \\"if-else\\" statement.
             This \\"if\\" block requires corresponding \\"else\\" block which will be
@@ -219,7 +220,7 @@ test('Cannot use multiple declarations', () => {
     let x = 3, y = 5;
     x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Multiple declaration in a single statement."`)
 })
 
@@ -230,7 +231,7 @@ test('Cannot use multiple declarations - verbose', () => {
     let x = 3, y = 5;
     x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Multiple declaration in a single statement.
             Split the variable declaration into multiple lines as follows
@@ -249,7 +250,7 @@ test('Cannot use destructuring declarations', () => {
     let [a, b] = x;
     a;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: Array patterns are not allowed"`)
 })
 
@@ -261,7 +262,7 @@ test('Cannot use destructuring declarations - verbose', () => {
     let [a, b] = x;
     a;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 4: Array patterns are not allowed
             You are trying to use Array patterns, which is not allowed (yet).
@@ -274,7 +275,7 @@ test('no declaration without assignment', () => {
     stripIndent`
     let x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Missing value in variable declaration."`)
 })
 
@@ -284,7 +285,7 @@ test('no declaration without assignment - verbose', () => {
     "enable verbose";
     let x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 4: Missing value in variable declaration.
             A variable declaration assigns a value to a name.
@@ -302,7 +303,7 @@ test('no var statements', () => {
     stripIndent`
     var x = 1;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Variable declaration using \\"var\\" is not allowed."`)
 })
 
@@ -312,7 +313,7 @@ test('no var statements - verbose', () => {
     "enable verbose";
     var x = 1;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Variable declaration using \\"var\\" is not allowed.
             Use keyword \\"let\\" instead, to declare a variable:
@@ -329,7 +330,7 @@ test('Cannot use update statements', () => {
     x += 5;
     x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: The assignment operator += is not allowed. Use = instead."`)
 })
 
@@ -341,7 +342,7 @@ test('Cannot use update statements - verbose', () => {
     x += 5;
     x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 0: The assignment operator += is not allowed. Use = instead.
 
@@ -357,7 +358,7 @@ test('Cannot use update statements', () => {
     x <<= 5;
     x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: The assignment operator <<= is not allowed. Use = instead."`)
 })
 
@@ -369,7 +370,7 @@ test('Cannot use update statements - verbose', () => {
     x <<= 5;
     x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 0: The assignment operator <<= is not allowed. Use = instead.
 
@@ -431,7 +432,7 @@ test('if needs braces', () => {
     else
       false;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 1: Missing curly braces around \\"if\\" block.
             Line 1: Missing curly braces around \\"else\\" block."
@@ -447,7 +448,7 @@ test('if needs braces - verbose', () => {
     else
       false;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Missing curly braces around \\"if\\" block.
             if block need to be enclosed with a pair of curly braces.
@@ -516,7 +517,7 @@ test('for needs braces', () => {
     for (let i = 0; i < 1; i = i + 1)
       i;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Missing curly braces around \\"for\\" block."`)
 })
 
@@ -527,7 +528,7 @@ test('for needs braces - verbose', () => {
     for (let i = 0; i < 1; i = i + 1)
       i;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Missing curly braces around \\"for\\" block.
             Remember to enclose your \\"for\\" block with braces:
@@ -546,7 +547,7 @@ test('while needs braces', () => {
     while (i < 1)
       i = i + 1;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: Missing curly braces around \\"while\\" block."`)
 })
 
@@ -558,7 +559,7 @@ test('while needs braces - verbose', () => {
     while (i < 1)
       i = i + 1;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 0: Missing curly braces around \\"while\\" block.
             Remember to enclose your \\"while\\" block with braces:
@@ -575,7 +576,7 @@ test('No empty statements', () => {
     stripIndent`
     ;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Empty statements are not allowed"`)
 })
 
@@ -585,7 +586,7 @@ test('No empty statements - verbose', () => {
     "enable verbose";
     ;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Empty statements are not allowed
             You are trying to use Empty statements, which is not allowed (yet).
@@ -598,7 +599,7 @@ test('No array expressions in chapter 2', () => {
     stripIndent`
     [];
     `,
-    { chapter: 2 }
+    { chapter: Chapter.SOURCE_2 }
   ).toMatchInlineSnapshot(`"Line 1: Array expressions are not allowed"`)
 })
 
@@ -608,7 +609,7 @@ test('No array expressions in chapter 2 - verbose', () => {
     "enable verbose";
     [];
     `,
-    { chapter: 2 }
+    { chapter: Chapter.SOURCE_2 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Array expressions are not allowed
             You are trying to use Array expressions, which is not allowed (yet).
@@ -621,7 +622,7 @@ test('No spread in array expressions', () => {
     stripIndent`
     [...[]];
     `,
-    { chapter: 3 }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`"Line 1: Spread syntax is not allowed in arrays."`)
 })
 
@@ -630,7 +631,7 @@ test('No trailing commas in arrays', () => {
     stripIndent`
     [1,];
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Trailing comma"`)
 })
 
@@ -640,7 +641,7 @@ test('No trailing commas in arrays - verbose', () => {
     "enable verbose";
     [1,];
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 2: Trailing comma
             Please remove the trailing comma
@@ -656,7 +657,7 @@ test('No trailing commas in objects', () => {
       b: 2,
     });
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 3: Trailing comma"`)
 })
 
@@ -672,7 +673,7 @@ test('no try statements', () => {
       display(e);
     }
     `,
-    { chapter: 3 }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`
             "Line 6: Catch clauses are not allowed
             Line 4: Try statements are not allowed"
@@ -692,7 +693,7 @@ test('no try statements - verbose', () => {
       display(e);
     }
     `,
-    { chapter: 3 }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`
             "Line 7, Column 2: Catch clauses are not allowed
             You are trying to use Catch clauses, which is not allowed (yet).
@@ -709,7 +710,7 @@ test('no for of loops', () => {
     for (let i of list()) {
     }
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 1: Missing value in variable declaration.
             Line 1: For of statements are not allowed"
@@ -723,7 +724,7 @@ test('no for of loops - verbose', () => {
     for (let i of list()) {
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 9: Missing value in variable declaration.
             A variable declaration assigns a value to a name.
@@ -745,7 +746,7 @@ test('no for in loops', () => {
     for (let i in { a: 1, b: 2 }) {
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 1: Missing value in variable declaration.
             Line 1: For in statements are not allowed"
@@ -759,7 +760,7 @@ test('no for in loops - verbose', () => {
     for (let i in { a: 1, b: 2 }) {
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 9: Missing value in variable declaration.
             A variable declaration assigns a value to a name.
@@ -783,7 +784,7 @@ test('no generator functions', () => {
       return 1;
     }
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: Yield expressions are not allowed"`)
 })
 
@@ -796,7 +797,7 @@ test('no generator functions - verbose', () => {
       return 1;
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 2: Yield expressions are not allowed
             You are trying to use Yield expressions, which is not allowed (yet).
@@ -891,7 +892,7 @@ test('no export function', () => {
       return x;
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Export named declarations are not allowed"`)
 })
 
@@ -903,7 +904,7 @@ test('no export function - verbose', () => {
     return x;
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Export named declarations are not allowed
             You are trying to use Export named declarations, which is not allowed (yet).
@@ -916,7 +917,7 @@ test('no export constant', () => {
     stripIndent`
     export const x = 1;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Export named declarations are not allowed"`)
 })
 
@@ -926,7 +927,7 @@ test('no export constant - verbose', () => {
     "enable verbose";
     export const x = 1;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Export named declarations are not allowed
             You are trying to use Export named declarations, which is not allowed (yet).
@@ -940,7 +941,7 @@ test('no export default', () => {
     const x = 1;
     export default x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: Export default declarations are not allowed"`)
 })
 
@@ -951,7 +952,7 @@ test('no export default - verbose', () => {
     const x = 1;
     export default x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 0: Export default declarations are not allowed
             You are trying to use Export default declarations, which is not allowed (yet).
@@ -964,7 +965,7 @@ test('no sequence expression', () => {
     stripIndent`
     (1, 2);
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Sequence expressions are not allowed"`)
 })
 
@@ -974,7 +975,7 @@ test('no sequence expression - verbose', () => {
     "enable verbose";
     (1, 2);
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 1: Sequence expressions are not allowed
             You are trying to use Sequence expressions, which is not allowed (yet).
@@ -988,7 +989,7 @@ test('no interface', () => {
     interface Box {
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: The keyword 'interface' is reserved (1:0)"`)
 })
 
@@ -999,7 +1000,7 @@ test('no interface - verbose', () => {
     interface Box {
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: SyntaxError: The keyword 'interface' is reserved (2:0)
             There is a syntax error in your program
@@ -1013,7 +1014,7 @@ test('no template literals - verbose', () => {
     "enable verbose";
     'hi'
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 4: Missing semicolon at the end of statement
             Every statement must be terminated by a semicolon.
@@ -1026,7 +1027,7 @@ test('no regexp', () => {
     stripIndent`
     /pattern/
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 1: Missing semicolon at the end of statement
             Line 1: 'RegExp' literals are not allowed."
@@ -1039,7 +1040,7 @@ test('no regexp - verbose', () => {
     "enable verbose";
     /pattern/
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 9: Missing semicolon at the end of statement
             Every statement must be terminated by a semicolon.
@@ -1058,7 +1059,7 @@ test('no this, no new', () => {
     }
     const box = new Box();
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: Expected string as prop, got number."`)
 })
 
@@ -1071,7 +1072,7 @@ test('no this, no new - verbose', () => {
     }
     const box = new Box();
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 2: Expected string as prop, got number.
             Expected string as prop, got number.
@@ -1084,7 +1085,7 @@ test('no unspecified operators', () => {
     stripIndent`
     1 << 10;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Operator '<<' is not allowed."`)
 })
 
@@ -1094,7 +1095,7 @@ test('no unspecified operators - verbose', () => {
     "enable verbose";
     1 << 10;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Operator '<<' is not allowed.
 
@@ -1108,7 +1109,7 @@ test('no unspecified unary operators', () => {
     let x = 5;
     typeof x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: Operator 'typeof' is not allowed."`)
 })
 
@@ -1119,7 +1120,7 @@ test('no unspecified unary operators - verbose', () => {
     let x = 5;
     typeof x;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 0: Operator 'typeof' is not allowed.
 
@@ -1134,7 +1135,7 @@ test('no implicit undefined return', () => {
       return;
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: Missing value in return statement."`)
 })
 test('no implicit undefined return - verbose', () => {
@@ -1145,7 +1146,7 @@ test('no implicit undefined return - verbose', () => {
       return;
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 2: Missing value in return statement.
             This return statement is missing a value.
@@ -1163,7 +1164,7 @@ test('no repeated params', () => {
       return x;
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: Argument name clash (1:14)"`)
 })
 
@@ -1175,7 +1176,7 @@ test('no repeated params - verbose', () => {
       return x;
     }
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 14: SyntaxError: Argument name clash (2:14)
             There is a syntax error in your program
@@ -1188,7 +1189,7 @@ test('no declaring reserved keywords', () => {
     stripIndent`
     let yield = 5;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: The keyword 'yield' is reserved (1:4)"`)
 })
 
@@ -1198,7 +1199,7 @@ test('no declaring reserved keywords - verbose', () => {
     "enable verbose";
     let yield = 5;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 4: SyntaxError: The keyword 'yield' is reserved (2:4)
             There is a syntax error in your program
@@ -1211,7 +1212,7 @@ test('no assigning to reserved keywords', () => {
     stripIndent`
     package = 5;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: SyntaxError: The keyword 'package' is reserved (1:0)"`)
 })
 
@@ -1221,7 +1222,7 @@ test('no assigning to reserved keywords - verbose', () => {
     "enable verbose";
     package = 5;
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: SyntaxError: The keyword 'package' is reserved (2:0)
             There is a syntax error in your program
@@ -1234,7 +1235,7 @@ test('no holes in arrays', () => {
     stripIndent`
     [1, , 3];
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: No holes are allowed in array literals."`)
 })
 
@@ -1244,7 +1245,7 @@ test('no assigning to reserved keywords - verbose', () => {
     "enable verbose";
     [1, , 3];
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: No holes are allowed in array literals.
             No holes (empty slots with no content inside) are allowed in array literals.

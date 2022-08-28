@@ -1,4 +1,5 @@
 /* tslint:disable:max-line-length */
+import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import {
   expectDifferentParsedErrors,
@@ -43,13 +44,14 @@ const assignToBuiltinVerbose = stripIndent`
 `
 
 test('Error when assigning to builtin', () => {
-  return expectParsedError(assignToBuiltin, { chapter: 3 }).toMatchInlineSnapshot(
+  return expectParsedError(assignToBuiltin, { chapter: Chapter.SOURCE_3 }).toMatchInlineSnapshot(
     `"Line 1: Cannot assign new value to constant map."`
   )
 })
 
 test('Error when assigning to builtin - verbose', () => {
-  return expectParsedError(assignToBuiltinVerbose, { chapter: 3 }).toMatchInlineSnapshot(`
+  return expectParsedError(assignToBuiltinVerbose, { chapter: Chapter.SOURCE_3 })
+    .toMatchInlineSnapshot(`
             "Line 2, Column 0: Cannot assign new value to constant map.
             As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
             "
@@ -70,13 +72,14 @@ const assignToBuiltinVerbose1 = stripIndent`
 `
 
 test('Error when assigning to builtin', () => {
-  return expectParsedError(assignToBuiltin1, { chapter: 3 }).toMatchInlineSnapshot(
+  return expectParsedError(assignToBuiltin1, { chapter: Chapter.SOURCE_3 }).toMatchInlineSnapshot(
     `"Line 1: Cannot assign new value to constant undefined."`
   )
 })
 
 test('Error when assigning to builtin - verbose', () => {
-  return expectParsedError(assignToBuiltinVerbose1, { chapter: 3 }).toMatchInlineSnapshot(`
+  return expectParsedError(assignToBuiltinVerbose1, { chapter: Chapter.SOURCE_3 })
+    .toMatchInlineSnapshot(`
             "Line 2, Column 0: Cannot assign new value to constant undefined.
             As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
             "
@@ -93,7 +96,7 @@ test.skip('Error when assigning to property on undefined', () => {
     stripIndent`
     undefined.prop = 123;
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Cannot assign property prop of undefined"`)
 })
 
@@ -104,7 +107,7 @@ test.skip('Error when assigning to property on variable with value undefined', (
     const u = undefined;
     u.prop = 123;
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: Cannot assign property prop of undefined"`)
 })
 
@@ -115,7 +118,7 @@ test.skip('Error when deeply assigning to property on variable with value undefi
     const u = undefined;
     u.prop.prop = 123;
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 2: Cannot read property prop of undefined"`)
 })
 
@@ -125,7 +128,7 @@ test.skip('Error when accessing property on undefined', () => {
     stripIndent`
     undefined.prop;
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
@@ -135,7 +138,7 @@ test.skip('Error when deeply accessing property on undefined', () => {
     stripIndent`
     undefined.prop.prop;
   `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
@@ -144,7 +147,7 @@ test('Nice errors when errors occur inside builtins', () => {
     stripIndent`
     parse_int("10");
   `,
-    { chapter: 4 }
+    { chapter: Chapter.SOURCE_4 }
   ).toMatchInlineSnapshot(`"Line 1: Expected 2 arguments, but got 1."`)
 })
 
@@ -153,7 +156,7 @@ test('Nice errors when errors occur inside builtins', () => {
     stripIndent`
     parse("'");
   `,
-    { chapter: 4 }
+    { chapter: Chapter.SOURCE_4 }
   ).toMatchInlineSnapshot(`"Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)"`)
 })
 
@@ -165,7 +168,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
     }
     map(f, list(1, 2));
   `,
-    { chapter: 4 }
+    { chapter: Chapter.SOURCE_4 }
   ).toMatchInlineSnapshot(`"Line 2: Name a not declared."`)
 })
 
@@ -177,7 +180,7 @@ test('Infinite recursion with a block bodied function', () => {
     }
     i(1000);
   `,
-    { chapter: 4 }
+    { chapter: Chapter.SOURCE_4 }
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
 }, 15000)
 
@@ -192,7 +195,7 @@ test('Infinite recursion with function calls in argument', () => {
     }
     i(1000, 1);
   `,
-    { chapter: 4 }
+    { chapter: Chapter.SOURCE_4 }
   ).toEqual(
     expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
   )
@@ -209,7 +212,7 @@ test('Infinite recursion of mutually recursive functions', () => {
     }
     f(1000);
   `,
-    { chapter: 4 }
+    { chapter: Chapter.SOURCE_4 }
   ).toEqual(
     expect.stringMatching(
       /Maximum call stack size exceeded\n([^f]*f[^g]*g[^f]*f|[^g]*g[^f]*f[^g]*g)/
@@ -407,13 +410,13 @@ const callingNonFunctionValueArrayVerbose = stripIndent`
 
 test('Error when calling non function value array', () => {
   return expectParsedError(callingNonFunctionValueArray, {
-    chapter: 3,
+    chapter: Chapter.SOURCE_3,
     native: true
   }).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]."`)
 })
 
 test('Error when calling non function value array - verbose', () => {
-  return expectParsedError(callingNonFunctionValueArrayVerbose, { chapter: 3 })
+  return expectParsedError(callingNonFunctionValueArrayVerbose, { chapter: Chapter.SOURCE_3 })
     .toMatchInlineSnapshot(`
             "Line 2, Column 0: Calling non-function value [1].
             Because [1] is not a function, you cannot run [1]().
@@ -438,14 +441,15 @@ const callingNonFunctionValueObjectVerbose = stripIndent`
 `
 
 test('Error when calling non function value object', () => {
-  return expectParsedError(callingNonFunctionValueObject, { chapter: 100 }).toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value {\\"a\\": 1}."`
-  )
+  return expectParsedError(callingNonFunctionValueObject, {
+    chapter: Chapter.LIBRARY_PARSER
+  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value {\\"a\\": 1}."`)
 })
 
 test('Error when calling non function value object - verbose', () => {
-  return expectParsedError(callingNonFunctionValueObjectVerbose, { chapter: 100 })
-    .toMatchInlineSnapshot(`
+  return expectParsedError(callingNonFunctionValueObjectVerbose, {
+    chapter: Chapter.LIBRARY_PARSER
+  }).toMatchInlineSnapshot(`
             "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
             Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
             "
@@ -465,7 +469,7 @@ test('Error when calling non function value object - verbose', () => {
       "enable verbose";
       ({a: 1})();
     `,
-    { chapter: 100 }
+    { chapter: Chapter.LIBRARY_PARSER }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
             Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
@@ -575,7 +579,7 @@ test('Error when calling function from member expression with too many arguments
     const f = [x => x];
     f[0](1, 2);
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
@@ -586,7 +590,7 @@ test('Error when calling function from member expression with too many arguments
       const f = [x => x];
       f[0](1, 2);
     `,
-    { chapter: 3 }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 2: Expected 1 arguments, but got 2.
             Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
@@ -646,7 +650,7 @@ test('No error when calling list function in with variable arguments', () => {
     list(1, 2, 3);
     list(1, 2, 3, 4, 5, 6, 6);
   `,
-    { native: true, chapter: 2 }
+    { native: true, chapter: Chapter.SOURCE_2 }
   ).toMatchInlineSnapshot(`
             Array [
               1,
@@ -679,7 +683,7 @@ test('No error when calling display function in with variable arguments', () => 
     display(1);
     display(1, "test");
   `,
-    { native: true, chapter: 2 }
+    { native: true, chapter: Chapter.SOURCE_2 }
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -689,7 +693,7 @@ test('No error when calling stringify function in with variable arguments', () =
     stringify(1, 2);
     stringify(1, 2, 3);
   `,
-    { native: true, chapter: 2 }
+    { native: true, chapter: Chapter.SOURCE_2 }
   ).toMatchInlineSnapshot(`"1"`)
 })
 
@@ -700,7 +704,7 @@ test('No error when calling math_max function in with variable arguments', () =>
     math_max(1, 2);
     math_max(1, 2, 3);
   `,
-    { native: true, chapter: 2 }
+    { native: true, chapter: Chapter.SOURCE_2 }
   ).toMatchInlineSnapshot(`3`)
 })
 
@@ -711,7 +715,7 @@ test('No error when calling math_min function in with variable arguments', () =>
     math_min(1, 2);
     math_min(1, 2, 3);
   `,
-    { native: true, chapter: 2 }
+    { native: true, chapter: Chapter.SOURCE_2 }
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -720,7 +724,7 @@ test('Error with too many arguments passed to math_sin', () => {
     stripIndent`
     math_sin(7,8);
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 2."`)
 })
 
@@ -730,7 +734,7 @@ test('Error with too few arguments passed to rest parameters', () => {
     function rest(a, b, ...c) {}
     rest(1);
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: Expected 2 or more arguments, but got 1."`)
 })
 
@@ -740,7 +744,7 @@ test('Error when redeclaring constant', () => {
     const f = x => x;
     const f = x => x;
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
@@ -750,7 +754,7 @@ test('Error when redeclaring constant as variable', () => {
     const f = x => x;
     let f = x => x;
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
@@ -760,7 +764,7 @@ test('Error when redeclaring variable as constant', () => {
     let f = x => x;
     const f = x => x;
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
@@ -770,7 +774,7 @@ test('Error when redeclaring variable', () => {
     let f = x => x;
     let f = x => x;
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
@@ -780,7 +784,7 @@ test('Error when redeclaring function after let', () => {
     let f = x => x;
     function f() {}
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
 })
 
@@ -791,7 +795,7 @@ test('Error when redeclaring function after let --verbose', () => {
     let f = x => x;
     function f() {}
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
             There is a syntax error in your program
@@ -805,7 +809,7 @@ test('Error when redeclaring function after function', () => {
     function f() {}
     function f() {}
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
 })
 
@@ -816,7 +820,7 @@ test('Error when redeclaring function after function --verbose', () => {
     function f() {}
     function f() {}
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
             There is a syntax error in your program
@@ -830,7 +834,7 @@ test('Error when redeclaring function after const', () => {
     const f = x => x;
     function f() {}
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
 })
 
@@ -841,7 +845,7 @@ test('Error when redeclaring function after const --verbose', () => {
     const f = x => x;
     function f() {}
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
             There is a syntax error in your program
@@ -855,7 +859,7 @@ test('Error when redeclaring const after function', () => {
     function f() {}
     const f = x => x;
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
@@ -866,7 +870,7 @@ test('Error when redeclaring const after function --verbose', () => {
     function f() {}
     const f = x => x;
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 6: SyntaxError: Identifier 'f' has already been declared (3:6)
             There is a syntax error in your program
@@ -880,7 +884,7 @@ test('Error when redeclaring let after function', () => {
     function f() {}
     let f = x => x;
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
@@ -891,7 +895,7 @@ test('Error when redeclaring let after function --verbose', () => {
     function f() {}
     let f = x => x;
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`
             "Line 3, Column 4: SyntaxError: Identifier 'f' has already been declared (3:4)
             There is a syntax error in your program
@@ -905,7 +909,7 @@ test.skip('Error when accessing property of null', () => {
     stripIndent`
     null["prop"];
   `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of null"`)
 })
 
@@ -915,7 +919,7 @@ test.skip('Error when accessing property of undefined', () => {
     stripIndent`
     undefined["prop"];
   `,
-    { chapter: 10, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
 })
 
@@ -925,7 +929,7 @@ test.skip('Error when accessing inherited property of builtin', () => {
     stripIndent`
     pair["constructor"];
   `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`
             "Line 1: Cannot read inherited property constructor of function pair(left, right) {
             	[implementation hidden]
@@ -940,7 +944,7 @@ test.skip('Error when accessing inherited property of function', () => {
     function f() {}
     f["constructor"];
   `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 2: Cannot read inherited property constructor of function f() {}"`)
 })
 
@@ -950,7 +954,7 @@ test.skip('Error when accessing inherited property of arrow function', () => {
     stripIndent`
     (() => 1)["constructor"];
   `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property constructor of () => 1"`)
 })
 
@@ -960,7 +964,7 @@ test.skip('Error when accessing inherited property of array', () => {
     stripIndent`
     [].push;
   `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property push of []"`)
 })
 
@@ -969,7 +973,7 @@ test('Error when accessing inherited property of object', () => {
     stripIndent`
     ({}).valueOf;
   `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}."`)
 })
 
@@ -979,7 +983,7 @@ test.skip('Error when accessing inherited property of string', () => {
     stripIndent`
     'hi'.includes;
   `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property includes of \\"hi\\""`)
 })
 
@@ -989,7 +993,7 @@ test.skip('Error when accessing inherited property of number', () => {
     stripIndent`
     (1).toPrecision;
   `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property toPrecision of 1"`)
 })
 
@@ -998,7 +1002,7 @@ test('Access local property', () => {
     stripIndent`
     ({a: 0})["a"];
   `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`0`)
 })
 
@@ -1007,7 +1011,7 @@ test('Type error when accessing property of null', () => {
     stripIndent`
     null.prop;
     `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got null."`)
 })
 
@@ -1016,7 +1020,7 @@ test('Type error when accessing property of string', () => {
     stripIndent`
     'hi'.length;
     `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
 })
 
@@ -1028,7 +1032,7 @@ test('Type error when accessing property of function', () => {
     }
     f.prototype;
     `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
 })
 
@@ -1037,7 +1041,7 @@ test('Type error when assigning property of string', () => {
     stripIndent`
     'hi'.prop = 5;
     `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
 })
 
@@ -1049,7 +1053,7 @@ test('Type error when assigning property of function', () => {
     }
     f.prop = 5;
     `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
 })
 
@@ -1062,7 +1066,7 @@ test('Type error with non boolean in if statement, error line at if statement, n
       2;
     } else {}
     `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected boolean as condition, got number."`)
 })
 
@@ -1073,7 +1077,7 @@ test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnu
     *
     'string';
     `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Expected number on right hand side of operation, got string."`)
 })
 
@@ -1093,7 +1097,7 @@ test('Cascading js errors work properly 1', () => {
     const ones = pair(1, () => ones);
     eval_stream(make_alternating_stream(enum_stream(1, 9)), 10);
     `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(
     `"Line 8: Error: head(xs) expects a pair as argument xs, but encountered null"`
   )
@@ -1108,7 +1112,7 @@ test('Cascading js errors work properly', () => {
 
     h(null);
     `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(
     `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null"`
   )

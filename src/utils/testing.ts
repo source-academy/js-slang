@@ -7,7 +7,7 @@ import { transpileToLazy } from '../lazy/lazy'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Context, CustomBuiltIns, SourceError, Value, Variant } from '../types'
+import { Chapter, Context, CustomBuiltIns, SourceError, Value, Variant } from '../types'
 import { stringify } from './stringify'
 
 export interface CodeSnippetTestCase {
@@ -42,7 +42,7 @@ interface TestResult {
 
 interface TestOptions {
   context?: TestContext
-  chapter?: number
+  chapter?: Chapter
   variant?: Variant
   testBuiltins?: TestBuiltins
   native?: boolean
@@ -52,12 +52,12 @@ interface TestOptions {
 
 export function createTestContext({
   context,
-  chapter = 1,
+  chapter = Chapter.SOURCE_1,
   variant = Variant.DEFAULT,
   testBuiltins = {}
 }: {
   context?: TestContext
-  chapter?: number
+  chapter?: Chapter
   variant?: Variant
   testBuiltins?: TestBuiltins
 } = {}): TestContext {
@@ -350,7 +350,7 @@ export function expectToLooselyMatchJS(code: string, options: TestOptions = {}) 
 
 export async function expectNativeToTimeoutAndError(code: string, timeout: number) {
   const start = Date.now()
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   const promise = runInContext(code, context, {
     scheduler: 'preemptive',
     executionMethod: 'native',

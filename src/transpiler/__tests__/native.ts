@@ -1,6 +1,6 @@
 import { runInContext } from '../../index'
 import { mockContext } from '../../mocks/context'
-import { Finished } from '../../types'
+import { Chapter, Finished } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectNativeToTimeoutAndError } from '../../utils/testing'
 
@@ -67,7 +67,7 @@ test('test increasing time limit for while loops', async () => {
 })
 
 test('test proper setting of variables in an outer scope', async () => {
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   await runInContext(
     stripIndent`
     let a = 'old';
@@ -83,7 +83,7 @@ test('test proper setting of variables in an outer scope', async () => {
 })
 
 test('using internal names still work', async () => {
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   let result = await runInContext(
     stripIndent`
     const boolOrErr = 1;
@@ -103,7 +103,7 @@ test('using internal names still work', async () => {
 })
 
 test('assigning a = b where b was from a previous program call works', async () => {
-  const context = mockContext(3)
+  const context = mockContext(Chapter.SOURCE_3)
   const result = await runInContext(
     stripIndent`
     let b = null;

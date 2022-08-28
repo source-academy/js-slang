@@ -1,4 +1,4 @@
-import { Variant } from '../types'
+import { Chapter, Variant } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { expectResult } from '../utils/testing'
 
@@ -13,7 +13,7 @@ test('Unused arguments are not evaluated', () => {
     `,
     {
       variant: Variant.LAZY,
-      chapter: 2,
+      chapter: Chapter.SOURCE_2,
       native: true
     }
   ).toBe(1)
@@ -58,7 +58,7 @@ test('Conditionals force test', () => {
     const res = f(((b) => b)(true), ((b) => !b)(true));
     res;
     `,
-    { variant: Variant.LAZY, chapter: 2, native: true }
+    { variant: Variant.LAZY, chapter: Chapter.SOURCE_2, native: true }
   ).toBe(true)
 })
 
@@ -79,7 +79,7 @@ test('Thunks are memoized', () => {
     const res = square(incX());
     res;
     `,
-    { variant: Variant.LAZY, chapter: 3, native: true }
+    { variant: Variant.LAZY, chapter: Chapter.SOURCE_3, native: true }
   ).toBe(4)
 })
 
@@ -114,6 +114,6 @@ test('Tail calls work', () => {
     const res = test2(1);
     res;
     `,
-    { variant: Variant.LAZY, chapter: 2, native: true }
+    { variant: Variant.LAZY, chapter: Chapter.SOURCE_2, native: true }
   ).toBe(1)
 })

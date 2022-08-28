@@ -10,10 +10,6 @@ import { simple } from '../utils/walkers'
 
 // Context Utils
 
-export function isFullJSChapter(chapter: number): boolean {
-  return chapter == -1
-}
-
 /**
  * Small function to determine the variant to be used
  * by a program, as both context and options can have

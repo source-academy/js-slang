@@ -60,6 +60,15 @@ export interface Comment {
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
 
+export enum Chapter {
+  SOURCE_1 = 1,
+  SOURCE_2 = 2,
+  SOURCE_3 = 3,
+  SOURCE_4 = 4,
+  FULL_JS = -1,
+  LIBRARY_PARSER = 100
+}
+
 export enum Variant {
   DEFAULT = 'default',
   NATIVE = 'native',
@@ -70,8 +79,8 @@ export enum Variant {
   GPU = 'gpu'
 }
 
-export interface SourceLanguage {
-  chapter: number
+export interface Language {
+  chapter: Chapter
   variant: Variant
 }
 
@@ -104,7 +113,7 @@ export interface NativeStorage {
 
 export interface Context<T = any> {
   /** The source version used */
-  chapter: number
+  chapter: Chapter
 
   /** The external symbols that exist in the Context. */
   externalSymbols: string[]

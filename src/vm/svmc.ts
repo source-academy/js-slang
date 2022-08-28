@@ -4,14 +4,14 @@ import * as util from 'util'
 import { createEmptyContext } from '../createContext'
 import { parse } from '../parser/parser'
 import { INTERNAL_FUNCTIONS as concurrentInternalFunctions } from '../stdlib/vm.prelude'
-import { Variant } from '../types'
+import { Chapter, Variant } from '../types'
 import { assemble } from './svml-assembler'
 import { compileToIns } from './svml-compiler'
 import { stringifyProgram } from './util'
 
 interface CliOptions {
   compileTo: 'debug' | 'json' | 'binary' | 'ast'
-  sourceChapter: 1 | 2 | 3
+  sourceChapter: Chapter.SOURCE_1 | Chapter.SOURCE_2 | Chapter.SOURCE_3
   sourceVariant: Variant.DEFAULT | Variant.CONCURRENT // does not support other variants
   inputFilename: string
   outputFilename: string | null
@@ -27,7 +27,7 @@ const writeFileAsync = util.promisify(fs.writeFile)
 function parseOptions(): CliOptions | null {
   const ret: CliOptions = {
     compileTo: 'binary',
-    sourceChapter: 3,
+    sourceChapter: Chapter.SOURCE_3,
     sourceVariant: Variant.DEFAULT,
     inputFilename: '',
     outputFilename: null,

@@ -2,7 +2,6 @@
 
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import * as gpu_lib from './gpu/lib'
-import { isFullJSChapter } from './runner'
 import { AsyncScheduler } from './schedulers'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
@@ -15,6 +14,7 @@ import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/typeChecker'
 import {
+  Chapter,
   Context,
   CustomBuiltIns,
   Environment,
@@ -133,7 +133,7 @@ const createNativeStorage = (): NativeStorage => ({
 })
 
 export const createEmptyContext = <T>(
-  chapter: number,
+  chapter: Chapter,
   variant: Variant = Variant.DEFAULT,
   externalSymbols: string[],
   externalContext?: T,
@@ -375,7 +375,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     }
   }
 
-  if (context.chapter >= 100) {
+  if (context.chapter === Chapter.LIBRARY_PARSER) {
     defineBuiltin(context, 'is_object(val)', misc.is_object)
     defineBuiltin(context, 'is_NaN(val)', misc.is_NaN)
     defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
@@ -425,25 +425,25 @@ const defaultBuiltIns: CustomBuiltIns = {
 }
 
 const createContext = <T>(
-  chapter = 1,
+  chapter: Chapter = Chapter.SOURCE_1,
   variant: Variant = Variant.DEFAULT,
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
   moduleParams?: any
 ): Context => {
-  if (isFullJSChapter(chapter)) {
+  if (chapter === Chapter.FULL_JS) {
     // fullJS will include all builtins and preludes of source 4
     return {
       ...createContext(
-        4,
+        Chapter.SOURCE_4,
         variant,
         externalSymbols,
         externalContext,
         externalBuiltIns,
         moduleParams
       ),
-      chapter: -1
+      chapter: Chapter.FULL_JS
     } as Context
   }
 

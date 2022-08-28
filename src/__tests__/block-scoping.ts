@@ -1,3 +1,4 @@
+import { Chapter } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { expectParsedError, expectResult } from '../utils/testing'
 
@@ -52,7 +53,7 @@ test('let uses block scoping instead of function scoping', () => {
     }
     test();
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -68,7 +69,7 @@ test('for loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -86,7 +87,7 @@ test('while loops use block scoping instead of function scoping', () => {
     }
     test();
   `,
-    { chapter: 4, native: true }
+    { chapter: Chapter.SOURCE_4, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -104,7 +105,7 @@ test('for loop `let` variables are copied into the block scope', () => {
   }
   test();
   `,
-    { chapter: 4, native: true }
+    { chapter: Chapter.SOURCE_4, native: true }
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -120,7 +121,7 @@ test('Cannot overwrite loop variables within a block', () => {
   }
   test();
   `,
-    { chapter: 3 }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(
     `"Line 4: Assignment to a for loop variable in the for loop is not allowed."`
   )
@@ -175,6 +176,6 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   }
   test();
   `,
-    { chapter: 3 }
+    { chapter: Chapter.SOURCE_3 }
   ).toMatchInlineSnapshot(`"Line 3: Name variable not declared."`)
 })

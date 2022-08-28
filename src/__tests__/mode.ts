@@ -2,7 +2,7 @@ import * as ace from 'ace-builds'
 import DefaultMode from 'ace-builds/src-noconflict/mode-javascript'
 
 import { HighlightRulesSelector, ModeSelector } from '../editors/ace/modes/source'
-import { Variant } from '../types'
+import { Chapter, Variant } from '../types'
 
 // suppress all console warning
 console.warn = () => {
@@ -27,7 +27,7 @@ const CATEGORY = {
   bool: /\bconstant.language.boolean\b/
 }
 
-const setSession = (chapter: number, variant: Variant, external: string, code: string): void => {
+const setSession = (chapter: Chapter, variant: Variant, external: string, code: string): void => {
   // load the library
   HighlightRulesSelector(chapter, variant, external)
   ModeSelector(chapter, variant, external)
@@ -47,7 +47,7 @@ const expectedBool = (
 test('function token type error', () => {
   const code = `const p = pair(3, 4); \nset_tail(p, 3);`
 
-  setSession(2, defaultVariant, defaultExternal, code)
+  setSession(Chapter.SOURCE_2, defaultVariant, defaultExternal, code)
   const token1 = session.getTokenAt(0, 11)
   const token2 = session.getTokenAt(1, 3)
 
@@ -56,7 +56,7 @@ test('function token type error', () => {
   expect(expectedBool(token2, CATEGORY.functions)).toBe(false)
 
   // at source 4, set_tail is function as well
-  setSession(4, defaultVariant, defaultExternal, code)
+  setSession(Chapter.SOURCE_4, defaultVariant, defaultExternal, code)
   const newToken1 = session.getTokenAt(0, 11)
   const newToken2 = session.getTokenAt(1, 3)
   expect(expectedBool(newToken1, CATEGORY.functions)).toBe(true)
@@ -66,7 +66,7 @@ test('function token type error', () => {
 test('constants are not correctly loaded', () => {
   const code = `true; \n5; \nmath_LOG2E;`
 
-  setSession(1, defaultVariant, defaultExternal, code)
+  setSession(Chapter.SOURCE_1, defaultVariant, defaultExternal, code)
 
   const token1 = session.getTokenAt(0, 1)
   expect(expectedBool(token1, CATEGORY.bool)).toBe(true)
@@ -81,7 +81,7 @@ test('constants are not correctly loaded', () => {
 test('operator syntax type error', () => {
   const code = 'const num = 3; \nnum++; \nnum--; \nnum += 1;'
 
-  setSession(1, defaultVariant, defaultExternal, code)
+  setSession(Chapter.SOURCE_1, defaultVariant, defaultExternal, code)
 
   const token1 = session.getTokenAt(1, 4)
   expect(expectedBool(token1, CATEGORY.forbidden)).toBe(true)
@@ -97,7 +97,7 @@ test('forbidden keywords', () => {
   const code = 'let x = 3; \nwhile (x > 0) { x = x - 1; }'
 
   // not allowed in source 1
-  setSession(1, defaultVariant, defaultExternal, code)
+  setSession(Chapter.SOURCE_1, defaultVariant, defaultExternal, code)
 
   const token1 = session.getTokenAt(0, 1)
   expect(expectedBool(token1, CATEGORY.forbidden)).toBe(true)
@@ -106,7 +106,7 @@ test('forbidden keywords', () => {
   expect(expectedBool(token2, CATEGORY.forbidden)).toBe(true)
 
   // allowed in source 4
-  setSession(4, defaultVariant, defaultExternal, code)
+  setSession(Chapter.SOURCE_4, defaultVariant, defaultExternal, code)
   const newToken1 = session.getTokenAt(0, 1)
   expect(expectedBool(newToken1, CATEGORY.types)).toBe(true)
 
@@ -117,7 +117,7 @@ test('forbidden keywords', () => {
 test('forbidden JavaScript reserved words', () => {
   const code = `private \npackage \nthis`
 
-  setSession(4, defaultVariant, defaultExternal, code)
+  setSession(Chapter.SOURCE_4, defaultVariant, defaultExternal, code)
 
   const token1 = session.getTokenAt(0, 1)
   expect(expectedBool(token1, CATEGORY.forbidden)).toBe(true)

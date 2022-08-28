@@ -8,11 +8,11 @@ import { createContext, parseError } from '../index'
 import { transpileToLazy } from '../lazy/lazy'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Variant } from '../types'
+import { Chapter, Variant } from '../types'
 import { validateAndAnnotate } from '../validator/validator'
 
 function transpileCode(
-  chapter = 1,
+  chapter: Chapter = Chapter.SOURCE_1,
   variant: Variant = Variant.DEFAULT,
   code = '',
   pretranspile = false
