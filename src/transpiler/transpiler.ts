@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
 import * as es from 'estree'
-import { partition } from 'lodash';
+import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID } from '../constants'
@@ -38,49 +38,59 @@ const globalIdNames = [
 
 export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
 
-export function transformImportDeclarations(program: es.Program, usedIdentifiers: Set<string>, useThis: boolean = false): string {
-  const prefix: string[] = [];
-  const [importNodes, otherNodes] = partition(program.body, node => node.type === 'ImportDeclaration');
-  const moduleNames = new Map<string, string>();
-  let moduleCount = 0;
+export function transformImportDeclarations(
+  program: es.Program,
+  usedIdentifiers: Set<string>,
+  useThis: boolean = false
+): string {
+  const prefix: string[] = []
+  const [importNodes, otherNodes] = partition(
+    program.body,
+    node => node.type === 'ImportDeclaration'
+  )
+  const moduleNames = new Map<string, string>()
+  let moduleCount = 0
 
   const declNodes = (importNodes as es.ImportDeclaration[]).flatMap(node => {
-    const moduleName = node.source.value as string;
+    const moduleName = node.source.value as string
 
-    let moduleNamespace: string;
+    let moduleNamespace: string
     if (!moduleNames.has(moduleName)) {
       // Increment module count until we reach an unused identifier
-      let namespaced = `__MODULE_${moduleCount}__`;
+      let namespaced = `__MODULE_${moduleCount}__`
       while (usedIdentifiers.has(namespaced)) {
-        namespaced = `__MODULE_${moduleCount}__`;
-        moduleCount++;
+        namespaced = `__MODULE_${moduleCount}__`
+        moduleCount++
       }
 
       // The module hasn't been added to the prefix yet, so do that
-      moduleNames.set(moduleName, namespaced);
-      moduleCount++;
+      moduleNames.set(moduleName, namespaced)
+      moduleCount++
       const moduleText = memoizedGetModuleFile(moduleName, 'bundle').trim()
-      prefix.push(`const ${namespaced} = ${moduleText}({ context: ctx });\n`);
-      moduleNamespace = namespaced;
+      prefix.push(`const ${namespaced} = ${moduleText}({ context: ctx });\n`)
+      moduleNamespace = namespaced
     } else {
-      moduleNamespace = moduleNames.get(moduleName)!;
+      moduleNamespace = moduleNames.get(moduleName)!
     }
 
     return node.specifiers.map(specifier => {
       if (specifier.type !== 'ImportSpecifier') {
-        throw new Error(`Expected import specifier, found: ${node.type}`);
+        throw new Error(`Expected import specifier, found: ${node.type}`)
       }
 
       // Convert each import specifier to its corresponding local variable declaration
       return create.constantDeclaration(
         specifier.local.name,
-        create.memberExpression(create.identifier(`${useThis ? 'this.' : ''}${moduleNamespace}`), specifier.imported.name)
-      );
+        create.memberExpression(
+          create.identifier(`${useThis ? 'this.' : ''}${moduleNamespace}`),
+          specifier.imported.name
+        )
+      )
     })
-  }) as (es.Directive | es.Statement | es.ModuleDeclaration)[];
+  }) as (es.Directive | es.Statement | es.ModuleDeclaration)[]
 
-  program.body = declNodes.concat(otherNodes);
-  return prefix.join('');
+  program.body = declNodes.concat(otherNodes)
+  return prefix.join('')
 }
 
 /**

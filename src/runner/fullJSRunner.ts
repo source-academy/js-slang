@@ -104,7 +104,7 @@ export async function fullJSRunner(
     ...preludeAndBuiltins,
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set())
   ])
-  const preEvalCode: string = generate(preEvalProgram); // + modulePrefix
+  const preEvalCode: string = generate(preEvalProgram) // + modulePrefix
   await fullJSEval(preEvalCode, context)
 
   const { transpiled, sourceMapJson } = transpile(program, context)
