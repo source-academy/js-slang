@@ -5,7 +5,7 @@ import { inspect } from 'util'
 import { CUT, TRY_AGAIN } from '../constants'
 import { createContext, IOptions, parseError, Result, resume, runInContext } from '../index'
 import Closure from '../interpreter/closure'
-import { Context, SuspendedNonDet } from '../types'
+import { Context, SuspendedNonDet, Variant } from '../types'
 
 const NO_MORE_VALUES_MESSAGE: string = 'There are no more values of: '
 let previousInput: string | undefined // stores the input which is then shown when there are no more values for the program
@@ -80,7 +80,7 @@ function _run(
 
 function _startRepl(chapter = 1, useSubst: boolean, prelude = '') {
   // use defaults for everything
-  const context = createContext(chapter, 'non-det')
+  const context = createContext(chapter, Variant.NON_DET)
   const options: Partial<IOptions> = {
     executionMethod: 'interpreter',
     useSubst

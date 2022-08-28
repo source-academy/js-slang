@@ -134,7 +134,7 @@ const createNativeStorage = (): NativeStorage => ({
 
 export const createEmptyContext = <T>(
   chapter: number,
-  variant: Variant = 'default',
+  variant: Variant = Variant.DEFAULT,
   externalSymbols: string[],
   externalContext?: T,
   moduleParams?: any
@@ -318,7 +318,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter >= 2) {
     // List library
 
-    if (context.variant === 'lazy') {
+    if (context.variant === Variant.LAZY) {
       defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair, false))
       defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list, false), 0)
       defineBuiltin(context, 'is_pair(val)', new LazyBuiltIn(list.is_pair, true))
@@ -365,7 +365,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
     )
 
-    if (context.variant === 'gpu') {
+    if (context.variant === Variant.GPU) {
       defineBuiltin(context, '__clearKernelCache()', gpu_lib.__clearKernelCache)
       defineBuiltin(
         context,
@@ -386,7 +386,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     )
   }
 
-  if (context.variant === 'lazy') {
+  if (context.variant === Variant.LAZY) {
     defineBuiltin(context, 'wrapLazyCallee(f)', new LazyBuiltIn(operators.wrapLazyCallee, true))
     defineBuiltin(context, 'makeLazyFunction(f)', new LazyBuiltIn(operators.makeLazyFunction, true))
     defineBuiltin(context, 'forceIt(val)', new LazyBuiltIn(operators.forceIt, true))
@@ -397,13 +397,13 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 function importPrelude(context: Context) {
   let prelude = ''
   if (context.chapter >= 2) {
-    prelude += context.variant === 'lazy' ? lazyListPrelude : listPrelude
+    prelude += context.variant === Variant.LAZY ? lazyListPrelude : listPrelude
   }
   if (context.chapter >= 3) {
     prelude += streamPrelude
   }
 
-  if (context.variant === 'non-det') {
+  if (context.variant === Variant.NON_DET) {
     prelude += nonDetPrelude
   }
 
@@ -426,7 +426,7 @@ const defaultBuiltIns: CustomBuiltIns = {
 
 const createContext = <T>(
   chapter = 1,
-  variant: Variant = 'default',
+  variant: Variant = Variant.DEFAULT,
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns,

@@ -8,7 +8,7 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Environment, Frame, Value } from '../types'
+import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -269,7 +269,7 @@ const checkNumberOfArguments = (
 function* getArgs(context: Context, call: es.CallExpression) {
   const args = []
   for (const arg of call.arguments) {
-    if (context.variant === 'lazy') {
+    if (context.variant === Variant.LAZY) {
       args.push(delayIt(arg, currentEnvironment(context)))
     } else if (arg.type === 'SpreadElement') {
       args.push(...(yield* actualValue(arg.argument, context)))
@@ -596,7 +596,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     // If we are now left with a CallExpression, then we use TCO
-    if (returnExpression.type === 'CallExpression' && context.variant !== 'lazy') {
+    if (returnExpression.type === 'CallExpression' && context.variant !== Variant.LAZY) {
       const callee = yield* actualValue(returnExpression.callee, context)
       const args = yield* getArgs(context, returnExpression)
       return new TailCallReturnValue(callee, args, returnExpression)

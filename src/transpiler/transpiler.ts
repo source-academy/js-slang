@@ -7,7 +7,7 @@ import { MODULE_CONTEXTS_ID, MODULE_PARAMS_ID, NATIVE_STORAGE_ID } from '../cons
 import { UndefinedVariable } from '../errors/errors'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
 import { isFullJSChapter } from '../runner'
-import { AllowedDeclarations, Context, NativeStorage } from '../types'
+import { AllowedDeclarations, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/astCreator'
 import {
   getIdentifiersInNativeStorage,
@@ -665,7 +665,7 @@ export function transpile(
   context: Context,
   skipUndefined = false
 ): TranspiledResult {
-  if (isFullJSChapter(context.chapter) || context.variant == 'native') {
+  if (isFullJSChapter(context.chapter) || context.variant == Variant.NATIVE) {
     return transpileToFullJS(program)
   }
 

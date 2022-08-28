@@ -59,7 +59,16 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
-export type Variant = 'native' | 'wasm' | 'lazy' | 'non-det' | 'concurrent' | 'gpu' | 'default' // this might replace EvaluationMethod
+
+export enum Variant {
+  DEFAULT = 'default',
+  NATIVE = 'native',
+  WASM = 'wasm',
+  LAZY = 'lazy',
+  NON_DET = 'non-det',
+  CONCURRENT = 'concurrent',
+  GPU = 'gpu'
+}
 
 export interface SourceLanguage {
   chapter: number

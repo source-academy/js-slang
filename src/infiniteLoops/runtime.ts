@@ -4,6 +4,7 @@ import { MODULE_PARAMS_ID } from '../constants'
 import createContext from '../createContext'
 import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
+import { Variant } from '../types'
 import * as create from '../utils/astCreator'
 import { checkForInfiniteLoop } from './detect'
 import { InfiniteLoopError } from './errors'
@@ -304,7 +305,7 @@ functions[FunctionNames.evalU] = sym.evaluateHybridUnary
  * @returns SourceError if an infinite loop was detected, undefined otherwise.
  */
 export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
-  const context = createContext(4, 'default', undefined, undefined)
+  const context = createContext(4, Variant.DEFAULT, undefined, undefined)
   const prelude = parse(context.prelude as string, context) as es.Program
   const previous: es.Program[] = []
   context.prelude = null

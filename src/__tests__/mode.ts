@@ -10,7 +10,7 @@ console.warn = () => {
 }
 
 // default chapter variant and external library
-const defaultVariant: Variant = 'default'
+const defaultVariant: Variant = Variant.DEFAULT
 const defaultExternal: string = 'NONE'
 
 // define session

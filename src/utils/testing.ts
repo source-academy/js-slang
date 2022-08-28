@@ -53,7 +53,7 @@ interface TestOptions {
 export function createTestContext({
   context,
   chapter = 1,
-  variant = 'default',
+  variant = Variant.DEFAULT,
   testBuiltins = {}
 }: {
   context?: TestContext
@@ -129,11 +129,11 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     } else {
       // Mutates program
       switch (options.variant) {
-        case 'gpu':
+        case Variant.GPU:
           transpileToGPU(parsed)
           pretranspiled = generate(parsed)
           break
-        case 'lazy':
+        case Variant.LAZY:
           transpileToLazy(parsed)
           pretranspiled = generate(parsed)
           break

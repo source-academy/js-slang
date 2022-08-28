@@ -1,3 +1,4 @@
+import { Variant } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { expectResult } from '../utils/testing'
 
@@ -11,7 +12,7 @@ test('Unused arguments are not evaluated', () => {
     res;
     `,
     {
-      variant: 'lazy',
+      variant: Variant.LAZY,
       chapter: 2,
       native: true
     }
@@ -28,7 +29,7 @@ test('Unary operations force argument', () => {
     res;
     `,
     {
-      variant: 'lazy',
+      variant: Variant.LAZY,
       native: true
     }
   ).toBe(true)
@@ -43,7 +44,7 @@ test('Binary operations force arguments', () => {
     const res = add(((x) => x)(5), ((x) => x + 1)(9));
     res;
     `,
-    { variant: 'lazy', native: true }
+    { variant: Variant.LAZY, native: true }
   ).toBe(15)
 })
 
@@ -57,7 +58,7 @@ test('Conditionals force test', () => {
     const res = f(((b) => b)(true), ((b) => !b)(true));
     res;
     `,
-    { variant: 'lazy', chapter: 2, native: true }
+    { variant: Variant.LAZY, chapter: 2, native: true }
   ).toBe(true)
 })
 
@@ -78,7 +79,7 @@ test('Thunks are memoized', () => {
     const res = square(incX());
     res;
     `,
-    { variant: 'lazy', chapter: 3, native: true }
+    { variant: Variant.LAZY, chapter: 3, native: true }
   ).toBe(4)
 })
 
@@ -95,7 +96,7 @@ test('Thunks capture local environment', () => {
     const res = addSome2(3);
     res;
     `,
-    { variant: 'lazy', native: true }
+    { variant: Variant.LAZY, native: true }
   ).toBe(6)
 })
 
@@ -113,6 +114,6 @@ test('Tail calls work', () => {
     const res = test2(1);
     res;
     `,
-    { variant: 'lazy', chapter: 2, native: true }
+    { variant: Variant.LAZY, chapter: 2, native: true }
   ).toBe(1)
 })

@@ -2,6 +2,7 @@ import { Context, Result, runInContext } from '../..'
 import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../mocks/context'
 import { FatalSyntaxError } from '../../parser/parser'
+import { Variant } from '../../types'
 import { locationDummyNode } from '../../utils/astCreator'
 import { CodeSnippetTestCase } from '../../utils/testing'
 
@@ -107,14 +108,14 @@ test('Source builtins are accessible in fullJS program', async () => {
   const fullJSProgram: string = `
     parse('head(list(1,2,3));');
     `
-  const fullJSContext: Context = mockContext(-1, 'default')
+  const fullJSContext: Context = mockContext(-1, Variant.DEFAULT)
   await runInContext(fullJSProgram, fullJSContext)
 
   expect(fullJSContext.errors.length).toBeLessThanOrEqual(0)
 })
 
 test('Simulate fullJS REPL', async () => {
-  const fullJSContext: Context = mockContext(-1, 'default')
+  const fullJSContext: Context = mockContext(-1, Variant.DEFAULT)
   const replStatements: [string, any][] = [
     ['const x = 1;', undefined],
     ['x;', 1],
@@ -135,7 +136,7 @@ describe('Native javascript programs are valid in fullJSRunner', () => {
   it.each([...JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS])(
     `%p`,
     async ({ snippet, value, errors }: CodeSnippetTestCase) => {
-      const fullJSContext: Context = mockContext(-1, 'default')
+      const fullJSContext: Context = mockContext(-1, Variant.DEFAULT)
       const result = await runInContext(snippet, fullJSContext)
 
       expect(result.status).toStrictEqual('finished')
@@ -149,7 +150,7 @@ describe('Error locations are handled well in fullJS', () => {
   it.each([...JAVASCRIPT_CODE_SNIPPETS_ERRORS])(
     `%p`,
     async ({ snippet, value, errors }: CodeSnippetTestCase) => {
-      const fullJSContext: Context = mockContext(-1, 'default')
+      const fullJSContext: Context = mockContext(-1, Variant.DEFAULT)
       const result = await runInContext(snippet, fullJSContext)
 
       expect(result.status).toStrictEqual('error')
@@ -167,7 +168,7 @@ describe('Additional JavaScript features are not available in Source Native', ()
     async ({ snippet }: CodeSnippetTestCase) => {
       // Test all chapters from Source 1 - 4
       for (let chapterNum = 0; chapterNum <= 4; chapterNum++) {
-        const sourceNativeContext: Context = mockContext(chapterNum, 'native')
+        const sourceNativeContext: Context = mockContext(chapterNum, Variant.NATIVE)
         const result = await runInContext(snippet, sourceNativeContext)
 
         expect(result.status).toStrictEqual('error')

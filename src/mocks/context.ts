@@ -5,7 +5,7 @@ import Closure from '../interpreter/closure'
 import { createBlockEnvironment } from '../interpreter/interpreter'
 import { Context, Environment, Frame, Variant } from '../types'
 
-export function mockContext(chapter = 1, variant: Variant = 'default'): Context {
+export function mockContext(chapter = 1, variant: Variant = Variant.DEFAULT): Context {
   return createContext(chapter, variant)
 }
 

@@ -10,7 +10,7 @@ import { ExecutionMethod, Variant } from '../types'
 function startRepl(
   chapter = 1,
   executionMethod: ExecutionMethod = 'interpreter',
-  variant: Variant = 'default',
+  variant: Variant = Variant.DEFAULT,
   useSubst: boolean = false,
   useRepl: boolean,
   prelude = ''
