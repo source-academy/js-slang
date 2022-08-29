@@ -3,6 +3,7 @@ import { Program } from 'estree'
 import { evaluate } from '../interpreter/interpreter'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
+import { Chapter } from '../types'
 import { stripIndent } from '../utils/formatters'
 
 test('Function params and body identifiers are in different environment', () => {
@@ -14,7 +15,7 @@ test('Function params and body identifiers are in different environment', () => 
   }
   f(2);
   `
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   context.prelude = null // hide the unneeded prelude
   const parsed = parse(code, context)
   const it = evaluate(parsed as any as Program, context)

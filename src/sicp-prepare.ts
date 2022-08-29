@@ -3,8 +3,9 @@ import { FunctionDeclaration, Program } from 'estree'
 import * as fs from 'fs'
 
 import { default as createContext } from './createContext'
+import { Chapter } from './types'
 
-const context = createContext(4)
+const context = createContext(Chapter.SOURCE_4)
 
 // Generate names.txt
 const a = context.nativeStorage.builtins.keys()

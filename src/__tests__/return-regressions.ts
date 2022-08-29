@@ -3,6 +3,7 @@
  * Please reference Issue #124 (https://github.com/source-academy/js-slang/issues/124)
  */
 
+import { Chapter } from '../types'
 import { expectParsedError, expectResult } from '../utils/testing'
 
 // This is bad practice. Don't do this!
@@ -174,7 +175,7 @@ test('Bare early returns in while loops work', () => {
     }
     f();
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -199,7 +200,7 @@ test('Recursive call early returns in while loops work', () => {
     }
     f();
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`3`)
 })
 
@@ -224,7 +225,7 @@ test('Tail call early returns in while loops work', () => {
     }
     f();
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -246,7 +247,7 @@ test('Bare early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -268,7 +269,7 @@ test('Recursive call early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`3`)
 })
 
@@ -293,6 +294,6 @@ test('Tail call early returns in for loops work', () => {
     }
     f();
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`1`)
 })

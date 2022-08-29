@@ -1,7 +1,7 @@
 import { Options } from 'acorn'
 import * as es from 'estree'
 
-import { SourceLanguage } from './types'
+import { Chapter, Language, Variant } from './types'
 
 export const CUT = 'cut' // cut operator for Source 4.3
 export const TRY_AGAIN = 'retry' // command for Source 4.3
@@ -25,17 +25,17 @@ export const JSSLANG_PROPERTIES = {
   factorToIncreaseBy: 10
 }
 
-export const sourceLanguages: SourceLanguage[] = [
-  { chapter: 1, variant: 'default' },
-  { chapter: 1, variant: 'wasm' },
-  { chapter: 1, variant: 'lazy' },
-  { chapter: 2, variant: 'default' },
-  { chapter: 2, variant: 'lazy' },
-  { chapter: 3, variant: 'default' },
-  { chapter: 3, variant: 'concurrent' },
-  { chapter: 3, variant: 'non-det' },
-  { chapter: 4, variant: 'default' },
-  { chapter: 4, variant: 'gpu' }
+export const sourceLanguages: Language[] = [
+  { chapter: Chapter.SOURCE_1, variant: Variant.DEFAULT },
+  { chapter: Chapter.SOURCE_1, variant: Variant.WASM },
+  { chapter: Chapter.SOURCE_1, variant: Variant.LAZY },
+  { chapter: Chapter.SOURCE_2, variant: Variant.DEFAULT },
+  { chapter: Chapter.SOURCE_2, variant: Variant.LAZY },
+  { chapter: Chapter.SOURCE_3, variant: Variant.DEFAULT },
+  { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT },
+  { chapter: Chapter.SOURCE_3, variant: Variant.NON_DET },
+  { chapter: Chapter.SOURCE_4, variant: Variant.DEFAULT },
+  { chapter: Chapter.SOURCE_4, variant: Variant.GPU }
 ]
 
 export const ACORN_PARSE_OPTIONS: Options = { ecmaVersion: 2015 }

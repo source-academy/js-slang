@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
-import { TypeAnnotatedNode } from '../../types'
+import { Chapter, TypeAnnotatedNode } from '../../types'
 import { getVariableDecarationName } from '../../utils/astCreator'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
@@ -10,7 +10,7 @@ import { simple } from '../../utils/walkers'
 import { validateAndAnnotate } from '../validator'
 
 export function toValidatedAst(code: string) {
-  const context = mockContext(1)
+  const context = mockContext(Chapter.SOURCE_1)
   const ast = parse(code, context)
   expect(ast).not.toBeUndefined()
   return validateAndAnnotate(ast as es.Program, context)
@@ -22,7 +22,7 @@ test('for loop variable cannot be reassigned', async () => {
       i = 10;
     }
   `
-  return expectParsedError(code, { chapter: 4 }).toMatchInlineSnapshot(
+  return expectParsedError(code, { chapter: Chapter.SOURCE_4 }).toMatchInlineSnapshot(
     `"Line 2: Assignment to a for loop variable in the for loop is not allowed."`
   )
 })
@@ -35,7 +35,7 @@ test('for loop variable cannot be reassigned in closure', async () => {
       }
     }
   `
-  return expectParsedError(code, { chapter: 4 }).toMatchInlineSnapshot(
+  return expectParsedError(code, { chapter: Chapter.SOURCE_4 }).toMatchInlineSnapshot(
     `"Line 3: Assignment to a for loop variable in the for loop is not allowed."`
   )
 })
