@@ -20,7 +20,7 @@ import { SourceDocumentation } from '../docTooltip'
 
 export function HighlightRulesSelector(
   id: number,
-  variant: Variant = 'default',
+  variant: Variant = Variant.DEFAULT,
   external: String = 'NONE',
   externalLibraries: (
     | {
@@ -48,7 +48,7 @@ export function HighlightRulesSelector(
     const TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules
     const identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
 
-    const chapter = variant === 'default' ? id.toString() : id.toString() + '_' + variant
+    const chapter = variant === Variant.DEFAULT ? id.toString() : id.toString() + '_' + variant
     const builtin_lib = SourceDocumentation.builtins[chapter]
 
     function addFromBuiltinLibrary(meta: string) {
@@ -714,7 +714,11 @@ export function HighlightRulesSelector(
 }
 
 //source mode
-export function ModeSelector(id: number, variant: Variant = 'default', external: string = 'NONE') {
+export function ModeSelector(
+  id: number,
+  variant: Variant = Variant.DEFAULT,
+  external: string = 'NONE'
+) {
   const name = id.toString() + variant + external
 
   // @ts-ignore

@@ -4,12 +4,12 @@ import * as es from 'estree'
 import { parseError, runInContext } from '../../index'
 import { mockContext } from '../../mocks/context'
 import { parse as __parse } from '../../parser/parser'
-import { Context, TypeAnnotatedFuncDecl, TypeAnnotatedNode } from '../../types'
+import { Chapter, Context, TypeAnnotatedFuncDecl, TypeAnnotatedNode } from '../../types'
 import { typeToString } from '../../utils/stringify'
 import { validateAndAnnotate } from '../../validator/validator'
 import { typeCheck } from '../typeChecker'
 
-function parseAndTypeCheck(code: string, chapterOrContext: number | Context = 1) {
+function parseAndTypeCheck(code: string, chapterOrContext: Chapter | Context = Chapter.SOURCE_1) {
   const context =
     typeof chapterOrContext === 'number' ? mockContext(chapterOrContext) : chapterOrContext
   const program: any = __parse(code, context)
@@ -49,7 +49,7 @@ function topLevelTypesToString(program: TypeAnnotatedNode<es.Program>) {
 
 describe('type checking pairs and lists', () => {
   it('happy paths for list functions', () => {
-    const context = mockContext(2)
+    const context = mockContext(Chapter.SOURCE_2)
 
     // we must avoid typechecking library code and user code in the same context
     // else all declarations will be interpreted as one big letrec
@@ -121,7 +121,7 @@ describe('type checking pairs and lists', () => {
       accumulate((x,y)=>x+y,0,xs);
       accumulate((x,y)=>x||y,false,ys);
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "accumulate: ((T0, T1) -> T1, T1, List<T0>) -> T1
       xs: List<number>
@@ -141,7 +141,7 @@ describe('type checking pairs and lists', () => {
       const b = accumulate((x,y)=>x||y,false,ys);
     `
 
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "accumulate: ((number, number) -> number, number, List<number>) -> number
       xs: List<number>
@@ -182,7 +182,7 @@ describe('type checking functions', () => {
         return is_null(xs) ? ys : pair(head(xs), append(tail(xs), ys));
       }
     `
-    const [program, errors] = parseAndTypeCheck(code1, 2)
+    const [program, errors] = parseAndTypeCheck(code1, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(
       `"append: (List<T0>, List<T0>) -> List<T0>"`
     )
@@ -195,7 +195,7 @@ describe('type checking functions', () => {
         return foo;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: T0 -> T1"`)
     expect(parseError(errors)).toMatchInlineSnapshot(
       `"Line 3: foo contains cyclic reference to itself"`
@@ -213,7 +213,7 @@ describe('type checking functions', () => {
         return x === 0 ? 1 : x === 1 ? 1 : fib(x - 1) + fib(x - 2);
       }
     `
-    const [program, errors] = parseAndTypeCheck(code1, 2)
+    const [program, errors] = parseAndTypeCheck(code1, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"fib: number -> number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -228,7 +228,7 @@ describe('type checking functions', () => {
       bar(foo)(3, 4, 5);
       baz(3);
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "foo: number -> number
       goo: number -> number
@@ -268,7 +268,7 @@ describe('type checking functions', () => {
       bar(foo); // okay
       bar(goo); // error
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "foo: number -> number
       goo: boolean -> boolean
@@ -291,7 +291,7 @@ describe('type checking functions', () => {
         return 1;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: (T0, T1) -> number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: One or more undeclared names detected (e.g. 'append').
@@ -308,7 +308,7 @@ function foo(x, y) {
   return pair(x, y);
 }
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"foo: (T0, T1) -> [T0, T1]"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -323,7 +323,7 @@ const y = foo(1, 2);
 const z = head(x) + 34;
 head(x) + 56;
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "foo: (number, number) -> [number, number]
       x: [number, number]
@@ -340,7 +340,7 @@ head(x) + 56;
       const a = pair(3, pair(4, false));
       const b = tail(tail(a)) + 1;
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "x: [number, number]
       y: T0
@@ -369,7 +369,7 @@ describe('type checking for polymorphic builtin functions', () => {
     const code = `
       const x = is_boolean('file') || false;
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -379,7 +379,7 @@ describe('type checking for polymorphic builtin functions', () => {
       const x = is_boolean(5);
       x + 5;
     `
-    const [, errors] = parseAndTypeCheck(code, 1)
+    const [, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: A type mismatch was detected in the binary expression:
         x + 5
@@ -399,7 +399,7 @@ describe('type checking of functions with variable number of arguments', () => {
       display(1+1);
       display(true, 'hello');
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "xs: T0
@@ -420,7 +420,7 @@ describe('type checking overloaded unary/binary primitives', () => {
       const x = !false;
       const y = x || true;
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "foo: number -> number
@@ -448,7 +448,7 @@ describe('type checking overloaded unary/binary primitives', () => {
       const x = y => y;
       x(1)(2);
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "foo: (number, number) -> number
       x: T0 -> T0"
@@ -509,7 +509,7 @@ describe('type checking overloaded unary/binary primitives', () => {
       const y = foo(false);
       const c = foo(a) + bar(1, false);
     `
-    const [, errors] = parseAndTypeCheck(code, 1)
+    const [, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 4: A type mismatch was detected in the binary expression:
         a + b
@@ -539,7 +539,7 @@ describe('type checking overloaded unary/binary primitives', () => {
       const c = 4;
       const d = (a || !a) ? b : c;
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "a: boolean
@@ -556,7 +556,7 @@ describe('type checking overloaded unary/binary primitives', () => {
       const c = 4;
       const d = (a ) ? b : c;
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 5: Expected the test part of the conditional expression:
         a ? ... : ...
@@ -578,7 +578,7 @@ describe('type checking overloaded unary/binary primitives', () => {
       const c = '4';
       const d = (a ) ? b : c;
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(parseError(errors)).toMatchInlineSnapshot(`
           "Line 5: The two branches of the conditional expression:
             a ? ... : ...
@@ -607,7 +607,7 @@ describe('type checking if else statements', () => {
         4;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: Expected the test part of the if statement:
         if (a + a) { ... } else { ... }
@@ -626,7 +626,7 @@ describe('type checking functions used in polymorphic fashion', () => {
       'a' + f('b');
     `
 
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"f: addable -> addable"`)
   })
@@ -636,7 +636,7 @@ describe('type checking functions used in polymorphic fashion', () => {
       const x = 3 + f(4);
       const y = 'a' + f('b');
     `
-    const [, errors] = parseAndTypeCheck(code, 1)
+    const [, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 4: A type mismatch was detected in the function call:
         f('b')
@@ -661,7 +661,7 @@ describe('Type checking reassignment for Source 3', () => {
       xs = pair(1, null); // okay
       xs = pair(false, pair(false, null)); // not okay
     `
-    const [program, errors] = parseAndTypeCheck(code1, 3)
+    const [program, errors] = parseAndTypeCheck(code1, Chapter.SOURCE_3)
     expect(errors.length).toEqual(3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "z: number
@@ -700,7 +700,7 @@ describe('Type checking reassignment for Source 3', () => {
       x = 4;
       y = 4; // error
     `
-    const [program, errors] = parseAndTypeCheck(code1, 3)
+    const [program, errors] = parseAndTypeCheck(code1, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "x: number
       y: number
@@ -723,7 +723,7 @@ describe('Type checking reassignment for Source 3', () => {
       y = 4; // error
       const a = 3;
     `
-    const [program, errors] = parseAndTypeCheck(code1, 3)
+    const [program, errors] = parseAndTypeCheck(code1, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "x: number
       y: number
@@ -746,7 +746,7 @@ describe('checking while loops in source 3', () => {
         x = x + 1;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -758,7 +758,7 @@ describe('checking while loops in source 3', () => {
         x = x + 1;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: Expected the test part of the while statement:
@@ -775,7 +775,7 @@ describe('checking while loops in source 3', () => {
         x = x + 1;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: Expected the test part of the while statement:
@@ -794,7 +794,7 @@ describe('checking while loops in source 3', () => {
         continue;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -808,7 +808,7 @@ describe('checking while loops in source 3', () => {
         break;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"x: number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -825,7 +825,7 @@ describe('checking if statements inside functions', () => {
         }
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"f: boolean -> undefined"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -841,7 +841,7 @@ describe('Checking top level blocks', () => {
         'a';
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: The two branches of the if statement:
@@ -864,7 +864,7 @@ describe('Checking top level blocks', () => {
       }
       a = a || false;
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -880,7 +880,7 @@ describe('Checking top level blocks', () => {
         }
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: The two branches of the if statement:
@@ -905,7 +905,7 @@ describe('Checking top level blocks', () => {
         const b = 3;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -922,7 +922,7 @@ describe('Checking top level blocks', () => {
         const b = 3;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: The two branches of the if statement:
@@ -946,7 +946,7 @@ describe('Checking top level blocks', () => {
         }
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: The two branches of the if statement:
@@ -969,7 +969,7 @@ describe('type checking for loops', () => {
       }
     `
     // console.log(parse(code, 3).body[1])
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -982,7 +982,7 @@ describe('type checking for loops', () => {
       }
     `
     // console.log(parse(code, 3).body[1])
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -994,7 +994,7 @@ describe('type checking for loops', () => {
         a + 20;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: number"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: Expected the test part of the for statement:
@@ -1011,7 +1011,7 @@ describe('type checking for loops', () => {
         a && a;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"a: boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 3: A type mismatch was detected in the binary expression:
@@ -1044,7 +1044,7 @@ describe('type checking arrays', () => {
       arr[0] = false;
       const x = 1 + arr[1]; // type error
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "arr: Array<number>
       y: number
@@ -1086,7 +1086,7 @@ describe('type checking arrays', () => {
       const arrLen = array_length(arr1);
       const is_arr = is_array(x);
     `
-    const [program, errors] = parseAndTypeCheck(code1, 3)
+    const [program, errors] = parseAndTypeCheck(code1, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "arr1: Array<number>
       arr_fail: Array<number>
@@ -1132,7 +1132,7 @@ describe('type checking arrays', () => {
 describe('typing some SICP Chapter 1 programs', () => {
   it('1.1.1', () => {
     const code = `3 * 2 * (4 + (3 - 5)) + 10 * (27 / 6);`
-    const [, errors] = parseAndTypeCheck(code, 1)
+    const [, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
 
@@ -1143,7 +1143,7 @@ describe('typing some SICP Chapter 1 programs', () => {
       pi * radius * radius;
       const circumference = 2 * pi * radius;
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "pi: number
       radius: number
@@ -1167,7 +1167,7 @@ describe('typing some SICP Chapter 1 programs', () => {
       square(square(3));
       f(3);
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "square: number -> number
       sum_of_squares: (number, number) -> number
@@ -1196,7 +1196,7 @@ describe('typing some SICP Chapter 1 programs', () => {
       a === 4 ? 6 : b === 4 ? 6 + 7 + a : 25;
       2 + (b > a ? b : a);
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "abs: number -> number
       not_equal: (addable, addable) -> boolean
@@ -1230,7 +1230,7 @@ describe('typing some SICP Chapter 1 programs', () => {
         return sqrt_iter(1.0);
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "square: number -> number
       average: (number, number) -> number
@@ -1266,7 +1266,7 @@ describe('typing some SICP Chapter 1 programs', () => {
                   : A(x - 1, A(x, y - 1));
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "factorial: number -> number
       factorial_iter: number -> number
@@ -1316,7 +1316,7 @@ describe('typing some SICP Chapter 1 programs', () => {
               kinds_of_coins === 5 ? 50 : 0;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "fib: number -> number
       fibo: number -> number
@@ -1398,7 +1398,7 @@ describe('typing some SICP Chapter 1 programs', () => {
                 : false;
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "square: number -> number
       expt: (number, number) -> number
@@ -1450,7 +1450,7 @@ describe('typing some SICP Chapter 1 programs', () => {
         return sum(pi_term, a, pi_next, b);
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 1)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "sum: (number -> number, number, number -> number, number) -> number
       cube: number -> number
@@ -1510,7 +1510,7 @@ describe('typing some SICP Chapter 2 programs', () => {
       print_rat(mul_rat(one_half, one_third));
       print_rat(div_rat(one_half, one_third));
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "make_rat: (number, number) -> [number, number]
       numer: [number, number] -> number
@@ -1559,7 +1559,7 @@ describe('typing some SICP Chapter 2 programs', () => {
       const squares = list(1, 4, 9, 16, 25);
       list_ref(squares, 3);
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "list_ref: (List<T0>, number) -> T0
       length: List<T0> -> number
@@ -1589,7 +1589,7 @@ describe('typing some SICP Chapter 2 programs', () => {
       count_leaves(x);
       count_leaves(list(x, x));
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "count_leaves: List<T0> -> addable
       scale_tree: (number, number) -> List<T0>
@@ -1707,7 +1707,7 @@ describe('typing some SICP Chapter 2 programs', () => {
         }
       }
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "is_even: number -> boolean
       square: number -> number
@@ -1782,7 +1782,7 @@ function make_account(balance) {
   return dispatch;
 }
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "factorial: number -> number
       make_simplified_withdraw: number -> number -> number
@@ -1859,7 +1859,7 @@ insert_queue(q1, "b");
 delete_queue(q1);
 delete_queue(q1);
     `
-    const [program, errors] = parseAndTypeCheck(code1, 3)
+    const [program, errors] = parseAndTypeCheck(code1, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "front_ptr: List<List<T0>> -> List<T0>
       rear_ptr: List<List<T0>> -> List<List<T0>>
@@ -1905,7 +1905,7 @@ const my_stream_2 = stream_map(x => x + 1, my_stream);
 const x = stream_ref(my_stream, 1);
 const y = stream_ref(my_stream_2, 1);
     `
-    const [program, errors] = parseAndTypeCheck(code1, 3)
+    const [program, errors] = parseAndTypeCheck(code1, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "stream_tail: [number, () -> [number, () -> List<T0>]] -> [number, () -> List<T0>]
       stream_ref: ([number, () -> [number, () -> List<T0>]], number) -> number
@@ -1940,7 +1940,7 @@ describe('primitive functions differences between S2 and S3', () => {
       pair(1, 2) === pair(2, 3);
       pair(1, 2) !== pair(2, 3);
     `
-    const [program, errors] = parseAndTypeCheck(code, 2)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_2)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`""`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
       "Line 2: A type mismatch was detected in the binary expression:
@@ -1963,7 +1963,7 @@ describe('primitive functions differences between S2 and S3', () => {
       pair(1, 2) === pair(2, 3);
       pair(1, 2) !== pair(2, 3);
     `
-    const [program, errors] = parseAndTypeCheck(code, 3)
+    const [program, errors] = parseAndTypeCheck(code, Chapter.SOURCE_3)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`""`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
   })
@@ -1975,7 +1975,7 @@ describe('Type context from previous executions get saved', () => {
       const num = 1;
       const f = x => x;
     `
-    const context = mockContext(1)
+    const context = mockContext(Chapter.SOURCE_1)
     let [program, errors] = parseAndTypeCheck(code1, context)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "num: number
@@ -2009,7 +2009,7 @@ describe('Type context from previous executions get saved', () => {
 
       const err = equal(xs, null);
     `
-    const context = mockContext(2)
+    const context = mockContext(Chapter.SOURCE_2)
     await runInContext('', context) // we run an empty program to simulate execution of prelude
     const [program, errors] = parseAndTypeCheck(code1, context)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
@@ -2041,7 +2041,7 @@ describe('Type context from previous executions get saved', () => {
       const __eval_stream = eval_stream;
       const __stream_ref = stream_ref;
     `
-    const context = mockContext(3)
+    const context = mockContext(Chapter.SOURCE_3)
     await runInContext('', context) // we run an empty program to simulate execution of prelude
     const [program, errors] = parseAndTypeCheck(code1, context)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
@@ -2078,7 +2078,7 @@ describe('imported vars have any type', () => {
       // error
       const illegal = not_imported;
     `
-    const [program, errors] = parseAndTypeCheck(code1, 1)
+    const [program, errors] = parseAndTypeCheck(code1, Chapter.SOURCE_1)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "a: T0
       b: T0
@@ -2108,7 +2108,7 @@ describe('predicate tests work as expected', () => {
         return is_pair(xs) && is_number(head(xs)) && is_number(tail(xs));
       }
     `
-    const context = mockContext(2)
+    const context = mockContext(Chapter.SOURCE_2)
     const [program, errors] = parseAndTypeCheck(code, context)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`
       "is_number_pair: T0 -> boolean
@@ -2127,7 +2127,7 @@ describe('predicate tests work as expected', () => {
         }
       }
     `
-    const context = mockContext(2)
+    const context = mockContext(Chapter.SOURCE_2)
     const [program, errors] = parseAndTypeCheck(code, context)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"is_number_pair: T0 -> boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
@@ -2143,7 +2143,7 @@ describe('predicate tests work as expected', () => {
         }
       }
     `
-    const context = mockContext(2)
+    const context = mockContext(Chapter.SOURCE_2)
     const [program, errors] = parseAndTypeCheck(code, context)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"is_number_pair: T0 -> boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)
@@ -2159,7 +2159,7 @@ describe('predicate tests work as expected', () => {
         }
       }
     `
-    const context = mockContext(2)
+    const context = mockContext(Chapter.SOURCE_2)
     const [program, errors] = parseAndTypeCheck(code, context)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"fails: T0 -> boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
@@ -2183,7 +2183,7 @@ describe('predicate tests work as expected', () => {
         }
       }
     `
-    const context = mockContext(2)
+    const context = mockContext(Chapter.SOURCE_2)
     const [program, errors] = parseAndTypeCheck(code, context)
     expect(topLevelTypesToString(program)).toMatchInlineSnapshot(`"fails: T0 -> boolean"`)
     expect(parseError(errors)).toMatchInlineSnapshot(`
@@ -2208,7 +2208,7 @@ describe('equal has correct type', () => {
     const code1 = `
       const f = equal;
     `
-    const context = mockContext(2)
+    const context = mockContext(Chapter.SOURCE_2)
     await runInContext('', context) // we run an empty program to simulate execution of prelude
     const [program, errors] = parseAndTypeCheck(code1, context)
     expect(parseError(errors)).toMatchInlineSnapshot(`""`)

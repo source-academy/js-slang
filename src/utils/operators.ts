@@ -12,7 +12,7 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
-import { NativeStorage, Thunk } from '../types'
+import { Chapter, NativeStorage, Thunk } from '../types'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
 import { makeWrapper } from './makeWrapper'
@@ -178,7 +178,7 @@ export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
 
 export function binaryOp(
   operator: BinaryOperator,
-  chapter: number,
+  chapter: Chapter,
   left: any,
   right: any,
   line: number,

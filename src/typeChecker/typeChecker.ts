@@ -18,6 +18,7 @@ import { typedParse } from '../parser/parser'
 import {
   AllowedDeclarations,
   BindableType,
+  Chapter,
   Context,
   ContiguousArrayElements,
   ForAll,
@@ -1725,7 +1726,7 @@ const temporaryStreamFuncs: [string, BindableType][] = [
   ['stream_ref', tForAll(tFunc(tVar('T1'), tNumber, tVar('T2')))]
 ]
 
-export function createTypeEnvironment(chapter: number): Env {
+export function createTypeEnvironment(chapter: Chapter): Env {
   const initialTypeMappings = [...predeclaredNames, ...primitiveFuncs]
   if (chapter >= 2) {
     initialTypeMappings.push(...pairFuncs, ...listFuncs)

@@ -1,6 +1,7 @@
 // import { parse } from '../../parser/parser'
 import { createContext } from '../..'
 import { getNames } from '../../index'
+import { Chapter } from '../../types'
 import { NameDeclaration } from '../index'
 
 test('Test empty program does not generate names', async () => {
@@ -449,7 +450,7 @@ test('Test that builtins are prompted', async () => {
   const code: string = 'w'
   const line = 1
   const col = 1
-  const [extractedNames] = await getNames(code, line, col, createContext(4))
+  const [extractedNames] = await getNames(code, line, col, createContext(Chapter.SOURCE_4))
   const expectedNames: NameDeclaration[] = [
     { name: 'function', meta: 'keyword', score: 20000 },
     { name: 'const', meta: 'keyword', score: 20000 },
@@ -466,7 +467,7 @@ test('Test that unavailable builtins are not prompted', async () => {
   const code: string = 'w'
   const line = 1
   const col = 1
-  const [extractedNames] = await getNames(code, line, col, createContext(1))
+  const [extractedNames] = await getNames(code, line, col, createContext(Chapter.SOURCE_1))
   const expectedNames: NameDeclaration[] = [
     { name: 'function', meta: 'keyword', score: 20000 },
     { name: 'const', meta: 'keyword', score: 20000 },
@@ -480,7 +481,7 @@ test('Test keywords in function', async () => {
   const code: string = 'function foo() {r}'
   const line = 1
   const col = 17
-  const [extractedNames] = await getNames(code, line, col, createContext(4))
+  const [extractedNames] = await getNames(code, line, col, createContext(Chapter.SOURCE_4))
   const expectedNames: NameDeclaration[] = [
     { name: 'foo', meta: 'func', score: 0 },
     { name: 'return', meta: 'keyword', score: 20000 },
@@ -499,7 +500,7 @@ test('Test keywords in while loop', async () => {
   const code: string = 'while (true) {r}'
   const line = 1
   const col = 15
-  const [extractedNames] = await getNames(code, line, col, createContext(4))
+  const [extractedNames] = await getNames(code, line, col, createContext(Chapter.SOURCE_4))
   const expectedNames: NameDeclaration[] = [
     { name: 'break', meta: 'keyword', score: 20000 },
     { name: 'continue', meta: 'keyword', score: 20000 },
@@ -518,7 +519,7 @@ test('Test keywords in for loop', async () => {
   const code: string = 'for(;;){r}'
   const line = 1
   const col = 9
-  const [extractedNames] = await getNames(code, line, col, createContext(4))
+  const [extractedNames] = await getNames(code, line, col, createContext(Chapter.SOURCE_4))
   const expectedNames: NameDeclaration[] = [
     { name: 'break', meta: 'keyword', score: 20000 },
     { name: 'continue', meta: 'keyword', score: 20000 },

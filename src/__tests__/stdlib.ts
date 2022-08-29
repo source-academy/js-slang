@@ -1,10 +1,10 @@
-import { Value } from '../types'
+import { Chapter, Value } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { expectResult, snapshotFailure } from '../utils/testing'
 
 test.each([
   [
-    1,
+    Chapter.SOURCE_1,
     `
     display('message');
     `,
@@ -13,7 +13,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     error('error!');
     `,
@@ -22,7 +22,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_undefined(undefined);
     `,
@@ -31,7 +31,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     is_undefined(null);
     `,
@@ -40,7 +40,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     is_null(undefined);
     `,
@@ -49,7 +49,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     is_null(null);
     `,
@@ -58,7 +58,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_string('string');
     `,
@@ -67,7 +67,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_string('true');
     `,
@@ -76,7 +76,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_string('1');
     `,
@@ -85,7 +85,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_string(true);
     `,
@@ -94,7 +94,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_string(1);
     `,
@@ -103,7 +103,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_number('string');
     `,
@@ -112,7 +112,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_number('true');
     `,
@@ -121,7 +121,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_number('1');
     `,
@@ -130,7 +130,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_number(true);
     `,
@@ -139,7 +139,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_number(1);
     `,
@@ -148,7 +148,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_boolean('string');
     `,
@@ -157,7 +157,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_boolean('true');
     `,
@@ -166,7 +166,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_boolean('1');
     `,
@@ -175,7 +175,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_boolean(true);
     `,
@@ -184,7 +184,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_boolean(1);
     `,
@@ -193,7 +193,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_function(display);
     `,
@@ -202,7 +202,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_function(x => x);
     `,
@@ -211,7 +211,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     function f(x) {
       return x;
@@ -223,7 +223,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_function(1);
     `,
@@ -232,7 +232,7 @@ test.each([
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     is_array(1);
     `,
@@ -241,7 +241,7 @@ test.each([
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     is_array(pair(1, 2));
     `,
@@ -250,7 +250,7 @@ test.each([
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     is_array([1]);
     `,
@@ -259,7 +259,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_object(1);
     `,
@@ -268,7 +268,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_object(pair(1, 2));
     `,
@@ -277,7 +277,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_object([1]);
     `,
@@ -286,7 +286,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_object({});
     `,
@@ -295,7 +295,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_object({a: 1});
     `,
@@ -304,7 +304,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_object(x => x);
     `,
@@ -313,7 +313,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_object(display);
     `,
@@ -322,7 +322,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_object(1);
     `,
@@ -331,7 +331,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_object('string');
     `,
@@ -340,7 +340,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_object(true);
     `,
@@ -349,7 +349,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_NaN(1 / 0);
     `,
@@ -358,7 +358,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_NaN(NaN);
     `,
@@ -367,7 +367,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_NaN(1);
     `,
@@ -376,7 +376,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     is_NaN(x => x);
     `,
@@ -385,7 +385,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     has_own_property({a: 1, b: 2}, 'a');
     `,
@@ -394,7 +394,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     has_own_property({a: 1, b: 2}, 'c');
     `,
@@ -442,7 +442,7 @@ test.each([
   // ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     array_length([1]);
     `,
@@ -451,7 +451,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     parse_int('10', 10);
     `,
@@ -460,7 +460,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     parse_int('10', 2);
     `,
@@ -469,7 +469,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     is_number(get_time());
     `,
@@ -478,7 +478,7 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     const start = get_time();
     function repeatUntilDifferentTime() {
@@ -495,7 +495,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     pair(1, 2);
     `,
@@ -504,7 +504,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     list(1, 2);
     `,
@@ -513,7 +513,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     is_list(1);
     `,
@@ -522,7 +522,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     is_list(pair(1, 2));
     `,
@@ -531,7 +531,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     is_list(list(1, 2));
     `,
@@ -540,7 +540,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     head(pair(1, 2));
     `,
@@ -549,7 +549,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     tail(pair(1, 2));
     `,
@@ -558,7 +558,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     head(null);
     `,
@@ -567,7 +567,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     tail(null);
     `,
@@ -576,7 +576,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     head(1);
     `,
@@ -585,7 +585,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     tail(1);
     `,
@@ -594,7 +594,7 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     length(list(1, 2));
     `,
@@ -603,20 +603,21 @@ test.each([
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     length(1);
     `,
     false,
     undefined
   ]
-] as [number, string, boolean, Value][])(
+] as [Chapter, string, boolean, Value][])(
   'Builtins work as expected %#',
-  (chapter: number, snippet: string, passing: boolean, returnValue: Value) => {
+  (chapter: Chapter, snippet: string, passing: boolean, returnValue: Value) => {
     if (passing) {
-      return expectResult(stripIndent(snippet), { chapter, native: chapter < 100 }).toEqual(
-        returnValue
-      )
+      return expectResult(stripIndent(snippet), {
+        chapter,
+        native: chapter !== Chapter.LIBRARY_PARSER
+      }).toEqual(returnValue)
     } else {
       return snapshotFailure(stripIndent(snippet), { chapter }, 'fails')
     }

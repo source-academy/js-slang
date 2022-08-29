@@ -1,4 +1,5 @@
 import * as list from '../stdlib/list'
+import { Chapter } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { stringify } from '../utils/stringify'
 import { testSuccess } from '../utils/testing'
@@ -30,7 +31,7 @@ test('stringify is fast', () => {
         const end = get_time();
         end - start;
         `,
-      { chapter: 3, native: false }
+      { chapter: Chapter.SOURCE_3, native: false }
     ).then(testResult => testResult.result)
   ).resolves.toBeLessThan(2000)
   // This benchmark takes 100ms on my machine,
@@ -138,7 +139,7 @@ test('display_list with stringify is linear runtime', () => {
       slope;
     `,
       {
-        chapter: 3,
+        chapter: Chapter.SOURCE_3,
         native: false, // we're measuring a builtin, no need for native
         testBuiltins: {
           no_display_list: noDisplayList

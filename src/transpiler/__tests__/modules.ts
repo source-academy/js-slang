@@ -2,6 +2,7 @@ import { Identifier, ImportDeclaration } from 'estree'
 
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
+import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import {
   transformImportDeclarations,
@@ -16,7 +17,7 @@ jest.mock('../../modules/moduleLoader', () => ({
 
 test('Transform single import decalration', () => {
   const code = `import { foo, bar } from "test/one_module";`
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
   const result = transformSingleImportDeclaration(123, program.body[0] as ImportDeclaration)
   const names = result.map(decl => (decl.declarations[0].id as Identifier).name)
@@ -30,7 +31,7 @@ test('Transform import decalrations variable decalarations', () => {
     import { bar } from "test/another_module";
     foo(bar);
   `
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
   transformImportDeclarations(program)
   expect(program.body[0].type).toBe('VariableDeclaration')
@@ -42,7 +43,7 @@ test('checkForUndefinedVariables accounts for import statements', () => {
     import { hello } from "module";
     hello;
   `
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
   transpile(program, context, false)
 })
