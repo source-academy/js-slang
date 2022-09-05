@@ -128,7 +128,7 @@ export const createEmptyContext = <T>(
   chapter: number,
   variant: Variant = 'default',
   externalSymbols: string[],
-  externalContext?: T,
+  externalContext?: T
 ): Context<T> => {
   return {
     chapter,
@@ -437,12 +437,7 @@ const createContext = <T>(
     } as Context
   }
 
-  const context = createEmptyContext(
-    chapter,
-    variant,
-    externalSymbols,
-    externalContext,
-  )
+  const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
 
   importBuiltins(context, externalBuiltIns)
   importPrelude(context)
