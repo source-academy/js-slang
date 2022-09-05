@@ -3,10 +3,7 @@ import type { Identifier, Literal, MemberExpression, VariableDeclaration } from 
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { stripIndent } from '../../utils/formatters'
-import {
-  transformImportDeclarations,
-  transpile
-} from '../transpiler'
+import { transformImportDeclarations, transpile } from '../transpiler'
 
 jest.mock('../../modules/moduleLoader', () => ({
   ...jest.requireActual('../../modules/moduleLoader'),
@@ -24,10 +21,10 @@ test('Transform import declarations into variable declarations', () => {
   const [_, importNodes] = transformImportDeclarations(program, new Set<string>())
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
-  expect((importNodes[0].declarations[0].id as Identifier).name).toEqual('foo');
+  expect((importNodes[0].declarations[0].id as Identifier).name).toEqual('foo')
 
   expect(importNodes[1].type).toBe('VariableDeclaration')
-  expect((importNodes[1].declarations[0].id as Identifier).name).toEqual('bar');
+  expect((importNodes[1].declarations[0].id as Identifier).name).toEqual('bar')
 })
 
 test('Transpiler accounts for user variable names when transforming import statements', () => {
@@ -40,19 +37,26 @@ test('Transpiler accounts for user variable names when transforming import state
   `
   const context = mockContext(4)
   const program = parse(code, context)!
-  const [_, importNodes, [varDecl0, varDecl1]] = transformImportDeclarations(program, new Set<string>(['__MODULE_0__', '__MODULE_2__']))
+  const [_, importNodes, [varDecl0, varDecl1]] = transformImportDeclarations(
+    program,
+    new Set<string>(['__MODULE_0__', '__MODULE_2__'])
+  )
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
-  expect(((importNodes[0].declarations[0].init as MemberExpression).object as Identifier).name).toEqual('__MODULE_1__');
+  expect(
+    ((importNodes[0].declarations[0].init as MemberExpression).object as Identifier).name
+  ).toEqual('__MODULE_1__')
 
   expect(varDecl0.type).toBe('VariableDeclaration')
-  expect(((varDecl0 as VariableDeclaration).declarations[0].init as Literal).value).toEqual('test0');
+  expect(((varDecl0 as VariableDeclaration).declarations[0].init as Literal).value).toEqual('test0')
 
   expect(varDecl1.type).toBe('VariableDeclaration')
-  expect(((varDecl1 as VariableDeclaration).declarations[0].init as Literal).value).toEqual('test1');
+  expect(((varDecl1 as VariableDeclaration).declarations[0].init as Literal).value).toEqual('test1')
 
   expect(importNodes[1].type).toBe('VariableDeclaration')
-  expect(((importNodes[1].declarations[0].init as MemberExpression).object as Identifier).name).toEqual('__MODULE_3__');
+  expect(
+    ((importNodes[1].declarations[0].init as MemberExpression).object as Identifier).name
+  ).toEqual('__MODULE_3__')
 })
 
 test('checkForUndefinedVariables accounts for import statements', () => {

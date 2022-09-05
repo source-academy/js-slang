@@ -562,16 +562,26 @@ function trackLocations(program: es.Program) {
 }
 
 function handleImports(programs: es.Program[]): [string, string[]] {
-  const [prefixes, imports] = programs.reduce(([prefix, moduleNames], program) => {
-    const [prefixToAdd, importsToAdd, otherNodes] = transformImportDeclarations(program, new Set<string>());
-    program.body = (importsToAdd as es.Program['body']).concat(otherNodes);
-    prefix.push(prefixToAdd);
+  const [prefixes, imports] = programs.reduce(
+    ([prefix, moduleNames], program) => {
+      const [prefixToAdd, importsToAdd, otherNodes] = transformImportDeclarations(
+        program,
+        new Set<string>()
+      )
+      program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
+      prefix.push(prefixToAdd)
 
-    const importedNames = importsToAdd.flatMap(node => node.declarations.map(decl => ((decl.init as es.MemberExpression).object as es.Identifier).name));
-    return [prefix, moduleNames.concat(importedNames)];
-  }, [[] as string[], [] as string[]]);
+      const importedNames = importsToAdd.flatMap(node =>
+        node.declarations.map(
+          decl => ((decl.init as es.MemberExpression).object as es.Identifier).name
+        )
+      )
+      return [prefix, moduleNames.concat(importedNames)]
+    },
+    [[] as string[], [] as string[]]
+  )
 
-  return [prefixes.join('\n'), [...new Set<string>(imports)]];
+  return [prefixes.join('\n'), [...new Set<string>(imports)]]
 }
 
 /**

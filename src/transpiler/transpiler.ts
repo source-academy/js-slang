@@ -87,9 +87,9 @@ export function transformImportDeclarations(
         )
       )
     })
-  });
+  })
 
-  return [prefix.join(''), declNodes, otherNodes];
+  return [prefix.join(''), declNodes, otherNodes]
 }
 
 /**
@@ -628,8 +628,11 @@ function transpileToSource(
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
 
-  const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(program, usedIdentifiers)
-  program.body = (importNodes as es.Program['body']).concat(otherNodes);
+  const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
+    program,
+    usedIdentifiers
+  )
+  program.body = (importNodes as es.Program['body']).concat(otherNodes)
 
   getGloballyDeclaredIdentifiers(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)
@@ -656,13 +659,16 @@ function transpileToSource(
 function transpileToFullJS(program: es.Program): TranspiledResult {
   const usedIdentifiers = new Set<string>(getIdentifiersInProgram(program))
 
-  const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(program, usedIdentifiers)
+  const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
+    program,
+    usedIdentifiers
+  )
 
   const transpiledProgram: es.Program = create.program([
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
     create.expressionStatement(create.identifier('undefined')),
     ...(importNodes as es.Statement[]),
-    ...(otherNodes as es.Statement[]),
+    ...(otherNodes as es.Statement[])
   ])
 
   const sourceMap = new SourceMapGenerator({ file: 'source' })

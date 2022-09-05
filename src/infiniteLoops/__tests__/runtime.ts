@@ -1,7 +1,7 @@
 import { runInContext } from '../..'
 import { mockContext } from '../../mocks/context'
-import * as moduleLoader from '../../modules/moduleLoader';
-import { stripIndent } from '../../utils/formatters';
+import * as moduleLoader from '../../modules/moduleLoader'
+import { stripIndent } from '../../utils/formatters'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
 import { testForInfiniteLoop } from '../runtime'
 
@@ -31,7 +31,7 @@ jest.spyOn(moduleLoader, 'memoizedGetModuleFile').mockImplementationOnce(() => {
       });
       return exports;
     })
-  `;
+  `
 })
 
 test('works in runInContext when throwInfiniteLoops is true', async () => {
