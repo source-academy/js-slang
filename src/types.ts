@@ -157,11 +157,6 @@ export interface Context<T = any> {
   typeEnvironment: TypeEnvironment
 
   /**
-   * Parameters to pass to a module during module initialization
-   */
-  moduleParams: any
-
-  /**
    * Storage container for module specific information and state
    */
   moduleContexts: {

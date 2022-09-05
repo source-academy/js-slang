@@ -1,6 +1,5 @@
 import * as es from 'estree'
 
-import { MODULE_PARAMS_ID } from '../constants'
 import createContext from '../createContext'
 import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
@@ -327,13 +326,13 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
     functionsId,
     stateId,
     builtinsId,
-    MODULE_PARAMS_ID,
+    'ctx',
     // redeclare window so modules don't do anything funny like play sounds
     '{let window = {}; return eval(code)}'
   )
 
   try {
-    sandboxedRun(instrumentedCode, functions, state, newBuiltins, context.moduleParams)
+    sandboxedRun(instrumentedCode, functions, state, newBuiltins, { ctx: context })
   } catch (error) {
     if (error instanceof InfiniteLoopError) {
       if (state.lastLocation !== undefined) {

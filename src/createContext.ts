@@ -129,7 +129,6 @@ export const createEmptyContext = <T>(
   variant: Variant = 'default',
   externalSymbols: string[],
   externalContext?: T,
-  moduleParams?: any
 ): Context<T> => {
   return {
     chapter,
@@ -143,7 +142,6 @@ export const createEmptyContext = <T>(
     nativeStorage: createNativeStorage(),
     executionMethod: 'auto',
     variant,
-    moduleParams,
     moduleContexts: {},
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
@@ -444,7 +442,6 @@ const createContext = <T>(
     variant,
     externalSymbols,
     externalContext,
-    moduleParams
   )
 
   importBuiltins(context, externalBuiltIns)
