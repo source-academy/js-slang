@@ -42,7 +42,7 @@ export function transformImportDeclarations(
   program: es.Program,
   usedIdentifiers: Set<string>,
   useThis: boolean = false
-): string {
+): [string, es.VariableDeclaration[], es.Program['body']] {
   const prefix: string[] = []
   const [importNodes, otherNodes] = partition(
     program.body,
@@ -87,10 +87,9 @@ export function transformImportDeclarations(
         )
       )
     })
-  }) as (es.Directive | es.Statement | es.ModuleDeclaration)[]
+  });
 
-  program.body = declNodes.concat(otherNodes)
-  return prefix.join('')
+  return [prefix.join(''), declNodes, otherNodes];
 }
 
 /**
@@ -129,36 +128,6 @@ export function hoistImportDeclarations(program: es.Program) {
   }) as (es.ModuleDeclaration | es.Statement | es.Declaration)[]
 
   program.body = newImports.concat(program.body.filter(node => node.type !== 'ImportDeclaration'))
-}
-
-export function transformSingleImportDeclaration(
-  moduleCounter: number,
-  node: es.ImportDeclaration,
-  useThis = false
-) {
-  const result = []
-  const tempNamespace = (useThis ? 'this.' : '') + `__MODULE_${moduleCounter}__`
-  const neededSymbols = node.specifiers.map(specifier => {
-    if (specifier.type !== 'ImportSpecifier') {
-      throw new Error(
-        `I expected only ImportSpecifiers to be allowed, but encountered ${specifier.type}.`
-      )
-    }
-
-    return {
-      imported: specifier.imported.name,
-      local: specifier.local.name
-    }
-  })
-  for (const symbol of neededSymbols) {
-    result.push(
-      create.constantDeclaration(
-        symbol.local,
-        create.memberExpression(create.identifier(tempNamespace), symbol.imported)
-      )
-    )
-  }
-  return result
 }
 
 // `useThis` is a temporary indicator used by fullJS
@@ -659,7 +628,9 @@ function transpileToSource(
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
 
-  const modulePrefix = transformImportDeclarations(program, usedIdentifiers)
+  const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(program, usedIdentifiers)
+  program.body = (importNodes as es.Program['body']).concat(otherNodes);
+
   getGloballyDeclaredIdentifiers(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)
   )
@@ -685,11 +656,13 @@ function transpileToSource(
 function transpileToFullJS(program: es.Program): TranspiledResult {
   const usedIdentifiers = new Set<string>(getIdentifiersInProgram(program))
 
-  const modulePrefix = transformImportDeclarations(program, usedIdentifiers)
+  const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(program, usedIdentifiers)
+
   const transpiledProgram: es.Program = create.program([
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
     create.expressionStatement(create.identifier('undefined')),
-    ...(program.body as es.Statement[])
+    ...(importNodes as es.Statement[]),
+    ...(otherNodes as es.Statement[]),
   ])
 
   const sourceMap = new SourceMapGenerator({ file: 'source' })

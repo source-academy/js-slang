@@ -318,7 +318,6 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
   const { builtinsId, functionsId, stateId } = InfiniteLoopRuntimeObjectNames
 
   const instrumentedCode = instrument(previous, program, newBuiltins.keys())
-
   const state = new st.State()
 
   const sandboxedRun = new Function(
@@ -332,7 +331,7 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
   )
 
   try {
-    sandboxedRun(instrumentedCode, functions, state, newBuiltins, { ctx: context })
+    sandboxedRun(instrumentedCode, functions, state, newBuiltins, { context })
   } catch (error) {
     if (error instanceof InfiniteLoopError) {
       if (state.lastLocation !== undefined) {

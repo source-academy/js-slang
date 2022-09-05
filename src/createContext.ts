@@ -420,7 +420,6 @@ const createContext = <T>(
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
-  moduleParams?: any
 ): Context => {
   if (isFullJSChapter(chapter)) {
     // fullJS will include all builtins and preludes of source 4
@@ -431,7 +430,6 @@ const createContext = <T>(
         externalSymbols,
         externalContext,
         externalBuiltIns,
-        moduleParams
       ),
       chapter: -1
     } as Context
