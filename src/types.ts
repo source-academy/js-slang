@@ -170,8 +170,8 @@ export interface Context<T = any> {
 }
 
 export type ModuleContext = {
-  state: any
-  tabs: any[]
+  state: null | any
+  tabs: null | any[]
 }
 
 export interface BlockFrame {
