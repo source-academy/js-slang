@@ -376,13 +376,13 @@ export function valueToStringDag(value: Value): StringDag {
     return [result, isCircular]
   }
 
-  function convertObject(obj: Value): [StringDag, boolean] {
+  function convertObject(value: Value): [StringDag, boolean] {
     const memoResult = memo.get(value)
     if (memoResult !== undefined) {
       return [memoResult, false]
     }
-    ancestors.set(obj, ancestors.size)
-    const entries = Object.entries(obj)
+    ancestors.set(value, ancestors.size)
+    const entries = Object.entries(value)
     const converted = entries.map(kv => convert(kv[1]))
     let length = 2 + Math.max(0, entries.length - 1) * 2 + entries.length * 2
     let isCircular = false
