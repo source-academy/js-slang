@@ -45,14 +45,14 @@ The documentation of the functions and constants provided by the `sicp` package 
 
 This package is generated from the GitHub repository [`js-slang`](https://github.com/source-academy/js-slang) in the GitHub organization `source-academy`. Please report issues and bugs in this repository, using the prefix `sicp:` in the title.
 
-Setting up and Using SICP package
-=================================
+Developers
+==========
 
-Developers: To install a new version of `sicp` on `npm`, bump
+To install a new version of `sicp` on `npm`, bump
 the version number in `package.json` and then run
 ```
-% yarn
+% cd ..
+% yarn build_sicp_package
+% cd sicp_publish
 % npm publish
 ```
-
-
