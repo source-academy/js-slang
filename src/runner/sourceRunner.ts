@@ -23,7 +23,7 @@ import {
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { hoistImportDeclarations, transpile } from '../transpiler/transpiler'
-import { Context, Scheduler, SourceError } from '../types'
+import { Context, Scheduler, SourceError, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
@@ -38,7 +38,7 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   steps: 1000,
   stepLimit: 1000,
   executionMethod: 'auto',
-  variant: 'default',
+  variant: Variant.DEFAULT,
   originalMaxExecTime: 1000,
   useSubst: false,
   isPrelude: false,
@@ -104,7 +104,7 @@ function runSubstitution(
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
   let it = evaluate(program, context)
   let scheduler: Scheduler
-  if (context.variant === 'non-det') {
+  if (context.variant === Variant.NON_DET) {
     it = nonDetEvaluate(program, context)
     scheduler = new NonDetScheduler()
   } else if (options.scheduler === 'async') {
@@ -137,10 +137,10 @@ async function runNative(
   try {
     appendModulesToContext(program, context)
     switch (context.variant) {
-      case 'gpu':
+      case Variant.GPU:
         transpileToGPU(program)
         break
-      case 'lazy':
+      case Variant.LAZY:
         transpileToLazy(program)
         break
     }
@@ -149,7 +149,7 @@ async function runNative(
     // console.log(transpiled);
     let value = await sandboxedEval(transpiled, context)
 
-    if (context.variant === 'lazy') {
+    if (context.variant === Variant.LAZY) {
       value = forceIt(value)
     }
 
@@ -163,7 +163,7 @@ async function runNative(
       value
     })
   } catch (error) {
-    const isDefaultVariant = options.variant === undefined || options.variant === 'default'
+    const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
       const detectedInfiniteLoop = testForInfiniteLoop(code, context.previousCode.slice(1))
       if (detectedInfiniteLoop !== undefined) {
@@ -226,7 +226,7 @@ export async function sourceRunner(
 
   hoistImportDeclarations(program)
 
-  if (context.variant === 'concurrent') {
+  if (context.variant === Variant.CONCURRENT) {
     return runConcurrent(code, program, context, theOptions)
   }
 
@@ -241,7 +241,7 @@ export async function sourceRunner(
     verboseErrors
   )
 
-  if (isNativeRunnable && context.variant === 'native') {
+  if (isNativeRunnable && context.variant === Variant.NATIVE) {
     return await fullJSRunner(code, context, theOptions)
   }
 

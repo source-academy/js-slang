@@ -5,9 +5,11 @@ Alternatively, you can use the [Source Academy](https://sourceacademy.org), whic
 Setting up and Using SICP package
 =================================
 
+You will need `node` version 16, and `yarn`.
+
 Create the file `package.json` first if you have not done that, by running
 ``` {.}
-$ npm init
+$ yarn init
 ```
 Add the following line in the `package.json` file
 ``` {.}
@@ -16,22 +18,41 @@ Add the following line in the `package.json` file
   "type": "module"
 }  
 ```
-Next, install the package
+Install the package `sicp` as follows:
 ``` {.}
-$ npm i sicp
+$ yarn add sicp
 ```
-To use SICP package, you need to import it in your program by writing
+To use the `sicp` package, you need to import it in your program by writing
 ``` {.}
 import 'sicp';
 ```
-For example,
+For example, if your file `test.js` contains:
 ``` {.}
 import 'sicp';
 
 const p = list("I", "love", "sicp");
 display(head(tail(p)));
 ```
+you can check that everything is in place and then run your program:
+```
+% ls
+node_modules    package.json    test.js         yarn.lock
+% node test.js
+"love"
+```
 The documentation of the functions and constants provided by the `sicp` package is
 [available here](https://docs.sourceacademy.org/source_4/global.html).
 
 This package is generated from the GitHub repository [`js-slang`](https://github.com/source-academy/js-slang) in the GitHub organization `source-academy`. Please report issues and bugs in this repository, using the prefix `sicp:` in the title.
+
+Developers
+==========
+
+To install a new version of `sicp` on `npm`, bump
+the version number in `package.json` and then run
+```
+% cd ..
+% yarn build_sicp_package
+% cd sicp_publish
+% npm publish
+```

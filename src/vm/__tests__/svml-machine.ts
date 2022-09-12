@@ -1,3 +1,4 @@
+import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import {
   expectDisplayResult,
@@ -14,8 +15,10 @@ import {
 // comments mention additional opcodes tested by test code
 describe('standard opcodes', () => {
   test('LGCI works', () => {
-    return expectDisplayResult(`display(123);`, { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(123);`, {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "123",
               ]
@@ -23,8 +26,10 @@ describe('standard opcodes', () => {
   })
 
   test('LGCF64 works', () => {
-    return expectDisplayResult(`display(1.5);`, { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(1.5);`, {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "1.5",
               ]
@@ -32,8 +37,10 @@ describe('standard opcodes', () => {
   })
 
   test('LGCB0 works', () => {
-    return expectDisplayResult(`display(false);`, { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(false);`, {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "false",
               ]
@@ -41,8 +48,10 @@ describe('standard opcodes', () => {
   })
 
   test('LGCB1 works', () => {
-    return expectDisplayResult(`display(true);`, { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(true);`, {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "true",
               ]
@@ -50,8 +59,10 @@ describe('standard opcodes', () => {
   })
 
   test('LGCU works', () => {
-    return expectDisplayResult(`display(undefined);`, { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(undefined);`, {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "undefined",
               ]
@@ -59,8 +70,10 @@ describe('standard opcodes', () => {
   })
 
   test('LGCN works', () => {
-    return expectDisplayResult(`display(null);`, { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult(`display(null);`, {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "null",
               ]
@@ -68,8 +81,10 @@ describe('standard opcodes', () => {
   })
 
   test('LGCS works', () => {
-    return expectDisplayResult(`display("test string");`, { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult(`display("test string");`, {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "\\"test string\\"",
               ]
@@ -77,8 +92,10 @@ describe('standard opcodes', () => {
   })
 
   test('ADDG works for numbers', () => {
-    return expectDisplayResult('display(-1+1);', { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult('display(-1+1);', {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "0",
               ]
@@ -86,8 +103,10 @@ describe('standard opcodes', () => {
   })
 
   test('ADDG works for strings', () => {
-    return expectDisplayResult('display("first"+"second");', { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult('display("first"+"second");', {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "\\"firstsecond\\"",
               ]
@@ -96,16 +115,18 @@ describe('standard opcodes', () => {
 
   test('ADDG fails for ill-typed operands', () => {
     return expectParsedError('1+undefined;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected string and string or number and number, got number and undefined for +."`
     )
   })
 
   test('SUBG works for numbers', () => {
-    return expectDisplayResult('display(123-124);', { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult('display(123-124);', {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "-1",
               ]
@@ -114,16 +135,18 @@ describe('standard opcodes', () => {
 
   test('SUBG fails for ill-typed operands', () => {
     return expectParsedError('1-undefined;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected number and number, got number and undefined for -."`
     )
   })
 
   test('MULG works for numbers', () => {
-    return expectDisplayResult('display(123*2);', { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult('display(123*2);', {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "246",
               ]
@@ -132,16 +155,18 @@ describe('standard opcodes', () => {
 
   test('MULG fails for ill-typed operands', () => {
     return expectParsedError('1*undefined;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected number and number, got number and undefined for *."`
     )
   })
 
   test('DIVG works for numbers', () => {
-    return expectDisplayResult('display(128/32);', { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult('display(128/32);', {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "4",
               ]
@@ -149,23 +174,26 @@ describe('standard opcodes', () => {
   })
 
   test('DIVG fails for division by 0', () => {
-    return expectParsedError('128/0;', { chapter: 3, variant: 'concurrent' }).toMatchInlineSnapshot(
-      `"Error: execution aborted: division by 0"`
-    )
+    return expectParsedError('128/0;', {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`"Error: execution aborted: division by 0"`)
   })
 
   test('DIVG fails for ill-typed operands', () => {
     return expectParsedError('1/undefined;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected number and number, got number and undefined for /."`
     )
   })
 
   test('MODG works for numbers', () => {
-    return expectDisplayResult('display(128%31);', { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult('display(128%31);', {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "4",
               ]
@@ -174,8 +202,8 @@ describe('standard opcodes', () => {
 
   test('MODG fails for ill-typed operands', () => {
     return expectParsedError('1%undefined;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected undefined, got undefined for undefined."`
     )
@@ -183,8 +211,8 @@ describe('standard opcodes', () => {
 
   test('NEGG works', () => {
     return expectDisplayResult('display(-1);display(-(-1));', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`
               Array [
                 "-1",
@@ -195,15 +223,15 @@ describe('standard opcodes', () => {
 
   test('NEGG fails for ill-typed operands', () => {
     return expectParsedError('-"hi";', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`"Error: execution aborted: Expected number, got string for -."`)
   })
 
   test('NOTG works', () => {
     return expectDisplayResult('display(!false);display(!true);', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`
               Array [
                 "true",
@@ -214,15 +242,15 @@ describe('standard opcodes', () => {
 
   test('NOTG fails for ill-typed operands', () => {
     return expectParsedError('!1;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`"Error: execution aborted: Expected boolean, got number for !."`)
   })
 
   test('LTG works for numbers', () => {
     return expectDisplayResult('display(5 < 10); display(10 < 5);', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`
               Array [
                 "true",
@@ -233,8 +261,8 @@ describe('standard opcodes', () => {
 
   test('LTG works for strings', () => {
     return expectDisplayResult('display("abc" < "bcd"); display("bcd" < "abc");', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`
               Array [
                 "true",
@@ -245,8 +273,8 @@ describe('standard opcodes', () => {
 
   test('LTG fails for ill-typed operands', () => {
     return expectParsedError('1<undefined;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected string and string or number and number, got number and undefined for <."`
     )
@@ -254,8 +282,8 @@ describe('standard opcodes', () => {
 
   test('GTG works for numbers', () => {
     return expectDisplayResult('display(5 > 10); display(10 > 5);', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`
               Array [
                 "false",
@@ -266,8 +294,8 @@ describe('standard opcodes', () => {
 
   test('GTG works for strings', () => {
     return expectDisplayResult('display("abc" > "bcd"); display("bcd" > "abc");', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`
               Array [
                 "false",
@@ -278,8 +306,8 @@ describe('standard opcodes', () => {
 
   test('GTG fails for ill-typed operands', () => {
     return expectParsedError('1>undefined;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected string and string or number and number, got number and undefined for >."`
     )
@@ -293,8 +321,8 @@ describe('standard opcodes', () => {
         display(10 <= 5);
         `,
       {
-        chapter: 3,
-        variant: 'concurrent'
+        chapter: Chapter.SOURCE_3,
+        variant: Variant.CONCURRENT
       }
     ).toMatchInlineSnapshot(`
               Array [
@@ -313,8 +341,8 @@ describe('standard opcodes', () => {
         display('bcd' <= 'abc');
         `,
       {
-        chapter: 3,
-        variant: 'concurrent'
+        chapter: Chapter.SOURCE_3,
+        variant: Variant.CONCURRENT
       }
     ).toMatchInlineSnapshot(`
               Array [
@@ -327,8 +355,8 @@ describe('standard opcodes', () => {
 
   test('LEG fails for ill-typed operands', () => {
     return expectParsedError('1<=undefined;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected string and string or number and number, got number and undefined for <=."`
     )
@@ -342,8 +370,8 @@ describe('standard opcodes', () => {
         display(10 >= 5);
         `,
       {
-        chapter: 3,
-        variant: 'concurrent'
+        chapter: Chapter.SOURCE_3,
+        variant: Variant.CONCURRENT
       }
     ).toMatchInlineSnapshot(`
               Array [
@@ -362,8 +390,8 @@ describe('standard opcodes', () => {
         display('bcd' >= 'abc');
         `,
       {
-        chapter: 3,
-        variant: 'concurrent'
+        chapter: Chapter.SOURCE_3,
+        variant: Variant.CONCURRENT
       }
     ).toMatchInlineSnapshot(`
               Array [
@@ -376,8 +404,8 @@ describe('standard opcodes', () => {
 
   test('GEG fails for ill-typed operands', () => {
     return expectParsedError('1>=undefined;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected string and string or number and number, got number and undefined for >=."`
     )
@@ -394,7 +422,7 @@ describe('standard opcodes', () => {
         display(f(3));
         display(f);
         `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "3",
@@ -405,8 +433,10 @@ describe('standard opcodes', () => {
   })
 
   test('STLG and LDLG works', () => {
-    return expectDisplayResult(`const x = 1; display(x);`, { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectDisplayResult(`const x = 1; display(x);`, {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               Array [
                 "1",
               ]
@@ -416,8 +446,8 @@ describe('standard opcodes', () => {
   // NEWA, LDAG, STAG, DUP
   test('array opcodes work', () => {
     return expectDisplayResult(`const x = [1,2,3,1]; display(x[1]); display(x[8]);`, {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`
               Array [
                 "2",
@@ -428,8 +458,8 @@ describe('standard opcodes', () => {
 
   test('LDAG fails for non-array', () => {
     return expectParsedError('1[0];', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected array, got number for array access."`
     )
@@ -437,8 +467,8 @@ describe('standard opcodes', () => {
 
   test('LDAG fails for ill-typed argument', () => {
     return expectParsedError('const arr = []; arr["hi"];', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected number, got string for array index."`
     )
@@ -446,8 +476,8 @@ describe('standard opcodes', () => {
 
   test('STAG fails for non-array', () => {
     return expectParsedError('0[1] = 1;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected array, got number for array access."`
     )
@@ -455,8 +485,8 @@ describe('standard opcodes', () => {
 
   test('STAG fails for ill-typed argument', () => {
     return expectParsedError('const arr = []; arr["hi"] = 1;', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(
       `"Error: execution aborted: Expected number, got string for array index."`
     )
@@ -489,7 +519,7 @@ describe('standard opcodes', () => {
           y === test_and_set &&
           0 !== "0");
           `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "true",
@@ -508,7 +538,7 @@ describe('standard opcodes', () => {
         f();
         display(x);
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "1",
@@ -527,7 +557,7 @@ describe('standard opcodes', () => {
           display('BRF');
         }
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "\\"did not BRF\\"",
@@ -543,7 +573,7 @@ describe('standard opcodes', () => {
           display('did not BRF');
         }
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "\\"did not BRF\\"",
@@ -559,7 +589,7 @@ describe('standard opcodes', () => {
         }
         display("should show");
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "\\"should show\\"",
@@ -583,7 +613,7 @@ describe('standard opcodes', () => {
         display('after POPENV');
         display('after BR');
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "\\"before NEWENV\\"",
@@ -607,7 +637,7 @@ describe('primitive opcodes', () => {
           set_tail(p,q);
           display(p);
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "[1, [...<circular>, 4]]",
@@ -621,8 +651,8 @@ describe('primitive opcodes', () => {
           display();
         `,
         {
-          chapter: 3,
-          variant: 'concurrent'
+          chapter: Chapter.SOURCE_3,
+          variant: Variant.CONCURRENT
         }
       ).toMatchInlineSnapshot(`"Error: \\"Expected 1 or more arguments, but got 0.\\""`)
     })
@@ -639,7 +669,7 @@ describe('primitive opcodes', () => {
           display(array_length(arr));
           display(array_length(p));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "0",
@@ -652,8 +682,8 @@ describe('primitive opcodes', () => {
 
     test('ARRAY_LEN fails for ill-typed argument', () => {
       return expectParsedError('array_length(1);', {
-        chapter: 3,
-        variant: 'concurrent'
+        chapter: Chapter.SOURCE_3,
+        variant: Variant.CONCURRENT
       }).toMatchInlineSnapshot(
         `"Error: execution aborted: Expected array, got number for array_length."`
       )
@@ -666,8 +696,8 @@ describe('primitive opcodes', () => {
           draw_data(null, list(undefined, 2), "3");
         `,
         {
-          chapter: 3,
-          variant: 'concurrent'
+          chapter: Chapter.SOURCE_3,
+          variant: Variant.CONCURRENT
         }
       ).toMatchInlineSnapshot(`
                 Array [
@@ -701,8 +731,8 @@ describe('primitive opcodes', () => {
           display(draw_data(null, list(undefined, 2), "3"));
         `,
         {
-          chapter: 3,
-          variant: 'concurrent'
+          chapter: Chapter.SOURCE_3,
+          variant: Variant.CONCURRENT
         }
       ).toMatchInlineSnapshot(`
                 Array [
@@ -718,16 +748,16 @@ describe('primitive opcodes', () => {
           draw_data();
         `,
         {
-          chapter: 3,
-          variant: 'concurrent'
+          chapter: Chapter.SOURCE_3,
+          variant: Variant.CONCURRENT
         }
       ).toMatchInlineSnapshot(`"Error: \\"Expected 1 or more arguments, but got 0.\\""`)
     })
 
     test('ERROR works', () => {
       return expectParsedError('error(123);', {
-        chapter: 3,
-        variant: 'concurrent'
+        chapter: Chapter.SOURCE_3,
+        variant: Variant.CONCURRENT
       }).toMatchInlineSnapshot(`"Error: 123"`)
     })
 
@@ -738,8 +768,8 @@ describe('primitive opcodes', () => {
           display(is_array(1));
         `,
         {
-          chapter: 3,
-          variant: 'concurrent'
+          chapter: Chapter.SOURCE_3,
+          variant: Variant.CONCURRENT
         }
       ).toMatchInlineSnapshot(`
                 Array [
@@ -756,8 +786,8 @@ describe('primitive opcodes', () => {
           display(is_boolean(1));
         `,
         {
-          chapter: 3,
-          variant: 'concurrent'
+          chapter: Chapter.SOURCE_3,
+          variant: Variant.CONCURRENT
         }
       ).toMatchInlineSnapshot(`
                 Array [
@@ -773,7 +803,7 @@ describe('primitive opcodes', () => {
           display(is_function(() => {}));
           display(is_function(1));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "true",
@@ -788,7 +818,7 @@ describe('primitive opcodes', () => {
           display(is_null(null));
           display(is_null(1));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "true",
@@ -803,7 +833,7 @@ describe('primitive opcodes', () => {
           display(is_number(1));
           display(is_number(false));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "true",
@@ -818,7 +848,7 @@ describe('primitive opcodes', () => {
           display(is_string("string"));
           display(is_string(1));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "true",
@@ -833,7 +863,7 @@ describe('primitive opcodes', () => {
           display(is_undefined(undefined));
           display(is_undefined(1));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "true",
@@ -848,7 +878,7 @@ describe('primitive opcodes', () => {
         stripIndent`
           display(math_hypot(3,4));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "5",
@@ -862,7 +892,7 @@ describe('primitive opcodes', () => {
           display_list(pair(1, null));
           display_list(pair(1, pair(2, null)), "test");
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "list(1)",
@@ -876,7 +906,7 @@ describe('primitive opcodes', () => {
         stripIndent`
           display(char_at("test", 1));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "\\"e\\"",
@@ -894,7 +924,7 @@ describe('primitive opcodes', () => {
           function f() {}
           display(arity(f));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "0",
@@ -908,8 +938,8 @@ describe('primitive opcodes', () => {
 
     test('ARITY fails for ill-typed argument', () => {
       return expectParsedError('arity(1);', {
-        chapter: 3,
-        variant: 'concurrent'
+        chapter: Chapter.SOURCE_3,
+        variant: Variant.CONCURRENT
       }).toMatchInlineSnapshot(
         `"Error: execution aborted: Expected closure, got number for arity."`
       )
@@ -921,7 +951,7 @@ describe('primitive opcodes', () => {
         stripIndent`
           display(list(1,2,3,4));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "[1, [2, [3, [4, null]]]]",
@@ -934,7 +964,7 @@ describe('primitive opcodes', () => {
         stripIndent`
         stream_tail(1);
       `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(
         `"Error: \\"stream_tail(xs) expects a pair as argument xs, but encountered 1\\""`
       )
@@ -942,7 +972,10 @@ describe('primitive opcodes', () => {
   })
 
   test('nullary handler', () => {
-    return snapshotSuccess('get_time();', { chapter: 3, variant: 'concurrent' })
+    return snapshotSuccess('get_time();', {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    })
   })
 
   test('unary handler', () => {
@@ -950,7 +983,7 @@ describe('primitive opcodes', () => {
       stripIndent`
           display(math_abs(-1));
         `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "1",
@@ -963,7 +996,7 @@ describe('primitive opcodes', () => {
       stripIndent`
           display(math_pow(2,3));
         `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "8",
@@ -977,7 +1010,7 @@ describe('primitive opcodes', () => {
           display(Infinity);
           display(NaN);
         `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "Infinity",
@@ -986,7 +1019,7 @@ describe('primitive opcodes', () => {
             `)
   })
 
-  describe('concurrent', () => {
+  describe(Variant.CONCURRENT, () => {
     test('TEST_AND_SET works', () => {
       return expectDisplayResult(
         stripIndent`
@@ -995,7 +1028,7 @@ describe('primitive opcodes', () => {
           test_and_set(x);
           display(head(x));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "false",
@@ -1009,7 +1042,7 @@ describe('primitive opcodes', () => {
         stripIndent`
         test_and_set(1);
       `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(
         `"Error: execution aborted: Expected array, got number for test_and_set."`
       )
@@ -1023,7 +1056,7 @@ describe('primitive opcodes', () => {
           clear(x);
           display(head(x));
         `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`
                 Array [
                   "true",
@@ -1037,7 +1070,7 @@ describe('primitive opcodes', () => {
         stripIndent`
         clear(1);
       `,
-        { chapter: 3, variant: 'concurrent' }
+        { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
       ).toMatchInlineSnapshot(`"Error: execution aborted: Expected array, got number for clear."`)
     })
   })
@@ -1045,7 +1078,7 @@ describe('primitive opcodes', () => {
 
 describe('standard program execution', () => {
   test('program always returns all threads terminated', () => {
-    return expectResult('1 + 1;', { chapter: 3, variant: 'concurrent' }).toBe(
+    return expectResult('1 + 1;', { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }).toBe(
       'all threads terminated'
     )
   })
@@ -1061,7 +1094,7 @@ describe('standard program execution', () => {
         f(3);
         g(true);
         `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "3",
@@ -1072,8 +1105,8 @@ describe('standard program execution', () => {
 
   test('logical operators work', () => {
     return expectDisplayResult('display(!(true && (false || (true && !false))));', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`
               Array [
                 "false",
@@ -1089,7 +1122,7 @@ describe('standard program execution', () => {
         }
         false && f();
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     )
   })
 
@@ -1101,7 +1134,7 @@ describe('standard program execution', () => {
         }
         true || f();
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     )
   })
 
@@ -1120,7 +1153,7 @@ describe('standard program execution', () => {
 
       display(permutations(list(1,2,3)));
     `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "[ [1, [2, [3, null]]],
@@ -1156,7 +1189,7 @@ describe('standard program execution', () => {
         const s = stream_pairs(ints);
         display(eval_stream(s, 10));
         `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "[ [1, 2],
@@ -1168,8 +1201,10 @@ describe('standard program execution', () => {
   })
 
   test('program times out', () => {
-    return expectParsedError('while(true) {}', { chapter: 3, variant: 'concurrent' })
-      .toMatchInlineSnapshot(`
+    return expectParsedError('while(true) {}', {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
+    }).toMatchInlineSnapshot(`
               "Potential infinite loop detected.
                   If you are certain your program is correct, press run again without editing your program.
                     The time limit will be increased from 1 to 10 seconds.
@@ -1203,7 +1238,7 @@ describe('standard program execution', () => {
         }
         display(x);
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "3",
@@ -1223,7 +1258,7 @@ describe('standard program execution', () => {
         }
         display(i);
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`"Line 4: Name i not declared."`)
   })
 
@@ -1237,7 +1272,7 @@ describe('standard program execution', () => {
           }
           f();
         `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`"Error: return not allowed in loops"`)
   })
 
@@ -1257,7 +1292,7 @@ describe('standard program execution', () => {
           }
         }
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "0",
@@ -1271,7 +1306,7 @@ describe('standard program execution', () => {
         const x = 1;
         x = 2;
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`"Line 2: Cannot assign new value to constant x."`)
   })
 
@@ -1281,7 +1316,7 @@ describe('standard program execution', () => {
         const x = list;
         display(x(1,2));
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "[1, [2, null]]",
@@ -1296,7 +1331,7 @@ describe('standard program execution', () => {
         const xs = list(false);
         display(x(xs));
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "false",
@@ -1310,28 +1345,28 @@ describe('standard program execution', () => {
         const x = list(false);
         test_and_set(x, 1);
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`"Error: execution aborted: Expected 1 arguments, but got 2."`)
   })
 
   test('wrong number of arguments for normal functions throws error', () => {
     return expectParsedError('((x, y) => 1)(1);', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`"Error: execution aborted: Expected 2 arguments, but got 1."`)
   })
 
   test('wrong number of arguments for primitive functions throws error', () => {
     return expectParsedError('math_sin(1,2);', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`"Error: execution aborted: Expected 1 arguments, but got 2."`)
   })
 
   test('call non function value throws error', () => {
     return expectParsedError('let x = 0; x(1,2);', {
-      chapter: 3,
-      variant: 'concurrent'
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.CONCURRENT
     }).toMatchInlineSnapshot(`"Error: execution aborted: calling non-function value 0."`)
   })
 
@@ -1343,7 +1378,7 @@ describe('standard program execution', () => {
         }
         display(f());
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "true",
@@ -1363,7 +1398,7 @@ describe('standard program execution', () => {
         }
         f();
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "3",
@@ -1379,7 +1414,7 @@ describe('standard program execution', () => {
           display(i);
         }
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "0",
@@ -1406,7 +1441,7 @@ describe('standard program execution', () => {
           display(i, "outer");
         }
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "inner 0",
@@ -1439,7 +1474,7 @@ describe('standard program execution', () => {
         }
         display(0);
       `,
-      { chapter: 3, variant: 'concurrent' }
+      { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }
     ).toMatchInlineSnapshot(`
               Array [
                 "0",
@@ -1466,46 +1501,48 @@ test('concurrent program execution interleaves', () => {
       display('main');
     }
   `
-  return getDisplayResult(code, { chapter: 3, variant: 'concurrent' }).then(displayResult => {
-    // check for interleaving displays of main, t1 and t2
-    // done by looking for 't1' and 't2' somewhere between two 'main' displays
-    let firstMain = -1
-    let foundT1 = false
-    let foundT2 = false
-    for (let i = 0; i < displayResult.length; i++) {
-      const currentResult = displayResult[i]
-      switch (currentResult) {
-        case '"main"': {
-          if (firstMain === -1) {
-            firstMain = i
+  return getDisplayResult(code, { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT }).then(
+    displayResult => {
+      // check for interleaving displays of main, t1 and t2
+      // done by looking for 't1' and 't2' somewhere between two 'main' displays
+      let firstMain = -1
+      let foundT1 = false
+      let foundT2 = false
+      for (let i = 0; i < displayResult.length; i++) {
+        const currentResult = displayResult[i]
+        switch (currentResult) {
+          case '"main"': {
+            if (firstMain === -1) {
+              firstMain = i
+              continue
+            }
+            if (foundT1 && foundT2) {
+              return
+            }
             continue
           }
-          if (foundT1 && foundT2) {
-            return
-          }
-          continue
-        }
-        case '"t1"': {
-          if (firstMain === -1) {
+          case '"t1"': {
+            if (firstMain === -1) {
+              continue
+            }
+            foundT1 = true
             continue
           }
-          foundT1 = true
-          continue
-        }
-        case '"t2"': {
-          if (firstMain === -1) {
+          case '"t2"': {
+            if (firstMain === -1) {
+              continue
+            }
+            foundT2 = true
             continue
           }
-          foundT2 = true
-          continue
-        }
-        default: {
-          fail('Did not expect "' + currentResult + '" in output')
+          default: {
+            fail('Did not expect "' + currentResult + '" in output')
+          }
         }
       }
+      fail('Did not interleave')
     }
-    fail('Did not interleave')
-  })
+  )
 })
 
 // Still fails when TO is so large that this program takes more than a second to run
@@ -1536,5 +1573,5 @@ test('concurrent program execution interleaves (busy wait)', () => {
       display('main');
     }
   `
-  return getDisplayResult(code, { chapter: 3, variant: 'concurrent' })
+  return getDisplayResult(code, { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT })
 })

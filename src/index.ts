@@ -8,6 +8,7 @@ import { looseParse, parse, parseWithComments, typedParse } from './parser/parse
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
+  Chapter,
   Context,
   Error as ResultError,
   ExecutionMethod,
@@ -27,7 +28,7 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
-import { fullJSRunner, hasVerboseErrors, isFullJSChapter, sourceRunner } from './runner'
+import { fullJSRunner, hasVerboseErrors, sourceRunner } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
 
@@ -283,7 +284,7 @@ export async function runInContext(
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
-  if (isFullJSChapter(context.chapter)) {
+  if (context.chapter === Chapter.FULL_JS) {
     return fullJSRunner(code, context, options)
   }
 

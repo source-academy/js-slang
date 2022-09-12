@@ -1,3 +1,4 @@
+import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectDisplayResult, expectParsedError, expectResult } from '../../utils/testing'
 
@@ -7,7 +8,7 @@ test('list creates list', () => {
     function f() { return 1; }
     list(1, 'a string ""', () => f, f, true, 3.14);
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`
             Array [
               1,
@@ -36,7 +37,7 @@ test('pair creates pair', () => {
     stripIndent`
     pair(1, 'a string ""');
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`
             Array [
               1,
@@ -50,7 +51,7 @@ test('head works', () => {
     stripIndent`
     head(pair(1, 'a string ""'));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`1`)
 })
 
@@ -59,7 +60,7 @@ test('tail works', () => {
     stripIndent`
     tail(pair(1, 'a string ""'));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`"a string \\"\\""`)
 })
 
@@ -68,7 +69,7 @@ test('tail of a 1 element list is null', () => {
     stripIndent`
     tail(list(1));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`null`)
 })
 
@@ -77,7 +78,7 @@ test('empty list is null', () => {
     stripIndent`
     list();
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot('null')
 })
 
@@ -86,7 +87,7 @@ test('equal', () => {
     stripIndent`
   !equal(1, x => x) && !equal(x => x, 1);
   `,
-    { chapter: 2 }
+    { chapter: Chapter.SOURCE_2 }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -99,7 +100,7 @@ test('for_each', () => {
     }, list(1, 2, 3));
     sum;
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`6`)
 })
 
@@ -108,7 +109,7 @@ test('map', () => {
     stripIndent`
     equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -117,7 +118,7 @@ test('filter', () => {
     stripIndent`
     equal(filter(x => x <= 4, list(2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000)), list(2, 1, 3, 4, 2));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -126,7 +127,7 @@ test('build_list', () => {
     stripIndent`
     equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -135,7 +136,7 @@ test('reverse', () => {
     stripIndent`
     equal(reverse(list("string", "null", "undefined", "null", 123)), list(123, "null", "undefined", "null", "string"));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -144,7 +145,7 @@ test('append', () => {
     stripIndent`
     equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -155,7 +156,7 @@ test('member', () => {
       member(4, list(1, 2, 3, 4, 123, 456, 789)),
       list(4, 123, 456, 789));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -164,7 +165,7 @@ test('remove', () => {
     stripIndent`
     remove(1, list(1));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`null`)
 })
 
@@ -173,7 +174,7 @@ test('remove not found', () => {
     stripIndent`
     remove(2, list(1));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`
             Array [
               1,
@@ -187,7 +188,7 @@ test('remove_all', () => {
     stripIndent`
     equal(remove_all(1, list(1, 2, 3, 4, 1, 1, 1, 5, 1, 1, 6)), list(2, 3, 4, 5, 6));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -196,7 +197,7 @@ test('remove_all not found', () => {
     stripIndent`
     equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -205,7 +206,7 @@ test('enum_list', () => {
     stripIndent`
     equal(enum_list(1, 5), list(1, 2, 3, 4, 5));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -214,7 +215,7 @@ test('enum_list with floats', () => {
     stripIndent`
     equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -223,7 +224,7 @@ test('list_ref', () => {
     stripIndent`
     list_ref(list(1, 2, 3, "4", 4), 4);
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`4`)
 })
 
@@ -232,7 +233,7 @@ test('accumulate', () => {
     stripIndent`
     accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`10`)
 })
 
@@ -241,7 +242,7 @@ test('list_to_string', () => {
     stripIndent`
     list_to_string(list(1, 2, 3));
   `,
-    { chapter: 2, native: true }
+    { chapter: Chapter.SOURCE_2, native: true }
   ).toMatchInlineSnapshot(`"[1,[2,[3,null]]]"`)
 })
 
@@ -251,7 +252,7 @@ test.skip('assoc', () => {
     stripIndent`
     equal(assoc(3, list(pair(1, 2), pair(3, 4))), pair(3, 4));
   `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -260,7 +261,7 @@ test.skip('assoc not found', () => {
     stripIndent`
     equal(assoc(2, list(pair(1, 2), pair(3, 4))), false);
   `,
-    { chapter: 100, native: true }
+    { chapter: Chapter.LIBRARY_PARSER, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -272,7 +273,7 @@ test('set_head', () => {
     set_head(p, 3);
     p === q && equal(p, pair(3, 2));
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -284,7 +285,7 @@ test('set_tail', () => {
     set_tail(p, 3);
     p === q && equal(p, pair(1, 3));
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(`true`)
 })
 
@@ -293,7 +294,7 @@ test('non-list error head', () => {
     stripIndent`
     head([1, 2, 3]);
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -304,7 +305,7 @@ test('non-list error tail', () => {
     stripIndent`
     tail([1, 2, 3]);
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toMatchInlineSnapshot(
     `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
   )
@@ -316,7 +317,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     length([1, 2, 3]);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(
       `"Line 33: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
@@ -327,7 +328,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     map(x=>x, [1, 2, 3]);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(
       `"Line 47: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
@@ -338,7 +339,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     for_each(x=>x, [1, 2, 3]);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(
       `"Line 76: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
@@ -349,7 +350,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     reverse([1, 2, 3]);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(
       `"Line 106: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
@@ -360,7 +361,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     append([1, 2, 3], list(1, 2, 3));
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(
       `"Line 121: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
@@ -371,7 +372,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     member(1, [1, 2, 3]);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(
       `"Line 136: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
@@ -382,7 +383,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     remove(1, [1, 2, 3]);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(
       `"Line 151: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
@@ -393,7 +394,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     remove_all(1, [1, 2, 3]);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(
       `"Line 169: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
@@ -404,7 +405,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     assoc(1, [1, 2, 3]);
   `,
-      { chapter: 100 }
+      { chapter: Chapter.LIBRARY_PARSER }
     ).toMatchInlineSnapshot(`"Line 1: Name assoc not declared."`)
   })
 
@@ -413,7 +414,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     filter(x => true, [1, 2, 3]);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(
       `"Line 185: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
@@ -424,7 +425,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(`"Line 1: Expected 3 arguments, but got 2."`)
   })
 
@@ -433,7 +434,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(`"Line 1: Expected 3 arguments, but got 2."`)
   })
 
@@ -442,7 +443,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     set_head([1, 2, 3], 4);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(
       `"Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
@@ -453,7 +454,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     set_tail([1, 2, 3], 4);
   `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(
       `"Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"`
     )
@@ -465,7 +466,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     build_list(x => x, -1);
   `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(
       `"Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered -1"`
     )
@@ -477,7 +478,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     build_list(x => x, 1.5);
   `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(
       `"Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered 1.5"`
     )
@@ -488,7 +489,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     build_list(x => x, '1');
   `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(
       `"Line 63: Expected number on left hand side of operation, got string."`
     )
@@ -499,7 +500,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     enum_list('1', '5');
   `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(
       `"Line 203: Expected string on right hand side of operation, got number."`
     )
@@ -510,7 +511,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     enum_list('1', 5);
   `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(
       `"Line 201: Expected string on right hand side of operation, got number."`
     )
@@ -521,7 +522,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     enum_list(1, '5');
   `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(
       `"Line 201: Expected number on right hand side of operation, got string."`
     )
@@ -532,7 +533,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     list_ref(list(1, 2, 3), 3);
   `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(
       `"Line 216: Error: head(xs) expects a pair as argument xs, but encountered null"`
     )
@@ -543,7 +544,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     list_ref(list(1, 2, 3), -1);
   `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(
       `"Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null"`
     )
@@ -554,7 +555,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     list_ref(list(1, 2, 3), 1.5);
   `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(
       `"Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null"`
     )
@@ -565,7 +566,7 @@ describe('These tests are reporting weird line numbers, as list functions are no
       stripIndent`
     list_ref(list(1, 2, 3), '1');
   `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(
       `"Line 215: Expected string on right hand side of operation, got number."`
     )
@@ -579,7 +580,7 @@ describe('display_list', () => {
         display_list(build_list(i => i, 5));
         0; // suppress long result in snapshot
       `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "list(0, 1, 2, 3, 4)",
@@ -593,7 +594,7 @@ describe('display_list', () => {
         display_list(build_list(i => build_list(j => j, i), 5));
         0; // suppress long result in snapshot
       `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "list(null, list(0), list(0, 1), list(0, 1, 2), list(0, 1, 2, 3))",
@@ -607,7 +608,7 @@ describe('display_list', () => {
         display_list(build_list(i => build_list(j => pair(j, j), i), 5));
         0; // suppress long result in snapshot
       `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "list(null,
@@ -625,7 +626,7 @@ describe('display_list', () => {
         display_list(build_list(i => build_list(j => pair(build_list(k => k, j), j), i), 5));
         0; // suppress long result in snapshot
       `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "list(null,
@@ -644,7 +645,7 @@ describe('display_list', () => {
         xs === display_list(xs);
         // Note reference equality
       `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(`true`)
   })
 
@@ -664,7 +665,7 @@ describe('display_list', () => {
         xs === display_list(xs);
         // Note reference equality
       `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(`true`)
   })
 
@@ -674,7 +675,7 @@ describe('display_list', () => {
         display_list(build_list(i => i, 5), "build_list:");
         0; // suppress long result in snapshot
       `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "build_list: list(0, 1, 2, 3, 4)",
@@ -688,7 +689,7 @@ describe('display_list', () => {
         display_list(build_list(i => i, 5), true);
         0; // suppress long result in snapshot
       `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(
       `"Line 1: TypeError: display_list expects the second argument to be a string"`
     )
@@ -704,7 +705,7 @@ describe('display_list', () => {
         display_list(parse('const twice = f => x => {const result = f(f(x)); return two;};'));
         0; // suppress long result in snapshot
       `,
-      { chapter: 4, native: true }
+      { chapter: Chapter.SOURCE_4, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "list(\\"constant_declaration\\",
@@ -732,7 +733,7 @@ describe('display_list', () => {
         display_list(build_list(i => build_list(j => j, i), 20));
         0; // suppress long result in snapshot
       `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "list(null,
@@ -767,7 +768,7 @@ describe('display_list', () => {
         display_list(p);
         0; // suppress long result in snapshot
       `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "[1, ...<circular>]",
@@ -783,7 +784,7 @@ describe('display_list', () => {
         display_list(p);
         0; // suppress long result in snapshot
       `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "[1, [2, [3, ...<circular>]]]",
@@ -800,7 +801,7 @@ describe('display_list', () => {
         display_list(p3);
         0; // suppress long result in snapshot
       `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "list(list(1), list(list(1), 1))",
@@ -817,7 +818,7 @@ describe('display_list', () => {
         display_list(p3);
         0; // suppress long result in snapshot
       `,
-      { chapter: 2, native: true }
+      { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "list(list(1), list(2, 1))",
@@ -839,7 +840,7 @@ describe('display_list', () => {
         display_list(build_list(build_inf, 5));
         0; // suppress long result in snapshot
       `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "list([0, ...<circular>],
@@ -866,7 +867,7 @@ describe('display_list', () => {
         display_list(build_list(i => build_inf(i, i => build_list(i => i, i)), 3));
         0; // suppress long result in snapshot
       `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "list([null, ...<circular>],
@@ -891,7 +892,7 @@ describe('display_list', () => {
         display_list(build_inf(3, i => build_list(i => build_inf(i, i=>i), i)));
         0; // suppress long result in snapshot
       `,
-      { chapter: 3, native: true }
+      { chapter: Chapter.SOURCE_3, native: true }
     ).toMatchInlineSnapshot(`
               Array [
                 "[ null,

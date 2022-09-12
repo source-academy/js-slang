@@ -1,3 +1,4 @@
+import { Chapter } from '../types'
 import { expectDisplayResult, expectParsedError } from '../utils/testing'
 
 test('display throw error if second argument is non-string when used', () => {
@@ -62,7 +63,7 @@ Array [
 })
 
 test('display can be used to display lists', () => {
-  return expectDisplayResult(`display(list(1, 2));`, { chapter: 2, native: true })
+  return expectDisplayResult(`display(list(1, 2));`, { chapter: Chapter.SOURCE_2, native: true })
     .toMatchInlineSnapshot(`
 Array [
   "[1, [2, null]]",
@@ -71,8 +72,10 @@ Array [
 })
 
 test('display can be used to display arrays', () => {
-  return expectDisplayResult(`display([1, 2, [4, 5]]);`, { chapter: 3, native: true })
-    .toMatchInlineSnapshot(`
+  return expectDisplayResult(`display([1, 2, [4, 5]]);`, {
+    chapter: Chapter.SOURCE_3,
+    native: true
+  }).toMatchInlineSnapshot(`
 Array [
   "[1, 2, [4, 5]]",
 ]
@@ -80,8 +83,9 @@ Array [
 })
 
 test('display can be used to display objects', () => {
-  return expectDisplayResult(`display({a: 1, b: 2, c: {d: 3}});`, { chapter: 100 })
-    .toMatchInlineSnapshot(`
+  return expectDisplayResult(`display({a: 1, b: 2, c: {d: 3}});`, {
+    chapter: Chapter.LIBRARY_PARSER
+  }).toMatchInlineSnapshot(`
 Array [
   "{\\"a\\": 1, \\"b\\": 2, \\"c\\": {\\"d\\": 3}}",
 ]
@@ -89,7 +93,7 @@ Array [
 })
 
 test('display with no arguments throws an error', () => {
-  return expectParsedError(`display();`, { chapter: 100 }).toMatchInlineSnapshot(
+  return expectParsedError(`display();`, { chapter: Chapter.LIBRARY_PARSER }).toMatchInlineSnapshot(
     `"Line 1: Expected 1 or more arguments, but got 0."`
   )
 })

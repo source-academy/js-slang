@@ -4,14 +4,15 @@ import * as util from 'util'
 import { createEmptyContext } from '../createContext'
 import { parse } from '../parser/parser'
 import { INTERNAL_FUNCTIONS as concurrentInternalFunctions } from '../stdlib/vm.prelude'
+import { Chapter, Variant } from '../types'
 import { assemble } from './svml-assembler'
 import { compileToIns } from './svml-compiler'
 import { stringifyProgram } from './util'
 
 interface CliOptions {
   compileTo: 'debug' | 'json' | 'binary' | 'ast'
-  sourceChapter: 1 | 2 | 3
-  sourceVariant: 'default' | 'concurrent' // does not support other variants
+  sourceChapter: Chapter.SOURCE_1 | Chapter.SOURCE_2 | Chapter.SOURCE_3
+  sourceVariant: Variant.DEFAULT | Variant.CONCURRENT // does not support other variants
   inputFilename: string
   outputFilename: string | null
   vmInternalFunctions: string[] | null
@@ -26,8 +27,8 @@ const writeFileAsync = util.promisify(fs.writeFile)
 function parseOptions(): CliOptions | null {
   const ret: CliOptions = {
     compileTo: 'binary',
-    sourceChapter: 3,
-    sourceVariant: 'default',
+    sourceChapter: Chapter.SOURCE_3,
+    sourceVariant: Variant.DEFAULT,
     inputFilename: '',
     outputFilename: null,
     vmInternalFunctions: null
@@ -76,8 +77,8 @@ function parseOptions(): CliOptions | null {
         case '--variant':
         case '-v':
           switch (argument) {
-            case 'default':
-            case 'concurrent':
+            case Variant.DEFAULT:
+            case Variant.CONCURRENT:
               ret.sourceVariant = argument
               break
             default:
@@ -192,12 +193,12 @@ Options:
     return
   }
 
-  if (options.sourceVariant === 'concurrent' && options.vmInternalFunctions) {
+  if (options.sourceVariant === Variant.CONCURRENT && options.vmInternalFunctions) {
     console.warn('Warning: ignoring internal functions specified on command line for concurrent VM')
   }
 
   const vmInternalFunctions =
-    options.sourceVariant === 'concurrent'
+    options.sourceVariant === Variant.CONCURRENT
       ? concurrentInternalFunctions.map(([name]) => name)
       : options.vmInternalFunctions || []
 

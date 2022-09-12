@@ -1,3 +1,4 @@
+import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError, expectResult } from '../../utils/testing'
 
@@ -6,7 +7,7 @@ test('parse_int with valid args is ok, radix 2', () => {
     stripIndent`
     parse_int('1100101010101', 2);
   `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toBe(parseInt('1100101010101', 2))
 })
 
@@ -15,7 +16,7 @@ test('parse_int with valid args is ok, radix 36', () => {
     stripIndent`
     parse_int('uu1', 36);
   `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toBe(parseInt('uu1', 36))
 })
 
@@ -24,7 +25,7 @@ test('parse_int with valid args is ok, but invalid str for radix', () => {
     stripIndent`
     parse_int('uu1', 2);
   `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toBe(parseInt('uu1', 2))
 })
 
@@ -111,7 +112,7 @@ test('arity with nullary function is ok', () => {
     stripIndent`
     arity(math_random);
   `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toBe(0)
 })
 
@@ -120,7 +121,7 @@ test('arity with function with parameters is ok', () => {
     stripIndent`
     arity(arity);
   `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toBe(1)
 })
 
@@ -129,7 +130,7 @@ test('arity ignores the rest parameter', () => {
     stripIndent`
     arity(display);
   `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toBe(1)
 })
 
@@ -141,7 +142,7 @@ test('arity with user-made function is ok', () => {
     }
     arity(test);
   `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toBe(2)
 })
 
@@ -150,7 +151,7 @@ test('arity with user-made lambda function is ok', () => {
     stripIndent`
     arity(x => x);
   `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toBe(1)
 })
 
@@ -159,7 +160,7 @@ test('arity with user-made nullary function is ok', () => {
     stripIndent`
     arity(() => undefined);
   `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toBe(0)
 })
 
@@ -171,7 +172,7 @@ test('arity with user-made function with rest parameter is ok', () => {
     }
     arity(test);
   `,
-    { chapter: 3, native: true }
+    { chapter: Chapter.SOURCE_3, native: true }
   ).toBe(0)
 })
 
@@ -180,6 +181,6 @@ test('arity with non-function arg f throws error', () => {
     stripIndent`
     arity('function');
   `,
-    { chapter: 1, native: true }
+    { chapter: Chapter.SOURCE_1, native: true }
   ).toMatchInlineSnapshot(`"Line 1: Error: arity expects a function as argument"`)
 })

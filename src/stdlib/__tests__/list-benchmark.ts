@@ -1,3 +1,4 @@
+import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { testSuccess } from '../../utils/testing'
 import * as list from '../list'
@@ -103,7 +104,7 @@ test('display_list is linear runtime', () => {
       slope;
     `,
       {
-        chapter: 3,
+        chapter: Chapter.SOURCE_3,
         native: false, // we're measuring a builtin, no need for native
         testBuiltins: {
           no_display_list: noDisplayList

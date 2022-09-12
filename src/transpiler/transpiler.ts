@@ -7,8 +7,7 @@ import { RawSourceMap, SourceMapGenerator } from 'source-map'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
-import { isFullJSChapter } from '../runner'
-import { AllowedDeclarations, Context, NativeStorage } from '../types'
+import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/astCreator'
 import {
   getIdentifiersInNativeStorage,
@@ -471,7 +470,7 @@ function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): Native
 function transformUnaryAndBinaryOperationsToFunctionCalls(
   program: es.Program,
   globalIds: NativeIds,
-  chapter: number
+  chapter: Chapter
 ) {
   simple(program, {
     BinaryExpression(node: es.BinaryExpression) {
@@ -683,7 +682,7 @@ export function transpile(
   context: Context,
   skipUndefined = false
 ): TranspiledResult {
-  if (isFullJSChapter(context.chapter) || context.variant == 'native') {
+  if (context.chapter === Chapter.FULL_JS || context.variant == Variant.NATIVE) {
     return transpileToFullJS(program)
   }
 

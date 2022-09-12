@@ -1,11 +1,12 @@
+import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { snapshotFailure, snapshotSuccess } from '../../utils/testing'
 
 test.each([
-  [1, ''],
+  [Chapter.SOURCE_1, ''],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     function name(a, b) {
       const sum = a + b;
@@ -26,84 +27,84 @@ test.each([
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     (() => true)();
     `
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     ((x, y) => { return x + y; })(1, 2);
     `
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     true;
     `
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     false;
     `
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     'a string "" \\'\\'';
     `
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     31.4 + (-3.14e10) * -1 % 2 / 1.5;
     `
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     1 === 1 && 1 < 2 && 1 <= 2 && 2 >= 1 && 2 > 1 || false;
     `
   ],
 
   [
-    1,
+    Chapter.SOURCE_1,
     `
     true ? 1 : 2;
     `
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     null;
     `
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     pair(1, null);
     `
   ],
 
   [
-    2,
+    Chapter.SOURCE_2,
     `
     list(1);
     `
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     let i = 1;
     while (i < 5) {
@@ -114,7 +115,7 @@ test.each([
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     let i = 1;
     for (i = 1; i < 5; i = i + 1) {
@@ -124,7 +125,7 @@ test.each([
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     let i = 1;
     for (let j = 0; j < 5; j = j + 1) {
@@ -142,28 +143,28 @@ test.each([
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     [];
     `
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     [1, 2, 3];
     `
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     [1, 2, 3][1];
     `
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     let x = [1, 2, 3];
     x[1];
@@ -171,7 +172,7 @@ test.each([
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     let x = [1, 2, 3];
     x[1] = 4;
@@ -179,7 +180,7 @@ test.each([
   ],
 
   [
-    3,
+    Chapter.SOURCE_3,
     `
     let x = 3;
     let y = 4;
@@ -189,7 +190,7 @@ test.each([
     `
   ],
   [
-    3,
+    Chapter.SOURCE_3,
     `
     function f(x, y, ...z) {
       return x + y;
@@ -198,49 +199,49 @@ test.each([
     `
   ],
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     ({});
     `
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     ({a: 1, b: 2});
     `
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     ({a: 1, b: 2})['a'];
     `
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     ({a: 1, b: 2}).a;
     `
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     ({'a': 1, 'b': 2}).a;
     `
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     ({1: 1, 2: 2})['1'];
     `
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     const key = 'a';
     ({a: 1, b: 2})[key];
@@ -248,7 +249,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     let x = {a: 1, b: 2};
     x.a = 3;
@@ -256,7 +257,7 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     let x = {a: 1, b: 2};
     x['a'] = 3;
@@ -264,20 +265,20 @@ test.each([
   ],
 
   [
-    100,
+    Chapter.LIBRARY_PARSER,
     `
     let x = {a: 1, b: 2};
     const key = 'a';
     x[key] = 3;
     `
   ]
-] as [number, string][])(
+] as [Chapter, string][])(
   'Syntaxes are allowed in the chapter they are introduced %#',
-  (chapter: number, snippet: string) => {
+  (chapter: Chapter, snippet: string) => {
     snippet = stripIndent(snippet)
     const parseSnippet = `parse(${JSON.stringify(snippet)});`
     const tests = [
-      snapshotSuccess(snippet, { chapter, native: chapter < 100 }, 'passes'),
+      snapshotSuccess(snippet, { chapter, native: chapter !== Chapter.LIBRARY_PARSER }, 'passes'),
       snapshotSuccess(parseSnippet, { chapter: Math.max(4, chapter), native: true }, 'parse passes')
     ]
     if (chapter > 1) {

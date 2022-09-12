@@ -2,7 +2,6 @@
 
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import * as gpu_lib from './gpu/lib'
-import { isFullJSChapter } from './runner'
 import { AsyncScheduler } from './schedulers'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
@@ -14,7 +13,15 @@ import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/typeChecker'
-import { Context, CustomBuiltIns, Environment, NativeStorage, Value, Variant } from './types'
+import {
+  Chapter,
+  Context,
+  CustomBuiltIns,
+  Environment,
+  NativeStorage,
+  Value,
+  Variant
+} from './types'
 import { makeWrapper } from './utils/makeWrapper'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
@@ -125,8 +132,8 @@ const createNativeStorage = (): NativeStorage => ({
 })
 
 export const createEmptyContext = <T>(
-  chapter: number,
-  variant: Variant = 'default',
+  chapter: Chapter,
+  variant: Variant = Variant.DEFAULT,
   externalSymbols: string[],
   externalContext?: T
 ): Context<T> => {
@@ -308,7 +315,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter >= 2) {
     // List library
 
-    if (context.variant === 'lazy') {
+    if (context.variant === Variant.LAZY) {
       defineBuiltin(context, 'pair(left, right)', new LazyBuiltIn(list.pair, false))
       defineBuiltin(context, 'list(...values)', new LazyBuiltIn(list.list, false), 0)
       defineBuiltin(context, 'is_pair(val)', new LazyBuiltIn(list.is_pair, true))
@@ -355,7 +362,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       (fun: Function, args: Value) => fun.apply(fun, list_to_vector(args))
     )
 
-    if (context.variant === 'gpu') {
+    if (context.variant === Variant.GPU) {
       defineBuiltin(context, '__clearKernelCache()', gpu_lib.__clearKernelCache)
       defineBuiltin(
         context,
@@ -365,7 +372,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     }
   }
 
-  if (context.chapter >= 100) {
+  if (context.chapter === Chapter.LIBRARY_PARSER) {
     defineBuiltin(context, 'is_object(val)', misc.is_object)
     defineBuiltin(context, 'is_NaN(val)', misc.is_NaN)
     defineBuiltin(context, 'has_own_property(obj, prop)', misc.has_own_property)
@@ -376,7 +383,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     )
   }
 
-  if (context.variant === 'lazy') {
+  if (context.variant === Variant.LAZY) {
     defineBuiltin(context, 'wrapLazyCallee(f)', new LazyBuiltIn(operators.wrapLazyCallee, true))
     defineBuiltin(context, 'makeLazyFunction(f)', new LazyBuiltIn(operators.makeLazyFunction, true))
     defineBuiltin(context, 'forceIt(val)', new LazyBuiltIn(operators.forceIt, true))
@@ -387,13 +394,13 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 function importPrelude(context: Context) {
   let prelude = ''
   if (context.chapter >= 2) {
-    prelude += context.variant === 'lazy' ? lazyListPrelude : listPrelude
+    prelude += context.variant === Variant.LAZY ? lazyListPrelude : listPrelude
   }
   if (context.chapter >= 3) {
     prelude += streamPrelude
   }
 
-  if (context.variant === 'non-det') {
+  if (context.variant === Variant.NON_DET) {
     prelude += nonDetPrelude
   }
 
@@ -415,17 +422,23 @@ const defaultBuiltIns: CustomBuiltIns = {
 }
 
 const createContext = <T>(
-  chapter = 1,
-  variant: Variant = 'default',
+  chapter: Chapter = Chapter.SOURCE_1,
+  variant: Variant = Variant.DEFAULT,
   externalSymbols: string[] = [],
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns
 ): Context => {
-  if (isFullJSChapter(chapter)) {
+  if (chapter === Chapter.FULL_JS) {
     // fullJS will include all builtins and preludes of source 4
     return {
-      ...createContext(4, variant, externalSymbols, externalContext, externalBuiltIns),
-      chapter: -1
+      ...createContext(
+        Chapter.SOURCE_4,
+        variant,
+        externalSymbols,
+        externalContext,
+        externalBuiltIns,
+      ),
+      chapter: Chapter.FULL_JS
     } as Context
   }
 

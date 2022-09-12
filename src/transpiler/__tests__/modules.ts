@@ -2,6 +2,7 @@ import type { Identifier, Literal, MemberExpression, VariableDeclaration } from 
 
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
+import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { transformImportDeclarations, transpile } from '../transpiler'
 
@@ -16,7 +17,7 @@ test('Transform import declarations into variable declarations', () => {
     import { bar } from "test/another_module";
     foo(bar);
   `
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
   const [_, importNodes] = transformImportDeclarations(program, new Set<string>())
 
@@ -64,7 +65,7 @@ test('checkForUndefinedVariables accounts for import statements', () => {
     import { hello } from "module";
     hello;
   `
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
   transpile(program, context, false)
 })

@@ -1,6 +1,7 @@
 import { runInContext } from '../..'
 import { mockContext } from '../../mocks/context'
 import * as moduleLoader from '../../modules/moduleLoader'
+import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
 import { testForInfiniteLoop } from '../runtime'
@@ -39,7 +40,7 @@ test('works in runInContext when throwInfiniteLoops is true', async () => {
     return fib(x-1) + fib(x-2);
   }
   fib(100000);`
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   await runInContext(code, context, { throwInfiniteLoops: true })
   const lastError = context.errors[context.errors.length - 1]
   expect(lastError instanceof InfiniteLoopError).toBe(true)
@@ -53,7 +54,7 @@ test('works in runInContext when throwInfiniteLoops is false', async () => {
     return fib(x-1) + fib(x-2);
   }
   fib(100000);`
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   await runInContext(code, context, { throwInfiniteLoops: false })
   const lastError: any = context.errors[context.errors.length - 1]
   expect(lastError instanceof InfiniteLoopError).toBe(false)
