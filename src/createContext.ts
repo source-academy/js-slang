@@ -436,7 +436,7 @@ const createContext = <T>(
         variant,
         externalSymbols,
         externalContext,
-        externalBuiltIns,
+        externalBuiltIns
       ),
       chapter: Chapter.FULL_JS
     } as Context
