@@ -146,12 +146,8 @@ async function runNative(
     }
 
     ;({ transpiled, sourceMapJson } = transpile(program, context))
-    let value = await sandboxedEval(
-      transpiled,
-      context.nativeStorage,
-      context.moduleParams,
-      context.moduleContexts
-    )
+    // console.log(transpiled);
+    let value = await sandboxedEval(transpiled, context)
 
     if (context.variant === Variant.LAZY) {
       value = forceIt(value)

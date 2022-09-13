@@ -175,14 +175,11 @@ export interface Context<T = any> {
   typeEnvironment: TypeEnvironment
 
   /**
-   * Parameters to pass to a module during module initialization
-   */
-  moduleParams: any
-
-  /**
    * Storage container for module specific information and state
    */
-  moduleContexts: Map<string, ModuleContext>
+  moduleContexts: {
+    [name: string]: ModuleContext
+  }
 
   /**
    * Code previously executed in this context
@@ -190,16 +187,9 @@ export interface Context<T = any> {
   previousCode: string[]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ModuleState {}
-
-/**
- * Used to store state and contextual information for
- * each module
- */
 export type ModuleContext = {
-  tabs: any[]
-  state?: ModuleState | null
+  state: null | any
+  tabs: null | any[]
 }
 
 export interface BlockFrame {

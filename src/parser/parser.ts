@@ -167,7 +167,13 @@ export const createAcornParserOptions = (context: Context): AcornOptions => ({
 })
 
 // Names-extractor needs comments
-export function parseForNames(source: string): [es.Program, acorn.Comment[]] {
+/**
+ * Parse a program, returning alongside comments found within that program
+ * @param source Code to parse for comments
+ * @returns Tuple consisting of the parsed program, and a list of comments found
+ * within the code
+ */
+export function parseWithComments(source: string): [es.Program, acorn.Comment[]] {
   let comments: acorn.Comment[] = []
   const options: AcornOptions = {
     sourceType: 'module',

@@ -18,7 +18,6 @@ import {
   Context,
   CustomBuiltIns,
   Environment,
-  ModuleContext,
   NativeStorage,
   Value,
   Variant
@@ -136,8 +135,7 @@ export const createEmptyContext = <T>(
   chapter: Chapter,
   variant: Variant = Variant.DEFAULT,
   externalSymbols: string[],
-  externalContext?: T,
-  moduleParams?: any
+  externalContext?: T
 ): Context<T> => {
   return {
     chapter,
@@ -151,8 +149,7 @@ export const createEmptyContext = <T>(
     nativeStorage: createNativeStorage(),
     executionMethod: 'auto',
     variant,
-    moduleParams,
-    moduleContexts: new Map<string, ModuleContext>(),
+    moduleContexts: {},
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
     previousCode: []
@@ -429,8 +426,7 @@ const createContext = <T>(
   variant: Variant = Variant.DEFAULT,
   externalSymbols: string[] = [],
   externalContext?: T,
-  externalBuiltIns: CustomBuiltIns = defaultBuiltIns,
-  moduleParams?: any
+  externalBuiltIns: CustomBuiltIns = defaultBuiltIns
 ): Context => {
   if (chapter === Chapter.FULL_JS) {
     // fullJS will include all builtins and preludes of source 4
@@ -440,20 +436,13 @@ const createContext = <T>(
         variant,
         externalSymbols,
         externalContext,
-        externalBuiltIns,
-        moduleParams
+        externalBuiltIns
       ),
       chapter: Chapter.FULL_JS
     } as Context
   }
 
-  const context = createEmptyContext(
-    chapter,
-    variant,
-    externalSymbols,
-    externalContext,
-    moduleParams
-  )
+  const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
 
   importBuiltins(context, externalBuiltIns)
   importPrelude(context)

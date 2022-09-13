@@ -1,9 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { MODULE_PARAMS_ID } from '../constants'
-import { memoizedGetModuleFile } from '../modules/moduleLoader'
-import { transformSingleImportDeclaration } from '../transpiler/transpiler'
+import { transformImportDeclarations } from '../transpiler/transpiler'
 import * as create from '../utils/astCreator'
 import { recursive, simple, WalkerCallback } from '../utils/walkers'
 // transforms AST of program
@@ -563,42 +561,27 @@ function trackLocations(program: es.Program) {
   })
 }
 
-function transformImportDeclarations(programs: es.Program[]) {
-  let moduleCounter = 0
-  let allImports: es.ImportDeclaration[] = []
-  for (const program of programs) {
-    const imports = []
-    let result: es.VariableDeclaration[] = []
-    while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
-      imports.push(program.body.shift() as es.ImportDeclaration)
-    }
-    for (const node of imports) {
-      result = transformSingleImportDeclaration(moduleCounter, node).concat(result)
-      moduleCounter++
-    }
-    program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
-    allImports = allImports.concat(imports)
-  }
-  return allImports
-}
+function handleImports(programs: es.Program[]): [string, string[]] {
+  const [prefixes, imports] = programs.reduce(
+    ([prefix, moduleNames], program) => {
+      const [prefixToAdd, importsToAdd, otherNodes] = transformImportDeclarations(
+        program,
+        new Set<string>()
+      )
+      program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
+      prefix.push(prefixToAdd)
 
-function handleImports(programs: es.Program[]) {
-  const imports = transformImportDeclarations(programs)
-  let moduleCounter = 0
-  let prefix = ''
-  const names = []
-  for (const node of imports) {
-    const moduleText = memoizedGetModuleFile(node.source.value as string, 'bundle').trim()
-    // remove ; from moduleText
-    const name = `__MODULE_${moduleCounter}__`
-    prefix += `const ${name} = (${moduleText.substring(
-      0,
-      moduleText.length - 1
-    )})(${MODULE_PARAMS_ID});\n`
-    moduleCounter++
-    names.push(name)
-  }
-  return [prefix, names]
+      const importedNames = importsToAdd.flatMap(node =>
+        node.declarations.map(
+          decl => ((decl.init as es.MemberExpression).object as es.Identifier).name
+        )
+      )
+      return [prefix, moduleNames.concat(importedNames)]
+    },
+    [[] as string[], [] as string[]]
+  )
+
+  return [prefixes.join('\n'), [...new Set<string>(imports)]]
 }
 
 /**
@@ -620,6 +603,7 @@ function instrument(
   predefined[functionsId] = functionsId
   predefined[stateId] = stateId
   const innerProgram = { ...program }
+
   const [prefix, moduleNames] = handleImports([program].concat(previous))
   for (const name of moduleNames) {
     predefined[name] = name

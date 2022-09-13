@@ -54,8 +54,13 @@ function getModuleManifest(): Modules {
  * @return String of module file contents
  */
 
-export const memoizedGetModuleFile = memoize(getModuleFile)
-function getModuleFile(name: string, type: 'tab' | 'bundle'): string {
+const memoizedGetModuleFileInternal = memoize(getModuleFile)
+export const memoizedGetModuleFile = (name: string, type: 'tab' | 'bundle' | 'json') =>
+  memoizedGetModuleFileInternal({ name, type })
+function getModuleFile({ name, type }: { name: string; type: 'tab' | 'bundle' | 'json' }): string {
+  if (type === 'json') {
+    return httpGet(`${MODULES_STATIC_URL}/jsons/${name}.json`)
+  }
   return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js`)
 }
 
@@ -77,16 +82,11 @@ export function loadModuleBundle(path: string, context: Context, node?: es.Node)
   const moduleText = memoizedGetModuleFile(path, 'bundle')
   try {
     const moduleBundle: ModuleBundle = eval(moduleText)
-    return moduleBundle(context.moduleParams, context.moduleContexts)
+    return moduleBundle({ context })
   } catch (error) {
+    // console.error("bundle error: ", error)
     throw new ModuleInternalError(path, node)
   }
-}
-
-export function convertRawTabToFunction(rawTabString: string): string {
-  rawTabString = rawTabString.trim()
-  const lastBracket = rawTabString.lastIndexOf('(')
-  return rawTabString.substring(0, lastBracket) + ')'
 }
 
 /**
@@ -108,9 +108,29 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   return sideContentTabPaths.map(path => {
     const rawTabFile = memoizedGetModuleFile(path, 'tab')
     try {
-      return eval(convertRawTabToFunction(rawTabFile))
+      return eval(rawTabFile)
     } catch (error) {
+      // console.error('tab error:', error);
       throw new ModuleInternalError(path, node)
     }
   })
+}
+
+type Documentation = {
+  [name: string]: string
+}
+
+export const memoizedloadModuleDocs = memoize(loadModuleDocs)
+export function loadModuleDocs(path: string, node?: es.Node) {
+  try {
+    const modules = memoizedGetModuleManifest()
+    // Check if the module exists
+    const moduleList = Object.keys(modules)
+    if (!moduleList.includes(path)) throw new ModuleNotFoundError(path, node)
+    const result = getModuleFile({ name: path, type: 'json' })
+    return JSON.parse(result) as Documentation
+  } catch (error) {
+    console.warn('Failed to load module documentation')
+    return null
+  }
 }
