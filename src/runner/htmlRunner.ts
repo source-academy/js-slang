@@ -1,17 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { IOptions, Result } from '..'
 import { Context } from '../types'
+
+const ERROR_HANDLING_SCRIPT = `<script>
+  window.onerror = (msg, url, lineNum) => {
+    window.parent.postMessage("Line " + Math.max(lineNum - 5, 0) + ": " + msg, "*");
+  };
+</script>\n`
 
 export async function htmlRunner(
   code: string,
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
-  // Currently returns the HTML code without any changes,
-  // more changes will be made in the future (e.g. adding modules support)
   return Promise.resolve({
     status: 'finished',
     context,
-    value: code
+    value: ERROR_HANDLING_SCRIPT + code
   })
 }
