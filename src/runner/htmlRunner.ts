@@ -1,7 +1,7 @@
 import { IOptions, Result } from '..'
 import { Context } from '../types'
 
-const ERROR_HANDLING_SCRIPT = `<script>
+export const ERROR_HANDLING_SCRIPT = `<script>
   window.onerror = (msg, url, lineNum) => {
     window.parent.postMessage("Line " + Math.max(lineNum - 5, 0) + ": " + msg, "*");
   };
