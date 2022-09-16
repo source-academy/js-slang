@@ -321,11 +321,7 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
         }
 
         return specs.map(spec => {
-          if (spec.type !== 'ImportSpecifier') {
-            throw new Error(`Expected ImportSpecifier, got ${spec.type}`)
-          }
-
-          if (docs[spec.local.name] === undefined) {
+          if (spec.type !== 'ImportSpecifier' || docs[spec.local.name] === undefined) {
             return {
               name: spec.local.name,
               meta: KIND_IMPORT,
