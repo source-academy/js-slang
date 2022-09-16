@@ -58,10 +58,7 @@ const memoizedGetModuleFileInternal = memoize(getModuleFile)
 export const memoizedGetModuleFile = (name: string, type: 'tab' | 'bundle' | 'json') =>
   memoizedGetModuleFileInternal({ name, type })
 function getModuleFile({ name, type }: { name: string; type: 'tab' | 'bundle' | 'json' }): string {
-  if (type === 'json') {
-    return httpGet(`${MODULES_STATIC_URL}/jsons/${name}.json`)
-  }
-  return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js`)
+  return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js${type === 'json' ? 'on' : ''}`)
 }
 
 /**
