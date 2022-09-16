@@ -1,14 +1,14 @@
 import { IOptions, Result } from '..'
 import { Context } from '../types'
 
-const ERROR_HANDLING_SCRIPT_TEMPLATE = `<script>
+const HTML_ERROR_HANDLING_SCRIPT_TEMPLATE = `<script>
   window.onerror = (msg, url, lineNum) => {
     window.parent.postMessage("Line " + Math.max(lineNum - %d, 0) + ": " + msg, "*");
   };
 </script>\n`
 
-const errorScriptLines = ERROR_HANDLING_SCRIPT_TEMPLATE.split('\n').length - 1
-export const htmlErrorScript = ERROR_HANDLING_SCRIPT_TEMPLATE.replace(
+const errorScriptLines = HTML_ERROR_HANDLING_SCRIPT_TEMPLATE.split('\n').length - 1
+export const htmlErrorHandlingScript = HTML_ERROR_HANDLING_SCRIPT_TEMPLATE.replace(
   '%d',
   errorScriptLines.toString()
 )
@@ -21,6 +21,6 @@ export async function htmlRunner(
   return Promise.resolve({
     status: 'finished',
     context,
-    value: htmlErrorScript + code
+    value: htmlErrorHandlingScript + code
   })
 }
