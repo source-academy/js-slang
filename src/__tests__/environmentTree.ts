@@ -1,6 +1,7 @@
 import { createGlobalEnvironment, EnvTree, EnvTreeNode } from '../createContext'
 import { pushEnvironment } from '../interpreter/interpreter'
 import { mockContext, mockEnvironment } from '../mocks/context'
+import { Chapter } from '../types'
 
 test('EnvTree root should be null upon instantiation', () => {
   const envTree = new EnvTree()
@@ -27,7 +28,7 @@ test('EnvTree::getTreeNode should return the tree node that contains a pointer t
 })
 
 test('EnvTreeNode::resetChildren should reset the children of the node to the given children', () => {
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   const parent = mockEnvironment(context, 'programEnvironment')
   pushEnvironment(context, parent)
   // children under parent
@@ -75,7 +76,7 @@ test('EnvTreeNode::resetChildren should reset the children of the node to the gi
 })
 
 test('EnvTreeNode::addChild should add the given child node to the tree node', () => {
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   const programEnv = mockEnvironment(context, 'programEnvironment')
   const envTreeRoot = context.runtime.environmentTree.root
   expect(envTreeRoot).not.toBeNull()

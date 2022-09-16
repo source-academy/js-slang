@@ -1,5 +1,6 @@
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
+import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { transpile } from '../transpiler'
 
@@ -10,7 +11,7 @@ import { transpile } from '../transpiler'
  */
 test('builtins do get prepended', () => {
   const code = '"ensure_builtins";'
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   const transpiled = transpile(parse(code, context)!, context).transpiled
   // replace native[<number>] as they may be inconsistent
   const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
@@ -30,7 +31,7 @@ test('Ensure no name clashes', () => {
     }
     const native = 123;
   `
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   const transpiled = transpile(parse(code, context)!, context).transpiled
   const replacedNative = transpiled.replace(/native0\[\d+]/g, 'native')
   const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')

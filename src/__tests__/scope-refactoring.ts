@@ -11,7 +11,7 @@ import {
   getScopeHelper,
   scopeVariables
 } from '../scope-refactoring'
-import { BlockFrame } from '../types'
+import { BlockFrame, Chapter } from '../types'
 /* tslint:disable:max-classes-per-file */
 
 class Target {
@@ -171,7 +171,7 @@ const conditionalsLoopsTests = [
 ]
 
 test('Scoped based refactoring of ordinary variable definitions', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const actuals: any = []
   variableDefinitionTests.forEach(testCase => {
     testCase.targets.forEach(target => {
@@ -191,7 +191,7 @@ test('Scoped based refactoring of ordinary variable definitions', () => {
 })
 
 test('Scoped based refactoring with function scopes', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const actuals: any = []
   functionScopeTests.forEach(testCase => {
     testCase.targets.forEach(target => {
@@ -211,7 +211,7 @@ test('Scoped based refactoring with function scopes', () => {
 })
 
 test('Scoped based refactoring with arrow function scopes', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const actuals: any = []
   arrowFunctionScopeTests.forEach(testCase => {
     testCase.targets.forEach(target => {
@@ -231,7 +231,7 @@ test('Scoped based refactoring with arrow function scopes', () => {
 })
 
 test('Scoped based refactoring with conditionals and loops', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const actuals: any = []
   conditionalsLoopsTests.forEach(testCase => {
     testCase.targets.forEach(target => {
@@ -251,7 +251,7 @@ test('Scoped based refactoring with conditionals and loops', () => {
 })
 
 test('scopeVariables should return an accurate scope tree', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const program = `
     const anakin = "chancellor palpatine is evil";
     const obiwan = "from my point of view the jedi are evil";
@@ -269,7 +269,7 @@ test('scopeVariables should return an accurate scope tree', () => {
 })
 
 test('scopeVariables should return an accurate scope tree with normal block scopes', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const program = `
     const anakin = 'chancellor palpatine is evil';
     const obiwan = 'from my point of view the jedi are evil';
@@ -294,7 +294,7 @@ test('scopeVariables should return an accurate scope tree with normal block scop
 })
 
 test('getBlockFromLoc with normal variable name', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -311,7 +311,7 @@ const nextline = 'having the time of your life';
 })
 
 test('getBlockFromLoc with function definition name', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -332,7 +332,7 @@ function picklerick() {
 })
 
 test('getBlockFromLoc with arrow function name', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -353,7 +353,7 @@ const picklerick() = x => {
 })
 
 test('getAllIdentifiers should get all indentifiers regardless of scope', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -392,7 +392,7 @@ if (true) {
 })
 
 test('getNodeLocsInCurrentBlockFrame should return all nodes in the current block frame', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -441,7 +441,7 @@ if (true) {
 })
 
 test('getBlockFramesInCurrentBlockFrame', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const program = `const y = true;
 const dancingqueen = 'you can dance, you can jive';
 const nextline = 'having the time of your life';
@@ -490,7 +490,7 @@ if (true) {
 })
 
 test('getScopeHelper', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const program = `{
     const x = 1;
     {
@@ -511,7 +511,7 @@ test('getScopeHelper', () => {
 })
 
 test('getScopeHelperNested', () => {
-  const context = createContext(4)
+  const context = createContext(Chapter.SOURCE_4)
   const program = `{
     const x = 1;
     {

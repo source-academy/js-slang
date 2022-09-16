@@ -3,13 +3,14 @@ import { generate } from 'astring'
 import { transpileToGPU } from '../../gpu/gpu'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
+import { Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 
 test('empty for loop does not get transpiled', () => {
   const code = stripIndent`
     for (let i = 0; i < 10; i = i + 1) {}
     `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -25,7 +26,7 @@ test('simple for loop with different update does not get transpiled', () => {
         res[i] = i;
     }
     `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -42,7 +43,7 @@ test('simple for loop with different loop variables does not get transpiled', ()
         res[i] = i;
     }
     `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -59,7 +60,7 @@ test('simple for loop with const initialization does not get transpiled', () => 
         res[i] = i;
     }
     `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -75,7 +76,7 @@ test('simple for loop with non-zero initialization does not get transpiled', () 
         res[i] = i;
     }
     `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -92,7 +93,7 @@ test('simple for loop with a function end counter does not get transpiled', () =
         res[i] = i;
     }
     `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -109,7 +110,7 @@ test('simple for loop with different initialization does not get transpiled', ()
           res[i] = i;
       }
       `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -126,7 +127,7 @@ test('simple for loop with assignment to array does not get transpiled', () => {
           res[i] = i;
       }
       `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -144,7 +145,7 @@ test('simple for loop with global variable update does not get transpiled', () =
           res[i] = i;
       }
       `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -162,7 +163,7 @@ test('simple for loop with function call does not get transpiled', () => {
             res[i] = i;
         }
         `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -179,7 +180,7 @@ test('simple for loop with double update does not get transpiled', () => {
             res[i] = i + 1;
         }
         `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -197,7 +198,7 @@ test('2 for loops with wrong indice order does not get transpiled', () => {
             }
         }
         `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -215,7 +216,7 @@ test('2 for loops with wrong indices order does not get transpiled', () => {
             }
         }
         `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -242,7 +243,7 @@ test('2 for loop case with 2 indices being written + use of result variable[i-1]
         }
     }
     `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -261,7 +262,7 @@ test('3 for loops with wrong indice order does not get transpiled', () => {
             }
         }
         `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)
@@ -281,7 +282,7 @@ test('3 for loops with wrong indice order does not get transpiled', () => {
             }
         }
         `
-  const context = mockContext(4, 'gpu')
+  const context = mockContext(4, Variant.GPU)
   const program = parse(code, context)!
   transpileToGPU(program)
   const transpiled = generate(program)

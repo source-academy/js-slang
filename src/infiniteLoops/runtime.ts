@@ -1,9 +1,9 @@
 import * as es from 'estree'
 
-import { MODULE_PARAMS_ID } from '../constants'
 import createContext from '../createContext'
 import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
+import { Chapter, Variant } from '../types'
 import * as create from '../utils/astCreator'
 import { checkForInfiniteLoop } from './detect'
 import { InfiniteLoopError } from './errors'
@@ -304,7 +304,7 @@ functions[FunctionNames.evalU] = sym.evaluateHybridUnary
  * @returns SourceError if an infinite loop was detected, undefined otherwise.
  */
 export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
-  const context = createContext(4, 'default', undefined, undefined)
+  const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT, undefined, undefined)
   const prelude = parse(context.prelude as string, context) as es.Program
   const previous: es.Program[] = []
   context.prelude = null
@@ -319,7 +319,6 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
   const { builtinsId, functionsId, stateId } = InfiniteLoopRuntimeObjectNames
 
   const instrumentedCode = instrument(previous, program, newBuiltins.keys())
-
   const state = new st.State()
 
   const sandboxedRun = new Function(
@@ -327,13 +326,13 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
     functionsId,
     stateId,
     builtinsId,
-    MODULE_PARAMS_ID,
+    'ctx',
     // redeclare window so modules don't do anything funny like play sounds
     '{let window = {}; return eval(code)}'
   )
 
   try {
-    sandboxedRun(instrumentedCode, functions, state, newBuiltins, context.moduleParams)
+    sandboxedRun(instrumentedCode, functions, state, newBuiltins, { context })
   } catch (error) {
     if (error instanceof InfiniteLoopError) {
       if (state.lastLocation !== undefined) {

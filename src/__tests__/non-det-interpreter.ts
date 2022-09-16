@@ -1,7 +1,7 @@
 /* tslint:disable:max-line-length */
 import { IOptions, parseError, Result, resume, runInContext } from '../index'
 import { mockContext } from '../mocks/context'
-import { Context, Finished, SuspendedNonDet } from '../types'
+import { Context, Finished, SuspendedNonDet, Variant } from '../types'
 
 test('Empty code returns undefined', async () => {
   await testDeterministicCode('', undefined)
@@ -1038,7 +1038,7 @@ function verifyRandomizedTest(results: any[], expectedValues: any[]) {
 }
 
 function makeNonDetContext() {
-  const context = mockContext(3, 'non-det')
+  const context = mockContext(3, Variant.NON_DET)
   context.executionMethod = 'interpreter'
   return context
 }

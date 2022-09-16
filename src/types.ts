@@ -59,10 +59,29 @@ export interface Comment {
 }
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
-export type Variant = 'native' | 'wasm' | 'lazy' | 'non-det' | 'concurrent' | 'gpu' | 'default' // this might replace EvaluationMethod
 
-export interface SourceLanguage {
-  chapter: number
+export enum Chapter {
+  SOURCE_1 = 1,
+  SOURCE_2 = 2,
+  SOURCE_3 = 3,
+  SOURCE_4 = 4,
+  FULL_JS = -1,
+  HTML = -2,
+  LIBRARY_PARSER = 100
+}
+
+export enum Variant {
+  DEFAULT = 'default',
+  NATIVE = 'native',
+  WASM = 'wasm',
+  LAZY = 'lazy',
+  NON_DET = 'non-det',
+  CONCURRENT = 'concurrent',
+  GPU = 'gpu'
+}
+
+export interface Language {
+  chapter: Chapter
   variant: Variant
 }
 
@@ -95,7 +114,7 @@ export interface NativeStorage {
 
 export interface Context<T = any> {
   /** The source version used */
-  chapter: number
+  chapter: Chapter
 
   /** The external symbols that exist in the Context. */
   externalSymbols: string[]
@@ -157,14 +176,11 @@ export interface Context<T = any> {
   typeEnvironment: TypeEnvironment
 
   /**
-   * Parameters to pass to a module during module initialization
-   */
-  moduleParams: any
-
-  /**
    * Storage container for module specific information and state
    */
-  moduleContexts: Map<string, ModuleContext>
+  moduleContexts: {
+    [name: string]: ModuleContext
+  }
 
   /**
    * Code previously executed in this context
@@ -172,16 +188,9 @@ export interface Context<T = any> {
   previousCode: string[]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ModuleState {}
-
-/**
- * Used to store state and contextual information for
- * each module
- */
 export type ModuleContext = {
-  tabs: any[]
-  state?: ModuleState | null
+  state: null | any
+  tabs: null | any[]
 }
 
 export interface BlockFrame {

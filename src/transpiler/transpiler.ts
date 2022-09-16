@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
 import * as es from 'estree'
+import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
-import { MODULE_CONTEXTS_ID, MODULE_PARAMS_ID, NATIVE_STORAGE_ID } from '../constants'
+import { NATIVE_STORAGE_ID } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
-import { isFullJSChapter } from '../runner'
-import { AllowedDeclarations, Context, NativeStorage } from '../types'
+import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/astCreator'
 import {
   getIdentifiersInNativeStorage,
@@ -37,22 +37,58 @@ const globalIdNames = [
 
 export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
 
-export function prefixModule(program: es.Program): string {
-  let moduleCounter = 0
-  let prefix = ''
-  for (const node of program.body) {
-    if (node.type !== 'ImportDeclaration') {
-      break
+export function transformImportDeclarations(
+  program: es.Program,
+  usedIdentifiers: Set<string>,
+  useThis: boolean = false
+): [string, es.VariableDeclaration[], es.Program['body']] {
+  const prefix: string[] = []
+  const [importNodes, otherNodes] = partition(
+    program.body,
+    node => node.type === 'ImportDeclaration'
+  )
+  const moduleNames = new Map<string, string>()
+  let moduleCount = 0
+
+  const declNodes = (importNodes as es.ImportDeclaration[]).flatMap(node => {
+    const moduleName = node.source.value as string
+
+    let moduleNamespace: string
+    if (!moduleNames.has(moduleName)) {
+      // Increment module count until we reach an unused identifier
+      let namespaced = `__MODULE_${moduleCount}__`
+      while (usedIdentifiers.has(namespaced)) {
+        namespaced = `__MODULE_${moduleCount}__`
+        moduleCount++
+      }
+
+      // The module hasn't been added to the prefix yet, so do that
+      moduleNames.set(moduleName, namespaced)
+      moduleCount++
+      const moduleText = memoizedGetModuleFile(moduleName, 'bundle').trim()
+      prefix.push(`const ${namespaced} = ${moduleText}({ context: ctx });\n`)
+      moduleNamespace = namespaced
+    } else {
+      moduleNamespace = moduleNames.get(moduleName)!
     }
-    const moduleText = memoizedGetModuleFile(node.source.value as string, 'bundle').trim()
-    // remove ; from moduleText
-    prefix += `const __MODULE_${moduleCounter}__ = (${moduleText.substring(
-      0,
-      moduleText.length - 1
-    )})(${MODULE_PARAMS_ID}, ${MODULE_CONTEXTS_ID});\n`
-    moduleCounter++
-  }
-  return prefix
+
+    return node.specifiers.map(specifier => {
+      if (specifier.type !== 'ImportSpecifier') {
+        throw new Error(`Expected import specifier, found: ${node.type}`)
+      }
+
+      // Convert each import specifier to its corresponding local variable declaration
+      return create.constantDeclaration(
+        specifier.local.name,
+        create.memberExpression(
+          create.identifier(`${useThis ? 'this.' : ''}${moduleNamespace}`),
+          specifier.imported.name
+        )
+      )
+    })
+  })
+
+  return [prefix.join(''), declNodes, otherNodes]
 }
 
 /**
@@ -93,50 +129,20 @@ export function hoistImportDeclarations(program: es.Program) {
   program.body = newImports.concat(program.body.filter(node => node.type !== 'ImportDeclaration'))
 }
 
-export function transformSingleImportDeclaration(
-  moduleCounter: number,
-  node: es.ImportDeclaration,
-  useThis = false
-) {
-  const result = []
-  const tempNamespace = (useThis ? 'this.' : '') + `__MODULE_${moduleCounter}__`
-  const neededSymbols = node.specifiers.map(specifier => {
-    if (specifier.type !== 'ImportSpecifier') {
-      throw new Error(
-        `I expected only ImportSpecifiers to be allowed, but encountered ${specifier.type}.`
-      )
-    }
-
-    return {
-      imported: specifier.imported.name,
-      local: specifier.local.name
-    }
-  })
-  for (const symbol of neededSymbols) {
-    result.push(
-      create.constantDeclaration(
-        symbol.local,
-        create.memberExpression(create.identifier(tempNamespace), symbol.imported)
-      )
-    )
-  }
-  return result
-}
-
 // `useThis` is a temporary indicator used by fullJS
-export function transformImportDeclarations(program: es.Program, useThis = false) {
-  const imports = []
-  let result: es.VariableDeclaration[] = []
-  let moduleCounter = 0
-  while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
-    imports.push(program.body.shift() as es.ImportDeclaration)
-  }
-  for (const node of imports) {
-    result = transformSingleImportDeclaration(moduleCounter, node, useThis).concat(result)
-    moduleCounter++
-  }
-  program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
-}
+// export function transformImportDeclarations(program: es.Program, useThis = false) {
+//   const imports = []
+//   let result: es.VariableDeclaration[] = []
+//   let moduleCounter = 0
+//   while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
+//     imports.push(program.body.shift() as es.ImportDeclaration)
+//   }
+//   for (const node of imports) {
+//     result = transformSingleImportDeclaration(moduleCounter, node, useThis).concat(result)
+//     moduleCounter++
+//   }
+//   program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
+// }
 
 export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
   return program.body
@@ -464,7 +470,7 @@ function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): Native
 function transformUnaryAndBinaryOperationsToFunctionCalls(
   program: es.Program,
   globalIds: NativeIds,
-  chapter: number
+  chapter: Chapter
 ) {
   simple(program, {
     BinaryExpression(node: es.BinaryExpression) {
@@ -621,8 +627,12 @@ function transpileToSource(
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
 
-  const modulePrefix = prefixModule(program)
-  transformImportDeclarations(program)
+  const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
+    program,
+    usedIdentifiers
+  )
+  program.body = (importNodes as es.Program['body']).concat(otherNodes)
+
   getGloballyDeclaredIdentifiers(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)
   )
@@ -646,15 +656,22 @@ function transpileToSource(
 }
 
 function transpileToFullJS(program: es.Program): TranspiledResult {
-  transformImportDeclarations(program)
+  const usedIdentifiers = new Set<string>(getIdentifiersInProgram(program))
+
+  const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
+    program,
+    usedIdentifiers
+  )
+
   const transpiledProgram: es.Program = create.program([
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
     create.expressionStatement(create.identifier('undefined')),
-    ...(program.body as es.Statement[])
+    ...(importNodes as es.Statement[]),
+    ...(otherNodes as es.Statement[])
   ])
 
   const sourceMap = new SourceMapGenerator({ file: 'source' })
-  const transpiled = generate(transpiledProgram, { sourceMap })
+  const transpiled = modulePrefix + generate(transpiledProgram, { sourceMap })
   const sourceMapJson = sourceMap.toJSON()
 
   return { transpiled, sourceMapJson }
@@ -665,7 +682,7 @@ export function transpile(
   context: Context,
   skipUndefined = false
 ): TranspiledResult {
-  if (isFullJSChapter(context.chapter) || context.variant == 'native') {
+  if (context.chapter === Chapter.FULL_JS || context.variant == Variant.NATIVE) {
     return transpileToFullJS(program)
   }
 

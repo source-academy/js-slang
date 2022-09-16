@@ -1,14 +1,46 @@
 import { runInContext } from '../..'
 import { mockContext } from '../../mocks/context'
+import * as moduleLoader from '../../modules/moduleLoader'
+import { Chapter } from '../../types'
+import { stripIndent } from '../../utils/formatters'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
 import { testForInfiniteLoop } from '../runtime'
+
+jest.spyOn(moduleLoader, 'memoizedGetModuleFile').mockImplementationOnce(() => {
+  return stripIndent`
+    (function () {
+      'use strict';
+      var exports = {};
+      function repeat(func, n) {
+        return n === 0 ? function (x) {
+          return x;
+        } : function (x) {
+          return func(repeat(func, n - 1)(x));
+        };
+      }
+      function twice(func) {
+        return repeat(func, 2);
+      }
+      function thrice(func) {
+        return repeat(func, 3);
+      }
+      exports.repeat = repeat;
+      exports.thrice = thrice;
+      exports.twice = twice;
+      Object.defineProperty(exports, '__esModule', {
+        value: true
+      });
+      return exports;
+    })
+  `
+})
 
 test('works in runInContext when throwInfiniteLoops is true', async () => {
   const code = `function fib(x) {
     return fib(x-1) + fib(x-2);
   }
   fib(100000);`
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   await runInContext(code, context, { throwInfiniteLoops: true })
   const lastError = context.errors[context.errors.length - 1]
   expect(lastError instanceof InfiniteLoopError).toBe(true)
@@ -22,7 +54,7 @@ test('works in runInContext when throwInfiniteLoops is false', async () => {
     return fib(x-1) + fib(x-2);
   }
   fib(100000);`
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   await runInContext(code, context, { throwInfiniteLoops: false })
   const lastError: any = context.errors[context.errors.length - 1]
   expect(lastError instanceof InfiniteLoopError).toBe(false)

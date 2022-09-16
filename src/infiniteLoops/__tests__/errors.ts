@@ -2,6 +2,7 @@ import { ExceptionError } from '../../errors/errors'
 import { RuntimeSourceError } from '../../errors/runtimeSourceError'
 import { TimeoutError } from '../../errors/timeoutErrors'
 import { mockContext } from '../../mocks/context'
+import { Chapter } from '../../types'
 import {
   getInfiniteLoopData,
   InfiniteLoopError,
@@ -35,7 +36,7 @@ test('other errors are not potential infinite loops', () => {
 })
 
 test('getInfiniteLoopData works when error is directly reported', () => {
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   context.errors.push(noBaseCaseError)
   context.previousCode.push('test')
   const result = getInfiniteLoopData(context)
@@ -48,7 +49,7 @@ test('getInfiniteLoopData works when error is directly reported', () => {
 test('getInfiniteLoopData works when error hidden in timeout', () => {
   const error: any = new TimeoutError()
   error.infiniteLoopError = noBaseCaseError
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   context.errors.push(error)
   context.previousCode.push('test')
   const result = getInfiniteLoopData(context)
@@ -61,7 +62,7 @@ test('getInfiniteLoopData works when error hidden in timeout', () => {
 test('getInfiniteLoopData works when error hidden in exceptionError', () => {
   const innerError: any = new Error()
   innerError.infiniteLoopError = noBaseCaseError
-  const context = mockContext(4)
+  const context = mockContext(Chapter.SOURCE_4)
   context.errors.push(new ExceptionError(innerError, fakePos))
   context.previousCode.push('test')
   const result = getInfiniteLoopData(context)

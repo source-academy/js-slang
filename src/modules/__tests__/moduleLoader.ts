@@ -1,5 +1,6 @@
 import { createEmptyContext } from '../../createContext'
 import { ModuleConnectionError, ModuleInternalError } from '../../errors/moduleErrors'
+import { Variant } from '../../types'
 import * as moduleLoader from '../moduleLoader'
 
 // Mock memoize function from lodash
@@ -106,7 +107,7 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     mockXMLHttpRequest({ responseText: sampleResponse })
     const loadedBundle = moduleLoader.loadModuleBundle(
       'module',
-      createEmptyContext(1, 'default', [])
+      createEmptyContext(1, Variant.DEFAULT, [])
     )
     expect(loadedBundle.make_empty_array()).toEqual([])
   })
@@ -117,7 +118,7 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     const wrongModuleText = `export function es6_function(params) {};`
     mockXMLHttpRequest({ responseText: wrongModuleText })
     expect(() =>
-      moduleLoader.loadModuleBundle('module', createEmptyContext(1, 'default', []))
+      moduleLoader.loadModuleBundle('module', createEmptyContext(1, Variant.DEFAULT, []))
     ).toThrow(ModuleInternalError)
   })
 
