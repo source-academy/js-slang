@@ -2,9 +2,10 @@ import { Context, Result, runInContext } from '../..'
 import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../mocks/context'
 import { FatalSyntaxError } from '../../parser/parser'
-import { Chapter, Variant } from '../../types'
+import { Chapter, Finished, Variant } from '../../types'
 import { locationDummyNode } from '../../utils/astCreator'
 import { CodeSnippetTestCase } from '../../utils/testing'
+import { htmlErrorHandlingScript } from '../htmlRunner'
 
 const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
   {
@@ -176,4 +177,15 @@ describe('Additional JavaScript features are not available in Source Native', ()
       }
     }
   )
+})
+
+// HTML Unit Tests
+
+test('Error handling script is injected in HTML code', async () => {
+  const htmlDocument: string = '<p>Hello World!</p>'
+  const htmlContext: Context = mockContext(Chapter.HTML, Variant.DEFAULT)
+  const result = await runInContext(htmlDocument, htmlContext)
+
+  expect(result.status).toStrictEqual('finished')
+  expect((result as Finished).value).toStrictEqual(htmlErrorHandlingScript + htmlDocument)
 })
