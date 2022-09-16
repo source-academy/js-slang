@@ -37,21 +37,22 @@
     "js-slang": "dist/repl/repl.js"
   },
   "scripts": {
+    "autocomplete": "node ./scripts/updateAutocompleteDocs.js",
+    "benchmark": "jest --runInBand --testPathPattern='.*benchmark.*' --testPathIgnorePatterns='/dist/'",
+    "build": "yarn docs && yarn tsc --build --force",
+    "build_sicp_package": "./scripts/build_sicp_package.sh",
     "ci": "yarn jsdoc && yarn autocomplete && yarn format:ci && yarn eslint && yarn test",
+    "compile": "yarn tsc",
+    "docs": "yarn jsdoc && yarn autocomplete",
+    "eslint": "eslint --ext \".ts,.tsx\" src",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
-    "prepublishOnly": "tsc",
-    "test": "jest",
-    "benchmark": "jest --runInBand --testPathPattern='.*benchmark.*' --testPathIgnorePatterns='/dist/'",
-    "test-coverage": "jest --coverage",
-    "eslint": "eslint --ext \".ts,.tsx\" src",
     "jsdoc": "./scripts/jsdoc.sh",
-    "autocomplete": "node ./scripts/updateAutocompleteDocs.js",
-    "docs": "yarn jsdoc && yarn autocomplete",
-    "build": "yarn docs && yarn tsc",
-    "build_sicp_package": "./scripts/build_sicp_package.sh",
+    "prepublishOnly": "tsc",
+    "prepare": "husky install",
     "publish_sicp_package": "./scripts/publish_sicp_package.sh",
-    "prepare": "husky install"
+    "test": "jest",
+    "test-coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
