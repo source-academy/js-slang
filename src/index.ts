@@ -28,7 +28,7 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
-import { fullJSRunner, hasVerboseErrors, htmlRunner, isFullJSChapter, sourceRunner } from './runner'
+import { fullJSRunner, hasVerboseErrors, htmlRunner, sourceRunner } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
 
