@@ -42,7 +42,7 @@ write() {
     #Write prelude names
     while read -r CURRENT_LINE
     do 
-        echo "global.$CURRENT_LINE = $CURRENT_LINE;" >> $SICPJSPATH
+        echo "exports.$CURRENT_LINE = $CURRENT_LINE;" >> $SICPJSPATH
     done < "sicp_publish/prelude_names.txt"
 
     #Write Functions
@@ -50,7 +50,7 @@ write() {
     do 
         if [ "$CURRENT_LINE" != "undefined" -a "$CURRENT_LINE" != "NaN" -a "$CURRENT_LINE" != "Infinity" ]
         then
-            echo "global.$CURRENT_LINE = dict.get(\"$CURRENT_LINE\");" >> $SICPJSPATH
+            echo "exports.$CURRENT_LINE = dict.get(\"$CURRENT_LINE\");" >> $SICPJSPATH
         fi
     done < "sicp_publish/names.txt"
 }
