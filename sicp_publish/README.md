@@ -22,13 +22,13 @@ Install the package `sicp` as follows:
 ``` {.}
 $ yarn add sicp
 ```
-To use the `sicp` package, you need to import it in your program by writing
+To use any functions in the `sicp` package, you need to import them in your program by writing
 ``` {.}
-import 'sicp';
+import { <Functions here> } from 'sicp';
 ```
 For example, if your file `test.js` contains:
 ``` {.}
-import 'sicp';
+import { display, head, list, tail } from 'sicp';
 
 const p = list("I", "love", "sicp");
 display(head(tail(p)));
