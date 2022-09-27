@@ -87,6 +87,10 @@
     "typescript": "^4.0.3"
   },
   "jest": {
+    "snapshotFormat": {
+      "escapeString": true,
+      "printBasicPrototype": true
+    },
     "moduleFileExtensions": [
       "ts",
       "js"
