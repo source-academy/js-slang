@@ -36,21 +36,31 @@ write() {
     echo "const createContext_1 = require(\"./createContext\");" >> $SICPJSPATH
     echo "const dict = createContext_1.default(4).nativeStorage.builtins;" >> $SICPJSPATH
 
-    cat sicp_publish/prelude.txt >> $SICPJSPATH
-
-
-    #Write prelude names
-    while read -r CURRENT_LINE
-    do 
-        echo "global.$CURRENT_LINE = $CURRENT_LINE;" >> $SICPJSPATH
-    done < "sicp_publish/prelude_names.txt"
-
-    #Write Functions
+    echo $'\n// Declare functions for prelude\n' >> $SICPJSPATH
     while read -r CURRENT_LINE
     do 
         if [ "$CURRENT_LINE" != "undefined" -a "$CURRENT_LINE" != "NaN" -a "$CURRENT_LINE" != "Infinity" ]
         then
-            echo "global.$CURRENT_LINE = dict.get(\"$CURRENT_LINE\");" >> $SICPJSPATH
+            echo "const $CURRENT_LINE = dict.get(\"$CURRENT_LINE\");" >> $SICPJSPATH
+        fi
+    done < "sicp_publish/names.txt"
+
+    echo $'\n// Prelude' >> $SICPJSPATH    
+    cat sicp_publish/prelude.txt >> $SICPJSPATH
+
+    echo $'\n// Write prelude names\n' >> $SICPJSPATH
+    while read -r CURRENT_LINE
+    do 
+        echo "exports.$CURRENT_LINE = $CURRENT_LINE;" >> $SICPJSPATH
+    done < "sicp_publish/prelude_names.txt"
+
+    echo $'\n// Write functions\n' >> $SICPJSPATH
+    
+    while read -r CURRENT_LINE
+    do 
+        if [ "$CURRENT_LINE" != "undefined" -a "$CURRENT_LINE" != "NaN" -a "$CURRENT_LINE" != "Infinity" ]
+        then
+            echo "exports.$CURRENT_LINE = dict.get(\"$CURRENT_LINE\");" >> $SICPJSPATH
         fi
     done < "sicp_publish/names.txt"
 }
