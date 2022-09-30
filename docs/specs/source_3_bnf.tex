@@ -26,9 +26,9 @@
                                    \textit{block}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.7}{while loop}}\\
 &&                       && |   &\quad && \textbf{\texttt{for}}\ \textbf{\texttt{(}} \ 
-                                          (\ \textit{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.8}{assignment}} \ | \  \textit{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.9}{let}}\ ) \textbf{\texttt{;}} \\
-&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression} \ \textbf{\texttt{;}} \\
-&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{assignment} \ \textbf{\texttt{)}} \ 
+                                          (\ \textit{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.8}{expression}}_1 \ | \  \textit{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.9}{let}}\ ) \textbf{\texttt{;}} \\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression}_2 \ \textbf{\texttt{;}} \\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression}_3 \ \textbf{\texttt{)}} \ 
                                             \textit{block}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/4.1.2\#ex_4.8}{for loop}}\\
 &&                       && |   &\quad && \textbf{\texttt{break}}\ \textbf{\texttt{;}}
@@ -62,7 +62,11 @@
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p3}{variable declaration}} \\[1mm]
 && \textit{assignment}   && ::= &\quad &&  \textit{name} \ 
                                            \textbf{\texttt{=}}\  \textit{expression} 
-                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p4}{variable assignment}} \\[1mm]
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p4}{variable assignment}} \\
+&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
+                                          \textit{expression} \textbf{\texttt{]}} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} 
+                                                           && \textrm{array assignment} \\[1mm]
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p3}{primitive number expression}}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p1}{primitive boolean expression}}\\
@@ -99,14 +103,10 @@
                                             \textit{expression}\
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p1}{conditional expression}} \\
 &&                       && |   &\quad && \textit{assignment} 
-                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p4}{variable assignment}} \\
+                                                           && \textrm{assignment} \\
 &&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
                                           \textit{expression} \textbf{\texttt{]}}
                                                            && \textrm{array access} \\
-&&                       && |   &\quad && \textit{expression} \textbf{\texttt{[}}
-                                          \textit{expression} \textbf{\texttt{]}} \ 
-                                           \textbf{\texttt{=}}\  \textit{expression} 
-                                                           && \textrm{array assignment} \\
 &&                       && |   &\quad &&   \textbf{\texttt{[}}\ 
                                             \textit{expressions}\
                                             \textbf{\texttt{]}}

@@ -292,25 +292,29 @@ const transformers: ASTTransformers = new Map([
   [
     'MemberExpression',
     (node: es.MemberExpression) => {
-      const key =
-        node.property.type === 'Identifier'
-          ? vector_to_list(['property', node.property.name])
-          : transform(node.property)
-      return vector_to_list(['object_access', transform(node.object), key])
+      // "computed" property of MemberExpression distinguishes
+      // between dot access (not computed) and
+      // a[...] (computed)
+      // the key in dot access is meant as string, and
+      // represented by a "property" node in parse result
+      return vector_to_list(['object_access',
+			     transform(node.object),
+			     ! node.computed && node.property.type === "Identifier"
+			     ? vector_to_list(['property', node.property.name])
+			     : transform(node.property)])
     }
   ],
 
   [
     'Property',
     (node: es.Property) => {
-      if (node.key.type === 'Literal') {
-        return [node.key.value, transform(node.value)]
-      } else if (node.key.type === 'Identifier') {
-        return [vector_to_list(['property', node.key.name]), transform(node.value)]
-      } else {
-        unreachable()
-        throw new ParseError('Invalid property key type')
-      }
+      // identifiers before the ":" in literal objects are meant
+      // as string, and represented by a "property" node in parse result
+      return vector_to_list(['key_value_pair',
+			     node.key.type === 'Identifier'
+			     ? vector_to_list(['property', node.key.name])
+			     : transform(node.key),
+			     transform(node.value)])
     }
   ],
 
@@ -366,6 +370,7 @@ const transformers: ASTTransformers = new Map([
       return vector_to_list([
         'method_definition',
         node.kind,
+        node.static,
         transform(node.key),
         transform(node.value)
       ])

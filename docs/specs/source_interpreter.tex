@@ -15,7 +15,7 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
 \item \lstinline{parse(x)}: \textit{primitive}, returns the parse tree that results from parsing
   the string \lstinline{x} as a Source program. The following two pages describe the shape of the parse tree.
   The tree is represented by the tagged lists on the right; the angle brackets denote recursive application
-  of the transformation rules.
+  of the transformation rules. Implementations are allowed to support more of JavaScript than listed.
 \end{itemize}
 In addition, the Source Academy frontend predeclares the name \lstinline{__PROGRAM__} in all Source languages
 to refer to the string representation of the program in the editor that is being run using ``Run''.
@@ -37,12 +37,6 @@ at the time when ``Run'' was last pressed.
                                                            && \texttt{list("constant\_declaration",  } \langle \textit{name}\rangle \textit{,  } \langle \textit{expression}\rangle \textit{)} \\
 &&                       && |   &\quad && \textit{let} \ \textbf{\texttt{;}}
                                                            &&  \textrm{see below}\\
-&&                       && |   &\quad && \textit{assignment} \ \textbf{\texttt{;}}
-                                                           && \textrm{see below}\\
-&&                       && |   &\quad && \textit{expression}_1 \textbf{\texttt{[}}
-                                          \textit{expression}_2 \textbf{\texttt{]}} \
-                                           \textbf{\texttt{=}}\  \textit{expression}_3  \textbf{\texttt{;}}\
-                                                           && \texttt{list("object\_assignment", } \langle \textit{expression}_1 \textbf{\texttt{[}} \textit{expression}_2 \textbf{\texttt{]}}  \rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \
                                    \textbf{\texttt{(}}\  \textit{parameters} \ \textbf{\texttt{)}}\ \textit{block} \quad
                                                            &&  \texttt{list("function\_declaration",  } \langle \textit{name}\rangle \textit{, } \langle \textit{parameters}\rangle \textit{,}\ \langle \textit{block}\rangle \textit{)} \\
@@ -55,9 +49,9 @@ at the time when ``Run'' was last pressed.
                                    \textit{block}
                                                            && \texttt{list("while\_loop",  } \langle \textit{expression}\rangle \textit{,  } \langle \textit{block}\rangle \textit{)} \\
 &&                       && |   &\quad && \textbf{\texttt{for}}\ \textbf{\texttt{(}} \
-                                          (\ \textit{\hyperlink{for}{assignment}}_1 \ | \  \textit{\hyperlink{for2}{let}}\ ) \textbf{\texttt{;}} \\
-&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression} \ \textbf{\texttt{;}} && \texttt{list("for\_loop",  } \langle \textit{assignment}_1\rangle\ \textrm{or}\ \langle \textit{let}\rangle \textit{,  } \langle \textit{expression}\rangle \textit{,  } \langle \textit{assignment}_2\rangle \textit{,}\\
-&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{assignment}_2 \ \textbf{\texttt{)}} \  \textit{block}
+                                          (\ \textit{\hyperlink{for}{expression}}_1 \ | \  \textit{\hyperlink{for2}{let}}\ ) \textbf{\texttt{;}} \\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression}_2 \ \textbf{\texttt{;}} && \texttt{list("for\_loop",  } \langle \textit{expression}_1\rangle\ \textrm{or}\ \langle \textit{let}\rangle \textit{,  } \langle \textit{expression}_2\rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{,}\\
+&&                       &&     &\quad && \ \ \ \ \ \ \ \ \ \ \textit{expression}_3 \ \textbf{\texttt{)}} \  \textit{block}
                                             && \texttt{ }\ \ \ \ \ \ \ \langle \textit{block}\rangle \textit{)} \\
 &&                       && |   &\quad && \textbf{\texttt{break}}\ \textbf{\texttt{;}}
                                                            && \texttt{list("break\_statement")} \\
@@ -65,10 +59,10 @@ at the time when ``Run'' was last pressed.
                                                            && \texttt{list("continue\_statement")} \\
 &&                       && |   &\quad &&  \textit{block}
                                                            && \textrm{see below}\\
-&&                       && |   &\quad &&  \textbf{\texttt{try}}\ \textit{block}_1 \ \textbf{\texttt{catch (}}\ \textit{name}\ \textbf{\texttt{)}}\ \textit{block}_2
-                                                           && \texttt{list("try\_statement",}\ \langle  \textit{block}_1 \rangle \texttt{,}\ \langle  \textit{name} \rangle \texttt{,}\ \langle  \textit{block}_2 \rangle \texttt{)} \\
-&&                       && |   &\quad &&  \textbf{\texttt{throw}}\ \textit{expression}
-                                                           && \texttt{list("throw\_statement",}\ \langle  \textit{expression} \rangle \texttt{)} \\
+%&&                       && |   &\quad &&  \textbf{\texttt{try}}\ \textit{block}_1 \ \textbf{\texttt{catch (}}\ \textit{name}\ \textbf{\texttt{)}}\ \textit{block}_2
+%                                                           && \texttt{list("try\_statement",}\ \langle  \textit{block}_1 \rangle \texttt{,}\ \langle  \textit{name} \rangle \texttt{,}\ \langle  \textit{block}_2 \rangle \texttt{)} \\
+%&&                       && |   &\quad &&  \textbf{\texttt{throw}}\ \textit{expression}
+%                                                           && \texttt{list("throw\_statement",}\ \langle  \textit{expression} \rangle \texttt{)} \\
 &&                       && |   &\quad &&  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{see below}\\[1mm]
 && \textit{parameters}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \
@@ -139,6 +133,8 @@ at the time when ``Run'' was last pressed.
                                             \textit{expression}_3\
                                                            && \texttt{list("conditional\_expression",  } \langle \textit{expression}_1\rangle \textit{,} \\
                                             &&&&&&&&&\ \ \ \ \ \ \texttt{ } \langle \textit{expression}_2\rangle \textit{,  } \langle \textit{expression}_3\rangle \textit{)} \\
+&&                       && |   &\quad && \textit{assignment} \ \textbf{\texttt{;}}
+                                                           && \\
 &&                       && |   &\quad && \textit{expression}_1 \textbf{\texttt{[}}
                                           \textit{expression}_2 \textbf{\texttt{]}}
                                                            && \texttt{list("object\_access",  } \langle \textit{expression}_1\rangle \textit{,  } \langle \textit{expression}_2\rangle \textit{)} \\
@@ -146,10 +142,10 @@ at the time when ``Run'' was last pressed.
                                             \textit{expressions}\
                                             \textbf{\texttt{]}}
                                                            && \texttt{list("array\_expression", list of  } \langle \textit{expression}\rangle \textit{)} \\
-&&                       && |   &\quad &&  \textbf{\texttt{new}}\ \textit{expression}
-                                                           && \texttt{list("new\_expression",}\ \langle  \textit{expression} \rangle \texttt{)} \\
-&&                       && |   &\quad &&  \textit{expression}\ \textbf{\texttt{.}}\ \textit{name}
-                                                           && \textrm{treat as}:\ \textit{expression}\ \textbf{\texttt{[ "}}\textit{name}\textbf{\texttt{" ]}}  \\
+% &&                       && |   &\quad &&  \textbf{\texttt{new}}\ \textit{expression}
+%                                                           && \texttt{list("new\_expression",}\ \langle  \textit{expression} \rangle \texttt{)} \\
+%&&                       && |   &\quad &&  \textit{expression}\ \textbf{\texttt{.}}\ \textit{name}
+%                                                           && \textrm{treat as}:\ \textit{expression}\ \textbf{\texttt{[ "}}\textit{name}\textbf{\texttt{" ]}}  \\
 &&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \
                                             \textbf{\texttt{)}} && \textrm{treat as:}\ \textit{expression} \\[1mm]
 && \textit{log-op}
