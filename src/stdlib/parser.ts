@@ -297,11 +297,13 @@ const transformers: ASTTransformers = new Map([
       // a[...] (computed)
       // the key in dot access is meant as string, and
       // represented by a "property" node in parse result
-      return vector_to_list(['object_access',
-			     transform(node.object),
-			     ! node.computed && node.property.type === "Identifier"
-			     ? vector_to_list(['property', node.property.name])
-			     : transform(node.property)])
+      return vector_to_list([
+        'object_access',
+        transform(node.object),
+        !node.computed && node.property.type === 'Identifier'
+          ? vector_to_list(['property', node.property.name])
+          : transform(node.property)
+      ])
     }
   ],
 
@@ -310,11 +312,13 @@ const transformers: ASTTransformers = new Map([
     (node: es.Property) => {
       // identifiers before the ":" in literal objects are meant
       // as string, and represented by a "property" node in parse result
-      return vector_to_list(['key_value_pair',
-			     node.key.type === 'Identifier'
-			     ? vector_to_list(['property', node.key.name])
-			     : transform(node.key),
-			     transform(node.value)])
+      return vector_to_list([
+        'key_value_pair',
+        node.key.type === 'Identifier'
+          ? vector_to_list(['property', node.key.name])
+          : transform(node.key),
+        transform(node.value)
+      ])
     }
   ],
 
