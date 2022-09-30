@@ -2926,34 +2926,46 @@ Object {
     Array [
       Array [
         Array [
+          "key_value_pair",
           Array [
-            "property",
             Array [
-              "a",
-              null,
+              "property",
+              Array [
+                "a",
+                null,
+              ],
             ],
-          ],
-          Array [
-            "literal",
             Array [
-              1,
+              Array [
+                "literal",
+                Array [
+                  1,
+                  null,
+                ],
+              ],
               null,
             ],
           ],
         ],
         Array [
           Array [
+            "key_value_pair",
             Array [
-              "property",
               Array [
-                "b",
-                null,
+                "property",
+                Array [
+                  "b",
+                  null,
+                ],
               ],
-            ],
-            Array [
-              "literal",
               Array [
-                2,
+                Array [
+                  "literal",
+                  Array [
+                    2,
+                    null,
+                  ],
+                ],
                 null,
               ],
             ],
@@ -3013,34 +3025,46 @@ Object {
         Array [
           Array [
             Array [
+              "key_value_pair",
               Array [
-                "property",
                 Array [
-                  "a",
-                  null,
+                  "property",
+                  Array [
+                    "a",
+                    null,
+                  ],
                 ],
-              ],
-              Array [
-                "literal",
                 Array [
-                  1,
+                  Array [
+                    "literal",
+                    Array [
+                      1,
+                      null,
+                    ],
+                  ],
                   null,
                 ],
               ],
             ],
             Array [
               Array [
+                "key_value_pair",
                 Array [
-                  "property",
                   Array [
-                    "b",
-                    null,
+                    "property",
+                    Array [
+                      "b",
+                      null,
+                    ],
                   ],
-                ],
-                Array [
-                  "literal",
                   Array [
-                    2,
+                    Array [
+                      "literal",
+                      Array [
+                        2,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
@@ -3110,34 +3134,46 @@ Object {
         Array [
           Array [
             Array [
+              "key_value_pair",
               Array [
-                "property",
                 Array [
-                  "a",
-                  null,
+                  "property",
+                  Array [
+                    "a",
+                    null,
+                  ],
                 ],
-              ],
-              Array [
-                "literal",
                 Array [
-                  1,
+                  Array [
+                    "literal",
+                    Array [
+                      1,
+                      null,
+                    ],
+                  ],
                   null,
                 ],
               ],
             ],
             Array [
               Array [
+                "key_value_pair",
                 Array [
-                  "property",
                   Array [
-                    "b",
-                    null,
+                    "property",
+                    Array [
+                      "b",
+                      null,
+                    ],
                   ],
-                ],
-                Array [
-                  "literal",
                   Array [
-                    2,
+                    Array [
+                      "literal",
+                      Array [
+                        2,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
@@ -3207,22 +3243,46 @@ Object {
         Array [
           Array [
             Array [
-              "a",
+              "key_value_pair",
               Array [
-                "literal",
                 Array [
-                  1,
+                  "literal",
+                  Array [
+                    "a",
+                    null,
+                  ],
+                ],
+                Array [
+                  Array [
+                    "literal",
+                    Array [
+                      1,
+                      null,
+                    ],
+                  ],
                   null,
                 ],
               ],
             ],
             Array [
               Array [
-                "b",
+                "key_value_pair",
                 Array [
-                  "literal",
                   Array [
-                    2,
+                    "literal",
+                    Array [
+                      "b",
+                      null,
+                    ],
+                  ],
+                  Array [
+                    Array [
+                      "literal",
+                      Array [
+                        2,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
@@ -3291,22 +3351,46 @@ Object {
         Array [
           Array [
             Array [
-              1,
+              "key_value_pair",
               Array [
-                "literal",
                 Array [
-                  1,
+                  "literal",
+                  Array [
+                    1,
+                    null,
+                  ],
+                ],
+                Array [
+                  Array [
+                    "literal",
+                    Array [
+                      1,
+                      null,
+                    ],
+                  ],
                   null,
                 ],
               ],
             ],
             Array [
               Array [
-                2,
+                "key_value_pair",
                 Array [
-                  "literal",
                   Array [
-                    2,
+                    "literal",
+                    Array [
+                      2,
+                      null,
+                    ],
+                  ],
+                  Array [
+                    Array [
+                      "literal",
+                      Array [
+                        2,
+                        null,
+                      ],
+                    ],
                     null,
                   ],
                 ],
@@ -3403,34 +3487,46 @@ Object {
                 Array [
                   Array [
                     Array [
+                      "key_value_pair",
                       Array [
-                        "property",
                         Array [
-                          "a",
-                          null,
+                          "property",
+                          Array [
+                            "a",
+                            null,
+                          ],
                         ],
-                      ],
-                      Array [
-                        "literal",
                         Array [
-                          1,
+                          Array [
+                            "literal",
+                            Array [
+                              1,
+                              null,
+                            ],
+                          ],
                           null,
                         ],
                       ],
                     ],
                     Array [
                       Array [
+                        "key_value_pair",
                         Array [
-                          "property",
                           Array [
-                            "b",
-                            null,
+                            "property",
+                            Array [
+                              "b",
+                              null,
+                            ],
                           ],
-                        ],
-                        Array [
-                          "literal",
                           Array [
-                            2,
+                            Array [
+                              "literal",
+                              Array [
+                                2,
+                                null,
+                              ],
+                            ],
                             null,
                           ],
                         ],
@@ -3443,7 +3539,7 @@ Object {
               ],
               Array [
                 Array [
-                  "property",
+                  "name",
                   Array [
                     "key",
                     null,
@@ -3520,34 +3616,46 @@ Object {
                 Array [
                   Array [
                     Array [
+                      "key_value_pair",
                       Array [
-                        "property",
                         Array [
-                          "a",
-                          null,
+                          "property",
+                          Array [
+                            "a",
+                            null,
+                          ],
                         ],
-                      ],
-                      Array [
-                        "literal",
                         Array [
-                          1,
+                          Array [
+                            "literal",
+                            Array [
+                              1,
+                              null,
+                            ],
+                          ],
                           null,
                         ],
                       ],
                     ],
                     Array [
                       Array [
+                        "key_value_pair",
                         Array [
-                          "property",
                           Array [
-                            "b",
-                            null,
+                            "property",
+                            Array [
+                              "b",
+                              null,
+                            ],
                           ],
-                        ],
-                        Array [
-                          "literal",
                           Array [
-                            2,
+                            Array [
+                              "literal",
+                              Array [
+                                2,
+                                null,
+                              ],
+                            ],
                             null,
                           ],
                         ],
@@ -3666,34 +3774,46 @@ Object {
                 Array [
                   Array [
                     Array [
+                      "key_value_pair",
                       Array [
-                        "property",
                         Array [
-                          "a",
-                          null,
+                          "property",
+                          Array [
+                            "a",
+                            null,
+                          ],
                         ],
-                      ],
-                      Array [
-                        "literal",
                         Array [
-                          1,
+                          Array [
+                            "literal",
+                            Array [
+                              1,
+                              null,
+                            ],
+                          ],
                           null,
                         ],
                       ],
                     ],
                     Array [
                       Array [
+                        "key_value_pair",
                         Array [
-                          "property",
                           Array [
-                            "b",
-                            null,
+                            "property",
+                            Array [
+                              "b",
+                              null,
+                            ],
                           ],
-                        ],
-                        Array [
-                          "literal",
                           Array [
-                            2,
+                            Array [
+                              "literal",
+                              Array [
+                                2,
+                                null,
+                              ],
+                            ],
                             null,
                           ],
                         ],
@@ -3813,34 +3933,46 @@ Object {
                 Array [
                   Array [
                     Array [
+                      "key_value_pair",
                       Array [
-                        "property",
                         Array [
-                          "a",
-                          null,
+                          "property",
+                          Array [
+                            "a",
+                            null,
+                          ],
                         ],
-                      ],
-                      Array [
-                        "literal",
                         Array [
-                          1,
+                          Array [
+                            "literal",
+                            Array [
+                              1,
+                              null,
+                            ],
+                          ],
                           null,
                         ],
                       ],
                     ],
                     Array [
                       Array [
+                        "key_value_pair",
                         Array [
-                          "property",
                           Array [
-                            "b",
-                            null,
+                            "property",
+                            Array [
+                              "b",
+                              null,
+                            ],
                           ],
-                        ],
-                        Array [
-                          "literal",
                           Array [
-                            2,
+                            Array [
+                              "literal",
+                              Array [
+                                2,
+                                null,
+                              ],
+                            ],
                             null,
                           ],
                         ],
@@ -3894,7 +4026,7 @@ Object {
                     ],
                     Array [
                       Array [
-                        "property",
+                        "name",
                         Array [
                           "key",
                           null,
