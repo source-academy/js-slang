@@ -3,6 +3,7 @@ import {
   Options as AcornOptions,
   parse as acornParse,
   parseExpressionAt as acornParseAt,
+  Parser,
   Position,
   tokenizer as acornTokenizer
 } from 'acorn'
@@ -10,12 +11,13 @@ import { parse as acornLooseParse } from 'acorn-loose'
 import * as es from 'estree'
 
 import { ACORN_PARSE_OPTIONS } from '../constants'
-import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
+import { Context, ErrorSeverity, ErrorType, Rule, SourceError, Variant } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { ancestor, AncestorWalkerFn } from '../utils/walkers'
 import { validateAndAnnotate } from '../validator/validator'
 import rules from './rules'
 import syntaxBlacklist from './syntaxBlacklist'
+import typeParser from './typeParser'
 
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -115,7 +117,8 @@ export function parseAt(source: string, num: number) {
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
-    program = acornParse(source, createAcornParserOptions(context)) as unknown as es.Program
+    const parser = context.variant === Variant.TYPED ? Parser.extend(typeParser) : Parser
+    program = parser.parse(source, createAcornParserOptions(context)) as unknown as es.Program
     ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
     if (error instanceof SyntaxError) {

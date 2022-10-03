@@ -72,6 +72,7 @@ export enum Chapter {
 
 export enum Variant {
   DEFAULT = 'default',
+  TYPED = 'typed',
   NATIVE = 'native',
   WASM = 'wasm',
   LAZY = 'lazy',
