@@ -398,3 +398,27 @@ export class InconsistentPredicateTestError implements SourceError {
     return this.explain()
   }
 }
+
+export class TypeMismatchError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  public actualType: string
+  public expectedType: string
+
+  constructor(public node: es.Node, actualType: string, expectedType: string) {
+    this.actualType = actualType
+    this.expectedType = expectedType
+  }
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.actualType}' is not assignable to type '${this.expectedType}'.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
