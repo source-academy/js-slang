@@ -655,8 +655,13 @@ function transpileToSource(
   return { transpiled, sourceMapJson }
 }
 
-function transpileToFullJS(program: es.Program): TranspiledResult {
-  const usedIdentifiers = new Set<string>(getIdentifiersInProgram(program))
+function transpileToFullJS(program: es.Program, context: Context, skipUndefined: boolean): TranspiledResult {
+  const usedIdentifiers = new Set<string>([
+    ...getIdentifiersInProgram(program),
+    ...getIdentifiersInNativeStorage(context.nativeStorage)])
+
+  const globalIds = getNativeIds(program, usedIdentifiers)
+  checkForUndefinedVariables(program, context.nativeStorage, globalIds, skipUndefined)
 
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
@@ -682,9 +687,11 @@ export function transpile(
   context: Context,
   skipUndefined = false
 ): TranspiledResult {
-  if (context.chapter === Chapter.FULL_JS || context.variant == Variant.NATIVE) {
-    return transpileToFullJS(program)
+  if (context.chapter === Chapter.FULL_JS) {
+    return transpileToFullJS(program, context, true)
+  } else if (context.variant == Variant.NATIVE) {
+    return transpileToFullJS(program, context, false)
+  } else {
+    return transpileToSource(program, context, skipUndefined)
   }
-
-  return transpileToSource(program, context, skipUndefined)
 }
