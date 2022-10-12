@@ -655,10 +655,15 @@ function transpileToSource(
   return { transpiled, sourceMapJson }
 }
 
-function transpileToFullJS(program: es.Program, context: Context, skipUndefined: boolean): TranspiledResult {
+function transpileToFullJS(
+  program: es.Program,
+  context: Context,
+  skipUndefined: boolean
+): TranspiledResult {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
-    ...getIdentifiersInNativeStorage(context.nativeStorage)])
+    ...getIdentifiersInNativeStorage(context.nativeStorage)
+  ])
 
   const globalIds = getNativeIds(program, usedIdentifiers)
   checkForUndefinedVariables(program, context.nativeStorage, globalIds, skipUndefined)
