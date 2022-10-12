@@ -2,6 +2,7 @@
 import { Options, parse } from 'acorn'
 import { generate } from 'astring'
 import * as es from 'estree'
+import { RawSourceMap } from 'source-map'
 
 import { IOptions, Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
@@ -92,31 +93,29 @@ export async function fullJSRunner(
 
   // modules
   hoistImportDeclarations(program)
-  try {
-    appendModulesToContext(program, context)
-    // modulePrefix = prefixModule(program)
-  } catch (error) {
-    context.errors.push(error instanceof RuntimeSourceError ? error : await toSourceError(error))
-    return resolvedErrorPromise
-  }
+  appendModulesToContext(program, context)
 
+  // evaluate and create a separate block for preludes and builtins
   const preEvalProgram: es.Program = create.program([
     ...preludeAndBuiltins,
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set())
   ])
-  const preEvalCode: string = generate(preEvalProgram) // + modulePrefix
+  const preEvalCode: string = generate(preEvalProgram)
   await fullJSEval(preEvalCode, context)
 
-  const { transpiled, sourceMapJson } = transpile(program, context)
-  // console.log(transpiled);
+  let transpiled
+  let sourceMapJson: RawSourceMap | undefined
   try {
+    ;({ transpiled, sourceMapJson } = transpile(program, context))
     return Promise.resolve({
       status: 'finished',
       context,
       value: await fullJSEval(transpiled, context)
     })
   } catch (error) {
-    context.errors.push(await toSourceError(error, sourceMapJson))
+    context.errors.push(
+      error instanceof RuntimeSourceError ? error : await toSourceError(error, sourceMapJson)
+    )
     return resolvedErrorPromise
   }
 }
