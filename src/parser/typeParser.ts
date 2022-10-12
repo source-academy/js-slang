@@ -1,6 +1,22 @@
 // Code taken from https://github.com/patternfly/patternfly-org/blob/main/packages/ast-helpers/acorn-typescript.js
 import { getLineInfo, lineBreak, tokTypes } from 'acorn'
 
+class DestructuringErrors {
+  shorthandAssign: number
+  trailingComma: number
+  parenthesizedAssign: number
+  parenthesizedBind: number
+  doubleProto: number
+  constructor() {
+    this.shorthandAssign =
+      this.trailingComma =
+      this.parenthesizedAssign =
+      this.parenthesizedBind =
+      this.doubleProto =
+        -1
+  }
+}
+
 const tsPredefinedType = {
   any: 'TSAnyKeyword',
   bigint: 'TSBigIntKeyword',
@@ -190,21 +206,14 @@ const typeParser = (BaseParser: any) => {
       if (this.options.ecmaVersion >= 6) {
         this.next()
 
-        const innerStartPos = this.start
-        const innerStartLoc = this.startLoc
-        const refDestructuringErrors = {
-          shorthandAssign: -1,
-          trailingComma: -1,
-          parenthesizedAssign: -1,
-          parenthesizedBind: -1,
-          doubleProto: -1
-        }
-        const oldYieldPos = this.yieldPos
-        const oldAwaitPos = this.awaitPos
+        const innerStartPos = this.start,
+          innerStartLoc = this.startLoc
         const exprList = []
-
-        let first = true
-        let lastIsComma = false
+        let first = true,
+          lastIsComma = false
+        const refDestructuringErrors = new DestructuringErrors(),
+          oldYieldPos = this.yieldPos,
+          oldAwaitPos = this.awaitPos
         let spreadStart
         this.yieldPos = 0
         this.awaitPos = 0
@@ -271,6 +280,24 @@ const typeParser = (BaseParser: any) => {
       } else {
         return val
       }
+    }
+
+    // Fix ambiguity between BinaryExpressions and TSCallExpressions
+    parseSubscript(base: { typeParameters: any }) {
+      const branch = this._branch()
+      if (this._isStartOfTypeParameters()) {
+        // <
+        try {
+          // will throw if no matching >
+          const typeParameters = branch.parseTSTypeParameterInstantiation()
+          if (typeParameters && branch.eat(tokTypes.parenL)) {
+            // Update parser to match branch
+            base.typeParameters = this.parseTSTypeParameterInstantiation()
+          }
+        } catch {}
+      }
+
+      return super.parseSubscript.apply(this, arguments)
     }
 
     parseExpression() {

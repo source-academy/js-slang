@@ -117,7 +117,10 @@ export function parseAt(source: string, num: number) {
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
-    const parser = context.variant === Variant.TYPED ? Parser.extend(typeParser as any) : Parser
+    const parser =
+      context.variant === Variant.TYPED
+        ? Parser.extend(typeParser as any, require('acorn-class-fields'))
+        : Parser
     program = parser.parse(source, createAcornParserOptions(context)) as unknown as es.Program
     ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
