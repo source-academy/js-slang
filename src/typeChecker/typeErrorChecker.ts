@@ -34,9 +34,7 @@ const typeAnnotationKeywordMap = {
 }
 
 /**
- * Checks if the given program contains any type errors.
- * @param program program to be type-checked
- * @param context context of evaluation
+ * Entry function for type checker.
  */
 export function checkForTypeErrors(
   program: NodeWithDeclaredTypeAnnotation<es.Program>,
@@ -48,9 +46,7 @@ export function checkForTypeErrors(
 
 /**
  * Recurses through the given node to check for any type errors.
- * Terminates the moment an error is found.
- * @param node node to be type-checked
- * @param context context of evaluation
+ * Any errors found are added to the context.
  */
 function traverseAndTypeCheck(
   node: NodeWithDeclaredTypeAnnotation<es.Node>,
@@ -61,58 +57,59 @@ function traverseAndTypeCheck(
     case 'Program':
     case 'BlockStatement': {
       pushEnv(env)
+      // Check all statements in program/block body
       node.body.forEach(nodeBody => {
         traverseAndTypeCheck(nodeBody, context, env)
       })
       if (node.type === 'BlockStatement') {
-        // if program, we want to save the types there, so only pop for blocks
+        // Types are saved for programs, but not for blocks
         env.pop()
       }
+      break
+    }
+    case 'ExpressionStatement': {
+      // Check expression
+      traverseAndTypeCheck(node.expression, context, env)
+      break
+    }
+    case 'FunctionDeclaration':
+      if (node.id === null) {
+        // TODO: Handle error
+        return
+      }
+      const types = getParamTypes(node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[])
+      // Return type will always be last item in types array
+      types.push(getAnnotatedType(node.returnType))
+      const fnType = tFunc(...types)
+      // Save function type in type env
+      setType(node.id?.name, fnType, env)
+      break
+    case 'VariableDeclaration': {
+      if (node.kind === 'var') {
+        // TODO: Handle error
+        return
+      }
+      // TODO: Handle non-identifier instances
+      const id = node.declarations[0].id as NodeWithDeclaredTypeAnnotation<es.Identifier>
+      const init = node.declarations[0].init!
+      if (id.typeAnnotation) {
+        const expectedType = getAnnotatedType(id.typeAnnotation)
+        checkForTypeMismatch(init, expectedType, context)
+        // Save variable type and decl kind in type env
+        setType(id.name, expectedType, env)
+        setDeclKind(id.name, node.kind, env)
+      }
+      traverseAndTypeCheck(id, context, env)
       break
     }
     case 'CallExpression': {
       const fnType = lookupType((node.callee as es.Identifier).name, env) as
         | FunctionType
         | undefined
+      // TODO: Handle function not found error
       if (fnType) {
         checkParamTypes(fnType.parameterTypes as Primitive[], node.arguments, context)
-        if (context.errors.length > 0) {
-          return
-        }
       }
-      break
-    }
-    case 'ExpressionStatement': {
-      traverseAndTypeCheck(node.expression, context, env)
-      break
-    }
-    case 'FunctionDeclaration':
-      if (node.id === null) {
-        return
-      }
-      const returnType = getAnnotatedType(node.returnType)
-      const types = getParamTypes(node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[])
-      types.push(returnType)
-      const fnType = tFunc(...types)
-      setType(node.id?.name, fnType, env)
-      break
-    case 'VariableDeclaration': {
-      if (node.kind === 'var') {
-        return
-      }
-      const id = node.declarations[0].id as NodeWithDeclaredTypeAnnotation<es.Identifier>
-      const init = node.declarations[0].init!
-      if (id.typeAnnotation) {
-        const expectedType = getAnnotatedType(id.typeAnnotation)
-        const actualType = getInferredType(init)
-        if (expectedType != tAny && expectedType != actualType) {
-          context.errors.push(new TypeMismatchError(node, actualType.name, expectedType.name))
-          return
-        }
-        setType(id.name, expectedType, env)
-        setDeclKind(id.name, node.kind, env)
-      }
-      traverseAndTypeCheck(id, context, env)
       break
     }
     default:
@@ -126,20 +123,13 @@ function checkParamTypes(expected: Primitive[], actual: es.Node[], context: Cont
   }
   for (let i = 0; i < expected.length; i++) {
     const expectedType = expected[i]
-    const actualType = getInferredType(actual[i])
-    if (expectedType != tAny && expectedType != actualType) {
-      context.errors.push(new TypeMismatchError(actual[i], actualType.name, expectedType.name))
-      return
-    }
+    const node = actual[i]
+    checkForTypeMismatch(node, expectedType, context)
   }
 }
 
-function getParamTypes(params: NodeWithDeclaredTypeAnnotation<es.Identifier>[]): Type[] {
-  return params.map(param => getAnnotatedType(param.typeAnnotation))
-}
-
 /**
- * Recurses through the given node to get the inferred type
+ * Recurses through the given node to get the inferred type.
  */
 function getInferredType(node: es.Node): Primitive {
   switch (node.type) {
@@ -156,6 +146,27 @@ function getInferredType(node: es.Node): Primitive {
   }
 }
 
+/**
+ * Infers the type of the given node, then checks against the given expected type.
+ * If not equal, adds type mismatch error to context.
+ */
+function checkForTypeMismatch(node: es.Node, expectedType: Primitive, context: Context) {
+  const actualType = getInferredType(node)
+  if (expectedType != tAny && expectedType != actualType) {
+    context.errors.push(new TypeMismatchError(node, actualType.name, expectedType.name))
+  }
+}
+
+/**
+ * Converts array of function parameters into array of types.
+ */
+function getParamTypes(params: NodeWithDeclaredTypeAnnotation<es.Identifier>[]): Type[] {
+  return params.map(param => getAnnotatedType(param.typeAnnotation))
+}
+
+/**
+ * Converts type annotation node to its corresponding type representation in Source.
+ */
 function getAnnotatedType(annotationNode: TypeAnnotationNode | undefined): Primitive {
   if (!annotationNode) {
     return tPrimitive(TypeAnnotationKeyword.ANY)
