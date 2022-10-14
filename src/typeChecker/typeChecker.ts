@@ -18,7 +18,6 @@ import { typedParse } from '../parser/parser'
 import {
   AllowedDeclarations,
   BindableType,
-  Chapter,
   Context,
   ContiguousArrayElements,
   ForAll,
@@ -27,13 +26,11 @@ import {
   Pair,
   PredicateTest,
   PredicateType,
-  Primitive,
   SArray,
   SourceError,
   Type,
   TypeAnnotatedFuncDecl,
   TypeAnnotatedNode,
-  TypeAnnotationKeyword,
   TypeEnvironment,
   Variable
 } from '../types'
@@ -45,9 +42,21 @@ import {
   TypeError,
   UnifyError
 } from './internalTypeErrors'
+import {
+  NEGATIVE_OP,
+  tArray,
+  tBool,
+  temporaryStreamFuncs,
+  tForAll,
+  tFunc,
+  tList,
+  tNumber,
+  tPair,
+  tString,
+  tUndef,
+  tVar
+} from './utils'
 
-/** Name of Unary negative builtin operator */
-const NEGATIVE_OP = '-_1'
 let typeIdCounter = 0
 
 /**
@@ -208,11 +217,6 @@ function isInternalTypeError(error: any) {
   return error instanceof InternalTypeError
 }
 
-// Type Definitions
-// Our type environment maps variable names to types.
-// it also remembers if names weer declared as const or let
-type Env = TypeEnvironment
-
 type Constraint = [Variable, Type]
 let hasUndefinedIdentifierError = false
 let typeErrors: SourceError[] = []
@@ -239,7 +243,7 @@ export function typeCheck(
     typeIdCounter = 0
     hasUndefinedIdentifierError = false
     typeErrors = []
-    const env: Env = context.typeEnvironment
+    const env: TypeEnvironment = context.typeEnvironment
     if (context.chapter >= 3 && env.length === 3) {
       // TODO: this is a hack since we don't infer streams properly yet
       // if chapter is 3 and the prelude was just loaded, we change all the stream functions
@@ -803,7 +807,7 @@ function returnBlockValueNodeIndexFor(
   }
 }
 
-function lookupType(name: string, env: Env): BindableType | undefined {
+function lookupType(name: string, env: TypeEnvironment): BindableType | undefined {
   for (let i = env.length - 1; i >= 0; i--) {
     if (env[i].typeMap.has(name)) {
       return env[i].typeMap.get(name)
@@ -812,7 +816,7 @@ function lookupType(name: string, env: Env): BindableType | undefined {
   return undefined
 }
 
-function lookupDeclKind(name: string, env: Env): AllowedDeclarations | undefined {
+function lookupDeclKind(name: string, env: TypeEnvironment): AllowedDeclarations | undefined {
   for (let i = env.length - 1; i >= 0; i--) {
     if (env[i].declKindMap.has(name)) {
       return env[i].declKindMap.get(name)
@@ -821,22 +825,22 @@ function lookupDeclKind(name: string, env: Env): AllowedDeclarations | undefined
   return undefined
 }
 
-function setType(name: string, type: BindableType, env: Env) {
+function setType(name: string, type: BindableType, env: TypeEnvironment) {
   env[env.length - 1].typeMap.set(name, type)
 }
 
-function setDeclKind(name: string, kind: AllowedDeclarations, env: Env) {
+function setDeclKind(name: string, kind: AllowedDeclarations, env: TypeEnvironment) {
   env[env.length - 1].declKindMap.set(name, kind)
 }
 
-function pushEnv(env: Env) {
+function pushEnv(env: TypeEnvironment) {
   env.push({ typeMap: new Map(), declKindMap: new Map() })
 }
 
 /* tslint:disable cyclomatic-complexity */
 function infer(
   node: TypeAnnotatedNode<es.Node>,
-  env: Env,
+  env: TypeEnvironment,
   constraints: Constraint[],
   isTopLevelAndLastValStmt: boolean = false
 ): Constraint[] {
@@ -854,7 +858,7 @@ function infer(
 /* tslint:disable cyclomatic-complexity */
 function _infer(
   node: TypeAnnotatedNode<es.Node>,
-  env: Env,
+  env: TypeEnvironment,
   constraints: Constraint[],
   isTopLevelAndLastValStmt: boolean = false
 ): Constraint[] {
@@ -1511,237 +1515,4 @@ function _infer(
     default:
       return addToConstraintList(constraints, [storedType, tUndef])
   }
-}
-
-// =======================================
-// Private Helper Parsing Functions
-// =======================================
-
-export function tPrimitive(name: Primitive['name']): Primitive {
-  return {
-    kind: 'primitive',
-    name
-  }
-}
-
-export function tVar(name: string | number): Variable {
-  return {
-    kind: 'variable',
-    name: `T${name}`,
-    constraint: 'none'
-  }
-}
-
-function tAddable(name: string): Variable {
-  return {
-    kind: 'variable',
-    name: `${name}`,
-    constraint: 'addable'
-  }
-}
-
-function tPair(var1: Type, var2: Type): Pair {
-  return {
-    kind: 'pair',
-    headType: var1,
-    tailType: var2
-  }
-}
-
-function tList(var1: Type): List {
-  return {
-    kind: 'list',
-    elementType: var1
-  }
-}
-
-export function tForAll(type: Type): ForAll {
-  return {
-    kind: 'forall',
-    polyType: type
-  }
-}
-
-function tArray(var1: Type): SArray {
-  return {
-    kind: 'array',
-    elementType: var1
-  }
-}
-
-const tBool = tPrimitive(TypeAnnotationKeyword.BOOLEAN)
-const tNumber = tPrimitive(TypeAnnotationKeyword.NUMBER)
-const tString = tPrimitive(TypeAnnotationKeyword.STRING)
-const tUndef = tPrimitive(TypeAnnotationKeyword.UNDEFINED)
-
-export function tFunc(...types: Type[]): FunctionType {
-  const parameterTypes = types.slice(0, -1)
-  const returnType = types.slice(-1)[0]
-  return {
-    kind: 'function',
-    parameterTypes,
-    returnType
-  }
-}
-
-function tPred(ifTrueType: Type | ForAll): PredicateType {
-  return {
-    kind: 'predicate',
-    ifTrueType
-  }
-}
-
-const predeclaredNames: [string, BindableType][] = [
-  // constants
-  ['Infinity', tNumber],
-  ['NaN', tNumber],
-  ['undefined', tUndef],
-  ['math_E', tNumber],
-  ['math_LN2', tNumber],
-  ['math_LN10', tNumber],
-  ['math_LOG2E', tNumber],
-  ['math_LOG10E', tNumber],
-  ['math_PI', tNumber],
-  ['math_SQRT1_2', tNumber],
-  ['math_SQRT2', tNumber],
-  // is something functions
-  ['is_boolean', tPred(tBool)],
-  ['is_number', tPred(tNumber)],
-  ['is_string', tPred(tString)],
-  ['is_undefined', tPred(tUndef)],
-  ['is_function', tPred(tForAll(tFunc(tVar('T'), tVar('U'))))],
-  // math functions
-  ['math_abs', tFunc(tNumber, tNumber)],
-  ['math_acos', tFunc(tNumber, tNumber)],
-  ['math_acosh', tFunc(tNumber, tNumber)],
-  ['math_asin', tFunc(tNumber, tNumber)],
-  ['math_asinh', tFunc(tNumber, tNumber)],
-  ['math_atan', tFunc(tNumber, tNumber)],
-  ['math_atan2', tFunc(tNumber, tNumber, tNumber)],
-  ['math_atanh', tFunc(tNumber, tNumber)],
-  ['math_cbrt', tFunc(tNumber, tNumber)],
-  ['math_ceil', tFunc(tNumber, tNumber)],
-  ['math_clz32', tFunc(tNumber, tNumber)],
-  ['math_cos', tFunc(tNumber, tNumber)],
-  ['math_cosh', tFunc(tNumber, tNumber)],
-  ['math_exp', tFunc(tNumber, tNumber)],
-  ['math_expm1', tFunc(tNumber, tNumber)],
-  ['math_floor', tFunc(tNumber, tNumber)],
-  ['math_fround', tFunc(tNumber, tNumber)],
-  ['math_hypot', tForAll(tVar('T'))],
-  ['math_imul', tFunc(tNumber, tNumber, tNumber)],
-  ['math_log', tFunc(tNumber, tNumber)],
-  ['math_log1p', tFunc(tNumber, tNumber)],
-  ['math_log2', tFunc(tNumber, tNumber)],
-  ['math_log10', tFunc(tNumber, tNumber)],
-  ['math_max', tForAll(tVar('T'))],
-  ['math_min', tForAll(tVar('T'))],
-  ['math_pow', tFunc(tNumber, tNumber, tNumber)],
-  ['math_random', tFunc(tNumber)],
-  ['math_round', tFunc(tNumber, tNumber)],
-  ['math_sign', tFunc(tNumber, tNumber)],
-  ['math_sin', tFunc(tNumber, tNumber)],
-  ['math_sinh', tFunc(tNumber, tNumber)],
-  ['math_sqrt', tFunc(tNumber, tNumber)],
-  ['math_tan', tFunc(tNumber, tNumber)],
-  ['math_tanh', tFunc(tNumber, tNumber)],
-  ['math_trunc', tFunc(tNumber, tNumber)],
-  // misc functions
-  ['parse_int', tFunc(tString, tNumber, tNumber)],
-  ['prompt', tFunc(tString, tString)],
-  ['get_time', tFunc(tNumber)],
-  ['stringify', tForAll(tFunc(tVar('T'), tString))],
-  ['display', tForAll(tVar('T'))],
-  ['error', tForAll(tVar('T'))]
-]
-
-const headType = tVar('headType')
-const tailType = tVar('tailType')
-
-const pairFuncs: [string, BindableType][] = [
-  ['pair', tForAll(tFunc(headType, tailType, tPair(headType, tailType)))],
-  ['head', tForAll(tFunc(tPair(headType, tailType), headType))],
-  ['tail', tForAll(tFunc(tPair(headType, tailType), tailType))],
-  ['is_pair', tPred(tForAll(tPair(headType, tailType)))],
-  ['is_null', tPred(tForAll(tList(tVar('T'))))],
-  ['is_list', tPred(tForAll(tList(tVar('T'))))]
-]
-
-const mutatingPairFuncs: [string, BindableType][] = [
-  ['set_head', tForAll(tFunc(tPair(headType, tailType), headType, tUndef))],
-  ['set_tail', tForAll(tFunc(tPair(headType, tailType), tailType, tUndef))]
-]
-
-const arrayFuncs: [string, BindableType][] = [
-  ['is_array', tPred(tForAll(tArray(tVar('T'))))],
-  ['array_length', tForAll(tFunc(tArray(tVar('T')), tNumber))]
-]
-
-const listFuncs: [string, BindableType][] = [['list', tForAll(tVar('T1'))]]
-
-const primitiveFuncs: [string, BindableType][] = [
-  [NEGATIVE_OP, tFunc(tNumber, tNumber)],
-  ['!', tFunc(tBool, tBool)],
-  ['&&', tForAll(tFunc(tBool, tVar('T'), tVar('T')))],
-  ['||', tForAll(tFunc(tBool, tVar('T'), tVar('T')))],
-  ['<', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['<=', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['>', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['>=', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['+', tForAll(tFunc(tAddable('A'), tAddable('A'), tAddable('A')))],
-  ['%', tFunc(tNumber, tNumber, tNumber)],
-  ['-', tFunc(tNumber, tNumber, tNumber)],
-  ['*', tFunc(tNumber, tNumber, tNumber)],
-  ['/', tFunc(tNumber, tNumber, tNumber)]
-]
-
-// Source 2 and below restricts === to addables
-const preS3equalityFuncs: [string, BindableType][] = [
-  ['===', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['!==', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))]
-]
-
-// Source 3 and above allows any values as arguments for ===
-const postS3equalityFuncs: [string, BindableType][] = [
-  ['===', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))],
-  ['!==', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))]
-]
-
-const temporaryStreamFuncs: [string, BindableType][] = [
-  ['is_stream', tForAll(tFunc(tVar('T1'), tBool))],
-  ['list_to_stream', tForAll(tFunc(tList(tVar('T1')), tVar('T2')))],
-  ['stream_to_list', tForAll(tFunc(tVar('T1'), tList(tVar('T2'))))],
-  ['stream_length', tForAll(tFunc(tVar('T1'), tNumber))],
-  ['stream_map', tForAll(tFunc(tVar('T1'), tVar('T2')))],
-  ['build_stream', tForAll(tFunc(tNumber, tFunc(tNumber, tVar('T1')), tVar('T2')))],
-  ['stream_for_each', tForAll(tFunc(tFunc(tVar('T1'), tVar('T2')), tBool))],
-  ['stream_reverse', tForAll(tFunc(tVar('T1'), tVar('T1')))],
-  ['stream_append', tForAll(tFunc(tVar('T1'), tVar('T1'), tVar('T1')))],
-  ['stream_member', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
-  ['stream_remove', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
-  ['stream_remove_all', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
-  ['stream_filter', tForAll(tFunc(tFunc(tVar('T1'), tBool), tVar('T2'), tVar('T2')))],
-  ['enum_stream', tForAll(tFunc(tNumber, tNumber, tVar('T1')))],
-  ['integers_from', tForAll(tFunc(tNumber, tVar('T1')))],
-  ['eval_stream', tForAll(tFunc(tVar('T1'), tNumber, tList(tVar('T2'))))],
-  ['stream_ref', tForAll(tFunc(tVar('T1'), tNumber, tVar('T2')))]
-]
-
-export function createTypeEnvironment(chapter: Chapter): Env {
-  const initialTypeMappings = [...predeclaredNames, ...primitiveFuncs]
-  if (chapter >= 2) {
-    initialTypeMappings.push(...pairFuncs, ...listFuncs)
-  }
-  if (chapter >= 3) {
-    initialTypeMappings.push(...postS3equalityFuncs, ...mutatingPairFuncs, ...arrayFuncs)
-  } else {
-    initialTypeMappings.push(...preS3equalityFuncs)
-  }
-
-  return [
-    {
-      typeMap: new Map(initialTypeMappings),
-      declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const']))
-    }
-  ]
 }

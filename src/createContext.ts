@@ -12,7 +12,7 @@ import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
-import { createTypeEnvironment, tForAll, tVar } from './typeChecker/typeChecker'
+import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils'
 import {
   Chapter,
   Context,

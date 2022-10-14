@@ -11,7 +11,7 @@ import {
   TypeAnnotationKeyword,
   TypeEnvironment
 } from '../types'
-import { tFunc, tPrimitive } from './typeChecker'
+import { tFunc, tPrimitive } from './utils'
 
 type NodeWithTypeAnnotation<T extends es.Node> = TypeAnnotation & T
 
