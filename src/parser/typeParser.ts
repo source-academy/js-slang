@@ -1,5 +1,5 @@
 // Code taken from https://github.com/patternfly/patternfly-org/blob/main/packages/ast-helpers/acorn-typescript.js
-import { getLineInfo, lineBreak, tokTypes } from 'acorn'
+import { getLineInfo, lineBreak, Parser, tokTypes } from 'acorn'
 
 class DestructuringErrors {
   shorthandAssign: number
@@ -50,7 +50,7 @@ const tsExprMarkup = {
   '!': 2
 }
 
-const typeParser = (BaseParser: any) => {
+const tsPlugin = (BaseParser: any) => {
   return class extends BaseParser {
     constructor(...args: any) {
       super(...args)
@@ -1032,4 +1032,7 @@ const typeParser = (BaseParser: any) => {
   }
 }
 
-export default typeParser
+// acorn-class-fields plugin is needed, else parsing of some function types will not work
+const TypeParser = Parser.extend(tsPlugin as any, require('acorn-class-fields'))
+
+export default TypeParser

@@ -17,7 +17,7 @@ import { ancestor, AncestorWalkerFn } from '../utils/walkers'
 import { validateAndAnnotate } from '../validator/validator'
 import rules from './rules'
 import syntaxBlacklist from './syntaxBlacklist'
-import typeParser from './typeParser'
+import TypeParser from './typeParser'
 
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -117,10 +117,7 @@ export function parseAt(source: string, num: number) {
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
-    const parser =
-      context.variant === Variant.TYPED
-        ? Parser.extend(typeParser as any, require('acorn-class-fields'))
-        : Parser
+    const parser = context.variant === Variant.TYPED ? TypeParser : Parser
     program = parser.parse(source, createAcornParserOptions(context)) as unknown as es.Program
     ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
