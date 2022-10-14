@@ -1,4 +1,5 @@
 import * as es from 'estree'
+import { InvalidNumberOfArguments, UndefinedVariable } from '../errors/errors'
 
 import { TypeMismatchError } from '../errors/typeErrors'
 import {
@@ -92,23 +93,27 @@ function traverseAndTypeCheck(
       // TODO: Handle non-identifier instances
       const id = node.declarations[0].id as NodeWithDeclaredTypeAnnotation<es.Identifier>
       const init = node.declarations[0].init!
-      if (id.typeAnnotation) {
-        const expectedType = getAnnotatedType(id.typeAnnotation)
-        checkForTypeMismatch(init, expectedType, context)
-        // Save variable type and decl kind in type env
-        setType(id.name, expectedType, env)
-        setDeclKind(id.name, node.kind, env)
-      }
+      const expectedType = getAnnotatedType(id.typeAnnotation)
+      checkForTypeMismatch(init, expectedType, context, env)
+      // Save variable type and decl kind in type env
+      setType(id.name, expectedType, env)
+      setDeclKind(id.name, node.kind, env)
       traverseAndTypeCheck(id, context, env)
       break
     }
     case 'CallExpression': {
-      const fnType = lookupType((node.callee as es.Identifier).name, env) as
-        | FunctionType
-        | undefined
-      // TODO: Handle function not found error
+      const fnName = (node.callee as es.Identifier).name
+      const fnType = lookupType(fnName, env) as FunctionType | undefined
       if (fnType) {
-        checkParamTypes(fnType.parameterTypes as Primitive[], node.arguments, context)
+        const expectedTypes = fnType.parameterTypes as Primitive[]
+        const args = node.arguments
+        if (args.length !== expectedTypes.length) {
+          context.errors.push(new InvalidNumberOfArguments(node, expectedTypes.length, args.length))
+          return
+        }
+        checkArgTypes(node, expectedTypes, context, env)
+      } else {
+        context.errors.push(new UndefinedVariable(fnName, node))
       }
       break
     }
@@ -117,21 +122,10 @@ function traverseAndTypeCheck(
   }
 }
 
-function checkParamTypes(expected: Primitive[], actual: es.Node[], context: Context) {
-  if (expected.length !== actual.length) {
-    return
-  }
-  for (let i = 0; i < expected.length; i++) {
-    const expectedType = expected[i]
-    const node = actual[i]
-    checkForTypeMismatch(node, expectedType, context)
-  }
-}
-
 /**
  * Recurses through the given node to get the inferred type.
  */
-function getInferredType(node: es.Node): Primitive {
+function getInferredType(node: es.Node, context: Context, env: TypeEnvironment): Primitive {
   switch (node.type) {
     case 'Literal': {
       const literalVal = node.value
@@ -140,6 +134,16 @@ function getInferredType(node: es.Node): Primitive {
         return tPrimitive(typeOfLiteral)
       }
       return tUnknown
+    }
+    case 'Identifier': {
+      const varName = node.name
+      const varType = lookupType(varName, env)
+      if (varType) {
+        return varType as Primitive
+      } else {
+        context.errors.push(new UndefinedVariable(varName, node))
+        return tUnknown
+      }
     }
     default:
       return tUnknown
@@ -150,10 +154,38 @@ function getInferredType(node: es.Node): Primitive {
  * Infers the type of the given node, then checks against the given expected type.
  * If not equal, adds type mismatch error to context.
  */
-function checkForTypeMismatch(node: es.Node, expectedType: Primitive, context: Context) {
-  const actualType = getInferredType(node)
-  if (expectedType != tAny && expectedType != actualType) {
+function checkForTypeMismatch(
+  node: es.Node,
+  expectedType: Primitive,
+  context: Context,
+  env: TypeEnvironment
+) {
+  const actualType = getInferredType(node, context, env)
+  if (expectedType.name !== TypeAnnotationKeyword.ANY && expectedType.name !== actualType.name) {
     context.errors.push(new TypeMismatchError(node, actualType.name, expectedType.name))
+  }
+}
+
+/**
+ * Checks the types of the arguments of the given call expression.
+ * If number of arguments is different, add InvalidNumberOfArguments error to context and terminates early.
+ * Else, checks each argument against its expected type.
+ */
+function checkArgTypes(
+  node: es.CallExpression,
+  expectedTypes: Primitive[],
+  context: Context,
+  env: TypeEnvironment
+) {
+  const args = node.arguments
+  if (args.length !== expectedTypes.length) {
+    context.errors.push(new InvalidNumberOfArguments(node, expectedTypes.length, args.length))
+    return
+  }
+  for (let i = 0; i < expectedTypes.length; i++) {
+    const expectedType = expectedTypes[i]
+    const node = args[i]
+    checkForTypeMismatch(node, expectedType, context, env)
   }
 }
 
@@ -166,10 +198,11 @@ function getParamTypes(params: NodeWithDeclaredTypeAnnotation<es.Identifier>[]):
 
 /**
  * Converts type annotation node to its corresponding type representation in Source.
+ * If no type annotation exists, returns the "any" type.
  */
 function getAnnotatedType(annotationNode: TypeAnnotationNode | undefined): Primitive {
   if (!annotationNode) {
-    return tPrimitive(TypeAnnotationKeyword.ANY)
+    return tAny
   }
   return tPrimitive(
     typeAnnotationKeywordMap[annotationNode.typeAnnotation.type] ?? TypeAnnotationKeyword.UNKNOWN
