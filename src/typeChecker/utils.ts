@@ -3,6 +3,7 @@
 // =======================================
 
 import {
+  AllowedDeclarations,
   BindableType,
   Chapter,
   ForAll,
@@ -21,6 +22,41 @@ import {
 /** Name of Unary negative builtin operator */
 export const NEGATIVE_OP = '-_1'
 
+// Helper functions for dealing with type environment
+export function lookupType(name: string, env: TypeEnvironment): BindableType | undefined {
+  for (let i = env.length - 1; i >= 0; i--) {
+    if (env[i].typeMap.has(name)) {
+      return env[i].typeMap.get(name)
+    }
+  }
+  return undefined
+}
+
+export function lookupDeclKind(
+  name: string,
+  env: TypeEnvironment
+): AllowedDeclarations | undefined {
+  for (let i = env.length - 1; i >= 0; i--) {
+    if (env[i].declKindMap.has(name)) {
+      return env[i].declKindMap.get(name)
+    }
+  }
+  return undefined
+}
+
+export function setType(name: string, type: BindableType, env: TypeEnvironment) {
+  env[env.length - 1].typeMap.set(name, type)
+}
+
+export function setDeclKind(name: string, kind: AllowedDeclarations, env: TypeEnvironment) {
+  env[env.length - 1].declKindMap.set(name, kind)
+}
+
+export function pushEnv(env: TypeEnvironment) {
+  env.push({ typeMap: new Map(), declKindMap: new Map() })
+}
+
+// Helper functions and constants for parsing types
 export function tPrimitive(name: Primitive['name']): Primitive {
   return {
     kind: 'primitive',
@@ -73,10 +109,12 @@ export function tArray(var1: Type): SArray {
   }
 }
 
+export const tAny = tPrimitive(TypeAnnotationKeyword.ANY)
 export const tBool = tPrimitive(TypeAnnotationKeyword.BOOLEAN)
 export const tNumber = tPrimitive(TypeAnnotationKeyword.NUMBER)
 export const tString = tPrimitive(TypeAnnotationKeyword.STRING)
 export const tUndef = tPrimitive(TypeAnnotationKeyword.UNDEFINED)
+export const tUnknown = tPrimitive(TypeAnnotationKeyword.UNKNOWN)
 
 export function tFunc(...types: Type[]): FunctionType {
   const parameterTypes = types.slice(0, -1)
@@ -95,6 +133,10 @@ export function tPred(ifTrueType: Type | ForAll): PredicateType {
   }
 }
 
+export const headType = tVar('headType')
+export const tailType = tVar('tailType')
+
+// Types for preludes
 export const predeclaredNames: [string, BindableType][] = [
   // constants
   ['Infinity', tNumber],
@@ -158,9 +200,6 @@ export const predeclaredNames: [string, BindableType][] = [
   ['display', tForAll(tVar('T'))],
   ['error', tForAll(tVar('T'))]
 ]
-
-export const headType = tVar('headType')
-export const tailType = tVar('tailType')
 
 export const pairFuncs: [string, BindableType][] = [
   ['pair', tForAll(tFunc(headType, tailType, tPair(headType, tailType)))],
@@ -231,6 +270,7 @@ export const temporaryStreamFuncs: [string, BindableType][] = [
   ['stream_ref', tForAll(tFunc(tVar('T1'), tNumber, tVar('T2')))]
 ]
 
+// Creates type environment for the appropriate Source chapter
 export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
   const initialTypeMappings = [...predeclaredNames, ...primitiveFuncs]
   if (chapter >= 2) {

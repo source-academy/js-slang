@@ -1,7 +1,14 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { ErrorSeverity, ErrorType, SArray, SourceError, Type, TypeAnnotatedNode } from '../types'
+import {
+  ErrorSeverity,
+  ErrorType,
+  NodeWithInferredTypeAnnotation,
+  SArray,
+  SourceError,
+  Type
+} from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
 
@@ -11,7 +18,7 @@ export class InvalidArrayIndexType implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.Node>, public receivedType: Type) {}
+  constructor(public node: NodeWithInferredTypeAnnotation<es.Node>, public receivedType: Type) {}
 
   get location() {
     return this.node.loc!
@@ -31,7 +38,7 @@ export class ArrayAssignmentError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.Node>,
+    public node: NodeWithInferredTypeAnnotation<es.Node>,
     public arrayType: SArray,
     public receivedType: SArray
   ) {}
@@ -54,7 +61,7 @@ export class ReassignConstError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.AssignmentExpression>) {}
+  constructor(public node: NodeWithInferredTypeAnnotation<es.AssignmentExpression>) {}
 
   get location() {
     return this.node.loc!
@@ -75,7 +82,7 @@ export class DifferentAssignmentError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.AssignmentExpression>,
+    public node: NodeWithInferredTypeAnnotation<es.AssignmentExpression>,
     public expectedType: Type,
     public receivedType: Type
   ) {}
@@ -101,8 +108,10 @@ export class DifferentAssignmentError implements SourceError {
   }
 }
 
-function formatAssignment(node: TypeAnnotatedNode<es.AssignmentExpression>): [string, string] {
-  const leftNode = node.left as TypeAnnotatedNode<es.Identifier>
+function formatAssignment(
+  node: NodeWithInferredTypeAnnotation<es.AssignmentExpression>
+): [string, string] {
+  const leftNode = node.left as NodeWithInferredTypeAnnotation<es.Identifier>
   const assignmentStr = simplify(generate(node.right))
   return [leftNode.name, assignmentStr]
 }
@@ -111,7 +120,7 @@ export class CyclicReferenceError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.Node>) {}
+  constructor(public node: NodeWithInferredTypeAnnotation<es.Node>) {}
 
   get location() {
     return this.node.loc!
@@ -126,11 +135,11 @@ export class CyclicReferenceError implements SourceError {
   }
 }
 
-function stringifyNode(node: TypeAnnotatedNode<es.Node>): string {
+function stringifyNode(node: NodeWithInferredTypeAnnotation<es.Node>): string {
   return ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type)
     ? node.type === 'VariableDeclaration'
       ? (node.declarations[0].id as es.Identifier).name
-      : (node as TypeAnnotatedNode<es.FunctionDeclaration>).id?.name!
+      : (node as NodeWithInferredTypeAnnotation<es.FunctionDeclaration>).id?.name!
     : node.type === 'Identifier'
     ? node.name
     : JSON.stringify(node) // might not be a good idea
@@ -141,7 +150,7 @@ export class DifferentNumberArgumentsError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.Node>,
+    public node: NodeWithInferredTypeAnnotation<es.Node>,
     public numExpectedArgs: number,
     public numReceived: number
   ) {}
@@ -163,8 +172,8 @@ export class InvalidArgumentTypesError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.Node>,
-    public args: TypeAnnotatedNode<es.Node>[],
+    public node: NodeWithInferredTypeAnnotation<es.Node>,
+    public args: NodeWithInferredTypeAnnotation<es.Node>[],
     public expectedTypes: Type[],
     public receivedTypes: Type[]
   ) {}
@@ -225,7 +234,7 @@ export class InvalidArgumentTypesError implements SourceError {
 }
 
 function formatNodeWithTest(
-  node: TypeAnnotatedNode<
+  node: NodeWithInferredTypeAnnotation<
     es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
   >
 ) {
@@ -260,7 +269,7 @@ export class InvalidTestConditionError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<
+    public node: NodeWithInferredTypeAnnotation<
       es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
     >,
     public receivedType: Type
@@ -289,7 +298,7 @@ export class UndefinedIdentifierError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.Identifier>, public name: string) {}
+  constructor(public node: NodeWithInferredTypeAnnotation<es.Identifier>, public name: string) {}
 
   get location() {
     return this.node.loc!
@@ -313,7 +322,7 @@ export class ConsequentAlternateMismatchError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>,
+    public node: NodeWithInferredTypeAnnotation<es.IfStatement | es.ConditionalExpression>,
     public consequentType: Type,
     public alternateType: Type
   ) {}
@@ -344,7 +353,10 @@ export class CallingNonFunctionType implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.CallExpression>, public callerType: Type) {}
+  constructor(
+    public node: NodeWithInferredTypeAnnotation<es.CallExpression>,
+    public callerType: Type
+  ) {}
 
   get location() {
     return this.node.loc!
@@ -371,7 +383,7 @@ export class InconsistentPredicateTestError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.CallExpression>,
+    public node: NodeWithInferredTypeAnnotation<es.CallExpression>,
     public argVarName: string,
     public preUnifyType: Type,
     public predicateType: Type

@@ -305,7 +305,7 @@ export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['eleme
 
 export type ContiguousArrayElements = ContiguousArrayElementExpression[]
 
-// Types used in type inference / Source Typed variant type error checker
+/** Types used in type inference / Source Typed variant type error checker **/
 
 export enum TypeAnnotationKeyword {
   ANY = 'any',
@@ -318,11 +318,26 @@ export enum TypeAnnotationKeyword {
   VOID = 'void'
 }
 
-export type TypeAnnotatedNode<T extends es.Node> = TypeAnnotation & T
+// Types for parsed TS node used in Source Typed variants
+export type NodeWithDeclaredTypeAnnotation<T extends es.Node> = DeclaredTypeAnnotation & T
 
-export type TypeAnnotatedFuncDecl = TypeAnnotatedNode<es.FunctionDeclaration> & TypedFuncDecl
+export type DeclaredTypeAnnotation = {
+  typeAnnotation?: TypeAnnotationNode
+  returnType?: TypeAnnotationNode
+}
 
-export type TypeAnnotation = Untypable | Typed | NotYetTyped
+export interface TypeAnnotationNode extends es.BaseNode {
+  type: 'TSTypeAnnotation'
+  typeAnnotation: es.BaseNode
+}
+
+// Types for nodes used in type inference
+export type NodeWithInferredTypeAnnotation<T extends es.Node> = InferredTypeAnnotation & T
+
+export type FuncDeclWithInferredTypeAnnotation =
+  NodeWithInferredTypeAnnotation<es.FunctionDeclaration> & TypedFuncDecl
+
+export type InferredTypeAnnotation = Untypable | Typed | NotYetTyped
 
 export interface TypedFuncDecl {
   functionInferredType?: Type
@@ -398,7 +413,7 @@ export type TypeEnvironment = {
 }[]
 
 export type PredicateTest = {
-  node: TypeAnnotatedNode<es.CallExpression>
+  node: NodeWithInferredTypeAnnotation<es.CallExpression>
   ifTrueType: Type | ForAll
   argVarName: string
 }

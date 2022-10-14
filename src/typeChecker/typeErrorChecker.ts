@@ -2,28 +2,25 @@ import * as es from 'estree'
 
 import { TypeMismatchError } from '../errors/typeErrors'
 import {
-  AllowedDeclarations,
-  BindableType,
   Context,
   FunctionType,
+  NodeWithDeclaredTypeAnnotation,
   Primitive,
   Type,
   TypeAnnotationKeyword,
+  TypeAnnotationNode,
   TypeEnvironment
 } from '../types'
-import { tFunc, tPrimitive } from './utils'
-
-type NodeWithTypeAnnotation<T extends es.Node> = TypeAnnotation & T
-
-type TypeAnnotation = {
-  typeAnnotation?: TypeAnnotationNode
-  returnType?: TypeAnnotationNode
-}
-
-interface TypeAnnotationNode extends es.BaseNode {
-  type: 'TSTypeAnnotation'
-  typeAnnotation: es.BaseNode
-}
+import {
+  lookupType,
+  pushEnv,
+  setDeclKind,
+  setType,
+  tAny,
+  tFunc,
+  tPrimitive,
+  tUnknown
+} from './utils'
 
 const typeAnnotationKeywordMap = {
   TSAnyKeyword: TypeAnnotationKeyword.ANY,
@@ -36,27 +33,13 @@ const typeAnnotationKeywordMap = {
   TSVoidKeyword: TypeAnnotationKeyword.VOID
 }
 
-const tAny = tPrimitive(TypeAnnotationKeyword.ANY)
-
-function setType(name: string, type: Type, env: TypeEnvironment) {
-  env[env.length - 1].typeMap.set(name, type)
-}
-
-function setDeclKind(name: string, kind: AllowedDeclarations, env: TypeEnvironment) {
-  env[env.length - 1].declKindMap.set(name, kind)
-}
-
-function pushEnv(env: TypeEnvironment) {
-  env.push({ typeMap: new Map(), declKindMap: new Map() })
-}
-
 /**
  * Checks if the given program contains any type errors.
  * @param program program to be type-checked
  * @param context context of evaluation
  */
 export function checkForTypeErrors(
-  program: NodeWithTypeAnnotation<es.Program>,
+  program: NodeWithDeclaredTypeAnnotation<es.Program>,
   context: Context
 ): void {
   const env: TypeEnvironment = context.typeEnvironment
@@ -70,7 +53,7 @@ export function checkForTypeErrors(
  * @param context context of evaluation
  */
 function traverseAndTypeCheck(
-  node: NodeWithTypeAnnotation<es.Node>,
+  node: NodeWithDeclaredTypeAnnotation<es.Node>,
   context: Context,
   env: TypeEnvironment
 ): void {
@@ -88,7 +71,9 @@ function traverseAndTypeCheck(
       break
     }
     case 'CallExpression': {
-      const fnType = getDeclaredType((node.callee as es.Identifier).name, env) as FunctionType
+      const fnType = lookupType((node.callee as es.Identifier).name, env) as
+        | FunctionType
+        | undefined
       if (fnType) {
         checkParamTypes(fnType.parameterTypes as Primitive[], node.arguments, context)
         if (context.errors.length > 0) {
@@ -106,7 +91,7 @@ function traverseAndTypeCheck(
         return
       }
       const returnType = getAnnotatedType(node.returnType)
-      const types = getParamTypes(node.params as NodeWithTypeAnnotation<es.Identifier>[])
+      const types = getParamTypes(node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[])
       types.push(returnType)
       const fnType = tFunc(...types)
       setType(node.id?.name, fnType, env)
@@ -115,7 +100,7 @@ function traverseAndTypeCheck(
       if (node.kind === 'var') {
         return
       }
-      const id = node.declarations[0].id as NodeWithTypeAnnotation<es.Identifier>
+      const id = node.declarations[0].id as NodeWithDeclaredTypeAnnotation<es.Identifier>
       const init = node.declarations[0].init!
       if (id.typeAnnotation) {
         const expectedType = getAnnotatedType(id.typeAnnotation)
@@ -149,7 +134,7 @@ function checkParamTypes(expected: Primitive[], actual: es.Node[], context: Cont
   }
 }
 
-function getParamTypes(params: NodeWithTypeAnnotation<es.Identifier>[]): Type[] {
+function getParamTypes(params: NodeWithDeclaredTypeAnnotation<es.Identifier>[]): Type[] {
   return params.map(param => getAnnotatedType(param.typeAnnotation))
 }
 
@@ -164,21 +149,11 @@ function getInferredType(node: es.Node): Primitive {
       if (Object.values(TypeAnnotationKeyword).includes(typeOfLiteral)) {
         return tPrimitive(typeOfLiteral)
       }
-      return tPrimitive(TypeAnnotationKeyword.UNKNOWN)
+      return tUnknown
     }
     default:
-      return tPrimitive(TypeAnnotationKeyword.UNKNOWN)
+      return tUnknown
   }
-}
-
-function getDeclaredType(name: string, env: TypeEnvironment): BindableType | undefined {
-  for (let i = env.length - 1; i >= 0; i--) {
-    const currEnv = env[i]
-    if (currEnv.typeMap.has(name)) {
-      return currEnv.typeMap.get(name)
-    }
-  }
-  return undefined
 }
 
 function getAnnotatedType(annotationNode: TypeAnnotationNode | undefined): Primitive {
