@@ -292,6 +292,32 @@ export interface BlockExpression extends es.BaseExpression {
 
 export type substituterNodes = es.Node | BlockExpression
 
+export {
+  Instruction as SVMInstruction,
+  Program as SVMProgram,
+  Address as SVMAddress,
+  Argument as SVMArgument,
+  Offset as SVMOffset,
+  SVMFunction
+} from './vm/svml-compiler'
+
+export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>
+
+export type ContiguousArrayElements = ContiguousArrayElementExpression[]
+
+// Types used in type inference / Source Typed variant type error checker
+
+export enum TypeAnnotationKeyword {
+  ANY = 'any',
+  BOOLEAN = 'boolean',
+  NULL = 'null',
+  NUMBER = 'number',
+  STRING = 'string',
+  UNDEFINED = 'undefined',
+  UNKNOWN = 'unknown',
+  VOID = 'void'
+}
+
 export type TypeAnnotatedNode<T extends es.Node> = TypeAnnotation & T
 
 export type TypeAnnotatedFuncDecl = TypeAnnotatedNode<es.FunctionDeclaration> & TypedFuncDecl
@@ -322,7 +348,7 @@ export type Constraint = 'none' | 'addable'
 
 export interface Primitive {
   kind: 'primitive'
-  name: 'number' | 'boolean' | 'string' | 'undefined'
+  name: TypeAnnotationKeyword
 }
 
 export interface Variable {
@@ -376,16 +402,3 @@ export type PredicateTest = {
   ifTrueType: Type | ForAll
   argVarName: string
 }
-
-export {
-  Instruction as SVMInstruction,
-  Program as SVMProgram,
-  Address as SVMAddress,
-  Argument as SVMArgument,
-  Offset as SVMOffset,
-  SVMFunction
-} from './vm/svml-compiler'
-
-export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>
-
-export type ContiguousArrayElements = ContiguousArrayElementExpression[]

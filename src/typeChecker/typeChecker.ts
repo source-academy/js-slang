@@ -33,6 +33,7 @@ import {
   Type,
   TypeAnnotatedFuncDecl,
   TypeAnnotatedNode,
+  TypeAnnotationKeyword,
   TypeEnvironment,
   Variable
 } from '../types'
@@ -1516,7 +1517,7 @@ function _infer(
 // Private Helper Parsing Functions
 // =======================================
 
-function tPrimitive(name: Primitive['name']): Primitive {
+export function tPrimitive(name: Primitive['name']): Primitive {
   return {
     kind: 'primitive',
     name
@@ -1568,12 +1569,12 @@ function tArray(var1: Type): SArray {
   }
 }
 
-const tBool = tPrimitive('boolean')
-const tNumber = tPrimitive('number')
-const tString = tPrimitive('string')
-const tUndef = tPrimitive('undefined')
+const tBool = tPrimitive(TypeAnnotationKeyword.BOOLEAN)
+const tNumber = tPrimitive(TypeAnnotationKeyword.NUMBER)
+const tString = tPrimitive(TypeAnnotationKeyword.STRING)
+const tUndef = tPrimitive(TypeAnnotationKeyword.UNDEFINED)
 
-function tFunc(...types: Type[]): FunctionType {
+export function tFunc(...types: Type[]): FunctionType {
   const parameterTypes = types.slice(0, -1)
   const returnType = types.slice(-1)[0]
   return {
