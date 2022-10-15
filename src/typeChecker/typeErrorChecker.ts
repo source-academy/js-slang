@@ -1,7 +1,9 @@
 import * as es from 'estree'
-import { InvalidNumberOfArguments, UndefinedVariable } from '../errors/errors'
 
-import { TypeMismatchError } from '../errors/typeErrors'
+import { InvalidNumberOfArguments, UndefinedVariable } from '../errors/errors'
+import { FunctionShouldHaveReturnValueError, TypeMismatchError } from '../errors/typeErrors'
+import { NoImplicitReturnUndefinedError } from '../parser/rules/noImplicitReturnUndefined'
+import { NoVarError } from '../parser/rules/noVar'
 import {
   Context,
   FunctionType,
@@ -12,6 +14,7 @@ import {
   TypeAnnotationNode,
   TypeEnvironment
 } from '../types'
+import { TypeError } from './internalTypeErrors'
 import {
   lookupType,
   pushEnv,
@@ -34,6 +37,9 @@ const typeAnnotationKeywordMap = {
   TSVoidKeyword: TypeAnnotationKeyword.VOID
 }
 
+// Special name used for saving return type in type environment
+const RETURN_TYPE_IDENTIFIER = '//RETURN_TYPE'
+
 /**
  * Entry function for type checker.
  */
@@ -42,7 +48,12 @@ export function checkForTypeErrors(
   context: Context
 ): void {
   const env: TypeEnvironment = context.typeEnvironment
-  traverseAndTypeCheck(program, context, env)
+  try {
+    traverseAndTypeCheck(program, context, env)
+  } catch (error) {
+    // Catch-all for errors that should not be reached logically
+    context.errors.push(error)
+  }
 }
 
 /**
@@ -75,19 +86,47 @@ function traverseAndTypeCheck(
     }
     case 'FunctionDeclaration':
       if (node.id === null) {
-        // TODO: Handle error
-        return
+        // Block should not be reached since node.id is only null when function declaration
+        // is part of `export default function`, which is not used in source
+        throw new TypeError(node, 'Function declaration should have an identifier')
       }
-      const types = getParamTypes(node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[])
+      const params = node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[]
+      const returnType = getAnnotatedType(node.returnType)
+
+      // Type check function body, creating new environment to store arg types/return type
+      pushEnv(env)
+      params.forEach(param => {
+        setType(param.name, getAnnotatedType(param.typeAnnotation), env)
+      })
+      setType(RETURN_TYPE_IDENTIFIER, returnType, env)
+      let hasReturnStmt = false
+      // Skipping type check of node.body since it is always a BlockStatement
+      node.body.body.forEach(stmt => {
+        if (stmt.type === 'ReturnStatement') {
+          hasReturnStmt = true
+        }
+        traverseAndTypeCheck(stmt, context, env)
+      })
+      // Type error where function does not return anything when it should
+      if (
+        !hasReturnStmt &&
+        returnType.name !== TypeAnnotationKeyword.ANY &&
+        returnType.name !== TypeAnnotationKeyword.VOID
+      ) {
+        context.errors.push(new FunctionShouldHaveReturnValueError(node))
+      }
+      env.pop()
+
+      const types = getParamTypes(params)
       // Return type will always be last item in types array
-      types.push(getAnnotatedType(node.returnType))
+      types.push(returnType)
       const fnType = tFunc(...types)
-      // Save function type in type env
-      setType(node.id?.name, fnType, env)
+      // Save function type
+      setType(node.id.name, fnType, env)
       break
     case 'VariableDeclaration': {
       if (node.kind === 'var') {
-        // TODO: Handle error
+        context.errors.push(new NoVarError(node))
         return
       }
       // TODO: Handle non-identifier instances
@@ -98,7 +137,6 @@ function traverseAndTypeCheck(
       // Save variable type and decl kind in type env
       setType(id.name, expectedType, env)
       setDeclKind(id.name, node.kind, env)
-      traverseAndTypeCheck(id, context, env)
       break
     }
     case 'CallExpression': {
@@ -117,15 +155,29 @@ function traverseAndTypeCheck(
       }
       break
     }
+    case 'ReturnStatement': {
+      if (!node.argument) {
+        context.errors.push(new NoImplicitReturnUndefinedError(node))
+      } else {
+        const expectedType = (lookupType(RETURN_TYPE_IDENTIFIER, env) as Primitive) ?? tAny
+        checkForTypeMismatch(node.argument, expectedType, context, env)
+        break
+      }
+    }
     default:
       break
   }
 }
 
 /**
- * Recurses through the given node to get the inferred type.
+ * Recurses through the given node to get the declared type.
+ * If the node is a literal, the type is inferred.
  */
-function getInferredType(node: es.Node, context: Context, env: TypeEnvironment): Primitive {
+function getInferredOrDeclaredType(
+  node: es.Node,
+  context: Context,
+  env: TypeEnvironment
+): Primitive {
   switch (node.type) {
     case 'Literal': {
       const literalVal = node.value
@@ -160,8 +212,12 @@ function checkForTypeMismatch(
   context: Context,
   env: TypeEnvironment
 ) {
-  const actualType = getInferredType(node, context, env)
-  if (expectedType.name !== TypeAnnotationKeyword.ANY && expectedType.name !== actualType.name) {
+  const actualType = getInferredOrDeclaredType(node, context, env)
+  if (
+    expectedType.name !== TypeAnnotationKeyword.ANY &&
+    actualType.name !== TypeAnnotationKeyword.ANY &&
+    expectedType.name !== actualType.name
+  ) {
     context.errors.push(new TypeMismatchError(node, actualType.name, expectedType.name))
   }
 }

@@ -407,6 +407,11 @@ export interface ForAll {
 
 export type BindableType = Type | ForAll | PredicateType
 
+/**
+ * Stores the type/declaration type of variables.
+ * The array distinguishes between the different scopes in the program
+ * (e.g. first element is the global scope, last element is the closest).
+ */
 export type TypeEnvironment = {
   typeMap: Map<string, BindableType>
   declKindMap: Map<string, AllowedDeclarations>

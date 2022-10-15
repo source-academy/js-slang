@@ -434,3 +434,22 @@ export class TypeMismatchError implements SourceError {
     return this.explain()
   }
 }
+
+export class FunctionShouldHaveReturnValueError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: es.Node) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `A function whose declared type is neither 'void' nor 'any' must return a value.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
