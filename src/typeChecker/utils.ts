@@ -12,9 +12,9 @@ import {
   Pair,
   PredicateType,
   Primitive,
+  PrimitiveType,
   SArray,
   Type,
-  TypeAnnotationKeyword,
   TypeEnvironment,
   Variable
 } from '../types'
@@ -44,16 +44,29 @@ export function lookupDeclKind(
   return undefined
 }
 
-export function setType(name: string, type: BindableType, env: TypeEnvironment) {
+export function setType(name: string, type: BindableType, env: TypeEnvironment): void {
   env[env.length - 1].typeMap.set(name, type)
 }
 
-export function setDeclKind(name: string, kind: AllowedDeclarations, env: TypeEnvironment) {
+export function setDeclKind(name: string, kind: AllowedDeclarations, env: TypeEnvironment): void {
   env[env.length - 1].declKindMap.set(name, kind)
 }
 
-export function pushEnv(env: TypeEnvironment) {
+export function pushEnv(env: TypeEnvironment): void {
   env.push({ typeMap: new Map(), declKindMap: new Map() })
+}
+
+// Helper functions for formatting types
+function formatTypeString(type: Type): string {
+  return type.kind === 'function' ? formatFunctionTypeString(type) : (type as Primitive).name
+}
+
+export function formatFunctionTypeString(fnType: FunctionType): string {
+  const paramTypeString = fnType.parameterTypes.reduce(
+    (prev, curr) => prev + ', ' + formatTypeString(curr),
+    ''
+  )
+  return `(${paramTypeString}) => ${formatTypeString(fnType)}`
 }
 
 // Helper functions and constants for parsing types
@@ -109,12 +122,13 @@ export function tArray(var1: Type): SArray {
   }
 }
 
-export const tAny = tPrimitive(TypeAnnotationKeyword.ANY)
-export const tBool = tPrimitive(TypeAnnotationKeyword.BOOLEAN)
-export const tNumber = tPrimitive(TypeAnnotationKeyword.NUMBER)
-export const tString = tPrimitive(TypeAnnotationKeyword.STRING)
-export const tUndef = tPrimitive(TypeAnnotationKeyword.UNDEFINED)
-export const tUnknown = tPrimitive(TypeAnnotationKeyword.UNKNOWN)
+export const tAny = tPrimitive(PrimitiveType.ANY)
+export const tBool = tPrimitive(PrimitiveType.BOOLEAN)
+export const tNumber = tPrimitive(PrimitiveType.NUMBER)
+export const tString = tPrimitive(PrimitiveType.STRING)
+export const tUndef = tPrimitive(PrimitiveType.UNDEFINED)
+export const tUnknown = tPrimitive(PrimitiveType.UNKNOWN)
+export const tVoid = tPrimitive(PrimitiveType.VOID)
 
 export function tFunc(...types: Type[]): FunctionType {
   const parameterTypes = types.slice(0, -1)

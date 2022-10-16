@@ -307,7 +307,7 @@ export type ContiguousArrayElements = ContiguousArrayElementExpression[]
 
 /** Types used in type inference / Source Typed variant type error checker **/
 
-export enum TypeAnnotationKeyword {
+export enum PrimitiveType {
   ANY = 'any',
   BOOLEAN = 'boolean',
   NULL = 'null',
@@ -318,17 +318,40 @@ export enum TypeAnnotationKeyword {
   VOID = 'void'
 }
 
+export enum TSTypeAnnotationType {
+  TSAnnotationType = 'TSAnnotationType',
+  TSFunctionType = 'TSFunctionType',
+  TSAnyKeyword = 'TSAnyKeyword',
+  TSBooleanKeyword = 'TSBooleanKeyword',
+  TSNullKeyword = 'TSNullKeyword',
+  TSNumberKeyword = 'TSNumberKeyword',
+  TSStringKeyword = 'TSStringKeyword',
+  TSUndefinedKeyword = 'TSUndefinedKeyword',
+  TSUnknownKeyword = 'TSUnknownKeyword',
+  TSVoidKeyword = 'TSVoidKeyword'
+}
+
 // Types for parsed TS node used in Source Typed variants
 export type NodeWithDeclaredTypeAnnotation<T extends es.Node> = DeclaredTypeAnnotation & T
 
 export type DeclaredTypeAnnotation = {
-  typeAnnotation?: TypeAnnotationNode
-  returnType?: TypeAnnotationNode
+  typeAnnotation?: AnnotationTypeNode
+  returnType?: AnnotationTypeNode
 }
 
-export interface TypeAnnotationNode extends es.BaseNode {
-  type: 'TSTypeAnnotation'
-  typeAnnotation: es.BaseNode
+export interface BaseTypeNode extends es.BaseNode {
+  type: TSTypeAnnotationType
+}
+
+export interface AnnotationTypeNode extends BaseTypeNode {
+  type: TSTypeAnnotationType.TSAnnotationType
+  typeAnnotation: BaseTypeNode | FunctionTypeNode
+}
+
+export interface FunctionTypeNode extends BaseTypeNode {
+  type: TSTypeAnnotationType.TSFunctionType
+  parameters: NodeWithDeclaredTypeAnnotation<es.Identifier>[]
+  typeAnnotation: AnnotationTypeNode
 }
 
 // Types for nodes used in type inference
@@ -363,7 +386,7 @@ export type Constraint = 'none' | 'addable'
 
 export interface Primitive {
   kind: 'primitive'
-  name: TypeAnnotationKeyword
+  name: PrimitiveType
 }
 
 export interface Variable {
