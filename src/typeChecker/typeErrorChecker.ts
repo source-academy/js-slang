@@ -18,9 +18,10 @@ import {
 } from '../types'
 import { TypeError } from './internalTypeErrors'
 import {
-  formatFunctionTypeString,
+  formatTypeString,
   lookupType,
   pushEnv,
+  RETURN_TYPE_IDENTIFIER,
   setDeclKind,
   setType,
   tAny,
@@ -28,22 +29,9 @@ import {
   tPrimitive,
   tUndef,
   tUnknown,
-  tVoid
+  tVoid,
+  typeAnnotationKeywordToPrimitiveTypeMap
 } from './utils'
-
-const typeAnnotationKeywordToPrimitiveTypeMap = {
-  [TSTypeAnnotationType.TSAnyKeyword]: PrimitiveType.ANY,
-  [TSTypeAnnotationType.TSBooleanKeyword]: PrimitiveType.BOOLEAN,
-  [TSTypeAnnotationType.TSNullKeyword]: PrimitiveType.NULL,
-  [TSTypeAnnotationType.TSNumberKeyword]: PrimitiveType.NUMBER,
-  [TSTypeAnnotationType.TSStringKeyword]: PrimitiveType.STRING,
-  [TSTypeAnnotationType.TSUndefinedKeyword]: PrimitiveType.UNDEFINED,
-  [TSTypeAnnotationType.TSUnknownKeyword]: PrimitiveType.UNKNOWN,
-  [TSTypeAnnotationType.TSVoidKeyword]: PrimitiveType.VOID
-}
-
-// Special name used for saving return type in type environment
-const RETURN_TYPE_IDENTIFIER = '//RETURN_TYPE'
 
 /**
  * Entry function for type checker.
@@ -304,47 +292,15 @@ function checkForTypeMismatch(
   expectedType: Type,
   context: Context
 ) {
-  if (actualType.kind === 'function' && expectedType.kind === 'function') {
-    checkForFunctionTypeMismatch(node, actualType, expectedType, context)
-  } else {
-    actualType = actualType as Primitive
-    expectedType = expectedType as Primitive
-    if (
-      actualType.name !== PrimitiveType.ANY &&
-      expectedType.name !== PrimitiveType.ANY &&
-      actualType.name !== expectedType.name
-    ) {
-      context.errors.push(new TypeMismatchError(node, actualType.name, expectedType.name))
-    }
+  const actualTypeString = formatTypeString(actualType)
+  const expectedTypeString = formatTypeString(expectedType)
+  if (
+    actualTypeString !== PrimitiveType.ANY &&
+    expectedTypeString !== PrimitiveType.ANY &&
+    actualTypeString !== expectedTypeString
+  ) {
+    context.errors.push(new TypeMismatchError(node, actualTypeString, expectedTypeString))
   }
-}
-
-/**
- * Checks that two given function types are equal.
- * If not equal, adds type mismatch error to context.
- */
-function checkForFunctionTypeMismatch(
-  node: es.Node,
-  actualType: FunctionType,
-  expectedType: FunctionType,
-  context: Context
-) {
-  const actualParamTypes = actualType.parameterTypes
-  const expectedParamTypes = expectedType.parameterTypes
-  if (actualParamTypes.length !== expectedParamTypes.length) {
-    context.errors.push(
-      new TypeMismatchError(
-        node,
-        formatFunctionTypeString(actualType),
-        formatFunctionTypeString(expectedType)
-      )
-    )
-    return
-  }
-  for (let i = 0; i < actualParamTypes.length; i++) {
-    checkForTypeMismatch(node, actualParamTypes[i], expectedParamTypes[i], context)
-  }
-  checkForTypeMismatch(node, actualType.returnType, expectedType.returnType, context)
 }
 
 /**

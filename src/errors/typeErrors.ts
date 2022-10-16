@@ -414,12 +414,12 @@ export class InconsistentPredicateTestError implements SourceError {
 export class TypeMismatchError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
-  public actualType: string
-  public expectedType: string
+  public actualTypeString: string
+  public expectedTypeString: string
 
-  constructor(public node: es.Node, actualType: string, expectedType: string) {
-    this.actualType = actualType
-    this.expectedType = expectedType
+  constructor(public node: es.Node, actualTypeString: string, expectedTypeString: string) {
+    this.actualTypeString = actualTypeString
+    this.expectedTypeString = expectedTypeString
   }
 
   get location() {
@@ -427,7 +427,7 @@ export class TypeMismatchError implements SourceError {
   }
 
   public explain() {
-    return `Type '${this.actualType}' is not assignable to type '${this.expectedType}'.`
+    return `Type '${this.actualTypeString}' is not assignable to type '${this.expectedTypeString}'.`
   }
 
   public elaborate() {

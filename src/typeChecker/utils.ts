@@ -14,13 +14,28 @@ import {
   Primitive,
   PrimitiveType,
   SArray,
+  TSTypeAnnotationType,
   Type,
   TypeEnvironment,
   Variable
 } from '../types'
 
-/** Name of Unary negative builtin operator */
+// Name of Unary negative builtin operator
 export const NEGATIVE_OP = '-_1'
+
+// Special name used for saving return type in type environment
+export const RETURN_TYPE_IDENTIFIER = '//RETURN_TYPE'
+
+export const typeAnnotationKeywordToPrimitiveTypeMap = {
+  [TSTypeAnnotationType.TSAnyKeyword]: PrimitiveType.ANY,
+  [TSTypeAnnotationType.TSBooleanKeyword]: PrimitiveType.BOOLEAN,
+  [TSTypeAnnotationType.TSNullKeyword]: PrimitiveType.NULL,
+  [TSTypeAnnotationType.TSNumberKeyword]: PrimitiveType.NUMBER,
+  [TSTypeAnnotationType.TSStringKeyword]: PrimitiveType.STRING,
+  [TSTypeAnnotationType.TSUndefinedKeyword]: PrimitiveType.UNDEFINED,
+  [TSTypeAnnotationType.TSUnknownKeyword]: PrimitiveType.UNKNOWN,
+  [TSTypeAnnotationType.TSVoidKeyword]: PrimitiveType.VOID
+}
 
 // Helper functions for dealing with type environment
 export function lookupType(name: string, env: TypeEnvironment): BindableType | undefined {
@@ -57,16 +72,19 @@ export function pushEnv(env: TypeEnvironment): void {
 }
 
 // Helper functions for formatting types
-function formatTypeString(type: Type): string {
+export function formatTypeString(type: Type): string {
   return type.kind === 'function' ? formatFunctionTypeString(type) : (type as Primitive).name
 }
 
 export function formatFunctionTypeString(fnType: FunctionType): string {
-  const paramTypeString = fnType.parameterTypes.reduce(
-    (prev, curr) => prev + ', ' + formatTypeString(curr),
-    ''
-  )
-  return `(${paramTypeString}) => ${formatTypeString(fnType)}`
+  const paramTypes = fnType.parameterTypes
+  const paramTypeString =
+    paramTypes.length === 0
+      ? ''
+      : paramTypes.length === 1
+      ? formatTypeString(paramTypes[0])
+      : paramTypes.reduce((prev, curr) => prev + ', ' + formatTypeString(curr), '')
+  return `(${paramTypeString}) => ${formatTypeString(fnType.returnType)}`
 }
 
 // Helper functions and constants for parsing types
