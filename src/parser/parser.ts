@@ -1,4 +1,5 @@
 /* tslint:disable:max-classes-per-file */
+import { parse as babelParse } from '@babel/parser'
 import {
   Options as AcornOptions,
   parse as acornParse,
@@ -119,6 +120,16 @@ export function parse(source: string, context: Context) {
   try {
     const parser = context.variant === Variant.TYPED ? TypeParser : Parser
     program = parser.parse(source, createAcornParserOptions(context)) as unknown as es.Program
+    if (program && context.variant === Variant.TYPED) {
+      // For Typed variant, the code is parsed twice, first using the custom TypeParser and then using Babel Parser.
+      // This is a temporary workaround as the custom TypeParser does not yet cover all type annotation cases needed for Source Typed.
+      // The reason why Babel Parser is not used directly is because it is not extensible to plugins,
+      // and does not allow for no semicolon/trailing comma errors when parsing.
+      program = babelParse(source, {
+        sourceType: 'module',
+        plugins: ['typescript', 'estree']
+      }).program as unknown as es.Program
+    }
     ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
     if (error instanceof SyntaxError) {

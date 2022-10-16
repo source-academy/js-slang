@@ -244,7 +244,8 @@ function typeCheckAndReturnArrowFunctionType(
 ): FunctionType {
   const params = node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[]
   const body = node.body
-  let returnType: Primitive | FunctionType = tUnknown
+  const expectedReturnType = getAnnotatedType(node.returnType)
+  let actualReturnType: Type = tUnknown
 
   // Type check function body, creating new environment to store arg types
   pushEnv(env)
@@ -254,22 +255,28 @@ function typeCheckAndReturnArrowFunctionType(
   if (node.body.type === 'BlockStatement') {
     let hasReturnStmt = false
     node.body.body.forEach(stmt => {
-      if (stmt.type === 'ReturnStatement' && !hasReturnStmt) {
-        returnType = getInferredOrDeclaredType(stmt, context, env)
-        hasReturnStmt = true
+      if (stmt.type === 'ReturnStatement') {
+        if (!hasReturnStmt) {
+          actualReturnType = getInferredOrDeclaredType(stmt, context, env)
+          hasReturnStmt = true
+        }
+        // Do nothing for extra return statements
+      } else {
+        traverseAndTypeCheck(stmt, context, env)
       }
     })
     if (!hasReturnStmt) {
-      returnType = tVoid
+      actualReturnType = tVoid
     }
   } else {
-    returnType = getInferredOrDeclaredType(body, context, env)
+    actualReturnType = getInferredOrDeclaredType(body, context, env)
   }
+  checkForTypeMismatch(node, actualReturnType, expectedReturnType, context)
   env.pop()
 
   const types = getParamTypes(params)
   // Return type will always be last item in types array
-  types.push(returnType)
+  types.push(expectedReturnType)
   const fnType = tFunc(...types)
   return fnType
 }
@@ -279,7 +286,7 @@ function typeCheckAndReturnArrowFunctionType(
  */
 function inferActualTypeAndCheckForTypeMismatch(
   node: es.Node,
-  expectedType: Primitive | FunctionType,
+  expectedType: Type,
   context: Context,
   env: TypeEnvironment
 ) {

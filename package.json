@@ -15,6 +15,7 @@
     "url": "https://github.com/source-academy/"
   },
   "dependencies": {
+    "@babel/parser": "^7.19.4",
     "@joeychenofficial/alt-ergo-modified": "^2.4.0",
     "@types/estree": "0.0.52",
     "acorn": "^8.0.3",
