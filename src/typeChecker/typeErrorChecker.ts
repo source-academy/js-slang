@@ -25,7 +25,9 @@ import {
   setDeclKind,
   setType,
   tAny,
+  tBool,
   tFunc,
+  tNumber,
   tPrimitive,
   tUndef,
   tUnknown,
@@ -86,10 +88,14 @@ function traverseAndTypeCheck(
       traverseAndTypeCheck(node.expression, context, env)
       break
     }
+    case 'BinaryExpression': {
+      typeCheckAndReturnBinaryExpressionType(node, context, env)
+      break
+    }
     case 'FunctionDeclaration':
       if (node.id === null) {
         // Block should not be reached since node.id is only null when function declaration
-        // is part of `export default function`, which is not used in source
+        // is part of `export default function`, which is not used in Source
         throw new TypeError(node, 'Function declaration should have an identifier')
       }
       const params = node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[]
@@ -185,7 +191,7 @@ function getInferredOrDeclaredType(
   node: NodeWithDeclaredTypeAnnotation<es.Node>,
   context: Context,
   env: TypeEnvironment
-): Primitive | FunctionType {
+): Type {
   switch (node.type) {
     case 'Literal': {
       const literalVal = node.value
@@ -205,6 +211,9 @@ function getInferredOrDeclaredType(
         return tUnknown
       }
     }
+    case 'BinaryExpression': {
+      return typeCheckAndReturnBinaryExpressionType(node, context, env)
+    }
     case 'ArrowFunctionExpression': {
       return typeCheckAndReturnArrowFunctionType(node, context, env)
     }
@@ -216,6 +225,91 @@ function getInferredOrDeclaredType(
         return getInferredOrDeclaredType(node.argument, context, env)
       }
     }
+    default:
+      return tUnknown
+  }
+}
+
+/**
+ * Typechecks the body of a binary expression, adding any type errors to context if necessary.
+ * Then, returns the type of the binary expression, inferred based on the operator.
+ */
+function typeCheckAndReturnBinaryExpressionType(
+  node: es.BinaryExpression,
+  context: Context,
+  env: TypeEnvironment
+): Type {
+  const leftType = formatTypeString(getInferredOrDeclaredType(node.left, context, env))
+  const rightType = formatTypeString(getInferredOrDeclaredType(node.right, context, env))
+  const operator = node.operator
+  switch (operator) {
+    case '-':
+    case '*':
+    case '/':
+    case '%':
+      // Both sides can only be either number or any
+      if (leftType !== PrimitiveType.NUMBER && leftType !== PrimitiveType.ANY) {
+        context.errors.push(new TypeMismatchError(node, leftType, PrimitiveType.NUMBER))
+      }
+      if (rightType !== PrimitiveType.NUMBER && rightType !== PrimitiveType.ANY) {
+        context.errors.push(new TypeMismatchError(node, rightType, PrimitiveType.NUMBER))
+      }
+      return tNumber
+    case '+':
+      // Both sides can only be number, string, or any
+      // However, case where one side is string and other side is number is not allowed
+      if (leftType === PrimitiveType.NUMBER || leftType === PrimitiveType.STRING) {
+        if (rightType !== leftType && rightType !== PrimitiveType.ANY) {
+          context.errors.push(new TypeMismatchError(node, rightType, leftType))
+        }
+        return tPrimitive(leftType)
+      }
+      if (rightType === PrimitiveType.NUMBER || rightType === PrimitiveType.STRING) {
+        if (leftType !== rightType && leftType !== PrimitiveType.ANY) {
+          context.errors.push(new TypeMismatchError(node, leftType, rightType))
+        }
+        return tPrimitive(rightType)
+      }
+      // TODO: Incorporate addable type
+      if (leftType !== PrimitiveType.ANY) {
+        context.errors.push(new TypeMismatchError(node, leftType, PrimitiveType.NUMBER))
+      }
+      if (rightType !== PrimitiveType.ANY) {
+        context.errors.push(new TypeMismatchError(node, rightType, PrimitiveType.NUMBER))
+      }
+      return tAny
+    case '<':
+    case '<=':
+    case '>':
+    case '>=':
+    case '!==':
+    case '===':
+      // In Source 3 and above, equality can be applied between two items of any type
+      if (context.chapter > 2 && (operator === '===' || operator === '!==')) {
+        return tBool
+      }
+      // Both sides can only be number, string, or any
+      // However, case where one side is string and other side is number is not allowed
+      if (leftType === PrimitiveType.NUMBER || leftType === PrimitiveType.STRING) {
+        if (rightType !== leftType && rightType !== PrimitiveType.ANY) {
+          context.errors.push(new TypeMismatchError(node, rightType, leftType))
+        }
+        return tBool
+      }
+      if (rightType === PrimitiveType.NUMBER || rightType === PrimitiveType.STRING) {
+        if (leftType !== rightType && leftType !== PrimitiveType.ANY) {
+          context.errors.push(new TypeMismatchError(node, leftType, rightType))
+        }
+        return tBool
+      }
+      // TODO: Incorporate addable type
+      if (leftType !== PrimitiveType.ANY) {
+        context.errors.push(new TypeMismatchError(node, leftType, PrimitiveType.NUMBER))
+      }
+      if (rightType !== PrimitiveType.ANY) {
+        context.errors.push(new TypeMismatchError(node, rightType, PrimitiveType.NUMBER))
+      }
+      return tBool
     default:
       return tUnknown
   }
