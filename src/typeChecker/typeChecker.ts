@@ -336,6 +336,8 @@ function fresh(monoType: Type, subst: { [typeName: string]: Variable }): Type {
         parameterTypes: monoType.parameterTypes.map(argType => fresh(argType, subst)),
         returnType: fresh(monoType.returnType, subst)
       }
+    default:
+      return monoType
   }
 }
 
@@ -369,6 +371,8 @@ function freeTypeVarsInType(type: Type): Variable[] {
         }, []),
         freeTypeVarsInType(type.returnType)
       )
+    default:
+      return []
   }
 }
 
@@ -446,6 +450,8 @@ function applyConstraints(type: Type, constraints: Constraint[]): Type {
         returnType: applyConstraints(type.returnType, constraints)
       }
     }
+    default:
+      return type
   }
 }
 
@@ -471,6 +477,8 @@ function contains(type: Type, name: string): boolean {
         contains(currentType, name)
       )
       return containedInParamTypes || contains(type.returnType, name)
+    default:
+      return false
   }
 }
 

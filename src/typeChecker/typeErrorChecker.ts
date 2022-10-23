@@ -6,6 +6,7 @@ import { NoImplicitReturnUndefinedError } from '../parser/rules/noImplicitReturn
 import { NoVarError } from '../parser/rules/noVar'
 import {
   AnnotationTypeNode,
+  BaseTypeNode,
   Context,
   FunctionType,
   FunctionTypeNode,
@@ -14,7 +15,9 @@ import {
   PrimitiveType,
   TSTypeAnnotationType,
   Type,
-  TypeEnvironment
+  TypeEnvironment,
+  UnionType,
+  UnionTypeNode
 } from '../types'
 import { TypeError } from './internalTypeErrors'
 import {
@@ -29,7 +32,9 @@ import {
   tFunc,
   tNumber,
   tPrimitive,
+  tString,
   tUndef,
+  tUnion,
   tUnknown,
   tVoid,
   typeAnnotationKeywordToPrimitiveTypeMap
@@ -173,8 +178,10 @@ function traverseAndTypeCheck(
       if (!node.argument) {
         context.errors.push(new NoImplicitReturnUndefinedError(node))
       } else {
-        const expectedType = (lookupType(RETURN_TYPE_IDENTIFIER, env) as Primitive) ?? tAny
-        inferActualTypeAndCheckForTypeMismatch(node.argument, expectedType, context, env)
+        const expectedType = lookupType(RETURN_TYPE_IDENTIFIER, env) as Primitive
+        if (expectedType) {
+          inferActualTypeAndCheckForTypeMismatch(node.argument, expectedType, context, env)
+        }
         break
       }
     }
@@ -270,12 +277,15 @@ function typeCheckAndReturnBinaryExpressionType(
         }
         return tPrimitive(rightType)
       }
-      // TODO: Incorporate addable type
       if (leftType !== PrimitiveType.ANY) {
-        context.errors.push(new TypeMismatchError(node, leftType, PrimitiveType.NUMBER))
+        context.errors.push(
+          new TypeMismatchError(node, leftType, formatTypeString(tUnion(tNumber, tString)))
+        )
       }
       if (rightType !== PrimitiveType.ANY) {
-        context.errors.push(new TypeMismatchError(node, rightType, PrimitiveType.NUMBER))
+        context.errors.push(
+          new TypeMismatchError(node, rightType, formatTypeString(tUnion(tNumber, tString)))
+        )
       }
       return tAny
     case '<':
@@ -302,12 +312,15 @@ function typeCheckAndReturnBinaryExpressionType(
         }
         return tBool
       }
-      // TODO: Incorporate addable type
       if (leftType !== PrimitiveType.ANY) {
-        context.errors.push(new TypeMismatchError(node, leftType, PrimitiveType.NUMBER))
+        context.errors.push(
+          new TypeMismatchError(node, leftType, formatTypeString(tUnion(tNumber, tString)))
+        )
       }
       if (rightType !== PrimitiveType.ANY) {
-        context.errors.push(new TypeMismatchError(node, rightType, PrimitiveType.NUMBER))
+        context.errors.push(
+          new TypeMismatchError(node, rightType, formatTypeString(tUnion(tNumber, tString)))
+        )
       }
       return tBool
     default:
@@ -371,7 +384,7 @@ function inferActualTypeAndCheckForTypeMismatch(
   expectedType: Type,
   context: Context,
   env: TypeEnvironment
-) {
+): void {
   const actualType = getInferredOrDeclaredType(node, context, env)
   checkForTypeMismatch(node, actualType, expectedType, context)
 }
@@ -385,15 +398,62 @@ function checkForTypeMismatch(
   actualType: Type,
   expectedType: Type,
   context: Context
-) {
-  const actualTypeString = formatTypeString(actualType)
-  const expectedTypeString = formatTypeString(expectedType)
+): void {
+  if (hasTypeMismatchErrors(actualType, expectedType)) {
+    context.errors.push(
+      new TypeMismatchError(node, formatTypeString(actualType), formatTypeString(expectedType))
+    )
+  }
+}
+
+/**
+ * Checks if the two given types are equal.
+ */
+function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
   if (
-    actualTypeString !== PrimitiveType.ANY &&
-    expectedTypeString !== PrimitiveType.ANY &&
-    actualTypeString !== expectedTypeString
+    (actualType as Primitive).name === PrimitiveType.ANY ||
+    (expectedType as Primitive).name === PrimitiveType.ANY
   ) {
-    context.errors.push(new TypeMismatchError(node, actualTypeString, expectedTypeString))
+    // Exit early as "any" is guaranteed not to cause type mismatch errors
+    return false
+  }
+  switch (expectedType.kind) {
+    case 'primitive':
+    case 'variable':
+      return (actualType as Primitive).name !== (expectedType as Primitive).name
+    case 'function':
+      if (actualType.kind !== 'function') {
+        return true
+      }
+      // Check parameter types
+      const actualParamTypes = actualType.parameterTypes
+      const expectedParamTypes = expectedType.parameterTypes
+      if (actualParamTypes.length !== expectedParamTypes.length) {
+        return true
+      }
+      for (let i = 0; i < actualType.parameterTypes.length; i++) {
+        if (hasTypeMismatchErrors(actualParamTypes[i], expectedParamTypes[i])) {
+          return true
+        }
+      }
+      // Check return type
+      return hasTypeMismatchErrors(actualType.returnType, expectedType.returnType)
+    case 'union':
+      const expectedSet = new Set(expectedType.types.map(formatTypeString))
+      // If not union type, expected set should contain actual type
+      if (actualType.kind !== 'union') {
+        return !expectedSet.has(formatTypeString(actualType))
+      }
+      // If both are union types, actual set should be a subset of expected set
+      const actualSet = new Set(actualType.types.map(formatTypeString))
+      for (const elem of actualSet) {
+        if (!expectedSet.has(elem)) {
+          return true
+        }
+      }
+      return false
+    default:
+      return true
   }
 }
 
@@ -429,11 +489,11 @@ function getParamTypes(params: NodeWithDeclaredTypeAnnotation<es.Identifier>[]):
 
 /**
  * Converts type annotation node to its corresponding type representation in Source.
- * If no type annotation exists, returns the "any" type.
+ * If no type annotation exists, returns the "any" primitive type.
  */
 function getAnnotatedType(
   annotationNode: AnnotationTypeNode | undefined
-): Primitive | FunctionType {
+): Primitive | FunctionType | UnionType {
   if (!annotationNode) {
     return tAny
   }
@@ -441,13 +501,23 @@ function getAnnotatedType(
   switch (annotatedTypeNode.type) {
     case TSTypeAnnotationType.TSFunctionType:
       const fnTypeNode = annotatedTypeNode as FunctionTypeNode
-      const types = getParamTypes(fnTypeNode.parameters)
+      const fnTypes = getParamTypes(fnTypeNode.parameters)
       // Return type will always be last item in types array
-      types.push(getAnnotatedType(fnTypeNode.typeAnnotation))
-      return tFunc(...types)
+      fnTypes.push(getAnnotatedType(fnTypeNode.typeAnnotation))
+      return tFunc(...fnTypes)
+    case TSTypeAnnotationType.TSUnionType:
+      const unionTypeNode = annotatedTypeNode as UnionTypeNode
+      const unionTypes = unionTypeNode.types.map(getPrimitiveType)
+      return tUnion(...unionTypes)
     default:
-      return tPrimitive(
-        typeAnnotationKeywordToPrimitiveTypeMap[annotatedTypeNode.type] ?? PrimitiveType.UNKNOWN
-      )
+      return getPrimitiveType(annotatedTypeNode)
   }
+}
+
+/**
+ * Converts node type to primitive type.
+ * If type is not found, returns the "unknown" primitive type.
+ */
+function getPrimitiveType(node: BaseTypeNode) {
+  return tPrimitive(typeAnnotationKeywordToPrimitiveTypeMap[node.type] ?? PrimitiveType.UNKNOWN)
 }

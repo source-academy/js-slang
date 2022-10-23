@@ -321,6 +321,7 @@ export enum PrimitiveType {
 export enum TSTypeAnnotationType {
   TSAnnotationType = 'TSAnnotationType',
   TSFunctionType = 'TSFunctionType',
+  TSUnionType = 'TSUnionType',
   TSAnyKeyword = 'TSAnyKeyword',
   TSBooleanKeyword = 'TSBooleanKeyword',
   TSNullKeyword = 'TSNullKeyword',
@@ -354,6 +355,11 @@ export interface FunctionTypeNode extends BaseTypeNode {
   typeAnnotation: AnnotationTypeNode
 }
 
+export interface UnionTypeNode extends BaseTypeNode {
+  type: TSTypeAnnotationType.TSUnionType
+  types: BaseTypeNode[]
+}
+
 // Types for nodes used in type inference
 export type NodeWithInferredTypeAnnotation<T extends es.Node> = InferredTypeAnnotation & T
 
@@ -381,7 +387,7 @@ export interface Typed {
   inferredType?: Type
 }
 
-export type Type = Primitive | Variable | FunctionType | List | Pair | SArray
+export type Type = Primitive | Variable | FunctionType | List | Pair | SArray | UnionType
 export type Constraint = 'none' | 'addable'
 
 export interface Primitive {
@@ -401,19 +407,8 @@ export interface FunctionType {
   parameterTypes: Type[]
   returnType: Type
 }
-
-export interface PredicateType {
-  kind: 'predicate'
-  ifTrueType: Type | ForAll
-}
-
 export interface List {
   kind: 'list'
-  elementType: Type
-}
-
-export interface SArray {
-  kind: 'array'
   elementType: Type
 }
 
@@ -422,13 +417,28 @@ export interface Pair {
   headType: Type
   tailType: Type
 }
+export interface SArray {
+  kind: 'array'
+  elementType: Type
+}
+
+// Union type is only used in typed variants for typechecking
+export interface UnionType {
+  kind: 'union'
+  types: Type[]
+}
+
+export type BindableType = Type | ForAll | PredicateType
 
 export interface ForAll {
   kind: 'forall'
   polyType: Type
 }
 
-export type BindableType = Type | ForAll | PredicateType
+export interface PredicateType {
+  kind: 'predicate'
+  ifTrueType: Type | ForAll
+}
 
 /**
  * Stores the type/declaration type of variables.

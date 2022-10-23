@@ -17,6 +17,7 @@ import {
   TSTypeAnnotationType,
   Type,
   TypeEnvironment,
+  UnionType,
   Variable
 } from '../types'
 
@@ -73,7 +74,14 @@ export function pushEnv(env: TypeEnvironment): void {
 
 // Helper functions for formatting types
 export function formatTypeString(type: Type): string {
-  return type.kind === 'function' ? formatFunctionTypeString(type) : (type as Primitive).name
+  switch (type.kind) {
+    case 'function':
+      return formatFunctionTypeString(type)
+    case 'union':
+      return type.types.map(formatTypeString).join(' | ')
+    default:
+      return (type as Primitive).name
+  }
 }
 
 export function formatFunctionTypeString(fnType: FunctionType): string {
@@ -155,6 +163,13 @@ export function tFunc(...types: Type[]): FunctionType {
     kind: 'function',
     parameterTypes,
     returnType
+  }
+}
+
+export function tUnion(...types: Type[]): UnionType {
+  return {
+    kind: 'union',
+    types
   }
 }
 
