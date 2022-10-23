@@ -97,6 +97,10 @@ function traverseAndTypeCheck(
       typeCheckAndReturnBinaryExpressionType(node, context, env)
       break
     }
+    case 'LogicalExpression': {
+      typeCheckAndReturnLogicalExpressionType(node, context, env)
+      break
+    }
     case 'FunctionDeclaration':
       if (node.id === null) {
         // Block should not be reached since node.id is only null when function declaration
@@ -221,6 +225,9 @@ function getInferredOrDeclaredType(
     case 'BinaryExpression': {
       return typeCheckAndReturnBinaryExpressionType(node, context, env)
     }
+    case 'LogicalExpression': {
+      return typeCheckAndReturnLogicalExpressionType(node, context, env)
+    }
     case 'ArrowFunctionExpression': {
       return typeCheckAndReturnArrowFunctionType(node, context, env)
     }
@@ -326,6 +333,26 @@ function typeCheckAndReturnBinaryExpressionType(
     default:
       return tUnknown
   }
+}
+
+/**
+ * Typechecks the body of a logical expression, adding any type errors to context if necessary.
+ * Then, returns the type of the logical expression.
+ * The return type is a union of the left expression type (boolean) and right expression type.
+ */
+function typeCheckAndReturnLogicalExpressionType(
+  node: es.LogicalExpression,
+  context: Context,
+  env: TypeEnvironment
+): UnionType {
+  const leftType = getInferredOrDeclaredType(node.left, context, env)
+  if ((leftType as Primitive).name !== PrimitiveType.BOOLEAN) {
+    context.errors.push(
+      new TypeMismatchError(node, formatTypeString(leftType), PrimitiveType.BOOLEAN)
+    )
+  }
+  const rightType = getInferredOrDeclaredType(node.right, context, env)
+  return tUnion(tBool, rightType)
 }
 
 /**

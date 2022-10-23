@@ -78,7 +78,9 @@ export function formatTypeString(type: Type): string {
     case 'function':
       return formatFunctionTypeString(type)
     case 'union':
-      return type.types.map(formatTypeString).join(' | ')
+      // Remove duplicates
+      const typeSet = new Set(type.types.map(formatTypeString))
+      return Array.from(typeSet).join(' | ')
     default:
       return (type as Primitive).name
   }
