@@ -93,6 +93,10 @@ function traverseAndTypeCheck(
       traverseAndTypeCheck(node.expression, context, env)
       break
     }
+    case 'UnaryExpression': {
+      typeCheckAndReturnUnaryExpressionType(node, context, env)
+      break
+    }
     case 'BinaryExpression': {
       typeCheckAndReturnBinaryExpressionType(node, context, env)
       break
@@ -222,6 +226,9 @@ function getInferredOrDeclaredType(
         return tUnknown
       }
     }
+    case 'UnaryExpression': {
+      return typeCheckAndReturnUnaryExpressionType(node, context, env)
+    }
     case 'BinaryExpression': {
       return typeCheckAndReturnBinaryExpressionType(node, context, env)
     }
@@ -245,6 +252,33 @@ function getInferredOrDeclaredType(
 }
 
 /**
+ * Typechecks the body of a unary expression, adding any type errors to context if necessary.
+ * Then, returns the type of the unary expression, inferred based on the operator.
+ */
+function typeCheckAndReturnUnaryExpressionType(
+  node: es.UnaryExpression,
+  context: Context,
+  env: TypeEnvironment
+): Primitive {
+  const argType = formatTypeString(getInferredOrDeclaredType(node.argument, context, env))
+  const operator = node.operator
+  switch (operator) {
+    case '-':
+      if (argType !== PrimitiveType.NUMBER && argType !== PrimitiveType.ANY) {
+        context.errors.push(new TypeMismatchError(node, argType, PrimitiveType.NUMBER))
+      }
+      return tNumber
+    case '!':
+      if (argType !== PrimitiveType.BOOLEAN && argType !== PrimitiveType.ANY) {
+        context.errors.push(new TypeMismatchError(node, argType, PrimitiveType.BOOLEAN))
+      }
+      return tBool
+    default:
+      return tUnknown
+  }
+}
+
+/**
  * Typechecks the body of a binary expression, adding any type errors to context if necessary.
  * Then, returns the type of the binary expression, inferred based on the operator.
  */
@@ -252,7 +286,7 @@ function typeCheckAndReturnBinaryExpressionType(
   node: es.BinaryExpression,
   context: Context,
   env: TypeEnvironment
-): Type {
+): Primitive | UnionType {
   const leftType = formatTypeString(getInferredOrDeclaredType(node.left, context, env))
   const rightType = formatTypeString(getInferredOrDeclaredType(node.right, context, env))
   const operator = node.operator
