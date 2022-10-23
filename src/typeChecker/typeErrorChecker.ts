@@ -105,6 +105,14 @@ function traverseAndTypeCheck(
       typeCheckAndReturnLogicalExpressionType(node, context, env)
       break
     }
+    case 'ConditionalExpression': {
+      typeCheckAndReturnConditionalExpressionType(node, context, env)
+      break
+    }
+    case 'IfStatement': {
+      typeCheckAndReturnIfStatementType(node, context, env)
+      break
+    }
     case 'FunctionDeclaration':
       if (node.id === null) {
         // Block should not be reached since node.id is only null when function declaration
@@ -120,17 +128,10 @@ function traverseAndTypeCheck(
         setType(param.name, getAnnotatedType(param.typeAnnotation), env)
       })
       setType(RETURN_TYPE_IDENTIFIER, returnType, env)
-      let hasReturnStmt = false
-      // Skipping type check of node.body since it is always a BlockStatement
-      node.body.body.forEach(stmt => {
-        if (stmt.type === 'ReturnStatement') {
-          hasReturnStmt = true
-        }
-        traverseAndTypeCheck(stmt, context, env)
-      })
+      const actualReturnType = getInferredOrDeclaredType(node.body, context, env)
       // Type error where function does not return anything when it should
       if (
-        !hasReturnStmt &&
+        (actualReturnType as Primitive).name === PrimitiveType.VOID &&
         returnType.kind === 'primitive' &&
         returnType.name !== PrimitiveType.ANY &&
         returnType.name !== PrimitiveType.VOID
@@ -138,6 +139,8 @@ function traverseAndTypeCheck(
         context.errors.push(new FunctionShouldHaveReturnValueError(node))
       }
       env.pop()
+
+      checkForTypeMismatch(node, actualReturnType, returnType, context)
 
       const types = getParamTypes(params)
       // Return type will always be last item in types array
@@ -238,6 +241,12 @@ function getInferredOrDeclaredType(
     case 'ArrowFunctionExpression': {
       return typeCheckAndReturnArrowFunctionType(node, context, env)
     }
+    case 'ConditionalExpression': {
+      return typeCheckAndReturnConditionalExpressionType(node, context, env)
+    }
+    case 'IfStatement': {
+      return typeCheckAndReturnIfStatementType(node, context, env)
+    }
     case 'ReturnStatement': {
       if (!node.argument) {
         context.errors.push(new NoImplicitReturnUndefinedError(node))
@@ -245,6 +254,19 @@ function getInferredOrDeclaredType(
       } else {
         return getInferredOrDeclaredType(node.argument, context, env)
       }
+    }
+    case 'BlockStatement': {
+      let returnType: Type = tVoid
+      pushEnv(env)
+      // Check all statements in program/block body
+      for (const nodeBody of node.body) {
+        returnType = getInferredOrDeclaredType(nodeBody, context, env)
+        if (nodeBody.type === 'ReturnStatement') {
+          break
+        }
+      }
+      env.pop()
+      return returnType
     }
     default:
       return tUnknown
@@ -387,6 +409,38 @@ function typeCheckAndReturnLogicalExpressionType(
   }
   const rightType = getInferredOrDeclaredType(node.right, context, env)
   return tUnion(tBool, rightType)
+}
+
+/**
+ * Typechecks the body of a conditional expression, adding any type errors to context if necessary.
+ * Then, returns the type of the conditional expression.
+ * The return type is a union of the left expression type (boolean) and right expression type.
+ */
+function typeCheckAndReturnConditionalExpressionType(
+  node: es.ConditionalExpression,
+  context: Context,
+  env: TypeEnvironment
+): UnionType {
+  inferActualTypeAndCheckForTypeMismatch(node.test, tBool, context, env)
+  const consType = getInferredOrDeclaredType(node.consequent, context, env)
+  const altType = getInferredOrDeclaredType(node.alternate, context, env)
+  return tUnion(consType, altType)
+}
+
+/**
+ * Typechecks the body of a conditional expression, adding any type errors to context if necessary.
+ * Then, returns the type of the conditional expression.
+ * The return type is a union of the left expression type (boolean) and right expression type.
+ */
+function typeCheckAndReturnIfStatementType(
+  node: es.IfStatement,
+  context: Context,
+  env: TypeEnvironment
+): UnionType {
+  inferActualTypeAndCheckForTypeMismatch(node.test, tBool, context, env)
+  const consType = getInferredOrDeclaredType(node.consequent, context, env)
+  const altType = node.alternate ? getInferredOrDeclaredType(node.alternate, context, env) : tVoid
+  return tUnion(consType, altType)
 }
 
 /**
