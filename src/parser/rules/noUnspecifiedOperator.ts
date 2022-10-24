@@ -51,7 +51,7 @@ const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression> = {
       }
     },
     UnaryExpression(node: es.UnaryExpression) {
-      const permittedOperators = ['-', '!']
+      const permittedOperators = ['-', '!', 'typeof']
       if (!permittedOperators.includes(node.operator)) {
         return [new NoUnspecifiedOperatorError(node)]
       } else {

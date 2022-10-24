@@ -253,7 +253,10 @@ function createWalkers(
       const checker = pair[1]
       const oldCheck = newWalkers.get(syntax)!
       const newCheck = (node: es.Node, context: Context, ancestors: es.Node[]) => {
-        if (typeof rule.disableOn !== 'undefined' && context.chapter >= rule.disableOn) {
+        if (rule.disableFromChapter && context.chapter >= rule.disableFromChapter) {
+          return
+        }
+        if (rule.disableForVariants && rule.disableForVariants.includes(context.variant)) {
           return
         }
         const errors = checker(node, ancestors)

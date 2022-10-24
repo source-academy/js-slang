@@ -253,6 +253,8 @@ function typeCheckAndReturnUnaryExpressionType(
         context.errors.push(new TypeMismatchError(node, argType, PrimitiveType.BOOLEAN))
       }
       return tBool
+    case 'typeof':
+      return tString
     default:
       return tUnknown
   }

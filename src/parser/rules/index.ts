@@ -15,6 +15,7 @@ import noImplicitReturnUndefined from './noImplicitReturnUndefined'
 import noNull from './noNull'
 import noSpreadInArray from './noSpreadInArray'
 import noTemplateExpression from './noTemplateExpression'
+import noTypeofOperator from './noTypeofOperator'
 import noUnspecifiedLiteral from './noUnspecifiedLiteral'
 import noUnspecifiedOperator from './noUnspecifiedOperator'
 import noUpdateAssignment from './noUpdateAssignment'
@@ -34,6 +35,7 @@ const rules: Rule<es.Node>[] = [
   noNull,
   noUnspecifiedLiteral,
   noUnspecifiedOperator,
+  noTypeofOperator,
   noUpdateAssignment,
   noVar,
   singleVariableDeclaration,

@@ -1,7 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
+import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 
 export class NoIfWithoutElseError implements SourceError {
@@ -31,7 +31,7 @@ export class NoIfWithoutElseError implements SourceError {
 
 const noIfWithoutElse: Rule<es.IfStatement> = {
   name: 'no-if-without-else',
-  disableOn: 3,
+  disableFromChapter: Chapter.SOURCE_3,
   checkers: {
     IfStatement(node: es.IfStatement, ancestors: [es.Node]) {
       if (!node.alternate) {

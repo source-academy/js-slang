@@ -44,7 +44,8 @@ export interface SourceError {
 
 export interface Rule<T extends es.Node> {
   name: string
-  disableOn?: number
+  disableFromChapter?: Chapter
+  disableForVariants?: Variant[]
   checkers: {
     [name: string]: (node: T, ancestors: es.Node[]) => SourceError[]
   }
