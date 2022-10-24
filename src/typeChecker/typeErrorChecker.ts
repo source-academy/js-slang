@@ -3,7 +3,6 @@ import * as es from 'estree'
 import { InvalidNumberOfArguments, UndefinedVariable } from '../errors/errors'
 import { FunctionShouldHaveReturnValueError, TypeMismatchError } from '../errors/typeErrors'
 import { NoImplicitReturnUndefinedError } from '../parser/rules/noImplicitReturnUndefined'
-import { NoVarError } from '../parser/rules/noVar'
 import {
   AnnotationTypeNode,
   BaseTypeNode,
@@ -50,10 +49,11 @@ export function checkForTypeErrors(
   try {
     typeCheckAndReturnType(program, context, env)
   } catch (error) {
-    // Catch-all for errors that should not be reached logically
+    // Catch-all for thrown errors
+    // (either errors that cause early termination or errors that should not be reached logically)
     console.error(error)
     context.errors.push(
-      typeof error === typeof TypeError
+      error instanceof TypeError
         ? error
         : new TypeError(
             program,
@@ -81,7 +81,7 @@ function typeCheckAndReturnType(
       if (Object.values(PrimitiveType).includes(typeOfLiteral)) {
         return tPrimitive(typeOfLiteral)
       }
-      return tUnknown
+      throw new TypeError(node, 'Unknown literal type.')
     }
     case 'Identifier': {
       const varName = node.name
@@ -90,7 +90,7 @@ function typeCheckAndReturnType(
         return varType as Type
       } else {
         context.errors.push(new UndefinedVariable(varName, node))
-        return tUnknown
+        return tAny
       }
     }
     case 'Program':
@@ -142,7 +142,7 @@ function typeCheckAndReturnType(
       if (node.id === null) {
         // Block should not be reached since node.id is only null when function declaration
         // is part of `export default function`, which is not used in Source
-        throw new TypeError(node, 'Function declaration should have an identifier')
+        throw new TypeError(node, 'Function declaration should always have an identifier.')
       }
       const params = node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[]
       const returnType = getAnnotatedType(node.returnType)
@@ -176,14 +176,13 @@ function typeCheckAndReturnType(
       return tVoid
     case 'VariableDeclaration': {
       if (node.kind === 'var') {
-        context.errors.push(new NoVarError(node))
-        return tVoid
+        throw new TypeError(node, 'Variable declaration using "var" is not allowed.')
       }
       if (node.declarations.length !== 1) {
-        throw new TypeError(node, 'Variable declaration should have one and only one declaration')
+        throw new TypeError(node, 'Variable declaration should have one and only one declaration.')
       }
       if (node.declarations[0].id.type !== 'Identifier') {
-        throw new TypeError(node, 'Variable declaration ID should be an identifier')
+        throw new TypeError(node, 'Variable declaration ID should be an identifier.')
       }
       const id = node.declarations[0].id as NodeWithDeclaredTypeAnnotation<es.Identifier>
       const init = node.declarations[0].init!
@@ -382,32 +381,13 @@ function typeCheckAndReturnArrowFunctionType(
   const params = node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[]
   const body = node.body
   const expectedReturnType = getAnnotatedType(node.returnType)
-  let actualReturnType: Type = tUnknown
 
   // Type check function body, creating new environment to store arg types
   pushEnv(env)
   params.forEach(param => {
     setType(param.name, getAnnotatedType(param.typeAnnotation), env)
   })
-  if (node.body.type === 'BlockStatement') {
-    let hasReturnStmt = false
-    node.body.body.forEach(stmt => {
-      if (stmt.type === 'ReturnStatement') {
-        if (!hasReturnStmt) {
-          actualReturnType = typeCheckAndReturnType(stmt, context, env)
-          hasReturnStmt = true
-        }
-        // Do nothing for extra return statements
-      } else {
-        typeCheckAndReturnType(stmt, context, env)
-      }
-    })
-    if (!hasReturnStmt) {
-      actualReturnType = tVoid
-    }
-  } else {
-    actualReturnType = typeCheckAndReturnType(body, context, env)
-  }
+  const actualReturnType = typeCheckAndReturnType(body, context, env)
   checkForTypeMismatch(node, actualReturnType, expectedReturnType, context)
   env.pop()
 
@@ -532,6 +512,11 @@ function getAnnotatedType(
       const unionTypeNode = annotatedTypeNode as UnionTypeNode
       const unionTypes = unionTypeNode.types.map(getPrimitiveType)
       return tUnion(...unionTypes)
+    case TSTypeAnnotationType.TSIntersectionType:
+      throw new TypeError(
+        annotationNode as unknown as es.Node,
+        'Intersection types are not allowed.'
+      )
     default:
       return getPrimitiveType(annotatedTypeNode)
   }

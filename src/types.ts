@@ -322,6 +322,7 @@ export enum TSTypeAnnotationType {
   TSAnnotationType = 'TSAnnotationType',
   TSFunctionType = 'TSFunctionType',
   TSUnionType = 'TSUnionType',
+  TSIntersectionType = 'TSIntersectionType',
   TSAnyKeyword = 'TSAnyKeyword',
   TSBooleanKeyword = 'TSBooleanKeyword',
   TSNullKeyword = 'TSNullKeyword',
