@@ -33,7 +33,6 @@ import {
   tNumber,
   tPrimitive,
   tString,
-  tUndef,
   tUnion,
   tUnknown,
   tVoid,
@@ -49,7 +48,7 @@ export function checkForTypeErrors(
 ): void {
   const env: TypeEnvironment = context.typeEnvironment
   try {
-    traverseAndTypeCheck(program, context, env)
+    typeCheckAndReturnType(program, context, env)
   } catch (error) {
     // Catch-all for errors that should not be reached logically
     console.error(error)
@@ -66,52 +65,78 @@ export function checkForTypeErrors(
 }
 
 /**
- * Recurses through the given node to check for any type errors.
+ * Recurses through the given node to check for any type errors,
+ * then returns the node's inferred/declared type.
  * Any errors found are added to the context.
  */
-function traverseAndTypeCheck(
+function typeCheckAndReturnType(
   node: NodeWithDeclaredTypeAnnotation<es.Node>,
   context: Context,
   env: TypeEnvironment
-): void {
+): Type {
   switch (node.type) {
+    case 'Literal': {
+      // Infers type
+      const typeOfLiteral = typeof node.value as PrimitiveType
+      if (Object.values(PrimitiveType).includes(typeOfLiteral)) {
+        return tPrimitive(typeOfLiteral)
+      }
+      return tUnknown
+    }
+    case 'Identifier': {
+      const varName = node.name
+      const varType = lookupType(varName, env)
+      if (varType) {
+        return varType as Type
+      } else {
+        context.errors.push(new UndefinedVariable(varName, node))
+        return tUnknown
+      }
+    }
     case 'Program':
     case 'BlockStatement': {
+      let returnType: Type = tVoid
       pushEnv(env)
       // Check all statements in program/block body
-      node.body.forEach(nodeBody => {
-        traverseAndTypeCheck(nodeBody, context, env)
-      })
+      for (const nodeBody of node.body) {
+        if (nodeBody.type === 'IfStatement' || nodeBody.type === 'ReturnStatement') {
+          returnType = typeCheckAndReturnType(nodeBody, context, env)
+          if (nodeBody.type === 'ReturnStatement') {
+            break
+          }
+        } else {
+          typeCheckAndReturnType(nodeBody, context, env)
+        }
+      }
       if (node.type === 'BlockStatement') {
         // Types are saved for programs, but not for blocks
         env.pop()
       }
-      break
+      return returnType
     }
     case 'ExpressionStatement': {
       // Check expression
-      traverseAndTypeCheck(node.expression, context, env)
-      break
+      return typeCheckAndReturnType(node.expression, context, env)
+    }
+    case 'ConditionalExpression':
+    case 'IfStatement': {
+      const predicateType = typeCheckAndReturnType(node.test, context, env)
+      checkForTypeMismatch(node, predicateType, tBool, context)
+      const consType = typeCheckAndReturnType(node.consequent, context, env)
+      const altType = node.alternate ? typeCheckAndReturnType(node.alternate, context, env) : tVoid
+      return tUnion(consType, altType)
     }
     case 'UnaryExpression': {
-      typeCheckAndReturnUnaryExpressionType(node, context, env)
-      break
+      return typeCheckAndReturnUnaryExpressionType(node, context, env)
     }
     case 'BinaryExpression': {
-      typeCheckAndReturnBinaryExpressionType(node, context, env)
-      break
+      return typeCheckAndReturnBinaryExpressionType(node, context, env)
     }
     case 'LogicalExpression': {
-      typeCheckAndReturnLogicalExpressionType(node, context, env)
-      break
+      return typeCheckAndReturnLogicalExpressionType(node, context, env)
     }
-    case 'ConditionalExpression': {
-      typeCheckAndReturnConditionalExpressionType(node, context, env)
-      break
-    }
-    case 'IfStatement': {
-      typeCheckAndReturnIfStatementType(node, context, env)
-      break
+    case 'ArrowFunctionExpression': {
+      return typeCheckAndReturnArrowFunctionType(node, context, env)
     }
     case 'FunctionDeclaration':
       if (node.id === null) {
@@ -128,7 +153,7 @@ function traverseAndTypeCheck(
         setType(param.name, getAnnotatedType(param.typeAnnotation), env)
       })
       setType(RETURN_TYPE_IDENTIFIER, returnType, env)
-      const actualReturnType = getInferredOrDeclaredType(node.body, context, env)
+      const actualReturnType = typeCheckAndReturnType(node.body, context, env)
       // Type error where function does not return anything when it should
       if (
         (actualReturnType as Primitive).name === PrimitiveType.VOID &&
@@ -148,11 +173,11 @@ function traverseAndTypeCheck(
       const fnType = tFunc(...types)
       // Save function type
       setType(node.id.name, fnType, env)
-      break
+      return tVoid
     case 'VariableDeclaration': {
       if (node.kind === 'var') {
         context.errors.push(new NoVarError(node))
-        return
+        return tVoid
       }
       if (node.declarations.length !== 1) {
         throw new TypeError(node, 'Variable declaration should have one and only one declaration')
@@ -163,11 +188,12 @@ function traverseAndTypeCheck(
       const id = node.declarations[0].id as NodeWithDeclaredTypeAnnotation<es.Identifier>
       const init = node.declarations[0].init!
       const expectedType = getAnnotatedType(id.typeAnnotation)
-      inferActualTypeAndCheckForTypeMismatch(init, expectedType, context, env)
+      const initType = typeCheckAndReturnType(init, context, env)
+      checkForTypeMismatch(node, initType, expectedType, context)
       // Save variable type and decl kind in type env
       setType(id.name, expectedType, env)
       setDeclKind(id.name, node.kind, env)
-      break
+      return tVoid
     }
     case 'CallExpression': {
       const fnName = (node.callee as es.Identifier).name
@@ -177,96 +203,29 @@ function traverseAndTypeCheck(
         const args = node.arguments
         if (args.length !== expectedTypes.length) {
           context.errors.push(new InvalidNumberOfArguments(node, expectedTypes.length, args.length))
-          return
+          return tVoid
         }
         checkArgTypes(node, expectedTypes, context, env)
+        return fnType?.returnType
       } else {
         context.errors.push(new UndefinedVariable(fnName, node))
+        return tVoid
       }
-      break
     }
     case 'ReturnStatement': {
       if (!node.argument) {
         context.errors.push(new NoImplicitReturnUndefinedError(node))
+        return tVoid
       } else {
-        const expectedType = lookupType(RETURN_TYPE_IDENTIFIER, env) as Primitive
+        const expectedType = lookupType(RETURN_TYPE_IDENTIFIER, env) as Type
         if (expectedType) {
-          inferActualTypeAndCheckForTypeMismatch(node.argument, expectedType, context, env)
-        }
-        break
-      }
-    }
-    default:
-      break
-  }
-}
-
-/**
- * Recurses through the given node to get the declared type.
- * If the node is a literal, the type is inferred.
- */
-function getInferredOrDeclaredType(
-  node: NodeWithDeclaredTypeAnnotation<es.Node>,
-  context: Context,
-  env: TypeEnvironment
-): Type {
-  switch (node.type) {
-    case 'Literal': {
-      const literalVal = node.value
-      const typeOfLiteral = typeof literalVal as PrimitiveType
-      if (Object.values(PrimitiveType).includes(typeOfLiteral)) {
-        return tPrimitive(typeOfLiteral)
-      }
-      return tUnknown
-    }
-    case 'Identifier': {
-      const varName = node.name
-      const varType = lookupType(varName, env)
-      if (varType) {
-        return varType as Primitive
-      } else {
-        context.errors.push(new UndefinedVariable(varName, node))
-        return tUnknown
-      }
-    }
-    case 'UnaryExpression': {
-      return typeCheckAndReturnUnaryExpressionType(node, context, env)
-    }
-    case 'BinaryExpression': {
-      return typeCheckAndReturnBinaryExpressionType(node, context, env)
-    }
-    case 'LogicalExpression': {
-      return typeCheckAndReturnLogicalExpressionType(node, context, env)
-    }
-    case 'ArrowFunctionExpression': {
-      return typeCheckAndReturnArrowFunctionType(node, context, env)
-    }
-    case 'ConditionalExpression': {
-      return typeCheckAndReturnConditionalExpressionType(node, context, env)
-    }
-    case 'IfStatement': {
-      return typeCheckAndReturnIfStatementType(node, context, env)
-    }
-    case 'ReturnStatement': {
-      if (!node.argument) {
-        context.errors.push(new NoImplicitReturnUndefinedError(node))
-        return tUndef
-      } else {
-        return getInferredOrDeclaredType(node.argument, context, env)
-      }
-    }
-    case 'BlockStatement': {
-      let returnType: Type = tVoid
-      pushEnv(env)
-      // Check all statements in program/block body
-      for (const nodeBody of node.body) {
-        returnType = getInferredOrDeclaredType(nodeBody, context, env)
-        if (nodeBody.type === 'ReturnStatement') {
-          break
+          const argumentType = typeCheckAndReturnType(node.argument, context, env)
+          checkForTypeMismatch(node, argumentType, expectedType, context)
+          return expectedType
+        } else {
+          return typeCheckAndReturnType(node.argument, context, env)
         }
       }
-      env.pop()
-      return returnType
     }
     default:
       return tUnknown
@@ -282,7 +241,7 @@ function typeCheckAndReturnUnaryExpressionType(
   context: Context,
   env: TypeEnvironment
 ): Primitive {
-  const argType = formatTypeString(getInferredOrDeclaredType(node.argument, context, env))
+  const argType = formatTypeString(typeCheckAndReturnType(node.argument, context, env))
   const operator = node.operator
   switch (operator) {
     case '-':
@@ -309,8 +268,8 @@ function typeCheckAndReturnBinaryExpressionType(
   context: Context,
   env: TypeEnvironment
 ): Primitive | UnionType {
-  const leftType = formatTypeString(getInferredOrDeclaredType(node.left, context, env))
-  const rightType = formatTypeString(getInferredOrDeclaredType(node.right, context, env))
+  const leftType = formatTypeString(typeCheckAndReturnType(node.left, context, env))
+  const rightType = formatTypeString(typeCheckAndReturnType(node.right, context, env))
   const operator = node.operator
   switch (operator) {
     case '-':
@@ -401,46 +360,14 @@ function typeCheckAndReturnLogicalExpressionType(
   context: Context,
   env: TypeEnvironment
 ): UnionType {
-  const leftType = getInferredOrDeclaredType(node.left, context, env)
+  const leftType = typeCheckAndReturnType(node.left, context, env)
   if ((leftType as Primitive).name !== PrimitiveType.BOOLEAN) {
     context.errors.push(
       new TypeMismatchError(node, formatTypeString(leftType), PrimitiveType.BOOLEAN)
     )
   }
-  const rightType = getInferredOrDeclaredType(node.right, context, env)
+  const rightType = typeCheckAndReturnType(node.right, context, env)
   return tUnion(tBool, rightType)
-}
-
-/**
- * Typechecks the body of a conditional expression, adding any type errors to context if necessary.
- * Then, returns the type of the conditional expression.
- * The return type is a union of the left expression type (boolean) and right expression type.
- */
-function typeCheckAndReturnConditionalExpressionType(
-  node: es.ConditionalExpression,
-  context: Context,
-  env: TypeEnvironment
-): UnionType {
-  inferActualTypeAndCheckForTypeMismatch(node.test, tBool, context, env)
-  const consType = getInferredOrDeclaredType(node.consequent, context, env)
-  const altType = getInferredOrDeclaredType(node.alternate, context, env)
-  return tUnion(consType, altType)
-}
-
-/**
- * Typechecks the body of a conditional expression, adding any type errors to context if necessary.
- * Then, returns the type of the conditional expression.
- * The return type is a union of the left expression type (boolean) and right expression type.
- */
-function typeCheckAndReturnIfStatementType(
-  node: es.IfStatement,
-  context: Context,
-  env: TypeEnvironment
-): UnionType {
-  inferActualTypeAndCheckForTypeMismatch(node.test, tBool, context, env)
-  const consType = getInferredOrDeclaredType(node.consequent, context, env)
-  const altType = node.alternate ? getInferredOrDeclaredType(node.alternate, context, env) : tVoid
-  return tUnion(consType, altType)
 }
 
 /**
@@ -467,19 +394,19 @@ function typeCheckAndReturnArrowFunctionType(
     node.body.body.forEach(stmt => {
       if (stmt.type === 'ReturnStatement') {
         if (!hasReturnStmt) {
-          actualReturnType = getInferredOrDeclaredType(stmt, context, env)
+          actualReturnType = typeCheckAndReturnType(stmt, context, env)
           hasReturnStmt = true
         }
         // Do nothing for extra return statements
       } else {
-        traverseAndTypeCheck(stmt, context, env)
+        typeCheckAndReturnType(stmt, context, env)
       }
     })
     if (!hasReturnStmt) {
       actualReturnType = tVoid
     }
   } else {
-    actualReturnType = getInferredOrDeclaredType(body, context, env)
+    actualReturnType = typeCheckAndReturnType(body, context, env)
   }
   checkForTypeMismatch(node, actualReturnType, expectedReturnType, context)
   env.pop()
@@ -489,19 +416,6 @@ function typeCheckAndReturnArrowFunctionType(
   types.push(expectedReturnType)
   const fnType = tFunc(...types)
   return fnType
-}
-
-/**
- * Infers the type of the given node, then checks for type mismatch.
- */
-function inferActualTypeAndCheckForTypeMismatch(
-  node: es.Node,
-  expectedType: Type,
-  context: Context,
-  env: TypeEnvironment
-): void {
-  const actualType = getInferredOrDeclaredType(node, context, env)
-  checkForTypeMismatch(node, actualType, expectedType, context)
 }
 
 /**
@@ -591,15 +505,9 @@ function checkArgTypes(
   for (let i = 0; i < expectedTypes.length; i++) {
     const expectedType = expectedTypes[i]
     const node = args[i]
-    inferActualTypeAndCheckForTypeMismatch(node, expectedType, context, env)
+    const actualType = typeCheckAndReturnType(node, context, env)
+    checkForTypeMismatch(node, actualType, expectedType, context)
   }
-}
-
-/**
- * Converts array of function parameters into array of types.
- */
-function getParamTypes(params: NodeWithDeclaredTypeAnnotation<es.Identifier>[]): Type[] {
-  return params.map(param => getAnnotatedType(param.typeAnnotation))
 }
 
 /**
@@ -627,6 +535,13 @@ function getAnnotatedType(
     default:
       return getPrimitiveType(annotatedTypeNode)
   }
+}
+
+/**
+ * Converts array of function parameters into array of types.
+ */
+function getParamTypes(params: NodeWithDeclaredTypeAnnotation<es.Identifier>[]): Type[] {
+  return params.map(param => getAnnotatedType(param.typeAnnotation))
 }
 
 /**
