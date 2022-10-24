@@ -4,7 +4,6 @@ import {
   Options as AcornOptions,
   parse as acornParse,
   parseExpressionAt as acornParseAt,
-  Parser,
   Position,
   tokenizer as acornTokenizer
 } from 'acorn'
@@ -12,7 +11,7 @@ import { parse as acornLooseParse } from 'acorn-loose'
 import * as es from 'estree'
 
 import { ACORN_PARSE_OPTIONS } from '../constants'
-import { Context, ErrorSeverity, ErrorType, Rule, SourceError, Variant } from '../types'
+import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { ancestor, AncestorWalkerFn } from '../utils/walkers'
 import { validateAndAnnotate } from '../validator/validator'
@@ -118,18 +117,44 @@ export function parseAt(source: string, num: number) {
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
-    const parser = context.variant === Variant.TYPED ? TypeParser : Parser
-    program = parser.parse(source, createAcornParserOptions(context)) as unknown as es.Program
-    if (program && context.variant === Variant.TYPED) {
-      // For Typed variant, the code is parsed twice, first using the custom TypeParser and then using Babel Parser.
-      // This is a temporary workaround as the custom TypeParser does not yet cover all type annotation cases needed for Source Typed.
-      // The reason why Babel Parser is not used directly is because it is not extensible to plugins,
-      // and does not allow for no semicolon/trailing comma errors when parsing.
-      program = babelParse(source, {
-        sourceType: 'module',
-        plugins: ['typescript', 'estree']
-      }).program as unknown as es.Program
+    program = acornParse(source, createAcornParserOptions(context)) as unknown as es.Program
+    ancestor(program as es.Node, walkers, undefined, context)
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      // tslint:disable-next-line:no-any
+      const loc = (error as any).loc
+      const location = {
+        start: { line: loc.line, column: loc.column },
+        end: { line: loc.line, column: loc.column + 1 }
+      }
+      context.errors.push(new FatalSyntaxError(location, error.toString()))
+    } else {
+      throw error
     }
+  }
+  const hasErrors = context.errors.find(m => m.severity === ErrorSeverity.ERROR)
+  if (program && !hasErrors) {
+    return program
+  } else {
+    return undefined
+  }
+}
+
+/**
+ * Parses code for the Source Typed variant.
+ * The code is parsed twice, first using the custom TypeParser and then using Babel Parser.
+ * This is a temporary workaround as the custom TypeParser does not yet cover all type annotation cases needed for Source Typed.
+ * The reason why Babel Parser is not used directly is because it is not extensible to plugins,
+ * and does not allow for no semicolon/trailing comma errors when parsing.
+ */
+export function parseWithTypeSupport(source: string, context: Context) {
+  let program: es.Program | undefined
+  try {
+    program = TypeParser.parse(source, createAcornParserOptions(context)) as unknown as es.Program
+    program = babelParse(source, {
+      sourceType: 'module',
+      plugins: ['typescript', 'estree']
+    }).program as unknown as es.Program
     ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
     if (error instanceof SyntaxError) {

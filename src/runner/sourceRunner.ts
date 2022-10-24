@@ -12,7 +12,7 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
-import { parse } from '../parser/parser'
+import { parse, parseWithTypeSupport } from '../parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
   callee,
@@ -213,7 +213,8 @@ export async function sourceRunner(
   context.errors = []
 
   // Parse and validate
-  const program: es.Program | undefined = parse(code, context)
+  const program: es.Program | undefined =
+    context.variant === Variant.TYPED ? parseWithTypeSupport(code, context) : parse(code, context)
   if (!program) {
     return resolvedErrorPromise
   }
