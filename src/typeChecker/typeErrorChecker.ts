@@ -105,25 +105,24 @@ function typeCheckAndReturnType(
       let returnType: Type = tVoid
       pushEnv(env)
       // Check all statements in program/block body
-      for (let i = 0; i < node.body.length; i++) {
-        const nodeBody = node.body[i]
-        if (nodeBody.type === 'IfStatement' || nodeBody.type === 'ReturnStatement') {
-          returnType = typeCheckAndReturnType(nodeBody, context, env)
-          if (nodeBody.type === 'ReturnStatement') {
+      for (const stmt of node.body) {
+        if (stmt.type === 'IfStatement' || stmt.type === 'ReturnStatement') {
+          returnType = typeCheckAndReturnType(stmt, context, env)
+          if (stmt.type === 'ReturnStatement') {
             break
           }
         } else {
-          typeCheckAndReturnType(nodeBody, context, env)
-        }
-        if ((nodeBody.type as string).startsWith('TS')) {
-          // Remove any TS type nodes from program
-          node.body.splice(i, 1)
+          typeCheckAndReturnType(stmt, context, env)
         }
       }
       if (node.type === 'BlockStatement') {
         // Types are saved for programs, but not for blocks
         env.pop()
       }
+
+      // Remove any TS type nodes from program
+      node.body = node.body.filter(stmt => !(stmt.type as string).startsWith('TS'))
+
       return returnType
     }
     case 'ExpressionStatement': {
