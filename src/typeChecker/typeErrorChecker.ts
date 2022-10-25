@@ -1,7 +1,11 @@
 import * as es from 'estree'
 
 import { InvalidNumberOfArguments, UndefinedVariable } from '../errors/errors'
-import { FunctionShouldHaveReturnValueError, TypeMismatchError } from '../errors/typeErrors'
+import {
+  FunctionShouldHaveReturnValueError,
+  TypeMismatchError,
+  TypeNotFoundError
+} from '../errors/typeErrors'
 import { NoImplicitReturnUndefinedError } from '../parser/rules/noImplicitReturnUndefined'
 import {
   AnnotationTypeNode,
@@ -15,6 +19,7 @@ import {
   TSTypeAnnotationType,
   Type,
   TypeEnvironment,
+  TypeReferenceNode,
   UnionType,
   UnionTypeNode
 } from '../types'
@@ -22,10 +27,12 @@ import { TypeError } from './internalTypeErrors'
 import {
   formatTypeString,
   lookupType,
+  lookupTypeAlias,
   pushEnv,
   RETURN_TYPE_IDENTIFIER,
   setDeclKind,
   setType,
+  setTypeAlias,
   tAny,
   tBool,
   tFunc,
@@ -98,7 +105,8 @@ function typeCheckAndReturnType(
       let returnType: Type = tVoid
       pushEnv(env)
       // Check all statements in program/block body
-      for (const nodeBody of node.body) {
+      for (let i = 0; i < node.body.length; i++) {
+        const nodeBody = node.body[i]
         if (nodeBody.type === 'IfStatement' || nodeBody.type === 'ReturnStatement') {
           returnType = typeCheckAndReturnType(nodeBody, context, env)
           if (nodeBody.type === 'ReturnStatement') {
@@ -106,6 +114,10 @@ function typeCheckAndReturnType(
           }
         } else {
           typeCheckAndReturnType(nodeBody, context, env)
+        }
+        if ((nodeBody.type as string).startsWith('TS')) {
+          // Remove any TS type nodes from program
+          node.body.splice(i, 1)
         }
       }
       if (node.type === 'BlockStatement') {
@@ -145,12 +157,12 @@ function typeCheckAndReturnType(
         throw new TypeError(node, 'Function declaration should always have an identifier.')
       }
       const params = node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[]
-      const returnType = getAnnotatedType(node.returnType)
+      const returnType = getAnnotatedType(node.returnType, context, env)
 
       // Type check function body, creating new environment to store arg types/return type
       pushEnv(env)
       params.forEach(param => {
-        setType(param.name, getAnnotatedType(param.typeAnnotation), env)
+        setType(param.name, getAnnotatedType(param.typeAnnotation, context, env), env)
       })
       setType(RETURN_TYPE_IDENTIFIER, returnType, env)
       const actualReturnType = typeCheckAndReturnType(node.body, context, env)
@@ -167,7 +179,7 @@ function typeCheckAndReturnType(
 
       checkForTypeMismatch(node, actualReturnType, returnType, context)
 
-      const types = getParamTypes(params)
+      const types = getParamTypes(params, context, env)
       // Return type will always be last item in types array
       types.push(returnType)
       const fnType = tFunc(...types)
@@ -186,7 +198,7 @@ function typeCheckAndReturnType(
       }
       const id = node.declarations[0].id as NodeWithDeclaredTypeAnnotation<es.Identifier>
       const init = node.declarations[0].init!
-      const expectedType = getAnnotatedType(id.typeAnnotation)
+      const expectedType = getAnnotatedType(id.typeAnnotation, context, env)
       const initType = typeCheckAndReturnType(init, context, env)
       checkForTypeMismatch(node, initType, expectedType, context)
       // Save variable type and decl kind in type env
@@ -227,7 +239,16 @@ function typeCheckAndReturnType(
       }
     }
     default:
-      return tUnknown
+      const nodeAsAny = node as any
+      switch (nodeAsAny.type) {
+        case TSTypeAnnotationType.TSTypeAliasDeclaration:
+          const id = nodeAsAny.id
+          const type = getAnnotatedType(nodeAsAny, context, env)
+          setTypeAlias(id.name, type, env)
+          return tVoid
+        default:
+          return tUnknown
+      }
   }
 }
 
@@ -382,18 +403,18 @@ function typeCheckAndReturnArrowFunctionType(
 ): FunctionType {
   const params = node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[]
   const body = node.body
-  const expectedReturnType = getAnnotatedType(node.returnType)
+  const expectedReturnType = getAnnotatedType(node.returnType, context, env)
 
   // Type check function body, creating new environment to store arg types
   pushEnv(env)
   params.forEach(param => {
-    setType(param.name, getAnnotatedType(param.typeAnnotation), env)
+    setType(param.name, getAnnotatedType(param.typeAnnotation, context, env), env)
   })
   const actualReturnType = typeCheckAndReturnType(body, context, env)
   checkForTypeMismatch(node, actualReturnType, expectedReturnType, context)
   env.pop()
 
-  const types = getParamTypes(params)
+  const types = getParamTypes(params, context, env)
   // Return type will always be last item in types array
   types.push(expectedReturnType)
   const fnType = tFunc(...types)
@@ -497,8 +518,10 @@ function checkArgTypes(
  * If no type annotation exists, returns the "any" primitive type.
  */
 function getAnnotatedType(
-  annotationNode: AnnotationTypeNode | undefined
-): Primitive | FunctionType | UnionType {
+  annotationNode: AnnotationTypeNode | undefined,
+  context: Context,
+  env: TypeEnvironment
+): Type {
   if (!annotationNode) {
     return tAny
   }
@@ -506,9 +529,9 @@ function getAnnotatedType(
   switch (annotatedTypeNode.type) {
     case TSTypeAnnotationType.TSFunctionType:
       const fnTypeNode = annotatedTypeNode as FunctionTypeNode
-      const fnTypes = getParamTypes(fnTypeNode.parameters)
+      const fnTypes = getParamTypes(fnTypeNode.parameters, context, env)
       // Return type will always be last item in types array
-      fnTypes.push(getAnnotatedType(fnTypeNode.typeAnnotation))
+      fnTypes.push(getAnnotatedType(fnTypeNode.typeAnnotation, context, env))
       return tFunc(...fnTypes)
     case TSTypeAnnotationType.TSUnionType:
       const unionTypeNode = annotatedTypeNode as UnionTypeNode
@@ -519,6 +542,20 @@ function getAnnotatedType(
         annotationNode as unknown as es.Node,
         'Intersection types are not allowed.'
       )
+    case TSTypeAnnotationType.TSTypeReference:
+      console.log(annotatedTypeNode)
+      const typeReferenceNode = annotatedTypeNode as TypeReferenceNode
+      const declaredType = lookupTypeAlias(typeReferenceNode.typeName.name, env)
+      if (!declaredType) {
+        context.errors.push(
+          new TypeNotFoundError(
+            annotationNode as unknown as es.Node,
+            typeReferenceNode.typeName.name
+          )
+        )
+        return tAny
+      }
+      return declaredType
     default:
       return getPrimitiveType(annotatedTypeNode)
   }
@@ -527,8 +564,12 @@ function getAnnotatedType(
 /**
  * Converts array of function parameters into array of types.
  */
-function getParamTypes(params: NodeWithDeclaredTypeAnnotation<es.Identifier>[]): Type[] {
-  return params.map(param => getAnnotatedType(param.typeAnnotation))
+function getParamTypes(
+  params: NodeWithDeclaredTypeAnnotation<es.Identifier>[],
+  context: Context,
+  env: TypeEnvironment
+): Type[] {
+  return params.map(param => getAnnotatedType(param.typeAnnotation, context, env))
 }
 
 /**

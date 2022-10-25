@@ -331,7 +331,9 @@ export enum TSTypeAnnotationType {
   TSStringKeyword = 'TSStringKeyword',
   TSUndefinedKeyword = 'TSUndefinedKeyword',
   TSUnknownKeyword = 'TSUnknownKeyword',
-  TSVoidKeyword = 'TSVoidKeyword'
+  TSVoidKeyword = 'TSVoidKeyword',
+  TSTypeAliasDeclaration = 'TSTypeAliasDeclaration',
+  TSTypeReference = 'TSTypeReference'
 }
 
 // Types for parsed TS node used in Source Typed variants
@@ -348,7 +350,7 @@ export interface BaseTypeNode extends es.BaseNode {
 
 export interface AnnotationTypeNode extends BaseTypeNode {
   type: TSTypeAnnotationType.TSAnnotationType
-  typeAnnotation: BaseTypeNode | FunctionTypeNode
+  typeAnnotation: BaseTypeNode | FunctionTypeNode | UnionTypeNode | TypeReferenceNode
 }
 
 export interface FunctionTypeNode extends BaseTypeNode {
@@ -360,6 +362,17 @@ export interface FunctionTypeNode extends BaseTypeNode {
 export interface UnionTypeNode extends BaseTypeNode {
   type: TSTypeAnnotationType.TSUnionType
   types: BaseTypeNode[]
+}
+
+export interface TypeAliasDeclarationNode extends BaseTypeNode {
+  type: TSTypeAnnotationType.TSTypeAliasDeclaration
+  id: es.Identifier
+  typeAnnotation: BaseTypeNode
+}
+
+export interface TypeReferenceNode extends BaseTypeNode {
+  type: TSTypeAnnotationType.TSTypeReference
+  typeName: es.Identifier
 }
 
 // Types for nodes used in type inference
@@ -450,6 +463,7 @@ export interface PredicateType {
 export type TypeEnvironment = {
   typeMap: Map<string, BindableType>
   declKindMap: Map<string, AllowedDeclarations>
+  typeAliasMap?: Map<string, Type>
 }[]
 
 export type PredicateTest = {

@@ -11,6 +11,7 @@ import { parse as acornLooseParse } from 'acorn-loose'
 import * as es from 'estree'
 
 import { ACORN_PARSE_OPTIONS } from '../constants'
+import { checkForTypeErrors } from '../typeChecker/typeErrorChecker'
 import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { ancestor, AncestorWalkerFn } from '../utils/walkers'
@@ -141,13 +142,13 @@ export function parse(source: string, context: Context) {
 }
 
 /**
- * Parses code for the Source Typed variant.
+ * Parses and typechecks code for the Source Typed variant.
  * The code is parsed twice, first using the custom TypeParser and then using Babel Parser.
  * This is a temporary workaround as the custom TypeParser does not yet cover all type annotation cases needed for Source Typed.
  * The reason why Babel Parser is not used directly is because it is not extensible to plugins,
  * and does not allow for no semicolon/trailing comma errors when parsing.
  */
-export function parseWithTypeSupport(source: string, context: Context) {
+export function parseAndTypeCheck(source: string, context: Context) {
   let program: es.Program | undefined
   try {
     program = TypeParser.parse(source, createAcornParserOptions(context)) as unknown as es.Program
@@ -155,6 +156,9 @@ export function parseWithTypeSupport(source: string, context: Context) {
       sourceType: 'module',
       plugins: ['typescript', 'estree']
     }).program as unknown as es.Program
+
+    checkForTypeErrors(program, context)
+
     ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
     if (error instanceof SyntaxError) {

@@ -60,12 +60,30 @@ export function lookupDeclKind(
   return undefined
 }
 
+export function lookupTypeAlias(name: string, env: TypeEnvironment): Type | undefined {
+  for (let i = env.length - 1; i >= 0; i--) {
+    const currEnv = env[i]
+    if (currEnv.typeAliasMap && currEnv.typeAliasMap.has(name)) {
+      return currEnv.typeAliasMap.get(name)
+    }
+  }
+  return undefined
+}
+
 export function setType(name: string, type: BindableType, env: TypeEnvironment): void {
   env[env.length - 1].typeMap.set(name, type)
 }
 
 export function setDeclKind(name: string, kind: AllowedDeclarations, env: TypeEnvironment): void {
   env[env.length - 1].declKindMap.set(name, kind)
+}
+
+export function setTypeAlias(name: string, type: Type, env: TypeEnvironment): void {
+  const currEnv = env[env.length - 1]
+  if (!currEnv.typeAliasMap) {
+    currEnv.typeAliasMap = new Map()
+  }
+  currEnv.typeAliasMap.set(name, type)
 }
 
 export function pushEnv(env: TypeEnvironment): void {
