@@ -47,15 +47,16 @@ import {
 } from './utils'
 
 /**
- * Entry function for type checker.
+ * Checks programs for type errors, and returns the program with all TS-related nodes removed.
  */
 export function checkForTypeErrors(
   program: NodeWithDeclaredTypeAnnotation<es.Program>,
   context: Context
-): void {
+): es.Program {
   const env: TypeEnvironment = context.typeEnvironment
   try {
     typeCheckAndReturnType(program, context, env)
+    return removeTSNodes(program)
   } catch (error) {
     // Catch-all for thrown errors
     // (either errors that cause early termination or errors that should not be reached logically)
@@ -69,6 +70,7 @@ export function checkForTypeErrors(
               error.message
           )
     )
+    return program
   }
 }
 
@@ -120,9 +122,6 @@ function typeCheckAndReturnType(
         // Types are saved for programs, but not for blocks
         env.pop()
       }
-
-      // Remove any TS type nodes from program
-      node.body = node.body.filter(stmt => !(stmt.type as string).startsWith('TS'))
 
       return returnType
     }
@@ -248,6 +247,8 @@ function typeCheckAndReturnType(
           const type = getAnnotatedType(nodeAsAny, context, env)
           setTypeAlias(id.name, type, env)
           return tVoid
+        case TSTypeAnnotationType.TSAsExpression:
+          return getAnnotatedType(nodeAsAny, context, env)
         default:
           return tUnknown
       }
@@ -383,7 +384,7 @@ function typeCheckAndReturnLogicalExpressionType(
   node: es.LogicalExpression,
   context: Context,
   env: TypeEnvironment
-): UnionType {
+): Type {
   const leftType = typeCheckAndReturnType(node.left, context, env)
   if ((leftType as Primitive).name !== PrimitiveType.BOOLEAN) {
     context.errors.push(
@@ -391,7 +392,7 @@ function typeCheckAndReturnLogicalExpressionType(
     )
   }
   const rightType = typeCheckAndReturnType(node.right, context, env)
-  return tUnion(tBool, rightType)
+  return mergeTypes(tBool, rightType)
 }
 
 /**
@@ -538,14 +539,13 @@ function getAnnotatedType(
     case TSTypeAnnotationType.TSUnionType:
       const unionTypeNode = annotatedTypeNode as UnionTypeNode
       const unionTypes = unionTypeNode.types.map(getPrimitiveType)
-      return tUnion(...unionTypes)
+      return mergeTypes(...unionTypes)
     case TSTypeAnnotationType.TSIntersectionType:
       throw new TypeError(
         annotationNode as unknown as es.Node,
         'Intersection types are not allowed.'
       )
     case TSTypeAnnotationType.TSTypeReference:
-      console.log(annotatedTypeNode)
       const typeReferenceNode = annotatedTypeNode as TypeReferenceNode
       const declaredType = lookupTypeAlias(typeReferenceNode.typeName.name, env)
       if (!declaredType) {
@@ -610,7 +610,7 @@ function mergeTypes(...types: Type[]): Type {
 }
 
 /**
- * Helper function to check if a type exists in an array of types.
+ * Checks if a type exists in an array of types.
  */
 function containsType(arr: Type[], typeToCheck: Type) {
   for (const type of arr) {
@@ -619,4 +619,87 @@ function containsType(arr: Type[], typeToCheck: Type) {
     }
   }
   return false
+}
+
+/**
+ * Traverses through the program and removes all TS-related nodes, returning the result.
+ */
+function removeTSNodes(node: NodeWithDeclaredTypeAnnotation<es.Node>): any {
+  switch (node.type) {
+    case 'Literal':
+    case 'Identifier': {
+      return node
+    }
+    case 'Program':
+    case 'BlockStatement': {
+      const newBody: es.Statement[] = []
+      node.body.forEach(stmt => {
+        const type = stmt.type as string
+        if (type.startsWith('TS')) {
+          switch (type) {
+            case TSTypeAnnotationType.TSAsExpression:
+              newBody.push(removeTSNodes(stmt))
+              break
+            default:
+              // Remove node from body
+              break
+          }
+        } else {
+          newBody.push(removeTSNodes(stmt))
+        }
+      })
+      node.body = newBody
+      return node
+    }
+    case 'ExpressionStatement': {
+      node.expression = removeTSNodes(node.expression)
+      return node
+    }
+    case 'ConditionalExpression':
+    case 'IfStatement': {
+      node.test = removeTSNodes(node.test)
+      node.consequent = removeTSNodes(node.consequent)
+      if (node.alternate) {
+        node.alternate = removeTSNodes(node.alternate)
+      }
+      return node
+    }
+    case 'UnaryExpression': {
+      node.argument = removeTSNodes(node.argument)
+      return node
+    }
+    case 'BinaryExpression':
+    case 'LogicalExpression': {
+      node.left = removeTSNodes(node.left)
+      node.right = removeTSNodes(node.right)
+      return node
+    }
+    case 'ArrowFunctionExpression':
+    case 'FunctionDeclaration':
+      node.body = removeTSNodes(node.body)
+      return node
+    case 'VariableDeclaration': {
+      const init = node.declarations[0].init!
+      node.declarations[0].init = removeTSNodes(init)
+      return node
+    }
+    case 'CallExpression': {
+      node.arguments = node.arguments.map(removeTSNodes)
+      return node
+    }
+    case 'ReturnStatement': {
+      if (node.argument) {
+        node.argument = removeTSNodes(node.argument)
+      }
+      return node
+    }
+    default:
+      const nodeAsAny = node as any
+      switch (nodeAsAny.type) {
+        case TSTypeAnnotationType.TSAsExpression:
+          return removeTSNodes(nodeAsAny.expression)
+        default:
+          return node
+      }
+  }
 }

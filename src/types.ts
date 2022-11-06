@@ -333,6 +333,7 @@ export enum TSTypeAnnotationType {
   TSUnknownKeyword = 'TSUnknownKeyword',
   TSVoidKeyword = 'TSVoidKeyword',
   TSTypeAliasDeclaration = 'TSTypeAliasDeclaration',
+  TSAsExpression = 'TSAsExpression',
   TSTypeReference = 'TSTypeReference'
 }
 
@@ -367,6 +368,12 @@ export interface UnionTypeNode extends BaseTypeNode {
 export interface TypeAliasDeclarationNode extends BaseTypeNode {
   type: TSTypeAnnotationType.TSTypeAliasDeclaration
   id: es.Identifier
+  typeAnnotation: BaseTypeNode
+}
+
+export interface AsExpressionNode extends BaseTypeNode {
+  type: TSTypeAnnotationType.TSAsExpression
+  expression: es.Node
   typeAnnotation: BaseTypeNode
 }
 

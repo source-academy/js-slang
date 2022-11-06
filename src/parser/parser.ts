@@ -147,6 +147,7 @@ export function parse(source: string, context: Context) {
  * This is a temporary workaround as the custom TypeParser does not yet cover all type annotation cases needed for Source Typed.
  * The reason why Babel Parser is not used directly is because it is not extensible to plugins,
  * and does not allow for no semicolon/trailing comma errors when parsing.
+ * Finally, the code is checked for type errors, and any TS-related nodes are removed.
  */
 export function parseAndTypeCheck(source: string, context: Context) {
   let program: es.Program | undefined
@@ -157,7 +158,7 @@ export function parseAndTypeCheck(source: string, context: Context) {
       plugins: ['typescript', 'estree']
     }).program as unknown as es.Program
 
-    checkForTypeErrors(program, context)
+    program = checkForTypeErrors(program, context)
 
     ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
