@@ -23,7 +23,6 @@ import {
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { hoistImportDeclarations, transpile } from '../transpiler/transpiler'
-import { checkForTypeErrors } from '../typeChecker/typeErrorChecker'
 import { Context, Scheduler, SourceError, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
@@ -224,13 +223,6 @@ export async function sourceRunner(
 
   if (context.errors.length > 0) {
     return resolvedErrorPromise
-  }
-
-  if (context.variant === Variant.TYPED) {
-    checkForTypeErrors(program, context)
-    if (context.errors.length > 0) {
-      return resolvedErrorPromise
-    }
   }
 
   hoistImportDeclarations(program)
