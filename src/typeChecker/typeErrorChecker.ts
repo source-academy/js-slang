@@ -1,4 +1,5 @@
 import * as es from 'estree'
+import { isEqual } from 'lodash'
 
 import { InvalidNumberOfArguments, UndefinedVariable } from '../errors/errors'
 import {
@@ -135,7 +136,7 @@ function typeCheckAndReturnType(
       checkForTypeMismatch(node, predicateType, tBool, context)
       const consType = typeCheckAndReturnType(node.consequent, context, env)
       const altType = node.alternate ? typeCheckAndReturnType(node.alternate, context, env) : tVoid
-      return tUnion(consType, altType)
+      return mergeTypes(consType, altType)
     }
     case 'UnaryExpression': {
       return typeCheckAndReturnUnaryExpressionType(node, context, env)
@@ -579,4 +580,43 @@ function getParamTypes(
  */
 function getPrimitiveType(node: BaseTypeNode) {
   return tPrimitive(typeAnnotationKeywordToPrimitiveTypeMap[node.type] ?? PrimitiveType.UNKNOWN)
+}
+
+/**
+ * Combines all types provided in the parameters into one, removing duplicate types in the process.
+ */
+function mergeTypes(...types: Type[]): Type {
+  const mergedTypes: Type[] = []
+  for (const currType of types) {
+    if (currType == tAny) {
+      return tAny
+    }
+    if (currType.kind === 'union') {
+      for (const type of currType.types) {
+        if (!containsType(mergedTypes, type)) {
+          mergedTypes.push(type)
+        }
+      }
+    } else if (!containsType(mergedTypes, currType)) {
+      mergedTypes.push(currType)
+    } else {
+      // Duplicate type, do nothing
+    }
+  }
+  if (mergedTypes.length === 1) {
+    return mergedTypes[0]
+  }
+  return tUnion(...mergedTypes)
+}
+
+/**
+ * Helper function to check if a type exists in an array of types.
+ */
+function containsType(arr: Type[], typeToCheck: Type) {
+  for (const type of arr) {
+    if (isEqual(type, typeToCheck)) {
+      return true
+    }
+  }
+  return false
 }
