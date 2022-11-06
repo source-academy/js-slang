@@ -158,12 +158,18 @@ function typeCheckAndReturnType(
       const params = node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[]
       const returnType = getAnnotatedType(node.returnType, context, env)
 
-      // Type check function body, creating new environment to store arg types/return type
+      const types = getParamTypes(params, context, env)
+      // Return type will always be last item in types array
+      types.push(returnType)
+      const fnType = tFunc(...types)
+
+      // Type check function body, creating new environment to store arg types, return type and function type
       pushEnv(env)
       params.forEach(param => {
         setType(param.name, getAnnotatedType(param.typeAnnotation, context, env), env)
       })
       setType(RETURN_TYPE_IDENTIFIER, returnType, env)
+      setType(node.id.name, fnType, env)
       const actualReturnType = typeCheckAndReturnType(node.body, context, env)
       // Type error where function does not return anything when it should
       if (
@@ -178,10 +184,6 @@ function typeCheckAndReturnType(
 
       checkForTypeMismatch(node, actualReturnType, returnType, context)
 
-      const types = getParamTypes(params, context, env)
-      // Return type will always be last item in types array
-      types.push(returnType)
-      const fnType = tFunc(...types)
       // Save function type
       setType(node.id.name, fnType, env)
       return tVoid
