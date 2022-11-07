@@ -356,3 +356,17 @@ export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
     }
   ]
 }
+
+// Type overrides for source typed variant
+export const source1TypeOverrides: [string, BindableType][] = [
+  // is something functions
+  ['is_boolean', tFunc(tAny, tBool)],
+  ['is_number', tFunc(tAny, tBool)],
+  ['is_string', tFunc(tAny, tBool)],
+  ['is_undefined', tFunc(tAny, tBool)],
+  ['is_function', tFunc(tAny, tBool)],
+  // misc functions
+  ['stringify', tFunc(tAny, tString)],
+  ['arity', tFunc(tAny, tNumber)],
+  ['char_at', tFunc(tString, tNumber, tUnion(tString, tUndef))]
+]

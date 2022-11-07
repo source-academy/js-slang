@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { isEqual } from 'lodash'
+import { cloneDeep, isEqual } from 'lodash'
 
 import { InvalidNumberOfArguments, UndefinedVariable } from '../errors/errors'
 import {
@@ -12,6 +12,7 @@ import {
   AnnotationTypeNode,
   BaseTypeNode,
   Context,
+  ForAll,
   FunctionType,
   FunctionTypeNode,
   NodeWithDeclaredTypeAnnotation,
@@ -34,14 +35,15 @@ import {
   setDeclKind,
   setType,
   setTypeAlias,
+  source1TypeOverrides,
   tAny,
   tBool,
   tFunc,
   tNumber,
   tPrimitive,
   tString,
+  tUndef,
   tUnion,
-  tUnknown,
   tVoid,
   typeAnnotationKeywordToPrimitiveTypeMap
 } from './utils'
@@ -53,7 +55,12 @@ export function checkForTypeErrors(
   program: NodeWithDeclaredTypeAnnotation<es.Program>,
   context: Context
 ): es.Program {
-  const env: TypeEnvironment = context.typeEnvironment
+  // Deep copy type environment
+  const env: TypeEnvironment = cloneDeep(context.typeEnvironment)
+  // Override predeclared function types
+  for (const [name, type] of source1TypeOverrides) {
+    setType(name, type, env)
+  }
   try {
     typeCheckAndReturnType(program, context, env)
     return removeTSNodes(program)
@@ -209,25 +216,29 @@ function typeCheckAndReturnType(
     }
     case 'CallExpression': {
       const fnName = (node.callee as es.Identifier).name
-      const fnType = lookupType(fnName, env) as FunctionType | undefined
+      const fnType = lookupType(fnName, env) as FunctionType | ForAll | undefined
       if (fnType) {
+        if (fnType.kind === 'forall') {
+          // Skip typecheck as function has variable number of arguments
+          return tAny
+        }
         const expectedTypes = fnType.parameterTypes as Primitive[]
         const args = node.arguments
         if (args.length !== expectedTypes.length) {
           context.errors.push(new InvalidNumberOfArguments(node, expectedTypes.length, args.length))
-          return tVoid
+          return fnType.returnType
         }
         checkArgTypes(node, expectedTypes, context, env)
-        return fnType?.returnType
+        return fnType.returnType
       } else {
         context.errors.push(new UndefinedVariable(fnName, node))
-        return tVoid
+        return tAny
       }
     }
     case 'ReturnStatement': {
       if (!node.argument) {
         context.errors.push(new NoImplicitReturnUndefinedError(node))
-        return tVoid
+        return tUndef
       } else {
         const expectedType = lookupType(RETURN_TYPE_IDENTIFIER, env) as Type
         if (expectedType) {
@@ -250,7 +261,7 @@ function typeCheckAndReturnType(
         case TSTypeAnnotationType.TSAsExpression:
           return getAnnotatedType(nodeAsAny, context, env)
         default:
-          return tUnknown
+          return tAny
       }
   }
 }
@@ -280,7 +291,7 @@ function typeCheckAndReturnUnaryExpressionType(
     case 'typeof':
       return tString
     default:
-      return tUnknown
+      return tAny
   }
 }
 
@@ -371,7 +382,7 @@ function typeCheckAndReturnBinaryExpressionType(
       }
       return tBool
     default:
-      return tUnknown
+      return tAny
   }
 }
 
@@ -695,11 +706,12 @@ function removeTSNodes(node: NodeWithDeclaredTypeAnnotation<es.Node>): any {
     }
     default:
       const nodeAsAny = node as any
-      switch (nodeAsAny.type) {
+      const type = nodeAsAny.type
+      switch (type) {
         case TSTypeAnnotationType.TSAsExpression:
           return removeTSNodes(nodeAsAny.expression)
         default:
-          return node
+          return type.startsWith('TS') ? undefined : node
       }
   }
 }
