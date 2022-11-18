@@ -5,6 +5,8 @@ import { InvalidNumberOfArguments, UndefinedVariable } from '../errors/errors'
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
   FunctionShouldHaveReturnValueError,
+  NoExplicitAnyError,
+  TypecastError,
   TypeMismatchError,
   TypeNotCallableError,
   TypeNotFoundError
@@ -273,7 +275,21 @@ function typeCheckAndReturnType(
           setTypeAlias(id.name, type, env)
           return tVoid
         case TSTypeAnnotationType.TSAsExpression:
-          return getAnnotatedType(nodeAsAny, context, env)
+          const originalType = typeCheckAndReturnType(nodeAsAny.expression, context, env)
+          const typeToCastTo = getAnnotatedType(nodeAsAny, context, env)
+          if ((typeToCastTo as Primitive).name === PrimitiveType.ANY) {
+            context.errors.push(new NoExplicitAnyError(node))
+          }
+          if (hasTypeMismatchErrors(typeToCastTo, originalType)) {
+            context.errors.push(
+              new TypecastError(
+                node,
+                formatTypeString(originalType),
+                formatTypeString(typeToCastTo)
+              )
+            )
+          }
+          return typeToCastTo
         default:
           return tAny
       }

@@ -490,3 +490,41 @@ export class TypeNotCallableError implements SourceError {
     return this.explain()
   }
 }
+
+export class NoExplicitAnyError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: es.Node) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Typecasting to 'any' is not allowed.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypecastError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: es.Node, public originalType: string, public typeToCastTo: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.originalType}' cannot be casted to type '${this.typeToCastTo}' as it is not a superset of '${this.typeToCastTo}'.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
