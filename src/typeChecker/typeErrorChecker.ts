@@ -2,17 +2,19 @@ import * as es from 'estree'
 import { cloneDeep, isEqual } from 'lodash'
 
 import { InvalidNumberOfArguments, UndefinedVariable } from '../errors/errors'
+import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
   FunctionShouldHaveReturnValueError,
   TypeMismatchError,
+  TypeNotCallableError,
   TypeNotFoundError
 } from '../errors/typeErrors'
+import { memoizedGetModuleManifest } from '../modules/moduleLoader'
 import { NoImplicitReturnUndefinedError } from '../parser/rules/noImplicitReturnUndefined'
 import {
   AnnotationTypeNode,
   BaseTypeNode,
   Context,
-  ForAll,
   FunctionType,
   FunctionTypeNode,
   NodeWithDeclaredTypeAnnotation,
@@ -114,6 +116,10 @@ function typeCheckAndReturnType(
     case 'BlockStatement': {
       let returnType: Type = tVoid
       pushEnv(env)
+      // Handle import statements
+      if (node.type === 'Program') {
+        handleImportDeclarations(node, context, env)
+      }
       // Check all statements in program/block body
       for (const stmt of node.body) {
         if (stmt.type === 'IfStatement' || stmt.type === 'ReturnStatement') {
@@ -216,10 +222,16 @@ function typeCheckAndReturnType(
     }
     case 'CallExpression': {
       const fnName = (node.callee as es.Identifier).name
-      const fnType = lookupType(fnName, env) as FunctionType | ForAll | undefined
+      const fnType = lookupType(fnName, env)
       if (fnType) {
         if (fnType.kind === 'forall') {
           // Skip typecheck as function has variable number of arguments
+          return tAny
+        }
+        if (fnType.kind !== 'function') {
+          if ((fnType as Primitive).name !== PrimitiveType.ANY) {
+            context.errors.push(new TypeNotCallableError(node, fnName))
+          }
           return tAny
         }
         const expectedTypes = fnType.parameterTypes as Primitive[]
@@ -250,6 +262,8 @@ function typeCheckAndReturnType(
         }
       }
     }
+    case 'ImportDeclaration':
+      return tVoid
     default:
       const nodeAsAny = node as any
       switch (nodeAsAny.type) {
@@ -263,6 +277,38 @@ function typeCheckAndReturnType(
         default:
           return tAny
       }
+  }
+}
+
+/**
+ * Adds types for imported functions to the type environment.
+ */
+function handleImportDeclarations(
+  node: NodeWithDeclaredTypeAnnotation<es.Program>,
+  context: Context,
+  env: TypeEnvironment
+) {
+  const importStmts: es.ImportDeclaration[] = node.body.filter(
+    stmt => stmt.type === 'ImportDeclaration'
+  ) as es.ImportDeclaration[]
+  if (importStmts.length > 0) {
+    const modules = memoizedGetModuleManifest()
+    const moduleList = Object.keys(modules)
+    importStmts.forEach(stmt => {
+      const moduleName = stmt.source.value as string
+      if (!moduleList.includes(moduleName)) {
+        context.errors.push(new ModuleNotFoundError(moduleName, stmt))
+      }
+      stmt.specifiers.map(spec => {
+        if (spec.type !== 'ImportSpecifier') {
+          throw new Error(
+            `I expected only ImportSpecifiers to be allowed, but encountered ${spec.type}.`
+          )
+        }
+
+        setType(spec.local.name, tAny, env)
+      })
+    })
   }
 }
 

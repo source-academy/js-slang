@@ -471,3 +471,22 @@ export class FunctionShouldHaveReturnValueError implements SourceError {
     return this.explain()
   }
 }
+
+export class TypeNotCallableError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: es.Node, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `'${this.name}' is not callable.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
