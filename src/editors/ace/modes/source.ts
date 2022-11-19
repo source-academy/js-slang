@@ -93,12 +93,22 @@ export function HighlightRulesSelector(
       return output
     }
 
-    const ChapterForbbidenWordSelector = () => {
+    const ChapterAndVariantForbiddenWordSelector = () => {
+      let forbiddenWords = ''
       if (id < 3) {
-        return 'while|for|break|continue|let'
-      } else {
-        return ''
+        forbiddenWords += 'while|for|break|continue|let'
       }
+      if (variant !== Variant.TYPED) {
+        forbiddenWords += '|typeof'
+      }
+      return forbiddenWords
+    }
+
+    const VariantForbiddenRegexSelector = () => {
+      if (variant === Variant.TYPED) {
+        return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]/
+      }
+      return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]|[^\|]*\|[^\|]/
     }
 
     // @ts-ignore
@@ -120,16 +130,15 @@ export function HighlightRulesSelector(
           'variable.language':
             'this|arguments|' + // Pseudo
             'var|yield|async|await|with|switch|throw|try|eval|' + // forbidden words
-            'typeof|' +
             'class|enum|extends|super|export|implements|private|public|' +
             'void|interface|package|protected|static|in|of|instanceof|new|' +
             'case|catch|default|delete|do|finally|' +
-            ChapterForbbidenWordSelector()
+            ChapterAndVariantForbiddenWordSelector()
         },
         'identifier'
       )
 
-      // origiinal keywordBeforeRegex = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
+      // original keywordBeforeRegex = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
       const keywordBeforeRegex = 'else|return'
 
       const escapedRegex =
@@ -271,7 +280,7 @@ export function HighlightRulesSelector(
           },
           {
             token: ['variable.language'],
-            regex: /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]|[^\|]*\|[^\|]/
+            regex: VariantForbiddenRegexSelector()
           },
           {
             token: keywordMapper,
@@ -551,6 +560,36 @@ export function HighlightRulesSelector(
         if (!options || options.jsx != false)
           // @ts-ignore
           JSX.call(this)
+
+        // Adding of highlight rules for Source Typed
+        // Code referenced from https://github.com/ajaxorg/ace-builds/blob/master/src/mode-typescript.js
+        if (variant === Variant.TYPED) {
+          // @ts-ignore
+          this.$rules.no_regex.unshift(
+            {
+              token: ['storage.type', 'text', 'entity.name.function.ts'],
+              regex: '(function)(\\s+)([a-zA-Z0-9$_\u00a1-\uffff][a-zA-Z0-9d$_\u00a1-\uffff]*)'
+            },
+            {
+              token: 'keyword',
+              regex:
+                '(?:\\b(constructor|declare|interface|as|AS|public|private|extends|export|super|readonly|module|namespace|abstract|implements)\\b)'
+            },
+            {
+              token: ['keyword', 'storage.type.variable.ts'],
+              regex: '(class|type)(\\s+[a-zA-Z0-9_?.$][\\w?.$]*)'
+            },
+            {
+              token: 'keyword',
+              regex: '\\b(?:super|export|import|keyof|infer|typeof)\\b'
+            },
+            {
+              token: ['storage.type.variable.ts'],
+              regex:
+                '(?:\\b(this\\.|string\\b|bool\\b|boolean\\b|number\\b|true\\b|false\\b|undefined\\b|any\\b|null\\b|(?:unique )?symbol\\b|object\\b|never\\b|enum\\b))'
+            }
+          )
+        }
       }
       // @ts-ignore
       this.embedRules(DocCommentHighlightRules, 'doc-', [
