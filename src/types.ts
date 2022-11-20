@@ -310,28 +310,39 @@ export type ContiguousArrayElements = ContiguousArrayElementExpression[]
 
 export enum PrimitiveType {
   ANY = 'any',
+  BIGINT = 'bigint',
   BOOLEAN = 'boolean',
+  NEVER = 'never',
   NULL = 'null',
   NUMBER = 'number',
+  OBJECT = 'object',
   STRING = 'string',
+  SYMBOL = 'symbol',
   UNDEFINED = 'undefined',
   UNKNOWN = 'unknown',
   VOID = 'void'
 }
 
 export enum TSTypeAnnotationType {
+  // Type annotation types
   TSAnnotationType = 'TSAnnotationType',
   TSFunctionType = 'TSFunctionType',
   TSUnionType = 'TSUnionType',
   TSIntersectionType = 'TSIntersectionType',
+  // Keywords
   TSAnyKeyword = 'TSAnyKeyword',
+  TSBigIntKeyword = 'TSBigIntKeyword',
   TSBooleanKeyword = 'TSBooleanKeyword',
+  TSNeverKeyword = 'TSNeverKeyword',
   TSNullKeyword = 'TSNullKeyword',
   TSNumberKeyword = 'TSNumberKeyword',
+  TSObjectKeyword = 'TSObjectKeyword',
   TSStringKeyword = 'TSStringKeyword',
+  TSSymbolKeyword = 'TSSymbolKeyword',
   TSUndefinedKeyword = 'TSUndefinedKeyword',
   TSUnknownKeyword = 'TSUnknownKeyword',
   TSVoidKeyword = 'TSVoidKeyword',
+  // Expressions
   TSTypeAliasDeclaration = 'TSTypeAliasDeclaration',
   TSAsExpression = 'TSAsExpression',
   TSTypeReference = 'TSTypeReference'

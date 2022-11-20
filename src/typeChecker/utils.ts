@@ -29,14 +29,26 @@ export const RETURN_TYPE_IDENTIFIER = '//RETURN_TYPE'
 
 export const typeAnnotationKeywordToPrimitiveTypeMap = {
   [TSTypeAnnotationType.TSAnyKeyword]: PrimitiveType.ANY,
+  [TSTypeAnnotationType.TSBigIntKeyword]: PrimitiveType.BIGINT,
   [TSTypeAnnotationType.TSBooleanKeyword]: PrimitiveType.BOOLEAN,
+  [TSTypeAnnotationType.TSNeverKeyword]: PrimitiveType.NEVER,
   [TSTypeAnnotationType.TSNullKeyword]: PrimitiveType.NULL,
   [TSTypeAnnotationType.TSNumberKeyword]: PrimitiveType.NUMBER,
+  [TSTypeAnnotationType.TSObjectKeyword]: PrimitiveType.OBJECT,
   [TSTypeAnnotationType.TSStringKeyword]: PrimitiveType.STRING,
+  [TSTypeAnnotationType.TSSymbolKeyword]: PrimitiveType.SYMBOL,
   [TSTypeAnnotationType.TSUndefinedKeyword]: PrimitiveType.UNDEFINED,
   [TSTypeAnnotationType.TSUnknownKeyword]: PrimitiveType.UNKNOWN,
   [TSTypeAnnotationType.TSVoidKeyword]: PrimitiveType.VOID
 }
+
+export const disallowedPrimitiveTypes = [
+  PrimitiveType.BIGINT,
+  PrimitiveType.NEVER,
+  PrimitiveType.OBJECT,
+  PrimitiveType.SYMBOL,
+  PrimitiveType.UNKNOWN
+]
 
 // Helper functions for dealing with type environment
 export function lookupType(name: string, env: TypeEnvironment): BindableType | undefined {

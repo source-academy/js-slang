@@ -528,3 +528,22 @@ export class TypecastError implements SourceError {
     return this.explain()
   }
 }
+
+export class TypeNotAllowedError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: es.Node, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.name}' is not allowed.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}

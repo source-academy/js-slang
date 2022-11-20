@@ -8,6 +8,7 @@ import {
   NoExplicitAnyError,
   TypecastError,
   TypeMismatchError,
+  TypeNotAllowedError,
   TypeNotCallableError,
   TypeNotFoundError
 } from '../errors/typeErrors'
@@ -31,6 +32,7 @@ import {
 } from '../types'
 import { TypeError } from './internalTypeErrors'
 import {
+  disallowedPrimitiveTypes,
   formatTypeString,
   lookupType,
   lookupTypeAlias,
@@ -611,7 +613,9 @@ function getAnnotatedType(
       return tFunc(...fnTypes)
     case TSTypeAnnotationType.TSUnionType:
       const unionTypeNode = annotatedTypeNode as UnionTypeNode
-      const unionTypes = unionTypeNode.types.map(getPrimitiveType)
+      const unionTypes = unionTypeNode.types.map(type =>
+        getPrimitiveType(annotationNode, type, context)
+      )
       return mergeTypes(...unionTypes)
     case TSTypeAnnotationType.TSIntersectionType:
       throw new TypeError(
@@ -632,7 +636,7 @@ function getAnnotatedType(
       }
       return declaredType
     default:
-      return getPrimitiveType(annotatedTypeNode)
+      return getPrimitiveType(annotationNode, annotatedTypeNode, context)
   }
 }
 
@@ -648,11 +652,20 @@ function getParamTypes(
 }
 
 /**
- * Converts node type to primitive type.
- * If type is not found, returns the "unknown" primitive type.
+ * Converts node type to primitive type, adding errors to context if disallowed/unknown types are used.
+ * If errors are found, returns the "any" primitive type to prevent throwing of further errors.
  */
-function getPrimitiveType(node: BaseTypeNode) {
-  return tPrimitive(typeAnnotationKeywordToPrimitiveTypeMap[node.type] ?? PrimitiveType.UNKNOWN)
+function getPrimitiveType(node: AnnotationTypeNode, typeNode: BaseTypeNode, context: Context) {
+  const primitiveType =
+    typeAnnotationKeywordToPrimitiveTypeMap[typeNode.type] ?? PrimitiveType.UNKNOWN
+  if (
+    disallowedPrimitiveTypes.includes(primitiveType) ||
+    (context.chapter === 1 && primitiveType === PrimitiveType.NULL)
+  ) {
+    context.errors.push(new TypeNotAllowedError(node as unknown as es.Node, primitiveType))
+    return tAny
+  }
+  return tPrimitive(primitiveType)
 }
 
 /**

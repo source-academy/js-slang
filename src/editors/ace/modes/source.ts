@@ -99,7 +99,7 @@ export function HighlightRulesSelector(
         forbiddenWords += 'while|for|break|continue|let'
       }
       if (variant !== Variant.TYPED) {
-        forbiddenWords += '|typeof'
+        forbiddenWords += '|typeof|void'
       }
       return forbiddenWords
     }
@@ -131,7 +131,7 @@ export function HighlightRulesSelector(
             'this|arguments|' + // Pseudo
             'var|yield|async|await|with|switch|throw|try|eval|' + // forbidden words
             'class|enum|extends|super|export|implements|private|public|' +
-            'void|interface|package|protected|static|in|of|instanceof|new|' +
+            'interface|package|protected|static|in|of|instanceof|new|' +
             'case|catch|default|delete|do|finally|' +
             ChapterAndVariantForbiddenWordSelector()
         },
