@@ -391,11 +391,17 @@ function typeCheckAndReturnBinaryExpressionType(
         if (rightType !== leftType && rightType !== PrimitiveType.ANY) {
           context.errors.push(new TypeMismatchError(node, rightType, leftType))
         }
+        if (leftType === PrimitiveType.STRING || rightType === PrimitiveType.STRING) {
+          return tString
+        }
         return tPrimitive(leftType)
       }
       if (rightType === PrimitiveType.NUMBER || rightType === PrimitiveType.STRING) {
         if (leftType !== rightType && leftType !== PrimitiveType.ANY) {
           context.errors.push(new TypeMismatchError(node, leftType, rightType))
+        }
+        if (leftType === PrimitiveType.STRING || rightType === PrimitiveType.STRING) {
+          return tString
         }
         return tPrimitive(rightType)
       }
@@ -409,7 +415,7 @@ function typeCheckAndReturnBinaryExpressionType(
           new TypeMismatchError(node, rightType, formatTypeString(tUnion(tNumber, tString)))
         )
       }
-      return tAny
+      return tUnion(tNumber, tString)
     case '<':
     case '<=':
     case '>':
