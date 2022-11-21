@@ -466,8 +466,8 @@ function typeCheckAndReturnLogicalExpressionType(
   context: Context,
   env: TypeEnvironment
 ): Type {
-  const leftType = typeCheckAndReturnType(node.left, context, env)
-  if ((leftType as Primitive).name !== PrimitiveType.BOOLEAN) {
+  const leftType = typeCheckAndReturnType(node.left, context, env) as Primitive
+  if (leftType.name !== PrimitiveType.BOOLEAN && leftType.name !== PrimitiveType.ANY) {
     context.errors.push(
       new TypeMismatchError(node, formatTypeString(leftType), PrimitiveType.BOOLEAN)
     )

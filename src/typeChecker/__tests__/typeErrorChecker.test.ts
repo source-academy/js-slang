@@ -53,6 +53,55 @@ describe('primitive types', () => {
   })
 })
 
+describe('union types', () => {
+  it('handles type mismatches correctly', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: number = 1;
+      const x2: string = '1';
+      const x3: boolean = true;
+      const x4: string | number = x1; // no error
+      const x5: number | string = x2; // no error
+      const x6: string | number = x3; // error
+      const x7: number | string = x6; // no error
+      const x8: string = x6; // error
+      const x9: number = x6; // error
+      const x10: number | boolean = x7; // error
+      const x11: number | string | boolean = x8; // no error
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 6: Type 'boolean' is not assignable to type 'string | number'.
+      Line 8: Type 'string | number' is not assignable to type 'string'.
+      Line 9: Type 'string | number' is not assignable to type 'number'.
+      Line 10: Type 'number | string' is not assignable to type 'number | boolean'."
+    `)
+  })
+
+  it('merges duplicate types', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: number | string | number = 1;
+      const x2: string | number | string = '1';
+      const x3: number | number = 1;
+      const x4: number | string = x1; // no error
+      const x5: number | string = x2; // no error
+      const x6: number = x3; // no error
+      const x7: string = x1; // error message should not show duplicates
+      const x8: number = x2; // error message should not show duplicates
+      const x9: string = x3; // error message should not show duplicates
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 7: Type 'number | string' is not assignable to type 'string'.
+      Line 8: Type 'string | number' is not assignable to type 'number'.
+      Line 9: Type 'number' is not assignable to type 'string'."
+    `)
+  })
+})
+
 describe('variable declarations', () => {
   it('identifies type mismatch errors for literals correctly', () => {
     const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
@@ -216,4 +265,50 @@ describe('binary operations', () => {
   })
 
   // TODO: Test === and !== for Source 3 and above
+})
+
+describe('logical expressions', () => {
+  it('left type must be boolean or any', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: boolean = true;
+      const x2: string = 'false';
+      const x3: any = true;
+      const x4 = 'false';
+      x1 && true; // no error
+      x1 || true; // no error
+      x2 && true; // error
+      x2 || true; // error
+      x3 && true; // no error
+      x4 || true; // no error
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 7: Type 'string' is not assignable to type 'boolean'.
+      Line 8: Type 'string' is not assignable to type 'boolean'."
+    `)
+  })
+
+  it('return type is union of boolean and right type', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: boolean = true;
+      const x2: string = 'false';
+      const x3: number | string = 1;
+      const x4 = false;
+      const x5: string = x1 && x1; // error, return type boolean
+      const x6: boolean = x1 || x2; // error, return type boolean | string
+      const x7: boolean = x1 && x3; // error, return type boolean | number | string
+      const x8: boolean = x1 || x4; // no error, return type any
+      const x9: string = x1 && x4; // no error, return type any
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 5: Type 'boolean' is not assignable to type 'string'.
+      Line 6: Type 'boolean | string' is not assignable to type 'boolean'.
+      Line 7: Type 'boolean | number | string' is not assignable to type 'boolean'."
+    `)
+  })
 })
