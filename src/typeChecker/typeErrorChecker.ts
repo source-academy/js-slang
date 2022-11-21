@@ -15,6 +15,7 @@ import {
 import { memoizedGetModuleManifest } from '../modules/moduleLoader'
 import { NoImplicitReturnUndefinedError } from '../parser/rules/noImplicitReturnUndefined'
 import {
+  AllowedDeclarations,
   AnnotationTypeNode,
   BaseTypeNode,
   Context,
@@ -124,6 +125,7 @@ function typeCheckAndReturnType(
       if (node.type === 'Program') {
         handleImportDeclarations(node, context, env)
       }
+      addTypeDeclarationsToEnvironment(node, context, env)
       // Check all statements in program/block body
       for (const stmt of node.body) {
         if (stmt.type === 'IfStatement' || stmt.type === 'ReturnStatement') {
@@ -167,11 +169,6 @@ function typeCheckAndReturnType(
       return typeCheckAndReturnArrowFunctionType(node, context, env)
     }
     case 'FunctionDeclaration':
-      if (node.id === null) {
-        // Block should not be reached since node.id is only null when function declaration
-        // is part of `export default function`, which is not used in Source
-        throw new TypeError(node, 'Function declaration should always have an identifier.')
-      }
       const params = node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[]
       const returnType = getAnnotatedType(node.returnType, context, env)
 
@@ -186,7 +183,7 @@ function typeCheckAndReturnType(
         setType(param.name, getAnnotatedType(param.typeAnnotation, context, env), env)
       })
       setType(RETURN_TYPE_IDENTIFIER, returnType, env)
-      setType(node.id.name, fnType, env)
+      setType(node.id!.name, fnType, env)
       const actualReturnType = typeCheckAndReturnType(node.body, context, env)
       env.pop()
 
@@ -201,27 +198,18 @@ function typeCheckAndReturnType(
         checkForTypeMismatch(node, actualReturnType, returnType, context)
       }
 
-      // Save function type
-      setType(node.id.name, fnType, env)
       return tVoid
     case 'VariableDeclaration': {
-      if (node.kind === 'var') {
-        throw new TypeError(node, 'Variable declaration using "var" is not allowed.')
-      }
-      if (node.declarations.length !== 1) {
-        throw new TypeError(node, 'Variable declaration should have one and only one declaration.')
-      }
-      if (node.declarations[0].id.type !== 'Identifier') {
-        throw new TypeError(node, 'Variable declaration ID should be an identifier.')
-      }
       const id = node.declarations[0].id as NodeWithDeclaredTypeAnnotation<es.Identifier>
       const init = node.declarations[0].init!
-      const expectedType = getAnnotatedType(id.typeAnnotation, context, env)
+      // Look up declared type directly as type has already been added to environment
+      const expectedType =
+        (lookupType(id.name, env) as Type) ?? getAnnotatedType(id.typeAnnotation, context, env)
       const initType = typeCheckAndReturnType(init, context, env)
       checkForTypeMismatch(node, initType, expectedType, context)
       // Save variable type and decl kind in type env
       setType(id.name, expectedType, env)
-      setDeclKind(id.name, node.kind, env)
+      setDeclKind(id.name, node.kind as AllowedDeclarations, env)
       return tVoid
     }
     case 'CallExpression': {
@@ -272,9 +260,7 @@ function typeCheckAndReturnType(
       const nodeAsAny = node as any
       switch (nodeAsAny.type) {
         case TSTypeAnnotationType.TSTypeAliasDeclaration:
-          const id = nodeAsAny.id
-          const type = getAnnotatedType(nodeAsAny, context, env)
-          setTypeAlias(id.name, type, env)
+          // Type has already been added to environment
           return tVoid
         case TSTypeAnnotationType.TSAsExpression:
           const originalType = typeCheckAndReturnType(nodeAsAny.expression, context, env)
@@ -328,6 +314,65 @@ function handleImportDeclarations(
       })
     })
   }
+}
+
+/**
+ * Adds all types for variable/function/type declarations to the current environment.
+ * This is so that the types can be referenced before the declarations are initialized.
+ */
+function addTypeDeclarationsToEnvironment(
+  node: es.Program | es.BlockStatement,
+  context: Context,
+  env: TypeEnvironment
+) {
+  node.body.forEach(node => {
+    switch (node.type) {
+      case 'FunctionDeclaration':
+        if (node.id === null) {
+          // Block should not be reached since node.id is only null when function declaration
+          // is part of `export default function`, which is not used in Source
+          throw new TypeError(node, 'Function declaration should always have an identifier.')
+        }
+        const params = node.params as NodeWithDeclaredTypeAnnotation<es.Identifier>[]
+        const returnType = getAnnotatedType(
+          (node as NodeWithDeclaredTypeAnnotation<es.FunctionDeclaration>).returnType,
+          context,
+          env
+        )
+
+        const types = getParamTypes(params, context, env)
+        // Return type will always be last item in types array
+        types.push(returnType)
+        const fnType = tFunc(...types)
+        setType(node.id.name, fnType, env)
+        break
+      case 'VariableDeclaration':
+        if (node.kind === 'var') {
+          throw new TypeError(node, 'Variable declaration using "var" is not allowed.')
+        }
+        if (node.declarations.length !== 1) {
+          throw new TypeError(
+            node,
+            'Variable declaration should have one and only one declaration.'
+          )
+        }
+        if (node.declarations[0].id.type !== 'Identifier') {
+          throw new TypeError(node, 'Variable declaration ID should be an identifier.')
+        }
+        const id = node.declarations[0].id as NodeWithDeclaredTypeAnnotation<es.Identifier>
+        const expectedType = getAnnotatedType(id.typeAnnotation, context, env)
+        setType(id.name, expectedType, env)
+        setDeclKind(id.name, node.kind, env)
+      default:
+        const nodeAsAny = node as any
+        if (nodeAsAny.type === TSTypeAnnotationType.TSTypeAliasDeclaration) {
+          const id = nodeAsAny.id
+          const type = getAnnotatedType(nodeAsAny, context, env)
+          setTypeAlias(id.name, type, env)
+        }
+        break
+    }
+  })
 }
 
 /**

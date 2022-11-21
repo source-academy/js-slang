@@ -456,4 +456,54 @@ describe('logical expressions', () => {
       Line 7: Type 'boolean | number | string' is not assignable to type 'boolean'."
     `)
   })
+
+  describe('scoping', () => {
+    it('gets types correct even if accessed before initialization', () => {
+      const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+      const code = `const x: number = f(); // error
+      function f(): string {
+        return g(); // error
+      }
+      function g(): number {
+        return h;
+      }
+      const y: string = h; // error
+      const h: number = 1;
+      `
+
+      parseAndTypeCheck(code, context)
+      expect(parseError(context.errors)).toMatchInlineSnapshot(`
+        "Line 1: Type 'string' is not assignable to type 'number'.
+        Line 3: Type 'number' is not assignable to type 'string'.
+        Line 8: Type 'number' is not assignable to type 'string'."
+      `)
+    })
+
+    it('gets types correct for nested constants and functions', () => {
+      const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+      const code = `function f(n: string): string {
+        return n;
+      }
+      const x: number = 1;
+      const y: string = '2';
+      {
+        function f(n: number): number {
+          return n;
+        }
+        const x: string = '1';
+        f(x); // error
+        const z: string = x + y; // no error
+      }
+      const z: string = x + y; // error
+      `
+
+      parseAndTypeCheck(code, context)
+      expect(parseError(context.errors)).toMatchInlineSnapshot(`
+        "Line 11: Type 'string' is not assignable to type 'number'.
+        Line 14: Type 'string' is not assignable to type 'number'."
+      `)
+    })
+  })
 })
