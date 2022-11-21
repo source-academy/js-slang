@@ -102,6 +102,151 @@ describe('union types', () => {
   })
 })
 
+describe('function declarations', () => {
+  it('checks argument types correctly', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `function sum(a: number, b: number): number {
+        return a + b;
+      }
+      sum(1, 2); // no error
+      sum(1, '2'); // error
+      sum(true, 2); // error
+      sum('1', false); // 2 errors
+      sum(1); // error
+      sum(1, '2', 3); // 1 error, typecheck on arguments only done if number of arguments is correct
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 5: Type 'string' is not assignable to type 'number'.
+      Line 6: Type 'boolean' is not assignable to type 'number'.
+      Line 7: Type 'string' is not assignable to type 'number'.
+      Line 7: Type 'boolean' is not assignable to type 'number'.
+      Line 8: Expected 2 arguments, but got 1.
+      Line 9: Expected 2 arguments, but got 3."
+    `)
+  })
+
+  it('checks return type correctly', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `function f1(n: number): number {
+        return n; // no error
+      }
+      function f2(n: number): string {
+        return n; // error
+      }
+      function f3(n: number): void {
+        return n; // error
+      }
+      function f4(n: number): void {
+        n; // do not return, no error
+      }
+      function f5(n: number): number { // error
+        n; // do not return
+      }
+
+      const x1: number = f1(1); // no error
+      const x2: number = f2(1); // error
+      const x3: number = f3(1); // error
+      const x4: number = f4(1); // error
+      const x5: number = f5(1); // no error
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 5: Type 'number' is not assignable to type 'string'.
+      Line 8: Type 'number' is not assignable to type 'void'.
+      Line 13: A function whose declared type is neither 'void' nor 'any' must return a value.
+      Line 18: Type 'string' is not assignable to type 'number'.
+      Line 19: Type 'void' is not assignable to type 'number'.
+      Line 20: Type 'void' is not assignable to type 'number'."
+    `)
+  })
+
+  it('handles recursive functions correctly', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `function f1(n: number): number {
+        return n === 1
+          ? n
+          : n * f1(n - 1);
+      }
+      function f2(n: string): number {
+        return n === 1 // error
+          ? 1
+          : n * f2(n - 1); // 3 errors, 1 for multiplication, 1 for subtraction, 1 for function argument
+      }
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 7: Type 'number' is not assignable to type 'string'.
+      Line 9: Type 'string' is not assignable to type 'number'.
+      Line 9: Type 'number' is not assignable to type 'string'.
+      Line 9: Type 'string' is not assignable to type 'number'."
+    `)
+  })
+})
+
+describe('type aliases', () => {
+  it('type alias nodes should be removed from program at end of typechecking', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `type stringOrNumber = string | number;
+      const x = 1;
+    `
+
+    const program = parseAndTypeCheck(code, context)
+    expect(program).toMatchSnapshot() // Should not contain type alias node
+  })
+
+  it('should not be used as variables', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `type x = string | number;
+      x;
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 2: Name x not declared."`)
+  })
+
+  it('should throw errors for type mismatch', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `type stringOrNumber = string | number;
+      const x: stringOrNumber = true;
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 2: Type 'boolean' is not assignable to type 'string | number'."`
+    )
+  })
+
+  it('should throw errors for undeclared types', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x: x = 1;`
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 1: Type 'x' not declared."`)
+  })
+
+  it('should coexist with variables of the same name', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `type x = string | number;
+      const x: x = 1;
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+})
+
 describe('variable declarations', () => {
   it('identifies type mismatch errors for literals correctly', () => {
     const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)

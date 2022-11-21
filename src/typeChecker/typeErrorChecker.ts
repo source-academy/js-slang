@@ -188,18 +188,18 @@ function typeCheckAndReturnType(
       setType(RETURN_TYPE_IDENTIFIER, returnType, env)
       setType(node.id.name, fnType, env)
       const actualReturnType = typeCheckAndReturnType(node.body, context, env)
-      // Type error where function does not return anything when it should
-      if (
-        (actualReturnType as Primitive).name === PrimitiveType.VOID &&
-        returnType.kind === 'primitive' &&
-        returnType.name !== PrimitiveType.ANY &&
-        returnType.name !== PrimitiveType.VOID
-      ) {
-        context.errors.push(new FunctionShouldHaveReturnValueError(node))
-      }
       env.pop()
 
-      checkForTypeMismatch(node, actualReturnType, returnType, context)
+      if (
+        (actualReturnType as Primitive).name === PrimitiveType.VOID &&
+        (returnType as Primitive).name !== PrimitiveType.ANY &&
+        (returnType as Primitive).name !== PrimitiveType.VOID
+      ) {
+        // Type error where function does not return anything when it should
+        context.errors.push(new FunctionShouldHaveReturnValueError(node))
+      } else {
+        checkForTypeMismatch(node, actualReturnType, returnType, context)
+      }
 
       // Save function type
       setType(node.id.name, fnType, env)

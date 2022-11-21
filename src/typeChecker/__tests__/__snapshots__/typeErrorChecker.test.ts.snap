@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`type aliases type alias nodes should be removed from program at end of typechecking 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 56,
+          "id": Node {
+            "end": 52,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 2,
+              },
+              "filename": undefined,
+              "identifierName": "x",
+              "start": Position {
+                "column": 12,
+                "line": 2,
+              },
+            },
+            "name": "x",
+            "start": 51,
+            "type": "Identifier",
+          },
+          "init": Node {
+            "end": 56,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 17,
+                "line": 2,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 16,
+                "line": 2,
+              },
+            },
+            "raw": "1",
+            "start": 55,
+            "type": "Literal",
+            "value": 1,
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 17,
+              "line": 2,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 12,
+              "line": 2,
+            },
+          },
+          "start": 51,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 57,
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 2,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 6,
+          "line": 2,
+        },
+      },
+      "start": 45,
+      "type": "VariableDeclaration",
+    },
+  ],
+  "end": 62,
+  "interpreter": null,
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 4,
+      "line": 3,
+    },
+    "filename": undefined,
+    "identifierName": undefined,
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "type": "Program",
+}
+`;
