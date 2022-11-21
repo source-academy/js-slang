@@ -213,30 +213,50 @@ function typeCheckAndReturnType(
       return tVoid
     }
     case 'CallExpression': {
-      const fnName = (node.callee as es.Identifier).name
-      const fnType = lookupType(fnName, env)
-      if (fnType) {
-        if (fnType.kind === 'forall') {
-          // Skip typecheck as function has variable number of arguments
-          return tAny
-        }
-        if (fnType.kind !== 'function') {
-          if ((fnType as Primitive).name !== PrimitiveType.ANY) {
-            context.errors.push(new TypeNotCallableError(node, fnName))
+      const callee = node.callee
+      switch (callee.type) {
+        case 'Identifier':
+          const fnName = callee.name
+          const fnType = lookupType(fnName, env)
+          if (fnType) {
+            if (fnType.kind === 'forall') {
+              // Skip typecheck as function has variable number of arguments
+              return tAny
+            }
+            if (fnType.kind !== 'function') {
+              if ((fnType as Primitive).name !== PrimitiveType.ANY) {
+                context.errors.push(new TypeNotCallableError(node, fnName))
+              }
+              return tAny
+            }
+            const expectedTypes = fnType.parameterTypes as Primitive[]
+            const args = node.arguments
+            if (args.length !== expectedTypes.length) {
+              context.errors.push(
+                new InvalidNumberOfArguments(node, expectedTypes.length, args.length)
+              )
+              return fnType.returnType
+            }
+            checkArgTypes(node, expectedTypes, context, env)
+            return fnType.returnType
+          } else {
+            context.errors.push(new UndefinedVariable(fnName, node))
+            return tAny
           }
+        case 'ArrowFunctionExpression':
+          const arrowFnType = typeCheckAndReturnArrowFunctionType(callee, context, env)
+          const expectedTypes = arrowFnType.parameterTypes as Primitive[]
+          const args = node.arguments
+          if (args.length !== expectedTypes.length) {
+            context.errors.push(
+              new InvalidNumberOfArguments(node, expectedTypes.length, args.length)
+            )
+            return arrowFnType.returnType
+          }
+          checkArgTypes(node, expectedTypes, context, env)
+          return arrowFnType.returnType
+        default:
           return tAny
-        }
-        const expectedTypes = fnType.parameterTypes as Primitive[]
-        const args = node.arguments
-        if (args.length !== expectedTypes.length) {
-          context.errors.push(new InvalidNumberOfArguments(node, expectedTypes.length, args.length))
-          return fnType.returnType
-        }
-        checkArgTypes(node, expectedTypes, context, env)
-        return fnType.returnType
-      } else {
-        context.errors.push(new UndefinedVariable(fnName, node))
-        return tAny
       }
     }
     case 'ReturnStatement': {

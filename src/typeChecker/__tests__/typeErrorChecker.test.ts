@@ -190,6 +190,52 @@ describe('function declarations', () => {
   })
 })
 
+describe('arrow functions', () => {
+  it('checks argument types correctly', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `((a: number, b: number): number => a + b)(1, 2); // no error
+      ((a: number, b: number): number => a + b)(1, '2'); // error
+      ((a: number, b: number): number => a + b)(true, 2); // error
+      ((a: number, b: number): number => a + b)('1', false); // 2 errors
+      ((a: number, b: number): number => a + b)(1); // error
+      ((a: number, b: number): number => a + b)(1, '2', 3); // 1 error, typecheck on arguments only done if number of arguments is correct
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 2: Type 'string' is not assignable to type 'number'.
+      Line 3: Type 'boolean' is not assignable to type 'number'.
+      Line 4: Type 'string' is not assignable to type 'number'.
+      Line 4: Type 'boolean' is not assignable to type 'number'.
+      Line 5: Expected 2 arguments, but got 1.
+      Line 6: Expected 2 arguments, but got 3."
+    `)
+  })
+
+  it('gets return type correct both with and without braces', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: number = ((a: number, b: number): number => a + b)(1, 2); // no error
+      const x2: string = ((a: number, b: number): string => a + b)(1, 2); // error
+      const x3: number = 
+        ((a: number, b: number): number => {
+          return a + b;
+        })(1, 2);
+      const x4: string =
+        ((a: number, b: number): string => {
+          return a + b;
+        })(1, 2);
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 2: Type 'number' is not assignable to type 'string'.
+      Line 8: Type 'number' is not assignable to type 'string'."
+    `)
+  })
+})
+
 describe('type aliases', () => {
   it('type alias nodes should be removed from program at end of typechecking', () => {
     const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
