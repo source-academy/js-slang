@@ -456,54 +456,227 @@ describe('logical expressions', () => {
       Line 7: Type 'boolean | number | string' is not assignable to type 'boolean'."
     `)
   })
+})
 
-  describe('scoping', () => {
-    it('gets types correct even if accessed before initialization', () => {
-      const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+describe('conditional expressions', () => {
+  it('predicate type must be boolean or any', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
 
-      const code = `const x: number = f(); // error
-      function f(): string {
-        return g(); // error
+    const code = `const x1: boolean = true;
+      const x2: string = 'false';
+      const x3: any = 1;
+      function f1(): number {
+        return x1 ? 1 : 2; // no error
       }
-      function g(): number {
-        return h;
+      function f2(): number {
+        return x2 ? 1 : 2; // error
       }
-      const y: string = h; // error
-      const h: number = 1;
-      `
+      function f3(): number {
+        return x3 ? 1 : 2; // no error
+      }
+      function f4(): number {
+        return x2 + x3 ? 1 : 2; // error
+      }
+      function f5(): number {
+        return x2 === 'false' ? 1 : 2; // no error
+      }
+      function f6(): number {
+        return x1 && (x2 === 'false') ? 1 : 2; // no error
+      }
+      function f7(): number {
+        return x1 || x2 ? 1 : 2; // error
+      }
+    `
 
-      parseAndTypeCheck(code, context)
-      expect(parseError(context.errors)).toMatchInlineSnapshot(`
-        "Line 1: Type 'string' is not assignable to type 'number'.
-        Line 3: Type 'number' is not assignable to type 'string'.
-        Line 8: Type 'number' is not assignable to type 'string'."
-      `)
-    })
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 8: Type 'string' is not assignable to type 'boolean'.
+      Line 14: Type 'string' is not assignable to type 'boolean'.
+      Line 23: Type 'boolean | string' is not assignable to type 'boolean'."
+    `)
+  })
 
-    it('gets types correct for nested constants and functions', () => {
-      const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+  it('return type is union of cons and alt type', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
 
-      const code = `function f(n: string): string {
+    const code = `const x: string | number = 1;
+      function f1(): number {
+        return true ? 1 : 2; // no error
+      }
+      function f2(): number {
+        return true ? 1 : '1'; // error
+      }
+      function f3(): number | boolean {
+        return true ? true : 2; // no error
+      }
+      function f4(): number | boolean | string {
+        return true ? true : x; // no error
+      }
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 6: Type 'number | string' is not assignable to type 'number'."`
+    )
+  })
+})
+
+describe('if-else statements', () => {
+  it('predicate type must be boolean or any', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: boolean = true;
+      const x2: string = 'false';
+      const x3: any = 1;
+      function f1(): number {
+        if (x1) { // no error
+          return 1;
+        } else {
+          return 2;
+        }
+      }
+      function f2(): number {
+        if (x2) { // error
+          return 1;
+        } else {
+          return 2;
+        }
+      }
+      function f3(): number {
+        if (x3) { // no error
+          return 1;
+        } else {
+          return 2;
+        }
+      }
+      function f4(): number {
+        if (x2 + x3) { // error
+          return 1;
+        } else {
+          return 2;
+        }
+      }
+      function f5(): number {
+        if (x2 === 'false') { // no error
+          return 1;
+        } else {
+          return 2;
+        }
+      }
+      function f6(): number {
+        if (x1 && (x2 === 'false')) { // no error
+          return 1;
+        } else {
+          return 2;
+        }
+        return x1 && (x2 === 'false') ? 1 : 2; // no error
+      }
+      function f7(): number {
+        if (x1 || x2) { // error
+          return 1;
+        } else {
+          return 2;
+        }
+      }
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 12: Type 'string' is not assignable to type 'boolean'.
+      Line 26: Type 'string' is not assignable to type 'boolean'.
+      Line 48: Type 'boolean | string' is not assignable to type 'boolean'."
+    `)
+  })
+
+  it('return type is checked one by one', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x: string | number = 1;
+      function f1(): number {
+        if (true) { // no error
+          return 1;
+        } else {
+          return 2;
+        }
+      }
+      function f2(): number {
+        if (true) {
+          return 1;
+        } else {
+          return '2'; // error
+        }
+      }
+      function f3(): number | boolean {
+        if (true) { // no error
+          return true;
+        } else {
+          return 2;
+        }
+      }
+      function f4(): number | boolean | string {
+        if (true) { // no error
+          return true;
+        } else {
+          return x;
+        }
+      }
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 13: Type 'string' is not assignable to type 'number'."`
+    )
+  })
+
+  // TODO: Test if without else for Source 3 and above
+})
+
+describe('scoping', () => {
+  it('gets types correct even if accessed before initialization', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x: number = f(); // error
+    function f(): string {
+      return g(); // error
+    }
+    function g(): number {
+      return h;
+    }
+    const y: string = h; // error
+    const h: number = 1;
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 1: Type 'string' is not assignable to type 'number'.
+      Line 3: Type 'number' is not assignable to type 'string'.
+      Line 8: Type 'number' is not assignable to type 'string'."
+    `)
+  })
+
+  it('gets types correct for nested constants and functions', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `function f(n: string): string {
+      return n;
+    }
+    const x: number = 1;
+    const y: string = '2';
+    {
+      function f(n: number): number {
         return n;
       }
-      const x: number = 1;
-      const y: string = '2';
-      {
-        function f(n: number): number {
-          return n;
-        }
-        const x: string = '1';
-        f(x); // error
-        const z: string = x + y; // no error
-      }
-      const z: string = x + y; // error
-      `
+      const x: string = '1';
+      f(x); // error
+      const z: string = x + y; // no error
+    }
+    const z: string = x + y; // error
+    `
 
-      parseAndTypeCheck(code, context)
-      expect(parseError(context.errors)).toMatchInlineSnapshot(`
-        "Line 11: Type 'string' is not assignable to type 'number'.
-        Line 14: Type 'string' is not assignable to type 'number'."
-      `)
-    })
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 11: Type 'string' is not assignable to type 'number'.
+      Line 14: Type 'string' is not assignable to type 'number'."
+    `)
   })
 })
