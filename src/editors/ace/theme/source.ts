@@ -113,7 +113,7 @@ function theme(acequire, exports, module) {
                         background-color: #130D26\
                         }\
                         .ace-source .ace_variable {\
-                        color: #80FFBB\
+                        color: #CCCCCC\
                         }\
                         .ace-source .ace_variable.ace_language {\
                         color: #FF80E1\

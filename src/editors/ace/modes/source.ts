@@ -582,11 +582,6 @@ export function HighlightRulesSelector(
             {
               token: 'keyword',
               regex: '\\b(?:super|export|import|keyof|infer|typeof)\\b'
-            },
-            {
-              token: ['storage.type.variable.ts'],
-              regex:
-                '(?:\\b(this\\.|string\\b|bool\\b|boolean\\b|number\\b|true\\b|false\\b|undefined\\b|any\\b|null\\b|(?:unique )?symbol\\b|object\\b|never\\b|enum\\b))'
             }
           )
         }
