@@ -118,12 +118,7 @@ export function formatTypeString(type: Type): string {
 
 export function formatFunctionTypeString(fnType: FunctionType): string {
   const paramTypes = fnType.parameterTypes
-  const paramTypeString =
-    paramTypes.length === 0
-      ? ''
-      : paramTypes.length === 1
-      ? formatTypeString(paramTypes[0])
-      : paramTypes.reduce((prev, curr) => prev + ', ' + formatTypeString(curr), '')
+  const paramTypeString = paramTypes.map(formatTypeString).join(', ')
   return `(${paramTypeString}) => ${formatTypeString(fnType.returnType)}`
 }
 

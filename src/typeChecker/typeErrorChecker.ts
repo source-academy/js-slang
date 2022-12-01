@@ -404,18 +404,14 @@ function typeCheckAndReturnUnaryExpressionType(
   context: Context,
   env: TypeEnvironment
 ): Primitive {
-  const argType = formatTypeString(typeCheckAndReturnType(node.argument, context, env))
+  const argType = typeCheckAndReturnType(node.argument, context, env)
   const operator = node.operator
   switch (operator) {
     case '-':
-      if (argType !== PrimitiveType.NUMBER && argType !== PrimitiveType.ANY) {
-        context.errors.push(new TypeMismatchError(node, argType, PrimitiveType.NUMBER))
-      }
+      checkForTypeMismatch(node, argType, tNumber, context)
       return tNumber
     case '!':
-      if (argType !== PrimitiveType.BOOLEAN && argType !== PrimitiveType.ANY) {
-        context.errors.push(new TypeMismatchError(node, argType, PrimitiveType.BOOLEAN))
-      }
+      checkForTypeMismatch(node, argType, tBool, context)
       return tBool
     case 'typeof':
       return tString
@@ -433,53 +429,40 @@ function typeCheckAndReturnBinaryExpressionType(
   context: Context,
   env: TypeEnvironment
 ): Primitive | UnionType {
-  const leftType = formatTypeString(typeCheckAndReturnType(node.left, context, env))
-  const rightType = formatTypeString(typeCheckAndReturnType(node.right, context, env))
+  const leftType = typeCheckAndReturnType(node.left, context, env)
+  const rightType = typeCheckAndReturnType(node.right, context, env)
+  const leftTypeString = formatTypeString(leftType)
+  const rightTypeString = formatTypeString(rightType)
   const operator = node.operator
   switch (operator) {
     case '-':
     case '*':
     case '/':
     case '%':
-      // Both sides can only be either number or any
-      if (leftType !== PrimitiveType.NUMBER && leftType !== PrimitiveType.ANY) {
-        context.errors.push(new TypeMismatchError(node, leftType, PrimitiveType.NUMBER))
-      }
-      if (rightType !== PrimitiveType.NUMBER && rightType !== PrimitiveType.ANY) {
-        context.errors.push(new TypeMismatchError(node, rightType, PrimitiveType.NUMBER))
-      }
+      checkForTypeMismatch(node, leftType, tNumber, context)
+      checkForTypeMismatch(node, rightType, tNumber, context)
       return tNumber
     case '+':
       // Both sides can only be number, string, or any
       // However, case where one side is string and other side is number is not allowed
-      if (leftType === PrimitiveType.NUMBER || leftType === PrimitiveType.STRING) {
-        if (rightType !== leftType && rightType !== PrimitiveType.ANY) {
-          context.errors.push(new TypeMismatchError(node, rightType, leftType))
-        }
-        if (leftType === PrimitiveType.STRING || rightType === PrimitiveType.STRING) {
+      if (leftTypeString === PrimitiveType.NUMBER || leftTypeString === PrimitiveType.STRING) {
+        checkForTypeMismatch(node, rightType, leftType, context)
+        // If string + number, return string
+        if (leftTypeString === PrimitiveType.STRING || rightTypeString === PrimitiveType.STRING) {
           return tString
         }
-        return tPrimitive(leftType)
+        return leftType as Primitive
       }
-      if (rightType === PrimitiveType.NUMBER || rightType === PrimitiveType.STRING) {
-        if (leftType !== rightType && leftType !== PrimitiveType.ANY) {
-          context.errors.push(new TypeMismatchError(node, leftType, rightType))
-        }
-        if (leftType === PrimitiveType.STRING || rightType === PrimitiveType.STRING) {
+      if (rightTypeString === PrimitiveType.NUMBER || rightTypeString === PrimitiveType.STRING) {
+        checkForTypeMismatch(node, leftType, rightType, context)
+        // If string + number, return string
+        if (leftTypeString === PrimitiveType.STRING || rightTypeString === PrimitiveType.STRING) {
           return tString
         }
-        return tPrimitive(rightType)
+        return rightType as Primitive
       }
-      if (leftType !== PrimitiveType.ANY) {
-        context.errors.push(
-          new TypeMismatchError(node, leftType, formatTypeString(tUnion(tNumber, tString)))
-        )
-      }
-      if (rightType !== PrimitiveType.ANY) {
-        context.errors.push(
-          new TypeMismatchError(node, rightType, formatTypeString(tUnion(tNumber, tString)))
-        )
-      }
+      checkForTypeMismatch(node, leftType, tUnion(tNumber, tString), context)
+      checkForTypeMismatch(node, rightType, tUnion(tNumber, tString), context)
       return tUnion(tNumber, tString)
     case '<':
     case '<=':
@@ -487,34 +470,22 @@ function typeCheckAndReturnBinaryExpressionType(
     case '>=':
     case '!==':
     case '===':
-      // In Source 3 and above, equality can be applied between two items of any type
+      // In Source 3 and above, skip type checking as equality can be applied between two items of any type
       if (context.chapter > 2 && (operator === '===' || operator === '!==')) {
         return tBool
       }
       // Both sides can only be number, string, or any
       // However, case where one side is string and other side is number is not allowed
-      if (leftType === PrimitiveType.NUMBER || leftType === PrimitiveType.STRING) {
-        if (rightType !== leftType && rightType !== PrimitiveType.ANY) {
-          context.errors.push(new TypeMismatchError(node, rightType, leftType))
-        }
+      if (leftTypeString === PrimitiveType.NUMBER || leftTypeString === PrimitiveType.STRING) {
+        checkForTypeMismatch(node, rightType, leftType, context)
         return tBool
       }
-      if (rightType === PrimitiveType.NUMBER || rightType === PrimitiveType.STRING) {
-        if (leftType !== rightType && leftType !== PrimitiveType.ANY) {
-          context.errors.push(new TypeMismatchError(node, leftType, rightType))
-        }
+      if (rightTypeString === PrimitiveType.NUMBER || rightTypeString === PrimitiveType.STRING) {
+        checkForTypeMismatch(node, leftType, rightType, context)
         return tBool
       }
-      if (leftType !== PrimitiveType.ANY) {
-        context.errors.push(
-          new TypeMismatchError(node, leftType, formatTypeString(tUnion(tNumber, tString)))
-        )
-      }
-      if (rightType !== PrimitiveType.ANY) {
-        context.errors.push(
-          new TypeMismatchError(node, rightType, formatTypeString(tUnion(tNumber, tString)))
-        )
-      }
+      checkForTypeMismatch(node, leftType, tUnion(tNumber, tString), context)
+      checkForTypeMismatch(node, rightType, tUnion(tNumber, tString), context)
       return tBool
     default:
       return tAny
@@ -532,11 +503,7 @@ function typeCheckAndReturnLogicalExpressionType(
   env: TypeEnvironment
 ): Type {
   const leftType = typeCheckAndReturnType(node.left, context, env) as Primitive
-  if (leftType.name !== PrimitiveType.BOOLEAN && leftType.name !== PrimitiveType.ANY) {
-    context.errors.push(
-      new TypeMismatchError(node, formatTypeString(leftType), PrimitiveType.BOOLEAN)
-    )
-  }
+  checkForTypeMismatch(node, leftType, tBool, context)
   const rightType = typeCheckAndReturnType(node.right, context, env)
   return mergeTypes(tBool, rightType)
 }

@@ -102,6 +102,75 @@ describe('union types', () => {
   })
 })
 
+describe('function types', () => {
+  it('handles type mismatches correctly', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const f1: (a: number, b: number) => number = (a, b) => a + b; // no error
+      const f2: (a: string, b: string) => string = (c, d) => c + d; // no error even if argument names are different
+      const f3: (a: number, b: number) => number = (a: number, b) => a + b; // no error
+      const f4: (a: string, b: string) => string = (a, b: string) => a + b; // no error
+      const f5: (a: number, b) => number = (a: number, b) => a + b; // no error
+      const f6: (a, b: string) => string = (a, b: string) => a + b; // no error
+      const f7: (a: number, b: number) => number = (a, b: string) => a + b; // error
+      const f8: (a: string, b: string) => string = (a: number, b) => a + b; // error
+      const f9: (a: number, b: number) => number = (a, b): string => a; // error
+      const f10: (a: string, b: string) => string = (a, b): number => b; // error
+      const f11: (a: number, b: number) => number = (a: string) => a; // error
+      const f12: (a: string, b: string) => string = (a: number, b, c) => b; // error
+      const f13: () => number = () => 1; // no error
+      const f14: () => number = (a) => a; // error
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 7: Type '(any, string) => any' is not assignable to type '(number, number) => number'.
+      Line 8: Type '(number, any) => any' is not assignable to type '(string, string) => string'.
+      Line 9: Type '(any, any) => string' is not assignable to type '(number, number) => number'.
+      Line 10: Type '(any, any) => number' is not assignable to type '(string, string) => string'.
+      Line 11: Type '(string) => any' is not assignable to type '(number, number) => number'.
+      Line 12: Type '(number, any, any) => any' is not assignable to type '(string, string) => string'.
+      Line 14: Type '(any) => any' is not assignable to type '() => number'."
+    `)
+  })
+
+  it('handles type mismatches correctly with union types', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const f1: (a: number | string, b: number | string) => number | string // no error
+        = (c: string | number, d: string | number): string | number => c + d; 
+      const f2: (a: number | string, b: number | string) => number | string // no error
+        = (a: number, b: number): number | string => a + b; 
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('checks argument types correctly', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const sum: (a: number, b: number) => number = (a, b) => a + b;
+      sum(1, 2); // no error
+      sum(1, '2'); // error
+      sum(true, 2); // error
+      sum('1', false); // 2 errors
+      sum(1); // error
+      sum(1, '2', 3); // 1 error, typecheck on arguments only done if number of arguments is correct
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 3: Type 'string' is not assignable to type 'number'.
+      Line 4: Type 'boolean' is not assignable to type 'number'.
+      Line 5: Type 'string' is not assignable to type 'number'.
+      Line 5: Type 'boolean' is not assignable to type 'number'.
+      Line 6: Expected 2 arguments, but got 1.
+      Line 7: Expected 2 arguments, but got 3."
+    `)
+  })
+})
+
 describe('function declarations', () => {
   it('checks argument types correctly', () => {
     const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
@@ -216,22 +285,20 @@ describe('arrow functions', () => {
   it('gets return type correct both with and without braces', () => {
     const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
 
-    const code = `const x1: number = ((a: number, b: number): number => a + b)(1, 2); // no error
-      const x2: string = ((a: number, b: number): string => a + b)(1, 2); // error
-      const x3: number = 
-        ((a: number, b: number): number => {
-          return a + b;
-        })(1, 2);
-      const x4: string =
-        ((a: number, b: number): string => {
-          return a + b;
-        })(1, 2);
+    const code = `((a: number, b: number): number => a + b)(1, 2); // no error
+      ((a: number, b: number): string => a + b)(1, 2); // error
+      ((a: string, b: string): number => { // error
+        return a + b;
+      })('1', '2');
+      ((a: string, b: string): string => { // no error
+        return a + b;
+      })('1', '2');
     `
 
     parseAndTypeCheck(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Type 'number' is not assignable to type 'string'.
-      Line 8: Type 'number' is not assignable to type 'string'."
+      Line 3: Type 'string' is not assignable to type 'number'."
     `)
   })
 })
@@ -385,18 +452,23 @@ describe('binary operations', () => {
       const x2: string = '1';
       const x3: any = true;
       const x4 = undefined;
-      const x5: number = x1 - 1; // no error, number + number
-      const x6: number = 2 * x2; // error as x2 is string
-      const x7: number = x1 / x3; // no error, number + any
-      const x8: number = x2 % x4; // error as x2 is string
-      const x9: string = x3 - x4; // error as result of -*/% operation is number
+      const x5: string | number = 1;
+      const x6: number = x1 - 1; // no error, number + number
+      const x7: number = 2 * x2; // error, number + string
+      const x8: number = x1 / x3; // no error, number + any
+      const x9: number = x2 % x4; // error, string + any
+      const x11: number = x1 - x5; // error, number + string | number
+      const x12: number = x5 * x3; // error, string | number + any
+      const x13: string = x3 - x4; // error as result of -*/% operation is number
     `
 
     parseAndTypeCheck(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 6: Type 'string' is not assignable to type 'number'.
-      Line 8: Type 'string' is not assignable to type 'number'.
-      Line 9: Type 'number' is not assignable to type 'string'."
+      "Line 7: Type 'string' is not assignable to type 'number'.
+      Line 9: Type 'string' is not assignable to type 'number'.
+      Line 10: Type 'string | number' is not assignable to type 'number'.
+      Line 11: Type 'string | number' is not assignable to type 'number'.
+      Line 12: Type 'number' is not assignable to type 'string'."
     `)
   })
 
@@ -408,22 +480,31 @@ describe('binary operations', () => {
       const x3: boolean = true;
       const x4: any = true;
       const x5 = undefined;
-      const x6: number = x1 + 1; // no error, number + number, return type number
-      const x7: string = x2 + '1'; // no error, string + string, return type string
-      const x8: number = x1 + x3; // error, number + boolean, return type number
-      const x9: string = x3 + x2; // error, boolean + string, return type string
-      const x10: number = x1 + x4; // no error, number + any, return type number
-      const x11: string = x5 + x2; // no error, any + string, return type string
-      const x12: string = x1 + x2; // error, number + string, return type string
-      const x13: string = x4 + x5; // error, any + any, return type number | string
+      const x6: string | number = 1;
+      const x7: string | boolean = '1';
+      const x8: number = x1 + 1; // no error, number + number, return type number
+      const x9: string = x2 + '1'; // no error, string + string, return type string
+      const x10: number = x1 + x3; // error, number + boolean, return type number
+      const x11: string = x3 + x2; // error, boolean + string, return type string
+      const x12: number = x1 + x4; // no error, number + any, return type number
+      const x13: string = x5 + x2; // no error, any + string, return type string
+      const x14: string = x1 + x2; // error, number + string, return type string
+      const x15: string = x4 + x5; // error, any + any, return type number | string
+      const x16: number | string = x6 + x4; // no error, string | number + any, return type number | string
+      const x17: number = x1 + x6; // error, number + string | number, return type number
+      const x18: string = x6 + x2; // error, string | number + string, return type string
+      const x19: string | number = x5 + x7; // error, any + string | boolean, return type string | number
     `
 
     parseAndTypeCheck(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 8: Type 'boolean' is not assignable to type 'number'.
-      Line 9: Type 'boolean' is not assignable to type 'string'.
-      Line 12: Type 'string' is not assignable to type 'number'.
-      Line 13: Type 'number | string' is not assignable to type 'string'."
+      "Line 10: Type 'boolean' is not assignable to type 'number'.
+      Line 11: Type 'boolean' is not assignable to type 'string'.
+      Line 14: Type 'string' is not assignable to type 'number'.
+      Line 15: Type 'number | string' is not assignable to type 'string'.
+      Line 17: Type 'string | number' is not assignable to type 'number'.
+      Line 18: Type 'string | number' is not assignable to type 'string'.
+      Line 19: Type 'string | boolean' is not assignable to type 'number | string'."
     `)
   })
 
@@ -435,23 +516,32 @@ describe('binary operations', () => {
       const x3: boolean = true;
       const x4: any = true;
       const x5 = undefined;
-      const x6: boolean = x1 === 1; // no error, number + number
-      const x7: boolean = x2 !== '1'; // no error, string + string
-      const x8: boolean = x1 < x3; // error, number + boolean
-      const x9: boolean = x3 <= x2; // error, boolean + string
-      const x10: boolean = x1 > x4; // no error, number + any
-      const x11: boolean = x5 >= x2; // no error, any + string
-      const x12: boolean = x1 === x2; // error, number + string
-      const x13: boolean = x4 !== x5; // no error, any + any
-      const x14: string = 1 < 2; // error as result of operation is boolean
+      const x6: string | number = 1;
+      const x7: string | boolean = '1';
+      const x8: boolean = x1 === 1; // no error, number + number
+      const x9: boolean = x2 !== '1'; // no error, string + string
+      const x10: boolean = x1 < x3; // error, number + boolean
+      const x11: boolean = x3 <= x2; // error, boolean + string
+      const x12: boolean = x1 > x4; // no error, number + any
+      const x13: boolean = x5 >= x2; // no error, any + string
+      const x14: boolean = x1 === x2; // error, number + string
+      const x15: boolean = x4 !== x5; // no error, any + any
+      const x16: boolean = x6 < x4; // no error, string | number + any
+      const x17: boolean = x1 <= x6; // error, number + string | number
+      const x18: boolean = x6 > x2; // error, string | number + string
+      const x19: boolean = x5 >= x7; // error, any + string | boolean
+      const x20: string = 1 === 2; // error as result of operation is boolean
     `
 
     parseAndTypeCheck(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 8: Type 'boolean' is not assignable to type 'number'.
-      Line 9: Type 'boolean' is not assignable to type 'string'.
-      Line 12: Type 'string' is not assignable to type 'number'.
-      Line 14: Type 'boolean' is not assignable to type 'string'."
+      "Line 10: Type 'boolean' is not assignable to type 'number'.
+      Line 11: Type 'boolean' is not assignable to type 'string'.
+      Line 14: Type 'string' is not assignable to type 'number'.
+      Line 17: Type 'string | number' is not assignable to type 'number'.
+      Line 18: Type 'string | number' is not assignable to type 'string'.
+      Line 19: Type 'string | boolean' is not assignable to type 'number | string'.
+      Line 20: Type 'boolean' is not assignable to type 'string'."
     `)
   })
 
