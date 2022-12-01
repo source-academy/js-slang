@@ -493,6 +493,26 @@ describe('unary operations', () => {
       Line 9: Type 'number' is not assignable to type 'boolean'."
     `)
   })
+
+  it('typeof is allowed for any type, and returns string type', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: number = 1;
+      const x2: string = '1';
+      const x3: any = 1;
+      const x4 = '1';
+      const x5: string = typeof x1; // no error
+      const x6: string = typeof x2; // no error
+      const x7: string = typeof x3; // no error
+      const x8: string = typeof x4; // no error
+      const x9: boolean = typeof 1; // error as result of typeof operation is string
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 9: Type 'string' is not assignable to type 'boolean'."`
+    )
+  })
 })
 
 describe('binary operations', () => {
