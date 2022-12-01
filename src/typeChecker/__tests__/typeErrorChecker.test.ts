@@ -38,6 +38,19 @@ describe('primitive types', () => {
     `)
   })
 
+  it('throws error for non-callable types', () => {
+    const source1Context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: number = 1;
+      x1();
+    `
+
+    parseAndTypeCheck(code, source1Context)
+    expect(parseError(source1Context.errors)).toMatchInlineSnapshot(
+      `"Line 2: 'x1' is not callable."`
+    )
+  })
+
   it('throws error for null type only for source 1', () => {
     const source1Context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
 
@@ -309,7 +322,7 @@ describe('arrow functions', () => {
 })
 
 describe('type aliases', () => {
-  it('type alias nodes should be removed from program at end of typechecking', () => {
+  it('TSTypeAliasDeclaration nodes should be removed from program at end of typechecking', () => {
     const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
 
     const code = `type stringOrNumber = string | number;
@@ -317,7 +330,7 @@ describe('type aliases', () => {
     `
 
     const program = parseAndTypeCheck(code, context)
-    expect(program).toMatchSnapshot() // Should not contain type alias node
+    expect(program).toMatchSnapshot() // Should not contain TSTypeAliasDeclaration node
   })
 
   it('should not be used as variables', () => {
@@ -362,6 +375,39 @@ describe('type aliases', () => {
 
     parseAndTypeCheck(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+})
+
+describe('typecasting', () => {
+  it('TSAsExpression nodes should be removed from program at end of typechecking', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: string | number = 1;
+      const x2: string = x1 as string;
+    `
+
+    const program = parseAndTypeCheck(code, context)
+    expect(program).toMatchSnapshot() // Should not contain TSAsExpression node
+  })
+
+  it('only supports downcasting', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: string | number = 1;
+      const x2: string | number = x1 as string | number; // no error
+      const x3: string = x1 as string; // no error
+      const x4: number = x1 as number; // no error
+      const x5: boolean = x1 as boolean; // error
+      const x6 = x1 as any; // error
+      const x7 = x1 as string | number | boolean; // error
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 5: Type 'string | number' cannot be casted to type 'boolean' as it is not a superset of 'boolean'.
+      Line 6: Typecasting to 'any' is not allowed.
+      Line 7: Type 'string | number' cannot be casted to type 'string | number | boolean' as it is not a superset of 'string | number | boolean'."
+    `)
   })
 })
 
@@ -770,6 +816,33 @@ describe('if-else statements', () => {
   })
 
   // TODO: Test if without else for Source 3 and above
+})
+
+describe('import statements', () => {
+  it('identifies imports even if accessed before import statement', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `show(heart);
+      import { show, heart } from 'rune';
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('defaults to any for all imports', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `import { show, heart } from 'rune';
+      show(heart);
+      heart(show);
+      const x1: string = heart;
+      const x2: number = show;
+    `
+
+    parseAndTypeCheck(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
 })
 
 describe('scoping', () => {
