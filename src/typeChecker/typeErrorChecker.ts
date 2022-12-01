@@ -157,13 +157,29 @@ function typeCheckAndReturnType(
       return mergeTypes(consType, altType)
     }
     case 'UnaryExpression': {
-      return typeCheckAndReturnUnaryExpressionType(node, context, env)
+      const argType = typeCheckAndReturnType(node.argument, context, env)
+      const operator = node.operator
+      switch (operator) {
+        case '-':
+          checkForTypeMismatch(node, argType, tNumber, context)
+          return tNumber
+        case '!':
+          checkForTypeMismatch(node, argType, tBool, context)
+          return tBool
+        case 'typeof':
+          return tString
+        default:
+          return tAny
+      }
     }
     case 'BinaryExpression': {
       return typeCheckAndReturnBinaryExpressionType(node, context, env)
     }
     case 'LogicalExpression': {
-      return typeCheckAndReturnLogicalExpressionType(node, context, env)
+      const leftType = typeCheckAndReturnType(node.left, context, env) as Primitive
+      checkForTypeMismatch(node, leftType, tBool, context)
+      const rightType = typeCheckAndReturnType(node.right, context, env)
+      return mergeTypes(tBool, rightType)
     }
     case 'ArrowFunctionExpression': {
       return typeCheckAndReturnArrowFunctionType(node, context, env)
@@ -396,31 +412,6 @@ function addTypeDeclarationsToEnvironment(
 }
 
 /**
- * Typechecks the body of a unary expression, adding any type errors to context if necessary.
- * Then, returns the type of the unary expression, inferred based on the operator.
- */
-function typeCheckAndReturnUnaryExpressionType(
-  node: es.UnaryExpression,
-  context: Context,
-  env: TypeEnvironment
-): Primitive {
-  const argType = typeCheckAndReturnType(node.argument, context, env)
-  const operator = node.operator
-  switch (operator) {
-    case '-':
-      checkForTypeMismatch(node, argType, tNumber, context)
-      return tNumber
-    case '!':
-      checkForTypeMismatch(node, argType, tBool, context)
-      return tBool
-    case 'typeof':
-      return tString
-    default:
-      return tAny
-  }
-}
-
-/**
  * Typechecks the body of a binary expression, adding any type errors to context if necessary.
  * Then, returns the type of the binary expression, inferred based on the operator.
  */
@@ -490,22 +481,6 @@ function typeCheckAndReturnBinaryExpressionType(
     default:
       return tAny
   }
-}
-
-/**
- * Typechecks the body of a logical expression, adding any type errors to context if necessary.
- * Then, returns the type of the logical expression.
- * The return type is a union of the left expression type (boolean) and right expression type.
- */
-function typeCheckAndReturnLogicalExpressionType(
-  node: es.LogicalExpression,
-  context: Context,
-  env: TypeEnvironment
-): Type {
-  const leftType = typeCheckAndReturnType(node.left, context, env) as Primitive
-  checkForTypeMismatch(node, leftType, tBool, context)
-  const rightType = typeCheckAndReturnType(node.right, context, env)
-  return mergeTypes(tBool, rightType)
 }
 
 /**
