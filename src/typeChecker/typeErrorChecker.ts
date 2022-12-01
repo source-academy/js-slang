@@ -555,7 +555,9 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
         return true
       }
       for (let i = 0; i < actualType.parameterTypes.length; i++) {
-        if (hasTypeMismatchErrors(actualParamTypes[i], expectedParamTypes[i])) {
+        // Note that actual and expected types are swapped here
+        // as expected type should be subset of actual type for function arguments
+        if (hasTypeMismatchErrors(expectedParamTypes[i], actualParamTypes[i])) {
           return true
         }
       }

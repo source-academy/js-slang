@@ -139,12 +139,17 @@ describe('function types', () => {
 
     const code = `const f1: (a: number | string, b: number | string) => number | string // no error
         = (c: string | number, d: string | number): string | number => c + d; 
-      const f2: (a: number | string, b: number | string) => number | string // no error
-        = (a: number, b: number): number | string => a + b; 
+      const f2: (a: number | string, b: number | string) => number | string // error
+        = (a: number, b: number): number | string => a + b;
+      const f3: (a: number | string, b: number | string) => number // error
+        = (a: number | string, b: number | string): number | string => a + b; 
     `
 
     parseAndTypeCheck(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 3: Type '(number, number) => number | string' is not assignable to type '(number | string, number | string) => number | string'.
+      Line 5: Type '(number | string, number | string) => number | string' is not assignable to type '(number | string, number | string) => number'."
+    `)
   })
 
   it('checks argument types correctly', () => {
