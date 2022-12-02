@@ -302,12 +302,12 @@ function typeCheckAndReturnType(
           const originalType = typeCheckAndReturnType(nodeAsAny.expression, context, env)
           const typeToCastTo = getAnnotatedType(nodeAsAny, context, env)
           if ((typeToCastTo as Primitive).name === PrimitiveType.ANY) {
-            context.errors.push(new NoExplicitAnyError(node))
+            context.errors.push(new NoExplicitAnyError(nodeAsAny))
           }
           if (hasTypeMismatchErrors(typeToCastTo, originalType)) {
             context.errors.push(
               new TypecastError(
-                node,
+                nodeAsAny,
                 formatTypeString(originalType),
                 formatTypeString(typeToCastTo)
               )
@@ -517,7 +517,7 @@ function typeCheckAndReturnArrowFunctionType(
  * If not equal, adds type mismatch error to context.
  */
 function checkForTypeMismatch(
-  node: es.Node,
+  node: NodeWithDeclaredTypeAnnotation<es.Node>,
   actualType: Type,
   expectedType: Type,
   context: Context
@@ -641,12 +641,7 @@ function getAnnotatedType(
       const typeReferenceNode = annotatedTypeNode as TypeReferenceNode
       const declaredType = lookupTypeAlias(typeReferenceNode.typeName.name, env)
       if (!declaredType) {
-        context.errors.push(
-          new TypeNotFoundError(
-            annotationNode as unknown as es.Node,
-            typeReferenceNode.typeName.name
-          )
-        )
+        context.errors.push(new TypeNotFoundError(annotationNode, typeReferenceNode.typeName.name))
         return tAny
       }
       return declaredType
@@ -677,7 +672,7 @@ function getPrimitiveType(node: AnnotationTypeNode, typeNode: BaseTypeNode, cont
     disallowedPrimitiveTypes.includes(primitiveType) ||
     (context.chapter === 1 && primitiveType === PrimitiveType.NULL)
   ) {
-    context.errors.push(new TypeNotAllowedError(node as unknown as es.Node, primitiveType))
+    context.errors.push(new TypeNotAllowedError(node, primitiveType))
     return tAny
   }
   return tPrimitive(primitiveType)

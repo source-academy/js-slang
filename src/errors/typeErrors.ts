@@ -2,8 +2,11 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import {
+  AnnotationTypeNode,
+  AsExpressionNode,
   ErrorSeverity,
   ErrorType,
+  NodeWithDeclaredTypeAnnotation,
   NodeWithInferredTypeAnnotation,
   SArray,
   SourceError,
@@ -416,7 +419,7 @@ export class TypeMismatchError implements SourceError {
   public severity = ErrorSeverity.ERROR
 
   constructor(
-    public node: es.Node,
+    public node: NodeWithDeclaredTypeAnnotation<es.Node>,
     public actualTypeString: string,
     public expectedTypeString: string
   ) {}
@@ -438,7 +441,7 @@ export class TypeNotFoundError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: es.Node, public name: string) {}
+  constructor(public node: AnnotationTypeNode, public name: string) {}
 
   get location() {
     return this.node.loc!
@@ -457,7 +460,7 @@ export class FunctionShouldHaveReturnValueError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: es.Node) {}
+  constructor(public node: NodeWithDeclaredTypeAnnotation<es.FunctionDeclaration>) {}
 
   get location() {
     return this.node.loc!
@@ -476,7 +479,10 @@ export class TypeNotCallableError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: es.Node, public name: string) {}
+  constructor(
+    public node: NodeWithDeclaredTypeAnnotation<es.CallExpression>,
+    public name: string
+  ) {}
 
   get location() {
     return this.node.loc!
@@ -495,7 +501,7 @@ export class NoExplicitAnyError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: es.Node) {}
+  constructor(public node: AsExpressionNode) {}
 
   get location() {
     return this.node.loc!
@@ -514,7 +520,11 @@ export class TypecastError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: es.Node, public originalType: string, public typeToCastTo: string) {}
+  constructor(
+    public node: AsExpressionNode,
+    public originalType: string,
+    public typeToCastTo: string
+  ) {}
 
   get location() {
     return this.node.loc!
@@ -533,7 +543,7 @@ export class TypeNotAllowedError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: es.Node, public name: string) {}
+  constructor(public node: AnnotationTypeNode, public name: string) {}
 
   get location() {
     return this.node.loc!
