@@ -13,6 +13,7 @@ import {
   TypeNotFoundError
 } from '../errors/typeErrors'
 import { memoizedGetModuleManifest } from '../modules/moduleLoader'
+import { DisallowedConstructError } from '../parser/parser'
 import { NoImplicitReturnUndefinedError } from '../parser/rules/noImplicitReturnUndefined'
 import {
   AllowedDeclarations,
@@ -314,6 +315,9 @@ function typeCheckAndReturnType(
             )
           }
           return typeToCastTo
+        case TSTypeAnnotationType.TSInterfaceDeclaration:
+          context.errors.push(new DisallowedConstructError(node))
+          return tUndef
         default:
           return tAny
       }

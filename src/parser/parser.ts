@@ -12,7 +12,15 @@ import * as es from 'estree'
 
 import { ACORN_PARSE_OPTIONS } from '../constants'
 import { checkForTypeErrors } from '../typeChecker/typeErrorChecker'
-import { Context, ErrorSeverity, ErrorType, Rule, SourceError, Variant } from '../types'
+import {
+  Context,
+  ErrorSeverity,
+  ErrorType,
+  Rule,
+  SourceError,
+  TSTypeAnnotationType,
+  Variant
+} from '../types'
 import { stripIndent } from '../utils/formatters'
 import { ancestor, AncestorWalkerFn } from '../utils/walkers'
 import { validateAndAnnotate } from '../validator/validator'
@@ -55,6 +63,8 @@ export class DisallowedConstructError implements SourceError {
         return "'this' expressions"
       case 'Property':
         return 'Properties'
+      case TSTypeAnnotationType.TSInterfaceDeclaration:
+        return 'Interface declarations'
       default: {
         const words = nodeType.split(/(?=[A-Z])/)
         return words.map((word, i) => (i === 0 ? word : word.toLowerCase())).join(' ') + 's'

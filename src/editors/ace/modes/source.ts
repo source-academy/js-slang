@@ -572,16 +572,15 @@ export function HighlightRulesSelector(
             },
             {
               token: 'keyword',
-              regex:
-                '(?:\\b(constructor|declare|interface|as|AS|public|private|extends|export|super|readonly|module|namespace|abstract|implements)\\b)'
+              regex: '(?:\\b(as|AS)\\b)'
             },
             {
               token: ['keyword', 'storage.type.variable.ts'],
-              regex: '(class|type)(\\s+[a-zA-Z0-9_?.$][\\w?.$]*)'
+              regex: '(type)(\\s+[a-zA-Z0-9_?.$][\\w?.$]*)'
             },
             {
               token: 'keyword',
-              regex: '\\b(?:super|export|import|keyof|infer|typeof)\\b'
+              regex: '\\b(?:typeof)\\b'
             }
           )
         }

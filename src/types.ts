@@ -342,9 +342,10 @@ export enum TSTypeAnnotationType {
   TSUndefinedKeyword = 'TSUndefinedKeyword',
   TSUnknownKeyword = 'TSUnknownKeyword',
   TSVoidKeyword = 'TSVoidKeyword',
-  // Expressions
+  // Nodes
   TSTypeAliasDeclaration = 'TSTypeAliasDeclaration',
   TSAsExpression = 'TSAsExpression',
+  TSInterfaceDeclaration = 'TSInterfaceDeclaration',
   TSTypeReference = 'TSTypeReference'
 }
 
