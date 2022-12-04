@@ -344,6 +344,20 @@ export const temporaryStreamFuncs: [string, BindableType][] = [
   ['stream_ref', tForAll(tFunc(tVar('T1'), tNumber, tVar('T2')))]
 ]
 
+// Prelude function type overrides for Source Typed variant
+export const source1TypeOverrides: [string, BindableType][] = [
+  // is something functions
+  ['is_boolean', tFunc(tAny, tBool)],
+  ['is_number', tFunc(tAny, tBool)],
+  ['is_string', tFunc(tAny, tBool)],
+  ['is_undefined', tFunc(tAny, tBool)],
+  ['is_function', tFunc(tAny, tBool)],
+  // misc functions
+  ['stringify', tFunc(tAny, tString)],
+  ['arity', tFunc(tAny, tNumber)],
+  ['char_at', tFunc(tString, tNumber, tUnion(tString, tUndef))]
+]
+
 // Creates type environment for the appropriate Source chapter
 export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
   const initialTypeMappings = [...predeclaredNames, ...primitiveFuncs]
@@ -363,17 +377,3 @@ export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
     }
   ]
 }
-
-// Type overrides for source typed variant
-export const source1TypeOverrides: [string, BindableType][] = [
-  // is something functions
-  ['is_boolean', tFunc(tAny, tBool)],
-  ['is_number', tFunc(tAny, tBool)],
-  ['is_string', tFunc(tAny, tBool)],
-  ['is_undefined', tFunc(tAny, tBool)],
-  ['is_function', tFunc(tAny, tBool)],
-  // misc functions
-  ['stringify', tFunc(tAny, tString)],
-  ['arity', tFunc(tAny, tNumber)],
-  ['char_at', tFunc(tString, tNumber, tUnion(tString, tUndef))]
-]

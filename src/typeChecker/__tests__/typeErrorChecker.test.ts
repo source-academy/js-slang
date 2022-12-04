@@ -300,23 +300,45 @@ describe('arrow functions', () => {
     `)
   })
 
+  it('checks return type correctly', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `(n: number): number => n; // no error
+      (n: number): string => n; // error
+      (n: number): void => n; // error
+      (n: number): void => {
+        n; // do not return, no error
+      };
+      (n: number): number => { // error
+        n; // do not return
+      };
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 2: Type 'number' is not assignable to type 'string'.
+      Line 3: Type 'number' is not assignable to type 'void'.
+      Line 7: A function whose declared type is neither 'void' nor 'any' must return a value."
+    `)
+  })
+
   it('gets return type correct both with and without braces', () => {
     const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
 
     const code = `((a: number, b: number): number => a + b)(1, 2); // no error
       ((a: number, b: number): string => a + b)(1, 2); // error
-      ((a: string, b: string): number => { // error
-        return a + b;
+      ((a: string, b: string): number => {
+        return a + b; // error
       })('1', '2');
-      ((a: string, b: string): string => { // no error
-        return a + b;
+      ((a: string, b: string): string => { 
+        return a + b; // no error
       })('1', '2');
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Type 'number' is not assignable to type 'string'.
-      Line 3: Type 'string' is not assignable to type 'number'."
+      Line 4: Type 'string' is not assignable to type 'number'."
     `)
   })
 })

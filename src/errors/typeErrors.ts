@@ -460,7 +460,9 @@ export class FunctionShouldHaveReturnValueError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: NodeWithDeclaredTypeAnnotation<es.FunctionDeclaration>) {}
+  constructor(
+    public node: NodeWithDeclaredTypeAnnotation<es.FunctionDeclaration | es.ArrowFunctionExpression>
+  ) {}
 
   get location() {
     return this.node.loc!

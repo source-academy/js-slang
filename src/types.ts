@@ -306,7 +306,9 @@ export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['eleme
 
 export type ContiguousArrayElements = ContiguousArrayElementExpression[]
 
-/** Types used in type inference / Source Typed variant type error checker **/
+// =======================================
+// Types used in type checker for type inference/type error checker for Source Typed variant
+// =======================================
 
 export enum PrimitiveType {
   ANY = 'any',
@@ -349,7 +351,7 @@ export enum TSTypeAnnotationType {
   TSTypeReference = 'TSTypeReference'
 }
 
-// Types for parsed TS node used in Source Typed variants
+// Types for parsed TS nodes used in Source Typed variants
 export type NodeWithDeclaredTypeAnnotation<T extends es.Node> = DeclaredTypeAnnotation & T
 
 export type DeclaredTypeAnnotation = {
@@ -456,7 +458,7 @@ export interface SArray {
   elementType: Type
 }
 
-// Union type is only used in typed variants for typechecking
+// Union type is only used in Source Typed for typechecking
 export interface UnionType {
   kind: 'union'
   types: Type[]

@@ -27,11 +27,7 @@ function topLevelTypesToString(program: NodeWithInferredTypeAnnotation<es.Progra
   return program.body
     .filter(node => ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type))
     .map(
-      (
-        node:
-          | NodeWithInferredTypeAnnotation<es.VariableDeclaration>
-          | NodeWithInferredTypeAnnotation<es.FunctionDeclaration>
-      ) => {
+      (node: NodeWithInferredTypeAnnotation<es.VariableDeclaration | es.FunctionDeclaration>) => {
         const id =
           node.type === 'VariableDeclaration'
             ? (node.declarations[0].id as es.Identifier).name

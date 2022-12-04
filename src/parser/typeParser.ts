@@ -1,5 +1,5 @@
 // Code taken from https://github.com/patternfly/patternfly-org/blob/main/packages/ast-helpers/acorn-typescript.js
-// Still WIP; some cases such as arrow function expressions are not properly handled
+// Some cases such as arrow function expressions are not properly handled
 import { getLineInfo, lineBreak, Parser, tokTypes } from 'acorn'
 
 class DestructuringErrors {
