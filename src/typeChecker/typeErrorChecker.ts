@@ -85,7 +85,7 @@ export function checkForTypeErrors(
               error.message
           )
     )
-    return program
+    return removeTSNodes(program)
   }
 }
 
