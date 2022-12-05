@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import { ConstAssignment } from '../errors/errors'
 import { NoAssignmentToForVariable } from '../errors/validityErrors'
-import { Context, NodeWithInferredTypeAnnotation } from '../types'
+import { Context, NodeWithInferredType } from '../types'
 import { getVariableDecarationName } from '../utils/astCreator'
 import { ancestor, base, FullWalkerCallback } from '../utils/walkers'
 
@@ -14,7 +14,7 @@ class Declaration {
 export function validateAndAnnotate(
   program: es.Program,
   context: Context
-): NodeWithInferredTypeAnnotation<es.Program> {
+): NodeWithInferredType<es.Program> {
   const accessedBeforeDeclarationMap = new Map<es.Node, Map<string, Declaration>>()
   const scopeHasCallExpressionMap = new Map<es.Node, boolean>()
   function processBlock(node: es.Program | es.BlockStatement) {
@@ -91,7 +91,7 @@ export function validateAndAnnotate(
     program,
     {
       VariableDeclaration(
-        node: NodeWithInferredTypeAnnotation<es.VariableDeclaration>,
+        node: NodeWithInferredType<es.VariableDeclaration>,
         ancestors: es.Node[]
       ) {
         const lastAncestor = ancestors[ancestors.length - 2]
@@ -103,7 +103,7 @@ export function validateAndAnnotate(
       },
       Identifier: validateIdentifier,
       FunctionDeclaration(
-        node: NodeWithInferredTypeAnnotation<es.FunctionDeclaration>,
+        node: NodeWithInferredType<es.FunctionDeclaration>,
         ancestors: es.Node[]
       ) {
         // a function declaration can be typed if there are no function calls in the same scope before it

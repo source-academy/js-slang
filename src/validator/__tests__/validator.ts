@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
-import { Chapter, NodeWithInferredTypeAnnotation } from '../../types'
+import { Chapter, NodeWithInferredType } from '../../types'
 import { getVariableDecarationName } from '../../utils/astCreator'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
@@ -55,7 +55,7 @@ test('testing typability', () => {
   const ast = toValidatedAst(code)
   expect(ast).toMatchSnapshot()
   simple(ast, {
-    VariableDeclaration(node: NodeWithInferredTypeAnnotation<es.VariableDeclaration>) {
+    VariableDeclaration(node: NodeWithInferredType<es.VariableDeclaration>) {
       let expectedTypability = ''
       switch (getVariableDecarationName(node)) {
         case 'a':
@@ -67,7 +67,7 @@ test('testing typability', () => {
       }
       expect(node.typability).toBe(expectedTypability)
     },
-    FunctionDeclaration(node: NodeWithInferredTypeAnnotation<es.FunctionDeclaration>) {
+    FunctionDeclaration(node: NodeWithInferredType<es.FunctionDeclaration>) {
       let expectedTypability = ''
       switch (node.id!.name) {
         case 'f':

@@ -12,9 +12,9 @@ import {
   Pair,
   PredicateType,
   Primitive,
-  PrimitiveType,
   SArray,
-  TSTypeAnnotationType,
+  TSBasicType,
+  TSNodeType,
   Type,
   TypeEnvironment,
   UnionType,
@@ -27,28 +27,20 @@ export const NEGATIVE_OP = '-_1'
 // Special name used for saving return type in type environment
 export const RETURN_TYPE_IDENTIFIER = '//RETURN_TYPE'
 
-export const typeAnnotationKeywordToPrimitiveTypeMap = {
-  [TSTypeAnnotationType.TSAnyKeyword]: PrimitiveType.ANY,
-  [TSTypeAnnotationType.TSBigIntKeyword]: PrimitiveType.BIGINT,
-  [TSTypeAnnotationType.TSBooleanKeyword]: PrimitiveType.BOOLEAN,
-  [TSTypeAnnotationType.TSNeverKeyword]: PrimitiveType.NEVER,
-  [TSTypeAnnotationType.TSNullKeyword]: PrimitiveType.NULL,
-  [TSTypeAnnotationType.TSNumberKeyword]: PrimitiveType.NUMBER,
-  [TSTypeAnnotationType.TSObjectKeyword]: PrimitiveType.OBJECT,
-  [TSTypeAnnotationType.TSStringKeyword]: PrimitiveType.STRING,
-  [TSTypeAnnotationType.TSSymbolKeyword]: PrimitiveType.SYMBOL,
-  [TSTypeAnnotationType.TSUndefinedKeyword]: PrimitiveType.UNDEFINED,
-  [TSTypeAnnotationType.TSUnknownKeyword]: PrimitiveType.UNKNOWN,
-  [TSTypeAnnotationType.TSVoidKeyword]: PrimitiveType.VOID
+export const typeAnnotationKeywordToBasicTypeMap = {
+  [TSNodeType.TSAnyKeyword]: TSBasicType.ANY,
+  [TSNodeType.TSBigIntKeyword]: TSBasicType.BIGINT,
+  [TSNodeType.TSBooleanKeyword]: TSBasicType.BOOLEAN,
+  [TSNodeType.TSNeverKeyword]: TSBasicType.NEVER,
+  [TSNodeType.TSNullKeyword]: TSBasicType.NULL,
+  [TSNodeType.TSNumberKeyword]: TSBasicType.NUMBER,
+  [TSNodeType.TSObjectKeyword]: TSBasicType.OBJECT,
+  [TSNodeType.TSStringKeyword]: TSBasicType.STRING,
+  [TSNodeType.TSSymbolKeyword]: TSBasicType.SYMBOL,
+  [TSNodeType.TSUndefinedKeyword]: TSBasicType.UNDEFINED,
+  [TSNodeType.TSUnknownKeyword]: TSBasicType.UNKNOWN,
+  [TSNodeType.TSVoidKeyword]: TSBasicType.VOID
 }
-
-export const disallowedPrimitiveTypes = [
-  PrimitiveType.BIGINT,
-  PrimitiveType.NEVER,
-  PrimitiveType.OBJECT,
-  PrimitiveType.SYMBOL,
-  PrimitiveType.UNKNOWN
-]
 
 // Helper functions for dealing with type environment
 export function lookupType(name: string, env: TypeEnvironment): BindableType | undefined {
@@ -175,13 +167,12 @@ export function tArray(var1: Type): SArray {
   }
 }
 
-export const tAny = tPrimitive(PrimitiveType.ANY)
-export const tBool = tPrimitive(PrimitiveType.BOOLEAN)
-export const tNumber = tPrimitive(PrimitiveType.NUMBER)
-export const tString = tPrimitive(PrimitiveType.STRING)
-export const tUndef = tPrimitive(PrimitiveType.UNDEFINED)
-export const tUnknown = tPrimitive(PrimitiveType.UNKNOWN)
-export const tVoid = tPrimitive(PrimitiveType.VOID)
+export const tAny = tPrimitive(TSBasicType.ANY)
+export const tBool = tPrimitive(TSBasicType.BOOLEAN)
+export const tNumber = tPrimitive(TSBasicType.NUMBER)
+export const tString = tPrimitive(TSBasicType.STRING)
+export const tUndef = tPrimitive(TSBasicType.UNDEFINED)
+export const tVoid = tPrimitive(TSBasicType.VOID)
 
 export function tFunc(...types: Type[]): FunctionType {
   const parameterTypes = types.slice(0, -1)

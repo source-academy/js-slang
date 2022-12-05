@@ -15,7 +15,7 @@ import {
   Finished,
   FuncDeclWithInferredTypeAnnotation,
   ModuleContext,
-  NodeWithInferredTypeAnnotation,
+  NodeWithInferredType,
   Result,
   SourceError,
   SVMProgram,
@@ -214,7 +214,7 @@ export function getTypeInformation(
     }
 
     // get name of the node
-    const getName = (typedNode: NodeWithInferredTypeAnnotation<es.Node>) => {
+    const getName = (typedNode: NodeWithInferredType<es.Node>) => {
       let nodeId = ''
       if (typedNode.type) {
         if (typedNode.type === 'FunctionDeclaration') {
@@ -229,7 +229,7 @@ export function getTypeInformation(
     }
 
     // callback function for findNodeAt function
-    function findByLocationPredicate(t: string, nd: NodeWithInferredTypeAnnotation<es.Node>) {
+    function findByLocationPredicate(t: string, nd: NodeWithInferredType<es.Node>) {
       if (!nd.inferredType) {
         return false
       }
@@ -258,7 +258,7 @@ export function getTypeInformation(
       return ans
     }
 
-    const node: NodeWithInferredTypeAnnotation<es.Node> = res.node
+    const node: NodeWithInferredType<es.Node> = res.node
 
     if (node === undefined) {
       return ans
@@ -266,7 +266,7 @@ export function getTypeInformation(
 
     const actualNode =
       node.type === 'VariableDeclaration'
-        ? (node.declarations[0].init! as NodeWithInferredTypeAnnotation<es.Node>)
+        ? (node.declarations[0].init! as NodeWithInferredType<es.Node>)
         : node
     const type = typeToString(
       actualNode.type === 'FunctionDeclaration'

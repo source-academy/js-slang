@@ -1,12 +1,6 @@
 import * as es from 'estree'
 
-import {
-  ErrorSeverity,
-  ErrorType,
-  NodeWithInferredTypeAnnotation,
-  SourceError,
-  Type
-} from '../types'
+import { ErrorSeverity, ErrorType, NodeWithInferredType, SourceError, Type } from '../types'
 import { typeToString } from '../utils/stringify'
 
 // tslint:disable:max-classes-per-file
@@ -14,7 +8,7 @@ export class TypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: NodeWithInferredTypeAnnotation<es.Node>, public message: string) {
+  constructor(public node: NodeWithInferredType<es.Node>, public message: string) {
     node.typability = 'Untypable'
   }
 

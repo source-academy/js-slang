@@ -311,27 +311,41 @@ export type ContiguousArrayElements = ContiguousArrayElementExpression[]
 // =======================================
 
 export enum PrimitiveType {
-  ANY = 'any',
-  BIGINT = 'bigint',
   BOOLEAN = 'boolean',
-  NEVER = 'never',
   NULL = 'null',
   NUMBER = 'number',
-  OBJECT = 'object',
   STRING = 'string',
-  SYMBOL = 'symbol',
-  UNDEFINED = 'undefined',
-  UNKNOWN = 'unknown',
+  UNDEFINED = 'undefined'
+}
+
+export enum TSAllowedTypes {
+  ANY = 'any',
   VOID = 'void'
 }
 
-export enum TSTypeAnnotationType {
+export enum TSDisallowedTypes {
+  BIGINT = 'bigint',
+  NEVER = 'never',
+  OBJECT = 'object',
+  SYMBOL = 'symbol',
+  UNKNOWN = 'unknown'
+}
+
+export const TSBasicType = {
+  ...PrimitiveType,
+  ...TSAllowedTypes,
+  ...TSDisallowedTypes
+}
+export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes
+
+// Enum of all keywords used as node types in a ESTree AST with TS support
+export enum TSNodeType {
   // Type annotation types
   TSAnnotationType = 'TSAnnotationType',
   TSFunctionType = 'TSFunctionType',
   TSUnionType = 'TSUnionType',
   TSIntersectionType = 'TSIntersectionType',
-  // Keywords
+  // Keywords for TS basic types
   TSAnyKeyword = 'TSAnyKeyword',
   TSBigIntKeyword = 'TSBigIntKeyword',
   TSBooleanKeyword = 'TSBooleanKeyword',
@@ -352,57 +366,57 @@ export enum TSTypeAnnotationType {
 }
 
 // Types for parsed TS nodes used in Source Typed variants
-export type NodeWithDeclaredTypeAnnotation<T extends es.Node> = DeclaredTypeAnnotation & T
+export type NodeWithTypeAnnotation<T extends es.Node> = TypeAnnotation & T
 
-export type DeclaredTypeAnnotation = {
+export type TypeAnnotation = {
   typeAnnotation?: AnnotationTypeNode
   returnType?: AnnotationTypeNode
 }
 
 export interface BaseTypeNode extends es.BaseNode {
-  type: TSTypeAnnotationType
+  type: TSNodeType
 }
 
 export interface AnnotationTypeNode extends BaseTypeNode {
-  type: TSTypeAnnotationType.TSAnnotationType
+  type: TSNodeType.TSAnnotationType
   typeAnnotation: BaseTypeNode | FunctionTypeNode | UnionTypeNode | TypeReferenceNode
 }
 
 export interface FunctionTypeNode extends BaseTypeNode {
-  type: TSTypeAnnotationType.TSFunctionType
-  parameters: NodeWithDeclaredTypeAnnotation<es.Identifier>[]
+  type: TSNodeType.TSFunctionType
+  parameters: NodeWithTypeAnnotation<es.Identifier>[]
   typeAnnotation: AnnotationTypeNode
 }
 
 export interface UnionTypeNode extends BaseTypeNode {
-  type: TSTypeAnnotationType.TSUnionType
+  type: TSNodeType.TSUnionType
   types: BaseTypeNode[]
 }
 
 export interface TypeAliasDeclarationNode extends BaseTypeNode {
-  type: TSTypeAnnotationType.TSTypeAliasDeclaration
+  type: TSNodeType.TSTypeAliasDeclaration
   id: es.Identifier
   typeAnnotation: BaseTypeNode
 }
 
 export interface AsExpressionNode extends BaseTypeNode {
-  type: TSTypeAnnotationType.TSAsExpression
+  type: TSNodeType.TSAsExpression
   expression: es.Node
   typeAnnotation: BaseTypeNode
 }
 
 export interface TypeReferenceNode extends BaseTypeNode {
-  type: TSTypeAnnotationType.TSTypeReference
+  type: TSNodeType.TSTypeReference
   typeName: es.Identifier
 }
 
 // Types for nodes used in type inference
-export type NodeWithInferredTypeAnnotation<T extends es.Node> = InferredTypeAnnotation & T
+export type NodeWithInferredType<T extends es.Node> = InferredType & T
 
-export type FuncDeclWithInferredTypeAnnotation =
-  NodeWithInferredTypeAnnotation<es.FunctionDeclaration> & TypedFuncDecl
+export type FuncDeclWithInferredTypeAnnotation = NodeWithInferredType<es.FunctionDeclaration> &
+  TypedFuncDecl
 
-export type InferredTypeAnnotation = Untypable | Typed | NotYetTyped
+export type InferredType = Untypable | Typed | NotYetTyped
 
 export interface TypedFuncDecl {
   functionInferredType?: Type
@@ -423,12 +437,15 @@ export interface Typed {
   inferredType?: Type
 }
 
-export type Type = Primitive | Variable | FunctionType | List | Pair | SArray | UnionType
+// Constraints used in type inference
 export type Constraint = 'none' | 'addable'
+
+// Types used by both type inferencer and Source Typed
+export type Type = Primitive | Variable | FunctionType | List | Pair | SArray | UnionType
 
 export interface Primitive {
   kind: 'primitive'
-  name: PrimitiveType
+  name: PrimitiveType | TSAllowedTypes
 }
 
 export interface Variable {
@@ -476,19 +493,19 @@ export interface PredicateType {
   ifTrueType: Type | ForAll
 }
 
+export type PredicateTest = {
+  node: NodeWithInferredType<es.CallExpression>
+  ifTrueType: Type | ForAll
+  argVarName: string
+}
+
 /**
- * Stores the type/declaration type of variables.
- * The array distinguishes between the different scopes in the program
+ * Each element in the TypeEnvironment array represents a different scope
  * (e.g. first element is the global scope, last element is the closest).
+ * Within each scope, variable types/declaration kinds, as well as type aliases, are stored.
  */
 export type TypeEnvironment = {
   typeMap: Map<string, BindableType>
   declKindMap: Map<string, AllowedDeclarations>
   typeAliasMap?: Map<string, Type>
 }[]
-
-export type PredicateTest = {
-  node: NodeWithInferredTypeAnnotation<es.CallExpression>
-  ifTrueType: Type | ForAll
-  argVarName: string
-}

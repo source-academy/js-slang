@@ -22,7 +22,7 @@ import {
   FuncDeclWithInferredTypeAnnotation,
   FunctionType,
   List,
-  NodeWithInferredTypeAnnotation,
+  NodeWithInferredType,
   Pair,
   PredicateTest,
   PredicateType,
@@ -70,7 +70,7 @@ let typeIdCounter = 0
  * @param constraints: undefined for first call
  */
 /* tslint:disable cyclomatic-complexity */
-function traverse(node: NodeWithInferredTypeAnnotation<es.Node>, constraints?: Constraint[]) {
+function traverse(node: NodeWithInferredType<es.Node>, constraints?: Constraint[]) {
   if (node === null) {
     // this happens in a holey array [,,,,,]
     return
@@ -237,12 +237,12 @@ function addTypeError(err: SourceError) {
  * @param program Parsed Program
  */
 export function typeCheck(
-  program: NodeWithInferredTypeAnnotation<es.Program>,
+  program: NodeWithInferredType<es.Program>,
   context: Context
-): [NodeWithInferredTypeAnnotation<es.Program>, SourceError[]] {
+): [NodeWithInferredType<es.Program>, SourceError[]] {
   function typeCheck_(
-    program: NodeWithInferredTypeAnnotation<es.Program>
-  ): [NodeWithInferredTypeAnnotation<es.Program>, SourceError[]] {
+    program: NodeWithInferredType<es.Program>
+  ): [NodeWithInferredType<es.Program>, SourceError[]] {
     typeIdCounter = 0
     hasUndefinedIdentifierError = false
     typeErrors = []
@@ -595,9 +595,9 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
 
 // Type checks consequent and alternate in a nested type environment as opposed to the current one.
 function addPredicateTestToConstraintList(
-  node: NodeWithInferredTypeAnnotation<es.Node>,
+  node: NodeWithInferredType<es.Node>,
   tests: PredicateTest[],
-  consequent: NodeWithInferredTypeAnnotation<es.Node>,
+  consequent: NodeWithInferredType<es.Node>,
   isTopLevelAndLastValStmt: boolean,
   env: TypeEnvironment,
   constraints: Constraint[]
@@ -646,10 +646,10 @@ function addPredicateTestToConstraintList(
 
 // Type checks consequent and alternate in a nested type environment as opposed to the current one.
 function addPredicateTestConditionalToConstraintList(
-  node: NodeWithInferredTypeAnnotation<es.IfStatement | es.ConditionalExpression>,
+  node: NodeWithInferredType<es.IfStatement | es.ConditionalExpression>,
   tests: PredicateTest[],
-  consequent: NodeWithInferredTypeAnnotation<es.Node>,
-  alternate: NodeWithInferredTypeAnnotation<es.Node> | undefined,
+  consequent: NodeWithInferredType<es.Node>,
+  alternate: NodeWithInferredType<es.Node> | undefined,
   isTopLevelAndLastValStmt: boolean,
   env: TypeEnvironment,
   constraints: Constraint[]
@@ -737,7 +737,7 @@ function stmtHasValueReturningStmt(node: es.Node): boolean {
 // and thus predicate tests in the "negative positions" of those expressions
 // are extracted as well.
 function extractPositiveTypeTests(
-  node: NodeWithInferredTypeAnnotation<es.Node>,
+  node: NodeWithInferredType<es.Node>,
   env: TypeEnvironment,
   result: PredicateTest[] = []
 ): PredicateTest[] {
@@ -778,7 +778,7 @@ function extractPositiveTypeTests(
 // and thus predicate tests in the "positive positions" of those expressions
 // are extracted as well.
 function extractNegativeTypeTests(
-  node: NodeWithInferredTypeAnnotation<es.Node>,
+  node: NodeWithInferredType<es.Node>,
   env: TypeEnvironment,
   result: PredicateTest[] = []
 ): PredicateTest[] {
@@ -820,7 +820,7 @@ function returnBlockValueNodeIndexFor(
 
 /* tslint:disable cyclomatic-complexity */
 function infer(
-  node: NodeWithInferredTypeAnnotation<es.Node>,
+  node: NodeWithInferredType<es.Node>,
   env: TypeEnvironment,
   constraints: Constraint[],
   isTopLevelAndLastValStmt: boolean = false
@@ -838,7 +838,7 @@ function infer(
 
 /* tslint:disable cyclomatic-complexity */
 function _infer(
-  node: NodeWithInferredTypeAnnotation<es.Node>,
+  node: NodeWithInferredType<es.Node>,
   env: TypeEnvironment,
   constraints: Constraint[],
   isTopLevelAndLastValStmt: boolean = false
@@ -848,7 +848,7 @@ function _infer(
     case 'UnaryExpression': {
       const op = node.operator === '-' ? NEGATIVE_OP : node.operator
       const funcType = lookupType(op, env) as FunctionType // in either case its a monomorphic type
-      const argNode = node.argument as NodeWithInferredTypeAnnotation<es.Node>
+      const argNode = node.argument as NodeWithInferredType<es.Node>
       const argType = argNode.inferredType as Variable
       const receivedTypes: Type[] = []
       let newConstraints = infer(argNode, env, constraints)
@@ -881,9 +881,9 @@ function _infer(
       // Note that this doesn't really follow the informal typing in the Source 3 documentation,
       // but we have no choice since we don't have union types, and every logical expression
       // always has a chance of returning the LHS, which is a boolean.
-      const leftNode = node.left as NodeWithInferredTypeAnnotation<es.Node>
+      const leftNode = node.left as NodeWithInferredType<es.Node>
       const leftType = leftNode.inferredType as Variable
-      const rightNode = node.right as NodeWithInferredTypeAnnotation<es.Node>
+      const rightNode = node.right as NodeWithInferredType<es.Node>
       const rightType = rightNode.inferredType as Variable
 
       let newConstraints = constraints
@@ -961,9 +961,9 @@ function _infer(
           : envType.kind === 'predicate'
           ? downgradePredicateToFunction(envType)
           : envType
-      const leftNode = node.left as NodeWithInferredTypeAnnotation<es.Node>
+      const leftNode = node.left as NodeWithInferredType<es.Node>
       const leftType = leftNode.inferredType as Variable
-      const rightNode = node.right as NodeWithInferredTypeAnnotation<es.Node>
+      const rightNode = node.right as NodeWithInferredType<es.Node>
       const rightType = rightNode.inferredType as Variable
 
       const argNodes = [leftNode, rightNode]
@@ -990,7 +990,7 @@ function _infer(
       return infer(node.expression, env, addToConstraintList(constraints, [storedType, tUndef]))
     }
     case 'ReturnStatement': {
-      const argNode = node.argument as NodeWithInferredTypeAnnotation<es.Node>
+      const argNode = node.argument as NodeWithInferredType<es.Node>
       return infer(
         argNode,
         env,
@@ -998,9 +998,9 @@ function _infer(
       )
     }
     case 'WhileStatement': {
-      const testNode = node.test as NodeWithInferredTypeAnnotation<es.Node>
+      const testNode = node.test as NodeWithInferredType<es.Node>
       const testType = testNode.inferredType as Variable
-      const bodyNode = node.body as NodeWithInferredTypeAnnotation<es.Node>
+      const bodyNode = node.body as NodeWithInferredType<es.Node>
       const bodyType = bodyNode.inferredType as Variable
       let newConstraints = addToConstraintList(constraints, [storedType, bodyType])
       try {
@@ -1014,12 +1014,12 @@ function _infer(
       return infer(bodyNode, env, newConstraints, isTopLevelAndLastValStmt)
     }
     case 'ForStatement': {
-      const initNode = node.init as NodeWithInferredTypeAnnotation<es.Node>
-      const testNode = node.test as NodeWithInferredTypeAnnotation<es.Node>
+      const initNode = node.init as NodeWithInferredType<es.Node>
+      const testNode = node.test as NodeWithInferredType<es.Node>
       const testType = testNode.inferredType as Variable
-      const bodyNode = node.body as NodeWithInferredTypeAnnotation<es.Node>
+      const bodyNode = node.body as NodeWithInferredType<es.Node>
       const bodyType = bodyNode.inferredType as Variable
-      const updateNode = node.update as NodeWithInferredTypeAnnotation<es.Node>
+      const updateNode = node.update as NodeWithInferredType<es.Node>
       let newConstraints = addToConstraintList(constraints, [storedType, bodyType])
       pushEnv(env)
       if (
@@ -1032,8 +1032,7 @@ function _infer(
         const initName = initNode.declarations[0].id.name
         setType(
           initName,
-          (initNode.declarations[0].init as NodeWithInferredTypeAnnotation<es.Node>)
-            .inferredType as Variable,
+          (initNode.declarations[0].init as NodeWithInferredType<es.Node>).inferredType as Variable,
           env
         )
         setDeclKind(initName, initNode.kind, env)
@@ -1042,7 +1041,7 @@ function _infer(
           initName,
           tForAll(
             applyConstraints(
-              (initNode.declarations[0].init as NodeWithInferredTypeAnnotation<es.Node>)
+              (initNode.declarations[0].init as NodeWithInferredType<es.Node>)
                 .inferredType as Variable,
               newConstraints
             )
@@ -1085,7 +1084,7 @@ function _infer(
       let n = lastStatementIndex
       const declNodes: (
         | FuncDeclWithInferredTypeAnnotation
-        | NodeWithInferredTypeAnnotation<es.VariableDeclaration>
+        | NodeWithInferredType<es.VariableDeclaration>
       )[] = []
       while (n >= 0) {
         const currNode = node.body[n]
@@ -1112,17 +1111,17 @@ function _infer(
           const declName = declNode.declarations[0].id.name
           setType(
             declName,
-            (declNode.declarations[0].init as NodeWithInferredTypeAnnotation<es.Node>)
+            (declNode.declarations[0].init as NodeWithInferredType<es.Node>)
               .inferredType as Variable,
             env
           )
           setDeclKind(declName, declNode.kind, env)
         }
       })
-      const lastNode = node.body[returnValNodeIndex] as NodeWithInferredTypeAnnotation<es.Node>
+      const lastNode = node.body[returnValNodeIndex] as NodeWithInferredType<es.Node>
       const lastNodeType = (
         isTopLevelAndLastValStmt && lastNode.type === 'ExpressionStatement'
-          ? (lastNode.expression as NodeWithInferredTypeAnnotation<es.Node>).inferredType
+          ? (lastNode.expression as NodeWithInferredType<es.Node>).inferredType
           : lastNode.inferredType
       ) as Variable
       let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
@@ -1148,7 +1147,7 @@ function _infer(
             declNode.declarations[0].id.name,
             tForAll(
               applyConstraints(
-                (declNode.declarations[0].init as NodeWithInferredTypeAnnotation<es.Node>)
+                (declNode.declarations[0].init as NodeWithInferredType<es.Node>)
                   .inferredType as Variable,
                 newConstraints
               )
@@ -1228,11 +1227,11 @@ function _infer(
       //  - an equality constraint between the return type of the condition expression and boolean
       // is added to the constraint set.
 
-      const testNode = node.test as NodeWithInferredTypeAnnotation<es.Node>
+      const testNode = node.test as NodeWithInferredType<es.Node>
       const testType = testNode.inferredType as Variable
-      const consNode = node.consequent as NodeWithInferredTypeAnnotation<es.Node>
+      const consNode = node.consequent as NodeWithInferredType<es.Node>
       const consType = consNode.inferredType as Variable
-      const altNode = node.alternate as NodeWithInferredTypeAnnotation<es.Node>
+      const altNode = node.alternate as NodeWithInferredType<es.Node>
       const altType = altNode.inferredType as Variable
 
       // The basics, these apply to both predicate tests as well as standard conditionals
@@ -1301,12 +1300,12 @@ function _infer(
       pushEnv(env)
       const paramNodes = node.params
       const paramTypes: Variable[] = paramNodes.map(
-        paramNode => (paramNode as NodeWithInferredTypeAnnotation<es.Node>).inferredType as Variable
+        paramNode => (paramNode as NodeWithInferredType<es.Node>).inferredType as Variable
       )
-      const bodyNode = node.body as NodeWithInferredTypeAnnotation<es.Node>
+      const bodyNode = node.body as NodeWithInferredType<es.Node>
       paramTypes.push(bodyNode.inferredType as Variable)
       const newConstraints = addToConstraintList(constraints, [storedType, tFunc(...paramTypes)])
-      paramNodes.forEach((paramNode: NodeWithInferredTypeAnnotation<es.Identifier>) => {
+      paramNodes.forEach((paramNode: NodeWithInferredType<es.Identifier>) => {
         setType(paramNode.name, paramNode.inferredType as Variable, env)
       })
       const result = infer(bodyNode, env, newConstraints)
@@ -1322,15 +1321,15 @@ function _infer(
       let newConstraints = addToConstraintList(constraints, [storedType, tUndef])
       pushEnv(env)
       const storedFunctionType = funcDeclNode.functionInferredType as Variable
-      const paramNodes = node.params as NodeWithInferredTypeAnnotation<es.Pattern>[]
+      const paramNodes = node.params as NodeWithInferredType<es.Pattern>[]
       const paramTypes = paramNodes.map(paramNode => paramNode.inferredType as Variable)
-      const bodyNode = node.body as NodeWithInferredTypeAnnotation<es.BlockStatement>
+      const bodyNode = node.body as NodeWithInferredType<es.BlockStatement>
       paramTypes.push(bodyNode.inferredType as Variable)
       newConstraints = addToConstraintList(newConstraints, [
         storedFunctionType,
         tFunc(...paramTypes)
       ])
-      paramNodes.forEach((paramNode: NodeWithInferredTypeAnnotation<es.Identifier>) => {
+      paramNodes.forEach((paramNode: NodeWithInferredType<es.Identifier>) => {
         setType(paramNode.name, paramNode.inferredType as Variable, env)
       })
       const result = infer(bodyNode, env, newConstraints)
@@ -1338,15 +1337,15 @@ function _infer(
       return result
     }
     case 'CallExpression': {
-      const calleeNode = node.callee as NodeWithInferredTypeAnnotation<es.Node>
+      const calleeNode = node.callee as NodeWithInferredType<es.Node>
       const calleeType = calleeNode.inferredType as Variable
-      const argNodes = node.arguments as NodeWithInferredTypeAnnotation<es.Node>[]
+      const argNodes = node.arguments as NodeWithInferredType<es.Node>[]
       const argTypes: Variable[] = argNodes.map(argNode => argNode.inferredType as Variable)
       argTypes.push(storedType)
       let newConstraints = constraints
       newConstraints = infer(calleeNode, env, newConstraints)
       const calledFunctionType = applyConstraints(
-        (calleeNode as NodeWithInferredTypeAnnotation<es.Node>).inferredType!,
+        (calleeNode as NodeWithInferredType<es.Node>).inferredType!,
         newConstraints
       )
       const receivedTypes: Type[] = []
@@ -1379,10 +1378,8 @@ function _infer(
       // 2. LHS is member expression
       // x = ...., need to check that x is not const
       // arr[x]
-      const leftNode = node.left as NodeWithInferredTypeAnnotation<
-        es.Identifier | es.MemberExpression
-      >
-      const rightNode = node.right as NodeWithInferredTypeAnnotation<es.Node>
+      const leftNode = node.left as NodeWithInferredType<es.Identifier | es.MemberExpression>
+      const rightNode = node.right as NodeWithInferredType<es.Node>
       const rightType = rightNode.inferredType as Variable
       const leftType = leftNode.inferredType as Variable
       let newConstraints = addToConstraintList(constraints, [storedType, rightType])
@@ -1419,7 +1416,7 @@ function _infer(
     }
     case 'ArrayExpression': {
       let newConstraints = constraints
-      const elements = node.elements as NodeWithInferredTypeAnnotation<es.Node>[]
+      const elements = node.elements as NodeWithInferredType<es.Node>[]
       // infer the types of array elements
       elements.forEach(element => {
         newConstraints = infer(element, env, newConstraints)
@@ -1450,9 +1447,9 @@ function _infer(
       // object and property
       // need to check that property is number and add constraints that inferredType is array
       // element type
-      const obj = node.object as NodeWithInferredTypeAnnotation<es.Identifier>
+      const obj = node.object as NodeWithInferredType<es.Identifier>
       const objName = obj.name
-      const property = node.property as NodeWithInferredTypeAnnotation<es.Node>
+      const property = node.property as NodeWithInferredType<es.Node>
       const propertyType = property.inferredType as Variable
       let newConstraints = infer(property, env, constraints)
       // Check that property is of type number
