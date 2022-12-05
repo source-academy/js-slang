@@ -83,29 +83,30 @@ export function HighlightRulesSelector(
     }
 
     const ChapterKeywordSelector = () => {
-      let output = ''
+      const output = []
       if (id >= 1) {
-        output += 'import|const|else|if|return|function|debugger'
+        output.push('import', 'const', 'else', 'if', 'return', 'function', 'debugger')
       }
       if (id >= 3) {
-        output += '|while|for|break|continue|let'
+        output.push('while', 'for', 'break', 'continue', 'let')
       }
-      return output
+      return output.join('|')
     }
 
     const ChapterAndVariantForbiddenWordSelector = () => {
-      let forbiddenWords = ''
+      const forbiddenWords = []
       if (id < 3) {
-        forbiddenWords += 'while|for|break|continue|let'
+        forbiddenWords.push('while', 'for', 'break', 'continue', 'let')
       }
       if (variant !== Variant.TYPED) {
-        forbiddenWords += '|typeof|void'
+        forbiddenWords.push('typeof', 'void')
       }
-      return forbiddenWords
+      return forbiddenWords.join('|')
     }
 
     const VariantForbiddenRegexSelector = () => {
       if (variant === Variant.TYPED) {
+        // Removes the part of the regex that highlights singular |, since Typed variant uses union types
         return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]/
       }
       return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]|[^\|]*\|[^\|]/
