@@ -29,6 +29,7 @@ import {
   Type,
   TypeAliasDeclarationNode,
   TypeEnvironment,
+  TypeNode,
   TypeReferenceNode,
   UnionType,
   UnionTypeNode
@@ -209,7 +210,7 @@ function typeCheckAndReturnType(
     }
     case 'FunctionDeclaration':
       const params = node.params as NodeWithTypeAnnotation<es.Identifier>[]
-      const expectedReturnType = getAnnotatedType(node.returnType, context, env)
+      const expectedReturnType = getTypeAnnotationType(node.returnType, context, env)
 
       const types = getParamTypes(params, context, env)
       // Return type will always be last item in types array
@@ -219,7 +220,7 @@ function typeCheckAndReturnType(
       // Type check function body, creating new environment to store arg types, return type and function type
       pushEnv(env)
       params.forEach(param => {
-        setType(param.name, getAnnotatedType(param.typeAnnotation, context, env), env)
+        setType(param.name, getTypeAnnotationType(param.typeAnnotation, context, env), env)
       })
       // Set unique identifier so that typechecking can be carried out for return statements
       setType(RETURN_TYPE_IDENTIFIER, expectedReturnType, env)
@@ -245,7 +246,7 @@ function typeCheckAndReturnType(
       const init = node.declarations[0].init!
       // Look up declared type directly as type has already been added to environment
       const expectedType =
-        (lookupType(id.name, env) as Type) ?? getAnnotatedType(id.typeAnnotation, context, env)
+        (lookupType(id.name, env) as Type) ?? getTypeAnnotationType(id.typeAnnotation, context, env)
       const initType = typeCheckAndReturnType(init, context, env)
       checkForTypeMismatch(node, initType, expectedType, context)
 
@@ -330,7 +331,7 @@ function typeCheckAndReturnType(
           return tUndef
         case TSNodeType.TSAsExpression:
           const originalType = typeCheckAndReturnType(nodeAsAny.expression, context, env)
-          const typeToCastTo = getAnnotatedType(nodeAsAny, context, env)
+          const typeToCastTo = getTypeAnnotationType(nodeAsAny, context, env)
           if ((typeToCastTo as Primitive).name === TSBasicType.ANY) {
             context.errors.push(new NoExplicitAnyError(nodeAsAny))
           }
@@ -401,7 +402,7 @@ function addTypeDeclarationsToEnvironment(
           throw new TypeError(node, 'Function declaration should always have an identifier')
         }
         const params = node.params as NodeWithTypeAnnotation<es.Identifier>[]
-        const returnType = getAnnotatedType(
+        const returnType = getTypeAnnotationType(
           (node as NodeWithTypeAnnotation<es.FunctionDeclaration>).returnType,
           context,
           env
@@ -426,7 +427,7 @@ function addTypeDeclarationsToEnvironment(
           throw new TypeError(node, 'Variable declaration ID should be an identifier')
         }
         const id = node.declarations[0].id as NodeWithTypeAnnotation<es.Identifier>
-        const expectedType = getAnnotatedType(id.typeAnnotation, context, env)
+        const expectedType = getTypeAnnotationType(id.typeAnnotation, context, env)
 
         // Save variable type and decl kind in type env
         setType(id.name, expectedType, env)
@@ -436,7 +437,7 @@ function addTypeDeclarationsToEnvironment(
         if (nodeAsAny.type === TSNodeType.TSTypeAliasDeclaration) {
           const declNode = nodeAsAny as TypeAliasDeclarationNode
           const id = declNode.id
-          const type = getAnnotatedType(declNode, context, env)
+          const type = getTypeAnnotationType(declNode, context, env)
           setTypeAlias(id.name, type, env)
         }
         break
@@ -531,12 +532,12 @@ function typeCheckAndReturnArrowFunctionType(
   env: TypeEnvironment
 ): FunctionType {
   const params = node.params as NodeWithTypeAnnotation<es.Identifier>[]
-  const expectedReturnType = getAnnotatedType(node.returnType, context, env)
+  const expectedReturnType = getTypeAnnotationType(node.returnType, context, env)
 
   // Type check function body, creating new environment to store arg types and return type
   pushEnv(env)
   params.forEach(param => {
-    setType(param.name, getAnnotatedType(param.typeAnnotation, context, env), env)
+    setType(param.name, getTypeAnnotationType(param.typeAnnotation, context, env), env)
   })
   // Set unique identifier so that typechecking can be carried out for return statements
   setType(RETURN_TYPE_IDENTIFIER, expectedReturnType, env)
@@ -656,10 +657,10 @@ function checkArgTypes(
 }
 
 /**
- * Converts type annotation node to its corresponding type representation in Source.
+ * Converts type annotation/type alias declaration node to its corresponding type representation in Source.
  * If no type annotation exists, returns the "any" primitive type.
  */
-function getAnnotatedType(
+function getTypeAnnotationType(
   annotationNode: AnnotationTypeNode | TypeAliasDeclarationNode | undefined,
   context: Context,
   env: TypeEnvironment
@@ -667,35 +668,38 @@ function getAnnotatedType(
   if (!annotationNode) {
     return tAny
   }
-  const annotatedTypeNode = annotationNode.typeAnnotation
-  switch (annotatedTypeNode.type) {
+  return getAnnotatedType(annotationNode.typeAnnotation, context, env)
+}
+
+/**
+ * Converts type node to its corresponding type representation in Source.
+ */
+function getAnnotatedType(typeNode: TypeNode, context: Context, env: TypeEnvironment): Type {
+  switch (typeNode.type) {
     case TSNodeType.TSFunctionType:
-      const fnTypeNode = annotatedTypeNode as FunctionTypeNode
+      const fnTypeNode = typeNode as FunctionTypeNode
       const fnTypes = getParamTypes(fnTypeNode.parameters, context, env)
       // Return type will always be last item in types array
-      fnTypes.push(getAnnotatedType(fnTypeNode.typeAnnotation, context, env))
+      fnTypes.push(getTypeAnnotationType(fnTypeNode.typeAnnotation, context, env))
       return tFunc(...fnTypes)
     case TSNodeType.TSUnionType:
-      const unionTypeNode = annotatedTypeNode as UnionTypeNode
-      const unionTypes = unionTypeNode.types.map(type =>
-        getPrimitiveType(annotationNode, type, context)
+      const unionTypeNode = typeNode as UnionTypeNode
+      const unionTypes = unionTypeNode.types.map(typeNode =>
+        getAnnotatedType(typeNode, context, env)
       )
       return mergeTypes(...unionTypes)
     case TSNodeType.TSIntersectionType:
-      throw new TypeError(
-        annotationNode as unknown as es.Node,
-        'Intersection types are not allowed'
-      )
+      throw new TypeError(typeNode as unknown as es.Node, 'Intersection types are not allowed')
     case TSNodeType.TSTypeReference:
-      const typeReferenceNode = annotatedTypeNode as TypeReferenceNode
+      const typeReferenceNode = typeNode as TypeReferenceNode
       const declaredType = lookupTypeAlias(typeReferenceNode.typeName.name, env)
       if (!declaredType) {
-        context.errors.push(new TypeNotFoundError(annotationNode, typeReferenceNode.typeName.name))
+        context.errors.push(new TypeNotFoundError(typeNode, typeReferenceNode.typeName.name))
         return tAny
       }
       return declaredType
     default:
-      return getPrimitiveType(annotationNode, annotatedTypeNode, context)
+      return getPrimitiveType(typeNode, context)
   }
 }
 
@@ -707,19 +711,15 @@ function getParamTypes(
   context: Context,
   env: TypeEnvironment
 ): Type[] {
-  return params.map(param => getAnnotatedType(param.typeAnnotation, context, env))
+  return params.map(param => getTypeAnnotationType(param.typeAnnotation, context, env))
 }
 
 /**
  * Converts node type to primitive type, adding errors to context if disallowed/unknown types are used.
  * If errors are found, returns the "any" type to prevent throwing of further errors.
  */
-function getPrimitiveType(
-  node: AnnotationTypeNode | TypeAliasDeclarationNode,
-  typeNode: BaseTypeNode,
-  context: Context
-) {
-  const primitiveType = typeAnnotationKeywordToBasicTypeMap[typeNode.type] ?? TSBasicType.UNKNOWN
+function getPrimitiveType(node: BaseTypeNode, context: Context) {
+  const primitiveType = typeAnnotationKeywordToBasicTypeMap[node.type] ?? TSBasicType.UNKNOWN
   if (
     Object.values(TSDisallowedTypes).includes(primitiveType) ||
     (context.chapter === 1 && primitiveType === TSBasicType.NULL)

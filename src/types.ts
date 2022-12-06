@@ -377,9 +377,11 @@ export interface BaseTypeNode extends es.BaseNode {
   type: TSNodeType
 }
 
+export type TypeNode = BaseTypeNode | FunctionTypeNode | UnionTypeNode | TypeReferenceNode
+
 export interface AnnotationTypeNode extends BaseTypeNode {
   type: TSNodeType.TSAnnotationType
-  typeAnnotation: BaseTypeNode | FunctionTypeNode | UnionTypeNode | TypeReferenceNode
+  typeAnnotation: TypeNode
 }
 
 export interface FunctionTypeNode extends BaseTypeNode {

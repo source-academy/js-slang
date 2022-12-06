@@ -2,7 +2,6 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import {
-  AnnotationTypeNode,
   AsExpressionNode,
   ErrorSeverity,
   ErrorType,
@@ -11,7 +10,7 @@ import {
   SArray,
   SourceError,
   Type,
-  TypeAliasDeclarationNode
+  TypeNode
 } from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
@@ -437,7 +436,7 @@ export class TypeNotFoundError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: AnnotationTypeNode | TypeAliasDeclarationNode, public name: string) {}
+  constructor(public node: TypeNode, public name: string) {}
 
   get location() {
     return this.node.loc!
@@ -538,7 +537,7 @@ export class TypeNotAllowedError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: AnnotationTypeNode | TypeAliasDeclarationNode, public name: string) {}
+  constructor(public node: TypeNode, public name: string) {}
 
   get location() {
     return this.node.loc!
