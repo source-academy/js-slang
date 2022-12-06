@@ -9,6 +9,7 @@ import {
   ForAll,
   FunctionType,
   List,
+  LiteralType,
   Pair,
   PredicateType,
   Primitive,
@@ -95,30 +96,42 @@ export function pushEnv(env: TypeEnvironment): void {
 }
 
 // Helper functions for formatting types
-export function formatTypeString(type: Type): string {
+export function formatTypeString(type: Type, formatAsLiteral?: boolean): string {
   switch (type.kind) {
     case 'function':
-      return formatFunctionTypeString(type)
+      const paramTypes = type.parameterTypes
+      const paramTypeString = paramTypes
+        .map(type => formatTypeString(type, formatAsLiteral))
+        .join(', ')
+      return `(${paramTypeString}) => ${formatTypeString(type.returnType, formatAsLiteral)}`
     case 'union':
       // Remove duplicates
-      const typeSet = new Set(type.types.map(formatTypeString))
+      const typeSet = new Set(type.types.map(type => formatTypeString(type, formatAsLiteral)))
       return Array.from(typeSet).join(' | ')
+    case 'literal':
+      if (typeof type.value === 'string') {
+        return `"${type.value.toString()}"`
+      }
+      return type.value.toString()
+    case 'primitive':
+      if (!formatAsLiteral || !type.value) {
+        return type.name
+      }
+      if (typeof type.value === 'string') {
+        return `"${type.value.toString()}"`
+      }
+      return type.value.toString()
     default:
-      return (type as Primitive).name
+      return type.kind
   }
 }
 
-export function formatFunctionTypeString(fnType: FunctionType): string {
-  const paramTypes = fnType.parameterTypes
-  const paramTypeString = paramTypes.map(formatTypeString).join(', ')
-  return `(${paramTypeString}) => ${formatTypeString(fnType.returnType)}`
-}
-
 // Helper functions and constants for parsing types
-export function tPrimitive(name: Primitive['name']): Primitive {
+export function tPrimitive(name: Primitive['name'], value?: string | number | boolean): Primitive {
   return {
     kind: 'primitive',
-    name
+    name,
+    value
   }
 }
 
@@ -188,6 +201,13 @@ export function tUnion(...types: Type[]): UnionType {
   return {
     kind: 'union',
     types
+  }
+}
+
+export function tLiteral(value: string | number | boolean): LiteralType {
+  return {
+    kind: 'literal',
+    value
   }
 }
 

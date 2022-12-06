@@ -20,6 +20,7 @@ import {
   Context,
   FunctionType,
   FunctionTypeNode,
+  LiteralTypeNode,
   NodeWithTypeAnnotation,
   Primitive,
   PrimitiveType,
@@ -48,6 +49,7 @@ import {
   tAny,
   tBool,
   tFunc,
+  tLiteral,
   tNumber,
   tPrimitive,
   tString,
@@ -114,7 +116,7 @@ function typeCheckAndReturnType(
       }
       const typeOfLiteral = typeof node.value as PrimitiveType
       if (Object.values(PrimitiveType).includes(typeOfLiteral)) {
-        return tPrimitive(typeOfLiteral)
+        return tPrimitive(typeOfLiteral, node.value as string | number | boolean)
       }
       throw new TypeError(node, 'Unknown literal type')
     }
@@ -171,7 +173,7 @@ function typeCheckAndReturnType(
 
       // Return type is union of consequent and alternate type
       const consType = typeCheckAndReturnType(node.consequent, context, env)
-      const altType = node.alternate ? typeCheckAndReturnType(node.alternate, context, env) : tVoid
+      const altType = node.alternate ? typeCheckAndReturnType(node.alternate, context, env) : tUndef
       return mergeTypes(consType, altType)
     }
     case 'UnaryExpression': {
@@ -335,12 +337,14 @@ function typeCheckAndReturnType(
           if ((typeToCastTo as Primitive).name === TSBasicType.ANY) {
             context.errors.push(new NoExplicitAnyError(nodeAsAny))
           }
+          const formatAsLiteral =
+            typeContainsLiteralType(originalType) || typeContainsLiteralType(typeToCastTo)
           if (hasTypeMismatchErrors(typeToCastTo, originalType)) {
             context.errors.push(
               new TypecastError(
                 nodeAsAny,
-                formatTypeString(originalType),
-                formatTypeString(typeToCastTo)
+                formatTypeString(originalType, formatAsLiteral),
+                formatTypeString(typeToCastTo, formatAsLiteral)
               )
             )
           }
@@ -572,15 +576,45 @@ function checkForTypeMismatch(
   expectedType: Type,
   context: Context
 ): void {
+  const formatAsLiteral =
+    typeContainsLiteralType(expectedType) || typeContainsLiteralType(actualType)
   if (hasTypeMismatchErrors(actualType, expectedType)) {
     context.errors.push(
-      new TypeMismatchError(node, formatTypeString(actualType), formatTypeString(expectedType))
+      new TypeMismatchError(
+        node,
+        formatTypeString(actualType, formatAsLiteral),
+        formatTypeString(expectedType, formatAsLiteral)
+      )
     )
   }
 }
 
 /**
- * Returns a boolean of whether the two given types are equal.
+ * Returns true if given type contains literal type, false otherwise.
+ * This is necessary to determine whether the type mismatch errors
+ * should be formatted as literal type or primitive type.
+ */
+function typeContainsLiteralType(type: Type): boolean {
+  switch (type.kind) {
+    case 'primitive':
+    case 'variable':
+      return false
+    case 'literal':
+      return true
+    case 'function':
+      return (
+        typeContainsLiteralType(type.returnType) ||
+        type.parameterTypes.reduce((prev, curr) => prev || typeContainsLiteralType(curr), false)
+      )
+    case 'union':
+      return type.types.reduce((prev, curr) => prev || typeContainsLiteralType(curr), false)
+    default:
+      return false
+  }
+}
+
+/**
+ * Returns a boolean if the two given types are equal, false otherwise.
  */
 function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
   if (
@@ -593,6 +627,9 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
   switch (expectedType.kind) {
     case 'primitive':
     case 'variable':
+      if (actualType.kind === 'literal') {
+        return typeof actualType.value !== (expectedType as Primitive).name
+      }
       return (actualType as Primitive).name !== (expectedType as Primitive).name
     case 'function':
       if (actualType.kind !== 'function') {
@@ -614,19 +651,22 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
       // Check return type
       return hasTypeMismatchErrors(actualType.returnType, expectedType.returnType)
     case 'union':
-      const expectedSet = new Set(expectedType.types.map(formatTypeString))
-      // If not union type, expected set should contain actual type
+      // If not union type, actual type should match one of the expected types
       if (actualType.kind !== 'union') {
-        return !expectedSet.has(formatTypeString(actualType))
+        return !containsType(expectedType.types, actualType)
       }
-      // If both are union types, actual set should be a subset of expected set
-      const actualSet = new Set(actualType.types.map(formatTypeString))
-      for (const elem of actualSet) {
-        if (!expectedSet.has(elem)) {
+      // If both are union types, every type in the actual types should match one of the expected types
+      for (const type of actualType.types) {
+        if (!containsType(expectedType.types, type)) {
           return true
         }
       }
       return false
+    case 'literal':
+      if (actualType.kind !== 'literal' && actualType.kind !== 'primitive') {
+        return true
+      }
+      return actualType.value !== expectedType.value
     default:
       return true
   }
@@ -688,6 +728,13 @@ function getAnnotatedType(typeNode: TypeNode, context: Context, env: TypeEnviron
         getAnnotatedType(typeNode, context, env)
       )
       return mergeTypes(...unionTypes)
+    case TSNodeType.TSLiteralType:
+      const literalTypeNode = typeNode as LiteralTypeNode
+      const value = literalTypeNode.literal.value
+      if (!['string', 'number', 'boolean'].includes(typeof value)) {
+        throw new TypeError(typeNode as unknown as es.Node, 'Unknown literal type')
+      }
+      return tLiteral(value as string | number | boolean)
     case TSNodeType.TSIntersectionType:
       throw new TypeError(typeNode as unknown as es.Node, 'Intersection types are not allowed')
     case TSNodeType.TSTypeReference:
@@ -736,7 +783,7 @@ function getPrimitiveType(node: BaseTypeNode, context: Context) {
 function mergeTypes(...types: Type[]): Type {
   const mergedTypes: Type[] = []
   for (const currType of types) {
-    if (currType == tAny) {
+    if (isEqual(currType, tAny)) {
       return tAny
     }
     if (currType.kind === 'union') {
@@ -763,6 +810,24 @@ function mergeTypes(...types: Type[]): Type {
 function containsType(arr: Type[], typeToCheck: Type) {
   for (const type of arr) {
     if (isEqual(type, typeToCheck)) {
+      return true
+    }
+    if (typeToCheck.kind === 'primitive') {
+      // If both types are primitives, ignore values
+      if (type.kind === 'primitive' && typeToCheck.name === type.name) {
+        return true
+      }
+      // If checking primitive against literal, check by value
+      if (type.kind === 'literal' && typeToCheck.value === type.value) {
+        return true
+      }
+    }
+    // If checking literal against primitive, check by type
+    if (
+      typeToCheck.kind === 'literal' &&
+      type.kind === 'primitive' &&
+      typeof typeToCheck.value === type.name
+    ) {
       return true
     }
   }

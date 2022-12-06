@@ -345,6 +345,7 @@ export enum TSNodeType {
   TSFunctionType = 'TSFunctionType',
   TSUnionType = 'TSUnionType',
   TSIntersectionType = 'TSIntersectionType',
+  TSLiteralType = 'TSLiteralType',
   // Keywords for TS basic types
   TSAnyKeyword = 'TSAnyKeyword',
   TSBigIntKeyword = 'TSBigIntKeyword',
@@ -377,7 +378,12 @@ export interface BaseTypeNode extends es.BaseNode {
   type: TSNodeType
 }
 
-export type TypeNode = BaseTypeNode | FunctionTypeNode | UnionTypeNode | TypeReferenceNode
+export type TypeNode =
+  | BaseTypeNode
+  | FunctionTypeNode
+  | UnionTypeNode
+  | TypeReferenceNode
+  | LiteralTypeNode
 
 export interface AnnotationTypeNode extends BaseTypeNode {
   type: TSNodeType.TSAnnotationType
@@ -393,6 +399,11 @@ export interface FunctionTypeNode extends BaseTypeNode {
 export interface UnionTypeNode extends BaseTypeNode {
   type: TSNodeType.TSUnionType
   types: BaseTypeNode[]
+}
+
+export interface LiteralTypeNode extends BaseTypeNode {
+  type: TSNodeType.TSLiteralType
+  literal: es.Literal
 }
 
 export interface TypeAliasDeclarationNode extends BaseTypeNode {
@@ -443,11 +454,21 @@ export interface Typed {
 export type Constraint = 'none' | 'addable'
 
 // Types used by both type inferencer and Source Typed
-export type Type = Primitive | Variable | FunctionType | List | Pair | SArray | UnionType
+export type Type =
+  | Primitive
+  | Variable
+  | FunctionType
+  | List
+  | Pair
+  | SArray
+  | UnionType
+  | LiteralType
 
 export interface Primitive {
   kind: 'primitive'
   name: PrimitiveType | TSAllowedTypes
+  // Value is needed for Source Typed type error checker due to existence of literal types
+  value?: string | number | boolean
 }
 
 export interface Variable {
@@ -477,10 +498,15 @@ export interface SArray {
   elementType: Type
 }
 
-// Union type is only used in Source Typed for typechecking
+// Union types and literal types are only used in Source Typed for typechecking
 export interface UnionType {
   kind: 'union'
   types: Type[]
+}
+
+export interface LiteralType {
+  kind: 'literal'
+  value: string | number | boolean
 }
 
 export type BindableType = Type | ForAll | PredicateType
