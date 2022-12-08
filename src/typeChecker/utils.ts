@@ -114,7 +114,7 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
       }
       return type.value.toString()
     case 'primitive':
-      if (!formatAsLiteral || !type.value) {
+      if (!formatAsLiteral || type.value === undefined) {
         return type.name
       }
       if (typeof type.value === 'string') {

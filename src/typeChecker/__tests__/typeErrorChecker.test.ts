@@ -115,6 +115,47 @@ describe('union types', () => {
   })
 })
 
+describe('literal types', () => {
+  it('handles type mismatches correctly', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: 1 = 1; // no error
+      const x2: 2 = 1; // error
+      const x3: '1' = '1'; // no error
+      const x4: '2' = '1'; // error
+      const x5: true = true; // no error
+      const x6: false = true; // error
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 2: Type '1' is not assignable to type '2'.
+      Line 4: Type '\\"1\\"' is not assignable to type '\\"2\\"'.
+      Line 6: Type 'true' is not assignable to type 'false'."
+    `)
+  })
+
+  it('works with union types and merges with primitive types', () => {
+    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+
+    const code = `const x1: number | 1 = '1'; // error should show type as 'number'
+      const x2: string | '1' | 'test' = false; // error should show type as 'string'
+      const x3: boolean | false = 1; // error should show type as 'boolean'
+      const x4: number | '1' = '2'; // error should show full type
+      const x5: string | true | 1 = false; // error should show full type
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 1: Type 'string' is not assignable to type 'number'.
+      Line 2: Type 'boolean' is not assignable to type 'string'.
+      Line 3: Type 'number' is not assignable to type 'boolean'.
+      Line 4: Type '\\"2\\"' is not assignable to type 'number | \\"1\\"'.
+      Line 5: Type 'false' is not assignable to type 'string | true | 1'."
+    `)
+  })
+})
+
 describe('function types', () => {
   it('handles type mismatches correctly', () => {
     const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
@@ -419,16 +460,21 @@ describe('typecasting', () => {
       const x2: string | number = x1 as string | number; // no error
       const x3: string = x1 as string; // no error
       const x4: number = x1 as number; // no error
-      const x5: boolean = x1 as boolean; // error
-      const x6 = x1 as any; // error
-      const x7 = x1 as string | number | boolean; // error
+      const x5: 1 | '1' = x1 as 1 | '1'; // no error
+      const x6: boolean = x1 as boolean; // error
+      const x7: true = x1 as true; // error
+      const x8 = x1 as any; // error
+      const x9: string | number | boolean = x1 as string | number | boolean; // error
+      const x10: 1 | 2 | '1' = x5 as 1 | 2 | '1'; // error
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 5: Type 'string | number' cannot be casted to type 'boolean' as it is not a superset of 'boolean'.
-      Line 6: Typecasting to 'any' is not allowed.
-      Line 7: Type 'string | number' cannot be casted to type 'string | number | boolean' as it is not a superset of 'string | number | boolean'."
+      "Line 6: Type 'string | number' cannot be casted to type 'boolean' as it is not a superset of 'boolean'.
+      Line 7: Type 'string | number' cannot be casted to type 'true' as it is not a superset of 'true'.
+      Line 8: Typecasting to 'any' is not allowed.
+      Line 9: Type 'string | number' cannot be casted to type 'string | number | boolean' as it is not a superset of 'string | number | boolean'.
+      Line 10: Type '1 | \\"1\\"' cannot be casted to type '1 | 2 | \\"1\\"' as it is not a superset of '1 | 2 | \\"1\\"'."
     `)
   })
 })
