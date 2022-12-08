@@ -464,7 +464,7 @@ export class FunctionShouldHaveReturnValueError implements SourceError {
   }
 
   public explain() {
-    return `A function whose declared type is neither 'void' nor 'any' must return a value.`
+    return "A function whose declared type is neither 'void' nor 'any' must return a value."
   }
 
   public elaborate() {
@@ -502,7 +502,7 @@ export class NoExplicitAnyError implements SourceError {
   }
 
   public explain() {
-    return `Typecasting to 'any' is not allowed.`
+    return "Typecasting to 'any' is not allowed."
   }
 
   public elaborate() {
