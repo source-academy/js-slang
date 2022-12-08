@@ -12,7 +12,15 @@ import * as es from 'estree'
 
 import { ACORN_PARSE_OPTIONS } from '../constants'
 import { checkForTypeErrors } from '../typeChecker/typeErrorChecker'
-import { Context, ErrorSeverity, ErrorType, Rule, SourceError, Variant } from '../types'
+import {
+  Context,
+  ErrorSeverity,
+  ErrorType,
+  NodeWithTypeAnnotation,
+  Rule,
+  SourceError,
+  Variant
+} from '../types'
 import { stripIndent } from '../utils/formatters'
 import { ancestor, AncestorWalkerFn } from '../utils/walkers'
 import { validateAndAnnotate } from '../validator/validator'
@@ -119,14 +127,18 @@ export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
     if (context.variant === Variant.TYPED) {
-      // For Source Typed variant, the code is parsed twice, first using the custom TypeParser and then using Babel Parser.
+      // For Source Typed variant, the code is parsed twice, first using the custom TypeParser
+      // (Acorn parser with plugin that allows for parsing of TS syntax), then using Babel Parser.
       // This is a workaround as the custom TypeParser does not cover all type annotation cases needed for Source Typed
       // and the Babel Parser does not allow for no semicolon/trailing comma errors when parsing.
-      program = TypeParser.parse(source, createAcornParserOptions(context)) as unknown as es.Program
+      program = TypeParser.parse(
+        source,
+        createAcornParserOptions(context)
+      ) as unknown as NodeWithTypeAnnotation<es.Program>
       program = babelParse(source, {
         sourceType: 'module',
         plugins: ['typescript', 'estree']
-      }).program as unknown as es.Program
+      }).program as unknown as NodeWithTypeAnnotation<es.Program>
 
       // Checks for type errors, then removes any TS-related nodes as they are not compatible with acorn-walk.
       program = checkForTypeErrors(program, context)

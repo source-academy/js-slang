@@ -92,7 +92,7 @@ export function setTypeAlias(name: string, type: Type, env: TypeEnvironment): vo
 }
 
 export function pushEnv(env: TypeEnvironment): void {
-  env.push({ typeMap: new Map(), declKindMap: new Map() })
+  env.push({ typeMap: new Map(), declKindMap: new Map(), typeAliasMap: new Map() })
 }
 
 // Helper functions for formatting types
@@ -384,7 +384,8 @@ export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
   return [
     {
       typeMap: new Map(initialTypeMappings),
-      declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const']))
+      declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const'])),
+      typeAliasMap: new Map()
     }
   ]
 }

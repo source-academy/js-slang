@@ -16,24 +16,22 @@ import { memoizedGetModuleManifest } from '../modules/moduleLoader'
 import { NoImplicitReturnUndefinedError } from '../parser/rules/noImplicitReturnUndefined'
 import {
   AnnotationTypeNode,
-  BaseTypeNode,
+  AsExpressionNode,
   Context,
   FunctionType,
-  FunctionTypeNode,
-  LiteralTypeNode,
   NodeWithTypeAnnotation,
   Primitive,
   PrimitiveType,
+  TSAllowedTypes,
   TSBasicType,
   TSDisallowedTypes,
+  TSNode,
   TSNodeType,
   Type,
   TypeAliasDeclarationNode,
   TypeEnvironment,
-  TypeNode,
-  TypeReferenceNode,
-  UnionType,
-  UnionTypeNode
+  TypeKeywordNode,
+  TypeNode
 } from '../types'
 import { TypeError } from './internalTypeErrors'
 import {
@@ -76,7 +74,6 @@ export function checkForTypeErrors(
   }
   try {
     typeCheckAndReturnType(program, context, env)
-    return removeTSNodes(program)
   } catch (error) {
     // Catch-all for thrown errors
     // (either errors that cause early termination or errors that should not be reached logically)
@@ -90,8 +87,8 @@ export function checkForTypeErrors(
               error.message
           )
     )
-    return removeTSNodes(program)
   }
+  return removeTSNodes(program)
 }
 
 /**
@@ -114,17 +111,22 @@ function typeCheckAndReturnType(
         // TODO: Handle null literal types for Source 2 and above
         return tAny
       }
-      const typeOfLiteral = typeof node.value as PrimitiveType
-      if (Object.values(PrimitiveType).includes(typeOfLiteral)) {
-        return tPrimitive(typeOfLiteral, node.value as string | number | boolean)
+      if (
+        typeof node.value !== 'string' &&
+        typeof node.value !== 'number' &&
+        typeof node.value !== 'boolean'
+      ) {
+        // Skip typecheck as unspecified literals will be handled by the noUnspecifiedLiteral rule,
+        // which is run after typechecking
+        return tAny
       }
-      throw new TypeError(node, 'Unknown literal type')
+      return tPrimitive(typeof node.value as PrimitiveType, node.value)
     }
     case 'Identifier': {
       const varName = node.name
-      const varType = lookupType(varName, env)
+      const varType = lookupTypeAndRemoveForAllAndPredicateTypes(varName, env)
       if (varType) {
-        return varType as Type
+        return varType
       } else {
         context.errors.push(new UndefinedVariable(varName, node))
         return tAny
@@ -148,6 +150,7 @@ function typeCheckAndReturnType(
         if (stmt.type === 'IfStatement' || stmt.type === 'ReturnStatement') {
           returnType = typeCheckAndReturnType(stmt, context, env)
           if (stmt.type === 'ReturnStatement') {
+            // If multiple return statements are present, only take the first type
             break
           }
         } else {
@@ -200,7 +203,7 @@ function typeCheckAndReturnType(
     }
     case 'LogicalExpression': {
       // Left type must be boolean/any
-      const leftType = typeCheckAndReturnType(node.left, context, env) as Primitive
+      const leftType = typeCheckAndReturnType(node.left, context, env)
       checkForTypeMismatch(node, leftType, tBool, context)
 
       // Return type is union of boolean and right type
@@ -248,7 +251,8 @@ function typeCheckAndReturnType(
       const init = node.declarations[0].init!
       // Look up declared type directly as type has already been added to environment
       const expectedType =
-        (lookupType(id.name, env) as Type) ?? getTypeAnnotationType(id.typeAnnotation, context, env)
+        lookupTypeAndRemoveForAllAndPredicateTypes(id.name, env) ??
+        getTypeAnnotationType(id.typeAnnotation, context, env)
       const initType = typeCheckAndReturnType(init, context, env)
       checkForTypeMismatch(node, initType, expectedType, context)
 
@@ -260,13 +264,8 @@ function typeCheckAndReturnType(
       switch (callee.type) {
         case 'Identifier':
           const fnName = callee.name
-          const fnType = lookupType(fnName, env)
+          const fnType = lookupTypeAndRemoveForAllAndPredicateTypes(fnName, env)
           if (fnType) {
-            if (fnType.kind === 'forall') {
-              // Skip typecheck as function has variable number of arguments;
-              // this only occurs for certain prelude functions
-              return tAny
-            }
             if (fnType.kind !== 'function') {
               if ((fnType as Primitive).name !== TSBasicType.ANY) {
                 context.errors.push(new TypeNotCallableError(node, fnName))
@@ -274,7 +273,7 @@ function typeCheckAndReturnType(
               return tAny
             }
             // Check argument types before returning declared return type
-            const expectedTypes = fnType.parameterTypes as Primitive[]
+            const expectedTypes = fnType.parameterTypes
             const args = node.arguments
             if (args.length !== expectedTypes.length) {
               context.errors.push(
@@ -291,7 +290,7 @@ function typeCheckAndReturnType(
         case 'ArrowFunctionExpression':
           const arrowFnType = typeCheckAndReturnArrowFunctionType(callee, context, env)
           // Check argument types before returning return type of arrow fn
-          const expectedTypes = arrowFnType.parameterTypes as Primitive[]
+          const expectedTypes = arrowFnType.parameterTypes
           const args = node.arguments
           if (args.length !== expectedTypes.length) {
             context.errors.push(
@@ -311,7 +310,7 @@ function typeCheckAndReturnType(
         return tUndef
       } else {
         // Check type only if return type is specified
-        const expectedType = lookupType(RETURN_TYPE_IDENTIFIER, env) as Type
+        const expectedType = lookupTypeAndRemoveForAllAndPredicateTypes(RETURN_TYPE_IDENTIFIER, env)
         if (expectedType) {
           const argumentType = typeCheckAndReturnType(node.argument, context, env)
           checkForTypeMismatch(node, argumentType, expectedType, context)
@@ -325,24 +324,24 @@ function typeCheckAndReturnType(
       // No typechecking needed, import declarations have already been handled separately
       return tUndef
     default:
-      // Cast to any as TS nodes are not officially supported by acorn
-      const nodeAsAny = node as any
-      switch (nodeAsAny.type) {
+      // Castint is needed as TS nodes are not officially supported by acorn
+      const tsNode = node as unknown as TSNode
+      switch (tsNode.type) {
         case TSNodeType.TSTypeAliasDeclaration:
           // No typechecking needed, type has already been added to environment
           return tUndef
         case TSNodeType.TSAsExpression:
-          const originalType = typeCheckAndReturnType(nodeAsAny.expression, context, env)
-          const typeToCastTo = getTypeAnnotationType(nodeAsAny, context, env)
+          const originalType = typeCheckAndReturnType(tsNode.expression, context, env)
+          const typeToCastTo = getTypeAnnotationType(tsNode, context, env)
           if ((typeToCastTo as Primitive).name === TSBasicType.ANY) {
-            context.errors.push(new NoExplicitAnyError(nodeAsAny))
+            context.errors.push(new NoExplicitAnyError(tsNode))
           }
           const formatAsLiteral =
             typeContainsLiteralType(originalType) || typeContainsLiteralType(typeToCastTo)
           if (hasTypeMismatchErrors(typeToCastTo, originalType)) {
             context.errors.push(
               new TypecastError(
-                nodeAsAny,
+                tsNode,
                 formatTypeString(originalType, formatAsLiteral),
                 formatTypeString(typeToCastTo, formatAsLiteral)
               )
@@ -369,23 +368,24 @@ function handleImportDeclarations(
   const importStmts: es.ImportDeclaration[] = node.body.filter(
     stmt => stmt.type === 'ImportDeclaration'
   ) as es.ImportDeclaration[]
-  if (importStmts.length > 0) {
-    const modules = memoizedGetModuleManifest()
-    const moduleList = Object.keys(modules)
-    importStmts.forEach(stmt => {
-      const moduleName = stmt.source.value as string
-      if (!moduleList.includes(moduleName)) {
-        context.errors.push(new ModuleNotFoundError(moduleName, stmt))
-      }
-      stmt.specifiers.map(spec => {
-        if (spec.type !== 'ImportSpecifier') {
-          throw new TypeError(stmt, 'Unknown specifier type')
-        }
-
-        setType(spec.local.name, tAny, env)
-      })
-    })
+  if (importStmts.length === 0) {
+    return
   }
+  const modules = memoizedGetModuleManifest()
+  const moduleList = Object.keys(modules)
+  importStmts.forEach(stmt => {
+    const moduleName = stmt.source.value as string
+    if (!moduleList.includes(moduleName)) {
+      context.errors.push(new ModuleNotFoundError(moduleName, stmt))
+    }
+    stmt.specifiers.map(spec => {
+      if (spec.type !== 'ImportSpecifier') {
+        throw new TypeError(stmt, 'Unknown specifier type')
+      }
+
+      setType(spec.local.name, tAny, env)
+    })
+  })
 }
 
 /**
@@ -393,11 +393,12 @@ function handleImportDeclarations(
  * This is so that the types can be referenced before the declarations are initialized.
  */
 function addTypeDeclarationsToEnvironment(
-  node: es.Program | es.BlockStatement,
+  node: NodeWithTypeAnnotation<es.Program | es.BlockStatement>,
   context: Context,
   env: TypeEnvironment
 ) {
-  node.body.forEach(node => {
+  const body = node.body as NodeWithTypeAnnotation<es.Node>[]
+  body.forEach(node => {
     switch (node.type) {
       case 'FunctionDeclaration':
         if (node.id === null) {
@@ -405,12 +406,9 @@ function addTypeDeclarationsToEnvironment(
           // is part of `export default function`, which is not used in Source
           throw new TypeError(node, 'Function declaration should always have an identifier')
         }
+        // Only identifiers are used as function params in Source
         const params = node.params as NodeWithTypeAnnotation<es.Identifier>[]
-        const returnType = getTypeAnnotationType(
-          (node as NodeWithTypeAnnotation<es.FunctionDeclaration>).returnType,
-          context,
-          env
-        )
+        const returnType = getTypeAnnotationType(node.returnType, context, env)
 
         const types = getParamTypes(params, context, env)
         // Return type will always be last item in types array
@@ -436,12 +434,12 @@ function addTypeDeclarationsToEnvironment(
         // Save variable type and decl kind in type env
         setType(id.name, expectedType, env)
         setDeclKind(id.name, node.kind, env)
+        break
       default:
-        const nodeAsAny = node as any
-        if (nodeAsAny.type === TSNodeType.TSTypeAliasDeclaration) {
-          const declNode = nodeAsAny as TypeAliasDeclarationNode
-          const id = declNode.id
-          const type = getTypeAnnotationType(declNode, context, env)
+        const tsNode = node as unknown as TSNode
+        if (tsNode.type === TSNodeType.TSTypeAliasDeclaration) {
+          const id = tsNode.id
+          const type = getTypeAnnotationType(tsNode, context, env)
           setTypeAlias(id.name, type, env)
         }
         break
@@ -457,7 +455,7 @@ function typeCheckAndReturnBinaryExpressionType(
   node: es.BinaryExpression,
   context: Context,
   env: TypeEnvironment
-): Primitive | UnionType {
+): Type {
   const leftType = typeCheckAndReturnType(node.left, context, env)
   const rightType = typeCheckAndReturnType(node.right, context, env)
   const leftTypeString = formatTypeString(leftType)
@@ -481,7 +479,7 @@ function typeCheckAndReturnBinaryExpressionType(
         if (leftTypeString === TSBasicType.STRING || rightTypeString === TSBasicType.STRING) {
           return tString
         }
-        return leftType as Primitive
+        return leftType
       }
       if (rightTypeString === TSBasicType.NUMBER || rightTypeString === TSBasicType.STRING) {
         checkForTypeMismatch(node, leftType, rightType, context)
@@ -489,7 +487,7 @@ function typeCheckAndReturnBinaryExpressionType(
         if (leftTypeString === TSBasicType.STRING || rightTypeString === TSBasicType.STRING) {
           return tString
         }
-        return rightType as Primitive
+        return rightType
       }
 
       // Return type number | string
@@ -679,7 +677,7 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
  */
 function checkArgTypes(
   node: es.CallExpression,
-  expectedTypes: Primitive[],
+  expectedTypes: Type[],
   context: Context,
   env: TypeEnvironment
 ) {
@@ -701,7 +699,7 @@ function checkArgTypes(
  * If no type annotation exists, returns the "any" primitive type.
  */
 function getTypeAnnotationType(
-  annotationNode: AnnotationTypeNode | TypeAliasDeclarationNode | undefined,
+  annotationNode: AnnotationTypeNode | TypeAliasDeclarationNode | AsExpressionNode | undefined,
   context: Context,
   env: TypeEnvironment
 ): Type {
@@ -717,20 +715,15 @@ function getTypeAnnotationType(
 function getAnnotatedType(typeNode: TypeNode, context: Context, env: TypeEnvironment): Type {
   switch (typeNode.type) {
     case TSNodeType.TSFunctionType:
-      const fnTypeNode = typeNode as FunctionTypeNode
-      const fnTypes = getParamTypes(fnTypeNode.parameters, context, env)
+      const fnTypes = getParamTypes(typeNode.parameters, context, env)
       // Return type will always be last item in types array
-      fnTypes.push(getTypeAnnotationType(fnTypeNode.typeAnnotation, context, env))
+      fnTypes.push(getTypeAnnotationType(typeNode.typeAnnotation, context, env))
       return tFunc(...fnTypes)
     case TSNodeType.TSUnionType:
-      const unionTypeNode = typeNode as UnionTypeNode
-      const unionTypes = unionTypeNode.types.map(typeNode =>
-        getAnnotatedType(typeNode, context, env)
-      )
+      const unionTypes = typeNode.types.map(node => getAnnotatedType(node, context, env))
       return mergeTypes(...unionTypes)
     case TSNodeType.TSLiteralType:
-      const literalTypeNode = typeNode as LiteralTypeNode
-      const value = literalTypeNode.literal.value
+      const value = typeNode.literal.value
       if (!['string', 'number', 'boolean'].includes(typeof value)) {
         throw new TypeError(typeNode as unknown as es.Node, 'Unknown literal type')
       }
@@ -738,10 +731,9 @@ function getAnnotatedType(typeNode: TypeNode, context: Context, env: TypeEnviron
     case TSNodeType.TSIntersectionType:
       throw new TypeError(typeNode as unknown as es.Node, 'Intersection types are not allowed')
     case TSNodeType.TSTypeReference:
-      const typeReferenceNode = typeNode as TypeReferenceNode
-      const declaredType = lookupTypeAlias(typeReferenceNode.typeName.name, env)
+      const declaredType = lookupTypeAlias(typeNode.typeName.name, env)
       if (!declaredType) {
-        context.errors.push(new TypeNotFoundError(typeNode, typeReferenceNode.typeName.name))
+        context.errors.push(new TypeNotFoundError(typeNode, typeNode.typeName.name))
         return tAny
       }
       return declaredType
@@ -765,16 +757,41 @@ function getParamTypes(
  * Converts node type to primitive type, adding errors to context if disallowed/unknown types are used.
  * If errors are found, returns the "any" type to prevent throwing of further errors.
  */
-function getPrimitiveType(node: BaseTypeNode, context: Context) {
+function getPrimitiveType(node: TypeKeywordNode, context: Context) {
   const primitiveType = typeAnnotationKeywordToBasicTypeMap[node.type] ?? TSBasicType.UNKNOWN
   if (
-    Object.values(TSDisallowedTypes).includes(primitiveType) ||
+    Object.values(TSDisallowedTypes).includes(primitiveType as TSDisallowedTypes) ||
     (context.chapter === 1 && primitiveType === TSBasicType.NULL)
   ) {
     context.errors.push(new TypeNotAllowedError(node, primitiveType))
     return tAny
   }
-  return tPrimitive(primitiveType)
+  return tPrimitive(primitiveType as PrimitiveType | TSAllowedTypes)
+}
+
+/**
+ * Wrapper function for lookupType that removes ForAll and Predicate types,
+ * since they are not used in the type error checker.
+ */
+function lookupTypeAndRemoveForAllAndPredicateTypes(
+  name: string,
+  env: TypeEnvironment
+): Type | undefined {
+  const type = lookupType(name, env)
+  if (!type) {
+    return undefined
+  }
+  if (type.kind === 'forall') {
+    // Skip typecheck as function has variable number of arguments;
+    // this only occurs for certain prelude functions
+    return tAny
+  }
+  if (type.kind === 'predicate') {
+    // All predicate functions (e.g. is_number)
+    // take in 1 parameter and return a boolean
+    return tFunc(tAny, tBool)
+  }
+  return type
 }
 
 /**

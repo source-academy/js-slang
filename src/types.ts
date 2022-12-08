@@ -336,17 +336,19 @@ export const TSBasicType = {
   ...TSAllowedTypes,
   ...TSDisallowedTypes
 }
+
+// All types recognised by type parser as basic types
 export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes
 
-// Enum of all keywords used as node types in a ESTree AST with TS support
-export enum TSNodeType {
-  // Type annotation types
+export enum TSTypeAnnotationType {
   TSAnnotationType = 'TSAnnotationType',
   TSFunctionType = 'TSFunctionType',
   TSUnionType = 'TSUnionType',
   TSIntersectionType = 'TSIntersectionType',
-  TSLiteralType = 'TSLiteralType',
-  // Keywords for TS basic types
+  TSLiteralType = 'TSLiteralType'
+}
+
+export enum TSTypeKeyword {
   TSAnyKeyword = 'TSAnyKeyword',
   TSBigIntKeyword = 'TSBigIntKeyword',
   TSBooleanKeyword = 'TSBooleanKeyword',
@@ -358,13 +360,24 @@ export enum TSNodeType {
   TSSymbolKeyword = 'TSSymbolKeyword',
   TSUndefinedKeyword = 'TSUndefinedKeyword',
   TSUnknownKeyword = 'TSUnknownKeyword',
-  TSVoidKeyword = 'TSVoidKeyword',
-  // Nodes
+  TSVoidKeyword = 'TSVoidKeyword'
+}
+
+export enum TSOnlyNode {
   TSTypeAliasDeclaration = 'TSTypeAliasDeclaration',
   TSAsExpression = 'TSAsExpression',
   TSInterfaceDeclaration = 'TSInterfaceDeclaration',
   TSTypeReference = 'TSTypeReference'
 }
+
+export const TSNodeType = {
+  ...TSTypeAnnotationType,
+  ...TSTypeKeyword,
+  ...TSOnlyNode
+}
+
+// All node types in a ESTree AST with TS support
+export type TSNodeType = TSTypeAnnotationType | TSTypeKeyword | TSOnlyNode
 
 // Types for parsed TS nodes used in Source Typed variants
 export type NodeWithTypeAnnotation<T extends es.Node> = TypeAnnotation & T
@@ -374,52 +387,72 @@ export type TypeAnnotation = {
   returnType?: AnnotationTypeNode
 }
 
-export interface BaseTypeNode extends es.BaseNode {
-  type: TSNodeType
-}
-
-export type TypeNode =
-  | BaseTypeNode
+export type TSNode =
+  | AnnotationTypeNode
   | FunctionTypeNode
   | UnionTypeNode
+  | IntersectionTypeNode
+  | TypeAliasDeclarationNode
+  | InterfaceDeclarationNode
+  | AsExpressionNode
+  | TypeReferenceNode
+
+export type TypeNode =
+  | TypeKeywordNode
+  | FunctionTypeNode
+  | UnionTypeNode
+  | IntersectionTypeNode
   | TypeReferenceNode
   | LiteralTypeNode
 
-export interface AnnotationTypeNode extends BaseTypeNode {
-  type: TSNodeType.TSAnnotationType
+export interface TypeKeywordNode extends es.BaseNode {
+  type: TSTypeKeyword
+}
+export interface AnnotationTypeNode extends es.BaseNode {
+  type: TSTypeAnnotationType.TSAnnotationType
   typeAnnotation: TypeNode
 }
 
-export interface FunctionTypeNode extends BaseTypeNode {
-  type: TSNodeType.TSFunctionType
+export interface FunctionTypeNode extends es.BaseNode {
+  type: TSTypeAnnotationType.TSFunctionType
   parameters: NodeWithTypeAnnotation<es.Identifier>[]
   typeAnnotation: AnnotationTypeNode
 }
 
-export interface UnionTypeNode extends BaseTypeNode {
-  type: TSNodeType.TSUnionType
-  types: BaseTypeNode[]
+export interface UnionTypeNode extends es.BaseNode {
+  type: TSTypeAnnotationType.TSUnionType
+  types: TypeNode[]
 }
 
-export interface LiteralTypeNode extends BaseTypeNode {
-  type: TSNodeType.TSLiteralType
+export interface IntersectionTypeNode extends es.BaseNode {
+  type: TSTypeAnnotationType.TSIntersectionType
+  // Remaining attributes are omitted from type as this node is disallowed
+}
+
+export interface LiteralTypeNode extends es.BaseNode {
+  type: TSTypeAnnotationType.TSLiteralType
   literal: es.Literal
 }
 
-export interface TypeAliasDeclarationNode extends BaseTypeNode {
-  type: TSNodeType.TSTypeAliasDeclaration
+export interface TypeAliasDeclarationNode extends es.BaseNode {
+  type: TSOnlyNode.TSTypeAliasDeclaration
   id: es.Identifier
-  typeAnnotation: BaseTypeNode
+  typeAnnotation: TypeNode
 }
 
-export interface AsExpressionNode extends BaseTypeNode {
-  type: TSNodeType.TSAsExpression
+export interface InterfaceDeclarationNode extends es.BaseNode {
+  type: TSOnlyNode.TSInterfaceDeclaration
+  // Remaining attributes are omitted from type as this node is disallowed
+}
+
+export interface AsExpressionNode extends es.BaseNode {
+  type: TSOnlyNode.TSAsExpression
   expression: es.Node
-  typeAnnotation: BaseTypeNode
+  typeAnnotation: TypeNode
 }
 
-export interface TypeReferenceNode extends BaseTypeNode {
-  type: TSNodeType.TSTypeReference
+export interface TypeReferenceNode extends es.BaseNode {
+  type: TSOnlyNode.TSTypeReference
   typeName: es.Identifier
 }
 
@@ -535,5 +568,5 @@ export type PredicateTest = {
 export type TypeEnvironment = {
   typeMap: Map<string, BindableType>
   declKindMap: Map<string, AllowedDeclarations>
-  typeAliasMap?: Map<string, Type>
+  typeAliasMap: Map<string, Type>
 }[]
