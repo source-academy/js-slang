@@ -214,6 +214,7 @@ function typeCheckAndReturnType(
       return typeCheckAndReturnArrowFunctionType(node, context, env)
     }
     case 'FunctionDeclaration':
+      // Only identifiers are used as function params in Source
       const params = node.params as NodeWithTypeAnnotation<es.Identifier>[]
       const expectedReturnType = getTypeAnnotationType(node.returnType, context, env)
 
@@ -324,7 +325,7 @@ function typeCheckAndReturnType(
       // No typechecking needed, import declarations have already been handled separately
       return tUndef
     default:
-      // Castint is needed as TS nodes are not officially supported by acorn
+      // Cast to TS nodes that are not officially supported by acorn
       const tsNode = node as unknown as TSNode
       switch (tsNode.type) {
         case TSNodeType.TSTypeAliasDeclaration:
@@ -436,6 +437,7 @@ function addTypeDeclarationsToEnvironment(
         setDeclKind(id.name, node.kind, env)
         break
       default:
+        // Cast to TS nodes that are not officially supported by acorn
         const tsNode = node as unknown as TSNode
         if (tsNode.type === TSNodeType.TSTypeAliasDeclaration) {
           const id = tsNode.id
@@ -533,6 +535,7 @@ function typeCheckAndReturnArrowFunctionType(
   context: Context,
   env: TypeEnvironment
 ): FunctionType {
+  // Only identifiers are used as function params in Source
   const params = node.params as NodeWithTypeAnnotation<es.Identifier>[]
   const expectedReturnType = getTypeAnnotationType(node.returnType, context, env)
 
