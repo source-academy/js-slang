@@ -120,11 +120,16 @@ export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
     if (context.variant === Variant.TYPED) {
-      // For Source Typed variant, the code is parsed twice, first using the custom TypeParser
-      // (Acorn parser with plugin that allows for parsing of TS syntax), then using Babel Parser.
+      // The code is first parsed using the custom TypeParser (Acorn parser with plugin that allows for parsing of TS syntax)
+      // in order to catch syntax errors such as no semicolon/trailing comma.
+      TypeParser.parse(source, createAcornParserOptions(context))
+
+      // The code is then parsed using Babel Parser to successfully parse all type syntax.
       // This is a workaround as the custom TypeParser does not cover all type annotation cases needed for Source Typed
       // and the Babel Parser does not allow for no semicolon/trailing comma errors when parsing.
-      TypeParser.parse(source, createAcornParserOptions(context))
+      // The final type is casted to a cloned version of esTree AST type that supports type syntax.
+      // Babel types are not used as the babel AST is different from the esTree AST,
+      // and though the 'estree' plugin is used here to revert the changes, the changes are not reflected in the types.
       const typedProgram = babelParse(source, {
         sourceType: 'module',
         plugins: ['typescript', 'estree']
