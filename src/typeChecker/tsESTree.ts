@@ -15,12 +15,6 @@ interface BaseNode extends BaseNodeWithoutComments {
   trailingComments?: Array<Comment> | undefined
 }
 
-// Added to support type syntax
-interface BaseNodeWithTypeAnnotation extends BaseNode {
-  typeAnnotation?: AnnotationTypeNode
-  returnType?: AnnotationTypeNode
-}
-
 interface NodeMap {
   AssignmentProperty: AssignmentProperty
   CatchClause: CatchClause
@@ -44,6 +38,8 @@ interface NodeMap {
   SwitchCase: SwitchCase
   TemplateElement: TemplateElement
   VariableDeclarator: VariableDeclarator
+  // Modified to add support for type syntax
+  TSNode: TSNode
 }
 
 export type Node = NodeMap[keyof NodeMap]
@@ -60,20 +56,20 @@ export interface Position {
   column: number
 }
 
-export interface Program extends BaseNodeWithTypeAnnotation {
+export interface Program extends BaseNode {
   type: 'Program'
   sourceType: 'script' | 'module'
   body: Array<Directive | Statement | ModuleDeclaration>
   comments?: Array<Comment> | undefined
 }
 
-export interface Directive extends BaseNodeWithTypeAnnotation {
+export interface Directive extends BaseNode {
   type: 'ExpressionStatement'
   expression: Literal
   directive: string
 }
 
-interface BaseFunction extends BaseNodeWithTypeAnnotation {
+interface BaseFunction extends BaseNode {
   params: Array<Pattern>
   generator?: boolean | undefined
   async?: boolean | undefined
@@ -106,8 +102,10 @@ export type Statement =
   | ForInStatement
   | ForOfStatement
   | Declaration
+  // Modified to add support for type syntax
+  | TSAsExpression
 
-type BaseStatement = BaseNodeWithTypeAnnotation
+type BaseStatement = BaseNode
 
 export interface EmptyStatement extends BaseStatement {
   type: 'EmptyStatement'
@@ -223,6 +221,8 @@ export interface FunctionDeclaration extends BaseFunction, BaseDeclaration {
   /** It is null when a function declaration is a part of the `export default function` statement */
   id: Identifier | null
   body: BlockStatement
+  // Added to support type syntax
+  returnType?: TSAnnotationType
 }
 
 export interface VariableDeclaration extends BaseDeclaration {
@@ -231,7 +231,7 @@ export interface VariableDeclaration extends BaseDeclaration {
   kind: 'var' | 'let' | 'const'
 }
 
-export interface VariableDeclarator extends BaseNodeWithTypeAnnotation {
+export interface VariableDeclarator extends BaseNode {
   type: 'VariableDeclarator'
   id: Pattern
   init?: Expression | null | undefined
@@ -267,7 +267,7 @@ export interface ExpressionMap {
 
 type Expression = ExpressionMap[keyof ExpressionMap]
 
-export type BaseExpression = BaseNodeWithTypeAnnotation
+export type BaseExpression = BaseNode
 
 type ChainElement = SimpleCallExpression | MemberExpression
 
@@ -290,12 +290,12 @@ export interface ObjectExpression extends BaseExpression {
   properties: Array<Property | SpreadElement>
 }
 
-export interface PrivateIdentifier extends BaseNodeWithTypeAnnotation {
+export interface PrivateIdentifier extends BaseNode {
   type: 'PrivateIdentifier'
   name: string
 }
 
-export interface Property extends BaseNodeWithTypeAnnotation {
+export interface Property extends BaseNode {
   type: 'Property'
   key: Expression | PrivateIdentifier
   value: Expression | Pattern // Could be an AssignmentProperty
@@ -305,7 +305,7 @@ export interface Property extends BaseNodeWithTypeAnnotation {
   computed: boolean
 }
 
-export interface PropertyDefinition extends BaseNodeWithTypeAnnotation {
+export interface PropertyDefinition extends BaseNode {
   type: 'PropertyDefinition'
   key: Expression | PrivateIdentifier
   value?: Expression | null | undefined
@@ -397,34 +397,36 @@ export type Pattern =
   | AssignmentPattern
   | MemberExpression
 
-type BasePattern = BaseNodeWithTypeAnnotation
+type BasePattern = BaseNode
 
-export interface SwitchCase extends BaseNodeWithTypeAnnotation {
+export interface SwitchCase extends BaseNode {
   type: 'SwitchCase'
   test?: Expression | null | undefined
   consequent: Array<Statement>
 }
 
-export interface CatchClause extends BaseNodeWithTypeAnnotation {
+export interface CatchClause extends BaseNode {
   type: 'CatchClause'
   param: Pattern | null
   body: BlockStatement
 }
 
-export interface Identifier extends BaseNodeWithTypeAnnotation, BaseExpression, BasePattern {
+export interface Identifier extends BaseNode, BaseExpression, BasePattern {
   type: 'Identifier'
   name: string
+  // Added to support type syntax
+  typeAnnotation?: TSAnnotationType
 }
 
 export type Literal = SimpleLiteral | RegExpLiteral | BigIntLiteral
 
-export interface SimpleLiteral extends BaseNodeWithTypeAnnotation, BaseExpression {
+export interface SimpleLiteral extends BaseNode, BaseExpression {
   type: 'Literal'
   value: string | boolean | number | null
   raw?: string | undefined
 }
 
-export interface RegExpLiteral extends BaseNodeWithTypeAnnotation, BaseExpression {
+export interface RegExpLiteral extends BaseNode, BaseExpression {
   type: 'Literal'
   value?: RegExp | null | undefined
   regex: {
@@ -434,7 +436,7 @@ export interface RegExpLiteral extends BaseNodeWithTypeAnnotation, BaseExpressio
   raw?: string | undefined
 }
 
-export interface BigIntLiteral extends BaseNodeWithTypeAnnotation, BaseExpression {
+export interface BigIntLiteral extends BaseNode, BaseExpression {
   type: 'Literal'
   value?: bigint | null | undefined
   bigint: string
@@ -491,11 +493,11 @@ export interface ForOfStatement extends BaseForXStatement {
   await: boolean
 }
 
-export interface Super extends BaseNodeWithTypeAnnotation {
+export interface Super extends BaseNode {
   type: 'Super'
 }
 
-export interface SpreadElement extends BaseNodeWithTypeAnnotation {
+export interface SpreadElement extends BaseNode {
   type: 'SpreadElement'
   argument: Expression
 }
@@ -504,6 +506,8 @@ export interface ArrowFunctionExpression extends BaseExpression, BaseFunction {
   type: 'ArrowFunctionExpression'
   expression: boolean
   body: BlockStatement | Expression
+  // Added to support type syntax
+  returnType?: TSAnnotationType
 }
 
 export interface YieldExpression extends BaseExpression {
@@ -524,7 +528,7 @@ export interface TaggedTemplateExpression extends BaseExpression {
   quasi: TemplateLiteral
 }
 
-export interface TemplateElement extends BaseNodeWithTypeAnnotation {
+export interface TemplateElement extends BaseNode {
   type: 'TemplateElement'
   tail: boolean
   value: {
@@ -562,17 +566,17 @@ export interface AssignmentPattern extends BasePattern {
 }
 
 export type Class = ClassDeclaration | ClassExpression
-interface BaseClass extends BaseNodeWithTypeAnnotation {
+interface BaseClass extends BaseNode {
   superClass?: Expression | null | undefined
   body: ClassBody
 }
 
-export interface ClassBody extends BaseNodeWithTypeAnnotation {
+export interface ClassBody extends BaseNode {
   type: 'ClassBody'
   body: Array<MethodDefinition | PropertyDefinition | StaticBlock>
 }
 
-export interface MethodDefinition extends BaseNodeWithTypeAnnotation {
+export interface MethodDefinition extends BaseNode {
   type: 'MethodDefinition'
   key: Expression | PrivateIdentifier
   value: FunctionExpression
@@ -603,14 +607,16 @@ export type ModuleDeclaration =
   | ExportNamedDeclaration
   | ExportDefaultDeclaration
   | ExportAllDeclaration
-type BaseModuleDeclaration = BaseNodeWithTypeAnnotation
+  // Modified to add support for type syntax
+  | TSTypeAliasDeclaration
+type BaseModuleDeclaration = BaseNode
 
 export type ModuleSpecifier =
   | ImportSpecifier
   | ImportDefaultSpecifier
   | ImportNamespaceSpecifier
   | ExportSpecifier
-interface BaseModuleSpecifier extends BaseNodeWithTypeAnnotation {
+interface BaseModuleSpecifier extends BaseNode {
   local: Identifier
 }
 
@@ -699,71 +705,73 @@ export type TSOnlyNode =
 export type TSNodeType = TSTypeAnnotationType | TSTypeKeyword | TSOnlyNode
 
 export type TSNode =
-  | AnnotationTypeNode
-  | FunctionTypeNode
-  | UnionTypeNode
-  | IntersectionTypeNode
-  | TypeAliasDeclarationNode
-  | InterfaceDeclarationNode
-  | AsExpressionNode
-  | TypeReferenceNode
+  | TSAnnotationType
+  | TSFunctionType
+  | TSUnionType
+  | TSIntersectionType
+  | TSTypeAliasDeclaration
+  | TSInterfaceDeclaration
+  | TSAsExpression
+  | TSTypeReference
 
 export type TypeNode =
   | TypeKeywordNode
-  | FunctionTypeNode
-  | UnionTypeNode
-  | IntersectionTypeNode
-  | TypeReferenceNode
-  | LiteralTypeNode
+  | TSFunctionType
+  | TSUnionType
+  | TSIntersectionType
+  | TSTypeReference
+  | TSLiteralType
 
-export interface TypeKeywordNode extends BaseNodeWithTypeAnnotation {
+type BaseTSNode = BaseNode
+
+export interface TypeKeywordNode extends BaseTSNode {
   type: TSTypeKeyword
 }
 
-export interface AnnotationTypeNode extends BaseNode {
+export interface TSAnnotationType extends BaseTSNode {
   type: 'TSAnnotationType'
   typeAnnotation: TypeNode
 }
 
-export interface FunctionTypeNode extends BaseNodeWithTypeAnnotation {
+export interface TSFunctionType extends BaseTSNode {
   type: 'TSFunctionType'
   parameters: Identifier[]
-  typeAnnotation: AnnotationTypeNode
+  typeAnnotation: TSAnnotationType
 }
 
-export interface UnionTypeNode extends BaseNodeWithTypeAnnotation {
+export interface TSUnionType extends BaseTSNode {
   type: 'TSUnionType'
   types: TypeNode[]
 }
 
-export interface IntersectionTypeNode extends BaseNodeWithTypeAnnotation {
+export interface TSIntersectionType extends BaseTSNode {
   type: 'TSIntersectionType'
   // Remaining attributes are omitted from type as this node is disallowed
 }
 
-export interface LiteralTypeNode extends BaseNodeWithTypeAnnotation {
+export interface TSLiteralType extends BaseTSNode {
   type: 'TSLiteralType'
   literal: Literal
 }
 
-export interface TypeAliasDeclarationNode extends BaseNode {
+export interface TSTypeAliasDeclaration extends BaseTSNode {
   type: 'TSTypeAliasDeclaration'
   id: Identifier
   typeAnnotation: TypeNode
 }
 
-export interface InterfaceDeclarationNode extends BaseNodeWithTypeAnnotation {
+export interface TSInterfaceDeclaration extends BaseTSNode {
   type: 'TSInterfaceDeclaration'
   // Remaining attributes are omitted from type as this node is disallowed
 }
 
-export interface AsExpressionNode extends BaseNode {
+export interface TSAsExpression extends BaseTSNode {
   type: 'TSAsExpression'
   expression: Node
   typeAnnotation: TypeNode
 }
 
-export interface TypeReferenceNode extends BaseNodeWithTypeAnnotation {
+export interface TSTypeReference extends BaseTSNode {
   type: 'TSTypeReference'
   typeName: Identifier
 }

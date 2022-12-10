@@ -1,31 +1,30 @@
 import * as es from 'estree'
 import { cloneDeep, isEqual } from 'lodash'
 
-import { InvalidNumberOfArguments, UndefinedVariable } from '../errors/errors'
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
   FunctionShouldHaveReturnValueError,
+  InvalidNumberOfArguments,
   NoExplicitAnyError,
   TypecastError,
   TypeMismatchError,
   TypeNotAllowedError,
   TypeNotCallableError,
-  TypeNotFoundError
+  TypeNotFoundError,
+  UndefinedVariable
 } from '../errors/typeErrors'
 import { memoizedGetModuleManifest } from '../modules/moduleLoader'
-import { NoImplicitReturnUndefinedError } from '../parser/rules/noImplicitReturnUndefined'
 import {
   Context,
   disallowedTypes,
   FunctionType,
-  Primitive,
   PrimitiveType,
   TSAllowedTypes,
   TSDisallowedTypes,
   Type,
   TypeEnvironment
 } from '../types'
-import { TypeError } from './internalTypeErrors'
+import { TypecheckError } from './internalTypeErrors'
 import * as tsEs from './tsESTree'
 import {
   formatTypeString,
@@ -69,9 +68,9 @@ export function checkForTypeErrors(program: tsEs.Program, context: Context): es.
     // (either errors that cause early termination or errors that should not be reached logically)
     console.error(error)
     context.errors.push(
-      error instanceof TypeError
+      error instanceof TypecheckError
         ? error
-        : new TypeError(
+        : new TypecheckError(
             program,
             'Uncaught error during typechecking, report this to the administrators!\n' +
               error.message
@@ -114,7 +113,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       if (varType) {
         return varType
       } else {
-        context.errors.push(new UndefinedVariable(varName, node))
+        context.errors.push(new UndefinedVariable(node, varName))
         return tAny
       }
     }
@@ -181,7 +180,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
           // No checking needed, typeof operation can be used on any type
           return tString
         default:
-          throw new TypeError(node, 'Unknown operator')
+          throw new TypecheckError(node, 'Unknown operator')
       }
     }
     case 'BinaryExpression': {
@@ -221,9 +220,9 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       env.pop()
 
       if (
-        (actualReturnType as Primitive).name === 'void' &&
-        (expectedReturnType as Primitive).name !== 'any' &&
-        (expectedReturnType as Primitive).name !== 'void'
+        isEqual(actualReturnType, tVoid) &&
+        !isEqual(expectedReturnType, tAny) &&
+        !isEqual(expectedReturnType, tVoid)
       ) {
         // Type error where function does not return anything when it should
         context.errors.push(new FunctionShouldHaveReturnValueError(node))
@@ -254,7 +253,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
           const fnType = lookupTypeAndRemoveForAllAndPredicateTypes(fnName, env)
           if (fnType) {
             if (fnType.kind !== 'function') {
-              if ((fnType as Primitive).name !== 'any') {
+              if (fnType.kind !== 'primitive' || fnType.name !== 'any') {
                 context.errors.push(new TypeNotCallableError(node, fnName))
               }
               return tAny
@@ -271,7 +270,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
             checkArgTypes(node, expectedTypes, context, env)
             return fnType.returnType
           } else {
-            context.errors.push(new UndefinedVariable(fnName, node))
+            context.errors.push(new UndefinedVariable(node, fnName))
             return tAny
           }
         case 'ArrowFunctionExpression':
@@ -288,12 +287,13 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
           checkArgTypes(node, expectedTypes, context, env)
           return arrowFnType.returnType
         default:
-          throw new TypeError(node, 'Unknown callee type')
+          throw new TypecheckError(node, 'Unknown callee type')
       }
     }
     case 'ReturnStatement': {
       if (!node.argument) {
-        context.errors.push(new NoImplicitReturnUndefinedError(node))
+        // Skip typecheck as unspecified literals will be handled by the noImplicitReturnUndefined rule,
+        // which is run after typechecking
         return tUndef
       } else {
         // Check type only if return type is specified
@@ -310,36 +310,31 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
     case 'ImportDeclaration':
       // No typechecking needed, import declarations have already been handled separately
       return tUndef
-    default:
-      // Cast to TS nodes that are not officially supported by acorn
-      const tsNode = node as unknown as tsEs.TSNode
-      switch (tsNode.type) {
-        case 'TSTypeAliasDeclaration':
-          // No typechecking needed, type has already been added to environment
-          return tUndef
-        case 'TSAsExpression':
-          const originalType = typeCheckAndReturnType(tsNode.expression, context, env)
-          const typeToCastTo = getTypeAnnotationType(tsNode, context, env)
-          if ((typeToCastTo as Primitive).name === 'any') {
-            context.errors.push(new NoExplicitAnyError(tsNode))
-          }
-          const formatAsLiteral =
-            typeContainsLiteralType(originalType) || typeContainsLiteralType(typeToCastTo)
-          if (hasTypeMismatchErrors(typeToCastTo, originalType)) {
-            context.errors.push(
-              new TypecastError(
-                tsNode,
-                formatTypeString(originalType, formatAsLiteral),
-                formatTypeString(typeToCastTo, formatAsLiteral)
-              )
-            )
-          }
-          return typeToCastTo
-        case 'TSInterfaceDeclaration':
-          throw new TypeError(node, 'Interface declarations are not allowed')
-        default:
-          throw new TypeError(node, 'Unknown node type')
+    case 'TSTypeAliasDeclaration':
+      // No typechecking needed, type has already been added to environment
+      return tUndef
+    case 'TSAsExpression':
+      const originalType = typeCheckAndReturnType(node.expression, context, env)
+      const typeToCastTo = getTypeAnnotationType(node, context, env)
+      if (typeToCastTo.kind === 'primitive' && typeToCastTo.name === 'any') {
+        context.errors.push(new NoExplicitAnyError(node))
       }
+      const formatAsLiteral =
+        typeContainsLiteralType(originalType) || typeContainsLiteralType(typeToCastTo)
+      if (hasTypeMismatchErrors(typeToCastTo, originalType)) {
+        context.errors.push(
+          new TypecastError(
+            node,
+            formatTypeString(originalType, formatAsLiteral),
+            formatTypeString(typeToCastTo, formatAsLiteral)
+          )
+        )
+      }
+      return typeToCastTo
+    case 'TSInterfaceDeclaration':
+      throw new TypecheckError(node, 'Interface declarations are not allowed')
+    default:
+      throw new TypecheckError(node, 'Unknown node type')
   }
 }
 
@@ -349,21 +344,22 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
  */
 function handleImportDeclarations(node: tsEs.Program, context: Context, env: TypeEnvironment) {
   const importStmts: tsEs.ImportDeclaration[] = node.body.filter(
-    stmt => stmt.type === 'ImportDeclaration'
-  ) as tsEs.ImportDeclaration[]
+    (stmt): stmt is tsEs.ImportDeclaration => stmt.type === 'ImportDeclaration'
+  )
   if (importStmts.length === 0) {
     return
   }
   const modules = memoizedGetModuleManifest()
   const moduleList = Object.keys(modules)
   importStmts.forEach(stmt => {
+    // Source only uses strings for import source value
     const moduleName = stmt.source.value as string
     if (!moduleList.includes(moduleName)) {
       context.errors.push(new ModuleNotFoundError(moduleName, stmt))
     }
     stmt.specifiers.map(spec => {
       if (spec.type !== 'ImportSpecifier') {
-        throw new TypeError(stmt, 'Unknown specifier type')
+        throw new TypecheckError(stmt, 'Unknown specifier type')
       }
 
       setType(spec.local.name, tAny, env)
@@ -386,7 +382,7 @@ function addTypeDeclarationsToEnvironment(
         if (node.id === null) {
           // Block should not be reached since node.id is only null when function declaration
           // is part of `export default function`, which is not used in Source
-          throw new TypeError(node, 'Function declaration should always have an identifier')
+          throw new TypecheckError(node, 'Function declaration should always have an identifier')
         }
         // Only identifiers are used as function params in Source
         const params = node.params as tsEs.Identifier[]
@@ -402,13 +398,16 @@ function addTypeDeclarationsToEnvironment(
         break
       case 'VariableDeclaration':
         if (node.kind === 'var') {
-          throw new TypeError(node, 'Variable declaration using "var" is not allowed')
+          throw new TypecheckError(node, 'Variable declaration using "var" is not allowed')
         }
         if (node.declarations.length !== 1) {
-          throw new TypeError(node, 'Variable declaration should have one and only one declaration')
+          throw new TypecheckError(
+            node,
+            'Variable declaration should have one and only one declaration'
+          )
         }
         if (node.declarations[0].id.type !== 'Identifier') {
-          throw new TypeError(node, 'Variable declaration ID should be an identifier')
+          throw new TypecheckError(node, 'Variable declaration ID should be an identifier')
         }
         const id = node.declarations[0].id as tsEs.Identifier
         const expectedType = getTypeAnnotationType(id.typeAnnotation, context, env)
@@ -417,14 +416,11 @@ function addTypeDeclarationsToEnvironment(
         setType(id.name, expectedType, env)
         setDeclKind(id.name, node.kind, env)
         break
+      case 'TSTypeAliasDeclaration':
+        const type = getTypeAnnotationType(node, context, env)
+        setTypeAlias(node.id.name, type, env)
+        break
       default:
-        // Cast to TS nodes that are not officially supported by acorn
-        const tsNode = node as unknown as tsEs.TSNode
-        if (tsNode.type === 'TSTypeAliasDeclaration') {
-          const id = tsNode.id
-          const type = getTypeAnnotationType(tsNode, context, env)
-          setTypeAlias(id.name, type, env)
-        }
         break
     }
   })
@@ -531,9 +527,9 @@ function typeCheckAndReturnArrowFunctionType(
   env.pop()
 
   if (
-    (actualReturnType as Primitive).name === 'void' &&
-    (expectedReturnType as Primitive).name !== 'any' &&
-    (expectedReturnType as Primitive).name !== 'void'
+    isEqual(actualReturnType, tVoid) &&
+    !isEqual(expectedReturnType, tAny) &&
+    !isEqual(expectedReturnType, tVoid)
   ) {
     // Type error where function does not return anything when it should
     context.errors.push(new FunctionShouldHaveReturnValueError(node))
@@ -599,7 +595,7 @@ function typeContainsLiteralType(type: Type): boolean {
  * Returns a boolean if the two given types are equal, false otherwise.
  */
 function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
-  if ((actualType as Primitive).name === 'any' || (expectedType as Primitive).name === 'any') {
+  if (isEqual(actualType, tAny) || isEqual(expectedType, tAny)) {
     // Exit early as "any" is guaranteed not to cause type mismatch errors
     return false
   }
@@ -607,9 +603,12 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
     case 'primitive':
     case 'variable':
       if (actualType.kind === 'literal') {
-        return typeof actualType.value !== (expectedType as Primitive).name
+        return typeof actualType.value !== expectedType.name
       }
-      return (actualType as Primitive).name !== (expectedType as Primitive).name
+      if (actualType.kind !== 'primitive' && actualType.kind !== 'variable') {
+        return true
+      }
+      return actualType.name !== expectedType.name
     case 'function':
       if (actualType.kind !== 'function') {
         return true
@@ -681,9 +680,9 @@ function checkArgTypes(
  */
 function getTypeAnnotationType(
   annotationNode:
-    | tsEs.AnnotationTypeNode
-    | tsEs.TypeAliasDeclarationNode
-    | tsEs.AsExpressionNode
+    | tsEs.TSAnnotationType
+    | tsEs.TSTypeAliasDeclaration
+    | tsEs.TSAsExpression
     | undefined,
   context: Context,
   env: TypeEnvironment
@@ -709,12 +708,12 @@ function getAnnotatedType(typeNode: tsEs.TypeNode, context: Context, env: TypeEn
       return mergeTypes(...unionTypes)
     case 'TSLiteralType':
       const value = typeNode.literal.value
-      if (!['string', 'number', 'boolean'].includes(typeof value)) {
-        throw new TypeError(typeNode as unknown as tsEs.Node, 'Unknown literal type')
+      if (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean') {
+        throw new TypecheckError(typeNode, 'Unknown literal type')
       }
-      return tLiteral(value as string | number | boolean)
+      return tLiteral(value)
     case 'TSIntersectionType':
-      throw new TypeError(typeNode as unknown as tsEs.Node, 'Intersection types are not allowed')
+      throw new TypecheckError(typeNode, 'Intersection types are not allowed')
     case 'TSTypeReference':
       const declaredType = lookupTypeAlias(typeNode.typeName.name, env)
       if (!declaredType) {
@@ -836,7 +835,8 @@ function containsType(arr: Type[], typeToCheck: Type) {
  * Traverses through the program and removes all TS-related nodes, returning the result.
  */
 function removeTSNodes(node: tsEs.Node): any {
-  switch (node.type) {
+  const type = node.type
+  switch (type) {
     case 'Literal':
     case 'Identifier': {
       return node
@@ -845,7 +845,7 @@ function removeTSNodes(node: tsEs.Node): any {
     case 'BlockStatement': {
       const newBody: tsEs.Statement[] = []
       node.body.forEach(stmt => {
-        const type = stmt.type as string
+        const type = stmt.type
         if (type.startsWith('TS')) {
           switch (type) {
             case 'TSAsExpression':
@@ -904,16 +904,11 @@ function removeTSNodes(node: tsEs.Node): any {
       }
       return node
     }
+    case 'TSAsExpression':
+      // Remove wrapper node
+      return removeTSNodes(node.expression)
     default:
-      const tsNode = node as unknown as tsEs.TSNode
-      const type = tsNode.type
-      switch (type) {
-        case 'TSAsExpression':
-          // Remove wrapper node
-          return removeTSNodes(tsNode.expression)
-        default:
-          // Remove all other TS nodes
-          return type.startsWith('TS') ? undefined : node
-      }
+      // Remove all other TS nodes
+      return type.startsWith('TS') ? undefined : node
   }
 }

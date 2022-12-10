@@ -400,6 +400,8 @@ export class InconsistentPredicateTestError implements SourceError {
   }
 }
 
+// Errors for Source Typed error checker
+
 export class TypeMismatchError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
@@ -484,7 +486,7 @@ export class NoExplicitAnyError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.AsExpressionNode) {}
+  constructor(public node: tsEs.TSAsExpression) {}
 
   get location() {
     return this.node.loc!
@@ -504,7 +506,7 @@ export class TypecastError implements SourceError {
   public severity = ErrorSeverity.ERROR
 
   constructor(
-    public node: tsEs.AsExpressionNode,
+    public node: tsEs.TSAsExpression,
     public originalType: string,
     public typeToCastTo: string
   ) {}
@@ -538,5 +540,56 @@ export class TypeNotAllowedError implements SourceError {
 
   public elaborate() {
     return this.explain()
+  }
+}
+
+export class UndefinedVariable implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.Node, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Name ${this.name} not declared.`
+  }
+
+  public elaborate() {
+    return `Before you can read the value of ${this.name}, you need to declare it as a variable or a constant. You can do this using the let or const keywords.`
+  }
+}
+
+export class InvalidNumberOfArguments implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  public calleeStr: string
+
+  constructor(
+    public node: tsEs.CallExpression,
+    public expected: number,
+    public got: number,
+    public hasVarArgs = false
+  ) {
+    this.calleeStr = generate(node.callee)
+  }
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Expected ${this.expected} ${this.hasVarArgs ? 'or more ' : ''}arguments, but got ${
+      this.got
+    }.`
+  }
+
+  public elaborate() {
+    const calleeStr = this.calleeStr
+    const pluralS = this.expected === 1 ? '' : 's'
+
+    return `Try calling function ${calleeStr} again, but with ${this.expected} argument${pluralS} instead. Remember that arguments are separated by a ',' (comma).`
   }
 }

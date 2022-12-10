@@ -2,6 +2,7 @@ import * as es from 'estree'
 
 import { ErrorSeverity, ErrorType, NodeWithInferredType, SourceError, Type } from '../types'
 import { typeToString } from '../utils/stringify'
+import * as tsEs from './tsESTree'
 
 // tslint:disable:max-classes-per-file
 export class TypeError implements SourceError {
@@ -51,5 +52,22 @@ export class InternalDifferentNumberArgumentsError extends InternalTypeError {
 export class InternalCyclicReferenceError extends InternalTypeError {
   constructor(public name: string) {
     super(`contains a cyclic reference to itself`)
+  }
+}
+
+export class TypecheckError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(public node: tsEs.Node | tsEs.TypeNode, public message: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+  public explain() {
+    return this.message
+  }
+  public elaborate() {
+    return this.message
   }
 }
