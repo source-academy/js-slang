@@ -15,12 +15,12 @@ import {
   Primitive,
   SArray,
   TSBasicType,
-  TSNodeType,
   Type,
   TypeEnvironment,
   UnionType,
   Variable
 } from '../types'
+import * as tsEs from './tsESTree'
 
 // Name of Unary negative builtin operator
 export const NEGATIVE_OP = '-_1'
@@ -29,18 +29,18 @@ export const NEGATIVE_OP = '-_1'
 export const RETURN_TYPE_IDENTIFIER = '//RETURN_TYPE'
 
 export const typeAnnotationKeywordToBasicTypeMap = {
-  [TSNodeType.TSAnyKeyword]: TSBasicType.ANY,
-  [TSNodeType.TSBigIntKeyword]: TSBasicType.BIGINT,
-  [TSNodeType.TSBooleanKeyword]: TSBasicType.BOOLEAN,
-  [TSNodeType.TSNeverKeyword]: TSBasicType.NEVER,
-  [TSNodeType.TSNullKeyword]: TSBasicType.NULL,
-  [TSNodeType.TSNumberKeyword]: TSBasicType.NUMBER,
-  [TSNodeType.TSObjectKeyword]: TSBasicType.OBJECT,
-  [TSNodeType.TSStringKeyword]: TSBasicType.STRING,
-  [TSNodeType.TSSymbolKeyword]: TSBasicType.SYMBOL,
-  [TSNodeType.TSUndefinedKeyword]: TSBasicType.UNDEFINED,
-  [TSNodeType.TSUnknownKeyword]: TSBasicType.UNKNOWN,
-  [TSNodeType.TSVoidKeyword]: TSBasicType.VOID
+  [tsEs.TSNodeType.TSAnyKeyword]: TSBasicType.ANY,
+  [tsEs.TSNodeType.TSBigIntKeyword]: TSBasicType.BIGINT,
+  [tsEs.TSNodeType.TSBooleanKeyword]: TSBasicType.BOOLEAN,
+  [tsEs.TSNodeType.TSNeverKeyword]: TSBasicType.NEVER,
+  [tsEs.TSNodeType.TSNullKeyword]: TSBasicType.NULL,
+  [tsEs.TSNodeType.TSNumberKeyword]: TSBasicType.NUMBER,
+  [tsEs.TSNodeType.TSObjectKeyword]: TSBasicType.OBJECT,
+  [tsEs.TSNodeType.TSStringKeyword]: TSBasicType.STRING,
+  [tsEs.TSNodeType.TSSymbolKeyword]: TSBasicType.SYMBOL,
+  [tsEs.TSNodeType.TSUndefinedKeyword]: TSBasicType.UNDEFINED,
+  [tsEs.TSNodeType.TSUnknownKeyword]: TSBasicType.UNKNOWN,
+  [tsEs.TSNodeType.TSVoidKeyword]: TSBasicType.VOID
 }
 
 // Helper functions for dealing with type environment
