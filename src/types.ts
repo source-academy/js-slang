@@ -310,32 +310,13 @@ export type ContiguousArrayElements = ContiguousArrayElementExpression[]
 // Types used in type checker for type inference/type error checker for Source Typed variant
 // =======================================
 
-export enum PrimitiveType {
-  BOOLEAN = 'boolean',
-  NULL = 'null',
-  NUMBER = 'number',
-  STRING = 'string',
-  UNDEFINED = 'undefined'
-}
+export type PrimitiveType = 'boolean' | 'null' | 'number' | 'string' | 'undefined'
 
-export enum TSAllowedTypes {
-  ANY = 'any',
-  VOID = 'void'
-}
+export type TSAllowedTypes = 'any' | 'void'
 
-export enum TSDisallowedTypes {
-  BIGINT = 'bigint',
-  NEVER = 'never',
-  OBJECT = 'object',
-  SYMBOL = 'symbol',
-  UNKNOWN = 'unknown'
-}
+export const disallowedTypes = ['bigint', 'never', 'object', 'symbol', 'unknown'] as const
 
-export const TSBasicType = {
-  ...PrimitiveType,
-  ...TSAllowedTypes,
-  ...TSDisallowedTypes
-}
+export type TSDisallowedTypes = typeof disallowedTypes[number]
 
 // All types recognised by type parser as basic types
 export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes

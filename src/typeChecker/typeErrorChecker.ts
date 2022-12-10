@@ -16,11 +16,11 @@ import { memoizedGetModuleManifest } from '../modules/moduleLoader'
 import { NoImplicitReturnUndefinedError } from '../parser/rules/noImplicitReturnUndefined'
 import {
   Context,
+  disallowedTypes,
   FunctionType,
   Primitive,
   PrimitiveType,
   TSAllowedTypes,
-  TSBasicType,
   TSDisallowedTypes,
   Type,
   TypeEnvironment
@@ -221,9 +221,9 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       env.pop()
 
       if (
-        (actualReturnType as Primitive).name === TSBasicType.VOID &&
-        (expectedReturnType as Primitive).name !== TSBasicType.ANY &&
-        (expectedReturnType as Primitive).name !== TSBasicType.VOID
+        (actualReturnType as Primitive).name === 'void' &&
+        (expectedReturnType as Primitive).name !== 'any' &&
+        (expectedReturnType as Primitive).name !== 'void'
       ) {
         // Type error where function does not return anything when it should
         context.errors.push(new FunctionShouldHaveReturnValueError(node))
@@ -254,7 +254,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
           const fnType = lookupTypeAndRemoveForAllAndPredicateTypes(fnName, env)
           if (fnType) {
             if (fnType.kind !== 'function') {
-              if ((fnType as Primitive).name !== TSBasicType.ANY) {
+              if ((fnType as Primitive).name !== 'any') {
                 context.errors.push(new TypeNotCallableError(node, fnName))
               }
               return tAny
@@ -314,13 +314,13 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       // Cast to TS nodes that are not officially supported by acorn
       const tsNode = node as unknown as tsEs.TSNode
       switch (tsNode.type) {
-        case tsEs.TSNodeType.TSTypeAliasDeclaration:
+        case 'TSTypeAliasDeclaration':
           // No typechecking needed, type has already been added to environment
           return tUndef
-        case tsEs.TSNodeType.TSAsExpression:
+        case 'TSAsExpression':
           const originalType = typeCheckAndReturnType(tsNode.expression, context, env)
           const typeToCastTo = getTypeAnnotationType(tsNode, context, env)
-          if ((typeToCastTo as Primitive).name === TSBasicType.ANY) {
+          if ((typeToCastTo as Primitive).name === 'any') {
             context.errors.push(new NoExplicitAnyError(tsNode))
           }
           const formatAsLiteral =
@@ -335,7 +335,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
             )
           }
           return typeToCastTo
-        case tsEs.TSNodeType.TSInterfaceDeclaration:
+        case 'TSInterfaceDeclaration':
           throw new TypeError(node, 'Interface declarations are not allowed')
         default:
           throw new TypeError(node, 'Unknown node type')
@@ -420,7 +420,7 @@ function addTypeDeclarationsToEnvironment(
       default:
         // Cast to TS nodes that are not officially supported by acorn
         const tsNode = node as unknown as tsEs.TSNode
-        if (tsNode.type === tsEs.TSNodeType.TSTypeAliasDeclaration) {
+        if (tsNode.type === 'TSTypeAliasDeclaration') {
           const id = tsNode.id
           const type = getTypeAnnotationType(tsNode, context, env)
           setTypeAlias(id.name, type, env)
@@ -456,18 +456,18 @@ function typeCheckAndReturnBinaryExpressionType(
     case '+':
       // Both sides can only be number, string, or any
       // However, case where one side is string and other side is number is not allowed
-      if (leftTypeString === TSBasicType.NUMBER || leftTypeString === TSBasicType.STRING) {
+      if (leftTypeString === 'number' || leftTypeString === 'string') {
         checkForTypeMismatch(node, rightType, leftType, context)
         // If string + number, return string; else return left type
-        if (leftTypeString === TSBasicType.STRING || rightTypeString === TSBasicType.STRING) {
+        if (leftTypeString === 'string' || rightTypeString === 'string') {
           return tString
         }
         return leftType
       }
-      if (rightTypeString === TSBasicType.NUMBER || rightTypeString === TSBasicType.STRING) {
+      if (rightTypeString === 'number' || rightTypeString === 'string') {
         checkForTypeMismatch(node, leftType, rightType, context)
         // If string + number, return string; else return right type
-        if (leftTypeString === TSBasicType.STRING || rightTypeString === TSBasicType.STRING) {
+        if (leftTypeString === 'string' || rightTypeString === 'string') {
           return tString
         }
         return rightType
@@ -489,11 +489,11 @@ function typeCheckAndReturnBinaryExpressionType(
       }
       // Both sides can only be number, string, or any
       // However, case where one side is string and other side is number is not allowed
-      if (leftTypeString === TSBasicType.NUMBER || leftTypeString === TSBasicType.STRING) {
+      if (leftTypeString === 'number' || leftTypeString === 'string') {
         checkForTypeMismatch(node, rightType, leftType, context)
         return tBool
       }
-      if (rightTypeString === TSBasicType.NUMBER || rightTypeString === TSBasicType.STRING) {
+      if (rightTypeString === 'number' || rightTypeString === 'string') {
         checkForTypeMismatch(node, leftType, rightType, context)
         return tBool
       }
@@ -531,9 +531,9 @@ function typeCheckAndReturnArrowFunctionType(
   env.pop()
 
   if (
-    (actualReturnType as Primitive).name === TSBasicType.VOID &&
-    (expectedReturnType as Primitive).name !== TSBasicType.ANY &&
-    (expectedReturnType as Primitive).name !== TSBasicType.VOID
+    (actualReturnType as Primitive).name === 'void' &&
+    (expectedReturnType as Primitive).name !== 'any' &&
+    (expectedReturnType as Primitive).name !== 'void'
   ) {
     // Type error where function does not return anything when it should
     context.errors.push(new FunctionShouldHaveReturnValueError(node))
@@ -599,10 +599,7 @@ function typeContainsLiteralType(type: Type): boolean {
  * Returns a boolean if the two given types are equal, false otherwise.
  */
 function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
-  if (
-    (actualType as Primitive).name === TSBasicType.ANY ||
-    (expectedType as Primitive).name === TSBasicType.ANY
-  ) {
+  if ((actualType as Primitive).name === 'any' || (expectedType as Primitive).name === 'any') {
     // Exit early as "any" is guaranteed not to cause type mismatch errors
     return false
   }
@@ -702,23 +699,23 @@ function getTypeAnnotationType(
  */
 function getAnnotatedType(typeNode: tsEs.TypeNode, context: Context, env: TypeEnvironment): Type {
   switch (typeNode.type) {
-    case tsEs.TSNodeType.TSFunctionType:
+    case 'TSFunctionType':
       const fnTypes = getParamTypes(typeNode.parameters, context, env)
       // Return type will always be last item in types array
       fnTypes.push(getTypeAnnotationType(typeNode.typeAnnotation, context, env))
       return tFunc(...fnTypes)
-    case tsEs.TSNodeType.TSUnionType:
+    case 'TSUnionType':
       const unionTypes = typeNode.types.map(node => getAnnotatedType(node, context, env))
       return mergeTypes(...unionTypes)
-    case tsEs.TSNodeType.TSLiteralType:
+    case 'TSLiteralType':
       const value = typeNode.literal.value
       if (!['string', 'number', 'boolean'].includes(typeof value)) {
         throw new TypeError(typeNode as unknown as tsEs.Node, 'Unknown literal type')
       }
       return tLiteral(value as string | number | boolean)
-    case tsEs.TSNodeType.TSIntersectionType:
+    case 'TSIntersectionType':
       throw new TypeError(typeNode as unknown as tsEs.Node, 'Intersection types are not allowed')
-    case tsEs.TSNodeType.TSTypeReference:
+    case 'TSTypeReference':
       const declaredType = lookupTypeAlias(typeNode.typeName.name, env)
       if (!declaredType) {
         context.errors.push(new TypeNotFoundError(typeNode, typeNode.typeName.name))
@@ -742,10 +739,10 @@ function getParamTypes(params: tsEs.Identifier[], context: Context, env: TypeEnv
  * If errors are found, returns the "any" type to prevent throwing of further errors.
  */
 function getPrimitiveType(node: tsEs.TypeKeywordNode, context: Context) {
-  const primitiveType = typeAnnotationKeywordToBasicTypeMap[node.type] ?? TSBasicType.UNKNOWN
+  const primitiveType = typeAnnotationKeywordToBasicTypeMap[node.type] ?? 'unknown'
   if (
-    Object.values(TSDisallowedTypes).includes(primitiveType as TSDisallowedTypes) ||
-    (context.chapter === 1 && primitiveType === TSBasicType.NULL)
+    disallowedTypes.includes(primitiveType as TSDisallowedTypes) ||
+    (context.chapter === 1 && primitiveType === 'null')
   ) {
     context.errors.push(new TypeNotAllowedError(node, primitiveType))
     return tAny
@@ -851,7 +848,7 @@ function removeTSNodes(node: tsEs.Node): any {
         const type = stmt.type as string
         if (type.startsWith('TS')) {
           switch (type) {
-            case tsEs.TSNodeType.TSAsExpression:
+            case 'TSAsExpression':
               newBody.push(removeTSNodes(stmt))
               break
             default:
@@ -911,7 +908,7 @@ function removeTSNodes(node: tsEs.Node): any {
       const tsNode = node as unknown as tsEs.TSNode
       const type = tsNode.type
       switch (type) {
-        case tsEs.TSNodeType.TSAsExpression:
+        case 'TSAsExpression':
           // Remove wrapper node
           return removeTSNodes(tsNode.expression)
         default:

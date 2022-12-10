@@ -28,19 +28,19 @@ export const NEGATIVE_OP = '-_1'
 // Special name used for saving return type in type environment
 export const RETURN_TYPE_IDENTIFIER = '//RETURN_TYPE'
 
-export const typeAnnotationKeywordToBasicTypeMap = {
-  [tsEs.TSNodeType.TSAnyKeyword]: TSBasicType.ANY,
-  [tsEs.TSNodeType.TSBigIntKeyword]: TSBasicType.BIGINT,
-  [tsEs.TSNodeType.TSBooleanKeyword]: TSBasicType.BOOLEAN,
-  [tsEs.TSNodeType.TSNeverKeyword]: TSBasicType.NEVER,
-  [tsEs.TSNodeType.TSNullKeyword]: TSBasicType.NULL,
-  [tsEs.TSNodeType.TSNumberKeyword]: TSBasicType.NUMBER,
-  [tsEs.TSNodeType.TSObjectKeyword]: TSBasicType.OBJECT,
-  [tsEs.TSNodeType.TSStringKeyword]: TSBasicType.STRING,
-  [tsEs.TSNodeType.TSSymbolKeyword]: TSBasicType.SYMBOL,
-  [tsEs.TSNodeType.TSUndefinedKeyword]: TSBasicType.UNDEFINED,
-  [tsEs.TSNodeType.TSUnknownKeyword]: TSBasicType.UNKNOWN,
-  [tsEs.TSNodeType.TSVoidKeyword]: TSBasicType.VOID
+export const typeAnnotationKeywordToBasicTypeMap: Record<tsEs.TSTypeKeyword, TSBasicType> = {
+  TSAnyKeyword: 'any',
+  TSBigIntKeyword: 'bigint',
+  TSBooleanKeyword: 'boolean',
+  TSNeverKeyword: 'never',
+  TSNullKeyword: 'null',
+  TSNumberKeyword: 'number',
+  TSObjectKeyword: 'object',
+  TSStringKeyword: 'string',
+  TSSymbolKeyword: 'symbol',
+  TSUndefinedKeyword: 'undefined',
+  TSUnknownKeyword: 'unknown',
+  TSVoidKeyword: 'void'
 }
 
 // Helper functions for dealing with type environment
@@ -180,12 +180,12 @@ export function tArray(var1: Type): SArray {
   }
 }
 
-export const tAny = tPrimitive(TSBasicType.ANY)
-export const tBool = tPrimitive(TSBasicType.BOOLEAN)
-export const tNumber = tPrimitive(TSBasicType.NUMBER)
-export const tString = tPrimitive(TSBasicType.STRING)
-export const tUndef = tPrimitive(TSBasicType.UNDEFINED)
-export const tVoid = tPrimitive(TSBasicType.VOID)
+export const tAny = tPrimitive('any')
+export const tBool = tPrimitive('boolean')
+export const tNumber = tPrimitive('number')
+export const tString = tPrimitive('string')
+export const tUndef = tPrimitive('undefined')
+export const tVoid = tPrimitive('void')
 
 export function tFunc(...types: Type[]): FunctionType {
   const parameterTypes = types.slice(0, -1)

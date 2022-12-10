@@ -668,41 +668,32 @@ export interface AwaitExpression extends BaseExpression {
 
 // Code below is added in order to support TS Nodes
 
-export enum TSTypeAnnotationType {
-  TSAnnotationType = 'TSAnnotationType',
-  TSFunctionType = 'TSFunctionType',
-  TSUnionType = 'TSUnionType',
-  TSIntersectionType = 'TSIntersectionType',
-  TSLiteralType = 'TSLiteralType'
-}
+export type TSTypeAnnotationType =
+  | 'TSAnnotationType'
+  | 'TSFunctionType'
+  | 'TSUnionType'
+  | 'TSIntersectionType'
+  | 'TSLiteralType'
 
-export enum TSTypeKeyword {
-  TSAnyKeyword = 'TSAnyKeyword',
-  TSBigIntKeyword = 'TSBigIntKeyword',
-  TSBooleanKeyword = 'TSBooleanKeyword',
-  TSNeverKeyword = 'TSNeverKeyword',
-  TSNullKeyword = 'TSNullKeyword',
-  TSNumberKeyword = 'TSNumberKeyword',
-  TSObjectKeyword = 'TSObjectKeyword',
-  TSStringKeyword = 'TSStringKeyword',
-  TSSymbolKeyword = 'TSSymbolKeyword',
-  TSUndefinedKeyword = 'TSUndefinedKeyword',
-  TSUnknownKeyword = 'TSUnknownKeyword',
-  TSVoidKeyword = 'TSVoidKeyword'
-}
+export type TSTypeKeyword =
+  | 'TSAnyKeyword'
+  | 'TSBigIntKeyword'
+  | 'TSBooleanKeyword'
+  | 'TSNeverKeyword'
+  | 'TSNullKeyword'
+  | 'TSNumberKeyword'
+  | 'TSObjectKeyword'
+  | 'TSStringKeyword'
+  | 'TSSymbolKeyword'
+  | 'TSUndefinedKeyword'
+  | 'TSUnknownKeyword'
+  | 'TSVoidKeyword'
 
-export enum TSOnlyNode {
-  TSTypeAliasDeclaration = 'TSTypeAliasDeclaration',
-  TSAsExpression = 'TSAsExpression',
-  TSInterfaceDeclaration = 'TSInterfaceDeclaration',
-  TSTypeReference = 'TSTypeReference'
-}
-
-export const TSNodeType = {
-  ...TSTypeAnnotationType,
-  ...TSTypeKeyword,
-  ...TSOnlyNode
-}
+export type TSOnlyNode =
+  | 'TSTypeAliasDeclaration'
+  | 'TSAsExpression'
+  | 'TSInterfaceDeclaration'
+  | 'TSTypeReference'
 
 // All node types in a ESTree AST with TS support
 export type TSNodeType = TSTypeAnnotationType | TSTypeKeyword | TSOnlyNode
@@ -730,49 +721,49 @@ export interface TypeKeywordNode extends BaseNodeWithTypeAnnotation {
 }
 
 export interface AnnotationTypeNode extends BaseNode {
-  type: TSTypeAnnotationType.TSAnnotationType
+  type: 'TSAnnotationType'
   typeAnnotation: TypeNode
 }
 
 export interface FunctionTypeNode extends BaseNodeWithTypeAnnotation {
-  type: TSTypeAnnotationType.TSFunctionType
+  type: 'TSFunctionType'
   parameters: Identifier[]
   typeAnnotation: AnnotationTypeNode
 }
 
 export interface UnionTypeNode extends BaseNodeWithTypeAnnotation {
-  type: TSTypeAnnotationType.TSUnionType
+  type: 'TSUnionType'
   types: TypeNode[]
 }
 
 export interface IntersectionTypeNode extends BaseNodeWithTypeAnnotation {
-  type: TSTypeAnnotationType.TSIntersectionType
+  type: 'TSIntersectionType'
   // Remaining attributes are omitted from type as this node is disallowed
 }
 
 export interface LiteralTypeNode extends BaseNodeWithTypeAnnotation {
-  type: TSTypeAnnotationType.TSLiteralType
+  type: 'TSLiteralType'
   literal: Literal
 }
 
 export interface TypeAliasDeclarationNode extends BaseNode {
-  type: TSOnlyNode.TSTypeAliasDeclaration
+  type: 'TSTypeAliasDeclaration'
   id: Identifier
   typeAnnotation: TypeNode
 }
 
 export interface InterfaceDeclarationNode extends BaseNodeWithTypeAnnotation {
-  type: TSOnlyNode.TSInterfaceDeclaration
+  type: 'TSInterfaceDeclaration'
   // Remaining attributes are omitted from type as this node is disallowed
 }
 
 export interface AsExpressionNode extends BaseNode {
-  type: TSOnlyNode.TSAsExpression
+  type: 'TSAsExpression'
   expression: Node
   typeAnnotation: TypeNode
 }
 
 export interface TypeReferenceNode extends BaseNodeWithTypeAnnotation {
-  type: TSOnlyNode.TSTypeReference
+  type: 'TSTypeReference'
   typeName: Identifier
 }
