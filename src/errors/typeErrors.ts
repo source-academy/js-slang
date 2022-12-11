@@ -516,7 +516,7 @@ export class TypecastError implements SourceError {
   }
 
   public explain() {
-    return `Type '${this.originalType}' cannot be casted to type '${this.typeToCastTo}' as it is not a superset of '${this.typeToCastTo}'.`
+    return `Type '${this.originalType}' cannot be casted to type '${this.typeToCastTo}' as '${this.originalType}' is not a superset of '${this.typeToCastTo}'.`
   }
 
   public elaborate() {

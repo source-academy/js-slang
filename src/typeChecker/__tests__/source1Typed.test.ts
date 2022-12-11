@@ -3,10 +3,14 @@ import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { Chapter, Variant } from '../../types'
 
-describe('primitive types', () => {
-  it('does not throw errors for allowed primitive types', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+let context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
 
+beforeEach(() => {
+  context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
+})
+
+describe('basic types', () => {
+  it('does not throw errors for allowed primitive types', () => {
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: boolean = true;
@@ -19,8 +23,6 @@ describe('primitive types', () => {
   })
 
   it('throws errors for disallowed primitive types', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: unknown = 1;
       const x2: never = 1;
       const x3: bigint = 1;
@@ -39,37 +41,27 @@ describe('primitive types', () => {
   })
 
   it('throws error for non-callable types', () => {
-    const source1Context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: number = 1;
       x1();
     `
 
-    parse(code, source1Context)
-    expect(parseError(source1Context.errors)).toMatchInlineSnapshot(
-      `"Line 2: 'x1' is not callable."`
-    )
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 2: 'x1' is not callable."`)
   })
 
-  it('throws error for null type only for source 1', () => {
-    const source1Context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
+  it('throws error for null type', () => {
     const code = 'const x1: null = null;'
 
-    parse(code, source1Context)
-    expect(parseError(source1Context.errors)).toMatchInlineSnapshot(`
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 1: Type 'null' is not allowed.
       Line 1: null literals are not allowed."
     `)
-
-    // TODO: Add test for Source 2 and above
   })
 })
 
 describe('union types', () => {
   it('handles type mismatches correctly', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: boolean = true;
@@ -77,8 +69,8 @@ describe('union types', () => {
       const x5: number | string = x2; // no error
       const x6: string | number = x3; // error
       const x7: number | string = x6; // no error
-      const x8: string = x6; // error
-      const x9: number = x6; // error
+      const x8: string = x4; // error
+      const x9: number = x4; // error
       const x10: number | boolean = x7; // error
       const x11: number | string | boolean = x8; // no error
     `
@@ -93,8 +85,6 @@ describe('union types', () => {
   })
 
   it('merges duplicate types', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: number | string | number = 1;
       const x2: string | number | string = '1';
       const x3: number | number = 1;
@@ -117,8 +107,6 @@ describe('union types', () => {
 
 describe('literal types', () => {
   it('handles type mismatches correctly', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: 1 = 1; // no error
       const x2: 2 = 1; // error
       const x3: '1' = '1'; // no error
@@ -136,8 +124,6 @@ describe('literal types', () => {
   })
 
   it('works with union types and merges with primitive types', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: number | 1 = '1'; // error should show type as 'number'
       const x2: string | '1' | 'test' = false; // error should show type as 'string'
       const x3: boolean | false = 1; // error should show type as 'boolean'
@@ -158,8 +144,6 @@ describe('literal types', () => {
 
 describe('function types', () => {
   it('handles type mismatches correctly', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const f1: (a: number, b: number) => number = (a, b) => a + b; // no error
       const f2: (a: string, b: string) => string = (c, d) => c + d; // no error even if argument names are different
       const f3: (a: number, b: number) => number = (a: number, b) => a + b; // no error
@@ -189,8 +173,6 @@ describe('function types', () => {
   })
 
   it('handles type mismatches correctly with union types', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const f1: (a: number | string, b: number | string) => number | string // no error
         = (c: string | number, d: string | number): string | number => c + d; 
       const f2: (a: number | string, b: number | string) => number | string // error
@@ -207,8 +189,6 @@ describe('function types', () => {
   })
 
   it('checks argument types correctly', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const sum: (a: number, b: number) => number = (a, b) => a + b;
       sum(1, 2); // no error
       sum(1, '2'); // error
@@ -232,8 +212,6 @@ describe('function types', () => {
 
 describe('function declarations', () => {
   it('checks argument types correctly', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `function sum(a: number, b: number): number {
         return a + b;
       }
@@ -257,8 +235,6 @@ describe('function declarations', () => {
   })
 
   it('checks return type correctly', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `function f1(n: number): number {
         return n; // no error
       }
@@ -294,8 +270,6 @@ describe('function declarations', () => {
   })
 
   it('handles recursive functions correctly', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `function f1(n: number): number {
         return n === 1
           ? n
@@ -320,8 +294,6 @@ describe('function declarations', () => {
 
 describe('arrow functions', () => {
   it('checks argument types correctly', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `((a: number, b: number): number => a + b)(1, 2); // no error
       ((a: number, b: number): number => a + b)(1, '2'); // error
       ((a: number, b: number): number => a + b)(true, 2); // error
@@ -342,8 +314,6 @@ describe('arrow functions', () => {
   })
 
   it('checks return type correctly', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `(n: number): number => n; // no error
       (n: number): string => n; // error
       (n: number): void => n; // error
@@ -364,8 +334,6 @@ describe('arrow functions', () => {
   })
 
   it('gets return type correct both with and without braces', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `((a: number, b: number): number => a + b)(1, 2); // no error
       ((a: number, b: number): string => a + b)(1, 2); // error
       ((a: string, b: string): number => {
@@ -386,8 +354,6 @@ describe('arrow functions', () => {
 
 describe('type aliases', () => {
   it('TSTypeAliasDeclaration nodes should be removed from program at end of typechecking', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `type stringOrNumber = string | number;
       const x = 1;
     `
@@ -397,8 +363,6 @@ describe('type aliases', () => {
   })
 
   it('should not be used as variables', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `type x = string | number;
       x;
     `
@@ -408,8 +372,6 @@ describe('type aliases', () => {
   })
 
   it('should throw errors for type mismatch', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `type stringOrNumber = string | number;
       const x: stringOrNumber = true;
     `
@@ -421,8 +383,6 @@ describe('type aliases', () => {
   })
 
   it('should throw errors for undeclared types', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x: x = 1;`
 
     parse(code, context)
@@ -430,8 +390,6 @@ describe('type aliases', () => {
   })
 
   it('should coexist with variables of the same name', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `type x = string | number;
       const x: x = 1;
     `
@@ -443,8 +401,6 @@ describe('type aliases', () => {
 
 describe('typecasting', () => {
   it('TSAsExpression nodes should be removed from program at end of typechecking', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: string | number = 1;
       const x2: string = x1 as string;
     `
@@ -453,9 +409,7 @@ describe('typecasting', () => {
     expect(program).toMatchSnapshot() // Should not contain TSAsExpression node
   })
 
-  it('only supports downcasting', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
+  it('only supports casting to a sub-type', () => {
     const code = `const x1: string | number = 1;
       const x2: string | number = x1 as string | number; // no error
       const x3: string = x1 as string; // no error
@@ -463,26 +417,33 @@ describe('typecasting', () => {
       const x5: 1 | '1' = x1 as 1 | '1'; // no error
       const x6: boolean = x1 as boolean; // error
       const x7: true = x1 as true; // error
-      const x8 = x1 as any; // error
-      const x9: string | number | boolean = x1 as string | number | boolean; // error
-      const x10: 1 | 2 | '1' = x5 as 1 | 2 | '1'; // error
+      const x8: string | number | boolean = x1 as string | number | boolean; // error
+      const x9: 1 | 2 | '1' = x5 as 1 | 2 | '1'; // error
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 6: Type 'string | number' cannot be casted to type 'boolean' as it is not a superset of 'boolean'.
-      Line 7: Type 'string | number' cannot be casted to type 'true' as it is not a superset of 'true'.
-      Line 8: Typecasting to 'any' is not allowed.
-      Line 9: Type 'string | number' cannot be casted to type 'string | number | boolean' as it is not a superset of 'string | number | boolean'.
-      Line 10: Type '1 | \\"1\\"' cannot be casted to type '1 | 2 | \\"1\\"' as it is not a superset of '1 | 2 | \\"1\\"'."
+      "Line 6: Type 'string | number' cannot be casted to type 'boolean' as 'string | number' is not a superset of 'boolean'.
+      Line 7: Type 'string | number' cannot be casted to type 'true' as 'string | number' is not a superset of 'true'.
+      Line 8: Type 'string | number' cannot be casted to type 'string | number | boolean' as 'string | number' is not a superset of 'string | number | boolean'.
+      Line 9: Type '1 | \\"1\\"' cannot be casted to type '1 | 2 | \\"1\\"' as '1 | \\"1\\"' is not a superset of '1 | 2 | \\"1\\"'."
     `)
+  })
+
+  it('does not allow casting to any', () => {
+    const code = `const x1: string | number = 1;
+      const x2 = x1 as any;
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 2: Typecasting to 'any' is not allowed."`
+    )
   })
 })
 
 describe('variable declarations', () => {
   it('identifies type mismatch errors for literals correctly', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: number = '1';
       const x2: string = true;
       const x3: boolean = undefined;
@@ -499,8 +460,6 @@ describe('variable declarations', () => {
   })
 
   it('identifies type mismatch errors for identifiers correctly', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: number = 1;
       const x2: string = x1;
       const x3: boolean = x2;
@@ -521,8 +480,6 @@ describe('variable declarations', () => {
 
 describe('unary operations', () => {
   it('! is allowed only for boolean or any type, and returns boolean type', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: boolean = true;
       const x2: string = 'false';
       const x3: any = true;
@@ -542,8 +499,6 @@ describe('unary operations', () => {
   })
 
   it('- is allowed only for number or any type, and returns number type', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: any = 1;
@@ -563,8 +518,6 @@ describe('unary operations', () => {
   })
 
   it('typeof is allowed for any type, and returns string type', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: any = 1;
@@ -585,8 +538,6 @@ describe('unary operations', () => {
 
 describe('binary operations', () => {
   it('-*/% are allowed only for number or any type, and returns number type', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: any = true;
@@ -612,8 +563,6 @@ describe('binary operations', () => {
   })
 
   it('+ is allowed only for number, string or any type, and returns appropriate type', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: boolean = true;
@@ -648,8 +597,6 @@ describe('binary operations', () => {
   })
 
   it('inequality operators are allowed only for number, string or any type, and returns boolean type', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: boolean = true;
@@ -689,8 +636,6 @@ describe('binary operations', () => {
 
 describe('logical expressions', () => {
   it('left type must be boolean or any', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: boolean = true;
       const x2: string = 'false';
       const x3: any = true;
@@ -711,8 +656,6 @@ describe('logical expressions', () => {
   })
 
   it('return type is union of boolean and right type', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: boolean = true;
       const x2: string = 'false';
       const x3: number | string = 1;
@@ -735,8 +678,6 @@ describe('logical expressions', () => {
 
 describe('conditional expressions', () => {
   it('predicate type must be boolean or any', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: boolean = true;
       const x2: string = 'false';
       const x3: any = 1;
@@ -772,8 +713,6 @@ describe('conditional expressions', () => {
   })
 
   it('return type is union of cons and alt type', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x: string | number = 1;
       function f1(): number {
         return true ? 1 : 2; // no error
@@ -798,8 +737,6 @@ describe('conditional expressions', () => {
 
 describe('if-else statements', () => {
   it('predicate type must be boolean or any', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x1: boolean = true;
       const x2: string = 'false';
       const x3: any = 1;
@@ -864,8 +801,6 @@ describe('if-else statements', () => {
   })
 
   it('return type is checked one by one', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x: string | number = 1;
       function f1(): number {
         if (true) { // no error
@@ -908,8 +843,6 @@ describe('if-else statements', () => {
 
 describe('import statements', () => {
   it('identifies imports even if accessed before import statement', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `show(heart);
       import { show, heart } from 'rune';
     `
@@ -919,8 +852,6 @@ describe('import statements', () => {
   })
 
   it('defaults to any for all imports', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `import { show, heart } from 'rune';
       show(heart);
       heart(show);
@@ -935,8 +866,6 @@ describe('import statements', () => {
 
 describe('scoping', () => {
   it('gets types correct even if accessed before initialization', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `const x: number = f(); // error
     function f(): string {
       return g(); // error
@@ -957,8 +886,6 @@ describe('scoping', () => {
   })
 
   it('gets types correct for nested constants and functions', () => {
-    const context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
-
     const code = `function f(n: string): string {
       return n;
     }
