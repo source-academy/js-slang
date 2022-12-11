@@ -59,7 +59,7 @@ export class TypecheckError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: tsEs.Node | tsEs.TypeNode, public message: string) {}
+  constructor(public node: tsEs.Node | tsEs.TSType, public message: string) {}
 
   get location() {
     return this.node.loc!

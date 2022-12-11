@@ -4,14 +4,14 @@ import { cloneDeep, isEqual } from 'lodash'
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
   FunctionShouldHaveReturnValueError,
-  InvalidNumberOfArguments,
+  InvalidNumberOfArgumentsTypeError,
   NoExplicitAnyError,
   TypecastError,
   TypeMismatchError,
   TypeNotAllowedError,
   TypeNotCallableError,
   TypeNotFoundError,
-  UndefinedVariable
+  UndefinedVariableTypeError
 } from '../errors/typeErrors'
 import { memoizedGetModuleManifest } from '../modules/moduleLoader'
 import {
@@ -51,7 +51,7 @@ import {
 
 /**
  * Entry function for type error checker.
- * Checks programs for type errors, and returns the program with all TS-related nodes removed.
+ * Checks program for type errors, and returns the program with all TS-related nodes removed.
  */
 export function checkForTypeErrors(program: tsEs.Program, context: Context): es.Program {
   // Deep copy type environment to avoid modifying type environment in the context,
@@ -105,6 +105,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
         // which is run after typechecking
         return tAny
       }
+      // Casting is safe here as above check already narrows type to string, number or boolean
       return tPrimitive(typeof node.value as PrimitiveType, node.value)
     }
     case 'Identifier': {
@@ -113,7 +114,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       if (varType) {
         return varType
       } else {
-        context.errors.push(new UndefinedVariable(node, varName))
+        context.errors.push(new UndefinedVariableTypeError(node, varName))
         return tAny
       }
     }
@@ -233,8 +234,12 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       // No need to save variable type again, return undefined type
       return tUndef
     case 'VariableDeclaration': {
+      // Typecasting is safe here as types are checked when calling addTypeDeclarationsToEnvironment
       const id = node.declarations[0].id as tsEs.Identifier
-      const init = node.declarations[0].init!
+      if (!node.declarations[0].init) {
+        throw new TypecheckError(node, 'Variable declaration must have value')
+      }
+      const init = node.declarations[0].init
       // Look up declared type directly as type has already been added to environment
       const expectedType =
         lookupTypeAndRemoveForAllAndPredicateTypes(id.name, env) ??
@@ -263,14 +268,14 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
             const args = node.arguments
             if (args.length !== expectedTypes.length) {
               context.errors.push(
-                new InvalidNumberOfArguments(node, expectedTypes.length, args.length)
+                new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
               )
               return fnType.returnType
             }
             checkArgTypes(node, expectedTypes, context, env)
             return fnType.returnType
           } else {
-            context.errors.push(new UndefinedVariable(node, fnName))
+            context.errors.push(new UndefinedVariableTypeError(node, fnName))
             return tAny
           }
         case 'ArrowFunctionExpression':
@@ -280,7 +285,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
           const args = node.arguments
           if (args.length !== expectedTypes.length) {
             context.errors.push(
-              new InvalidNumberOfArguments(node, expectedTypes.length, args.length)
+              new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
             )
             return arrowFnType.returnType
           }
@@ -451,10 +456,11 @@ function typeCheckAndReturnBinaryExpressionType(
       return tNumber
     case '+':
       // Both sides can only be number, string, or any
-      // However, case where one side is string and other side is number is not allowed
+      // However, the case where one side is string and other side is number is not allowed
       if (leftTypeString === 'number' || leftTypeString === 'string') {
         checkForTypeMismatch(node, rightType, leftType, context)
-        // If string + number, return string; else return left type
+        // Return type will be either number or string depending on the left/right type
+        // However, if one side is of type string and other side is of type number, return type will be string
         if (leftTypeString === 'string' || rightTypeString === 'string') {
           return tString
         }
@@ -462,14 +468,15 @@ function typeCheckAndReturnBinaryExpressionType(
       }
       if (rightTypeString === 'number' || rightTypeString === 'string') {
         checkForTypeMismatch(node, leftType, rightType, context)
-        // If string + number, return string; else return right type
+        // Return type will be either number or string depending on the left/right type
+        // However, if one side is of type string and other side is of type number, return type will be string
         if (leftTypeString === 'string' || rightTypeString === 'string') {
           return tString
         }
         return rightType
       }
 
-      // Return type number | string
+      // Return type is number | string if both left and right are neither number nor string
       checkForTypeMismatch(node, leftType, tUnion(tNumber, tString), context)
       checkForTypeMismatch(node, rightType, tUnion(tNumber, tString), context)
       return tUnion(tNumber, tString)
@@ -540,8 +547,7 @@ function typeCheckAndReturnArrowFunctionType(
   const types = getParamTypes(params, context, env)
   // Return type will always be last item in types array
   types.push(expectedReturnType)
-  const fnType = tFunc(...types)
-  return fnType
+  return tFunc(...types)
 }
 
 /**
@@ -663,7 +669,9 @@ function checkArgTypes(
 ) {
   const args = node.arguments
   if (args.length !== expectedTypes.length) {
-    context.errors.push(new InvalidNumberOfArguments(node, expectedTypes.length, args.length))
+    context.errors.push(
+      new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
+    )
     return
   }
   for (let i = 0; i < expectedTypes.length; i++) {
@@ -680,7 +688,7 @@ function checkArgTypes(
  */
 function getTypeAnnotationType(
   annotationNode:
-    | tsEs.TSAnnotationType
+    | tsEs.TSTypeAnnotation
     | tsEs.TSTypeAliasDeclaration
     | tsEs.TSAsExpression
     | undefined,
@@ -696,7 +704,7 @@ function getTypeAnnotationType(
 /**
  * Converts type node to its corresponding type representation in Source.
  */
-function getAnnotatedType(typeNode: tsEs.TypeNode, context: Context, env: TypeEnvironment): Type {
+function getAnnotatedType(typeNode: tsEs.TSType, context: Context, env: TypeEnvironment): Type {
   switch (typeNode.type) {
     case 'TSFunctionType':
       const fnTypes = getParamTypes(typeNode.parameters, context, env)
@@ -737,7 +745,7 @@ function getParamTypes(params: tsEs.Identifier[], context: Context, env: TypeEnv
  * Converts node type to primitive type, adding errors to context if disallowed/unknown types are used.
  * If errors are found, returns the "any" type to prevent throwing of further errors.
  */
-function getPrimitiveType(node: tsEs.TypeKeywordNode, context: Context) {
+function getPrimitiveType(node: tsEs.TSKeywordType, context: Context) {
   const primitiveType = typeAnnotationKeywordToBasicTypeMap[node.type] ?? 'unknown'
   if (
     disallowedTypes.includes(primitiveType as TSDisallowedTypes) ||
@@ -789,10 +797,10 @@ function mergeTypes(...types: Type[]): Type {
           mergedTypes.push(type)
         }
       }
-    } else if (!containsType(mergedTypes, currType)) {
-      mergedTypes.push(currType)
     } else {
-      // Duplicate type, do nothing
+      if (!containsType(mergedTypes, currType)) {
+        mergedTypes.push(currType)
+      }
     }
   }
   if (mergedTypes.length === 1) {

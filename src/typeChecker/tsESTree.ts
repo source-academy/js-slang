@@ -104,6 +104,7 @@ export type Statement =
   | Declaration
   // Modified to add support for type syntax
   | TSAsExpression
+  | TSTypeAliasDeclaration
 
 type BaseStatement = BaseNode
 
@@ -222,7 +223,7 @@ export interface FunctionDeclaration extends BaseFunction, BaseDeclaration {
   id: Identifier | null
   body: BlockStatement
   // Added to support type syntax
-  returnType?: TSAnnotationType
+  returnType?: TSTypeAnnotation
 }
 
 export interface VariableDeclaration extends BaseDeclaration {
@@ -415,7 +416,7 @@ export interface Identifier extends BaseNode, BaseExpression, BasePattern {
   type: 'Identifier'
   name: string
   // Added to support type syntax
-  typeAnnotation?: TSAnnotationType
+  typeAnnotation?: TSTypeAnnotation
 }
 
 export type Literal = SimpleLiteral | RegExpLiteral | BigIntLiteral
@@ -507,7 +508,7 @@ export interface ArrowFunctionExpression extends BaseExpression, BaseFunction {
   expression: boolean
   body: BlockStatement | Expression
   // Added to support type syntax
-  returnType?: TSAnnotationType
+  returnType?: TSTypeAnnotation
 }
 
 export interface YieldExpression extends BaseExpression {
@@ -607,8 +608,6 @@ export type ModuleDeclaration =
   | ExportNamedDeclaration
   | ExportDefaultDeclaration
   | ExportAllDeclaration
-  // Modified to add support for type syntax
-  | TSTypeAliasDeclaration
 type BaseModuleDeclaration = BaseNode
 
 export type ModuleSpecifier =
@@ -675,7 +674,7 @@ export interface AwaitExpression extends BaseExpression {
 // Code below is added in order to support TS Nodes
 
 export type TSTypeAnnotationType =
-  | 'TSAnnotationType'
+  | 'TSTypeAnnotation'
   | 'TSFunctionType'
   | 'TSUnionType'
   | 'TSIntersectionType'
@@ -701,11 +700,8 @@ export type TSOnlyNode =
   | 'TSInterfaceDeclaration'
   | 'TSTypeReference'
 
-// All node types in a ESTree AST with TS support
-export type TSNodeType = TSTypeAnnotationType | TSTypeKeyword | TSOnlyNode
-
 export type TSNode =
-  | TSAnnotationType
+  | TSTypeAnnotation
   | TSFunctionType
   | TSUnionType
   | TSIntersectionType
@@ -714,8 +710,8 @@ export type TSNode =
   | TSAsExpression
   | TSTypeReference
 
-export type TypeNode =
-  | TypeKeywordNode
+export type TSType =
+  | TSKeywordType
   | TSFunctionType
   | TSUnionType
   | TSIntersectionType
@@ -724,29 +720,29 @@ export type TypeNode =
 
 type BaseTSNode = BaseNode
 
-export interface TypeKeywordNode extends BaseTSNode {
+export interface TSKeywordType extends BaseTSNode {
   type: TSTypeKeyword
 }
 
-export interface TSAnnotationType extends BaseTSNode {
-  type: 'TSAnnotationType'
-  typeAnnotation: TypeNode
+export interface TSTypeAnnotation extends BaseTSNode {
+  type: 'TSTypeAnnotation'
+  typeAnnotation: TSType
 }
 
 export interface TSFunctionType extends BaseTSNode {
   type: 'TSFunctionType'
   parameters: Identifier[]
-  typeAnnotation: TSAnnotationType
+  typeAnnotation: TSTypeAnnotation
 }
 
 export interface TSUnionType extends BaseTSNode {
   type: 'TSUnionType'
-  types: TypeNode[]
+  types: TSType[]
 }
 
 export interface TSIntersectionType extends BaseTSNode {
   type: 'TSIntersectionType'
-  // Remaining attributes are omitted from type as this node is disallowed
+  types: TSType[]
 }
 
 export interface TSLiteralType extends BaseTSNode {
@@ -757,18 +753,30 @@ export interface TSLiteralType extends BaseTSNode {
 export interface TSTypeAliasDeclaration extends BaseTSNode {
   type: 'TSTypeAliasDeclaration'
   id: Identifier
-  typeAnnotation: TypeNode
+  typeAnnotation: TSType
 }
 
 export interface TSInterfaceDeclaration extends BaseTSNode {
   type: 'TSInterfaceDeclaration'
-  // Remaining attributes are omitted from type as this node is disallowed
+  id: Identifier
+  body: TSInterfaceBody
+}
+
+export interface TSInterfaceBody extends BaseTSNode {
+  type: 'TSInterfaceBody'
+  body: TSPropertySignature[]
+}
+
+export interface TSPropertySignature extends BaseTSNode {
+  type: 'TSPropertySignature'
+  key: es.Identifier
+  typeAnnotation: TSTypeAnnotation
 }
 
 export interface TSAsExpression extends BaseTSNode {
   type: 'TSAsExpression'
   expression: Node
-  typeAnnotation: TypeNode
+  typeAnnotation: TSType
 }
 
 export interface TSTypeReference extends BaseTSNode {

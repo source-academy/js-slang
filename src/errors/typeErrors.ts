@@ -429,7 +429,7 @@ export class TypeNotFoundError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.TypeNode, public name: string) {}
+  constructor(public node: tsEs.TSType, public name: string) {}
 
   get location() {
     return this.node.loc!
@@ -528,7 +528,7 @@ export class TypeNotAllowedError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.TypeNode, public name: string) {}
+  constructor(public node: tsEs.TSType, public name: string) {}
 
   get location() {
     return this.node.loc!
@@ -543,7 +543,7 @@ export class TypeNotAllowedError implements SourceError {
   }
 }
 
-export class UndefinedVariable implements SourceError {
+export class UndefinedVariableTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
@@ -562,7 +562,7 @@ export class UndefinedVariable implements SourceError {
   }
 }
 
-export class InvalidNumberOfArguments implements SourceError {
+export class InvalidNumberOfArgumentsTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
   public calleeStr: string
