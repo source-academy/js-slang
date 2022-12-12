@@ -297,9 +297,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
               if (fnName === 'head') {
                 return actualType.kind === 'pair' ? actualType.headType : actualType.elementType
               }
-              return actualType.kind === 'pair'
-                ? actualType.tailType
-                : tUnion(actualType.elementType, tNull)
+              return actualType.kind === 'pair' ? actualType.tailType : actualType
             }
           }
           const fnType = lookupTypeAndRemoveForAllAndPredicateTypes(fnName, env)
@@ -719,6 +717,9 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
         hasTypeMismatchErrors(actualType.tailType, expectedType.tailType)
       )
     case 'list':
+      if (isEqual(actualType, tNull)) {
+        return false
+      }
       if (actualType.kind !== 'list') {
         return true
       }
@@ -930,6 +931,9 @@ function containsType(arr: Type[], typeToCheck: Type) {
       !hasTypeMismatchErrors(typeToCheck.headType, type.headType) &&
       !hasTypeMismatchErrors(typeToCheck.tailType, type.tailType)
     ) {
+      return true
+    }
+    if (isEqual(typeToCheck, tNull) && type.kind === 'list') {
       return true
     }
     if (
