@@ -261,6 +261,30 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       switch (callee.type) {
         case 'Identifier':
           const fnName = callee.name
+          if (context.chapter >= 2) {
+            if (fnName === 'pair') {
+              const args = node.arguments
+              if (args.length !== 2) {
+                context.errors.push(new InvalidNumberOfArgumentsTypeError(node, 2, args.length))
+                return tPair(tAny, tAny)
+              }
+              return tPair(
+                typeCheckAndReturnType(args[0], context, env),
+                typeCheckAndReturnType(args[1], context, env)
+              )
+            }
+            if (fnName === 'list') {
+              const args = node.arguments
+              if (args.length === 0) {
+                return tNull
+              }
+              let elementType = typeCheckAndReturnType(args[0], context, env)
+              for (let i = 1; i < args.length; i++) {
+                elementType = mergeTypes(elementType, typeCheckAndReturnType(args[i], context, env))
+              }
+              return tList(elementType)
+            }
+          }
           const fnType = lookupTypeAndRemoveForAllAndPredicateTypes(fnName, env)
           if (fnType) {
             if (fnType.kind !== 'function') {
@@ -670,6 +694,19 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
         return true
       }
       return actualType.value !== expectedType.value
+    case 'pair':
+      if (actualType.kind !== 'pair') {
+        return true
+      }
+      return (
+        hasTypeMismatchErrors(actualType.headType, expectedType.headType) ||
+        hasTypeMismatchErrors(actualType.tailType, expectedType.tailType)
+      )
+    case 'list':
+      if (actualType.kind !== 'list') {
+        return true
+      }
+      return hasTypeMismatchErrors(actualType.elementType, expectedType.elementType)
     default:
       return true
   }
