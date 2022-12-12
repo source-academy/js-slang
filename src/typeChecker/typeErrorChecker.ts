@@ -20,6 +20,8 @@ import {
   disallowedTypes,
   FunctionType,
   PrimitiveType,
+  reservedTypes,
+  SourceTypedReservedTypes,
   TSAllowedTypes,
   TSDisallowedTypes,
   Type,
@@ -29,6 +31,7 @@ import { TypecheckError } from './internalTypeErrors'
 import * as tsEs from './tsESTree'
 import {
   formatTypeString,
+  getTypeOverrides,
   lookupType,
   lookupTypeAlias,
   pushEnv,
@@ -36,7 +39,6 @@ import {
   setDeclKind,
   setType,
   setTypeAlias,
-  source1TypeOverrides,
   tAny,
   tBool,
   tFunc,
@@ -60,7 +62,7 @@ export function checkForTypeErrors(program: tsEs.Program, context: Context): es.
   // which might affect the type inference checker
   const env: TypeEnvironment = cloneDeep(context.typeEnvironment)
   // Override predeclared function types
-  for (const [name, type] of source1TypeOverrides) {
+  for (const [name, type] of getTypeOverrides(context.chapter)) {
     setType(name, type, env)
   }
   try {
@@ -95,7 +97,8 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
         return tUndef
       }
       if (node.value === null) {
-        // For Source 1, return any type since null literals are not allowed
+        // For Source 1, skip typecheck as null literals will be handled by the noNull rule,
+        // which is run after typechecking
         return context.chapter === Chapter.SOURCE_1 ? tAny : tNull
       }
       if (
@@ -424,8 +427,21 @@ function addTypeDeclarationsToEnvironment(
         setDeclKind(id.name, node.kind, env)
         break
       case 'TSTypeAliasDeclaration':
+        const alias = node.id.name
+        if (reservedTypes.includes(alias as SourceTypedReservedTypes)) {
+          throw new TypecheckError(
+            node,
+            `Type '${alias}' is a reserved type and cannot be redeclared`
+          )
+        }
+        if (node.typeParameters !== undefined) {
+          throw new TypecheckError(
+            node,
+            'Type parameters are not allowed for type alias declarations'
+          )
+        }
         const type = getTypeAnnotationType(node, context, env)
-        setTypeAlias(node.id.name, type, env)
+        setTypeAlias(alias, type, env)
         break
       default:
         break

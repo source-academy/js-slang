@@ -353,7 +353,7 @@ export const temporaryStreamFuncs: [string, BindableType][] = [
 
 // Prelude function type overrides for Source Typed variant
 export const source1TypeOverrides: [string, BindableType][] = [
-  // is something functions
+  // predicate functions
   ['is_boolean', tFunc(tAny, tBool)],
   ['is_number', tFunc(tAny, tBool)],
   ['is_string', tFunc(tAny, tBool)],
@@ -363,6 +363,13 @@ export const source1TypeOverrides: [string, BindableType][] = [
   ['stringify', tFunc(tAny, tString)],
   ['arity', tFunc(tAny, tNumber)],
   ['char_at', tFunc(tString, tNumber, tUnion(tString, tUndef))]
+]
+
+export const source2TypeOverrides: [string, BindableType][] = [
+  // predicate functions
+  ['is_pair', tFunc(tAny, tBool)],
+  ['is_null', tFunc(tAny, tBool)],
+  ['is_list', tFunc(tAny, tBool)]
 ]
 
 // Creates type environment for the appropriate Source chapter
@@ -384,4 +391,12 @@ export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
       typeAliasMap: new Map()
     }
   ]
+}
+
+export function getTypeOverrides(chapter: Chapter): [string, BindableType][] {
+  const typeOverrides = [...source1TypeOverrides]
+  if (chapter >= 2) {
+    typeOverrides.push(...source2TypeOverrides)
+  }
+  return typeOverrides
 }

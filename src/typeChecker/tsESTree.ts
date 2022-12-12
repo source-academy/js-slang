@@ -754,6 +754,7 @@ export interface TSTypeAliasDeclaration extends BaseTSNode {
   type: 'TSTypeAliasDeclaration'
   id: Identifier
   typeAnnotation: TSType
+  typeParameters?: TSTypeParameterInstantiation
 }
 
 export interface TSInterfaceDeclaration extends BaseTSNode {
@@ -782,4 +783,10 @@ export interface TSAsExpression extends BaseTSNode {
 export interface TSTypeReference extends BaseTSNode {
   type: 'TSTypeReference'
   typeName: Identifier
+  typeParameters: TSTypeParameterInstantiation
+}
+
+export interface TSTypeParameterInstantiation extends BaseTSNode {
+  type: 'TSTypeParameterInstantiation'
+  params: TSType[]
 }
