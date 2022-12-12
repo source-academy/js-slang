@@ -258,12 +258,12 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
     }
     case 'CallExpression': {
       const callee = node.callee
+      const args = node.arguments
       switch (callee.type) {
         case 'Identifier':
           const fnName = callee.name
           if (context.chapter >= 2) {
             if (fnName === 'pair') {
-              const args = node.arguments
               if (args.length !== 2) {
                 context.errors.push(new InvalidNumberOfArgumentsTypeError(node, 2, args.length))
                 return tPair(tAny, tAny)
@@ -274,7 +274,6 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
               )
             }
             if (fnName === 'list') {
-              const args = node.arguments
               if (args.length === 0) {
                 return tNull
               }
@@ -283,6 +282,24 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
                 elementType = mergeTypes(elementType, typeCheckAndReturnType(args[i], context, env))
               }
               return tList(elementType)
+            }
+            if (fnName === 'head' || fnName === 'tail') {
+              if (args.length !== 1) {
+                context.errors.push(new InvalidNumberOfArgumentsTypeError(node, 1, args.length))
+                return tAny
+              }
+              const actualType = typeCheckAndReturnType(args[0], context, env)
+              const expectedType = tUnion(tPair(tAny, tAny), tList(tAny))
+              checkForTypeMismatch(node, actualType, expectedType, context)
+              if (actualType.kind !== 'pair' && actualType.kind !== 'list') {
+                return tAny
+              }
+              if (fnName === 'head') {
+                return actualType.kind === 'pair' ? actualType.headType : actualType.elementType
+              }
+              return actualType.kind === 'pair'
+                ? actualType.tailType
+                : tUnion(actualType.elementType, tNull)
             }
           }
           const fnType = lookupTypeAndRemoveForAllAndPredicateTypes(fnName, env)
@@ -312,7 +329,6 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
           const arrowFnType = typeCheckAndReturnArrowFunctionType(callee, context, env)
           // Check argument types before returning return type of arrow fn
           const expectedTypes = arrowFnType.parameterTypes
-          const args = node.arguments
           if (args.length !== expectedTypes.length) {
             context.errors.push(
               new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
@@ -907,6 +923,21 @@ function containsType(arr: Type[], typeToCheck: Type) {
       if (type.kind === 'literal' && typeToCheck.value === type.value) {
         return true
       }
+    }
+    if (
+      typeToCheck.kind === 'pair' &&
+      type.kind === 'pair' &&
+      !hasTypeMismatchErrors(typeToCheck.headType, type.headType) &&
+      !hasTypeMismatchErrors(typeToCheck.tailType, type.tailType)
+    ) {
+      return true
+    }
+    if (
+      typeToCheck.kind === 'list' &&
+      type.kind === 'list' &&
+      !hasTypeMismatchErrors(typeToCheck.elementType, type.elementType)
+    ) {
+      return true
     }
     // If checking literal against primitive, check by type
     if (
