@@ -318,10 +318,6 @@ export const disallowedTypes = ['bigint', 'never', 'object', 'symbol', 'unknown'
 
 export type TSDisallowedTypes = typeof disallowedTypes[number]
 
-export const reservedTypes = ['Pair', 'List'] as const
-
-export type SourceTypedReservedTypes = typeof reservedTypes[number]
-
 // All types recognised by type parser as basic types
 export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes
 

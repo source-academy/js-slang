@@ -116,6 +116,10 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
         return `"${type.value.toString()}"`
       }
       return type.value.toString()
+    case 'pair':
+      return `Pair<${formatTypeString(type.headType)}, ${formatTypeString(type.tailType)}>`
+    case 'list':
+      return `List<${formatTypeString(type.elementType)}>`
     default:
       return type.kind
   }

@@ -4,6 +4,7 @@ import { cloneDeep, isEqual } from 'lodash'
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
   FunctionShouldHaveReturnValueError,
+  IncorrectNumberOfTypeArgumentsError,
   InvalidNumberOfArgumentsTypeError,
   NoExplicitAnyError,
   TypecastError,
@@ -20,8 +21,6 @@ import {
   disallowedTypes,
   FunctionType,
   PrimitiveType,
-  reservedTypes,
-  SourceTypedReservedTypes,
   TSAllowedTypes,
   TSDisallowedTypes,
   Type,
@@ -42,9 +41,11 @@ import {
   tAny,
   tBool,
   tFunc,
+  tList,
   tLiteral,
   tNull,
   tNumber,
+  tPair,
   tPrimitive,
   tString,
   tUndef,
@@ -428,7 +429,7 @@ function addTypeDeclarationsToEnvironment(
         break
       case 'TSTypeAliasDeclaration':
         const alias = node.id.name
-        if (reservedTypes.includes(alias as SourceTypedReservedTypes)) {
+        if (context.chapter >= 2 && (alias === 'Pair' || alias === 'List')) {
           throw new TypecheckError(
             node,
             `Type '${alias}' is a reserved type and cannot be redeclared`
@@ -741,10 +742,35 @@ function getAnnotatedType(typeNode: tsEs.TSType, context: Context, env: TypeEnvi
     case 'TSIntersectionType':
       throw new TypecheckError(typeNode, 'Intersection types are not allowed')
     case 'TSTypeReference':
-      const declaredType = lookupTypeAlias(typeNode.typeName.name, env)
+      const name = typeNode.typeName.name
+      if (context.chapter >= 2) {
+        if (name === 'Pair') {
+          if (!typeNode.typeParameters || typeNode.typeParameters.params.length !== 2) {
+            context.errors.push(new IncorrectNumberOfTypeArgumentsError(typeNode, name, 2))
+            return tPair(tAny, tAny)
+          }
+          const typeParams = typeNode.typeParameters.params
+          return tPair(
+            getAnnotatedType(typeParams[0], context, env),
+            getAnnotatedType(typeParams[1], context, env)
+          )
+        }
+        if (name === 'List') {
+          if (!typeNode.typeParameters || typeNode.typeParameters.params.length !== 1) {
+            context.errors.push(new IncorrectNumberOfTypeArgumentsError(typeNode, name, 1))
+            return tList(tAny)
+          }
+          const typeParams = typeNode.typeParameters.params
+          return tList(getAnnotatedType(typeParams[0], context, env))
+        }
+      }
+      const declaredType = lookupTypeAlias(name, env)
       if (!declaredType) {
-        context.errors.push(new TypeNotFoundError(typeNode, typeNode.typeName.name))
+        context.errors.push(new TypeNotFoundError(typeNode, name))
         return tAny
+      }
+      if (typeNode.typeParameters !== undefined) {
+        throw new TypecheckError(typeNode, `Type '${name}' should not have type parameters`)
       }
       return declaredType
     default:
