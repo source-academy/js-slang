@@ -15,6 +15,7 @@ import {
 } from '../errors/typeErrors'
 import { memoizedGetModuleManifest } from '../modules/moduleLoader'
 import {
+  Chapter,
   Context,
   disallowedTypes,
   FunctionType,
@@ -40,6 +41,7 @@ import {
   tBool,
   tFunc,
   tLiteral,
+  tNull,
   tNumber,
   tPrimitive,
   tString,
@@ -93,8 +95,8 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
         return tUndef
       }
       if (node.value === null) {
-        // TODO: Handle null literal types for Source 2 and above
-        return tAny
+        // For Source 1, return any type since null literals are not allowed
+        return context.chapter === Chapter.SOURCE_1 ? tAny : tNull
       }
       if (
         typeof node.value !== 'string' &&

@@ -10,7 +10,7 @@ beforeEach(() => {
 })
 
 describe('basic types', () => {
-  it('does not throw errors for allowed primitive types', () => {
+  it('does not throw errors for allowed basic types', () => {
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: boolean = true;
@@ -22,7 +22,7 @@ describe('basic types', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 
-  it('throws errors for disallowed primitive types', () => {
+  it('throws errors for disallowed basic types', () => {
     const code = `const x1: unknown = 1;
       const x2: never = 1;
       const x3: bigint = 1;

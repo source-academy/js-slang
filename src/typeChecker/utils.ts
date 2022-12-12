@@ -181,6 +181,7 @@ export const tNumber = tPrimitive('number')
 export const tString = tPrimitive('string')
 export const tUndef = tPrimitive('undefined')
 export const tVoid = tPrimitive('void')
+export const tNull = tPrimitive('null')
 
 export function tFunc(...types: Type[]): FunctionType {
   const parameterTypes = types.slice(0, -1)
