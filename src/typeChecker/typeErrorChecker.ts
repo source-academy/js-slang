@@ -870,6 +870,7 @@ function lookupTypeAndRemoveForAllAndPredicateTypes(
   if (type.kind === 'forall') {
     // Skip typecheck as function has variable number of arguments;
     // this only occurs for certain prelude functions
+    // TODO: Add support for ForAll type to type error checker
     return tAny
   }
   if (type.kind === 'predicate') {
