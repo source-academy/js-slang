@@ -171,6 +171,8 @@ export function evaluateUnaryExpression(operator: UnaryOperator, value: any) {
     return !value
   } else if (operator === '-') {
     return -value
+  } else if (operator === 'typeof') {
+    return typeof value
   } else {
     return +value
   }

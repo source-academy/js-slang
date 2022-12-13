@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
+import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
 
 export class NoNullError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -23,7 +23,7 @@ export class NoNullError implements SourceError {
 
 const noNull: Rule<es.Literal> = {
   name: 'no-null',
-  disableOn: 2,
+  disableFromChapter: Chapter.SOURCE_2,
   checkers: {
     Literal(node: es.Literal, ancestors: [es.Node]) {
       if (node.value === null) {

@@ -4,7 +4,12 @@ import * as es from 'estree'
 import { parseError, runInContext } from '../../index'
 import { mockContext } from '../../mocks/context'
 import { parse as __parse } from '../../parser/parser'
-import { Chapter, Context, TypeAnnotatedFuncDecl, TypeAnnotatedNode } from '../../types'
+import {
+  Chapter,
+  Context,
+  FuncDeclWithInferredTypeAnnotation,
+  NodeWithInferredType
+} from '../../types'
 import { typeToString } from '../../utils/stringify'
 import { validateAndAnnotate } from '../../validator/validator'
 import { typeCheck } from '../typeChecker'
@@ -18,32 +23,28 @@ function parseAndTypeCheck(code: string, chapterOrContext: Chapter | Context = C
   return typeCheck(validatedProgram, context)
 }
 
-function topLevelTypesToString(program: TypeAnnotatedNode<es.Program>) {
+function topLevelTypesToString(program: NodeWithInferredType<es.Program>) {
   return program.body
     .filter(node => ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type))
-    .map(
-      (
-        node: TypeAnnotatedNode<es.VariableDeclaration> | TypeAnnotatedNode<es.FunctionDeclaration>
-      ) => {
-        const id =
-          node.type === 'VariableDeclaration'
-            ? (node.declarations[0].id as es.Identifier).name
-            : node.id?.name!
-        const actualNode =
-          node.type === 'VariableDeclaration'
-            ? (node.declarations[0].init! as TypeAnnotatedNode<es.Node>)
-            : node
-        const type =
-          actualNode.typability === 'Untypable'
-            ? "Couldn't infer type"
-            : typeToString(
-                actualNode.type === 'FunctionDeclaration'
-                  ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
-                  : actualNode.inferredType!
-              )
-        return `${id}: ${type}`
-      }
-    )
+    .map((node: NodeWithInferredType<es.VariableDeclaration | es.FunctionDeclaration>) => {
+      const id =
+        node.type === 'VariableDeclaration'
+          ? (node.declarations[0].id as es.Identifier).name
+          : node.id?.name!
+      const actualNode =
+        node.type === 'VariableDeclaration'
+          ? (node.declarations[0].init! as NodeWithInferredType<es.Node>)
+          : node
+      const type =
+        actualNode.typability === 'Untypable'
+          ? "Couldn't infer type"
+          : typeToString(
+              actualNode.type === 'FunctionDeclaration'
+                ? (actualNode as FuncDeclWithInferredTypeAnnotation).functionInferredType!
+                : actualNode.inferredType!
+            )
+      return `${id}: ${type}`
+    })
     .join('\n')
 }
 

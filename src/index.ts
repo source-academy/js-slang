@@ -13,12 +13,12 @@ import {
   Error as ResultError,
   ExecutionMethod,
   Finished,
+  FuncDeclWithInferredTypeAnnotation,
   ModuleContext,
+  NodeWithInferredType,
   Result,
   SourceError,
   SVMProgram,
-  TypeAnnotatedFuncDecl,
-  TypeAnnotatedNode,
   Variant
 } from './types'
 import { findNodeAt } from './utils/walkers'
@@ -214,7 +214,7 @@ export function getTypeInformation(
     }
 
     // get name of the node
-    const getName = (typedNode: TypeAnnotatedNode<es.Node>) => {
+    const getName = (typedNode: NodeWithInferredType<es.Node>) => {
       let nodeId = ''
       if (typedNode.type) {
         if (typedNode.type === 'FunctionDeclaration') {
@@ -229,7 +229,7 @@ export function getTypeInformation(
     }
 
     // callback function for findNodeAt function
-    function findByLocationPredicate(t: string, nd: TypeAnnotatedNode<es.Node>) {
+    function findByLocationPredicate(t: string, nd: NodeWithInferredType<es.Node>) {
       if (!nd.inferredType) {
         return false
       }
@@ -258,7 +258,7 @@ export function getTypeInformation(
       return ans
     }
 
-    const node: TypeAnnotatedNode<es.Node> = res.node
+    const node: NodeWithInferredType<es.Node> = res.node
 
     if (node === undefined) {
       return ans
@@ -266,11 +266,11 @@ export function getTypeInformation(
 
     const actualNode =
       node.type === 'VariableDeclaration'
-        ? (node.declarations[0].init! as TypeAnnotatedNode<es.Node>)
+        ? (node.declarations[0].init! as NodeWithInferredType<es.Node>)
         : node
     const type = typeToString(
       actualNode.type === 'FunctionDeclaration'
-        ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
+        ? (actualNode as FuncDeclWithInferredTypeAnnotation).functionInferredType!
         : actualNode.inferredType!
     )
     return ans + `At Line ${loc.line} => ${getName(node)}: ${type}`

@@ -1,7 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
+import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
 
 const mutableDeclarators = ['let', 'var']
 
@@ -31,7 +31,7 @@ export class NoDeclareMutableError implements SourceError {
 
 const noDeclareMutable: Rule<es.VariableDeclaration> = {
   name: 'no-declare-mutable',
-  disableOn: 3,
+  disableFromChapter: Chapter.SOURCE_3,
 
   checkers: {
     VariableDeclaration(node: es.VariableDeclaration, ancestors: [es.Node]) {

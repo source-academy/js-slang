@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
+import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
 
 export class NoDotAbbreviationError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -25,7 +25,7 @@ export class NoDotAbbreviationError implements SourceError {
 const noDotAbbreviation: Rule<es.MemberExpression> = {
   name: 'no-dot-abbreviation',
 
-  disableOn: 100,
+  disableFromChapter: Chapter.LIBRARY_PARSER,
 
   checkers: {
     MemberExpression(node: es.MemberExpression, ancestors: [es.Node]) {

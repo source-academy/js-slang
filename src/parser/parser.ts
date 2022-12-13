@@ -1,4 +1,5 @@
 /* tslint:disable:max-classes-per-file */
+import { parse as babelParse } from '@babel/parser'
 import {
   Options as AcornOptions,
   parse as acornParse,
@@ -10,12 +11,15 @@ import { parse as acornLooseParse } from 'acorn-loose'
 import * as es from 'estree'
 
 import { ACORN_PARSE_OPTIONS } from '../constants'
-import { Context, ErrorSeverity, ErrorType, Rule, SourceError } from '../types'
+import * as tsEs from '../typeChecker/tsESTree'
+import { checkForTypeErrors } from '../typeChecker/typeErrorChecker'
+import { Context, ErrorSeverity, ErrorType, Rule, SourceError, Variant } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { ancestor, AncestorWalkerFn } from '../utils/walkers'
 import { validateAndAnnotate } from '../validator/validator'
 import rules from './rules'
 import syntaxBlacklist from './syntaxBlacklist'
+import TypeParser from './typeParser'
 
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -115,7 +119,28 @@ export function parseAt(source: string, num: number) {
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
-    program = acornParse(source, createAcornParserOptions(context)) as unknown as es.Program
+    if (context.variant === Variant.TYPED) {
+      // The code is first parsed using the custom TypeParser (Acorn parser with plugin that allows for parsing of TS syntax)
+      // in order to catch syntax errors such as no semicolon/trailing comma.
+      TypeParser.parse(source, createAcornParserOptions(context))
+
+      // The code is then parsed using Babel Parser to successfully parse all type syntax.
+      // This is a workaround as the custom TypeParser does not cover all type annotation cases needed for Source Typed
+      // and the Babel Parser does not allow for no semicolon/trailing comma errors when parsing.
+      // The final type is casted to a cloned version of esTree AST type that supports type syntax.
+      // Babel types are not used as the babel AST is different from the esTree AST,
+      // and though the 'estree' plugin is used here to revert the changes, the changes are not reflected in the types.
+      const typedProgram = babelParse(source, {
+        sourceType: 'module',
+        plugins: ['typescript', 'estree']
+      }).program as unknown as tsEs.Program
+
+      // Checks for type errors, then removes any TS-related nodes as they are not compatible with acorn-walk.
+      program = checkForTypeErrors(typedProgram, context)
+    } else {
+      program = acornParse(source, createAcornParserOptions(context)) as unknown as es.Program
+    }
+
     ancestor(program as es.Node, walkers, undefined, context)
   } catch (error) {
     if (error instanceof SyntaxError) {
@@ -239,7 +264,10 @@ function createWalkers(
       const checker = pair[1]
       const oldCheck = newWalkers.get(syntax)!
       const newCheck = (node: es.Node, context: Context, ancestors: es.Node[]) => {
-        if (typeof rule.disableOn !== 'undefined' && context.chapter >= rule.disableOn) {
+        if (rule.disableFromChapter && context.chapter >= rule.disableFromChapter) {
+          return
+        }
+        if (rule.disableForVariants && rule.disableForVariants.includes(context.variant)) {
           return
         }
         const errors = checker(node, ancestors)
