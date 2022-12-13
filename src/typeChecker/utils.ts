@@ -67,9 +67,8 @@ export function lookupDeclKind(
 
 export function lookupTypeAlias(name: string, env: TypeEnvironment): Type | undefined {
   for (let i = env.length - 1; i >= 0; i--) {
-    const currEnv = env[i]
-    if (currEnv.typeAliasMap && currEnv.typeAliasMap.has(name)) {
-      return currEnv.typeAliasMap.get(name)
+    if (env[i].typeAliasMap.has(name)) {
+      return env[i].typeAliasMap.get(name)
     }
   }
   return undefined
@@ -84,11 +83,7 @@ export function setDeclKind(name: string, kind: AllowedDeclarations, env: TypeEn
 }
 
 export function setTypeAlias(name: string, type: Type, env: TypeEnvironment): void {
-  const currEnv = env[env.length - 1]
-  if (!currEnv.typeAliasMap) {
-    currEnv.typeAliasMap = new Map()
-  }
-  currEnv.typeAliasMap.set(name, type)
+  env[env.length - 1].typeAliasMap.set(name, type)
 }
 
 export function pushEnv(env: TypeEnvironment): void {

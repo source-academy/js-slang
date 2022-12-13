@@ -836,7 +836,11 @@ const tsPlugin = (BaseParser: any) => {
         params.push(this._parseTSType())
       }
       if (this._isEndOfTypeParameters()) {
-        this.next() // > or >>
+        if (this.value.length > 1) {
+          this.value = this.value.slice(1) // Fix to allow chaining of type parameters
+        } else {
+          this.next() // >
+        }
       }
       node.params = params
       return this.finishNode(node, 'TSTypeParameterInstantiation')
