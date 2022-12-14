@@ -251,49 +251,24 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       return tUndef
     }
     case 'CallExpression': {
-      const callee = node.callee
-      switch (callee.type) {
-        case 'Identifier':
-          const fnName = callee.name
-          const fnType = lookupTypeAndRemoveForAllAndPredicateTypes(fnName, env)
-          if (fnType) {
-            if (fnType.kind !== 'function') {
-              if (fnType.kind !== 'primitive' || fnType.name !== 'any') {
-                context.errors.push(new TypeNotCallableError(node, fnName))
-              }
-              return tAny
-            }
-            // Check argument types before returning declared return type
-            const expectedTypes = fnType.parameterTypes
-            const args = node.arguments
-            if (args.length !== expectedTypes.length) {
-              context.errors.push(
-                new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
-              )
-              return fnType.returnType
-            }
-            checkArgTypes(node, expectedTypes, context, env)
-            return fnType.returnType
-          } else {
-            context.errors.push(new UndefinedVariableTypeError(node, fnName))
-            return tAny
-          }
-        case 'ArrowFunctionExpression':
-          const arrowFnType = typeCheckAndReturnArrowFunctionType(callee, context, env)
-          // Check argument types before returning return type of arrow fn
-          const expectedTypes = arrowFnType.parameterTypes
-          const args = node.arguments
-          if (args.length !== expectedTypes.length) {
-            context.errors.push(
-              new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
-            )
-            return arrowFnType.returnType
-          }
-          checkArgTypes(node, expectedTypes, context, env)
-          return arrowFnType.returnType
-        default:
-          throw new TypecheckError(node, 'Unknown callee type')
+      const calleeType = typeCheckAndReturnType(node.callee, context, env)
+      if (calleeType.kind !== 'function') {
+        if (calleeType.kind !== 'primitive' || calleeType.name !== 'any') {
+          context.errors.push(new TypeNotCallableError(node, formatTypeString(calleeType)))
+        }
+        return tAny
       }
+      // Check argument types before returning declared return type
+      const expectedTypes = calleeType.parameterTypes
+      const args = node.arguments
+      if (args.length !== expectedTypes.length) {
+        context.errors.push(
+          new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
+        )
+        return calleeType.returnType
+      }
+      checkArgTypes(node, expectedTypes, context, env)
+      return calleeType.returnType
     }
     case 'ReturnStatement': {
       if (!node.argument) {
