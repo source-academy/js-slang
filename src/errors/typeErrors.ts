@@ -467,14 +467,14 @@ export class TypeNotCallableError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.CallExpression, public name: string) {}
+  constructor(public node: tsEs.CallExpression, public typeName: string) {}
 
   get location() {
     return this.node.loc!
   }
 
   public explain() {
-    return `'${this.name}' is not callable.`
+    return `Type '${this.typeName}' is not callable.`
   }
 
   public elaborate() {
