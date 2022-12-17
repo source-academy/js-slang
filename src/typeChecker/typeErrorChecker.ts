@@ -281,7 +281,14 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
               for (let i = 1; i < args.length; i++) {
                 elementType = mergeTypes(elementType, typeCheckAndReturnType(args[i], context, env))
               }
-              return tList(elementType)
+              let pairType = tPair(
+                typeCheckAndReturnType(args[args.length - 1], context, env),
+                tNull
+              )
+              for (let i = args.length - 2; i >= 0; i--) {
+                pairType = tPair(typeCheckAndReturnType(args[i], context, env), pairType)
+              }
+              return tList(elementType, pairType)
             }
             if (fnName === 'head' || fnName === 'tail') {
               if (args.length !== 1) {
@@ -709,6 +716,15 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
       }
       return actualType.value !== expectedType.value
     case 'pair':
+      if (actualType.kind === 'list') {
+        if (actualType.typeAsPair !== undefined) {
+          return hasTypeMismatchErrors(actualType.typeAsPair, expectedType)
+        }
+        return (
+          hasTypeMismatchErrors(actualType.elementType, expectedType.headType) ||
+          hasTypeMismatchErrors(actualType, expectedType.tailType)
+        )
+      }
       if (actualType.kind !== 'pair') {
         return true
       }
@@ -719,6 +735,15 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
     case 'list':
       if (isEqual(actualType, tNull)) {
         return false
+      }
+      if (actualType.kind === 'pair') {
+        if (expectedType.typeAsPair !== undefined) {
+          return hasTypeMismatchErrors(actualType, expectedType.typeAsPair)
+        }
+        return (
+          hasTypeMismatchErrors(actualType.headType, expectedType.elementType) ||
+          hasTypeMismatchErrors(actualType.tailType, expectedType)
+        )
       }
       if (actualType.kind !== 'list') {
         return true

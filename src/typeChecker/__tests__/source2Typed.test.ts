@@ -57,6 +57,15 @@ describe('pair', () => {
       Line 3: Expected 2 arguments, but got 3."
     `)
   })
+
+  it('lists are pairs', () => {
+    const code = `const x1: Pair<number, null> = list(1);
+      const x2: Pair<number, Pair<string, null>> = list(1, '2');
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
 })
 
 describe('list', () => {
@@ -77,6 +86,16 @@ describe('list', () => {
       Line 4: Type 'number' is not assignable to type 'List<number>'.
       Line 5: Type 'List<number | string>' is not assignable to type 'List<number>'."
     `)
+  })
+
+  it('pair with list as tail type is considered a list', () => {
+    const code = `const x1: List<number> = pair(1, null);
+      const x2: List<number | string> = pair(1, pair('1', null));
+      const x3: List<number | string> = pair(1, list('1'));
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 })
 

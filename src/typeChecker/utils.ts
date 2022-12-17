@@ -117,9 +117,12 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
       }
       return type.value.toString()
     case 'pair':
-      return `Pair<${formatTypeString(type.headType)}, ${formatTypeString(type.tailType)}>`
+      return `Pair<${formatTypeString(type.headType, formatAsLiteral)}, ${formatTypeString(
+        type.tailType,
+        formatAsLiteral
+      )}>`
     case 'list':
-      return `List<${formatTypeString(type.elementType)}>`
+      return `List<${formatTypeString(type.elementType, formatAsLiteral)}>`
     default:
       return type.kind
   }
@@ -158,10 +161,11 @@ export function tPair(var1: Type, var2: Type): Pair {
   }
 }
 
-export function tList(var1: Type): List {
+export function tList(var1: Type, typeAsPair?: Pair): List {
   return {
     kind: 'list',
-    elementType: var1
+    elementType: var1,
+    typeAsPair
   }
 }
 

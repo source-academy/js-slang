@@ -384,6 +384,7 @@ export interface FunctionType {
 export interface List {
   kind: 'list'
   elementType: Type
+  typeAsPair?: Pair
 }
 
 export interface Pair {
