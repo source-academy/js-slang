@@ -362,7 +362,7 @@ export const temporaryStreamFuncs: [string, BindableType][] = [
 // Prelude function type overrides for Source Typed variant
 export const source1TypeOverrides: [string, BindableType][] = [
   // math functions
-  // TODO: Add support for ForAll type to type error checker
+  // TODO: Add support for type checking of functions with variable no. of args
   ['math_hypot', tForAll(tNumber)],
   ['math_max', tForAll(tNumber)],
   ['math_min', tForAll(tNumber)],
@@ -370,35 +370,29 @@ export const source1TypeOverrides: [string, BindableType][] = [
   ['stringify', tFunc(tAny, tString)],
   ['arity', tFunc(tAny, tNumber)],
   ['char_at', tFunc(tString, tNumber, tUnion(tString, tUndef))],
-  // TODO: Add support for ForAll type to type error checker
+  // TODO: Add support for type checking of functions with variable no. of args
   ['display', tForAll(tAny)],
   ['error', tForAll(tAny)]
 ]
 
 export const source2TypeOverrides: [string, BindableType][] = [
-  // pair/list functions
-  // TODO: Add support for ForAll type to type error checker
-  ['pair', tForAll(tFunc(headType, tailType, tPair(headType, tailType)))],
-  ['list', tForAll(tAny)],
-  ['head', tForAll(tFunc(tPair(headType, tailType), headType))],
-  ['tail', tForAll(tFunc(tPair(headType, tailType), tailType))],
   // list library functions
-  ['accumulate', tFunc(tAny, tAny, tAny, tAny)],
-  ['append', tFunc(tAny, tAny, tAny)],
-  ['build_list', tFunc(tAny, tNumber, tList(tAny))],
+  ['accumulate', tFunc(tFunc(tAny, tAny, tAny), tAny, tList(tAny), tAny)],
+  ['append', tFunc(tList(tAny), tList(tAny), tList(tAny))],
+  ['build_list', tFunc(tFunc(tAny, tAny), tNumber, tList(tAny))],
   ['enum_list', tFunc(tNumber, tNumber, tList(tNumber))],
-  ['filter', tFunc(tAny, tList(tAny), tList(tAny))],
-  ['for_each', tFunc(tAny, tList(tAny), tBool)],
+  ['filter', tFunc(tFunc(tAny, tAny), tList(tAny), tList(tAny))],
+  ['for_each', tFunc(tFunc(tAny, tAny), tList(tAny), tBool)],
   ['length', tFunc(tList(tAny), tNumber)],
   ['list_ref', tFunc(tList(tAny), tNumber, tAny)],
   ['list_to_string', tFunc(tList(tAny), tString)],
-  ['map', tFunc(tAny, tList(tAny), tList(tAny))],
+  ['map', tFunc(tFunc(tAny, tAny), tList(tAny), tList(tAny))],
   ['member', tFunc(tAny, tList(tAny), tList(tAny))],
   ['remove', tFunc(tAny, tList(tAny), tList(tAny))],
   ['remove_all', tFunc(tAny, tList(tAny), tList(tAny))],
   ['reverse', tFunc(tList(tAny), tList(tAny))],
   // misc functions
-  // TODO: Add support for ForAll type to type checker
+  // TODO: Add support for type checking of functions with variable no. of args
   ['display_list', tForAll(tAny)],
   ['draw_data', tForAll(tAny)],
   ['equal', tFunc(tAny, tAny, tBool)]
