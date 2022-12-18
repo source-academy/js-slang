@@ -384,6 +384,7 @@ export interface FunctionType {
 export interface List {
   kind: 'list'
   elementType: Type
+  // Used in Source Typed variants to check for type mismatches against pairs
   typeAsPair?: Pair
 }
 

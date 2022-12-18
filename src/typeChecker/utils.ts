@@ -165,6 +165,7 @@ export function tList(var1: Type, typeAsPair?: Pair): List {
   return {
     kind: 'list',
     elementType: var1,
+    // Used in Source Typed variants to check for type mismatches against pairs
     typeAsPair
   }
 }

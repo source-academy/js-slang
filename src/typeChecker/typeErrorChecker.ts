@@ -260,6 +260,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       const callee = node.callee
       const args = node.arguments
       if (context.chapter >= 2 && callee.type === 'Identifier') {
+        // Special functions for Source 2+: pair, list, head, tail
         const fnName = callee.name
         if (fnName === 'pair') {
           if (args.length !== 2) {
@@ -275,10 +276,12 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
           if (args.length === 0) {
             return tNull
           }
+          // Element type is union of all types of arguments in list
           let elementType = typeCheckAndReturnType(args[0], context, env)
           for (let i = 1; i < args.length; i++) {
             elementType = mergeTypes(elementType, typeCheckAndReturnType(args[i], context, env))
           }
+          // Type the list as a pair, for use when checking for type mismatches against pairs
           let pairType = tPair(typeCheckAndReturnType(args[args.length - 1], context, env), tNull)
           for (let i = args.length - 2; i >= 0; i--) {
             pairType = tPair(typeCheckAndReturnType(args[i], context, env), pairType)
@@ -291,15 +294,21 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
             return tAny
           }
           const actualType = typeCheckAndReturnType(args[0], context, env)
+          // Argument should be either a pair or a list
           const expectedType = tUnion(tPair(tAny, tAny), tList(tAny))
+          const numErrors = context.errors.length
           checkForTypeMismatch(node, actualType, expectedType, context)
-          if (actualType.kind !== 'pair' && actualType.kind !== 'list') {
+          if (context.errors.length > numErrors) {
+            // If errors were found, return any type
             return tAny
           }
-          if (fnName === 'head') {
-            return actualType.kind === 'pair' ? actualType.headType : actualType.elementType
+          if (actualType.kind === 'pair') {
+            return fnName === 'head' ? actualType.headType : actualType.tailType
           }
-          return actualType.kind === 'pair' ? actualType.tailType : actualType
+          if (actualType.kind === 'list') {
+            return fnName === 'head' ? actualType.elementType : actualType
+          }
+          return actualType
         }
       }
       const calleeType = typeCheckAndReturnType(callee, context, env)
@@ -691,9 +700,12 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
       return actualType.value !== expectedType.value
     case 'pair':
       if (actualType.kind === 'list') {
+        // Special case, as lists are pairs
         if (actualType.typeAsPair !== undefined) {
+          // If pair representation of list is present, check against pair type
           return hasTypeMismatchErrors(actualType.typeAsPair, expectedType)
         }
+        // Head of pair should match list element type; tail of pair should match list type
         return (
           hasTypeMismatchErrors(actualType.elementType, expectedType.headType) ||
           hasTypeMismatchErrors(actualType, expectedType.tailType)
@@ -708,12 +720,16 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
       )
     case 'list':
       if (isEqual(actualType, tNull)) {
+        // Null matches against any list type as null is empty list
         return false
       }
       if (actualType.kind === 'pair') {
+        // Special case, as pairs can be lists
         if (expectedType.typeAsPair !== undefined) {
+          // If pair representation of list is present, check against pair type
           return hasTypeMismatchErrors(actualType, expectedType.typeAsPair)
         }
+        // Head of pair should match list element type; tail of pair should match list type
         return (
           hasTypeMismatchErrors(actualType.headType, expectedType.elementType) ||
           hasTypeMismatchErrors(actualType.tailType, expectedType)
@@ -797,6 +813,7 @@ function getAnnotatedType(typeNode: tsEs.TSType, context: Context, env: TypeEnvi
     case 'TSTypeReference':
       const name = typeNode.typeName.name
       if (context.chapter >= 2) {
+        // Special types for Source 2+: Pair, List
         if (name === 'Pair') {
           if (!typeNode.typeParameters || typeNode.typeParameters.params.length !== 2) {
             context.errors.push(new IncorrectNumberOfTypeArgumentsError(typeNode, name, 2))
@@ -912,43 +929,7 @@ function mergeTypes(...types: Type[]): Type {
  */
 function containsType(arr: Type[], typeToCheck: Type) {
   for (const type of arr) {
-    if (isEqual(type, typeToCheck)) {
-      return true
-    }
-    if (typeToCheck.kind === 'primitive') {
-      // If both types are primitives, ignore values
-      if (type.kind === 'primitive' && typeToCheck.name === type.name) {
-        return true
-      }
-      // If checking primitive against literal, check by value
-      if (type.kind === 'literal' && typeToCheck.value === type.value) {
-        return true
-      }
-    }
-    if (
-      typeToCheck.kind === 'pair' &&
-      type.kind === 'pair' &&
-      !hasTypeMismatchErrors(typeToCheck.headType, type.headType) &&
-      !hasTypeMismatchErrors(typeToCheck.tailType, type.tailType)
-    ) {
-      return true
-    }
-    if (isEqual(typeToCheck, tNull) && type.kind === 'list') {
-      return true
-    }
-    if (
-      typeToCheck.kind === 'list' &&
-      type.kind === 'list' &&
-      !hasTypeMismatchErrors(typeToCheck.elementType, type.elementType)
-    ) {
-      return true
-    }
-    // If checking literal against primitive, check by type
-    if (
-      typeToCheck.kind === 'literal' &&
-      type.kind === 'primitive' &&
-      typeof typeToCheck.value === type.name
-    ) {
+    if (!hasTypeMismatchErrors(typeToCheck, type)) {
       return true
     }
   }
