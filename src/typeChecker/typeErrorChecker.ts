@@ -259,92 +259,66 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
     case 'CallExpression': {
       const callee = node.callee
       const args = node.arguments
-      switch (callee.type) {
-        case 'Identifier':
-          const fnName = callee.name
-          if (context.chapter >= 2) {
-            if (fnName === 'pair') {
-              if (args.length !== 2) {
-                context.errors.push(new InvalidNumberOfArgumentsTypeError(node, 2, args.length))
-                return tPair(tAny, tAny)
-              }
-              return tPair(
-                typeCheckAndReturnType(args[0], context, env),
-                typeCheckAndReturnType(args[1], context, env)
-              )
-            }
-            if (fnName === 'list') {
-              if (args.length === 0) {
-                return tNull
-              }
-              let elementType = typeCheckAndReturnType(args[0], context, env)
-              for (let i = 1; i < args.length; i++) {
-                elementType = mergeTypes(elementType, typeCheckAndReturnType(args[i], context, env))
-              }
-              let pairType = tPair(
-                typeCheckAndReturnType(args[args.length - 1], context, env),
-                tNull
-              )
-              for (let i = args.length - 2; i >= 0; i--) {
-                pairType = tPair(typeCheckAndReturnType(args[i], context, env), pairType)
-              }
-              return tList(elementType, pairType)
-            }
-            if (fnName === 'head' || fnName === 'tail') {
-              if (args.length !== 1) {
-                context.errors.push(new InvalidNumberOfArgumentsTypeError(node, 1, args.length))
-                return tAny
-              }
-              const actualType = typeCheckAndReturnType(args[0], context, env)
-              const expectedType = tUnion(tPair(tAny, tAny), tList(tAny))
-              checkForTypeMismatch(node, actualType, expectedType, context)
-              if (actualType.kind !== 'pair' && actualType.kind !== 'list') {
-                return tAny
-              }
-              if (fnName === 'head') {
-                return actualType.kind === 'pair' ? actualType.headType : actualType.elementType
-              }
-              return actualType.kind === 'pair' ? actualType.tailType : actualType
-            }
+      if (context.chapter >= 2 && callee.type === 'Identifier') {
+        const fnName = callee.name
+        if (fnName === 'pair') {
+          if (args.length !== 2) {
+            context.errors.push(new InvalidNumberOfArgumentsTypeError(node, 2, args.length))
+            return tPair(tAny, tAny)
           }
-          const fnType = lookupTypeAndRemoveForAllAndPredicateTypes(fnName, env)
-          if (fnType) {
-            if (fnType.kind !== 'function') {
-              if (fnType.kind !== 'primitive' || fnType.name !== 'any') {
-                context.errors.push(new TypeNotCallableError(node, fnName))
-              }
-              return tAny
-            }
-            // Check argument types before returning declared return type
-            const expectedTypes = fnType.parameterTypes
-            const args = node.arguments
-            if (args.length !== expectedTypes.length) {
-              context.errors.push(
-                new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
-              )
-              return fnType.returnType
-            }
-            checkArgTypes(node, expectedTypes, context, env)
-            return fnType.returnType
-          } else {
-            context.errors.push(new UndefinedVariableTypeError(node, fnName))
+          return tPair(
+            typeCheckAndReturnType(args[0], context, env),
+            typeCheckAndReturnType(args[1], context, env)
+          )
+        }
+        if (fnName === 'list') {
+          if (args.length === 0) {
+            return tNull
+          }
+          let elementType = typeCheckAndReturnType(args[0], context, env)
+          for (let i = 1; i < args.length; i++) {
+            elementType = mergeTypes(elementType, typeCheckAndReturnType(args[i], context, env))
+          }
+          let pairType = tPair(typeCheckAndReturnType(args[args.length - 1], context, env), tNull)
+          for (let i = args.length - 2; i >= 0; i--) {
+            pairType = tPair(typeCheckAndReturnType(args[i], context, env), pairType)
+          }
+          return tList(elementType, pairType)
+        }
+        if (fnName === 'head' || fnName === 'tail') {
+          if (args.length !== 1) {
+            context.errors.push(new InvalidNumberOfArgumentsTypeError(node, 1, args.length))
             return tAny
           }
-        case 'ArrowFunctionExpression':
-          const arrowFnType = typeCheckAndReturnArrowFunctionType(callee, context, env)
-          // Check argument types before returning return type of arrow fn
-          const expectedTypes = arrowFnType.parameterTypes
-          if (args.length !== expectedTypes.length) {
-            context.errors.push(
-              new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
-            )
-            return arrowFnType.returnType
+          const actualType = typeCheckAndReturnType(args[0], context, env)
+          const expectedType = tUnion(tPair(tAny, tAny), tList(tAny))
+          checkForTypeMismatch(node, actualType, expectedType, context)
+          if (actualType.kind !== 'pair' && actualType.kind !== 'list') {
+            return tAny
           }
-          checkArgTypes(node, expectedTypes, context, env)
-          return arrowFnType.returnType
-        default:
-          throw new TypecheckError(node, 'Unknown callee type')
+          if (fnName === 'head') {
+            return actualType.kind === 'pair' ? actualType.headType : actualType.elementType
+          }
+          return actualType.kind === 'pair' ? actualType.tailType : actualType
+        }
       }
+      const calleeType = typeCheckAndReturnType(callee, context, env)
+      if (calleeType.kind !== 'function') {
+        if (calleeType.kind !== 'primitive' || calleeType.name !== 'any') {
+          context.errors.push(new TypeNotCallableError(node, formatTypeString(calleeType)))
+        }
+        return tAny
+      }
+      // Check argument types before returning declared return type
+      const expectedTypes = calleeType.parameterTypes
+      if (args.length !== expectedTypes.length) {
+        context.errors.push(
+          new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
+        )
+        return calleeType.returnType
+      }
+      checkArgTypes(node, expectedTypes, context, env)
+      return calleeType.returnType
     }
     case 'ReturnStatement': {
       if (!node.argument) {

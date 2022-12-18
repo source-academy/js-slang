@@ -46,7 +46,9 @@ describe('basic types', () => {
     `
 
     parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 2: 'x1' is not callable."`)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 2: Type 'number' is not callable."`
+    )
   })
 
   it('throws error for null type', () => {
@@ -208,6 +210,22 @@ describe('function types', () => {
       Line 7: Expected 2 arguments, but got 3."
     `)
   })
+
+  it('gets types of higher order functions correct', () => {
+    const code = `const make_adder: (x: number) => (y: number) => number = x => y => x + y;
+      const x1 = make_adder(1)(2); // no error
+      const x2 = make_adder('1')(2); // error
+      const x3 = make_adder(1)('2'); // error
+      const x4: string = make_adder(1)(2); // error
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 3: Type 'string' is not assignable to type 'number'.
+      Line 4: Type 'string' is not assignable to type 'number'.
+      Line 5: Type 'number' is not assignable to type 'string'."
+    `)
+  })
 })
 
 describe('function declarations', () => {
@@ -290,6 +308,27 @@ describe('function declarations', () => {
       Line 9: Type 'string' is not assignable to type 'number'."
     `)
   })
+
+  it('handles higher order functions', () => {
+    const code = `function make_adder(x: number): (y: number) => number {
+        function sum(y: number): number {
+          return x + y;
+        }
+        return sum;
+      }
+      const x1 = make_adder(1)(2); // no error
+      const x2 = make_adder('1')(2); // error
+      const x3 = make_adder(1)('2'); // error
+      const x4: string = make_adder(1)(2); // error
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 8: Type 'string' is not assignable to type 'number'.
+      Line 9: Type 'string' is not assignable to type 'number'.
+      Line 10: Type 'number' is not assignable to type 'string'."
+    `)
+  })
 })
 
 describe('arrow functions', () => {
@@ -348,6 +387,21 @@ describe('arrow functions', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Type 'number' is not assignable to type 'string'.
       Line 4: Type 'string' is not assignable to type 'number'."
+    `)
+  })
+
+  it('gets types of higher order functions correct', () => {
+    const code = `const x1 = ((x: number): (y: number) => number => y => x + y)(1)(2); // no error
+      const x2 = ((x: number): (y: number) => number => y => x + y)('1')(2); // error
+      const x3 = ((x: number): (y: number) => number => y => x + y)(1)('2'); // error
+      const x4: string = ((x: number): (y: number) => number => y => x + y)(1)(2); // error
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 2: Type 'string' is not assignable to type 'number'.
+      Line 3: Type 'string' is not assignable to type 'number'.
+      Line 4: Type 'number' is not assignable to type 'string'."
     `)
   })
 })
