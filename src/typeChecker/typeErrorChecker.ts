@@ -4,7 +4,7 @@ import { cloneDeep, isEqual } from 'lodash'
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
   FunctionShouldHaveReturnValueError,
-  IncorrectNumberOfTypeArgumentsError,
+  InvalidNumberOfTypeArgumentsForGenericTypeError,
   InvalidNumberOfArgumentsTypeError,
   NoExplicitAnyError,
   TypecastError,
@@ -261,6 +261,10 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       const args = node.arguments
       if (context.chapter >= 2 && callee.type === 'Identifier') {
         // Special functions for Source 2+: pair, list, head, tail
+        // Pairs and lists are data structures, but since code is not evaluated when type-checking,
+        // we can only get the types of pairs and lists by looking at the pair and list function calls.
+        // The typical way of getting the return type of call expressions is insufficient to type pairs and lists,
+        // hence these functions are handled separately.
         const fnName = callee.name
         if (fnName === 'pair') {
           if (args.length !== 2) {
@@ -306,7 +310,14 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
             return fnName === 'head' ? actualType.headType : actualType.tailType
           }
           if (actualType.kind === 'list') {
-            return fnName === 'head' ? actualType.elementType : actualType
+            return fnName === 'head'
+              ? actualType.elementType
+              : tList(
+                  actualType.elementType,
+                  actualType.typeAsPair && actualType.typeAsPair.tailType.kind === 'pair'
+                    ? actualType.typeAsPair.tailType
+                    : undefined
+                )
           }
           return actualType
         }
@@ -738,6 +749,9 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
       if (actualType.kind !== 'list') {
         return true
       }
+      if (actualType.typeAsPair !== undefined) {
+        return hasTypeMismatchErrors(actualType.typeAsPair, expectedType)
+      }
       return hasTypeMismatchErrors(actualType.elementType, expectedType.elementType)
     default:
       return true
@@ -816,7 +830,9 @@ function getAnnotatedType(typeNode: tsEs.TSType, context: Context, env: TypeEnvi
         // Special types for Source 2+: Pair, List
         if (name === 'Pair') {
           if (!typeNode.typeParameters || typeNode.typeParameters.params.length !== 2) {
-            context.errors.push(new IncorrectNumberOfTypeArgumentsError(typeNode, name, 2))
+            context.errors.push(
+              new InvalidNumberOfTypeArgumentsForGenericTypeError(typeNode, name, 2)
+            )
             return tPair(tAny, tAny)
           }
           const typeParams = typeNode.typeParameters.params
@@ -827,7 +843,9 @@ function getAnnotatedType(typeNode: tsEs.TSType, context: Context, env: TypeEnvi
         }
         if (name === 'List') {
           if (!typeNode.typeParameters || typeNode.typeParameters.params.length !== 1) {
-            context.errors.push(new IncorrectNumberOfTypeArgumentsError(typeNode, name, 1))
+            context.errors.push(
+              new InvalidNumberOfTypeArgumentsForGenericTypeError(typeNode, name, 1)
+            )
             return tList(tAny)
           }
           const typeParams = typeNode.typeParameters.params

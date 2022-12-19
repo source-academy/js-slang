@@ -58,13 +58,16 @@ describe('pair', () => {
     `)
   })
 
-  it('lists are pairs', () => {
+  it('lists (except null) are pairs', () => {
     const code = `const x1: Pair<number, null> = list(1);
       const x2: Pair<number, Pair<string, null>> = list(1, '2');
+      const x3: Pair<number, null> = null;
     `
 
     parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 3: Type 'null' is not assignable to type 'Pair<number, null>'."`
+    )
   })
 })
 
@@ -77,6 +80,7 @@ describe('list', () => {
       const x5: List<number> = list(1, '2'); // error
       const x6: List<number | string> = list(1, '2'); // no error
       const x7: List<number, string> = list(1, '2'); // error
+      const x8: List<null> = list(null, null); // no error
     `
 
     parse(code, context)
@@ -177,20 +181,19 @@ describe('tail', () => {
     )
   })
 
-  it('return type for list is same as original list', () => {
+  it('return type for list is tail type of list', () => {
     const code = `const x1: List<number> = list(1, 2);
     const x2: List<string> = list('1', '2');
     const x3: List<string | number> = list('1', 2);
     const x4: List<number> = tail(x1); // no error
     const x5: List<string> = tail(x2); // no error
-    const x6: List<number> = tail(list('1', 2)); // error
+    const x6: List<number> = tail(list('1', 2)); // no error
     const x7: List<string> = tail(x3); // error
     `
 
     parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 6: Type 'List<string | number>' is not assignable to type 'List<number>'.
-      Line 7: Type 'List<string | number>' is not assignable to type 'List<string>'."
-    `)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 7: Type 'List<string | number>' is not assignable to type 'List<string>'."`
+    )
   })
 })

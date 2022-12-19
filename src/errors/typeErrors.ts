@@ -594,7 +594,7 @@ export class InvalidNumberOfArgumentsTypeError implements SourceError {
   }
 }
 
-export class IncorrectNumberOfTypeArgumentsError implements SourceError {
+export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
   public calleeStr: string
