@@ -69,6 +69,15 @@ describe('pair', () => {
       `"Line 3: Type 'null' is not assignable to type 'Pair<number, null>'."`
     )
   })
+
+  it('type alias with the same name cannot be declared', () => {
+    const code = 'type Pair = string;'
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 1: Type alias name cannot be 'Pair'."`
+    )
+  })
 })
 
 describe('list', () => {
@@ -100,6 +109,15 @@ describe('list', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('type alias with the same name cannot be declared', () => {
+    const code = 'type List = string;'
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 1: Type alias name cannot be 'List'."`
+    )
   })
 })
 

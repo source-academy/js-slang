@@ -4,9 +4,10 @@ import { cloneDeep, isEqual } from 'lodash'
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
   FunctionShouldHaveReturnValueError,
-  InvalidNumberOfTypeArgumentsForGenericTypeError,
   InvalidNumberOfArgumentsTypeError,
+  InvalidNumberOfTypeArgumentsForGenericTypeError,
   NoExplicitAnyError,
+  TypeAliasNameNotAllowedError,
   TypecastError,
   TypeMismatchError,
   TypeNotAllowedError,
@@ -22,6 +23,7 @@ import {
   FunctionType,
   PrimitiveType,
   TSAllowedTypes,
+  TSBasicType,
   TSDisallowedTypes,
   Type,
   TypeEnvironment
@@ -467,18 +469,20 @@ function addTypeDeclarationsToEnvironment(
         setDeclKind(id.name, node.kind, env)
         break
       case 'TSTypeAliasDeclaration':
-        const alias = node.id.name
-        if (context.chapter >= 2 && (alias === 'Pair' || alias === 'List')) {
-          throw new TypecheckError(
-            node,
-            `Type '${alias}' is a reserved type and cannot be redeclared`
-          )
-        }
         if (node.typeParameters !== undefined) {
           throw new TypecheckError(
             node,
             'Type parameters are not allowed for type alias declarations'
           )
+        }
+        const alias = node.id.name
+        if (Object.values(typeAnnotationKeywordToBasicTypeMap).includes(alias as TSBasicType)) {
+          context.errors.push(new TypeAliasNameNotAllowedError(node, alias))
+          break
+        }
+        if (context.chapter >= 2 && (alias === 'Pair' || alias === 'List')) {
+          context.errors.push(new TypeAliasNameNotAllowedError(node, alias))
+          break
         }
         const type = getTypeAnnotationType(node, context, env)
         setTypeAlias(alias, type, env)

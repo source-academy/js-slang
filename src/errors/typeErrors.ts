@@ -613,3 +613,23 @@ export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceEr
     return this.explain()
   }
 }
+
+export class TypeAliasNameNotAllowedError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  public calleeStr: string
+
+  constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type alias name cannot be '${this.name}'.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}

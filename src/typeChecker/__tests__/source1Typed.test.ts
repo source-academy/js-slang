@@ -451,6 +451,31 @@ describe('type aliases', () => {
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
+
+  it('should throw errors for reserved types', () => {
+    const code = `type string = number;
+      type number = string;
+      type boolean = number;
+      type undefined = number;
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 1: Type alias name cannot be 'string'.
+      Line 2: Type alias name cannot be 'number'.
+      Line 3: Type alias name cannot be 'boolean'.
+      Line 4: Type alias name cannot be 'undefined'."
+    `)
+  })
+
+  it('should not throw errors for types that are not introduced yet', () => {
+    const code = `type Pair = number;
+      type List = string;
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
 })
 
 describe('typecasting', () => {
