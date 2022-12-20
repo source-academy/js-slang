@@ -134,6 +134,7 @@ export function parse(source: string, context: Context) {
         sourceType: 'module',
         plugins: ['typescript', 'estree']
       }).program as unknown as tsEs.Program
+      console.log(typedProgram)
 
       // Checks for type errors, then removes any TS-related nodes as they are not compatible with acorn-walk.
       program = checkForTypeErrors(typedProgram, context)

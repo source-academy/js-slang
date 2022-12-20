@@ -41,6 +41,7 @@ import {
   setType,
   setTypeAlias,
   tAny,
+  tArray,
   tBool,
   tFunc,
   tList,
@@ -305,7 +306,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
           const numErrors = context.errors.length
           checkForTypeMismatch(node, actualType, expectedType, context)
           if (context.errors.length > numErrors) {
-            // If errors were found, return any type
+            // If errors were found, return "any" type
             return tAny
           }
           if (actualType.kind === 'pair') {
@@ -342,6 +343,17 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       checkArgTypes(node, expectedTypes, context, env)
       return calleeType.returnType
     }
+    case 'ArrayExpression':
+      // Casting is safe here as Source disallows use of spread elements and holes in arrays
+      const elements = node.elements as Exclude<
+        tsEs.ArrayExpression['elements'][0],
+        tsEs.SpreadElement | null
+      >[]
+      if (elements.length === 0) {
+        return tArray(tAny)
+      }
+      const elementTypes = elements.map(elem => typeCheckAndReturnType(elem, context, env))
+      return tArray(mergeTypes(...elementTypes))
     case 'ReturnStatement': {
       if (!node.argument) {
         // Skip typecheck as unspecified literals will be handled by the noImplicitReturnUndefined rule,
@@ -757,6 +769,11 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
         return hasTypeMismatchErrors(actualType.typeAsPair, expectedType)
       }
       return hasTypeMismatchErrors(actualType.elementType, expectedType.elementType)
+    case 'array':
+      if (actualType.kind !== 'array') {
+        return true
+      }
+      return hasTypeMismatchErrors(actualType.elementType, expectedType.elementType)
     default:
       return true
   }
@@ -817,15 +834,17 @@ function getAnnotatedType(typeNode: tsEs.TSType, context: Context, env: TypeEnvi
       // Return type will always be last item in types array
       fnTypes.push(getTypeAnnotationType(typeNode.typeAnnotation, context, env))
       return tFunc(...fnTypes)
-    case 'TSUnionType':
-      const unionTypes = typeNode.types.map(node => getAnnotatedType(node, context, env))
-      return mergeTypes(...unionTypes)
     case 'TSLiteralType':
       const value = typeNode.literal.value
       if (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean') {
         throw new TypecheckError(typeNode, 'Unknown literal type')
       }
       return tLiteral(value)
+    case 'TSArrayType':
+      return tArray(getAnnotatedType(typeNode.elementType, context, env))
+    case 'TSUnionType':
+      const unionTypes = typeNode.types.map(node => getAnnotatedType(node, context, env))
+      return mergeTypes(...unionTypes)
     case 'TSIntersectionType':
       throw new TypecheckError(typeNode, 'Intersection types are not allowed')
     case 'TSTypeReference':
@@ -865,8 +884,10 @@ function getAnnotatedType(typeNode: tsEs.TSType, context: Context, env: TypeEnvi
         throw new TypecheckError(typeNode, `Type '${name}' should not have type parameters`)
       }
       return declaredType
+    case 'TSParenthesizedType':
+      return getAnnotatedType(typeNode.typeAnnotation, context, env)
     default:
-      return getPrimitiveType(typeNode, context)
+      return getBasicType(typeNode, context)
   }
 }
 
@@ -878,19 +899,19 @@ function getParamTypes(params: tsEs.Identifier[], context: Context, env: TypeEnv
 }
 
 /**
- * Converts node type to primitive type, adding errors to context if disallowed/unknown types are used.
+ * Converts node type to basic type, adding errors to context if disallowed/unknown types are used.
  * If errors are found, returns the "any" type to prevent throwing of further errors.
  */
-function getPrimitiveType(node: tsEs.TSKeywordType, context: Context) {
-  const primitiveType = typeAnnotationKeywordToBasicTypeMap[node.type] ?? 'unknown'
+function getBasicType(node: tsEs.TSKeywordType, context: Context) {
+  const basicType = typeAnnotationKeywordToBasicTypeMap[node.type] ?? 'unknown'
   if (
-    disallowedTypes.includes(primitiveType as TSDisallowedTypes) ||
-    (context.chapter === 1 && primitiveType === 'null')
+    disallowedTypes.includes(basicType as TSDisallowedTypes) ||
+    (context.chapter === 1 && basicType === 'null')
   ) {
-    context.errors.push(new TypeNotAllowedError(node, primitiveType))
+    context.errors.push(new TypeNotAllowedError(node, basicType))
     return tAny
   }
-  return tPrimitive(primitiveType as PrimitiveType | TSAllowedTypes)
+  return tPrimitive(basicType as PrimitiveType | TSAllowedTypes)
 }
 
 /**

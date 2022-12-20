@@ -123,6 +123,11 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
       )}>`
     case 'list':
       return `List<${formatTypeString(type.elementType, formatAsLiteral)}>`
+    case 'array':
+      const elementTypeString = formatTypeString(type.elementType, formatAsLiteral)
+      return elementTypeString.includes('|') || elementTypeString.includes('=>')
+        ? `(${elementTypeString})[]`
+        : `${elementTypeString}[]`
     default:
       return type.kind
   }
