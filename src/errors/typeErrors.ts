@@ -633,3 +633,43 @@ export class TypeAliasNameNotAllowedError implements SourceError {
     return this.explain()
   }
 }
+
+export class InvalidIndexTypeError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  public calleeStr: string
+
+  constructor(public node: tsEs.MemberExpression, public typeName: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.typeName}' cannot be used as an index type.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class InvalidArrayAccessError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  public calleeStr: string
+
+  constructor(public node: tsEs.MemberExpression, public typeName: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.typeName}' cannot be accessed as it is not an array.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}

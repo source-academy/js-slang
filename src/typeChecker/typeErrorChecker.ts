@@ -4,6 +4,8 @@ import { cloneDeep, isEqual } from 'lodash'
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
   FunctionShouldHaveReturnValueError,
+  InvalidArrayAccessError,
+  InvalidIndexTypeError,
   InvalidNumberOfArgumentsTypeError,
   InvalidNumberOfTypeArgumentsForGenericTypeError,
   NoExplicitAnyError,
@@ -354,6 +356,17 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       }
       const elementTypes = elements.map(elem => typeCheckAndReturnType(elem, context, env))
       return tArray(mergeTypes(...elementTypes))
+    case 'MemberExpression':
+      const indexType = typeCheckAndReturnType(node.property, context, env)
+      const objectType = typeCheckAndReturnType(node.object, context, env)
+      if (hasTypeMismatchErrors(indexType, tNumber)) {
+        context.errors.push(new InvalidIndexTypeError(node, formatTypeString(indexType, true)))
+      }
+      if (objectType.kind !== 'array') {
+        context.errors.push(new InvalidArrayAccessError(node, formatTypeString(objectType)))
+        return tAny
+      }
+      return objectType.elementType
     case 'ReturnStatement': {
       if (!node.argument) {
         // Skip typecheck as unspecified literals will be handled by the noImplicitReturnUndefined rule,
@@ -1052,6 +1065,16 @@ function removeTSNodes(node: tsEs.Node): any {
       }
       return node
     }
+    case 'ArrayExpression':
+      // Casting is safe here as Source disallows use of spread elements and holes in arrays
+      node.elements = (
+        node.elements as Exclude<tsEs.ArrayExpression['elements'][0], tsEs.SpreadElement | null>[]
+      ).map(removeTSNodes)
+      return node
+    case 'MemberExpression':
+      node.property = removeTSNodes(node.property)
+      node.object = removeTSNodes(node.object)
+      return node
     case 'TSAsExpression':
       // Remove wrapper node
       return removeTSNodes(node.expression)
