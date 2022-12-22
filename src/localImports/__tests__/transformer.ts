@@ -47,6 +47,7 @@ describe('transformImportedFile', () => {
     const expectedCode = `function ${iifeIdentifier}() {
         const square = x => x * x;
         const x = 42;
+        return list();
       }
     `
 
