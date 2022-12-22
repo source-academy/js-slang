@@ -39,7 +39,7 @@ beforeEach(() => {
 })
 
 describe('transformImportedFile', () => {
-  it('wraps the entire file in a FunctionDeclaration', () => {
+  it('wraps the program body in a FunctionDeclaration', () => {
     const iifeIdentifier = 'importedFile'
     const actualCode = `const square = x => x * x;
       const x = 42;
@@ -56,7 +56,11 @@ describe('transformImportedFile', () => {
     if (actualProgram === undefined || expectedProgram === undefined) {
       throw parseError
     }
-    const transformedProgram = transformImportedFile(actualProgram, iifeIdentifier)
-    expect(stripLocationInfo(transformedProgram)).toEqual(stripLocationInfo(expectedProgram))
+    const actualFunctionDeclaration = transformImportedFile(actualProgram, iifeIdentifier)
+    const expectedFunctionDeclaration = expectedProgram.body[0]
+    expect(expectedFunctionDeclaration.type).toEqual('FunctionDeclaration')
+    expect(stripLocationInfo(actualFunctionDeclaration)).toEqual(
+      stripLocationInfo(expectedFunctionDeclaration)
+    )
   })
 })
