@@ -38,63 +38,6 @@ This allows names to be explicitly typed, and for type checks to be performed.
 
 Support for \texttt{typeof} operations is also added to Source \S 1 Typed.
 
-\subsection{Types}
-
-The following types are introduced in Source \S 1 Typed:
-
-\noindent
-\[
-\Rule{}{\Number\ \type}
-\qquad
-\Rule{}{\Bool\ \type}
-\qquad
-\Rule{}{\String\ \type}
-\qquad
-\Rule{}{\Undefined\ \type}
-\]
-\noindent
-\[
-\Rule{}{\Void\ \type}
-\qquad
-\Rule{}{\Any\ \type}
-\qquad
-\Rule{}{\textit{literal}\ \type}
-\]
-\noindent
-\[
-\Rule{t_1\ \type \quad \cdots\quad t_n\ \type\quad t\ \type}{(t_1, \ldots t_n) \rightarrow t\ \type\ (\textit{function type})}
-\qquad
-\Rule{t_1\ \type \quad \cdots\quad t_n\ \type}{t_1\ |\ \ldots\ |\ t_n\ \type\ (\textit{union type})}
-\]
-
-\noindent
-where $n \geq 1$. The symbols $t_i$ in the rules above are meta-variables that stand for types.
-
-The $\Number$, $\Bool$, $\String$ and $\Undefined$ types are introduced for each of
-the primitive expressions available in Source \S 1. Additionally, two special types are introduced:
-the $\Void$ type is used specifically to indicate the return type of a function that does not return,
-while the $\Any$ type is used to annotate names that can take on any type (type-checking for such names will be skipped).
-These six types are collectively known as \emph{basic types}.
-
-Literal types are types for specific number, boolean or string values
-(e.g. \texttt{1}, \texttt{true}, \texttt{'2'}).
-
-Function types are used to indicate the argument type(s) as well as return type of a function,
-while union types are used to indicate a combination of types.
-
-\subsection{Type Syntax}
-
-Source \S 1 Typed supports the following type syntax:
-
-\begin{itemize}
-\item Type annotations: Used to explicitly assign a type to a name. Type annotations are optional;
-names that are declared without accompanying type annotations are assumed to be of the $\Any$ type during typechecking.
-\item Type alias declarations: Used to declare new types on top of the basic types,
-which can then be used in the rest of the program. Note that names for types are independent of names for variables and functions;
-a type and a variable with the same name can coexist in the same program.
-\item As expressions: Used to cast the type of a name to a subset of its original type.
-\end{itemize}
-
 \subsection{Type Environment}
 
 In order to keep track of the type of names in a program, we define a
@@ -183,6 +126,9 @@ $\Gamma_{-1}$
 & $[$ & \texttt{math\_log} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_log1p} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_log2} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& \end{tabular}
+
+\begin{tabular}[fragile]{lllllllll}
 & $[$ & \texttt{math\_LOG2E} & $\leftarrow$  & $\Number$ & & & $]$ \\
 & $[$ & \texttt{math\_log10} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_LOG10E} & $\leftarrow$  & $\Number$ & & & $]$ \\
@@ -244,58 +190,6 @@ To perform type checking on the program, typing relations are applied to every s
 Note that a name that is declared to be of type $t$ will always refer to values of a type $t'$ such that $t' \subseteq t$ at runtime.
 Names that do not have a type declared will be assumed to have the $any$ type; the $any$ type will not ever produce any type errors.
 
-\subsubsection{Notation}
-
-In order to simplify the type relations, the following notation is used.
-
-Function declaration statements of the form
-%
-\[ \Fun\ f \Lp x_1,\cdots, x_n\Rp\ \Lc\ S\ \Rc \]
-%
-\noindent
-are treated as abbreviations for constant declaration statements of the form
-%
-\[ \Const\ f\ \texttt{=}\ \Lp x_1,\cdots, x_n\Rp\ \texttt{=>}\ \Lc\ S\ \Rc \texttt{;} \]
-%
-function definitions of the form 
-%
-\[ \Lp x_1,\cdots, x_n\Rp\ \texttt{=>}\ E \]
-%
-\noindent
-are treated as abbreviations for the following
-%
-\[ \Lp x_1,\cdots, x_n\Rp\ \texttt{=>}\ \Lc\ \Return\ E\ \texttt{;}\ \Rc \]
-%
-conditional statements of the form 
-\begin{lstlisting}
-if (x1) {
-    const x = 1;    
-} else if (x2) {
-    const y = 3;
-} else if (x3) {
-    const a = 3;
-} else {
-    const b = 3;
-}
-\end{lstlisting}
-\noindent
-are treated as abbreviations for the following
-\begin{lstlisting}
-if (x1) {
-    const x = 1;    
-} else {
-    if (x2) {
-        const y = 3;
-    } else {
-        if (x3) {
-            const a = 3;
-        } else {
-            const b = 3;
-        }
-    }
-}
-\end{lstlisting}
-
 \subsubsection{Typing Relations on Expressions}
 
 The derived type of primitive expressions is their literal type, which is always a subtype of its corresponding basic type.
@@ -318,7 +212,7 @@ where $n$ denotes any literal number and $s$ denotes any literal string.
 \]
 \noindent
 
-For all other names, the type must be derived from the type environment.
+For names, the type must be derived from the type environment.
 
 \noindent
 \[
@@ -326,7 +220,7 @@ For all other names, the type must be derived from the type environment.
 \]
 \noindent
 
-For function applications (including binary and unary operators), the following two type rules are used, depending on the type of $E_0$.
+For function applications (including applications of binary and unary operators), the following two type rules are used, depending on the type of $E_0$.
 
 \noindent
 \[
@@ -338,6 +232,7 @@ For function applications (including binary and unary operators), the following 
   \Rule{\Gamma \vdash E_0 : \Any \quad \Gamma \vdash E_1 : t'_1, \ldots,  \Gamma \vdash E_n : t'_n
   \quad (\forall 1 \leq i \leq n)(t'_i \subseteq \Any)}{\Gamma \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : \Any}
 \]
+\noindent
 
 The type of the operator must be a function type with the right number of parameters,
 and the type of every argument must be a subtype of the corresponding parameter type of the function type.
@@ -352,17 +247,26 @@ The type of the lambda expression is then the function type with the declared ty
 
 \noindent
 \[
-  \Rule{\Gamma, x_1 : t_1, \cdots, x_n : t_n \vdash S : t' \quad t' \subseteq t \vee t' = \Any}{
+  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad \Gamma' \vdash S : t' \quad t' \subseteq t \vee t' = \Any}{
     \Gamma \vdash ( \Lp  x_1:\ t_1, \ldots, x_n:\ t_n \Rp :\ t\ \texttt{=>}\ \Lc\ S\ \Rc) : (t_1, \ldots, t_n) \rightarrow t}  
 \]
 \noindent
 
-For as expressions, the type to cast the expression to must be a subtype of the type of the expression.
-We impose a special rule that the type must not be cast to $\Any$.
+The type of a conditional expression is the union of the type of its consequent expression and its alternate expression.
+The predicate expression of a conditional expression must be a subtype of a boolean.
 
 \noindent
 \[
-  \Rule{\Gamma \vdash E : t' \quad t \subseteq t' \quad t \neq \Any}{\Gamma \vdash (E\ \texttt{as}\ t) : t}  
+  \Rule{\Gamma \vdash E_{pred} : t_{pred} \quad \Gamma \vdash E_{cons} : t_{cons} \quad \Gamma \vdash E_{alt} : t_{alt}
+    \quad t_{pred} \subseteq \Bool \vee t_{pred} = \Any}{\Gamma \vdash (E_{pred}\ \texttt{?}\ E_{cons} : E_{alt}) : t_{cons}\ |\ t_{alt}}
+\]
+\noindent
+
+For as expressions, the type to cast the expression to must be a subtype of the type of the expression.
+
+\noindent
+\[
+  \Rule{\Gamma \vdash E : t' \quad t \subseteq t'}{\Gamma \vdash (E\ \texttt{as}\ t) : t}  
 \]
 \noindent
 
@@ -373,41 +277,75 @@ As type syntax is optional, if the type annotation for $x$ absent, the declared 
 The derived type of the expression $E$ must be a subtype of the type declared for name $x$.
 The type of the constant declaration statement itself is $\Undefined$.
 
+\noindent
 \[
-  \Rule{\Gamma, x : t \vdash E : t' \quad t' \subseteq t \vee t' = \Any}{
+  \Rule{\Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t' \quad t' \subseteq t \vee t' = \Any}{
     \Gamma \vdash (\texttt{const}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
 \]
+\noindent
 
 For type alias declarations, the declared type of $x$, $t$, is added to the type environment.
 The type of the type alias declaration itself is $\Undefined$.
 
+\noindent
 \[
-  \Rule{\Gamma, x : t}{\Gamma \vdash (\texttt{type}\ x = t\texttt{;}) : \Undefined}
+  \Rule{\Gamma [x \leftarrow t] \Gamma'}{\Gamma \vdash (\texttt{type}\ x = t\texttt{;}) : \Undefined}
 \]
+\noindent
 
-The type of a return statement is the type of the expression in the statement,
-while the type of an expression statement is $\Undefined$ regardless of the type of the expression in the statement.
+The type of return statements and expression statements is the type of the expression in the statement.
 
+\noindent
 \[
   \Rule{\Gamma \vdash E : t}{\Gamma \vdash (\texttt{return}\ E\texttt{;}) : t}
   \quad
-  \Rule{\Gamma \vdash E : t}{\Gamma \vdash (E\texttt{;}) : \Undefined}
+  \Rule{\Gamma \vdash E : t}{\Gamma \vdash (E\texttt{;}) : t}
 \]
+\noindent
 
-The type of a block is the type of the last statement in the block. We assume that
-whenever there is a return statement or a conditional statement with a return statement within a
-sequence, it is the last statement in the sequence.
-(One could consider a ``dead code'' error otherwise.)
+For blocks, $\Gamma$ is first extended to include the types of names declared in the block.
+Then, the component statements are checked against the extended type environment.
 
+We assume that whenever there is a return statement or a conditional statement with a return statement within a
+block, it is the last statement in the block. (One could consider a ``dead code'' error otherwise.)
+
+The type of a function body block is the type of the return statement in the block.
+If the block does not contain any return statements, the type is $\Undefined$.
+
+\noindent
 \[
-  \Rule{\Gamma \vdash S_1 : t_1, \ldots, \Gamma \vdash S_n : t_n}{\Gamma \vdash \{S_1, \ldots, S_n\} : t_n}
+  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
+    \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is a return statement}}{
+    \Gamma \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
+    S_1, \ldots, S_n\} : t'_n}
 \]
+\noindent
+\[
+  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
+    \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is not a return statement}}{
+    \Gamma \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
+    S_1, \ldots, S_n\} : \Undefined}
+\]
+\noindent
+
+The type of a block outside of function bodies is the type of the last value-producing statement in the block.
+
+\noindent
+\[
+  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
+    \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is the last value-producing statement}}{
+    \Gamma \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
+    S_1, \ldots, S_n\} : t'_n}
+\]
+\noindent
 
 The type of a conditional statement or if statement is the union of the type of its consequent statement and its alternate statement.
 The predicate expression of a conditional statement must be a subtype of a boolean.
 
+\noindent
 \[
   \Rule{\Gamma \vdash S_{pred} : t_{pred} \quad \Gamma \vdash S_{cons} : t_{cons} \quad \Gamma \vdash S_{alt} : t_{alt}
     \quad t_{pred} \subseteq \Bool \vee t_{pred} = \Any}{\Gamma \vdash (\texttt{if}\ (S_{pred})\ \{\ S_{cons}\ \}\
     \texttt{else}\ \{\ S_{alt}\ \}) : t_{cons}\ |\ t_{alt}}
 \]
+\noindent
