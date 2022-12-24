@@ -6,10 +6,6 @@ import { Chapter } from '../../types'
 import { full } from '../../utils/walkers'
 import { transformImportedFile } from '../transformer'
 
-let actualContext = mockContext(Chapter.SOURCE_2)
-let expectedContext = mockContext(Chapter.SOURCE_2)
-const parseError = new Error('Unable to parse code')
-
 // This test suite only cares about the structure of the transformed AST.
 // The line & column numbers, as well as the character offsets of each node in
 // the ASTs derived from parsing the pre-transform code & the equivalent
@@ -33,14 +29,18 @@ const stripLocationInfo = (node: es.Node): es.Node => {
   return node
 }
 
-beforeEach(() => {
-  actualContext = mockContext(Chapter.SOURCE_2)
-  expectedContext = mockContext(Chapter.SOURCE_2)
-})
-
 describe('transformImportedFile', () => {
+  const iifeIdentifier = 'importedFile'
+  const parseError = new Error('Unable to parse code')
+  let actualContext = mockContext(Chapter.SOURCE_2)
+  let expectedContext = mockContext(Chapter.SOURCE_2)
+
+  beforeEach(() => {
+    actualContext = mockContext(Chapter.SOURCE_2)
+    expectedContext = mockContext(Chapter.SOURCE_2)
+  })
+
   it('wraps the program body in a FunctionDeclaration', () => {
-    const iifeIdentifier = 'importedFile'
     const actualCode = `const square = x => x * x;
       const x = 42;
     `
