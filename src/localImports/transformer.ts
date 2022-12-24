@@ -66,6 +66,10 @@ const getExportedNames = (nodes: es.ModuleDeclaration[]): string[] => {
             break
           }
           exportedNames.push(exportedName)
+        } else {
+          node.specifiers.forEach((node: es.ExportSpecifier): void => {
+            exportedNames.push(node.local.name)
+          })
         }
         break
     }

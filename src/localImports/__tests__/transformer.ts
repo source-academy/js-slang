@@ -133,4 +133,24 @@ describe('transformImportedFile', () => {
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
   })
+
+  it('returns all exported names in {}-notation', () => {
+    const actualCode = `const x = 42;
+      function id(x) {
+        return x;
+      }
+      const square = x => x * x;
+      export { x, id, square };
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        const x = 42;
+        function id(x) {
+          return x;
+        }
+        const square = x => x * x;
+        return list(pair("x", x), pair("id", id), pair("square", square));
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
 })
