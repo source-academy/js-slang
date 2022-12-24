@@ -839,35 +839,6 @@ Object {
 }
 `;
 
-exports[`no export constant - verbose: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "\\"enable verbose\\";
-export const x = 1;",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 2, Column 0: Export named declarations are not allowed
-You are trying to use Export named declarations, which is not allowed (yet).
-",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no export constant: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "export const x = 1;",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 1: Export named declarations are not allowed",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`no export default - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -893,39 +864,6 @@ export default x;",
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 2: Export default declarations are not allowed",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no export function - verbose: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "\\"enable verbose\\";
-export function f(x) {
-return x;
-}",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 2, Column 0: Export named declarations are not allowed
-You are trying to use Export named declarations, which is not allowed (yet).
-",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no export function: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "export function f(x) {
-  return x;
-}",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 1: Export named declarations are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

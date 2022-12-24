@@ -885,56 +885,6 @@ test('no super - verbose', () => {
           `)
 })
 
-test('no export function', () => {
-  return expectParsedError(
-    stripIndent`
-    export function f(x) {
-      return x;
-    }
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"Line 1: Export named declarations are not allowed"`)
-})
-
-test('no export function - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-    "enable verbose";
-    export function f(x) {
-    return x;
-    }
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 2, Column 0: Export named declarations are not allowed
-            You are trying to use Export named declarations, which is not allowed (yet).
-            "
-          `)
-})
-
-test('no export constant', () => {
-  return expectParsedError(
-    stripIndent`
-    export const x = 1;
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"Line 1: Export named declarations are not allowed"`)
-})
-
-test('no export constant - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-    "enable verbose";
-    export const x = 1;
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 2, Column 0: Export named declarations are not allowed
-            You are trying to use Export named declarations, which is not allowed (yet).
-            "
-          `)
-})
-
 test('no export default', () => {
   return expectParsedError(
     stripIndent`
