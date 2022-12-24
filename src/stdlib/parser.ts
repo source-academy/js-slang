@@ -341,6 +341,23 @@ const transformers: ASTTransformers = new Map([
   ],
 
   [
+    'ExportNamedDeclaration',
+    (node: es.ExportNamedDeclaration) => {
+      return vector_to_list([
+        'export_named_declaration',
+        node.declaration ? transform(node.declaration) : node.specifiers.map(transform)
+      ])
+    }
+  ],
+
+  [
+    'ExportSpecifier',
+    (node: es.ExportSpecifier) => {
+      return vector_to_list(['name', node.exported.name])
+    }
+  ],
+
+  [
     'ClassDeclaration',
     (node: es.ClassDeclaration) => {
       return vector_to_list([
