@@ -92,6 +92,34 @@ export function transformImportDeclarations(
 }
 
 /**
+ * Exports are handled as a separate pre-processing step.
+ * As such, we remove all AST nodes relating to exports.
+ */
+function removeExports(program: es.Program): void {
+  ancestor(program, {
+    // TODO: Handle other export AST nodes.
+    ExportNamedDeclaration(node: es.ExportNamedDeclaration, ancestors: es.Node[]) {
+      // The ancestors array contains the current node, meaning that the
+      // parent node is the second last node of the array.`
+      const parent = ancestors[ancestors.length - 2]
+      // The parent node of an ExportNamedDeclaration node must be a Program node.
+      if (parent.type !== 'Program') {
+        return
+      }
+      const nodeIndex = parent.body.findIndex(n => n === node)
+      if (node.declaration) {
+        // If the ExportNamedDeclaration node contains a declaration, replace
+        // it with the declaration node in its parent node's body.
+        parent.body[nodeIndex] = node.declaration
+      } else {
+        // Otherwise, remove the declaration node in its parent node's body.
+        parent.body.splice(nodeIndex, 1)
+      }
+    }
+  })
+}
+
+/**
  * Hoists import statements in the program to the top
  * Also collates multiple import statements to a module into
  * a single statement
@@ -638,6 +666,7 @@ function transpileToSource(
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
+  removeExports(program)
 
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
@@ -679,6 +708,7 @@ function transpileToFullJS(
 
   const globalIds = getNativeIds(program, usedIdentifiers)
   checkForUndefinedVariables(program, context.nativeStorage, globalIds, skipUndefined)
+  removeExports(program)
 
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
