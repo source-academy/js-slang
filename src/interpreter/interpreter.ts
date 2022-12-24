@@ -684,6 +684,25 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
   },
 
+  ExportNamedDeclaration: function*(node: es.ExportNamedDeclaration, context: Context) {
+    if (node.declaration) {
+      switch (node.declaration.type) {
+        case 'VariableDeclaration':
+          declareVariables(context, node.declaration)
+          break
+        case 'FunctionDeclaration':
+          if (node.declaration.id === null) {
+            // It is null when a function declaration is a part of the export default function statement.
+            break
+          }
+          declareIdentifier(context, node.declaration.id.name, node.declaration)
+          break
+      }
+      return yield* evaluate(node.declaration, context)
+    }
+    return undefined
+  },
+
   Program: function*(node: es.BlockStatement, context: Context) {
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
