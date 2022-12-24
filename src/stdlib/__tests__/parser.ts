@@ -193,3 +193,18 @@ test('Parses assignment expressions', () => {
     { chapter: Chapter.SOURCE_4 }
   )
 })
+
+test('Parses named export declarations', () => {
+  return snapshotSuccess(
+    oneLine`
+    stringify(parse(
+      "export const x = 42;
+      export const square = x => x * x;
+      export function id(x) {
+        return x;
+      }
+      export { x as y };"), undefined, 2);
+    `,
+    { chapter: Chapter.SOURCE_4 }
+  )
+})
