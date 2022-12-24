@@ -67,4 +67,70 @@ describe('transformImportedFile', () => {
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
   })
+
+  it('returns only exported variables', () => {
+    const actualCode = `const x = 42;
+      export const y = 53;
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        const x = 42;
+        const y = 53;
+        return list(pair("y", y));
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
+
+  it('returns only exported functions', () => {
+    const actualCode = `function id(x) {
+        return x;
+      }
+      export function square(x) {
+        return x * x;
+      }
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        function id(x) {
+          return x;
+        }
+        function square(x) {
+          return x * x;
+        }
+        return list(pair("square", square));
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
+
+  it('returns only exported arrow functions', () => {
+    const actualCode = `const id = x => x;
+      export const square = x => x * x;
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        const id = x => x;
+        const square = x => x * x;
+        return list(pair("square", square));
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
+
+  it('returns all exported names when there are multiple', () => {
+    const actualCode = `export const x = 42;
+      export function id(x) {
+        return x;
+      }
+      export const square = x => x * x;
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        const x = 42;
+        function id(x) {
+          return x;
+        }
+        const square = x => x * x;
+        return list(pair("x", x), pair("id", id), pair("square", square));
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
 })
