@@ -40,17 +40,7 @@ describe('transformImportedFile', () => {
     expectedContext = mockContext(Chapter.SOURCE_2)
   })
 
-  it('wraps the program body in a FunctionDeclaration', () => {
-    const actualCode = `const square = x => x * x;
-      const x = 42;
-    `
-    const expectedCode = `function ${iifeIdentifier}() {
-        const square = x => x * x;
-        const x = 42;
-        return list();
-      }
-    `
-
+  const assertASTsAreEquivalent = (actualCode: string, expectedCode: string): void => {
     const actualProgram = parse(actualCode, actualContext)
     const expectedProgram = parse(expectedCode, expectedContext)
 
@@ -63,5 +53,18 @@ describe('transformImportedFile', () => {
     expect(stripLocationInfo(actualFunctionDeclaration)).toEqual(
       stripLocationInfo(expectedFunctionDeclaration)
     )
+  }
+
+  it('wraps the program body in a FunctionDeclaration', () => {
+    const actualCode = `const square = x => x * x;
+      const x = 42;
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        const square = x => x * x;
+        const x = 42;
+        return list();
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
   })
 })
