@@ -95,7 +95,7 @@ export function transformImportDeclarations(
  * Exports are handled as a separate pre-processing step.
  * As such, we remove all AST nodes relating to exports.
  */
-function removeExports(program: es.Program): void {
+export function removeExports(program: es.Program): void {
   ancestor(program, {
     // TODO: Handle other export AST nodes.
     ExportNamedDeclaration(node: es.ExportNamedDeclaration, ancestors: es.Node[]) {

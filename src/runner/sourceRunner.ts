@@ -22,7 +22,7 @@ import {
   redexify
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
-import { hoistImportDeclarations, transpile } from '../transpiler/transpiler'
+import { hoistImportDeclarations, removeExports, transpile } from '../transpiler/transpiler'
 import { Context, Scheduler, SourceError, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
@@ -217,6 +217,7 @@ export async function sourceRunner(
     return resolvedErrorPromise
   }
 
+  removeExports(program)
   validateAndAnnotate(program, context)
   context.unTypecheckedCode.push(code)
 
