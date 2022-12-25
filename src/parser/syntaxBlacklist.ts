@@ -29,6 +29,7 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
 
   // Chapter 2
   ExportNamedDeclaration: 2,
+  ExportDefaultDeclaration: 2,
 
   // Chapter 3
   BreakStatement: 3,
@@ -83,7 +84,6 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   MetaProperty: Infinity,
   SequenceExpression: Infinity,
   AssignmentPattern: Infinity,
-  ExportDefaultDeclaration: Infinity,
   ExportAllDeclaration: Infinity,
   ImportDefaultSpecifier: Infinity,
   ImportNamespaceSpecifier: Infinity,
