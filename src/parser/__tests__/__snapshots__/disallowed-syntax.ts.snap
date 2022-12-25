@@ -839,37 +839,6 @@ Object {
 }
 `;
 
-exports[`no export default - verbose: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "\\"enable verbose\\";
-const x = 1;
-export default x;",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 3, Column 0: Export default declarations are not allowed
-You are trying to use Export default declarations, which is not allowed (yet).
-",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no export default: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const x = 1;
-export default x;",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 2: Export default declarations are not allowed",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`no for in loops - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],

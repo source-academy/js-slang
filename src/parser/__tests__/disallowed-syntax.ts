@@ -885,31 +885,6 @@ test('no super - verbose', () => {
           `)
 })
 
-test('no export default', () => {
-  return expectParsedError(
-    stripIndent`
-    const x = 1;
-    export default x;
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"Line 2: Export default declarations are not allowed"`)
-})
-
-test('no export default - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-    "enable verbose";
-    const x = 1;
-    export default x;
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 3, Column 0: Export default declarations are not allowed
-            You are trying to use Export default declarations, which is not allowed (yet).
-            "
-          `)
-})
-
 test('no sequence expression', () => {
   return expectParsedError(
     stripIndent`
