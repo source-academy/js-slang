@@ -122,6 +122,25 @@ test.each([
   ],
 
   [
+    Chapter.SOURCE_2,
+    `
+    export default function f(x) {
+      return x;
+    }
+    f(5);
+    `
+  ],
+
+  [
+    Chapter.SOURCE_2,
+    `
+    const x = 1;
+    export default x;
+    x;
+    `
+  ],
+
+  [
     Chapter.SOURCE_3,
     `
     let i = 1;
