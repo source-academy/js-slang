@@ -173,4 +173,27 @@ describe('transformImportedFile', () => {
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
   })
+
+  // Default exports of variable declarations and arrow function declarations
+  // is not allowed in ES6, and will be caught by the Acorn parser.
+  it('returns default export of function declaration', () => {
+    const actualCode = `function id(x) {
+        return x;
+      }
+      export default function square(x) {
+        return x * x;
+      }
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        function id(x) {
+          return x;
+        }
+        function square(x) {
+          return x * x;
+        }
+        return pair(square, list());
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
 })

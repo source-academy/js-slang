@@ -6,6 +6,7 @@ import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
+import { isDeclaration } from '../localImports/typeGuards'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/astCreator'
@@ -89,16 +90,6 @@ export function transformImportDeclarations(
   })
 
   return [prefix.join(''), declNodes, otherNodes]
-}
-
-function isDeclaration(node: es.Node): node is es.Declaration {
-  // export type Declaration =
-  //       FunctionDeclaration | VariableDeclaration | ClassDeclaration;
-  return (
-    node.type === 'VariableDeclaration' ||
-    node.type === 'FunctionDeclaration' ||
-    node.type === 'ClassDeclaration'
-  )
 }
 
 /**

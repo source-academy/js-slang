@@ -7,7 +7,7 @@ import {
   createLiteral,
   createPairCallExpression
 } from './constructors'
-import { isDirective, isModuleDeclaration, isStatement } from './typeGuards'
+import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from './typeGuards'
 
 const getExportedName = (node: es.Declaration): string | null => {
   switch (node.type) {
@@ -32,32 +32,57 @@ const getExportedName = (node: es.Declaration): string | null => {
 const getExportedNames = (nodes: es.ModuleDeclaration[]): Record<string, string> => {
   const exportedNameToIdentifierMap: Record<string, string> = {}
   nodes.forEach((node: es.ModuleDeclaration): void => {
-    switch (node.type) {
-      case 'ExportNamedDeclaration':
-        if (node.declaration) {
-          const exportedName = getExportedName(node.declaration)
-          if (exportedName === null) {
-            break
-          }
-          // When an ExportNamedDeclaration node has a declaration, the
-          // identifier is the same as the exported name (i.e., no renaming).
-          const identifier = exportedName
-          exportedNameToIdentifierMap[exportedName] = identifier
-        } else {
-          // When an ExportNamedDeclaration node does not have a declaration,
-          // it contains a list of names to export, i.e., export { a, b as c, d };.
-          // Exported names can be renamed using the 'as' keyword. As such, the
-          // exported names and their corresponding identifiers might be different.
-          node.specifiers.forEach((node: es.ExportSpecifier): void => {
-            const exportedName = node.exported.name
-            const identifier = node.local.name
-            exportedNameToIdentifierMap[exportedName] = identifier
-          })
-        }
-        break
+    // Only ExportNamedDeclaration nodes specify exported names.
+    if (node.type !== 'ExportNamedDeclaration') {
+      return
+    }
+    if (node.declaration) {
+      const exportedName = getExportedName(node.declaration)
+      if (exportedName === null) {
+        return
+      }
+      // When an ExportNamedDeclaration node has a declaration, the
+      // identifier is the same as the exported name (i.e., no renaming).
+      const identifier = exportedName
+      exportedNameToIdentifierMap[exportedName] = identifier
+    } else {
+      // When an ExportNamedDeclaration node does not have a declaration,
+      // it contains a list of names to export, i.e., export { a, b as c, d };.
+      // Exported names can be renamed using the 'as' keyword. As such, the
+      // exported names and their corresponding identifiers might be different.
+      node.specifiers.forEach((node: es.ExportSpecifier): void => {
+        const exportedName = node.exported.name
+        const identifier = node.local.name
+        exportedNameToIdentifierMap[exportedName] = identifier
+      })
     }
   })
   return exportedNameToIdentifierMap
+}
+
+const getDefaultExportName = (nodes: es.ModuleDeclaration[]): string | null => {
+  let defaultExportName: string | null = null
+  nodes.forEach((node: es.ModuleDeclaration): void => {
+    // Only ExportDefaultDeclaration nodes specify the default export.
+    if (node.type !== 'ExportDefaultDeclaration') {
+      return
+    }
+    if (isDeclaration(node.declaration)) {
+      const exportedName = getExportedName(node.declaration)
+      if (exportedName === null) {
+        return
+      }
+      if (defaultExportName !== null) {
+        // This should never occur because multiple default exports should have
+        // been caught by the Acorn parser when parsing into an AST.
+        throw new Error('Encountered multiple default exports!')
+      }
+      defaultExportName = exportedName
+    } else {
+      // TODO: Handle expressions.
+    }
+  })
+  return defaultExportName
 }
 
 const createReturnListArguments = (
@@ -97,6 +122,13 @@ const removeModuleDeclarations = (
           statements.push(node.declaration)
         }
         break
+      case 'ExportDefaultDeclaration':
+        if (isDeclaration(node.declaration)) {
+          statements.push(node.declaration)
+        }
+        break
+      case 'ExportAllDeclaration':
+        throw new Error('Not implemented yet.')
     }
   })
   return statements
@@ -107,10 +139,12 @@ export const transformImportedFile = (
   iifeIdentifier: string
 ): es.FunctionDeclaration => {
   const moduleDeclarations = program.body.filter(isModuleDeclaration)
+  const defaultExportName = getDefaultExportName(moduleDeclarations)
   const exportedNames = getExportedNames(moduleDeclarations)
 
-  // TODO: Handle default exports.
-  const defaultExport = createLiteral(null)
+  const defaultExport = defaultExportName
+    ? createIdentifier(defaultExportName)
+    : createLiteral(null)
   const namedExports = createListCallExpression(createReturnListArguments(exportedNames))
   const returnStatement: es.ReturnStatement = {
     type: 'ReturnStatement',

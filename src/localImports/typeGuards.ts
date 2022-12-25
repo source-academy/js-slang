@@ -34,3 +34,13 @@ export const isStatement = (
 ): node is es.Statement => {
   return !isDirective(node) && !isModuleDeclaration(node)
 }
+
+export function isDeclaration(node: es.Node): node is es.Declaration {
+  // export type Declaration =
+  //       FunctionDeclaration | VariableDeclaration | ClassDeclaration;
+  return (
+    node.type === 'VariableDeclaration' ||
+    node.type === 'FunctionDeclaration' ||
+    node.type === 'ClassDeclaration'
+  )
+}
