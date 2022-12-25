@@ -208,3 +208,18 @@ test('Parses named export declarations', () => {
     { chapter: Chapter.SOURCE_4 }
   )
 })
+
+test('Parses default export declarations', () => {
+  return snapshotSuccess(
+    oneLine`
+    stringify(parse(
+      "export const x = 42;
+      export default x;"), undefined, 2);
+    stringify(parse(
+      "export default function square(x) {
+        return x * x;
+      }"), undefined, 2);
+    `,
+    { chapter: Chapter.SOURCE_4 }
+  )
+})
