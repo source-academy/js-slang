@@ -91,6 +91,16 @@ export function transformImportDeclarations(
   return [prefix.join(''), declNodes, otherNodes]
 }
 
+function isDeclaration(node: es.Node): node is es.Declaration {
+  // export type Declaration =
+  //       FunctionDeclaration | VariableDeclaration | ClassDeclaration;
+  return (
+    node.type === 'VariableDeclaration' ||
+    node.type === 'FunctionDeclaration' ||
+    node.type === 'ClassDeclaration'
+  )
+}
+
 /**
  * Exports are handled as a separate pre-processing step.
  * As such, we remove all AST nodes relating to exports.
@@ -112,7 +122,28 @@ export function removeExports(program: es.Program): void {
         // it with the declaration node in its parent node's body.
         parent.body[nodeIndex] = node.declaration
       } else {
-        // Otherwise, remove the declaration node in its parent node's body.
+        // Otherwise, remove the ExportNamedDeclaration node in its parent node's body.
+        parent.body.splice(nodeIndex, 1)
+      }
+    },
+    ExportDefaultDeclaration(node: es.ExportDefaultDeclaration, ancestors: es.Node[]) {
+      // The ancestors array contains the current node, meaning that the
+      // parent node is the second last node of the array.`
+      const parent = ancestors[ancestors.length - 2]
+      // The parent node of an ExportNamedDeclaration node must be a Program node.
+      if (parent.type !== 'Program') {
+        return
+      }
+      const nodeIndex = parent.body.findIndex(n => n === node)
+      // 'node.declaration' can be either a Declaration or an Expression.
+      if (isDeclaration(node.declaration)) {
+        // If the ExportDefaultDeclaration node contains a declaration, replace
+        // it with the declaration node in its parent node's body.
+        parent.body[nodeIndex] = node.declaration
+      } else {
+        // Otherwise, the ExportDefaultDeclaration node contains a statement.
+        // Remove the ExportDefaultDeclaration node in its parent node's body.
+        // TODO: Add support for handling the default export of statements.
         parent.body.splice(nodeIndex, 1)
       }
     }
