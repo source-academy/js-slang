@@ -684,23 +684,25 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
   },
 
-  ExportNamedDeclaration: function*(node: es.ExportNamedDeclaration, context: Context) {
-    if (node.declaration) {
-      switch (node.declaration.type) {
-        case 'VariableDeclaration':
-          declareVariables(context, node.declaration)
-          break
-        case 'FunctionDeclaration':
-          if (node.declaration.id === null) {
-            // It is null when a function declaration is a part of the export default function statement.
-            break
-          }
-          declareIdentifier(context, node.declaration.id.name, node.declaration)
-          break
-      }
-      return yield* evaluate(node.declaration, context)
-    }
-    return undefined
+  ExportNamedDeclaration: function*(_node: es.ExportNamedDeclaration, _context: Context) {
+    // Exports are handled as a separate pre-processing step in 'transformImportedFile'.
+    // Subsequently, they are removed from the AST by 'removeExports' before the AST is evaluated.
+    // As such, there should be no ExportNamedDeclaration nodes in the AST.
+    throw new Error('Encountered an ExportNamedDeclaration node in the AST while evaluating. This suggests that an invariant has been broken.')
+  },
+
+  ExportDefaultDeclaration: function*(_node: es.ExportDefaultDeclaration, _context: Context) {
+    // Exports are handled as a separate pre-processing step in 'transformImportedFile'.
+    // Subsequently, they are removed from the AST by 'removeExports' before the AST is evaluated.
+    // As such, there should be no ExportDefaultDeclaration nodes in the AST.
+    throw new Error('Encountered an ExportDefaultDeclaration node in the AST while evaluating. This suggests that an invariant has been broken.')
+  },
+
+  ExportAllDeclaration: function*(_node: es.ExportAllDeclaration, _context: Context) {
+    // Exports are handled as a separate pre-processing step in 'transformImportedFile'.
+    // Subsequently, they are removed from the AST by 'removeExports' before the AST is evaluated.
+    // As such, there should be no ExportAllDeclaration nodes in the AST.
+    throw new Error('Encountered an ExportAllDeclaration node in the AST while evaluating. This suggests that an invariant has been broken.')
   },
 
   Program: function*(node: es.BlockStatement, context: Context) {
