@@ -421,18 +421,6 @@ export function checkForUndefinedVariables(
         for (const specifier of statement.specifiers) {
           identifiers.add(specifier.local.name)
         }
-      } else if (statement.type === 'ExportNamedDeclaration') {
-        // ExportNamedDeclaration can only be present in Program.
-        // We treat exported declarations the same as non-exported declarations
-        // by treating them as being introduced by the Program node.
-        if (!statement.declaration) {
-          continue
-        }
-        if (statement.declaration.type === 'VariableDeclaration') {
-          identifiers.add((statement.declaration.declarations[0].id as es.Identifier).name)
-        } else if (statement.declaration.type === 'FunctionDeclaration') {
-          identifiers.add((statement.declaration.id as es.Identifier).name)
-        }
       }
     }
     identifiersIntroducedByNode.set(node, identifiers)
