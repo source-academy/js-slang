@@ -62,7 +62,7 @@ describe('transformImportedFile', () => {
     const expectedCode = `function ${iifeIdentifier}() {
         const square = x => x * x;
         const x = 42;
-        return list();
+        return pair(null, list());
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
@@ -75,7 +75,7 @@ describe('transformImportedFile', () => {
     const expectedCode = `function ${iifeIdentifier}() {
         const x = 42;
         const y = 53;
-        return list(pair("y", y));
+        return pair(null, list(pair("y", y)));
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
@@ -96,7 +96,7 @@ describe('transformImportedFile', () => {
         function square(x) {
           return x * x;
         }
-        return list(pair("square", square));
+        return pair(null, list(pair("square", square)));
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
@@ -109,7 +109,7 @@ describe('transformImportedFile', () => {
     const expectedCode = `function ${iifeIdentifier}() {
         const id = x => x;
         const square = x => x * x;
-        return list(pair("square", square));
+        return pair(null, list(pair("square", square)));
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
@@ -128,7 +128,7 @@ describe('transformImportedFile', () => {
           return x;
         }
         const square = x => x * x;
-        return list(pair("x", x), pair("id", id), pair("square", square));
+        return pair(null, list(pair("x", x), pair("id", id), pair("square", square)));
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
@@ -148,7 +148,7 @@ describe('transformImportedFile', () => {
           return x;
         }
         const square = x => x * x;
-        return list(pair("x", x), pair("id", id), pair("square", square));
+        return pair(null, list(pair("x", x), pair("id", id), pair("square", square)));
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
@@ -168,7 +168,7 @@ describe('transformImportedFile', () => {
           return x;
         }
         const square = x => x * x;
-        return list(pair("y", x), pair("identity", id), pair("sq", square));
+        return pair(null, list(pair("y", x), pair("identity", id), pair("sq", square)));
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
