@@ -28,7 +28,7 @@ import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
-import { determineExecutionMethod } from '.'
+import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
@@ -204,7 +204,7 @@ async function runNative(
 export async function sourceRunner(
   code: string,
   context: Context,
-  verboseErrors: boolean,
+  isVerboseErrorsEnabled: boolean,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
   const theOptions: IOptions = { ...DEFAULT_SOURCE_OPTIONS, ...options }
@@ -239,7 +239,7 @@ export async function sourceRunner(
     theOptions,
     context,
     program,
-    verboseErrors
+    isVerboseErrorsEnabled
   )
 
   if (isNativeRunnable && context.variant === Variant.NATIVE) {
@@ -250,8 +250,8 @@ export async function sourceRunner(
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
-    await sourceRunner(prelude, context, verboseErrors, { ...options, isPrelude: true })
-    return sourceRunner(code, context, verboseErrors, options)
+    await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true })
+    return sourceRunner(code, context, isVerboseErrorsEnabled, options)
   }
 
   if (isNativeRunnable) {
@@ -259,4 +259,21 @@ export async function sourceRunner(
   }
 
   return runInterpreter(program, context, theOptions)
+}
+
+export async function sourceFilesRunner(
+  files: Partial<Record<string, string>>,
+  entrypointFilename: string,
+  context: Context,
+  options: Partial<IOptions> = {}
+): Promise<Result> {
+  const entrypointCode = files[entrypointFilename]
+  if (entrypointCode === undefined) {
+    // TODO: Add error to context.
+    return resolvedErrorPromise
+  }
+
+  const isVerboseErrorsEnabled = hasVerboseErrors(entrypointCode)
+
+  return sourceRunner(entrypointCode, context, isVerboseErrorsEnabled, options)
 }

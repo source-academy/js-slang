@@ -33,7 +33,7 @@ import {
   hasVerboseErrors,
   htmlRunner,
   resolvedErrorPromise,
-  sourceRunner
+  sourceFilesRunner
 } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
@@ -316,8 +316,10 @@ export async function runFilesInContext(
     return htmlRunner(code, context, options)
   }
 
+  // TODO: Clean up state management so that the `parseError` function is pure.
   verboseErrors = hasVerboseErrors(code)
-  return sourceRunner(code, context, verboseErrors, options)
+
+  return sourceFilesRunner(files, entrypointFilename, context, options)
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
