@@ -266,4 +266,32 @@ describe('transformImportedFile', () => {
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
   })
+
+  it('returns default export of expression 3', () => {
+    const actualCode = `export default 123 + 456;
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        // Expressions will be reduced when the IIFE is invoked.
+        return pair(123 + 456, list());
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
+
+  it('returns default export of expression 4', () => {
+    const actualCode = `function square(x) {
+        return x * x;
+      }
+      export default square(10);
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        function square(x) {
+          return x * x;
+        }
+        // Expressions will be reduced when the IIFE is invoked.
+        return pair(square(10), list());
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
 })
