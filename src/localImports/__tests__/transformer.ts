@@ -196,4 +196,74 @@ describe('transformImportedFile', () => {
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
   })
+
+  it('returns default export of variable', () => {
+    const actualCode = `const x = 42;
+      const y = 53;
+      export default y;
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        const x = 42;
+        const y = 53;
+        return pair(y, list());
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
+
+  it('returns default export of function', () => {
+    const actualCode = `function id(x) {
+        return x;
+      }
+      function square(x) {
+        return x * x;
+      }
+      export default square;
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        function id(x) {
+          return x;
+        }
+        function square(x) {
+          return x * x;
+        }
+        return pair(square, list());
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
+
+  it('returns default export of arrow function', () => {
+    const actualCode = `const id = x => x;
+      const square = x => x * x;
+      export default square;
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        const id = x => x;
+        const square = x => x * x;
+        return pair(square, list());
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
+
+  it('returns default export of expression 1', () => {
+    const actualCode = `export default 123;
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        return pair(123, list());
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
+
+  it('returns default export of expression 2', () => {
+    const actualCode = `export default "Hello world!";
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        return pair("Hello world!", list());
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
 })

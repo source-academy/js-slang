@@ -9,21 +9,21 @@ import {
 } from './constructors'
 import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from './typeGuards'
 
-const getExportedName = (node: es.Declaration): string | null => {
+const getIdentifier = (node: es.Declaration): es.Identifier | null => {
   switch (node.type) {
     case 'FunctionDeclaration':
       // node.id is null when a function declaration is a part of the export default function statement.
       if (node.id === null) {
         return null
       }
-      return node.id.name
+      return node.id
     case 'VariableDeclaration':
       const id = node.declarations[0].id
       // In Source, variable names are Identifiers.
       if (id.type !== 'Identifier') {
         throw new Error(`Expected variable name to be an Identifier, but was ${id.type} instead.`)
       }
-      return id.name
+      return id
     case 'ClassDeclaration':
       throw new Error('Exporting of class is not supported.')
   }
@@ -37,8 +37,8 @@ const getExportedNames = (nodes: es.ModuleDeclaration[]): Record<string, string>
       return
     }
     if (node.declaration) {
-      const exportedName = getExportedName(node.declaration)
-      if (exportedName === null) {
+      const exportedName = getIdentifier(node.declaration)?.name
+      if (exportedName === undefined) {
         return
       }
       // When an ExportNamedDeclaration node has a declaration, the
@@ -60,29 +60,33 @@ const getExportedNames = (nodes: es.ModuleDeclaration[]): Record<string, string>
   return exportedNameToIdentifierMap
 }
 
-const getDefaultExportName = (nodes: es.ModuleDeclaration[]): string | null => {
-  let defaultExportName: string | null = null
+const getDefaultExportExpression = (nodes: es.ModuleDeclaration[]): es.Expression | null => {
+  let defaultExport: es.Expression | null = null
   nodes.forEach((node: es.ModuleDeclaration): void => {
     // Only ExportDefaultDeclaration nodes specify the default export.
     if (node.type !== 'ExportDefaultDeclaration') {
       return
     }
+    if (defaultExport !== null) {
+      // This should never occur because multiple default exports should have
+      // been caught by the Acorn parser when parsing into an AST.
+      throw new Error('Encountered multiple default exports!')
+    }
     if (isDeclaration(node.declaration)) {
-      const exportedName = getExportedName(node.declaration)
-      if (exportedName === null) {
+      const identifier = getIdentifier(node.declaration)
+      if (identifier === null) {
         return
       }
-      if (defaultExportName !== null) {
-        // This should never occur because multiple default exports should have
-        // been caught by the Acorn parser when parsing into an AST.
-        throw new Error('Encountered multiple default exports!')
-      }
-      defaultExportName = exportedName
+      // When an ExportDefaultDeclaration node has a declaration, the
+      // identifier is the same as the exported name (i.e., no renaming).
+      defaultExport = identifier
     } else {
-      // TODO: Handle expressions.
+      // When an ExportDefaultDeclaration node does not have a declaration,
+      // it has an expression.
+      defaultExport = node.declaration
     }
   })
-  return defaultExportName
+  return defaultExport
 }
 
 const createReturnListArguments = (
@@ -139,12 +143,10 @@ export const transformImportedFile = (
   iifeIdentifier: string
 ): es.FunctionDeclaration => {
   const moduleDeclarations = program.body.filter(isModuleDeclaration)
-  const defaultExportName = getDefaultExportName(moduleDeclarations)
+  const defaultExportExpression = getDefaultExportExpression(moduleDeclarations)
   const exportedNames = getExportedNames(moduleDeclarations)
 
-  const defaultExport = defaultExportName
-    ? createIdentifier(defaultExportName)
-    : createLiteral(null)
+  const defaultExport = defaultExportExpression ?? createLiteral(null)
   const namedExports = createListCallExpression(createReturnListArguments(exportedNames))
   const returnStatement: es.ReturnStatement = {
     type: 'ReturnStatement',
