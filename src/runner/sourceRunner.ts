@@ -217,15 +217,15 @@ export async function sourceRunner(
     return resolvedErrorPromise
   }
 
+  hoistImportDeclarations(program)
   removeExports(program)
+
   validateAndAnnotate(program, context)
   context.unTypecheckedCode.push(code)
 
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
-
-  hoistImportDeclarations(program)
 
   if (context.variant === Variant.CONCURRENT) {
     return runConcurrent(code, program, context, theOptions)
