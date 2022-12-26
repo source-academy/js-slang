@@ -57,6 +57,15 @@ export const createListCallExpression = (
   } as es.SimpleCallExpression
 }
 
+export const createReturnStatement = (
+  argument: es.Expression | null | undefined
+): es.ReturnStatement => {
+  return {
+    type: 'ReturnStatement',
+    argument
+  }
+}
+
 export const createFunctionDeclaration = (
   name: string,
   params: es.Pattern[],

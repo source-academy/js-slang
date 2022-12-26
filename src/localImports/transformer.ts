@@ -5,7 +5,8 @@ import {
   createIdentifier,
   createListCallExpression,
   createLiteral,
-  createPairCallExpression
+  createPairCallExpression,
+  createReturnStatement
 } from './constructors'
 import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from './typeGuards'
 
@@ -148,10 +149,9 @@ export const transformImportedFile = (
 
   const defaultExport = defaultExportExpression ?? createLiteral(null)
   const namedExports = createListCallExpression(createReturnListArguments(exportedNames))
-  const returnStatement: es.ReturnStatement = {
-    type: 'ReturnStatement',
-    argument: createPairCallExpression(defaultExport, namedExports)
-  }
+  const returnStatement = createReturnStatement(
+    createPairCallExpression(defaultExport, namedExports)
+  )
 
   const programStatements = removeModuleDeclarations(removeDirectives(program.body))
   const iifeBody = [...programStatements, returnStatement]
