@@ -597,7 +597,6 @@ export class InvalidNumberOfArgumentsTypeError implements SourceError {
 export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
-  public calleeStr: string
 
   constructor(public node: tsEs.TSTypeReference, public name: string, public expected: number) {}
 
@@ -617,7 +616,6 @@ export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceEr
 export class TypeAliasNameNotAllowedError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
-  public calleeStr: string
 
   constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
 
@@ -637,7 +635,6 @@ export class TypeAliasNameNotAllowedError implements SourceError {
 export class InvalidIndexTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
-  public calleeStr: string
 
   constructor(public node: tsEs.MemberExpression, public typeName: string) {}
 
@@ -657,7 +654,6 @@ export class InvalidIndexTypeError implements SourceError {
 export class InvalidArrayAccessError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
-  public calleeStr: string
 
   constructor(public node: tsEs.MemberExpression, public typeName: string) {}
 
@@ -667,6 +663,25 @@ export class InvalidArrayAccessError implements SourceError {
 
   public explain() {
     return `Type '${this.typeName}' cannot be accessed as it is not an array.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class ConstNotAssignableError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(public node: tsEs.AssignmentExpression, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Cannot assign to '${this.name}' as it is a constant.`
   }
 
   public elaborate() {

@@ -3,6 +3,7 @@ import { cloneDeep, isEqual } from 'lodash'
 
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
+  ConstNotAssignableError,
   FunctionShouldHaveReturnValueError,
   InvalidArrayAccessError,
   InvalidIndexTypeError,
@@ -35,6 +36,7 @@ import * as tsEs from './tsESTree'
 import {
   formatTypeString,
   getTypeOverrides,
+  lookupDeclKind,
   lookupType,
   lookupTypeAlias,
   pushEnv,
@@ -345,6 +347,15 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       checkArgTypes(node, expectedTypes, context, env)
       return calleeType.returnType
     }
+    case 'AssignmentExpression':
+      const expectedType = typeCheckAndReturnType(node.left, context, env)
+      const actualType = typeCheckAndReturnType(node.right, context, env)
+
+      if (node.left.type === 'Identifier' && lookupDeclKind(node.left.name, env) === 'const') {
+        context.errors.push(new ConstNotAssignableError(node, node.left.name))
+      }
+      checkForTypeMismatch(node, actualType, expectedType, context)
+      return tUndef
     case 'ArrayExpression':
       // Casting is safe here as Source disallows use of spread elements and holes in arrays
       const elements = node.elements as Exclude<
@@ -1041,7 +1052,8 @@ function removeTSNodes(node: tsEs.Node): any {
       return node
     }
     case 'BinaryExpression':
-    case 'LogicalExpression': {
+    case 'LogicalExpression':
+    case 'AssignmentExpression': {
       node.left = removeTSNodes(node.left)
       node.right = removeTSNodes(node.right)
       return node
