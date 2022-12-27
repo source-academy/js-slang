@@ -651,7 +651,7 @@ export class InvalidIndexTypeError implements SourceError {
   }
 }
 
-export class InvalidArrayAccessError implements SourceError {
+export class InvalidArrayAccessTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
@@ -670,7 +670,7 @@ export class InvalidArrayAccessError implements SourceError {
   }
 }
 
-export class ConstNotAssignableError implements SourceError {
+export class ConstNotAssignableTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 

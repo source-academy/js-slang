@@ -3,9 +3,9 @@ import { cloneDeep, isEqual } from 'lodash'
 
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
-  ConstNotAssignableError,
+  ConstNotAssignableTypeError,
   FunctionShouldHaveReturnValueError,
-  InvalidArrayAccessError,
+  InvalidArrayAccessTypeError,
   InvalidIndexTypeError,
   InvalidNumberOfArgumentsTypeError,
   InvalidNumberOfTypeArgumentsForGenericTypeError,
@@ -215,6 +215,8 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
     case 'FunctionDeclaration':
       // Only identifiers are used as function params in Source
       const params = node.params as tsEs.Identifier[]
+      // Name of function cannot be null in Source
+      const fnName = node.id!.name
       const expectedReturnType = getTypeAnnotationType(node.returnType, context, env)
 
       const types = getParamTypes(params, context, env)
@@ -229,7 +231,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       })
       // Set unique identifier so that typechecking can be carried out for return statements
       setType(RETURN_TYPE_IDENTIFIER, expectedReturnType, env)
-      setType(node.id!.name, fnType, env)
+      setType(fnName, fnType, env)
       const actualReturnType = typeCheckAndReturnType(node.body, context, env)
       env.pop()
 
@@ -244,11 +246,23 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
         checkForTypeMismatch(node, actualReturnType, expectedReturnType, context)
       }
 
-      // No need to save variable type again, return undefined type
+      // Save function type in type env
+      setType(fnName, fnType, env)
       return tUndef
     case 'VariableDeclaration': {
-      // Typecasting is safe here as types are checked when calling addTypeDeclarationsToEnvironment
-      const id = node.declarations[0].id as tsEs.Identifier
+      if (node.kind === 'var') {
+        throw new TypecheckError(node, 'Variable declaration using "var" is not allowed')
+      }
+      if (node.declarations.length !== 1) {
+        throw new TypecheckError(
+          node,
+          'Variable declaration should have one and only one declaration'
+        )
+      }
+      if (node.declarations[0].id.type !== 'Identifier') {
+        throw new TypecheckError(node, 'Variable declaration ID should be an identifier')
+      }
+      const id = node.declarations[0].id
       if (!node.declarations[0].init) {
         throw new TypecheckError(node, 'Variable declaration must have value')
       }
@@ -260,7 +274,9 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       const initType = typeCheckAndReturnType(init, context, env)
       checkForTypeMismatch(node, initType, expectedType, context)
 
-      // No need to save variable type again, return undefined type
+      // Save variable type and decl kind in type env
+      setType(id.name, expectedType, env)
+      setDeclKind(id.name, node.kind, env)
       return tUndef
     }
     case 'CallExpression': {
@@ -352,7 +368,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       const actualType = typeCheckAndReturnType(node.right, context, env)
 
       if (node.left.type === 'Identifier' && lookupDeclKind(node.left.name, env) === 'const') {
-        context.errors.push(new ConstNotAssignableError(node, node.left.name))
+        context.errors.push(new ConstNotAssignableTypeError(node, node.left.name))
       }
       checkForTypeMismatch(node, actualType, expectedType, context)
       return tUndef
@@ -370,11 +386,13 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
     case 'MemberExpression':
       const indexType = typeCheckAndReturnType(node.property, context, env)
       const objectType = typeCheckAndReturnType(node.object, context, env)
+      // Index must be number
       if (hasTypeMismatchErrors(indexType, tNumber)) {
         context.errors.push(new InvalidIndexTypeError(node, formatTypeString(indexType, true)))
       }
+      // Expression being accessed must be array
       if (objectType.kind !== 'array') {
-        context.errors.push(new InvalidArrayAccessError(node, formatTypeString(objectType)))
+        context.errors.push(new InvalidArrayAccessTypeError(node, formatTypeString(objectType)))
         return tAny
       }
       return objectType.elementType
@@ -394,6 +412,30 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
           return typeCheckAndReturnType(node.argument, context, env)
         }
       }
+    }
+    case 'WhileStatement': {
+      // Predicate must be boolean
+      const testType = typeCheckAndReturnType(node.test, context, env)
+      checkForTypeMismatch(node, testType, tBool, context)
+      return typeCheckAndReturnType(node.body, context, env)
+    }
+    case 'ForStatement': {
+      // Add new environment so that new variable declared in init node can be isolated to within for statement only
+      pushEnv(env)
+      if (node.init) {
+        typeCheckAndReturnType(node.init, context, env)
+      }
+      if (node.test) {
+        // Predicate must be boolean
+        const testType = typeCheckAndReturnType(node.test, context, env)
+        checkForTypeMismatch(node, testType, tBool, context)
+      }
+      if (node.update) {
+        typeCheckAndReturnType(node.update, context, env)
+      }
+      const bodyType = typeCheckAndReturnType(node.body, context, env)
+      env.pop()
+      return bodyType
     }
     case 'ImportDeclaration':
       // No typechecking needed, import declarations have already been handled separately
@@ -1087,6 +1129,24 @@ function removeTSNodes(node: tsEs.Node): any {
       node.property = removeTSNodes(node.property)
       node.object = removeTSNodes(node.object)
       return node
+    case 'WhileStatement': {
+      node.test = removeTSNodes(node.test)
+      node.body = removeTSNodes(node.body)
+      return node
+    }
+    case 'ForStatement': {
+      if (node.init) {
+        node.init = removeTSNodes(node.init)
+      }
+      if (node.test) {
+        node.test = removeTSNodes(node.test)
+      }
+      if (node.update) {
+        node.update = removeTSNodes(node.update)
+      }
+      node.body = removeTSNodes(node.body)
+      return node
+    }
     case 'TSAsExpression':
       // Remove wrapper node
       return removeTSNodes(node.expression)
