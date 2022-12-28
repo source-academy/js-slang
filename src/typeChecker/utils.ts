@@ -362,6 +362,17 @@ export const temporaryStreamFuncs: [string, BindableType][] = [
 
 // Prelude function type overrides for Source Typed variant
 export const source1TypeOverrides: [string, BindableType][] = [
+  // constants
+  ['Infinity', tPrimitive('number', Infinity)],
+  ['NaN', tPrimitive('number', NaN)],
+  ['math_E', tPrimitive('number', Math.E)],
+  ['math_LN2', tPrimitive('number', Math.LN2)],
+  ['math_LN10', tPrimitive('number', Math.LN10)],
+  ['math_LOG2E', tPrimitive('number', Math.LOG2E)],
+  ['math_LOG10E', tPrimitive('number', Math.LOG10E)],
+  ['math_PI', tPrimitive('number', Math.PI)],
+  ['math_SQRT1_2', tPrimitive('number', Math.SQRT1_2)],
+  ['math_SQRT2', tPrimitive('number', Math.SQRT2)],
   // math functions
   // TODO: Add support for type checking of functions with variable no. of args
   ['math_hypot', tForAll(tNumber)],
@@ -399,6 +410,19 @@ export const source2TypeOverrides: [string, BindableType][] = [
   ['equal', tFunc(tAny, tAny, tBool)]
 ]
 
+const predeclaredConstTypes: [string, Type][] = [
+  ['Infinity', tLiteral(Infinity)],
+  ['NaN', tLiteral(NaN)],
+  ['math_E', tLiteral(Math.E)],
+  ['math_LN2', tLiteral(Math.LN2)],
+  ['math_LN10', tLiteral(Math.LN10)],
+  ['math_LOG2E', tLiteral(Math.LOG2E)],
+  ['math_LOG10E', tLiteral(Math.LOG10E)],
+  ['math_PI', tLiteral(Math.PI)],
+  ['math_SQRT1_2', tLiteral(Math.SQRT1_2)],
+  ['math_SQRT2', tLiteral(Math.SQRT2)]
+]
+
 // Creates type environment for the appropriate Source chapter
 export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
   const initialTypeMappings = [...predeclaredNames, ...primitiveFuncs]
@@ -415,7 +439,7 @@ export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
     {
       typeMap: new Map(initialTypeMappings),
       declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const'])),
-      typeAliasMap: new Map()
+      typeAliasMap: new Map(predeclaredConstTypes)
     }
   ]
 }
