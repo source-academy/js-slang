@@ -93,7 +93,7 @@ $ cd js-slang
 $ yarn
 $ yarn install 
 $ yarn jsdoc  # to make the web pages in js-slang/docs/source
-$ cd docs/source_language_specs 
+$ cd docs/specs 
 $ make        # to make the PDF documents using LaTeX
 ```
 
