@@ -10,7 +10,7 @@ beforeEach(() => {
 })
 
 describe('basic types', () => {
-  it('does not throw errors for allowed primitive types', () => {
+  it('does not throw errors for allowed basic types', () => {
     const code = `const x1: number = 1;
       const x2: string = '1';
       const x3: boolean = true;
@@ -22,7 +22,7 @@ describe('basic types', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 
-  it('throws errors for disallowed primitive types', () => {
+  it('throws errors for disallowed basic types', () => {
     const code = `const x1: unknown = 1;
       const x2: never = 1;
       const x3: bigint = 1;
@@ -446,6 +446,31 @@ describe('type aliases', () => {
   it('should coexist with variables of the same name', () => {
     const code = `type x = string | number;
       const x: x = 1;
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('should throw errors for reserved types', () => {
+    const code = `type string = number;
+      type number = string;
+      type boolean = number;
+      type undefined = number;
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 1: Type alias name cannot be 'string'.
+      Line 2: Type alias name cannot be 'number'.
+      Line 3: Type alias name cannot be 'boolean'.
+      Line 4: Type alias name cannot be 'undefined'."
+    `)
+  })
+
+  it('should not throw errors for types that are not introduced yet', () => {
+    const code = `type Pair = number;
+      type List = string;
     `
 
     parse(code, context)

@@ -116,6 +116,13 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
         return `"${type.value.toString()}"`
       }
       return type.value.toString()
+    case 'pair':
+      return `Pair<${formatTypeString(type.headType, formatAsLiteral)}, ${formatTypeString(
+        type.tailType,
+        formatAsLiteral
+      )}>`
+    case 'list':
+      return `List<${formatTypeString(type.elementType, formatAsLiteral)}>`
     default:
       return type.kind
   }
@@ -154,10 +161,12 @@ export function tPair(var1: Type, var2: Type): Pair {
   }
 }
 
-export function tList(var1: Type): List {
+export function tList(var1: Type, typeAsPair?: Pair): List {
   return {
     kind: 'list',
-    elementType: var1
+    elementType: var1,
+    // Used in Source Typed variants to check for type mismatches against pairs
+    typeAsPair
   }
 }
 
@@ -181,6 +190,7 @@ export const tNumber = tPrimitive('number')
 export const tString = tPrimitive('string')
 export const tUndef = tPrimitive('undefined')
 export const tVoid = tPrimitive('void')
+export const tNull = tPrimitive('null')
 
 export function tFunc(...types: Type[]): FunctionType {
   const parameterTypes = types.slice(0, -1)
@@ -363,16 +373,41 @@ export const source1TypeOverrides: [string, BindableType][] = [
   ['math_PI', tPrimitive('number', Math.PI)],
   ['math_SQRT1_2', tPrimitive('number', Math.SQRT1_2)],
   ['math_SQRT2', tPrimitive('number', Math.SQRT2)],
-  // is something functions
-  ['is_boolean', tFunc(tAny, tBool)],
-  ['is_number', tFunc(tAny, tBool)],
-  ['is_string', tFunc(tAny, tBool)],
-  ['is_undefined', tFunc(tAny, tBool)],
-  ['is_function', tFunc(tAny, tBool)],
+  // math functions
+  // TODO: Add support for type checking of functions with variable no. of args
+  ['math_hypot', tForAll(tNumber)],
+  ['math_max', tForAll(tNumber)],
+  ['math_min', tForAll(tNumber)],
   // misc functions
   ['stringify', tFunc(tAny, tString)],
   ['arity', tFunc(tAny, tNumber)],
-  ['char_at', tFunc(tString, tNumber, tUnion(tString, tUndef))]
+  ['char_at', tFunc(tString, tNumber, tUnion(tString, tUndef))],
+  // TODO: Add support for type checking of functions with variable no. of args
+  ['display', tForAll(tAny)],
+  ['error', tForAll(tAny)]
+]
+
+export const source2TypeOverrides: [string, BindableType][] = [
+  // list library functions
+  ['accumulate', tFunc(tFunc(tAny, tAny, tAny), tAny, tList(tAny), tAny)],
+  ['append', tFunc(tList(tAny), tList(tAny), tList(tAny))],
+  ['build_list', tFunc(tFunc(tAny, tAny), tNumber, tList(tAny))],
+  ['enum_list', tFunc(tNumber, tNumber, tList(tNumber))],
+  ['filter', tFunc(tFunc(tAny, tAny), tList(tAny), tList(tAny))],
+  ['for_each', tFunc(tFunc(tAny, tAny), tList(tAny), tBool)],
+  ['length', tFunc(tList(tAny), tNumber)],
+  ['list_ref', tFunc(tList(tAny), tNumber, tAny)],
+  ['list_to_string', tFunc(tList(tAny), tString)],
+  ['map', tFunc(tFunc(tAny, tAny), tList(tAny), tList(tAny))],
+  ['member', tFunc(tAny, tList(tAny), tList(tAny))],
+  ['remove', tFunc(tAny, tList(tAny), tList(tAny))],
+  ['remove_all', tFunc(tAny, tList(tAny), tList(tAny))],
+  ['reverse', tFunc(tList(tAny), tList(tAny))],
+  // misc functions
+  // TODO: Add support for type checking of functions with variable no. of args
+  ['display_list', tForAll(tAny)],
+  ['draw_data', tForAll(tAny)],
+  ['equal', tFunc(tAny, tAny, tBool)]
 ]
 
 const predeclaredConstTypes: [string, Type][] = [
@@ -407,4 +442,12 @@ export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
       typeAliasMap: new Map(predeclaredConstTypes)
     }
   ]
+}
+
+export function getTypeOverrides(chapter: Chapter): [string, BindableType][] {
+  const typeOverrides = [...source1TypeOverrides]
+  if (chapter >= 2) {
+    typeOverrides.push(...source2TypeOverrides)
+  }
+  return typeOverrides
 }
