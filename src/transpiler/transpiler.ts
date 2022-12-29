@@ -6,7 +6,6 @@ import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
-import { isDeclaration } from '../localImports/typeGuards'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/astCreator'
@@ -90,55 +89,6 @@ export function transformImportDeclarations(
   })
 
   return [prefix.join(''), declNodes, otherNodes]
-}
-
-/**
- * Exports are handled as a separate pre-processing step.
- * As such, we remove all AST nodes relating to exports.
- */
-export function removeExports(program: es.Program): void {
-  ancestor(program, {
-    // TODO: Handle other export AST nodes.
-    ExportNamedDeclaration(node: es.ExportNamedDeclaration, ancestors: es.Node[]) {
-      // The ancestors array contains the current node, meaning that the
-      // parent node is the second last node of the array.`
-      const parent = ancestors[ancestors.length - 2]
-      // The parent node of an ExportNamedDeclaration node must be a Program node.
-      if (parent.type !== 'Program') {
-        return
-      }
-      const nodeIndex = parent.body.findIndex(n => n === node)
-      if (node.declaration) {
-        // If the ExportNamedDeclaration node contains a declaration, replace
-        // it with the declaration node in its parent node's body.
-        parent.body[nodeIndex] = node.declaration
-      } else {
-        // Otherwise, remove the ExportNamedDeclaration node in its parent node's body.
-        parent.body.splice(nodeIndex, 1)
-      }
-    },
-    ExportDefaultDeclaration(node: es.ExportDefaultDeclaration, ancestors: es.Node[]) {
-      // The ancestors array contains the current node, meaning that the
-      // parent node is the second last node of the array.`
-      const parent = ancestors[ancestors.length - 2]
-      // The parent node of an ExportNamedDeclaration node must be a Program node.
-      if (parent.type !== 'Program') {
-        return
-      }
-      const nodeIndex = parent.body.findIndex(n => n === node)
-      // 'node.declaration' can be either a Declaration or an Expression.
-      if (isDeclaration(node.declaration)) {
-        // If the ExportDefaultDeclaration node contains a declaration, replace
-        // it with the declaration node in its parent node's body.
-        parent.body[nodeIndex] = node.declaration
-      } else {
-        // Otherwise, the ExportDefaultDeclaration node contains a statement.
-        // Remove the ExportDefaultDeclaration node in its parent node's body.
-        // TODO: Add support for handling the default export of statements.
-        parent.body.splice(nodeIndex, 1)
-      }
-    }
-  })
 }
 
 /**

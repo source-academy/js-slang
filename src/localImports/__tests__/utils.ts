@@ -3,6 +3,8 @@ import es from 'estree'
 import { full } from '../../utils/walkers'
 
 /**
+ * Strips out location information from an AST.
+ *
  * The local imports test suites only care about the structure of the
  * transformed AST. The line & column numbers, as well as the character
  * offsets of each node in the ASTs derived from parsing the pre-transform
