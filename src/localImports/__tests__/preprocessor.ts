@@ -36,8 +36,8 @@ describe('preprocessFileImports', () => {
     const files: Record<string, string> = {
       'a.js': '1 + 2;'
     }
-    const program = preprocessFileImports(files, 'non-existent-file.js', actualContext)
-    expect(program).toBeUndefined()
+    const actualProgram = preprocessFileImports(files, 'non-existent-file.js', actualContext)
+    expect(actualProgram).toBeUndefined()
   })
 
   it('returns the same AST if the entrypoint file does not contain import/export statements', () => {
@@ -48,7 +48,33 @@ describe('preprocessFileImports', () => {
               square(5);
               `
     }
-    const program = preprocessFileImports(files, 'a.js', actualContext)
-    assertASTsAreEquivalent(program, files['a.js'])
+    const expectedCode = files['a.js']
+    const actualProgram = preprocessFileImports(files, 'a.js', actualContext)
+    assertASTsAreEquivalent(actualProgram, expectedCode)
+  })
+
+  it('', () => {
+    const files: Record<string, string> = {
+      'a.js': `export const x = 42;
+              export function square(x) {
+                return x * x;
+              }
+              export const id = x => x;
+              export default function cube(x) {
+                return x * x * x;
+              }
+              `
+    }
+    const expectedCode = `const x = 42;
+                         function square(x) {
+                           return x * x;
+                         }
+                         const id = x => x;
+                         function cube(x) {
+                           return x * x * x;
+                         }
+                         `
+    const actualProgram = preprocessFileImports(files, 'a.js', actualContext)
+    assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 })
