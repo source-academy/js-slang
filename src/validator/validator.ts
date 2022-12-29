@@ -32,26 +32,6 @@ export function validateAndAnnotate(
           )
         }
         initialisedIdentifiers.set(statement.id.name, new Declaration(true))
-      } else if (statement.type === 'ExportNamedDeclaration') {
-        // ExportNamedDeclaration can only be present in Program.
-        // We treat exported declarations the same as non-exported declarations
-        // by treating them as being introduced by the Program node.
-        if (!statement.declaration) {
-          continue
-        }
-        if (statement.declaration.type === 'VariableDeclaration') {
-          initialisedIdentifiers.set(
-            getVariableDecarationName(statement.declaration),
-            new Declaration(statement.declaration.kind === 'const')
-          )
-        } else if (statement.declaration.type === 'FunctionDeclaration') {
-          if (statement.declaration.id === null) {
-            throw new Error(
-              'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-            )
-          }
-          initialisedIdentifiers.set(statement.declaration.id.name, new Declaration(true))
-        }
       }
     }
     scopeHasCallExpressionMap.set(node, false)
