@@ -681,7 +681,6 @@ function transpileToSource(
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
-  removeExports(program)
 
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
@@ -723,7 +722,6 @@ function transpileToFullJS(
 
   const globalIds = getNativeIds(program, usedIdentifiers)
   checkForUndefinedVariables(program, context.nativeStorage, globalIds, skipUndefined)
-  removeExports(program)
 
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
