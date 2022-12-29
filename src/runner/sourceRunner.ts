@@ -275,5 +275,12 @@ export async function sourceFilesRunner(
 
   const isVerboseErrorsEnabled = hasVerboseErrors(entrypointCode)
 
+  context.variant = determineVariant(context, options)
+  // TODO: Make use of the preprocessed program AST in later steps.
+  // const preprocessedProgram = preprocessFileImports(files, entrypointFilename, context)
+  // if (!preprocessedProgram) {
+  //   return resolvedErrorPromise
+  // }
+
   return sourceRunner(entrypointCode, context, isVerboseErrorsEnabled, options)
 }
