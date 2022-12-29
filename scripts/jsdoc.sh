@@ -48,6 +48,15 @@ run() {
 	     -d ${DST}/"source_1_lazy"/ \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js
+
+	# Source §1 Typed
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_1_TYPED.md \
+	     -d ${DST}/"source_1_typed"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js
     
     # Source §1 WebAssembly
     
@@ -76,7 +85,17 @@ run() {
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
 	     ${LIB}/list.js
+
+    # Source §2 Typed
     
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_2_TYPED.md \
+	     -d ${DST}/"source_2_typed"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+	     ${LIB}/list.js
+   
     # Source §3
     
     ${JSDOC} -r -t ${TMPL} \

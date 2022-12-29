@@ -28,8 +28,12 @@ the members of our learning community.
 #### <a href="source_1_lazy/">Source §1 Lazy</a>
   
 #### <a href="source_1_wasm/">Source §1 WebAssembly</a>
+
+#### <a href="source_1_typed/">Source §1 Typed</a>
   
 #### <a href="source_2_lazy/">Source §2 Lazy</a>
+
+#### <a href="source_2_typed/">Source §2 Typed</a>
 
 #### <a href="source_3_non-det/">Source §3 Non-Det</a>
 
@@ -53,8 +57,12 @@ the Source Academy.
 #### <a href="source_1_lazy.pdf">Specification of Source §1 Lazy</a>
   
 #### <a href="source_1_wasm.pdf">Specification of Source §1 WebAssembly</a>
+
+#### <a href="source_1_typed.pdf">Specification of Source §1 Typed</a>
   
 #### <a href="source_2_lazy.pdf">Specification of Source §2 Lazy</a>
+
+#### <a href="source_2_typed.pdf">Specification of Source §2 Typed</a>
 
 #### <a href="source_3_nondet.pdf">Specification of Source §3 Non-Det</a>
 
