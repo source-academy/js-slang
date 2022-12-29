@@ -13,9 +13,10 @@ import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from './
 const getIdentifier = (node: es.Declaration): es.Identifier | null => {
   switch (node.type) {
     case 'FunctionDeclaration':
-      // node.id is null when a function declaration is a part of the export default function statement.
       if (node.id === null) {
-        return null
+        throw new Error(
+          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+        )
       }
       return node.id
     case 'VariableDeclaration':

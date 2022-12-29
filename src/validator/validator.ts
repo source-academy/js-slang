@@ -26,7 +26,12 @@ export function validateAndAnnotate(
           new Declaration(statement.kind === 'const')
         )
       } else if (statement.type === 'FunctionDeclaration') {
-        initialisedIdentifiers.set((statement.id as es.Identifier).name, new Declaration(true))
+        if (statement.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
+        initialisedIdentifiers.set(statement.id.name, new Declaration(true))
       } else if (statement.type === 'ExportNamedDeclaration') {
         // ExportNamedDeclaration can only be present in Program.
         // We treat exported declarations the same as non-exported declarations
@@ -40,10 +45,12 @@ export function validateAndAnnotate(
             new Declaration(statement.declaration.kind === 'const')
           )
         } else if (statement.declaration.type === 'FunctionDeclaration') {
-          initialisedIdentifiers.set(
-            (statement.declaration.id as es.Identifier).name,
-            new Declaration(true)
-          )
+          if (statement.declaration.id === null) {
+            throw new Error(
+              'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+            )
+          }
+          initialisedIdentifiers.set(statement.declaration.id.name, new Declaration(true))
         }
       }
     }

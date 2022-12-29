@@ -228,8 +228,13 @@ function extractAndRenameNames(
       const index = names.size
       names.set(name, { index, isVar })
     } else if (stmt.type === 'FunctionDeclaration') {
-      const node = stmt as es.FunctionDeclaration
-      let name = (node.id as es.Identifier).name
+      const node = stmt
+      if (node.id === null) {
+        throw new Error(
+          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+        )
+      }
+      let name = node.id.name
       if (rename) {
         const loc = node.loc!.start // should be present
         const oldName = name
@@ -349,7 +354,12 @@ function renameVariables(
     },
     Function(node: es.Function, inactive, c) {
       if (node.type === 'FunctionDeclaration') {
-        c(node.id!, inactive)
+        if (node.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
+        c(node.id, inactive)
       }
       const oldActive = new Set(inactive)
       const locals = new Set<string>()
@@ -383,12 +393,15 @@ function getLocalsInScope(node: es.BlockStatement | es.Program) {
   const locals = new Set<string>()
   for (const stmt of node.body) {
     if (stmt.type === 'VariableDeclaration') {
-      const stmtNode = stmt as es.VariableDeclaration
-      const name = (stmtNode.declarations[0].id as es.Identifier).name
+      const name = (stmt.declarations[0].id as es.Identifier).name
       locals.add(name)
     } else if (stmt.type === 'FunctionDeclaration') {
-      const stmtNode = stmt as es.FunctionDeclaration
-      const name = (stmtNode.id as es.Identifier).name
+      if (stmt.id === null) {
+        throw new Error(
+          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+        )
+      }
+      const name = stmt.id.name
       locals.add(name)
     }
   }
@@ -507,11 +520,19 @@ const compilers = {
   },
 
   // wrapper, compile as an arrow function expression instead
-  FunctionDeclaration(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
-    node = node as es.FunctionDeclaration
+  FunctionDeclaration(
+    node: es.FunctionDeclaration,
+    indexTable: Map<string, EnvEntry>[],
+    insertFlag: boolean
+  ) {
+    if (node.id === null) {
+      throw new Error(
+        'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+      )
+    }
     return compile(
       create.constantDeclaration(
-        (node.id as es.Identifier).name,
+        node.id.name,
         create.arrowFunctionExpression(node.params, node.body)
       ),
       indexTable,

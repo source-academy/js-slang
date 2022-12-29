@@ -1762,8 +1762,13 @@ function reduceMain(
           // }
           return [stmt, context, paths, explain(node)]
         } else if (firstStatement.type === 'FunctionDeclaration') {
+          if (firstStatement.id === null) {
+            throw new Error(
+              'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+            )
+          }
           let funDecExp = ast.functionDeclarationExpression(
-            firstStatement.id!,
+            firstStatement.id,
             firstStatement.params,
             firstStatement.body
           ) as FunctionDeclarationExpression

@@ -139,7 +139,12 @@ function declareFunctionsAndVariables(context: Context, node: es.BlockStatement)
         declareVariables(context, statement)
         break
       case 'FunctionDeclaration':
-        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
+        if (statement.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
+        declareIdentifier(context, statement.id.name, statement)
         break
     }
   }
@@ -562,7 +567,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
-    const id = node.id as es.Identifier
+    const id = node.id
+    if (id === null) {
+      throw new Error("Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.")
+    }
     // tslint:disable-next-line:no-any
     const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)

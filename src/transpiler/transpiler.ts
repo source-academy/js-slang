@@ -407,7 +407,12 @@ export function checkForUndefinedVariables(
       if (statement.type === 'VariableDeclaration') {
         identifiers.add((statement.declarations[0].id as es.Identifier).name)
       } else if (statement.type === 'FunctionDeclaration') {
-        identifiers.add((statement.id as es.Identifier).name)
+        if (statement.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
+        identifiers.add(statement.id.name)
       } else if (statement.type === 'ImportDeclaration') {
         for (const specifier of statement.specifiers) {
           identifiers.add(specifier.local.name)

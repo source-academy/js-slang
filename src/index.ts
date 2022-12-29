@@ -224,6 +224,11 @@ export function getTypeInformation(
       let nodeId = ''
       if (typedNode.type) {
         if (typedNode.type === 'FunctionDeclaration') {
+          if (typedNode.id === null) {
+            throw new Error(
+              'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+            )
+          }
           nodeId = typedNode.id?.name!
         } else if (typedNode.type === 'VariableDeclaration') {
           nodeId = (typedNode.declarations[0].id as es.Identifier).name

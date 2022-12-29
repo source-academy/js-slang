@@ -216,7 +216,12 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       })
       // Set unique identifier so that typechecking can be carried out for return statements
       setType(RETURN_TYPE_IDENTIFIER, expectedReturnType, env)
-      setType(node.id!.name, fnType, env)
+      if (node.id === null) {
+        throw new Error(
+          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+        )
+      }
+      setType(node.id.name, fnType, env)
       const actualReturnType = typeCheckAndReturnType(node.body, context, env)
       env.pop()
 
@@ -360,9 +365,9 @@ function addTypeDeclarationsToEnvironment(
     switch (node.type) {
       case 'FunctionDeclaration':
         if (node.id === null) {
-          // Block should not be reached since node.id is only null when function declaration
-          // is part of `export default function`, which is not used in Source
-          throw new TypecheckError(node, 'Function declaration should always have an identifier')
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
         }
         // Only identifiers are used as function params in Source
         const params = node.params as tsEs.Identifier[]
