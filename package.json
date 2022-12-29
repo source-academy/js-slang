@@ -105,7 +105,8 @@
     "testRegex": "/__tests__/.*\\.ts$",
     "testPathIgnorePatterns": [
       "/dist/",
-      ".*benchmark.*"
+      ".*benchmark.*",
+      ".*/utils\\.ts"
     ],
     "coveragePathIgnorePatterns": [
       "/dist/",
