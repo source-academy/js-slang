@@ -187,6 +187,33 @@ test('Cannot have incomplete statements - verbose', () => {
           `)
 })
 
+test('no anonymous function declarations', () => {
+  return expectParsedError(
+    stripIndent`
+    export default function (x) {
+      return x * x;
+    }
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  ).toMatchInlineSnapshot(`"Line 1: The 'function' keyword needs to be followed by a name."`)
+})
+
+test('no anonymous function declarations - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+    "enable verbose";
+    export default function (x) {
+      return x * x;
+    }
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  ).toMatchInlineSnapshot(`
+            "Line 2, Column 15: The 'function' keyword needs to be followed by a name.
+            Function declarations without a name are similar to function expressions, which are banned.
+            "
+           `)
+})
+
 test('Cannot have if without else in chapter <= 2', () => {
   return expectParsedError(
     stripIndent`

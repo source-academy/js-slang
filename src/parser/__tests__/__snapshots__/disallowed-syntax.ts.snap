@@ -695,6 +695,39 @@ Line 1: Missing curly braces around \\"else\\" block.",
 }
 `;
 
+exports[`no anonymous function declarations - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+export default function (x) {
+  return x * x;
+}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 15: The 'function' keyword needs to be followed by a name.
+Function declarations without a name are similar to function expressions, which are banned.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`no anonymous function declarations: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "export default function (x) {
+  return x * x;
+}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: The 'function' keyword needs to be followed by a name.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`no assigning to reserved keywords - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
