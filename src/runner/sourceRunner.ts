@@ -12,7 +12,7 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
-import { removeExports } from '../localImports/transformer'
+import { removeExports } from '../localImports/transformers'
 import { parse } from '../parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {

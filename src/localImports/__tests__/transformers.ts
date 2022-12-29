@@ -1,7 +1,7 @@
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { Chapter } from '../../types'
-import { transformImportedFile } from '../transformer'
+import { transformImportedFile } from '../transformers'
 import { stripLocationInfo } from './utils'
 
 describe('transformImportedFile', () => {

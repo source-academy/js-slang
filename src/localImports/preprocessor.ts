@@ -2,7 +2,7 @@ import es from 'estree'
 
 import { parse } from '../parser/parser'
 import { Context } from '../types'
-import { removeExports } from './transformer'
+import { removeExports } from './transformers'
 
 const preprocessFileImports = (
   files: Partial<Record<string, string>>,
