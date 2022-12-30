@@ -8,12 +8,12 @@ import { stripLocationInfo } from './utils'
 
 describe('preprocessFileImports', () => {
   const parseError = new Error('Unable to parse code')
-  let actualContext = mockContext(Chapter.SOURCE_2)
-  let expectedContext = mockContext(Chapter.SOURCE_2)
+  let actualContext = mockContext(Chapter.LIBRARY_PARSER)
+  let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
 
   beforeEach(() => {
-    actualContext = mockContext(Chapter.SOURCE_2)
-    expectedContext = mockContext(Chapter.SOURCE_2)
+    actualContext = mockContext(Chapter.LIBRARY_PARSER)
+    expectedContext = mockContext(Chapter.LIBRARY_PARSER)
   })
 
   const assertASTsAreEquivalent = (
@@ -56,6 +56,7 @@ describe('preprocessFileImports', () => {
   it('removes all export-related AST nodes', () => {
     const files: Record<string, string> = {
       'a.js': `export const x = 42;
+        export let y = 53;
         export function square(x) {
           return x * x;
         }
@@ -66,6 +67,7 @@ describe('preprocessFileImports', () => {
       `
     }
     const expectedCode = `const x = 42;
+      let y = 53;
       function square(x) {
        return x * x;
       }

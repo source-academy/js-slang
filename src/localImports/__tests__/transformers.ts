@@ -7,12 +7,12 @@ import { stripLocationInfo } from './utils'
 describe('transformImportedFile', () => {
   const iifeIdentifier = 'importedFile'
   const parseError = new Error('Unable to parse code')
-  let actualContext = mockContext(Chapter.SOURCE_2)
-  let expectedContext = mockContext(Chapter.SOURCE_2)
+  let actualContext = mockContext(Chapter.LIBRARY_PARSER)
+  let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
 
   beforeEach(() => {
-    actualContext = mockContext(Chapter.SOURCE_2)
-    expectedContext = mockContext(Chapter.SOURCE_2)
+    actualContext = mockContext(Chapter.LIBRARY_PARSER)
+    expectedContext = mockContext(Chapter.LIBRARY_PARSER)
   })
 
   const assertASTsAreEquivalent = (actualCode: string, expectedCode: string): void => {
@@ -45,11 +45,11 @@ describe('transformImportedFile', () => {
 
   it('returns only exported variables', () => {
     const actualCode = `const x = 42;
-      export const y = 53;
+      export let y = 53;
     `
     const expectedCode = `function ${iifeIdentifier}() {
         const x = 42;
-        const y = 53;
+        let y = 53;
         return pair(null, list(pair("y", y)));
       }
     `
@@ -92,6 +92,7 @@ describe('transformImportedFile', () => {
 
   it('returns all exported names when there are multiple', () => {
     const actualCode = `export const x = 42;
+      export let y = 53;
       export function id(x) {
         return x;
       }
@@ -99,11 +100,12 @@ describe('transformImportedFile', () => {
     `
     const expectedCode = `function ${iifeIdentifier}() {
         const x = 42;
+        let y = 53;
         function id(x) {
           return x;
         }
         const square = x => x * x;
-        return pair(null, list(pair("x", x), pair("id", id), pair("square", square)));
+        return pair(null, list(pair("x", x), pair("y", y), pair("id", id), pair("square", square)));
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
@@ -111,19 +113,21 @@ describe('transformImportedFile', () => {
 
   it('returns all exported names in {}-notation', () => {
     const actualCode = `const x = 42;
+      let y = 53;
       function id(x) {
         return x;
       }
       const square = x => x * x;
-      export { x, id, square };
+      export { x, y, id, square };
     `
     const expectedCode = `function ${iifeIdentifier}() {
         const x = 42;
+        let y = 53;
         function id(x) {
           return x;
         }
         const square = x => x * x;
-        return pair(null, list(pair("x", x), pair("id", id), pair("square", square)));
+        return pair(null, list(pair("x", x), pair("y", y), pair("id", id), pair("square", square)));
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
@@ -131,19 +135,21 @@ describe('transformImportedFile', () => {
 
   it('returns renamed exported names', () => {
     const actualCode = `const x = 42;
+      let y = 53;
       function id(x) {
         return x;
       }
       const square = x => x * x;
-      export { x as y, id as identity, square as sq };
+      export { x as y, y as x, id as identity, square as sq };
     `
     const expectedCode = `function ${iifeIdentifier}() {
         const x = 42;
+        let y = 53;
         function id(x) {
           return x;
         }
         const square = x => x * x;
-        return pair(null, list(pair("y", x), pair("identity", id), pair("sq", square)));
+        return pair(null, list(pair("y", x), pair("x", y), pair("identity", id), pair("sq", square)));
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
@@ -174,12 +180,12 @@ describe('transformImportedFile', () => {
 
   it('returns default export of variable', () => {
     const actualCode = `const x = 42;
-      const y = 53;
+      let y = 53;
       export default y;
     `
     const expectedCode = `function ${iifeIdentifier}() {
         const x = 42;
-        const y = 53;
+        let y = 53;
         return pair(y, list());
       }
     `
@@ -273,19 +279,21 @@ describe('transformImportedFile', () => {
   it('returns default export in {}-notation', () => {
     const actualCode = `
       const x = 42;
+      let y = 53;
       function square(x) {
         return x * x;
       }
       const id = x => x;
-      export { x, square as default, id };
+      export { x, y, square as default, id };
     `
     const expectedCode = `function ${iifeIdentifier}() {
         const x = 42;
+        let y = 53;
         function square(x) {
           return x * x;
         }
         const id = x => x;
-        return pair(square, list(pair("x", x), pair("id", id)));
+        return pair(square, list(pair("x", x), pair("y", y), pair("id", id)));
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)

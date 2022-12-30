@@ -29,7 +29,6 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
 
   // Chapter 2
   ExportNamedDeclaration: 2,
-  ExportDefaultDeclaration: 2,
 
   // Chapter 3
   BreakStatement: 3,
@@ -59,6 +58,7 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   ClassBody: libraryParserLanguage,
   MethodDefinition: libraryParserLanguage,
   FunctionExpression: libraryParserLanguage,
+  ExportDefaultDeclaration: libraryParserLanguage,
 
   // Disallowed forever
   UpdateExpression: Infinity,

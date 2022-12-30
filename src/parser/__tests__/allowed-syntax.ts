@@ -122,25 +122,6 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_2,
-    `
-    export default function f(x) {
-      return x;
-    }
-    f(5);
-    `
-  ],
-
-  [
-    Chapter.SOURCE_2,
-    `
-    const x = 1;
-    export default x;
-    x;
-    `
-  ],
-
-  [
     Chapter.SOURCE_3,
     `
     let i = 1;
@@ -307,6 +288,25 @@ test.each([
     let x = {a: 1, b: 2};
     const key = 'a';
     x[key] = 3;
+    `
+  ],
+
+  [
+    Chapter.LIBRARY_PARSER,
+    `
+    export default function f(x) {
+      return x;
+    }
+    f(5);
+    `
+  ],
+
+  [
+    Chapter.LIBRARY_PARSER,
+    `
+    const x = 1;
+    export default x;
+    x;
     `
   ]
 ] as [Chapter, string][])(
