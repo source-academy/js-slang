@@ -294,6 +294,13 @@ test.each([
   [
     Chapter.LIBRARY_PARSER,
     `
+    import defaultExport from "module-name";
+    `
+  ],
+
+  [
+    Chapter.LIBRARY_PARSER,
+    `
     export default function f(x) {
       return x;
     }

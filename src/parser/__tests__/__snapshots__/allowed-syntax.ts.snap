@@ -4290,6 +4290,60 @@ x[key] = 3;",
 exports[`Syntaxes are allowed in the chapter they are introduced 35: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
+  "code": "import defaultExport from \\"module-name\\";",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Import default specifiers are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 35: parse passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse(\\"import defaultExport from \\\\\\"module-name\\\\\\";\\");",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": Array [
+    "import_declaration",
+    Array [
+      Array [
+        Array [
+          "default_name",
+          null,
+        ],
+        null,
+      ],
+      Array [
+        "module-name",
+        null,
+      ],
+    ],
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 35: passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "import defaultExport from \\"module-name\\";",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 36: fails a chapter below 1`] = `
+Object {
+  "alertResult": Array [],
   "code": "export default function f(x) {
   return x;
 }
@@ -4303,7 +4357,7 @@ f(5);",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 35: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 36: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"export default function f(x) {\\\\n  return x;\\\\n}\\\\nf(5);\\");",
@@ -4397,7 +4451,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 35: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 36: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "export default function f(x) {
@@ -4413,7 +4467,7 @@ f(5);",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 36: fails a chapter below 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 37: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
   "code": "const x = 1;
@@ -4428,7 +4482,7 @@ x;",
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 36: parse passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 37: parse passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"const x = 1;\\\\nexport default x;\\\\nx;\\");",
@@ -4495,7 +4549,7 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 36: passes 1`] = `
+exports[`Syntaxes are allowed in the chapter they are introduced 37: passes 1`] = `
 Object {
   "alertResult": Array [],
   "code": "const x = 1;
