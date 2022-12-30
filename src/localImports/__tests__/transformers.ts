@@ -1,7 +1,7 @@
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { Chapter } from '../../types'
-import { transformImportedFile } from '../transformers'
+import { removeExports, transformImportedFile } from '../transformers'
 import { stripLocationInfo } from './utils'
 
 describe('transformImportedFile', () => {
@@ -268,5 +268,78 @@ describe('transformImportedFile', () => {
       }
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
+  })
+})
+
+describe('removeExports', () => {
+  const parseError = new Error('Unable to parse code')
+  let actualContext = mockContext(Chapter.LIBRARY_PARSER)
+  let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
+
+  beforeEach(() => {
+    actualContext = mockContext(Chapter.LIBRARY_PARSER)
+    expectedContext = mockContext(Chapter.LIBRARY_PARSER)
+  })
+
+  const assertASTsAreEquivalent = (actualCode: string, expectedCode: string): void => {
+    const actualProgram = parse(actualCode, actualContext)
+    const expectedProgram = parse(expectedCode, expectedContext)
+    if (actualProgram === undefined || expectedProgram === undefined) {
+      throw parseError
+    }
+
+    removeExports(actualProgram)
+    expect(stripLocationInfo(actualProgram)).toEqual(stripLocationInfo(expectedProgram))
+  }
+
+  describe('removes ExportNamedDeclaration nodes', () => {
+    test('when exporting variable declarations', () => {
+      const actualCode = `export const x = 42;
+        export let y = 53;
+      `
+      const expectedCode = `const x = 42;
+        let y = 53;
+      `
+      assertASTsAreEquivalent(actualCode, expectedCode)
+    })
+
+    test('when exporting function declarations', () => {
+      const actualCode = `export function square(x) {
+          return x * x;
+        }
+      `
+      const expectedCode = `function square(x) {
+          return x * x;
+        }
+      `
+      assertASTsAreEquivalent(actualCode, expectedCode)
+    })
+
+    test('when exporting arrow function declarations', () => {
+      const actualCode = `export const square = x => x * x;
+      `
+      const expectedCode = `const square = x => x * x;
+      `
+      assertASTsAreEquivalent(actualCode, expectedCode)
+    })
+
+    test('when exporting (renamed) identifiers', () => {
+      const actualCode = `const x = 42;
+        let y = 53;
+        function square(x) {
+          return x * x;
+        }
+        const id = x => x;
+        export { x, y, square as sq, id };
+      `
+      const expectedCode = `const x = 42;
+        let y = 53;
+        function square(x) {
+          return x * x;
+        }
+        const id = x => x;
+      `
+      assertASTsAreEquivalent(actualCode, expectedCode)
+    })
   })
 })

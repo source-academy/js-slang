@@ -53,7 +53,7 @@ describe('preprocessFileImports', () => {
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
-  it('', () => {
+  it('removes all export-related AST nodes', () => {
     const files: Record<string, string> = {
       'a.js': `export const x = 42;
         export function square(x) {
