@@ -341,6 +341,13 @@ const transformers: ASTTransformers = new Map([
   ],
 
   [
+    'ImportDefaultSpecifier',
+    (_node: es.ImportDefaultSpecifier) => {
+      return vector_to_list(['default_name'])
+    }
+  ],
+
+  [
     'ExportNamedDeclaration',
     (node: es.ExportNamedDeclaration) => {
       return vector_to_list([
