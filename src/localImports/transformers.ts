@@ -3,7 +3,6 @@ import es from 'estree'
 import { ancestor } from '../utils/walkers'
 import {
   createFunctionDeclaration,
-  createIdentifier,
   createListCallExpression,
   createLiteral,
   createPairCallExpression,
@@ -32,21 +31,23 @@ const getIdentifier = (node: es.Declaration): es.Identifier | null => {
   }
 }
 
-const getExportedNames = (nodes: es.ModuleDeclaration[]): Record<string, string> => {
-  const exportedNameToIdentifierMap: Record<string, string> = {}
+const getExportedNameToIdentifierMap = (
+  nodes: es.ModuleDeclaration[]
+): Record<string, es.Identifier> => {
+  const exportedNameToIdentifierMap: Record<string, es.Identifier> = {}
   nodes.forEach((node: es.ModuleDeclaration): void => {
     // Only ExportNamedDeclaration nodes specify exported names.
     if (node.type !== 'ExportNamedDeclaration') {
       return
     }
     if (node.declaration) {
-      const exportedName = getIdentifier(node.declaration)?.name
-      if (exportedName === undefined) {
+      const identifier = getIdentifier(node.declaration)
+      if (identifier === null) {
         return
       }
       // When an ExportNamedDeclaration node has a declaration, the
       // identifier is the same as the exported name (i.e., no renaming).
-      const identifier = exportedName
+      const exportedName = identifier.name
       exportedNameToIdentifierMap[exportedName] = identifier
     } else {
       // When an ExportNamedDeclaration node does not have a declaration,
@@ -55,7 +56,7 @@ const getExportedNames = (nodes: es.ModuleDeclaration[]): Record<string, string>
       // exported names and their corresponding identifiers might be different.
       node.specifiers.forEach((node: es.ExportSpecifier): void => {
         const exportedName = node.exported.name
-        const identifier = node.local.name
+        const identifier = node.local
         exportedNameToIdentifierMap[exportedName] = identifier
       })
     }
@@ -63,8 +64,24 @@ const getExportedNames = (nodes: es.ModuleDeclaration[]): Record<string, string>
   return exportedNameToIdentifierMap
 }
 
-const getDefaultExportExpression = (nodes: es.ModuleDeclaration[]): es.Expression | null => {
+const getDefaultExportExpression = (
+  nodes: es.ModuleDeclaration[],
+  exportedNameToIdentifierMap: Partial<Record<string, es.Identifier>>
+): es.Expression | null => {
   let defaultExport: es.Expression | null = null
+
+  // Handle default exports which are parsed as ExportNamedDeclaration AST nodes.
+  // 'export { name as default };' is equivalent to 'export default name;' but
+  // is represented by an ExportNamedDeclaration node instead of an
+  // ExportedDefaultDeclaration node.
+  //
+  // NOTE: If there is a named export representing the default export, its entry
+  // in the map must be removed to prevent it from being treated as a named export.
+  if (exportedNameToIdentifierMap['default'] !== undefined) {
+    defaultExport = exportedNameToIdentifierMap['default']
+    delete exportedNameToIdentifierMap['default']
+  }
+
   nodes.forEach((node: es.ModuleDeclaration): void => {
     // Only ExportDefaultDeclaration nodes specify the default export.
     if (node.type !== 'ExportDefaultDeclaration') {
@@ -93,12 +110,12 @@ const getDefaultExportExpression = (nodes: es.ModuleDeclaration[]): es.Expressio
 }
 
 const createReturnListArguments = (
-  exportedNameToIdentifierMap: Record<string, string>
+  exportedNameToIdentifierMap: Record<string, es.Identifier>
 ): Array<es.Expression | es.SpreadElement> => {
   return Object.entries(exportedNameToIdentifierMap).map(
-    ([exportedName, identifier]: [string, string]) => {
+    ([exportedName, identifier]: [string, es.Identifier]) => {
       const head = createLiteral(exportedName)
-      const tail = createIdentifier(identifier)
+      const tail = identifier
       return createPairCallExpression(head, tail)
     }
   )
@@ -146,11 +163,16 @@ export const transformImportedFile = (
   iifeIdentifier: string
 ): es.FunctionDeclaration => {
   const moduleDeclarations = program.body.filter(isModuleDeclaration)
-  const defaultExportExpression = getDefaultExportExpression(moduleDeclarations)
-  const exportedNames = getExportedNames(moduleDeclarations)
+  const exportedNameToIdentifierMap = getExportedNameToIdentifierMap(moduleDeclarations)
+  const defaultExportExpression = getDefaultExportExpression(
+    moduleDeclarations,
+    exportedNameToIdentifierMap
+  )
 
   const defaultExport = defaultExportExpression ?? createLiteral(null)
-  const namedExports = createListCallExpression(createReturnListArguments(exportedNames))
+  const namedExports = createListCallExpression(
+    createReturnListArguments(exportedNameToIdentifierMap)
+  )
   const returnStatement = createReturnStatement(
     createPairCallExpression(defaultExport, namedExports)
   )
