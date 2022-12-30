@@ -59,6 +59,7 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   MethodDefinition: libraryParserLanguage,
   FunctionExpression: libraryParserLanguage,
   ExportDefaultDeclaration: libraryParserLanguage,
+  ImportDefaultSpecifier: libraryParserLanguage,
 
   // Disallowed forever
   UpdateExpression: Infinity,
@@ -85,7 +86,6 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   SequenceExpression: Infinity,
   AssignmentPattern: Infinity,
   ExportAllDeclaration: Infinity,
-  ImportDefaultSpecifier: Infinity,
   ImportNamespaceSpecifier: Infinity,
   TaggedTemplateExpression: Infinity
 }
