@@ -193,12 +193,12 @@ export const transformImportedFile = (
  *
  * @param program The AST which should be stripped of export-related nodes.
  */
-export function removeExports(program: es.Program): void {
+export const removeExports = (program: es.Program): void => {
   ancestor(program, {
     // TODO: Handle other export AST nodes.
     ExportNamedDeclaration(node: es.ExportNamedDeclaration, ancestors: es.Node[]) {
       // The ancestors array contains the current node, meaning that the
-      // parent node is the second last node of the array.`
+      // parent node is the second last node of the array.
       const parent = ancestors[ancestors.length - 2]
       // The parent node of an ExportNamedDeclaration node must be a Program node.
       if (parent.type !== 'Program') {
@@ -216,7 +216,7 @@ export function removeExports(program: es.Program): void {
     },
     ExportDefaultDeclaration(node: es.ExportDefaultDeclaration, ancestors: es.Node[]) {
       // The ancestors array contains the current node, meaning that the
-      // parent node is the second last node of the array.`
+      // parent node is the second last node of the array.
       const parent = ancestors[ancestors.length - 2]
       // The parent node of an ExportNamedDeclaration node must be a Program node.
       if (parent.type !== 'Program') {
@@ -233,6 +233,42 @@ export function removeExports(program: es.Program): void {
         // Remove the ExportDefaultDeclaration node in its parent node's body.
         parent.body.splice(nodeIndex, 1)
       }
+    }
+  })
+}
+
+export const removeNonSourceModuleImports = (program: es.Program): void => {
+  // First pass: remove all import AST nodes which are unused by Source modules.
+  ancestor(program, {
+    // TODO: Handle other import AST nodes.
+    ImportDefaultSpecifier(node: es.ImportDefaultSpecifier, ancestors: es.Node[]) {
+      // The ancestors array contains the current node, meaning that the
+      // parent node is the second last node of the array.
+      const parent = ancestors[ancestors.length - 2]
+      // The parent node of an ImportDefaultSpecifier node must be an ImportDeclaration node.
+      if (parent.type !== 'ImportDeclaration') {
+        return
+      }
+      const nodeIndex = parent.specifiers.findIndex(n => n === node)
+      // Remove the ImportDefaultSpecifier node in its parent node's array of specifiers.
+      // This is because Source modules do not support default imports.
+      parent.specifiers.splice(nodeIndex, 1)
+    }
+  })
+  // Second pass: remove all ImportDeclaration nodes without any specifiers.
+  ancestor(program, {
+    ImportDeclaration(node: es.ImportDeclaration, ancestors: es.Node[]) {
+      // The ancestors array contains the current node, meaning that the
+      // parent node is the second last node of the array.
+      const parent = ancestors[ancestors.length - 2]
+      // The parent node of an ImportDeclaration node must be a Program node.
+      if (parent.type !== 'Program') {
+        return
+      }
+      const nodeIndex = parent.body.findIndex(n => n === node)
+      // Remove the ImportDeclaration node in its parent node's body.
+      // This is because ImportDeclaration nodes without any specifiers are functionally useless.
+      parent.body.splice(nodeIndex, 1)
     }
   })
 }
