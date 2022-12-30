@@ -269,6 +269,27 @@ describe('transformImportedFile', () => {
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
   })
+
+  it('returns default export in {}-notation', () => {
+    const actualCode = `
+      const x = 42;
+      function square(x) {
+        return x * x;
+      }
+      const id = x => x;
+      export { x, square as default, id };
+    `
+    const expectedCode = `function ${iifeIdentifier}() {
+        const x = 42;
+        function square(x) {
+          return x * x;
+        }
+        const id = x => x;
+        return pair(square, list(pair("x", x), pair("id", id)));
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
 })
 
 describe('removeExports', () => {
