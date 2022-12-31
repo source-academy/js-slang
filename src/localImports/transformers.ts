@@ -253,6 +253,19 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
       // Remove the ImportDefaultSpecifier node in its parent node's array of specifiers.
       // This is because Source modules do not support default imports.
       parent.specifiers.splice(nodeIndex, 1)
+    },
+    ImportNamespaceSpecifier(node: es.ImportNamespaceSpecifier, ancestors: es.Node[]) {
+      // The ancestors array contains the current node, meaning that the
+      // parent node is the second last node of the array.
+      const parent = ancestors[ancestors.length - 2]
+      // The parent node of an ImportNamespaceSpecifier node must be an ImportDeclaration node.
+      if (parent.type !== 'ImportDeclaration') {
+        return
+      }
+      const nodeIndex = parent.specifiers.findIndex(n => n === node)
+      // Remove the ImportNamespaceSpecifier node in its parent node's array of specifiers.
+      // This is because Source modules do not support namespace imports.
+      parent.specifiers.splice(nodeIndex, 1)
     }
   })
   // Second pass: remove all ImportDeclaration nodes without any specifiers.
