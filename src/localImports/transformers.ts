@@ -312,6 +312,8 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
     }
   })
 
+  // Operate on a copy of the Program node's body to prevent the walk from missing ImportDeclaration nodes.
+  const programBody = [...program.body]
   const removeImportDeclaration = (node: es.ImportDeclaration, ancestors: es.Node[]): void => {
     // The ancestors array contains the current node, meaning that the
     // parent node is the second last node of the array.
@@ -320,9 +322,9 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
     if (parent.type !== 'Program') {
       return
     }
-    const nodeIndex = parent.body.findIndex(n => n === node)
+    const nodeIndex = programBody.findIndex(n => n === node)
     // Remove the ImportDeclaration node in its parent node's body.
-    parent.body.splice(nodeIndex, 1)
+    programBody.splice(nodeIndex, 1)
   }
   // Second pass: remove all ImportDeclaration nodes for non-Source modules, or that do not
   // have any specifiers (thus being functionally useless).
@@ -344,4 +346,5 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
       }
     }
   })
+  program.body = programBody
 }
