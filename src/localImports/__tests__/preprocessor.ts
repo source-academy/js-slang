@@ -79,4 +79,17 @@ describe('preprocessFileImports', () => {
     const actualProgram = preprocessFileImports(files, 'a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
+
+  it('removes all non-Source module import-related AST nodes', () => {
+    const files: Record<string, string> = {
+      'a.js': `import d, { a, b, c } from "source-module";
+        import w, { x, y, z } from "./not-source-module.js";
+        import * as f from "another-source-module";
+      `
+    }
+    const expectedCode = `import { a, b, c } from "source-module";
+    `
+    const actualProgram = preprocessFileImports(files, 'a.js', actualContext)
+    assertASTsAreEquivalent(actualProgram, expectedCode)
+  })
 })

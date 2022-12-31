@@ -2,7 +2,7 @@ import es from 'estree'
 
 import { parse } from '../parser/parser'
 import { Context } from '../types'
-import { removeExports } from './transformers'
+import { removeExports, removeNonSourceModuleImports } from './transformers'
 
 const preprocessFileImports = (
   files: Partial<Record<string, string>>,
@@ -22,6 +22,9 @@ const preprocessFileImports = (
   // After this pre-processing step, all export-related nodes in the AST
   // are no longer needed and are thus removed.
   removeExports(program)
+  // Likewise, all import-related nodes in the AST which are not Source
+  // module imports are no longer needed and are also removed.
+  removeNonSourceModuleImports(program)
 
   return program
 }
