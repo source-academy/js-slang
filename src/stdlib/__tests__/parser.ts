@@ -194,6 +194,16 @@ test('Parses assignment expressions', () => {
   )
 })
 
+test('Parses default import specifiers', () => {
+  return snapshotSuccess(
+    oneLine`
+    stringify(parse(
+      "import defaultExport from 'module-name';"), undefined, 2);
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  )
+})
+
 test('Parses named export declarations', () => {
   return snapshotSuccess(
     oneLine`
@@ -205,7 +215,7 @@ test('Parses named export declarations', () => {
       }
       export { x as y };"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4 }
+    { chapter: Chapter.LIBRARY_PARSER }
   )
 })
 
@@ -220,6 +230,6 @@ test('Parses default export declarations', () => {
         return x * x;
       }"), undefined, 2);
     `,
-    { chapter: Chapter.SOURCE_4 }
+    { chapter: Chapter.LIBRARY_PARSER }
   )
 })
