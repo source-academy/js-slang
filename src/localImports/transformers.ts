@@ -196,7 +196,11 @@ export const transformImportedFile = (
 export const removeExports = (program: es.Program): void => {
   ancestor(program, {
     // TODO: Handle other export AST nodes.
-    ExportNamedDeclaration(node: es.ExportNamedDeclaration, ancestors: es.Node[]) {
+    ExportNamedDeclaration(
+      node: es.ExportNamedDeclaration,
+      _state: es.Node[],
+      ancestors: es.Node[]
+    ) {
       // The ancestors array contains the current node, meaning that the
       // parent node is the second last node of the array.
       const parent = ancestors[ancestors.length - 2]
@@ -214,7 +218,11 @@ export const removeExports = (program: es.Program): void => {
         parent.body.splice(nodeIndex, 1)
       }
     },
-    ExportDefaultDeclaration(node: es.ExportDefaultDeclaration, ancestors: es.Node[]) {
+    ExportDefaultDeclaration(
+      node: es.ExportDefaultDeclaration,
+      _state: es.Node[],
+      ancestors: es.Node[]
+    ) {
       // The ancestors array contains the current node, meaning that the
       // parent node is the second last node of the array.
       const parent = ancestors[ancestors.length - 2]
@@ -265,10 +273,14 @@ export const isSourceModule = (value: string): boolean => {
 export const removeNonSourceModuleImports = (program: es.Program): void => {
   // First pass: remove all import AST nodes which are unused by Source modules.
   ancestor(program, {
-    ImportSpecifier(_node: es.ImportSpecifier, _ancestors: es.Node[]): void {
+    ImportSpecifier(_node: es.ImportSpecifier, _state: es.Node[], _ancestors: es.Node[]): void {
       // Nothing to do here since ImportSpecifier nodes are used by Source modules.
     },
-    ImportDefaultSpecifier(node: es.ImportDefaultSpecifier, ancestors: es.Node[]): void {
+    ImportDefaultSpecifier(
+      node: es.ImportDefaultSpecifier,
+      _state: es.Node[],
+      ancestors: es.Node[]
+    ): void {
       // The ancestors array contains the current node, meaning that the
       // parent node is the second last node of the array.
       const parent = ancestors[ancestors.length - 2]
@@ -281,7 +293,11 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
       // This is because Source modules do not support default imports.
       parent.specifiers.splice(nodeIndex, 1)
     },
-    ImportNamespaceSpecifier(node: es.ImportNamespaceSpecifier, ancestors: es.Node[]): void {
+    ImportNamespaceSpecifier(
+      node: es.ImportNamespaceSpecifier,
+      _state: es.Node[],
+      ancestors: es.Node[]
+    ): void {
       // The ancestors array contains the current node, meaning that the
       // parent node is the second last node of the array.
       const parent = ancestors[ancestors.length - 2]
@@ -311,7 +327,7 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
   // Second pass: remove all ImportDeclaration nodes for non-Source modules, or that do not
   // have any specifiers (thus being functionally useless).
   ancestor(program, {
-    ImportDeclaration(node: es.ImportDeclaration, ancestors: es.Node[]): void {
+    ImportDeclaration(node: es.ImportDeclaration, _state: es.Node[], ancestors: es.Node[]): void {
       // Module names must always be strings in Source.
       if (typeof node.source.value !== 'string') {
         return
