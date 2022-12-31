@@ -237,11 +237,38 @@ export const removeExports = (program: es.Program): void => {
   })
 }
 
+/**
+ * Returns whether a string is a file path. We define a file
+ * path to be any string containing the '/' character.
+ *
+ * @param value The value of the string.
+ */
+const isFilePath = (value: string): boolean => {
+  return value.includes('/')
+}
+
+/**
+ * Returns whether a string is a reference to a Source module.
+ * We define a Source module name to be any string that is not
+ * a file path.
+ *
+ * Source module import:           `import { x } from "module";`
+ * Local (relative) module import: `import { x } from "./module";`
+ * Local (absolute) module import: `import { x } from "/dir/dir2/module";`
+ *
+ * @param value The value of the string.
+ */
+export const isSourceModule = (value: string): boolean => {
+  return !isFilePath(value)
+}
+
 export const removeNonSourceModuleImports = (program: es.Program): void => {
   // First pass: remove all import AST nodes which are unused by Source modules.
   ancestor(program, {
-    // TODO: Handle other import AST nodes.
-    ImportDefaultSpecifier(node: es.ImportDefaultSpecifier, ancestors: es.Node[]) {
+    ImportSpecifier(_node: es.ImportSpecifier, _ancestors: es.Node[]): void {
+      // Nothing to do here since ImportSpecifier nodes are used by Source modules.
+    },
+    ImportDefaultSpecifier(node: es.ImportDefaultSpecifier, ancestors: es.Node[]): void {
       // The ancestors array contains the current node, meaning that the
       // parent node is the second last node of the array.
       const parent = ancestors[ancestors.length - 2]
@@ -254,7 +281,7 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
       // This is because Source modules do not support default imports.
       parent.specifiers.splice(nodeIndex, 1)
     },
-    ImportNamespaceSpecifier(node: es.ImportNamespaceSpecifier, ancestors: es.Node[]) {
+    ImportNamespaceSpecifier(node: es.ImportNamespaceSpecifier, ancestors: es.Node[]): void {
       // The ancestors array contains the current node, meaning that the
       // parent node is the second last node of the array.
       const parent = ancestors[ancestors.length - 2]
@@ -268,20 +295,37 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
       parent.specifiers.splice(nodeIndex, 1)
     }
   })
-  // Second pass: remove all ImportDeclaration nodes without any specifiers.
+
+  const removeImportDeclaration = (node: es.ImportDeclaration, ancestors: es.Node[]): void => {
+    // The ancestors array contains the current node, meaning that the
+    // parent node is the second last node of the array.
+    const parent = ancestors[ancestors.length - 2]
+    // The parent node of an ImportDeclaration node must be a Program node.
+    if (parent.type !== 'Program') {
+      return
+    }
+    const nodeIndex = parent.body.findIndex(n => n === node)
+    // Remove the ImportDeclaration node in its parent node's body.
+    parent.body.splice(nodeIndex, 1)
+  }
+  // Second pass: remove all ImportDeclaration nodes for non-Source modules, or that do not
+  // have any specifiers (thus being functionally useless).
   ancestor(program, {
-    ImportDeclaration(node: es.ImportDeclaration, ancestors: es.Node[]) {
-      // The ancestors array contains the current node, meaning that the
-      // parent node is the second last node of the array.
-      const parent = ancestors[ancestors.length - 2]
-      // The parent node of an ImportDeclaration node must be a Program node.
-      if (parent.type !== 'Program') {
+    ImportDeclaration(node: es.ImportDeclaration, ancestors: es.Node[]): void {
+      // Module names must always be strings in Source.
+      if (typeof node.source.value !== 'string') {
         return
       }
-      const nodeIndex = parent.body.findIndex(n => n === node)
-      // Remove the ImportDeclaration node in its parent node's body.
-      // This is because ImportDeclaration nodes without any specifiers are functionally useless.
-      parent.body.splice(nodeIndex, 1)
+      // ImportDeclaration nodes without any specifiers are functionally useless and are thus removed.
+      if (node.specifiers.length === 0) {
+        removeImportDeclaration(node, ancestors)
+        return
+      }
+      // Non-Source modules should already have been handled in the pre-processing step and are no
+      // longer needed. They must be removed to avoid being treated as Source modules.
+      if (!isSourceModule(node.source.value)) {
+        removeImportDeclaration(node, ancestors)
+      }
     }
   })
 }
