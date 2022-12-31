@@ -97,34 +97,40 @@ export function transformImportDeclarations(
  * a single statement
  */
 export function hoistImportDeclarations(program: es.Program) {
-  const importNodes = program.body.filter(
-    node => node.type === 'ImportDeclaration'
-  ) as es.ImportDeclaration[]
+  const importDeclarations = program.body.filter(
+    (node: es.Directive | es.Statement | es.ModuleDeclaration): node is es.ImportDeclaration =>
+      node.type === 'ImportDeclaration'
+  )
+  type LiteralValueType = string | number | bigint | boolean | RegExp | null | undefined
   const specifiers = new Map<
-    string,
-    (es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier)[]
+    LiteralValueType,
+    Array<es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier>
   >()
-  const baseNodes = new Map<string, es.ImportDeclaration>()
+  const baseNodes = new Map<LiteralValueType, es.ImportDeclaration>()
 
-  for (const node of importNodes) {
-    const moduleName = node.source.value as string
+  for (const importDeclaration of importDeclarations) {
+    const moduleName = importDeclaration.source.value
 
     if (!specifiers.has(moduleName)) {
-      specifiers.set(moduleName, node.specifiers)
-      baseNodes.set(moduleName, node)
+      specifiers.set(moduleName, importDeclaration.specifiers)
+      baseNodes.set(moduleName, importDeclaration)
     } else {
-      for (const specifier of node.specifiers) {
+      for (const specifier of importDeclaration.specifiers) {
+        // TypeScript is unable to infer that `specifiers.get(moduleName)` is always defined.
         specifiers.get(moduleName)!.push(specifier)
       }
     }
   }
 
-  const newImports = Array.from(baseNodes.entries()).map(([module, node]) => {
+  const newImports: Array<es.Directive | es.Statement | es.ModuleDeclaration> = Array.from(
+    baseNodes.entries()
+  ).map(([moduleName, node]: [LiteralValueType, es.ImportDeclaration]): es.ImportDeclaration => {
     return {
       ...node,
-      specifiers: specifiers.get(module)
+      // TypeScript is unable to infer that `specifiers.get(moduleName)` is always defined.
+      specifiers: specifiers.get(moduleName)!
     }
-  }) as (es.ModuleDeclaration | es.Statement | es.Declaration)[]
+  })
 
   program.body = newImports.concat(program.body.filter(node => node.type !== 'ImportDeclaration'))
 }
