@@ -2,11 +2,10 @@ import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { Chapter } from '../../types'
 import { removeExports, transformImportedFile } from '../transformers'
-import { stripLocationInfo } from './utils'
+import { parseError, stripLocationInfo } from './utils'
 
 describe('transformImportedFile', () => {
   const iifeIdentifier = 'importedFile'
-  const parseError = new Error('Unable to parse code')
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
   let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
 
@@ -301,7 +300,6 @@ describe('transformImportedFile', () => {
 })
 
 describe('removeExports', () => {
-  const parseError = new Error('Unable to parse code')
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
   let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
 

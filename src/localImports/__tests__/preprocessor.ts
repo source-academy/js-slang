@@ -4,10 +4,9 @@ import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { Chapter } from '../../types'
 import preprocessFileImports from '../preprocessor'
-import { stripLocationInfo } from './utils'
+import { parseError, stripLocationInfo } from './utils'
 
 describe('preprocessFileImports', () => {
-  const parseError = new Error('Unable to parse code')
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
   let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
 

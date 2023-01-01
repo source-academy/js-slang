@@ -2,6 +2,8 @@ import es from 'estree'
 
 import { full, simple } from '../../utils/walkers'
 
+export const parseError = new Error('Unable to parse code')
+
 /**
  * Strips out location information from an AST.
  *
