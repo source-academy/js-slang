@@ -44,3 +44,7 @@ export function isDeclaration(node: es.Node): node is es.Declaration {
     node.type === 'ClassDeclaration'
   )
 }
+
+export function isImportDeclaration(node: es.Node): node is es.ImportDeclaration {
+  return node.type === 'ImportDeclaration'
+}

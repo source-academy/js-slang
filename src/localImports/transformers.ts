@@ -256,7 +256,7 @@ const isFilePath = (value: string): boolean => {
 }
 
 /**
- * Returns whether a string is a reference to a Source module.
+ * Returns whether a module name refers to a Source module.
  * We define a Source module name to be any string that is not
  * a file path.
  *
@@ -264,10 +264,10 @@ const isFilePath = (value: string): boolean => {
  * Local (relative) module import: `import { x } from "./module";`
  * Local (absolute) module import: `import { x } from "/dir/dir2/module";`
  *
- * @param value The value of the string.
+ * @param moduleName The name of the module.
  */
-export const isSourceModule = (value: string): boolean => {
-  return !isFilePath(value)
+export const isSourceModule = (moduleName: string): boolean => {
+  return !isFilePath(moduleName)
 }
 
 /**
