@@ -267,10 +267,11 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
         throw new TypecheckError(node, 'Variable declaration must have value')
       }
       const init = node.declarations[0].init
-      // Look up declared type directly as type has already been added to environment
-      const expectedType =
-        lookupTypeAndRemoveForAllAndPredicateTypes(id.name, env) ??
-        getTypeAnnotationType(id.typeAnnotation, context, env)
+      // Look up declared type if current environment contains name
+      const expectedType = env[env.length - 1].typeMap.has(id.name)
+        ? lookupTypeAndRemoveForAllAndPredicateTypes(id.name, env) ??
+          getTypeAnnotationType(id.typeAnnotation, context, env)
+        : getTypeAnnotationType(id.typeAnnotation, context, env)
       const initType = typeCheckAndReturnType(init, context, env)
       checkForTypeMismatch(node, initType, expectedType, context)
 
@@ -541,6 +542,7 @@ function addTypeDeclarationsToEnvironment(
         }
         const id = node.declarations[0].id as tsEs.Identifier
         const expectedType = getTypeAnnotationType(id.typeAnnotation, context, env)
+        // Type is not checked here as it will be checked in typeCheckAndReturnType
 
         // Save variable type and decl kind in type env
         setType(id.name, expectedType, env)
