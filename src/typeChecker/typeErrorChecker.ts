@@ -365,6 +365,14 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
         }
         return tAny
       }
+
+      // If any of the arguments is a spread element, skip type checking of arguments
+      // TODO: Add support for type checking of call expressions with spread elements
+      const hasVarArgs = args.reduce((prev, curr) => prev || curr.type === 'SpreadElement', false)
+      if (hasVarArgs) {
+        return calleeType.returnType
+      }
+
       // Check argument types before returning declared return type
       const expectedTypes = calleeType.parameterTypes
       if (args.length !== expectedTypes.length) {
