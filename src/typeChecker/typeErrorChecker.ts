@@ -23,7 +23,6 @@ import {
   Chapter,
   Context,
   disallowedTypes,
-  FunctionType,
   PrimitiveType,
   TSAllowedTypes,
   TSBasicType,
@@ -213,11 +212,24 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       return typeCheckAndReturnArrowFunctionType(node, context, env)
     }
     case 'FunctionDeclaration':
-      // Only identifiers are used as function params in Source
-      const params = node.params as tsEs.Identifier[]
-      // Name of function cannot be null in Source
-      const fnName = node.id!.name
+      if (node.id === null) {
+        // Block should not be reached since node.id is only null when function declaration
+        // is part of `export default function`, which is not used in Source
+        throw new TypecheckError(node, 'Function declaration should always have an identifier')
+      }
+
+      // Only identifiers/rest elements are used as function params in Source
+      const params = node.params as (tsEs.Identifier | tsEs.RestElement)[]
+      const fnName = node.id.name
       const expectedReturnType = getTypeAnnotationType(node.returnType, context, env)
+
+      // If the function has variable number of arguments, set function type as any
+      // TODO: Add support for variable number of function arguments
+      const hasVarArgs = params.reduce((prev, curr) => prev || curr.type === 'RestElement', false)
+      if (hasVarArgs) {
+        setType(fnName, tAny, env)
+        return tUndef
+      }
 
       const types = getParamTypes(params, context, env)
       // Return type will always be last item in types array
@@ -226,7 +238,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
 
       // Type check function body, creating new environment to store arg types, return type and function type
       pushEnv(env)
-      params.forEach(param => {
+      params.forEach((param: tsEs.Identifier) => {
         setType(param.name, getTypeAnnotationType(param.typeAnnotation, context, env), env)
       })
       // Set unique identifier so that typechecking can be carried out for return statements
@@ -515,9 +527,18 @@ function addTypeDeclarationsToEnvironment(
           // is part of `export default function`, which is not used in Source
           throw new TypecheckError(node, 'Function declaration should always have an identifier')
         }
-        // Only identifiers are used as function params in Source
-        const params = node.params as tsEs.Identifier[]
+        // Only identifiers/rest elements are used as function params in Source
+        const params = node.params as (tsEs.Identifier | tsEs.RestElement)[]
+        const fnName = node.id.name
         const returnType = getTypeAnnotationType(node.returnType, context, env)
+
+        // If the function has variable number of arguments, set function type as any
+        // TODO: Add support for variable number of function arguments
+        const hasVarArgs = params.reduce((prev, curr) => prev || curr.type === 'RestElement', false)
+        if (hasVarArgs) {
+          setType(fnName, tAny, env)
+          break
+        }
 
         const types = getParamTypes(params, context, env)
         // Return type will always be last item in types array
@@ -525,7 +546,7 @@ function addTypeDeclarationsToEnvironment(
         const fnType = tFunc(...types)
 
         // Save function type in type env
-        setType(node.id.name, fnType, env)
+        setType(fnName, fnType, env)
         break
       case 'VariableDeclaration':
         if (node.kind === 'var') {
@@ -660,14 +681,21 @@ function typeCheckAndReturnArrowFunctionType(
   node: tsEs.ArrowFunctionExpression,
   context: Context,
   env: TypeEnvironment
-): FunctionType {
-  // Only identifiers are used as function params in Source
-  const params = node.params as tsEs.Identifier[]
+): Type {
+  // Only identifiers/rest elements are used as function params in Source
+  const params = node.params as (tsEs.Identifier | tsEs.RestElement)[]
   const expectedReturnType = getTypeAnnotationType(node.returnType, context, env)
+
+  // If the function has variable number of arguments, set function type as any
+  // TODO: Add support for variable number of function arguments
+  const hasVarArgs = params.reduce((prev, curr) => prev || curr.type === 'RestElement', false)
+  if (hasVarArgs) {
+    return tAny
+  }
 
   // Type check function body, creating new environment to store arg types and return type
   pushEnv(env)
-  params.forEach(param => {
+  params.forEach((param: tsEs.Identifier) => {
     setType(param.name, getTypeAnnotationType(param.typeAnnotation, context, env), env)
   })
   // Set unique identifier so that typechecking can be carried out for return statements
@@ -898,7 +926,14 @@ function getTypeAnnotationType(
 function getAnnotatedType(typeNode: tsEs.TSType, context: Context, env: TypeEnvironment): Type {
   switch (typeNode.type) {
     case 'TSFunctionType':
-      const fnTypes = getParamTypes(typeNode.parameters, context, env)
+      const params = typeNode.parameters
+      // If the function has variable number of arguments, set function type as any
+      // TODO: Add support for variable number of function arguments
+      const hasVarArgs = params.reduce((prev, curr) => prev || curr.type === 'RestElement', false)
+      if (hasVarArgs) {
+        return tAny
+      }
+      const fnTypes = getParamTypes(params, context, env)
       // Return type will always be last item in types array
       fnTypes.push(getTypeAnnotationType(typeNode.typeAnnotation, context, env))
       return tFunc(...fnTypes)
@@ -962,7 +997,11 @@ function getAnnotatedType(typeNode: tsEs.TSType, context: Context, env: TypeEnvi
 /**
  * Converts array of function parameters into array of types.
  */
-function getParamTypes(params: tsEs.Identifier[], context: Context, env: TypeEnvironment): Type[] {
+function getParamTypes(
+  params: (tsEs.Identifier | tsEs.RestElement)[],
+  context: Context,
+  env: TypeEnvironment
+): Type[] {
   return params.map(param => getTypeAnnotationType(param.typeAnnotation, context, env))
 }
 

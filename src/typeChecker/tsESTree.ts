@@ -558,6 +558,8 @@ export interface ArrayPattern extends BasePattern {
 export interface RestElement extends BasePattern {
   type: 'RestElement'
   argument: Pattern
+  // Added to support type syntax
+  typeAnnotation?: TSTypeAnnotation
 }
 
 export interface AssignmentPattern extends BasePattern {
@@ -735,7 +737,7 @@ export interface TSTypeAnnotation extends BaseTSNode {
 
 export interface TSFunctionType extends BaseTSNode {
   type: 'TSFunctionType'
-  parameters: Identifier[]
+  parameters: (Identifier | RestElement)[]
   typeAnnotation: TSTypeAnnotation
 }
 
