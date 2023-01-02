@@ -593,3 +593,43 @@ export class InvalidNumberOfArgumentsTypeError implements SourceError {
     return `Try calling function ${calleeStr} again, but with ${this.expected} argument${pluralS} instead. Remember that arguments are separated by a ',' (comma).`
   }
 }
+
+export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  public calleeStr: string
+
+  constructor(public node: tsEs.TSTypeReference, public name: string, public expected: number) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Generic type '${this.name}' requires ${this.expected} type argument(s).`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypeAliasNameNotAllowedError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  public calleeStr: string
+
+  constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type alias name cannot be '${this.name}'.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
