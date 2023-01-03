@@ -406,10 +406,13 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       return tUndef
     case 'ArrayExpression':
       // Casting is safe here as Source disallows use of spread elements and holes in arrays
-      const elements = node.elements as Exclude<
-        tsEs.ArrayExpression['elements'][0],
-        tsEs.SpreadElement | null
-      >[]
+      const elements = node.elements.filter(
+        (elem): elem is Exclude<tsEs.ArrayExpression['elements'][0], tsEs.SpreadElement | null> =>
+          elem !== null && elem.type !== 'SpreadElement'
+      )
+      if (elements.length !== node.elements.length) {
+        throw new TypecheckError(node, 'Disallowed array element type')
+      }
       if (elements.length === 0) {
         return tArray(tAny)
       }
@@ -532,6 +535,7 @@ function handleImportDeclarations(node: tsEs.Program, context: Context, env: Typ
 /**
  * Adds all types for variable/function/type declarations to the current environment.
  * This is so that the types can be referenced before the declarations are initialized.
+ * Type checking is not carried out as this function is only responsible for hoisting declarations.
  */
 function addTypeDeclarationsToEnvironment(
   node: tsEs.Program | tsEs.BlockStatement,
@@ -588,7 +592,6 @@ function addTypeDeclarationsToEnvironment(
         }
         const id = node.declarations[0].id as tsEs.Identifier
         const expectedType = getTypeAnnotationType(id.typeAnnotation, context, env)
-        // Type is not checked here as it will be checked in typeCheckAndReturnType
 
         // Save variable type and decl kind in type env
         setType(id.name, expectedType, env)
@@ -1129,7 +1132,10 @@ function containsType(arr: Type[], typeToCheck: Type) {
 /**
  * Traverses through the program and removes all TS-related nodes, returning the result.
  */
-function removeTSNodes(node: tsEs.Node): any {
+function removeTSNodes(node: tsEs.Node | undefined | null): any {
+  if (node === undefined || node === null) {
+    return node
+  }
   const type = node.type
   switch (type) {
     case 'Literal':
@@ -1165,14 +1171,13 @@ function removeTSNodes(node: tsEs.Node): any {
     case 'IfStatement': {
       node.test = removeTSNodes(node.test)
       node.consequent = removeTSNodes(node.consequent)
-      if (node.alternate) {
-        node.alternate = removeTSNodes(node.alternate)
-      }
+      node.alternate = removeTSNodes(node.alternate)
       return node
     }
     case 'UnaryExpression':
     case 'RestElement':
-    case 'SpreadElement': {
+    case 'SpreadElement':
+    case 'ReturnStatement': {
       node.argument = removeTSNodes(node.argument)
       return node
     }
@@ -1188,25 +1193,16 @@ function removeTSNodes(node: tsEs.Node): any {
       node.body = removeTSNodes(node.body)
       return node
     case 'VariableDeclaration': {
-      const init = node.declarations[0].init!
-      node.declarations[0].init = removeTSNodes(init)
+      node.declarations[0].init = removeTSNodes(node.declarations[0].init)
       return node
     }
     case 'CallExpression': {
       node.arguments = node.arguments.map(removeTSNodes)
       return node
     }
-    case 'ReturnStatement': {
-      if (node.argument) {
-        node.argument = removeTSNodes(node.argument)
-      }
-      return node
-    }
     case 'ArrayExpression':
       // Casting is safe here as Source disallows use of spread elements and holes in arrays
-      node.elements = (
-        node.elements as Exclude<tsEs.ArrayExpression['elements'][0], tsEs.SpreadElement | null>[]
-      ).map(removeTSNodes)
+      node.elements = node.elements.map(removeTSNodes)
       return node
     case 'MemberExpression':
       node.property = removeTSNodes(node.property)
@@ -1218,15 +1214,9 @@ function removeTSNodes(node: tsEs.Node): any {
       return node
     }
     case 'ForStatement': {
-      if (node.init) {
-        node.init = removeTSNodes(node.init)
-      }
-      if (node.test) {
-        node.test = removeTSNodes(node.test)
-      }
-      if (node.update) {
-        node.update = removeTSNodes(node.update)
-      }
+      node.init = removeTSNodes(node.init)
+      node.test = removeTSNodes(node.test)
+      node.update = removeTSNodes(node.update)
       node.body = removeTSNodes(node.body)
       return node
     }
