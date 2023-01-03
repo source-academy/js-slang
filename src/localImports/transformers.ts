@@ -8,6 +8,7 @@ import {
   createPairCallExpression,
   createReturnStatement
 } from './constructors'
+import { transformFilePathToValidFunctionName } from './filePaths'
 import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from './typeGuards'
 
 const getIdentifier = (node: es.Declaration): es.Identifier | null => {
@@ -113,7 +114,7 @@ const createReturnListArguments = (
   exportedNameToIdentifierMap: Record<string, es.Identifier>
 ): Array<es.Expression | es.SpreadElement> => {
   return Object.entries(exportedNameToIdentifierMap).map(
-    ([exportedName, identifier]: [string, es.Identifier]) => {
+    ([exportedName, identifier]: [string, es.Identifier]): es.SimpleCallExpression => {
       const head = createLiteral(exportedName)
       const tail = identifier
       return createPairCallExpression(head, tail)
@@ -160,7 +161,7 @@ const removeModuleDeclarations = (
 
 export const transformImportedFile = (
   program: es.Program,
-  iifeIdentifier: string
+  currentFileName: string
 ): es.FunctionDeclaration => {
   const moduleDeclarations = program.body.filter(isModuleDeclaration)
   const exportedNameToIdentifierMap = getExportedNameToIdentifierMap(moduleDeclarations)
@@ -180,7 +181,8 @@ export const transformImportedFile = (
   const programStatements = removeModuleDeclarations(removeDirectives(program.body))
   const iifeBody = [...programStatements, returnStatement]
 
-  return createFunctionDeclaration(iifeIdentifier, [], iifeBody)
+  const functionName = transformFilePathToValidFunctionName(currentFileName)
+  return createFunctionDeclaration(functionName, [], iifeBody)
 }
 
 /**

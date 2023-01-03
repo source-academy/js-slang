@@ -5,7 +5,8 @@ import { removeExports, transformImportedFile } from '../transformers'
 import { parseError, stripLocationInfo } from './utils'
 
 describe('transformImportedFile', () => {
-  const iifeIdentifier = 'importedFile'
+  const currentFileName = '/dir/a.js'
+  const iifeIdentifier = '__$dir$a$dot$js__'
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
   let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
 
@@ -21,7 +22,7 @@ describe('transformImportedFile', () => {
       throw parseError
     }
 
-    const actualFunctionDeclaration = transformImportedFile(actualProgram, iifeIdentifier)
+    const actualFunctionDeclaration = transformImportedFile(actualProgram, currentFileName)
     const expectedFunctionDeclaration = expectedProgram.body[0]
     expect(expectedFunctionDeclaration.type).toEqual('FunctionDeclaration')
     expect(stripLocationInfo(actualFunctionDeclaration)).toEqual(
