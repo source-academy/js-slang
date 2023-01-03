@@ -27,6 +27,8 @@ import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
+import { InvalidFilePathError } from './errors/localImportErrors'
+import { isFilePathValid } from './localImports/filePaths'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import {
   fullJSRunner,
@@ -307,6 +309,13 @@ export async function runFilesInContext(
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
+  for (const filePath in files) {
+    if (!isFilePathValid(filePath)) {
+      context.errors.push(new InvalidFilePathError(filePath))
+      return resolvedErrorPromise
+    }
+  }
+
   const code = files[entrypointFilename]
   if (code === undefined) {
     // TODO: Add error to context.

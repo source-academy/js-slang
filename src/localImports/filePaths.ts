@@ -2,7 +2,7 @@
  * Maps characters that are legal in file paths but illegal in
  * function names to strings which are legal in function names.
  */
-const charEncoding: Record<string, string> = {
+export const charEncoding: Record<string, string> = {
   '/': '$',
   '.': '$dot$',
   '-': '$dash$'
@@ -31,4 +31,28 @@ export const transformFilePathToValidFunctionName = (filePath: string): string =
     (filePath: string): string => filePath
   )
   return `__${encodeChars(filePath)}__`
+}
+
+const isAlphanumeric = (char: string): boolean => {
+  return /[a-zA-Z0-9]/i.exec(char) !== null
+}
+
+/**
+ * Returns whether the given file path is valid. A file path is
+ * valid if it only contains alphanumeric characters and the
+ * characters defined in `charEncoding`.
+ *
+ * @param filePath The file path to check.
+ */
+export const isFilePathValid = (filePath: string): boolean => {
+  for (const char of filePath) {
+    if (isAlphanumeric(char)) {
+      continue
+    }
+    if (char in charEncoding) {
+      continue
+    }
+    return false
+  }
+  return true
 }
