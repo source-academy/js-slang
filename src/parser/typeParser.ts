@@ -375,7 +375,7 @@ const tsPlugin = (BaseParser: any) => {
           return
       }
 
-      if (this.type === tokTypes.bracketL) {
+      while (this.type === tokTypes.bracketL) {
         node = this._parseMaybeTSArrayType(node)
       }
 
@@ -596,7 +596,7 @@ const tsPlugin = (BaseParser: any) => {
       this.expect(tokTypes.parenL)
       this._parseTSTypeAnnotation(node)
       this.expect(tokTypes.parenR)
-      if (this.eat(tokTypes.bracketL)) {
+      while (this.eat(tokTypes.bracketL)) {
         this.expect(tokTypes.bracketR)
       }
       return this.finishNode(node, 'TSParenthesizedType')
