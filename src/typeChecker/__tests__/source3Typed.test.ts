@@ -25,6 +25,22 @@ describe('array type', () => {
       Line 4: Type '(number | string)[]' is not assignable to type 'string[]'."
     `)
   })
+
+  it('handles nested array types', () => {
+    const code = `const arr1: number[][] = [[1], [2], [3]];
+      const arr2: string[][] = [['1'], ['2'], ['3']];
+      const arr3: number[][] = [[1], ['2'], [3]];
+      const arr4: string[][] = [[1], ['2'], [3]];
+      const arr5: (number | string)[][] = [[1], ['2'], [3]];
+      const arr6: number[][] = [];
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 3: Type '(number[] | string[])[]' is not assignable to type 'number[][]'.
+      Line 4: Type '(number[] | string[])[]' is not assignable to type 'string[][]'."
+    `)
+  })
 })
 
 describe('array access', () => {

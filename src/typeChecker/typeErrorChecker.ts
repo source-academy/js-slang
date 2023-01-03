@@ -24,6 +24,7 @@ import {
   Context,
   disallowedTypes,
   PrimitiveType,
+  SArray,
   TSAllowedTypes,
   TSBasicType,
   TSDisallowedTypes,
@@ -896,6 +897,15 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
       }
       return hasTypeMismatchErrors(actualType.elementType, expectedType.elementType)
     case 'array':
+      if (actualType.kind === 'union') {
+        // Special case: number[] | string[] matches with (number | string)[]
+        const types = actualType.types.filter((type): type is SArray => type.kind === 'array')
+        if (types.length !== actualType.types.length) {
+          return true
+        }
+        const combinedType = types.map(type => type.elementType)
+        return hasTypeMismatchErrors(tUnion(...combinedType), expectedType.elementType)
+      }
       if (actualType.kind !== 'array') {
         return true
       }
