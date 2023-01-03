@@ -130,6 +130,10 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
         return tAny
       }
     }
+    case 'RestElement':
+    case 'SpreadElement':
+      // TODO: Add support for rest and spread element
+      return tAny
     case 'Program':
     case 'BlockStatement': {
       let returnType: Type = tVoid
@@ -219,7 +223,13 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
       }
 
       // Only identifiers/rest elements are used as function params in Source
-      const params = node.params as (tsEs.Identifier | tsEs.RestElement)[]
+      const params = node.params.filter(
+        (param): param is tsEs.Identifier | tsEs.RestElement =>
+          param.type === 'Identifier' || param.type === 'RestElement'
+      )
+      if (params.length !== node.params.length) {
+        throw new TypecheckError(node, 'Unknown function parameter type')
+      }
       const fnName = node.id.name
       const expectedReturnType = getTypeAnnotationType(node.returnType, context, env)
 
@@ -536,7 +546,13 @@ function addTypeDeclarationsToEnvironment(
           throw new TypecheckError(node, 'Function declaration should always have an identifier')
         }
         // Only identifiers/rest elements are used as function params in Source
-        const params = node.params as (tsEs.Identifier | tsEs.RestElement)[]
+        const params = node.params.filter(
+          (param): param is tsEs.Identifier | tsEs.RestElement =>
+            param.type === 'Identifier' || param.type === 'RestElement'
+        )
+        if (params.length !== node.params.length) {
+          throw new TypecheckError(node, 'Unknown function parameter type')
+        }
         const fnName = node.id.name
         const returnType = getTypeAnnotationType(node.returnType, context, env)
 
@@ -691,7 +707,13 @@ function typeCheckAndReturnArrowFunctionType(
   env: TypeEnvironment
 ): Type {
   // Only identifiers/rest elements are used as function params in Source
-  const params = node.params as (tsEs.Identifier | tsEs.RestElement)[]
+  const params = node.params.filter(
+    (param): param is tsEs.Identifier | tsEs.RestElement =>
+      param.type === 'Identifier' || param.type === 'RestElement'
+  )
+  if (params.length !== node.params.length) {
+    throw new TypecheckError(node, 'Unknown function parameter type')
+  }
   const expectedReturnType = getTypeAnnotationType(node.returnType, context, env)
 
   // If the function has variable number of arguments, set function type as any
@@ -1138,7 +1160,9 @@ function removeTSNodes(node: tsEs.Node): any {
       }
       return node
     }
-    case 'UnaryExpression': {
+    case 'UnaryExpression':
+    case 'RestElement':
+    case 'SpreadElement': {
       node.argument = removeTSNodes(node.argument)
       return node
     }
