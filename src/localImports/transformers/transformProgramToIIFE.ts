@@ -1,7 +1,9 @@
 import es from 'estree'
+import * as path from 'path'
 
 import {
   createFunctionDeclaration,
+  createIdentifier,
   createListCallExpression,
   createLiteral,
   createPairCallExpression,
@@ -9,6 +11,54 @@ import {
 } from '../constructors'
 import { transformFilePathToValidFunctionName } from '../filePaths'
 import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from '../typeGuards'
+
+const getFilePathToImportedNamesMap = (
+  nodes: es.ModuleDeclaration[],
+  currentFilePath: string
+): Record<string, es.Identifier[]> => {
+  const filePathToImportedNamesMap: Record<string, es.Identifier[]> = {}
+  nodes.forEach((node: es.ModuleDeclaration): void => {
+    // Only ImportDeclaration nodes specify imported names.
+    if (node.type !== 'ImportDeclaration') {
+      return
+    }
+    const importSource = node.source.value
+    if (typeof importSource !== 'string') {
+      throw new Error(
+        'Encountered an ImportDeclaration node with a non-string source. This should never occur.'
+      )
+    }
+    // Different import sources can refer to the same file. For example,
+    // both './b.js' & '../dir/b.js' can refer to the same file if the
+    // current file path is '/dir/a.js'. To ensure that every file is
+    // processed only once, we resolve the import source against the
+    // current file path to get the absolute file path of the file to
+    // be imported. Since the absolute file path is guaranteed to be
+    // unique, it is also the canonical file path.
+    const importFilePath = path.resolve(currentFilePath, importSource)
+    // If this is the file ImportDeclaration node for the canonical
+    // file path, instantiate the entry in the map.
+    if (filePathToImportedNamesMap[importFilePath] === undefined) {
+      filePathToImportedNamesMap[importFilePath] = []
+    }
+    node.specifiers.forEach(
+      (
+        specifier: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
+      ): void => {
+        switch (specifier.type) {
+          case 'ImportSpecifier':
+            filePathToImportedNamesMap[importFilePath].push(specifier.imported)
+            break
+          case 'ImportDefaultSpecifier':
+            throw new Error('Not implemented yet.')
+          case 'ImportNamespaceSpecifier':
+            throw new Error('Not implemented yet.')
+        }
+      }
+    )
+  })
+  return filePathToImportedNamesMap
+}
 
 const getIdentifier = (node: es.Declaration): es.Identifier | null => {
   switch (node.type) {
@@ -169,11 +219,17 @@ export const transformProgramToIIFE = (
   currentFileName: string
 ): es.FunctionDeclaration => {
   const moduleDeclarations = program.body.filter(isModuleDeclaration)
+  const filePathToImportedNamesMap = getFilePathToImportedNamesMap(
+    moduleDeclarations,
+    currentFileName
+  )
   const exportedNameToIdentifierMap = getExportedNameToIdentifierMap(moduleDeclarations)
   const defaultExportExpression = getDefaultExportExpression(
     moduleDeclarations,
     exportedNameToIdentifierMap
   )
+
+  const iifeParams = Object.keys(filePathToImportedNamesMap).map(createIdentifier)
 
   const defaultExport = defaultExportExpression ?? createLiteral(null)
   const namedExports = createListCallExpression(
@@ -187,5 +243,5 @@ export const transformProgramToIIFE = (
   const iifeBody = [...programStatements, returnStatement]
 
   const functionName = transformFilePathToValidFunctionName(currentFileName)
-  return createFunctionDeclaration(functionName, [], iifeBody)
+  return createFunctionDeclaration(functionName, iifeParams, iifeBody)
 }
