@@ -3,7 +3,11 @@ import * as path from 'path'
 
 import { parse } from '../parser/parser'
 import { Context } from '../types'
-import { isSourceModule, removeExports, removeNonSourceModuleImports } from './transformers'
+import { removeExports } from './transformers/removeExports'
+import {
+  isSourceModule,
+  removeNonSourceModuleImports
+} from './transformers/removeNonSourceModuleImports'
 import { isImportDeclaration } from './typeGuards'
 
 /**
