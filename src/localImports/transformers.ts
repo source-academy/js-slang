@@ -141,7 +141,13 @@ const removeModuleDeclarations = (
       statements.push(node)
       return
     }
+    // If there are declaration nodes that are child nodes of the
+    // ModuleDeclaration nodes, we add them to the processed statements
+    // array so that the declarations are still part of the resulting
+    // program.
     switch (node.type) {
+      case 'ImportDeclaration':
+        break
       case 'ExportNamedDeclaration':
         if (node.declaration) {
           statements.push(node.declaration)
