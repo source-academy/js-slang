@@ -19,6 +19,13 @@ export const createLiteral = (
   }
 }
 
+export const createIdentifier = (name: string): es.Identifier => {
+  return {
+    type: 'Identifier',
+    name
+  }
+}
+
 export const createPairCallExpression = (
   head: es.Expression | es.SpreadElement,
   tail: es.Expression | es.SpreadElement
