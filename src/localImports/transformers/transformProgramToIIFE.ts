@@ -14,7 +14,7 @@ import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from '..
 
 const getFilePathToImportedNamesMap = (
   nodes: es.ModuleDeclaration[],
-  currentFilePath: string
+  currentDirPath: string
 ): Record<string, es.Identifier[]> => {
   const filePathToImportedNamesMap: Record<string, es.Identifier[]> = {}
   nodes.forEach((node: es.ModuleDeclaration): void => {
@@ -35,7 +35,7 @@ const getFilePathToImportedNamesMap = (
     // current file path to get the absolute file path of the file to
     // be imported. Since the absolute file path is guaranteed to be
     // unique, it is also the canonical file path.
-    const importFilePath = path.resolve(currentFilePath, importSource)
+    const importFilePath = path.resolve(currentDirPath, importSource)
     // Even though we limit the chars that can appear in Source file
     // paths, some chars in file paths (such as '/') cannot be used
     // in function names. As such, we substitute illegal chars with
@@ -225,9 +225,10 @@ export const transformProgramToIIFE = (
   currentFileName: string
 ): es.FunctionDeclaration => {
   const moduleDeclarations = program.body.filter(isModuleDeclaration)
+  const currentDirPath = path.resolve(currentFileName, '..')
   const filePathToImportedNamesMap = getFilePathToImportedNamesMap(
     moduleDeclarations,
-    currentFileName
+    currentDirPath
   )
   const exportedNameToIdentifierMap = getExportedNameToIdentifierMap(moduleDeclarations)
   const defaultExportExpression = getDefaultExportExpression(
