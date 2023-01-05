@@ -36,10 +36,16 @@ const getFilePathToImportedNamesMap = (
     // be imported. Since the absolute file path is guaranteed to be
     // unique, it is also the canonical file path.
     const importFilePath = path.resolve(currentFilePath, importSource)
+    // Even though we limit the chars that can appear in Source file
+    // paths, some chars in file paths (such as '/') cannot be used
+    // in function names. As such, we substitute illegal chars with
+    // legal ones in a manner that gives us a bijective mapping from
+    // file paths to function names.
+    const importFunctionName = transformFilePathToValidFunctionName(importFilePath)
     // If this is the file ImportDeclaration node for the canonical
     // file path, instantiate the entry in the map.
-    if (filePathToImportedNamesMap[importFilePath] === undefined) {
-      filePathToImportedNamesMap[importFilePath] = []
+    if (filePathToImportedNamesMap[importFunctionName] === undefined) {
+      filePathToImportedNamesMap[importFunctionName] = []
     }
     node.specifiers.forEach(
       (
@@ -47,7 +53,7 @@ const getFilePathToImportedNamesMap = (
       ): void => {
         switch (specifier.type) {
           case 'ImportSpecifier':
-            filePathToImportedNamesMap[importFilePath].push(specifier.imported)
+            filePathToImportedNamesMap[importFunctionName].push(specifier.imported)
             break
           case 'ImportDefaultSpecifier':
             throw new Error('Not implemented yet.')
