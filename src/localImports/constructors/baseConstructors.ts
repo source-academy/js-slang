@@ -39,6 +39,17 @@ export const createCallExpression = (
   } as es.SimpleCallExpression
 }
 
+export const createVariableDeclarator = (
+  id: es.Identifier,
+  initialValue: es.Expression | null | undefined = null
+): es.VariableDeclarator => {
+  return {
+    type: 'VariableDeclarator',
+    id,
+    init: initialValue
+  }
+}
+
 export const createReturnStatement = (
   argument: es.Expression | null | undefined
 ): es.ReturnStatement => {

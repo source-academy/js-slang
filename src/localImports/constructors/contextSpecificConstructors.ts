@@ -1,7 +1,12 @@
 import es from 'estree'
 
 import { accessExportFunctionName } from '../../stdlib/localImport.prelude'
-import { createCallExpression, createIdentifier, createLiteral } from './baseConstructors'
+import {
+  createCallExpression,
+  createIdentifier,
+  createLiteral,
+  createVariableDeclarator
+} from './baseConstructors'
 
 export const createPairCallExpression = (
   head: es.Expression | es.SpreadElement,
@@ -24,11 +29,7 @@ export const createImportedNameDeclaration = (
     createIdentifier(functionName),
     createLiteral(importedName.name)
   ])
-  const variableDeclarator: es.VariableDeclarator = {
-    type: 'VariableDeclarator',
-    id: importedName,
-    init: callExpression
-  }
+  const variableDeclarator = createVariableDeclarator(importedName, callExpression)
   return {
     type: 'VariableDeclaration',
     declarations: [variableDeclarator],
