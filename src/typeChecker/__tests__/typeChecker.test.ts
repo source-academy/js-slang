@@ -86,7 +86,7 @@ describe('type checking pairs and lists', () => {
       $accumulate: ((T0, T1) -> T1, T1, List<T0>, T1 -> T1) -> T1
       accumulate: ((T0, T1) -> T1, T1, List<T0>) -> T1
       __access_named_export__: (List<[T0, T1]>, addable) -> undefined
-      __access_export__: ([T0, T1], addable) -> undefined"
+      __access_export__: ([undefined, T0], addable) -> undefined"
     `)
     expect(parseError(errors1)).toMatchInlineSnapshot(`
       "Line 24: A type mismatch was detected in the binary expression:
