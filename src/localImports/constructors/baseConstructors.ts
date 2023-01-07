@@ -50,6 +50,17 @@ export const createVariableDeclarator = (
   }
 }
 
+export const createVariableDeclaration = (
+  declarations: es.VariableDeclarator[],
+  kind: 'var' | 'let' | 'const'
+): es.VariableDeclaration => {
+  return {
+    type: 'VariableDeclaration',
+    declarations,
+    kind
+  }
+}
+
 export const createReturnStatement = (
   argument: es.Expression | null | undefined
 ): es.ReturnStatement => {

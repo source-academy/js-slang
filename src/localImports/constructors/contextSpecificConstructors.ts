@@ -5,6 +5,7 @@ import {
   createCallExpression,
   createIdentifier,
   createLiteral,
+  createVariableDeclaration,
   createVariableDeclarator
 } from './baseConstructors'
 
@@ -30,9 +31,5 @@ export const createImportedNameDeclaration = (
     createLiteral(importedName.name)
   ])
   const variableDeclarator = createVariableDeclarator(importedName, callExpression)
-  return {
-    type: 'VariableDeclaration',
-    declarations: [variableDeclarator],
-    kind: 'const'
-  }
+  return createVariableDeclaration([variableDeclarator], 'const')
 }
