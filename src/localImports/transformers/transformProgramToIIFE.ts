@@ -4,12 +4,14 @@ import * as path from 'path'
 import {
   createFunctionDeclaration,
   createIdentifier,
+  createLiteral,
+  createReturnStatement
+} from '../constructors/baseConstructors'
+import {
   createImportedNameDeclaration,
   createListCallExpression,
-  createLiteral,
-  createPairCallExpression,
-  createReturnStatement
-} from '../constructors'
+  createPairCallExpression
+} from '../constructors/contextSpecificConstructors'
 import { transformFilePathToValidFunctionName } from '../filePaths'
 import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from '../typeGuards'
 
