@@ -1,6 +1,7 @@
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectResult } from '../../utils/testing'
+import { defaultExportLookupName } from '../localImport.prelude'
 
 describe('__access_named_export__', () => {
   it('returns identifier if name exists in list of exported names', () => {
@@ -89,7 +90,7 @@ describe('__access_export__', () => {
       }
       // When 'null' is passed in as the name of the export,
       // '__access_export__' returns the default export.
-      const square = __access_export__(importedFile(), null);
+      const square = __access_export__(importedFile(), "${defaultExportLookupName}");
       square(5);
     `,
       { chapter: Chapter.SOURCE_2, native: true }

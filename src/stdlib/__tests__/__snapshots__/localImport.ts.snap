@@ -10,7 +10,7 @@ Object {
 }
 // When 'null' is passed in as the name of the export,
 // '__access_export__' returns the default export.
-const square = __access_export__(importedFile(), null);
+const square = __access_export__(importedFile(), \\"default\\");
 square(5);",
   "displayResult": Array [],
   "numErrors": 0,
