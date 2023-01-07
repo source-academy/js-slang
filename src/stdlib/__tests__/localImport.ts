@@ -78,4 +78,21 @@ describe('__access_export__', () => {
       { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot(`25`)
   })
+
+  it('returns default export if it exists', () => {
+    return expectResult(
+      stripIndent`
+      function importedFile() {
+        const square = x => x * x;
+        const cube = x => x * x * x;
+        return pair(cube, list(pair("square", square)));
+      }
+      // When 'null' is passed in as the name of the export,
+      // '__access_export__' returns the default export.
+      const square = __access_export__(importedFile(), null);
+      square(5);
+    `,
+      { chapter: Chapter.SOURCE_2, native: true }
+    ).toMatchInlineSnapshot(`125`)
+  })
 })
