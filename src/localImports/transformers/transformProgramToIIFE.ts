@@ -4,6 +4,7 @@ import * as path from 'path'
 import {
   createFunctionDeclaration,
   createIdentifier,
+  createImportedNameDeclaration,
   createListCallExpression,
   createLiteral,
   createPairCallExpression,
@@ -12,11 +13,11 @@ import {
 import { transformFilePathToValidFunctionName } from '../filePaths'
 import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from '../typeGuards'
 
-const getFilePathToImportedNamesMap = (
+const getFunctionNameToImportedNamesMap = (
   nodes: es.ModuleDeclaration[],
   currentDirPath: string
 ): Record<string, es.Identifier[]> => {
-  const filePathToImportedNamesMap: Record<string, es.Identifier[]> = {}
+  const functionNameToImportedNamesMap: Record<string, es.Identifier[]> = {}
   nodes.forEach((node: es.ModuleDeclaration): void => {
     // Only ImportDeclaration nodes specify imported names.
     if (node.type !== 'ImportDeclaration') {
@@ -44,8 +45,8 @@ const getFilePathToImportedNamesMap = (
     const importFunctionName = transformFilePathToValidFunctionName(importFilePath)
     // If this is the file ImportDeclaration node for the canonical
     // file path, instantiate the entry in the map.
-    if (filePathToImportedNamesMap[importFunctionName] === undefined) {
-      filePathToImportedNamesMap[importFunctionName] = []
+    if (functionNameToImportedNamesMap[importFunctionName] === undefined) {
+      functionNameToImportedNamesMap[importFunctionName] = []
     }
     node.specifiers.forEach(
       (
@@ -53,7 +54,7 @@ const getFilePathToImportedNamesMap = (
       ): void => {
         switch (specifier.type) {
           case 'ImportSpecifier':
-            filePathToImportedNamesMap[importFunctionName].push(specifier.imported)
+            functionNameToImportedNamesMap[importFunctionName].push(specifier.imported)
             break
           case 'ImportDefaultSpecifier':
             throw new Error('Not implemented yet.')
@@ -63,7 +64,7 @@ const getFilePathToImportedNamesMap = (
       }
     )
   })
-  return filePathToImportedNamesMap
+  return functionNameToImportedNamesMap
 }
 
 const getIdentifier = (node: es.Declaration): es.Identifier | null => {
@@ -165,6 +166,19 @@ const getDefaultExportExpression = (
   return defaultExport
 }
 
+const createImportedNameDeclarations = (
+  functionNameToImportedNamesMap: Record<string, es.Identifier[]>
+): es.VariableDeclaration[] => {
+  const importedNameDeclarations: es.VariableDeclaration[] = []
+  for (const [functionName, importedNames] of Object.entries(functionNameToImportedNamesMap)) {
+    importedNames.forEach((importedName: es.Identifier): void => {
+      const importedNameDeclaration = createImportedNameDeclaration(functionName, importedName)
+      importedNameDeclarations.push(importedNameDeclaration)
+    })
+  }
+  return importedNameDeclarations
+}
+
 const createReturnListArguments = (
   exportedNameToIdentifierMap: Record<string, es.Identifier>
 ): Array<es.Expression | es.SpreadElement> => {
@@ -226,7 +240,7 @@ export const transformProgramToIIFE = (
 ): es.FunctionDeclaration => {
   const moduleDeclarations = program.body.filter(isModuleDeclaration)
   const currentDirPath = path.resolve(currentFileName, '..')
-  const filePathToImportedNamesMap = getFilePathToImportedNamesMap(
+  const functionNameToImportedNamesMap = getFunctionNameToImportedNamesMap(
     moduleDeclarations,
     currentDirPath
   )
@@ -236,7 +250,9 @@ export const transformProgramToIIFE = (
     exportedNameToIdentifierMap
   )
 
-  const iifeParams = Object.keys(filePathToImportedNamesMap).map(createIdentifier)
+  const accessImportedNameStatements = createImportedNameDeclarations(
+    functionNameToImportedNamesMap
+  )
 
   const defaultExport = defaultExportExpression ?? createLiteral(null)
   const namedExports = createListCallExpression(
@@ -247,8 +263,9 @@ export const transformProgramToIIFE = (
   )
 
   const programStatements = removeModuleDeclarations(removeDirectives(program.body))
-  const iifeBody = [...programStatements, returnStatement]
+  const iifeBody = [...accessImportedNameStatements, ...programStatements, returnStatement]
 
   const functionName = transformFilePathToValidFunctionName(currentFileName)
+  const iifeParams = Object.keys(functionNameToImportedNamesMap).map(createIdentifier)
   return createFunctionDeclaration(functionName, iifeParams, iifeBody)
 }
