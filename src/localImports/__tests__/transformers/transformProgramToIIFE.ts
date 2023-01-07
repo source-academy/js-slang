@@ -328,4 +328,19 @@ describe('transformImportedFile', () => {
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
   })
+
+  it('merges file paths that resolve to the same file', () => {
+    const actualCode = `
+      import { x } from "./b.js";
+      import { y } from "../dir/b.js";
+    `
+    const expectedCode = `
+      function ${iifeIdentifier}(__$dir$b$dot$js__) {
+        const x = __access_export__(__$dir$b$dot$js__, "x");
+        const y = __access_export__(__$dir$b$dot$js__, "y");
+        return pair(null, list());
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
 })
