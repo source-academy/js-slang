@@ -22,13 +22,22 @@ export const createListCallExpression = (
   return createCallExpression('list', listElements)
 }
 
+/**
+ * Constructs the AST equivalent of:
+ * const importedName = __access_export__(functionName, lookupName);
+ *
+ * @param functionName The name of the transformed IIFE to import from.
+ * @param importedName The name of the import.
+ * @param lookupName   The name to lookup in the transformed IIFE.
+ */
 export const createImportedNameDeclaration = (
   functionName: string,
-  importedName: es.Identifier
+  importedName: es.Identifier,
+  lookupName: string
 ): es.VariableDeclaration => {
   const callExpression = createCallExpression(accessExportFunctionName, [
     createIdentifier(functionName),
-    createLiteral(importedName.name)
+    createLiteral(lookupName)
   ])
   const variableDeclarator = createVariableDeclarator(importedName, callExpression)
   return createVariableDeclaration([variableDeclarator], 'const')
