@@ -298,4 +298,19 @@ describe('transformImportedFile', () => {
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
   })
+
+  it('handles named imports of local (non-Source) modules', () => {
+    const actualCode = `
+      import { x } from "./b.js";
+      import { y } from "../dir2/c.js";
+    `
+    const expectedCode = `
+      function ${iifeIdentifier}(__$dir$b$dot$js__, __$dir2$c$dot$js__) {
+        const x = __access_export__(__$dir$b$dot$js__, "x");
+        const y = __access_export__(__$dir2$c$dot$js__, "y");
+        return pair(null, list());
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
 })
