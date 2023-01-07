@@ -16,7 +16,11 @@ function __access_named_export__(named_exports, lookup_name) {
 }
 
 function ${accessExportFunctionName}(exports, lookup_name) {
-  const named_exports = tail(exports);
-  return __access_named_export__(named_exports, lookup_name);
+  if (is_null(lookup_name)) {
+    return head(exports);
+  } else {
+    const named_exports = tail(exports);
+    return __access_named_export__(named_exports, lookup_name);
+  }
 }
 `
