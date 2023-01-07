@@ -150,7 +150,6 @@ describe('preprocessFileImports', () => {
     const files: Record<string, string> = {
       'a.js': `import d, { a, b, c } from "source-module";
         import w, { x, y, z } from "./not-source-module.js";
-        import * as f from "another-source-module";
       `
     }
     const expectedCode = `import { a, b, c } from "source-module";

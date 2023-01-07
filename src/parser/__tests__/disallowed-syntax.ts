@@ -1205,3 +1205,26 @@ test('no assigning to reserved keywords - verbose', () => {
             "
           `)
 })
+
+test('no namespace imports', () => {
+  return expectParsedError(
+    stripIndent`
+    import * as x from "module-name";
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  ).toMatchInlineSnapshot(`"Line 1: Namespace imports are not allowed"`)
+})
+
+test('no namespace imports - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+    "enable verbose";
+    import * as x from "module-name";
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  ).toMatchInlineSnapshot(`
+            "Line 2, Column 7: Namespace imports are not allowed
+            You are trying to use Namespace imports, which is not allowed (yet).
+            "
+          `)
+})

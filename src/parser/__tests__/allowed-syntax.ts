@@ -301,13 +301,6 @@ test.each([
   [
     Chapter.LIBRARY_PARSER,
     `
-    import * as x from "module-name";
-    `
-  ],
-
-  [
-    Chapter.LIBRARY_PARSER,
-    `
     export default function f(x) {
       return x;
     }

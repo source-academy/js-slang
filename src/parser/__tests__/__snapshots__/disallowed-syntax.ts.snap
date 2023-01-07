@@ -1067,6 +1067,35 @@ Object {
 }
 `;
 
+exports[`no namespace imports - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+import * as x from \\"module-name\\";",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 7: Namespace imports are not allowed
+You are trying to use Namespace imports, which is not allowed (yet).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`no namespace imports: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "import * as x from \\"module-name\\";",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Namespace imports are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`no regexp - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],

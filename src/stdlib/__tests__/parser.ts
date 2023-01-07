@@ -204,16 +204,6 @@ test('Parses default import specifiers', () => {
   )
 })
 
-test('Parses namespace import specifiers', () => {
-  return snapshotSuccess(
-    oneLine`
-    stringify(parse(
-      "import * as x from 'module-name';"), undefined, 2);
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  )
-})
-
 test('Parses named export declarations', () => {
   return snapshotSuccess(
     oneLine`

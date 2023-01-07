@@ -348,13 +348,6 @@ const transformers: ASTTransformers = new Map([
   ],
 
   [
-    'ImportNamespaceSpecifier',
-    (_node: es.ImportNamespaceSpecifier) => {
-      return vector_to_list(['namespace'])
-    }
-  ],
-
-  [
     'ExportNamedDeclaration',
     (node: es.ExportNamedDeclaration) => {
       return vector_to_list([
