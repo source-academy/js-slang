@@ -1,3 +1,5 @@
+export const accessExportFunctionName = '__access_export__'
+
 export const localImportPrelude = `
 function __access_named_export__(named_exports, lookup_name) {
   if (is_null(named_exports)) {
@@ -13,7 +15,7 @@ function __access_named_export__(named_exports, lookup_name) {
   }
 }
 
-function __access_export__(exports, lookup_name) {
+function ${accessExportFunctionName}(exports, lookup_name) {
   const named_exports = tail(exports);
   return __access_named_export__(named_exports, lookup_name);
 }
