@@ -266,11 +266,11 @@ export async function sourceRunner(
 
 export async function sourceFilesRunner(
   files: Partial<Record<string, string>>,
-  entrypointFilename: string,
+  entrypointFilePath: string,
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
-  const entrypointCode = files[entrypointFilename]
+  const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
     // TODO: Add error to context.
     return resolvedErrorPromise
@@ -280,7 +280,7 @@ export async function sourceFilesRunner(
 
   context.variant = determineVariant(context, options)
   // TODO: Make use of the preprocessed program AST in later steps.
-  // const preprocessedProgram = preprocessFileImports(files, entrypointFilename, context)
+  // const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
   // if (!preprocessedProgram) {
   //   return resolvedErrorPromise
   // }

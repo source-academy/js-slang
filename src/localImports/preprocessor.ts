@@ -46,10 +46,10 @@ export const getImportedLocalModulePaths = (
 
 const preprocessFileImports = (
   files: Partial<Record<string, string>>,
-  entrypointFilename: string,
+  entrypointFilePath: string,
   context: Context
 ): es.Program | undefined => {
-  const entrypointCode = files[entrypointFilename]
+  const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
     return undefined
   }

@@ -305,7 +305,7 @@ export async function runInContext(
 
 export async function runFilesInContext(
   files: Partial<Record<string, string>>,
-  entrypointFilename: string,
+  entrypointFilePath: string,
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
@@ -316,7 +316,7 @@ export async function runFilesInContext(
     }
   }
 
-  const code = files[entrypointFilename]
+  const code = files[entrypointFilePath]
   if (code === undefined) {
     // TODO: Add error to context.
     return resolvedErrorPromise
@@ -333,7 +333,7 @@ export async function runFilesInContext(
   // TODO: Clean up state management so that the `parseError` function is pure.
   verboseErrors = hasVerboseErrors(code)
 
-  return sourceFilesRunner(files, entrypointFilename, context, options)
+  return sourceFilesRunner(files, entrypointFilePath, context, options)
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
