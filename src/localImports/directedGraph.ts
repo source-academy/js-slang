@@ -1,3 +1,6 @@
+/**
+ * Represents a directed graph which disallows self-loops.
+ */
 export class DirectedGraph {
   private readonly adjacencyList: Map<string, Set<string>>
   private readonly differentKeysError = new Error(
@@ -8,6 +11,13 @@ export class DirectedGraph {
     this.adjacencyList = new Map()
   }
 
+  /**
+   * Adds a directed edge to the graph from the source node to
+   * the destination node. Self-loops are not allowed.
+   *
+   * @param sourceNode      The name of the source node.
+   * @param destinationNode The name of the destination node.
+   */
   public addEdge(sourceNode: string, destinationNode: string): void {
     if (sourceNode === destinationNode) {
       throw new Error('Edges that connect a node to itself are not allowed.')
@@ -25,6 +35,12 @@ export class DirectedGraph {
     }
   }
 
+  /**
+   * Calculates the in-degree of every node in the directed graph.
+   *
+   * The in-degree of a node is the number of edges coming into
+   * the node.
+   */
   private calculateInDegrees(): Map<string, number> {
     const inDegrees = new Map()
     for (const neighbours of this.adjacencyList.values()) {
@@ -42,6 +58,12 @@ export class DirectedGraph {
     return inDegrees
   }
 
+  /**
+   * Returns a topological ordering of the nodes in the directed
+   * graph if the graph is acyclic. Otherwise, returns null.
+   *
+   * To get the topological ordering, Kahn's algorithm is used.
+   */
   public getTopologicalOrder(): string[] | null {
     let numOfVisitedNodes = 0
     const inDegrees = this.calculateInDegrees()
@@ -81,6 +103,9 @@ export class DirectedGraph {
       }
     }
 
+    // If not all nodes are visited, then at least one
+    // cycle exists in the graph and a topological ordering
+    // cannot be found.
     if (numOfVisitedNodes !== this.adjacencyList.size) {
       return null
     }
