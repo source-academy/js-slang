@@ -19,3 +19,19 @@ export class InvalidFilePathError implements SourceError {
     return 'You should rename the offending file path to only use valid chars.'
   }
 }
+
+export class CannotFindModuleError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  public location = UNKNOWN_LOCATION
+
+  constructor(public moduleFilePath: string) {}
+
+  public explain() {
+    return `Cannot find module '${this.moduleFilePath}'.`
+  }
+
+  public elaborate() {
+    return 'Check that the module file path resolves to an existing file.'
+  }
+}

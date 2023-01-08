@@ -1,6 +1,7 @@
 import es from 'estree'
 import * as path from 'path'
 
+import { CannotFindModuleError } from '../errors/localImportErrors'
 import { parse } from '../parser/parser'
 import { Context } from '../types'
 import { removeExports } from './transformers/removeExports'
@@ -51,6 +52,7 @@ const preprocessFileImports = (
 ): es.Program | undefined => {
   const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
+    context.errors.push(new CannotFindModuleError(entrypointFilePath))
     return undefined
   }
 

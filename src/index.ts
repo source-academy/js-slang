@@ -27,7 +27,7 @@ import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
-import { InvalidFilePathError } from './errors/localImportErrors'
+import { CannotFindModuleError, InvalidFilePathError } from './errors/localImportErrors'
 import { isFilePathValid } from './localImports/filePaths'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import {
@@ -318,7 +318,7 @@ export async function runFilesInContext(
 
   const code = files[entrypointFilePath]
   if (code === undefined) {
-    // TODO: Add error to context.
+    context.errors.push(new CannotFindModuleError(entrypointFilePath))
     return resolvedErrorPromise
   }
 

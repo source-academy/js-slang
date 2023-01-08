@@ -4,6 +4,7 @@ import { RawSourceMap } from 'source-map'
 import { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
 import { ExceptionError } from '../errors/errors'
+import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
@@ -272,7 +273,7 @@ export async function sourceFilesRunner(
 ): Promise<Result> {
   const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
-    // TODO: Add error to context.
+    context.errors.push(new CannotFindModuleError(entrypointFilePath))
     return resolvedErrorPromise
   }
 
