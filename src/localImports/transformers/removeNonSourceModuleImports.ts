@@ -103,9 +103,8 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
   // have any specifiers (thus being functionally useless).
   ancestor(program, {
     ImportDeclaration(node: es.ImportDeclaration, _state: es.Node[], ancestors: es.Node[]): void {
-      // Module names must always be strings in Source.
       if (typeof node.source.value !== 'string') {
-        return
+        throw new Error('Module names must be strings.')
       }
       // ImportDeclaration nodes without any specifiers are functionally useless and are thus removed.
       if (node.specifiers.length === 0) {

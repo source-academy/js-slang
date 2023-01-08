@@ -33,9 +33,8 @@ export const getImportedLocalModulePaths = (
   const importDeclarations = program.body.filter(isImportDeclaration)
   importDeclarations.forEach((importDeclaration: es.ImportDeclaration): void => {
     const modulePath = importDeclaration.source.value
-    // Module names must be strings in Source.
     if (typeof modulePath !== 'string') {
-      return
+      throw new Error('Module names must be strings.')
     }
     if (!isSourceModule(modulePath)) {
       const absoluteModulePath = path.resolve(baseFilePath, modulePath)
