@@ -10,7 +10,8 @@ describe('addEdge', () => {
 })
 
 describe('Topological ordering', () => {
-  it('returns null when the graph is not acyclic', () => {
+  // TODO: Update this.
+  it('returns the first cycle found when the graph is not acyclic', () => {
     const graph = new DirectedGraph()
     graph.addEdge('A', 'B')
     graph.addEdge('B', 'C')
@@ -18,13 +19,16 @@ describe('Topological ordering', () => {
     graph.addEdge('D', 'E')
     graph.addEdge('E', 'B')
 
-    expect(graph.getTopologicalOrder()).toBeNull()
+    const topologicalOrderResult = graph.getTopologicalOrder()
+    expect(topologicalOrderResult.isValidTopologicalOrderFound).toBe(false)
   })
 
   it('returns an empty array when the graph has no nodes', () => {
     const graph = new DirectedGraph()
 
-    expect(graph.getTopologicalOrder()).toEqual([])
+    const topologicalOrderResult = graph.getTopologicalOrder()
+    expect(topologicalOrderResult.isValidTopologicalOrderFound).toBe(true)
+    expect(topologicalOrderResult.topologicalOrder).toEqual([])
   })
 
   it('returns a topological ordering if the graph is acyclic 1', () => {
@@ -34,7 +38,9 @@ describe('Topological ordering', () => {
     graph.addEdge('C', 'D')
     graph.addEdge('D', 'E')
 
-    expect(graph.getTopologicalOrder()).toEqual(['A', 'B', 'C', 'D', 'E'])
+    const topologicalOrderResult = graph.getTopologicalOrder()
+    expect(topologicalOrderResult.isValidTopologicalOrderFound).toBe(true)
+    expect(topologicalOrderResult.topologicalOrder).toEqual(['A', 'B', 'C', 'D', 'E'])
   })
 
   it('returns a topological ordering if the graph is acyclic 2', () => {
@@ -44,10 +50,12 @@ describe('Topological ordering', () => {
     graph.addEdge('B', 'D')
     graph.addEdge('C', 'D')
 
+    const topologicalOrderResult = graph.getTopologicalOrder()
+    expect(topologicalOrderResult.isValidTopologicalOrderFound).toBe(true)
     expect([
       ['A', 'B', 'C', 'D'],
       ['A', 'C', 'B', 'D']
-    ]).toContainEqual(graph.getTopologicalOrder())
+    ]).toContainEqual(topologicalOrderResult.topologicalOrder)
   })
 
   it('returns a topological ordering if the graph is acyclic 3', () => {
@@ -55,6 +63,8 @@ describe('Topological ordering', () => {
     graph.addEdge('A', 'B')
     graph.addEdge('C', 'D')
 
+    const topologicalOrderResult = graph.getTopologicalOrder()
+    expect(topologicalOrderResult.isValidTopologicalOrderFound).toBe(true)
     expect([
       ['A', 'B', 'C', 'D'],
       ['A', 'C', 'B', 'D'],
@@ -62,6 +72,6 @@ describe('Topological ordering', () => {
       ['C', 'A', 'B', 'D'],
       ['C', 'A', 'D', 'B'],
       ['C', 'D', 'A', 'B']
-    ]).toContainEqual(graph.getTopologicalOrder())
+    ]).toContainEqual(topologicalOrderResult.topologicalOrder)
   })
 })
