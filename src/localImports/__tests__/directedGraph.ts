@@ -10,8 +10,7 @@ describe('addEdge', () => {
 })
 
 describe('Topological ordering', () => {
-  // TODO: Update this.
-  it('returns the first cycle found when the graph is not acyclic', () => {
+  it('returns the first cycle found when the graph is not acyclic 1', () => {
     const graph = new DirectedGraph()
     graph.addEdge('A', 'B')
     graph.addEdge('B', 'C')
@@ -21,6 +20,53 @@ describe('Topological ordering', () => {
 
     const topologicalOrderResult = graph.getTopologicalOrder()
     expect(topologicalOrderResult.isValidTopologicalOrderFound).toBe(false)
+    expect([
+      ['B', 'C', 'D', 'E', 'B'],
+      ['C', 'D', 'E', 'B', 'C'],
+      ['D', 'E', 'B', 'C', 'D'],
+      ['E', 'B', 'C', 'D', 'E']
+    ]).toContainEqual(topologicalOrderResult.firstCycleFound)
+  })
+
+  it('returns the first cycle found when the graph is not acyclic 2', () => {
+    const graph = new DirectedGraph()
+    graph.addEdge('A', 'B')
+    graph.addEdge('B', 'C')
+    graph.addEdge('C', 'A')
+    graph.addEdge('C', 'D')
+    graph.addEdge('D', 'E')
+    graph.addEdge('E', 'C')
+
+    const topologicalOrderResult = graph.getTopologicalOrder()
+    expect(topologicalOrderResult.isValidTopologicalOrderFound).toBe(false)
+    expect([
+      ['A', 'B', 'C', 'A'],
+      ['B', 'C', 'A', 'B'],
+      ['C', 'A', 'B', 'C'],
+      ['C', 'D', 'E', 'C'],
+      ['D', 'E', 'C', 'D'],
+      ['E', 'C', 'D', 'E']
+    ]).toContainEqual(topologicalOrderResult.firstCycleFound)
+  })
+
+  it('returns the first cycle found when the graph is not acyclic 3', () => {
+    const graph = new DirectedGraph()
+    graph.addEdge('A', 'B')
+    graph.addEdge('B', 'C')
+    graph.addEdge('C', 'A')
+    graph.addEdge('A', 'D')
+    graph.addEdge('D', 'C')
+
+    const topologicalOrderResult = graph.getTopologicalOrder()
+    expect(topologicalOrderResult.isValidTopologicalOrderFound).toBe(false)
+    expect([
+      ['A', 'B', 'C', 'A'],
+      ['B', 'C', 'A', 'B'],
+      ['C', 'A', 'B', 'C'],
+      ['A', 'D', 'C', 'A'],
+      ['D', 'C', 'A', 'D'],
+      ['C', 'A', 'D', 'C']
+    ]).toContainEqual(topologicalOrderResult.firstCycleFound)
   })
 
   it('returns an empty array when the graph has no nodes', () => {
