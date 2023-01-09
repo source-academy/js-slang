@@ -100,28 +100,28 @@ describe('preprocessFileImports', () => {
 
   it('returns undefined if the entrypoint file does not exist', () => {
     const files: Record<string, string> = {
-      'a.js': '1 + 2;'
+      '/a.js': '1 + 2;'
     }
-    const actualProgram = preprocessFileImports(files, 'non-existent-file.js', actualContext)
+    const actualProgram = preprocessFileImports(files, '/non-existent-file.js', actualContext)
     expect(actualProgram).toBeUndefined()
   })
 
   it('returns the same AST if the entrypoint file does not contain import/export statements', () => {
     const files: Record<string, string> = {
-      'a.js': `function square(x) {
+      '/a.js': `function square(x) {
           return x * x;
         }
         square(5);
       `
     }
-    const expectedCode = files['a.js']
-    const actualProgram = preprocessFileImports(files, 'a.js', actualContext)
+    const expectedCode = files['/a.js']
+    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
   it('removes all export-related AST nodes', () => {
     const files: Record<string, string> = {
-      'a.js': `export const x = 42;
+      '/a.js': `export const x = 42;
         export let y = 53;
         export function square(x) {
           return x * x;
@@ -142,19 +142,19 @@ describe('preprocessFileImports', () => {
        return x * x * x;
       }
     `
-    const actualProgram = preprocessFileImports(files, 'a.js', actualContext)
+    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
   it('removes all non-Source module import-related AST nodes', () => {
     const files: Record<string, string> = {
-      'a.js': `import d, { a, b, c } from "source-module";
+      '/a.js': `import d, { a, b, c } from "source-module";
         import w, { x, y, z } from "./not-source-module.js";
       `
     }
     const expectedCode = `import { a, b, c } from "source-module";
     `
-    const actualProgram = preprocessFileImports(files, 'a.js', actualContext)
+    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 })
