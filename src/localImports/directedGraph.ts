@@ -103,7 +103,7 @@ export class DirectedGraph {
 
     const cycle = [startingNodeInCycle]
     // Then, we keep picking arbitrary nodes with non-zero in-degrees until
-    // we pick our starting node again.
+    // we pick a node that has already been picked.
     while (true) {
       const currentNode = cycle[cycle.length - 1]
 
@@ -136,13 +136,16 @@ export class DirectedGraph {
         )
       }
 
+      // If the next node we pick is already part of the cycle,
+      // we drop all elements before the first instance of the
+      // next node and return the cycle.
+      const nextNodeIndex = cycle.indexOf(nextNodeInCycle)
+      const isNodeAlreadyInCycle = nextNodeIndex !== -1
       cycle.push(nextNodeInCycle)
-      if (nextNodeInCycle === startingNodeInCycle) {
-        break
+      if (isNodeAlreadyInCycle) {
+        return cycle.slice(nextNodeIndex)
       }
     }
-
-    return cycle
   }
 
   /**
