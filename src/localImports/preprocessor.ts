@@ -107,7 +107,7 @@ const preprocessFileImports = (
   }
 
   const topologicalOrder = importGraph.getTopologicalOrder()
-  if (topologicalOrder === null) {
+  if (!topologicalOrder.isValidTopologicalOrderFound) {
     // TODO: Add error to context.
     return undefined
   }

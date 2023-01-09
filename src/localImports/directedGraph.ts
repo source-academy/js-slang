@@ -1,4 +1,20 @@
 /**
+ * The result of attempting to find a topological ordering
+ * of nodes on a DirectedGraph.
+ */
+export type TopologicalOrderResult =
+  | {
+      isValidTopologicalOrderFound: true
+      topologicalOrder: string[]
+      firstCycleFound: null
+    }
+  | {
+      isValidTopologicalOrderFound: false
+      topologicalOrder: null
+      firstCycleFound: string[]
+    }
+
+/**
  * Represents a directed graph which disallows self-loops.
  */
 export class DirectedGraph {
@@ -64,7 +80,7 @@ export class DirectedGraph {
    *
    * To get the topological ordering, Kahn's algorithm is used.
    */
-  public getTopologicalOrder(): string[] | null {
+  public getTopologicalOrder(): TopologicalOrderResult {
     let numOfVisitedNodes = 0
     const inDegrees = this.calculateInDegrees()
     const topologicalOrder: string[] = []
@@ -107,9 +123,17 @@ export class DirectedGraph {
     // cycle exists in the graph and a topological ordering
     // cannot be found.
     if (numOfVisitedNodes !== this.adjacencyList.size) {
-      return null
+      return {
+        isValidTopologicalOrderFound: false,
+        topologicalOrder: null,
+        firstCycleFound: []
+      }
     }
 
-    return topologicalOrder
+    return {
+      isValidTopologicalOrderFound: true,
+      topologicalOrder,
+      firstCycleFound: null
+    }
   }
 }
