@@ -4,6 +4,7 @@ import * as path from 'path'
 import { CannotFindModuleError } from '../errors/localImportErrors'
 import { parse } from '../parser/parser'
 import { Context } from '../types'
+import { DirectedGraph } from './directedGraph'
 import { removeExports } from './transformers/removeExports'
 import {
   isSourceModule,
@@ -45,30 +46,80 @@ export const getImportedLocalModulePaths = (
   return importedLocalModuleNames
 }
 
+const parseProgramsAndConstructImportGraph = (
+  files: Partial<Record<string, string>>,
+  entrypointFilePath: string,
+  context: Context
+): {
+  programs: Record<string, es.Program>
+  importGraph: DirectedGraph
+} => {
+  const programs: Record<string, es.Program> = {}
+  const importGraph = new DirectedGraph()
+
+  const parseProgram = (currentFilePath: string): void => {
+    const code = files[currentFilePath]
+    if (code === undefined) {
+      context.errors.push(new CannotFindModuleError(entrypointFilePath))
+      return
+    }
+
+    const program = parse(code, context)
+    if (program === undefined) {
+      return
+    }
+
+    programs[currentFilePath] = program
+
+    const importedLocalModulePaths = getImportedLocalModulePaths(program, currentFilePath)
+    for (const importedLocalModulePath in importedLocalModulePaths) {
+      // Since the file at 'currentFilePath' contains the import statement
+      // from the file at 'importedLocalModulePath', we treat the former
+      // as the destination node and the latter as the source node in our
+      // import graph. This is because when we insert the transformed IIFEs
+      // into the resulting program, we need to start with the IIFEs that
+      // do not depend on other IIFEs.
+      importGraph.addEdge(importedLocalModulePath, currentFilePath)
+    }
+  }
+
+  parseProgram(entrypointFilePath)
+
+  return {
+    programs,
+    importGraph
+  }
+}
+
 const preprocessFileImports = (
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context
 ): es.Program | undefined => {
-  const entrypointCode = files[entrypointFilePath]
-  if (entrypointCode === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+  const { programs, importGraph } = parseProgramsAndConstructImportGraph(
+    files,
+    entrypointFilePath,
+    context
+  )
+  // Return 'undefined' if there are errors while parsing.
+  if (context.errors.length !== 0) {
     return undefined
   }
 
-  const program = parse(entrypointCode, context)
-  if (program === undefined) {
+  const topologicalOrder = importGraph.getTopologicalOrder()
+  if (topologicalOrder === null) {
+    // TODO: Add error to context.
     return undefined
   }
 
   // After this pre-processing step, all export-related nodes in the AST
   // are no longer needed and are thus removed.
-  removeExports(program)
+  removeExports(programs[entrypointFilePath])
   // Likewise, all import-related nodes in the AST which are not Source
   // module imports are no longer needed and are also removed.
-  removeNonSourceModuleImports(program)
+  removeNonSourceModuleImports(programs[entrypointFilePath])
 
-  return program
+  return programs[entrypointFilePath]
 }
 
 export default preprocessFileImports
