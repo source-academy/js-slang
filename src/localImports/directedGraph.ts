@@ -75,6 +75,77 @@ export class DirectedGraph {
   }
 
   /**
+   * Finds a cycle of nodes in the directed graph. This operates on the
+   * invariant that any nodes left over with a non-zero in-degree after
+   * Kahn's algorithm has been run is part of a cycle.
+   *
+   * @param inDegrees The number of edges coming into each node after
+   *                  running Kahn's algorithm.
+   */
+  private findCycle(inDegrees: Map<string, number>): string[] {
+    // First, we pick any arbitrary node that is part of a cycle as our
+    // starting node.
+    let startingNodeInCycle: string | null = null
+    for (const [node, inDegree] of inDegrees) {
+      if (inDegree !== 0) {
+        startingNodeInCycle = node
+        break
+      }
+    }
+    // By the invariant stated above, it is impossible that the starting
+    // node cannot be found. The lack of a starting node implies that
+    // all nodes have an in-degree of 0 after running Kahn's algorithm.
+    // This in turn implies that Kahn's algorithm was able to find a
+    // valid topological ordering & that the graph contains no cycles.
+    if (startingNodeInCycle === null) {
+      throw new Error('There are no cycles in this graph. This should never happen.')
+    }
+
+    const cycle = [startingNodeInCycle]
+    // Then, we keep picking arbitrary nodes with non-zero in-degrees until
+    // we pick our starting node again.
+    while (true) {
+      const currentNode = cycle[cycle.length - 1]
+
+      const neighbours = this.adjacencyList.get(currentNode)
+      if (neighbours === undefined) {
+        throw this.differentKeysError
+      }
+      // By the invariant stated above, it is impossible that any node
+      // on the cycle has an in-degree of 0 after running Kahn's algorithm.
+      // An in-degree of 0 implies that the node is not part of a cycle,
+      // which is a contradiction since the current node was picked because
+      // it is part of a cycle.
+      if (neighbours.size === 0) {
+        throw new Error(`Node '${currentNode}' has no incoming edges. This should never happen.`)
+      }
+
+      let nextNodeInCycle: string | null = null
+      for (const neighbour of neighbours) {
+        if (inDegrees.get(neighbour) !== 0) {
+          nextNodeInCycle = neighbour
+          break
+        }
+      }
+      // By the invariant stated above, if the current node is part of a cycle,
+      // then one of its neighbours must also be part of the same cycle. This
+      // is because a cycle contains at least 2 nodes.
+      if (nextNodeInCycle === null) {
+        throw new Error(
+          `None of the neighbours of node '${currentNode}' are part of the same cycle. This should never happen.`
+        )
+      }
+
+      cycle.push(nextNodeInCycle)
+      if (nextNodeInCycle === startingNodeInCycle) {
+        break
+      }
+    }
+
+    return cycle
+  }
+
+  /**
    * Returns a topological ordering of the nodes in the directed
    * graph if the graph is acyclic. Otherwise, returns null.
    *
@@ -123,10 +194,11 @@ export class DirectedGraph {
     // cycle exists in the graph and a topological ordering
     // cannot be found.
     if (numOfVisitedNodes !== this.adjacencyList.size) {
+      const firstCycleFound = this.findCycle(inDegrees)
       return {
         isValidTopologicalOrderFound: false,
         topologicalOrder: null,
-        firstCycleFound: []
+        firstCycleFound
       }
     }
 
