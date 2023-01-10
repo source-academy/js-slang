@@ -656,11 +656,11 @@ describe('binary operations', () => {
       const x12: number = x1 + x4; // no error, number + any, return type number
       const x13: string = x5 + x2; // no error, any + string, return type string
       const x14: string = x1 + x2; // error, number + string, return type string
-      const x15: string = x4 + x5; // error, any + any, return type number | string
-      const x16: number | string = x6 + x4; // no error, string | number + any, return type number | string
+      const x15: string = x4 + x5; // no error, any + any, return type any
+      const x16: number | string = x6 + x4; // no error, string | number + any, return type any
       const x17: number = x1 + x6; // error, number + string | number, return type number
       const x18: string = x6 + x2; // error, string | number + string, return type string
-      const x19: string | number = x5 + x7; // error, any + string | boolean, return type string | number
+      const x19: string | number = x5 + x7; // error, any + string | boolean, return type any
     `
 
     parse(code, context)
@@ -668,7 +668,6 @@ describe('binary operations', () => {
       "Line 10: Type 'boolean' is not assignable to type 'number'.
       Line 11: Type 'boolean' is not assignable to type 'string'.
       Line 14: Type 'string' is not assignable to type 'number'.
-      Line 15: Type 'number | string' is not assignable to type 'string'.
       Line 17: Type 'string | number' is not assignable to type 'number'.
       Line 18: Type 'string | number' is not assignable to type 'string'.
       Line 19: Type 'string | boolean' is not assignable to type 'number | string'."
