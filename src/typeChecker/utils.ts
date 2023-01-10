@@ -446,6 +446,13 @@ export const source3TypeOverrides: [string, BindableType][] = [
   ['stream_to_list', tFunc(tPair(tAny, tFunc(tAny)), tList(tAny))]
 ]
 
+export const source4TypeOverrides: [string, BindableType][] = [
+  ['apply_in_underlying_javascript', tFunc(tAny, tList(tAny), tAny)],
+  ['tokenize', tFunc(tString, tList(tString))],
+  // TODO: Define types for parse tree
+  ['parse', tFunc(tString, tAny)]
+]
+
 const predeclaredConstTypes: [string, Type][] = [
   ['Infinity', tLiteral(Infinity)],
   ['NaN', tLiteral(NaN)],
@@ -487,6 +494,9 @@ export function getTypeOverrides(chapter: Chapter): [string, BindableType][] {
   }
   if (chapter >= 3) {
     typeOverrides.push(...source3TypeOverrides)
+  }
+  if (chapter >= 4) {
+    typeOverrides.push(...source4TypeOverrides)
   }
   return typeOverrides
 }

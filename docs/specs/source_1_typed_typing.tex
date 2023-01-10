@@ -76,13 +76,13 @@ type environment $\Gamma_0$ as follows:
 && \hspace{2mm} [ \texttt{typeof} \leftarrow \Any \rightarrow \String]\Gamma_{-2}
 \end{eqnarray*}
 
-The overloaded binary primitives are handled as follows:
+The overloaded binary primitives (with the exception of \texttt{+}, the handling of which will be elaborated in \nameref{typing-rules})
+are handled as follows:
 
 \begin{eqnarray*}
  & &
       \Gamma_{-2}
-                 [ \texttt{+} \leftarrow (\String,\ \String) \rightarrow \String\ |\ (\Number,\ \Number) \rightarrow \Number] \\
-&& \hspace{6mm}  [ \texttt{===} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool] \\
+                 [ \texttt{===} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool] \\
 && \hspace{6mm}  [ \texttt{!==} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool] \\
 && \hspace{6mm}  [ \texttt{>} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool]\\
 && \hspace{6mm}  [ \texttt{>=} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool]\\
@@ -184,6 +184,7 @@ Subtyping is illustrated using the following type rules:
 \noindent
 
 \subsection{Typing Relations}
+\label{typing-rules}
 
 To perform type checking on the program, typing relations are applied to every statement and expression in the program.
 
@@ -239,6 +240,45 @@ and the type of every argument must be a subtype of the corresponding parameter 
 If all these conditions are met, the type of the function application is the same
 as the return type of the function type that is the type of the operator.
 If the type of the operator is $\Any$, the types for the arguments will be checked against $\Any$ and the return type will be $\Any$.
+
+Applications of binary and unary operators are treated the same as function applications, with the exception of the \texttt{+} operator.
+For the \texttt{+} operator, the following rules are applied, in order of priority:
+
+\begin{itemize}
+\item{If the expression on either side is of type $\String$ or literal string type,
+  check that the other expression is a subtype of $\String$. The return type is $\String$.}
+\item{If the expression on either side is of type $\Number$ or literal number type,
+  check that the other expression is a subtype of $\Number$. The return type is $\Number$.}
+\item{If neither expression can be narrowed to either $\String$ or $\Number$, check that both sides are subtypes of 
+  $\String\ |\ \Number$. The return type is $\Any$.}
+\end{itemize}
+
+\noindent
+\[
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 = \String \vee t_0 = \textit{literal string type}
+    \quad t_1 \subseteq \String \vee t_1 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \String}
+\]
+\noindent
+\[
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 = \String \vee t_1 = \textit{literal string type}
+    \quad t_0 \subseteq \String \vee t_0 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \String}
+\]
+\noindent
+\[
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 = \Number \vee t_0 = \textit{literal number type}
+    \quad t_1 \subseteq \Number \vee t_1 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \Number}
+\]
+\noindent
+\[
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 = \Number \vee t_1 = \textit{literal number type}
+    \quad t_0 \subseteq \Number \vee t_0 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \Number}
+\]
+\noindent
+\[
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 \subseteq (\String\ |\ \Number) \vee t_0 = \Any
+    \quad t_1 \subseteq (\String\ |\ \Number) \vee t_1 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \Any}
+\]
+\noindent
 
 For lambda expressions, we extend $\Gamma$ with the declared types of all the function parameters,
 and check the type of the function body against the declared return type.
