@@ -44,7 +44,12 @@ export class CircularImportError implements SourceError {
   constructor(public filePathsInCycle: string[]) {}
 
   public explain() {
-    const formattedCycle = this.filePathsInCycle.map(filePath => `"${filePath}"`).join(' -> ')
+    // We need to reverse the file paths in the cycle so that the
+    // semantics of '"/a.js" -> "/b.js"' is '"/a.js" imports "/b.js"'.
+    const formattedCycle = this.filePathsInCycle
+      .map(filePath => `"${filePath}"`)
+      .reverse()
+      .join(' -> ')
     return `Circular import detected: ${formattedCycle}.`
   }
 
