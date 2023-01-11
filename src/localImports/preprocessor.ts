@@ -1,7 +1,7 @@
 import es from 'estree'
 import * as path from 'path'
 
-import { CannotFindModuleError } from '../errors/localImportErrors'
+import { CannotFindModuleError, CircularImportError } from '../errors/localImportErrors'
 import { parse } from '../parser/parser'
 import { Context } from '../types'
 import { DirectedGraph } from './directedGraph'
@@ -108,7 +108,7 @@ const preprocessFileImports = (
 
   const topologicalOrder = importGraph.getTopologicalOrder()
   if (!topologicalOrder.isValidTopologicalOrderFound) {
-    // TODO: Add error to context.
+    context.errors.push(new CircularImportError(topologicalOrder.firstCycleFound))
     return undefined
   }
 

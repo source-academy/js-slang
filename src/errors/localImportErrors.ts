@@ -35,3 +35,20 @@ export class CannotFindModuleError implements SourceError {
     return 'Check that the module file path resolves to an existing file.'
   }
 }
+
+export class CircularImportError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  public location = UNKNOWN_LOCATION
+
+  constructor(public filePathsInCycle: string[]) {}
+
+  public explain() {
+    const formattedCycle = this.filePathsInCycle.map(filePath => `"${filePath}"`).join(' -> ')
+    return `Circular import detected: ${formattedCycle}.`
+  }
+
+  public elaborate() {
+    return 'Break the circular import cycle by removing imports from any of the offending files.'
+  }
+}
