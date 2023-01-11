@@ -84,9 +84,10 @@ const parseProgramsAndConstructImportGraph = (
       // Since the file at 'currentFilePath' contains the import statement
       // from the file at 'importedLocalModulePath', we treat the former
       // as the destination node and the latter as the source node in our
-      // import graph. This is because when we insert the transformed IIFEs
-      // into the resulting program, we need to start with the IIFEs that
-      // do not depend on other IIFEs.
+      // import graph. This is because when we insert the transformed
+      // function declarations into the resulting program, we need to start
+      // with the function declarations that do not depend on other
+      // function declarations.
       importGraph.addEdge(importedLocalModulePath, currentFilePath)
       // Recursively parse imported files.
       parseFile(importedLocalModulePath)

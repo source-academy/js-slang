@@ -26,9 +26,9 @@ export const createListCallExpression = (
  * Constructs the AST equivalent of:
  * const importedName = __access_export__(functionName, lookupName);
  *
- * @param functionName The name of the transformed IIFE to import from.
+ * @param functionName The name of the transformed function declaration to import from.
  * @param importedName The name of the import.
- * @param lookupName   The name to lookup in the transformed IIFE.
+ * @param lookupName   The name to lookup in the transformed function declaration.
  */
 export const createImportedNameDeclaration = (
   functionName: string,

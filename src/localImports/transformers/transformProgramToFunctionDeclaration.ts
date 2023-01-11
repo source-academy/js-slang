@@ -246,7 +246,7 @@ const removeModuleDeclarations = (
   return statements
 }
 
-export const transformProgramToIIFE = (
+export const transformProgramToFunctionDeclaration = (
   program: es.Program,
   currentFileName: string
 ): es.FunctionDeclaration => {
@@ -275,9 +275,9 @@ export const transformProgramToIIFE = (
   )
 
   const programStatements = removeModuleDeclarations(removeDirectives(program.body))
-  const iifeBody = [...accessImportedNameStatements, ...programStatements, returnStatement]
+  const functionBody = [...accessImportedNameStatements, ...programStatements, returnStatement]
 
   const functionName = transformFilePathToValidFunctionName(currentFileName)
-  const iifeParams = Object.keys(functionNameToImportSpecifiersMap).map(createIdentifier)
-  return createFunctionDeclaration(functionName, iifeParams, iifeBody)
+  const functionParams = Object.keys(functionNameToImportSpecifiersMap).map(createIdentifier)
+  return createFunctionDeclaration(functionName, functionParams, functionBody)
 }
