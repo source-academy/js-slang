@@ -73,6 +73,14 @@ const parseProgramsAndConstructImportGraph = (
 
     const importedLocalModulePaths = getImportedLocalModulePaths(program, currentFilePath)
     for (const importedLocalModulePath of importedLocalModulePaths) {
+      // If we traverse the same edge in the import graph twice, it means
+      // that there is a cycle in the graph. We terminate early so as not
+      // to get into an infinite loop (and also because there is no point
+      // in traversing cycles when our goal is to build up the import
+      // graph).
+      if (importGraph.hasEdge(importedLocalModulePath, currentFilePath)) {
+        continue
+      }
       // Since the file at 'currentFilePath' contains the import statement
       // from the file at 'importedLocalModulePath', we treat the former
       // as the destination node and the latter as the source node in our
