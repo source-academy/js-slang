@@ -2,7 +2,7 @@ import { mockContext } from '../../../mocks/context'
 import { parse } from '../../../parser/parser'
 import { Chapter } from '../../../types'
 import { removeExports } from '../../transformers/removeExports'
-import { parseError, stripLocationInfo } from '../utils'
+import { parseCodeError, stripLocationInfo } from '../utils'
 
 describe('removeExports', () => {
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
@@ -17,7 +17,7 @@ describe('removeExports', () => {
     const actualProgram = parse(actualCode, actualContext)
     const expectedProgram = parse(expectedCode, expectedContext)
     if (actualProgram === undefined || expectedProgram === undefined) {
-      throw parseError
+      throw parseCodeError
     }
 
     removeExports(actualProgram)

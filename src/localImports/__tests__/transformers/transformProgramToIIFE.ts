@@ -3,7 +3,7 @@ import { parse } from '../../../parser/parser'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
 import { Chapter } from '../../../types'
 import { transformProgramToIIFE } from '../../transformers/transformProgramToIIFE'
-import { parseError, stripLocationInfo } from '../utils'
+import { parseCodeError, stripLocationInfo } from '../utils'
 
 describe('transformImportedFile', () => {
   const currentFileName = '/dir/a.js'
@@ -20,7 +20,7 @@ describe('transformImportedFile', () => {
     const actualProgram = parse(actualCode, actualContext)
     const expectedProgram = parse(expectedCode, expectedContext)
     if (actualProgram === undefined || expectedProgram === undefined) {
-      throw parseError
+      throw parseCodeError
     }
 
     const actualFunctionDeclaration = transformProgramToIIFE(actualProgram, currentFileName)

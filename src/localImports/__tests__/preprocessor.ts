@@ -1,10 +1,11 @@
 import es from 'estree'
 
+import { parseError } from '../../index'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { Chapter } from '../../types'
 import preprocessFileImports, { getImportedLocalModulePaths } from '../preprocessor'
-import { parseError, stripLocationInfo } from './utils'
+import { parseCodeError, stripLocationInfo } from './utils'
 
 describe('getImportedLocalModulePaths', () => {
   let context = mockContext(Chapter.LIBRARY_PARSER)
@@ -20,7 +21,7 @@ describe('getImportedLocalModulePaths', () => {
   ): void => {
     const program = parse(code, context)
     if (program === undefined) {
-      throw parseError
+      throw parseCodeError
     }
     expect(getImportedLocalModulePaths(program, baseFilePath)).toEqual(new Set(expectedModulePaths))
   }
@@ -29,7 +30,7 @@ describe('getImportedLocalModulePaths', () => {
     const code = ''
     const program = parse(code, context)
     if (program === undefined) {
-      throw parseError
+      throw parseCodeError
     }
     expect(() => getImportedLocalModulePaths(program, 'a.js')).toThrowError(
       "Current file path 'a.js' is not absolute."
@@ -87,12 +88,12 @@ describe('preprocessFileImports', () => {
     expectedCode: string
   ): void => {
     if (actualProgram === undefined) {
-      throw parseError
+      throw parseCodeError
     }
 
     const expectedProgram = parse(expectedCode, expectedContext)
     if (expectedProgram === undefined) {
-      throw parseError
+      throw parseCodeError
     }
 
     expect(stripLocationInfo(actualProgram)).toEqual(stripLocationInfo(expectedProgram))
@@ -156,5 +157,26 @@ describe('preprocessFileImports', () => {
     `
     const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
+  })
+
+  it('returns CircularImportError if there are circular imports', () => {
+    const files: Record<string, string> = {
+      '/a.js': `
+        import { b } from "./b.js";
+        export const a = 1;
+      `,
+      '/b.js': `
+        import { c } from "./c.js";
+        export const b = 2;
+      `,
+      '/c.js': `
+        import { a } from "./a.js";
+        export const c = 3;
+      `
+    }
+    preprocessFileImports(files, '/a.js', actualContext)
+    expect(parseError(actualContext.errors)).toEqual(
+      'Circular import detected: "/a.js" -> "/b.js" -> "/c.js" -> "/a.js".'
+    )
   })
 })
