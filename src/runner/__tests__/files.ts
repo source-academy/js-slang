@@ -1,5 +1,4 @@
-import { InvalidFilePathError } from '../../errors/localImportErrors'
-import { runFilesInContext } from '../../index'
+import { parseError, runFilesInContext } from '../../index'
 import { mockContext } from '../../mocks/context'
 import { Chapter } from '../../types'
 
@@ -16,6 +15,8 @@ describe('runFilesInContext', () => {
       '+-.js': '"hello world";'
     }
     runFilesInContext(files, 'a.js', context)
-    expect(context.errors).toEqual([new InvalidFilePathError('+-.js')])
+    expect(parseError(context.errors)).toEqual(
+      `'+-.js' must only contain alphanumeric chars or one of /,.,-.`
+    )
   })
 })
