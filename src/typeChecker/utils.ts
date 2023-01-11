@@ -142,10 +142,10 @@ export function tPrimitive(name: Primitive['name'], value?: string | number | bo
   }
 }
 
-export function tVar(name: string | number): Variable {
+export function tVar(name: string): Variable {
   return {
     kind: 'variable',
-    name: `T${name}`,
+    name,
     constraint: 'none'
   }
 }
@@ -153,39 +153,39 @@ export function tVar(name: string | number): Variable {
 export function tAddable(name: string): Variable {
   return {
     kind: 'variable',
-    name: `${name}`,
+    name,
     constraint: 'addable'
   }
 }
 
-export function tPair(var1: Type, var2: Type): Pair {
+export function tPair(headType: Type, tailType: Type): Pair {
   return {
     kind: 'pair',
-    headType: var1,
-    tailType: var2
+    headType,
+    tailType
   }
 }
 
-export function tList(var1: Type, typeAsPair?: Pair): List {
+export function tList(elementType: Type, typeAsPair?: Pair): List {
   return {
     kind: 'list',
-    elementType: var1,
+    elementType,
     // Used in Source Typed variants to check for type mismatches against pairs
     typeAsPair
   }
 }
 
-export function tForAll(type: Type): ForAll {
+export function tForAll(polyType: Type): ForAll {
   return {
     kind: 'forall',
-    polyType: type
+    polyType
   }
 }
 
-export function tArray(var1: Type): SArray {
+export function tArray(elementType: Type): SArray {
   return {
     kind: 'array',
-    elementType: var1
+    elementType
   }
 }
 
