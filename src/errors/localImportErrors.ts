@@ -10,9 +10,10 @@ export class InvalidFilePathError implements SourceError {
   constructor(public filePath: string) {}
 
   public explain() {
-    return `'${this.filePath}' must only contain alphanumeric chars or one of ${Object.keys(
-      charEncoding
-    )}.`
+    const validNonAlphanumericChars = Object.keys(charEncoding)
+      .map(char => `'${char}'`)
+      .join(', ')
+    return `'${this.filePath}' must only contain alphanumeric chars or one of ${validNonAlphanumericChars}.`
   }
 
   public elaborate() {
