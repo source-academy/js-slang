@@ -15,13 +15,17 @@ import {
   TypeNotAllowedError,
   TypeNotCallableError,
   TypeNotFoundError,
+  TypeNotGenericError,
+  TypeParameterNameNotAllowedError,
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
 import { memoizedGetModuleManifest } from '../modules/moduleLoader'
 import {
+  BindableType,
   Chapter,
   Context,
   disallowedTypes,
+  Pair,
   PrimitiveType,
   SArray,
   TSAllowedTypes,
@@ -46,6 +50,7 @@ import {
   tAny,
   tArray,
   tBool,
+  tForAll,
   tFunc,
   tList,
   tLiteral,
@@ -56,6 +61,7 @@ import {
   tString,
   tUndef,
   tUnion,
+  tVar,
   tVoid,
   typeAnnotationKeywordToBasicTypeMap
 } from './utils'
@@ -594,12 +600,6 @@ function addTypeDeclarationsToEnvironment(
         setDeclKind(id.name, node.kind, env)
         break
       case 'TSTypeAliasDeclaration':
-        if (node.typeParameters !== undefined) {
-          throw new TypecheckError(
-            node,
-            'Type parameters are not allowed for type alias declarations'
-          )
-        }
         const alias = node.id.name
         if (Object.values(typeAnnotationKeywordToBasicTypeMap).includes(alias as TSBasicType)) {
           context.errors.push(new TypeAliasNameNotAllowedError(node, alias))
@@ -609,7 +609,29 @@ function addTypeDeclarationsToEnvironment(
           context.errors.push(new TypeAliasNameNotAllowedError(node, alias))
           break
         }
-        const type = getTypeAnnotationType(node, context, env)
+
+        let type: BindableType = tAny
+        if (node.typeParameters && node.typeParameters.params.length > 0) {
+          const typeParamNames: string[] = []
+          // Add type parameters to enclosing environment
+          pushEnv(env)
+          node.typeParameters.params.forEach(param => {
+            if (param.type !== 'TSTypeParameter') {
+              throw new TypecheckError(node, 'Invalid type parameter type')
+            }
+            const name = param.name
+            if (Object.values(typeAnnotationKeywordToBasicTypeMap).includes(name as TSBasicType)) {
+              context.errors.push(new TypeParameterNameNotAllowedError(param, name))
+              return
+            }
+            setTypeAlias(name, tVar(name), env)
+            typeParamNames.push(name)
+          })
+          type = tForAll(getTypeAnnotationType(node, context, env), typeParamNames)
+          env.pop()
+        } else {
+          type = getTypeAnnotationType(node, context, env)
+        }
         setTypeAlias(alias, type, env)
         break
       default:
@@ -1003,7 +1025,12 @@ function getAnnotatedType(typeNode: tsEs.TSType, context: Context, env: TypeEnvi
             )
             return tPair(tAny, tAny)
           }
-          const typeParams = typeNode.typeParameters.params
+          const typeParams = typeNode.typeParameters.params.filter(
+            (param): param is tsEs.TSType => param.type !== 'TSTypeParameter'
+          )
+          if (typeParams.length !== typeNode.typeParameters.params.length) {
+            throw new TypecheckError(typeNode, 'Invalid type parameter type')
+          }
           return tPair(
             getAnnotatedType(typeParams[0], context, env),
             getAnnotatedType(typeParams[1], context, env)
@@ -1016,19 +1043,16 @@ function getAnnotatedType(typeNode: tsEs.TSType, context: Context, env: TypeEnvi
             )
             return tList(tAny)
           }
-          const typeParams = typeNode.typeParameters.params
+          const typeParams = typeNode.typeParameters.params.filter(
+            (param): param is tsEs.TSType => param.type !== 'TSTypeParameter'
+          )
+          if (typeParams.length !== typeNode.typeParameters.params.length) {
+            throw new TypecheckError(typeNode, 'Invalid type parameter type')
+          }
           return tList(getAnnotatedType(typeParams[0], context, env))
         }
       }
-      const declaredType = lookupTypeAlias(name, env)
-      if (!declaredType) {
-        context.errors.push(new TypeNotFoundError(typeNode, name))
-        return tAny
-      }
-      if (typeNode.typeParameters !== undefined) {
-        throw new TypecheckError(typeNode, `Type '${name}' should not have type parameters`)
-      }
-      return declaredType
+      return lookupTypeAliasAndRemoveForAllAndPredicateTypes(typeNode, name, context, env)
     case 'TSParenthesizedType':
       return getAnnotatedType(typeNode.typeAnnotation, context, env)
     default:
@@ -1087,6 +1111,101 @@ function lookupTypeAndRemoveForAllAndPredicateTypes(
     return tFunc(tAny, tBool)
   }
   return type
+}
+
+/**
+ * Wrapper function for lookupTypeAlias that removes forall and predicate types.
+ * An error is thrown for predicate types as type aliases should not ever be predicate types.
+ * For forall types, the given type arguments are substituted into the poly type,
+ * and the resulting type is returned.
+ */
+function lookupTypeAliasAndRemoveForAllAndPredicateTypes(
+  typeNode: tsEs.TSTypeReference,
+  name: string,
+  context: Context,
+  env: TypeEnvironment
+): Type {
+  const type = lookupTypeAlias(name, env)
+  if (!type) {
+    context.errors.push(new TypeNotFoundError(typeNode, name))
+    return tAny
+  }
+  if (type.kind === 'predicate') {
+    throw new TypecheckError(typeNode, 'Type alias should not be predicate type')
+  }
+  if (type.kind === 'forall') {
+    if (!type.typeParamNames) {
+      throw new TypecheckError(typeNode, 'Generic type aliases must have type parameters')
+    }
+    if (
+      !typeNode.typeParameters ||
+      typeNode.typeParameters.params.length !== type.typeParamNames.length
+    ) {
+      context.errors.push(
+        new InvalidNumberOfTypeArgumentsForGenericTypeError(
+          typeNode,
+          name,
+          type.typeParamNames.length
+        )
+      )
+      return tAny
+    }
+    let polyType = type.polyType
+    const typesToSub = typeNode.typeParameters.params
+    for (let i = 0; i < type.typeParamNames.length; i++) {
+      const typeToSub = typesToSub[i]
+      if (typeToSub.type === 'TSTypeParameter') {
+        throw new TypecheckError(typeNode, 'Type argument should not be type parameter')
+      }
+      polyType = substituteVariableTypes(
+        polyType,
+        type.typeParamNames[i],
+        getAnnotatedType(typeToSub, context, env)
+      )
+    }
+    return polyType
+  }
+  if (typeNode.typeParameters !== undefined) {
+    context.errors.push(new TypeNotGenericError(typeNode, name))
+    return tAny
+  }
+  return type
+}
+
+/**
+ * Recurses through the given type and returns a new type
+ * with all variable types that match the given name substituted with the type to substitute.
+ */
+function substituteVariableTypes(type: Type, varName: string, typeToSub: Type): Type {
+  switch (type.kind) {
+    case 'primitive':
+    case 'literal':
+      return type
+    case 'variable':
+      return type.name === varName ? typeToSub : type
+    case 'function':
+      const types = type.parameterTypes.map(param =>
+        substituteVariableTypes(param, varName, typeToSub)
+      )
+      types.push(substituteVariableTypes(type.returnType, varName, typeToSub))
+      return tFunc(...types)
+    case 'union':
+      return tUnion(...type.types.map(type => substituteVariableTypes(type, varName, typeToSub)))
+    case 'pair':
+      return tPair(
+        substituteVariableTypes(type.headType, varName, typeToSub),
+        substituteVariableTypes(type.tailType, varName, typeToSub)
+      )
+    case 'list':
+      return tList(
+        substituteVariableTypes(type.elementType, varName, typeToSub),
+        type.typeAsPair && (substituteVariableTypes(type.typeAsPair, varName, typeToSub) as Pair)
+      )
+    case 'array':
+      return tArray(substituteVariableTypes(type.elementType, varName, typeToSub))
+    default:
+      return type
+  }
 }
 
 /**

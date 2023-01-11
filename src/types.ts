@@ -419,6 +419,8 @@ export type BindableType = Type | ForAll | PredicateType
 export interface ForAll {
   kind: 'forall'
   polyType: Type
+  // Used in Source Typed variant
+  typeParamNames?: string[]
 }
 
 export interface PredicateType {
@@ -440,5 +442,5 @@ export type PredicateTest = {
 export type TypeEnvironment = {
   typeMap: Map<string, BindableType>
   declKindMap: Map<string, AllowedDeclarations>
-  typeAliasMap: Map<string, Type>
+  typeAliasMap: Map<string, BindableType>
 }[]

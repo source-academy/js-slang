@@ -65,7 +65,7 @@ export function lookupDeclKind(
   return undefined
 }
 
-export function lookupTypeAlias(name: string, env: TypeEnvironment): Type | undefined {
+export function lookupTypeAlias(name: string, env: TypeEnvironment): BindableType | undefined {
   for (let i = env.length - 1; i >= 0; i--) {
     if (env[i].typeAliasMap.has(name)) {
       return env[i].typeAliasMap.get(name)
@@ -82,7 +82,7 @@ export function setDeclKind(name: string, kind: AllowedDeclarations, env: TypeEn
   env[env.length - 1].declKindMap.set(name, kind)
 }
 
-export function setTypeAlias(name: string, type: Type, env: TypeEnvironment): void {
+export function setTypeAlias(name: string, type: BindableType, env: TypeEnvironment): void {
   env[env.length - 1].typeAliasMap.set(name, type)
 }
 
@@ -175,10 +175,11 @@ export function tList(elementType: Type, typeAsPair?: Pair): List {
   }
 }
 
-export function tForAll(polyType: Type): ForAll {
+export function tForAll(polyType: Type, typeParamNames?: string[]): ForAll {
   return {
     kind: 'forall',
-    polyType
+    polyType,
+    typeParamNames
   }
 }
 
