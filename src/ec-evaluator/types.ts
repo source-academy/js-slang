@@ -48,3 +48,10 @@ export enum Tags {
   ArrAccInstr = 'arr_acc_i',
   ArrAssmtInstr = 'arr_assmt_i'
 }
+
+interface IInstr {
+  tag: Tags
+}
+
+export type Command = es.Node | IInstr
+
