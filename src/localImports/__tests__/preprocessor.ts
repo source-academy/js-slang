@@ -38,21 +38,24 @@ describe('getImportedLocalModulePaths', () => {
   })
 
   it('returns local (relative) module imports', () => {
-    const code = `import { x } from "./dir2/b.js";
+    const code = `
+      import { x } from "./dir2/b.js";
       import { y } from "../dir3/c.js";
     `
     assertCorrectModulePathsAreReturned(code, '/dir/a.js', ['/dir/dir2/b.js', '/dir3/c.js'])
   })
 
   it('returns local (absolute) module imports', () => {
-    const code = `import { x } from "/dir/dir2/b.js";
+    const code = `
+      import { x } from "/dir/dir2/b.js";
       import { y } from "/dir3/c.js";
     `
     assertCorrectModulePathsAreReturned(code, '/dir/a.js', ['/dir/dir2/b.js', '/dir3/c.js'])
   })
 
   it('does not return Source module imports', () => {
-    const code = `import { x } from "rune";
+    const code = `
+      import { x } from "rune";
       import { y } from "sound";
     `
     assertCorrectModulePathsAreReturned(code, '/dir/a.js', [])
@@ -65,7 +68,8 @@ describe('getImportedLocalModulePaths', () => {
   })
 
   it('returns unique module paths', () => {
-    const code = `import { a } from "./b.js";
+    const code = `
+      import { a } from "./b.js";
       import { b } from "./b.js";
       import { c } from "./c.js";
       import { d } from "./c.js";
@@ -109,7 +113,8 @@ describe('preprocessFileImports', () => {
 
   it('returns the same AST if the entrypoint file does not contain import/export statements', () => {
     const files: Record<string, string> = {
-      '/a.js': `function square(x) {
+      '/a.js': `
+        function square(x) {
           return x * x;
         }
         square(5);
@@ -122,7 +127,8 @@ describe('preprocessFileImports', () => {
 
   it('removes all export-related AST nodes', () => {
     const files: Record<string, string> = {
-      '/a.js': `export const x = 42;
+      '/a.js': `
+        export const x = 42;
         export let y = 53;
         export function square(x) {
           return x * x;
@@ -133,7 +139,8 @@ describe('preprocessFileImports', () => {
         }
       `
     }
-    const expectedCode = `const x = 42;
+    const expectedCode = `
+      const x = 42;
       let y = 53;
       function square(x) {
        return x * x;
@@ -149,7 +156,8 @@ describe('preprocessFileImports', () => {
 
   it('removes all non-Source module import-related AST nodes', () => {
     const files: Record<string, string> = {
-      '/a.js': `import d, { a, b, c } from "source-module";
+      '/a.js': `
+        import d, { a, b, c } from "source-module";
         import w, { x, y, z } from "./not-source-module.js";
       `,
       '/not-source-module.js': `

@@ -26,21 +26,25 @@ describe('removeExports', () => {
 
   describe('removes ExportNamedDeclaration nodes', () => {
     test('when exporting variable declarations', () => {
-      const actualCode = `export const x = 42;
+      const actualCode = `
+        export const x = 42;
         export let y = 53;
       `
-      const expectedCode = `const x = 42;
+      const expectedCode = `
+        const x = 42;
         let y = 53;
       `
       assertASTsAreEquivalent(actualCode, expectedCode)
     })
 
     test('when exporting function declarations', () => {
-      const actualCode = `export function square(x) {
+      const actualCode = `
+        export function square(x) {
           return x * x;
         }
       `
-      const expectedCode = `function square(x) {
+      const expectedCode = `
+        function square(x) {
           return x * x;
         }
       `
@@ -48,15 +52,18 @@ describe('removeExports', () => {
     })
 
     test('when exporting arrow function declarations', () => {
-      const actualCode = `export const square = x => x * x;
+      const actualCode = `
+        export const square = x => x * x;
       `
-      const expectedCode = `const square = x => x * x;
+      const expectedCode = `
+        const square = x => x * x;
       `
       assertASTsAreEquivalent(actualCode, expectedCode)
     })
 
     test('when exporting (renamed) identifiers', () => {
-      const actualCode = `const x = 42;
+      const actualCode = `
+        const x = 42;
         let y = 53;
         function square(x) {
           return x * x;
@@ -64,7 +71,8 @@ describe('removeExports', () => {
         const id = x => x;
         export { x, y, square as sq, id as default };
       `
-      const expectedCode = `const x = 42;
+      const expectedCode = `
+        const x = 42;
         let y = 53;
         function square(x) {
           return x * x;
@@ -79,11 +87,13 @@ describe('removeExports', () => {
     // Default exports of variable declarations and arrow function declarations
     // is not allowed in ES6, and will be caught by the Acorn parser.
     test('when exporting function declarations', () => {
-      const actualCode = `export default function square(x) {
+      const actualCode = `
+        export default function square(x) {
           return x * x;
         }
       `
-      const expectedCode = `function square(x) {
+      const expectedCode = `
+        function square(x) {
           return x * x;
         }
       `
@@ -91,30 +101,36 @@ describe('removeExports', () => {
     })
 
     test('when exporting constants', () => {
-      const actualCode = `const x = 42;
+      const actualCode = `
+        const x = 42;
         export default x;
       `
-      const expectedCode = `const x = 42;
+      const expectedCode = `
+        const x = 42;
       `
       assertASTsAreEquivalent(actualCode, expectedCode)
     })
 
     test('when exporting variables', () => {
-      const actualCode = `let y = 53;
+      const actualCode = `
+        let y = 53;
         export default y;
       `
-      const expectedCode = `let y = 53;
+      const expectedCode = `
+        let y = 53;
       `
       assertASTsAreEquivalent(actualCode, expectedCode)
     })
 
     test('when exporting functions', () => {
-      const actualCode = `function square(x) {
+      const actualCode = `
+        function square(x) {
           return x * x;
         }
         export default square;
       `
-      const expectedCode = `function square(x) {
+      const expectedCode = `
+        function square(x) {
           return x * x;
         }
       `
@@ -122,16 +138,19 @@ describe('removeExports', () => {
     })
 
     test('when exporting arrow functions', () => {
-      const actualCode = `const id = x => x;
+      const actualCode = `
+        const id = x => x;
         export default id;
       `
-      const expectedCode = `const id = x => x;
+      const expectedCode = `
+        const id = x => x;
       `
       assertASTsAreEquivalent(actualCode, expectedCode)
     })
 
     test('when exporting expressions', () => {
-      const actualCode = `export default 123 + 456;
+      const actualCode = `
+        export default 123 + 456;
       `
       const expectedCode = ''
       assertASTsAreEquivalent(actualCode, expectedCode)

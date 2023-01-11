@@ -32,10 +32,12 @@ describe('transformImportedFile', () => {
   }
 
   it('wraps the program body in a FunctionDeclaration', () => {
-    const actualCode = `const square = x => x * x;
+    const actualCode = `
+      const square = x => x * x;
       const x = 42;
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         const square = x => x * x;
         const x = 42;
         return pair(null, list());
@@ -45,10 +47,12 @@ describe('transformImportedFile', () => {
   })
 
   it('returns only exported variables', () => {
-    const actualCode = `const x = 42;
+    const actualCode = `
+      const x = 42;
       export let y = 53;
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         const x = 42;
         let y = 53;
         return pair(null, list(pair("y", y)));
@@ -58,14 +62,16 @@ describe('transformImportedFile', () => {
   })
 
   it('returns only exported functions', () => {
-    const actualCode = `function id(x) {
+    const actualCode = `
+      function id(x) {
         return x;
       }
       export function square(x) {
         return x * x;
       }
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         function id(x) {
           return x;
         }
@@ -79,10 +85,12 @@ describe('transformImportedFile', () => {
   })
 
   it('returns only exported arrow functions', () => {
-    const actualCode = `const id = x => x;
+    const actualCode = `
+      const id = x => x;
       export const square = x => x * x;
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         const id = x => x;
         const square = x => x * x;
         return pair(null, list(pair("square", square)));
@@ -92,14 +100,16 @@ describe('transformImportedFile', () => {
   })
 
   it('returns all exported names when there are multiple', () => {
-    const actualCode = `export const x = 42;
+    const actualCode = `
+      export const x = 42;
       export let y = 53;
       export function id(x) {
         return x;
       }
       export const square = x => x * x;
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         const x = 42;
         let y = 53;
         function id(x) {
@@ -113,7 +123,8 @@ describe('transformImportedFile', () => {
   })
 
   it('returns all exported names in {}-notation', () => {
-    const actualCode = `const x = 42;
+    const actualCode = `
+      const x = 42;
       let y = 53;
       function id(x) {
         return x;
@@ -121,7 +132,8 @@ describe('transformImportedFile', () => {
       const square = x => x * x;
       export { x, y, id, square };
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         const x = 42;
         let y = 53;
         function id(x) {
@@ -135,7 +147,8 @@ describe('transformImportedFile', () => {
   })
 
   it('returns renamed exported names', () => {
-    const actualCode = `const x = 42;
+    const actualCode = `
+      const x = 42;
       let y = 53;
       function id(x) {
         return x;
@@ -143,7 +156,8 @@ describe('transformImportedFile', () => {
       const square = x => x * x;
       export { x as y, y as x, id as identity, square as sq };
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         const x = 42;
         let y = 53;
         function id(x) {
@@ -159,14 +173,16 @@ describe('transformImportedFile', () => {
   // Default exports of variable declarations and arrow function declarations
   // is not allowed in ES6, and will be caught by the Acorn parser.
   it('returns default export of function declaration', () => {
-    const actualCode = `function id(x) {
+    const actualCode = `
+      function id(x) {
         return x;
       }
       export default function square(x) {
         return x * x;
       }
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         function id(x) {
           return x;
         }
@@ -180,11 +196,13 @@ describe('transformImportedFile', () => {
   })
 
   it('returns default export of variable', () => {
-    const actualCode = `const x = 42;
+    const actualCode = `
+      const x = 42;
       let y = 53;
       export default y;
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         const x = 42;
         let y = 53;
         return pair(y, list());
@@ -194,7 +212,8 @@ describe('transformImportedFile', () => {
   })
 
   it('returns default export of function', () => {
-    const actualCode = `function id(x) {
+    const actualCode = `
+      function id(x) {
         return x;
       }
       function square(x) {
@@ -202,7 +221,8 @@ describe('transformImportedFile', () => {
       }
       export default square;
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         function id(x) {
           return x;
         }
@@ -216,11 +236,13 @@ describe('transformImportedFile', () => {
   })
 
   it('returns default export of arrow function', () => {
-    const actualCode = `const id = x => x;
+    const actualCode = `
+      const id = x => x;
       const square = x => x * x;
       export default square;
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         const id = x => x;
         const square = x => x * x;
         return pair(square, list());
@@ -230,9 +252,11 @@ describe('transformImportedFile', () => {
   })
 
   it('returns default export of expression 1', () => {
-    const actualCode = `export default 123;
+    const actualCode = `
+      export default 123;
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         return pair(123, list());
       }
     `
@@ -240,9 +264,11 @@ describe('transformImportedFile', () => {
   })
 
   it('returns default export of expression 2', () => {
-    const actualCode = `export default "Hello world!";
+    const actualCode = `
+      export default "Hello world!";
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         return pair("Hello world!", list());
       }
     `
@@ -250,9 +276,11 @@ describe('transformImportedFile', () => {
   })
 
   it('returns default export of expression 3', () => {
-    const actualCode = `export default 123 + 456;
+    const actualCode = `
+      export default 123 + 456;
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         // Expressions will be reduced when the IIFE is invoked.
         return pair(123 + 456, list());
       }
@@ -261,12 +289,14 @@ describe('transformImportedFile', () => {
   })
 
   it('returns default export of expression 4', () => {
-    const actualCode = `function square(x) {
+    const actualCode = `
+      function square(x) {
         return x * x;
       }
       export default square(10);
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         function square(x) {
           return x * x;
         }
@@ -287,7 +317,8 @@ describe('transformImportedFile', () => {
       const id = x => x;
       export { x, y, square as default, id };
     `
-    const expectedCode = `function ${iifeIdentifier}() {
+    const expectedCode = `
+      function ${iifeIdentifier}() {
         const x = 42;
         let y = 53;
         function square(x) {
