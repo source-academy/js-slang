@@ -57,7 +57,7 @@ const parseProgramsAndConstructImportGraph = (
   const programs: Record<string, es.Program> = {}
   const importGraph = new DirectedGraph()
 
-  const parseProgram = (currentFilePath: string): void => {
+  const parseFile = (currentFilePath: string): void => {
     const code = files[currentFilePath]
     if (code === undefined) {
       context.errors.push(new CannotFindModuleError(entrypointFilePath))
@@ -72,7 +72,7 @@ const parseProgramsAndConstructImportGraph = (
     programs[currentFilePath] = program
 
     const importedLocalModulePaths = getImportedLocalModulePaths(program, currentFilePath)
-    for (const importedLocalModulePath in importedLocalModulePaths) {
+    for (const importedLocalModulePath of importedLocalModulePaths) {
       // Since the file at 'currentFilePath' contains the import statement
       // from the file at 'importedLocalModulePath', we treat the former
       // as the destination node and the latter as the source node in our
@@ -80,10 +80,12 @@ const parseProgramsAndConstructImportGraph = (
       // into the resulting program, we need to start with the IIFEs that
       // do not depend on other IIFEs.
       importGraph.addEdge(importedLocalModulePath, currentFilePath)
+      // Recursively parse imported files.
+      parseFile(importedLocalModulePath)
     }
   }
 
-  parseProgram(entrypointFilePath)
+  parseFile(entrypointFilePath)
 
   return {
     programs,
