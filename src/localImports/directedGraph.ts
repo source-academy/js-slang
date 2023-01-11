@@ -52,6 +52,22 @@ export class DirectedGraph {
   }
 
   /**
+   * Returns whether the directed edge from the source node to the
+   * destination node exists in the graph.
+   *
+   * @param sourceNode      The name of the source node.
+   * @param destinationNode The name of the destination node.
+   */
+  public hasEdge(sourceNode: string, destinationNode: string): boolean {
+    if (sourceNode === destinationNode) {
+      throw new Error('Edges that connect a node to itself are not allowed.')
+    }
+
+    const neighbours = this.adjacencyList.get(sourceNode) ?? new Set()
+    return neighbours.has(destinationNode)
+  }
+
+  /**
    * Calculates the in-degree of every node in the directed graph.
    *
    * The in-degree of a node is the number of edges coming into

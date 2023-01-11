@@ -9,6 +9,25 @@ describe('addEdge', () => {
   })
 })
 
+describe('hasEdge', () => {
+  it('returns false if the edge does not exist in the graph', () => {
+    const graph = new DirectedGraph()
+    expect(graph.hasEdge('A', 'B')).toBe(false)
+  })
+
+  it('returns false if the reversed edge exists in the graph, but not the edge itself', () => {
+    const graph = new DirectedGraph()
+    graph.addEdge('B', 'A')
+    expect(graph.hasEdge('A', 'B')).toBe(false)
+  })
+
+  it('returns true if the edge exists in the graph', () => {
+    const graph = new DirectedGraph()
+    graph.addEdge('A', 'B')
+    expect(graph.hasEdge('A', 'B')).toBe(true)
+  })
+})
+
 describe('Topological ordering', () => {
   it('returns the first cycle found when the graph is not acyclic 1', () => {
     const graph = new DirectedGraph()
