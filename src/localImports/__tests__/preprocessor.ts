@@ -151,6 +151,14 @@ describe('preprocessFileImports', () => {
     const files: Record<string, string> = {
       '/a.js': `import d, { a, b, c } from "source-module";
         import w, { x, y, z } from "./not-source-module.js";
+      `,
+      '/not-source-module.js': `
+        export const x = 1;
+        export const y = 2;
+        export const z = 3;
+        export default function square(x) {
+          return x * x;
+        }
       `
     }
     const expectedCode = `import { a, b, c } from "source-module";
