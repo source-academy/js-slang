@@ -106,6 +106,7 @@ const preprocessFileImports = (
   entrypointFilePath: string,
   context: Context
 ): es.Program | undefined => {
+  // Parse all files into ASTs and build the import graph.
   const { programs, importGraph } = parseProgramsAndConstructImportGraph(
     files,
     entrypointFilePath,
@@ -116,20 +117,25 @@ const preprocessFileImports = (
     return undefined
   }
 
+  // Check for circular imports.
   const topologicalOrder = importGraph.getTopologicalOrder()
   if (!topologicalOrder.isValidTopologicalOrderFound) {
     context.errors.push(new CircularImportError(topologicalOrder.firstCycleFound))
     return undefined
   }
 
+  // Remove import/export related nodes in the AST of the entrypoint
+  // program because these nodes are not necessarily supported by the
+  // Source runner.
+  const entrypointProgram = programs[entrypointFilePath]
   // After this pre-processing step, all export-related nodes in the AST
   // are no longer needed and are thus removed.
-  removeExports(programs[entrypointFilePath])
+  removeExports(entrypointProgram)
   // Likewise, all import-related nodes in the AST which are not Source
   // module imports are no longer needed and are also removed.
-  removeNonSourceModuleImports(programs[entrypointFilePath])
+  removeNonSourceModuleImports(entrypointProgram)
 
-  return programs[entrypointFilePath]
+  return entrypointProgram
 }
 
 export default preprocessFileImports
