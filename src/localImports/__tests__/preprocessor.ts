@@ -176,7 +176,7 @@ describe('preprocessFileImports', () => {
     }
     preprocessFileImports(files, '/a.js', actualContext)
     expect(parseError(actualContext.errors)).toEqual(
-      'Circular import detected: "/a.js" -> "/b.js" -> "/c.js" -> "/a.js".'
+      "Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'."
     )
   })
 })
