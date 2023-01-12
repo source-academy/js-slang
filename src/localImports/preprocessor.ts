@@ -10,6 +10,7 @@ import {
   isSourceModule,
   removeNonSourceModuleImports
 } from './transformers/removeNonSourceModuleImports'
+import { transformProgramToFunctionDeclaration } from './transformers/transformProgramToFunctionDeclaration'
 import { isImportDeclaration } from './typeGuards'
 
 /**
@@ -135,6 +136,28 @@ const preprocessFileImports = (
   // Likewise, all import-related nodes in the AST which are not Source
   // module imports are no longer needed and are also removed.
   removeNonSourceModuleImports(entrypointProgram)
+
+  // Transform all programs into their equivalent function declaration
+  // except for the entrypoint program.
+  const functionDeclarations: Record<string, es.FunctionDeclaration> = {}
+  for (const [filePath, program] of Object.entries(programs)) {
+    // The entrypoint program does not need to be transformed into its
+    // function declaration equivalent as its enclosing environment is
+    // simply the overall program's (constructed program's) environment.
+    if (filePath === entrypointFilePath) {
+      continue
+    }
+
+    const functionDeclaration = transformProgramToFunctionDeclaration(program, filePath)
+    const functionName = functionDeclaration.id?.name
+    if (functionName === undefined) {
+      throw new Error(
+        'A transformed function declaration is missing its name. This should never happen.'
+      )
+    }
+
+    functionDeclarations[functionName] = functionDeclaration
+  }
 
   return entrypointProgram
 }
