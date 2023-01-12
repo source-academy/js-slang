@@ -340,9 +340,9 @@ describe('transformImportedFile', () => {
       import { y } from "../dir2/c.js";
     `
     const expectedCode = `
-      function ${functionName}(__$dir$b$dot$js__, __$dir2$c$dot$js__) {
-        const x = __access_export__(__$dir$b$dot$js__, "x");
-        const y = __access_export__(__$dir2$c$dot$js__, "y");
+      function ${functionName}(___$dir$b$dot$js___, ___$dir2$c$dot$js___) {
+        const x = __access_export__(___$dir$b$dot$js___, "x");
+        const y = __access_export__(___$dir2$c$dot$js___, "y");
         return pair(null, list());
       }
     `
@@ -355,9 +355,9 @@ describe('transformImportedFile', () => {
       import y from "../dir2/c.js";
     `
     const expectedCode = `
-      function ${functionName}(__$dir$b$dot$js__, __$dir2$c$dot$js__) {
-        const x = __access_export__(__$dir$b$dot$js__, "${defaultExportLookupName}");
-        const y = __access_export__(__$dir2$c$dot$js__, "${defaultExportLookupName}");
+      function ${functionName}(___$dir$b$dot$js___, ___$dir2$c$dot$js___) {
+        const x = __access_export__(___$dir$b$dot$js___, "${defaultExportLookupName}");
+        const y = __access_export__(___$dir2$c$dot$js___, "${defaultExportLookupName}");
         return pair(null, list());
       }
     `
@@ -370,9 +370,9 @@ describe('transformImportedFile', () => {
       import { y } from "../../../../../dir2/c.js";
     `
     const expectedCode = `
-      function ${functionName}(__$dir$b$dot$js__, __$dir2$c$dot$js__) {
-        const x = __access_export__(__$dir$b$dot$js__, "x");
-        const y = __access_export__(__$dir2$c$dot$js__, "y");
+      function ${functionName}(___$dir$b$dot$js___, ___$dir2$c$dot$js___) {
+        const x = __access_export__(___$dir$b$dot$js___, "x");
+        const y = __access_export__(___$dir2$c$dot$js___, "y");
         return pair(null, list());
       }
     `
@@ -385,9 +385,9 @@ describe('transformImportedFile', () => {
       import { y } from "../dir/b.js";
     `
     const expectedCode = `
-      function ${functionName}(__$dir$b$dot$js__) {
-        const x = __access_export__(__$dir$b$dot$js__, "x");
-        const y = __access_export__(__$dir$b$dot$js__, "y");
+      function ${functionName}(___$dir$b$dot$js___) {
+        const x = __access_export__(___$dir$b$dot$js___, "x");
+        const y = __access_export__(___$dir$b$dot$js___, "y");
         return pair(null, list());
       }
     `

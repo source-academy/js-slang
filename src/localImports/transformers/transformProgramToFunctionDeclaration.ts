@@ -18,11 +18,16 @@ import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from '..
 
 type ImportSpecifier = es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
 
-const getFunctionNameToImportSpecifiersMap = (
+const transformFunctionNameToInvokedFunctionResultVariableName = (functionName: string): string => {
+  return `_${functionName}_`
+}
+
+const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
   nodes: es.ModuleDeclaration[],
   currentDirPath: string
 ): Record<string, ImportSpecifier[]> => {
-  const functionNameToImportSpecifiersMap: Record<string, ImportSpecifier[]> = {}
+  const invokedFunctionResultVariableNameToImportSpecifierMap: Record<string, ImportSpecifier[]> =
+    {}
   nodes.forEach((node: es.ModuleDeclaration): void => {
     // Only ImportDeclaration nodes specify imported names.
     if (node.type !== 'ImportDeclaration') {
@@ -48,14 +53,33 @@ const getFunctionNameToImportSpecifiersMap = (
     // legal ones in a manner that gives us a bijective mapping from
     // file paths to function names.
     const importFunctionName = transformFilePathToValidFunctionName(importFilePath)
+    // In the top-level environment of the resulting program, for every
+    // imported file, we will end up with two different names; one for
+    // the function declaration, and another for the variable holding
+    // the result of invoking the function. The former is represented
+    // by 'importFunctionName', while the latter is represented by
+    // 'invokedFunctionResultVariableName'. Since multiple files can
+    // import the same file, yet we only want the code in each file to
+    // be evaluated a single time (and share the same state), we need to
+    // evaluate the transformed functions (of imported files) only once
+    // in the top-level environment of the resulting program, then pass
+    // the result (the exported names) into other transformed functions.
+    // Having the two different names helps us to achieve this objective.
+    const invokedFunctionResultVariableName =
+      transformFunctionNameToInvokedFunctionResultVariableName(importFunctionName)
     // If this is the file ImportDeclaration node for the canonical
     // file path, instantiate the entry in the map.
-    if (functionNameToImportSpecifiersMap[importFunctionName] === undefined) {
-      functionNameToImportSpecifiersMap[importFunctionName] = []
+    if (
+      invokedFunctionResultVariableNameToImportSpecifierMap[invokedFunctionResultVariableName] ===
+      undefined
+    ) {
+      invokedFunctionResultVariableNameToImportSpecifierMap[invokedFunctionResultVariableName] = []
     }
-    functionNameToImportSpecifiersMap[importFunctionName].push(...node.specifiers)
+    invokedFunctionResultVariableNameToImportSpecifierMap[invokedFunctionResultVariableName].push(
+      ...node.specifiers
+    )
   })
-  return functionNameToImportSpecifiersMap
+  return invokedFunctionResultVariableNameToImportSpecifierMap
 }
 
 const getIdentifier = (node: es.Declaration): es.Identifier | null => {
@@ -252,10 +276,8 @@ export const transformProgramToFunctionDeclaration = (
 ): es.FunctionDeclaration => {
   const moduleDeclarations = program.body.filter(isModuleDeclaration)
   const currentDirPath = path.resolve(currentFileName, '..')
-  const functionNameToImportSpecifiersMap = getFunctionNameToImportSpecifiersMap(
-    moduleDeclarations,
-    currentDirPath
-  )
+  const invokedFunctionResultVariableNameToImportSpecifiersMap =
+    getInvokedFunctionResultVariableNameToImportSpecifiersMap(moduleDeclarations, currentDirPath)
   const exportedNameToIdentifierMap = getExportedNameToIdentifierMap(moduleDeclarations)
   const defaultExportExpression = getDefaultExportExpression(
     moduleDeclarations,
@@ -263,7 +285,7 @@ export const transformProgramToFunctionDeclaration = (
   )
 
   const accessImportedNameStatements = createImportedNameDeclarations(
-    functionNameToImportSpecifiersMap
+    invokedFunctionResultVariableNameToImportSpecifiersMap
   )
 
   const defaultExport = defaultExportExpression ?? createLiteral(null)
@@ -278,6 +300,8 @@ export const transformProgramToFunctionDeclaration = (
   const functionBody = [...accessImportedNameStatements, ...programStatements, returnStatement]
 
   const functionName = transformFilePathToValidFunctionName(currentFileName)
-  const functionParams = Object.keys(functionNameToImportSpecifiersMap).map(createIdentifier)
+  const functionParams = Object.keys(invokedFunctionResultVariableNameToImportSpecifiersMap).map(
+    createIdentifier
+  )
   return createFunctionDeclaration(functionName, functionParams, functionBody)
 }
