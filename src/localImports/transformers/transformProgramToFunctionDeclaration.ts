@@ -181,25 +181,25 @@ const getDefaultExportExpression = (
 }
 
 export const createImportDeclarations = (
-  functionNameToImportSpecifiersMap: Record<string, ImportSpecifier[]>
+  invokedFunctionResultVariableNameToImportSpecifiersMap: Record<string, ImportSpecifier[]>
 ): es.VariableDeclaration[] => {
-  const importedNameDeclarations: es.VariableDeclaration[] = []
-  for (const [functionName, importSpecifiers] of Object.entries(
-    functionNameToImportSpecifiersMap
+  const importDeclarations: es.VariableDeclaration[] = []
+  for (const [invokedFunctionResultVariableName, importSpecifiers] of Object.entries(
+    invokedFunctionResultVariableNameToImportSpecifiersMap
   )) {
     importSpecifiers.forEach((importSpecifier: ImportSpecifier): void => {
-      let importedNameDeclaration
+      let importDeclaration
       switch (importSpecifier.type) {
         case 'ImportSpecifier':
-          importedNameDeclaration = createImportedNameDeclaration(
-            functionName,
+          importDeclaration = createImportedNameDeclaration(
+            invokedFunctionResultVariableName,
             importSpecifier.local,
             importSpecifier.imported.name
           )
           break
         case 'ImportDefaultSpecifier':
-          importedNameDeclaration = createImportedNameDeclaration(
-            functionName,
+          importDeclaration = createImportedNameDeclaration(
+            invokedFunctionResultVariableName,
             importSpecifier.local,
             defaultExportLookupName
           )
@@ -208,10 +208,10 @@ export const createImportDeclarations = (
           // In order to support namespace imports, Source would need to first support objects.
           throw new Error('Namespace imports are not supported.')
       }
-      importedNameDeclarations.push(importedNameDeclaration)
+      importDeclarations.push(importDeclaration)
     })
   }
-  return importedNameDeclarations
+  return importDeclarations
 }
 
 const createReturnListArguments = (
