@@ -42,3 +42,24 @@ export const createImportedNameDeclaration = (
   const variableDeclarator = createVariableDeclarator(importedName, callExpression)
   return createVariableDeclaration([variableDeclarator], 'const')
 }
+
+/**
+ * Constructs the AST equivalent of:
+ * const variableName = functionName(...functionArgs);
+ *
+ * @param functionName The name of the transformed function declaration to invoke.
+ * @param variableName The name of the variable holding the result of the function invocation.
+ * @param functionArgs The arguments to be passed when invoking the function.
+ */
+export const createInvokedFunctionResultVariableDeclaration = (
+  functionName: string,
+  variableName: string,
+  functionArgs: es.Identifier[]
+): es.VariableDeclaration => {
+  const callExpression = createCallExpression(functionName, functionArgs)
+  const variableDeclarator = createVariableDeclarator(
+    createIdentifier(variableName),
+    callExpression
+  )
+  return createVariableDeclaration([variableDeclarator], 'const')
+}
