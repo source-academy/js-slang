@@ -19,4 +19,10 @@ describe('runFilesInContext', () => {
       `'+-.js' must only contain alphanumeric chars or one of '/', '.', '-'.`
     )
   })
+
+  it('returns CannotFindModuleError if entrypoint file does not exist', () => {
+    const files: Record<string, string> = {}
+    runFilesInContext(files, 'a.js', context)
+    expect(parseError(context.errors)).toEqual(`Cannot find module 'a.js'.`)
+  })
 })
