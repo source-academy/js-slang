@@ -558,6 +558,8 @@ export interface ArrayPattern extends BasePattern {
 export interface RestElement extends BasePattern {
   type: 'RestElement'
   argument: Pattern
+  // Added to support type syntax
+  typeAnnotation?: TSTypeAnnotation
 }
 
 export interface AssignmentPattern extends BasePattern {
@@ -679,6 +681,8 @@ export type TSTypeAnnotationType =
   | 'TSUnionType'
   | 'TSIntersectionType'
   | 'TSLiteralType'
+  | 'TSArrayType'
+  | 'TSParenthesizedType'
 
 export type TSTypeKeyword =
   | 'TSAnyKeyword'
@@ -717,6 +721,8 @@ export type TSType =
   | TSIntersectionType
   | TSTypeReference
   | TSLiteralType
+  | TSArrayType
+  | TSParenthesizedType
 
 type BaseTSNode = BaseNode
 
@@ -731,7 +737,7 @@ export interface TSTypeAnnotation extends BaseTSNode {
 
 export interface TSFunctionType extends BaseTSNode {
   type: 'TSFunctionType'
-  parameters: Identifier[]
+  parameters: (Identifier | RestElement)[]
   typeAnnotation: TSTypeAnnotation
 }
 
@@ -748,6 +754,16 @@ export interface TSIntersectionType extends BaseTSNode {
 export interface TSLiteralType extends BaseTSNode {
   type: 'TSLiteralType'
   literal: Literal
+}
+
+export interface TSArrayType extends BaseTSNode {
+  type: 'TSArrayType'
+  elementType: TSType
+}
+
+export interface TSParenthesizedType extends BaseTSNode {
+  type: 'TSParenthesizedType'
+  typeAnnotation: TSType
 }
 
 export interface TSTypeAliasDeclaration extends BaseTSNode {

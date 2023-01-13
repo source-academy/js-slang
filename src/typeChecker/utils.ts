@@ -123,6 +123,11 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
       )}>`
     case 'list':
       return `List<${formatTypeString(type.elementType, formatAsLiteral)}>`
+    case 'array':
+      const elementTypeString = formatTypeString(type.elementType, formatAsLiteral)
+      return elementTypeString.includes('|') || elementTypeString.includes('=>')
+        ? `(${elementTypeString})[]`
+        : `${elementTypeString}[]`
     default:
       return type.kind
   }
@@ -361,6 +366,7 @@ export const temporaryStreamFuncs: [string, BindableType][] = [
 ]
 
 // Prelude function type overrides for Source Typed variant
+// No need to override predicate functions as they are automatically handled by type checker
 export const source1TypeOverrides: [string, BindableType][] = [
   // constants
   ['Infinity', tPrimitive('number', Infinity)],
@@ -393,7 +399,7 @@ export const source2TypeOverrides: [string, BindableType][] = [
   ['append', tFunc(tList(tAny), tList(tAny), tList(tAny))],
   ['build_list', tFunc(tFunc(tAny, tAny), tNumber, tList(tAny))],
   ['enum_list', tFunc(tNumber, tNumber, tList(tNumber))],
-  ['filter', tFunc(tFunc(tAny, tAny), tList(tAny), tList(tAny))],
+  ['filter', tFunc(tFunc(tAny, tBool), tList(tAny), tList(tAny))],
   ['for_each', tFunc(tFunc(tAny, tAny), tList(tAny), tBool)],
   ['length', tFunc(tList(tAny), tNumber)],
   ['list_ref', tFunc(tList(tAny), tNumber, tAny)],
@@ -408,6 +414,43 @@ export const source2TypeOverrides: [string, BindableType][] = [
   ['display_list', tForAll(tAny)],
   ['draw_data', tForAll(tAny)],
   ['equal', tFunc(tAny, tAny, tBool)]
+]
+
+export const source3TypeOverrides: [string, BindableType][] = [
+  // array functions
+  ['array_length', tFunc(tArray(tAny), tNumber)],
+  // mutating pair functions
+  ['set_head', tFunc(tPair(tAny, tAny), tAny, tUndef)],
+  ['set_tail', tFunc(tPair(tAny, tAny), tAny, tUndef)],
+  // stream library functions
+  ['build_stream', tFunc(tFunc(tAny, tAny), tNumber, tPair(tAny, tFunc(tAny)))],
+  ['enum_stream', tFunc(tNumber, tNumber, tPair(tNumber, tFunc(tAny)))],
+  ['eval_stream', tFunc(tPair(tAny, tFunc(tAny)), tNumber, tList(tAny))],
+  ['integers_from', tFunc(tNumber, tPair(tNumber, tFunc(tAny)))],
+  ['list_to_stream', tFunc(tList(tAny), tPair(tAny, tFunc(tAny)))],
+  ['stream', tAny],
+  [
+    'stream_append',
+    tFunc(tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))
+  ],
+  ['stream_filter', tFunc(tFunc(tAny, tBool), tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
+  ['stream_for_each', tFunc(tFunc(tAny, tAny), tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
+  ['stream_length', tFunc(tPair(tAny, tFunc(tAny)), tNumber)],
+  ['stream_map', tFunc(tFunc(tAny, tAny), tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
+  ['stream_member', tFunc(tAny, tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
+  ['stream_ref', tFunc(tPair(tAny, tFunc(tAny)), tNumber, tAny)],
+  ['stream_remove', tFunc(tAny, tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
+  ['stream_remove_all', tFunc(tAny, tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
+  ['stream_reverse', tFunc(tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
+  ['stream_tail', tFunc(tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
+  ['stream_to_list', tFunc(tPair(tAny, tFunc(tAny)), tList(tAny))]
+]
+
+export const source4TypeOverrides: [string, BindableType][] = [
+  ['apply_in_underlying_javascript', tFunc(tAny, tList(tAny), tAny)],
+  ['tokenize', tFunc(tString, tList(tString))],
+  // TODO: Define types for parse tree
+  ['parse', tFunc(tString, tAny)]
 ]
 
 const predeclaredConstTypes: [string, Type][] = [
@@ -448,6 +491,12 @@ export function getTypeOverrides(chapter: Chapter): [string, BindableType][] {
   const typeOverrides = [...source1TypeOverrides]
   if (chapter >= 2) {
     typeOverrides.push(...source2TypeOverrides)
+  }
+  if (chapter >= 3) {
+    typeOverrides.push(...source3TypeOverrides)
+  }
+  if (chapter >= 4) {
+    typeOverrides.push(...source4TypeOverrides)
   }
   return typeOverrides
 }

@@ -65,6 +65,7 @@ Currently, valid CHAPTER/VARIANT combinations are:
 * `--chapter=3 --variant=concurrent`
 * `--chapter=3 --variant=non-det`
 * `--chapter=3 --variant=interpreter`
+* `--chapter=3 --variant=typed`
 * `--chapter=4 --variant=default`
 * `--chapter=4 --variant=gpu`
 * `--chapter=4 --variant=interpreter`

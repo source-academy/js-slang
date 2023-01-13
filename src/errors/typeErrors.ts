@@ -597,7 +597,6 @@ export class InvalidNumberOfArgumentsTypeError implements SourceError {
 export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
-  public calleeStr: string
 
   constructor(public node: tsEs.TSTypeReference, public name: string, public expected: number) {}
 
@@ -617,7 +616,6 @@ export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceEr
 export class TypeAliasNameNotAllowedError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
-  public calleeStr: string
 
   constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
 
@@ -627,6 +625,63 @@ export class TypeAliasNameNotAllowedError implements SourceError {
 
   public explain() {
     return `Type alias name cannot be '${this.name}'.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class InvalidIndexTypeError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.MemberExpression, public typeName: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.typeName}' cannot be used as an index type.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class InvalidArrayAccessTypeError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.MemberExpression, public typeName: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.typeName}' cannot be accessed as it is not an array.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class ConstNotAssignableTypeError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(public node: tsEs.AssignmentExpression, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Cannot assign to '${this.name}' as it is a constant.`
   }
 
   public elaborate() {

@@ -20,6 +20,7 @@
 \newcommand{\Number}{\texttt{number}}
 \newcommand{\String}{\texttt{string}}
 \newcommand{\Undefined}{\texttt{undefined}}
+\newcommand{\Null}{\texttt{null}}
 \newcommand{\Any}{\texttt{any}}
 \newcommand{\Void}{\texttt{void}}
 \newcommand{\Pred}{\textit{Pred}}
@@ -33,10 +34,10 @@
 
 \section{Type System}  
 
-In Source \S 1 Typed, the Source \S 1 syntax is expanded to include type syntax such as type annotations and type aliases.
+In Source \S 3 Typed, the Source \S 3 syntax is expanded to include type syntax such as type annotations and type aliases.
 This allows names to be explicitly typed, and for type checks to be performed.
 
-Support for \texttt{typeof} operations is also added to Source \S 1 Typed.
+Support for \texttt{typeof} operations is also added to Source \S 3 Typed.
 
 \subsection{Type Environment}
 
@@ -82,15 +83,15 @@ are handled as follows:
 \begin{eqnarray*}
  & &
       \Gamma_{-2}
-                 [ \texttt{===} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool] \\
-&& \hspace{6mm}  [ \texttt{!==} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool] \\
+                 [ \texttt{===} \leftarrow (\Any,\ \Any) \rightarrow \Bool] \\
+&& \hspace{6mm}  [ \texttt{!==} \leftarrow (\Any,\ \Any) \rightarrow \Bool] \\
 && \hspace{6mm}  [ \texttt{>} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool]\\
 && \hspace{6mm}  [ \texttt{>=} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool]\\
 && \hspace{6mm}  [ \texttt{<} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool] \\
 && \hspace{6mm}  [ \texttt{<=} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool]\Gamma_{-1}
 \end{eqnarray*}
 
-The Source \S 1 standard library functions and constants have their types defined as follows:
+The Source \S 3 standard library functions and constants have their types defined as follows:
 
 \begin{tabular}[fragile]{lllllllll}
 $\Gamma_{-1}$
@@ -126,9 +127,6 @@ $\Gamma_{-1}$
 & $[$ & \texttt{math\_log} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_log1p} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_log2} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
-& \end{tabular}
-
-\begin{tabular}[fragile]{lllllllll}
 & $[$ & \texttt{math\_LOG2E} & $\leftarrow$  & $\Number$ & & & $]$ \\
 & $[$ & \texttt{math\_log10} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_LOG10E} & $\leftarrow$  & $\Number$ & & & $]$ \\
@@ -138,6 +136,9 @@ $\Gamma_{-1}$
 & $[$ & \texttt{math\_pow} & $\leftarrow$  & $(\Number, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_random} & $\leftarrow$  & $()$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_round} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& \end{tabular}
+
+\begin{tabular}[fragile]{lllllllll}
 & $[$ & \texttt{math\_sign} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_sin} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_sinh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
@@ -152,12 +153,24 @@ $\Gamma_{-1}$
 & $[$ & \texttt{prompt} & $\leftarrow$  & $\String$ & $\rightarrow$ & $\String$ & $]$ \\
 & $[$ & \texttt{get\_time} & $\leftarrow$  & $()$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{stringify} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\String$ & $]$ \\
-& $[$ & \texttt{undefined} & $\leftarrow$  & $\Undefined$ & & & $]$ & $\Gamma_0$ \\
+& $[$ & \texttt{undefined} & $\leftarrow$  & $\Undefined$ & & & $]$ \\
+& $[$ & \texttt{null}      & $\leftarrow$  & $\Null$ & & & $]$ \\
+& $[$ & \texttt{pair} & $\leftarrow$  & $(T_1,\ T_2)$ & $\rightarrow$ & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $]$ \\
+& $[$ & \texttt{head} & $\leftarrow$  & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $\rightarrow$ & $T_1$ & $]$ \\
+& $[$ & \texttt{tail} & $\leftarrow$  & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $\rightarrow$ & $T_2$ & $]$ \\
+& $[$ & \texttt{list} & $\leftarrow$  & $(T_1, \ldots, T_n)$ & $\rightarrow$ & \textit{List<} $T_1\ |\ \ldots\ |\ T_n$ \textit{>} & $]$ \\
+& $[$ & \texttt{is\_pair} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{is\_null} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{is\_list} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{set\_head} & $\leftarrow$  & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $\rightarrow$ & $\Undefined$ & $]$ \\
+& $[$ & \texttt{set\_tail} & $\leftarrow$  & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $\rightarrow$ & $\Undefined$ & $]$ \\
+& $[$ & \texttt{is\_array} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{array\_length} & $\leftarrow$  & $\Any$[] & $\rightarrow$ & $\Number$ & $]$ $\Gamma_0$ \\
 & \end{tabular}
 
 \subsection{Subtyping}
 
-In order for type checks to be performed in Source \S 1 Typed, we introduce the notion of subtyping.
+In order for type checks to be performed in Source \S 3 Typed, we introduce the notion of subtyping.
 
 \begin{definition}
 $t \subseteq t'$ is used to denote that type $t$ is a subtype of type $t'$.
@@ -180,6 +193,32 @@ Subtyping is illustrated using the following type rules:
 \Rule{(\forall 1 \leq i \leq n)(t_i \subseteq t'_i) \quad t' \subseteq t}{(t'_1, \ldots t'_n) \rightarrow t' \subseteq (t_1, \ldots t_n) \rightarrow t}
 \qquad
 \Rule{(\exists i)(t' \subseteq t_i)}{t'\ \subseteq\ t_1\ |\ \ldots\ |\ t_n}
+\]
+\noindent
+\[
+\Rule{t' = \textit{Pair<}\ t'_{head}, t'_{tail}\ \textit{>} \quad t = \textit{Pair<}\ t_{head}, t_{tail}\ \textit{>}
+  \quad t'_{head} \subseteq t_{head} \quad t'_{tail} \subseteq t_{tail}}{t' \subseteq t}
+\]
+\noindent
+\[
+\Rule{t' = \textit{List<}\ t'_{elem}\ \textit{>} \quad t = \textit{List<}\ t_{elem}\ \textit{>}
+  \quad t'_{elem} \subseteq t_{elem}}{t' \subseteq t}
+\qquad
+\Rule{t' = \Null \quad t = \textit{List<}\ t_{elem}\ \textit{>}}{t' \subseteq t}
+\]
+\noindent
+\[
+\Rule{t' = \textit{Pair<}\ t'_{head}, t'_{tail}\ \textit{>} \quad t = \textit{List<}\ t_{elem}\ \textit{>}
+  \quad t'_{head} \subseteq t_{elem} \quad t'_{tail} \subseteq t}{t' \subseteq t}
+\]
+\noindent
+\[
+\Rule{t' = \textit{List<}\ t'_{elem}\ \textit{>} \quad t = \textit{Pair<}\ t_{head}, t_{tail}\ \textit{>}
+  \quad t'_{elem} \subseteq t_{head} \quad t' \subseteq t_{tail}}{t' \subseteq t}
+\]
+\noindent
+\[
+\Rule{t' = t'_{elem}[] \quad t = t_{elem}[] \quad t'_{elem} \subseteq t_{elem}}{t' \subseteq t}
 \]
 \noindent
 
@@ -302,6 +341,28 @@ The predicate expression of a conditional expression must be a subtype of a bool
 \]
 \noindent
 
+The type of a literal array expression is the union of the types of all of the array's members.
+
+\noindent
+\[
+  \Rule{\Gamma \vdash E_1 : t_1, \ldots, \Gamma \vdash E_n : t_n}{
+    \Gamma \vdash [E_1, \ldots, E_n] : (t_1\ |\ \ldots\ |\ t_n)[]}
+\]
+\noindent
+
+The type of an array access expression is the member type of the array. The array index must be a number.
+If the type of the array being accessed is $\Any$, the type of the array access expression is $\Any$.
+
+\noindent
+\[
+  \Rule{\Gamma \vdash E_0 : t_0[] \quad \Gamma \vdash E_1 : t_1 \quad t_1 \subseteq \Number \vee t_1 = \Any}{
+    \Gamma \vdash E_0[E_1] : t_0}
+  \quad
+  \Rule{\Gamma \vdash E_0 : \Any \quad \Gamma \vdash E_1 : t_1 \quad t_1 \subseteq \Number \vee t_1 = \Any}{
+    \Gamma \vdash E_0[E_1] : \Any}
+\]
+\noindent
+
 For as expressions, the type to cast the expression to must be a subtype of the type of the expression.
 
 \noindent
@@ -310,9 +371,21 @@ For as expressions, the type to cast the expression to must be a subtype of the 
 \]
 \noindent
 
+\subsubsection{Typing Relations on Assignments}
+
+For assignments, the type of the right expression must be a subtype of the type of the left expression.
+The type of the assignment itself is $\Undefined$.
+
+\noindent
+\[
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 \subseteq t_0 \vee t_1 = \Any}{
+    \Gamma \vdash (E_0 = E_1) : \Undefined}
+\]
+\noindent
+
 \subsubsection{Typing Relations on Statements}
 
-For constant declarations, the declared type of $x$, $t$, is added to the type environment.
+For constant or variable declarations, the declared type of $x$, $t$, is added to the type environment.
 As type syntax is optional, if the type annotation for $x$ absent, the declared type $t$ is assumed to be $\Any$.
 The derived type of the expression $E$ must be a subtype of the type declared for name $x$.
 The type of the constant declaration statement itself is $\Undefined$.
@@ -321,6 +394,9 @@ The type of the constant declaration statement itself is $\Undefined$.
 \[
   \Rule{\Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t' \quad t' \subseteq t \vee t' = \Any}{
     \Gamma \vdash (\texttt{const}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
+  \qquad
+  \Rule{\Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t' \quad t' \subseteq t \vee t' = \Any}{
+    \Gamma \vdash (\texttt{let}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
 \]
 \noindent
 
@@ -343,6 +419,16 @@ The type of return statements and expression statements is the type of the expre
 \]
 \noindent
 
+The type of break and continue statements is $\Undefined$.
+
+\noindent
+\[
+  \Rule{}{\Gamma \vdash (\texttt{break} \texttt{;}) : \Undefined}
+  \quad
+  \Rule{}{\Gamma \vdash (\texttt{continue} \texttt{;}) : \Undefined}
+\]
+\noindent
+
 For blocks, $\Gamma$ is first extended to include the types of names declared in the block.
 Then, the component statements are checked against the extended type environment.
 
@@ -356,14 +442,14 @@ If the block does not contain any return statements, the type is $\Undefined$.
 \[
   \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
     \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is a return statement}}{
-    \Gamma \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
+    \Gamma \vdash \{ (\texttt{decl}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{decl}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
     S_1, \ldots, S_n\} : t'_n}
 \]
 \noindent
 \[
   \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
     \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is not a return statement}}{
-    \Gamma \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
+    \Gamma \vdash \{ (\texttt{decl}\ x_1 \texttt{:}\ t_1 = E_1 \texttt{;}) \ldots (\texttt{decl}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
     S_1, \ldots, S_n\} : \Undefined}
 \]
 \noindent
@@ -374,7 +460,7 @@ The type of a block outside of function bodies is the type of the last value-pro
 \[
   \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
     \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is the last value-producing statement}}{
-    \Gamma \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
+    \Gamma \vdash \{ (\texttt{decl}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{decl}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
     S_1, \ldots, S_n\} : t'_n}
 \]
 \noindent
@@ -387,5 +473,25 @@ The predicate expression of a conditional statement must be a subtype of a boole
   \Rule{\Gamma \vdash S_{pred} : t_{pred} \quad \Gamma \vdash S_{cons} : t_{cons} \quad \Gamma \vdash S_{alt} : t_{alt}
     \quad t_{pred} \subseteq \Bool \vee t_{pred} = \Any}{\Gamma \vdash (\texttt{if}\ (S_{pred})\ \{\ S_{cons}\ \}\
     \texttt{else}\ \{\ S_{alt}\ \}) : t_{cons}\ |\ t_{alt}}
+\]
+\noindent
+
+For \texttt{while} statements, the predicate expression must be a subtype of $\Bool$. The rest of the statement is treated as a block.
+
+\noindent
+\[
+  \Rule{\Gamma \vdash E_{pred} : t_{pred} \quad \Gamma \vdash S : t \quad t_{pred} \subseteq \Bool \vee t_{pred} = \Any }{
+    \Gamma \vdash (\texttt{while}\ (\ E_{pred}\ )\ \{\ S\ \}) : t}
+\]
+\noindent
+
+For \texttt{for} statements, the typing is the same as that of a \texttt{while} statement,
+except with additional type checks for the initialization and assignment expressions.
+
+\noindent
+\[
+  \Rule{\Gamma \vdash E_{init} : t_{init} \quad \Gamma \vdash E_{pred} : t_{pred} \quad \Gamma \vdash E_{assign} : t_{assign} \quad
+    \Gamma \vdash S : t \quad t_{pred} \subseteq \Bool \vee t_{pred} = \Any }{
+    \Gamma \vdash (\texttt{for}\ (\ E_{init} \texttt{;} E_{pred} \texttt{;} E_{assign}\ )\ \{\ S\ \}) : t}
 \]
 \noindent
