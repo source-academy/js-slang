@@ -17,7 +17,7 @@ import {
   removeNonSourceModuleImports
 } from './transformers/removeNonSourceModuleImports'
 import {
-  createImportedNameDeclarations,
+  createImportDeclarations,
   getInvokedFunctionResultVariableNameToImportSpecifiersMap,
   transformProgramToFunctionDeclaration
 } from './transformers/transformProgramToFunctionDeclaration'
@@ -147,7 +147,7 @@ const preprocessFileImports = (
       entrypointProgramModuleDeclarations,
       entrypointDirPath
     )
-  const entrypointProgramAccessImportedNameStatements = createImportedNameDeclarations(
+  const entrypointProgramAccessImportStatements = createImportDeclarations(
     entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap
   )
 
@@ -213,7 +213,7 @@ const preprocessFileImports = (
     body: [
       ...Object.values(functionDeclarations),
       ...invokedFunctionResultVariableDeclarations,
-      ...entrypointProgramAccessImportedNameStatements,
+      ...entrypointProgramAccessImportStatements,
       ...entrypointProgram.body
     ]
   }

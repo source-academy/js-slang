@@ -180,7 +180,7 @@ const getDefaultExportExpression = (
   return defaultExport
 }
 
-export const createImportedNameDeclarations = (
+export const createImportDeclarations = (
   functionNameToImportSpecifiersMap: Record<string, ImportSpecifier[]>
 ): es.VariableDeclaration[] => {
   const importedNameDeclarations: es.VariableDeclaration[] = []
@@ -283,7 +283,7 @@ export const transformProgramToFunctionDeclaration = (
     exportedNameToIdentifierMap
   )
 
-  const accessImportedNameStatements = createImportedNameDeclarations(
+  const accessImportStatements = createImportDeclarations(
     invokedFunctionResultVariableNameToImportSpecifiersMap
   )
 
@@ -296,7 +296,7 @@ export const transformProgramToFunctionDeclaration = (
   )
 
   const programStatements = removeModuleDeclarations(removeDirectives(program.body))
-  const functionBody = [...accessImportedNameStatements, ...programStatements, returnStatement]
+  const functionBody = [...accessImportStatements, ...programStatements, returnStatement]
 
   const functionName = transformFilePathToValidFunctionName(currentFileName)
   const functionParams = Object.keys(invokedFunctionResultVariableNameToImportSpecifiersMap).map(
