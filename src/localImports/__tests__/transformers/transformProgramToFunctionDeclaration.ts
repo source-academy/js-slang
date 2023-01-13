@@ -393,4 +393,26 @@ describe('transformImportedFile', () => {
     `
     assertASTsAreEquivalent(actualCode, expectedCode)
   })
+
+  it('handles named imports of local (non-Source) modules when split across multiple import declarations', () => {
+    const actualCode = `
+      import { x } from "./b.js";
+      import { y } from "./b.js";
+      import { z } from "./b.js";
+
+      export const a = x + y + z;
+    `
+    const expectedCode = `
+      function ${functionName}(___$dir$b$dot$js___) {
+        const x = __access_export__(___$dir$b$dot$js___, "x");
+        const y = __access_export__(___$dir$b$dot$js___, "y");
+        const z = __access_export__(___$dir$b$dot$js___, "z");
+
+        const a = x + y + z;
+
+        return pair(null, list(pair("a", a)));
+      }
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
+  })
 })
