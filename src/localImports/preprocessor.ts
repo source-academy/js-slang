@@ -151,13 +151,6 @@ const preprocessFileImports = (
     entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap
   )
 
-  // After this pre-processing step, all export-related nodes in the AST
-  // are no longer needed and are thus removed.
-  removeExports(entrypointProgram)
-  // Likewise, all import-related nodes in the AST which are not Source
-  // module imports are no longer needed and are also removed.
-  removeNonSourceModuleImports(entrypointProgram)
-
   // Transform all programs into their equivalent function declaration
   // except for the entrypoint program.
   const functionDeclarations: Record<string, es.FunctionDeclaration> = {}
@@ -208,7 +201,7 @@ const preprocessFileImports = (
     invokedFunctionResultVariableDeclarations.push(invokedFunctionResultVariableDeclaration)
   })
 
-  return {
+  const preprocessedProgram: es.Program = {
     ...entrypointProgram,
     body: [
       ...Object.values(functionDeclarations),
@@ -217,6 +210,15 @@ const preprocessFileImports = (
       ...entrypointProgram.body
     ]
   }
+
+  // After this pre-processing step, all export-related nodes in the AST
+  // are no longer needed and are thus removed.
+  removeExports(preprocessedProgram)
+  // Likewise, all import-related nodes in the AST which are not Source
+  // module imports are no longer needed and are also removed.
+  removeNonSourceModuleImports(preprocessedProgram)
+
+  return preprocessedProgram
 }
 
 export default preprocessFileImports
