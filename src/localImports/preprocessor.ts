@@ -11,6 +11,7 @@ import {
   transformFilePathToValidFunctionName,
   transformFunctionNameToInvokedFunctionResultVariableName
 } from './filePaths'
+import { hoistImports } from './transformers/hoistImports'
 import { removeExports } from './transformers/removeExports'
 import {
   isSourceModule,
@@ -217,6 +218,10 @@ const preprocessFileImports = (
   // Likewise, all import-related nodes in the AST which are not Source
   // module imports are no longer needed and are also removed.
   removeNonSourceModuleImports(preprocessedProgram)
+  // Finally, we need to hoist all remaining imports to the top of the
+  // program. These imports should be source module imports since
+  // non-Source module imports would have already been removed.
+  hoistImports(preprocessedProgram)
 
   return preprocessedProgram
 }
