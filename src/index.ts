@@ -330,7 +330,9 @@ export async function runFilesInContext(
     return htmlRunner(code, context, options)
   }
 
-  // TODO: Clean up state management so that the `parseError` function is pure.
+  // FIXME: Clean up state management so that the `parseError` function is pure.
+  //        This is not a huge priority, but it would be good not to make use of
+  //        global state.
   verboseErrors = hasVerboseErrors(code)
 
   return sourceFilesRunner(files, entrypointFilePath, context, options)
