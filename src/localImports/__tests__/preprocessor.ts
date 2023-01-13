@@ -288,9 +288,9 @@ describe('preprocessFileImports', () => {
   it('returns a preprocessed program with all imports', () => {
     const files: Record<string, string> = {
       '/a.js': `
-        import { a, b } from "./b.js";
+        import { a as x, b as y } from "./b.js";
 
-        a + b;
+        x + y;
       `,
       '/b.js': `
         import y, { square } from "./c.js";
@@ -345,10 +345,10 @@ describe('preprocessFileImports', () => {
       const ___$c$dot$js___ = __$c$dot$js__(___$d$dot$js___);
       const ___$b$dot$js___ = __$b$dot$js__(___$c$dot$js___);
 
-      const a = ${accessExportFunctionName}(___$b$dot$js___, "a");
-      const b = ${accessExportFunctionName}(___$b$dot$js___, "b");
+      const x = ${accessExportFunctionName}(___$b$dot$js___, "a");
+      const y = ${accessExportFunctionName}(___$b$dot$js___, "b");
 
-      a + b;
+      x + y;
     `
     const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
