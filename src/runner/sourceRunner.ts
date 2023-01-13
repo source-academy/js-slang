@@ -13,6 +13,7 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
+import { hoistAndMergeImports } from '../localImports/transformers/hoistAndMergeImports'
 import { removeExports } from '../localImports/transformers/removeExports'
 import { removeNonSourceModuleImports } from '../localImports/transformers/removeNonSourceModuleImports'
 import { parse } from '../parser/parser'
@@ -25,7 +26,7 @@ import {
   redexify
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
-import { hoistImportDeclarations, transpile } from '../transpiler/transpiler'
+import { transpile } from '../transpiler/transpiler'
 import { Context, Scheduler, SourceError, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
@@ -220,9 +221,12 @@ export async function sourceRunner(
     return resolvedErrorPromise
   }
 
-  hoistImportDeclarations(program)
-  removeNonSourceModuleImports(program)
+  // TODO: Remove this after runners have been refactored.
+  //       These should be done as part of the local imports
+  //       preprocessing step.
   removeExports(program)
+  removeNonSourceModuleImports(program)
+  hoistAndMergeImports(program)
 
   validateAndAnnotate(program, context)
   context.unTypecheckedCode.push(code)
@@ -280,7 +284,7 @@ export async function sourceFilesRunner(
   const isVerboseErrorsEnabled = hasVerboseErrors(entrypointCode)
 
   context.variant = determineVariant(context, options)
-  // TODO: Make use of the preprocessed program AST in later steps.
+  // TODO: Make use of the preprocessed program AST after refactoring runners.
   // const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
   // if (!preprocessedProgram) {
   //   return resolvedErrorPromise

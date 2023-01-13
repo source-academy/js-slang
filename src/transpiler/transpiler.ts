@@ -91,50 +91,6 @@ export function transformImportDeclarations(
   return [prefix.join(''), declNodes, otherNodes]
 }
 
-/**
- * Hoists import statements in the program to the top
- * Also collates multiple import statements to a module into
- * a single statement
- */
-export function hoistImportDeclarations(program: es.Program) {
-  const importDeclarations = program.body.filter(
-    (node: es.Directive | es.Statement | es.ModuleDeclaration): node is es.ImportDeclaration =>
-      node.type === 'ImportDeclaration'
-  )
-  type LiteralValueType = string | number | bigint | boolean | RegExp | null | undefined
-  const specifiers = new Map<
-    LiteralValueType,
-    Array<es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier>
-  >()
-  const baseNodes = new Map<LiteralValueType, es.ImportDeclaration>()
-
-  for (const importDeclaration of importDeclarations) {
-    const moduleName = importDeclaration.source.value
-
-    if (!specifiers.has(moduleName)) {
-      specifiers.set(moduleName, importDeclaration.specifiers)
-      baseNodes.set(moduleName, importDeclaration)
-    } else {
-      for (const specifier of importDeclaration.specifiers) {
-        // TypeScript is unable to infer that `specifiers.get(moduleName)` is always defined.
-        specifiers.get(moduleName)!.push(specifier)
-      }
-    }
-  }
-
-  const newImports: Array<es.Directive | es.Statement | es.ModuleDeclaration> = Array.from(
-    baseNodes.entries()
-  ).map(([moduleName, node]: [LiteralValueType, es.ImportDeclaration]): es.ImportDeclaration => {
-    return {
-      ...node,
-      // TypeScript is unable to infer that `specifiers.get(moduleName)` is always defined.
-      specifiers: specifiers.get(moduleName)!
-    }
-  })
-
-  program.body = newImports.concat(program.body.filter(node => node.type !== 'ImportDeclaration'))
-}
-
 // `useThis` is a temporary indicator used by fullJS
 // export function transformImportDeclarations(program: es.Program, useThis = false) {
 //   const imports = []
