@@ -4,7 +4,13 @@ import * as path from 'path'
 import { CannotFindModuleError, CircularImportError } from '../errors/localImportErrors'
 import { parse } from '../parser/parser'
 import { Context } from '../types'
+import { isIdentifier } from '../utils/rttc'
+import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import { DirectedGraph } from './directedGraph'
+import {
+  transformFilePathToValidFunctionName,
+  transformFunctionNameToInvokedFunctionResultVariableName
+} from './filePaths'
 import { removeExports } from './transformers/removeExports'
 import {
   isSourceModule,
@@ -120,9 +126,9 @@ const preprocessFileImports = (
   }
 
   // Check for circular imports.
-  const topologicalOrder = importGraph.getTopologicalOrder()
-  if (!topologicalOrder.isValidTopologicalOrderFound) {
-    context.errors.push(new CircularImportError(topologicalOrder.firstCycleFound))
+  const topologicalOrderResult = importGraph.getTopologicalOrder()
+  if (!topologicalOrderResult.isValidTopologicalOrderFound) {
+    context.errors.push(new CircularImportError(topologicalOrderResult.firstCycleFound))
     return undefined
   }
 
@@ -159,7 +165,42 @@ const preprocessFileImports = (
     functionDeclarations[functionName] = functionDeclaration
   }
 
-  return entrypointProgram
+  const invokedFunctionResultVariableDeclarations: es.VariableDeclaration[] = []
+  topologicalOrderResult.topologicalOrder.forEach((filePath: string): void => {
+    // As mentioned above, the entrypoint program does not have a function
+    // declaration equivalent, so there is no need to process it.
+    if (filePath === entrypointFilePath) {
+      return
+    }
+
+    const functionName = transformFilePathToValidFunctionName(filePath)
+    const invokedFunctionResultVariableName =
+      transformFunctionNameToInvokedFunctionResultVariableName(functionName)
+
+    const functionDeclaration = functionDeclarations[functionName]
+    const functionParams = functionDeclaration.params.filter(isIdentifier)
+    if (functionParams.length !== functionDeclaration.params.length) {
+      throw new Error(
+        'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
+      )
+    }
+
+    const invokedFunctionResultVariableDeclaration = createInvokedFunctionResultVariableDeclaration(
+      functionName,
+      invokedFunctionResultVariableName,
+      functionParams
+    )
+    invokedFunctionResultVariableDeclarations.push(invokedFunctionResultVariableDeclaration)
+  })
+
+  return {
+    ...entrypointProgram,
+    body: [
+      ...Object.values(functionDeclarations),
+      ...invokedFunctionResultVariableDeclarations,
+      ...entrypointProgram.body
+    ]
+  }
 }
 
 export default preprocessFileImports

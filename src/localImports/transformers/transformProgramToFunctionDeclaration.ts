@@ -13,14 +13,13 @@ import {
   createListCallExpression,
   createPairCallExpression
 } from '../constructors/contextSpecificConstructors'
-import { transformFilePathToValidFunctionName } from '../filePaths'
+import {
+  transformFilePathToValidFunctionName,
+  transformFunctionNameToInvokedFunctionResultVariableName
+} from '../filePaths'
 import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from '../typeGuards'
 
 type ImportSpecifier = es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
-
-const transformFunctionNameToInvokedFunctionResultVariableName = (functionName: string): string => {
-  return `_${functionName}_`
-}
 
 const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
   nodes: es.ModuleDeclaration[],
