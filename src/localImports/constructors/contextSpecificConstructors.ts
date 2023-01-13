@@ -9,6 +9,12 @@ import {
   createVariableDeclarator
 } from './baseConstructors'
 
+/**
+ * Constructs a call to the `pair` function.
+ *
+ * @param head The head of the pair.
+ * @param tail The tail of the pair.
+ */
 export const createPairCallExpression = (
   head: es.Expression | es.SpreadElement,
   tail: es.Expression | es.SpreadElement
@@ -16,6 +22,11 @@ export const createPairCallExpression = (
   return createCallExpression('pair', [head, tail])
 }
 
+/**
+ * Constructs a call to the `list` function.
+ *
+ * @param listElements The elements of the list.
+ */
 export const createListCallExpression = (
   listElements: Array<es.Expression | es.SpreadElement>
 ): es.SimpleCallExpression => {
