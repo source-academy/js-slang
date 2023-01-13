@@ -11,14 +11,14 @@ import {
   transformFilePathToValidFunctionName,
   transformFunctionNameToInvokedFunctionResultVariableName
 } from './filePaths'
-import { hoistImports } from './transformers/hoistImports'
+import { hoistAndMergeImports } from './transformers/hoistAndMergeImports'
 import { removeExports } from './transformers/removeExports'
 import {
   isSourceModule,
   removeNonSourceModuleImports
 } from './transformers/removeNonSourceModuleImports'
 import {
-  createImportDeclarations,
+  createAccessImportStatements,
   getInvokedFunctionResultVariableNameToImportSpecifiersMap,
   transformProgramToFunctionDeclaration
 } from './transformers/transformProgramToFunctionDeclaration'
@@ -155,7 +155,7 @@ const preprocessFileImports = (
       entrypointProgramModuleDeclarations,
       entrypointDirPath
     )
-  const entrypointProgramAccessImportStatements = createImportDeclarations(
+  const entrypointProgramAccessImportStatements = createAccessImportStatements(
     entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap
   )
 
@@ -181,6 +181,7 @@ const preprocessFileImports = (
     functionDeclarations[functionName] = functionDeclaration
   }
 
+  // Invoke each of the transformed functions and store the result in a variable.
   const invokedFunctionResultVariableDeclarations: es.VariableDeclaration[] = []
   topologicalOrderResult.topologicalOrder.forEach((filePath: string): void => {
     // As mentioned above, the entrypoint program does not have a function
@@ -209,6 +210,7 @@ const preprocessFileImports = (
     invokedFunctionResultVariableDeclarations.push(invokedFunctionResultVariableDeclaration)
   })
 
+  // Re-assemble the program.
   const preprocessedProgram: es.Program = {
     ...entrypointProgram,
     body: [
@@ -227,8 +229,10 @@ const preprocessFileImports = (
   removeNonSourceModuleImports(preprocessedProgram)
   // Finally, we need to hoist all remaining imports to the top of the
   // program. These imports should be source module imports since
-  // non-Source module imports would have already been removed.
-  hoistImports(preprocessedProgram)
+  // non-Source module imports would have already been removed. As part
+  // of this step, we also merge imports from the same module so as to
+  // import each unique name per module only once.
+  hoistAndMergeImports(preprocessedProgram)
 
   return preprocessedProgram
 }

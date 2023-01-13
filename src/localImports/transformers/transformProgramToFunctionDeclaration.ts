@@ -185,7 +185,7 @@ const getDefaultExportExpression = (
   return defaultExport
 }
 
-export const createImportDeclarations = (
+export const createAccessImportStatements = (
   invokedFunctionResultVariableNameToImportSpecifiersMap: Record<string, ImportSpecifier[]>
 ): es.VariableDeclaration[] => {
   const importDeclarations: es.VariableDeclaration[] = []
@@ -288,7 +288,7 @@ export const transformProgramToFunctionDeclaration = (
     exportedNameToIdentifierMap
   )
 
-  const accessImportStatements = createImportDeclarations(
+  const accessImportStatements = createAccessImportStatements(
     invokedFunctionResultVariableNameToImportSpecifiersMap
   )
 
