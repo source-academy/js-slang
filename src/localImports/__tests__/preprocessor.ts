@@ -3,6 +3,7 @@ import es from 'estree'
 import { parseError } from '../../index'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
+import { accessExportFunctionName, defaultExportLookupName } from '../../stdlib/localImport.prelude'
 import { Chapter } from '../../types'
 import preprocessFileImports, { getImportedLocalModulePaths } from '../preprocessor'
 import { parseCodeError, stripLocationInfo } from './utils'
@@ -194,5 +195,74 @@ describe('preprocessFileImports', () => {
     expect(parseError(actualContext.errors)).toEqual(
       "Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'."
     )
+  })
+
+  it('returns a preprocessed program with all imports', () => {
+    const files: Record<string, string> = {
+      '/a.js': `
+        import { a, b } from "./b.js";
+
+        a + b;
+      `,
+      '/b.js': `
+        import y, { square } from "./c.js";
+
+        const a = square(y);
+        const b = 3;
+        export { a, b };
+      `,
+      '/c.js': `
+        import { mysteryFunction } from "./d.js";
+
+        const x = mysteryFunction(5);
+        export function square(x) {
+          return x * x;
+        }
+        export default x;
+      `,
+      '/d.js': `
+        const addTwo = x => x + 2;
+        export { addTwo as mysteryFunction };
+      `
+    }
+    const expectedCode = `
+      function __$b$dot$js__(___$c$dot$js___) {
+        const y = ${accessExportFunctionName}(___$c$dot$js___, "${defaultExportLookupName}");
+        const square = ${accessExportFunctionName}(___$c$dot$js___, "square");
+
+        const a = square(y);
+        const b = 3;
+
+        return pair(null, list(pair("a", a), pair("b", b)));
+      }
+
+      function __$c$dot$js__(___$d$dot$js___) {
+        const mysteryFunction = ${accessExportFunctionName}(___$d$dot$js___, "mysteryFunction");
+
+        const x = mysteryFunction(5);
+        function square(x) {
+          return x * x;
+        }
+
+        return pair(x, list(pair("square", square)));
+      }
+
+      function __$d$dot$js__() {
+        const addTwo = x => x + 2;
+
+        return pair(null, list(pair("mysteryFunction", addTwo)));
+      }
+
+      const ___$d$dot$js___ = __$d$dot$js__();
+      const ___$c$dot$js___ = __$c$dot$js__(___$d$dot$js___);
+      const ___$b$dot$js___ = __$b$dot$js__(___$c$dot$js___);
+
+      const a = ${accessExportFunctionName}(___$b$dot$js___, "a");
+      const b = ${accessExportFunctionName}(___$b$dot$js___, "b");
+
+      a + b;
+    `
+    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
+    assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 })
