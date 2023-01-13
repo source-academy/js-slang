@@ -1,16 +1,7 @@
 import es from 'estree'
 
 import { ancestor } from '../../utils/walkers'
-
-/**
- * Returns whether a string is a file path. We define a file
- * path to be any string containing the '/' character.
- *
- * @param value The value of the string.
- */
-const isFilePath = (value: string): boolean => {
-  return value.includes('/')
-}
+import { isFilePath } from '../filePaths'
 
 /**
  * Returns whether a module name refers to a Source module.

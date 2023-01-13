@@ -71,3 +71,13 @@ export const isFilePathValid = (filePath: string): boolean => {
   }
   return true
 }
+
+/**
+ * Returns whether a string is a file path. We define a file
+ * path to be any string containing the '/' character.
+ *
+ * @param value The value of the string.
+ */
+export const isFilePath = (value: string): boolean => {
+  return value.includes('/')
+}
