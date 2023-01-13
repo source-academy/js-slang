@@ -274,24 +274,34 @@ const removeModuleDeclarations = (
   return statements
 }
 
+/**
+ * Transforms the given program into a function declaration. This is done
+ * so that every imported module has its own scope (since functions have
+ * their own scope).
+ *
+ * @param program         The program to be transformed.
+ * @param currentFilePath The file path of the current program.
+ */
 export const transformProgramToFunctionDeclaration = (
   program: es.Program,
-  currentFileName: string
+  currentFilePath: string
 ): es.FunctionDeclaration => {
   const moduleDeclarations = program.body.filter(isModuleDeclaration)
-  const currentDirPath = path.resolve(currentFileName, '..')
+  const currentDirPath = path.resolve(currentFilePath, '..')
+
+  // Create variables to hold the imported statements.
   const invokedFunctionResultVariableNameToImportSpecifiersMap =
     getInvokedFunctionResultVariableNameToImportSpecifiersMap(moduleDeclarations, currentDirPath)
+  const accessImportStatements = createAccessImportStatements(
+    invokedFunctionResultVariableNameToImportSpecifiersMap
+  )
+
+  // Create the return value of all exports for the function.
   const exportedNameToIdentifierMap = getExportedNameToIdentifierMap(moduleDeclarations)
   const defaultExportExpression = getDefaultExportExpression(
     moduleDeclarations,
     exportedNameToIdentifierMap
   )
-
-  const accessImportStatements = createAccessImportStatements(
-    invokedFunctionResultVariableNameToImportSpecifiersMap
-  )
-
   const defaultExport = defaultExportExpression ?? createLiteral(null)
   const namedExports = createListCallExpression(
     createReturnListArguments(exportedNameToIdentifierMap)
@@ -300,12 +310,17 @@ export const transformProgramToFunctionDeclaration = (
     createPairCallExpression(defaultExport, namedExports)
   )
 
+  // Assemble the function body.
   const programStatements = removeModuleDeclarations(removeDirectives(program.body))
   const functionBody = [...accessImportStatements, ...programStatements, returnStatement]
 
-  const functionName = transformFilePathToValidFunctionName(currentFileName)
+  // Determine the function name based on the absolute file path.
+  const functionName = transformFilePathToValidFunctionName(currentFilePath)
+
+  // Set the equivalent variable names of imported modules as the function parameters.
   const functionParams = Object.keys(invokedFunctionResultVariableNameToImportSpecifiersMap).map(
     createIdentifier
   )
+
   return createFunctionDeclaration(functionName, functionParams, functionBody)
 }
