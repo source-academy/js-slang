@@ -155,7 +155,7 @@ describe('preprocessFileImports', () => {
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
-  it('removes all non-Source module import-related AST nodes', () => {
+  it('ignores Source module imports & removes all non-Source module import-related AST nodes in the preprocessed program', () => {
     const files: Record<string, string> = {
       '/a.js': `
         import d, { a, b, c } from "source-module";
@@ -170,7 +170,26 @@ describe('preprocessFileImports', () => {
         }
       `
     }
-    const expectedCode = `import { a, b, c } from "source-module";
+    const expectedCode = `
+      import { a, b, c } from "source-module";
+
+      function __$not$dash$source$dash$module$dot$js__() {
+        const x = 1;
+        const y = 2;
+        const z = 3;
+        function square(x) {
+          return x * x;
+        }
+
+        return pair(square, list(pair("x", x), pair("y", y), pair("z", z)));
+      }
+
+      const ___$not$dash$source$dash$module$dot$js___ = __$not$dash$source$dash$module$dot$js__();
+
+      const w = ${accessExportFunctionName}(___$not$dash$source$dash$module$dot$js___, "${defaultExportLookupName}");
+      const x = ${accessExportFunctionName}(___$not$dash$source$dash$module$dot$js___, "x");
+      const y = ${accessExportFunctionName}(___$not$dash$source$dash$module$dot$js___, "y");
+      const z = ${accessExportFunctionName}(___$not$dash$source$dash$module$dot$js___, "z");
     `
     const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
