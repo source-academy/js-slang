@@ -16,8 +16,12 @@ import {
   isSourceModule,
   removeNonSourceModuleImports
 } from './transformers/removeNonSourceModuleImports'
-import { transformProgramToFunctionDeclaration } from './transformers/transformProgramToFunctionDeclaration'
-import { isImportDeclaration } from './typeGuards'
+import {
+  createImportedNameDeclarations,
+  getInvokedFunctionResultVariableNameToImportSpecifiersMap,
+  transformProgramToFunctionDeclaration
+} from './transformers/transformProgramToFunctionDeclaration'
+import { isImportDeclaration, isModuleDeclaration } from './typeGuards'
 
 /**
  * Returns all absolute local module paths which should be imported.
@@ -132,10 +136,21 @@ const preprocessFileImports = (
     return undefined
   }
 
-  // Remove import/export related nodes in the AST of the entrypoint
-  // program because these nodes are not necessarily supported by the
-  // Source runner.
+  // We want to operate on the entrypoint program to get the eventual
+  // preprocessed program.
   const entrypointProgram = programs[entrypointFilePath]
+  const entrypointDirPath = path.resolve(entrypointFilePath, '..')
+
+  const entrypointProgramModuleDeclarations = entrypointProgram.body.filter(isModuleDeclaration)
+  const entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap =
+    getInvokedFunctionResultVariableNameToImportSpecifiersMap(
+      entrypointProgramModuleDeclarations,
+      entrypointDirPath
+    )
+  const entrypointProgramAccessImportedNameStatements = createImportedNameDeclarations(
+    entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap
+  )
+
   // After this pre-processing step, all export-related nodes in the AST
   // are no longer needed and are thus removed.
   removeExports(entrypointProgram)
@@ -198,6 +213,7 @@ const preprocessFileImports = (
     body: [
       ...Object.values(functionDeclarations),
       ...invokedFunctionResultVariableDeclarations,
+      ...entrypointProgramAccessImportedNameStatements,
       ...entrypointProgram.body
     ]
   }

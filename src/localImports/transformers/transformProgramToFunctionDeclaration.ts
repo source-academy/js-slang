@@ -21,7 +21,7 @@ import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from '..
 
 type ImportSpecifier = es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
 
-const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
+export const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
   nodes: es.ModuleDeclaration[],
   currentDirPath: string
 ): Record<string, ImportSpecifier[]> => {
@@ -180,7 +180,7 @@ const getDefaultExportExpression = (
   return defaultExport
 }
 
-const createImportedNameDeclarations = (
+export const createImportedNameDeclarations = (
   functionNameToImportSpecifiersMap: Record<string, ImportSpecifier[]>
 ): es.VariableDeclaration[] => {
   const importedNameDeclarations: es.VariableDeclaration[] = []
