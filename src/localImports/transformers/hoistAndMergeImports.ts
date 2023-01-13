@@ -1,6 +1,8 @@
 import es from 'estree'
+import * as _ from 'lodash'
 
-import { createImportDeclaration } from '../constructors/baseConstructors'
+import { createImportDeclaration, createLiteral } from '../constructors/baseConstructors'
+import { cloneAndStripImportSpecifier } from '../constructors/contextSpecificConstructors'
 import { isImportDeclaration } from '../typeGuards'
 
 /**
@@ -20,14 +22,36 @@ export const hoistAndMergeImports = (program: es.Program): void => {
 
   // Merge import sources & specifiers.
   const importSourceToSpecifiersMap: Map<
-    es.Literal,
-    Set<es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier>
+    string,
+    Array<es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier>
   > = new Map()
   for (const importDeclaration of importDeclarations) {
-    const importSource = importDeclaration.source
-    const specifiers = importSourceToSpecifiersMap.get(importSource) ?? new Set()
+    const importSource = importDeclaration.source.value
+    if (typeof importSource !== 'string') {
+      throw new Error('Module names must be strings.')
+    }
+    const specifiers = importSourceToSpecifiersMap.get(importSource) ?? []
     for (const specifier of importDeclaration.specifiers) {
-      specifiers.add(specifier)
+      // The Acorn parser adds extra information to AST nodes that are not
+      // part of the ESTree types. As such, we need to clone and strip
+      // the import specifier AST nodes to get a canonical representation
+      // that we can use to keep track of whether the import specifier
+      // is a duplicate or not.
+      const strippedSpecifier = cloneAndStripImportSpecifier(specifier)
+      // Note that we cannot make use of JavaScript's built-in Set class
+      // as it compares references for objects.
+      const isSpecifierDuplicate =
+        specifiers.filter(
+          (
+            specifier: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
+          ): boolean => {
+            return _.isEqual(strippedSpecifier, specifier)
+          }
+        ).length !== 0
+      if (isSpecifierDuplicate) {
+        continue
+      }
+      specifiers.push(strippedSpecifier)
     }
     importSourceToSpecifiersMap.set(importSource, specifiers)
   }
@@ -36,10 +60,14 @@ export const hoistAndMergeImports = (program: es.Program): void => {
   const mergedImportDeclarations: es.ImportDeclaration[] = []
   importSourceToSpecifiersMap.forEach(
     (
-      specifiers: Set<es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier>,
-      importSource: es.Literal
+      specifiers: Array<
+        es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
+      >,
+      importSource: string
     ): void => {
-      mergedImportDeclarations.push(createImportDeclaration(Array.from(specifiers), importSource))
+      mergedImportDeclarations.push(
+        createImportDeclaration(specifiers, createLiteral(importSource))
+      )
     }
   )
 
