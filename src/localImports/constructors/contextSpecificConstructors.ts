@@ -63,3 +63,35 @@ export const createInvokedFunctionResultVariableDeclaration = (
   )
   return createVariableDeclaration([variableDeclarator], 'const')
 }
+
+/**
+ * Clones the import specifier, but only the properties
+ * that are part of its ESTree AST type. This is useful for
+ * stripping out extraneous information on the import
+ * specifier AST nodes (such as the location information
+ * that the Acorn parser adds).
+ *
+ * @param importSpecifier The import specifier to be cloned.
+ */
+export const cloneAndStripImportSpecifier = (
+  importSpecifier: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
+): es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier => {
+  switch (importSpecifier.type) {
+    case 'ImportSpecifier':
+      return {
+        type: 'ImportSpecifier',
+        local: createIdentifier(importSpecifier.local.name),
+        imported: createIdentifier(importSpecifier.imported.name)
+      }
+    case 'ImportDefaultSpecifier':
+      return {
+        type: 'ImportDefaultSpecifier',
+        local: createIdentifier(importSpecifier.local.name)
+      }
+    case 'ImportNamespaceSpecifier':
+      return {
+        type: 'ImportNamespaceSpecifier',
+        local: createIdentifier(importSpecifier.local.name)
+      }
+  }
+}
