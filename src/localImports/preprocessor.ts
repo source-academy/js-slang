@@ -85,6 +85,13 @@ const parseProgramsAndConstructImportGraph = (
 
     const importedLocalModulePaths = getImportedLocalModulePaths(program, currentFilePath)
     for (const importedLocalModulePath of importedLocalModulePaths) {
+      // If the source & destination nodes in the import graph are the
+      // same, then the file is trying to import from itself. This is a
+      // special case of circular imports.
+      if (importedLocalModulePath === currentFilePath) {
+        context.errors.push(new CircularImportError([importedLocalModulePath, currentFilePath]))
+        return
+      }
       // If we traverse the same edge in the import graph twice, it means
       // that there is a cycle in the graph. We terminate early so as not
       // to get into an infinite loop (and also because there is no point

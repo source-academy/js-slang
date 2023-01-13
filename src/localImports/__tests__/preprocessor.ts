@@ -216,6 +216,20 @@ describe('preprocessFileImports', () => {
     )
   })
 
+  it('returns CircularImportError if there are self-imports', () => {
+    const files: Record<string, string> = {
+      '/a.js': `
+        import { y } from "./a.js";
+        const x = 1;
+        export { x as y };
+      `
+    }
+    preprocessFileImports(files, '/a.js', actualContext)
+    expect(parseError(actualContext.errors)).toEqual(
+      "Circular import detected: '/a.js' -> '/a.js'."
+    )
+  })
+
   it('returns a preprocessed program with all imports', () => {
     const files: Record<string, string> = {
       '/a.js': `
