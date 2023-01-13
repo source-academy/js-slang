@@ -251,14 +251,17 @@ describe('preprocessFileImports', () => {
     const files: Record<string, string> = {
       '/a.js': `
         import { b } from "./b.js";
+
         export const a = 1;
       `,
       '/b.js': `
         import { c } from "./c.js";
+
         export const b = 2;
       `,
       '/c.js': `
         import { a } from "./a.js";
+
         export const c = 3;
       `
     }

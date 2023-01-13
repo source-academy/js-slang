@@ -43,6 +43,7 @@ describe('transformImportedFile', () => {
       function ${functionName}() {
         const square = x => x * x;
         const x = 42;
+
         return pair(null, list());
       }
     `
@@ -58,6 +59,7 @@ describe('transformImportedFile', () => {
       function ${functionName}() {
         const x = 42;
         let y = 53;
+
         return pair(null, list(pair("y", y)));
       }
     `
@@ -81,6 +83,7 @@ describe('transformImportedFile', () => {
         function square(x) {
           return x * x;
         }
+
         return pair(null, list(pair("square", square)));
       }
     `
@@ -96,6 +99,7 @@ describe('transformImportedFile', () => {
       function ${functionName}() {
         const id = x => x;
         const square = x => x * x;
+
         return pair(null, list(pair("square", square)));
       }
     `
@@ -119,6 +123,7 @@ describe('transformImportedFile', () => {
           return x;
         }
         const square = x => x * x;
+
         return pair(null, list(pair("x", x), pair("y", y), pair("id", id), pair("square", square)));
       }
     `
@@ -143,6 +148,7 @@ describe('transformImportedFile', () => {
           return x;
         }
         const square = x => x * x;
+
         return pair(null, list(pair("x", x), pair("y", y), pair("id", id), pair("square", square)));
       }
     `
@@ -167,6 +173,7 @@ describe('transformImportedFile', () => {
           return x;
         }
         const square = x => x * x;
+
         return pair(null, list(pair("y", x), pair("x", y), pair("identity", id), pair("sq", square)));
       }
     `
@@ -192,6 +199,7 @@ describe('transformImportedFile', () => {
         function square(x) {
           return x * x;
         }
+
         return pair(square, list());
       }
     `
@@ -208,6 +216,7 @@ describe('transformImportedFile', () => {
       function ${functionName}() {
         const x = 42;
         let y = 53;
+
         return pair(y, list());
       }
     `
@@ -232,6 +241,7 @@ describe('transformImportedFile', () => {
         function square(x) {
           return x * x;
         }
+
         return pair(square, list());
       }
     `
@@ -248,6 +258,7 @@ describe('transformImportedFile', () => {
       function ${functionName}() {
         const id = x => x;
         const square = x => x * x;
+
         return pair(square, list());
       }
     `
@@ -303,6 +314,7 @@ describe('transformImportedFile', () => {
         function square(x) {
           return x * x;
         }
+
         // Expressions will be reduced when the function is invoked.
         return pair(square(10), list());
       }
@@ -328,6 +340,7 @@ describe('transformImportedFile', () => {
           return x * x;
         }
         const id = x => x;
+
         return pair(square, list(pair("x", x), pair("y", y), pair("id", id)));
       }
     `
@@ -343,6 +356,7 @@ describe('transformImportedFile', () => {
       function ${functionName}(___$dir$b$dot$js___, ___$dir2$c$dot$js___) {
         const x = __access_export__(___$dir$b$dot$js___, "x");
         const y = __access_export__(___$dir2$c$dot$js___, "y");
+
         return pair(null, list());
       }
     `
@@ -358,6 +372,7 @@ describe('transformImportedFile', () => {
       function ${functionName}(___$dir$b$dot$js___, ___$dir2$c$dot$js___) {
         const x = __access_export__(___$dir$b$dot$js___, "${defaultExportLookupName}");
         const y = __access_export__(___$dir2$c$dot$js___, "${defaultExportLookupName}");
+
         return pair(null, list());
       }
     `
@@ -373,6 +388,7 @@ describe('transformImportedFile', () => {
       function ${functionName}(___$dir$b$dot$js___, ___$dir2$c$dot$js___) {
         const x = __access_export__(___$dir$b$dot$js___, "x");
         const y = __access_export__(___$dir2$c$dot$js___, "y");
+
         return pair(null, list());
       }
     `
@@ -388,6 +404,7 @@ describe('transformImportedFile', () => {
       function ${functionName}(___$dir$b$dot$js___) {
         const x = __access_export__(___$dir$b$dot$js___, "x");
         const y = __access_export__(___$dir$b$dot$js___, "y");
+
         return pair(null, list());
       }
     `
