@@ -121,6 +121,23 @@ const parseProgramsAndConstructImportGraph = (
   }
 }
 
+const getSourceModuleImports = (programs: Record<string, es.Program>): es.ImportDeclaration[] => {
+  const sourceModuleImports: es.ImportDeclaration[] = []
+  Object.values(programs).forEach((program: es.Program): void => {
+    const importDeclarations = program.body.filter(isImportDeclaration)
+    importDeclarations.forEach((importDeclaration: es.ImportDeclaration): void => {
+      const importSource = importDeclaration.source.value
+      if (typeof importSource !== 'string') {
+        throw new Error('Module names must be strings.')
+      }
+      if (isSourceModule(importSource)) {
+        sourceModuleImports.push(importDeclaration)
+      }
+    })
+  })
+  return sourceModuleImports
+}
+
 const preprocessFileImports = (
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
@@ -149,6 +166,7 @@ const preprocessFileImports = (
   const entrypointProgram = programs[entrypointFilePath]
   const entrypointDirPath = path.resolve(entrypointFilePath, '..')
 
+  // Create variables to hold the imported statements.
   const entrypointProgramModuleDeclarations = entrypointProgram.body.filter(isModuleDeclaration)
   const entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap =
     getInvokedFunctionResultVariableNameToImportSpecifiersMap(
@@ -210,10 +228,14 @@ const preprocessFileImports = (
     invokedFunctionResultVariableDeclarations.push(invokedFunctionResultVariableDeclaration)
   })
 
+  // Get all Source module imports across the entrypoint program & all imported programs.
+  const sourceModuleImports = getSourceModuleImports(programs)
+
   // Re-assemble the program.
   const preprocessedProgram: es.Program = {
     ...entrypointProgram,
     body: [
+      ...sourceModuleImports,
       ...Object.values(functionDeclarations),
       ...invokedFunctionResultVariableDeclarations,
       ...entrypointProgramAccessImportStatements,
