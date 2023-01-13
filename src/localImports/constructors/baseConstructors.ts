@@ -103,3 +103,30 @@ export const createImportDeclaration = (
     source
   }
 }
+
+export const createImportSpecifier = (
+  local: es.Identifier,
+  imported: es.Identifier
+): es.ImportSpecifier => {
+  return {
+    type: 'ImportSpecifier',
+    local,
+    imported
+  }
+}
+
+export const createImportDefaultSpecifier = (local: es.Identifier): es.ImportDefaultSpecifier => {
+  return {
+    type: 'ImportDefaultSpecifier',
+    local
+  }
+}
+
+export const createImportNamespaceSpecifier = (
+  local: es.Identifier
+): es.ImportNamespaceSpecifier => {
+  return {
+    type: 'ImportNamespaceSpecifier',
+    local
+  }
+}
