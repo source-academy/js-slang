@@ -195,6 +195,58 @@ describe('preprocessFileImports', () => {
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
+  it('collates Source module imports at the start of the top-level environment of the preprocessed program', () => {
+    const files: Record<string, string> = {
+      '/a.js': `
+        import { b } from "./b.js";
+        import { w, x } from "source-module";
+        import { f, g } from "other-source-module";
+
+        b;
+      `,
+      '/b.js': `
+        import { square } from "./c.js";
+        import { x, y } from "source-module";
+        import { h } from "another-source-module";
+
+        export const b = square(5);
+      `,
+      '/c.js': `
+        import { x, y, z } from "source-module";
+
+        export const square = x => x * x;
+      `
+    }
+    const expectedCode = `
+      import { w, x, y, z } from "source-module";
+      import { f, g } from "other-source-module";
+      import { h } from "another-source-module";
+
+      function __$b$dot$js__(___$c$dot$js___) {
+        const square = ${accessExportFunctionName}(___$c$dot$js___, "square");
+
+        const b = square(5);
+
+        return pair(null, list(pair("b", b)));
+      }
+
+      function __$c$dot$js__() {
+        const square = x => x * x;
+
+        return pair(null, list(pair("square", square)));
+      }
+
+      const ___$c$dot$js___ = __$c$dot$js__();
+      const ___$b$dot$js___ = __$b$dot$js__(___$c$dot$js___);
+
+      const b = ${accessExportFunctionName}(___$b$dot$js___, "b");
+
+      b;
+    `
+    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
+    assertASTsAreEquivalent(actualProgram, expectedCode)
+  })
+
   it('returns CircularImportError if there are circular imports', () => {
     const files: Record<string, string> = {
       '/a.js': `
