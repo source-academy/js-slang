@@ -52,8 +52,11 @@ export const stripLocationInfo = (node: es.Node): es.Node => {
     ImportDefaultSpecifier(node: es.ImportDefaultSpecifier): void {
       deleteLocationProperties(node.local)
     },
-    ImportNamespaceSpecifier(node: es.ImportNamespaceSpecifier): void {
-      deleteLocationProperties(node.local)
+    ExportNamedDeclaration(node: es.ExportNamedDeclaration): void {
+      node.specifiers.forEach((node: es.ExportSpecifier) => {
+        deleteLocationProperties(node)
+        deleteLocationProperties(node.exported)
+      })
     }
   })
   return node
