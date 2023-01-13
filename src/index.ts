@@ -231,7 +231,7 @@ export function getTypeInformation(
               'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
             )
           }
-          nodeId = typedNode.id?.name!
+          nodeId = typedNode.id.name
         } else if (typedNode.type === 'VariableDeclaration') {
           nodeId = (typedNode.declarations[0].id as es.Identifier).name
         } else if (typedNode.type === 'Identifier') {
