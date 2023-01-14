@@ -17,7 +17,7 @@ export class InvalidFilePathError implements SourceError {
   }
 
   public elaborate() {
-    return 'You should rename the offending file path to only use valid chars.'
+    return 'Rename the offending file path to only use valid chars.'
   }
 }
 
