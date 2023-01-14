@@ -297,10 +297,10 @@ export async function runInContext(
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
-  const defaultFilename = 'default'
+  const defaultFilePath = '/default.js'
   const files: Partial<Record<string, string>> = {}
-  files[defaultFilename] = code
-  return runFilesInContext(files, defaultFilename, context, options)
+  files[defaultFilePath] = code
+  return runFilesInContext(files, defaultFilePath, context, options)
 }
 
 export async function runFilesInContext(
