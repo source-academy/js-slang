@@ -26,7 +26,12 @@ export function validateAndAnnotate(
           new Declaration(statement.kind === 'const')
         )
       } else if (statement.type === 'FunctionDeclaration') {
-        initialisedIdentifiers.set((statement.id as es.Identifier).name, new Declaration(true))
+        if (statement.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
+        initialisedIdentifiers.set(statement.id.name, new Declaration(true))
       }
     }
     scopeHasCallExpressionMap.set(node, false)

@@ -27,7 +27,8 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   ImportDeclaration: 1,
   ImportSpecifier: 1,
 
-  // Chapter 2 (no new syntax)
+  // Chapter 2
+  ExportNamedDeclaration: 2,
 
   // Chapter 3
   BreakStatement: 3,
@@ -57,6 +58,8 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   ClassBody: libraryParserLanguage,
   MethodDefinition: libraryParserLanguage,
   FunctionExpression: libraryParserLanguage,
+  ImportDefaultSpecifier: libraryParserLanguage,
+  ExportDefaultDeclaration: libraryParserLanguage,
 
   // Disallowed forever
   UpdateExpression: Infinity,
@@ -82,10 +85,7 @@ const syntaxBlacklist: { [nodeName: string]: number } = {
   MetaProperty: Infinity,
   SequenceExpression: Infinity,
   AssignmentPattern: Infinity,
-  ExportNamedDeclaration: Infinity,
-  ExportDefaultDeclaration: Infinity,
   ExportAllDeclaration: Infinity,
-  ImportDefaultSpecifier: Infinity,
   ImportNamespaceSpecifier: Infinity,
   TaggedTemplateExpression: Infinity
 }

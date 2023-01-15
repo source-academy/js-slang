@@ -7,13 +7,9 @@ import { RawSourceMap } from 'source-map'
 import { IOptions, Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { hoistAndMergeImports } from '../localImports/transformers/hoistAndMergeImports'
 import { FatalSyntaxError } from '../parser/parser'
-import {
-  evallerReplacer,
-  getBuiltins,
-  hoistImportDeclarations,
-  transpile
-} from '../transpiler/transpiler'
+import { evallerReplacer, getBuiltins, transpile } from '../transpiler/transpiler'
 import type { Context } from '../types'
 import * as create from '../utils/astCreator'
 import { toSourceError } from './errors'
@@ -92,7 +88,7 @@ export async function fullJSRunner(
     : [...getBuiltins(context.nativeStorage), ...preparePrelude(context)]
 
   // modules
-  hoistImportDeclarations(program)
+  hoistAndMergeImports(program)
   appendModulesToContext(program, context)
 
   // evaluate and create a separate block for preludes and builtins

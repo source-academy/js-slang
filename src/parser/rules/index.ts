@@ -8,6 +8,7 @@ import forStatementMustHaveAllParts from './forStatementMustHaveAllParts'
 import noDeclareMutable from './noDeclareMutable'
 import noDotAbbreviation from './noDotAbbreviation'
 import noEval from './noEval'
+import noFunctionDeclarationWithoutIdentifier from './noFunctionDeclarationWithoutIdentifier'
 import noHolesInArrays from './noHolesInArrays'
 import noIfWithoutElse from './noIfWithoutElse'
 import noImplicitDeclareUndefined from './noImplicitDeclareUndefined'
@@ -29,6 +30,7 @@ const rules: Rule<es.Node>[] = [
   forStatementMustHaveAllParts,
   noDeclareMutable,
   noDotAbbreviation,
+  noFunctionDeclarationWithoutIdentifier,
   noIfWithoutElse,
   noImplicitDeclareUndefined,
   noImplicitReturnUndefined,

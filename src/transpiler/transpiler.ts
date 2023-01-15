@@ -91,44 +91,6 @@ export function transformImportDeclarations(
   return [prefix.join(''), declNodes, otherNodes]
 }
 
-/**
- * Hoists import statements in the program to the top
- * Also collates multiple import statements to a module into
- * a single statement
- */
-export function hoistImportDeclarations(program: es.Program) {
-  const importNodes = program.body.filter(
-    node => node.type === 'ImportDeclaration'
-  ) as es.ImportDeclaration[]
-  const specifiers = new Map<
-    string,
-    (es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier)[]
-  >()
-  const baseNodes = new Map<string, es.ImportDeclaration>()
-
-  for (const node of importNodes) {
-    const moduleName = node.source.value as string
-
-    if (!specifiers.has(moduleName)) {
-      specifiers.set(moduleName, node.specifiers)
-      baseNodes.set(moduleName, node)
-    } else {
-      for (const specifier of node.specifiers) {
-        specifiers.get(moduleName)!.push(specifier)
-      }
-    }
-  }
-
-  const newImports = Array.from(baseNodes.entries()).map(([module, node]) => {
-    return {
-      ...node,
-      specifiers: specifiers.get(module)
-    }
-  }) as (es.ModuleDeclaration | es.Statement | es.Declaration)[]
-
-  program.body = newImports.concat(program.body.filter(node => node.type !== 'ImportDeclaration'))
-}
-
 // `useThis` is a temporary indicator used by fullJS
 // export function transformImportDeclarations(program: es.Program, useThis = false) {
 //   const imports = []
@@ -357,7 +319,12 @@ export function checkForUndefinedVariables(
       if (statement.type === 'VariableDeclaration') {
         identifiers.add((statement.declarations[0].id as es.Identifier).name)
       } else if (statement.type === 'FunctionDeclaration') {
-        identifiers.add((statement.id as es.Identifier).name)
+        if (statement.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
+        identifiers.add(statement.id.name)
       } else if (statement.type === 'ImportDeclaration') {
         for (const specifier of statement.specifiers) {
           identifiers.add(specifier.local.name)

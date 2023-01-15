@@ -67,7 +67,11 @@ function unshadowVariables(program: es.Node, predefined = {}) {
     for (const stmt of stmts) {
       if (stmt.type === 'FunctionDeclaration') {
         // do hoisting first
-        stmt.id = stmt.id as es.Identifier
+        if (stmt.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
         stmt.id.name = genId(stmt.id.name)
       } else if (stmt.type === 'VariableDeclaration') {
         for (const decl of stmt.declarations) {
@@ -438,7 +442,12 @@ function trackFunctions(program: es.Node) {
     ArrowFunctionExpression: anonFunction,
     FunctionExpression: anonFunction,
     FunctionDeclaration(node: es.FunctionDeclaration) {
-      const name = (node.id as es.Identifier).name
+      if (node.id === null) {
+        throw new Error(
+          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+        )
+      }
+      const name = node.id.name
       inPlaceEnclose(node.body, preFunction(name, node.params))
     }
   })

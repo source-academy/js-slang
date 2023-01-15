@@ -193,3 +193,43 @@ test('Parses assignment expressions', () => {
     { chapter: Chapter.SOURCE_4 }
   )
 })
+
+test('Parses default import specifiers', () => {
+  return snapshotSuccess(
+    oneLine`
+    stringify(parse(
+      "import defaultExport from 'module-name';"), undefined, 2);
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  )
+})
+
+test('Parses named export declarations', () => {
+  return snapshotSuccess(
+    oneLine`
+    stringify(parse(
+      "export const x = 42;
+      export const square = x => x * x;
+      export function id(x) {
+        return x;
+      }
+      export { x as y };"), undefined, 2);
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  )
+})
+
+test('Parses default export declarations', () => {
+  return snapshotSuccess(
+    oneLine`
+    stringify(parse(
+      "export const x = 42;
+      export default x;"), undefined, 2);
+    stringify(parse(
+      "export default function square(x) {
+        return x * x;
+      }"), undefined, 2);
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  )
+})

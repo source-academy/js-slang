@@ -546,9 +546,9 @@ function addTypeDeclarationsToEnvironment(
     switch (node.type) {
       case 'FunctionDeclaration':
         if (node.id === null) {
-          // Block should not be reached since node.id is only null when function declaration
-          // is part of `export default function`, which is not used in Source
-          throw new TypecheckError(node, 'Function declaration should always have an identifier')
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
         }
         // Only identifiers/rest elements are used as function params in Source
         const params = node.params.filter(

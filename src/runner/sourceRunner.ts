@@ -4,6 +4,7 @@ import { RawSourceMap } from 'source-map'
 import { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
 import { ExceptionError } from '../errors/errors'
+import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
@@ -12,6 +13,9 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
+import { hoistAndMergeImports } from '../localImports/transformers/hoistAndMergeImports'
+import { removeExports } from '../localImports/transformers/removeExports'
+import { removeNonSourceModuleImports } from '../localImports/transformers/removeNonSourceModuleImports'
 import { parse } from '../parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
@@ -22,13 +26,13 @@ import {
   redexify
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
-import { hoistImportDeclarations, transpile } from '../transpiler/transpiler'
+import { transpile } from '../transpiler/transpiler'
 import { Context, Scheduler, SourceError, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
-import { determineExecutionMethod } from '.'
+import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
@@ -204,7 +208,7 @@ async function runNative(
 export async function sourceRunner(
   code: string,
   context: Context,
-  verboseErrors: boolean,
+  isVerboseErrorsEnabled: boolean,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
   const theOptions: IOptions = { ...DEFAULT_SOURCE_OPTIONS, ...options }
@@ -217,14 +221,19 @@ export async function sourceRunner(
     return resolvedErrorPromise
   }
 
+  // TODO: Remove this after runners have been refactored.
+  //       These should be done as part of the local imports
+  //       preprocessing step.
+  removeExports(program)
+  removeNonSourceModuleImports(program)
+  hoistAndMergeImports(program)
+
   validateAndAnnotate(program, context)
   context.unTypecheckedCode.push(code)
 
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
-
-  hoistImportDeclarations(program)
 
   if (context.variant === Variant.CONCURRENT) {
     return runConcurrent(code, program, context, theOptions)
@@ -238,7 +247,7 @@ export async function sourceRunner(
     theOptions,
     context,
     program,
-    verboseErrors
+    isVerboseErrorsEnabled
   )
 
   if (isNativeRunnable && context.variant === Variant.NATIVE) {
@@ -249,8 +258,8 @@ export async function sourceRunner(
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
-    await sourceRunner(prelude, context, verboseErrors, { ...options, isPrelude: true })
-    return sourceRunner(code, context, verboseErrors, options)
+    await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true })
+    return sourceRunner(code, context, isVerboseErrorsEnabled, options)
   }
 
   if (isNativeRunnable) {
@@ -258,4 +267,28 @@ export async function sourceRunner(
   }
 
   return runInterpreter(program, context, theOptions)
+}
+
+export async function sourceFilesRunner(
+  files: Partial<Record<string, string>>,
+  entrypointFilePath: string,
+  context: Context,
+  options: Partial<IOptions> = {}
+): Promise<Result> {
+  const entrypointCode = files[entrypointFilePath]
+  if (entrypointCode === undefined) {
+    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    return resolvedErrorPromise
+  }
+
+  const isVerboseErrorsEnabled = hasVerboseErrors(entrypointCode)
+
+  context.variant = determineVariant(context, options)
+  // TODO: Make use of the preprocessed program AST after refactoring runners.
+  // const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
+  // if (!preprocessedProgram) {
+  //   return resolvedErrorPromise
+  // }
+
+  return sourceRunner(entrypointCode, context, isVerboseErrorsEnabled, options)
 }

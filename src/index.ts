@@ -27,8 +27,16 @@ import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
+import { CannotFindModuleError, InvalidFilePathError } from './errors/localImportErrors'
+import { isFilePathValid } from './localImports/filePaths'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
-import { fullJSRunner, hasVerboseErrors, htmlRunner, sourceRunner } from './runner'
+import {
+  fullJSRunner,
+  hasVerboseErrors,
+  htmlRunner,
+  resolvedErrorPromise,
+  sourceFilesRunner
+} from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
 
@@ -218,7 +226,12 @@ export function getTypeInformation(
       let nodeId = ''
       if (typedNode.type) {
         if (typedNode.type === 'FunctionDeclaration') {
-          nodeId = typedNode.id?.name!
+          if (typedNode.id === null) {
+            throw new Error(
+              'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+            )
+          }
+          nodeId = typedNode.id.name
         } else if (typedNode.type === 'VariableDeclaration') {
           nodeId = (typedNode.declarations[0].id as es.Identifier).name
         } else if (typedNode.type === 'Identifier') {
@@ -284,6 +297,31 @@ export async function runInContext(
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
+  const defaultFilePath = '/default.js'
+  const files: Partial<Record<string, string>> = {}
+  files[defaultFilePath] = code
+  return runFilesInContext(files, defaultFilePath, context, options)
+}
+
+export async function runFilesInContext(
+  files: Partial<Record<string, string>>,
+  entrypointFilePath: string,
+  context: Context,
+  options: Partial<IOptions> = {}
+): Promise<Result> {
+  for (const filePath in files) {
+    if (!isFilePathValid(filePath)) {
+      context.errors.push(new InvalidFilePathError(filePath))
+      return resolvedErrorPromise
+    }
+  }
+
+  const code = files[entrypointFilePath]
+  if (code === undefined) {
+    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    return resolvedErrorPromise
+  }
+
   if (context.chapter === Chapter.FULL_JS) {
     return fullJSRunner(code, context, options)
   }
@@ -292,8 +330,12 @@ export async function runInContext(
     return htmlRunner(code, context, options)
   }
 
+  // FIXME: Clean up state management so that the `parseError` function is pure.
+  //        This is not a huge priority, but it would be good not to make use of
+  //        global state.
   verboseErrors = hasVerboseErrors(code)
-  return sourceRunner(code, context, verboseErrors, options)
+
+  return sourceFilesRunner(files, entrypointFilePath, context, options)
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {

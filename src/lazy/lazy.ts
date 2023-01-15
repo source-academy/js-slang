@@ -12,6 +12,11 @@ function transformFunctionDeclarationsToArrowFunctions(program: es.Program) {
   simple(program, {
     FunctionDeclaration(node) {
       const { id, params, body } = node as es.FunctionDeclaration
+      if (id === null) {
+        throw new Error(
+          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+        )
+      }
       node.type = 'VariableDeclaration'
       node = node as es.VariableDeclaration
       const asArrowFunction = create.callExpression(
@@ -22,7 +27,7 @@ function transformFunctionDeclarationsToArrowFunctions(program: es.Program) {
       node.declarations = [
         {
           type: 'VariableDeclarator',
-          id: id as es.Identifier,
+          id,
           init: asArrowFunction
         }
       ]
