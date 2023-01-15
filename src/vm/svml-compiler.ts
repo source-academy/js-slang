@@ -311,7 +311,7 @@ function renameVariables(
   }
 
   recursive(baseNode, new Set<string>(), {
-    VariablePattern(node: es.Identifier, inactive, c) {
+    VariablePattern(node: es.Identifier, inactive, _c) {
       // for declarations
       const name = node.name
       if (inactive.has(name)) {
@@ -321,7 +321,7 @@ function renameVariables(
         node.name = namesToRename.get(name)!
       }
     },
-    Identifier(node: es.Identifier, inactive, c) {
+    Identifier(node: es.Identifier, inactive, _c) {
       // for lone references
       const name = node.name
       if (inactive.has(name)) {
@@ -566,7 +566,7 @@ const compilers = {
   },
 
   // handled by insertFlag in compile function
-  ReturnStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  ReturnStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
     node = node as es.ReturnStatement
     if (loopTracker.length > 0) {
       throw Error('return not allowed in loops')
@@ -846,7 +846,7 @@ const compilers = {
     throw Error('Invalid Assignment')
   },
 
-  ForStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  ForStatement(_node: es.Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
@@ -904,7 +904,7 @@ const compilers = {
     return { maxStackSize: 0, insertFlag }
   },
 
-  ObjectExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  ObjectExpression(_node: es.Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
@@ -920,11 +920,11 @@ const compilers = {
     throw Error('Unsupported operation')
   },
 
-  Property(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  Property(_node: es.Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  DebuggerStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  DebuggerStatement(_node: es.Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
     throw Error('Unsupported operation')
   }
 }

@@ -5,7 +5,7 @@ import { Context, Result, Scheduler, Value } from './types'
 
 export class AsyncScheduler implements Scheduler {
   public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       context.runtime.isRunning = true
       let itValue = it.next()
       try {
@@ -37,7 +37,7 @@ export class AsyncScheduler implements Scheduler {
 
 export class NonDetScheduler implements Scheduler {
   public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       try {
         const itValue = it.next()
         if (itValue.done) {
@@ -65,7 +65,7 @@ export class PreemptiveScheduler implements Scheduler {
   constructor(public steps: number) {}
 
   public run(it: IterableIterator<Value>, context: Context): Promise<Result> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       context.runtime.isRunning = true
       // This is used in the evaluation of the REPL during a paused state.
       // The debugger is turned off while the code evaluates just above the debugger statement.

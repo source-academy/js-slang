@@ -124,7 +124,7 @@ function unshadowVariables(program: es.Node, predefined = {}) {
     },
     ArrowFunctionExpression: unshadowFunctionInner,
     FunctionExpression: unshadowFunctionInner,
-    Identifier(node: es.Identifier, s: undefined, callback: WalkerCallback<undefined>) {
+    Identifier(node: es.Identifier, _s: undefined, _callback: WalkerCallback<undefined>) {
       if (env[0][node.name]) {
         node.name = env[0][node.name]
       } else {
@@ -254,7 +254,7 @@ function hybridizeBinaryUnaryOperations(program: es.Node) {
 
 function hybridizeVariablesAndLiterals(program: es.Node) {
   recursive(program, true, {
-    Identifier(node: es.Identifier, state: boolean, callback: WalkerCallback<boolean>) {
+    Identifier(node: es.Identifier, state: boolean, _callback: WalkerCallback<boolean>) {
       if (state) {
         create.mutateToCallExpression(node, callFunction(FunctionNames.hybridize), [
           create.identifier(node.name),
@@ -263,7 +263,7 @@ function hybridizeVariablesAndLiterals(program: es.Node) {
         ])
       }
     },
-    Literal(node: es.Literal, state: boolean, callback: WalkerCallback<boolean>) {
+    Literal(node: es.Literal, state: boolean, _callback: WalkerCallback<boolean>) {
       if (state && (typeof node.value === 'boolean' || typeof node.value === 'number')) {
         create.mutateToCallExpression(node, callFunction(FunctionNames.dummify), [
           create.literal(node.value)
@@ -544,8 +544,8 @@ function trackLocations(program: es.Program) {
   const stateExpr = create.identifier(globalIds.stateId)
   const doLoops = (
     node: es.ForStatement | es.WhileStatement,
-    state: undefined,
-    callback: WalkerCallback<undefined>
+    _state: undefined,
+    _callback: WalkerCallback<undefined>
   ) => {
     inPlaceEnclose(
       node.body,
@@ -555,7 +555,11 @@ function trackLocations(program: es.Program) {
     )
   }
   recursive(program, undefined, {
-    CallExpression(node: es.CallExpression, state: undefined, callback: WalkerCallback<undefined>) {
+    CallExpression(
+      node: es.CallExpression,
+      _state: undefined,
+      _callback: WalkerCallback<undefined>
+    ) {
       if (node.callee.type === 'MemberExpression') return
       const copy: es.CallExpression = { ...node }
       const lazyCall = create.arrowFunctionExpression([], copy)

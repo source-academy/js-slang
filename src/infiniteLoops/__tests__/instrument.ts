@@ -14,7 +14,7 @@ function mockFunctionsAndState() {
   const theState = undefined
   const functions = {}
   const returnFirst = (...args: any[]) => args[0]
-  const nothing = (...args: any[]) => {}
+  const nothing = (..._args: any[]) => {}
   functions[functionNames.nothingFunction] = nothing
   functions[functionNames.concretize] = returnFirst
   functions[functionNames.hybridize] = returnFirst

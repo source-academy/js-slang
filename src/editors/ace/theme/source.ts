@@ -9,7 +9,7 @@
  */
 
 // @ts-ignore
-function theme(acequire, exports, module) {
+function theme(acequire, exports, _module) {
   exports.isDark = true
   exports.cssClass = 'ace-source'
   exports.cssText =

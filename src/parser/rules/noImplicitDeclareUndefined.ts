@@ -33,7 +33,7 @@ const noImplicitDeclareUndefined: Rule<es.VariableDeclaration> = {
   name: 'no-implicit-declare-undefined',
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, ancestors: [es.Node]) {
+    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [es.Node]) {
       const errors: SourceError[] = []
       for (const decl of node.declarations) {
         if (!decl.init) {

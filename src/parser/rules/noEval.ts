@@ -25,7 +25,7 @@ const noEval: Rule<es.Identifier> = {
   name: 'no-eval',
 
   checkers: {
-    Identifier(node: es.Identifier, ancestors: [es.Node]) {
+    Identifier(node: es.Identifier, _ancestors: [es.Node]) {
       if (node.name === 'eval') {
         return [new NoEval(node)]
       } else {
