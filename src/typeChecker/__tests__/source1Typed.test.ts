@@ -655,7 +655,7 @@ describe('binary operations', () => {
       const x11: string = x3 + x2; // error, boolean + string, return type string
       const x12: number = x1 + x4; // no error, number + any, return type number
       const x13: string = x5 + x2; // no error, any + string, return type string
-      const x14: string = x1 + x2; // error, number + string, return type string
+      const x14: number = x1 + x2; // error, number + string, return type number (follows left side)
       const x15: string = x4 + x5; // no error, any + any, return type any
       const x16: number | string = x6 + x4; // no error, string | number + any, return type any
       const x17: number = x1 + x6; // error, number + string | number, return type number
@@ -977,7 +977,7 @@ describe('scoping', () => {
       f(x); // error
       const z: string = x + y; // no error
     }
-    const z: string = x + y; // error
+    const z: number = x + y; // error
     `
 
     parse(code, context)

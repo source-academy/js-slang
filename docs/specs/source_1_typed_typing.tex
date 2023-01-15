@@ -245,28 +245,27 @@ Applications of binary and unary operators are treated the same as function appl
 For the \texttt{+} operator, the following rules are applied, in order of priority:
 
 \begin{itemize}
-\item{If the expression on either side is of type $\String$ or literal string type,
-  check that the other expression is a subtype of $\String$. The return type is $\String$.}
-\item{If the expression on either side is of type $\Number$ or literal number type,
+\item{If the expression on the left side is a subtype of type $\Number$,
   check that the other expression is a subtype of $\Number$. The return type is $\Number$.}
-\item{If neither expression can be narrowed to either $\String$ or $\Number$, check that both sides are subtypes of 
-  $\String\ |\ \Number$. The return type is $\Any$.}
+\item{If the expression on the left side is a subtype of type $\String$,
+  check that the other expression is a subtype of $\String$. The return type is $\String$.}
+\item{If the expression on the right side is a subtype of type $\Number$,
+  check that the other expression is a subtype of $\Number$. The return type is $\Number$.}
+\item{If the expression on the right side is a subtype of type $\String$,
+  check that the other expression is a subtype of $\String$. The return type is $\String$.}
+\item{If the expression on the left side cannot be narrowed to either $\Number$ or $\String$, check that both sides are subtypes of 
+  $\Number\ |\ \String$. The return type is $\Any$.}
 \end{itemize}
 
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 = \String \vee t_0 = \textit{literal string type}
-    \quad t_1 \subseteq \String \vee t_1 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \String}
-\]
-\noindent
-\[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 = \String \vee t_1 = \textit{literal string type}
-    \quad t_0 \subseteq \String \vee t_0 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \String}
-\]
-\noindent
-\[
   \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 = \Number \vee t_0 = \textit{literal number type}
     \quad t_1 \subseteq \Number \vee t_1 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \Number}
+\]
+\noindent
+\[
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 = \String \vee t_0 = \textit{literal string type}
+    \quad t_1 \subseteq \String \vee t_1 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \String}
 \]
 \noindent
 \[
@@ -275,8 +274,13 @@ For the \texttt{+} operator, the following rules are applied, in order of priori
 \]
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 \subseteq (\String\ |\ \Number) \vee t_0 = \Any
-    \quad t_1 \subseteq (\String\ |\ \Number) \vee t_1 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \Any}
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 = \String \vee t_1 = \textit{literal string type}
+    \quad t_0 \subseteq \String \vee t_0 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \String}
+\]
+\noindent
+\[
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 \subseteq (\Number\ |\ \String) \vee t_0 = \Any
+    \quad t_1 \subseteq (\Number\ |\ \String) \vee t_1 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \Any}
 \]
 \noindent
 
