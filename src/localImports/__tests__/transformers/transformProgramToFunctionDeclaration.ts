@@ -7,7 +7,7 @@ import { parseCodeError, stripLocationInfo } from '../utils'
 
 describe('transformImportedFile', () => {
   const currentFileName = '/dir/a.js'
-  const functionName = '__$dir$a$dot$js__'
+  const functionName = '__$dir$a$$dot$$js__'
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
   let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
 
@@ -353,9 +353,9 @@ describe('transformImportedFile', () => {
       import { y } from "../dir2/c.js";
     `
     const expectedCode = `
-      function ${functionName}(___$dir$b$dot$js___, ___$dir2$c$dot$js___) {
-        const x = __access_export__(___$dir$b$dot$js___, "x");
-        const y = __access_export__(___$dir2$c$dot$js___, "y");
+      function ${functionName}(___$dir$b$$dot$$js___, ___$dir2$c$$dot$$js___) {
+        const x = __access_export__(___$dir$b$$dot$$js___, "x");
+        const y = __access_export__(___$dir2$c$$dot$$js___, "y");
 
         return pair(null, list());
       }
@@ -369,9 +369,9 @@ describe('transformImportedFile', () => {
       import y from "../dir2/c.js";
     `
     const expectedCode = `
-      function ${functionName}(___$dir$b$dot$js___, ___$dir2$c$dot$js___) {
-        const x = __access_export__(___$dir$b$dot$js___, "${defaultExportLookupName}");
-        const y = __access_export__(___$dir2$c$dot$js___, "${defaultExportLookupName}");
+      function ${functionName}(___$dir$b$$dot$$js___, ___$dir2$c$$dot$$js___) {
+        const x = __access_export__(___$dir$b$$dot$$js___, "${defaultExportLookupName}");
+        const y = __access_export__(___$dir2$c$$dot$$js___, "${defaultExportLookupName}");
 
         return pair(null, list());
       }
@@ -385,9 +385,9 @@ describe('transformImportedFile', () => {
       import { y } from "../../../../../dir2/c.js";
     `
     const expectedCode = `
-      function ${functionName}(___$dir$b$dot$js___, ___$dir2$c$dot$js___) {
-        const x = __access_export__(___$dir$b$dot$js___, "x");
-        const y = __access_export__(___$dir2$c$dot$js___, "y");
+      function ${functionName}(___$dir$b$$dot$$js___, ___$dir2$c$$dot$$js___) {
+        const x = __access_export__(___$dir$b$$dot$$js___, "x");
+        const y = __access_export__(___$dir2$c$$dot$$js___, "y");
 
         return pair(null, list());
       }
@@ -401,9 +401,9 @@ describe('transformImportedFile', () => {
       import { y } from "../dir/b.js";
     `
     const expectedCode = `
-      function ${functionName}(___$dir$b$dot$js___) {
-        const x = __access_export__(___$dir$b$dot$js___, "x");
-        const y = __access_export__(___$dir$b$dot$js___, "y");
+      function ${functionName}(___$dir$b$$dot$$js___) {
+        const x = __access_export__(___$dir$b$$dot$$js___, "x");
+        const y = __access_export__(___$dir$b$$dot$$js___, "y");
 
         return pair(null, list());
       }
@@ -420,10 +420,10 @@ describe('transformImportedFile', () => {
       export const a = x + y + z;
     `
     const expectedCode = `
-      function ${functionName}(___$dir$b$dot$js___) {
-        const x = __access_export__(___$dir$b$dot$js___, "x");
-        const y = __access_export__(___$dir$b$dot$js___, "y");
-        const z = __access_export__(___$dir$b$dot$js___, "z");
+      function ${functionName}(___$dir$b$$dot$$js___) {
+        const x = __access_export__(___$dir$b$$dot$$js___, "x");
+        const y = __access_export__(___$dir$b$$dot$$js___, "y");
+        const z = __access_export__(___$dir$b$$dot$$js___, "z");
 
         const a = x + y + z;
 
