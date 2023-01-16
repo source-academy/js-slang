@@ -10,8 +10,15 @@ export const nonAlphanumericCharEncoding: Record<string, string> = {
   // characters.
   _: '_',
   '/': '$',
-  '.': '$dot$',
-  '-': '$dash$'
+  // The following encodings work because we disallow file paths
+  // with consecutive slash characters (//). Note that when using
+  // the 'replace' or 'replaceAll' functions, the dollar sign ($)
+  // takes on a special meaning. As such, to insert a dollar sign,
+  // we need to write '$$'. See
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_string_as_the_replacement
+  // for more information.
+  '.': '$$$$dot$$$$', // '$$dot$$'
+  '-': '$$$$dash$$$$' // '$$dash$$'
 }
 
 /**
@@ -61,11 +68,15 @@ const isAlphanumeric = (char: string): boolean => {
 /**
  * Returns whether the given file path is valid. A file path is
  * valid if it only contains alphanumeric characters and the
- * characters defined in `charEncoding`.
+ * characters defined in `charEncoding`, and does not contain
+ * consecutive slash characters (//).
  *
  * @param filePath The file path to check.
  */
 export const isFilePathValid = (filePath: string): boolean => {
+  if (filePath.includes('//')) {
+    return false
+  }
   for (const char of filePath) {
     if (isAlphanumeric(char)) {
       continue

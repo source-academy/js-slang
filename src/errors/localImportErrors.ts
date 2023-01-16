@@ -13,11 +13,11 @@ export class InvalidFilePathError implements SourceError {
     const validNonAlphanumericChars = Object.keys(nonAlphanumericCharEncoding)
       .map(char => `'${char}'`)
       .join(', ')
-    return `'${this.filePath}' must only contain alphanumeric chars or one of ${validNonAlphanumericChars}.`
+    return `'${this.filePath}' must only contain alphanumeric chars or one of ${validNonAlphanumericChars}, and must not contain consecutive slashes '//'.`
   }
 
   public elaborate() {
-    return 'Rename the offending file path to only use valid chars.'
+    return 'Rename the offending file path to only use valid chars and remove consecutive slashes.'
   }
 }
 

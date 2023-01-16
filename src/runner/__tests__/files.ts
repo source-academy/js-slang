@@ -9,14 +9,25 @@ describe('runFilesInContext', () => {
     context = mockContext(Chapter.SOURCE_4)
   })
 
-  it('returns InvalidFilePathError if file paths are invalid', () => {
+  it('returns InvalidFilePathError if any file path contains invalid characters', () => {
     const files: Record<string, string> = {
-      'a.js': '1 + 2;',
-      '+-.js': '"hello world";'
+      '/a.js': '1 + 2;',
+      '/+-.js': '"hello world";'
     }
-    runFilesInContext(files, 'a.js', context)
+    runFilesInContext(files, '/a.js', context)
     expect(parseError(context.errors)).toEqual(
-      `'+-.js' must only contain alphanumeric chars or one of '_', '/', '.', '-'.`
+      `'/+-.js' must only contain alphanumeric chars or one of '_', '/', '.', '-', and must not contain consecutive slashes '//'.`
+    )
+  })
+
+  it('returns InvalidFilePathError if any file path contains consecutive slash characters', () => {
+    const files: Record<string, string> = {
+      '/a.js': '1 + 2;',
+      '/dir//dir2/b.js': '"hello world";'
+    }
+    runFilesInContext(files, '/a.js', context)
+    expect(parseError(context.errors)).toEqual(
+      `'/dir//dir2/b.js' must only contain alphanumeric chars or one of '_', '/', '.', '-', and must not contain consecutive slashes '//'.`
     )
   })
 
