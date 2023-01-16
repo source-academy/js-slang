@@ -73,7 +73,7 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
       // way to display it.
       const elaboration = error.elaborate()
       return line < 1
-        ? explanation
+        ? `${explanation}\n${elaboration}\n`
         : `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
     } else {
       return line < 1 ? explanation : `Line ${line}: ${explanation}`
