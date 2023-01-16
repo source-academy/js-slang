@@ -266,9 +266,35 @@ describe('preprocessFileImports', () => {
       `
     }
     preprocessFileImports(files, '/a.js', actualContext)
-    expect(parseError(actualContext.errors)).toEqual(
-      "Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'."
+    expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
+      `"Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'."`
     )
+  })
+
+  it('returns CircularImportError if there are circular imports - verbose', () => {
+    const files: Record<string, string> = {
+      '/a.js': `
+        import { b } from "./b.js";
+
+        export const a = 1;
+      `,
+      '/b.js': `
+        import { c } from "./c.js";
+
+        export const b = 2;
+      `,
+      '/c.js': `
+        import { a } from "./a.js";
+
+        export const c = 3;
+      `
+    }
+    preprocessFileImports(files, '/a.js', actualContext)
+    expect(parseError(actualContext.errors, true)).toMatchInlineSnapshot(`
+      "Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'.
+      Break the circular import cycle by removing imports from any of the offending files.
+      "
+    `)
   })
 
   it('returns CircularImportError if there are self-imports', () => {
@@ -280,9 +306,25 @@ describe('preprocessFileImports', () => {
       `
     }
     preprocessFileImports(files, '/a.js', actualContext)
-    expect(parseError(actualContext.errors)).toEqual(
-      "Circular import detected: '/a.js' -> '/a.js'."
+    expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
+      `"Circular import detected: '/a.js' -> '/a.js'."`
     )
+  })
+
+  it('returns CircularImportError if there are self-imports - verbose', () => {
+    const files: Record<string, string> = {
+      '/a.js': `
+        import { y } from "./a.js";
+        const x = 1;
+        export { x as y };
+      `
+    }
+    preprocessFileImports(files, '/a.js', actualContext)
+    expect(parseError(actualContext.errors, true)).toMatchInlineSnapshot(`
+      "Circular import detected: '/a.js' -> '/a.js'.
+      Break the circular import cycle by removing imports from any of the offending files.
+      "
+    `)
   })
 
   it('returns a preprocessed program with all imports', () => {
