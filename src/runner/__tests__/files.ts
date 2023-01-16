@@ -16,7 +16,7 @@ describe('runFilesInContext', () => {
     }
     runFilesInContext(files, 'a.js', context)
     expect(parseError(context.errors)).toEqual(
-      `'+-.js' must only contain alphanumeric chars or one of '/', '.', '-'.`
+      `'+-.js' must only contain alphanumeric chars or one of '_', '/', '.', '-'.`
     )
   })
 

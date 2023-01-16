@@ -1,5 +1,5 @@
 import { UNKNOWN_LOCATION } from '../constants'
-import { charEncoding } from '../localImports/filePaths'
+import { nonAlphanumericCharEncoding } from '../localImports/filePaths'
 import { ErrorSeverity, ErrorType, SourceError } from '../types'
 
 export class InvalidFilePathError implements SourceError {
@@ -10,7 +10,7 @@ export class InvalidFilePathError implements SourceError {
   constructor(public filePath: string) {}
 
   public explain() {
-    const validNonAlphanumericChars = Object.keys(charEncoding)
+    const validNonAlphanumericChars = Object.keys(nonAlphanumericCharEncoding)
       .map(char => `'${char}'`)
       .join(', ')
     return `'${this.filePath}' must only contain alphanumeric chars or one of ${validNonAlphanumericChars}.`

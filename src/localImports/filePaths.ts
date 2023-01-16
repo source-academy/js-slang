@@ -1,8 +1,14 @@
 /**
- * Maps characters that are legal in file paths but illegal in
- * function names to strings which are legal in function names.
+ * Maps non-alphanumeric characters that are legal in file paths
+ * to strings which are legal in function names.
  */
-export const charEncoding: Record<string, string> = {
+export const nonAlphanumericCharEncoding: Record<string, string> = {
+  // While the underscore character is legal in both file paths
+  // and function names, it is the only character to be legal
+  // in both that is not an alphanumeric character. For simplicity,
+  // we handle it the same way as the other non-alphanumeric
+  // characters.
+  _: '_',
   '/': '$',
   '.': '$dot$',
   '-': '$dash$'
@@ -20,7 +26,7 @@ export const charEncoding: Record<string, string> = {
  * @param filePath The file path to transform.
  */
 export const transformFilePathToValidFunctionName = (filePath: string): string => {
-  const encodeChars = Object.entries(charEncoding).reduce(
+  const encodeChars = Object.entries(nonAlphanumericCharEncoding).reduce(
     (
       accumulatedFunction: (filePath: string) => string,
       [charToReplace, replacementString]: [string, string]
@@ -64,7 +70,7 @@ export const isFilePathValid = (filePath: string): boolean => {
     if (isAlphanumeric(char)) {
       continue
     }
-    if (char in charEncoding) {
+    if (char in nonAlphanumericCharEncoding) {
       continue
     }
     return false
