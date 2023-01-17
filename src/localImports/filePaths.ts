@@ -1,11 +1,30 @@
+import {
+  ConsecutiveSlashesInFilePathError,
+  IllegalCharInFilePathError,
+  InvalidFilePathError
+} from '../errors/localImportErrors'
+
 /**
- * Maps characters that are legal in file paths but illegal in
- * function names to strings which are legal in function names.
+ * Maps non-alphanumeric characters that are legal in file paths
+ * to strings which are legal in function names.
  */
-export const charEncoding: Record<string, string> = {
+export const nonAlphanumericCharEncoding: Record<string, string> = {
+  // While the underscore character is legal in both file paths
+  // and function names, it is the only character to be legal
+  // in both that is not an alphanumeric character. For simplicity,
+  // we handle it the same way as the other non-alphanumeric
+  // characters.
+  _: '_',
   '/': '$',
-  '.': '$dot$',
-  '-': '$dash$'
+  // The following encodings work because we disallow file paths
+  // with consecutive slash characters (//). Note that when using
+  // the 'replace' or 'replaceAll' functions, the dollar sign ($)
+  // takes on a special meaning. As such, to insert a dollar sign,
+  // we need to write '$$'. See
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_string_as_the_replacement
+  // for more information.
+  '.': '$$$$dot$$$$', // '$$dot$$'
+  '-': '$$$$dash$$$$' // '$$dash$$'
 }
 
 /**
@@ -20,7 +39,7 @@ export const charEncoding: Record<string, string> = {
  * @param filePath The file path to transform.
  */
 export const transformFilePathToValidFunctionName = (filePath: string): string => {
-  const encodeChars = Object.entries(charEncoding).reduce(
+  const encodeChars = Object.entries(nonAlphanumericCharEncoding).reduce(
     (
       accumulatedFunction: (filePath: string) => string,
       [charToReplace, replacementString]: [string, string]
@@ -53,23 +72,28 @@ const isAlphanumeric = (char: string): boolean => {
 }
 
 /**
- * Returns whether the given file path is valid. A file path is
- * valid if it only contains alphanumeric characters and the
- * characters defined in `charEncoding`.
+ * Validates the given file path, returning an `InvalidFilePathError`
+ * if the file path is invalid & `null` otherwise. A file path is
+ * valid if it only contains alphanumeric characters and the characters
+ * defined in `charEncoding`, and does not contain consecutive slash
+ * characters (//).
  *
  * @param filePath The file path to check.
  */
-export const isFilePathValid = (filePath: string): boolean => {
+export const validateFilePath = (filePath: string): InvalidFilePathError | null => {
+  if (filePath.includes('//')) {
+    return new ConsecutiveSlashesInFilePathError(filePath)
+  }
   for (const char of filePath) {
     if (isAlphanumeric(char)) {
       continue
     }
-    if (char in charEncoding) {
+    if (char in nonAlphanumericCharEncoding) {
       continue
     }
-    return false
+    return new IllegalCharInFilePathError(filePath)
   }
-  return true
+  return null
 }
 
 /**

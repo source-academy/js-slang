@@ -173,7 +173,7 @@ describe('preprocessFileImports', () => {
     const expectedCode = `
       import { a, b, c } from "source-module";
 
-      function __$not$dash$source$dash$module$dot$js__() {
+      function __$not$$dash$$source$$dash$$module$$dot$$js__() {
         const x = 1;
         const y = 2;
         const z = 3;
@@ -184,12 +184,12 @@ describe('preprocessFileImports', () => {
         return pair(square, list(pair("x", x), pair("y", y), pair("z", z)));
       }
 
-      const ___$not$dash$source$dash$module$dot$js___ = __$not$dash$source$dash$module$dot$js__();
+      const ___$not$$dash$$source$$dash$$module$$dot$$js___ = __$not$$dash$$source$$dash$$module$$dot$$js__();
 
-      const w = ${accessExportFunctionName}(___$not$dash$source$dash$module$dot$js___, "${defaultExportLookupName}");
-      const x = ${accessExportFunctionName}(___$not$dash$source$dash$module$dot$js___, "x");
-      const y = ${accessExportFunctionName}(___$not$dash$source$dash$module$dot$js___, "y");
-      const z = ${accessExportFunctionName}(___$not$dash$source$dash$module$dot$js___, "z");
+      const w = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "${defaultExportLookupName}");
+      const x = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "x");
+      const y = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "y");
+      const z = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "z");
     `
     const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
@@ -222,24 +222,24 @@ describe('preprocessFileImports', () => {
       import { f, g } from "other-source-module";
       import { h } from "another-source-module";
 
-      function __$b$dot$js__(___$c$dot$js___) {
-        const square = ${accessExportFunctionName}(___$c$dot$js___, "square");
+      function __$b$$dot$$js__(___$c$$dot$$js___) {
+        const square = ${accessExportFunctionName}(___$c$$dot$$js___, "square");
 
         const b = square(5);
 
         return pair(null, list(pair("b", b)));
       }
 
-      function __$c$dot$js__() {
+      function __$c$$dot$$js__() {
         const square = x => x * x;
 
         return pair(null, list(pair("square", square)));
       }
 
-      const ___$c$dot$js___ = __$c$dot$js__();
-      const ___$b$dot$js___ = __$b$dot$js__(___$c$dot$js___);
+      const ___$c$$dot$$js___ = __$c$$dot$$js__();
+      const ___$b$$dot$$js___ = __$b$$dot$$js__(___$c$$dot$$js___);
 
-      const b = ${accessExportFunctionName}(___$b$dot$js___, "b");
+      const b = ${accessExportFunctionName}(___$b$$dot$$js___, "b");
 
       b;
     `
@@ -266,9 +266,35 @@ describe('preprocessFileImports', () => {
       `
     }
     preprocessFileImports(files, '/a.js', actualContext)
-    expect(parseError(actualContext.errors)).toEqual(
-      "Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'."
+    expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
+      `"Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'."`
     )
+  })
+
+  it('returns CircularImportError if there are circular imports - verbose', () => {
+    const files: Record<string, string> = {
+      '/a.js': `
+        import { b } from "./b.js";
+
+        export const a = 1;
+      `,
+      '/b.js': `
+        import { c } from "./c.js";
+
+        export const b = 2;
+      `,
+      '/c.js': `
+        import { a } from "./a.js";
+
+        export const c = 3;
+      `
+    }
+    preprocessFileImports(files, '/a.js', actualContext)
+    expect(parseError(actualContext.errors, true)).toMatchInlineSnapshot(`
+      "Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'.
+      Break the circular import cycle by removing imports from any of the offending files.
+      "
+    `)
   })
 
   it('returns CircularImportError if there are self-imports', () => {
@@ -280,9 +306,25 @@ describe('preprocessFileImports', () => {
       `
     }
     preprocessFileImports(files, '/a.js', actualContext)
-    expect(parseError(actualContext.errors)).toEqual(
-      "Circular import detected: '/a.js' -> '/a.js'."
+    expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
+      `"Circular import detected: '/a.js' -> '/a.js'."`
     )
+  })
+
+  it('returns CircularImportError if there are self-imports - verbose', () => {
+    const files: Record<string, string> = {
+      '/a.js': `
+        import { y } from "./a.js";
+        const x = 1;
+        export { x as y };
+      `
+    }
+    preprocessFileImports(files, '/a.js', actualContext)
+    expect(parseError(actualContext.errors, true)).toMatchInlineSnapshot(`
+      "Circular import detected: '/a.js' -> '/a.js'.
+      Break the circular import cycle by removing imports from any of the offending files.
+      "
+    `)
   })
 
   it('returns a preprocessed program with all imports', () => {
@@ -314,9 +356,9 @@ describe('preprocessFileImports', () => {
       `
     }
     const expectedCode = `
-      function __$b$dot$js__(___$c$dot$js___) {
-        const y = ${accessExportFunctionName}(___$c$dot$js___, "${defaultExportLookupName}");
-        const square = ${accessExportFunctionName}(___$c$dot$js___, "square");
+      function __$b$$dot$$js__(___$c$$dot$$js___) {
+        const y = ${accessExportFunctionName}(___$c$$dot$$js___, "${defaultExportLookupName}");
+        const square = ${accessExportFunctionName}(___$c$$dot$$js___, "square");
 
         const a = square(y);
         const b = 3;
@@ -324,8 +366,8 @@ describe('preprocessFileImports', () => {
         return pair(null, list(pair("a", a), pair("b", b)));
       }
 
-      function __$c$dot$js__(___$d$dot$js___) {
-        const mysteryFunction = ${accessExportFunctionName}(___$d$dot$js___, "mysteryFunction");
+      function __$c$$dot$$js__(___$d$$dot$$js___) {
+        const mysteryFunction = ${accessExportFunctionName}(___$d$$dot$$js___, "mysteryFunction");
 
         const x = mysteryFunction(5);
         function square(x) {
@@ -335,18 +377,18 @@ describe('preprocessFileImports', () => {
         return pair(x, list(pair("square", square)));
       }
 
-      function __$d$dot$js__() {
+      function __$d$$dot$$js__() {
         const addTwo = x => x + 2;
 
         return pair(null, list(pair("mysteryFunction", addTwo)));
       }
 
-      const ___$d$dot$js___ = __$d$dot$js__();
-      const ___$c$dot$js___ = __$c$dot$js__(___$d$dot$js___);
-      const ___$b$dot$js___ = __$b$dot$js__(___$c$dot$js___);
+      const ___$d$$dot$$js___ = __$d$$dot$$js__();
+      const ___$c$$dot$$js___ = __$c$$dot$$js__(___$d$$dot$$js___);
+      const ___$b$$dot$$js___ = __$b$$dot$$js__(___$c$$dot$$js___);
 
-      const x = ${accessExportFunctionName}(___$b$dot$js___, "a");
-      const y = ${accessExportFunctionName}(___$b$dot$js___, "b");
+      const x = ${accessExportFunctionName}(___$b$$dot$$js___, "a");
+      const y = ${accessExportFunctionName}(___$b$$dot$$js___, "b");
 
       x + y;
     `
