@@ -2,22 +2,38 @@ import { UNKNOWN_LOCATION } from '../constants'
 import { nonAlphanumericCharEncoding } from '../localImports/filePaths'
 import { ErrorSeverity, ErrorType, SourceError } from '../types'
 
-export class InvalidFilePathError implements SourceError {
+export abstract class InvalidFilePathError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
   public location = UNKNOWN_LOCATION
 
   constructor(public filePath: string) {}
 
+  abstract explain(): string
+
+  abstract elaborate(): string
+}
+
+export class IllegalCharInFilePathError extends InvalidFilePathError {
   public explain() {
     const validNonAlphanumericChars = Object.keys(nonAlphanumericCharEncoding)
       .map(char => `'${char}'`)
       .join(', ')
-    return `'${this.filePath}' must only contain alphanumeric chars or one of ${validNonAlphanumericChars}, and must not contain consecutive slashes '//'.`
+    return `File path '${this.filePath}' must only contain alphanumeric chars and/or ${validNonAlphanumericChars}.`
   }
 
   public elaborate() {
-    return 'Rename the offending file path to only use valid chars and remove consecutive slashes.'
+    return 'Rename the offending file path to only use valid chars.'
+  }
+}
+
+export class ConsecutiveSlashesInFilePathError extends InvalidFilePathError {
+  public explain() {
+    return `File path '${this.filePath}' cannot contain consecutive slashes '//'.`
+  }
+
+  public elaborate() {
+    return 'Remove consecutive slashes from the offending file path.'
   }
 }
 

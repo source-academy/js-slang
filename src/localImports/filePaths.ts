@@ -1,3 +1,9 @@
+import {
+  ConsecutiveSlashesInFilePathError,
+  IllegalCharInFilePathError,
+  InvalidFilePathError
+} from '../errors/localImportErrors'
+
 /**
  * Maps non-alphanumeric characters that are legal in file paths
  * to strings which are legal in function names.
@@ -66,16 +72,17 @@ const isAlphanumeric = (char: string): boolean => {
 }
 
 /**
- * Returns whether the given file path is valid. A file path is
- * valid if it only contains alphanumeric characters and the
- * characters defined in `charEncoding`, and does not contain
- * consecutive slash characters (//).
+ * Validates the given file path, returning an `InvalidFilePathError`
+ * if the file path is invalid & `null` otherwise. A file path is
+ * valid if it only contains alphanumeric characters and the characters
+ * defined in `charEncoding`, and does not contain consecutive slash
+ * characters (//).
  *
  * @param filePath The file path to check.
  */
-export const isFilePathValid = (filePath: string): boolean => {
+export const validateFilePath = (filePath: string): InvalidFilePathError | null => {
   if (filePath.includes('//')) {
-    return false
+    return new ConsecutiveSlashesInFilePathError(filePath)
   }
   for (const char of filePath) {
     if (isAlphanumeric(char)) {
@@ -84,9 +91,9 @@ export const isFilePathValid = (filePath: string): boolean => {
     if (char in nonAlphanumericCharEncoding) {
       continue
     }
-    return false
+    return new IllegalCharInFilePathError(filePath)
   }
-  return true
+  return null
 }
 
 /**
