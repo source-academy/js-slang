@@ -1,3 +1,5 @@
+# js-slang
+
 Open-source implementations of the programming language _Source_. Source is a
 series of small subsets of JavaScript, designed for teaching university-level
 programming courses for computer science majors, following Structure and
