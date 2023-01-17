@@ -4,6 +4,19 @@ programming courses for computer science majors, following Structure and
 Interpretation of Computer Programs, JavaScript Adaptation
 (<https://sourceacademy.org/sicpjs/>).
 
+# Table of Contents
+
+- [Requirements](#requirements)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Requirements](#requirements-1)
+- [Testing](#testing)
+- [Error messages](#error-messages)
+- [Using your js-slang in Source Academy](#using-your-js-slang-in-source-academy)
+- [Using your js-slang in your local Source Academy](#using-your-js-slang-in-your-local-source-academy)
+- [Building and publishing SICP package](#building-and-publishing-sicp-package)
+- [License](#license)
+
 # Requirements
 
 - node: known working version: v16.14.0
