@@ -15,6 +15,7 @@ Interpretation of Computer Programs, JavaScript Adaptation
 - [Using your js-slang in Source Academy](#using-your-js-slang-in-source-academy)
 - [Using your js-slang in your local Source Academy](#using-your-js-slang-in-your-local-source-academy)
 - [Building and publishing SICP package](#building-and-publishing-sicp-package)
+- [Talks and Presentations](#talks-and-presentations)
 - [License](#license)
 
 # Requirements
@@ -212,6 +213,11 @@ To publish SICP package, update version number in `sicp_publish/package.json`
 $ cd js-slang/sicp_publish
 $ npm publish
 ```
+
+# Talks and Presentations
+
+- **How `js-slang` works under the hood** [17th Jan 2023][The
+  Gathering][[slides](https://docs.google.com/presentation/d/1GFR39iznBZxWv948zUsmcbCSSDasm4xYs3Jc5GF7A3I/edit?usp=sharing)]
 
 # License
 
