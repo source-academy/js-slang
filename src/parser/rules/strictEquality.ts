@@ -29,7 +29,7 @@ const strictEquality: Rule<es.BinaryExpression> = {
   name: 'strict-equality',
 
   checkers: {
-    BinaryExpression(node: es.BinaryExpression, ancestors: [es.Node]) {
+    BinaryExpression(node: es.BinaryExpression, _ancestors: [es.Node]) {
       if (node.operator === '==' || node.operator === '!=') {
         return [new StrictEqualityError(node)]
       } else {

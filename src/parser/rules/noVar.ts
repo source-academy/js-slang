@@ -29,7 +29,7 @@ const noVar: Rule<es.VariableDeclaration> = {
   name: 'no-var',
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, ancestors: [es.Node]) {
+    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [es.Node]) {
       if (node.kind === 'var') {
         return [new NoVarError(node)]
       } else {

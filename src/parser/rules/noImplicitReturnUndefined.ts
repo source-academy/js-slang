@@ -31,7 +31,7 @@ const noImplicitReturnUndefined: Rule<es.ReturnStatement> = {
   name: 'no-implicit-return-undefined',
 
   checkers: {
-    ReturnStatement(node: es.ReturnStatement, ancestors: [es.Node]) {
+    ReturnStatement(node: es.ReturnStatement, _ancestors: [es.Node]) {
       if (!node.argument) {
         return [new NoImplicitReturnUndefinedError(node)]
       } else {

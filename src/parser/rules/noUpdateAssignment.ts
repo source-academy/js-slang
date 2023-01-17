@@ -36,7 +36,7 @@ const noUpdateAssignment: Rule<es.AssignmentExpression> = {
   name: 'no-update-assignment',
 
   checkers: {
-    AssignmentExpression(node: es.AssignmentExpression, ancestors: [es.Node]) {
+    AssignmentExpression(node: es.AssignmentExpression, _ancestors: [es.Node]) {
       if (node.operator !== '=') {
         return [new NoUpdateAssignment(node)]
       } else {

@@ -246,7 +246,7 @@ function createWalkers(
   const syntaxPairs = Object.entries(allowedSyntaxes)
   syntaxPairs.map(pair => {
     const syntax = pair[0]
-    newWalkers.set(syntax, (node: es.Node, context: Context, ancestors: [es.Node]) => {
+    newWalkers.set(syntax, (node: es.Node, context: Context, _ancestors: [es.Node]) => {
       if (!visitedNodes.has(node)) {
         visitedNodes.add(node)
 

@@ -105,7 +105,7 @@ export function getKeywords(
   function addAllowedKeywords(keywords: { [key: string]: NameDeclaration[] }) {
     Object.entries(keywords)
       .filter(([nodeType]) => context.chapter >= syntaxBlacklist[nodeType])
-      .forEach(([nodeType, decl]) => keywordSuggestions.push(...decl))
+      .forEach(([_nodeType, decl]) => keywordSuggestions.push(...decl))
   }
 
   // The rest of the keywords are only valid at the beginning of a statement

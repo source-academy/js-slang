@@ -28,7 +28,7 @@ const noDotAbbreviation: Rule<es.MemberExpression> = {
   disableFromChapter: Chapter.LIBRARY_PARSER,
 
   checkers: {
-    MemberExpression(node: es.MemberExpression, ancestors: [es.Node]) {
+    MemberExpression(node: es.MemberExpression, _ancestors: [es.Node]) {
       if (!node.computed) {
         return [new NoDotAbbreviationError(node)]
       } else {

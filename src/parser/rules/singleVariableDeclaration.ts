@@ -35,7 +35,7 @@ const singleVariableDeclaration: Rule<es.VariableDeclaration> = {
   name: 'single-variable-declaration',
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, ancestors: [es.Node]) {
+    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [es.Node]) {
       if (node.declarations.length > 1) {
         return [new MultipleDeclarationsError(node)]
       } else {

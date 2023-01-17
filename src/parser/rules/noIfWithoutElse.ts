@@ -33,7 +33,7 @@ const noIfWithoutElse: Rule<es.IfStatement> = {
   name: 'no-if-without-else',
   disableFromChapter: Chapter.SOURCE_3,
   checkers: {
-    IfStatement(node: es.IfStatement, ancestors: [es.Node]) {
+    IfStatement(node: es.IfStatement, _ancestors: [es.Node]) {
       if (!node.alternate) {
         return [new NoIfWithoutElseError(node)]
       } else {

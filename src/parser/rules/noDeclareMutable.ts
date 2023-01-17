@@ -34,7 +34,7 @@ const noDeclareMutable: Rule<es.VariableDeclaration> = {
   disableFromChapter: Chapter.SOURCE_3,
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, ancestors: [es.Node]) {
+    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [es.Node]) {
       if (mutableDeclarators.includes(node.kind)) {
         return [new NoDeclareMutableError(node)]
       } else {

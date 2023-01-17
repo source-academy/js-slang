@@ -51,7 +51,7 @@ export function validateAndAnnotate(
     BlockStatement: processBlock,
     FunctionDeclaration: processFunction,
     ArrowFunctionExpression: processFunction,
-    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
+    ForStatement(forStatement: es.ForStatement, _ancestors: es.Node[]) {
       const init = forStatement.init!
       if (init.type === 'VariableDeclaration') {
         accessedBeforeDeclarationMap.set(

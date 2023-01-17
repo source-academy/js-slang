@@ -32,7 +32,7 @@ const bracesAroundFor: Rule<es.ForStatement> = {
   name: 'braces-around-for',
 
   checkers: {
-    ForStatement(node: es.ForStatement, ancestors: [es.Node]) {
+    ForStatement(node: es.ForStatement, _ancestors: [es.Node]) {
       if (node.body.type !== 'BlockStatement') {
         return [new BracesAroundForError(node)]
       } else {

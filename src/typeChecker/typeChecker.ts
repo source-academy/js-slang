@@ -513,7 +513,7 @@ function cannotBeResolvedIfAddable(LHS: Variable, RHS: Type): boolean {
   )
 }
 
-function downgradePredicateToFunction(type: PredicateType): FunctionType {
+function downgradePredicateToFunction(_type: PredicateType): FunctionType {
   return {
     kind: 'function',
     parameterTypes: [freshTypeVar(tVar('T'))],

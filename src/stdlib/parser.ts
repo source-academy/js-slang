@@ -270,14 +270,14 @@ const transformers: ASTTransformers = new Map([
 
   [
     'BreakStatement',
-    (node: es.BreakStatement) => {
+    (_node: es.BreakStatement) => {
       return vector_to_list(['break_statement'])
     }
   ],
 
   [
     'ContinueStatement',
-    (node: es.ContinueStatement) => {
+    (_node: es.ContinueStatement) => {
       return vector_to_list(['continue_statement'])
     }
   ],
@@ -425,14 +425,14 @@ const transformers: ASTTransformers = new Map([
 
   [
     'ThisExpression',
-    (node: es.ThisExpression) => {
+    (_node: es.ThisExpression) => {
       return vector_to_list(['this_expression'])
     }
   ],
 
   [
     'Super',
-    (node: es.Super) => {
+    (_node: es.Super) => {
       return vector_to_list(['super_expression'])
     }
   ],

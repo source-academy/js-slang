@@ -28,7 +28,7 @@ const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression> = {
   name: 'no-unspecified-operator',
 
   checkers: {
-    BinaryExpression(node: es.BinaryExpression, ancestors: [es.Node]) {
+    BinaryExpression(node: es.BinaryExpression, _ancestors: [es.Node]) {
       const permittedOperators = [
         '+',
         '-',

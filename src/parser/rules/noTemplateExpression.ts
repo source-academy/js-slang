@@ -25,7 +25,7 @@ const noTemplateExpression: Rule<es.TemplateLiteral> = {
   name: 'no-template-expression',
 
   checkers: {
-    TemplateLiteral(node: es.TemplateLiteral, ancestors: [es.Node]) {
+    TemplateLiteral(node: es.TemplateLiteral, _ancestors: [es.Node]) {
       if (node.expressions.length > 0) {
         return [new NoTemplateExpressionError(node)]
       } else {
