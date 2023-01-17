@@ -19,7 +19,7 @@ test('Transform import declarations into variable declarations', () => {
   `
   const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
-  const [_, importNodes] = transformImportDeclarations(program, new Set<string>())
+  const [, importNodes] = transformImportDeclarations(program, new Set<string>())
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
   expect((importNodes[0].declarations[0].id as Identifier).name).toEqual('foo')
@@ -38,7 +38,7 @@ test('Transpiler accounts for user variable names when transforming import state
   `
   const context = mockContext(4)
   const program = parse(code, context)!
-  const [_, importNodes, [varDecl0, varDecl1]] = transformImportDeclarations(
+  const [, importNodes, [varDecl0, varDecl1]] = transformImportDeclarations(
     program,
     new Set<string>(['__MODULE_0__', '__MODULE_2__'])
   )
