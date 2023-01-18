@@ -164,67 +164,36 @@ $\Gamma_{-1}$
 & $[$ & \texttt{is\_list} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ $\Gamma_0$ \\
 & \end{tabular}
 
-\subsection{Subtyping}
+\subsection{Success Types}
 
-In order for type checks to be performed in Source \S 2 Typed, we introduce the notion of subtyping.
+In order for type checks to be performed in Source \S 3 Typed, we introduce the notion of success types.
 
+We first define the special $\Any$ type:
 \begin{definition}
-$t \subseteq t'$ is used to denote that type $t$ is a subtype of type $t'$.
+$\Any$ is the union of all possible types.
 \end{definition}
 
-Subtyping is illustrated using the following type rules:
+Success typing in Source Typed is defined as follows:
 
-\noindent
-\[
-\Rule{}{t \subseteq \Any}
-\qquad
-\Rule{t'\ \textit{is a basic type} \quad t\ \textit{is a basic type} \quad t' = t}{t' \subseteq t}
-\]
-\noindent
-\[
-\Rule{t'\ \textit{is a literal type} \quad t\ \textit{is a basic type} \quad \texttt{typeof}\ t' = t}{t' \subseteq t}
-\]
-\noindent
-\[
-\Rule{(\forall 1 \leq i \leq n)(t_i \subseteq t'_i) \quad t' \subseteq t}{(t'_1, \ldots t'_n) \rightarrow t' \subseteq (t_1, \ldots t_n) \rightarrow t}
-\qquad
-\Rule{(\exists i)(t' \subseteq t_i)}{t'\ \subseteq\ t_1\ |\ \ldots\ |\ t_n}
-\]
-\noindent
-\[
-\Rule{t' = \textit{Pair<}\ t'_{head}, t'_{tail}\ \textit{>} \quad t = \textit{Pair<}\ t_{head}, t_{tail}\ \textit{>}
-  \quad t'_{head} \subseteq t_{head} \quad t'_{tail} \subseteq t_{tail}}{t' \subseteq t}
-\]
-\noindent
-\[
-\Rule{t' = \textit{List<}\ t'_{elem}\ \textit{>} \quad t = \textit{List<}\ t_{elem}\ \textit{>}
-  \quad t'_{elem} \subseteq t_{elem}}{t' \subseteq t}
-\qquad
-\Rule{t' = \Null \quad t = \textit{List<}\ t_{elem}\ \textit{>}}{t' \subseteq t}
-\]
-\noindent
-\[
-\Rule{t' = \textit{Pair<}\ t'_{head}, t'_{tail}\ \textit{>} \quad t = \textit{List<}\ t_{elem}\ \textit{>}
-  \quad t'_{head} \subseteq t_{elem} \quad t'_{tail} \subseteq t}{t' \subseteq t}
-\]
-\noindent
-\[
-\Rule{t' = \textit{List<}\ t'_{elem}\ \textit{>} \quad t = \textit{Pair<}\ t_{head}, t_{tail}\ \textit{>}
-  \quad t'_{elem} \subseteq t_{head} \quad t' \subseteq t_{tail}}{t' \subseteq t}
-\]
-\noindent
+\begin{definition}
+Type $t'$ is a success type of type $t$ if $\exists x (x \in t \wedge x \in t')$.
+Alternatively: $t \wedge t' \neq \emptyset$.
+\end{definition}
+
+In Source Typed, type checks are performed by checking that the actual type is a success type of the expected type.
+This means that type errors will be thrown if and only if a definite clash in types at runtime is detected.
+Given that $\Any$ is the union of all possible types, this also means that the $\Any$ type is guaranteed not to produce any type errors.
 
 \subsection{Typing Relations}
 \label{typing-rules}
 
 To perform type checking on the program, typing relations are applied to every statement and expression in the program.
 
-Note that a name that is declared to be of type $t$ will always refer to values of a type $t'$ such that $t' \subseteq t$ at runtime.
-Names that do not have a type declared will be assumed to have the $any$ type; the $any$ type will not ever produce any type errors.
+Names that do not have a type declared will be assumed to have the $\Any$ type.
 
 \subsubsection{Typing Relations on Expressions}
 
-The derived type of primitive expressions is their literal type, which is always a subtype of its corresponding basic type.
+The derived type of primitive expressions is their literal type, which is an element of its corresponding basic type.
 
 \noindent
 \[
@@ -257,18 +226,18 @@ For function applications (including applications of binary and unary operators)
 \noindent
 \[
 \Rule{\Gamma \vdash E_0 : (t_1, \ldots, t_n) \rightarrow t \quad \Gamma \vdash E_1 : t'_1, \ldots,  \Gamma \vdash E_n : t'_n
-  \quad (\forall 1 \leq i \leq n)(t'_i \subseteq t_i \vee t'_i = \Any)}{\Gamma \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : t}
+  \quad (\forall 1 \leq i \leq n)(t'_i \wedge t_i \neq \emptyset)}{\Gamma \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : t}
 \]
 \noindent
 \[
   \Rule{\Gamma \vdash E_0 : \Any \quad \Gamma \vdash E_1 : t'_1, \ldots,  \Gamma \vdash E_n : t'_n
-  \quad (\forall 1 \leq i \leq n)(t'_i \subseteq \Any)}{\Gamma \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : \Any}
+  \quad (\forall 1 \leq i \leq n)(t'_i \wedge \Any \neq \emptyset)}{\Gamma \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : \Any}
 \]
 \noindent
 
 The type of the operator must be a function type with the right number of parameters,
-and the type of every argument must be a subtype of the corresponding parameter type of the function type.
-If all these conditions are met, the type of the function application is the same
+and the type of every argument must be a success type of the corresponding parameter type of the function type.
+If all of the conditions are met, the type of the function application is the same
 as the return type of the function type that is the type of the operator.
 If the type of the operator is $\Any$, the types for the arguments will be checked against $\Any$ and the return type will be $\Any$.
 
@@ -276,42 +245,42 @@ Applications of binary and unary operators are treated the same as function appl
 For the \texttt{+} operator, the following rules are applied, in order of priority:
 
 \begin{itemize}
-\item{If the expression on the left side is a subtype of type $\Number$,
-  check that the other expression is a subtype of $\Number$. The return type is $\Number$.}
-\item{If the expression on the left side is a subtype of type $\String$,
-  check that the other expression is a subtype of $\String$. The return type is $\String$.}
-\item{If the expression on the right side is a subtype of type $\Number$,
-  check that the other expression is a subtype of $\Number$. The return type is $\Number$.}
-\item{If the expression on the right side is a subtype of type $\String$,
-  check that the other expression is a subtype of $\String$. The return type is $\String$.}
-\item{If the expression on the left side cannot be narrowed to either $\Number$ or $\String$, check that both sides are subtypes of 
-  $\Number\ |\ \String$. The return type is $\Any$.}
+\item{If the expression on the left side is of type $\Number$ or literal number type,
+  check that the other expression is a success type of $\Number$. The return type is $\Number$.}
+\item{If the expression on the left side is of type $\String$ or literal string type,
+  check that the other expression is a success type of $\String$. The return type is $\String$.}
+\item{If the expression on the right side is of type $\Number$ or literal number type,
+  check that the other expression is a success type of $\Number$. The return type is $\Number$.}
+\item{If the expression on the right side is of type $\String$ or literal string type,
+  check that the other expression is a success type of $\String$. The return type is $\String$.}
+\item{If the expression on the left side cannot be narrowed to either $\Number$ or $\String$, check that both sides are success types of 
+  $\Number\ |\ \String$. The return type is $\Number\ |\ \String$.}
 \end{itemize}
 
 \noindent
 \[
   \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 = \Number \vee t_0 = \textit{literal number type}
-    \quad t_1 \subseteq \Number \vee t_1 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \Number}
+    \quad t_1 \wedge \Number \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \Number}
 \]
 \noindent
 \[
   \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 = \String \vee t_0 = \textit{literal string type}
-    \quad t_1 \subseteq \String \vee t_1 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \String}
+    \quad t_1 \wedge \String \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \String}
 \]
 \noindent
 \[
   \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 = \Number \vee t_1 = \textit{literal number type}
-    \quad t_0 \subseteq \Number \vee t_0 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \Number}
+    \quad t_0 \wedge \Number \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \Number}
 \]
 \noindent
 \[
   \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 = \String \vee t_1 = \textit{literal string type}
-    \quad t_0 \subseteq \String \vee t_0 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \String}
+    \quad t_0 \wedge \String \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \String}
 \]
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 \subseteq (\Number\ |\ \String) \vee t_0 = \Any
-    \quad t_1 \subseteq (\Number\ |\ \String) \vee t_1 = \Any}{\Gamma \vdash E_0\ + \ E_1 : \Any}
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 \wedge (\Number\ |\ \String) \neq \emptyset
+    \quad t_1 \wedge (\Number\ |\ \String) \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \Number\ |\ \String}
 \]
 \noindent
 
@@ -322,26 +291,26 @@ The type of the lambda expression is then the function type with the declared ty
 
 \noindent
 \[
-  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad \Gamma' \vdash S : t' \quad t' \subseteq t \vee t' = \Any}{
+  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad \Gamma' \vdash S : t' \quad t' \wedge t \neq \emptyset}{
     \Gamma \vdash ( \Lp  x_1:\ t_1, \ldots, x_n:\ t_n \Rp :\ t\ \texttt{=>}\ \Lc\ S\ \Rc) : (t_1, \ldots, t_n) \rightarrow t}  
 \]
 \noindent
 
 The type of a conditional expression is the union of the type of its consequent expression and its alternate expression.
-The predicate expression of a conditional expression must be a subtype of a boolean.
+The predicate expression of a conditional expression must be a success type of a boolean.
 
 \noindent
 \[
   \Rule{\Gamma \vdash E_{pred} : t_{pred} \quad \Gamma \vdash E_{cons} : t_{cons} \quad \Gamma \vdash E_{alt} : t_{alt}
-    \quad t_{pred} \subseteq \Bool \vee t_{pred} = \Any}{\Gamma \vdash (E_{pred}\ \texttt{?}\ E_{cons} : E_{alt}) : t_{cons}\ |\ t_{alt}}
+    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma \vdash (E_{pred}\ \texttt{?}\ E_{cons} : E_{alt}) : t_{cons}\ |\ t_{alt}}
 \]
 \noindent
 
-For as expressions, the type to cast the expression to must be a subtype of the type of the expression.
+For as expressions, the type to cast the expression to must be a success type of the type of the expression.
 
 \noindent
 \[
-  \Rule{\Gamma \vdash E : t' \quad t \subseteq t'}{\Gamma \vdash (E\ \texttt{as}\ t) : t}  
+  \Rule{\Gamma \vdash E : t' \quad t \wedge t' \neq \emptyset}{\Gamma \vdash (E\ \texttt{as}\ t) : t}  
 \]
 \noindent
 
@@ -349,12 +318,12 @@ For as expressions, the type to cast the expression to must be a subtype of the 
 
 For constant declarations, the declared type of $x$, $t$, is added to the type environment.
 As type syntax is optional, if the type annotation for $x$ absent, the declared type $t$ is assumed to be $\Any$.
-The derived type of the expression $E$ must be a subtype of the type declared for name $x$.
+The derived type of the expression $E$ must be a success type of the type declared for name $x$.
 The type of the constant declaration statement itself is $\Undefined$.
 
 \noindent
 \[
-  \Rule{\Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t' \quad t' \subseteq t \vee t' = \Any}{
+  \Rule{\Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t' \quad t' \wedge t \neq \emptyset}{
     \Gamma \vdash (\texttt{const}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
 \]
 \noindent
@@ -403,24 +372,13 @@ If the block does not contain any return statements, the type is $\Undefined$.
 \]
 \noindent
 
-The type of a block outside of function bodies is the type of the last value-producing statement in the block.
-
-\noindent
-\[
-  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
-    \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is the last value-producing statement}}{
-    \Gamma \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
-    S_1, \ldots, S_n\} : t'_n}
-\]
-\noindent
-
 The type of a conditional statement or if statement is the union of the type of its consequent statement and its alternate statement.
-The predicate expression of a conditional statement must be a subtype of a boolean.
+The predicate expression of a conditional statement must be a success type of a boolean.
 
 \noindent
 \[
   \Rule{\Gamma \vdash S_{pred} : t_{pred} \quad \Gamma \vdash S_{cons} : t_{cons} \quad \Gamma \vdash S_{alt} : t_{alt}
-    \quad t_{pred} \subseteq \Bool \vee t_{pred} = \Any}{\Gamma \vdash (\texttt{if}\ (S_{pred})\ \{\ S_{cons}\ \}\
+    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma \vdash (\texttt{if}\ (S_{pred})\ \{\ S_{cons}\ \}\
     \texttt{else}\ \{\ S_{alt}\ \}) : t_{cons}\ |\ t_{alt}}
 \]
 \noindent

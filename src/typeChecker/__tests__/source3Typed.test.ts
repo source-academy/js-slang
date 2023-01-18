@@ -11,54 +11,63 @@ beforeEach(() => {
 
 describe('array type', () => {
   it('handles type mismatches correctly', () => {
-    const code = `const arr1: number[] = [1, 2, 3];
-      const arr2: string[] = ['1', '2', '3'];
-      const arr3: number[] = [1, '2', 3];
-      const arr4: string[] = [1, '2', 3];
-      const arr5: (number | string)[] = [1, '2', 3];
-      const arr6: number[] = [];
+    const code = `const arr1: number[] = [1, 2, 3]; // no error
+      const arr2: string[] = ['1', '2', '3']; // no error
+      const arr3: number[] = [1, '2', 3]; // no error
+      const arr4: boolean[] = [1, '2', 3]; // error
+      const arr5: (number | string)[] = [1, '2', 3]; // no error
+      const arr6: number[] = []; // no error
     `
 
     parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 3: Type '(number | string)[]' is not assignable to type 'number[]'.
-      Line 4: Type '(number | string)[]' is not assignable to type 'string[]'."
-    `)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 4: Type '(number | string)[]' is not assignable to type 'boolean[]'."`
+    )
   })
 
   it('handles nested array types', () => {
-    const code = `const arr1: number[][] = [[1], [2], [3]];
-      const arr2: string[][] = [['1'], ['2'], ['3']];
-      const arr3: number[][] = [[1], ['2'], [3]];
-      const arr4: string[][] = [[1], ['2'], [3]];
-      const arr5: (number | string)[][] = [[1], ['2'], [3]];
-      const arr6: number[][] = [];
+    const code = `const arr1: number[][] = [[1], [2], [3]]; // no error
+      const arr2: string[][] = [['1'], ['2'], ['3']]; // no error
+      const arr3: number[][] = [[1], ['2'], [3]]; // no error
+      const arr4: boolean[][] = [[1], ['2'], [3]]; // error
+      const arr5: (number | string)[][] = [[1], ['2'], [3]]; // no error
+      const arr6: number[][] = []; // no error
+      const arr7: number[][] = [1, 2, 3]; // error
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 3: Type '(number[] | string[])[]' is not assignable to type 'number[][]'.
-      Line 4: Type '(number[] | string[])[]' is not assignable to type 'string[][]'."
+      "Line 4: Type '(number[] | string[])[]' is not assignable to type 'boolean[][]'.
+      Line 7: Type 'number[]' is not assignable to type 'number[][]'."
     `)
   })
 })
 
 describe('array access', () => {
-  it('index must be number', () => {
+  it('index must be success type of number', () => {
     const code = `const arr: number[] = [1, 2, 3];
-      arr[0];
-      arr['1'];
-      arr[true];
-      arr[undefined];
-      arr[null];
+      const x1: number = 0;
+      const x2: string = '1';
+      const x3: boolean = true;
+      const x4: string | number = '1';
+      const x5: string | boolean = '1';
+      arr[0]; // no error
+      arr['1']; // error
+      arr[true]; // error
+      arr[x1]; // no error
+      arr[x2]; // error
+      arr[x3]; // error
+      arr[x4]; // no error
+      arr[x5]; // error
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 3: Type '\\"1\\"' cannot be used as an index type.
-      Line 4: Type 'true' cannot be used as an index type.
-      Line 5: Type 'undefined' cannot be used as an index type.
-      Line 6: Type 'null' cannot be used as an index type."
+      "Line 8: Type '\\"1\\"' cannot be used as an index type.
+      Line 9: Type 'true' cannot be used as an index type.
+      Line 11: Type 'string' cannot be used as an index type.
+      Line 12: Type 'boolean' cannot be used as an index type.
+      Line 14: Type 'string | boolean' cannot be used as an index type."
     `)
   })
 
@@ -125,7 +134,7 @@ describe('variable assignment', () => {
 })
 
 describe('while loops', () => {
-  it('predicate must be boolean', () => {
+  it('predicate must be success type of boolean', () => {
     const code = `let x: number = 0;
       let y: boolean = true;
       while (x < 1) { // no error
@@ -148,14 +157,14 @@ describe('while loops', () => {
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 6: Type 'number' is not assignable to type 'boolean'.
-      Line 9: Type 'undefined' is not assignable to type 'boolean'.
+      Line 9: Type 'number' is not assignable to type 'boolean'.
       Line 12: Type 'number' is not assignable to type 'boolean'."
     `)
   })
 })
 
 describe('for loops', () => {
-  it('predicate must be boolean', () => {
+  it('predicate must be success type of boolean', () => {
     const code = `for (let x: number = 0; x < 1; x = x + 1) { // no error
         display(x);
       }
@@ -176,7 +185,7 @@ describe('for loops', () => {
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 4: Type 'number' is not assignable to type 'boolean'.
-      Line 7: Type 'undefined' is not assignable to type 'boolean'.
+      Line 7: Type 'number' is not assignable to type 'boolean'.
       Line 10: Type 'number' is not assignable to type 'boolean'."
     `)
   })
@@ -189,6 +198,34 @@ describe('for loops', () => {
       for (x = '1'; x === '1'; x = x + '1') {
         display(x);
       }
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+})
+
+describe('binary operations', () => {
+  it('=== and !== allows any type on both sides', () => {
+    const code = `const x1: number = 1;
+      const x2: string = '1';
+      const x3: boolean = true;
+      const x4: any = true;
+      const x5 = undefined;
+      const x6: string | number = 1;
+      const x7: string | boolean = '1';
+      const x8: boolean = x1 === 1; // number + number
+      const x9: boolean = x2 !== '1'; // string + string
+      const x10: boolean = x1 === x3; // number + boolean
+      const x11: boolean = x3 !== x2; // boolean + string
+      const x12: boolean = x1 === x4; // number + any
+      const x13: boolean = x5 !== x2; // any + string
+      const x14: boolean = x1 === x2; // number + string
+      const x15: boolean = x4 !== x5; // any + any
+      const x16: boolean = x6 === x4; // string | number + any
+      const x17: boolean = x1 !== x6; // number + string | number
+      const x18: boolean = x6 === x2; // string | number + string
+      const x19: boolean = x5 !== x7; // any + string | boolean
     `
 
     parse(code, context)

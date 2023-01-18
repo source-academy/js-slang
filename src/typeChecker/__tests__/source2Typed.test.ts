@@ -86,18 +86,19 @@ describe('list', () => {
       const x2: List<number> = list(); // no error
       const x3: List<number> = list('1'); // error
       const x4: List<number> = 1; // error
-      const x5: List<number> = list(1, '2'); // error
-      const x6: List<number | string> = list(1, '2'); // no error
-      const x7: List<number, string> = list(1, '2'); // error
-      const x8: List<null> = list(null, null); // no error
+      const x5: List<number> = list(1, '2'); // no error
+      const x6: List<boolean> = list(1, '2'); // error
+      const x7: List<number | string> = list(1, '2'); // no error
+      const x8: List<number, string> = list(1, '2'); // error
+      const x9: List<null> = list(null, null); // no error
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 7: Generic type 'List' requires 1 type argument(s).
+      "Line 8: Generic type 'List' requires 1 type argument(s).
       Line 3: Type 'List<string>' is not assignable to type 'List<number>'.
       Line 4: Type 'number' is not assignable to type 'List<number>'.
-      Line 5: Type 'List<number | string>' is not assignable to type 'List<number>'."
+      Line 6: Type 'List<number | string>' is not assignable to type 'List<boolean>'."
     `)
   })
 
@@ -135,36 +136,36 @@ describe('head', () => {
     )
   })
 
-  it('return type is type of first element in pair', () => {
+  it('return type for pair is type of first element in pair', () => {
     const code = `const x1: Pair<number, number> = pair(1, 2);
     const x2: Pair<string, number> = pair('1', 2);
     const x3: Pair<string | number, number> = pair('1', 2);
     const x4: number = head(x1); // no error
     const x5: string = head(x2); // no error
     const x6: string = head(pair('1', 2)); // no error
-    const x7: string = head(x3); // error
+    const x7: boolean = head(x3); // error
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 7: Type 'string | number' is not assignable to type 'string'."`
+      `"Line 7: Type 'string | number' is not assignable to type 'boolean'."`
     )
   })
 
-  it('return type is element type in list', () => {
+  it('return type for list is element type in list', () => {
     const code = `const x1: List<number> = list(1, 2);
     const x2: List<string> = list('1', '2');
     const x3: List<string | number> = list('1', 2);
     const x4: number = head(x1); // no error
     const x5: string = head(x2); // no error
-    const x6: string = head(list('1', 2)); // error
-    const x7: string = head(x3); // error
+    const x6: boolean = head(list('1', 2)); // error
+    const x7: boolean = head(x3); // error
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 6: Type 'string | number' is not assignable to type 'string'.
-      Line 7: Type 'string | number' is not assignable to type 'string'."
+      "Line 6: Type 'string | number' is not assignable to type 'boolean'.
+      Line 7: Type 'string | number' is not assignable to type 'boolean'."
     `)
   })
 })
@@ -183,19 +184,19 @@ describe('tail', () => {
     )
   })
 
-  it('return type is type of second element in pair', () => {
+  it('return type for pair is type of second element in pair', () => {
     const code = `const x1: Pair<number, number> = pair(1, 2);
     const x2: Pair<number, string> = pair(1, '2');
     const x3: Pair<number, string | number> = pair(1, '2');
     const x4: number = tail(x1); // no error
     const x5: string = tail(x2); // no error
     const x6: string = tail(pair(1, '2')); // no error
-    const x7: string = tail(x3); // error
+    const x7: boolean = tail(x3); // error
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 7: Type 'string | number' is not assignable to type 'string'."`
+      `"Line 7: Type 'string | number' is not assignable to type 'boolean'."`
     )
   })
 
@@ -206,12 +207,12 @@ describe('tail', () => {
     const x4: List<number> = tail(x1); // no error
     const x5: List<string> = tail(x2); // no error
     const x6: List<number> = tail(list('1', 2)); // no error
-    const x7: List<string> = tail(x3); // error
+    const x7: List<boolean> = tail(x3); // error
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 7: Type 'List<string | number>' is not assignable to type 'List<string>'."`
+      `"Line 7: Type 'List<string | number>' is not assignable to type 'List<boolean>'."`
     )
   })
 })
