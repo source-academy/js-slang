@@ -401,17 +401,6 @@ If the block does not contain any return statements, the type is $\Undefined$.
 \]
 \noindent
 
-The type of a block outside of function bodies is the type of the last value-producing statement in the block.
-
-\noindent
-\[
-  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
-    \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is the last value-producing statement}}{
-    \Gamma \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
-    S_1, \ldots, S_n\} : t'_n}
-\]
-\noindent
-
 The type of a conditional statement or if statement is the union of the type of its consequent statement and its alternate statement.
 The predicate expression of a conditional statement must be a success type of a boolean.
 
