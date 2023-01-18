@@ -269,7 +269,7 @@ function prepareBuiltins(oldBuiltins: Map<string, any>) {
   return newBuiltins
 }
 
-function nothingFunction(...args: any[]) {
+function nothingFunction(..._args: any[]) {
   return nothingFunction
 }
 

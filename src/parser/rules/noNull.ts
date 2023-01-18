@@ -25,7 +25,7 @@ const noNull: Rule<es.Literal> = {
   name: 'no-null',
   disableFromChapter: Chapter.SOURCE_2,
   checkers: {
-    Literal(node: es.Literal, ancestors: [es.Node]) {
+    Literal(node: es.Literal, _ancestors: [es.Node]) {
       if (node.value === null) {
         return [new NoNullError(node)]
       } else {

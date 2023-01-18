@@ -337,7 +337,7 @@ function* evaluateConditional(node: es.IfStatement | es.ConditionalExpression, c
 // prettier-ignore
 export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   /** Simple Values */
-  Literal: function*(node: es.Literal, context: Context) {
+  Literal: function*(node: es.Literal, _context: Context) {
     yield node.value
   },
 
@@ -496,11 +496,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return yield* evaluate(node.expression, context)
   },
 
-  ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
+  ContinueStatement: function*(_node: es.ContinueStatement, _context: Context) {
     yield new ContinueValue()
   },
 
-  BreakStatement: function*(node: es.BreakStatement, context: Context) {
+  BreakStatement: function*(_node: es.BreakStatement, _context: Context) {
     yield new BreakValue()
   },
 

@@ -340,7 +340,7 @@ function* evaluateBlockStatement(context: Context, node: es.BlockStatement) {
 // prettier-ignore
 export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   /** Simple Values */
-  Literal: function*(node: es.Literal, context: Context) {
+  Literal: function*(node: es.Literal, _context: Context) {
     return node.value
   },
 
@@ -443,11 +443,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return undefined
   },
 
-  ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
+  ContinueStatement: function*(_node: es.ContinueStatement, _context: Context) {
     return new ContinueValue()
   },
 
-  BreakStatement: function*(node: es.BreakStatement, context: Context) {
+  BreakStatement: function*(_node: es.BreakStatement, _context: Context) {
     return new BreakValue()
   },
 
