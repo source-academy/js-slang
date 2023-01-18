@@ -650,20 +650,12 @@ function typeCheckAndReturnBinaryExpressionType(
       // However, the case where one side is string and other side is number is not allowed
       if (leftTypeString === 'number' || leftTypeString === 'string') {
         checkForTypeMismatch(node, rightType, leftType, context)
-        // Return type will be either number or string depending on the left/right type
-        // However, if one side is of type string and other side is of type number, return type will be string
-        if (leftTypeString === 'string' || rightTypeString === 'string') {
-          return tString
-        }
+        // If left type is number or string, return left type
         return leftType
       }
       if (rightTypeString === 'number' || rightTypeString === 'string') {
         checkForTypeMismatch(node, leftType, rightType, context)
-        // Return type will be either number or string depending on the left/right type
-        // However, if one side is of type string and other side is of type number, return type will be string
-        if (leftTypeString === 'string' || rightTypeString === 'string') {
-          return tString
-        }
+        // If left type is not number or string but right type is number or string, return right type
         return rightType
       }
 
@@ -697,7 +689,7 @@ function typeCheckAndReturnBinaryExpressionType(
       checkForTypeMismatch(node, rightType, tUnion(tNumber, tString), context)
       return tBool
     default:
-      return tAny
+      throw new TypecheckError(node, 'Unknown operator')
   }
 }
 
