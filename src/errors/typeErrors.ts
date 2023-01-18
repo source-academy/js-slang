@@ -482,25 +482,6 @@ export class TypeNotCallableError implements SourceError {
   }
 }
 
-export class NoExplicitAnyError implements SourceError {
-  public type = ErrorType.TYPE
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: tsEs.TSAsExpression) {}
-
-  get location() {
-    return this.node.loc!
-  }
-
-  public explain() {
-    return "Typecasting to 'any' is not allowed."
-  }
-
-  public elaborate() {
-    return this.explain()
-  }
-}
-
 export class TypecastError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
@@ -516,7 +497,7 @@ export class TypecastError implements SourceError {
   }
 
   public explain() {
-    return `Type '${this.originalType}' cannot be casted to type '${this.typeToCastTo}' as '${this.originalType}' is not a superset of '${this.typeToCastTo}'.`
+    return `Type '${this.originalType}' cannot be casted to type '${this.typeToCastTo}' as the two types do not intersect.`
   }
 
   public elaborate() {

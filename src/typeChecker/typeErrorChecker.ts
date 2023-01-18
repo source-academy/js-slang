@@ -9,7 +9,6 @@ import {
   InvalidIndexTypeError,
   InvalidNumberOfArgumentsTypeError,
   InvalidNumberOfTypeArgumentsForGenericTypeError,
-  NoExplicitAnyError,
   TypeAliasNameNotAllowedError,
   TypecastError,
   TypeMismatchError,
@@ -481,9 +480,6 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
     case 'TSAsExpression':
       const originalType = typeCheckAndReturnType(node.expression, context, env)
       const typeToCastTo = getTypeAnnotationType(node, context, env)
-      if (typeToCastTo.kind === 'primitive' && typeToCastTo.name === 'any') {
-        context.errors.push(new NoExplicitAnyError(node))
-      }
       const formatAsLiteral =
         typeContainsLiteralType(originalType) || typeContainsLiteralType(typeToCastTo)
       if (hasTypeMismatchErrors(typeToCastTo, originalType)) {
@@ -794,20 +790,30 @@ function typeContainsLiteralType(type: Type): boolean {
 }
 
 /**
- * Returns a boolean if the two given types are equal, false otherwise.
+ * Returns true if the actual type and the expected type do not match, false otherwise.
+ * The two types will not match if the intersection of the two types is empty.
  */
 function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
   if (isEqual(actualType, tAny) || isEqual(expectedType, tAny)) {
     // Exit early as "any" is guaranteed not to cause type mismatch errors
     return false
   }
+  if (expectedType.kind !== 'union' && actualType.kind === 'union') {
+    // If the expected type is not a union type but the actual type is a union type,
+    // Check if the expected type matches any of the actual types
+    // This removes the need to check if the actual type is a union type in all of the switch cases
+    return !containsType(actualType.types, expectedType)
+  }
   switch (expectedType.kind) {
-    case 'primitive':
     case 'variable':
+      return true
+    case 'primitive':
       if (actualType.kind === 'literal') {
-        return typeof actualType.value !== expectedType.name
+        return expectedType.value === undefined
+          ? typeof actualType.value !== expectedType.name
+          : actualType.value !== expectedType.value
       }
-      if (actualType.kind !== 'primitive' && actualType.kind !== 'variable') {
+      if (actualType.kind !== 'primitive') {
         return true
       }
       return actualType.name !== expectedType.name
@@ -823,7 +829,8 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
       }
       for (let i = 0; i < actualType.parameterTypes.length; i++) {
         // Note that actual and expected types are swapped here
-        // as expected type should be subset of actual type for function arguments
+        // to simulate contravariance for function parameter types
+        // This will be useful if type checking in Source Typed were to be made stricter in the future
         if (hasTypeMismatchErrors(expectedParamTypes[i], actualParamTypes[i])) {
           return true
         }
@@ -831,20 +838,23 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
       // Check return type
       return hasTypeMismatchErrors(actualType.returnType, expectedType.returnType)
     case 'union':
-      // If not union type, actual type should match one of the expected types
+      // If actual type is not union type, check if actual type matches one of the expected types
       if (actualType.kind !== 'union') {
         return !containsType(expectedType.types, actualType)
       }
-      // If both are union types, every type in the actual types should match one of the expected types
+      // If both are union types, there are no type errors as long as one of the types match
       for (const type of actualType.types) {
-        if (!containsType(expectedType.types, type)) {
-          return true
+        if (containsType(expectedType.types, type)) {
+          return false
         }
       }
-      return false
+      return true
     case 'literal':
       if (actualType.kind !== 'literal' && actualType.kind !== 'primitive') {
         return true
+      }
+      if (actualType.kind === 'primitive' && actualType.value === undefined) {
+        return actualType.name !== typeof expectedType.value
       }
       return actualType.value !== expectedType.value
     case 'pair':
@@ -886,9 +896,6 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
       }
       if (actualType.kind !== 'list') {
         return true
-      }
-      if (actualType.typeAsPair !== undefined) {
-        return hasTypeMismatchErrors(actualType.typeAsPair, expectedType)
       }
       return hasTypeMismatchErrors(actualType.elementType, expectedType.elementType)
     case 'array':
