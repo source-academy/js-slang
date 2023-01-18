@@ -651,18 +651,19 @@ describe('binary operations', () => {
       const x12: number = x1 + x4; // no error, number + any, return type number
       const x13: string = x5 + x2; // no error, any + string, return type string
       const x14: number = x1 + x2; // error, number + string, return type number (follows left side)
-      const x15: string = x4 + x5; // no error, any + any, return type any
-      const x16: number | string = x6 + x4; // no error, string | number + any, return type any
+      const x15: string = x4 + x5; // no error, any + any, return type string | number
+      const x16: boolean = x6 + x4; // error, string | number + any, return type number | string
       const x17: number = x1 + x6; // no error, number + string | number, return type number
       const x18: string = x6 + x2; // no error, string | number + string, return type string
-      const x19: string | number = x5 + x7; // no error, any + string | boolean, return type any
+      const x19: string | number = x5 + x7; // no error, any + string | boolean, return type number | string
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 10: Type 'boolean' is not assignable to type 'number'.
       Line 11: Type 'boolean' is not assignable to type 'string'.
-      Line 14: Type 'string' is not assignable to type 'number'."
+      Line 14: Type 'string' is not assignable to type 'number'.
+      Line 16: Type 'number | string' is not assignable to type 'boolean'."
     `)
   })
 

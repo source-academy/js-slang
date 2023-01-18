@@ -258,7 +258,7 @@ For the \texttt{+} operator, the following rules are applied, in order of priori
 \item{If the expression on the right side is of type $\String$ or literal string type,
   check that the other expression is a success type of $\String$. The return type is $\String$.}
 \item{If the expression on the left side cannot be narrowed to either $\Number$ or $\String$, check that both sides are success types of 
-  $\Number\ |\ \String$. The return type is $\Any$.}
+  $\Number\ |\ \String$. The return type is $\Number\ |\ \String$.}
 \end{itemize}
 
 \noindent
@@ -284,7 +284,7 @@ For the \texttt{+} operator, the following rules are applied, in order of priori
 \noindent
 \[
   \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 \wedge (\Number\ |\ \String) \neq \emptyset
-    \quad t_1 \wedge (\Number\ |\ \String) \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \Any}
+    \quad t_1 \wedge (\Number\ |\ \String) \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \Number\ |\ \String}
 \]
 \noindent
 

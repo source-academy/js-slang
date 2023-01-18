@@ -655,10 +655,10 @@ function typeCheckAndReturnBinaryExpressionType(
         return rightType
       }
 
-      // Return type is any if both left and right are neither number nor string
+      // Return type is number | string if both left and right are neither number nor string
       checkForTypeMismatch(node, leftType, tUnion(tNumber, tString), context)
       checkForTypeMismatch(node, rightType, tUnion(tNumber, tString), context)
-      return tAny
+      return tUnion(tNumber, tString)
     case '<':
     case '<=':
     case '>':
