@@ -157,7 +157,7 @@ describe('while loops', () => {
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 6: Type 'number' is not assignable to type 'boolean'.
-      Line 9: Type 'undefined' is not assignable to type 'boolean'.
+      Line 9: Type 'number' is not assignable to type 'boolean'.
       Line 12: Type 'number' is not assignable to type 'boolean'."
     `)
   })
@@ -185,7 +185,7 @@ describe('for loops', () => {
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 4: Type 'number' is not assignable to type 'boolean'.
-      Line 7: Type 'undefined' is not assignable to type 'boolean'.
+      Line 7: Type 'number' is not assignable to type 'boolean'.
       Line 10: Type 'number' is not assignable to type 'boolean'."
     `)
   })

@@ -402,7 +402,7 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context, env: TypeEnvi
         context.errors.push(new ConstNotAssignableTypeError(node, node.left.name))
       }
       checkForTypeMismatch(node, actualType, expectedType, context)
-      return tUndef
+      return actualType
     case 'ArrayExpression':
       // Casting is safe here as Source disallows use of spread elements and holes in arrays
       const elements = node.elements.filter(

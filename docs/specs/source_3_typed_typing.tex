@@ -321,12 +321,12 @@ For as expressions, the type to cast the expression to must be a success type of
 \subsubsection{Typing Relations on Assignments}
 
 For assignments, the type of the right expression must be a success type of the type of the left expression.
-The type of the assignment itself is $\Undefined$.
+The type of the assignment itself is the type of the right expression.
 
 \noindent
 \[
   \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 \wedge t_0 \neq \emptyset}{
-    \Gamma \vdash (E_0 = E_1) : \Undefined}
+    \Gamma \vdash (E_0 = E_1) : t_1}
 \]
 \noindent
 
