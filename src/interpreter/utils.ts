@@ -1,9 +1,8 @@
 /**
- * Stack is implemented for control and stash registers.
+ * Stack is implemented for agenda and stash registers.
  */
 interface IStack<T> {
   push(item: T): void
-  extend(items: T[]): void
   pop(): T | undefined
   peek(): T | undefined
   size(): number

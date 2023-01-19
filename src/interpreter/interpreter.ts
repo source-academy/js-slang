@@ -1,3 +1,10 @@
+/**
+ *
+ * This interpreter implements an explicit-control evaluator.
+ *
+ * Heavily adapted from https://github.com/source-academy/JSpike/
+ */
+
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
 import { isEmpty, uniqueId } from 'lodash'
@@ -13,6 +20,35 @@ import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
+import { AgendaItem, InstrTypes } from './types'
+import { Stack } from './utils'
+
+/**
+ * The agenda is a list of commands that still needs to be executed by the machine.
+ * It contains syntax tree nodes or instructions.
+ */
+//@ts-ignore TODO remove ts-ignore
+class Agenda extends Stack<AgendaItem> {
+  constructor(program: es.BlockStatement) {
+    super()
+    // Evaluation of last statement is undefined if stash is empty
+    this.storage.push({ type: InstrTypes.PUSH_UNDEFINED })
+
+    // Load program into agenda stack
+    // program is a es.BlockStatement
+    this.storage.push(program)
+  }
+}
+
+/**
+ * The stash is a list of values that stores intermediate results.
+ */
+//@ts-ignore TODO remove ts-ignore
+class Stash extends Stack<Value> {
+  constructor() {
+    super()
+  }
+}
 
 class BreakValue {}
 
