@@ -1,9 +1,17 @@
 import * as es from 'estree'
 
+import { Context } from '..'
+import { Value } from '../types'
+import { Agenda, Stash } from './interpreter'
+
 export type AgendaItem = es.Node | IInstr
 
+// Might have to change each InstrType to its own interface because different instrtypes have different
+// additional properties that they require.
 export interface IInstr {
-  type: InstrTypes
+  instrType: InstrTypes
+  symbol?: string
+  const?: boolean
 }
 
 export enum InstrTypes {
@@ -20,6 +28,13 @@ export enum InstrTypes {
   ARRAY_LITERAL = 'ArrayLiteral',
   ARRAY_ASSIGNMENT = 'ArrayAssignment'
 }
+
+export type cmdEvaluator = (
+  command: AgendaItem,
+  context: Context,
+  agenda: Agenda,
+  stash: Stash
+) => Value
 
 // Tags taken from MicroPython interpreter
 // export enum Tags {

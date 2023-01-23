@@ -10,10 +10,10 @@ import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluate } from '../interpreter/interpreter'
-// import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
+import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import { parse } from '../parser/parser'
-// import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
+import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
   callee,
   getEvaluationSteps,
@@ -23,7 +23,7 @@ import {
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { hoistImportDeclarations, transpile } from '../transpiler/transpiler'
-import { Context, /*Scheduler,*/ SourceError, Variant } from '../types'
+import { Context, Scheduler, SourceError, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
@@ -102,21 +102,26 @@ function runSubstitution(
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  // Temporary solution, logic for breakpoints, different variant and scheduling options missing. 
-  // Was taken care of by 'schedulers' before which don't work with new code structure that doesn't use generators.
-  return new Promise((resolve, reject) => {
-    resolve({ status: 'finished', context, value: evaluate(program, context) })
-  })
-  // let it = evaluate(program, context
-  // if (context.variant === Variant.NON_DET) {
-  //   it = nonDetEvaluate(program, context)
-  //   scheduler = new NonDetScheduler()
-  // } else if (options.scheduler === 'async') {
-  //   scheduler = new AsyncScheduler()
-  // } else {
-  //   scheduler = new PreemptiveScheduler(options.steps)
+  // To run new interpreter, uncomment the code below.
+  // And change the import statement for evaluate to 'import { evaluate } from '../ec-evaluator/interpreter'
+  // if (true) {
+  //   return new Promise((resolve, reject) => {
+  //     resolve({ status: 'finished', context, value: evaluate(program, context) })
+  //   })
   // }
-  // return scheduler.run(it, context)
+  // This is just a temporary solution. Logic for breakpoints, nondet evaluate and async scheduling option missing.
+  // Was taken care of by 'schedulers' before which don't work with new code structure that doesn't use generators.
+  let it = evaluate(program, context)
+  let scheduler: Scheduler
+  if (context.variant === Variant.NON_DET) {
+    it = nonDetEvaluate(program, context)
+    scheduler = new NonDetScheduler()
+  } else if (options.scheduler === 'async') {
+    scheduler = new AsyncScheduler()
+  } else {
+    scheduler = new PreemptiveScheduler(options.steps)
+  }
+  return scheduler.run(it, context)
 }
 
 async function runNative(
