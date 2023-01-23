@@ -1,3 +1,6 @@
+import { AgendaItem} from './types'
+import * as es from 'estree'
+
 /**
  * Stack is implemented for agenda and stash registers.
  */
@@ -36,4 +39,13 @@ export class Stack<T> implements IStack<T> {
   size() {
     return this.storage.length
   }
+}
+
+/**
+ * Typeguard for esNode
+ * @param command an AgendaItem
+ * @returns true if the AgendaItem is an esNode and false otherwise.
+ */
+export const isNode = (command: AgendaItem): command is es.Node => {
+  return (command as es.Node).type !== undefined
 }
