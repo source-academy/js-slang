@@ -120,7 +120,7 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
     const declaration: es.VariableDeclarator = command.declarations[0]
     const id = declaration.id as es.Identifier
     // Results in a redundant pop if this is part of a sequence statements. Not sure if this is intended.
-    agenda.push({instrType: InstrTypes.POP})
+    agenda.push({ instrType: InstrTypes.POP })
     agenda.push({
       instrType: InstrTypes.ASSIGNMENT,
       symbol: id.name,
