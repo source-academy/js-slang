@@ -13,9 +13,9 @@ import * as constants from '../constants'
 import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
-import {Context, ContiguousArrayElements, Environment, Frame, Value, Variant} from '../types'
+import { checkEditorBreakpoints } from '../stdlib/inspector'
+import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -201,7 +201,7 @@ function defineVariable(context: Context, name: string, value: Value, constant =
 }
 
 function* visit(context: Context, node: es.Node) {
-checkEditorBreakpoints(context, node)
+  checkEditorBreakpoints(context, node)
   context.runtime.nodes.unshift(node)
   yield context
 }

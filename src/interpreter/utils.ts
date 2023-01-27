@@ -1,4 +1,3 @@
-
 /**
  * Stack is implemented for agenda and stash registers.
  */

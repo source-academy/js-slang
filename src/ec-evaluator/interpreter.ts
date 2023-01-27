@@ -2,7 +2,7 @@
  *
  * This interpreter implements an explicit-control evaluator.
  *
- * Heavily adapted from https://github.com/source-academy/JSpike/ 
+ * Heavily adapted from https://github.com/source-academy/JSpike/
  * and the legacy interpreter at '../interpreter/interpreter'
  */
 
@@ -74,7 +74,7 @@ export function evaluate(program: es.Program, context: Context) {
 }
 
 /**
- * Dictionary of functions which handle the logic for the response of the three registers of 
+ * Dictionary of functions which handle the logic for the response of the three registers of
  * the ASE machine to each AgendaItem.
  */
 const cmdEvaluators: { [command: string]: cmdEvaluator } = {
@@ -83,6 +83,7 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
     const environment: Environment = createBlockEnvironment(context, 'programEnvironment')
     pushEnvironment(context, environment)
     declareFunctionsAndVariables(context, command)
+    // Allow AgendaInst to be an array of statements so that we can separate sequence from block?
     for (let index = command.body.length - 1; index > 0; index--) {
       agenda.push(command.body[index])
       agenda.push({ instrType: InstrTypes.POP })
@@ -104,12 +105,22 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
   Literal: function (command: es.Literal, context: Context, agenda: Agenda, stash: Stash) {
     stash.push(command.value)
   },
-  ExpressionStatement: function (command: es.ExpressionStatement, context: Context, agenda: Agenda) {
+  ExpressionStatement: function (
+    command: es.ExpressionStatement,
+    context: Context,
+    agenda: Agenda
+  ) {
     agenda.push(command.expression)
   },
-  VariableDeclaration: function (command: es.VariableDeclaration, context: Context, agenda: Agenda) {
+  VariableDeclaration: function (
+    command: es.VariableDeclaration,
+    context: Context,
+    agenda: Agenda
+  ) {
     const declaration: es.VariableDeclarator = command.declarations[0]
     const id = declaration.id as es.Identifier
+    // Results in a redundant pop if this is part of a sequence statements. Not sure if this is intended.
+    agenda.push({instrType: InstrTypes.POP})
     agenda.push({
       instrType: InstrTypes.ASSIGNMENT,
       symbol: id.name,
@@ -139,8 +150,6 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
     stash.push(evaluateBinaryExpression(command.symbol as es.BinaryOperator, left, right))
   },
   Assignment: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
-    // Assignment doesn't return undefined but returns the value(no stash pop). This is how it seemed to be
-    // in the ASE machine as well. Was this intended?
     defineVariable(context, command.symbol!, stash.peek(), command.const)
   },
   Environment: function (command: IInstr, context: Context) {
@@ -150,13 +159,14 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
     stash.pop()
   },
   PushUndefined: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
-    if (stash.size() == 0) {
+    if (stash.size() === 0) {
       stash.push(undefined)
     }
   }
 }
 
-export const createBlockEnvironment = ( context: Context,
+export const createBlockEnvironment = (
+  context: Context,
   name = 'blockEnvironment',
   head: Frame = {}
 ): Environment => {
