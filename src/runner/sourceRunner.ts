@@ -229,7 +229,6 @@ export async function sourceRunner(
   hoistAndMergeImports(program)
 
   validateAndAnnotate(program, context)
-  context.unTypecheckedCode.push(code)
 
   if (context.errors.length > 0) {
     return resolvedErrorPromise
@@ -253,6 +252,7 @@ export async function sourceRunner(
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
+    context.unTypecheckedCode.push(prelude)
     await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true })
     return sourceRunner(code, context, isVerboseErrorsEnabled, options)
   }
@@ -279,6 +279,11 @@ export async function sourceFilesRunner(
   const isVerboseErrorsEnabled = hasVerboseErrors(entrypointCode)
 
   context.variant = determineVariant(context, options)
+  // FIXME: The type checker does not support the typing of multiple files, so
+  //        we only push the code in the entrypoint file. Either way, the type
+  //        checker is currently not used at all.
+  context.unTypecheckedCode.push(entrypointCode)
+
   // TODO: Make use of the preprocessed program AST after refactoring runners.
   // const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
   // if (!preprocessedProgram) {
