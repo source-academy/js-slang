@@ -249,7 +249,7 @@ export async function sourceRunner(
     return await fullJSRunner(code, context, theOptions)
   }
 
-  // Handle preludes
+  // All runners after this point evaluate the prelude.
   if (context.prelude !== null) {
     const prelude = context.prelude
     context.prelude = null
