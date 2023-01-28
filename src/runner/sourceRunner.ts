@@ -243,14 +243,9 @@ export async function sourceRunner(
     return runSubstitution(program, context, theOptions)
   }
 
-  const isNativeRunnable: boolean = determineExecutionMethod(
-    theOptions,
-    context,
-    program,
-    isVerboseErrorsEnabled
-  )
+  determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
 
-  if (isNativeRunnable && context.variant === Variant.NATIVE) {
+  if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
     return await fullJSRunner(code, context, theOptions)
   }
 
@@ -262,7 +257,7 @@ export async function sourceRunner(
     return sourceRunner(code, context, isVerboseErrorsEnabled, options)
   }
 
-  if (isNativeRunnable) {
+  if (context.executionMethod === 'native') {
     return runNative(code, program, context, theOptions)
   }
 

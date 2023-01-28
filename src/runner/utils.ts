@@ -35,10 +35,10 @@ export function determineExecutionMethod(
   context: Context,
   program: Program,
   verboseErrors: boolean
-): boolean {
-  let isNativeRunnable
+): void {
   if (theOptions.executionMethod === 'auto') {
     if (context.executionMethod === 'auto') {
+      let isNativeRunnable
       if (verboseErrors) {
         isNativeRunnable = false
       } else if (areBreakpointsSet()) {
@@ -53,14 +53,10 @@ export function determineExecutionMethod(
         isNativeRunnable = !hasDebuggerStatement
       }
       context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
-    } else {
-      isNativeRunnable = context.executionMethod === 'native'
     }
   } else {
-    isNativeRunnable = theOptions.executionMethod === 'native'
     context.executionMethod = theOptions.executionMethod
   }
-  return isNativeRunnable
 }
 
 /**
