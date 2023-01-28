@@ -2981,7 +2981,7 @@ export function getEvaluationSteps(
     let i = -1
     let stillEval = false
     while ((reducedWithPath[0] as es.Program).body.length > 0) {
-      if (steps.length == limit) {
+      if (steps.length === limit) {
         steps[steps.length - 1] = [ast.program([]), [], 'Maximum number of steps exceeded']
         stillEval = true
         break
