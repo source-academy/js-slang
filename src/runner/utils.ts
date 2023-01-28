@@ -44,13 +44,13 @@ export function determineExecutionMethod(
       } else if (areBreakpointsSet()) {
         isNativeRunnable = false
       } else {
-        let hasDeuggerStatement = false
+        let hasDebuggerStatement = false
         simple(program, {
           DebuggerStatement(node: DebuggerStatement) {
-            hasDeuggerStatement = true
+            hasDebuggerStatement = true
           }
         })
-        isNativeRunnable = !hasDeuggerStatement
+        isNativeRunnable = !hasDebuggerStatement
       }
       context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
     } else {
