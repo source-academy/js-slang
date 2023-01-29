@@ -10,8 +10,10 @@ export type AgendaItem = es.Node | IInstr
 // additional properties that they require.
 export interface IInstr {
   instrType: InstrTypes
-  symbol?: string
-  const?: boolean
+  symbol?: string // for Assignment
+  const?: boolean // for Assignment
+  numOfArgs?: number // for Application
+  expr? : es.CallExpression // for Application error handling
 }
 
 export enum InstrTypes {
@@ -26,7 +28,8 @@ export enum InstrTypes {
   ENVIRONMENT = 'Environment',
   PUSH_UNDEFINED = 'PushUndefined',
   ARRAY_LITERAL = 'ArrayLiteral',
-  ARRAY_ASSIGNMENT = 'ArrayAssignment'
+  ARRAY_ASSIGNMENT = 'ArrayAssignment',
+  MARKER = 'Marker'
 }
 
 export type cmdEvaluator = (

@@ -3,13 +3,14 @@ import { RawSourceMap } from 'source-map'
 
 import { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
+import { evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import { evaluate } from '../ec-evaluator/interpreter'
+import { evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import { parse } from '../parser/parser'
@@ -32,7 +33,6 @@ import { determineExecutionMethod } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
-import { Suspended } from '../types'
 
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
   scheduler: 'async',
@@ -103,20 +103,6 @@ function runSubstitution(
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  // To run new interpreter, uncomment the code below.
-  // And change the import statement for evaluate to 'import { evaluate } from '../ec-evaluator/interpreter'
-  if (true) {
-    return new Promise((resolve, reject) => {
-      // function* dum () {
-      //   return 2;
-      // }
-      // evaluate(program, context)
-      // resolve({ status: 'suspended', dum, scheduler: new PreemptiveScheduler(options.steps), context } as unknown as Suspended)
-      resolve({ status: 'finished', context, value: evaluate(program, context) })
-    })
-  }
-  // This is just a temporary solution. Logic for breakpoints, nondet evaluate and async scheduling option missing.
-  // Was taken care of by 'schedulers' before which don't work with new code structure that doesn't use generators.
   let it = evaluate(program, context)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
@@ -216,6 +202,17 @@ async function runNative(
   }
 }
 
+function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+  return new Promise((resolve, reject) => {
+    // function* dum () {
+    //   return 2;
+    // }
+    // evaluate(program, context)
+    // resolve({ status: 'suspended', dum, scheduler: new PreemptiveScheduler(options.steps), context } as unknown as Suspended)
+    resolve({ status: 'finished', context, value: ECEvaluate(program, context) })
+  })
+}
+
 export async function sourceRunner(
   code: string,
   context: Context,
@@ -270,6 +267,10 @@ export async function sourceRunner(
 
   if (isNativeRunnable) {
     return runNative(code, program, context, theOptions)
+  }
+
+  if (context.variant === Variant.EXPLICIT_CONTROL) {
+    return runECEvaluator(program, context, theOptions)
   }
 
   return runInterpreter(program, context, theOptions)

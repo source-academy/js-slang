@@ -14,7 +14,7 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
-import { blockArrowFunction, constantDeclaration } from '../utils/astCreator'
+import { blockArrowFunction, constantDeclaration, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import Closure from './closure'
 import { AgendaItem, cmdEvaluator, IInstr, InstrTypes } from './types'
@@ -59,8 +59,10 @@ export function evaluate(program: es.Program, context: Context) {
   const stash: Stash = new Stash()
   let command: AgendaItem | undefined = agenda.pop()
   while (command) {
+    console.log(agenda)
+    console.log(stash)
     if (isNode(command)) {
-      console.log(command)
+      console.log(command.type)
       // Not sure if context.runtime.nodes has been shifted/unshifted correctly here.
       context.runtime.nodes.unshift(command)
       checkEditorBreakpoints(context, command)
@@ -69,6 +71,7 @@ export function evaluate(program: es.Program, context: Context) {
       // context.runtime.break = false
       context.runtime.nodes.shift()
     } else {
+      console.log(command.instrType)
       cmdEvaluators[command.instrType](command, context, agenda, stash)
     }
     command = agenda.pop()
@@ -116,13 +119,11 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
     agenda.push(command.expression)
   },
   DebuggerStatement: function(command: es.DebuggerStatement, context: Context, agenda: Agenda) {
-    // temporary to make interpreter work in current source frontend. Not final.
     context.runtime.break = true;
   },
   VariableDeclaration: function (command: es.VariableDeclaration, context: Context, agenda: Agenda) {
     const declaration: es.VariableDeclarator = command.declarations[0]
     const id = declaration.id as es.Identifier
-    // Results in a redundant pop if this is part of a sequence statements. Not sure if this is intended.
     agenda.push({ instrType: InstrTypes.POP })
     agenda.push({
       instrType: InstrTypes.ASSIGNMENT,
@@ -153,7 +154,17 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
     agenda.push(lambdaDeclaration)
   },
   CallExpression: function(command: es.CallExpression, context: Context, agenda: Agenda, stash: Stash) {
-    command.callee
+    agenda.push({instrType: InstrTypes.APPLICATION, numOfArgs: command.arguments.length, expr: command})
+    for (let index = command.arguments.length - 1; index >= 0; index--) {
+      agenda.push(command.arguments[index])
+    }
+    agenda.push(command.callee)
+  },
+  ReturnStatement: function(command: es.ReturnStatement, context: Context, agenda: Agenda, stash: Stash) {
+    agenda.push({instrType:InstrTypes.RESET})
+    if (command.argument){
+      agenda.push(command.argument)
+    }
   },
   UnaryOperation: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
     const argument = stash.pop()
@@ -169,6 +180,42 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
   },
   Environment: function (command: IInstr, context: Context) {
     popEnvironment(context)
+  },
+  Application: function(command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
+    const args: Value[] = []
+    for (let index = 0; index < command.numOfArgs!; index++ ){
+      args.unshift(stash.pop())
+    }
+    // Member expressions ?
+    const func = stash.pop()
+    checkNumberOfArguments(context, func, args, command.expr!) 
+    if (func instanceof Closure) {
+      // User-defined and Pre-defined functions
+      const next = agenda.peek()
+      if (!next || (!isNode(next) && next.instrType === InstrTypes.ENVIRONMENT)) {
+        // Pushing another Env instruction would be redundant
+        agenda.push({ instrType: InstrTypes.MARKER })
+      } else if (!isNode(next) && next.instrType === InstrTypes.RESET) {
+        agenda.pop()
+      } else {
+        // empty instruction for marker? in case of functions without return statements.
+        agenda.push({ instrType: InstrTypes.MARKER })
+        agenda.push({ instrType: InstrTypes.ENVIRONMENT })
+        // TODO: push curr env (not the new extended env) with the Env Inst
+      }
+      agenda.push(func.node.body)
+      const environment = createEnvironment(func, args)
+      pushEnvironment(context, environment)
+    } else if (typeof func === "function") { 
+      // Pre-built functions
+      stash.push(func.apply(null, args)) // eslint-disable-line prefer-spread
+    }
+  },
+  Reset: function(command: IInstr, context: Context, agenda: Agenda) {
+    const cmdNext: AgendaItem | undefined = agenda.pop()
+    if (cmdNext && !isNode(cmdNext) && cmdNext.instrType !== InstrTypes.MARKER) {
+      agenda.push({instrType: InstrTypes.RESET})
+    }
   },
   Pop: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
     stash.pop()
@@ -309,3 +356,71 @@ const getVariable = (context: Context, name: string) => {
 //   }
 //   return handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
 // }
+
+const checkNumberOfArguments = (
+  context: Context,
+  callee: Closure | Value,
+  args: Value[],
+  exp: es.CallExpression
+) => {
+  if (callee instanceof Closure) {
+    // User-defined or Pre-defined functions
+    const params = callee.node.params
+    const hasVarArgs = params[params.length - 1]?.type === 'RestElement'
+    if (hasVarArgs ? params.length - 1 > args.length : params.length !== args.length) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(
+          exp,
+          hasVarArgs ? params.length - 1 : params.length,
+          args.length,
+          hasVarArgs
+        )
+      )
+    }
+  } else {
+    // Pre-built functions
+    const hasVarArgs = callee.minArgsNeeded != undefined
+    if (hasVarArgs ? callee.minArgsNeeded > args.length : callee.length !== args.length) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(
+          exp,
+          hasVarArgs ? callee.minArgsNeeded : callee.length,
+          args.length,
+          hasVarArgs
+        )
+      )
+    }
+  }
+  return undefined
+}
+
+const createEnvironment = (
+  closure: Closure,
+  args: Value[],
+  callExpression?: es.CallExpression
+): Environment => {
+  const environment: Environment = {
+    name: closure.functionName, // TODO: Change this
+    tail: closure.environment,
+    head: {},
+    id: uniqueId()
+  }
+  if (callExpression) {
+    // Don't think this is required for ece. Stack and agenda eliminates need to keep track of call expression.
+    environment.callExpression = {
+      ...callExpression,
+      arguments: args.map(primitive)
+    }
+  }
+  closure.node.params.forEach((param, index) => {
+    if (param.type === 'RestElement') {
+      // Not sure where rest elements are used in source. If no use found can remove the condition.
+      environment.head[(param.argument as es.Identifier).name] = args.slice(index)
+    } else {
+      environment.head[(param as es.Identifier).name] = args[index]
+    }
+  })
+  return environment
+}

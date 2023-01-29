@@ -1,10 +1,13 @@
 /**
  * Adapted from the legacy interpreter at '../interpreter/interpreter'
+ * TODO: Turn main constructor into what was previously "makeFromArrowFunction"
+ * TODO: Get rid of redundant parts of closure. 
  */
 /* tslint:disable:max-classes-per-file */
 import { generate } from 'astring'
 import * as es from 'estree'
 
+import { apply } from '../interpreter/interpreter'
 import { Context, Environment, Value } from '../types'
 import {
   blockArrowFunction,
@@ -12,7 +15,6 @@ import {
   identifier,
   returnStatement
 } from '../utils/astCreator'
-import { apply } from '../interpreter/interpreter'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
   function DummyClass(this: Closure) {
