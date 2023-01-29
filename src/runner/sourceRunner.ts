@@ -119,7 +119,6 @@ function runInterpreter(program: es.Program, context: Context, options: IOptions
 }
 
 async function runNative(
-  code: string,
   program: es.Program,
   context: Context,
   options: IOptions
@@ -132,20 +131,25 @@ async function runNative(
     }
   }
 
+  // For whatever reason, the transpiler mutates the state of the AST as it is transpiling and inserts
+  // a bunch of global identifiers to it. Once that happens, the infinite loop detection instrumentation
+  // ends up generating code that has syntax errors. As such, we need to make a deep copy here to preserve
+  // the original AST for future use, such as with the infinite loop detector.
+  const transpiledProgram = _.cloneDeep(program)
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    appendModulesToContext(program, context)
+    appendModulesToContext(transpiledProgram, context)
     switch (context.variant) {
       case Variant.GPU:
-        transpileToGPU(program)
+        transpileToGPU(transpiledProgram)
         break
       case Variant.LAZY:
-        transpileToLazy(program)
+        transpileToLazy(transpiledProgram)
         break
     }
 
-    ;({ transpiled, sourceMapJson } = transpile(program, context))
+    ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
     // console.log(transpiled);
     let value = await sandboxedEval(transpiled, context)
 
@@ -165,7 +169,7 @@ async function runNative(
   } catch (error) {
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-      const detectedInfiniteLoop = testForInfiniteLoop(code, context.previousPrograms.slice(1))
+      const detectedInfiniteLoop = testForInfiniteLoop(program, context.previousPrograms.slice(1))
       if (detectedInfiniteLoop !== undefined) {
         if (options.throwInfiniteLoops) {
           context.errors.push(detectedInfiniteLoop)
@@ -254,7 +258,7 @@ export async function sourceRunner(
   }
 
   if (context.executionMethod === 'native') {
-    return runNative(code, program, context, theOptions)
+    return runNative(program, context, theOptions)
   }
 
   return runInterpreter(program, context, theOptions)
