@@ -14,7 +14,9 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
+import { blockArrowFunction, constantDeclaration } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
+import Closure from './closure'
 import { AgendaItem, cmdEvaluator, IInstr, InstrTypes } from './types'
 import { isNode, Stack } from './utils'
 
@@ -58,12 +60,13 @@ export function evaluate(program: es.Program, context: Context) {
   let command: AgendaItem | undefined = agenda.pop()
   while (command) {
     if (isNode(command)) {
+      console.log(command)
       // Not sure if context.runtime.nodes has been shifted/unshifted correctly here.
       context.runtime.nodes.unshift(command)
       checkEditorBreakpoints(context, command)
       // Logic to handle breakpoints might have to go somewhere here.
       cmdEvaluators[command.type](command, context, agenda, stash)
-      context.runtime.break = false
+      // context.runtime.break = false
       context.runtime.nodes.shift()
     } else {
       cmdEvaluators[command.instrType](command, context, agenda, stash)
@@ -112,11 +115,11 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
   ) {
     agenda.push(command.expression)
   },
-  VariableDeclaration: function (
-    command: es.VariableDeclaration,
-    context: Context,
-    agenda: Agenda
-  ) {
+  DebuggerStatement: function(command: es.DebuggerStatement, context: Context, agenda: Agenda) {
+    // temporary to make interpreter work in current source frontend. Not final.
+    context.runtime.break = true;
+  },
+  VariableDeclaration: function (command: es.VariableDeclaration, context: Context, agenda: Agenda) {
     const declaration: es.VariableDeclarator = command.declarations[0]
     const id = declaration.id as es.Identifier
     // Results in a redundant pop if this is part of a sequence statements. Not sure if this is intended.
@@ -139,6 +142,18 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
     agenda.push({ instrType: InstrTypes.BINARY_OP, symbol: command.operator })
     agenda.push(command.right)
     agenda.push(command.left)
+  },
+  ArrowFunctionExpression: function (command: es.ArrowFunctionExpression, context: Context, agenda: Agenda, stash: Stash) {
+    const closure: Closure = Closure.makeFromArrowFunction(command, currentEnvironment(context), context)
+    stash.push(closure)
+  },
+  FunctionDeclaration: function(command: es.FunctionDeclaration, context: Context, agenda: Agenda) {
+    const lambdaExpression: es.ArrowFunctionExpression = blockArrowFunction(command.params as es.Identifier[], command.body, command.loc)
+    const lambdaDeclaration: es.VariableDeclaration = constantDeclaration(command.id!.name, lambdaExpression, command.loc)
+    agenda.push(lambdaDeclaration)
+  },
+  CallExpression: function(command: es.CallExpression, context: Context, agenda: Agenda, stash: Stash) {
+    command.callee
   },
   UnaryOperation: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
     const argument = stash.pop()

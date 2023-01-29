@@ -756,6 +756,7 @@ function getNonEmptyEnv(environment: Environment): Environment {
 
 export function* evaluate(node: es.Node, context: Context) {
   yield* visit(context, node)
+  console.log(node)
   const result = yield* evaluators[node.type](node, context)
   yield* leave(context)
   if (result instanceof Closure) {
