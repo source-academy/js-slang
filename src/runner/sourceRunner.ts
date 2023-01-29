@@ -280,8 +280,10 @@ export async function sourceFilesRunner(
 
   context.variant = determineVariant(context, options)
   // FIXME: The type checker does not support the typing of multiple files, so
-  //        we only push the code in the entrypoint file. Either way, the type
-  //        checker is currently not used at all.
+  //        we only push the code in the entrypoint file. Ideally, all files
+  //        involved in the program evaluation should be type-checked. Either way,
+  //        the type checker is currently not used at all so this is not very
+  //        urgent.
   context.unTypecheckedCode.push(entrypointCode)
 
   // TODO: Make use of the preprocessed program AST after refactoring runners.
