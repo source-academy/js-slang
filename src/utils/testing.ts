@@ -124,6 +124,8 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     let pretranspiled: string = ''
     let transpiled: string = ''
     const parsed = parse(code, nativeTestContext)!
+    // Reset errors in context so as not to interfere with actual run.
+    nativeTestContext.errors = []
     if (parsed === undefined) {
       pretranspiled = 'parseError'
     } else {
