@@ -336,6 +336,10 @@ export function testForInfiniteLoop(code: string, previousProgramsStack: es.Prog
       }
       return error
     }
+    // Programs that exceed the maximum call stack size are okay as long as they terminate.
+    if (error instanceof RangeError && error.message === 'Maximum call stack size exceeded') {
+      return undefined
+    }
     throw error
   }
   return undefined
