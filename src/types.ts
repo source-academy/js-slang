@@ -79,7 +79,8 @@ export enum Variant {
   LAZY = 'lazy',
   NON_DET = 'non-det',
   CONCURRENT = 'concurrent',
-  GPU = 'gpu'
+  GPU = 'gpu',
+  EXPLICIT_CONTROL = 'explicit-control'
 }
 
 export interface Language {

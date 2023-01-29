@@ -4,6 +4,7 @@ import { RawSourceMap } from 'source-map'
 import { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
 import { evaluate } from '../interpreter/interpreter'
+import { evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
@@ -102,15 +103,6 @@ function runSubstitution(
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  // To run new interpreter, uncomment the code below.
-  // And change the import statement for evaluate to 'import { evaluate } from '../ec-evaluator/interpreter'
-  // if (true) {
-  //   return new Promise((resolve, reject) => {
-  //     resolve({ status: 'finished', context, value: evaluate(program, context) })
-  //   })
-  // }
-  // This is just a temporary solution. Logic for breakpoints, nondet evaluate and async scheduling option missing.
-  // Was taken care of by 'schedulers' before which don't work with new code structure that doesn't use generators.
   let it = evaluate(program, context)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
@@ -210,6 +202,12 @@ async function runNative(
   }
 }
 
+function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+  return new Promise((resolve, reject) => {
+    resolve({ status: 'finished', context, value: ECEvaluate(program, context) })
+  })
+}
+
 export async function sourceRunner(
   code: string,
   context: Context,
@@ -264,6 +262,10 @@ export async function sourceRunner(
 
   if (isNativeRunnable) {
     return runNative(code, program, context, theOptions)
+  }
+
+  if (context.variant === Variant.EXPLICIT_CONTROL) {
+    return runECEvaluator(program, context, theOptions)
   }
 
   return runInterpreter(program, context, theOptions)
