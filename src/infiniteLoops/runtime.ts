@@ -300,18 +300,14 @@ functions[FunctionNames.evalU] = sym.evaluateHybridUnary
 /**
  * Tests the given program for infinite loops.
  * @param code Program to test.
- * @param previousCodeStack Any code previously entered in the REPL.
+ * @param previousProgramsStack Any code previously entered in the REPL & parsed into AST.
  * @returns SourceError if an infinite loop was detected, undefined otherwise.
  */
-export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
+export function testForInfiniteLoop(code: string, previousProgramsStack: es.Program[]) {
   const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT, undefined, undefined)
   const prelude = parse(context.prelude as string, context) as es.Program
-  const previous: es.Program[] = []
+  const previous: es.Program[] = [...previousProgramsStack]
   context.prelude = null
-  for (const code of previousCodeStack) {
-    const ast = parse(code, context)
-    if (ast !== undefined) previous.push(ast)
-  }
   previous.push(prelude)
   const program = parse(code, context)
   if (program === undefined) return

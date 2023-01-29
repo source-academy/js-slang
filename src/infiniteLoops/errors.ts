@@ -1,3 +1,5 @@
+import * as es from 'estree'
+
 import { Context } from '..'
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -69,12 +71,12 @@ export class InfiniteLoopError extends RuntimeSourceError {
  *  *
  * @param {Context} - The context being used.
  *
- * @returns [error type, is stream, error message, previous code] if the error was an infinite loop
+ * @returns [error type, is stream, error message, previous programs] if the error was an infinite loop
  * @returns {undefined} otherwise
  */
 export function getInfiniteLoopData(
   context: Context
-): undefined | [InfiniteLoopErrorType, boolean, string, string[]] {
+): undefined | [InfiniteLoopErrorType, boolean, string, es.Program[]] {
   // return error type/string, prevCodeStack
   // cast as any to access infiniteLoopError property later
   const errors = context.errors
@@ -93,7 +95,7 @@ export function getInfiniteLoopData(
       infiniteLoopError.infiniteLoopType,
       infiniteLoopError.streamMode,
       infiniteLoopError.explain(),
-      context.previousCode
+      context.previousPrograms
     ]
   } else {
     return undefined

@@ -14,6 +14,7 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
+import preprocessFileImports from '../localImports/preprocessor'
 import { hoistAndMergeImports } from '../localImports/transformers/hoistAndMergeImports'
 import { removeExports } from '../localImports/transformers/removeExports'
 import { removeNonSourceModuleImports } from '../localImports/transformers/removeNonSourceModuleImports'
@@ -164,7 +165,7 @@ async function runNative(
   } catch (error) {
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-      const detectedInfiniteLoop = testForInfiniteLoop(code, context.previousCode.slice(1))
+      const detectedInfiniteLoop = testForInfiniteLoop(code, context.previousPrograms.slice(1))
       if (detectedInfiniteLoop !== undefined) {
         if (options.throwInfiniteLoops) {
           context.errors.push(detectedInfiniteLoop)
@@ -289,10 +290,11 @@ export async function sourceFilesRunner(
   previousCode = currentCode
 
   // TODO: Make use of the preprocessed program AST after refactoring runners.
-  // const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
-  // if (!preprocessedProgram) {
-  //   return resolvedErrorPromise
-  // }
+  const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
+  if (!preprocessedProgram) {
+    return resolvedErrorPromise
+  }
+  context.previousPrograms.unshift(preprocessedProgram)
 
   return sourceRunner(entrypointCode, context, isVerboseErrorsEnabled, options)
 }
