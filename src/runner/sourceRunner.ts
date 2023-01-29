@@ -63,7 +63,6 @@ function runConcurrent(
   } else {
     context.nativeStorage.maxExecTime = options.originalMaxExecTime
   }
-  context.previousCode.unshift(code)
   previousCode = code
   try {
     return Promise.resolve({
@@ -132,7 +131,6 @@ async function runNative(
   }
 
   if (!options.isPrelude) {
-    context.previousCode.unshift(code)
     previousCode = code
   }
 
