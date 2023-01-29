@@ -15,9 +15,6 @@ import { evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import preprocessFileImports from '../localImports/preprocessor'
-import { hoistAndMergeImports } from '../localImports/transformers/hoistAndMergeImports'
-import { removeExports } from '../localImports/transformers/removeExports'
-import { removeNonSourceModuleImports } from '../localImports/transformers/removeNonSourceModuleImports'
 import { parse } from '../parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
@@ -206,30 +203,15 @@ async function runNative(
 }
 
 export async function sourceRunner(
-  code: string,
+  program: es.Program,
   context: Context,
   isVerboseErrorsEnabled: boolean,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
   const theOptions: IOptions = { ...DEFAULT_SOURCE_OPTIONS, ...options }
   context.variant = determineVariant(context, options)
-  context.errors = []
-
-  // Parse and validate
-  const program: es.Program | undefined = parse(code, context)
-  if (!program) {
-    return resolvedErrorPromise
-  }
-
-  // TODO: Remove this after runners have been refactored.
-  //       These should be done as part of the local imports
-  //       preprocessing step.
-  removeExports(program)
-  removeNonSourceModuleImports(program)
-  hoistAndMergeImports(program)
 
   validateAndAnnotate(program, context)
-
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
@@ -250,11 +232,14 @@ export async function sourceRunner(
 
   // All runners after this point evaluate the prelude.
   if (context.prelude !== null) {
-    const prelude = context.prelude
+    context.unTypecheckedCode.push(context.prelude)
+    const prelude = parse(context.prelude, context)
+    if (prelude === undefined) {
+      return resolvedErrorPromise
+    }
     context.prelude = null
-    context.unTypecheckedCode.push(prelude)
     await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true })
-    return sourceRunner(code, context, isVerboseErrorsEnabled, options)
+    return sourceRunner(program, context, isVerboseErrorsEnabled, options)
   }
 
   if (context.executionMethod === 'native') {
@@ -293,12 +278,11 @@ export async function sourceFilesRunner(
   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
   previousCode = currentCode
 
-  // TODO: Make use of the preprocessed program AST after refactoring runners.
   const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
   if (!preprocessedProgram) {
     return resolvedErrorPromise
   }
   context.previousPrograms.unshift(preprocessedProgram)
 
-  return sourceRunner(entrypointCode, context, isVerboseErrorsEnabled, options)
+  return sourceRunner(preprocessedProgram, context, isVerboseErrorsEnabled, options)
 }
