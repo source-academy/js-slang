@@ -1,4 +1,5 @@
 import * as es from 'estree'
+import * as _ from 'lodash'
 import { RawSourceMap } from 'source-map'
 
 import { IOptions, Result } from '..'
@@ -49,21 +50,19 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   throwInfiniteLoops: true
 }
 
-let previousCode = ''
+let previousCode: {
+  files: Partial<Record<string, string>>
+  entrypointFilePath: string
+} | null = null
 let isPreviousCodeTimeoutError = false
 
-function runConcurrent(
-  code: string,
-  program: es.Program,
-  context: Context,
-  options: IOptions
-): Promise<Result> {
-  if (previousCode === code) {
+function runConcurrent(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+  if (context.shouldIncreaseEvaluationTimeout) {
     context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
   } else {
     context.nativeStorage.maxExecTime = options.originalMaxExecTime
   }
-  previousCode = code
+
   try {
     return Promise.resolve({
       status: 'finished',
@@ -124,14 +123,12 @@ async function runNative(
   context: Context,
   options: IOptions
 ): Promise<Result> {
-  if (previousCode === code && isPreviousCodeTimeoutError) {
-    context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-  } else if (!options.isPrelude) {
-    context.nativeStorage.maxExecTime = options.originalMaxExecTime
-  }
-
   if (!options.isPrelude) {
-    previousCode = code
+    if (context.shouldIncreaseEvaluationTimeout && isPreviousCodeTimeoutError) {
+      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+    } else {
+      context.nativeStorage.maxExecTime = options.originalMaxExecTime
+    }
   }
 
   let transpiled
@@ -233,7 +230,7 @@ export async function sourceRunner(
   }
 
   if (context.variant === Variant.CONCURRENT) {
-    return runConcurrent(code, program, context, theOptions)
+    return runConcurrent(program, context, theOptions)
   }
 
   if (theOptions.useSubst) {
@@ -283,6 +280,13 @@ export async function sourceFilesRunner(
   //        the type checker is currently not used at all so this is not very
   //        urgent.
   context.unTypecheckedCode.push(entrypointCode)
+
+  const currentCode = {
+    files,
+    entrypointFilePath
+  }
+  context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
+  previousCode = currentCode
 
   // TODO: Make use of the preprocessed program AST after refactoring runners.
   // const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)

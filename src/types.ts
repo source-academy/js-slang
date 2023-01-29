@@ -188,6 +188,11 @@ export interface Context<T = any> {
    * Code previously executed in this context
    */
   previousCode: string[]
+
+  /**
+   * Whether the evaluation timeout should be increased
+   */
+  shouldIncreaseEvaluationTimeout: boolean
 }
 
 export type ModuleContext = {
