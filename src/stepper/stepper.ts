@@ -2979,11 +2979,11 @@ export function getEvaluationSteps(
     // even steps: program before reduction
     // odd steps: program after reduction
     let i = -1
-    let stillEval = false
+    let limitExceeded = false
     while ((reducedWithPath[0] as es.Program).body.length > 0) {
       if (steps.length === limit) {
         steps[steps.length - 1] = [ast.program([]), [], 'Maximum number of steps exceeded']
-        stillEval = true
+        limitExceeded = true
         break
       }
       steps.push([
@@ -2999,7 +2999,7 @@ export function getEvaluationSteps(
       reducedWithPath = reduceMain(reducedWithPath[0], context)
       i += 2
     }
-    if (!stillEval) {
+    if (!limitExceeded) {
       steps[steps.length - 1][2] = 'Evaluation complete'
     }
     return steps
