@@ -324,7 +324,11 @@ export async function runFilesInContext(
   }
 
   if (context.chapter === Chapter.FULL_JS) {
-    return fullJSRunner(code, context, options)
+    const program = parse(code, context)
+    if (program === undefined) {
+      return resolvedErrorPromise
+    }
+    return fullJSRunner(program, context, options)
   }
 
   if (context.chapter === Chapter.HTML) {

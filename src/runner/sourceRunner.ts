@@ -245,7 +245,7 @@ export async function sourceRunner(
   determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
 
   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-    return await fullJSRunner(code, context, theOptions)
+    return await fullJSRunner(program, context, theOptions)
   }
 
   // All runners after this point evaluate the prelude.
