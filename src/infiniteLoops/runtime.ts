@@ -336,6 +336,7 @@ export function testForInfiniteLoop(code: string, previousProgramsStack: es.Prog
       }
       return error
     }
+    throw error
   }
   return undefined
 }
