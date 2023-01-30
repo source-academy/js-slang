@@ -11,10 +11,10 @@ export type AgendaItem = es.Node | IInstr
 export interface IInstr {
   instrType: InstrTypes
   symbol?: string // for Assignment
-  const?: boolean // for Assignment
+  constant?: boolean // for Assignment
+  declaration?: boolean // for Assignment
   numOfArgs?: number // for Application
   expr?: es.CallExpression // for Application error handling
-  constant?: boolean
   env?: Environment // For restoring environments
 }
 

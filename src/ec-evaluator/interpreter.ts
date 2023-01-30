@@ -75,7 +75,7 @@ export function evaluate(program: es.Program, context: Context): Value {
       // Node is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash)
     }
-    console.log(context.runtime.environments)
+    // console.log(context.runtime.environments)
     command = agenda.pop()
   }
   return stash.peek()
@@ -127,13 +127,22 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   ) {
     const declaration: es.VariableDeclarator = command.declarations[0]
     const id = declaration.id as es.Identifier
+    // Pop instruction required as declarations are not value producing so the value remaining on the stash needs to be popped.
     agenda.push(popInstr())
-    agenda.push(assignmentInstr(id.name, command.kind === 'const'))
+    agenda.push(assignmentInstr(id.name, command.kind === 'const', true))
     agenda.push(declaration.init!)
   },
 
-  AssignmentExpression: function(command: es.AssignmentExpression, context: Context, agenda: Agenda, stash: Stash) {
-    defineVariable;
+  AssignmentExpression: function (
+    command: es.AssignmentExpression,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const id = command.left as es.Identifier
+    // No pop instruction because assignments are value producing so the value on the stash remains.
+    agenda.push(assignmentInstr(id.name, false, false))
+    agenda.push(command.right)
   },
 
   Identifier: function (command: es.Identifier, context: Context, agenda: Agenda, stash: Stash) {
@@ -218,7 +227,12 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     }
   },
 
-  [InstrTypes.APPLICATION]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
+  [InstrTypes.APPLICATION]: function (
+    command: IInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
     // Get function arguments from the stash
     const args: Value[] = []
     for (let index = 0; index < command.numOfArgs!; index++) {
@@ -235,7 +249,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
 
     if (func instanceof Closure) {
       // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
-      // TODO: Do we need an empty instruction for marker? in case of functions without return statements. 
+      // TODO: Do we need an empty instruction for marker? in case of functions without return statements.
       const next = agenda.peek()
       if (!next || (!isNode(next) && next.instrType === InstrTypes.ENVIRONMENT)) {
         // Pushing another Env Instruction would be redundant so only Marker needs to be pushed.
@@ -270,7 +284,9 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    defineVariable(context, command.symbol!, stash.peek(), command.constant)
+    command.declaration
+      ? defineVariable(context, command.symbol!, stash.peek(), command.constant)
+      : setVariable(context, command.symbol!, stash.peek())
   },
 
   [InstrTypes.UNARY_OP]: function (
@@ -369,8 +385,6 @@ function declareFunctionsAndVariables(context: Context, node: es.BlockStatement)
     }
   }
 }
-
-
 
 const currentEnvironment = (context: Context) => context.runtime.environments[0]
 

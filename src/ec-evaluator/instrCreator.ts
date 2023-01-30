@@ -5,10 +5,15 @@
 import { Environment } from '../types'
 import { IInstr, InstrTypes } from './types'
 
-export const assignmentInstr = (symbol: string, constant: boolean): IInstr => ({
+export const assignmentInstr = (
+  symbol: string,
+  constant: boolean,
+  declaration: boolean
+): IInstr => ({
   instrType: InstrTypes.ASSIGNMENT,
   symbol,
-  constant
+  constant,
+  declaration
 })
 
 export const popInstr = (): IInstr => ({ instrType: InstrTypes.POP })
