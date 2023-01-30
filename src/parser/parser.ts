@@ -13,7 +13,7 @@ import * as es from 'estree'
 import { ACORN_PARSE_OPTIONS } from '../constants'
 import * as tsEs from '../typeChecker/tsESTree'
 import { checkForTypeErrors } from '../typeChecker/typeErrorChecker'
-import { Context, ErrorSeverity, ErrorType, Rule, SourceError, Variant } from '../types'
+import { Chapter, Context, ErrorSeverity, ErrorType, Rule, SourceError, Variant } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { ancestor, AncestorWalkerFn } from '../utils/walkers'
 import { validateAndAnnotate } from '../validator/validator'
@@ -118,6 +118,12 @@ export function parseAt(source: string, num: number) {
   return theNode
 }
 
+const FULL_JS_PARSER_OPTIONS: AcornOptions = {
+  sourceType: 'module',
+  ecmaVersion: 'latest',
+  locations: true
+}
+
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined
   try {
@@ -139,6 +145,12 @@ export function parse(source: string, context: Context) {
 
       // Checks for type errors, then removes any TS-related nodes as they are not compatible with acorn-walk.
       program = checkForTypeErrors(typedProgram, context)
+    } else if (
+      context.chapter === Chapter.FULL_JS ||
+      (context.executionMethod === 'native' && context.variant === Variant.NATIVE)
+    ) {
+      // Do not enforce Source rules on JavaScript code.
+      return acornParse(source, FULL_JS_PARSER_OPTIONS) as unknown as es.Program
     } else {
       program = acornParse(source, createAcornParserOptions(context)) as unknown as es.Program
     }

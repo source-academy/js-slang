@@ -299,22 +299,15 @@ functions[FunctionNames.evalU] = sym.evaluateHybridUnary
 
 /**
  * Tests the given program for infinite loops.
- * @param code Program to test.
- * @param previousCodeStack Any code previously entered in the REPL.
+ * @param program Program to test.
+ * @param previousProgramsStack Any code previously entered in the REPL & parsed into AST.
  * @returns SourceError if an infinite loop was detected, undefined otherwise.
  */
-export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
+export function testForInfiniteLoop(program: es.Program, previousProgramsStack: es.Program[]) {
   const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT, undefined, undefined)
   const prelude = parse(context.prelude as string, context) as es.Program
-  const previous: es.Program[] = []
   context.prelude = null
-  for (const code of previousCodeStack) {
-    const ast = parse(code, context)
-    if (ast !== undefined) previous.push(ast)
-  }
-  previous.push(prelude)
-  const program = parse(code, context)
-  if (program === undefined) return
+  const previous: es.Program[] = [...previousProgramsStack, prelude]
   const newBuiltins = prepareBuiltins(context.nativeStorage.builtins)
   const { builtinsId, functionsId, stateId } = InfiniteLoopRuntimeObjectNames
 
@@ -340,6 +333,11 @@ export function testForInfiniteLoop(code: string, previousCodeStack: string[]) {
       }
       return error
     }
+    // Programs that exceed the maximum call stack size are okay as long as they terminate.
+    if (error instanceof RangeError && error.message === 'Maximum call stack size exceeded') {
+      return undefined
+    }
+    throw error
   }
   return undefined
 }

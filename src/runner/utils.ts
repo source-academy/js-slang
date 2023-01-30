@@ -35,32 +35,31 @@ export function determineExecutionMethod(
   context: Context,
   program: Program,
   verboseErrors: boolean
-): boolean {
-  let isNativeRunnable
-  if (theOptions.executionMethod === 'auto') {
-    if (context.executionMethod === 'auto') {
-      if (verboseErrors) {
-        isNativeRunnable = false
-      } else if (areBreakpointsSet()) {
-        isNativeRunnable = false
-      } else {
-        let hasDeuggerStatement = false
-        simple(program, {
-          DebuggerStatement(node: DebuggerStatement) {
-            hasDeuggerStatement = true
-          }
-        })
-        isNativeRunnable = !hasDeuggerStatement
-      }
-      context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
-    } else {
-      isNativeRunnable = context.executionMethod === 'native'
-    }
-  } else {
-    isNativeRunnable = theOptions.executionMethod === 'native'
+): void {
+  if (theOptions.executionMethod !== 'auto') {
     context.executionMethod = theOptions.executionMethod
+    return
   }
-  return isNativeRunnable
+
+  if (context.executionMethod !== 'auto') {
+    return
+  }
+
+  let isNativeRunnable
+  if (verboseErrors) {
+    isNativeRunnable = false
+  } else if (areBreakpointsSet()) {
+    isNativeRunnable = false
+  } else {
+    let hasDebuggerStatement = false
+    simple(program, {
+      DebuggerStatement(_node: DebuggerStatement) {
+        hasDebuggerStatement = true
+      }
+    })
+    isNativeRunnable = !hasDebuggerStatement
+  }
+  context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
 }
 
 /**
