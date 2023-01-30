@@ -1449,3 +1449,22 @@ describe(`#1109: Empty function bodies don't break execution`, () => {
     expect(getLastStepAsString(steps)).toEqual('"Gets returned by normal run";')
   })
 })
+
+describe(`#1342: Test the fix of #1341: Stepper limit off by one`, ()=>{
+  test('Program steps equal to Stepper limit', ()=>{
+      const code = `
+      function factorial(n) {
+          return n === 1
+              ? 1
+              : n * factorial(n - 1);
+      }
+      factorial(100);
+      `
+      const context = mockContext(Chapter.SOURCE_2)
+      const program = parse(code, context)!
+      const steps = getEvaluationSteps(program, context, 1000)
+      expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+      expect(getLastStepAsString(steps)).toEqual('9.33262154439441e+157;')
+  })
+})
+
