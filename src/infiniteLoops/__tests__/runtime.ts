@@ -1,7 +1,11 @@
+import * as es from 'estree'
+
 import { runInContext } from '../..'
+import createContext from '../../createContext'
 import { mockContext } from '../../mocks/context'
 import * as moduleLoader from '../../modules/moduleLoader'
-import { Chapter } from '../../types'
+import { parse } from '../../parser/parser'
+import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
 import { testForInfiniteLoop } from '../runtime'
@@ -64,13 +68,22 @@ test('works in runInContext when throwInfiniteLoops is false', async () => {
   expect(result?.[1]).toBe(false)
 })
 
+const testForInfiniteLoopWithCode = (code: string, previousPrograms: es.Program[]) => {
+  const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT)
+  const program = parse(code, context)
+  if (program === undefined) {
+    throw new Error('Unable to parse code.')
+  }
+  return testForInfiniteLoop(program, previousPrograms)
+}
+
 test('non-infinite recursion not detected', () => {
   const code = `function fib(x) {
         return x<=1?x:fib(x-1) + fib(x-2);
     }
     fib(100000);
     `
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result).toBeUndefined()
 })
 
@@ -79,7 +92,7 @@ test('non-infinite loop not detected', () => {
     let j = 0;
     while(j<2000) {j=j+1;}
     `
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result).toBeUndefined()
 })
 
@@ -89,7 +102,7 @@ test('no base case function detected', () => {
     }
     fib(100000);
     `
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.NoBaseCase)
   expect(result?.streamMode).toBe(false)
 })
@@ -97,7 +110,7 @@ test('no base case function detected', () => {
 test('no base case loop detected', () => {
   const code = `for(let i = 0;true;i=i+1){i+1;}
     `
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.NoBaseCase)
   expect(result?.streamMode).toBe(false)
 })
@@ -109,7 +122,7 @@ test('no variables changing function detected', () => {
     }
     f();
     `
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
   expect(result?.streamMode).toBe(false)
   expect(result?.explain()).toContain('None of the variables are being updated.')
@@ -122,7 +135,7 @@ test('no state change function detected', () => {
     }
     f();
     `
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
   expect(result?.streamMode).toBe(false)
   expect(result?.explain()).toContain('None of the variables are being updated.')
@@ -134,7 +147,7 @@ test('infinite cycle detected', () => {
     }
     f([2,3,4]);
     `
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
   expect(result?.streamMode).toBe(false)
   expect(result?.explain()).toContain('cycle')
@@ -149,7 +162,7 @@ test('infinite data structures detected', () => {
     set_tail(tail(tail(circ)), circ);
     f(circ);
     `
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
   expect(result?.streamMode).toBe(false)
   expect(result?.explain()).toContain('cycle')
@@ -162,14 +175,14 @@ test('functions using SMT work', () => {
     }
     f(1);
     `
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.FromSmt)
   expect(result?.streamMode).toBe(false)
 })
 
 test('detect forcing infinite streams', () => {
   const code = `stream_to_list(integers_from(0));`
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.NoBaseCase)
   expect(result?.streamMode).toBe(true)
 })
@@ -182,7 +195,7 @@ test('detect mutual recursion', () => {
         return x===1?0:1-e(x-1);
     }
     e(9);`
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.FromSmt)
   expect(result?.streamMode).toBe(false)
 })
@@ -194,7 +207,7 @@ test('functions passed as arguments not checked', () => {
   const add = x => x + 1;
   
   (thrice)(twice(twice))(twice(add))(0);`
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result).toBeUndefined()
 })
 
@@ -217,7 +230,7 @@ test('detect complicated cycle example', () => {
    
    remove_duplicate(list(list(1,2,3), list(1,2,3)));
    `
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
   expect(result?.streamMode).toBe(false)
 })
@@ -233,7 +246,7 @@ test('detect complicated cycle example 2', () => {
 }
 make_big_int_from_number(1234);
    `
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
   expect(result?.streamMode).toBe(false)
 })
@@ -248,7 +261,7 @@ test('detect complicated fromSMT example 2', () => {
 
   }
   fast_power(2,3);`
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.FromSmt)
   expect(result?.streamMode).toBe(false)
 })
@@ -260,7 +273,7 @@ test('detect complicated stream example', () => {
             : pair(a, () => stream_reverse(up(a + 1, b)));
   }
   eval_stream(up(1,1), 22);`
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result).toBeDefined()
   expect(result?.streamMode).toBe(true)
 })
@@ -271,7 +284,7 @@ test('math functions are disabled in smt solver', () => {
     return x===0? x: f(math_floor(x+1));
   }
   f(1);`
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result).toBeUndefined()
 })
 
@@ -281,7 +294,7 @@ test('cycle detection ignores non deterministic functions', () => {
     return x===0?0:f(math_floor(math_random()/2) + 1);
   }
   f(1);`
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result).toBeUndefined()
 })
 
@@ -289,6 +302,6 @@ test('handle imports properly', () => {
   const code = `import {thrice} from "repeat";
   function f(x) { return is_number(x) ? f(x) : 42; }
   display(f(thrice(x=>x+1)(0)));`
-  const result = testForInfiniteLoop(code, [])
+  const result = testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
 })
