@@ -1,7 +1,7 @@
 /**
  * Adapted from the legacy interpreter at '../interpreter/interpreter'
  * TODO: Turn main constructor into what was previously "makeFromArrowFunction"
- * TODO: Get rid of redundant parts of closure. 
+ * TODO: Get rid of redundant parts of closure.
  */
 /* tslint:disable:max-classes-per-file */
 import { generate } from 'astring'

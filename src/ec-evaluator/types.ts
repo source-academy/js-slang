@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { Context } from '..'
-import { Value } from '../types'
+import { Environment, Value } from '../types'
 import { Agenda, Stash } from './interpreter'
 
 export type AgendaItem = es.Node | IInstr
@@ -13,7 +13,9 @@ export interface IInstr {
   symbol?: string // for Assignment
   const?: boolean // for Assignment
   numOfArgs?: number // for Application
-  expr? : es.CallExpression // for Application error handling
+  expr?: es.CallExpression // for Application error handling
+  constant?: boolean
+  env?: Environment // For restoring environments
 }
 
 export enum InstrTypes {
@@ -26,7 +28,7 @@ export enum InstrTypes {
   APPLICATION = 'Application',
   BRANCH = 'Branch',
   ENVIRONMENT = 'Environment',
-  PUSH_UNDEFINED = 'PushUndefined',
+  PUSH_UNDEFINED_IF_NEEDED = 'PushUndefinedIfNeeded',
   ARRAY_LITERAL = 'ArrayLiteral',
   ARRAY_ASSIGNMENT = 'ArrayAssignment',
   MARKER = 'Marker'

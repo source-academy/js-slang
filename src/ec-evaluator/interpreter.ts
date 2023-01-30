@@ -17,22 +17,21 @@ import { Context, Environment, Frame, Value } from '../types'
 import { blockArrowFunction, constantDeclaration, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import Closure from './closure'
+import { assignmentInstr, envInstr, popInstr, pushUndefInstr } from './instrCreator'
 import { AgendaItem, cmdEvaluator, IInstr, InstrTypes } from './types'
-import { isNode, Stack } from './utils'
+import { handleSequence, isNode, Stack } from './utils'
 
 /**
  * The agenda is a list of commands that still needs to be executed by the machine.
  * It contains syntax tree nodes or instructions.
  */
-//@ts-ignore TODO remove ts-ignore
 export class Agenda extends Stack<AgendaItem> {
-  constructor(program: es.Program) {
+  public constructor(program: es.Program) {
     super()
     // Evaluation of last statement is undefined if stash is empty
-    this.push({ instrType: InstrTypes.PUSH_UNDEFINED })
+    this.push(pushUndefInstr())
 
     // Load program into agenda stack
-    // program is a es.BlockStatement
     this.push(program)
   }
 }
@@ -40,9 +39,8 @@ export class Agenda extends Stack<AgendaItem> {
 /**
  * The stash is a list of values that stores intermediate results.
  */
-//@ts-ignore TODO remove ts-ignore
 export class Stash extends Stack<Value> {
-  constructor() {
+  public constructor() {
     super()
   }
 }
@@ -50,19 +48,18 @@ export class Stash extends Stack<Value> {
 /**
  * Function to be called when a program is to be interpreted using
  * the explicit control evaluator.
- * @param program a program string parsed as a es.Program
- * @param context
- * @returns top value of the stash
+ *
+ * @param program The program to evaluate.
+ * @param context The context to evaluate in.
+ * @returns The top value of the stash. It is usually the return value of the program.
  */
-export function evaluate(program: es.Program, context: Context) {
+export function evaluate(program: es.Program, context: Context): Value {
   const agenda: Agenda = new Agenda(program)
   const stash: Stash = new Stash()
-  let command: AgendaItem | undefined = agenda.pop()
+
+  let command = agenda.pop()
   while (command) {
-    console.log(agenda)
-    console.log(stash)
     if (isNode(command)) {
-      console.log(command.type)
       // Not sure if context.runtime.nodes has been shifted/unshifted correctly here.
       context.runtime.nodes.unshift(command)
       checkEditorBreakpoints(context, command)
@@ -71,7 +68,7 @@ export function evaluate(program: es.Program, context: Context) {
       // context.runtime.break = false
       context.runtime.nodes.shift()
     } else {
-      console.log(command.instrType)
+      // Node is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash)
     }
     command = agenda.pop()
@@ -83,34 +80,33 @@ export function evaluate(program: es.Program, context: Context) {
  * Dictionary of functions which handle the logic for the response of the three registers of
  * the ASE machine to each AgendaItem.
  */
-const cmdEvaluators: { [command: string]: cmdEvaluator } = {
+const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   Program: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     context.numberOfOuterEnvironments += 1
-    const environment: Environment = createBlockEnvironment(context, 'programEnvironment')
+    const environment = createBlockEnvironment(context, 'programEnvironment')
     pushEnvironment(context, environment)
-    declareFunctionsAndVariables(context, command)
-    // Allow AgendaInst to be an array of statements so that we can separate sequence from block?
-    for (let index = command.body.length - 1; index > 0; index--) {
-      agenda.push(command.body[index])
-      agenda.push({ instrType: InstrTypes.POP })
-    }
-    agenda.push(command.body[0])
+
+    // TODO type mismatch if param is set as es.Program
+    // how to convert es.Program to es.BlockStatement?
+    agenda.push({ ...command, type: 'BlockStatement' })
   },
+
   BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
-    // Lot of code with blockstatement and program is repeated and needs to be abstracted.
-    const environment: Environment = createBlockEnvironment(context, 'blockEnvironment')
+    // To restore environment after block ends
+    agenda.push(envInstr(currentEnvironment(context)))
+
+    const environment = createBlockEnvironment(context, 'blockEnvironment')
     pushEnvironment(context, environment)
     declareFunctionsAndVariables(context, command)
-    agenda.push({ instrType: InstrTypes.ENVIRONMENT })
-    for (let index = command.body.length - 1; index > 0; index--) {
-      agenda.push(command.body[index])
-      agenda.push({ instrType: InstrTypes.POP })
-    }
-    agenda.push(command.body[0])
+
+    // Push block body
+    agenda.push(...handleSequence(command.body))
   },
+
   Literal: function (command: es.Literal, context: Context, agenda: Agenda, stash: Stash) {
     stash.push(command.value)
   },
+
   ExpressionStatement: function (
     command: es.ExpressionStatement,
     context: Context,
@@ -118,20 +114,21 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
   ) {
     agenda.push(command.expression)
   },
-  DebuggerStatement: function(command: es.DebuggerStatement, context: Context, agenda: Agenda) {
-    context.runtime.break = true;
+  DebuggerStatement: function (command: es.DebuggerStatement, context: Context, agenda: Agenda) {
+    context.runtime.break = true
   },
-  VariableDeclaration: function (command: es.VariableDeclaration, context: Context, agenda: Agenda) {
+  VariableDeclaration: function (
+    command: es.VariableDeclaration,
+    context: Context,
+    agenda: Agenda
+  ) {
     const declaration: es.VariableDeclarator = command.declarations[0]
     const id = declaration.id as es.Identifier
-    agenda.push({ instrType: InstrTypes.POP })
-    agenda.push({
-      instrType: InstrTypes.ASSIGNMENT,
-      symbol: id.name,
-      const: command.kind === 'const'
-    })
+    agenda.push(popInstr())
+    agenda.push(assignmentInstr(id.name, command.kind === 'const'))
     agenda.push(declaration.init!)
   },
+
   Identifier: function (command: es.Identifier, context: Context, agenda: Agenda, stash: Stash) {
     stash.push(getVariable(context, command.name))
   },
@@ -144,51 +141,79 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
     agenda.push(command.right)
     agenda.push(command.left)
   },
-  ArrowFunctionExpression: function (command: es.ArrowFunctionExpression, context: Context, agenda: Agenda, stash: Stash) {
-    const closure: Closure = Closure.makeFromArrowFunction(command, currentEnvironment(context), context)
+
+  ArrowFunctionExpression: function (
+    command: es.ArrowFunctionExpression,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const closure: Closure = Closure.makeFromArrowFunction(
+      command,
+      currentEnvironment(context),
+      context
+    )
     stash.push(closure)
   },
-  FunctionDeclaration: function(command: es.FunctionDeclaration, context: Context, agenda: Agenda) {
-    const lambdaExpression: es.ArrowFunctionExpression = blockArrowFunction(command.params as es.Identifier[], command.body, command.loc)
-    const lambdaDeclaration: es.VariableDeclaration = constantDeclaration(command.id!.name, lambdaExpression, command.loc)
+  FunctionDeclaration: function (
+    command: es.FunctionDeclaration,
+    context: Context,
+    agenda: Agenda
+  ) {
+    const lambdaExpression: es.ArrowFunctionExpression = blockArrowFunction(
+      command.params as es.Identifier[],
+      command.body,
+      command.loc
+    )
+    const lambdaDeclaration: es.VariableDeclaration = constantDeclaration(
+      command.id!.name,
+      lambdaExpression,
+      command.loc
+    )
     agenda.push(lambdaDeclaration)
   },
-  CallExpression: function(command: es.CallExpression, context: Context, agenda: Agenda, stash: Stash) {
-    agenda.push({instrType: InstrTypes.APPLICATION, numOfArgs: command.arguments.length, expr: command})
+  CallExpression: function (
+    command: es.CallExpression,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    agenda.push({
+      instrType: InstrTypes.APPLICATION,
+      numOfArgs: command.arguments.length,
+      expr: command
+    })
     for (let index = command.arguments.length - 1; index >= 0; index--) {
       agenda.push(command.arguments[index])
     }
     agenda.push(command.callee)
   },
-  ReturnStatement: function(command: es.ReturnStatement, context: Context, agenda: Agenda, stash: Stash) {
-    agenda.push({instrType:InstrTypes.RESET})
-    if (command.argument){
+  ReturnStatement: function (
+    command: es.ReturnStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    agenda.push({ instrType: InstrTypes.RESET })
+    if (command.argument) {
       agenda.push(command.argument)
     }
   },
-  UnaryOperation: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
-    const argument = stash.pop()
-    stash.push(evaluateUnaryExpression(command.symbol as es.UnaryOperator, argument))
+  /** Instructions */
+  [InstrTypes.RESET]: function (command: IInstr, context: Context, agenda: Agenda) {
+    const cmdNext: AgendaItem | undefined = agenda.pop()
+    if (cmdNext && !isNode(cmdNext) && cmdNext.instrType !== InstrTypes.MARKER) {
+      agenda.push({ instrType: InstrTypes.RESET })
+    }
   },
-  BinaryOperation: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
-    const right = stash.pop()
-    const left = stash.pop()
-    stash.push(evaluateBinaryExpression(command.symbol as es.BinaryOperator, left, right))
-  },
-  Assignment: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
-    defineVariable(context, command.symbol!, stash.peek(), command.const)
-  },
-  Environment: function (command: IInstr, context: Context) {
-    popEnvironment(context)
-  },
-  Application: function(command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
+  Application: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
     const args: Value[] = []
-    for (let index = 0; index < command.numOfArgs!; index++ ){
+    for (let index = 0; index < command.numOfArgs!; index++) {
       args.unshift(stash.pop())
     }
     // Member expressions ?
     const func = stash.pop()
-    checkNumberOfArguments(context, func, args, command.expr!) 
+    checkNumberOfArguments(context, func, args, command.expr!)
     if (func instanceof Closure) {
       // User-defined and Pre-defined functions
       const next = agenda.peek()
@@ -206,21 +231,61 @@ const cmdEvaluators: { [command: string]: cmdEvaluator } = {
       agenda.push(func.node.body)
       const environment = createEnvironment(func, args)
       pushEnvironment(context, environment)
-    } else if (typeof func === "function") { 
+    } else if (typeof func === 'function') {
       // Pre-built functions
       stash.push(func.apply(null, args)) // eslint-disable-line prefer-spread
     }
   },
-  Reset: function(command: IInstr, context: Context, agenda: Agenda) {
-    const cmdNext: AgendaItem | undefined = agenda.pop()
-    if (cmdNext && !isNode(cmdNext) && cmdNext.instrType !== InstrTypes.MARKER) {
-      agenda.push({instrType: InstrTypes.RESET})
-    }
-  },
-  Pop: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
+
+  [InstrTypes.WHILE]: function () {},
+
+  [InstrTypes.POP]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
     stash.pop()
   },
-  PushUndefined: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
+
+  [InstrTypes.ASSIGNMENT]: function (
+    command: IInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    defineVariable(context, command.symbol!, stash.peek(), command.constant)
+  },
+
+  [InstrTypes.UNARY_OP]: function (
+    command: IInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const argument = stash.pop()
+    stash.push(evaluateUnaryExpression(command.symbol as es.UnaryOperator, argument))
+  },
+
+  [InstrTypes.BINARY_OP]: function (
+    command: IInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const right = stash.pop()
+    const left = stash.pop()
+    stash.push(evaluateBinaryExpression(command.symbol as es.BinaryOperator, left, right))
+  },
+
+  [InstrTypes.ENVIRONMENT]: function (command: IInstr, context: Context) {
+    // Restore environment
+    while (currentEnvironment(context).id !== command.env?.id) {
+      popEnvironment(context)
+    }
+  },
+
+  [InstrTypes.PUSH_UNDEFINED_IF_NEEDED]: function (
+    command: IInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
     if (stash.size() === 0) {
       stash.push(undefined)
     }
@@ -310,6 +375,7 @@ const currentEnvironment = (context: Context) => context.runtime.environments[0]
 // }
 
 const popEnvironment = (context: Context) => context.runtime.environments.shift()
+
 export const pushEnvironment = (context: Context, environment: Environment) => {
   context.runtime.environments.unshift(environment)
   context.runtime.environmentTree.insert(environment)
