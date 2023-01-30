@@ -59,7 +59,10 @@ export function evaluate(program: es.Program, context: Context): Value {
 
   let command = agenda.pop()
   while (command) {
+    console.log(agenda)
+    console.log(stash)
     if (isNode(command)) {
+      console.log(command.type)
       // Not sure if context.runtime.nodes has been shifted/unshifted correctly here.
       context.runtime.nodes.unshift(command)
       checkEditorBreakpoints(context, command)
@@ -85,10 +88,8 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
     pushEnvironment(context, environment)
-
-    // TODO type mismatch if param is set as es.Program
-    // how to convert es.Program to es.BlockStatement?
-    agenda.push({ ...command, type: 'BlockStatement' })
+    declareFunctionsAndVariables(context, command)
+    agenda.push(...handleSequence(command.body))
   },
 
   BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
