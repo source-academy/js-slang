@@ -72,7 +72,7 @@ const testForInfiniteLoopWithCode = (code: string, previousPrograms: es.Program[
   const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT)
   const program = parse(code, context)
   if (program === undefined) {
-    return
+    throw new Error('Unable to parse code.')
   }
   return testForInfiniteLoop(program, previousPrograms)
 }
