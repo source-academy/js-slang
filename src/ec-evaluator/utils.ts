@@ -46,7 +46,7 @@ export class Stack<T> implements IStack<T> {
  * Typeguard for esNode to distinguish between program statements and instructions.
  *
  * @param command An AgendaItem
- * @returns true if the AgendaItem is an esNode and false otherwise.
+ * @returns true if the AgendaItem is an esNode and false if it is an instruction.
  */
 export const isNode = (command: AgendaItem): command is es.Node => {
   return (command as es.Node).type !== undefined

@@ -59,8 +59,8 @@ export function evaluate(program: es.Program, context: Context): Value {
 
   let command = agenda.pop()
   while (command) {
-    console.log(agenda)
-    console.log(stash)
+    // console.log(agenda)
+    // console.log(stash)
     if (isNode(command)) {
       console.log(command.type)
       // Not sure if context.runtime.nodes has been shifted/unshifted correctly here.
@@ -71,9 +71,11 @@ export function evaluate(program: es.Program, context: Context): Value {
       // context.runtime.break = false
       context.runtime.nodes.shift()
     } else {
+      console.log(command.instrType)
       // Node is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash)
     }
+    console.log(context.runtime.environments)
     command = agenda.pop()
   }
   return stash.peek()
@@ -130,6 +132,10 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     agenda.push(declaration.init!)
   },
 
+  AssignmentExpression: function(command: es.AssignmentExpression, context: Context, agenda: Agenda, stash: Stash) {
+    defineVariable;
+  },
+
   Identifier: function (command: es.Identifier, context: Context, agenda: Agenda, stash: Stash) {
     stash.push(getVariable(context, command.name))
   },
@@ -161,6 +167,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     context: Context,
     agenda: Agenda
   ) {
+    // Function declaration desugared into constant declaration.
     const lambdaExpression: es.ArrowFunctionExpression = blockArrowFunction(
       command.params as es.Identifier[],
       command.body,
@@ -179,6 +186,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
+    // Push application instruction, function arguments and function onto agenda.
     agenda.push({
       instrType: InstrTypes.APPLICATION,
       numOfArgs: command.arguments.length,
@@ -195,6 +203,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
+    // Push return argument onto agenda as well as Reset Instruction to clear to ignore all statements after the return.
     agenda.push({ instrType: InstrTypes.RESET })
     if (command.argument) {
       agenda.push(command.argument)
@@ -202,38 +211,49 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   },
   /** Instructions */
   [InstrTypes.RESET]: function (command: IInstr, context: Context, agenda: Agenda) {
+    // Keep pushing reset instructions until marker is found.
     const cmdNext: AgendaItem | undefined = agenda.pop()
     if (cmdNext && !isNode(cmdNext) && cmdNext.instrType !== InstrTypes.MARKER) {
       agenda.push({ instrType: InstrTypes.RESET })
     }
   },
-  Application: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
+
+  [InstrTypes.APPLICATION]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
+    // Get function arguments from the stash
     const args: Value[] = []
     for (let index = 0; index < command.numOfArgs!; index++) {
       args.unshift(stash.pop())
     }
-    // Member expressions ?
-    const func = stash.pop()
+
+    // Member expressions?
+
+    // Get function from the stash
+    const func: Closure | Function = stash.pop()
+
+    // Check for number of arguments mismatch error
     checkNumberOfArguments(context, func, args, command.expr!)
+
     if (func instanceof Closure) {
-      // User-defined and Pre-defined functions
+      // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
+      // TODO: Do we need an empty instruction for marker? in case of functions without return statements. 
       const next = agenda.peek()
       if (!next || (!isNode(next) && next.instrType === InstrTypes.ENVIRONMENT)) {
-        // Pushing another Env instruction would be redundant
+        // Pushing another Env Instruction would be redundant so only Marker needs to be pushed.
         agenda.push({ instrType: InstrTypes.MARKER })
       } else if (!isNode(next) && next.instrType === InstrTypes.RESET) {
+        // Reset Instruction will be replaced by Reset Instruction of new return statement.
         agenda.pop()
+        // TODO: What if the function has no return statement? (interpreter produces wrong result, tested). Possible solution: Add hidden dummy return statement at end of all closure bodies.
       } else {
-        // empty instruction for marker? in case of functions without return statements.
+        agenda.push(envInstr(currentEnvironment(context)))
         agenda.push({ instrType: InstrTypes.MARKER })
-        agenda.push({ instrType: InstrTypes.ENVIRONMENT })
-        // TODO: push curr env (not the new extended env) with the Env Inst
       }
+      // Push function body on agenda and create environment for function parameters.
       agenda.push(func.node.body)
       const environment = createEnvironment(func, args)
       pushEnvironment(context, environment)
     } else if (typeof func === 'function') {
-      // Pre-built functions
+      // Directly stash result of applying pre-built functions without the ASE machine.
       stash.push(func.apply(null, args)) // eslint-disable-line prefer-spread
     }
   },
@@ -293,6 +313,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   }
 }
 
+// Should all of these be moved to utils?
 export const createBlockEnvironment = (
   context: Context,
   name = 'blockEnvironment',
@@ -349,6 +370,22 @@ function declareFunctionsAndVariables(context: Context, node: es.BlockStatement)
   }
 }
 
+
+
+const currentEnvironment = (context: Context) => context.runtime.environments[0]
+
+// const replaceEnvironment = (context: Context, environment: Environment) => {
+//   context.runtime.environments[0] = environment
+//   context.runtime.environmentTree.insert(environment)
+// }
+
+const popEnvironment = (context: Context) => context.runtime.environments.shift()
+
+export const pushEnvironment = (context: Context, environment: Environment) => {
+  context.runtime.environments.unshift(environment)
+  context.runtime.environmentTree.insert(environment)
+}
+
 function defineVariable(context: Context, name: string, value: Value, constant = false) {
   const environment = currentEnvironment(context)
 
@@ -366,20 +403,6 @@ function defineVariable(context: Context, name: string, value: Value, constant =
   })
 
   return environment
-}
-
-const currentEnvironment = (context: Context) => context.runtime.environments[0]
-
-// const replaceEnvironment = (context: Context, environment: Environment) => {
-//   context.runtime.environments[0] = environment
-//   context.runtime.environmentTree.insert(environment)
-// }
-
-const popEnvironment = (context: Context) => context.runtime.environments.shift()
-
-export const pushEnvironment = (context: Context, environment: Environment) => {
-  context.runtime.environments.unshift(environment)
-  context.runtime.environmentTree.insert(environment)
 }
 
 const getVariable = (context: Context, name: string) => {
@@ -401,28 +424,28 @@ const getVariable = (context: Context, name: string) => {
   return handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
 }
 
-// const setVariable = (context: Context, name: string, value: any) => {
-//   let environment: Environment | null = currentEnvironment(context)
-//   while (environment) {
-//     if (environment.head.hasOwnProperty(name)) {
-//       if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
-//         break
-//       }
-//       const descriptors = Object.getOwnPropertyDescriptors(environment.head)
-//       if (descriptors[name].writable) {
-//         environment.head[name] = value
-//         return undefined
-//       }
-//       return handleRuntimeError(
-//         context,
-//         new errors.ConstAssignment(context.runtime.nodes[0]!, name)
-//       )
-//     } else {
-//       environment = environment.tail
-//     }
-//   }
-//   return handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
-// }
+const setVariable = (context: Context, name: string, value: any) => {
+  let environment: Environment | null = currentEnvironment(context)
+  while (environment) {
+    if (environment.head.hasOwnProperty(name)) {
+      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
+        break
+      }
+      const descriptors = Object.getOwnPropertyDescriptors(environment.head)
+      if (descriptors[name].writable) {
+        environment.head[name] = value
+        return undefined
+      }
+      return handleRuntimeError(
+        context,
+        new errors.ConstAssignment(context.runtime.nodes[0]!, name)
+      )
+    } else {
+      environment = environment.tail
+    }
+  }
+  return handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
+}
 
 const checkNumberOfArguments = (
   context: Context,
