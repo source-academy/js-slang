@@ -34,7 +34,6 @@ import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
 import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
-import { fullJSRunner } from './fullJSRunner'
 import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
@@ -150,7 +149,6 @@ async function runNative(
     }
 
     ;({ transpiled, sourceMapJson } = transpile(program, context))
-    // console.log(transpiled);
     let value = await sandboxedEval(transpiled, context)
 
     if (context.variant === Variant.LAZY) {
@@ -249,10 +247,6 @@ export async function sourceRunner(
     program,
     isVerboseErrorsEnabled
   )
-
-  if (isNativeRunnable && context.variant === Variant.NATIVE) {
-    return await fullJSRunner(code, context, theOptions)
-  }
 
   // Handle preludes
   if (context.prelude !== null) {

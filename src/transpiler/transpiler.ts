@@ -631,26 +631,37 @@ function transpileToFullJS(
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage)
   ])
-
   const globalIds = getNativeIds(program, usedIdentifiers)
+
+  const functionsToStringMap = generateFunctionsToStringMap(program)
   checkForUndefinedVariables(program, context.nativeStorage, globalIds, skipUndefined)
+  transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
 
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
     usedIdentifiers
   )
+  program.body = (importNodes as es.Program['body']).concat(otherNodes)
 
-  const transpiledProgram: es.Program = create.program([
-    evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
+  getGloballyDeclaredIdentifiers(program).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  )
+  const statements = program.body as es.Statement[]
+  const newStatements = [
+    ...getDeclarationsToAccessTranspilerInternals(globalIds),
+    evallerReplacer(globalIds.native, usedIdentifiers),
     create.expressionStatement(create.identifier('undefined')),
-    ...(importNodes as es.Statement[]),
-    ...(otherNodes as es.Statement[])
-  ])
+    ...statements
+  ]
 
-  const sourceMap = new SourceMapGenerator({ file: 'source' })
-  const transpiled = modulePrefix + generate(transpiledProgram, { sourceMap })
-  const sourceMapJson = sourceMap.toJSON()
+  program.body =
+    context.nativeStorage.evaller === null
+      ? [wrapWithBuiltins(newStatements, context.nativeStorage)]
+      : [create.blockStatement(newStatements)]
 
+  const map = new SourceMapGenerator({ file: 'source' })
+  const transpiled = modulePrefix + generate(program, { sourceMap: map })
+  const sourceMapJson = map.toJSON()
   return { transpiled, sourceMapJson }
 }
 
@@ -659,10 +670,8 @@ export function transpile(
   context: Context,
   skipUndefined = false
 ): TranspiledResult {
-  if (context.chapter === Chapter.FULL_JS) {
-    return transpileToFullJS(program, context, true)
-  } else if (context.variant == Variant.NATIVE) {
-    return transpileToFullJS(program, context, false)
+  if (context.chapter === Chapter.FULL_JS || context.variant == Variant.NATIVE) {
+    return transpileToFullJS(program, context, skipUndefined)
   } else {
     return transpileToSource(program, context, skipUndefined)
   }
