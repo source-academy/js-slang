@@ -128,8 +128,15 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
       return elementTypeString.includes('|') || elementTypeString.includes('=>')
         ? `(${elementTypeString})[]`
         : `${elementTypeString}[]`
+    case 'variable':
+      if (type.typeArgs) {
+        return `${type.name}<${type.typeArgs
+          .map(param => formatTypeString(param, formatAsLiteral))
+          .join(', ')}>`
+      }
+      return type.name
     default:
-      return type.kind
+      return type
   }
 }
 
@@ -142,11 +149,12 @@ export function tPrimitive(name: Primitive['name'], value?: string | number | bo
   }
 }
 
-export function tVar(name: string): Variable {
+export function tVar(name: string, typeArgs?: Type[]): Variable {
   return {
     kind: 'variable',
     name,
-    constraint: 'none'
+    constraint: 'none',
+    typeArgs
   }
 }
 
@@ -175,11 +183,11 @@ export function tList(elementType: Type, typeAsPair?: Pair): List {
   }
 }
 
-export function tForAll(polyType: Type, typeParamNames?: string[]): ForAll {
+export function tForAll(polyType: Type, typeParams?: Variable[]): ForAll {
   return {
     kind: 'forall',
     polyType,
-    typeParamNames
+    typeParams
   }
 }
 

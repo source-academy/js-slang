@@ -32,7 +32,8 @@ import {
   TSBasicType,
   TSDisallowedTypes,
   Type,
-  TypeEnvironment
+  TypeEnvironment,
+  Variable
 } from '../types'
 import { TypecheckError } from './internalTypeErrors'
 import * as tsEs from './tsESTree'
@@ -66,6 +67,9 @@ import {
   typeAnnotationKeywordToBasicTypeMap
 } from './utils'
 
+// Type environment is saved as a global variable so that it is not passed between functions excessively
+let env: TypeEnvironment = []
+
 /**
  * Entry function for type error checker.
  * Checks program for type errors, and returns the program with all TS-related nodes removed.
@@ -73,7 +77,7 @@ import {
 export function checkForTypeErrors(program: tsEs.Program, context: Context): es.Program {
   // Deep copy type environment to avoid modifying type environment in the context,
   // which might affect the type inference checker
-  const env: TypeEnvironment = cloneDeep(context.typeEnvironment)
+  env = cloneDeep(context.typeEnvironment)
   // Override predeclared function types
   for (const [name, type] of getTypeOverrides(context.chapter)) {
     setType(name, type, env)
@@ -94,6 +98,8 @@ export function checkForTypeErrors(program: tsEs.Program, context: Context): es.
           )
     )
   }
+  // Resets global variables
+  env = []
   return removeTSNodes(program)
 }
 
@@ -612,7 +618,7 @@ function addTypeDeclarationsToEnvironment(
 
         let type: BindableType = tAny
         if (node.typeParameters && node.typeParameters.params.length > 0) {
-          const typeParamNames: string[] = []
+          const typeParams: Variable[] = []
           // Add type parameters to enclosing environment
           pushEnv(env)
           node.typeParameters.params.forEach(param => {
@@ -624,10 +630,13 @@ function addTypeDeclarationsToEnvironment(
               context.errors.push(new TypeParameterNameNotAllowedError(param, name))
               return
             }
-            setTypeAlias(name, tVar(name), env)
-            typeParamNames.push(name)
+            const typeVariable = tVar(name)
+            setTypeAlias(name, typeVariable, env)
+            typeParams.push(typeVariable)
           })
-          type = tForAll(getTypeAnnotationType(node, context, env), typeParamNames)
+          // Add own name to enclosing environment for handling recursive types
+          setTypeAlias(alias, tVar(alias, typeParams), env)
+          type = tForAll(getTypeAnnotationType(node, context, env), typeParams)
           env.pop()
         } else {
           type = getTypeAnnotationType(node, context, env)
@@ -820,6 +829,12 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
     // Exit early as "any" is guaranteed not to cause type mismatch errors
     return false
   }
+  if (expectedType.kind !== 'variable' && actualType.kind === 'variable') {
+    // If the expected type is not a variable type but the actual type is a variable type,
+    // Swap the order of the types around
+    // This removes the need to check if the actual type is a variable type in all of the switch cases
+    return hasTypeMismatchErrors(expectedType, actualType)
+  }
   if (expectedType.kind !== 'union' && actualType.kind === 'union') {
     // If the expected type is not a union type but the actual type is a union type,
     // Check if the expected type matches any of the actual types
@@ -828,6 +843,32 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
   }
   switch (expectedType.kind) {
     case 'variable':
+      if (actualType.kind === 'variable') {
+        // If both are variable types, compare without expanding
+        return (
+          expectedType.name !== actualType.name ||
+          !isEqual(expectedType.typeArgs, actualType.typeArgs)
+        )
+      }
+      // Expand variable type and compare expanded type with actual type
+      const aliasType = lookupTypeAlias(expectedType.name, env)
+      if (aliasType && aliasType.kind === 'forall') {
+        // Clone type to prevent modifying generic type saved in type env
+        let polyType = cloneDeep(aliasType.polyType)
+        if (expectedType.typeArgs) {
+          if (aliasType.typeParams?.length !== expectedType.typeArgs.length) {
+            return true
+          }
+          for (let i = 0; i < expectedType.typeArgs.length; i++) {
+            polyType = substituteVariableTypes(
+              polyType,
+              aliasType.typeParams[i],
+              expectedType.typeArgs[i]
+            )
+          }
+        }
+        return hasTypeMismatchErrors(actualType, polyType)
+      }
       return true
     case 'primitive':
       if (actualType.kind === 'literal') {
@@ -1134,38 +1175,35 @@ function lookupTypeAliasAndRemoveForAllAndPredicateTypes(
     throw new TypecheckError(typeNode, 'Type alias should not be predicate type')
   }
   if (type.kind === 'forall') {
-    if (!type.typeParamNames) {
+    if (!type.typeParams) {
       throw new TypecheckError(typeNode, 'Generic type aliases must have type parameters')
     }
     if (
       !typeNode.typeParameters ||
-      typeNode.typeParameters.params.length !== type.typeParamNames.length
+      typeNode.typeParameters.params.length !== type.typeParams.length
     ) {
       context.errors.push(
-        new InvalidNumberOfTypeArgumentsForGenericTypeError(
-          typeNode,
-          name,
-          type.typeParamNames.length
-        )
+        new InvalidNumberOfTypeArgumentsForGenericTypeError(typeNode, name, type.typeParams.length)
       )
       return tAny
     }
-    let polyType = type.polyType
+    // Clone type to prevent modifying generic type saved in type env
+    let polyType = cloneDeep(type.polyType)
     const typesToSub = typeNode.typeParameters.params
-    for (let i = 0; i < type.typeParamNames.length; i++) {
+    for (let i = 0; i < type.typeParams.length; i++) {
       const typeToSub = typesToSub[i]
       if (typeToSub.type === 'TSTypeParameter') {
         throw new TypecheckError(typeNode, 'Type argument should not be type parameter')
       }
       polyType = substituteVariableTypes(
         polyType,
-        type.typeParamNames[i],
+        type.typeParams[i],
         getAnnotatedType(typeToSub, context, env)
       )
     }
     return polyType
   }
-  if (typeNode.typeParameters !== undefined) {
+  if (typeNode.typeParameters !== undefined && type.kind !== 'variable') {
     context.errors.push(new TypeNotGenericError(typeNode, name))
     return tAny
   }
@@ -1174,35 +1212,45 @@ function lookupTypeAliasAndRemoveForAllAndPredicateTypes(
 
 /**
  * Recurses through the given type and returns a new type
- * with all variable types that match the given name substituted with the type to substitute.
+ * with all variable types that match the given type variable substituted with the type to substitute.
  */
-function substituteVariableTypes(type: Type, varName: string, typeToSub: Type): Type {
+function substituteVariableTypes(type: Type, typeVar: Variable, typeToSub: Type): Type {
   switch (type.kind) {
     case 'primitive':
     case 'literal':
       return type
     case 'variable':
-      return type.name === varName ? typeToSub : type
+      if (type.name === typeVar.name) {
+        return typeToSub
+      }
+      if (type.typeArgs) {
+        for (let i = 0; i < type.typeArgs.length; i++) {
+          if (isEqual(type.typeArgs[i], typeVar)) {
+            type.typeArgs[i] = typeToSub
+          }
+        }
+      }
+      return type
     case 'function':
       const types = type.parameterTypes.map(param =>
-        substituteVariableTypes(param, varName, typeToSub)
+        substituteVariableTypes(param, typeVar, typeToSub)
       )
-      types.push(substituteVariableTypes(type.returnType, varName, typeToSub))
+      types.push(substituteVariableTypes(type.returnType, typeVar, typeToSub))
       return tFunc(...types)
     case 'union':
-      return tUnion(...type.types.map(type => substituteVariableTypes(type, varName, typeToSub)))
+      return tUnion(...type.types.map(type => substituteVariableTypes(type, typeVar, typeToSub)))
     case 'pair':
       return tPair(
-        substituteVariableTypes(type.headType, varName, typeToSub),
-        substituteVariableTypes(type.tailType, varName, typeToSub)
+        substituteVariableTypes(type.headType, typeVar, typeToSub),
+        substituteVariableTypes(type.tailType, typeVar, typeToSub)
       )
     case 'list':
       return tList(
-        substituteVariableTypes(type.elementType, varName, typeToSub),
-        type.typeAsPair && (substituteVariableTypes(type.typeAsPair, varName, typeToSub) as Pair)
+        substituteVariableTypes(type.elementType, typeVar, typeToSub),
+        type.typeAsPair && (substituteVariableTypes(type.typeAsPair, typeVar, typeToSub) as Pair)
       )
     case 'array':
-      return tArray(substituteVariableTypes(type.elementType, varName, typeToSub))
+      return tArray(substituteVariableTypes(type.elementType, typeVar, typeToSub))
     default:
       return type
   }

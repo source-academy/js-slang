@@ -374,10 +374,15 @@ export interface Primitive {
   value?: string | number | boolean
 }
 
+// In Source Typed, Variable type is used for
+// 1. Type parameters
+// 2. Type references of generic types with type arguments
 export interface Variable {
   kind: 'variable'
   name: string
   constraint: Constraint
+  // Used in Source Typed variant to store type arguments of generic types
+  typeArgs?: Type[]
 }
 
 // cannot name Function, conflicts with TS
@@ -416,11 +421,12 @@ export interface LiteralType {
 
 export type BindableType = Type | ForAll | PredicateType
 
+// In Source Typed, ForAll type is used for generic types
 export interface ForAll {
   kind: 'forall'
   polyType: Type
-  // Used in Source Typed variant
-  typeParamNames?: string[]
+  // Used in Source Typed variant to store type parameters of generic types
+  typeParams?: Variable[]
 }
 
 export interface PredicateType {
