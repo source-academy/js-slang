@@ -766,7 +766,7 @@ function typeCheckAndReturnArrowFunctionType(
 
   const types = getParamTypes(params, context)
   // Return type will always be last item in types array
-  types.push(expectedReturnType)
+  types.push(node.returnType ? expectedReturnType : actualReturnType)
   return tFunc(...types)
 }
 

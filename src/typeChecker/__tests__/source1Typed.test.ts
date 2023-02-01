@@ -177,11 +177,11 @@ describe('function types', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 7: Type '(any, string) => any' is not assignable to type '(number, number) => number'.
-      Line 8: Type '(number, any) => any' is not assignable to type '(string, string) => string'.
+      "Line 7: Type '(any, string) => string' is not assignable to type '(number, number) => number'.
+      Line 8: Type '(number, any) => number' is not assignable to type '(string, string) => string'.
       Line 9: Type '(any, any) => string' is not assignable to type '(number, number) => number'.
       Line 10: Type '(any, any) => number' is not assignable to type '(string, string) => string'.
-      Line 11: Type '(string) => any' is not assignable to type '(number, number) => number'.
+      Line 11: Type '(string) => string' is not assignable to type '(number, number) => number'.
       Line 12: Type '(number, any, any) => any' is not assignable to type '(string, string) => string'.
       Line 14: Type '(any) => any' is not assignable to type '() => number'."
     `)
