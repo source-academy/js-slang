@@ -1,5 +1,4 @@
 /**
- *
  * This interpreter implements an explicit-control evaluator.
  *
  * Heavily adapted from https://github.com/source-academy/JSpike/
@@ -17,7 +16,7 @@ import { Context, Environment, Frame, Value } from '../types'
 import { blockArrowFunction, constantDeclaration, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import Closure from './closure'
-import { assignmentInstr, envInstr, popInstr, pushUndefInstr } from './instrCreator'
+import { assignmentInstr, branchInstr, envInstr, popInstr, pushUndefInstr } from './instrCreator'
 import { AgendaItem, cmdEvaluator, IInstr, InstrTypes } from './types'
 import { handleSequence, isNode, Stack } from './utils'
 
@@ -117,9 +116,11 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   ) {
     agenda.push(command.expression)
   },
+
   DebuggerStatement: function (command: es.DebuggerStatement, context: Context, agenda: Agenda) {
     context.runtime.break = true
   },
+
   VariableDeclaration: function (
     command: es.VariableDeclaration,
     context: Context,
@@ -145,13 +146,25 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     agenda.push(command.right)
   },
 
+  ConditionalExpression: function (
+    command: es.ConditionalExpression,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    agenda.push(branchInstr(command.consequent, command.alternate))
+    agenda.push(command.test)
+  },
+
   Identifier: function (command: es.Identifier, context: Context, agenda: Agenda, stash: Stash) {
     stash.push(getVariable(context, command.name))
   },
+
   UnaryExpression: function (command: es.UnaryExpression, context: Context, agenda: Agenda) {
     agenda.push({ instrType: InstrTypes.UNARY_OP, symbol: command.operator })
     agenda.push(command.argument)
   },
+
   BinaryExpression: function (command: es.BinaryExpression, context: Context, agenda: Agenda) {
     agenda.push({ instrType: InstrTypes.BINARY_OP, symbol: command.operator })
     agenda.push(command.right)
@@ -171,6 +184,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     )
     stash.push(closure)
   },
+
   FunctionDeclaration: function (
     command: es.FunctionDeclaration,
     context: Context,
@@ -189,6 +203,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     )
     agenda.push(lambdaDeclaration)
   },
+
   CallExpression: function (
     command: es.CallExpression,
     context: Context,
@@ -206,6 +221,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     }
     agenda.push(command.callee)
   },
+
   ReturnStatement: function (
     command: es.ReturnStatement,
     context: Context,
@@ -218,6 +234,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
       agenda.push(command.argument)
     }
   },
+
   /** Instructions */
   [InstrTypes.RESET]: function (command: IInstr, context: Context, agenda: Agenda) {
     // Keep pushing reset instructions until marker is found.
@@ -270,6 +287,10 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
       // Directly stash result of applying pre-built functions without the ASE machine.
       stash.push(func.apply(null, args)) // eslint-disable-line prefer-spread
     }
+  },
+
+  [InstrTypes.BRANCH]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
+    agenda.push(stash.pop() ? command.consequent! : command.alternate!)
   },
 
   [InstrTypes.WHILE]: function () {},

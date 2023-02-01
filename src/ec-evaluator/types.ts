@@ -6,8 +6,8 @@ import { Agenda, Stash } from './interpreter'
 
 export type AgendaItem = es.Node | IInstr
 
-// Might have to change each InstrType to its own interface because different instrtypes have different
-// additional properties that they require.
+// TODO: Might have to change each InstrType to its own interface because different instrtypes have
+// different additional properties that they require.
 export interface IInstr {
   instrType: InstrTypes
   symbol?: string // for Assignment
@@ -16,6 +16,8 @@ export interface IInstr {
   numOfArgs?: number // for Application
   expr?: es.CallExpression // for Application error handling
   env?: Environment // For restoring environments
+  consequent?: es.Expression
+  alternate?: es.Expression
 }
 
 export enum InstrTypes {
