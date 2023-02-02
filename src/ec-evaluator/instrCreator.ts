@@ -19,10 +19,15 @@ export const assignmentInstr = (
 
 export const popInstr = (): IInstr => ({ instrType: InstrTypes.POP })
 
-export const branchInstr = (consequent: es.Expression, alternate: es.Expression): IInstr => ({
+export const branchInstr = (
+  consequent: es.Expression | es.Statement,
+  alternate: es.Expression | es.Statement | null = null,
+  srcNode: es.Node
+): IInstr => ({
   instrType: InstrTypes.BRANCH,
   consequent,
-  alternate
+  alternate,
+  srcNode
 })
 
 export const envInstr = (env: Environment): IInstr => ({ instrType: InstrTypes.ENVIRONMENT, env })

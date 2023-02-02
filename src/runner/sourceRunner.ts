@@ -209,7 +209,15 @@ function runECEvaluator(program: es.Program, context: Context, options: IOptions
     // }
     // evaluate(program, context)
     // resolve({ status: 'suspended', dum, scheduler: new PreemptiveScheduler(options.steps), context } as unknown as Suspended)
-    resolve({ status: 'finished', context, value: ECEvaluate(program, context) })
+    try {
+      const value = ECEvaluate(program, context)
+      resolve({ status: 'finished', context, value })
+    } catch (error) {
+      // if (error instanceof RuntimeSourceError) {
+      //   context.errors.push(error)
+      // }
+      resolve({ status: 'error' })
+    }
   })
 }
 

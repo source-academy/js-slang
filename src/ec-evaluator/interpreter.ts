@@ -15,6 +15,7 @@ import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
 import { blockArrowFunction, constantDeclaration, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
+import * as rttc from '../utils/rttc'
 import Closure from './closure'
 import { assignmentInstr, branchInstr, envInstr, popInstr, pushUndefInstr } from './instrCreator'
 import { AgendaItem, cmdEvaluator, IInstr, InstrTypes } from './types'
@@ -85,6 +86,7 @@ export function evaluate(program: es.Program, context: Context): Value {
  * the ASE machine to each AgendaItem.
  */
 const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
+  /** Statements */
   Program: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
@@ -103,6 +105,10 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
 
     // Push block body
     agenda.push(...handleSequence(command.body))
+  },
+
+  IfStatement: function (command: es.IfStatement, context: Context, agenda: Agenda, stash: Stash) {
+    agenda.push(...reduceConditional(command))
   },
 
   Literal: function (command: es.Literal, context: Context, agenda: Agenda, stash: Stash) {
@@ -152,8 +158,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    agenda.push(branchInstr(command.consequent, command.alternate))
-    agenda.push(command.test)
+    agenda.push(...reduceConditional(command))
   },
 
   Identifier: function (command: es.Identifier, context: Context, agenda: Agenda, stash: Stash) {
@@ -290,7 +295,23 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   },
 
   [InstrTypes.BRANCH]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
-    agenda.push(stash.pop() ? command.consequent! : command.alternate!)
+    const test = stash.pop()
+
+    // TODO: Check if test value is boolean
+    // This evaluator throws away the node which created the boolean
+    // How to retrieve/save the node?
+    // Save it in the branch function?
+    const error = rttc.checkIfStatement(command.srcNode!, test, context.chapter)
+    if (error) {
+      // throw error instead of return?
+      handleRuntimeError(context, error)
+    }
+
+    if (test) {
+      agenda.push(command.consequent!)
+    } else if (command.alternate) {
+      agenda.push(command.alternate)
+    }
   },
 
   [InstrTypes.WHILE]: function () {},
@@ -548,4 +569,12 @@ const createEnvironment = (
     }
   })
   return environment
+}
+
+/**
+ * This function is used for ConditionalExpressions and IfStatements, to create the sequence
+ * of agenda items to be added.
+ */
+const reduceConditional = (node: es.IfStatement | es.ConditionalExpression): AgendaItem[] => {
+  return [branchInstr(node.consequent, node.alternate, node), node.test]
 }

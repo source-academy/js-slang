@@ -16,8 +16,9 @@ export interface IInstr {
   numOfArgs?: number // for Application
   expr?: es.CallExpression // for Application error handling
   env?: Environment // For restoring environments
-  consequent?: es.Expression
-  alternate?: es.Expression
+  consequent?: es.Expression | es.Statement // For conditionals, if statements
+  alternate?: es.Expression | es.Statement | null // For conditioonals, if statements
+  srcNode?: es.Node // For remembering the node that created the agenda item for e.g. error throwing
 }
 
 export enum InstrTypes {
