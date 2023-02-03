@@ -166,12 +166,12 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   },
 
   UnaryExpression: function (command: es.UnaryExpression, context: Context, agenda: Agenda) {
-    agenda.push({ instrType: InstrTypes.UNARY_OP, symbol: command.operator })
+    agenda.push({ instrType: InstrTypes.UNARY_OP, symbol: command.operator, srcNode: command })
     agenda.push(command.argument)
   },
 
   BinaryExpression: function (command: es.BinaryExpression, context: Context, agenda: Agenda) {
-    agenda.push({ instrType: InstrTypes.BINARY_OP, symbol: command.operator })
+    agenda.push({ instrType: InstrTypes.BINARY_OP, symbol: command.operator, srcNode: command })
     agenda.push(command.right)
     agenda.push(command.left)
   },
@@ -261,8 +261,6 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
       args.unshift(stash.pop())
     }
 
-    // Member expressions?
-
     // Get function from the stash
     const func: Closure | Function = stash.pop()
 
@@ -338,6 +336,10 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     stash: Stash
   ) {
     const argument = stash.pop()
+    const error = rttc.checkUnaryExpression(command.srcNode!, command.symbol as es.UnaryOperator, argument, context.chapter)
+    if (error) {
+      handleRuntimeError(context, error)
+    }
     stash.push(evaluateUnaryExpression(command.symbol as es.UnaryOperator, argument))
   },
 
@@ -349,6 +351,10 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   ) {
     const right = stash.pop()
     const left = stash.pop()
+    const error = rttc.checkBinaryExpression(command.srcNode!, command.symbol as es.BinaryOperator, context.chapter, left, right)
+    if (error) {
+      handleRuntimeError(context, error)
+    }
     stash.push(evaluateBinaryExpression(command.symbol as es.BinaryOperator, left, right))
   },
 

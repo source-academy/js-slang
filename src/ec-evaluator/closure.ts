@@ -15,6 +15,7 @@ import {
   identifier,
   returnStatement
 } from '../utils/astCreator'
+import { dummyLocation} from '../utils/dummyAstCreator'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
   function DummyClass(this: Closure) {
@@ -64,7 +65,7 @@ export default class Closure extends Callable {
     }
     const functionBody = isExpressionBody(node.body)
       ? [returnStatement(node.body, node.body.loc!)]
-      : node.body
+      : [node.body, returnStatement({type:"Literal", value:"undefined", loc:dummyLocation()}, dummyLocation())]
     const closure = new Closure(
       blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc!),
       environment,
