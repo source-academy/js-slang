@@ -75,7 +75,7 @@ describe('pair', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type alias name cannot be 'Pair'."`
+      `"Line 1: Type alias 'Pair' has already been declared."`
     )
   })
 })
@@ -117,7 +117,7 @@ describe('list', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type alias name cannot be 'List'."`
+      `"Line 1: Type alias 'List' has already been declared."`
     )
   })
 })

@@ -707,3 +707,22 @@ export class ConstNotAssignableTypeError implements SourceError {
     return this.explain()
   }
 }
+
+export class DuplicateTypeAliasError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type alias '${this.name}' has already been declared.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}

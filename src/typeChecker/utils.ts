@@ -475,14 +475,27 @@ const predeclaredConstTypes: [string, Type][] = [
   ['math_SQRT2', tLiteral(Math.SQRT2)]
 ]
 
+const pairTypeAlias: [string, BindableType] = [
+  'Pair',
+  tForAll(tPair(headType, tailType), [headType, tailType])
+]
+const listTypeAlias: [string, BindableType] = ['List', tForAll(tList(tVar('T')), [tVar('T')])]
+const streamTypeAlias: [string, BindableType] = [
+  'Stream',
+  tForAll(tFunc(tPair(tVar('T'), tVar('Stream', [tVar('T')]))), [tVar('T')])
+]
+
 // Creates type environment for the appropriate Source chapter
 export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
   const initialTypeMappings = [...predeclaredNames, ...primitiveFuncs]
+  const initialTypeAliasMappings: [string, BindableType][] = [...predeclaredConstTypes]
   if (chapter >= 2) {
     initialTypeMappings.push(...pairFuncs, ...listFuncs)
+    initialTypeAliasMappings.push(pairTypeAlias, listTypeAlias)
   }
   if (chapter >= 3) {
     initialTypeMappings.push(...postS3equalityFuncs, ...mutatingPairFuncs, ...arrayFuncs)
+    initialTypeAliasMappings.push(streamTypeAlias)
   } else {
     initialTypeMappings.push(...preS3equalityFuncs)
   }
@@ -491,7 +504,7 @@ export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
     {
       typeMap: new Map(initialTypeMappings),
       declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const'])),
-      typeAliasMap: new Map(predeclaredConstTypes)
+      typeAliasMap: new Map(initialTypeAliasMappings)
     }
   ]
 }

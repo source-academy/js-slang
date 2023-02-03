@@ -4,6 +4,7 @@ import { cloneDeep, isEqual } from 'lodash'
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
   ConstNotAssignableTypeError,
+  DuplicateTypeAliasError,
   FunctionShouldHaveReturnValueError,
   InvalidArrayAccessTypeError,
   InvalidIndexTypeError,
@@ -610,8 +611,8 @@ function addTypeDeclarationsToEnvironment(
           context.errors.push(new TypeAliasNameNotAllowedError(node, alias))
           break
         }
-        if (context.chapter >= 2 && (alias === 'Pair' || alias === 'List')) {
-          context.errors.push(new TypeAliasNameNotAllowedError(node, alias))
+        if (lookupTypeAlias(alias, env) !== undefined) {
+          context.errors.push(new DuplicateTypeAliasError(node, alias))
           break
         }
 
@@ -1048,42 +1049,6 @@ function getAnnotatedType(typeNode: tsEs.TSType, context: Context): Type {
       throw new TypecheckError(typeNode, 'Intersection types are not allowed')
     case 'TSTypeReference':
       const name = typeNode.typeName.name
-      if (context.chapter >= 2) {
-        // Special types for Source 2+: Pair, List
-        if (name === 'Pair') {
-          if (!typeNode.typeParameters || typeNode.typeParameters.params.length !== 2) {
-            context.errors.push(
-              new InvalidNumberOfTypeArgumentsForGenericTypeError(typeNode, name, 2)
-            )
-            return tPair(tAny, tAny)
-          }
-          const typeParams = typeNode.typeParameters.params.filter(
-            (param): param is tsEs.TSType => param.type !== 'TSTypeParameter'
-          )
-          if (typeParams.length !== typeNode.typeParameters.params.length) {
-            throw new TypecheckError(typeNode, 'Invalid type parameter type')
-          }
-          return tPair(
-            getAnnotatedType(typeParams[0], context),
-            getAnnotatedType(typeParams[1], context)
-          )
-        }
-        if (name === 'List') {
-          if (!typeNode.typeParameters || typeNode.typeParameters.params.length !== 1) {
-            context.errors.push(
-              new InvalidNumberOfTypeArgumentsForGenericTypeError(typeNode, name, 1)
-            )
-            return tList(tAny)
-          }
-          const typeParams = typeNode.typeParameters.params.filter(
-            (param): param is tsEs.TSType => param.type !== 'TSTypeParameter'
-          )
-          if (typeParams.length !== typeNode.typeParameters.params.length) {
-            throw new TypecheckError(typeNode, 'Invalid type parameter type')
-          }
-          return tList(getAnnotatedType(typeParams[0], context))
-        }
-      }
       return lookupTypeAliasAndRemoveForAllAndPredicateTypes(typeNode, name, context)
     case 'TSParenthesizedType':
       return getAnnotatedType(typeNode.typeAnnotation, context)
