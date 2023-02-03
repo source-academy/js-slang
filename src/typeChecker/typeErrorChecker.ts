@@ -60,6 +60,7 @@ import {
   tNumber,
   tPair,
   tPrimitive,
+  tStream,
   tString,
   tUndef,
   tUnion,
@@ -319,11 +320,12 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context): Type {
       const callee = node.callee
       const args = node.arguments
       if (context.chapter >= 2 && callee.type === 'Identifier') {
-        // Special functions for Source 2+: list, head, tail
+        // Special functions for Source 2+: list, head, tail, stream
         // The typical way of getting the return type of call expressions is insufficient to type lists,
         // as we need to save the pair representation of the list as well (lists are pairs).
         // head and tail should preserve the pair representation of lists whenever possible.
         // Hence, these 3 functions are handled separately.
+        // Streams are treated similarly to lists, except only for Source 3+ and we do not need to store the pair representation.
         const fnName = callee.name
         if (fnName === 'list') {
           if (args.length === 0) {
@@ -370,6 +372,17 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context): Type {
           }
           return actualType
         }
+        if (fnName === 'stream' && context.chapter >= 3) {
+          if (args.length === 0) {
+            return tNull
+          }
+          // Element type is union of all types of arguments in stream
+          let elementType = typeCheckAndReturnType(args[0], context)
+          for (let i = 1; i < args.length; i++) {
+            elementType = mergeTypes(elementType, typeCheckAndReturnType(args[i], context))
+          }
+          return tStream(elementType)
+        }
       }
       const calleeType = typeCheckAndReturnType(callee, context)
       if (calleeType.kind !== 'function') {
@@ -396,16 +409,23 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context): Type {
         )
         return returnType
       }
+
       for (let i = 0; i < expectedTypes.length; i++) {
-        const expectedType = expectedTypes[i]
         const node = args[i]
         const actualType = typeCheckAndReturnType(node, context)
-        if (expectedType.kind === 'variable') {
-          // Substitute all instances of current type variable in return type with actual type of argument
-          returnType = substituteVariableTypes(returnType, expectedType, actualType)
-        } else {
-          checkForTypeMismatch(node, actualType, expectedType, context)
+        // Get all valid type variable mappings for current argument
+        const mappings = getTypeVariableMappings(actualType, expectedTypes[i])
+        // Apply type variable mappings to subsequent argument types and return type
+        for (const mapping of mappings) {
+          const typeVar = tVar(mapping[0])
+          const typeToSub = mapping[1]
+          for (let j = i; j < expectedTypes.length; j++) {
+            expectedTypes[j] = substituteVariableTypes(expectedTypes[j], typeVar, typeToSub)
+          }
+          returnType = substituteVariableTypes(returnType, typeVar, typeToSub)
         }
+        // Typecheck current argument
+        checkForTypeMismatch(node, actualType, expectedTypes[i], context)
       }
       return returnType
     }
@@ -774,6 +794,59 @@ function typeCheckAndReturnArrowFunctionType(
 }
 
 /**
+ * Recurses through the two given types and returns an array of tuples
+ * that map type variable names to the type to substitute.
+ */
+function getTypeVariableMappings(actualType: Type, expectedType: Type): [string, Type][] {
+  const mappings: [string, Type][] = []
+  switch (expectedType.kind) {
+    case 'variable':
+      mappings.push([expectedType.name, actualType])
+      break
+    case 'pair':
+      if (actualType.kind === 'list') {
+        if (actualType.typeAsPair !== undefined) {
+          mappings.push(
+            ...getTypeVariableMappings(actualType.typeAsPair.headType, expectedType.headType)
+          )
+          mappings.push(
+            ...getTypeVariableMappings(actualType.typeAsPair.tailType, expectedType.tailType)
+          )
+        } else {
+          mappings.push(...getTypeVariableMappings(actualType.elementType, expectedType.headType))
+          mappings.push(...getTypeVariableMappings(actualType.elementType, expectedType.tailType))
+        }
+      }
+      if (actualType.kind === 'pair') {
+        mappings.push(...getTypeVariableMappings(actualType.headType, expectedType.headType))
+        mappings.push(...getTypeVariableMappings(actualType.tailType, expectedType.tailType))
+      }
+      break
+    case 'list':
+      if (actualType.kind === 'list') {
+        mappings.push(...getTypeVariableMappings(actualType.elementType, expectedType.elementType))
+      }
+      break
+    case 'function':
+      if (
+        actualType.kind === 'function' &&
+        actualType.parameterTypes.length === expectedType.parameterTypes.length
+      ) {
+        for (let i = 0; i < actualType.parameterTypes.length; i++) {
+          mappings.push(
+            ...getTypeVariableMappings(actualType.parameterTypes[i], expectedType.parameterTypes[i])
+          )
+        }
+        mappings.push(...getTypeVariableMappings(actualType.returnType, expectedType.returnType))
+      }
+      break
+    default:
+      break
+  }
+  return mappings
+}
+
+/**
  * Checks if the two given types are equal.
  * If not equal, adds type mismatch error to context.
  */
@@ -844,11 +917,23 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
   switch (expectedType.kind) {
     case 'variable':
       if (actualType.kind === 'variable') {
-        // If both are variable types, compare without expanding
-        return (
-          expectedType.name !== actualType.name ||
-          !isEqual(expectedType.typeArgs, actualType.typeArgs)
-        )
+        // If both are variable types, compare without expanding;
+        // name and type arguments must match
+        if (expectedType.name !== actualType.name) {
+          return true
+        }
+        if (expectedType.typeArgs === undefined) {
+          return actualType.typeArgs?.length !== 0
+        }
+        if (actualType.typeArgs?.length !== expectedType.typeArgs.length) {
+          return true
+        }
+        for (let i = 0; i < expectedType.typeArgs.length; i++) {
+          if (hasTypeMismatchErrors(actualType.typeArgs[i], expectedType.typeArgs[i])) {
+            return true
+          }
+        }
+        return false
       }
       // Expand variable type and compare expanded type with actual type
       const aliasType = lookupTypeAlias(expectedType.name, env)

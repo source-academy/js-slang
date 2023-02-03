@@ -240,6 +240,11 @@ export function tPred(ifTrueType: Type | ForAll): PredicateType {
 export const headType = tVar('headType')
 export const tailType = tVar('tailType')
 
+// Stream type used in Source Typed
+export function tStream(elementType: Type): FunctionType {
+  return tFunc(tPair(elementType, tVar('Stream', [elementType])))
+}
+
 // Types for preludes
 export const predeclaredNames: [string, BindableType][] = [
   // constants
@@ -393,20 +398,26 @@ export const source1TypeOverrides: [string, BindableType][] = [
 
 export const source2TypeOverrides: [string, BindableType][] = [
   // list library functions
-  ['accumulate', tFunc(tFunc(tAny, tAny, tAny), tAny, tList(tAny), tAny)],
-  ['append', tFunc(tList(tAny), tList(tAny), tList(tAny))],
-  ['build_list', tFunc(tFunc(tAny, tAny), tNumber, tList(tAny))],
+  [
+    'accumulate',
+    tForAll(tFunc(tFunc(tVar('T'), tVar('U'), tVar('U')), tVar('U'), tList(tVar('T')), tVar('U')))
+  ],
+  [
+    'append',
+    tForAll(tFunc(tList(tVar('T')), tList(tVar('U')), tList(tUnion(tVar('T'), tVar('U')))))
+  ],
+  ['build_list', tForAll(tFunc(tFunc(tNumber, tVar('T')), tNumber, tList(tVar('T'))))],
   ['enum_list', tFunc(tNumber, tNumber, tList(tNumber))],
-  ['filter', tFunc(tFunc(tAny, tBool), tList(tAny), tList(tAny))],
-  ['for_each', tFunc(tFunc(tAny, tAny), tList(tAny), tBool)],
+  ['filter', tForAll(tFunc(tFunc(tVar('T'), tBool), tList(tVar('T')), tList(tVar('T'))))],
+  ['for_each', tForAll(tFunc(tFunc(tVar('T'), tAny), tList(tVar('T')), tLiteral(true)))],
   ['length', tFunc(tList(tAny), tNumber)],
-  ['list_ref', tFunc(tList(tAny), tNumber, tAny)],
+  ['list_ref', tForAll(tFunc(tList(tVar('T')), tNumber, tVar('T')))],
   ['list_to_string', tFunc(tList(tAny), tString)],
-  ['map', tFunc(tFunc(tAny, tAny), tList(tAny), tList(tAny))],
-  ['member', tFunc(tAny, tList(tAny), tList(tAny))],
-  ['remove', tFunc(tAny, tList(tAny), tList(tAny))],
-  ['remove_all', tFunc(tAny, tList(tAny), tList(tAny))],
-  ['reverse', tFunc(tList(tAny), tList(tAny))],
+  ['map', tForAll(tFunc(tFunc(tVar('T'), tVar('U')), tList(tVar('T')), tList(tVar('U'))))],
+  ['member', tForAll(tFunc(tVar('T'), tList(tVar('T')), tList(tVar('T'))))],
+  ['remove', tForAll(tFunc(tVar('T'), tList(tVar('T')), tList(tVar('T'))))],
+  ['remove_all', tForAll(tFunc(tVar('T'), tList(tVar('T')), tList(tVar('T'))))],
+  ['reverse', tForAll(tFunc(tList(tVar('T')), tList(tVar('T'))))],
   // misc functions
   // TODO: Add support for type checking of functions with variable no. of args
   ['display_list', tForAll(tAny)],
@@ -417,31 +428,34 @@ export const source2TypeOverrides: [string, BindableType][] = [
 export const source3TypeOverrides: [string, BindableType][] = [
   // array functions
   ['array_length', tFunc(tArray(tAny), tNumber)],
-  // mutating pair functions
-  ['set_head', tFunc(tPair(tAny, tAny), tAny, tUndef)],
-  ['set_tail', tFunc(tPair(tAny, tAny), tAny, tUndef)],
   // stream library functions
-  ['build_stream', tFunc(tFunc(tAny, tAny), tNumber, tPair(tAny, tFunc(tAny)))],
-  ['enum_stream', tFunc(tNumber, tNumber, tPair(tNumber, tFunc(tAny)))],
-  ['eval_stream', tFunc(tPair(tAny, tFunc(tAny)), tNumber, tList(tAny))],
-  ['integers_from', tFunc(tNumber, tPair(tNumber, tFunc(tAny)))],
-  ['list_to_stream', tFunc(tList(tAny), tPair(tAny, tFunc(tAny)))],
-  ['stream', tAny],
+  ['build_stream', tForAll(tFunc(tFunc(tNumber, tVar('T')), tNumber, tStream(tVar('T'))))],
+  ['enum_stream', tFunc(tNumber, tNumber, tStream(tNumber))],
+  ['eval_stream', tForAll(tFunc(tStream(tVar('T')), tNumber, tList(tVar('T'))))],
+  ['integers_from', tFunc(tNumber, tStream(tNumber))],
+  ['is_stream', tFunc(tAny, tBool)],
+  ['list_to_stream', tForAll(tFunc(tList(tVar('T')), tStream(tVar('T'))))],
   [
     'stream_append',
-    tFunc(tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))
+    tForAll(tFunc(tStream(tVar('T')), tStream(tVar('U')), tStream(tUnion(tVar('T'), tVar('U')))))
   ],
-  ['stream_filter', tFunc(tFunc(tAny, tBool), tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
-  ['stream_for_each', tFunc(tFunc(tAny, tAny), tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
-  ['stream_length', tFunc(tPair(tAny, tFunc(tAny)), tNumber)],
-  ['stream_map', tFunc(tFunc(tAny, tAny), tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
-  ['stream_member', tFunc(tAny, tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
-  ['stream_ref', tFunc(tPair(tAny, tFunc(tAny)), tNumber, tAny)],
-  ['stream_remove', tFunc(tAny, tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
-  ['stream_remove_all', tFunc(tAny, tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
-  ['stream_reverse', tFunc(tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
-  ['stream_tail', tFunc(tPair(tAny, tFunc(tAny)), tPair(tAny, tFunc(tAny)))],
-  ['stream_to_list', tFunc(tPair(tAny, tFunc(tAny)), tList(tAny))]
+  [
+    'stream_filter',
+    tForAll(tFunc(tFunc(tVar('T'), tBool), tStream(tVar('T')), tStream(tVar('T'))))
+  ],
+  ['stream_for_each', tForAll(tFunc(tFunc(tVar('T'), tAny), tStream(tVar('T')), tLiteral(true)))],
+  ['stream_length', tFunc(tStream(tAny), tNumber)],
+  [
+    'stream_map',
+    tForAll(tFunc(tFunc(tVar('T'), tVar('U')), tStream(tVar('T')), tStream(tVar('U'))))
+  ],
+  ['stream_member', tForAll(tFunc(tVar('T'), tStream(tVar('T')), tStream(tVar('T'))))],
+  ['stream_ref', tForAll(tFunc(tStream(tVar('T')), tNumber, tVar('T')))],
+  ['stream_remove', tForAll(tFunc(tVar('T'), tStream(tVar('T')), tStream(tVar('T'))))],
+  ['stream_remove_all', tForAll(tFunc(tVar('T'), tStream(tVar('T')), tStream(tVar('T'))))],
+  ['stream_reverse', tForAll(tFunc(tStream(tVar('T')), tStream(tVar('T'))))],
+  ['stream_tail', tForAll(tFunc(tStream(tVar('T')), tStream(tVar('T'))))],
+  ['stream_to_list', tForAll(tFunc(tStream(tVar('T')), tList(tVar('T'))))]
 ]
 
 export const source4TypeOverrides: [string, BindableType][] = [
@@ -469,10 +483,7 @@ const pairTypeAlias: [string, BindableType] = [
   tForAll(tPair(headType, tailType), [headType, tailType])
 ]
 const listTypeAlias: [string, BindableType] = ['List', tForAll(tList(tVar('T')), [tVar('T')])]
-const streamTypeAlias: [string, BindableType] = [
-  'Stream',
-  tForAll(tFunc(tPair(tVar('T'), tVar('Stream', [tVar('T')]))), [tVar('T')])
-]
+const streamTypeAlias: [string, BindableType] = ['Stream', tForAll(tStream(tVar('T')), [tVar('T')])]
 
 // Creates type environment for the appropriate Source chapter
 export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
