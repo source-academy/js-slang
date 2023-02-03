@@ -243,18 +243,18 @@ export const tailType = tVar('tailType')
 // Types for preludes
 export const predeclaredNames: [string, BindableType][] = [
   // constants
-  ['Infinity', tNumber],
-  ['NaN', tNumber],
+  ['Infinity', tPrimitive('number', Infinity)],
+  ['NaN', tPrimitive('number', NaN)],
   ['undefined', tUndef],
-  ['math_E', tNumber],
-  ['math_LN2', tNumber],
-  ['math_LN10', tNumber],
-  ['math_LOG2E', tNumber],
-  ['math_LOG10E', tNumber],
-  ['math_PI', tNumber],
-  ['math_SQRT1_2', tNumber],
-  ['math_SQRT2', tNumber],
-  // is something functions
+  ['math_E', tPrimitive('number', Math.E)],
+  ['math_LN2', tPrimitive('number', Math.LN2)],
+  ['math_LN10', tPrimitive('number', Math.LN10)],
+  ['math_LOG2E', tPrimitive('number', Math.LOG2E)],
+  ['math_LOG10E', tPrimitive('number', Math.LOG10E)],
+  ['math_PI', tPrimitive('number', Math.PI)],
+  ['math_SQRT1_2', tPrimitive('number', Math.SQRT1_2)],
+  ['math_SQRT2', tPrimitive('number', Math.SQRT2)],
+  // predicate functions
   ['is_boolean', tPred(tBool)],
   ['is_number', tPred(tNumber)],
   ['is_string', tPred(tString)],
@@ -377,17 +377,6 @@ export const temporaryStreamFuncs: [string, BindableType][] = [
 // Prelude function type overrides for Source Typed variant
 // No need to override predicate functions as they are automatically handled by type checker
 export const source1TypeOverrides: [string, BindableType][] = [
-  // constants
-  ['Infinity', tPrimitive('number', Infinity)],
-  ['NaN', tPrimitive('number', NaN)],
-  ['math_E', tPrimitive('number', Math.E)],
-  ['math_LN2', tPrimitive('number', Math.LN2)],
-  ['math_LN10', tPrimitive('number', Math.LN10)],
-  ['math_LOG2E', tPrimitive('number', Math.LOG2E)],
-  ['math_LOG10E', tPrimitive('number', Math.LOG10E)],
-  ['math_PI', tPrimitive('number', Math.PI)],
-  ['math_SQRT1_2', tPrimitive('number', Math.SQRT1_2)],
-  ['math_SQRT2', tPrimitive('number', Math.SQRT2)],
   // math functions
   // TODO: Add support for type checking of functions with variable no. of args
   ['math_hypot', tForAll(tNumber)],
