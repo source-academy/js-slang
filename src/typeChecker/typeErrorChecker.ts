@@ -319,22 +319,12 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context): Type {
       const callee = node.callee
       const args = node.arguments
       if (context.chapter >= 2 && callee.type === 'Identifier') {
-        // Special functions for Source 2+: pair, list, head, tail
-        // Pairs and lists are data structures, but since code is not evaluated when type-checking,
-        // we can only get the types of pairs and lists by looking at the pair and list function calls.
-        // The typical way of getting the return type of call expressions is insufficient to type pairs and lists,
-        // hence these functions are handled separately.
+        // Special functions for Source 2+: list, head, tail
+        // The typical way of getting the return type of call expressions is insufficient to type lists,
+        // as we need to save the pair representation of the list as well (lists are pairs).
+        // head and tail should preserve the pair representation of lists whenever possible.
+        // Hence, these 3 functions are handled separately.
         const fnName = callee.name
-        if (fnName === 'pair') {
-          if (args.length !== 2) {
-            context.errors.push(new InvalidNumberOfArgumentsTypeError(node, 2, args.length))
-            return tPair(tAny, tAny)
-          }
-          return tPair(
-            typeCheckAndReturnType(args[0], context),
-            typeCheckAndReturnType(args[1], context)
-          )
-        }
         if (fnName === 'list') {
           if (args.length === 0) {
             return tNull
@@ -389,23 +379,35 @@ function typeCheckAndReturnType(node: tsEs.Node, context: Context): Type {
         return tAny
       }
 
+      const expectedTypes = calleeType.parameterTypes
+      let returnType = calleeType.returnType
+
       // If any of the arguments is a spread element, skip type checking of arguments
       // TODO: Add support for type checking of call expressions with spread elements
       const hasVarArgs = args.reduce((prev, curr) => prev || curr.type === 'SpreadElement', false)
       if (hasVarArgs) {
-        return calleeType.returnType
+        return returnType
       }
 
       // Check argument types before returning declared return type
-      const expectedTypes = calleeType.parameterTypes
       if (args.length !== expectedTypes.length) {
         context.errors.push(
           new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
         )
-        return calleeType.returnType
+        return returnType
       }
-      checkArgTypes(node, expectedTypes, context)
-      return calleeType.returnType
+      for (let i = 0; i < expectedTypes.length; i++) {
+        const expectedType = expectedTypes[i]
+        const node = args[i]
+        const actualType = typeCheckAndReturnType(node, context)
+        if (expectedType.kind === 'variable') {
+          // Substitute all instances of current type variable in return type with actual type of argument
+          returnType = substituteVariableTypes(returnType, expectedType, actualType)
+        } else {
+          checkForTypeMismatch(node, actualType, expectedType, context)
+        }
+      }
+      return returnType
     }
     case 'AssignmentExpression':
       const expectedType = typeCheckAndReturnType(node.left, context)
@@ -979,27 +981,6 @@ function hasTypeMismatchErrors(actualType: Type, expectedType: Type): boolean {
 }
 
 /**
- * Checks the types of the arguments of the given call expression.
- * If number of arguments is different, add InvalidNumberOfArguments error to context and terminates early.
- * Else, checks each argument against its expected type.
- */
-function checkArgTypes(node: tsEs.CallExpression, expectedTypes: Type[], context: Context) {
-  const args = node.arguments
-  if (args.length !== expectedTypes.length) {
-    context.errors.push(
-      new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
-    )
-    return
-  }
-  for (let i = 0; i < expectedTypes.length; i++) {
-    const expectedType = expectedTypes[i]
-    const node = args[i]
-    const actualType = typeCheckAndReturnType(node, context)
-    checkForTypeMismatch(node, actualType, expectedType, context)
-  }
-}
-
-/**
  * Converts type annotation/type alias declaration node to its corresponding type representation in Source.
  * If no type annotation exists, returns the "any" primitive type.
  */
@@ -1081,8 +1062,9 @@ function getBasicType(node: tsEs.TSKeywordType, context: Context) {
 }
 
 /**
- * Wrapper function for lookupType that removes ForAll and Predicate types,
- * since they are not used in the type error checker.
+ * Wrapper function for lookupTypeAlias that removes forall and predicate types.
+ * Predicate types are substituted with the function type that takes in 1 argument and returns a boolean.
+ * For forall types, the poly type is returned.
  */
 function lookupTypeAndRemoveForAllAndPredicateTypes(name: string): Type | undefined {
   const type = lookupType(name, env)
@@ -1090,10 +1072,14 @@ function lookupTypeAndRemoveForAllAndPredicateTypes(name: string): Type | undefi
     return undefined
   }
   if (type.kind === 'forall') {
-    // Skip typecheck as function has variable number of arguments;
-    // this only occurs for certain prelude functions
-    // TODO: Add support for ForAll type to type error checker
-    return tAny
+    if (type.polyType.kind !== 'function') {
+      // Skip typecheck as function has variable number of arguments;
+      // this only occurs for certain prelude functions
+      // TODO: Add support for functions with variable number of arguments
+      return tAny
+    }
+    // Clone type so that original type is not modified
+    return cloneDeep(type.polyType)
   }
   if (type.kind === 'predicate') {
     // All predicate functions (e.g. is_number)
