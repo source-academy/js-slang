@@ -418,7 +418,7 @@ describe('arrow functions', () => {
 
 describe('type aliases', () => {
   it('TSTypeAliasDeclaration nodes should be removed from program at end of typechecking', () => {
-    const code = `type stringOrNumber = string | number;
+    const code = `type StringOrNumber = string | number;
       const x = 1;
     `
 
@@ -436,8 +436,8 @@ describe('type aliases', () => {
   })
 
   it('should throw errors for type mismatch', () => {
-    const code = `type stringOrNumber = string | number;
-      const x: stringOrNumber = true;
+    const code = `type StringOrNumber = string | number;
+      const x: StringOrNumber = true;
     `
 
     parse(code, context)
@@ -453,6 +453,17 @@ describe('type aliases', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 1: Type 'x' not declared."`)
   })
 
+  it('should throw errors for duplicates', () => {
+    const code = `type x = string;
+      type x = number;
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 2: SyntaxError: Identifier 'x' has already been declared. (2:11)"`
+    )
+  })
+
   it('should coexist with variables of the same name', () => {
     const code = `type x = string | number;
       const x: x = 1;
@@ -462,7 +473,7 @@ describe('type aliases', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 
-  it('should throw errors for reserved types', () => {
+  it('type alias name cannot be reserved type', () => {
     const code = `type string = number;
       type number = string;
       type boolean = number;
@@ -481,10 +492,64 @@ describe('type aliases', () => {
   it('should not throw errors for types that are not introduced yet', () => {
     const code = `type Pair = number;
       type List = string;
+      type Stream = boolean;
     `
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+})
+
+describe('generic types', () => {
+  it('non-generic types should not have type parameters', () => {
+    const code = `type NotGeneric = string;
+      const x: NotGeneric<string> = '1';
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 2: Type 'NotGeneric' is not generic."`
+    )
+  })
+
+  it('should throw errors for incorrect number of type arguments', () => {
+    const code = `type Union<T, U> = T | U;
+      const x1: Union<string> = '1';
+      const x2: Union<string, number, boolean> = true;
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 2: Generic type 'Union' requires 2 type argument(s).
+      Line 3: Generic type 'Union' requires 2 type argument(s)."
+    `)
+  })
+
+  it('type parameters cannot be reserved types', () => {
+    const code = `type Union<string, number, boolean, undefined> = string | number | boolean | undefined;`
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 1: Type parameter name cannot be 'string'.
+      Line 1: Type parameter name cannot be 'number'.
+      Line 1: Type parameter name cannot be 'boolean'.
+      Line 1: Type parameter name cannot be 'undefined'."
+    `)
+  })
+
+  it('should throw errors for type mismatch', () => {
+    const code = `type Union<T, U> = T | U;
+      const x1: Union<string, number> = true;
+      const x2: Union<string, boolean> = 1;
+      const x3: Union<number, boolean> = '1';
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 2: Type 'boolean' is not assignable to type 'string | number'.
+      Line 3: Type 'number' is not assignable to type 'string | boolean'.
+      Line 4: Type 'string' is not assignable to type 'number | boolean'."
+    `)
   })
 })
 

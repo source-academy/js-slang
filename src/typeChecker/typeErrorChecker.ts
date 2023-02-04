@@ -634,6 +634,8 @@ function addTypeDeclarationsToEnvironment(
           break
         }
         if (lookupTypeAlias(alias, env) !== undefined) {
+          // Only happens when attempting to declare type aliases that share names with predeclared types (e.g. Pair, List)
+          // Declaration of two type aliases with the same name will be caught as syntax error by parser
           context.errors.push(new DuplicateTypeAliasError(node, alias))
           break
         }
