@@ -124,13 +124,14 @@ const FULL_JS_PARSER_OPTIONS: AcornOptions = {
   locations: true
 }
 
-export function parse(source: string, context: Context) {
+export function parse(source: string, context: Context, options: Partial<AcornOptions> = {}) {
   let program: es.Program | undefined
+  const acornParserOptions = createAcornParserOptions(context, options)
   try {
     if (context.variant === Variant.TYPED) {
       // The code is first parsed using the custom TypeParser (Acorn parser with plugin that allows for parsing of TS syntax)
       // in order to catch syntax errors such as no semicolon/trailing comma.
-      TypeParser.parse(source, createAcornParserOptions(context))
+      TypeParser.parse(source, acornParserOptions)
 
       // The code is then parsed using Babel Parser to successfully parse all type syntax.
       // This is a workaround as the custom TypeParser does not cover all type annotation cases needed for Source Typed
@@ -140,7 +141,8 @@ export function parse(source: string, context: Context) {
       // and though the 'estree' plugin is used here to revert the changes, the changes are not reflected in the types.
       const typedProgram = babelParse(source, {
         sourceType: 'module',
-        plugins: ['typescript', 'estree']
+        plugins: ['typescript', 'estree'],
+        sourceFilename: options.sourceFile
       }).program as unknown as tsEs.Program
 
       // Checks for type errors, then removes any TS-related nodes as they are not compatible with acorn-walk.
@@ -150,9 +152,12 @@ export function parse(source: string, context: Context) {
       (context.executionMethod === 'native' && context.variant === Variant.NATIVE)
     ) {
       // Do not enforce Source rules on JavaScript code.
-      return acornParse(source, FULL_JS_PARSER_OPTIONS) as unknown as es.Program
+      return acornParse(source, {
+        ...FULL_JS_PARSER_OPTIONS,
+        ...options
+      }) as unknown as es.Program
     } else {
-      program = acornParse(source, createAcornParserOptions(context)) as unknown as es.Program
+      program = acornParse(source, acornParserOptions) as unknown as es.Program
     }
 
     ancestor(program as es.Node, walkers, undefined, context)
@@ -162,7 +167,8 @@ export function parse(source: string, context: Context) {
       const loc = (error as any).loc
       const location = {
         start: { line: loc.line, column: loc.column },
-        end: { line: loc.line, column: loc.column + 1 }
+        end: { line: loc.line, column: loc.column + 1 },
+        source: acornParserOptions.sourceFile
       }
       context.errors.push(new FatalSyntaxError(location, error.toString()))
     } else {
@@ -181,7 +187,10 @@ export function tokenize(source: string, context: Context) {
   return [...acornTokenizer(source, createAcornParserOptions(context))]
 }
 
-export const createAcornParserOptions = (context: Context): AcornOptions => ({
+export const createAcornParserOptions = (
+  context: Context,
+  options: Partial<AcornOptions> = {}
+): AcornOptions => ({
   sourceType: 'module',
   ecmaVersion: 6,
   locations: true,
@@ -190,7 +199,8 @@ export const createAcornParserOptions = (context: Context): AcornOptions => ({
     context.errors.push(
       new MissingSemicolonError({
         end: { line: loc.line, column: loc.column + 1 },
-        start: loc
+        start: loc,
+        source: options.sourceFile
       })
     )
   },
@@ -199,10 +209,12 @@ export const createAcornParserOptions = (context: Context): AcornOptions => ({
     context.errors.push(
       new TrailingCommaError({
         end: { line: loc.line, column: loc.column + 1 },
-        start: loc
+        start: loc,
+        source: options.sourceFile
       })
     )
-  }
+  },
+  ...options
 })
 
 // Names-extractor needs comments

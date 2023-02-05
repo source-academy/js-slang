@@ -64,6 +64,14 @@ let verboseErrors: boolean = false
 
 export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
+    // FIXME: Either refactor the parser to output an ESTree-compliant AST, or modify the ESTree types.
+    const filePath = error.location?.source
+      ? `[${error.location.source}] `
+      : // @ts-ignore - Typed Source makes use of Babel parser which is NOT compliant with ESTree. Instead of using `source`, it makes use of `filename`.
+      error.location?.filename
+      ? // @ts-ignore - Typed Source makes use of Babel parser which is NOT compliant with ESTree. Instead of using `source`, it makes use of `filename`.
+        `[${error.location.filename}] `
+      : ''
     const line = error.location ? error.location.start.line : '<unknown>'
     const column = error.location ? error.location.start.column : '<unknown>'
     const explanation = error.explain()
@@ -73,10 +81,10 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
       // way to display it.
       const elaboration = error.elaborate()
       return line < 1
-        ? `${explanation}\n${elaboration}\n`
-        : `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
+        ? `${filePath}${explanation}\n${elaboration}\n`
+        : `${filePath}Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
     } else {
-      return line < 1 ? explanation : `Line ${line}: ${explanation}`
+      return line < 1 ? explanation : `${filePath}Line ${line}: ${explanation}`
     }
   })
   return errorMessagesArr.join('\n')
