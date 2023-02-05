@@ -210,13 +210,17 @@ function runECEvaluator(program: es.Program, context: Context, options: IOptions
     // evaluate(program, context)
     // resolve({ status: 'suspended', dum, scheduler: new PreemptiveScheduler(options.steps), context } as unknown as Suspended)
     try {
+      context.runtime.isRunning = true
       const value = ECEvaluate(program, context)
       resolve({ status: 'finished', context, value })
     } catch (error) {
       // if (error instanceof RuntimeSourceError) {
       //   context.errors.push(error)
       // }
+      // checkForStackOverflow(error, context) TODO: implement stack overflow check
       resolve({ status: 'error' })
+    } finally {
+      context.runtime.isRunning = false
     }
   })
 }
@@ -273,12 +277,12 @@ export async function sourceRunner(
     return sourceRunner(code, context, verboseErrors, options)
   }
 
-  if (isNativeRunnable) {
-    return runNative(code, program, context, theOptions)
-  }
-
   if (context.variant === Variant.EXPLICIT_CONTROL) {
     return runECEvaluator(program, context, theOptions)
+  }
+
+  if (isNativeRunnable) {
+    return runNative(code, program, context, theOptions)
   }
 
   return runInterpreter(program, context, theOptions)

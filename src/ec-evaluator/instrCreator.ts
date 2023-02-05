@@ -9,12 +9,14 @@ import { IInstr, InstrTypes } from './types'
 export const assignmentInstr = (
   symbol: string,
   constant: boolean,
-  declaration: boolean
+  declaration: boolean,
+  srcNode: es.Node
 ): IInstr => ({
   instrType: InstrTypes.ASSIGNMENT,
   symbol,
   constant,
-  declaration
+  declaration,
+  srcNode
 })
 
 export const popInstr = (): IInstr => ({ instrType: InstrTypes.POP })
@@ -27,6 +29,12 @@ export const branchInstr = (
   instrType: InstrTypes.BRANCH,
   consequent,
   alternate,
+  srcNode
+})
+
+export const applicationInstr = (numOfArgs: number, srcNode: es.Node): IInstr => ({
+  instrType: InstrTypes.APPLICATION,
+  numOfArgs,
   srcNode
 })
 

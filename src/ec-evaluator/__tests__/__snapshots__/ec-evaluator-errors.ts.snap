@@ -1,0 +1,1106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Access local property: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "({a: 0})[\\"a\\"];",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Builtins don't create additional errors when it's not their fault: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) {
+  return a;
+}
+map(f, list(1, 2));",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Name a not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Cascading js errors work properly 1: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function make_alternating_stream(stream) {
+  return pair(head(stream), () => make_alternating_stream(
+                                    negate_whole_stream(
+                                        stream_tail(stream))));
+}
+
+function negate_whole_stream(stream) {
+    return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));
+}
+
+const ones = pair(1, () => ones);
+eval_stream(make_alternating_stream(enum_stream(1, 9)), 10);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 8: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Cascading js errors work properly: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function h(p) {
+  return head(p);
+}
+
+h(null);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when accessing inherited property of object: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "({}).valueOf;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Cannot read inherited property valueOf of {}.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when assigning to builtin - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+map = 5;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map.
+As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when assigning to builtin - verbose: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+undefined = 5;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant undefined.
+As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when assigning to builtin: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "map = 5;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Cannot assign new value to constant map.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when assigning to builtin: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "undefined = 5;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Cannot assign new value to constant undefined.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function in tail call with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+const g = () => 1;
+const f = x => g(x);
+f(1);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3, Column 15: Expected 0 arguments, but got 1.
+Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function in tail call with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const g = () => 1;
+const f = x => g(x);
+f(1);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Expected 0 arguments, but got 1.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function with too few arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  const f = x => x;
+  f();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 0.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function with too few arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+f();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 0.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  const f = x => x;
+  f(1, 2);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling arrow function with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+f(1, 2);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling builtin function in with too few arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse_int(\\"\\");",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected 2 arguments, but got 1.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling builtin function in with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "is_number(1, 2, 3);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected 1 arguments, but got 3.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function from member expression with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  const f = [x => x];
+  f[0](1, 2);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function from member expression with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = [x => x];
+f[0](1, 2);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function with too few arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  function f(x) {
+    return x;
+  }
+  f();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 0.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function with too few arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) {
+  return x;
+}
+f();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 4: Expected 1 arguments, but got 0.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  function f(x) {
+    return x;
+  }
+  f(1, 2);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 5, Column 2: Expected 1 arguments, but got 2.
+Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x) {
+  return x;
+}
+f(1, 2);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 4: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value "string" - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  'string'();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 2: Calling non-function value \\"string\\".
+Because \\"string\\" is not a function, you cannot run \\"string\\"().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value "string": expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "'string'();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Calling non-function value \\"string\\".",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value 0 - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  0();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 2: Calling non-function value 0.
+Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value 0: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "0();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Calling non-function value 0.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value array - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+[1]();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 0: Calling non-function value [1].
+Because [1] is not a function, you cannot run [1]().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value array: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "[1]();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Calling non-function value [1].",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value null - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  null();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 2: null literals are not allowed.
+They're not part of the Source §1 specs.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value null: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "null();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: null literals are not allowed.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value object - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+({a: 1})();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
+Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value object - verbose: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+({a: 1})();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
+Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value object: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "({a: 1})();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Calling non-function value {\\"a\\": 1}.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value true - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  true();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 2: Calling non-function value true.
+Because true is not a function, you cannot run true().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value true: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "true();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Calling non-function value true.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  undefined();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined with arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  undefined(1, true);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 2: Calling non-function value undefined.
+Because undefined is not a function, you cannot run undefined(1, true).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined with arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "undefined(1, true);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Calling non-function value undefined.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value undefined: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "undefined();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Calling non-function value undefined.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring const after function --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+function f() {}
+const f = x => x;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3, Column 6: SyntaxError: Identifier 'f' has already been declared (3:6)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring const after function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {}
+const f = x => x;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring constant as variable: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+let f = x => x;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring constant: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+const f = x => x;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after const --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+const f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after const: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after function --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+function f() {}
+function f() {}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {}
+function f() {}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after let --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+let f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3, Column 9: SyntaxError: Identifier 'f' has already been declared (3:9)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring function after let: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let f = x => x;
+function f() {}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring let after function --verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+function f() {}
+let f = x => x;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3, Column 4: SyntaxError: Identifier 'f' has already been declared (3:4)
+There is a syntax error in your program
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring let after function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {}
+let f = x => x;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring variable as constant: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let f = x => x;
+const f = x => x;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when redeclaring variable: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let f = x => x;
+let f = x => x;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error with too few arguments passed to rest parameters: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function rest(a, b, ...c) {}
+rest(1);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Expected 2 or more arguments, but got 1.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error with too many arguments passed to math_sin: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "math_sin(7,8);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Nice errors when errors occur inside builtins: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse_int(\\"10\\");",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected 2 arguments, but got 1.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Nice errors when errors occur inside builtins: expectParsedError 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse(\\"'\\");",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No error when calling display function in with variable arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "display(1);
+display(1, \\"test\\");",
+  "displayResult": Array [
+    "1",
+    "test 1",
+  ],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No error when calling list function in with variable arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "list();
+list(1);
+list(1, 2, 3);
+list(1, 2, 3, 4, 5, 6, 6);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": Array [
+    1,
+    Array [
+      2,
+      Array [
+        3,
+        Array [
+          4,
+          Array [
+            5,
+            Array [
+              6,
+              Array [
+                6,
+                null,
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No error when calling math_max function in with variable arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "math_max();
+math_max(1, 2);
+math_max(1, 2, 3);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No error when calling math_min function in with variable arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "math_min();
+math_min(1, 2);
+math_min(1, 2, 3);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`No error when calling stringify function in with variable arguments: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "stringify(1, 2);
+stringify(1, 2, 3);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "1",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when accessing property of function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+  return 1;
+}
+f.prototype;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 4: Expected object or array, got function.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when accessing property of null: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "null.prop;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected object or array, got null.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when accessing property of string: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "'hi'.length;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected object or array, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when assigning property of function: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+  return 1;
+}
+f.prop = 5;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 4: Expected object or array, got function.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error when assigning property of string: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "'hi'.prop = 5;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected object or array, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error with <number> * <nonnumber>, error line at <number>, not <nonnumber>: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "12
+*
+'string';",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected number on right hand side of operation, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Type error with non boolean in if statement, error line at if statement, not at 1: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "if (
+1
+) {
+  2;
+} else {}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Expected boolean as condition, got number.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Undefined variable error is thrown - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+im_undefined;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 0: Name im_undefined not declared.
+Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Undefined variable error is thrown: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "im_undefined;",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Name im_undefined not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;

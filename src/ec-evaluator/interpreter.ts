@@ -6,6 +6,7 @@
  */
 
 /* tslint:disable:max-classes-per-file */
+import * as constants from '../constants'
 import * as es from 'estree'
 import { uniqueId } from 'lodash'
 
@@ -13,11 +14,24 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
-import { blockArrowFunction, conditionalExpression, constantDeclaration, literal, primitive } from '../utils/astCreator'
+import {
+  blockArrowFunction,
+  conditionalExpression,
+  constantDeclaration,
+  literal,
+  primitive
+} from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import Closure from './closure'
-import { assignmentInstr, branchInstr, envInstr, popInstr, pushUndefInstr } from './instrCreator'
+import Closure from '../interpreter/closure'
+import {
+  applicationInstr,
+  assignmentInstr,
+  branchInstr,
+  envInstr,
+  popInstr,
+  pushUndefInstr
+} from './instrCreator'
 import { AgendaItem, cmdEvaluator, IInstr, InstrTypes } from './types'
 import { handleSequence, isNode, Stack } from './utils'
 
@@ -136,7 +150,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     const id = declaration.id as es.Identifier
     // Pop instruction required as declarations are not value producing so the value remaining on the stash needs to be popped.
     agenda.push(popInstr())
-    agenda.push(assignmentInstr(id.name, command.kind === 'const', true))
+    agenda.push(assignmentInstr(id.name, command.kind === 'const', true, command))
     agenda.push(declaration.init!)
   },
 
@@ -148,7 +162,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   ) {
     const id = command.left as es.Identifier
     // No pop instruction because assignments are value producing so the value on the stash remains.
-    agenda.push(assignmentInstr(id.name, false, false))
+    agenda.push(assignmentInstr(id.name, false, false, command))
     agenda.push(command.right)
   },
 
@@ -162,7 +176,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   },
 
   Identifier: function (command: es.Identifier, context: Context, agenda: Agenda, stash: Stash) {
-    stash.push(getVariable(context, command.name))
+    stash.push(getVariable(context, command.name, command))
   },
 
   UnaryExpression: function (command: es.UnaryExpression, context: Context, agenda: Agenda) {
@@ -176,8 +190,8 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     agenda.push(command.left)
   },
 
-  LogicalExpression: function(command: es.LogicalExpression, context: Context, agenda: Agenda) {
-    if (command.operator === "&&") {
+  LogicalExpression: function (command: es.LogicalExpression, context: Context, agenda: Agenda) {
+    if (command.operator === '&&') {
       agenda.push(conditionalExpression(command.left, command.right, literal(false), command.loc))
     } else {
       agenda.push(conditionalExpression(command.left, literal(true), command.right, command.loc))
@@ -224,11 +238,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     stash: Stash
   ) {
     // Push application instruction, function arguments and function onto agenda.
-    agenda.push({
-      instrType: InstrTypes.APPLICATION,
-      numOfArgs: command.arguments.length,
-      expr: command
-    })
+    agenda.push(applicationInstr(command.arguments.length, command))
     for (let index = command.arguments.length - 1; index >= 0; index--) {
       agenda.push(command.arguments[index])
     }
@@ -271,11 +281,9 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
 
     // Get function from the stash
     const func: Closure | Function = stash.pop()
-
-    // Check for number of arguments mismatch error
-    checkNumberOfArguments(context, func, args, command.expr!)
-
     if (func instanceof Closure) {
+      // Check for number of arguments mismatch error
+      checkNumberOfArguments(context, func, args, command.srcNode! as es.CallExpression)
       // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
       const next = agenda.peek()
       if (!next || (!isNode(next) && next.instrType === InstrTypes.ENVIRONMENT)) {
@@ -293,8 +301,26 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
       const environment = createEnvironment(func, args)
       pushEnvironment(context, environment)
     } else if (typeof func === 'function') {
+      // Check for number of arguments mismatch error
+      checkNumberOfArguments(context, func, args, command.srcNode! as es.CallExpression)
       // Directly stash result of applying pre-built functions without the ASE machine.
-      stash.push(func.apply(null, args)) // eslint-disable-line prefer-spread
+      try {
+        const result = func(...args) 
+        stash.push(result) 
+      } catch (error) {
+        context.runtime.environments = context.runtime.environments.slice(
+          -context.numberOfOuterEnvironments
+        )
+        if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
+          // The error could've arisen when the builtin called a source function which errored.
+          // If the cause was a source error, we don't want to include the error.
+          // However if the error came from the builtin itself, we need to handle it.
+          const loc = command.srcNode ? command.srcNode.loc! : constants.UNKNOWN_LOCATION
+          handleRuntimeError(context, new errors.ExceptionError(error, loc))
+        }
+      }
+    } else {
+      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode!))
     }
   },
 
@@ -331,8 +357,19 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     stash: Stash
   ) {
     command.declaration
-      ? defineVariable(context, command.symbol!, stash.peek(), command.constant)
-      : setVariable(context, command.symbol!, stash.peek())
+      ? defineVariable(
+          context,
+          command.symbol!,
+          stash.peek(),
+          command.constant,
+          command.srcNode! as es.VariableDeclaration
+        )
+      : setVariable(
+          context,
+          command.symbol!,
+          stash.peek(),
+          command.srcNode! as es.AssignmentExpression
+        )
   },
 
   [InstrTypes.UNARY_OP]: function (
@@ -342,7 +379,12 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     stash: Stash
   ) {
     const argument = stash.pop()
-    const error = rttc.checkUnaryExpression(command.srcNode!, command.symbol as es.UnaryOperator, argument, context.chapter)
+    const error = rttc.checkUnaryExpression(
+      command.srcNode!,
+      command.symbol as es.UnaryOperator,
+      argument,
+      context.chapter
+    )
     if (error) {
       handleRuntimeError(context, error)
     }
@@ -357,7 +399,13 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   ) {
     const right = stash.pop()
     const left = stash.pop()
-    const error = rttc.checkBinaryExpression(command.srcNode!, command.symbol as es.BinaryOperator, context.chapter, left, right)
+    const error = rttc.checkBinaryExpression(
+      command.srcNode!,
+      command.symbol as es.BinaryOperator,
+      context.chapter,
+      left,
+      right
+    )
     if (error) {
       handleRuntimeError(context, error)
     }
@@ -454,14 +502,17 @@ export const pushEnvironment = (context: Context, environment: Environment) => {
   context.runtime.environmentTree.insert(environment)
 }
 
-function defineVariable(context: Context, name: string, value: Value, constant = false) {
+function defineVariable(
+  context: Context,
+  name: string,
+  value: Value,
+  constant = false,
+  node: es.VariableDeclaration
+) {
   const environment = currentEnvironment(context)
 
   if (environment.head[name] !== DECLARED_BUT_NOT_YET_ASSIGNED) {
-    return handleRuntimeError(
-      context,
-      new errors.VariableRedeclaration(context.runtime.nodes[0]!, name, !constant)
-    )
+    return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
   }
 
   Object.defineProperty(environment.head, name, {
@@ -473,15 +524,12 @@ function defineVariable(context: Context, name: string, value: Value, constant =
   return environment
 }
 
-const getVariable = (context: Context, name: string) => {
+const getVariable = (context: Context, name: string, node: es.Identifier) => {
   let environment: Environment | null = currentEnvironment(context)
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
       if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
-        return handleRuntimeError(
-          context,
-          new errors.UnassignedVariable(name, context.runtime.nodes[0])
-        )
+        return handleRuntimeError(context, new errors.UnassignedVariable(name, node))
       } else {
         return environment.head[name]
       }
@@ -489,10 +537,10 @@ const getVariable = (context: Context, name: string) => {
       environment = environment.tail
     }
   }
-  return handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
+  return handleRuntimeError(context, new errors.UndefinedVariable(name, node))
 }
 
-const setVariable = (context: Context, name: string, value: any) => {
+const setVariable = (context: Context, name: string, value: any, node: es.AssignmentExpression) => {
   let environment: Environment | null = currentEnvironment(context)
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
@@ -504,15 +552,12 @@ const setVariable = (context: Context, name: string, value: any) => {
         environment.head[name] = value
         return undefined
       }
-      return handleRuntimeError(
-        context,
-        new errors.ConstAssignment(context.runtime.nodes[0]!, name)
-      )
+      return handleRuntimeError(context, new errors.ConstAssignment(node, name))
     } else {
       environment = environment.tail
     }
   }
-  return handleRuntimeError(context, new errors.UndefinedVariable(name, context.runtime.nodes[0]))
+  return handleRuntimeError(context, new errors.UndefinedVariable(name, node))
 }
 
 const checkNumberOfArguments = (
