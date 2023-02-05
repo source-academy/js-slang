@@ -85,7 +85,7 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
     value: undefined,
     errors: [
       new FatalSyntaxError(
-        { start: { line: 1, column: 8 }, end: { line: 1, column: 9 } },
+        { start: { line: 1, column: 8 }, end: { line: 1, column: 9 }, source: undefined },
         'SyntaxError: Unexpected token (1:8)'
       )
     ]
