@@ -69,6 +69,10 @@ const parseProgramsAndConstructImportGraph = (
   const programs: Record<string, es.Program> = {}
   const importGraph = new DirectedGraph()
 
+  // If there is more than one file, tag AST nodes with the source file path.
+  const numOfFiles = Object.keys(files).length
+  const shouldAddSourceFileToAST = numOfFiles > 1
+
   const parseFile = (currentFilePath: string): void => {
     const code = files[currentFilePath]
     if (code === undefined) {
@@ -76,7 +80,13 @@ const parseProgramsAndConstructImportGraph = (
       return
     }
 
-    const program = parse(code, context)
+    // Tag AST nodes with the source file path for use in error messages.
+    const parserOptions = shouldAddSourceFileToAST
+      ? {
+          sourceFile: currentFilePath
+        }
+      : {}
+    const program = parse(code, context, parserOptions)
     if (program === undefined) {
       return
     }
