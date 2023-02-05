@@ -142,8 +142,7 @@ export function parse(source: string, context: Context, options: Partial<AcornOp
       const typedProgram = babelParse(source, {
         sourceType: 'module',
         plugins: ['typescript', 'estree'],
-        // Note that not all Acorn options work for the Babel parser, though there is a huge overlap.
-        ...options
+        sourceFilename: options.sourceFile
       }).program as unknown as tsEs.Program
 
       // Checks for type errors, then removes any TS-related nodes as they are not compatible with acorn-walk.
