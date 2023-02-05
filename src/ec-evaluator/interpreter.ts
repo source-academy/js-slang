@@ -6,12 +6,13 @@
  */
 
 /* tslint:disable:max-classes-per-file */
-import * as constants from '../constants'
 import * as es from 'estree'
 import { uniqueId } from 'lodash'
 
+import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import Closure from '../interpreter/closure'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
 import {
@@ -23,7 +24,6 @@ import {
 } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import Closure from '../interpreter/closure'
 import {
   applicationInstr,
   assignmentInstr,
@@ -305,8 +305,8 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
       checkNumberOfArguments(context, func, args, command.srcNode! as es.CallExpression)
       // Directly stash result of applying pre-built functions without the ASE machine.
       try {
-        const result = func(...args) 
-        stash.push(result) 
+        const result = func(...args)
+        stash.push(result)
       } catch (error) {
         context.runtime.environments = context.runtime.environments.slice(
           -context.numberOfOuterEnvironments

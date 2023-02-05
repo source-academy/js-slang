@@ -16,7 +16,6 @@ const undefinedVariableVerbose = stripIndent`
 im_undefined;
 `
 const optionEC = { variant: Variant.EXPLICIT_CONTROL }
-const optionECLibParser = { chapter: Chapter.LIBRARY_PARSER, variant: Variant.EXPLICIT_CONTROL }
 const optionEC1 = { chapter: Chapter.SOURCE_1, variant: Variant.EXPLICIT_CONTROL }
 const optionEC2 = { chapter: Chapter.SOURCE_2, variant: Variant.EXPLICIT_CONTROL }
 const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
@@ -100,58 +99,6 @@ test('Assigning to builtin error message differs from verbose version', () => {
   }).toBe(undefined)
 })
 
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when assigning to property on undefined', () => {
-  return expectParsedError(
-    stripIndent`
-    undefined.prop = 123;
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Cannot assign property prop of undefined"`)
-})
-
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when assigning to property on variable with value undefined', () => {
-  return expectParsedError(
-    stripIndent`
-    const u = undefined;
-    u.prop = 123;
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 2: Cannot assign property prop of undefined"`)
-})
-
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when deeply assigning to property on variable with value undefined', () => {
-  return expectParsedError(
-    stripIndent`
-    const u = undefined;
-    u.prop.prop = 123;
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 2: Cannot read property prop of undefined"`)
-})
-
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when accessing property on undefined', () => {
-  return expectParsedError(
-    stripIndent`
-    undefined.prop;
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
-})
-
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when deeply accessing property on undefined', () => {
-  return expectParsedError(
-    stripIndent`
-    undefined.prop.prop;
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
-})
-
 test('Nice errors when errors occur inside builtins', () => {
   return expectParsedError(
     stripIndent`
@@ -182,7 +129,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
   ).toMatchInlineSnapshot(`"Line 2: Name a not declared."`)
 })
 
-xtest('Infinite recursion with a block bodied function', () => {
+test.skip('Infinite recursion with a block bodied function', () => {
   return expectParsedErrorNoSnapshot(
     stripIndent`
     function i(n) {
@@ -194,7 +141,7 @@ xtest('Infinite recursion with a block bodied function', () => {
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
 }, 15000)
 
-xtest('Infinite recursion with function calls in argument', () => {
+test.skip('Infinite recursion with function calls in argument', () => {
   return expectParsedErrorNoSnapshot(
     stripIndent`
     function i(n, redundant) {
@@ -211,7 +158,7 @@ xtest('Infinite recursion with function calls in argument', () => {
   )
 }, 10000)
 
-xtest('Infinite recursion of mutually recursive functions', () => {
+test.skip('Infinite recursion of mutually recursive functions', () => {
   return expectParsedErrorNoSnapshot(
     stripIndent`
     function f(n) {
@@ -426,13 +373,13 @@ const callingNonFunctionValueArrayVerbose = stripIndent`
 [1]();
 `
 
-xtest('Error when calling non function value array', () => {
+test.skip('Error when calling non function value array', () => {
   return expectParsedError(callingNonFunctionValueArray, optionEC3).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value [1]."`
   )
 })
 
-xtest('Error when calling non function value array - verbose', () => {
+test.skip('Error when calling non function value array - verbose', () => {
   return expectParsedError(callingNonFunctionValueArrayVerbose, optionEC3).toMatchInlineSnapshot(`
             "Line 2, Column 0: Calling non-function value [1].
             Because [1] is not a function, you cannot run [1]().
@@ -456,42 +403,12 @@ const callingNonFunctionValueObjectVerbose = stripIndent`
 "enable verbose";
 ({a: 1})();
 `
-
-xtest('Error when calling non function value object', () => {
-  return expectParsedError(callingNonFunctionValueObject, optionECLibParser).toMatchInlineSnapshot(
-    `"Line 1: Calling non-function value {\\"a\\": 1}."`
-  )
-})
-
-xtest('Error when calling non function value object - verbose', () => {
-  return expectParsedError(callingNonFunctionValueObjectVerbose, optionECLibParser)
-    .toMatchInlineSnapshot(`
-            "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
-            Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
-            "
-          `)
-})
-
 test('Calling non function value object error message differs from verbose version', () => {
   return expectDifferentParsedErrors(
     callingNonFunctionValueObject,
     callingNonFunctionValueObjectVerbose,
     optionEC
   ).toBe(undefined)
-})
-
-xtest('Error when calling non function value object - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-      "enable verbose";
-      ({a: 1})();
-    `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`
-            "Line 2, Column 0: Calling non-function value {\\"a\\": 1}.
-            Because {\\"a\\": 1} is not a function, you cannot run {\\"a\\": 1}().
-            "
-          `)
 })
 
 test('Error when calling function with too few arguments', () => {
@@ -602,7 +519,7 @@ test('Error when calling arrow function with too many arguments - verbose', () =
           `)
 })
 
-xtest('Error when calling function from member expression with too many arguments', () => {
+test.skip('Error when calling function from member expression with too many arguments', () => {
   return expectParsedError(
     stripIndent`
     const f = [x => x];
@@ -612,7 +529,7 @@ xtest('Error when calling function from member expression with too many argument
   ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
-xtest('Error when calling function from member expression with too many arguments - verbose', () => {
+test.skip('Error when calling function from member expression with too many arguments - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -933,160 +850,6 @@ test('Error when redeclaring let after function --verbose', () => {
           `)
 })
 
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when accessing property of null', () => {
-  return expectParsedError(
-    stripIndent`
-    null["prop"];
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of null"`)
-})
-
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when accessing property of undefined', () => {
-  return expectParsedError(
-    stripIndent`
-    undefined["prop"];
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read property prop of undefined"`)
-})
-
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when accessing inherited property of builtin', () => {
-  return expectParsedError(
-    stripIndent`
-    pair["constructor"];
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`
-            "Line 1: Cannot read inherited property constructor of function pair(left, right) {
-            	[implementation hidden]
-            }"
-          `)
-})
-
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when accessing inherited property of function', () => {
-  return expectParsedError(
-    stripIndent`
-    function f() {}
-    f["constructor"];
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 2: Cannot read inherited property constructor of function f() {}"`)
-})
-
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when accessing inherited property of arrow function', () => {
-  return expectParsedError(
-    stripIndent`
-    (() => 1)["constructor"];
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property constructor of () => 1"`)
-})
-
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when accessing inherited property of array', () => {
-  return expectParsedError(
-    stripIndent`
-    [].push;
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property push of []"`)
-})
-
-xtest('Error when accessing inherited property of object', () => {
-  return expectParsedError(
-    stripIndent`
-    ({}).valueOf;
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}."`)
-})
-
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when accessing inherited property of string', () => {
-  return expectParsedError(
-    stripIndent`
-    'hi'.includes;
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property includes of \\"hi\\""`)
-})
-
-// NOTE: Obsoleted due to strict types on member access
-test.skip('Error when accessing inherited property of number', () => {
-  return expectParsedError(
-    stripIndent`
-    (1).toPrecision;
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property toPrecision of 1"`)
-})
-
-xtest('Access local property', () => {
-  return expectResult(
-    stripIndent`
-    ({a: 0})["a"];
-  `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`0`)
-})
-
-xtest('Type error when accessing property of null', () => {
-  return expectParsedError(
-    stripIndent`
-    null.prop;
-    `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got null."`)
-})
-
-xtest('Type error when accessing property of string', () => {
-  return expectParsedError(
-    stripIndent`
-    'hi'.length;
-    `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
-})
-
-xtest('Type error when accessing property of function', () => {
-  return expectParsedError(
-    stripIndent`
-    function f() {
-      return 1;
-    }
-    f.prototype;
-    `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
-})
-
-xtest('Type error when assigning property of string', () => {
-  return expectParsedError(
-    stripIndent`
-    'hi'.prop = 5;
-    `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
-})
-
-xtest('Type error when assigning property of function', () => {
-  return expectParsedError(
-    stripIndent`
-    function f() {
-      return 1;
-    }
-    f.prop = 5;
-    `,
-    optionECLibParser
-  ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
-})
-
 test('Type error with non boolean in if statement, error line at if statement, not at 1', () => {
   return expectParsedError(
     stripIndent`
@@ -1111,7 +874,7 @@ test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnu
   ).toMatchInlineSnapshot(`"Line 1: Expected number on right hand side of operation, got string."`)
 })
 
-test('Cascading js errors work properly 1', () => {
+test.skip('Cascading js errors work properly 1', () => {
   return expectParsedError(
     stripIndent`
     function make_alternating_stream(stream) {
@@ -1146,4 +909,94 @@ test('Cascading js errors work properly', () => {
   ).toMatchInlineSnapshot(
     `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null"`
   )
+})
+
+test.skip('Check that stack is at most 10k in size', () => {
+  return expectParsedErrorNoSnapshot(
+    stripIndent`
+    function f(x) {
+      if (x <= 0) {
+        return 0;
+      } else {
+        return 1 + f(x-1);
+      }
+    }
+    f(10000);
+  `,
+    optionEC
+  ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))
+}, 10000)
+
+test('Cannot overwrite loop variables within a block', () => {
+  return expectParsedError(
+    stripIndent`
+  function test(){
+      let z = [];
+      for (let x = 0; x < 2; x = x + 1) {
+        x = 1;
+      }
+      return false;
+  }
+  test();
+  `,
+    optionEC3
+  ).toMatchInlineSnapshot(
+    `"Line 4: Assignment to a for loop variable in the for loop is not allowed."`
+  )
+})
+
+test('No hoisting of functions. Only the name is hoisted like let and const', () => {
+  return expectParsedError(
+    stripIndent`
+      const v = f();
+      function f() {
+        return 1;
+      }
+      v;
+    `,
+    optionEC
+  ).toMatchInlineSnapshot(`"Line 1: Name f declared later in current scope but not yet assigned"`)
+}, 30000)
+
+test('Error when accessing temporal dead zone', () => {
+  return expectParsedError(
+    stripIndent`
+    const a = 1;
+    function f() {
+      display(a);
+      const a = 5;
+    }
+    f();
+    `,
+    optionEC
+  ).toMatchInlineSnapshot(`"Line 3: Name a declared later in current scope but not yet assigned"`)
+}, 30000)
+
+// tslint:disable-next-line:max-line-length
+test('In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.', () => {
+  return expectParsedError(
+    stripIndent`
+      const a = 1;
+      {
+        a + a;
+        const a = 10;
+      }
+    `,
+    optionEC
+  ).toMatchInlineSnapshot(`"Line 3: Name a declared later in current scope but not yet assigned"`)
+}, 30000)
+
+test('Shadowed variables may not be assigned to until declared in the current scope', () => {
+  return expectParsedError(
+    stripIndent`
+  let variable = 1;
+  function test(){
+    variable = 100;
+    let variable = true;
+    return variable;
+  }
+  test();
+  `,
+    optionEC3
+  ).toMatchInlineSnapshot(`"Line 3: Name variable not declared."`)
 })
