@@ -64,6 +64,7 @@ let verboseErrors: boolean = false
 
 export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
+    const filePath = error.location?.source ? `[${error.location.source}] ` : ''
     const line = error.location ? error.location.start.line : '<unknown>'
     const column = error.location ? error.location.start.column : '<unknown>'
     const explanation = error.explain()
@@ -73,10 +74,10 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
       // way to display it.
       const elaboration = error.elaborate()
       return line < 1
-        ? `${explanation}\n${elaboration}\n`
-        : `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
+        ? `${filePath}${explanation}\n${elaboration}\n`
+        : `${filePath}Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
     } else {
-      return line < 1 ? explanation : `Line ${line}: ${explanation}`
+      return line < 1 ? explanation : `${filePath}Line ${line}: ${explanation}`
     }
   })
   return errorMessagesArr.join('\n')
