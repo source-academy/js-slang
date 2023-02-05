@@ -13,7 +13,7 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
-import { blockArrowFunction, constantDeclaration, primitive } from '../utils/astCreator'
+import { blockArrowFunction, conditionalExpression, constantDeclaration, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -62,7 +62,7 @@ export function evaluate(program: es.Program, context: Context): Value {
     // console.log(agenda)
     // console.log(stash)
     if (isNode(command)) {
-      console.log(command.type)
+      // console.log(command.type)
       // Not sure if context.runtime.nodes has been shifted/unshifted correctly here.
       context.runtime.nodes.unshift(command)
       checkEditorBreakpoints(context, command)
@@ -71,7 +71,7 @@ export function evaluate(program: es.Program, context: Context): Value {
       // context.runtime.break = false
       context.runtime.nodes.shift()
     } else {
-      console.log(command.instrType)
+      // console.log(command.instrType)
       // Node is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash)
     }
@@ -176,6 +176,14 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     agenda.push(command.left)
   },
 
+  LogicalExpression: function(command: es.LogicalExpression, context: Context, agenda: Agenda) {
+    if (command.operator === "&&") {
+      agenda.push(conditionalExpression(command.left, command.right, literal(false), command.loc))
+    } else {
+      agenda.push(conditionalExpression(command.left, literal(true), command.right, command.loc))
+    }
+  },
+
   ArrowFunctionExpression: function (
     command: es.ArrowFunctionExpression,
     context: Context,
@@ -244,7 +252,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
   [InstrTypes.RESET]: function (command: IInstr, context: Context, agenda: Agenda) {
     // Keep pushing reset instructions until marker is found.
     const cmdNext: AgendaItem | undefined = agenda.pop()
-    if (cmdNext && !isNode(cmdNext) && cmdNext.instrType !== InstrTypes.MARKER) {
+    if (cmdNext && (isNode(cmdNext) || cmdNext.instrType !== InstrTypes.MARKER)) {
       agenda.push({ instrType: InstrTypes.RESET })
     }
   },
@@ -269,7 +277,6 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
 
     if (func instanceof Closure) {
       // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
-      // TODO: Do we need an empty instruction for marker? in case of functions without return statements.
       const next = agenda.peek()
       if (!next || (!isNode(next) && next.instrType === InstrTypes.ENVIRONMENT)) {
         // Pushing another Env Instruction would be redundant so only Marker needs to be pushed.
@@ -277,7 +284,6 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
       } else if (!isNode(next) && next.instrType === InstrTypes.RESET) {
         // Reset Instruction will be replaced by Reset Instruction of new return statement.
         agenda.pop()
-        // TODO: What if the function has no return statement? (interpreter produces wrong result, tested). Possible solution: Add hidden dummy return statement at end of all closure bodies.
       } else {
         agenda.push(envInstr(currentEnvironment(context)))
         agenda.push({ instrType: InstrTypes.MARKER })
