@@ -1,22 +1,18 @@
-import { Options, parse as acornParse, Position, SourceLocation } from 'acorn'
+import { Options, parse as acornParse, Position } from 'acorn'
 import { Node as ESNode, Program } from 'estree'
 
 import { Chapter, Context, Rule, SourceError, Variant } from '../../types'
 import { ancestor, AncestorWalkerFn } from '../../utils/walkers'
-import { Parser } from '../types'
 import {
   DisallowedConstructError,
   FatalSyntaxError,
   MissingSemicolonError,
   TrailingCommaError
-} from './errors'
+} from '../errors'
+import { Parser } from '../types'
+import { positionToSourceLocation } from '../utils'
 import defaultRules from './rules'
 import syntaxBlacklist from './syntax'
-
-const toSourceLocation = (position: Position): SourceLocation => ({
-  start: position,
-  end: { ...position, column: position.column + 1 }
-})
 
 const combineAncestorWalkers =
   <TState>(w1: AncestorWalkerFn<TState>, w2: AncestorWalkerFn<TState>): AncestorWalkerFn<TState> =>
@@ -34,10 +30,10 @@ export class SourceParser implements Parser {
     ecmaVersion: 6,
     locations: true,
     onInsertedSemicolon(_tokenEndPos: number, tokenPos: Position) {
-      throw new MissingSemicolonError(toSourceLocation(tokenPos))
+      throw new MissingSemicolonError(positionToSourceLocation(tokenPos))
     },
     onTrailingComma(_tokenEndPos: number, tokenPos: Position) {
-      throw new TrailingCommaError(toSourceLocation(tokenPos))
+      throw new TrailingCommaError(positionToSourceLocation(tokenPos))
     }
   }
 
@@ -54,7 +50,7 @@ export class SourceParser implements Parser {
       return acornParse(programStr, SourceParser.defaultAcornOptions) as unknown as Program
     } catch (error) {
       if (error instanceof SyntaxError) {
-        error = new FatalSyntaxError(toSourceLocation((error as any).loc), error.toString())
+        error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())
       }
 
       if (throwOnError) throw error

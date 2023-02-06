@@ -1,7 +1,7 @@
 import { Node, SourceLocation } from 'estree'
 
-import { ErrorSeverity, ErrorType, SourceError } from '../../types'
-import { stripIndent } from '../../utils/formatters'
+import { ErrorSeverity, ErrorType, SourceError } from '../types'
+import { stripIndent } from '../utils/formatters'
 
 export class MissingSemicolonError implements SourceError {
   public type = ErrorType.SYNTAX
