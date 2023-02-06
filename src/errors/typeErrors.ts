@@ -594,6 +594,25 @@ export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceEr
   }
 }
 
+export class TypeNotGenericError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.TSTypeReference, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.name}' is not generic.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
 export class TypeAliasNameNotAllowedError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
@@ -606,6 +625,25 @@ export class TypeAliasNameNotAllowedError implements SourceError {
 
   public explain() {
     return `Type alias name cannot be '${this.name}'.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypeParameterNameNotAllowedError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.TSTypeParameter, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type parameter name cannot be '${this.name}'.`
   }
 
   public elaborate() {
@@ -663,6 +701,25 @@ export class ConstNotAssignableTypeError implements SourceError {
 
   public explain() {
     return `Cannot assign to '${this.name}' as it is a constant.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class DuplicateTypeAliasError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type alias '${this.name}' has already been declared.`
   }
 
   public elaborate() {

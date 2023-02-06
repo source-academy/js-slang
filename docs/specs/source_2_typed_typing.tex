@@ -42,8 +42,7 @@ Support for \texttt{typeof} operations is also added to Source \S 2 Typed.
 \subsection{Type Environment}
 
 In order to keep track of the type of names in a program, we define a
-\emph{type environment}, denoted by $\Gamma$. More
-formally,
+\emph{type environment}, denoted by $\Gamma$. More formally,
 the partial function $\Gamma$ from names to types expresses a 
 context, in which a name $x$ is associated with type $\Gamma(x)$. 
 
@@ -164,6 +163,22 @@ $\Gamma_{-1}$
 & $[$ & \texttt{is\_list} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ $\Gamma_0$ \\
 & \end{tabular}
 
+In order to support the definition of type aliases, we define a separate
+\emph{type alias environment}, denoted by $\Gamma_{alias}$. Unlike $\Gamma$,
+$\Gamma_{alias}$ binds names to special \emph{type functions} of the form $<T_1, \ldots, T_n> \rightarrow t$
+where $T_1 \ldots T_n$ are type parameters $t$ is the return type expressed in terms of $T_1 \ldots T_n$.
+$<>$ is used to differentiate type functions from function types, which are of the form $(t_1, \ldots, t_n) \rightarrow t$.
+
+Since $\Gamma$ and $\Gamma_{alias}$ are separate environments, the same name $x$ can be used for both variables and type aliases.
+
+The initial type alias environment $\Gamma_{alias0}$ is as follows:
+
+\begin{tabular}[fragile]{lllllllll}
+$\Gamma_{alias-1}$
+& $[$ & \texttt{Pair} & $\leftarrow$ & $<T_{head}, T_{tail}>$ & $\rightarrow$ & $Pair<T_{head}, T_{tail}>$ & $]$ \\
+& $[$ & \texttt{List} & $\leftarrow$ & $<T_{elem}>$ & $\rightarrow$ & $List<T_{elem}>$ & $]$ $\Gamma_{alias0}$ \\
+& \end{tabular}
+
 \subsection{Success Types}
 
 In order for type checks to be performed in Source \S 3 Typed, we introduce the notion of success types.
@@ -230,8 +245,8 @@ For function applications (including applications of binary and unary operators)
 \]
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : \Any \quad \Gamma \vdash E_1 : t'_1, \ldots,  \Gamma \vdash E_n : t'_n
-  \quad (\forall 1 \leq i \leq n)(t'_i \wedge \Any \neq \emptyset)}{\Gamma \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : \Any}
+  \Rule{\Gamma \vdash E_0 : \Any \quad \Gamma \vdash E_1 : t'_1, \ldots, \Gamma \vdash E_n : t'_n
+    }{\Gamma \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : \Any}
 \]
 \noindent
 
@@ -239,42 +254,51 @@ The type of the operator must be a function type with the right number of parame
 and the type of every argument must be a success type of the corresponding parameter type of the function type.
 If all of the conditions are met, the type of the function application is the same
 as the return type of the function type that is the type of the operator.
-If the type of the operator is $\Any$, the types for the arguments will be checked against $\Any$ and the return type will be $\Any$.
+If the type of the operator is $\Any$, the return type will be $\Any$.
 
 Applications of binary and unary operators are treated the same as function applications, with the exception of the \texttt{+} operator.
+We use the $\subseteq$ operator to indicate that a type is a subset of another type, as defined below:
+
+\begin{itemize}
+\item{A type is a subset of type $\Number$ if it is of type $\Number$, literal number type,
+  or a union type containing any number of literal number types.}
+\item{A type is a subset of type $\String$ if it is of type $\String$, literal string type,
+  or a union type containing any number of literal string types.}
+\end{itemize}
+
 For the \texttt{+} operator, the following rules are applied, in order of priority:
 
 \begin{itemize}
-\item{If the expression on the left side is of type $\Number$ or literal number type,
+\item{If the expression on the left side is a subset of type $\Number$,
   check that the other expression is a success type of $\Number$. The return type is $\Number$.}
-\item{If the expression on the left side is of type $\String$ or literal string type,
+\item{If the expression on the left side is a subset of type $\String$,
   check that the other expression is a success type of $\String$. The return type is $\String$.}
-\item{If the expression on the right side is of type $\Number$ or literal number type,
+\item{If the expression on the right side is a subset of type $\Number$,
   check that the other expression is a success type of $\Number$. The return type is $\Number$.}
-\item{If the expression on the right side is of type $\String$ or literal string type,
+\item{If the expression on the right side is a subset of type $\String$,
   check that the other expression is a success type of $\String$. The return type is $\String$.}
-\item{If the expression on the left side cannot be narrowed to either $\Number$ or $\String$, check that both sides are success types of 
+\item{If the expression on the left side cannot be narrowed to a subset of either $\Number$ or $\String$, check that both sides are success types of 
   $\Number\ |\ \String$. The return type is $\Number\ |\ \String$.}
 \end{itemize}
 
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 = \Number \vee t_0 = \textit{literal number type}
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 \subseteq \Number
     \quad t_1 \wedge \Number \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \Number}
 \]
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 = \String \vee t_0 = \textit{literal string type}
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 \subseteq \String
     \quad t_1 \wedge \String \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \String}
 \]
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 = \Number \vee t_1 = \textit{literal number type}
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 \subseteq \Number
     \quad t_0 \wedge \Number \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \Number}
 \]
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 = \String \vee t_1 = \textit{literal string type}
+  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 \subseteq \String
     \quad t_0 \wedge \String \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \String}
 \]
 \noindent
@@ -316,24 +340,36 @@ For as expressions, the type to cast the expression to must be a success type of
 
 \subsubsection{Typing Relations on Statements}
 
-For constant declarations, the declared type of $x$, $t$, is added to the type environment.
-As type syntax is optional, if the type annotation for $x$ absent, the declared type $t$ is assumed to be $\Any$.
-The derived type of the expression $E$ must be a success type of the type declared for name $x$.
-The type of the constant declaration statement itself is $\Undefined$.
+For type alias declarations, the binding of name $x$ to type function $<T_1, \ldots, T_n> \rightarrow t$ is added to the type alias environment.
+If no type parameters are given, the type function is assumed to take in 0 type arguments.
 
 \noindent
 \[
-  \Rule{\Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t' \quad t' \wedge t \neq \emptyset}{
-    \Gamma \vdash (\texttt{const}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
+  \Rule{\Gamma_{alias} [x \leftarrow <> \rightarrow t] \Gamma_{alias}'}{\Gamma \vdash (\texttt{type}\ x = t \texttt{;}) : \Undefined}
+  \Rule{\Gamma_{alias} [x \leftarrow <T_1, \ldots, T_n> \rightarrow T] \Gamma_{alias}'
+    }{\Gamma \vdash (\texttt{type}\ x<T_1, \ldots, T_n> = t \texttt{;}) : \Undefined}
 \]
 \noindent
 
-For type alias declarations, the declared type of $x$, $t$, is added to the type environment.
-The type of the type alias declaration itself is $\Undefined$.
+For constant declarations, the declared type of $x$, $t$, is added to the type environment.
+If the type annotation for $x$ is absent, the declared type $t$ is assumed to be $\Any$.
+
+If the type annotation is a type reference to a type alias with name $T$,
+$t$ is first derived by applying the type arguments $t_1, \ldots, t_n$ to the type function for $T$,
+replacing all instances of type variables $T_1, \ldots, T_n$ in $t$ with $t_1, \ldots, t_n$ respectively.
+
+The derived type of the expression $E$, $t_E$, must be a success type of $t$.
+The type of the statement itself is $\Undefined$.
 
 \noindent
 \[
-  \Rule{\Gamma [x \leftarrow t] \Gamma'}{\Gamma \vdash (\texttt{type}\ x = t\texttt{;}) : \Undefined}
+  \Rule{\Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t_E \quad t_E \wedge t \neq \emptyset}{
+    \Gamma \vdash (\texttt{const}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
+\]
+\noindent
+\[
+  \Rule{\Gamma_{alias}(T)<t_1, \ldots, t_n> = t \quad \Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t_E \quad
+    t_E \wedge t \neq \emptyset}{\Gamma \vdash (\texttt{const}\ x \texttt{:}\ T<t_1, \ldots, t_n> = E\texttt{;}) : \Undefined}
 \]
 \noindent
 

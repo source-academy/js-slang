@@ -75,7 +75,7 @@ describe('pair', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type alias name cannot be 'Pair'."`
+      `"Line 1: Type alias 'Pair' has already been declared."`
     )
   })
 })
@@ -117,7 +117,7 @@ describe('list', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 1: Type alias name cannot be 'List'."`
+      `"Line 1: Type alias 'List' has already been declared."`
     )
   })
 })
@@ -214,5 +214,22 @@ describe('tail', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(
       `"Line 7: Type 'List<string | number>' is not assignable to type 'List<boolean>'."`
     )
+  })
+})
+
+describe('list library functions (select)', () => {
+  it('handles types correctly', () => {
+    const code = `const xs: List<number> = list(1, 2, 3);
+      const ys1: List<boolean> = reverse(xs);
+      const ys2: List<boolean> = map((x: number): string => '1', xs);
+      const res: string = accumulate((a: number, b: number): number => a + b, 0, xs);
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 2: Type 'List<number>' is not assignable to type 'List<boolean>'.
+      Line 3: Type 'List<string>' is not assignable to type 'List<boolean>'.
+      Line 4: Type 'number' is not assignable to type 'string'."
+    `)
   })
 })

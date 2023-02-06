@@ -232,3 +232,44 @@ describe('binary operations', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 })
+
+describe('stream type', () => {
+  it('handles type mismatches correctly', () => {
+    const code = `const xs1: Stream<number> = () => pair(1, 2); // error
+      const xs2: Stream<number> = () => pair(1, xs2); // no error
+      const xs3: Stream<string> = () => pair(1, xs3); // error
+      const xs4: Stream<string> = stream(1, 2, 3); // error
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 1: Type '() => Pair<number, number>' is not assignable to type '() => Pair<number, Stream<number>>'.
+      Line 3: Type '() => Pair<number, () => Pair<string, Stream<string>>>' is not assignable to type '() => Pair<string, Stream<string>>'.
+      Line 4: Type '() => Pair<number, Stream<number>>' is not assignable to type '() => Pair<string, Stream<string>>'."
+    `)
+  })
+
+  it('type alias with the same name cannot be declared', () => {
+    const code = 'type Stream = string;'
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 1: Type alias 'Stream' has already been declared."`
+    )
+  })
+})
+
+describe('stream library functions (select)', () => {
+  it('handles types correctly', () => {
+    const code = `const xs: Stream<number> = stream(1, 2, 3);
+      const ys1: Stream<boolean> = stream_reverse(xs);
+      const ys2: Stream<boolean> = stream_map((x: number): string => '1', xs);
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 2: Type '() => Pair<number, Stream<number>>' is not assignable to type '() => Pair<boolean, Stream<boolean>>'.
+      Line 3: Type '() => Pair<string, Stream<number>>' is not assignable to type '() => Pair<boolean, Stream<boolean>>'."
+    `)
+  })
+})
