@@ -2,7 +2,7 @@ import { generate } from 'astring'
 
 import { transpileToGPU } from '../../gpu/gpu'
 import { mockContext } from '../../mocks/context'
-import { parse } from '../../parser/parser'
+import { parse } from '../../parsers/parser'
 import { Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 

@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { Rule, Variant } from '../../types'
+import { Rule, Variant } from '../../../types'
 import { NoUnspecifiedOperatorError } from './noUnspecifiedOperator'
 
 const noTypeofOperator: Rule<es.UnaryExpression> = {

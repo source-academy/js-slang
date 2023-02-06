@@ -1,7 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
+import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
 
 const mutableDeclarators = ['let', 'var']
 

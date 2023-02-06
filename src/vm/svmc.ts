@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as util from 'util'
 
 import { createEmptyContext } from '../createContext'
-import { parse } from '../parser/parser'
+import { parse } from '../parsers/parser'
 import { INTERNAL_FUNCTIONS as concurrentInternalFunctions } from '../stdlib/vm.prelude'
 import { Chapter, Variant } from '../types'
 import { assemble } from './svml-assembler'

@@ -2,7 +2,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import * as errors from '../errors/errors'
-import { parse } from '../parser/parser'
+import { parse } from '../parsers/parser'
 import {
   BlockExpression,
   Context,

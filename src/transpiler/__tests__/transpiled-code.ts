@@ -1,5 +1,5 @@
 import { mockContext } from '../../mocks/context'
-import { parse } from '../../parser/parser'
+import { parse } from '../../parsers/parser'
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { transpile } from '../transpiler'

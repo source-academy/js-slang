@@ -4,7 +4,7 @@ import { Context } from '../'
 import { ModuleConnectionError, ModuleNotFoundError } from '../errors/moduleErrors'
 import { findAncestors, findIdentifierNode } from '../finder'
 import { memoizedloadModuleDocs } from '../modules/moduleLoader'
-import syntaxBlacklist from '../parser/syntaxBlacklist'
+import syntaxBlacklist from '../parsers/source/syntax'
 
 export interface NameDeclaration {
   name: string

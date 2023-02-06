@@ -1,7 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
+import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
 
 export class MultipleDeclarationsError implements SourceError {
   public type = ErrorType.SYNTAX

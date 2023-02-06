@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
+import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
 
 export class StrictEqualityError implements SourceError {
   public type = ErrorType.SYNTAX

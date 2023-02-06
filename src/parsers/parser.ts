@@ -17,10 +17,10 @@ import { Chapter, Context, ErrorSeverity, ErrorType, Rule, SourceError, Variant 
 import { stripIndent } from '../utils/formatters'
 import { ancestor, AncestorWalkerFn } from '../utils/walkers'
 import { validateAndAnnotate } from '../validator/validator'
-import { transformBabelASTToESTreeCompliantAST } from './babelASTTransformer'
-import rules from './rules'
-import syntaxBlacklist from './syntaxBlacklist'
-import TypeParser from './typeParser'
+import { transformBabelASTToESTreeCompliantAST } from './source/babelASTTransformer'
+import rules from './source/rules'
+import syntaxBlacklist from './source/syntax'
+import TypeParser from './source/typed/typeParser'
 
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX

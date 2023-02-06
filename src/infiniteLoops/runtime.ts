@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import createContext from '../createContext'
-import { parse } from '../parser/parser'
+import { parse } from '../parsers/parser'
 import * as stdList from '../stdlib/list'
 import { Chapter, Variant } from '../types'
 import * as create from '../utils/astCreator'

@@ -4,7 +4,7 @@ import { SourceMapConsumer } from 'source-map'
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import { looseParse, parse, parseWithComments, typedParse } from './parser/parser'
+import { looseParse, parse, parseWithComments, typedParse } from './parsers/parser'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
