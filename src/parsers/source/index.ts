@@ -1,16 +1,12 @@
-import { Options, parse as acornParse, Position } from 'acorn'
+import { parse as acornParse, Token, tokenizer } from 'acorn'
 import { Node as ESNode, Program } from 'estree'
 
+import { DEFAULT_ECMA_VERSION } from '../../constants'
 import { Chapter, Context, Rule, SourceError, Variant } from '../../types'
 import { ancestor, AncestorWalkerFn } from '../../utils/walkers'
-import {
-  DisallowedConstructError,
-  FatalSyntaxError,
-  MissingSemicolonError,
-  TrailingCommaError
-} from '../errors'
+import { DisallowedConstructError, FatalSyntaxError } from '../errors'
 import { Parser } from '../types'
-import { positionToSourceLocation } from '../utils'
+import { createAcornParserOptions, positionToSourceLocation } from '../utils'
 import defaultRules from './rules'
 import syntaxBlacklist from './syntax'
 
@@ -25,18 +21,6 @@ const mapToObj = <T>(map: Map<string, T>) =>
   Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
 
 export class SourceParser implements Parser {
-  static defaultAcornOptions: Options = {
-    sourceType: 'module',
-    ecmaVersion: 6,
-    locations: true,
-    onInsertedSemicolon(_tokenEndPos: number, tokenPos: Position) {
-      throw new MissingSemicolonError(positionToSourceLocation(tokenPos))
-    },
-    onTrailingComma(_tokenEndPos: number, tokenPos: Position) {
-      throw new TrailingCommaError(positionToSourceLocation(tokenPos))
-    }
-  }
-
   private chapter: Chapter
   private variant: Variant
 
@@ -45,9 +29,18 @@ export class SourceParser implements Parser {
     this.variant = variant
   }
 
+  static tokenize(programStr: string, context: Context): Token[] {
+    return [
+      ...tokenizer(programStr, createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors))
+    ]
+  }
+
   parse(programStr: string, context: Context, throwOnError?: boolean): Program | null {
     try {
-      return acornParse(programStr, SourceParser.defaultAcornOptions) as unknown as Program
+      return acornParse(
+        programStr,
+        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors)
+      ) as unknown as Program
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())

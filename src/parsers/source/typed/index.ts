@@ -2,8 +2,10 @@ import { parse as babelParse, ParserOptions as babelOptions } from '@babel/parse
 import { Program } from 'estree'
 
 import { Context } from '../../..'
+import { DEFAULT_ECMA_VERSION } from '../../../constants'
 import * as TypedES from '../../../typeChecker/tsESTree'
 import { checkForTypeErrors } from '../../../typeChecker/typeErrorChecker'
+import { createAcornParserOptions } from '../../utils'
 import { SourceParser } from '..'
 import TypeParser from './typeParser'
 
@@ -14,7 +16,7 @@ export class SourceTypedParser extends SourceParser {
   }
 
   parse(programStr: string, context: Context, _throwOnError?: boolean): Program | null {
-    TypeParser.parse(programStr, SourceParser.defaultAcornOptions)
+    TypeParser.parse(programStr, createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors))
 
     const typedProgram: TypedES.Program = babelParse(
       programStr,

@@ -1,21 +1,15 @@
-import { Options, parse } from 'acorn'
+import { parse } from 'acorn'
 import { Program } from 'estree'
 
 import { Context } from '../..'
 import { FatalSyntaxError } from '../errors'
 import { Parser } from '../types'
-import { positionToSourceLocation } from '../utils'
+import { createAcornParserOptions, positionToSourceLocation } from '../utils'
 
 export class FullJSParser implements Parser {
-  static defaultAcornOptions: Options = {
-    sourceType: 'module',
-    ecmaVersion: 'latest',
-    locations: true
-  }
-
-  parse(programStr: string, context: Context, throwOnError: boolean): Program | null {
+  parse(programStr: string, context: Context, throwOnError?: boolean): Program | null {
     try {
-      return parse(programStr, FullJSParser.defaultAcornOptions) as unknown as Program
+      return parse(programStr, createAcornParserOptions('latest')) as unknown as Program
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())

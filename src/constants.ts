@@ -1,14 +1,13 @@
-import { Options } from 'acorn'
 import * as es from 'estree'
 
 import { Chapter, Language, Variant } from './types'
+
+export const DEFAULT_ECMA_VERSION = 6
 
 export const CUT = 'cut' // cut operator for Source 4.3
 export const TRY_AGAIN = 'retry' // command for Source 4.3
 export const GLOBAL = typeof window === 'undefined' ? global : window
 export const NATIVE_STORAGE_ID = 'nativeStorage'
-export const MODULE_PARAMS_ID = 'moduleParams'
-export const MODULE_CONTEXTS_ID = 'moduleContexts'
 export const MAX_LIST_DISPLAY_LENGTH = 100
 export const UNKNOWN_LOCATION: es.SourceLocation = {
   start: {
@@ -38,5 +37,3 @@ export const sourceLanguages: Language[] = [
   { chapter: Chapter.SOURCE_4, variant: Variant.DEFAULT },
   { chapter: Chapter.SOURCE_4, variant: Variant.GPU }
 ]
-
-export const ACORN_PARSE_OPTIONS: Options = { ecmaVersion: 2015 }
