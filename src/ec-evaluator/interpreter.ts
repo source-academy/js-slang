@@ -19,6 +19,7 @@ import {
   blockArrowFunction,
   conditionalExpression,
   constantDeclaration,
+  identifier,
   literal,
   primitive
 } from '../utils/astCreator'
@@ -30,7 +31,8 @@ import {
   branchInstr,
   envInstr,
   popInstr,
-  pushUndefInstr
+  pushUndefInstr,
+  whileInstr
 } from './instrCreator'
 import { AgendaItem, cmdEvaluator, IInstr, InstrTypes } from './types'
 import { handleSequence, isNode, Stack } from './utils'
@@ -119,6 +121,17 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
 
     // Push block body
     agenda.push(...handleSequence(command.body))
+  },
+
+  WhileStatement: function (
+    command: es.WhileStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    agenda.push(whileInstr(command.test, command.body))
+    agenda.push(command.test)
+    agenda.push(identifier('undefined')) // Return undefined if there is no loop execution
   },
 
   IfStatement: function (command: es.IfStatement, context: Context, agenda: Agenda, stash: Stash) {
@@ -284,6 +297,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     if (func instanceof Closure) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode! as es.CallExpression)
+
       // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
       const next = agenda.peek()
       if (!next || (!isNode(next) && next.instrType === InstrTypes.ENVIRONMENT)) {
@@ -296,6 +310,7 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
         agenda.push(envInstr(currentEnvironment(context)))
         agenda.push({ instrType: InstrTypes.MARKER })
       }
+
       // Push function body on agenda and create environment for function parameters.
       agenda.push(func.node.body)
       const environment = createEnvironment(func, args)
@@ -344,7 +359,18 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     }
   },
 
-  [InstrTypes.WHILE]: function () {},
+  [InstrTypes.WHILE]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
+    // TODO check if test is a boolean
+    // Throw error if test is not boolean
+    const test = stash.pop()
+    if (test) {
+      agenda.push(command)
+      agenda.push(command.test!)
+      agenda.push(pushUndefInstr()) // The loop returns undefined if the stash is empty
+      agenda.push(command.body!)
+      agenda.push(popInstr()) // Pop previous body value
+    }
+  },
 
   [InstrTypes.POP]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
     stash.pop()

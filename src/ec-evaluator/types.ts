@@ -18,6 +18,8 @@ export interface IInstr {
   consequent?: es.Expression | es.Statement // For conditionals, if statements
   alternate?: es.Expression | es.Statement | null // For conditioonals, if statements
   srcNode?: es.Node // For remembering the node that created the agenda item for e.g. error throwing
+  test?: es.Expression // For while loops
+  body?: es.Statement // For while loops
 }
 
 export enum InstrTypes {
