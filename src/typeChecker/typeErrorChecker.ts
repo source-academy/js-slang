@@ -1241,7 +1241,7 @@ function substituteVariableTypes(type: Type, typeVar: Variable, typeToSub: Type)
     case 'literal':
       return type
     case 'variable':
-      if (type.name === typeVar.name) {
+      if (isEqual(type, typeVar)) {
         return typeToSub
       }
       if (type.typeArgs) {

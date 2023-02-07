@@ -269,7 +269,7 @@ describe('stream library functions (select)', () => {
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 2: Type '() => Pair<number, Stream<number>>' is not assignable to type '() => Pair<boolean, Stream<boolean>>'.
-      Line 3: Type '() => Pair<string, Stream<number>>' is not assignable to type '() => Pair<boolean, Stream<boolean>>'."
+      Line 3: Type '() => Pair<string, Stream<string>>' is not assignable to type '() => Pair<boolean, Stream<boolean>>'."
     `)
   })
 })
