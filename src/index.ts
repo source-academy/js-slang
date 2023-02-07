@@ -4,7 +4,7 @@ import { SourceMapConsumer } from 'source-map'
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import { looseParse, parse, parseWithComments, typedParse } from './parsers/parser'
+import { looseParse, typedParse } from './parsers/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
@@ -30,6 +30,7 @@ import * as es from 'estree'
 import { CannotFindModuleError } from './errors/localImportErrors'
 import { validateFilePath } from './localImports/filePaths'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
+import { parseWithComments } from './parsers/utils'
 import {
   fullJSRunner,
   hasVerboseErrors,

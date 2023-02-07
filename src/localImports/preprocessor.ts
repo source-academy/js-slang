@@ -2,7 +2,7 @@ import es from 'estree'
 import * as path from 'path'
 
 import { CannotFindModuleError, CircularImportError } from '../errors/localImportErrors'
-import { parse } from '../parsers/parser'
+import { parse } from '../parsers'
 import { Context } from '../types'
 import { isIdentifier } from '../utils/rttc'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'

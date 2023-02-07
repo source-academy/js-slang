@@ -3,7 +3,7 @@ import * as es from 'estree'
 
 import { parseError, runInContext } from '../../index'
 import { mockContext } from '../../mocks/context'
-import { parse as __parse } from '../../parsers/parser'
+import { parse as __parse } from '../../parsers'
 import {
   Chapter,
   Context,

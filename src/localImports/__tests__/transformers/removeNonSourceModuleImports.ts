@@ -1,5 +1,5 @@
 import { mockContext } from '../../../mocks/context'
-import { parse } from '../../../parsers/parser'
+import { parse } from '../../../parsers'
 import { Chapter } from '../../../types'
 import { removeNonSourceModuleImports } from '../../transformers/removeNonSourceModuleImports'
 import { parseCodeError, stripLocationInfo } from '../utils'
@@ -16,7 +16,7 @@ describe('removeNonSourceModuleImports', () => {
   const assertASTsAreEquivalent = (actualCode: string, expectedCode: string): void => {
     const actualProgram = parse(actualCode, actualContext)
     const expectedProgram = parse(expectedCode, expectedContext)
-    if (actualProgram === undefined || expectedProgram === undefined) {
+    if (actualProgram === null || expectedProgram === null) {
       throw parseCodeError
     }
 

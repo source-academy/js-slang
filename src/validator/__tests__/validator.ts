@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { mockContext } from '../../mocks/context'
-import { parse } from '../../parsers/parser'
+import { parse } from '../../parsers'
 import { Chapter, NodeWithInferredType } from '../../types'
 import { getVariableDecarationName } from '../../utils/astCreator'
 import { stripIndent } from '../../utils/formatters'

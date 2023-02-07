@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
-import { parse } from '../parsers/parser'
+import { parse } from '../parsers'
 import {
   CONSTANT_PRIMITIVES,
   generatePrimitiveFunctionCode,

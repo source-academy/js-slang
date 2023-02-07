@@ -2,7 +2,7 @@ import es from 'estree'
 
 import { parseError } from '../../index'
 import { mockContext } from '../../mocks/context'
-import { parse } from '../../parsers/parser'
+import { parse } from '../../parsers'
 import { accessExportFunctionName, defaultExportLookupName } from '../../stdlib/localImport.prelude'
 import { Chapter } from '../../types'
 import preprocessFileImports, { getImportedLocalModulePaths } from '../preprocessor'

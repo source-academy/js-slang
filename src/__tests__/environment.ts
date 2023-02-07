@@ -2,7 +2,7 @@ import { Program } from 'estree'
 
 import { evaluate } from '../interpreter/interpreter'
 import { mockContext } from '../mocks/context'
-import { parse } from '../parsers/parser'
+import { parse } from '../parsers'
 import { Chapter } from '../types'
 import { stripIndent } from '../utils/formatters'
 

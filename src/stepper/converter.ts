@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { mockContext } from '../mocks/context'
-import { parse } from '../parsers/parser'
+import { parse } from '../parsers'
 import { Chapter, Context, substituterNodes } from '../types'
 import * as builtin from './lib'
 import { codify } from './stepper'

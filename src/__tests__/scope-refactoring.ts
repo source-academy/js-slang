@@ -2,7 +2,7 @@ import { Program } from 'estree'
 
 import { default as createContext } from '../createContext'
 import { getAllOccurrencesInScope } from '../index'
-import { looseParse } from '../parsers/parser'
+import { looseParse } from '../parsers/utils'
 import {
   getAllIdentifiers,
   getBlockFramesInCurrentBlockFrame,

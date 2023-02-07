@@ -1,5 +1,5 @@
 import { mockContext } from '../../../mocks/context'
-import { parse } from '../../../parsers/parser'
+import { parse } from '../../../parsers'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
 import { Chapter } from '../../../types'
 import { transformProgramToFunctionDeclaration } from '../../transformers/transformProgramToFunctionDeclaration'
@@ -19,7 +19,7 @@ describe('transformImportedFile', () => {
   const assertASTsAreEquivalent = (actualCode: string, expectedCode: string): void => {
     const actualProgram = parse(actualCode, actualContext)
     const expectedProgram = parse(expectedCode, expectedContext)
-    if (actualProgram === undefined || expectedProgram === undefined) {
+    if (actualProgram === null || expectedProgram === null) {
       throw parseCodeError
     }
 
