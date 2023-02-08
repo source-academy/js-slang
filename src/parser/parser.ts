@@ -17,6 +17,7 @@ import { Chapter, Context, ErrorSeverity, ErrorType, Rule, SourceError, Variant 
 import { stripIndent } from '../utils/formatters'
 import { ancestor, AncestorWalkerFn } from '../utils/walkers'
 import { validateAndAnnotate } from '../validator/validator'
+import { transformBabelASTToESTreeCompliantAST } from './babelASTTransformer'
 import rules from './rules'
 import syntaxBlacklist from './syntaxBlacklist'
 import TypeParser from './typeParser'
@@ -147,6 +148,7 @@ export function parse(source: string, context: Context, options: Partial<AcornOp
 
       // Checks for type errors, then removes any TS-related nodes as they are not compatible with acorn-walk.
       program = checkForTypeErrors(typedProgram, context)
+      transformBabelASTToESTreeCompliantAST(program)
     } else if (
       context.chapter === Chapter.FULL_JS ||
       (context.executionMethod === 'native' && context.variant === Variant.NATIVE)
