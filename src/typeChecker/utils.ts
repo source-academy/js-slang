@@ -65,7 +65,7 @@ export function lookupDeclKind(
   return undefined
 }
 
-export function lookupTypeAlias(name: string, env: TypeEnvironment): BindableType | undefined {
+export function lookupTypeAlias(name: string, env: TypeEnvironment): Type | ForAll | undefined {
   for (let i = env.length - 1; i >= 0; i--) {
     if (env[i].typeAliasMap.has(name)) {
       return env[i].typeAliasMap.get(name)
@@ -82,7 +82,7 @@ export function setDeclKind(name: string, kind: AllowedDeclarations, env: TypeEn
   env[env.length - 1].declKindMap.set(name, kind)
 }
 
-export function setTypeAlias(name: string, type: BindableType, env: TypeEnvironment): void {
+export function setTypeAlias(name: string, type: Type | ForAll, env: TypeEnvironment): void {
   env[env.length - 1].typeAliasMap.set(name, type)
 }
 
@@ -478,17 +478,17 @@ const predeclaredConstTypes: [string, Type][] = [
   ['math_SQRT2', tLiteral(Math.SQRT2)]
 ]
 
-const pairTypeAlias: [string, BindableType] = [
+const pairTypeAlias: [string, ForAll] = [
   'Pair',
   tForAll(tPair(headType, tailType), [headType, tailType])
 ]
-const listTypeAlias: [string, BindableType] = ['List', tForAll(tList(tVar('T')), [tVar('T')])]
-const streamTypeAlias: [string, BindableType] = ['Stream', tForAll(tStream(tVar('T')), [tVar('T')])]
+const listTypeAlias: [string, ForAll] = ['List', tForAll(tList(tVar('T')), [tVar('T')])]
+const streamTypeAlias: [string, ForAll] = ['Stream', tForAll(tStream(tVar('T')), [tVar('T')])]
 
 // Creates type environment for the appropriate Source chapter
 export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
   const initialTypeMappings = [...predeclaredNames, ...primitiveFuncs]
-  const initialTypeAliasMappings: [string, BindableType][] = [...predeclaredConstTypes]
+  const initialTypeAliasMappings: [string, Type | ForAll][] = [...predeclaredConstTypes]
   if (chapter >= 2) {
     initialTypeMappings.push(...pairFuncs, ...listFuncs)
     initialTypeAliasMappings.push(pairTypeAlias, listTypeAlias)

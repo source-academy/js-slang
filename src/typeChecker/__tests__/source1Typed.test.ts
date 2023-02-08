@@ -442,7 +442,19 @@ describe('type aliases', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 2: Type 'boolean' is not assignable to type 'string | number'."`
+      `"Line 2: Type 'boolean' is not assignable to type 'StringOrNumber'."`
+    )
+  })
+
+  it('type alias can be referenced before initialization', () => {
+    const code = `const x: TestType = true;
+      type StringOrNumber = string | number;
+      type TestType = StringOrNumber;
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 1: Type 'boolean' is not assignable to type 'TestType'."`
     )
   })
 
@@ -546,10 +558,21 @@ describe('generic types', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 2: Type 'boolean' is not assignable to type 'string | number'.
-      Line 3: Type 'number' is not assignable to type 'string | boolean'.
-      Line 4: Type 'string' is not assignable to type 'number | boolean'."
+      "Line 2: Type 'boolean' is not assignable to type 'Union<string, number>'.
+      Line 3: Type 'number' is not assignable to type 'Union<string, boolean>'.
+      Line 4: Type 'string' is not assignable to type 'Union<number, boolean>'."
     `)
+  })
+
+  it('generic type aliases can be referenced before initialization', () => {
+    const code = `const x: Union<string, number> = true;
+      type Union<T, U> = T | U;
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 1: Type 'boolean' is not assignable to type 'Union<string, number>'."`
+    )
   })
 })
 
