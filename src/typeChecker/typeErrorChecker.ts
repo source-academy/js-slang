@@ -1,3 +1,4 @@
+import { parse as babelParse } from '@babel/parser'
 import * as es from 'estree'
 import { cloneDeep, isEqual } from 'lodash'
 
@@ -37,6 +38,7 @@ import {
   Variable
 } from '../types'
 import { TypecheckError } from './internalTypeErrors'
+import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
 import * as tsEs from './tsESTree'
 import {
   formatTypeString,
@@ -87,6 +89,14 @@ export function checkForTypeErrors(program: tsEs.Program, inputContext: Context)
   // Override predeclared function types
   for (const [name, type] of getTypeOverrides(context.chapter)) {
     setType(name, type, env)
+  }
+  if (context.chapter >= 4) {
+    // Add parse tree types to type environment
+    const source4Types = babelParse(parseTreeTypesPrelude, {
+      sourceType: 'module',
+      plugins: ['typescript', 'estree']
+    }).program as unknown as tsEs.Program
+    typeCheckAndReturnType(source4Types)
   }
   try {
     typeCheckAndReturnType(program)
