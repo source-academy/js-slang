@@ -42,9 +42,9 @@ export const envInstr = (env: Environment): IInstr => ({ instrType: InstrTypes.E
 
 export const pushUndefInstr = (): IInstr => ({ instrType: InstrTypes.PUSH_UNDEFINED_IF_NEEDED })
 
-export const contMarkerInstr = (): IInstr => ({ instrType: InstrTypes.CONTINUE_MARKER })
+// export const contMarkerInstr = (): IInstr => ({ instrType: InstrTypes.CONTINUE_MARKER })
 
-export const breakMarkerInstr = (): IInstr => ({ instrType: InstrTypes.BREAK_MARKER })
+// export const breakMarkerInstr = (): IInstr => ({ instrType: InstrTypes.BREAK_MARKER })
 
 export const whileInstr = (test: es.Expression, body: es.Statement): IInstr => ({
   instrType: InstrTypes.WHILE,

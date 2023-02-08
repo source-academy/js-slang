@@ -16,12 +16,19 @@ import Closure from '../interpreter/closure'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, Environment, Frame, Value } from '../types'
 import {
+  assignmentExpression,
   blockArrowFunction,
+  blockStatement,
   conditionalExpression,
   constantDeclaration,
+  expressionStatement,
+  forStatement,
   identifier,
   literal,
-  primitive
+  primitive,
+  variableDeclaration,
+  variableDeclarator,
+  whileStatement
 } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -78,7 +85,6 @@ export function evaluate(program: es.Program, context: Context): Value {
     // console.log(agenda)
     // console.log(stash)
     if (isNode(command)) {
-      // console.log(command.type)
       // Not sure if context.runtime.nodes has been shifted/unshifted correctly here.
       context.runtime.nodes.unshift(command)
       checkEditorBreakpoints(context, command)
@@ -87,7 +93,6 @@ export function evaluate(program: es.Program, context: Context): Value {
       // context.runtime.break = false
       context.runtime.nodes.shift()
     } else {
-      // console.log(command.instrType)
       // Node is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash)
     }
@@ -132,6 +137,52 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     agenda.push(whileInstr(command.test, command.body))
     agenda.push(command.test)
     agenda.push(identifier('undefined')) // Return undefined if there is no loop execution
+  },
+
+  ForStatement: function (
+    command: es.ForStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    // All 3 parts will be defined due to parser rules
+    const init = command.init!
+    const test = command.test!
+    const update = command.update!
+
+    // Loop control variable present
+    // Refer to Source §3 specifications https://docs.sourceacademy.org/source_3.pdf
+    if (init.type === 'VariableDeclaration' && init.kind === 'let') {
+      const id = init.declarations[0].id as es.Identifier
+      const valueExpression = init.declarations[0].init!
+
+      agenda.push(
+        blockStatement([
+          init,
+          forStatement(
+            assignmentExpression(id, valueExpression),
+            test,
+            update,
+            blockStatement([
+              variableDeclaration([
+                variableDeclarator(identifier('_copy_of_' + id.name), identifier(id.name))
+              ]),
+              blockStatement([
+                variableDeclaration([
+                  variableDeclarator(identifier(id.name), identifier('_copy_of_' + id.name))
+                ]),
+                command.body
+              ])
+            ])
+          )
+        ])
+      )
+    } else {
+      // Append update statement at the end of loop body
+      const whileBody = blockStatement([command.body, expressionStatement(update)])
+      agenda.push(whileStatement(whileBody, test))
+      agenda.push(init)
+    }
   },
 
   IfStatement: function (command: es.IfStatement, context: Context, agenda: Agenda, stash: Stash) {
@@ -455,6 +506,33 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
       stash.push(undefined)
     }
   }
+
+  // [InstrTypes.CONTINUE]: function (
+  //   command: IInstr,
+  //   context: Context,
+  //   agenda: Agenda,
+  //   stash: Stash
+  // ) {
+  //   const next = stash.pop()
+  //   if (!isInstr(next) || next.instrType !== InstrTypes.CONTINUE_MARKER) {
+  //     // If no continue marker found,
+  //     // continue loop by pushing same instruction back on agenda
+  //     agenda.push(command)
+  //   }
+  // },
+
+  // [InstrTypes.BREAK]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
+  //   const next = stash.pop()
+  //   if (!isInstr(next) || next.instrType !== InstrTypes.BREAK_MARKER) {
+  //     // If no break marker found
+  //     // continue loop by pushing same instruction back on agenda
+  //     agenda.push(command)
+  //   }
+  // },
+
+  // [InstrTypes.CONTINUE_MARKER]: function () {},
+
+  // [InstrTypes.BREAK_MARKER]: function () {}
 }
 
 // Should all of these be moved to utils?
