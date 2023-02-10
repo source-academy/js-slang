@@ -461,8 +461,8 @@ export const source3TypeOverrides: [string, BindableType][] = [
 export const source4TypeOverrides: [string, BindableType][] = [
   ['apply_in_underlying_javascript', tFunc(tAny, tList(tAny), tAny)],
   ['tokenize', tFunc(tString, tList(tString))],
-  // TODO: Define types for parse tree
-  ['parse', tFunc(tString, tAny)]
+  // For parse tree types, see parseTreeTypes.prelude.ts
+  ['parse', tFunc(tString, tVar('Program'))]
 ]
 
 const predeclaredConstTypes: [string, Type][] = [
