@@ -14,8 +14,8 @@ Node {
                 "column": 13,
                 "line": 2,
               },
-              "filename": undefined,
               "identifierName": "x",
+              "source": undefined,
               "start": Position {
                 "column": 12,
                 "line": 2,
@@ -32,8 +32,8 @@ Node {
                 "column": 17,
                 "line": 2,
               },
-              "filename": undefined,
               "identifierName": undefined,
+              "source": undefined,
               "start": Position {
                 "column": 16,
                 "line": 2,
@@ -49,8 +49,8 @@ Node {
               "column": 17,
               "line": 2,
             },
-            "filename": undefined,
             "identifierName": undefined,
+            "source": undefined,
             "start": Position {
               "column": 12,
               "line": 2,
@@ -67,8 +67,8 @@ Node {
           "column": 18,
           "line": 2,
         },
-        "filename": undefined,
         "identifierName": undefined,
+        "source": undefined,
         "start": Position {
           "column": 6,
           "line": 2,
@@ -85,8 +85,8 @@ Node {
       "column": 4,
       "line": 3,
     },
-    "filename": undefined,
     "identifierName": undefined,
+    "source": undefined,
     "start": Position {
       "column": 0,
       "line": 1,
@@ -112,8 +112,8 @@ Node {
                 "column": 25,
                 "line": 1,
               },
-              "filename": undefined,
               "identifierName": "x1",
+              "source": undefined,
               "start": Position {
                 "column": 6,
                 "line": 1,
@@ -129,8 +129,8 @@ Node {
                   "column": 25,
                   "line": 1,
                 },
-                "filename": undefined,
                 "identifierName": undefined,
+                "source": undefined,
                 "start": Position {
                   "column": 8,
                   "line": 1,
@@ -145,8 +145,8 @@ Node {
                     "column": 25,
                     "line": 1,
                   },
-                  "filename": undefined,
                   "identifierName": undefined,
+                  "source": undefined,
                   "start": Position {
                     "column": 10,
                     "line": 1,
@@ -162,8 +162,8 @@ Node {
                         "column": 16,
                         "line": 1,
                       },
-                      "filename": undefined,
                       "identifierName": undefined,
+                      "source": undefined,
                       "start": Position {
                         "column": 10,
                         "line": 1,
@@ -179,8 +179,8 @@ Node {
                         "column": 25,
                         "line": 1,
                       },
-                      "filename": undefined,
                       "identifierName": undefined,
+                      "source": undefined,
                       "start": Position {
                         "column": 19,
                         "line": 1,
@@ -200,8 +200,8 @@ Node {
                 "column": 29,
                 "line": 1,
               },
-              "filename": undefined,
               "identifierName": undefined,
+              "source": undefined,
               "start": Position {
                 "column": 28,
                 "line": 1,
@@ -217,8 +217,8 @@ Node {
               "column": 29,
               "line": 1,
             },
-            "filename": undefined,
             "identifierName": undefined,
+            "source": undefined,
             "start": Position {
               "column": 6,
               "line": 1,
@@ -235,8 +235,8 @@ Node {
           "column": 30,
           "line": 1,
         },
-        "filename": undefined,
         "identifierName": undefined,
+        "source": undefined,
         "start": Position {
           "column": 0,
           "line": 1,
@@ -256,8 +256,8 @@ Node {
                 "column": 22,
                 "line": 2,
               },
-              "filename": undefined,
               "identifierName": "x2",
+              "source": undefined,
               "start": Position {
                 "column": 12,
                 "line": 2,
@@ -273,8 +273,8 @@ Node {
                   "column": 22,
                   "line": 2,
                 },
-                "filename": undefined,
                 "identifierName": undefined,
+                "source": undefined,
                 "start": Position {
                   "column": 14,
                   "line": 2,
@@ -289,8 +289,8 @@ Node {
                     "column": 22,
                     "line": 2,
                   },
-                  "filename": undefined,
                   "identifierName": undefined,
+                  "source": undefined,
                   "start": Position {
                     "column": 16,
                     "line": 2,
@@ -308,8 +308,8 @@ Node {
                 "column": 27,
                 "line": 2,
               },
-              "filename": undefined,
               "identifierName": "x1",
+              "source": undefined,
               "start": Position {
                 "column": 25,
                 "line": 2,
@@ -324,8 +324,8 @@ Node {
               "column": 37,
               "line": 2,
             },
-            "filename": undefined,
             "identifierName": undefined,
+            "source": undefined,
             "start": Position {
               "column": 12,
               "line": 2,
@@ -342,8 +342,8 @@ Node {
           "column": 38,
           "line": 2,
         },
-        "filename": undefined,
         "identifierName": undefined,
+        "source": undefined,
         "start": Position {
           "column": 6,
           "line": 2,
@@ -360,8 +360,8 @@ Node {
       "column": 4,
       "line": 3,
     },
-    "filename": undefined,
     "identifierName": undefined,
+    "source": undefined,
     "start": Position {
       "column": 0,
       "line": 1,
