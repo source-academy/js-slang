@@ -20,6 +20,7 @@ export interface IInstr {
   srcNode?: es.Node // For remembering the node that created the agenda item for e.g. error throwing
   test?: es.Expression // For while loops
   body?: es.Statement // For while loops
+  arity?: number // For arrays
 }
 
 export enum InstrTypes {
@@ -34,7 +35,9 @@ export enum InstrTypes {
   ENVIRONMENT = 'Environment',
   PUSH_UNDEFINED_IF_NEEDED = 'PushUndefinedIfNeeded',
   ARRAY_LITERAL = 'ArrayLiteral',
+  ARRAY_ACCESS = 'ArrayAccess',
   ARRAY_ASSIGNMENT = 'ArrayAssignment',
+  ARRAY_LENGTH = 'ArrayLength',
   MARKER = 'Marker'
 }
 

@@ -14,7 +14,7 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, Environment, Frame, Value } from '../types'
+import { Context, ContiguousArrayElements, Environment, Frame, Value } from '../types'
 import {
   assignmentExpression,
   blockArrowFunction,
@@ -82,8 +82,6 @@ export function evaluate(program: es.Program, context: Context): Value {
 
   let command = agenda.pop()
   while (command) {
-    // console.log(agenda)
-    // console.log(stash)
     if (isNode(command)) {
       // Not sure if context.runtime.nodes has been shifted/unshifted correctly here.
       context.runtime.nodes.unshift(command)
@@ -96,7 +94,6 @@ export function evaluate(program: es.Program, context: Context): Value {
       // Node is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash)
     }
-    // console.log(context.runtime.environments)
     command = agenda.pop()
   }
   return stash.peek()
@@ -224,10 +221,43 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    const id = command.left as es.Identifier
-    // No pop instruction because assignments are value producing so the value on the stash remains.
-    agenda.push(assignmentInstr(id.name, false, false, command))
-    agenda.push(command.right)
+    if (command.left.type === 'MemberExpression') {
+      agenda.push({ instrType: InstrTypes.ARRAY_ASSIGNMENT })
+      agenda.push(command.right)
+      agenda.push(command.left.property)
+      agenda.push(command.left.object)
+    } else if (command.left.type === 'Identifier') {
+      const id = command.left
+      // No pop instruction because assignments are value producing so the value on the stash remains.
+      agenda.push(assignmentInstr(id.name, false, false, command))
+      agenda.push(command.right)
+    }
+  },
+
+  ArrayExpression: function (
+    command: es.ArrayExpression,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const elems = command.elements as ContiguousArrayElements
+    const len = elems.length
+
+    agenda.push({ instrType: InstrTypes.ARRAY_LITERAL, arity: len })
+    for (const elem of elems) {
+      agenda.push(elem)
+    }
+  },
+
+  MemberExpression: function (
+    command: es.MemberExpression,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    agenda.push({ instrType: InstrTypes.ARRAY_ACCESS })
+    agenda.push(command.property)
+    agenda.push(command.object)
   },
 
   ConditionalExpression: function (
@@ -505,7 +535,55 @@ const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
     if (stash.size() === 0) {
       stash.push(undefined)
     }
+  },
+
+  [InstrTypes.ARRAY_LITERAL]: function (
+    command: IInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const arity = command.arity!
+    const array = []
+    for (let i = 0; i < arity; ++i) {
+      array.push(stash.pop())
+    }
+    stash.push(array)
+  },
+
+  [InstrTypes.ARRAY_ACCESS]: function (
+    command: IInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const index = stash.pop()
+    const array = stash.pop()
+    stash.push(array[index])
+  },
+
+  [InstrTypes.ARRAY_ASSIGNMENT]: function (
+    command: IInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const value = stash.pop()
+    const index = stash.pop()
+    const array = stash.pop()
+    array[index] = value
+    stash.push(value)
   }
+
+  // [InstrTypes.ARRAY_LENGTH]: function (
+  //   command: IInstr,
+  //   context: Context,
+  //   agenda: Agenda,
+  //   stash: Stash
+  // ) {
+  //   const array = stash.pop()
+  //   stash.push(array.length)
+  // }
 
   // [InstrTypes.CONTINUE]: function (
   //   command: IInstr,
