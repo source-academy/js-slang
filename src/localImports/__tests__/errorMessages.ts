@@ -138,6 +138,7 @@ describe('non-syntax errors (transpiled)', () => {
 
   beforeEach(() => {
     context = mockContext(Chapter.SOURCE_4)
+    context.executionMethod = 'native'
   })
 
   describe('SourceError', () => {
