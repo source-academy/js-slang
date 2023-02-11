@@ -133,6 +133,43 @@ describe('non-syntax errors (non-transpiled)', () => {
   })
 })
 
+describe('non-syntax errors (transpiled)', () => {
+  let context = mockContext(Chapter.SOURCE_4)
+
+  beforeEach(() => {
+    context = mockContext(Chapter.SOURCE_4)
+  })
+
+  describe('SourceError', () => {
+    test('file path is not part of error message if the program is single-file', async () => {
+      const files: Record<string, string> = {
+        '/a.js': `
+          1 + 'hello';
+        `
+      }
+      await runFilesInContext(files, '/a.js', context)
+      expect(parseError(context.errors)).toMatchInlineSnapshot(
+        `"Line 2: Expected number on right hand side of operation, got string."`
+      )
+    })
+
+    test('file path is part of error message if the program is multi-file', async () => {
+      const files: Record<string, string> = {
+        '/a.js': `
+          1 + 'hello';
+        `,
+        '/b.js': `
+          const y = 2;
+        `
+      }
+      await runFilesInContext(files, '/a.js', context)
+      expect(parseError(context.errors)).toMatchInlineSnapshot(
+        `"[/a.js] Line 2: Expected number on right hand side of operation, got string."`
+      )
+    })
+  })
+})
+
 // We specifically test typed Source because it makes use of the Babel parser.
 describe('non-syntax errors (non-transpiled & typed)', () => {
   let context = mockContext(Chapter.SOURCE_4, Variant.TYPED)
