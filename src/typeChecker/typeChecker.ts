@@ -85,7 +85,7 @@ function traverse(node: NodeWithInferredType<es.Node>, constraints?: Constraint[
       }
     }
   } else {
-    node.inferredType = tVar(typeIdCounter)
+    node.inferredType = tVar(`T${typeIdCounter}`)
     typeIdCounter++
   }
   switch (node.type) {
@@ -176,7 +176,7 @@ function traverse(node: NodeWithInferredType<es.Node>, constraints?: Constraint[
           }
         }
       } else {
-        funcDeclNode.functionInferredType = tVar(typeIdCounter)
+        funcDeclNode.functionInferredType = tVar(`T${typeIdCounter}`)
       }
       typeIdCounter++
       funcDeclNode.params.forEach(param => {
@@ -1175,7 +1175,7 @@ function _infer(
       const literalVal = node.value
       const typeOfLiteral = typeof literalVal
       if (literalVal === null) {
-        return addToConstraintList(constraints, [storedType, tList(tVar(typeIdCounter++))])
+        return addToConstraintList(constraints, [storedType, tList(tVar(`T${typeIdCounter++}`))])
       } else if (typeOfLiteral === 'number') {
         return addToConstraintList(constraints, [storedType, tNumber])
       } else if (typeOfLiteral === 'boolean') {
@@ -1421,7 +1421,7 @@ function _infer(
       elements.forEach(element => {
         newConstraints = infer(element, env, newConstraints)
       })
-      const arrayElementType = tVar(typeIdCounter++)
+      const arrayElementType = tVar(`T${typeIdCounter++}`)
       newConstraints = addToConstraintList(newConstraints, [storedType, tArray(arrayElementType)])
       elements.forEach(element => {
         try {
