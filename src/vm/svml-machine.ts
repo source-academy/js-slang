@@ -1683,7 +1683,7 @@ function run(): any {
   while (RUNNING) {
     // infinite loop protection
     if (Date.now() - startTime > MAX_TIME) {
-      throw new PotentialInfiniteLoopError(locationDummyNode(-1, -1), MAX_TIME)
+      throw new PotentialInfiniteLoopError(locationDummyNode(-1, -1, null), MAX_TIME)
     }
 
     if (TO > 0) {
