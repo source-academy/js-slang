@@ -101,6 +101,7 @@ export async function toSourceError(error: Error, sourceMap?: RawSourceMap): Pro
 
   let { line, column } = errorLocation
   let identifier: string = 'UNKNOWN'
+  let source: string | null = null
 
   if (sourceMap && !(line === -1 || column === -1)) {
     // Get original lines, column and identifier
@@ -112,6 +113,7 @@ export async function toSourceError(error: Error, sourceMap?: RawSourceMap): Pro
     line = originalPosition.line ?? -1 // use -1 in place of null
     column = originalPosition.column ?? -1
     identifier = originalPosition.name ?? identifier
+    source = originalPosition.source ?? null
   }
 
   const errorMessage: string = error.message
@@ -119,9 +121,9 @@ export async function toSourceError(error: Error, sourceMap?: RawSourceMap): Pro
     possibleMessages.some(possibleMessage => errorMessage.includes(possibleMessage))
 
   if (errorMessageContains(ASSIGNMENT_TO_CONST_ERROR_MESSAGES)) {
-    return new ConstAssignment(locationDummyNode(line, column), identifier)
+    return new ConstAssignment(locationDummyNode(line, column, source), identifier)
   } else if (errorMessageContains(UNDEFINED_VARIABLE_MESSAGES)) {
-    return new UndefinedVariable(identifier, locationDummyNode(line, column))
+    return new UndefinedVariable(identifier, locationDummyNode(line, column, source))
   } else {
     const location =
       line === -1 || column === -1

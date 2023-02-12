@@ -77,7 +77,7 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
           const a = b;
           `,
     value: undefined,
-    errors: [new UndefinedVariable('b', locationDummyNode(2, 20))]
+    errors: [new UndefinedVariable('b', locationDummyNode(2, 20, 'source'))]
   },
   {
     name: 'SYNTAX ERROR',
@@ -99,7 +99,7 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
             h();
             `,
     value: undefined,
-    errors: [new UndefinedVariable('g', locationDummyNode(3, 14))]
+    errors: [new UndefinedVariable('g', locationDummyNode(3, 14, 'source'))]
   }
 ]
 
