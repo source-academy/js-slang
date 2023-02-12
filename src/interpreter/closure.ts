@@ -65,7 +65,7 @@ export default class Closure extends Callable {
       ? [
           node.body,
           returnStatement(
-            { type: 'Literal', value: 'undefined', loc: dummyLocation() },
+            identifier('undefined', dummyLocation()),
             dummyLocation()
           )
         ]
