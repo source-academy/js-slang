@@ -3,7 +3,7 @@ import { RawSourceMap } from 'source-map'
 
 import { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
-import { evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
+import { ECEResultPromise, evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
@@ -203,26 +203,8 @@ async function runNative(
 }
 
 function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  return new Promise((resolve, reject) => {
-    // function* dum () {
-    //   return 2;
-    // }
-    // evaluate(program, context)
-    // resolve({ status: 'suspended', dum, scheduler: new PreemptiveScheduler(options.steps), context } as unknown as Suspended)
-    try {
-      context.runtime.isRunning = true
-      const value = ECEvaluate(program, context)
-      resolve({ status: 'finished', context, value })
-    } catch (error) {
-      // if (error instanceof RuntimeSourceError) {
-      //   context.errors.push(error)
-      // }
-      // checkForStackOverflow(error, context) TODO: implement stack overflow check
-      resolve({ status: 'error' })
-    } finally {
-      context.runtime.isRunning = false
-    }
-  })
+  const value = ECEvaluate(program, context)
+  return ECEResultPromise(context, value)
 }
 
 export async function sourceRunner(
@@ -264,6 +246,7 @@ export async function sourceRunner(
     program,
     verboseErrors
   )
+  // TODO: Change context.runtime.execution method to 'ec-eval' instead of 'interpreter'
 
   if (isNativeRunnable && context.variant === Variant.NATIVE) {
     return await fullJSRunner(code, context, theOptions)
@@ -285,5 +268,7 @@ export async function sourceRunner(
     return runNative(code, program, context, theOptions)
   }
 
-  return runInterpreter(program, context, theOptions)
+  // return runECEvaluator(program, context, theOptions)
+  // TODO: Remove the line below, turn runInterpreter into a legacy variant
+  return runInterpreter(program!, context, theOptions)
 }

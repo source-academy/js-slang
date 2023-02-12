@@ -9,6 +9,7 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
+import { Agenda, Stash } from './ec-evaluator/interpreter'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -125,7 +126,7 @@ export interface Context<T = any> {
   /** All the errors gathered */
   errors: SourceError[]
 
-  /** Runtime Sepecific state */
+  /** Runtime Specific state */
   runtime: {
     break: boolean
     debuggerOn: boolean
@@ -133,6 +134,8 @@ export interface Context<T = any> {
     environmentTree: EnvTree
     environments: Environment[]
     nodes: es.Node[]
+    agenda?: Agenda
+    stash?: Stash
   }
 
   numberOfOuterEnvironments: number
@@ -258,7 +261,12 @@ export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-n
   value: Value
 }
 
-export type Result = Suspended | SuspendedNonDet | Finished | Error
+export interface SuspendedEcEval {
+  status: 'suspended-ec-eval'
+  context: Context
+}
+
+export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedEcEval
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>

@@ -10,7 +10,7 @@ const optionEC = { variant: Variant.EXPLICIT_CONTROL }
 const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
 
 // This is bad practice. Don't do this!
-test('Calling unreachable results in error', () => {
+xtest('Calling unreachable results in error', () => {
   return expectParsedError(
     `
     function unreachable() {

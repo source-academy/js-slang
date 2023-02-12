@@ -62,13 +62,7 @@ export default class Closure extends Callable {
     const functionBody = isExpressionBody(node.body)
       ? [returnStatement(node.body, node.body.loc!)]
       : dummyReturn
-      ? [
-          node.body,
-          returnStatement(
-            identifier('undefined', dummyLocation()),
-            dummyLocation()
-          )
-        ]
+      ? [node.body, returnStatement(identifier('undefined', dummyLocation()), dummyLocation())]
       : node.body
     const closure = new Closure(
       blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc!),

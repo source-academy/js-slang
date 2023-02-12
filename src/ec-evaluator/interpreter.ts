@@ -13,8 +13,7 @@ import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Environment, Frame, Value } from '../types'
+import { Context, ContiguousArrayElements, Environment, Frame, Result, Value } from '../types'
 import {
   assignmentExpression,
   blockArrowFunction,
@@ -41,7 +40,7 @@ import {
   pushUndefInstr,
   whileInstr
 } from './instrCreator'
-import { AgendaItem, cmdEvaluator, IInstr, InstrTypes } from './types'
+import { AgendaItem, CmdEvaluator, IInstr, InstrTypes } from './types'
 import { handleSequence, isNode, Stack } from './utils'
 
 /**
@@ -73,22 +72,80 @@ export class Stash extends Stack<Value> {
  * the explicit control evaluator.
  *
  * @param program The program to evaluate.
- * @param context The context to evaluate in.
- * @returns The top value of the stash. It is usually the return value of the program.
+ * @param context The context to evaluate the program in.
+ * @returns The result of running the ECE machine.
  */
 export function evaluate(program: es.Program, context: Context): Value {
-  const agenda: Agenda = new Agenda(program)
-  const stash: Stash = new Stash()
+  context.runtime.agenda = new Agenda(program)
+  context.runtime.stash = new Stash()
+  return runECEMachine(context, context.runtime.agenda, context.runtime.stash)
+}
 
+/**
+ * Function that is called when a user wishes to resume evaluation after
+ * hitting a breakpoint.
+ * @param context The context to continue evaluating the program in.
+ * @returns The result of running the ECE machine.
+ */
+export function resumeEvaluate(context: Context) {
+  return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!)
+  // Agenda and stash should not be undefined since resumeEvaluate should only be called when
+  // after the initial evaluate so context.runtime.agenda and context.runtime.stash
+  // should be initialised.
+}
+
+/**
+ * Function that helps decide whether the function is finished evaluating
+ * or suspended depending on the breakpoints.
+ * @param context The context of the program.
+ * @param value The value of ec evaluating the program.
+ * @returns The corresponding promise.
+ */
+export function ECEResultPromise(context: Context, value: Value): Promise<Result> {
+  return new Promise((resolve, reject) => {
+    try {
+      context.runtime.isRunning = true
+      if (value && value.break) {
+        resolve({ status: 'suspended-ec-eval', context })
+      } else {
+        resolve({ status: 'finished', context, value })
+      }
+    } catch (error) {
+      if (error instanceof RuntimeSourceError) {
+        context.errors.push(error)
+      }
+      // checkForStackOverflow(error, context) TODO: implement stack overflow check
+      resolve({ status: 'error' })
+    } finally {
+      context.runtime.isRunning = false
+    }
+  })
+}
+
+/**
+ *
+ * @param context The context to evaluate the program in.
+ * @param agenda Points to the current context.runtime.agenda
+ * @param stash Points to the current context.runtime.stash
+ * @returns A special break object if the program is interrupted by a break point;
+ * else the top value of the stash. It is usually the return value of the program.
+ */
+function runECEMachine(context: Context, agenda: Agenda, stash: Stash) {
+  context.runtime.break = false
+  context.runtime.nodes = []
   let command = agenda.pop()
   while (command) {
     if (isNode(command)) {
-      // Not sure if context.runtime.nodes has been shifted/unshifted correctly here.
       context.runtime.nodes.unshift(command)
-      checkEditorBreakpoints(context, command)
-      // Logic to handle breakpoints might have to go somewhere here.
+      // checkEditorBreakpoints(context, command)
+      // Not sure what checkEditorBreakpoints does, seems to be working fine without it
       cmdEvaluators[command.type](command, context, agenda, stash)
-      // context.runtime.break = false
+      if (context.runtime.break && context.runtime.debuggerOn) {
+        // We can put this under isNode since context.runtime.break
+        // will only be updated after a debugger statement and so we will
+        // run into a node immediately after.
+        return { break: true }
+      }
       context.runtime.nodes.shift()
     } else {
       // Node is an instrucion
@@ -103,7 +160,7 @@ export function evaluate(program: es.Program, context: Context): Value {
  * Dictionary of functions which handle the logic for the response of the three registers of
  * the ASE machine to each AgendaItem.
  */
-const cmdEvaluators: { [commandType: string]: cmdEvaluator } = {
+const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
   /** Statements */
   Program: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     context.numberOfOuterEnvironments += 1

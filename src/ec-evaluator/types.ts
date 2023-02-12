@@ -41,12 +41,18 @@ export enum InstrTypes {
   MARKER = 'Marker'
 }
 
-export type cmdEvaluator = (
+export type CmdEvaluator = (
   command: AgendaItem,
   context: Context,
   agenda: Agenda,
   stash: Stash
 ) => Value
+
+// Special value that cannot be found on the stash so is safe to return
+// as an indicator of a breakpoint from running the ECE machine
+export interface Break {
+  break: boolean
+}
 
 // Tags taken from MicroPython interpreter
 // export enum Tags {
