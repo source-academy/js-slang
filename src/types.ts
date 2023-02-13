@@ -60,7 +60,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
+export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'ec-evaluator'
 
 export enum Chapter {
   SOURCE_1 = 1,

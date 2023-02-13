@@ -52,7 +52,7 @@ export function determineExecutionMethod(
         })
         isNativeRunnable = !hasDeuggerStatement
       }
-      context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
+      context.executionMethod = isNativeRunnable ? 'native' : 'ec-evaluator'
     } else {
       isNativeRunnable = context.executionMethod === 'native'
     }

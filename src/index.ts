@@ -301,8 +301,17 @@ export function resume(result: Result): Finished | ResultError | Promise<Result>
   if (result.status === 'finished' || result.status === 'error') {
     return result
   } else if (result.status === 'suspended-ec-eval') {
-    const value = resumeEvaluate(result.context)
-    return ECEResultPromise(result.context, value)
+    try {
+      result.context.runtime.isRunning = true
+      const value = resumeEvaluate(result.context)
+      return ECEResultPromise(result.context, value)
+    } catch (error) {
+      return new Promise((resolve, reject) => {
+        resolve({ status: 'error' })
+      })
+    } finally {
+      result.context.runtime.isRunning = false
+    }
   } else {
     return result.scheduler.run(result.it, result.context)
   }

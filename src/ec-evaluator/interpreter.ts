@@ -13,6 +13,7 @@ import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
+import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Result, Value } from '../types'
 import {
   assignmentExpression,
@@ -103,23 +104,12 @@ export function resumeEvaluate(context: Context) {
  */
 export function ECEResultPromise(context: Context, value: Value): Promise<Result> {
   return new Promise((resolve, reject) => {
-    try {
-      context.runtime.isRunning = true
       if (value && value.break) {
         resolve({ status: 'suspended-ec-eval', context })
       } else {
         resolve({ status: 'finished', context, value })
       }
-    } catch (error) {
-      if (error instanceof RuntimeSourceError) {
-        context.errors.push(error)
-      }
-      // checkForStackOverflow(error, context) TODO: implement stack overflow check
-      resolve({ status: 'error' })
-    } finally {
-      context.runtime.isRunning = false
-    }
-  })
+    })
 }
 
 /**
@@ -137,8 +127,7 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash) {
   while (command) {
     if (isNode(command)) {
       context.runtime.nodes.unshift(command)
-      // checkEditorBreakpoints(context, command)
-      // Not sure what checkEditorBreakpoints does, seems to be working fine without it
+      checkEditorBreakpoints(context, command)
       cmdEvaluators[command.type](command, context, agenda, stash)
       if (context.runtime.break && context.runtime.debuggerOn) {
         // We can put this under isNode since context.runtime.break
@@ -685,7 +674,7 @@ export const createBlockEnvironment = (
   }
 }
 
-const handleRuntimeError = (context: Context, error: RuntimeSourceError): never => {
+const handleRuntimeError = (context: Context, error: RuntimeSourceError) => {
   context.errors.push(error)
   context.runtime.environments = context.runtime.environments.slice(
     -context.numberOfOuterEnvironments

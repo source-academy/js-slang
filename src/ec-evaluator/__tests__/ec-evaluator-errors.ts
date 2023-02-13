@@ -21,13 +21,13 @@ const optionEC2 = { chapter: Chapter.SOURCE_2, variant: Variant.EXPLICIT_CONTROL
 const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 
-xtest('Undefined variable error is thrown', () => {
+test('Undefined variable error is thrown', () => {
   return expectParsedError(undefinedVariable, optionEC).toMatchInlineSnapshot(
     `"Line 1: Name im_undefined not declared."`
   )
 })
 
-xtest('Undefined variable error is thrown - verbose', () => {
+test('Undefined variable error is thrown - verbose', () => {
   return expectParsedError(undefinedVariableVerbose).toMatchInlineSnapshot(`
             "Line 2, Column 0: Name im_undefined not declared.
             Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
@@ -35,7 +35,7 @@ xtest('Undefined variable error is thrown - verbose', () => {
           `)
 })
 
-xtest('Undefined variable error message differs from verbose version', () => {
+test('Undefined variable error message differs from verbose version', () => {
   return expectDifferentParsedErrors(undefinedVariable, undefinedVariableVerbose, optionEC).toBe(
     undefined
   )
@@ -50,13 +50,13 @@ const assignToBuiltinVerbose = stripIndent`
   map = 5;
 `
 
-xtest('Error when assigning to builtin', () => {
+test('Error when assigning to builtin', () => {
   return expectParsedError(assignToBuiltin, optionEC3).toMatchInlineSnapshot(
     `"Line 1: Cannot assign new value to constant map."`
   )
 })
 
-xtest('Error when assigning to builtin - verbose', () => {
+test('Error when assigning to builtin - verbose', () => {
   return expectParsedError(assignToBuiltinVerbose, optionEC3).toMatchInlineSnapshot(`
             "Line 2, Column 0: Cannot assign new value to constant map.
             As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
@@ -64,7 +64,7 @@ xtest('Error when assigning to builtin - verbose', () => {
           `)
 })
 
-xtest('Assigning to builtin error message differs from verbose version', () => {
+test('Assigning to builtin error message differs from verbose version', () => {
   return expectDifferentParsedErrors(assignToBuiltin, assignToBuiltinVerbose, {
     variant: Variant.EXPLICIT_CONTROL
   }).toBe(undefined)
@@ -79,13 +79,13 @@ const assignToBuiltinVerbose1 = stripIndent`
   undefined = 5;
 `
 
-xtest('Error when assigning to builtin', () => {
+test('Error when assigning to builtin', () => {
   return expectParsedError(assignToBuiltin1, optionEC3).toMatchInlineSnapshot(
     `"Line 1: Cannot assign new value to constant undefined."`
   )
 })
 
-xtest('Error when assigning to builtin - verbose', () => {
+test('Error when assigning to builtin - verbose', () => {
   return expectParsedError(assignToBuiltinVerbose1, optionEC3).toMatchInlineSnapshot(`
             "Line 2, Column 0: Cannot assign new value to constant undefined.
             As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
@@ -93,13 +93,13 @@ xtest('Error when assigning to builtin - verbose', () => {
           `)
 })
 
-xtest('Assigning to builtin error message differs from verbose version', () => {
+test('Assigning to builtin error message differs from verbose version', () => {
   return expectDifferentParsedErrors(assignToBuiltin1, assignToBuiltinVerbose1, {
     variant: Variant.EXPLICIT_CONTROL
   }).toBe(undefined)
 })
 
-xtest('Nice errors when errors occur inside builtins', () => {
+test('Nice errors when errors occur inside builtins', () => {
   return expectParsedError(
     stripIndent`
     parse_int("10");
@@ -108,7 +108,7 @@ xtest('Nice errors when errors occur inside builtins', () => {
   ).toMatchInlineSnapshot(`"Line 1: Expected 2 arguments, but got 1."`)
 })
 
-xtest('Nice errors when errors occur inside builtins', () => {
+test('Nice errors when errors occur inside builtins', () => {
   return expectParsedError(
     stripIndent`
     parse("'");
@@ -117,7 +117,7 @@ xtest('Nice errors when errors occur inside builtins', () => {
   ).toMatchInlineSnapshot(`"Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)"`)
 })
 
-xtest("Builtins don't create additional errors when it's not their fault", () => {
+test("Builtins don't create additional errors when it's not their fault", () => {
   return expectParsedError(
     stripIndent`
     function f(x) {
@@ -186,13 +186,13 @@ const callingNonFunctionValueUndefinedVerbose = stripIndent`
   undefined();
 `
 // should not be different when error passing is fixed
-xtest('Error when calling non function value undefined', () => {
+test('Error when calling non function value undefined', () => {
   return expectParsedError(callingNonFunctionValueUndefined, optionEC).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value undefined."`
   )
 })
 
-xtest('Error when calling non function value undefined - verbose', () => {
+test('Error when calling non function value undefined - verbose', () => {
   return expectParsedError(callingNonFunctionValueUndefinedVerbose, optionEC)
     .toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value undefined.
@@ -201,7 +201,7 @@ xtest('Error when calling non function value undefined - verbose', () => {
           `)
 })
 
-xtest('Calling non function value undefined error message differs from verbose version', () => {
+test('Calling non function value undefined error message differs from verbose version', () => {
   return expectDifferentParsedErrors(
     callingNonFunctionValueUndefined,
     callingNonFunctionValueUndefinedVerbose,
@@ -218,13 +218,13 @@ const callingNonFunctionValueUndefinedArgsVerbose = stripIndent`
   undefined(1, true);
 `
 // should not be different when error passing is fixed
-xtest('Error when calling non function value undefined with arguments', () => {
+test('Error when calling non function value undefined with arguments', () => {
   return expectParsedError(callingNonFunctionValueUndefinedArgs, optionEC).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value undefined."`
   )
 })
 
-xtest('Error when calling non function value undefined with arguments - verbose', () => {
+test('Error when calling non function value undefined with arguments - verbose', () => {
   return expectParsedError(callingNonFunctionValueUndefinedArgsVerbose, optionEC)
     .toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value undefined.
@@ -233,7 +233,7 @@ xtest('Error when calling non function value undefined with arguments - verbose'
           `)
 })
 
-xtest('Calling non function value undefined with arguments error message differs from verbose version', () => {
+test('Calling non function value undefined with arguments error message differs from verbose version', () => {
   return expectDifferentParsedErrors(
     callingNonFunctionValueUndefinedArgs,
     callingNonFunctionValueUndefinedArgsVerbose,
@@ -250,13 +250,13 @@ const callingNonFunctionValueNullVerbose = stripIndent`
   null();
 `
 
-xtest('Error when calling non function value null', () => {
+test('Error when calling non function value null', () => {
   return expectParsedError(callingNonFunctionValueNull, optionEC).toMatchInlineSnapshot(
     `"Line 1: null literals are not allowed."`
   )
 })
 
-xtest('Error when calling non function value null - verbose', () => {
+test('Error when calling non function value null - verbose', () => {
   return expectParsedError(callingNonFunctionValueNullVerbose, optionEC).toMatchInlineSnapshot(`
             "Line 2, Column 2: null literals are not allowed.
             They're not part of the Source §1 specs.
@@ -264,7 +264,7 @@ xtest('Error when calling non function value null - verbose', () => {
           `)
 })
 
-xtest('Calling non function value null error message differs from verbose version', () => {
+test('Calling non function value null error message differs from verbose version', () => {
   return expectDifferentParsedErrors(
     callingNonFunctionValueNull,
     callingNonFunctionValueNullVerbose,
@@ -280,13 +280,13 @@ const callingNonFunctionValueTrueVerbose = stripIndent`
   true();
 `
 
-xtest('Error when calling non function value true', () => {
+test('Error when calling non function value true', () => {
   return expectParsedError(callingNonFunctionValueTrue, optionEC).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value true."`
   )
 })
 
-xtest('Error when calling non function value true - verbose', () => {
+test('Error when calling non function value true - verbose', () => {
   return expectParsedError(callingNonFunctionValueTrueVerbose, optionEC).toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value true.
             Because true is not a function, you cannot run true().
@@ -294,7 +294,7 @@ xtest('Error when calling non function value true - verbose', () => {
           `)
 })
 
-xtest('Calling non function value true error message differs from verbose version', () => {
+test('Calling non function value true error message differs from verbose version', () => {
   return expectDifferentParsedErrors(
     callingNonFunctionValueTrue,
     callingNonFunctionValueTrueVerbose,
@@ -311,13 +311,13 @@ const callingNonFunctionValue0Verbose = stripIndent`
   0();
 `
 
-xtest('Error when calling non function value 0', () => {
+test('Error when calling non function value 0', () => {
   return expectParsedError(callingNonFunctionValue0, optionEC).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value 0."`
   )
 })
 
-xtest('Error when calling non function value 0 - verbose', () => {
+test('Error when calling non function value 0 - verbose', () => {
   return expectParsedError(callingNonFunctionValue0Verbose, optionEC).toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value 0.
             Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
@@ -325,7 +325,7 @@ xtest('Error when calling non function value 0 - verbose', () => {
           `)
 })
 
-xtest('Calling non function value 0 error message differs from verbose version', () => {
+test('Calling non function value 0 error message differs from verbose version', () => {
   return expectDifferentParsedErrors(
     callingNonFunctionValue0,
     callingNonFunctionValue0Verbose,
@@ -342,13 +342,13 @@ const callingNonFunctionValueStringVerbose = stripIndent`
   'string'();
 `
 
-xtest('Error when calling non function value "string"', () => {
+test('Error when calling non function value "string"', () => {
   return expectParsedError(callingNonFunctionValueString, optionEC).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value \\"string\\"."`
   )
 })
 
-xtest('Error when calling non function value "string" - verbose', () => {
+test('Error when calling non function value "string" - verbose', () => {
   return expectParsedError(callingNonFunctionValueStringVerbose, optionEC).toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value \\"string\\".
             Because \\"string\\" is not a function, you cannot run \\"string\\"().
@@ -356,7 +356,7 @@ xtest('Error when calling non function value "string" - verbose', () => {
           `)
 })
 
-xtest('Calling non function value string error message differs from verbose version', () => {
+test('Calling non function value string error message differs from verbose version', () => {
   return expectDifferentParsedErrors(
     callingNonFunctionValueString,
     callingNonFunctionValueStringVerbose,
@@ -387,7 +387,7 @@ test.skip('Error when calling non function value array - verbose', () => {
           `)
 })
 
-xtest('Calling non function value array error message differs from verbose version', () => {
+test('Calling non function value array error message differs from verbose version', () => {
   return expectDifferentParsedErrors(
     callingNonFunctionValueArray,
     callingNonFunctionValueArrayVerbose,
@@ -403,7 +403,7 @@ const callingNonFunctionValueObjectVerbose = stripIndent`
 "enable verbose";
 ({a: 1})();
 `
-xtest('Calling non function value object error message differs from verbose version', () => {
+test('Calling non function value object error message differs from verbose version', () => {
   return expectDifferentParsedErrors(
     callingNonFunctionValueObject,
     callingNonFunctionValueObjectVerbose,
@@ -411,7 +411,7 @@ xtest('Calling non function value object error message differs from verbose vers
   ).toBe(undefined)
 })
 
-xtest('Error when calling function with too few arguments', () => {
+test('Error when calling function with too few arguments', () => {
   return expectParsedError(
     stripIndent`
     function f(x) {
@@ -423,7 +423,7 @@ xtest('Error when calling function with too few arguments', () => {
   ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0."`)
 })
 
-xtest('Error when calling function with too few arguments - verbose', () => {
+test('Error when calling function with too few arguments - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -440,7 +440,7 @@ xtest('Error when calling function with too few arguments - verbose', () => {
           `)
 })
 
-xtest('Error when calling function with too many arguments', () => {
+test('Error when calling function with too many arguments', () => {
   return expectParsedError(
     stripIndent`
     function f(x) {
@@ -452,7 +452,7 @@ xtest('Error when calling function with too many arguments', () => {
   ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2."`)
 })
 
-xtest('Error when calling function with too many arguments - verbose', () => {
+test('Error when calling function with too many arguments - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -469,7 +469,7 @@ xtest('Error when calling function with too many arguments - verbose', () => {
           `)
 })
 
-xtest('Error when calling arrow function with too few arguments', () => {
+test('Error when calling arrow function with too few arguments', () => {
   return expectParsedError(
     stripIndent`
     const f = x => x;
@@ -479,7 +479,7 @@ xtest('Error when calling arrow function with too few arguments', () => {
   ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0."`)
 })
 
-xtest('Error when calling arrow function with too few arguments - verbose', () => {
+test('Error when calling arrow function with too few arguments - verbose', () => {
   return expectParsedError(
     stripIndent`
   "enable verbose";
@@ -494,7 +494,7 @@ xtest('Error when calling arrow function with too few arguments - verbose', () =
           `)
 })
 
-xtest('Error when calling arrow function with too many arguments', () => {
+test('Error when calling arrow function with too many arguments', () => {
   return expectParsedError(
     stripIndent`
     const f = x => x;
@@ -504,7 +504,7 @@ xtest('Error when calling arrow function with too many arguments', () => {
   ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
-xtest('Error when calling arrow function with too many arguments - verbose', () => {
+test('Error when calling arrow function with too many arguments - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -544,7 +544,7 @@ test.skip('Error when calling function from member expression with too many argu
           `)
 })
 
-xtest('Error when calling arrow function in tail call with too many arguments - verbose', () => {
+test('Error when calling arrow function in tail call with too many arguments - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -560,7 +560,7 @@ xtest('Error when calling arrow function in tail call with too many arguments - 
           `)
 })
 
-xtest('Error when calling arrow function in tail call with too many arguments', () => {
+test('Error when calling arrow function in tail call with too many arguments', () => {
   return expectParsedError(
     stripIndent`
     const g = () => 1;
@@ -571,7 +571,7 @@ xtest('Error when calling arrow function in tail call with too many arguments', 
   ).toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1."`)
 })
 
-xtest('Error when calling builtin function in with too many arguments', () => {
+test('Error when calling builtin function in with too many arguments', () => {
   return expectParsedError(
     stripIndent`
     is_number(1, 2, 3);
@@ -580,7 +580,7 @@ xtest('Error when calling builtin function in with too many arguments', () => {
   ).toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 3."`)
 })
 
-xtest('Error when calling builtin function in with too few arguments', () => {
+test('Error when calling builtin function in with too few arguments', () => {
   return expectParsedError(
     stripIndent`
     parse_int("");
@@ -589,7 +589,7 @@ xtest('Error when calling builtin function in with too few arguments', () => {
   ).toMatchInlineSnapshot(`"Line 1: Expected 2 arguments, but got 1."`)
 })
 
-xtest('No error when calling list function in with variable arguments', () => {
+test('No error when calling list function in with variable arguments', () => {
   return expectResult(
     stripIndent`
     list();
@@ -624,7 +624,7 @@ xtest('No error when calling list function in with variable arguments', () => {
           `)
 })
 
-xtest('No error when calling display function in with variable arguments', () => {
+test('No error when calling display function in with variable arguments', () => {
   return expectResult(
     stripIndent`
     display(1);
@@ -634,7 +634,7 @@ xtest('No error when calling display function in with variable arguments', () =>
   ).toMatchInlineSnapshot(`1`)
 })
 
-xtest('No error when calling stringify function in with variable arguments', () => {
+test('No error when calling stringify function in with variable arguments', () => {
   return expectResult(
     stripIndent`
     stringify(1, 2);
@@ -644,7 +644,7 @@ xtest('No error when calling stringify function in with variable arguments', () 
   ).toMatchInlineSnapshot(`"1"`)
 })
 
-xtest('No error when calling math_max function in with variable arguments', () => {
+test('No error when calling math_max function in with variable arguments', () => {
   return expectResult(
     stripIndent`
     math_max();
@@ -655,7 +655,7 @@ xtest('No error when calling math_max function in with variable arguments', () =
   ).toMatchInlineSnapshot(`3`)
 })
 
-xtest('No error when calling math_min function in with variable arguments', () => {
+test('No error when calling math_min function in with variable arguments', () => {
   return expectResult(
     stripIndent`
     math_min();
@@ -666,7 +666,7 @@ xtest('No error when calling math_min function in with variable arguments', () =
   ).toMatchInlineSnapshot(`1`)
 })
 
-xtest('Error with too many arguments passed to math_sin', () => {
+test('Error with too many arguments passed to math_sin', () => {
   return expectParsedError(
     stripIndent`
     math_sin(7,8);
@@ -675,7 +675,7 @@ xtest('Error with too many arguments passed to math_sin', () => {
   ).toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 2."`)
 })
 
-xtest('Error with too few arguments passed to rest parameters', () => {
+test('Error with too few arguments passed to rest parameters', () => {
   return expectParsedError(
     stripIndent`
     function rest(a, b, ...c) {}
@@ -685,7 +685,7 @@ xtest('Error with too few arguments passed to rest parameters', () => {
   ).toMatchInlineSnapshot(`"Line 2: Expected 2 or more arguments, but got 1."`)
 })
 
-xtest('Error when redeclaring constant', () => {
+test('Error when redeclaring constant', () => {
   return expectParsedError(
     stripIndent`
     const f = x => x;
@@ -695,7 +695,7 @@ xtest('Error when redeclaring constant', () => {
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
-xtest('Error when redeclaring constant as variable', () => {
+test('Error when redeclaring constant as variable', () => {
   return expectParsedError(
     stripIndent`
     const f = x => x;
@@ -705,7 +705,7 @@ xtest('Error when redeclaring constant as variable', () => {
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
-xtest('Error when redeclaring variable as constant', () => {
+test('Error when redeclaring variable as constant', () => {
   return expectParsedError(
     stripIndent`
     let f = x => x;
@@ -715,7 +715,7 @@ xtest('Error when redeclaring variable as constant', () => {
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
-xtest('Error when redeclaring variable', () => {
+test('Error when redeclaring variable', () => {
   return expectParsedError(
     stripIndent`
     let f = x => x;
@@ -725,7 +725,7 @@ xtest('Error when redeclaring variable', () => {
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
-xtest('Error when redeclaring function after let', () => {
+test('Error when redeclaring function after let', () => {
   return expectParsedError(
     stripIndent`
     let f = x => x;
@@ -735,7 +735,7 @@ xtest('Error when redeclaring function after let', () => {
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
 })
 
-xtest('Error when redeclaring function after let --verbose', () => {
+test('Error when redeclaring function after let --verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -750,7 +750,7 @@ xtest('Error when redeclaring function after let --verbose', () => {
           `)
 })
 
-xtest('Error when redeclaring function after function', () => {
+test('Error when redeclaring function after function', () => {
   return expectParsedError(
     stripIndent`
     function f() {}
@@ -760,7 +760,7 @@ xtest('Error when redeclaring function after function', () => {
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
 })
 
-xtest('Error when redeclaring function after function --verbose', () => {
+test('Error when redeclaring function after function --verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -775,7 +775,7 @@ xtest('Error when redeclaring function after function --verbose', () => {
           `)
 })
 
-xtest('Error when redeclaring function after const', () => {
+test('Error when redeclaring function after const', () => {
   return expectParsedError(
     stripIndent`
     const f = x => x;
@@ -785,7 +785,7 @@ xtest('Error when redeclaring function after const', () => {
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:9)"`)
 })
 
-xtest('Error when redeclaring function after const --verbose', () => {
+test('Error when redeclaring function after const --verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -800,7 +800,7 @@ xtest('Error when redeclaring function after const --verbose', () => {
           `)
 })
 
-xtest('Error when redeclaring const after function', () => {
+test('Error when redeclaring const after function', () => {
   return expectParsedError(
     stripIndent`
     function f() {}
@@ -810,7 +810,7 @@ xtest('Error when redeclaring const after function', () => {
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:6)"`)
 })
 
-xtest('Error when redeclaring const after function --verbose', () => {
+test('Error when redeclaring const after function --verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -825,7 +825,7 @@ xtest('Error when redeclaring const after function --verbose', () => {
           `)
 })
 
-xtest('Error when redeclaring let after function', () => {
+test('Error when redeclaring let after function', () => {
   return expectParsedError(
     stripIndent`
     function f() {}
@@ -835,7 +835,7 @@ xtest('Error when redeclaring let after function', () => {
   ).toMatchInlineSnapshot(`"Line 2: SyntaxError: Identifier 'f' has already been declared (2:4)"`)
 })
 
-xtest('Error when redeclaring let after function --verbose', () => {
+test('Error when redeclaring let after function --verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
@@ -850,7 +850,7 @@ xtest('Error when redeclaring let after function --verbose', () => {
           `)
 })
 
-xtest('Type error with non boolean in if statement, error line at if statement, not at 1', () => {
+test('Type error with non boolean in if statement, error line at if statement, not at 1', () => {
   return expectParsedError(
     stripIndent`
     if (
@@ -863,7 +863,7 @@ xtest('Type error with non boolean in if statement, error line at if statement, 
   ).toMatchInlineSnapshot(`"Line 1: Expected boolean as condition, got number."`)
 })
 
-xtest('Type error with <number> * <nonnumber>, error line at <number>, not <nonnumber>', () => {
+test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnumber>', () => {
   return expectParsedError(
     stripIndent`
     12
@@ -896,7 +896,7 @@ test.skip('Cascading js errors work properly 1', () => {
   )
 })
 
-xtest('Cascading js errors work properly', () => {
+test('Cascading js errors work properly', () => {
   return expectParsedError(
     stripIndent`
     function h(p) {
@@ -927,17 +927,17 @@ test.skip('Check that stack is at most 10k in size', () => {
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))
 }, 10000)
 
-xtest('Cannot overwrite loop variables within a block', () => {
+test('Cannot overwrite loop variables within a block', () => {
   return expectParsedError(
     stripIndent`
-  function xtest(){
+  function test(){
       let z = [];
       for (let x = 0; x < 2; x = x + 1) {
         x = 1;
       }
       return false;
   }
-  xtest();
+  test();
   `,
     optionEC3
   ).toMatchInlineSnapshot(
@@ -945,7 +945,7 @@ xtest('Cannot overwrite loop variables within a block', () => {
   )
 })
 
-xtest('No hoisting of functions. Only the name is hoisted like let and const', () => {
+test('No hoisting of functions. Only the name is hoisted like let and const', () => {
   return expectParsedError(
     stripIndent`
       const v = f();
@@ -958,7 +958,7 @@ xtest('No hoisting of functions. Only the name is hoisted like let and const', (
   ).toMatchInlineSnapshot(`"Line 1: Name f declared later in current scope but not yet assigned"`)
 }, 30000)
 
-xtest('Error when accessing temporal dead zone', () => {
+test('Error when accessing temporal dead zone', () => {
   return expectParsedError(
     stripIndent`
     const a = 1;
@@ -973,7 +973,7 @@ xtest('Error when accessing temporal dead zone', () => {
 }, 30000)
 
 // tslint:disable-next-line:max-line-length
-xtest('In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.', () => {
+test('In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.', () => {
   return expectParsedError(
     stripIndent`
       const a = 1;
@@ -986,16 +986,16 @@ xtest('In a block, every going-to-be-defined variable in the block cannot be acc
   ).toMatchInlineSnapshot(`"Line 3: Name a declared later in current scope but not yet assigned"`)
 }, 30000)
 
-xtest('Shadowed variables may not be assigned to until declared in the current scope', () => {
+test('Shadowed variables may not be assigned to until declared in the current scope', () => {
   return expectParsedError(
     stripIndent`
   let variable = 1;
-  function xtest(){
+  function test(){
     variable = 100;
     let variable = true;
     return variable;
   }
-  xtest();
+  test();
   `,
     optionEC3
   ).toMatchInlineSnapshot(`"Line 3: Name variable not declared."`)

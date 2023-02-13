@@ -203,8 +203,17 @@ async function runNative(
 }
 
 function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  const value = ECEvaluate(program, context)
-  return ECEResultPromise(context, value)
+  try {
+    context.runtime.isRunning = true
+    const value = ECEvaluate(program, context)
+    return ECEResultPromise(context, value)
+  } catch (error) {
+    return new Promise((resolve, reject) => {
+      resolve({ status: 'error' })
+    })
+  } finally {
+    context.runtime.isRunning = false
+  }
 }
 
 export async function sourceRunner(
@@ -246,7 +255,6 @@ export async function sourceRunner(
     program,
     verboseErrors
   )
-  // TODO: Change context.runtime.execution method to 'ec-eval' instead of 'interpreter'
 
   if (isNativeRunnable && context.variant === Variant.NATIVE) {
     return await fullJSRunner(code, context, theOptions)
@@ -264,11 +272,15 @@ export async function sourceRunner(
     return runECEvaluator(program, context, theOptions)
   }
 
+  // if (context.executionMethod === 'ec-evaluator') {
+  //   return runECEvaluator(program, context, theOptions)
+  // }
+  // Uncomment this to have env visualiser use ec-evaluator. Only test suite that fails
+  // due to this is '__tests/inspect.ts'. Need to verify how to rectify
+
   if (isNativeRunnable) {
     return runNative(code, program, context, theOptions)
   }
 
-  // return runECEvaluator(program, context, theOptions)
-  // TODO: Remove the line below, turn runInterpreter into a legacy variant
   return runInterpreter(program!, context, theOptions)
 }
