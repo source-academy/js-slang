@@ -26,6 +26,7 @@ import {
 import { makeWrapper } from './utils/makeWrapper'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
+import * as wgsl_lib from './wgsl/lib'
 
 export class LazyBuiltIn {
   func: (...arg0: any) => any
@@ -371,6 +372,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         '__createKernelSource(shape, extern, localNames, output, fun, kernelId)',
         gpu_lib.__createKernelSource
       )
+    }
+
+    if (context.variant === Variant.WGSL) {
+      console.log('WGSL USED', context)
+      defineBuiltin(context, '__clearKernelCache()', wgsl_lib.test)
     }
   }
 

@@ -36,7 +36,8 @@ export const sourceLanguages: Language[] = [
   { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT },
   { chapter: Chapter.SOURCE_3, variant: Variant.NON_DET },
   { chapter: Chapter.SOURCE_4, variant: Variant.DEFAULT },
-  { chapter: Chapter.SOURCE_4, variant: Variant.GPU }
+  { chapter: Chapter.SOURCE_4, variant: Variant.GPU },
+  { chapter: Chapter.SOURCE_4, variant: Variant.WGSL }
 ]
 
 export const ACORN_PARSE_OPTIONS: Options = { ecmaVersion: 2015 }
