@@ -1,53 +1,103 @@
 /**
  * Utility functions for creating the various agenda instructions.
  */
+
 import * as es from 'estree'
 
 import { Environment } from '../types'
-import { IInstr, InstrTypes } from './types'
+import {
+  AppInstr,
+  ArrLitInstr,
+  AssmtInstr,
+  BinOpInstr,
+  BranchInstr,
+  EnvInstr,
+  Instr,
+  InstrType,
+  UnOpInstr,
+  WhileInstr
+} from './types'
+
+export const resetInstr = (): Instr => ({
+  instrType: InstrType.RESET
+})
+
+export const whileInstr = (test: es.Expression, body: es.Statement): WhileInstr => ({
+  instrType: InstrType.WHILE,
+  test,
+  body
+})
 
 export const assignmentInstr = (
   symbol: string,
   constant: boolean,
   declaration: boolean,
   srcNode: es.Node
-): IInstr => ({
-  instrType: InstrTypes.ASSIGNMENT,
+): AssmtInstr => ({
+  instrType: InstrType.ASSIGNMENT,
   symbol,
   constant,
   declaration,
   srcNode
 })
 
-export const popInstr = (): IInstr => ({ instrType: InstrTypes.POP })
+export const unOpInstr = (symbol: es.UnaryOperator, srcNode: es.Node): UnOpInstr => ({
+  instrType: InstrType.UNARY_OP,
+  symbol,
+  srcNode
+})
+
+export const binOpInstr = (symbol: es.BinaryOperator, srcNode: es.Node): BinOpInstr => ({
+  instrType: InstrType.BINARY_OP,
+  symbol,
+  srcNode
+})
+
+export const popInstr = (): Instr => ({ instrType: InstrType.POP })
+
+export const appInstr = (numOfArgs: number, srcNode: es.Node): AppInstr => ({
+  instrType: InstrType.APPLICATION,
+  numOfArgs,
+  srcNode
+})
 
 export const branchInstr = (
   consequent: es.Expression | es.Statement,
-  alternate: es.Expression | es.Statement | null = null,
+  alternate: es.Expression | es.Statement | null | undefined,
   srcNode: es.Node
-): IInstr => ({
-  instrType: InstrTypes.BRANCH,
+): BranchInstr => ({
+  instrType: InstrType.BRANCH,
   consequent,
   alternate,
   srcNode
 })
 
-export const applicationInstr = (numOfArgs: number, srcNode: es.Node): IInstr => ({
-  instrType: InstrTypes.APPLICATION,
-  numOfArgs,
-  srcNode
+export const envInstr = (env: Environment): EnvInstr => ({
+  instrType: InstrType.ENVIRONMENT,
+  env
 })
 
-export const envInstr = (env: Environment): IInstr => ({ instrType: InstrTypes.ENVIRONMENT, env })
+export const pushUndefInstr = (): Instr => ({
+  instrType: InstrType.PUSH_UNDEFINED_IF_NEEDED
+})
 
-export const pushUndefInstr = (): IInstr => ({ instrType: InstrTypes.PUSH_UNDEFINED_IF_NEEDED })
+export const arrLitInstr = (arity: number): ArrLitInstr => ({
+  instrType: InstrType.ARRAY_LITERAL,
+  arity
+})
+
+export const arrAccInstr = (): Instr => ({
+  instrType: InstrType.ARRAY_ACCESS
+})
+
+export const arrAssmtInstr = (): Instr => ({
+  instrType: InstrType.ARRAY_ASSIGNMENT
+})
+
+export const markerInstr = (): Instr => ({
+  instrType: InstrType.MARKER
+})
 
 // export const contMarkerInstr = (): IInstr => ({ instrType: InstrTypes.CONTINUE_MARKER })
 
 // export const breakMarkerInstr = (): IInstr => ({ instrType: InstrTypes.BREAK_MARKER })
-
-export const whileInstr = (test: es.Expression, body: es.Statement): IInstr => ({
-  instrType: InstrTypes.WHILE,
-  test,
-  body
-})

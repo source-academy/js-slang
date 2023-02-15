@@ -15,33 +15,24 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Result, Value } from '../types'
-import {
-  assignmentExpression,
-  blockArrowFunction,
-  blockStatement,
-  conditionalExpression,
-  constantDeclaration,
-  expressionStatement,
-  forStatement,
-  identifier,
-  literal,
-  primitive,
-  variableDeclaration,
-  variableDeclarator,
-  whileStatement
-} from '../utils/astCreator'
+import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import * as instr from './instrCreator'
 import {
-  applicationInstr,
-  assignmentInstr,
-  branchInstr,
-  envInstr,
-  popInstr,
-  pushUndefInstr,
-  whileInstr
-} from './instrCreator'
-import { AgendaItem, CmdEvaluator, IInstr, InstrTypes } from './types'
+  AgendaItem,
+  AppInstr,
+  ArrLitInstr,
+  AssmtInstr,
+  BinOpInstr,
+  BranchInstr,
+  CmdEvaluator,
+  EnvInstr,
+  Instr,
+  InstrType,
+  UnOpInstr,
+  WhileInstr
+} from './types'
 import { handleSequence, isNode, Stack } from './utils'
 
 /**
@@ -52,7 +43,7 @@ export class Agenda extends Stack<AgendaItem> {
   public constructor(program: es.Program) {
     super()
     // Evaluation of last statement is undefined if stash is empty
-    this.push(pushUndefInstr())
+    this.push(instr.pushUndefInstr())
 
     // Load program into agenda stack
     this.push(program)
@@ -104,12 +95,12 @@ export function resumeEvaluate(context: Context) {
  */
 export function ECEResultPromise(context: Context, value: Value): Promise<Result> {
   return new Promise((resolve, reject) => {
-      if (value && value.break) {
-        resolve({ status: 'suspended-ec-eval', context })
-      } else {
-        resolve({ status: 'finished', context, value })
-      }
-    })
+    if (value && value.break) {
+      resolve({ status: 'suspended-ec-eval', context })
+    } else {
+      resolve({ status: 'finished', context, value })
+    }
+  })
 }
 
 /**
@@ -149,9 +140,11 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash) {
  * Dictionary of functions which handle the logic for the response of the three registers of
  * the ASE machine to each AgendaItem.
  */
-const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
-  /** Statements */
-  Program: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
+const cmdEvaluators: { [type: string]: CmdEvaluator } = {
+  /**
+   * Statements
+   */
+  Program: function (command: es.BlockStatement, context: Context, agenda: Agenda, stash: Stash) {
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
     pushEnvironment(context, environment)
@@ -159,9 +152,14 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     agenda.push(...handleSequence(command.body))
   },
 
-  BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
+  BlockStatement: function (
+    command: es.BlockStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
     // To restore environment after block ends
-    agenda.push(envInstr(currentEnvironment(context)))
+    agenda.push(instr.envInstr(currentEnvironment(context)))
 
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     pushEnvironment(context, environment)
@@ -177,9 +175,9 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    agenda.push(whileInstr(command.test, command.body))
+    agenda.push(instr.whileInstr(command.test, command.body))
     agenda.push(command.test)
-    agenda.push(identifier('undefined')) // Return undefined if there is no loop execution
+    agenda.push(ast.identifier('undefined')) // Return undefined if there is no loop execution
   },
 
   ForStatement: function (
@@ -200,19 +198,25 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
       const valueExpression = init.declarations[0].init!
 
       agenda.push(
-        blockStatement([
+        ast.blockStatement([
           init,
-          forStatement(
-            assignmentExpression(id, valueExpression),
+          ast.forStatement(
+            ast.assignmentExpression(id, valueExpression),
             test,
             update,
-            blockStatement([
-              variableDeclaration([
-                variableDeclarator(identifier('_copy_of_' + id.name), identifier(id.name))
+            ast.blockStatement([
+              ast.variableDeclaration([
+                ast.variableDeclarator(
+                  ast.identifier(`_copy_of_${id.name}`),
+                  ast.identifier(id.name)
+                )
               ]),
-              blockStatement([
-                variableDeclaration([
-                  variableDeclarator(identifier(id.name), identifier('_copy_of_' + id.name))
+              ast.blockStatement([
+                ast.variableDeclaration([
+                  ast.variableDeclarator(
+                    ast.identifier(id.name),
+                    ast.identifier(`_copy_of_${id.name}`)
+                  )
                 ]),
                 command.body
               ])
@@ -222,8 +226,8 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
       )
     } else {
       // Append update statement at the end of loop body
-      const whileBody = blockStatement([command.body, expressionStatement(update)])
-      agenda.push(whileStatement(whileBody, test))
+      const whileBody = ast.blockStatement([command.body, ast.expressionStatement(update)])
+      agenda.push(ast.whileStatement(whileBody, test))
       agenda.push(init)
     }
   },
@@ -232,33 +236,75 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     agenda.push(...reduceConditional(command))
   },
 
-  Literal: function (command: es.Literal, context: Context, agenda: Agenda, stash: Stash) {
-    stash.push(command.value)
-  },
-
   ExpressionStatement: function (
     command: es.ExpressionStatement,
     context: Context,
-    agenda: Agenda
+    agenda: Agenda,
+    stash: Stash
   ) {
     agenda.push(command.expression)
   },
 
-  DebuggerStatement: function (command: es.DebuggerStatement, context: Context, agenda: Agenda) {
+  DebuggerStatement: function (
+    command: es.DebuggerStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
     context.runtime.break = true
   },
 
   VariableDeclaration: function (
     command: es.VariableDeclaration,
     context: Context,
-    agenda: Agenda
+    agenda: Agenda,
+    stash: Stash
   ) {
     const declaration: es.VariableDeclarator = command.declarations[0]
     const id = declaration.id as es.Identifier
-    // Pop instruction required as declarations are not value producing so the value remaining on the stash needs to be popped.
-    agenda.push(popInstr())
-    agenda.push(assignmentInstr(id.name, command.kind === 'const', true, command))
+    agenda.push(instr.popInstr())
+    agenda.push(instr.assignmentInstr(id.name, command.kind === 'const', true, command))
     agenda.push(declaration.init!)
+  },
+
+  FunctionDeclaration: function (
+    command: es.FunctionDeclaration,
+    context: Context,
+    agenda: Agenda
+  ) {
+    // Function declaration desugared into constant declaration.
+    const lambdaExpression: es.ArrowFunctionExpression = ast.blockArrowFunction(
+      command.params as es.Identifier[],
+      command.body,
+      command.loc
+    )
+    const lambdaDeclaration: es.VariableDeclaration = ast.constantDeclaration(
+      command.id!.name,
+      lambdaExpression,
+      command.loc
+    )
+    agenda.push(lambdaDeclaration)
+  },
+
+  ReturnStatement: function (
+    command: es.ReturnStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    // Push return argument onto agenda as well as Reset Instruction to clear to ignore all statements after the return.
+    agenda.push(instr.resetInstr())
+    if (command.argument) {
+      agenda.push(command.argument)
+    }
+  },
+
+  /**
+   * Expressions
+   */
+
+  Literal: function (command: es.Literal, context: Context, agenda: Agenda, stash: Stash) {
+    stash.push(command.value)
   },
 
   AssignmentExpression: function (
@@ -268,14 +314,13 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     stash: Stash
   ) {
     if (command.left.type === 'MemberExpression') {
-      agenda.push({ instrType: InstrTypes.ARRAY_ASSIGNMENT })
+      agenda.push(instr.arrAssmtInstr())
       agenda.push(command.right)
       agenda.push(command.left.property)
       agenda.push(command.left.object)
     } else if (command.left.type === 'Identifier') {
       const id = command.left
-      // No pop instruction because assignments are value producing so the value on the stash remains.
-      agenda.push(assignmentInstr(id.name, false, false, command))
+      agenda.push(instr.assignmentInstr(id.name, false, false, command))
       agenda.push(command.right)
     }
   },
@@ -289,7 +334,7 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     const elems = command.elements as ContiguousArrayElements
     const len = elems.length
 
-    agenda.push({ instrType: InstrTypes.ARRAY_LITERAL, arity: len })
+    agenda.push(instr.arrLitInstr(len))
     for (const elem of elems) {
       agenda.push(elem)
     }
@@ -301,7 +346,7 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    agenda.push({ instrType: InstrTypes.ARRAY_ACCESS })
+    agenda.push(instr.arrAccInstr())
     agenda.push(command.property)
     agenda.push(command.object)
   },
@@ -320,21 +365,25 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
   },
 
   UnaryExpression: function (command: es.UnaryExpression, context: Context, agenda: Agenda) {
-    agenda.push({ instrType: InstrTypes.UNARY_OP, symbol: command.operator, srcNode: command })
+    agenda.push(instr.unOpInstr(command.operator, command))
     agenda.push(command.argument)
   },
 
   BinaryExpression: function (command: es.BinaryExpression, context: Context, agenda: Agenda) {
-    agenda.push({ instrType: InstrTypes.BINARY_OP, symbol: command.operator, srcNode: command })
+    agenda.push(instr.binOpInstr(command.operator, command))
     agenda.push(command.right)
     agenda.push(command.left)
   },
 
   LogicalExpression: function (command: es.LogicalExpression, context: Context, agenda: Agenda) {
     if (command.operator === '&&') {
-      agenda.push(conditionalExpression(command.left, command.right, literal(false), command.loc))
+      agenda.push(
+        ast.conditionalExpression(command.left, command.right, ast.literal(false), command.loc)
+      )
     } else {
-      agenda.push(conditionalExpression(command.left, literal(true), command.right, command.loc))
+      agenda.push(
+        ast.conditionalExpression(command.left, ast.literal(true), command.right, command.loc)
+      )
     }
   },
 
@@ -353,25 +402,6 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     stash.push(closure)
   },
 
-  FunctionDeclaration: function (
-    command: es.FunctionDeclaration,
-    context: Context,
-    agenda: Agenda
-  ) {
-    // Function declaration desugared into constant declaration.
-    const lambdaExpression: es.ArrowFunctionExpression = blockArrowFunction(
-      command.params as es.Identifier[],
-      command.body,
-      command.loc
-    )
-    const lambdaDeclaration: es.VariableDeclaration = constantDeclaration(
-      command.id!.name,
-      lambdaExpression,
-      command.loc
-    )
-    agenda.push(lambdaDeclaration)
-  },
-
   CallExpression: function (
     command: es.CallExpression,
     context: Context,
@@ -379,44 +409,118 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     stash: Stash
   ) {
     // Push application instruction, function arguments and function onto agenda.
-    agenda.push(applicationInstr(command.arguments.length, command))
+    agenda.push(instr.appInstr(command.arguments.length, command))
     for (let index = command.arguments.length - 1; index >= 0; index--) {
       agenda.push(command.arguments[index])
     }
     agenda.push(command.callee)
   },
 
-  ReturnStatement: function (
-    command: es.ReturnStatement,
+  /**
+   * Instructions
+   */
+
+  [InstrType.RESET]: function (command: Instr, context: Context, agenda: Agenda, stash: Stash) {
+    // Keep pushing reset instructions until marker is found.
+    const cmdNext: AgendaItem | undefined = agenda.pop()
+    if (cmdNext && (isNode(cmdNext) || cmdNext.instrType !== InstrType.MARKER)) {
+      agenda.push(instr.resetInstr())
+    }
+  },
+
+  [InstrType.WHILE]: function (
+    command: WhileInstr,
     context: Context,
     agenda: Agenda,
     stash: Stash
   ) {
-    // Push return argument onto agenda as well as Reset Instruction to clear to ignore all statements after the return.
-    agenda.push({ instrType: InstrTypes.RESET })
-    if (command.argument) {
-      agenda.push(command.argument)
+    // TODO check if test is a boolean
+    // Throw error if test is not boolean
+    const test = stash.pop()
+    if (test) {
+      agenda.push(command)
+      agenda.push(command.test!)
+      agenda.push(instr.pushUndefInstr()) // The loop returns undefined if the stash is empty
+      agenda.push(command.body!)
+      agenda.push(instr.popInstr()) // Pop previous body value
     }
   },
 
-  /** Instructions */
-  [InstrTypes.RESET]: function (command: IInstr, context: Context, agenda: Agenda) {
-    // Keep pushing reset instructions until marker is found.
-    const cmdNext: AgendaItem | undefined = agenda.pop()
-    if (cmdNext && (isNode(cmdNext) || cmdNext.instrType !== InstrTypes.MARKER)) {
-      agenda.push({ instrType: InstrTypes.RESET })
-    }
+  [InstrType.ASSIGNMENT]: function (
+    command: AssmtInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    command.declaration
+      ? defineVariable(
+          context,
+          command.symbol,
+          stash.peek(),
+          command.constant,
+          command.srcNode as es.VariableDeclaration
+        )
+      : setVariable(
+          context,
+          command.symbol,
+          stash.peek(),
+          command.srcNode as es.AssignmentExpression
+        )
   },
 
-  [InstrTypes.APPLICATION]: function (
-    command: IInstr,
+  [InstrType.UNARY_OP]: function (
+    command: UnOpInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const argument = stash.pop()
+    const error = rttc.checkUnaryExpression(
+      command.srcNode,
+      command.symbol as es.UnaryOperator,
+      argument,
+      context.chapter
+    )
+    if (error) {
+      handleRuntimeError(context, error)
+    }
+    stash.push(evaluateUnaryExpression(command.symbol as es.UnaryOperator, argument))
+  },
+
+  [InstrType.BINARY_OP]: function (
+    command: BinOpInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const right = stash.pop()
+    const left = stash.pop()
+    const error = rttc.checkBinaryExpression(
+      command.srcNode,
+      command.symbol as es.BinaryOperator,
+      context.chapter,
+      left,
+      right
+    )
+    if (error) {
+      handleRuntimeError(context, error)
+    }
+    stash.push(evaluateBinaryExpression(command.symbol as es.BinaryOperator, left, right))
+  },
+
+  [InstrType.POP]: function (command: Instr, context: Context, agenda: Agenda, stash: Stash) {
+    stash.pop()
+  },
+
+  [InstrType.APPLICATION]: function (
+    command: AppInstr,
     context: Context,
     agenda: Agenda,
     stash: Stash
   ) {
     // Get function arguments from the stash
     const args: Value[] = []
-    for (let index = 0; index < command.numOfArgs!; index++) {
+    for (let index = 0; index < command.numOfArgs; index++) {
       args.unshift(stash.pop())
     }
 
@@ -424,19 +528,19 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     const func: Closure | Function = stash.pop()
     if (func instanceof Closure) {
       // Check for number of arguments mismatch error
-      checkNumberOfArguments(context, func, args, command.srcNode! as es.CallExpression)
+      checkNumberOfArguments(context, func, args, command.srcNode as es.CallExpression)
 
       // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
       const next = agenda.peek()
-      if (!next || (!isNode(next) && next.instrType === InstrTypes.ENVIRONMENT)) {
+      if (!next || (!isNode(next) && next.instrType === InstrType.ENVIRONMENT)) {
         // Pushing another Env Instruction would be redundant so only Marker needs to be pushed.
-        agenda.push({ instrType: InstrTypes.MARKER })
-      } else if (!isNode(next) && next.instrType === InstrTypes.RESET) {
+        agenda.push(instr.markerInstr())
+      } else if (!isNode(next) && next.instrType === InstrType.RESET) {
         // Reset Instruction will be replaced by Reset Instruction of new return statement.
         agenda.pop()
       } else {
-        agenda.push(envInstr(currentEnvironment(context)))
-        agenda.push({ instrType: InstrTypes.MARKER })
+        agenda.push(instr.envInstr(currentEnvironment(context)))
+        agenda.push(instr.markerInstr())
       }
 
       // Push function body on agenda and create environment for function parameters.
@@ -445,7 +549,7 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
       pushEnvironment(context, environment)
     } else if (typeof func === 'function') {
       // Check for number of arguments mismatch error
-      checkNumberOfArguments(context, func, args, command.srcNode! as es.CallExpression)
+      checkNumberOfArguments(context, func, args, command.srcNode as es.CallExpression)
       // Directly stash result of applying pre-built functions without the ASE machine.
       try {
         const result = func(...args)
@@ -463,118 +567,44 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
         }
       }
     } else {
-      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode!))
+      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
     }
   },
 
-  [InstrTypes.BRANCH]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
+  [InstrType.BRANCH]: function (
+    command: BranchInstr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
     const test = stash.pop()
 
     // TODO: Check if test value is boolean
     // This evaluator throws away the node which created the boolean
     // How to retrieve/save the node?
     // Save it in the branch function?
-    const error = rttc.checkIfStatement(command.srcNode!, test, context.chapter)
+    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter)
     if (error) {
       // throw error instead of return?
       handleRuntimeError(context, error)
     }
 
     if (test) {
-      agenda.push(command.consequent!)
+      agenda.push(command.consequent)
     } else if (command.alternate) {
       agenda.push(command.alternate)
     }
   },
 
-  [InstrTypes.WHILE]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
-    // TODO check if test is a boolean
-    // Throw error if test is not boolean
-    const test = stash.pop()
-    if (test) {
-      agenda.push(command)
-      agenda.push(command.test!)
-      agenda.push(pushUndefInstr()) // The loop returns undefined if the stash is empty
-      agenda.push(command.body!)
-      agenda.push(popInstr()) // Pop previous body value
-    }
-  },
-
-  [InstrTypes.POP]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
-    stash.pop()
-  },
-
-  [InstrTypes.ASSIGNMENT]: function (
-    command: IInstr,
-    context: Context,
-    agenda: Agenda,
-    stash: Stash
-  ) {
-    command.declaration
-      ? defineVariable(
-          context,
-          command.symbol!,
-          stash.peek(),
-          command.constant,
-          command.srcNode! as es.VariableDeclaration
-        )
-      : setVariable(
-          context,
-          command.symbol!,
-          stash.peek(),
-          command.srcNode! as es.AssignmentExpression
-        )
-  },
-
-  [InstrTypes.UNARY_OP]: function (
-    command: IInstr,
-    context: Context,
-    agenda: Agenda,
-    stash: Stash
-  ) {
-    const argument = stash.pop()
-    const error = rttc.checkUnaryExpression(
-      command.srcNode!,
-      command.symbol as es.UnaryOperator,
-      argument,
-      context.chapter
-    )
-    if (error) {
-      handleRuntimeError(context, error)
-    }
-    stash.push(evaluateUnaryExpression(command.symbol as es.UnaryOperator, argument))
-  },
-
-  [InstrTypes.BINARY_OP]: function (
-    command: IInstr,
-    context: Context,
-    agenda: Agenda,
-    stash: Stash
-  ) {
-    const right = stash.pop()
-    const left = stash.pop()
-    const error = rttc.checkBinaryExpression(
-      command.srcNode!,
-      command.symbol as es.BinaryOperator,
-      context.chapter,
-      left,
-      right
-    )
-    if (error) {
-      handleRuntimeError(context, error)
-    }
-    stash.push(evaluateBinaryExpression(command.symbol as es.BinaryOperator, left, right))
-  },
-
-  [InstrTypes.ENVIRONMENT]: function (command: IInstr, context: Context) {
+  [InstrType.ENVIRONMENT]: function (command: EnvInstr, context: Context) {
     // Restore environment
-    while (currentEnvironment(context).id !== command.env?.id) {
+    while (currentEnvironment(context).id !== command.env.id) {
       popEnvironment(context)
     }
   },
 
-  [InstrTypes.PUSH_UNDEFINED_IF_NEEDED]: function (
-    command: IInstr,
+  [InstrType.PUSH_UNDEFINED_IF_NEEDED]: function (
+    command: Instr,
     context: Context,
     agenda: Agenda,
     stash: Stash
@@ -584,8 +614,8 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrTypes.ARRAY_LITERAL]: function (
-    command: IInstr,
+  [InstrType.ARRAY_LITERAL]: function (
+    command: ArrLitInstr,
     context: Context,
     agenda: Agenda,
     stash: Stash
@@ -598,8 +628,8 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     stash.push(array)
   },
 
-  [InstrTypes.ARRAY_ACCESS]: function (
-    command: IInstr,
+  [InstrType.ARRAY_ACCESS]: function (
+    command: Instr,
     context: Context,
     agenda: Agenda,
     stash: Stash
@@ -609,8 +639,8 @@ const cmdEvaluators: { [commandType: string]: CmdEvaluator } = {
     stash.push(array[index])
   },
 
-  [InstrTypes.ARRAY_ASSIGNMENT]: function (
-    command: IInstr,
+  [InstrType.ARRAY_ASSIGNMENT]: function (
+    command: Instr,
     context: Context,
     agenda: Agenda,
     stash: Stash
@@ -843,7 +873,7 @@ const createEnvironment = (
     // Don't think this is required for ece. Stack and agenda eliminates need to keep track of call expression.
     environment.callExpression = {
       ...callExpression,
-      arguments: args.map(primitive)
+      arguments: args.map(ast.primitive)
     }
   }
   closure.node.params.forEach((param, index) => {
@@ -862,5 +892,5 @@ const createEnvironment = (
  * of agenda items to be added.
  */
 const reduceConditional = (node: es.IfStatement | es.ConditionalExpression): AgendaItem[] => {
-  return [branchInstr(node.consequent, node.alternate, node), node.test]
+  return [instr.branchInstr(node.consequent, node.alternate, node), node.test]
 }

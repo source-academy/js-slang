@@ -4,26 +4,7 @@ import { Context } from '..'
 import { Environment, Value } from '../types'
 import { Agenda, Stash } from './interpreter'
 
-export type AgendaItem = es.Node | IInstr
-
-// TODO: Might have to change each InstrType to its own interface because different instrtypes have
-// different additional properties that they require.
-export interface IInstr {
-  instrType: InstrTypes
-  symbol?: string // for Assignment
-  constant?: boolean // for Assignment
-  declaration?: boolean // for Assignment
-  numOfArgs?: number // for Application
-  env?: Environment // For restoring environments
-  consequent?: es.Expression | es.Statement // For conditionals, if statements
-  alternate?: es.Expression | es.Statement | null // For conditioonals, if statements
-  srcNode?: es.Node // For remembering the node that created the agenda item for e.g. error throwing
-  test?: es.Expression // For while loops
-  body?: es.Statement // For while loops
-  arity?: number // For arrays
-}
-
-export enum InstrTypes {
+export enum InstrType {
   RESET = 'Reset',
   WHILE = 'While',
   ASSIGNMENT = 'Assignment',
@@ -40,6 +21,62 @@ export enum InstrTypes {
   ARRAY_LENGTH = 'ArrayLength',
   MARKER = 'Marker'
 }
+
+interface BaseInstr {
+  instrType: InstrType
+}
+
+export interface WhileInstr extends BaseInstr {
+  test: es.Expression
+  body: es.Statement
+}
+
+export interface AssmtInstr extends BaseInstr {
+  symbol: string
+  constant: boolean
+  declaration: boolean
+  srcNode: es.Node
+}
+
+export interface UnOpInstr extends BaseInstr {
+  symbol: es.UnaryOperator
+  srcNode: es.Node
+}
+
+export interface BinOpInstr extends BaseInstr {
+  symbol: es.BinaryOperator
+  srcNode: es.Node
+}
+
+export interface AppInstr extends BaseInstr {
+  numOfArgs: number
+  srcNode: es.Node
+}
+
+export interface BranchInstr extends BaseInstr {
+  consequent: es.Expression | es.Statement
+  alternate: es.Expression | es.Statement | null | undefined
+  srcNode: es.Node
+}
+
+export interface EnvInstr extends BaseInstr {
+  env: Environment
+}
+
+export interface ArrLitInstr extends BaseInstr {
+  arity: number
+}
+
+export type Instr =
+  | BaseInstr
+  | WhileInstr
+  | AssmtInstr
+  | AppInstr
+  | BranchInstr
+  | EnvInstr
+  | ArrLitInstr
+
+export type AgendaItem = es.Node | Instr
 
 export type CmdEvaluator = (
   command: AgendaItem,
