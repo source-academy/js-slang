@@ -129,7 +129,7 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
         ? `(${elementTypeString})[]`
         : `${elementTypeString}[]`
     case 'variable':
-      if (type.typeArgs) {
+      if (type.typeArgs && type.typeArgs.length > 0) {
         return `${type.name}<${type.typeArgs
           .map(param => formatTypeString(param, formatAsLiteral))
           .join(', ')}>`
@@ -462,7 +462,7 @@ export const source4TypeOverrides: [string, BindableType][] = [
   ['apply_in_underlying_javascript', tFunc(tAny, tList(tAny), tAny)],
   ['tokenize', tFunc(tString, tList(tString))],
   // For parse tree types, see parseTreeTypes.prelude.ts
-  ['parse', tFunc(tString, tVar('Program'))]
+  ['parse', tFunc(tString, tUnion(tVar('Program', []), tVar('Statement', [])))]
 ]
 
 const predeclaredConstTypes: [string, Type][] = [

@@ -17,6 +17,20 @@ describe('parse tree types', () => {
     parse(parseTreeTypesPrelude, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
+
+  it('types parse trees correctly (program)', () => {
+    const code = `const x: Program = parse('const x = 1; x;');
+      const type: "statement" = head(x);
+      const stmts: List<Statement> = tail(x); // error
+      const stmts2: List<Statement> = head(tail(x)); // no error
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 2: Type '\\"sequence\\"' is not assignable to type '\\"statement\\"'.
+      Line 3: Type 'Pair<List<Statement>, null>' is not assignable to type 'List<Statement>'."
+    `)
+  })
 })
 
 describe('parse', () => {
@@ -28,6 +42,15 @@ describe('parse', () => {
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(
       `"Line 2: Type 'number' is not assignable to type 'string'."`
+    )
+  })
+
+  it('returns Program | Statement', () => {
+    const code = "const x: number = parse('1;');"
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 1: Type 'Program | Statement' is not assignable to type 'number'."`
     )
   })
 })

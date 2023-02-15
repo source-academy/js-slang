@@ -951,7 +951,10 @@ function hasTypeMismatchErrors(node: tsEs.Node, actualType: Type, expectedType: 
         if (expectedType.name !== actualType.name) {
           return true
         }
-        if (expectedType.typeArgs === undefined) {
+        if (expectedType.typeArgs === undefined || expectedType.typeArgs.length === 0) {
+          if (actualType.typeArgs === undefined) {
+            return false
+          }
           return actualType.typeArgs?.length !== 0
         }
         if (actualType.typeArgs?.length !== expectedType.typeArgs.length) {
@@ -1247,7 +1250,7 @@ function lookupTypeAliasAndRemoveForAllTypes(node: tsEs.Node, varType: Variable)
   // If type saved in type environment is not generic,
   // given variable type should not have type arguments
   if (aliasType.kind !== 'forall') {
-    if (varType.typeArgs) {
+    if (varType.typeArgs && varType.typeArgs.length > 0) {
       context.errors.push(new TypeNotGenericError(node, varType.name))
       return tAny
     }
