@@ -22,10 +22,15 @@ export const resetInstr = (): Instr => ({
   instrType: InstrType.RESET
 })
 
-export const whileInstr = (test: es.Expression, body: es.Statement): WhileInstr => ({
+export const whileInstr = (
+  test: es.Expression,
+  body: es.Statement,
+  srcNode: es.Node
+): WhileInstr => ({
   instrType: InstrType.WHILE,
   test,
-  body
+  body,
+  srcNode
 })
 
 export const assignmentInstr = (

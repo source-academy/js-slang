@@ -175,7 +175,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    agenda.push(instr.whileInstr(command.test, command.body))
+    agenda.push(instr.whileInstr(command.test, command.body, command))
     agenda.push(command.test)
     agenda.push(ast.identifier('undefined')) // Return undefined if there is no loop execution
   },
@@ -262,9 +262,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ) {
     const declaration: es.VariableDeclarator = command.declarations[0]
     const id = declaration.id as es.Identifier
+
+    // Parser enforces initialisation during variable declaration
+    const init = declaration.init!
+
     agenda.push(instr.popInstr())
     agenda.push(instr.assignmentInstr(id.name, command.kind === 'const', true, command))
-    agenda.push(declaration.init!)
+    agenda.push(init)
   },
 
   FunctionDeclaration: function (
@@ -434,14 +438,19 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    // TODO check if test is a boolean
-    // Throw error if test is not boolean
     const test = stash.pop()
+
+    // Check if test condition is a boolean
+    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter)
+    if (error) {
+      handleRuntimeError(context, error)
+    }
+
     if (test) {
       agenda.push(command)
-      agenda.push(command.test!)
+      agenda.push(command.test)
       agenda.push(instr.pushUndefInstr()) // The loop returns undefined if the stash is empty
-      agenda.push(command.body!)
+      agenda.push(command.body)
       agenda.push(instr.popInstr()) // Pop previous body value
     }
   },
@@ -579,13 +588,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ) {
     const test = stash.pop()
 
-    // TODO: Check if test value is boolean
-    // This evaluator throws away the node which created the boolean
-    // How to retrieve/save the node?
-    // Save it in the branch function?
+    // Check if test condition is a boolean
     const error = rttc.checkIfStatement(command.srcNode, test, context.chapter)
     if (error) {
-      // throw error instead of return?
       handleRuntimeError(context, error)
     }
 

@@ -29,6 +29,7 @@ interface BaseInstr {
 export interface WhileInstr extends BaseInstr {
   test: es.Expression
   body: es.Statement
+  srcNode: es.Node
 }
 
 export interface AssmtInstr extends BaseInstr {
