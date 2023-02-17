@@ -28,7 +28,7 @@ export function parse(
   }
 
   const ast: Program | null = parser.parse(programStr, context, throwOnError)
-  if (ast) parser.validate(ast, context, throwOnError)
+  const validAst: boolean = !!ast && parser.validate(ast, context, throwOnError)
 
-  return ast
+  return validAst ? ast : null
 }
