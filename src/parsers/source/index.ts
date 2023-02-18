@@ -5,7 +5,7 @@ import { DEFAULT_ECMA_VERSION } from '../../constants'
 import { Chapter, Context, Rule, SourceError, Variant } from '../../types'
 import { ancestor, AncestorWalkerFn } from '../../utils/walkers'
 import { DisallowedConstructError, FatalSyntaxError } from '../errors'
-import { Parser } from '../types'
+import { AcornOptions, Parser } from '../types'
 import { createAcornParserOptions, positionToSourceLocation } from '../utils'
 import defaultRules from './rules'
 import syntaxBlacklist from './syntax'
@@ -20,7 +20,7 @@ const combineAncestorWalkers =
 const mapToObj = <T>(map: Map<string, T>) =>
   Array.from(map).reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {})
 
-export class SourceParser implements Parser {
+export class SourceParser implements Parser<AcornOptions> {
   private chapter: Chapter
   private variant: Variant
 
@@ -35,15 +35,23 @@ export class SourceParser implements Parser {
     ]
   }
 
-  parse(programStr: string, context: Context, throwOnError?: boolean): Program | null {
+  parse(
+    programStr: string,
+    context: Context,
+    options?: Partial<AcornOptions>,
+    throwOnError?: boolean
+  ): Program | null {
     try {
       return acornParse(
         programStr,
-        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors)
+        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options)
       ) as unknown as Program
     } catch (error) {
       if (error instanceof SyntaxError) {
-        error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())
+        error = new FatalSyntaxError(
+          positionToSourceLocation((error as any).loc, options?.sourceFile),
+          error.toString()
+        )
       }
 
       if (throwOnError) throw error

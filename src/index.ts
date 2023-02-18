@@ -329,7 +329,7 @@ export async function runFilesInContext(
 
   if (context.chapter === Chapter.FULL_JS) {
     const program = parse(code, context)
-    if (program === undefined) {
+    if (program === null) {
       return resolvedErrorPromise
     }
     return fullJSRunner(program, context, options)

@@ -3,13 +3,23 @@ import { Program } from 'estree'
 
 import { Context } from '../..'
 import { FatalSyntaxError } from '../errors'
-import { Parser } from '../types'
-import { createAcornParserOptions, positionToSourceLocation } from '../utils'
+import { AcornOptions, Parser } from '../types'
+import { positionToSourceLocation } from '../utils'
 
-export class FullJSParser implements Parser {
-  parse(programStr: string, context: Context, throwOnError?: boolean): Program | null {
+export class FullJSParser implements Parser<AcornOptions> {
+  parse(
+    programStr: string,
+    context: Context,
+    options?: Partial<AcornOptions>,
+    throwOnError?: boolean
+  ): Program | null {
     try {
-      return parse(programStr, createAcornParserOptions('latest')) as unknown as Program
+      return parse(programStr, {
+        sourceType: 'module',
+        ecmaVersion: 'latest',
+        locations: true,
+        ...options
+      }) as unknown as Program
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())
@@ -21,6 +31,7 @@ export class FullJSParser implements Parser {
 
     return null
   }
+
   validate(_ast: Program, _context: Context, _throwOnError: boolean): boolean {
     return true
   }

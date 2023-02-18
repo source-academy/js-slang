@@ -15,7 +15,7 @@ import { evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import preprocessFileImports from '../localImports/preprocessor'
-import { parse } from '../parsers/parser'
+import { parse } from '../parsers'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
   callee,
@@ -234,7 +234,7 @@ export async function sourceRunner(
   if (context.prelude !== null) {
     context.unTypecheckedCode.push(context.prelude)
     const prelude = parse(context.prelude, context)
-    if (prelude === undefined) {
+    if (prelude === null) {
       return resolvedErrorPromise
     }
     context.prelude = null

@@ -5,14 +5,15 @@ import { Chapter, Variant } from '../types'
 import { FullJSParser } from './fullJS'
 import { SourceParser } from './source'
 import { SourceTypedParser } from './source/typed'
-import { Parser } from './types'
+import { AcornOptions, Parser } from './types'
 
-export function parse(
+export function parse<TOptions extends AcornOptions>(
   programStr: string,
   context: Context,
+  options?: Partial<TOptions>,
   throwOnError?: boolean
 ): Program | null {
-  let parser: Parser
+  let parser: Parser<TOptions>
   switch (context.chapter) {
     case Chapter.FULL_JS:
       parser = new FullJSParser()
@@ -27,7 +28,7 @@ export function parse(
       }
   }
 
-  const ast: Program | null = parser.parse(programStr, context, throwOnError)
+  const ast: Program | null = parser.parse(programStr, context, options, throwOnError)
   const validAst: boolean = !!ast && parser.validate(ast, context, throwOnError)
 
   return validAst ? ast : null

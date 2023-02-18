@@ -7,7 +7,7 @@ import { IOptions, Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { hoistAndMergeImports } from '../localImports/transformers/hoistAndMergeImports'
-import { parse } from '../parsers/parser'
+import { parse } from '../parsers'
 import { evallerReplacer, getBuiltins, transpile } from '../transpiler/transpiler'
 import type { Context } from '../types'
 import * as create from '../utils/astCreator'
@@ -29,7 +29,7 @@ function preparePrelude(context: Context): es.Statement[] | undefined {
   const prelude = context.prelude
   context.prelude = null
   const program = parse(prelude, context)
-  if (program === undefined) {
+  if (program === null) {
     return undefined
   }
 

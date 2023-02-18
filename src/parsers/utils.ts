@@ -2,20 +2,19 @@ import {
   Comment,
   ecmaVersion,
   Node,
-  Options,
   parse as acornParse,
   parseExpressionAt as acornParseAt,
-  Position,
-  SourceLocation
+  Position
 } from 'acorn'
 import { parse as acornLooseParse } from 'acorn-loose'
-import { Program } from 'estree'
+import { Program, SourceLocation } from 'estree'
 
 import { Context } from '..'
 import { DEFAULT_ECMA_VERSION } from '../constants'
 import { SourceError } from '../types'
 import { validateAndAnnotate } from '../validator/validator'
 import { MissingSemicolonError, TrailingCommaError } from './errors'
+import { AcornOptions } from './types'
 
 /**
  * Generates options object for acorn parser
@@ -29,19 +28,19 @@ import { MissingSemicolonError, TrailingCommaError } from './errors'
 export const createAcornParserOptions = (
   ecmaVersion: ecmaVersion,
   errors?: SourceError[],
-  throwOnError?: boolean,
-  options?: Partial<Options>
-): Options => ({
+  options?: Partial<AcornOptions>,
+  throwOnError?: boolean
+): AcornOptions => ({
   ecmaVersion,
   sourceType: 'module',
   locations: true,
   onInsertedSemicolon(_tokenEndPos: number, tokenPos: Position) {
-    const error = new MissingSemicolonError(positionToSourceLocation(tokenPos))
+    const error = new MissingSemicolonError(positionToSourceLocation(tokenPos, options?.sourceFile))
     if (throwOnError) throw error
     errors?.push(error)
   },
   onTrailingComma(_tokenEndPos: number, tokenPos: Position) {
-    const error = new TrailingCommaError(positionToSourceLocation(tokenPos))
+    const error = new TrailingCommaError(positionToSourceLocation(tokenPos, options?.sourceFile))
     if (throwOnError) throw error
     errors?.push(error)
   },
@@ -80,9 +79,14 @@ export function parseWithComments(
   ecmaVersion: ecmaVersion = DEFAULT_ECMA_VERSION
 ): [Program, Comment[]] {
   let comments: acorn.Comment[] = []
-  const acornOptions: Options = createAcornParserOptions(ecmaVersion, undefined, undefined, {
-    onComment: comments
-  })
+  const acornOptions: AcornOptions = createAcornParserOptions(
+    ecmaVersion,
+    undefined,
+    {
+      onComment: comments
+    },
+    undefined
+  )
 
   let ast: Program | undefined
   try {
@@ -127,7 +131,8 @@ export function typedParse(programStr: string, context: Context): Program {
  * @param position acorn Position object
  * @returns SourceLocation
  */
-export const positionToSourceLocation = (position: Position): SourceLocation => ({
-  start: position,
-  end: { ...position, column: position.column + 1 }
+export const positionToSourceLocation = (position: Position, source?: string): SourceLocation => ({
+  start: { ...position },
+  end: { ...position, column: position.column + 1 },
+  source
 })

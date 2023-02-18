@@ -4,7 +4,7 @@ import { runInContext } from '../..'
 import createContext from '../../createContext'
 import { mockContext } from '../../mocks/context'
 import * as moduleLoader from '../../modules/moduleLoader'
-import { parse } from '../../parser/parser'
+import { parse } from '../../parsers'
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
@@ -71,7 +71,7 @@ test('works in runInContext when throwInfiniteLoops is false', async () => {
 const testForInfiniteLoopWithCode = (code: string, previousPrograms: es.Program[]) => {
   const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT)
   const program = parse(code, context)
-  if (program === undefined) {
+  if (program === null) {
     throw new Error('Unable to parse code.')
   }
   return testForInfiniteLoop(program, previousPrograms)
