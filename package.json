@@ -14,6 +14,22 @@
     "name": "Source Academy",
     "url": "https://github.com/source-academy/"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/source-academy/js-slang.git"
+  },
+  "bugs": {
+    "url": "https://github.com/source-academy/js-slang/issues"
+  },
+  "homepage": "https://github.com/source-academy/js-slang",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "js-slang": "dist/repl/repl.js"
+  },
   "dependencies": {
     "@babel/parser": "^7.19.4",
     "@joeychenofficial/alt-ergo-modified": "^2.4.0",
@@ -30,40 +46,22 @@
     "source-map": "0.7.3",
     "xmlhttprequest-ts": "^1.0.1"
   },
-  "main": "dist/index",
-  "types": "dist/index",
-  "files": [
-    "dist"
-  ],
-  "bin": {
-    "js-slang": "dist/repl/repl.js"
-  },
   "scripts": {
-    "autocomplete": "node ./scripts/updateAutocompleteDocs.js",
-    "benchmark": "jest --runInBand --testPathPattern='.*benchmark.*' --testPathIgnorePatterns='/dist/'",
-    "build": "yarn docs && yarn tsc --build --force",
-    "build_sicp_package": "./scripts/build_sicp_package.sh",
-    "ci": "yarn jsdoc && yarn autocomplete && yarn format:ci && yarn eslint && yarn test",
-    "compile": "yarn tsc",
-    "docs": "yarn jsdoc && yarn autocomplete",
+    "build": "yarn docs && tsc --build --force",
+    "build:slang": "tsc --build --force",
     "eslint": "eslint --ext \".ts,.tsx\" src",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
-    "jsdoc": "./scripts/jsdoc.sh",
-    "prepublishOnly": "tsc",
-    "prepare": "husky install",
-    "publish_sicp_package": "./scripts/publish_sicp_package.sh",
     "test": "jest",
-    "test-coverage": "jest --coverage"
+    "test-coverage": "jest --coverage",
+    "docs": "yarn jsdoc && yarn autocomplete",
+    "jsdoc": "./scripts/jsdoc.sh",
+    "autocomplete": "node ./scripts/updateAutocompleteDocs.js",
+    "build_sicp_package": "./scripts/build_sicp_package.sh",
+    "publish_sicp_package": "./scripts/publish_sicp_package.sh",
+    "benchmark": "jest --runInBand --testPathPattern='.*benchmark.*' --testPathIgnorePatterns='/dist/'",
+    "prepare": "husky install"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/source-academy/js-slang.git"
-  },
-  "bugs": {
-    "url": "https://github.com/source-academy/js-slang/issues"
-  },
-  "homepage": "https://github.com/source-academy/js-slang",
   "devDependencies": {
     "@types/jest": "^29.0.0",
     "@types/lodash.assignin": "^4.2.6",
