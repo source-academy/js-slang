@@ -474,7 +474,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       const indexType = typeCheckAndReturnType(node.property)
       const objectType = typeCheckAndReturnType(node.object)
       // Index must be number
-      if (hasTypeMismatchErrors(node, indexType, tNumber)) {
+      if (hasTypeMismatchErrors(node, indexType, tNumber, [], [])) {
         context.errors.push(new InvalidIndexTypeError(node, formatTypeString(indexType, true)))
       }
       // Expression being accessed must be array
@@ -535,7 +535,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       const typeToCastTo = getTypeAnnotationType(node)
       const formatAsLiteral =
         typeContainsLiteralType(originalType) || typeContainsLiteralType(typeToCastTo)
-      if (hasTypeMismatchErrors(node, typeToCastTo, originalType)) {
+      if (hasTypeMismatchErrors(node, typeToCastTo, originalType, [], [])) {
         context.errors.push(
           new TypecastError(
             node,
@@ -887,7 +887,7 @@ function getTypeVariableMappings(
 function checkForTypeMismatch(node: tsEs.Node, actualType: Type, expectedType: Type): void {
   const formatAsLiteral =
     typeContainsLiteralType(expectedType) || typeContainsLiteralType(actualType)
-  if (hasTypeMismatchErrors(node, actualType, expectedType)) {
+  if (hasTypeMismatchErrors(node, actualType, expectedType, [], [])) {
     context.errors.push(
       new TypeMismatchError(
         node,
@@ -926,7 +926,14 @@ function typeContainsLiteralType(type: Type): boolean {
  * Returns true if the actual type and the expected type do not match, false otherwise.
  * The two types will not match if the intersection of the two types is empty.
  */
-function hasTypeMismatchErrors(node: tsEs.Node, actualType: Type, expectedType: Type): boolean {
+function hasTypeMismatchErrors(
+  node: tsEs.Node,
+  actualType: Type,
+  expectedType: Type,
+  visitedTypeAliasesForActualType: Variable[],
+  visitedTypeAliasesForExpectedType: Variable[],
+  skipTypeAliasExpansion: boolean = false
+): boolean {
   if (isEqual(actualType, tAny) || isEqual(expectedType, tAny)) {
     // Exit early as "any" is guaranteed not to cause type mismatch errors
     return false
@@ -935,40 +942,75 @@ function hasTypeMismatchErrors(node: tsEs.Node, actualType: Type, expectedType: 
     // If the expected type is not a variable type but the actual type is a variable type,
     // Swap the order of the types around
     // This removes the need to check if the actual type is a variable type in all of the switch cases
-    return hasTypeMismatchErrors(node, expectedType, actualType)
+    return hasTypeMismatchErrors(
+      node,
+      expectedType,
+      actualType,
+      visitedTypeAliasesForExpectedType,
+      visitedTypeAliasesForActualType,
+      skipTypeAliasExpansion
+    )
   }
   if (expectedType.kind !== 'union' && actualType.kind === 'union') {
     // If the expected type is not a union type but the actual type is a union type,
     // Check if the expected type matches any of the actual types
     // This removes the need to check if the actual type is a union type in all of the switch cases
-    return !containsType(node, actualType.types, expectedType)
+    return !containsType(
+      node,
+      actualType.types,
+      expectedType,
+      visitedTypeAliasesForActualType,
+      visitedTypeAliasesForExpectedType
+    )
   }
   switch (expectedType.kind) {
     case 'variable':
       if (actualType.kind === 'variable') {
         // If both are variable types, compare without using type saved in type environment
         // name and type arguments must match
-        if (expectedType.name !== actualType.name) {
-          return true
-        }
-        if (expectedType.typeArgs === undefined || expectedType.typeArgs.length === 0) {
-          if (actualType.typeArgs === undefined) {
-            return false
+        if (expectedType.name === actualType.name) {
+          if (expectedType.typeArgs === undefined || expectedType.typeArgs.length === 0) {
+            return actualType.typeArgs === undefined ? false : actualType.typeArgs.length !== 0
           }
-          return actualType.typeArgs?.length !== 0
-        }
-        if (actualType.typeArgs?.length !== expectedType.typeArgs.length) {
-          return true
-        }
-        for (let i = 0; i < expectedType.typeArgs.length; i++) {
-          if (hasTypeMismatchErrors(node, actualType.typeArgs[i], expectedType.typeArgs[i])) {
+          if (actualType.typeArgs?.length !== expectedType.typeArgs.length) {
             return true
           }
+          for (let i = 0; i < expectedType.typeArgs.length; i++) {
+            if (
+              hasTypeMismatchErrors(
+                node,
+                actualType.typeArgs[i],
+                expectedType.typeArgs[i],
+                visitedTypeAliasesForActualType,
+                visitedTypeAliasesForExpectedType,
+                skipTypeAliasExpansion
+              )
+            ) {
+              return true
+            }
+          }
+          return false
         }
-        return false
       }
+      for (const visitedType of visitedTypeAliasesForExpectedType) {
+        if (visitedType.name === expectedType.name) {
+          // Circular dependency, terminate type check
+          return true
+        }
+      }
+      if (skipTypeAliasExpansion) {
+        return true
+      }
+      visitedTypeAliasesForExpectedType.push(expectedType)
       const aliasType = lookupTypeAliasAndRemoveForAllTypes(node, expectedType)
-      return hasTypeMismatchErrors(node, actualType, aliasType)
+      return hasTypeMismatchErrors(
+        node,
+        actualType,
+        aliasType,
+        visitedTypeAliasesForActualType,
+        visitedTypeAliasesForExpectedType,
+        skipTypeAliasExpansion
+      )
     case 'primitive':
       if (actualType.kind === 'literal') {
         return expectedType.value === undefined
@@ -993,12 +1035,28 @@ function hasTypeMismatchErrors(node: tsEs.Node, actualType: Type, expectedType: 
         // Note that actual and expected types are swapped here
         // to simulate contravariance for function parameter types
         // This will be useful if type checking in Source Typed were to be made stricter in the future
-        if (hasTypeMismatchErrors(node, expectedParamTypes[i], actualParamTypes[i])) {
+        if (
+          hasTypeMismatchErrors(
+            node,
+            expectedParamTypes[i],
+            actualParamTypes[i],
+            visitedTypeAliasesForExpectedType,
+            visitedTypeAliasesForActualType,
+            skipTypeAliasExpansion
+          )
+        ) {
           return true
         }
       }
       // Check return type
-      return hasTypeMismatchErrors(node, actualType.returnType, expectedType.returnType)
+      return hasTypeMismatchErrors(
+        node,
+        actualType.returnType,
+        expectedType.returnType,
+        visitedTypeAliasesForActualType,
+        visitedTypeAliasesForExpectedType,
+        skipTypeAliasExpansion
+      )
     case 'union':
       // If actual type is not union type, check if actual type matches one of the expected types
       if (actualType.kind !== 'union') {
@@ -1024,20 +1082,55 @@ function hasTypeMismatchErrors(node: tsEs.Node, actualType: Type, expectedType: 
         // Special case, as lists are pairs
         if (actualType.typeAsPair !== undefined) {
           // If pair representation of list is present, check against pair type
-          return hasTypeMismatchErrors(node, actualType.typeAsPair, expectedType)
+          return hasTypeMismatchErrors(
+            node,
+            actualType.typeAsPair,
+            expectedType,
+            visitedTypeAliasesForActualType,
+            visitedTypeAliasesForExpectedType,
+            skipTypeAliasExpansion
+          )
         }
         // Head of pair should match list element type; tail of pair should match list type
         return (
-          hasTypeMismatchErrors(node, actualType.elementType, expectedType.headType) ||
-          hasTypeMismatchErrors(node, actualType, expectedType.tailType)
+          hasTypeMismatchErrors(
+            node,
+            actualType.elementType,
+            expectedType.headType,
+            visitedTypeAliasesForActualType,
+            visitedTypeAliasesForExpectedType,
+            skipTypeAliasExpansion
+          ) ||
+          hasTypeMismatchErrors(
+            node,
+            actualType,
+            expectedType.tailType,
+            visitedTypeAliasesForActualType,
+            visitedTypeAliasesForExpectedType,
+            skipTypeAliasExpansion
+          )
         )
       }
       if (actualType.kind !== 'pair') {
         return true
       }
       return (
-        hasTypeMismatchErrors(node, actualType.headType, expectedType.headType) ||
-        hasTypeMismatchErrors(node, actualType.tailType, expectedType.tailType)
+        hasTypeMismatchErrors(
+          node,
+          actualType.headType,
+          expectedType.headType,
+          visitedTypeAliasesForActualType,
+          visitedTypeAliasesForExpectedType,
+          skipTypeAliasExpansion
+        ) ||
+        hasTypeMismatchErrors(
+          node,
+          actualType.tailType,
+          expectedType.tailType,
+          visitedTypeAliasesForActualType,
+          visitedTypeAliasesForExpectedType,
+          skipTypeAliasExpansion
+        )
       )
     case 'list':
       if (isEqual(actualType, tNull)) {
@@ -1048,18 +1141,46 @@ function hasTypeMismatchErrors(node: tsEs.Node, actualType: Type, expectedType: 
         // Special case, as pairs can be lists
         if (expectedType.typeAsPair !== undefined) {
           // If pair representation of list is present, check against pair type
-          return hasTypeMismatchErrors(node, actualType, expectedType.typeAsPair)
+          return hasTypeMismatchErrors(
+            node,
+            actualType,
+            expectedType.typeAsPair,
+            visitedTypeAliasesForActualType,
+            visitedTypeAliasesForExpectedType,
+            skipTypeAliasExpansion
+          )
         }
         // Head of pair should match list element type; tail of pair should match list type
         return (
-          hasTypeMismatchErrors(node, actualType.headType, expectedType.elementType) ||
-          hasTypeMismatchErrors(node, actualType.tailType, expectedType)
+          hasTypeMismatchErrors(
+            node,
+            actualType.headType,
+            expectedType.elementType,
+            visitedTypeAliasesForActualType,
+            visitedTypeAliasesForExpectedType,
+            skipTypeAliasExpansion
+          ) ||
+          hasTypeMismatchErrors(
+            node,
+            actualType.tailType,
+            expectedType,
+            visitedTypeAliasesForActualType,
+            visitedTypeAliasesForExpectedType,
+            skipTypeAliasExpansion
+          )
         )
       }
       if (actualType.kind !== 'list') {
         return true
       }
-      return hasTypeMismatchErrors(node, actualType.elementType, expectedType.elementType)
+      return hasTypeMismatchErrors(
+        node,
+        actualType.elementType,
+        expectedType.elementType,
+        visitedTypeAliasesForActualType,
+        visitedTypeAliasesForExpectedType,
+        skipTypeAliasExpansion
+      )
     case 'array':
       if (actualType.kind === 'union') {
         // Special case: number[] | string[] matches with (number | string)[]
@@ -1068,12 +1189,26 @@ function hasTypeMismatchErrors(node: tsEs.Node, actualType: Type, expectedType: 
           return true
         }
         const combinedType = types.map(type => type.elementType)
-        return hasTypeMismatchErrors(node, tUnion(...combinedType), expectedType.elementType)
+        return hasTypeMismatchErrors(
+          node,
+          tUnion(...combinedType),
+          expectedType.elementType,
+          visitedTypeAliasesForActualType,
+          visitedTypeAliasesForExpectedType,
+          skipTypeAliasExpansion
+        )
       }
       if (actualType.kind !== 'array') {
         return true
       }
-      return hasTypeMismatchErrors(node, actualType.elementType, expectedType.elementType)
+      return hasTypeMismatchErrors(
+        node,
+        actualType.elementType,
+        expectedType.elementType,
+        visitedTypeAliasesForActualType,
+        visitedTypeAliasesForExpectedType,
+        skipTypeAliasExpansion
+      )
     default:
       return true
   }
@@ -1358,9 +1493,24 @@ function mergeTypes(node: tsEs.Node, ...types: Type[]): Type {
 /**
  * Checks if a type exists in an array of types.
  */
-function containsType(node: tsEs.Node, arr: Type[], typeToCheck: Type) {
+function containsType(
+  node: tsEs.Node,
+  arr: Type[],
+  typeToCheck: Type,
+  visitedTypeAliasesForTypes: Variable[] = [],
+  visitedTypeAliasesForTypeToCheck: Variable[] = []
+) {
   for (const type of arr) {
-    if (!hasTypeMismatchErrors(node, typeToCheck, type)) {
+    if (
+      !hasTypeMismatchErrors(
+        node,
+        typeToCheck,
+        type,
+        visitedTypeAliasesForTypeToCheck,
+        visitedTypeAliasesForTypes,
+        true
+      )
+    ) {
       return true
     }
   }
