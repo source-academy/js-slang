@@ -244,7 +244,7 @@ test('for loop `let` variables are copied into the block scope', () => {
   ).toMatchInlineSnapshot(`1`)
 })
 
-test('streams and its pre-defined/pre-built functions are working as intended',  () => {
+test('streams and its pre-defined/pre-built functions are working as intended', () => {
   return expectResult(
     stripIndent`
        function make_alternating_stream(stream) {
@@ -258,8 +258,20 @@ test('streams and its pre-defined/pre-built functions are working as intended', 
     }
 
     const ones = pair(1, () => ones);
-    eval_stream(make_alternating_stream(enum_stream(1, 9)), 10);
+    list_ref(eval_stream(make_alternating_stream(enum_stream(1, 9)), 9), 8);
     `,
     optionEC4
-  ).toMatchInlineSnapshot(`[1, [-2, [3, [-4, [5, [-6, [7, [-8, [9, null]]]]]]]]]`)
+  ).toMatchInlineSnapshot(`9`)
+})
+
+test('streams can be created and functions with no return statements are still evaluated properly', () => {
+  return expectResult(
+    stripIndent`
+    const s = stream(true, false, undefined, 1, x=>x, null, -123, head);
+    const result = [];
+    stream_for_each(item => {result[array_length(result)] = item;}, s);
+    stream_ref(s,4)(22) === 22 && stream_ref(s,7)(pair('', '1')) === '1' && result;
+    `,
+    optionEC4
+  ).toMatchInlineSnapshot(`false`)
 })

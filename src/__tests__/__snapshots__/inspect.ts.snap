@@ -15,7 +15,7 @@ Object {
     "i": 0,
   },
   "id": Any<String>,
-  "name": "forBlockEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
 }
 `;
@@ -23,10 +23,10 @@ Object {
 exports[`debugger; pauses for 3`] = `
 Object {
   "head": Object {
-    "i": 0,
+    "_copy_of_i": 0,
   },
   "id": Any<String>,
-  "name": "forLoopEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
 }
 `;
@@ -35,13 +35,41 @@ exports[`debugger; pauses for 4`] = `
 Object {
   "head": Object {},
   "id": Any<String>,
-  "name": "functionBodyEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
-  "thisContext": undefined,
 }
 `;
 
 exports[`debugger; pauses for 5`] = `
+Object {
+  "head": Object {
+    "i": 0,
+  },
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`debugger; pauses for 6`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`debugger; pauses for 7`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`debugger; pauses for 8`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -90,10 +118,9 @@ Object {
 }
 `;
 
-exports[`debugger; pauses for 6`] = `
+exports[`debugger; pauses for 9`] = `
 Object {
   "head": Object {
-    "25": [Function],
     "a": [Function],
   },
   "id": Any<String>,
@@ -102,7 +129,7 @@ Object {
 }
 `;
 
-exports[`debugger; pauses for 7`] = `
+exports[`debugger; pauses for 10`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -155,7 +182,7 @@ Object {
 }
 `;
 
-exports[`debugger; pauses for 8`] = `""`;
+exports[`debugger; pauses for 11`] = `""`;
 
 exports[`debugger; pauses while 1`] = `
 Object {
@@ -170,13 +197,21 @@ exports[`debugger; pauses while 2`] = `
 Object {
   "head": Object {},
   "id": Any<String>,
-  "name": "functionBodyEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
-  "thisContext": undefined,
 }
 `;
 
 exports[`debugger; pauses while 3`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`debugger; pauses while 4`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -225,10 +260,9 @@ Object {
 }
 `;
 
-exports[`debugger; pauses while 4`] = `
+exports[`debugger; pauses while 5`] = `
 Object {
   "head": Object {
-    "33": [Function],
     "a": [Function],
   },
   "id": Any<String>,
@@ -237,7 +271,7 @@ Object {
 }
 `;
 
-exports[`debugger; pauses while 5`] = `
+exports[`debugger; pauses while 6`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -290,7 +324,7 @@ Object {
 }
 `;
 
-exports[`debugger; pauses while 6`] = `""`;
+exports[`debugger; pauses while 7`] = `""`;
 
 exports[`debugger; statement basic test 1`] = `
 Object {
@@ -361,7 +395,6 @@ exports[`debugger; statement basic test 3`] = `""`;
 exports[`debugger; statement execution sequence 1`] = `
 Object {
   "head": Object {
-    "10": [Function],
     "a": [Function],
   },
   "id": Any<String>,
@@ -433,13 +466,21 @@ Object {
     "z": Symbol(Used to implement hoisting),
   },
   "id": Any<String>,
-  "name": "functionBodyEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
-  "thisContext": undefined,
 }
 `;
 
 exports[`debugger; statement hoisting 2`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`debugger; statement hoisting 3`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -488,10 +529,9 @@ Object {
 }
 `;
 
-exports[`debugger; statement hoisting 3`] = `
+exports[`debugger; statement hoisting 4`] = `
 Object {
   "head": Object {
-    "20": [Function],
     "a": [Function],
   },
   "id": Any<String>,
@@ -500,7 +540,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement hoisting 4`] = `
+exports[`debugger; statement hoisting 5`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -553,19 +593,27 @@ Object {
 }
 `;
 
-exports[`debugger; statement hoisting 5`] = `""`;
+exports[`debugger; statement hoisting 6`] = `""`;
 
 exports[`debugger; statement in function 1`] = `
 Object {
   "head": Object {},
   "id": Any<String>,
-  "name": "functionBodyEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
-  "thisContext": undefined,
 }
 `;
 
 exports[`debugger; statement in function 2`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`debugger; statement in function 3`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -614,10 +662,9 @@ Object {
 }
 `;
 
-exports[`debugger; statement in function 3`] = `
+exports[`debugger; statement in function 4`] = `
 Object {
   "head": Object {
-    "5": [Function],
     "a": [Function],
   },
   "id": Any<String>,
@@ -626,7 +673,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement in function 4`] = `
+exports[`debugger; statement in function 5`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -679,7 +726,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement in function 5`] = `""`;
+exports[`debugger; statement in function 6`] = `""`;
 
 exports[`debugger; statement test function scope 1`] = `
 Object {
@@ -697,13 +744,21 @@ Object {
     "l": 0.5,
   },
   "id": Any<String>,
-  "name": "functionBodyEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
-  "thisContext": undefined,
 }
 `;
 
 exports[`debugger; statement test function scope 2`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`debugger; statement test function scope 3`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -752,10 +807,9 @@ Object {
 }
 `;
 
-exports[`debugger; statement test function scope 3`] = `
+exports[`debugger; statement test function scope 4`] = `
 Object {
   "head": Object {
-    "15": [Function],
     "a": [Function],
   },
   "id": Any<String>,
@@ -764,7 +818,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement test function scope 4`] = `
+exports[`debugger; statement test function scope 5`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -817,7 +871,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement test function scope 5`] = `""`;
+exports[`debugger; statement test function scope 6`] = `""`;
 
 exports[`setBreakpointAtLine basic 1`] = `
 Object {
@@ -834,49 +888,49 @@ Object {
 exports[`setBreakpointAtLine basic 2`] = `
 Object {
   "head": Object {
-    "$accumulate": Symbol(Used to implement hoisting),
-    "$append": Symbol(Used to implement hoisting),
-    "$build_list": Symbol(Used to implement hoisting),
-    "$enum_list": Symbol(Used to implement hoisting),
-    "$filter": Symbol(Used to implement hoisting),
-    "$length": Symbol(Used to implement hoisting),
-    "$list_to_string": Symbol(Used to implement hoisting),
-    "$map": Symbol(Used to implement hoisting),
-    "$remove": Symbol(Used to implement hoisting),
-    "$remove_all": Symbol(Used to implement hoisting),
-    "$reverse": Symbol(Used to implement hoisting),
-    "accumulate": Symbol(Used to implement hoisting),
-    "append": Symbol(Used to implement hoisting),
-    "build_list": Symbol(Used to implement hoisting),
-    "build_stream": Symbol(Used to implement hoisting),
-    "enum_list": Symbol(Used to implement hoisting),
-    "enum_stream": Symbol(Used to implement hoisting),
-    "equal": Symbol(Used to implement hoisting),
-    "eval_stream": Symbol(Used to implement hoisting),
-    "filter": Symbol(Used to implement hoisting),
-    "for_each": Symbol(Used to implement hoisting),
-    "integers_from": Symbol(Used to implement hoisting),
-    "is_stream": Symbol(Used to implement hoisting),
-    "length": Symbol(Used to implement hoisting),
-    "list_ref": Symbol(Used to implement hoisting),
-    "list_to_stream": Symbol(Used to implement hoisting),
-    "list_to_string": Symbol(Used to implement hoisting),
-    "map": Symbol(Used to implement hoisting),
-    "member": Symbol(Used to implement hoisting),
-    "remove": Symbol(Used to implement hoisting),
-    "remove_all": Symbol(Used to implement hoisting),
-    "reverse": Symbol(Used to implement hoisting),
-    "stream_append": Symbol(Used to implement hoisting),
-    "stream_filter": Symbol(Used to implement hoisting),
-    "stream_for_each": Symbol(Used to implement hoisting),
-    "stream_length": Symbol(Used to implement hoisting),
-    "stream_map": Symbol(Used to implement hoisting),
-    "stream_member": Symbol(Used to implement hoisting),
-    "stream_ref": Symbol(Used to implement hoisting),
-    "stream_remove": Symbol(Used to implement hoisting),
-    "stream_remove_all": Symbol(Used to implement hoisting),
-    "stream_reverse": Symbol(Used to implement hoisting),
-    "stream_to_list": Symbol(Used to implement hoisting),
+    "$accumulate": [Function],
+    "$append": [Function],
+    "$build_list": [Function],
+    "$enum_list": [Function],
+    "$filter": [Function],
+    "$length": [Function],
+    "$list_to_string": [Function],
+    "$map": [Function],
+    "$remove": [Function],
+    "$remove_all": [Function],
+    "$reverse": [Function],
+    "accumulate": [Function],
+    "append": [Function],
+    "build_list": [Function],
+    "build_stream": [Function],
+    "enum_list": [Function],
+    "enum_stream": [Function],
+    "equal": [Function],
+    "eval_stream": [Function],
+    "filter": [Function],
+    "for_each": [Function],
+    "integers_from": [Function],
+    "is_stream": [Function],
+    "length": [Function],
+    "list_ref": [Function],
+    "list_to_stream": [Function],
+    "list_to_string": [Function],
+    "map": [Function],
+    "member": [Function],
+    "remove": [Function],
+    "remove_all": [Function],
+    "reverse": [Function],
+    "stream_append": [Function],
+    "stream_filter": [Function],
+    "stream_for_each": [Function],
+    "stream_length": [Function],
+    "stream_map": [Function],
+    "stream_member": [Function],
+    "stream_ref": [Function],
+    "stream_remove": [Function],
+    "stream_remove_all": [Function],
+    "stream_reverse": [Function],
+    "stream_to_list": [Function],
   },
   "id": Any<String>,
   "name": "programEnvironment",
@@ -903,7 +957,7 @@ Object {
     "i": 1,
   },
   "id": Any<String>,
-  "name": "forBlockEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
 }
 `;
@@ -911,10 +965,10 @@ Object {
 exports[`setBreakpointAtLine for loops 3`] = `
 Object {
   "head": Object {
-    "i": 1,
+    "_copy_of_i": 1,
   },
   "id": Any<String>,
-  "name": "forLoopEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
 }
 `;
@@ -923,12 +977,32 @@ exports[`setBreakpointAtLine for loops 4`] = `
 Object {
   "head": Object {},
   "id": Any<String>,
-  "name": "programEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
 }
 `;
 
 exports[`setBreakpointAtLine for loops 5`] = `
+Object {
+  "head": Object {
+    "i": 1,
+  },
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine for loops 6`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "programEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine for loops 7`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -981,93 +1055,6 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine for loops 6`] = `""`;
-
-exports[`setBreakpointAtLine for loops 7`] = `
-Array [
-  Object {
-    "head": Object {
-      "b": Symbol(Used to implement hoisting),
-    },
-    "id": "92",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
-      "i": 2,
-    },
-    "id": "91",
-    "name": "forBlockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
-      "i": 2,
-    },
-    "id": "88",
-    "name": "forLoopEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {},
-    "id": "87",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
-      "$accumulate": [Function],
-      "$append": [Function],
-      "$build_list": [Function],
-      "$enum_list": [Function],
-      "$filter": [Function],
-      "$length": [Function],
-      "$list_to_string": [Function],
-      "$map": [Function],
-      "$remove": [Function],
-      "$remove_all": [Function],
-      "$reverse": [Function],
-      "accumulate": [Function],
-      "append": [Function],
-      "build_list": [Function],
-      "build_stream": [Function],
-      "enum_list": [Function],
-      "enum_stream": [Function],
-      "equal": [Function],
-      "eval_stream": [Function],
-      "filter": [Function],
-      "for_each": [Function],
-      "integers_from": [Function],
-      "is_stream": [Function],
-      "length": [Function],
-      "list_ref": [Function],
-      "list_to_stream": [Function],
-      "list_to_string": [Function],
-      "map": [Function],
-      "member": [Function],
-      "remove": [Function],
-      "remove_all": [Function],
-      "reverse": [Function],
-      "stream_append": [Function],
-      "stream_filter": [Function],
-      "stream_for_each": [Function],
-      "stream_length": [Function],
-      "stream_map": [Function],
-      "stream_member": [Function],
-      "stream_ref": [Function],
-      "stream_remove": [Function],
-      "stream_remove_all": [Function],
-      "stream_reverse": [Function],
-      "stream_to_list": [Function],
-    },
-    "id": "86",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-]
-`;
-
 exports[`setBreakpointAtLine for loops 8`] = `""`;
 
 exports[`setBreakpointAtLine for loops 9`] = `
@@ -1076,29 +1063,43 @@ Array [
     "head": Object {
       "b": Symbol(Used to implement hoisting),
     },
-    "id": "94",
+    "id": "98",
     "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {
-      "i": 4,
+      "i": 2,
     },
-    "id": "93",
-    "name": "forBlockEnvironment",
+    "id": "97",
+    "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {
-      "i": 4,
+      "_copy_of_i": 2,
     },
-    "id": "88",
-    "name": "forLoopEnvironment",
+    "id": "96",
+    "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "87",
+    "id": "95",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {
+      "i": 2,
+    },
+    "id": "90",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {},
+    "id": "89",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -1148,7 +1149,7 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "86",
+    "id": "88",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -1163,29 +1164,43 @@ Array [
     "head": Object {
       "b": Symbol(Used to implement hoisting),
     },
-    "id": "96",
+    "id": "102",
     "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {
-      "i": 8,
+      "i": 4,
     },
-    "id": "95",
-    "name": "forBlockEnvironment",
+    "id": "101",
+    "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {
-      "i": 8,
+      "_copy_of_i": 4,
     },
-    "id": "88",
-    "name": "forLoopEnvironment",
+    "id": "100",
+    "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "87",
+    "id": "99",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {
+      "i": 4,
+    },
+    "id": "90",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {},
+    "id": "89",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -1235,7 +1250,7 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "86",
+    "id": "88",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -1247,8 +1262,46 @@ exports[`setBreakpointAtLine for loops 12`] = `""`;
 exports[`setBreakpointAtLine for loops 13`] = `
 Array [
   Object {
+    "head": Object {
+      "b": Symbol(Used to implement hoisting),
+    },
+    "id": "106",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {
+      "i": 8,
+    },
+    "id": "105",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {
+      "_copy_of_i": 8,
+    },
+    "id": "104",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
     "head": Object {},
-    "id": "87",
+    "id": "103",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {
+      "i": 8,
+    },
+    "id": "90",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {},
+    "id": "89",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -1298,7 +1351,7 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "86",
+    "id": "88",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -1306,6 +1359,69 @@ Array [
 `;
 
 exports[`setBreakpointAtLine for loops 14`] = `""`;
+
+exports[`setBreakpointAtLine for loops 15`] = `
+Array [
+  Object {
+    "head": Object {},
+    "id": "89",
+    "name": "programEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {
+      "$accumulate": [Function],
+      "$append": [Function],
+      "$build_list": [Function],
+      "$enum_list": [Function],
+      "$filter": [Function],
+      "$length": [Function],
+      "$list_to_string": [Function],
+      "$map": [Function],
+      "$remove": [Function],
+      "$remove_all": [Function],
+      "$reverse": [Function],
+      "accumulate": [Function],
+      "append": [Function],
+      "build_list": [Function],
+      "build_stream": [Function],
+      "enum_list": [Function],
+      "enum_stream": [Function],
+      "equal": [Function],
+      "eval_stream": [Function],
+      "filter": [Function],
+      "for_each": [Function],
+      "integers_from": [Function],
+      "is_stream": [Function],
+      "length": [Function],
+      "list_ref": [Function],
+      "list_to_stream": [Function],
+      "list_to_string": [Function],
+      "map": [Function],
+      "member": [Function],
+      "remove": [Function],
+      "remove_all": [Function],
+      "reverse": [Function],
+      "stream_append": [Function],
+      "stream_filter": [Function],
+      "stream_for_each": [Function],
+      "stream_length": [Function],
+      "stream_map": [Function],
+      "stream_member": [Function],
+      "stream_ref": [Function],
+      "stream_remove": [Function],
+      "stream_remove_all": [Function],
+      "stream_reverse": [Function],
+      "stream_to_list": [Function],
+    },
+    "id": "88",
+    "name": "programEnvironment",
+    "tail": null,
+  },
+]
+`;
+
+exports[`setBreakpointAtLine for loops 16`] = `""`;
 
 exports[`setBreakpointAtLine function 1 1`] = `
 Object {
@@ -1377,13 +1493,21 @@ exports[`setBreakpointAtLine function 2 1`] = `
 Object {
   "head": Object {},
   "id": Any<String>,
-  "name": "functionBodyEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
-  "thisContext": undefined,
 }
 `;
 
 exports[`setBreakpointAtLine function 2 2`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine function 2 3`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -1432,10 +1556,9 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine function 2 3`] = `
+exports[`setBreakpointAtLine function 2 4`] = `
 Object {
   "head": Object {
-    "43": [Function],
     "a": [Function],
   },
   "id": Any<String>,
@@ -1444,7 +1567,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine function 2 4`] = `
+exports[`setBreakpointAtLine function 2 5`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -1497,12 +1620,11 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine function 2 5`] = `""`;
+exports[`setBreakpointAtLine function 2 6`] = `""`;
 
 exports[`setBreakpointAtLine function 3 1`] = `
 Object {
   "head": Object {
-    "48": [Function],
     "a": [Function],
   },
   "id": Any<String>,
@@ -1636,13 +1758,21 @@ exports[`setBreakpointAtLine granularity 1 1`] = `
 Object {
   "head": Object {},
   "id": Any<String>,
-  "name": "functionBodyEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
-  "thisContext": undefined,
 }
 `;
 
 exports[`setBreakpointAtLine granularity 1 2`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine granularity 1 3`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -1691,10 +1821,9 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 1 3`] = `
+exports[`setBreakpointAtLine granularity 1 4`] = `
 Object {
   "head": Object {
-    "55": [Function],
     "a": [Function],
   },
   "id": Any<String>,
@@ -1703,7 +1832,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 1 4`] = `
+exports[`setBreakpointAtLine granularity 1 5`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -1756,135 +1885,21 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 1 5`] = `""`;
+exports[`setBreakpointAtLine granularity 1 6`] = `""`;
 
-exports[`setBreakpointAtLine granularity 1 6`] = `
+exports[`setBreakpointAtLine granularity 1 7`] = `
 Array [
   Object {
     "head": Object {},
-    "id": "60",
-    "name": "functionBodyEnvironment",
-    "tail": null,
-    "thisContext": undefined,
-  },
-  Object {
-    "callExpression": Object {
-      "arguments": Array [
-        Object {
-          "loc": undefined,
-          "type": "Literal",
-          "value": 0,
-        },
-      ],
-      "callee": Node {
-        "end": 58,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 5,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 5,
-          },
-        },
-        "name": "a",
-        "start": 57,
-        "type": "Identifier",
-      },
-      "end": 69,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 16,
-          "line": 5,
-        },
-        "start": Position {
-          "column": 4,
-          "line": 5,
-        },
-      },
-      "start": 57,
-      "type": "CallExpression",
-    },
-    "head": Object {
-      "ctrlf": 0,
-    },
-    "id": "59",
-    "name": "a",
+    "id": "65",
+    "name": "blockEnvironment",
     "tail": null,
   },
-  Object {
-    "head": Object {
-      "55": [Function],
-      "a": [Function],
-    },
-    "id": "54",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
-      "$accumulate": [Function],
-      "$append": [Function],
-      "$build_list": [Function],
-      "$enum_list": [Function],
-      "$filter": [Function],
-      "$length": [Function],
-      "$list_to_string": [Function],
-      "$map": [Function],
-      "$remove": [Function],
-      "$remove_all": [Function],
-      "$reverse": [Function],
-      "accumulate": [Function],
-      "append": [Function],
-      "build_list": [Function],
-      "build_stream": [Function],
-      "enum_list": [Function],
-      "enum_stream": [Function],
-      "equal": [Function],
-      "eval_stream": [Function],
-      "filter": [Function],
-      "for_each": [Function],
-      "integers_from": [Function],
-      "is_stream": [Function],
-      "length": [Function],
-      "list_ref": [Function],
-      "list_to_stream": [Function],
-      "list_to_string": [Function],
-      "map": [Function],
-      "member": [Function],
-      "remove": [Function],
-      "remove_all": [Function],
-      "reverse": [Function],
-      "stream_append": [Function],
-      "stream_filter": [Function],
-      "stream_for_each": [Function],
-      "stream_length": [Function],
-      "stream_map": [Function],
-      "stream_member": [Function],
-      "stream_ref": [Function],
-      "stream_remove": [Function],
-      "stream_remove_all": [Function],
-      "stream_reverse": [Function],
-      "stream_to_list": [Function],
-    },
-    "id": "53",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-]
-`;
-
-exports[`setBreakpointAtLine granularity 1 7`] = `""`;
-
-exports[`setBreakpointAtLine granularity 1 8`] = `
-Array [
   Object {
     "head": Object {},
-    "id": "63",
-    "name": "functionBodyEnvironment",
+    "id": "64",
+    "name": "blockEnvironment",
     "tail": null,
-    "thisContext": undefined,
   },
   Object {
     "callExpression": Object {
@@ -1928,16 +1943,131 @@ Array [
     "head": Object {
       "ctrlf": -1,
     },
+    "id": "63",
+    "name": "a",
+    "tail": null,
+  },
+  Object {
+    "head": Object {},
     "id": "62",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {},
+    "id": "61",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "callExpression": Object {
+      "arguments": Array [
+        Object {
+          "loc": undefined,
+          "type": "Literal",
+          "value": 0,
+        },
+      ],
+      "callee": Node {
+        "end": 58,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 5,
+            "line": 5,
+          },
+          "start": Position {
+            "column": 4,
+            "line": 5,
+          },
+        },
+        "name": "a",
+        "start": 57,
+        "type": "Identifier",
+      },
+      "end": 69,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 16,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 5,
+        },
+      },
+      "start": 57,
+      "type": "CallExpression",
+    },
+    "head": Object {
+      "ctrlf": 0,
+    },
+    "id": "60",
+    "name": "a",
+    "tail": null,
+  },
+  Object {
+    "head": Object {},
+    "id": "59",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {},
+    "id": "58",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "callExpression": Object {
+      "arguments": Array [
+        Object {
+          "loc": undefined,
+          "type": "Literal",
+          "value": 1,
+        },
+      ],
+      "callee": Node {
+        "end": 78,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 3,
+            "line": 7,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 7,
+          },
+        },
+        "name": "a",
+        "start": 77,
+        "type": "Identifier",
+      },
+      "end": 81,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 7,
+        },
+      },
+      "start": 77,
+      "type": "CallExpression",
+    },
+    "head": Object {
+      "ctrlf": 1,
+    },
+    "id": "57",
     "name": "a",
     "tail": null,
   },
   Object {
     "head": Object {
-      "55": [Function],
       "a": [Function],
     },
-    "id": "54",
+    "id": "56",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -1987,26 +2117,34 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "53",
+    "id": "55",
     "name": "programEnvironment",
     "tail": null,
   },
 ]
 `;
 
-exports[`setBreakpointAtLine granularity 1 9`] = `""`;
+exports[`setBreakpointAtLine granularity 1 8`] = `""`;
 
 exports[`setBreakpointAtLine granularity 2 1`] = `
 Object {
   "head": Object {},
   "id": Any<String>,
-  "name": "functionBodyEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
-  "thisContext": undefined,
 }
 `;
 
 exports[`setBreakpointAtLine granularity 2 2`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine granularity 2 3`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -2055,150 +2193,92 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 2 3`] = `
-Object {
-  "head": Object {
-    "66": [Function],
-    "a": [Function],
-  },
-  "id": Any<String>,
-  "name": "programEnvironment",
-  "tail": null,
-}
-`;
-
 exports[`setBreakpointAtLine granularity 2 4`] = `
-Object {
-  "head": Object {
-    "$accumulate": [Function],
-    "$append": [Function],
-    "$build_list": [Function],
-    "$enum_list": [Function],
-    "$filter": [Function],
-    "$length": [Function],
-    "$list_to_string": [Function],
-    "$map": [Function],
-    "$remove": [Function],
-    "$remove_all": [Function],
-    "$reverse": [Function],
-    "accumulate": [Function],
-    "append": [Function],
-    "build_list": [Function],
-    "build_stream": [Function],
-    "enum_list": [Function],
-    "enum_stream": [Function],
-    "equal": [Function],
-    "eval_stream": [Function],
-    "filter": [Function],
-    "for_each": [Function],
-    "integers_from": [Function],
-    "is_stream": [Function],
-    "length": [Function],
-    "list_ref": [Function],
-    "list_to_stream": [Function],
-    "list_to_string": [Function],
-    "map": [Function],
-    "member": [Function],
-    "remove": [Function],
-    "remove_all": [Function],
-    "reverse": [Function],
-    "stream_append": [Function],
-    "stream_filter": [Function],
-    "stream_for_each": [Function],
-    "stream_length": [Function],
-    "stream_map": [Function],
-    "stream_member": [Function],
-    "stream_ref": [Function],
-    "stream_remove": [Function],
-    "stream_remove_all": [Function],
-    "stream_reverse": [Function],
-    "stream_to_list": [Function],
-  },
-  "id": Any<String>,
-  "name": "programEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine granularity 2 5`] = `""`;
-
-exports[`setBreakpointAtLine granularity 2 6`] = `
-Array [
-  Object {
-    "head": Object {
-      "66": [Function],
-      "a": [Function],
-    },
-    "id": "65",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
-      "$accumulate": [Function],
-      "$append": [Function],
-      "$build_list": [Function],
-      "$enum_list": [Function],
-      "$filter": [Function],
-      "$length": [Function],
-      "$list_to_string": [Function],
-      "$map": [Function],
-      "$remove": [Function],
-      "$remove_all": [Function],
-      "$reverse": [Function],
-      "accumulate": [Function],
-      "append": [Function],
-      "build_list": [Function],
-      "build_stream": [Function],
-      "enum_list": [Function],
-      "enum_stream": [Function],
-      "equal": [Function],
-      "eval_stream": [Function],
-      "filter": [Function],
-      "for_each": [Function],
-      "integers_from": [Function],
-      "is_stream": [Function],
-      "length": [Function],
-      "list_ref": [Function],
-      "list_to_stream": [Function],
-      "list_to_string": [Function],
-      "map": [Function],
-      "member": [Function],
-      "remove": [Function],
-      "remove_all": [Function],
-      "reverse": [Function],
-      "stream_append": [Function],
-      "stream_filter": [Function],
-      "stream_for_each": [Function],
-      "stream_length": [Function],
-      "stream_map": [Function],
-      "stream_member": [Function],
-      "stream_ref": [Function],
-      "stream_remove": [Function],
-      "stream_remove_all": [Function],
-      "stream_reverse": [Function],
-      "stream_to_list": [Function],
-    },
-    "id": "64",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-]
-`;
-
-exports[`setBreakpointAtLine granularity 2 7`] = `""`;
-
-exports[`setBreakpointAtLine granularity 3 1`] = `
 Object {
   "head": Object {},
   "id": Any<String>,
-  "name": "functionBodyEnvironment",
+  "name": "blockEnvironment",
   "tail": null,
-  "thisContext": undefined,
 }
 `;
 
-exports[`setBreakpointAtLine granularity 3 2`] = `
+exports[`setBreakpointAtLine granularity 2 5`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine granularity 2 6`] = `
+Object {
+  "callExpression": Object {
+    "arguments": Array [
+      Object {
+        "loc": undefined,
+        "type": "Literal",
+        "value": 0,
+      },
+    ],
+    "callee": Node {
+      "end": 58,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 5,
+          "line": 5,
+        },
+        "start": Position {
+          "column": 4,
+          "line": 5,
+        },
+      },
+      "name": "a",
+      "start": 57,
+      "type": "Identifier",
+    },
+    "end": 69,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 16,
+        "line": 5,
+      },
+      "start": Position {
+        "column": 4,
+        "line": 5,
+      },
+    },
+    "start": 57,
+    "type": "CallExpression",
+  },
+  "head": Object {
+    "ctrlf": 0,
+  },
+  "id": Any<String>,
+  "name": "a",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine granularity 2 7`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine granularity 2 8`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine granularity 2 9`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -2247,10 +2327,9 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 3 3`] = `
+exports[`setBreakpointAtLine granularity 2 10`] = `
 Object {
   "head": Object {
-    "77": [Function],
     "a": [Function],
   },
   "id": Any<String>,
@@ -2259,7 +2338,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 3 4`] = `
+exports[`setBreakpointAtLine granularity 2 11`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -2312,16 +2391,219 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 3 5`] = `""`;
+exports[`setBreakpointAtLine granularity 2 12`] = `""`;
 
-exports[`setBreakpointAtLine granularity 3 6`] = `
+exports[`setBreakpointAtLine granularity 2 13`] = `
+Array [
+  Object {
+    "head": Object {
+      "a": [Function],
+    },
+    "id": "67",
+    "name": "programEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {
+      "$accumulate": [Function],
+      "$append": [Function],
+      "$build_list": [Function],
+      "$enum_list": [Function],
+      "$filter": [Function],
+      "$length": [Function],
+      "$list_to_string": [Function],
+      "$map": [Function],
+      "$remove": [Function],
+      "$remove_all": [Function],
+      "$reverse": [Function],
+      "accumulate": [Function],
+      "append": [Function],
+      "build_list": [Function],
+      "build_stream": [Function],
+      "enum_list": [Function],
+      "enum_stream": [Function],
+      "equal": [Function],
+      "eval_stream": [Function],
+      "filter": [Function],
+      "for_each": [Function],
+      "integers_from": [Function],
+      "is_stream": [Function],
+      "length": [Function],
+      "list_ref": [Function],
+      "list_to_stream": [Function],
+      "list_to_string": [Function],
+      "map": [Function],
+      "member": [Function],
+      "remove": [Function],
+      "remove_all": [Function],
+      "reverse": [Function],
+      "stream_append": [Function],
+      "stream_filter": [Function],
+      "stream_for_each": [Function],
+      "stream_length": [Function],
+      "stream_map": [Function],
+      "stream_member": [Function],
+      "stream_ref": [Function],
+      "stream_remove": [Function],
+      "stream_remove_all": [Function],
+      "stream_reverse": [Function],
+      "stream_to_list": [Function],
+    },
+    "id": "66",
+    "name": "programEnvironment",
+    "tail": null,
+  },
+]
+`;
+
+exports[`setBreakpointAtLine granularity 2 14`] = `""`;
+
+exports[`setBreakpointAtLine granularity 3 1`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine granularity 3 2`] = `
+Object {
+  "head": Object {},
+  "id": Any<String>,
+  "name": "blockEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine granularity 3 3`] = `
+Object {
+  "callExpression": Object {
+    "arguments": Array [
+      Object {
+        "loc": undefined,
+        "type": "Literal",
+        "value": 1,
+      },
+    ],
+    "callee": Node {
+      "end": 78,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 7,
+        },
+      },
+      "name": "a",
+      "start": 77,
+      "type": "Identifier",
+    },
+    "end": 81,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 6,
+        "line": 7,
+      },
+      "start": Position {
+        "column": 2,
+        "line": 7,
+      },
+    },
+    "start": 77,
+    "type": "CallExpression",
+  },
+  "head": Object {
+    "ctrlf": 1,
+  },
+  "id": Any<String>,
+  "name": "a",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine granularity 3 4`] = `
+Object {
+  "head": Object {
+    "a": [Function],
+  },
+  "id": Any<String>,
+  "name": "programEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine granularity 3 5`] = `
+Object {
+  "head": Object {
+    "$accumulate": [Function],
+    "$append": [Function],
+    "$build_list": [Function],
+    "$enum_list": [Function],
+    "$filter": [Function],
+    "$length": [Function],
+    "$list_to_string": [Function],
+    "$map": [Function],
+    "$remove": [Function],
+    "$remove_all": [Function],
+    "$reverse": [Function],
+    "accumulate": [Function],
+    "append": [Function],
+    "build_list": [Function],
+    "build_stream": [Function],
+    "enum_list": [Function],
+    "enum_stream": [Function],
+    "equal": [Function],
+    "eval_stream": [Function],
+    "filter": [Function],
+    "for_each": [Function],
+    "integers_from": [Function],
+    "is_stream": [Function],
+    "length": [Function],
+    "list_ref": [Function],
+    "list_to_stream": [Function],
+    "list_to_string": [Function],
+    "map": [Function],
+    "member": [Function],
+    "remove": [Function],
+    "remove_all": [Function],
+    "reverse": [Function],
+    "stream_append": [Function],
+    "stream_filter": [Function],
+    "stream_for_each": [Function],
+    "stream_length": [Function],
+    "stream_map": [Function],
+    "stream_member": [Function],
+    "stream_ref": [Function],
+    "stream_remove": [Function],
+    "stream_remove_all": [Function],
+    "stream_reverse": [Function],
+    "stream_to_list": [Function],
+  },
+  "id": Any<String>,
+  "name": "programEnvironment",
+  "tail": null,
+}
+`;
+
+exports[`setBreakpointAtLine granularity 3 6`] = `""`;
+
+exports[`setBreakpointAtLine granularity 3 7`] = `
 Array [
   Object {
     "head": Object {},
-    "id": "82",
-    "name": "functionBodyEnvironment",
+    "id": "84",
+    "name": "blockEnvironment",
     "tail": null,
-    "thisContext": undefined,
+  },
+  Object {
+    "head": Object {},
+    "id": "83",
+    "name": "blockEnvironment",
+    "tail": null,
   },
   Object {
     "callExpression": Object {
@@ -2365,16 +2647,73 @@ Array [
     "head": Object {
       "ctrlf": 0,
     },
+    "id": "82",
+    "name": "a",
+    "tail": null,
+  },
+  Object {
+    "head": Object {},
     "id": "81",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {},
+    "id": "80",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "callExpression": Object {
+      "arguments": Array [
+        Object {
+          "loc": undefined,
+          "type": "Literal",
+          "value": 1,
+        },
+      ],
+      "callee": Node {
+        "end": 78,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 3,
+            "line": 7,
+          },
+          "start": Position {
+            "column": 2,
+            "line": 7,
+          },
+        },
+        "name": "a",
+        "start": 77,
+        "type": "Identifier",
+      },
+      "end": 81,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 6,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 7,
+        },
+      },
+      "start": 77,
+      "type": "CallExpression",
+    },
+    "head": Object {
+      "ctrlf": 1,
+    },
+    "id": "79",
     "name": "a",
     "tail": null,
   },
   Object {
     "head": Object {
-      "77": [Function],
       "a": [Function],
     },
-    "id": "76",
+    "id": "78",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2424,23 +2763,22 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "75",
+    "id": "77",
     "name": "programEnvironment",
     "tail": null,
   },
 ]
 `;
 
-exports[`setBreakpointAtLine granularity 3 7`] = `""`;
+exports[`setBreakpointAtLine granularity 3 8`] = `""`;
 
-exports[`setBreakpointAtLine granularity 3 8`] = `
+exports[`setBreakpointAtLine granularity 3 9`] = `
 Array [
   Object {
     "head": Object {
-      "77": [Function],
       "a": [Function],
     },
-    "id": "76",
+    "id": "78",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2490,14 +2828,14 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "75",
+    "id": "77",
     "name": "programEnvironment",
     "tail": null,
   },
 ]
 `;
 
-exports[`setBreakpointAtLine granularity 3 9`] = `""`;
+exports[`setBreakpointAtLine granularity 3 10`] = `""`;
 
 exports[`setBreakpointAtLine while loops 1`] = `
 Object {
@@ -2578,15 +2916,15 @@ exports[`setBreakpointAtLine while loops 5`] = `
 Array [
   Object {
     "head": Object {},
-    "id": "99",
+    "id": "110",
     "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {
-      "a": 9,
+      "a": 6,
     },
-    "id": "98",
+    "id": "108",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2636,7 +2974,7 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "97",
+    "id": "107",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2648,16 +2986,10 @@ exports[`setBreakpointAtLine while loops 6`] = `""`;
 exports[`setBreakpointAtLine while loops 7`] = `
 Array [
   Object {
-    "head": Object {},
-    "id": "100",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
     "head": Object {
-      "a": 6,
+      "a": 3,
     },
-    "id": "98",
+    "id": "108",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2707,7 +3039,7 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "97",
+    "id": "107",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2715,139 +3047,3 @@ Array [
 `;
 
 exports[`setBreakpointAtLine while loops 8`] = `""`;
-
-exports[`setBreakpointAtLine while loops 9`] = `
-Array [
-  Object {
-    "head": Object {},
-    "id": "100",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
-      "a": 6,
-    },
-    "id": "98",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
-      "$accumulate": [Function],
-      "$append": [Function],
-      "$build_list": [Function],
-      "$enum_list": [Function],
-      "$filter": [Function],
-      "$length": [Function],
-      "$list_to_string": [Function],
-      "$map": [Function],
-      "$remove": [Function],
-      "$remove_all": [Function],
-      "$reverse": [Function],
-      "accumulate": [Function],
-      "append": [Function],
-      "build_list": [Function],
-      "build_stream": [Function],
-      "enum_list": [Function],
-      "enum_stream": [Function],
-      "equal": [Function],
-      "eval_stream": [Function],
-      "filter": [Function],
-      "for_each": [Function],
-      "integers_from": [Function],
-      "is_stream": [Function],
-      "length": [Function],
-      "list_ref": [Function],
-      "list_to_stream": [Function],
-      "list_to_string": [Function],
-      "map": [Function],
-      "member": [Function],
-      "remove": [Function],
-      "remove_all": [Function],
-      "reverse": [Function],
-      "stream_append": [Function],
-      "stream_filter": [Function],
-      "stream_for_each": [Function],
-      "stream_length": [Function],
-      "stream_map": [Function],
-      "stream_member": [Function],
-      "stream_ref": [Function],
-      "stream_remove": [Function],
-      "stream_remove_all": [Function],
-      "stream_reverse": [Function],
-      "stream_to_list": [Function],
-    },
-    "id": "97",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-]
-`;
-
-exports[`setBreakpointAtLine while loops 10`] = `""`;
-
-exports[`setBreakpointAtLine while loops 11`] = `
-Array [
-  Object {
-    "head": Object {
-      "a": 3,
-    },
-    "id": "98",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
-      "$accumulate": [Function],
-      "$append": [Function],
-      "$build_list": [Function],
-      "$enum_list": [Function],
-      "$filter": [Function],
-      "$length": [Function],
-      "$list_to_string": [Function],
-      "$map": [Function],
-      "$remove": [Function],
-      "$remove_all": [Function],
-      "$reverse": [Function],
-      "accumulate": [Function],
-      "append": [Function],
-      "build_list": [Function],
-      "build_stream": [Function],
-      "enum_list": [Function],
-      "enum_stream": [Function],
-      "equal": [Function],
-      "eval_stream": [Function],
-      "filter": [Function],
-      "for_each": [Function],
-      "integers_from": [Function],
-      "is_stream": [Function],
-      "length": [Function],
-      "list_ref": [Function],
-      "list_to_stream": [Function],
-      "list_to_string": [Function],
-      "map": [Function],
-      "member": [Function],
-      "remove": [Function],
-      "remove_all": [Function],
-      "reverse": [Function],
-      "stream_append": [Function],
-      "stream_filter": [Function],
-      "stream_for_each": [Function],
-      "stream_length": [Function],
-      "stream_map": [Function],
-      "stream_member": [Function],
-      "stream_ref": [Function],
-      "stream_remove": [Function],
-      "stream_remove_all": [Function],
-      "stream_reverse": [Function],
-      "stream_to_list": [Function],
-    },
-    "id": "97",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-]
-`;
-
-exports[`setBreakpointAtLine while loops 12`] = `""`;

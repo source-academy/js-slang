@@ -273,6 +273,9 @@ export async function sourceRunner(
   }
 
   if (context.executionMethod === 'ec-evaluator') {
+    if (options.isPrelude) {
+      return runECEvaluator(program, {...context, runtime: {...context.runtime, debuggerOn: false}}, theOptions)
+    }
     return runECEvaluator(program, context, theOptions)
   }
   // Uncomment this to have env visualiser use ec-evaluator. Only test suite that fails

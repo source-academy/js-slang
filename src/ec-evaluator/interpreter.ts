@@ -12,12 +12,12 @@ import { uniqueId } from 'lodash'
 import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import Closure from '../interpreter/closure'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Result, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import Closure from '../interpreter/closure'
 import * as instr from './instrCreator'
 import {
   AgendaItem,
@@ -368,7 +368,8 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const closure: Closure = Closure.makeFromArrowFunction(
       command,
       currentEnvironment(context),
-      context
+      context, 
+      true
     )
     stash.push(closure)
   },
