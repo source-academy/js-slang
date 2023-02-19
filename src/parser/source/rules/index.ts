@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { Rule } from '../../../types'
+import { Chapter, SourceError, Variant } from '../../../types'
 import bracesAroundFor from './bracesAroundFor'
 import bracesAroundIfElse from './bracesAroundIfElse'
 import bracesAroundWhile from './bracesAroundWhile'
@@ -23,7 +23,16 @@ import noUpdateAssignment from './noUpdateAssignment'
 import noVar from './noVar'
 import singleVariableDeclaration from './singleVariableDeclaration'
 
-const rules: Rule<es.Node>[] = [
+export interface Rule<T extends es.Node> {
+  name: string
+  disableFromChapter?: Chapter
+  disableForVariants?: Variant[]
+  checkers: {
+    [name: string]: (node: T, ancestors: es.Node[]) => SourceError[]
+  }
+}
+
+export const rules: Rule<es.Node>[] = [
   bracesAroundFor,
   bracesAroundIfElse,
   bracesAroundWhile,
@@ -46,5 +55,3 @@ const rules: Rule<es.Node>[] = [
   noTemplateExpression,
   noSpreadInArray
 ]
-
-export default rules

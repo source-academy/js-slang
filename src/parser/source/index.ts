@@ -2,12 +2,13 @@ import { parse as acornParse, Token, tokenizer } from 'acorn'
 import { Node as ESNode, Program } from 'estree'
 
 import { DEFAULT_ECMA_VERSION } from '../../constants'
-import { Chapter, Context, Rule, SourceError, Variant } from '../../types'
+import { Chapter, Context, SourceError, Variant } from '../../types'
 import { ancestor, AncestorWalkerFn } from '../../utils/walkers'
 import { DisallowedConstructError, FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { createAcornParserOptions, positionToSourceLocation } from '../utils'
-import defaultRules from './rules'
+import { checkIdentifiers } from './checks'
+import { Rule, rules } from './rules'
 import syntaxBlacklist from './syntax'
 
 const combineAncestorWalkers =
@@ -63,6 +64,7 @@ export class SourceParser implements Parser<AcornOptions> {
 
   validate(ast: Program, context: Context, throwOnError?: boolean): boolean {
     const validationWalkers: Map<string, AncestorWalkerFn<any>> = new Map()
+
     this.getDisallowedSyntaxes().forEach((syntaxNodeName: string) => {
       validationWalkers.set(syntaxNodeName, (node: ESNode, _state: any, _ancestors: [ESNode]) => {
         if (node.type != syntaxNodeName) return
@@ -74,8 +76,7 @@ export class SourceParser implements Parser<AcornOptions> {
     })
 
     this.getLangRules()
-      .map(rule => Object.entries(rule.checkers))
-      .flat()
+      .flatMap(rule => Object.entries(rule.checkers))
       .forEach(([syntaxNodeName, checker]) => {
         const langWalker: AncestorWalkerFn<any> = (
           node: ESNode,
@@ -87,17 +88,16 @@ export class SourceParser implements Parser<AcornOptions> {
           if (throwOnError && errors.length > 0) throw errors[0]
           errors.forEach(e => context.errors.push(e))
         }
-        if (validationWalkers.has(syntaxNodeName)) {
-          validationWalkers.set(
-            syntaxNodeName,
-            combineAncestorWalkers(validationWalkers.get(syntaxNodeName)!, langWalker)
-          )
-        } else {
-          validationWalkers.set(syntaxNodeName, langWalker)
-        }
+
+        validationWalkers.set(
+          syntaxNodeName,
+          validationWalkers.has(syntaxNodeName)
+            ? combineAncestorWalkers(validationWalkers.get(syntaxNodeName)!, langWalker)
+            : langWalker
+        )
       })
 
-    ancestor(ast as ESNode, mapToObj(validationWalkers), undefined, undefined)
+    ancestor(ast as ESNode, mapToObj(validationWalkers))
     return context.errors.length == 0
   }
 
@@ -114,7 +114,7 @@ export class SourceParser implements Parser<AcornOptions> {
   }
 
   private getLangRules(): Rule<ESNode>[] {
-    return defaultRules.filter(
+    return rules.filter(
       (rule: Rule<ESNode>) =>
         !(
           (rule.disableFromChapter && this.chapter >= rule.disableFromChapter) ||

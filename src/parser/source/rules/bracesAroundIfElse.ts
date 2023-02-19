@@ -1,7 +1,8 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, SourceError } from '../../../types'
+import { Rule } from '.'
 import { stripIndent } from '../../../utils/formatters'
 
 export class BracesAroundIfElseError implements SourceError {

@@ -1,7 +1,8 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { Chapter, ErrorSeverity, ErrorType, SourceError } from '../../../types'
+import { Rule } from '.'
 import { stripIndent } from '../../../utils/formatters'
 
 export class NoIfWithoutElseError implements SourceError {
