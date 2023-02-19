@@ -14,7 +14,7 @@ import {
   ReassignConstError,
   UndefinedIdentifierError
 } from '../errors/typeErrors'
-import { typedParse } from '../parser/parser'
+import { typedParse } from '../parser/utils'
 import {
   Context,
   ContiguousArrayElements,

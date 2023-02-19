@@ -21,7 +21,7 @@ describe('getImportedLocalModulePaths', () => {
     expectedModulePaths: string[]
   ): void => {
     const program = parse(code, context)
-    if (program === undefined) {
+    if (program === null) {
       throw parseCodeError
     }
     expect(getImportedLocalModulePaths(program, baseFilePath)).toEqual(new Set(expectedModulePaths))
@@ -30,7 +30,7 @@ describe('getImportedLocalModulePaths', () => {
   it('throws an error if the current file path is not absolute', () => {
     const code = ''
     const program = parse(code, context)
-    if (program === undefined) {
+    if (program === null) {
       throw parseCodeError
     }
     expect(() => getImportedLocalModulePaths(program, 'a.js')).toThrowError(
@@ -97,7 +97,7 @@ describe('preprocessFileImports', () => {
     }
 
     const expectedProgram = parse(expectedCode, expectedContext)
-    if (expectedProgram === undefined) {
+    if (expectedProgram === null) {
       throw parseCodeError
     }
 

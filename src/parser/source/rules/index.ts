@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { Rule } from '../../types'
+import { Rule } from '../../../types'
 import bracesAroundFor from './bracesAroundFor'
 import bracesAroundIfElse from './bracesAroundIfElse'
 import bracesAroundWhile from './bracesAroundWhile'

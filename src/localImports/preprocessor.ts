@@ -3,6 +3,7 @@ import * as path from 'path'
 
 import { CannotFindModuleError, CircularImportError } from '../errors/localImportErrors'
 import { parse } from '../parser/parser'
+import { AcornOptions } from '../parser/types'
 import { Context } from '../types'
 import { isIdentifier } from '../utils/rttc'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
@@ -81,13 +82,13 @@ const parseProgramsAndConstructImportGraph = (
     }
 
     // Tag AST nodes with the source file path for use in error messages.
-    const parserOptions = shouldAddSourceFileToAST
+    const parserOptions: Partial<AcornOptions> = shouldAddSourceFileToAST
       ? {
           sourceFile: currentFilePath
         }
       : {}
-    const program = parse(code, context, parserOptions)
-    if (program === undefined) {
+    const program = parse<AcornOptions>(code, context, parserOptions)
+    if (program === null) {
       return
     }
 

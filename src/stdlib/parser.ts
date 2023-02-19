@@ -1,7 +1,8 @@
 import * as es from 'estree'
 
-import { parse as sourceParse, tokenize as sourceTokenize } from '../parser/parser'
-import { libraryParserLanguage } from '../parser/syntaxBlacklist'
+import { parse as sourceParse } from '../parser/parser'
+import { SourceParser } from '../parser/source'
+import { libraryParserLanguage } from '../parser/source/syntax'
 import { Context, ContiguousArrayElements, Value } from '../types'
 import { oneLine } from '../utils/formatters'
 import { vector_to_list } from './list'
@@ -497,7 +498,7 @@ export function parse(x: string, context: Context): Value {
     throw new ParseError(context.errors[0].explain())
   }
 
-  if (program !== undefined) {
+  if (program) {
     return transform(program)
   } else {
     unreachable()
@@ -506,6 +507,6 @@ export function parse(x: string, context: Context): Value {
 }
 
 export function tokenize(x: string, context: Context): Value {
-  const tokensArr = sourceTokenize(x, context).map(tok => x.substring(tok.start, tok.end))
+  const tokensArr = SourceParser.tokenize(x, context).map(tok => x.substring(tok.start, tok.end))
   return vector_to_list(tokensArr)
 }

@@ -234,7 +234,7 @@ export async function sourceRunner(
   if (context.prelude !== null) {
     context.unTypecheckedCode.push(context.prelude)
     const prelude = parse(context.prelude, context)
-    if (prelude === undefined) {
+    if (prelude === null) {
       return resolvedErrorPromise
     }
     context.prelude = null

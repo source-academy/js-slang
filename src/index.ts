@@ -4,7 +4,7 @@ import { SourceMapConsumer } from 'source-map'
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import { looseParse, parse, parseWithComments, typedParse } from './parser/parser'
+import { looseParse, typedParse } from './parser/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
@@ -30,6 +30,8 @@ import * as es from 'estree'
 import { CannotFindModuleError } from './errors/localImportErrors'
 import { validateFilePath } from './localImports/filePaths'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
+import { parse } from './parser/parser'
+import { parseWithComments } from './parser/utils'
 import {
   fullJSRunner,
   hasVerboseErrors,
@@ -327,7 +329,7 @@ export async function runFilesInContext(
 
   if (context.chapter === Chapter.FULL_JS) {
     const program = parse(code, context)
-    if (program === undefined) {
+    if (program === null) {
       return resolvedErrorPromise
     }
     return fullJSRunner(program, context, options)

@@ -3,7 +3,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import { GPU } from 'gpu.js'
 
-import { ACORN_PARSE_OPTIONS } from '../constants'
+import { DEFAULT_ECMA_VERSION } from '../constants'
 import { TypeError } from '../utils/rttc'
 import { gpuRuntimeTranspile } from './transfomer'
 
@@ -216,7 +216,7 @@ export function __createKernelSource(
 
   const code = f.toString()
   // We don't need the full source parser here because it's already validated at transpile time.
-  const ast = parse(code, ACORN_PARSE_OPTIONS) as unknown as es.Program
+  const ast = parse(code, { ecmaVersion: DEFAULT_ECMA_VERSION }) as unknown as es.Program
   const body = (ast.body[0] as es.ExpressionStatement).expression as es.ArrowFunctionExpression
   const newBody = gpuRuntimeTranspile(body, new Set(localNames))
   const kernel = new Function(generate(newBody))

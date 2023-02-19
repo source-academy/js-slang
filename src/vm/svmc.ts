@@ -183,7 +183,7 @@ Options:
     console.error('%d warning(s) and %d error(s) produced.', numWarnings, numErrors)
   }
 
-  if (typeof program === 'undefined') {
+  if (program === null) {
     process.exitCode = 1
     return
   }

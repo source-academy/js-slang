@@ -3,7 +3,7 @@ import { DebuggerStatement, Literal, Program } from 'estree'
 
 import { IOptions, Result } from '..'
 import { loadModuleTabs } from '../modules/moduleLoader'
-import { parseAt } from '../parser/parser'
+import { parseAt } from '../parser/utils'
 import { areBreakpointsSet } from '../stdlib/inspector'
 import { Context, Variant } from '../types'
 import { simple } from '../utils/walkers'

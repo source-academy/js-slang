@@ -29,7 +29,7 @@ function preparePrelude(context: Context): es.Statement[] | undefined {
   const prelude = context.prelude
   context.prelude = null
   const program = parse(prelude, context)
-  if (program === undefined) {
+  if (program === null) {
     return undefined
   }
 

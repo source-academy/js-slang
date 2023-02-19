@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../types'
+import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
 
 export class NoNullError implements SourceError {
   public type = ErrorType.SYNTAX
