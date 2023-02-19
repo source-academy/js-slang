@@ -194,13 +194,12 @@ function scopeWhileStatements(nodes: es.WhileStatement[]): BlockFrame[] {
 
 // For statements may declare new variables whose scope is limited to the loop body
 function scopeForStatement(node: es.ForStatement): BlockFrame {
-  const variables = node.init
-    ? (node.init as es.VariableDeclaration).declarations.map((dec: es.VariableDeclarator) => ({
-        type: 'DefinitionNode',
-        name: (dec.id as es.Identifier).name,
-        loc: (dec.id as es.Identifier).loc
-      }))
-    : []
+  const declarations = (node.init as es.VariableDeclaration)?.declarations || []
+  const variables = declarations.map((dec: es.VariableDeclarator) => ({
+    type: 'DefinitionNode',
+    name: (dec.id as es.Identifier).name,
+    loc: (dec.id as es.Identifier).loc
+  }))
   const block = scopeVariables(node.body as es.BlockStatement, node.loc)
   // Any variable declared at the start of the for loop is inserted into the body
   // since its scope is limited to the body

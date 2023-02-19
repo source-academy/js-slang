@@ -505,11 +505,11 @@ test('setBreakpointAtLine while loops', () => {
       expect(flattenEnvironments(obj2)).toMatchSnapshot()
       expect(obj2.status).toBe('suspended-ec-eval')
       expect(parseError(context.errors)).toMatchSnapshot()
-          return (resume(obj2) as Promise<Result>).then(obj5 => {
-            expect(flattenEnvironments(obj5)).toMatchSnapshot()
-            expect(obj5.status).toBe('finished')
-            expect(parseError(context.errors)).toMatchSnapshot()
-          })
+      return (resume(obj2) as Promise<Result>).then(obj5 => {
+        expect(flattenEnvironments(obj5)).toMatchSnapshot()
+        expect(obj5.status).toBe('finished')
+        expect(parseError(context.errors)).toMatchSnapshot()
+      })
     })
   })
 })

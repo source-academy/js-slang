@@ -368,7 +368,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const closure: Closure = Closure.makeFromArrowFunction(
       command,
       currentEnvironment(context),
-      context, 
+      context,
       true
     )
     stash.push(closure)
