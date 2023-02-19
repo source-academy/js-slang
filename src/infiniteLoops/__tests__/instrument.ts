@@ -1,7 +1,7 @@
 import { Program } from 'estree'
 
 import { mockContext } from '../../mocks/context'
-import { parse } from '../../parsers'
+import { parse } from '../../parser/parser'
 import { Chapter } from '../../types'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../../utils/operators'
 import {

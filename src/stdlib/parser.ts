@@ -1,8 +1,8 @@
 import * as es from 'estree'
 
-import { parse as sourceParse } from '../parsers'
-import { SourceParser } from '../parsers/source'
-import { libraryParserLanguage } from '../parsers/source/syntax'
+import { parse as sourceParse } from '../parser/parser'
+import { SourceParser } from '../parser/source'
+import { libraryParserLanguage } from '../parser/source/syntax'
 import { Context, ContiguousArrayElements, Value } from '../types'
 import { oneLine } from '../utils/formatters'
 import { vector_to_list } from './list'

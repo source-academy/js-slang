@@ -1,7 +1,7 @@
 import { Context, Result, runInContext } from '../..'
 import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../mocks/context'
-import { FatalSyntaxError } from '../../parsers/errors'
+import { FatalSyntaxError } from '../../parser/errors'
 import { Chapter, Finished, Variant } from '../../types'
 import { locationDummyNode } from '../../utils/astCreator'
 import { CodeSnippetTestCase } from '../../utils/testing'

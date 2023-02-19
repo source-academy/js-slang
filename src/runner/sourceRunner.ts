@@ -15,7 +15,7 @@ import { evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import preprocessFileImports from '../localImports/preprocessor'
-import { parse } from '../parsers'
+import { parse } from '../parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
   callee,

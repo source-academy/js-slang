@@ -1,5 +1,5 @@
 import { mockContext } from '../../../mocks/context'
-import { parse } from '../../../parsers'
+import { parse } from '../../../parser/parser'
 import { Chapter } from '../../../types'
 import { removeExports } from '../../transformers/removeExports'
 import { parseCodeError, stripLocationInfo } from '../utils'
