@@ -12,12 +12,12 @@ import { uniqueId } from 'lodash'
 import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import Closure from './closure'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Result, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import Closure from '../interpreter/closure'
 import * as instr from './instrCreator'
 import {
   AgendaItem,
@@ -152,11 +152,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda.push(...handleSequence(command.body))
   },
 
-  BlockStatement: function (
-    command: es.BlockStatement,
-    context: Context,
-    agenda: Agenda,
-  ) {
+  BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     // To restore environment after block ends
     agenda.push(instr.envInstr(currentEnvironment(context)))
 
@@ -168,21 +164,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda.push(...handleSequence(command.body))
   },
 
-  WhileStatement: function (
-    command: es.WhileStatement,
-    context: Context,
-    agenda: Agenda,
-  ) {
+  WhileStatement: function (command: es.WhileStatement, context: Context, agenda: Agenda) {
     agenda.push(instr.whileInstr(command.test, command.body, command))
     agenda.push(command.test)
     agenda.push(ast.identifier('undefined')) // Return undefined if there is no loop execution
   },
 
-  ForStatement: function (
-    command: es.ForStatement,
-    context: Context,
-    agenda: Agenda,
-  ) {
+  ForStatement: function (command: es.ForStatement, context: Context, agenda: Agenda) {
     // All 3 parts will be defined due to parser rules
     const init = command.init!
     const test = command.test!
@@ -236,22 +224,19 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ExpressionStatement: function (
     command: es.ExpressionStatement,
     context: Context,
-    agenda: Agenda,
+    agenda: Agenda
   ) {
     agenda.push(command.expression)
   },
 
-  DebuggerStatement: function (
-    command: es.DebuggerStatement,
-    context: Context,
-  ) {
+  DebuggerStatement: function (command: es.DebuggerStatement, context: Context) {
     context.runtime.break = true
   },
 
   VariableDeclaration: function (
     command: es.VariableDeclaration,
     context: Context,
-    agenda: Agenda,
+    agenda: Agenda
   ) {
     const declaration: es.VariableDeclarator = command.declarations[0]
     const id = declaration.id as es.Identifier
@@ -283,11 +268,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda.push(lambdaDeclaration)
   },
 
-  ReturnStatement: function (
-    command: es.ReturnStatement,
-    context: Context,
-    agenda: Agenda,
-  ) {
+  ReturnStatement: function (command: es.ReturnStatement, context: Context, agenda: Agenda) {
     // Push return argument onto agenda as well as Reset Instruction to clear to ignore all statements after the return.
     agenda.push(instr.resetInstr())
     if (command.argument) {
@@ -306,7 +287,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   AssignmentExpression: function (
     command: es.AssignmentExpression,
     context: Context,
-    agenda: Agenda,
+    agenda: Agenda
   ) {
     if (command.left.type === 'MemberExpression') {
       agenda.push(instr.arrAssmtInstr())
@@ -320,11 +301,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  ArrayExpression: function (
-    command: es.ArrayExpression,
-    context: Context,
-    agenda: Agenda,
-  ) {
+  ArrayExpression: function (command: es.ArrayExpression, context: Context, agenda: Agenda) {
     const elems = command.elements as ContiguousArrayElements
     const len = elems.length
 
@@ -387,6 +364,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
+    // Reuses the Closure data structure from legacy interpreter
     const closure: Closure = Closure.makeFromArrowFunction(
       command,
       currentEnvironment(context),
@@ -395,11 +373,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash.push(closure)
   },
 
-  CallExpression: function (
-    command: es.CallExpression,
-    context: Context,
-    agenda: Agenda,
-  ) {
+  CallExpression: function (command: es.CallExpression, context: Context, agenda: Agenda) {
     // Push application instruction, function arguments and function onto agenda.
     agenda.push(instr.appInstr(command.arguments.length, command))
     for (let index = command.arguments.length - 1; index >= 0; index--) {
@@ -515,6 +489,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
+    checkStackOverFlow(context, agenda)
     // Get function arguments from the stash
     const args: Value[] = []
     for (let index = 0; index < command.numOfArgs; index++) {
@@ -543,13 +518,8 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Push function body on agenda and create environment for function parameters.
       // Name the environment if the function call expression is not anonymous
       agenda.push(func.node.body)
-      if (isIdentifier(command.srcNode.callee)) {
-        const environment = createEnvironment(func, args, command.srcNode.callee.name)
-        pushEnvironment(context, environment)
-      } else {
-        const environment = createEnvironment(func, args)
-        pushEnvironment(context, environment)
-      }
+      const environment = createEnvironment(func, args, command.srcNode)
+      pushEnvironment(context, environment)
     } else if (typeof func === 'function') {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
@@ -689,7 +659,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   // [InstrTypes.BREAK_MARKER]: function () {}
 }
 
-// Should all of these be moved to utils?
 export const createBlockEnvironment = (
   context: Context,
   name = 'blockEnvironment',
@@ -860,23 +829,44 @@ const checkNumberOfArguments = (
 const createEnvironment = (
   closure: Closure,
   args: Value[],
-  name?: string
+  callExpression: es.CallExpression
 ): Environment => {
   const environment: Environment = {
-    name: name ? name : closure.functionName, 
+    name: isIdentifier(callExpression.callee) ? callExpression.callee.name : closure.functionName,
     tail: closure.environment,
     head: {},
-    id: uniqueId()
+    id: uniqueId(),
+    callExpression: {
+      ...callExpression,
+      arguments: args.map(ast.primitive)
+    }
   }
   closure.node.params.forEach((param, index) => {
-    if (param.type === 'RestElement') {
-      // Not sure where rest elements are used in source. If no use found can remove the condition.
-      environment.head[(param.argument as es.Identifier).name] = args.slice(index)
-    } else {
-      environment.head[(param as es.Identifier).name] = args[index]
-    }
+    environment.head[(param as es.Identifier).name] = args[index]
   })
   return environment
+}
+
+const checkStackOverFlow = (context: Context, agenda: Agenda) => {
+  if (agenda.size() > 100000) {
+    const stacks: es.CallExpression[] = []
+    let counter = 0
+    for (
+      let i = 0;
+      counter < errors.MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW &&
+      i < context.runtime.environments.length;
+      i++
+    ) {
+      if (context.runtime.environments[i].callExpression) {
+        stacks.unshift(context.runtime.environments[i].callExpression!)
+        counter++
+      }
+    }
+    handleRuntimeError(
+      context,
+      new errors.MaximumStackLimitExceeded(context.runtime.nodes[0], stacks)
+    )
+  }
 }
 
 /**

@@ -111,7 +111,7 @@ export class PreemptiveScheduler implements Scheduler {
 
 /* Checks if the error is a stackoverflow error, and captures it in the
    context if this is the case */
-export function checkForStackOverflow(error: any, context: Context) {
+function checkForStackOverflow(error: any, context: Context) {
   if (/Maximum call stack/.test(error.toString())) {
     const environments = context.runtime.environments
     const stacks: any = []

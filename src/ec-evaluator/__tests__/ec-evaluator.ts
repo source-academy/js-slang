@@ -243,3 +243,23 @@ test('for loop `let` variables are copied into the block scope', () => {
     optionEC4
   ).toMatchInlineSnapshot(`1`)
 })
+
+test('streams and its pre-defined/pre-built functions are working as intended',  () => {
+  return expectResult(
+    stripIndent`
+       function make_alternating_stream(stream) {
+      return pair(head(stream), () => make_alternating_stream(
+                                        negate_whole_stream(
+                                            stream_tail(stream))));
+    }
+
+    function negate_whole_stream(stream) {
+        return pair(-head(stream), () => negate_whole_stream(stream_tail(stream)));
+    }
+
+    const ones = pair(1, () => ones);
+    eval_stream(make_alternating_stream(enum_stream(1, 9)), 10);
+    `,
+    optionEC4
+  ).toMatchInlineSnapshot(`[1, [-2, [3, [-4, [5, [-6, [7, [-8, [9, null]]]]]]]]]`)
+})

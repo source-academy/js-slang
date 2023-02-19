@@ -129,19 +129,19 @@ test("Builtins don't create additional errors when it's not their fault", () => 
   ).toMatchInlineSnapshot(`"Line 2: Name a not declared."`)
 })
 
-test.skip('Infinite recursion with a block bodied function', () => {
+test('Infinite recursion with a block bodied function', () => {
   return expectParsedErrorNoSnapshot(
     stripIndent`
     function i(n) {
       return n === 0 ? 0 : 1 + i(n-1);
     }
-    i(1000);
+    i(20000);
   `,
     optionEC4
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
 }, 15000)
 
-test.skip('Infinite recursion with function calls in argument', () => {
+test('Infinite recursion with function calls in argument', () => {
   return expectParsedErrorNoSnapshot(
     stripIndent`
     function i(n, redundant) {
@@ -150,15 +150,15 @@ test.skip('Infinite recursion with function calls in argument', () => {
     function r() {
       return 1;
     }
-    i(1000, 1);
+    i(20000, 1);
   `,
     optionEC4
   ).toEqual(
     expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*, 1\)[^i]{2,4}){2}[ir]/)
   )
-}, 10000)
+}, 20000)
 
-test.skip('Infinite recursion of mutually recursive functions', () => {
+test('Infinite recursion of mutually recursive functions', () => {
   return expectParsedErrorNoSnapshot(
     stripIndent`
     function f(n) {
@@ -167,7 +167,7 @@ test.skip('Infinite recursion of mutually recursive functions', () => {
     function g(n) {
       return 1 + f(n);
     }
-    f(1000);
+    f(20000);
   `,
     optionEC4
   ).toEqual(
@@ -911,7 +911,7 @@ test('Cascading js errors work properly', () => {
   )
 })
 
-test.skip('Check that stack is at most 10k in size', () => {
+test('Check that stack is at most 10k in size', () => {
   return expectParsedErrorNoSnapshot(
     stripIndent`
     function f(x) {
@@ -921,7 +921,7 @@ test.skip('Check that stack is at most 10k in size', () => {
         return 1 + f(x-1);
       }
     }
-    f(10000);
+    f(20000);
   `,
     optionEC
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))
