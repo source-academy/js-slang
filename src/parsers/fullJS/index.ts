@@ -35,4 +35,8 @@ export class FullJSParser implements Parser<AcornOptions> {
   validate(_ast: Program, _context: Context, _throwOnError: boolean): boolean {
     return true
   }
+
+  toString(): string {
+    return 'FullJSParser'
+  }
 }

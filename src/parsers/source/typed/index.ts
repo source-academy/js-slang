@@ -57,4 +57,8 @@ export class SourceTypedParser extends SourceParser {
 
     return typedCheckedProgram
   }
+
+  toString(): string {
+    return 'SourceTypedParser'
+  }
 }
