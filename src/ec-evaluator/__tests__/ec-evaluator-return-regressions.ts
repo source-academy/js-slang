@@ -162,7 +162,7 @@ test('Tail call early returns in if statements work', () => {
 })
 
 // This is bad practice. Don't do this!
-test.skip('Bare early returns in while loops work', () => {
+test('Bare early returns in while loops work', () => {
   return expectResult(
     `
     function unreachable() {
@@ -184,7 +184,7 @@ test.skip('Bare early returns in while loops work', () => {
 })
 
 // This is bad practice. Don't do this!
-test.skip('Recursive call early returns in while loops work', () => {
+test('Recursive call early returns in while loops work', () => {
   return expectResult(
     `
     function unreachable() {
@@ -209,7 +209,7 @@ test.skip('Recursive call early returns in while loops work', () => {
 })
 
 // This is bad practice. Don't do this!
-test.skip('Tail call early returns in while loops work', () => {
+test('Tail call early returns in while loops work', () => {
   return expectResult(
     `
     function unreachable() {
@@ -234,7 +234,7 @@ test.skip('Tail call early returns in while loops work', () => {
 })
 
 // This is bad practice. Don't do this!
-test.skip('Bare early returns in for loops work', () => {
+test('Bare early returns in for loops work', () => {
   return expectResult(
     `
     function unreachable() {
@@ -256,7 +256,7 @@ test.skip('Bare early returns in for loops work', () => {
 })
 
 // This is bad practice. Don't do this!
-test.skip('Recursive call early returns in for loops work', () => {
+test('Recursive call early returns in for loops work', () => {
   return expectResult(
     `
     function unreachable() {
@@ -278,7 +278,7 @@ test.skip('Recursive call early returns in for loops work', () => {
 })
 
 // This is bad practice. Don't do this!
-test.skip('Tail call early returns in for loops work', () => {
+test('Tail call early returns in for loops work', () => {
   return expectResult(
     `
     function unreachable() {

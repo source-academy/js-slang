@@ -12,7 +12,7 @@ import { uniqueId } from 'lodash'
 import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import Closure from '../interpreter/closure'
+import Closure from './closure'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Result, Value } from '../types'
 import * as ast from '../utils/astCreator'
@@ -33,7 +33,7 @@ import {
   UnOpInstr,
   WhileInstr
 } from './types'
-import { handleSequence, isNode, Stack } from './utils'
+import { handleSequence, isIdentifier, isNode, Stack } from './utils'
 
 /**
  * The agenda is a list of commands that still needs to be executed by the machine.
@@ -156,7 +156,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.BlockStatement,
     context: Context,
     agenda: Agenda,
-    stash: Stash
   ) {
     // To restore environment after block ends
     agenda.push(instr.envInstr(currentEnvironment(context)))
@@ -173,7 +172,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.WhileStatement,
     context: Context,
     agenda: Agenda,
-    stash: Stash
   ) {
     agenda.push(instr.whileInstr(command.test, command.body, command))
     agenda.push(command.test)
@@ -184,7 +182,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.ForStatement,
     context: Context,
     agenda: Agenda,
-    stash: Stash
   ) {
     // All 3 parts will be defined due to parser rules
     const init = command.init!
@@ -240,7 +237,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.ExpressionStatement,
     context: Context,
     agenda: Agenda,
-    stash: Stash
   ) {
     agenda.push(command.expression)
   },
@@ -248,8 +244,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   DebuggerStatement: function (
     command: es.DebuggerStatement,
     context: Context,
-    agenda: Agenda,
-    stash: Stash
   ) {
     context.runtime.break = true
   },
@@ -258,7 +252,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.VariableDeclaration,
     context: Context,
     agenda: Agenda,
-    stash: Stash
   ) {
     const declaration: es.VariableDeclarator = command.declarations[0]
     const id = declaration.id as es.Identifier
@@ -294,7 +287,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.ReturnStatement,
     context: Context,
     agenda: Agenda,
-    stash: Stash
   ) {
     // Push return argument onto agenda as well as Reset Instruction to clear to ignore all statements after the return.
     agenda.push(instr.resetInstr())
@@ -315,7 +307,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.AssignmentExpression,
     context: Context,
     agenda: Agenda,
-    stash: Stash
   ) {
     if (command.left.type === 'MemberExpression') {
       agenda.push(instr.arrAssmtInstr())
@@ -333,7 +324,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.ArrayExpression,
     context: Context,
     agenda: Agenda,
-    stash: Stash
   ) {
     const elems = command.elements as ContiguousArrayElements
     const len = elems.length
@@ -400,8 +390,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const closure: Closure = Closure.makeFromArrowFunction(
       command,
       currentEnvironment(context),
-      context,
-      true
+      context
     )
     stash.push(closure)
   },
@@ -410,7 +399,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.CallExpression,
     context: Context,
     agenda: Agenda,
-    stash: Stash
   ) {
     // Push application instruction, function arguments and function onto agenda.
     agenda.push(instr.appInstr(command.arguments.length, command))
@@ -537,7 +525,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const func: Closure | Function = stash.pop()
     if (func instanceof Closure) {
       // Check for number of arguments mismatch error
-      checkNumberOfArguments(context, func, args, command.srcNode as es.CallExpression)
+      checkNumberOfArguments(context, func, args, command.srcNode)
 
       // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
       const next = agenda.peek()
@@ -553,12 +541,18 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       }
 
       // Push function body on agenda and create environment for function parameters.
+      // Name the environment if the function call expression is not anonymous
       agenda.push(func.node.body)
-      const environment = createEnvironment(func, args)
-      pushEnvironment(context, environment)
+      if (isIdentifier(command.srcNode.callee)) {
+        const environment = createEnvironment(func, args, command.srcNode.callee.name)
+        pushEnvironment(context, environment)
+      } else {
+        const environment = createEnvironment(func, args)
+        pushEnvironment(context, environment)
+      }
     } else if (typeof func === 'function') {
       // Check for number of arguments mismatch error
-      checkNumberOfArguments(context, func, args, command.srcNode as es.CallExpression)
+      checkNumberOfArguments(context, func, args, command.srcNode)
       // Directly stash result of applying pre-built functions without the ASE machine.
       try {
         const result = func(...args)
@@ -866,20 +860,13 @@ const checkNumberOfArguments = (
 const createEnvironment = (
   closure: Closure,
   args: Value[],
-  callExpression?: es.CallExpression
+  name?: string
 ): Environment => {
   const environment: Environment = {
-    name: closure.functionName, // TODO: Change this
+    name: name ? name : closure.functionName, 
     tail: closure.environment,
     head: {},
     id: uniqueId()
-  }
-  if (callExpression) {
-    // Don't think this is required for ece. Stack and agenda eliminates need to keep track of call expression.
-    environment.callExpression = {
-      ...callExpression,
-      arguments: args.map(ast.primitive)
-    }
   }
   closure.node.params.forEach((param, index) => {
     if (param.type === 'RestElement') {

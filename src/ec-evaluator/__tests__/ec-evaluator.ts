@@ -194,7 +194,7 @@ test('let uses block scoping instead of function scoping', () => {
 })
 
 // This is bad practice. Don't do this!
-test.skip('for loops use block scoping instead of function scoping', () => {
+test('for loops use block scoping instead of function scoping', () => {
   return expectResult(
     stripIndent`
     function test(){
@@ -228,7 +228,7 @@ test.skip('while loops use block scoping instead of function scoping', () => {
 
 // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
 // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
-test.skip('for loop `let` variables are copied into the block scope', () => {
+test('for loop `let` variables are copied into the block scope', () => {
   return expectResult(
     stripIndent`
   function test(){

@@ -60,7 +60,7 @@ export const binOpInstr = (symbol: es.BinaryOperator, srcNode: es.Node): BinOpIn
 
 export const popInstr = (): Instr => ({ instrType: InstrType.POP })
 
-export const appInstr = (numOfArgs: number, srcNode: es.Node): AppInstr => ({
+export const appInstr = (numOfArgs: number, srcNode: es.CallExpression): AppInstr => ({
   instrType: InstrType.APPLICATION,
   numOfArgs,
   srcNode

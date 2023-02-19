@@ -272,9 +272,9 @@ export async function sourceRunner(
     return runECEvaluator(program, context, theOptions)
   }
 
-  // if (context.executionMethod === 'ec-evaluator') {
-  //   return runECEvaluator(program, context, theOptions)
-  // }
+  if (context.executionMethod === 'ec-evaluator') {
+    return runECEvaluator(program, context, theOptions)
+  }
   // Uncomment this to have env visualiser use ec-evaluator. Only test suite that fails
   // due to this is '__tests/inspect.ts'. Need to verify how to rectify
 

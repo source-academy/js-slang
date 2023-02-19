@@ -53,6 +53,28 @@ export const isNode = (command: AgendaItem): command is es.Node => {
 }
 
 /**
+ * Typeguard for esIdentifier. To verify if an esNode is an esIdentifier.
+ *
+ * @param node an esNode
+ * @returns true if node is an esIdentifier, false otherwise.
+ */
+export const isIdentifier = (node: es.Node): node is es.Identifier => {
+  return (node as es.Identifier).name !== undefined
+}
+
+/**
+ * Typeguard for esBlockStatement. To verify if a function body is a block statement.
+ *
+ * @param body the function body
+ * @returns true if node is an esIdentifier, false otherwise.
+ */
+export const isExpressionBody = (
+  body: es.BlockStatement | es.Expression
+): body is es.Expression => {
+  return body.type !== 'BlockStatement'
+}
+
+/**
  * A helper function for handling sequences of statements.
  * Statements must be pushed in reverse order, and each statement is separated by a pop
  * instruction so that only the result of the last statement remains on stash.

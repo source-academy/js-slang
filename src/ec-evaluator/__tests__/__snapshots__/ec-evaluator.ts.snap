@@ -190,6 +190,45 @@ test();",
 }
 `;
 
+exports[`for loop \`let\` variables are copied into the block scope: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function test(){
+  let z = [];
+  for (let x = 0; x < 10; x = x + 1) {
+    z[x] = () => x;
+  }
+  return z[1]();
+}
+test();",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`for loops use block scoping instead of function scoping: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function test(){
+  let x = true;
+  for (let x = 1; x > 0; x = x - 1) {
+  }
+  return x;
+}
+test();",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`let uses block scoping instead of function scoping: expectResult 1`] = `
 Object {
   "alertResult": Array [],

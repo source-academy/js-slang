@@ -373,13 +373,13 @@ const callingNonFunctionValueArrayVerbose = stripIndent`
 [1]();
 `
 
-test.skip('Error when calling non function value array', () => {
+test('Error when calling non function value array', () => {
   return expectParsedError(callingNonFunctionValueArray, optionEC3).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value [1]."`
   )
 })
 
-test.skip('Error when calling non function value array - verbose', () => {
+test('Error when calling non function value array - verbose', () => {
   return expectParsedError(callingNonFunctionValueArrayVerbose, optionEC3).toMatchInlineSnapshot(`
             "Line 2, Column 0: Calling non-function value [1].
             Because [1] is not a function, you cannot run [1]().
@@ -519,7 +519,7 @@ test('Error when calling arrow function with too many arguments - verbose', () =
           `)
 })
 
-test.skip('Error when calling function from member expression with too many arguments', () => {
+test('Error when calling function from member expression with too many arguments', () => {
   return expectParsedError(
     stripIndent`
     const f = [x => x];
@@ -529,7 +529,7 @@ test.skip('Error when calling function from member expression with too many argu
   ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
-test.skip('Error when calling function from member expression with too many arguments - verbose', () => {
+test('Error when calling function from member expression with too many arguments - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";

@@ -51,7 +51,7 @@ export interface BinOpInstr extends BaseInstr {
 
 export interface AppInstr extends BaseInstr {
   numOfArgs: number
-  srcNode: es.Node
+  srcNode: es.CallExpression
 }
 
 export interface BranchInstr extends BaseInstr {

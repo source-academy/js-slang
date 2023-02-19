@@ -250,6 +250,37 @@ Object {
 }
 `;
 
+exports[`Error when calling function from member expression with too many arguments - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+  const f = [x => x];
+  f[0](1, 2);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
+Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling function from member expression with too many arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const f = [x => x];
+f[0](1, 2);",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Error when calling function with too few arguments - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -372,6 +403,35 @@ Object {
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 1: Calling non-function value 0.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value array - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+[1]();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 0: Calling non-function value [1].
+Because [1] is not a function, you cannot run [1]().
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Error when calling non function value array: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "[1]();",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Calling non-function value [1].",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

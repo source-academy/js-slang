@@ -2,7 +2,7 @@ import { Chapter, Value, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectResult, snapshotFailure } from '../../utils/testing'
 
-test.skip.each([
+test.each([
   [
     Chapter.SOURCE_1,
     `
