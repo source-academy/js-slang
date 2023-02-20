@@ -190,6 +190,33 @@ test();",
 }
 `;
 
+exports[`continue in while loops are working as intended: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function test(){
+  let i = 0;
+  let j = false;
+  while (i <= 10){
+    if (i === 10){
+      j = true;
+      i = i + 1;
+      continue;
+    }
+    j = false;
+    i = i + 1;
+  }
+  return j;
+}
+test();",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`for loop \`let\` variables are copied into the block scope: expectResult 1`] = `
 Object {
   "alertResult": Array [],

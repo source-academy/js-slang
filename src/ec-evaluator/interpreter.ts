@@ -114,7 +114,7 @@ export function ECEResultPromise(context: Context, value: Value): Promise<Result
     if (value instanceof ECEBreak) {
       resolve({ status: 'suspended-ec-eval', context })
     } else if (value instanceof ECError) {
-      resolve({status: 'error'})
+      resolve({ status: 'error' })
     } else {
       resolve({ status: 'finished', context, value })
     }
@@ -905,7 +905,7 @@ const createEnvironment = (
 
 /**
  * This function can be used to check for a stack overflow.
- * The current limit is set to be an agenda size of 1.0 x 10^5, if the agenda 
+ * The current limit is set to be an agenda size of 1.0 x 10^5, if the agenda
  * flows beyond this limit an error is thrown.
  * This corresponds to about 10mb of space according to tests ran.
  */

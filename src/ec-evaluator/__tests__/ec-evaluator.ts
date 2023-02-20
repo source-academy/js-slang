@@ -193,7 +193,6 @@ test('let uses block scoping instead of function scoping', () => {
   ).toMatchInlineSnapshot(`true`)
 })
 
-// This is bad practice. Don't do this!
 test('for loops use block scoping instead of function scoping', () => {
   return expectResult(
     stripIndent`
@@ -219,6 +218,29 @@ test('while loops use block scoping instead of function scoping', () => {
         break;
       }
       return x;
+    }
+    test();
+  `,
+    optionEC4
+  ).toMatchInlineSnapshot(`true`)
+})
+
+test('continue in while loops are working as intended', () => {
+  return expectResult(
+    stripIndent`
+    function test(){
+      let i = 0;
+      let j = false;
+      while (i <= 10){
+        if (i === 10){
+          j = true;
+          i = i + 1;
+          continue;
+        }
+        j = false;
+        i = i + 1;
+      }
+      return j;
     }
     test();
   `,

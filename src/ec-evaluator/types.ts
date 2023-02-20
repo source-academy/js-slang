@@ -105,7 +105,7 @@ export class ECEBreak {}
 
 // Special value that cannot be found on the stash so is safe to be used
 // as an indicator of an error from running the ECE machine
-export class ECError{}
+export class ECError {}
 
 // Tags taken from MicroPython interpreter
 // export enum Tags {
