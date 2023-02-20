@@ -1384,7 +1384,7 @@ function lookupTypeAliasAndRemoveForAllTypes(node: tsEs.Node, varType: Variable)
   // If type saved in type environment is not generic,
   // given variable type should not have type arguments
   if (aliasType.kind !== 'forall') {
-    if (varType.typeArgs && varType.typeArgs.length > 0) {
+    if (varType.typeArgs !== undefined && varType.typeArgs.length > 0) {
       context.errors.push(new TypeNotGenericError(node, varType.name))
       return tAny
     }
@@ -1429,7 +1429,7 @@ function substituteVariableTypes(type: Type, typeVar: Variable, typeToSub: Type)
       if (isEqual(type, typeVar)) {
         return typeToSub
       }
-      if (type.typeArgs) {
+      if (type.typeArgs !== undefined) {
         for (let i = 0; i < type.typeArgs.length; i++) {
           if (isEqual(type.typeArgs[i], typeVar)) {
             type.typeArgs[i] = typeToSub
