@@ -38,9 +38,9 @@ describe('pair', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 4: Generic type 'Pair' requires 2 type argument(s).
-      Line 2: Type 'Pair<number, string>' is not assignable to type 'Pair<number, number>'.
+      "Line 2: Type 'Pair<number, string>' is not assignable to type 'Pair<number, number>'.
       Line 3: Type 'number' is not assignable to type 'Pair<number, number>'.
+      Line 4: Generic type 'Pair' requires 2 type argument(s).
       Line 5: Type 'List<number>' is not assignable to type 'Pair<number, number>'."
     `)
   })
@@ -95,10 +95,10 @@ describe('list', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 8: Generic type 'List' requires 1 type argument(s).
-      Line 3: Type 'List<string>' is not assignable to type 'List<number>'.
+      "Line 3: Type 'List<string>' is not assignable to type 'List<number>'.
       Line 4: Type 'number' is not assignable to type 'List<number>'.
-      Line 6: Type 'List<number | string>' is not assignable to type 'List<boolean>'."
+      Line 6: Type 'List<number | string>' is not assignable to type 'List<boolean>'.
+      Line 8: Generic type 'List' requires 1 type argument(s)."
     `)
   })
 

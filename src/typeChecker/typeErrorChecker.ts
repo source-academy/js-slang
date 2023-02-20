@@ -363,10 +363,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
             context.errors.push(new InvalidNumberOfArgumentsTypeError(node, 1, args.length))
             return tAny
           }
-          let actualType = typeCheckAndReturnType(args[0])
-          if (actualType.kind === 'variable') {
-            actualType = lookupTypeAliasAndRemoveForAllTypes(node, actualType)
-          }
+          const actualType = typeCheckAndReturnType(args[0])
           // Argument should be either a pair or a list
           const expectedType = tUnion(tPair(tAny, tAny), tList(tAny))
           const numErrors = context.errors.length
@@ -988,7 +985,11 @@ function hasTypeMismatchErrors(
       if (skipTypeAliasExpansion) {
         return true
       }
-      visitedTypeAliasesForExpectedType.push(expectedType)
+      // Pair and List need not be added to visited type alias
+      // as they can be used repeatedly without causing circular dependencies
+      if (expectedType.name !== 'Pair' && expectedType.name !== 'List') {
+        visitedTypeAliasesForExpectedType.push(expectedType)
+      }
       const aliasType = lookupTypeAliasAndRemoveForAllTypes(node, expectedType)
       return hasTypeMismatchErrors(
         node,
@@ -1250,42 +1251,6 @@ function getAnnotatedType(typeNode: tsEs.TSType): Type {
       throw new TypecheckError(typeNode, 'Intersection types are not allowed')
     case 'TSTypeReference':
       const name = typeNode.typeName.name
-      if (context.chapter >= 2) {
-        // Special types for Source 2+: Pair, List
-        // Instead of adding the pair and list types to the type alias environment,
-        // we derive the pair/list type directly whenever a type reference is reached,
-        // which helps to reduce complexity at typecheck time
-        if (name === 'Pair') {
-          if (!typeNode.typeParameters || typeNode.typeParameters.params.length !== 2) {
-            context.errors.push(
-              new InvalidNumberOfTypeArgumentsForGenericTypeError(typeNode, name, 2)
-            )
-            return tPair(tAny, tAny)
-          }
-          const typeParams = typeNode.typeParameters.params.filter(
-            (param): param is tsEs.TSType => param.type !== 'TSTypeParameter'
-          )
-          if (typeParams.length !== typeNode.typeParameters.params.length) {
-            throw new TypecheckError(typeNode, 'Invalid type parameter type')
-          }
-          return tPair(getAnnotatedType(typeParams[0]), getAnnotatedType(typeParams[1]))
-        }
-        if (name === 'List') {
-          if (!typeNode.typeParameters || typeNode.typeParameters.params.length !== 1) {
-            context.errors.push(
-              new InvalidNumberOfTypeArgumentsForGenericTypeError(typeNode, name, 1)
-            )
-            return tList(tAny)
-          }
-          const typeParams = typeNode.typeParameters.params.filter(
-            (param): param is tsEs.TSType => param.type !== 'TSTypeParameter'
-          )
-          if (typeParams.length !== typeNode.typeParameters.params.length) {
-            throw new TypecheckError(typeNode, 'Invalid type parameter type')
-          }
-          return tList(getAnnotatedType(typeParams[0]))
-        }
-      }
       // Return variable type which saves the name and type arguments
       if (typeNode.typeParameters) {
         const typesToSub: Type[] = []

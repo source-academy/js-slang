@@ -478,6 +478,11 @@ const predeclaredConstTypes: [string, Type][] = [
   ['math_SQRT2', tLiteral(Math.SQRT2)]
 ]
 
+const pairTypeAlias: [string, ForAll] = [
+  'Pair',
+  tForAll(tPair(headType, tailType), [headType, tailType])
+]
+const listTypeAlias: [string, ForAll] = ['List', tForAll(tList(tVar('T')), [tVar('T')])]
 const streamTypeAlias: [string, ForAll] = ['Stream', tForAll(tStream(tVar('T')), [tVar('T')])]
 
 // Creates type environment for the appropriate Source chapter
@@ -486,6 +491,7 @@ export function createTypeEnvironment(chapter: Chapter): TypeEnvironment {
   const initialTypeAliasMappings: [string, Type | ForAll][] = [...predeclaredConstTypes]
   if (chapter >= 2) {
     initialTypeMappings.push(...pairFuncs, ...listFuncs)
+    initialTypeAliasMappings.push(pairTypeAlias, listTypeAlias)
   }
   if (chapter >= 3) {
     initialTypeMappings.push(...postS3equalityFuncs, ...mutatingPairFuncs, ...arrayFuncs)
