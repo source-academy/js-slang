@@ -375,20 +375,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
             // If errors were found, return "any" type
             return tAny
           }
-          if (actualType.kind === 'pair') {
-            return fnName === 'head' ? actualType.headType : actualType.tailType
-          }
-          if (actualType.kind === 'list') {
-            return fnName === 'head'
-              ? actualType.elementType
-              : tList(
-                  actualType.elementType,
-                  actualType.typeAsPair && actualType.typeAsPair.tailType.kind === 'pair'
-                    ? actualType.typeAsPair.tailType
-                    : undefined
-                )
-          }
-          return actualType
+          return fnName === 'head' ? getHeadType(node, actualType) : getTailType(node, actualType)
         }
         if (fnName === 'stream' && context.chapter >= 3) {
           if (args.length === 0) {
@@ -1326,6 +1313,49 @@ function getParamTypes(params: (tsEs.Identifier | tsEs.RestElement)[]): Type[] {
 }
 
 /**
+ * Returns the head type of the input type.
+ * If the type is not union, pair or list, returns the type itself.
+ */
+function getHeadType(node: tsEs.Node, type: Type): Type {
+  switch (type.kind) {
+    case 'pair':
+      return type.headType
+    case 'list':
+      return type.elementType
+    case 'union':
+      return tUnion(...type.types.map(type => getHeadType(node, type)))
+    case 'variable':
+      return getHeadType(node, lookupTypeAliasAndRemoveForAllTypes(node, type))
+    default:
+      return type
+  }
+}
+
+/**
+ * Returns the tail type of the input type.
+ * If the type is not union, pair or list, returns the type itself.
+ */
+function getTailType(node: tsEs.Node, type: Type): Type {
+  switch (type.kind) {
+    case 'pair':
+      return type.tailType
+    case 'list':
+      return tList(
+        type.elementType,
+        type.typeAsPair && type.typeAsPair.tailType.kind === 'pair'
+          ? type.typeAsPair.tailType
+          : undefined
+      )
+    case 'union':
+      return tUnion(...type.types.map(type => getTailType(node, type)))
+    case 'variable':
+      return getTailType(node, lookupTypeAliasAndRemoveForAllTypes(node, type))
+    default:
+      return type
+  }
+}
+
+/**
  * Converts node type to basic type, adding errors to context if disallowed/unknown types are used.
  * If errors are found, returns the "any" type to prevent throwing of further errors.
  */
@@ -1474,12 +1504,12 @@ function mergeTypes(node: tsEs.Node, ...types: Type[]): Type {
     }
     if (currType.kind === 'union') {
       for (const type of currType.types) {
-        if (!containsType(node, mergedTypes, type)) {
+        if (!containsType(node, mergedTypes, type, [], [], true)) {
           mergedTypes.push(type)
         }
       }
     } else {
-      if (!containsType(node, mergedTypes, currType)) {
+      if (!containsType(node, mergedTypes, currType, [], [], true)) {
         mergedTypes.push(currType)
       }
     }
@@ -1498,7 +1528,8 @@ function containsType(
   arr: Type[],
   typeToCheck: Type,
   visitedTypeAliasesForTypes: Variable[] = [],
-  visitedTypeAliasesForTypeToCheck: Variable[] = []
+  visitedTypeAliasesForTypeToCheck: Variable[] = [],
+  skipTypeAliasExpansion: boolean = false
 ) {
   for (const type of arr) {
     if (
@@ -1508,7 +1539,7 @@ function containsType(
         type,
         visitedTypeAliasesForTypeToCheck,
         visitedTypeAliasesForTypes,
-        true
+        skipTypeAliasExpansion
       )
     ) {
       return true
