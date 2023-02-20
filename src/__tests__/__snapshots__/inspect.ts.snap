@@ -33,7 +33,9 @@ Object {
 
 exports[`debugger; pauses for 4`] = `
 Object {
-  "head": Object {},
+  "head": Object {
+    "i": 0,
+  },
   "id": Any<String>,
   "name": "blockEnvironment",
   "tail": null,
@@ -42,9 +44,7 @@ Object {
 
 exports[`debugger; pauses for 5`] = `
 Object {
-  "head": Object {
-    "i": 0,
-  },
+  "head": Object {},
   "id": Any<String>,
   "name": "blockEnvironment",
   "tail": null,
@@ -61,15 +61,6 @@ Object {
 `;
 
 exports[`debugger; pauses for 7`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`debugger; pauses for 8`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -118,7 +109,7 @@ Object {
 }
 `;
 
-exports[`debugger; pauses for 9`] = `
+exports[`debugger; pauses for 8`] = `
 Object {
   "head": Object {
     "a": [Function],
@@ -129,7 +120,7 @@ Object {
 }
 `;
 
-exports[`debugger; pauses for 10`] = `
+exports[`debugger; pauses for 9`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -182,7 +173,7 @@ Object {
 }
 `;
 
-exports[`debugger; pauses for 11`] = `""`;
+exports[`debugger; pauses for 10`] = `""`;
 
 exports[`debugger; pauses while 1`] = `
 Object {
@@ -975,15 +966,6 @@ Object {
 
 exports[`setBreakpointAtLine for loops 4`] = `
 Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine for loops 5`] = `
-Object {
   "head": Object {
     "i": 1,
   },
@@ -993,7 +975,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine for loops 6`] = `
+exports[`setBreakpointAtLine for loops 5`] = `
 Object {
   "head": Object {},
   "id": Any<String>,
@@ -1002,7 +984,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine for loops 7`] = `
+exports[`setBreakpointAtLine for loops 6`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -1055,9 +1037,104 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine for loops 8`] = `""`;
+exports[`setBreakpointAtLine for loops 7`] = `""`;
 
-exports[`setBreakpointAtLine for loops 9`] = `
+exports[`setBreakpointAtLine for loops 8`] = `
+Array [
+  Object {
+    "head": Object {
+      "b": Symbol(Used to implement hoisting),
+    },
+    "id": "95",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {
+      "i": 2,
+    },
+    "id": "94",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {
+      "_copy_of_i": 2,
+    },
+    "id": "93",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {
+      "i": 2,
+    },
+    "id": "89",
+    "name": "blockEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {},
+    "id": "88",
+    "name": "programEnvironment",
+    "tail": null,
+  },
+  Object {
+    "head": Object {
+      "$accumulate": [Function],
+      "$append": [Function],
+      "$build_list": [Function],
+      "$enum_list": [Function],
+      "$filter": [Function],
+      "$length": [Function],
+      "$list_to_string": [Function],
+      "$map": [Function],
+      "$remove": [Function],
+      "$remove_all": [Function],
+      "$reverse": [Function],
+      "accumulate": [Function],
+      "append": [Function],
+      "build_list": [Function],
+      "build_stream": [Function],
+      "enum_list": [Function],
+      "enum_stream": [Function],
+      "equal": [Function],
+      "eval_stream": [Function],
+      "filter": [Function],
+      "for_each": [Function],
+      "integers_from": [Function],
+      "is_stream": [Function],
+      "length": [Function],
+      "list_ref": [Function],
+      "list_to_stream": [Function],
+      "list_to_string": [Function],
+      "map": [Function],
+      "member": [Function],
+      "remove": [Function],
+      "remove_all": [Function],
+      "reverse": [Function],
+      "stream_append": [Function],
+      "stream_filter": [Function],
+      "stream_for_each": [Function],
+      "stream_length": [Function],
+      "stream_map": [Function],
+      "stream_member": [Function],
+      "stream_ref": [Function],
+      "stream_remove": [Function],
+      "stream_remove_all": [Function],
+      "stream_reverse": [Function],
+      "stream_to_list": [Function],
+    },
+    "id": "87",
+    "name": "programEnvironment",
+    "tail": null,
+  },
+]
+`;
+
+exports[`setBreakpointAtLine for loops 9`] = `""`;
+
+exports[`setBreakpointAtLine for loops 10`] = `
 Array [
   Object {
     "head": Object {
@@ -1069,7 +1146,7 @@ Array [
   },
   Object {
     "head": Object {
-      "i": 2,
+      "i": 4,
     },
     "id": "97",
     "name": "blockEnvironment",
@@ -1077,29 +1154,23 @@ Array [
   },
   Object {
     "head": Object {
-      "_copy_of_i": 2,
+      "_copy_of_i": 4,
     },
     "id": "96",
     "name": "blockEnvironment",
     "tail": null,
   },
   Object {
-    "head": Object {},
-    "id": "95",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
     "head": Object {
-      "i": 2,
+      "i": 4,
     },
-    "id": "90",
+    "id": "89",
     "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "89",
+    "id": "88",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -1149,28 +1220,20 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "88",
+    "id": "87",
     "name": "programEnvironment",
     "tail": null,
   },
 ]
 `;
 
-exports[`setBreakpointAtLine for loops 10`] = `""`;
+exports[`setBreakpointAtLine for loops 11`] = `""`;
 
-exports[`setBreakpointAtLine for loops 11`] = `
+exports[`setBreakpointAtLine for loops 12`] = `
 Array [
   Object {
     "head": Object {
       "b": Symbol(Used to implement hoisting),
-    },
-    "id": "102",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
-      "i": 4,
     },
     "id": "101",
     "name": "blockEnvironment",
@@ -1178,102 +1241,9 @@ Array [
   },
   Object {
     "head": Object {
-      "_copy_of_i": 4,
-    },
-    "id": "100",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {},
-    "id": "99",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
-      "i": 4,
-    },
-    "id": "90",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {},
-    "id": "89",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
-      "$accumulate": [Function],
-      "$append": [Function],
-      "$build_list": [Function],
-      "$enum_list": [Function],
-      "$filter": [Function],
-      "$length": [Function],
-      "$list_to_string": [Function],
-      "$map": [Function],
-      "$remove": [Function],
-      "$remove_all": [Function],
-      "$reverse": [Function],
-      "accumulate": [Function],
-      "append": [Function],
-      "build_list": [Function],
-      "build_stream": [Function],
-      "enum_list": [Function],
-      "enum_stream": [Function],
-      "equal": [Function],
-      "eval_stream": [Function],
-      "filter": [Function],
-      "for_each": [Function],
-      "integers_from": [Function],
-      "is_stream": [Function],
-      "length": [Function],
-      "list_ref": [Function],
-      "list_to_stream": [Function],
-      "list_to_string": [Function],
-      "map": [Function],
-      "member": [Function],
-      "remove": [Function],
-      "remove_all": [Function],
-      "reverse": [Function],
-      "stream_append": [Function],
-      "stream_filter": [Function],
-      "stream_for_each": [Function],
-      "stream_length": [Function],
-      "stream_map": [Function],
-      "stream_member": [Function],
-      "stream_ref": [Function],
-      "stream_remove": [Function],
-      "stream_remove_all": [Function],
-      "stream_reverse": [Function],
-      "stream_to_list": [Function],
-    },
-    "id": "88",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-]
-`;
-
-exports[`setBreakpointAtLine for loops 12`] = `""`;
-
-exports[`setBreakpointAtLine for loops 13`] = `
-Array [
-  Object {
-    "head": Object {
-      "b": Symbol(Used to implement hoisting),
-    },
-    "id": "106",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {
       "i": 8,
     },
-    "id": "105",
+    "id": "100",
     "name": "blockEnvironment",
     "tail": null,
   },
@@ -1281,13 +1251,7 @@ Array [
     "head": Object {
       "_copy_of_i": 8,
     },
-    "id": "104",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {},
-    "id": "103",
+    "id": "99",
     "name": "blockEnvironment",
     "tail": null,
   },
@@ -1295,13 +1259,13 @@ Array [
     "head": Object {
       "i": 8,
     },
-    "id": "90",
+    "id": "89",
     "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "89",
+    "id": "88",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -1351,20 +1315,20 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "88",
+    "id": "87",
     "name": "programEnvironment",
     "tail": null,
   },
 ]
 `;
 
-exports[`setBreakpointAtLine for loops 14`] = `""`;
+exports[`setBreakpointAtLine for loops 13`] = `""`;
 
-exports[`setBreakpointAtLine for loops 15`] = `
+exports[`setBreakpointAtLine for loops 14`] = `
 Array [
   Object {
     "head": Object {},
-    "id": "89",
+    "id": "88",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -1414,14 +1378,14 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "88",
+    "id": "87",
     "name": "programEnvironment",
     "tail": null,
   },
 ]
 `;
 
-exports[`setBreakpointAtLine for loops 16`] = `""`;
+exports[`setBreakpointAtLine for loops 15`] = `""`;
 
 exports[`setBreakpointAtLine function 1 1`] = `
 Object {
@@ -1891,13 +1855,13 @@ exports[`setBreakpointAtLine granularity 1 7`] = `
 Array [
   Object {
     "head": Object {},
-    "id": "65",
+    "id": "64",
     "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "64",
+    "id": "63",
     "name": "blockEnvironment",
     "tail": null,
   },
@@ -1943,19 +1907,19 @@ Array [
     "head": Object {
       "ctrlf": -1,
     },
-    "id": "63",
+    "id": "62",
     "name": "a",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "62",
+    "id": "61",
     "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "61",
+    "id": "60",
     "name": "blockEnvironment",
     "tail": null,
   },
@@ -2001,19 +1965,19 @@ Array [
     "head": Object {
       "ctrlf": 0,
     },
-    "id": "60",
+    "id": "59",
     "name": "a",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "59",
+    "id": "58",
     "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "58",
+    "id": "57",
     "name": "blockEnvironment",
     "tail": null,
   },
@@ -2059,7 +2023,7 @@ Array [
     "head": Object {
       "ctrlf": 1,
     },
-    "id": "57",
+    "id": "56",
     "name": "a",
     "tail": null,
   },
@@ -2067,7 +2031,7 @@ Array [
     "head": Object {
       "a": [Function],
     },
-    "id": "56",
+    "id": "55",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2117,7 +2081,7 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "55",
+    "id": "54",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2399,7 +2363,7 @@ Array [
     "head": Object {
       "a": [Function],
     },
-    "id": "67",
+    "id": "66",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2449,7 +2413,7 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "66",
+    "id": "65",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2595,13 +2559,13 @@ exports[`setBreakpointAtLine granularity 3 7`] = `
 Array [
   Object {
     "head": Object {},
-    "id": "84",
+    "id": "83",
     "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "83",
+    "id": "82",
     "name": "blockEnvironment",
     "tail": null,
   },
@@ -2647,19 +2611,19 @@ Array [
     "head": Object {
       "ctrlf": 0,
     },
-    "id": "82",
+    "id": "81",
     "name": "a",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "81",
+    "id": "80",
     "name": "blockEnvironment",
     "tail": null,
   },
   Object {
     "head": Object {},
-    "id": "80",
+    "id": "79",
     "name": "blockEnvironment",
     "tail": null,
   },
@@ -2705,7 +2669,7 @@ Array [
     "head": Object {
       "ctrlf": 1,
     },
-    "id": "79",
+    "id": "78",
     "name": "a",
     "tail": null,
   },
@@ -2713,7 +2677,7 @@ Array [
     "head": Object {
       "a": [Function],
     },
-    "id": "78",
+    "id": "77",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2763,7 +2727,7 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "77",
+    "id": "76",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2778,7 +2742,7 @@ Array [
     "head": Object {
       "a": [Function],
     },
-    "id": "78",
+    "id": "77",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2828,7 +2792,7 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "77",
+    "id": "76",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2916,7 +2880,7 @@ exports[`setBreakpointAtLine while loops 5`] = `
 Array [
   Object {
     "head": Object {},
-    "id": "110",
+    "id": "105",
     "name": "blockEnvironment",
     "tail": null,
   },
@@ -2924,7 +2888,7 @@ Array [
     "head": Object {
       "a": 6,
     },
-    "id": "108",
+    "id": "103",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2974,7 +2938,7 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "107",
+    "id": "102",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -2989,7 +2953,7 @@ Array [
     "head": Object {
       "a": 3,
     },
-    "id": "108",
+    "id": "103",
     "name": "programEnvironment",
     "tail": null,
   },
@@ -3039,7 +3003,7 @@ Array [
       "stream_reverse": [Function],
       "stream_to_list": [Function],
     },
-    "id": "107",
+    "id": "102",
     "name": "programEnvironment",
     "tail": null,
   },
