@@ -176,6 +176,20 @@ run() {
 	     ${LIB}/stream.js \
 	     ${LIB}/array.js \
 	     ${LIB}/pairmutator.js 
+
+	# Source §4 Typed
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_4_TYPED.md \
+	     -d ${DST}/"source_4_typed"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+	     ${LIB}/list.js \
+	     ${LIB}/stream.js \
+	     ${LIB}/array.js \
+	     ${LIB}/pairmutator.js \
+	     ${LIB}/mce.js
     
     # MISC
     
