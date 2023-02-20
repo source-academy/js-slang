@@ -216,7 +216,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       agenda.push(instr.breakMarkerInstr())
       agenda.push(instr.forInstr(init, test, update, command.body, command))
       agenda.push(test)
-      agenda.push(ast.identifier('undefined'))
+      agenda.push(instr.popInstr()) // Pop value from init assignment
+      agenda.push(init)
+      agenda.push(ast.identifier('undefined')) // Return undefined if there is no loop execution
     }
   },
 
@@ -669,6 +671,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const next = agenda.pop() as AgendaItem
     if (isInstr(next) && next.instrType == InstrType.CONTINUE_MARKER) {
       // Encountered continue mark, stop popping
+    } else if (isInstr(next) && next.instrType == InstrType.ENVIRONMENT) {
+      agenda.push(command)
+      agenda.push(next) // Let instruction evaluate to restore env
     } else {
       // Continue popping from agenda by pushing same instruction on agenda
       agenda.push(command)
@@ -681,6 +686,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const next = agenda.pop() as AgendaItem
     if (isInstr(next) && next.instrType == InstrType.BREAK_MARKER) {
       // Encountered break mark, stop popping
+    } else if (isInstr(next) && next.instrType == InstrType.ENVIRONMENT) {
+      agenda.push(command)
+      agenda.push(next) // Let instruction evaluate to restore env
     } else {
       // Continue popping from agenda by pushing same instruction on agenda
       agenda.push(command)

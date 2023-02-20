@@ -310,3 +310,24 @@ stream_ref(s,4)(22) === 22 && stream_ref(s,7)(pair('', '1')) === '1' && result;"
   "visualiseListResult": Array [],
 }
 `;
+
+exports[`while loops use block scoping instead of function scoping: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function test(){
+  let x = true;
+  while (true) {
+    let x = false;
+    break;
+  }
+  return x;
+}
+test();",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;

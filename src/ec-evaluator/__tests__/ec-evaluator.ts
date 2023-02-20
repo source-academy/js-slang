@@ -209,7 +209,7 @@ test('for loops use block scoping instead of function scoping', () => {
   ).toMatchInlineSnapshot(`true`)
 })
 
-test.skip('while loops use block scoping instead of function scoping', () => {
+test('while loops use block scoping instead of function scoping', () => {
   return expectResult(
     stripIndent`
     function test(){
