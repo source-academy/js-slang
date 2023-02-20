@@ -981,7 +981,7 @@ function hasTypeMismatchErrors(
         }
       }
       for (const visitedType of visitedTypeAliasesForExpectedType) {
-        if (visitedType.name === expectedType.name) {
+        if (isEqual(visitedType, expectedType)) {
           // Circular dependency, treat as type mismatch
           return true
         }
@@ -990,11 +990,7 @@ function hasTypeMismatchErrors(
       if (skipTypeAliasExpansion) {
         return true
       }
-      // Pair and List should not be added to visited type aliases
-      // as they can be used repeatedly without causing circular dependencies
-      if (expectedType.name !== 'Pair' && expectedType.name !== 'List') {
-        visitedTypeAliasesForExpectedType.push(expectedType)
-      }
+      visitedTypeAliasesForExpectedType.push(expectedType)
       // Expand type and continue typechecking
       const aliasType = lookupTypeAliasAndRemoveForAllTypes(node, expectedType)
       return hasTypeMismatchErrors(
@@ -1464,6 +1460,8 @@ function substituteVariableTypes(type: Type, typeVar: Variable, typeToSub: Type)
 
 /**
  * Combines all types provided in the parameters into one, removing duplicate types in the process.
+ * Type aliases encountered are not expanded as it is sufficient to compare the variable types at name level without expanding them;
+ * in fact, expanding type aliases here would lead to type aliases with circular dependencies being incorrectly flagged as not declared.
  */
 function mergeTypes(node: tsEs.Node, ...types: Type[]): Type {
   const mergedTypes: Type[] = []
