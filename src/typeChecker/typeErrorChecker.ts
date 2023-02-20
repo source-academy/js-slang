@@ -80,8 +80,7 @@ let env: TypeEnvironment = []
  * Checks program for type errors, and returns the program with all TS-related nodes removed.
  */
 export function checkForTypeErrors(program: tsEs.Program, inputContext: Context): es.Program {
-  // Deep copy type environment to avoid modifying type environment in the context,
-  // which might affect the type inference checker
+  // Set context as global variable
   context = inputContext
   // Deep copy type environment to avoid modifying type environment in the context,
   // which might affect the type inference checker
@@ -201,7 +200,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
     }
     case 'ConditionalExpression':
     case 'IfStatement': {
-      // Predicate type must be boolean/any
+      // Typecheck predicate against boolean
       const predicateType = typeCheckAndReturnType(node.test)
       checkForTypeMismatch(node, predicateType, tBool)
 
@@ -215,11 +214,11 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       const operator = node.operator
       switch (operator) {
         case '-':
-          // Only number/any type allowed
+          // Typecheck against number
           checkForTypeMismatch(node, argType, tNumber)
           return tNumber
         case '!':
-          // Only boolean/any type allowed
+          // Typecheck against boolean
           checkForTypeMismatch(node, argType, tBool)
           return tBool
         case 'typeof':
@@ -233,7 +232,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       return typeCheckAndReturnBinaryExpressionType(node)
     }
     case 'LogicalExpression': {
-      // Left type must be boolean/any
+      // Typecheck left type against boolean
       const leftType = typeCheckAndReturnType(node.left)
       checkForTypeMismatch(node, leftType, tBool)
 
@@ -275,7 +274,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       types.push(expectedReturnType)
       const fnType = tFunc(...types)
 
-      // Type check function body, creating new environment to store arg types, return type and function type
+      // Typecheck function body, creating new environment to store arg types, return type and function type
       pushEnv(env)
       params.forEach((param: tsEs.Identifier) => {
         setType(param.name, getTypeAnnotationType(param.typeAnnotation), env)
@@ -457,8 +456,8 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
     case 'MemberExpression':
       const indexType = typeCheckAndReturnType(node.property)
       const objectType = typeCheckAndReturnType(node.object)
-      // Index must be number
-      if (hasTypeMismatchErrors(node, indexType, tNumber, [], [])) {
+      // Typecheck index against number
+      if (hasTypeMismatchErrors(node, indexType, tNumber)) {
         context.errors.push(new InvalidIndexTypeError(node, formatTypeString(indexType, true)))
       }
       // Expression being accessed must be array
@@ -485,7 +484,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       }
     }
     case 'WhileStatement': {
-      // Predicate must be boolean
+      // Typecheck predicate against boolean
       const testType = typeCheckAndReturnType(node.test)
       checkForTypeMismatch(node, testType, tBool)
       return typeCheckAndReturnType(node.body)
@@ -497,7 +496,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
         typeCheckAndReturnType(node.init)
       }
       if (node.test) {
-        // Predicate must be boolean
+        // Typecheck predicate against boolean
         const testType = typeCheckAndReturnType(node.test)
         checkForTypeMismatch(node, testType, tBool)
       }
@@ -519,7 +518,8 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       const typeToCastTo = getTypeAnnotationType(node)
       const formatAsLiteral =
         typeContainsLiteralType(originalType) || typeContainsLiteralType(typeToCastTo)
-      if (hasTypeMismatchErrors(node, typeToCastTo, originalType, [], [])) {
+      // Type to cast to must have some overlap with original type
+      if (hasTypeMismatchErrors(node, typeToCastTo, originalType)) {
         context.errors.push(
           new TypecastError(
             node,
@@ -632,12 +632,8 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
           context.errors.push(new TypeAliasNameNotAllowedError(node, alias))
           break
         }
-        if (context.chapter >= 2 && (alias === 'Pair' || alias === 'List')) {
-          context.errors.push(new DuplicateTypeAliasError(node, alias))
-          break
-        }
         if (lookupTypeAlias(alias, env) !== undefined) {
-          // Only happens when attempting to declare type aliases that share names with predeclared types (e.g. Stream)
+          // Only happens when attempting to declare type aliases that share names with predeclared types (e.g. Pair, List)
           // Declaration of two type aliases with the same name will be caught as syntax error by parser
           context.errors.push(new DuplicateTypeAliasError(node, alias))
           break
@@ -646,7 +642,7 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         let type: BindableType = tAny
         if (node.typeParameters && node.typeParameters.params.length > 0) {
           const typeParams: Variable[] = []
-          // Add type parameters to enclosing environment
+          // Check validity of type parameters
           pushEnv(env)
           node.typeParameters.params.forEach(param => {
             if (param.type !== 'TSTypeParameter') {
@@ -657,12 +653,8 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
               context.errors.push(new TypeParameterNameNotAllowedError(param, name))
               return
             }
-            const typeVariable = tVar(name)
-            setTypeAlias(name, typeVariable, env)
-            typeParams.push(typeVariable)
+            typeParams.push(tVar(name))
           })
-          // Add own name to enclosing environment for handling recursive types
-          setTypeAlias(alias, tVar(alias, typeParams), env)
           type = tForAll(getTypeAnnotationType(node), typeParams)
           env.pop()
         } else {
@@ -691,12 +683,13 @@ function typeCheckAndReturnBinaryExpressionType(node: tsEs.BinaryExpression): Ty
     case '*':
     case '/':
     case '%':
-      // Return type number
+      // Typecheck both sides against number
       checkForTypeMismatch(node, leftType, tNumber)
       checkForTypeMismatch(node, rightType, tNumber)
+      // Return type number
       return tNumber
     case '+':
-      // Both sides can only be number, string, or any
+      // Typecheck both sides against number or string
       // However, the case where one side is string and other side is number is not allowed
       if (leftTypeString === 'number' || leftTypeString === 'string') {
         checkForTypeMismatch(node, rightType, leftType)
@@ -709,9 +702,9 @@ function typeCheckAndReturnBinaryExpressionType(node: tsEs.BinaryExpression): Ty
         return rightType
       }
 
-      // Return type is number | string if both left and right are neither number nor string
       checkForTypeMismatch(node, leftType, tUnion(tNumber, tString))
       checkForTypeMismatch(node, rightType, tUnion(tNumber, tString))
+      // Return type is number | string if both left and right are neither number nor string
       return tUnion(tNumber, tString)
     case '<':
     case '<=':
@@ -723,7 +716,7 @@ function typeCheckAndReturnBinaryExpressionType(node: tsEs.BinaryExpression): Ty
       if (context.chapter > 2 && (operator === '===' || operator === '!==')) {
         return tBool
       }
-      // Both sides can only be number, string, or any
+      // Typecheck both sides against number or string
       // However, case where one side is string and other side is number is not allowed
       if (leftTypeString === 'number' || leftTypeString === 'string') {
         checkForTypeMismatch(node, rightType, leftType)
@@ -734,9 +727,9 @@ function typeCheckAndReturnBinaryExpressionType(node: tsEs.BinaryExpression): Ty
         return tBool
       }
 
-      // Return type boolean
       checkForTypeMismatch(node, leftType, tUnion(tNumber, tString))
       checkForTypeMismatch(node, rightType, tUnion(tNumber, tString))
+      // Return type boolean
       return tBool
     default:
       throw new TypecheckError(node, 'Unknown operator')
@@ -765,7 +758,7 @@ function typeCheckAndReturnArrowFunctionType(node: tsEs.ArrowFunctionExpression)
     return tAny
   }
 
-  // Type check function body, creating new environment to store arg types and return type
+  // Typecheck function body, creating new environment to store arg types and return type
   pushEnv(env)
   params.forEach((param: tsEs.Identifier) => {
     setType(param.name, getTypeAnnotationType(param.typeAnnotation), env)
@@ -801,9 +794,11 @@ function getTypeVariableMappings(
   actualType: Type,
   expectedType: Type
 ): [string, Type][] {
+  // If type variable mapping is found, terminate early
   if (expectedType.kind === 'variable') {
     return [[expectedType.name, actualType]]
   }
+  // If actual type is a type reference, expand type first
   if (actualType.kind === 'variable') {
     actualType = lookupTypeAliasAndRemoveForAllTypes(node, actualType)
   }
@@ -865,13 +860,13 @@ function getTypeVariableMappings(
 }
 
 /**
- * Checks if the two given types are equal.
- * If not equal, adds type mismatch error to context.
+ * Checks if the actual type matches the expected type.
+ * If not, adds type mismatch error to context.
  */
 function checkForTypeMismatch(node: tsEs.Node, actualType: Type, expectedType: Type): void {
   const formatAsLiteral =
     typeContainsLiteralType(expectedType) || typeContainsLiteralType(actualType)
-  if (hasTypeMismatchErrors(node, actualType, expectedType, [], [])) {
+  if (hasTypeMismatchErrors(node, actualType, expectedType)) {
     context.errors.push(
       new TypeMismatchError(
         node,
@@ -884,8 +879,8 @@ function checkForTypeMismatch(node: tsEs.Node, actualType: Type, expectedType: T
 
 /**
  * Returns true if given type contains literal type, false otherwise.
- * This is necessary to determine whether the type mismatch errors
- * should be formatted as literal type or primitive type.
+ * This is necessary to determine whether types should be formatted as
+ * literal type or primitive type in error messages.
  */
 function typeContainsLiteralType(type: Type): boolean {
   switch (type.kind) {
@@ -909,13 +904,23 @@ function typeContainsLiteralType(type: Type): boolean {
 /**
  * Returns true if the actual type and the expected type do not match, false otherwise.
  * The two types will not match if the intersection of the two types is empty.
+ *
+ * @param node Current node being checked
+ * @param actualType Type being checked
+ * @param expectedType Type the actual type is being checked against
+ * @param visitedTypeAliasesForActualType Array that keeps track of previously encountered type aliases
+ * for actual type to prevent infinite recursion
+ * @param visitedTypeAliasesForExpectedType Array that keeps track of previously encountered type aliases
+ * for expected type to prevent infinite recursion
+ * @param skipTypeAliasExpansion If true, type aliases are not expanded (e.g. in type alias declarations)
+ * @returns true if the actual type and the expected type do not match, false otherwise
  */
 function hasTypeMismatchErrors(
   node: tsEs.Node,
   actualType: Type,
   expectedType: Type,
-  visitedTypeAliasesForActualType: Variable[],
-  visitedTypeAliasesForExpectedType: Variable[],
+  visitedTypeAliasesForActualType: Variable[] = [],
+  visitedTypeAliasesForExpectedType: Variable[] = [],
   skipTypeAliasExpansion: boolean = false
 ): boolean {
   if (isEqual(actualType, tAny) || isEqual(expectedType, tAny)) {
@@ -950,8 +955,7 @@ function hasTypeMismatchErrors(
   switch (expectedType.kind) {
     case 'variable':
       if (actualType.kind === 'variable') {
-        // If both are variable types, compare without using type saved in type environment
-        // name and type arguments must match
+        // If both are variable types, types match if both name and type arguments match
         if (expectedType.name === actualType.name) {
           if (expectedType.typeArgs === undefined || expectedType.typeArgs.length === 0) {
             return actualType.typeArgs === undefined ? false : actualType.typeArgs.length !== 0
@@ -978,18 +982,20 @@ function hasTypeMismatchErrors(
       }
       for (const visitedType of visitedTypeAliasesForExpectedType) {
         if (visitedType.name === expectedType.name) {
-          // Circular dependency, terminate type check
+          // Circular dependency, treat as type mismatch
           return true
         }
       }
+      // Skips expansion, treat as type mismatch
       if (skipTypeAliasExpansion) {
         return true
       }
-      // Pair and List need not be added to visited type alias
+      // Pair and List should not be added to visited type aliases
       // as they can be used repeatedly without causing circular dependencies
       if (expectedType.name !== 'Pair' && expectedType.name !== 'List') {
         visitedTypeAliasesForExpectedType.push(expectedType)
       }
+      // Expand type and continue typechecking
       const aliasType = lookupTypeAliasAndRemoveForAllTypes(node, expectedType)
       return hasTypeMismatchErrors(
         node,
@@ -1251,7 +1257,7 @@ function getAnnotatedType(typeNode: tsEs.TSType): Type {
       throw new TypecheckError(typeNode, 'Intersection types are not allowed')
     case 'TSTypeReference':
       const name = typeNode.typeName.name
-      // Return variable type which saves the name and type arguments
+      // Save name and type arguments in variable type
       if (typeNode.typeParameters) {
         const typesToSub: Type[] = []
         for (const paramNode of typeNode.typeParameters.params) {
@@ -1271,7 +1277,7 @@ function getAnnotatedType(typeNode: tsEs.TSType): Type {
 }
 
 /**
- * Converts array of function parameters into array of types.
+ * Converts an array of function parameters into an array of types.
  */
 function getParamTypes(params: (tsEs.Identifier | tsEs.RestElement)[]): Type[] {
   return params.map(param => getTypeAnnotationType(param.typeAnnotation))
@@ -1279,7 +1285,6 @@ function getParamTypes(params: (tsEs.Identifier | tsEs.RestElement)[]): Type[] {
 
 /**
  * Returns the head type of the input type.
- * If the type is not union, pair or list, returns the type itself.
  */
 function getHeadType(node: tsEs.Node, type: Type): Type {
   switch (type.kind) {
@@ -1298,7 +1303,6 @@ function getHeadType(node: tsEs.Node, type: Type): Type {
 
 /**
  * Returns the tail type of the input type.
- * If the type is not union, pair or list, returns the type itself.
  */
 function getTailType(node: tsEs.Node, type: Type): Type {
   switch (type.kind) {
