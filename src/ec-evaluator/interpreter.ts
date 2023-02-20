@@ -43,7 +43,7 @@ export class Agenda extends Stack<AgendaItem> {
   public constructor(program: es.Program) {
     super()
     // Evaluation of last statement is undefined if stash is empty
-    this.push(instr.pushUndefInstr())
+    this.push(instr.pushUndefIfNeededInstr())
 
     // Load program into agenda stack
     this.push(program)
@@ -245,7 +245,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const init = declaration.init!
 
     agenda.push(instr.popInstr())
-    agenda.push(instr.assignmentInstr(id.name, command.kind === 'const', true, command))
+    agenda.push(instr.assmtInstr(id.name, command.kind === 'const', true, command))
     agenda.push(init)
   },
 
@@ -296,7 +296,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       agenda.push(command.left.object)
     } else if (command.left.type === 'Identifier') {
       const id = command.left
-      agenda.push(instr.assignmentInstr(id.name, false, false, command))
+      agenda.push(instr.assmtInstr(id.name, false, false, command))
       agenda.push(command.right)
     }
   },
@@ -412,7 +412,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (test) {
       agenda.push(command)
       agenda.push(command.test)
-      agenda.push(instr.pushUndefInstr()) // The loop returns undefined if the stash is empty
+      agenda.push(instr.pushUndefIfNeededInstr()) // The loop returns undefined if the stash is empty
       agenda.push(command.body)
       agenda.push(instr.popInstr()) // Pop previous body value
     }

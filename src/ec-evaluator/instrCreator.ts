@@ -33,7 +33,7 @@ export const whileInstr = (
   srcNode
 })
 
-export const assignmentInstr = (
+export const assmtInstr = (
   symbol: string,
   constant: boolean,
   declaration: boolean,
@@ -82,7 +82,7 @@ export const envInstr = (env: Environment): EnvInstr => ({
   env
 })
 
-export const pushUndefInstr = (): Instr => ({
+export const pushUndefIfNeededInstr = (): Instr => ({
   instrType: InstrType.PUSH_UNDEFINED_IF_NEEDED
 })
 
