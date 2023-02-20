@@ -1388,7 +1388,7 @@ function lookupTypeAliasAndRemoveForAllTypes(node: tsEs.Node, varType: Variable)
   }
   // Check type parameters
   if (aliasType.typeParams === undefined) {
-    if (varType.typeArgs?.length !== 0) {
+    if (varType.typeArgs !== undefined && varType.typeArgs.length > 0) {
       context.errors.push(new TypeNotGenericError(node, varType.name))
     }
     return tAny

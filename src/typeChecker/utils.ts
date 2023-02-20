@@ -129,7 +129,7 @@ export function formatTypeString(type: Type, formatAsLiteral?: boolean): string 
         ? `(${elementTypeString})[]`
         : `${elementTypeString}[]`
     case 'variable':
-      if (type.typeArgs && type.typeArgs.length > 0) {
+      if (type.typeArgs !== undefined && type.typeArgs.length > 0) {
         return `${type.name}<${type.typeArgs
           .map(param => formatTypeString(param, formatAsLiteral))
           .join(', ')}>`
