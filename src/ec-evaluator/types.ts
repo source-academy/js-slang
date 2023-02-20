@@ -7,6 +7,7 @@ import { Agenda, Stash } from './interpreter'
 export enum InstrType {
   RESET = 'Reset',
   WHILE = 'While',
+  FOR = 'For',
   ASSIGNMENT = 'Assignment',
   UNARY_OP = 'UnaryOperation',
   BINARY_OP = 'BinaryOperation',
@@ -28,6 +29,14 @@ interface BaseInstr {
 
 export interface WhileInstr extends BaseInstr {
   test: es.Expression
+  body: es.Statement
+  srcNode: es.Node
+}
+
+export interface ForInstr extends BaseInstr {
+  init: es.VariableDeclaration | es.Expression
+  test: es.Expression
+  update: es.Expression
   body: es.Statement
   srcNode: es.Node
 }

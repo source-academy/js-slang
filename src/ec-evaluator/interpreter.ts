@@ -28,6 +28,7 @@ import {
   BranchInstr,
   CmdEvaluator,
   EnvInstr,
+  ForInstr,
   Instr,
   InstrType,
   UnOpInstr,
@@ -210,10 +211,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         ])
       )
     } else {
-      // Append update statement at the end of loop body
-      const whileBody = ast.blockStatement([command.body, ast.expressionStatement(update)])
-      agenda.push(ast.whileStatement(whileBody, test))
-      agenda.push(init)
+      agenda.push(instr.forInstr(init, test, update, command.body, command))
+      agenda.push(test)
+      agenda.push(ast.identifier('undefined'))
     }
   },
 
@@ -412,6 +412,26 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (test) {
       agenda.push(command)
       agenda.push(command.test)
+      agenda.push(instr.pushUndefIfNeededInstr()) // The loop returns undefined if the stash is empty
+      agenda.push(command.body)
+      agenda.push(instr.popInstr()) // Pop previous body value
+    }
+  },
+
+  [InstrType.FOR]: function (command: ForInstr, context: Context, agenda: Agenda, stash: Stash) {
+    const test = stash.pop()
+
+    // Check if test condition is a boolean
+    const error = rttc.checkIfStatement(command.srcNode, test, context.chapter)
+    if (error) {
+      handleRuntimeError(context, error)
+    }
+
+    if (test) {
+      agenda.push(command)
+      agenda.push(command.test)
+      agenda.push(instr.popInstr()) // Pop value from update
+      agenda.push(command.update)
       agenda.push(instr.pushUndefIfNeededInstr()) // The loop returns undefined if the stash is empty
       agenda.push(command.body)
       agenda.push(instr.popInstr()) // Pop previous body value

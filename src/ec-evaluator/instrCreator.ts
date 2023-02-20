@@ -12,6 +12,7 @@ import {
   BinOpInstr,
   BranchInstr,
   EnvInstr,
+  ForInstr,
   Instr,
   InstrType,
   UnOpInstr,
@@ -29,6 +30,21 @@ export const whileInstr = (
 ): WhileInstr => ({
   instrType: InstrType.WHILE,
   test,
+  body,
+  srcNode
+})
+
+export const forInstr = (
+  init: es.VariableDeclaration | es.Expression,
+  test: es.Expression,
+  update: es.Expression,
+  body: es.Statement,
+  srcNode: es.Node
+): ForInstr => ({
+  instrType: InstrType.FOR,
+  init,
+  test,
+  update,
   body,
   srcNode
 })
