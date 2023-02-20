@@ -99,11 +99,13 @@ export type CmdEvaluator = (
   stash: Stash
 ) => Value
 
-// Special value that cannot be found on the stash so is safe to return
+// Special class that cannot be found on the stash so is safe to be used
 // as an indicator of a breakpoint from running the ECE machine
-export interface Break {
-  break: boolean
-}
+export class ECEBreak {}
+
+// Special value that cannot be found on the stash so is safe to be used
+// as an indicator of an error from running the ECE machine
+export class ECError{}
 
 // Tags taken from MicroPython interpreter
 // export enum Tags {

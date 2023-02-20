@@ -203,17 +203,8 @@ async function runNative(
 }
 
 function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  try {
-    context.runtime.isRunning = true
-    const value = ECEvaluate(program, context)
-    return ECEResultPromise(context, value)
-  } catch (error) {
-    return new Promise((resolve, reject) => {
-      resolve({ status: 'error' })
-    })
-  } finally {
-    context.runtime.isRunning = false
-  }
+  const value = ECEvaluate(program, context)
+  return ECEResultPromise(context, value)
 }
 
 export async function sourceRunner(

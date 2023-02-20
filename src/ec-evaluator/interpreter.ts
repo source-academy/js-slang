@@ -27,6 +27,8 @@ import {
   BinOpInstr,
   BranchInstr,
   CmdEvaluator,
+  ECEBreak,
+  ECError,
   EnvInstr,
   ForInstr,
   Instr,
@@ -69,35 +71,50 @@ export class Stash extends Stack<Value> {
  * @returns The result of running the ECE machine.
  */
 export function evaluate(program: es.Program, context: Context): Value {
-  context.runtime.agenda = new Agenda(program)
-  context.runtime.stash = new Stash()
-  return runECEMachine(context, context.runtime.agenda, context.runtime.stash)
+  try {
+    context.runtime.isRunning = true
+    context.runtime.agenda = new Agenda(program)
+    context.runtime.stash = new Stash()
+    return runECEMachine(context, context.runtime.agenda, context.runtime.stash)
+  } catch (error) {
+    return new ECError()
+  } finally {
+    context.runtime.isRunning = false
+  }
 }
 
 /**
  * Function that is called when a user wishes to resume evaluation after
  * hitting a breakpoint.
+ * This should only be called after the first 'evaluate' function has been called so that
+ * context.runtime.agenda and context.runtime.stash are defined.
  * @param context The context to continue evaluating the program in.
  * @returns The result of running the ECE machine.
  */
 export function resumeEvaluate(context: Context) {
-  return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!)
-  // Agenda and stash should not be undefined since resumeEvaluate should only be called when
-  // after the initial evaluate so context.runtime.agenda and context.runtime.stash
-  // should be initialised.
+  try {
+    context.runtime.isRunning = true
+    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!)
+  } catch (error) {
+    return new ECError()
+  } finally {
+    context.runtime.isRunning = false
+  }
 }
 
 /**
- * Function that helps decide whether the function is finished evaluating
- * or suspended depending on the breakpoints.
+ * Function that returns the appropriate Promise<Result> given the output of ec evaluating, depending
+ * on whether the program is finished evaluating, ran into a breakpoint or ran into an error.
  * @param context The context of the program.
  * @param value The value of ec evaluating the program.
  * @returns The corresponding promise.
  */
 export function ECEResultPromise(context: Context, value: Value): Promise<Result> {
   return new Promise((resolve, reject) => {
-    if (value && value.break) {
+    if (value instanceof ECEBreak) {
       resolve({ status: 'suspended-ec-eval', context })
+    } else if (value instanceof ECError) {
+      resolve({status: 'error'})
     } else {
       resolve({ status: 'finished', context, value })
     }
@@ -125,7 +142,7 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash) {
         // We can put this under isNode since context.runtime.break
         // will only be updated after a debugger statement and so we will
         // run into a node immediately after.
-        return { break: true }
+        return new ECEBreak()
       }
       context.runtime.nodes.shift()
     } else {
@@ -886,6 +903,12 @@ const createEnvironment = (
   return environment
 }
 
+/**
+ * This function can be used to check for a stack overflow.
+ * The current limit is set to be an agenda size of 1.0 x 10^5, if the agenda 
+ * flows beyond this limit an error is thrown.
+ * This corresponds to about 10mb of space according to tests ran.
+ */
 const checkStackOverFlow = (context: Context, agenda: Agenda) => {
   if (agenda.size() > 100000) {
     const stacks: es.CallExpression[] = []
