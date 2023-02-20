@@ -119,6 +119,20 @@ export const markerInstr = (): Instr => ({
   instrType: InstrType.MARKER
 })
 
-// export const contMarkerInstr = (): IInstr => ({ instrType: InstrTypes.CONTINUE_MARKER })
+export const contInstr = (): Instr => ({
+  instrType: InstrType.CONTINUE
+})
+
+export const contMarkerInstr = (): Instr => ({
+  instrType: InstrType.CONTINUE_MARKER
+})
+
+export const breakInstr = (): Instr => ({
+  instrType: InstrType.BREAK
+})
+
+export const breakMarkerInstr = (): Instr => ({
+  instrType: InstrType.BREAK_MARKER
+})
 
 // export const breakMarkerInstr = (): IInstr => ({ instrType: InstrTypes.BREAK_MARKER })

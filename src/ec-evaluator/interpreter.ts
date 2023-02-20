@@ -34,7 +34,7 @@ import {
   UnOpInstr,
   WhileInstr
 } from './types'
-import { handleSequence, isIdentifier, isNode, Stack } from './utils'
+import { handleSequence, isIdentifier, isInstr, isNode, Stack } from './utils'
 
 /**
  * The agenda is a list of commands that still needs to be executed by the machine.
@@ -145,6 +145,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   /**
    * Statements
    */
+
   Program: function (command: es.BlockStatement, context: Context, agenda: Agenda, stash: Stash) {
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
@@ -166,6 +167,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   },
 
   WhileStatement: function (command: es.WhileStatement, context: Context, agenda: Agenda) {
+    agenda.push(instr.breakMarkerInstr())
     agenda.push(instr.whileInstr(command.test, command.body, command))
     agenda.push(command.test)
     agenda.push(ast.identifier('undefined')) // Return undefined if there is no loop execution
@@ -211,6 +213,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         ])
       )
     } else {
+      agenda.push(instr.breakMarkerInstr())
       agenda.push(instr.forInstr(init, test, update, command.body, command))
       agenda.push(test)
       agenda.push(ast.identifier('undefined'))
@@ -274,6 +277,24 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (command.argument) {
       agenda.push(command.argument)
     }
+  },
+
+  ContinueStatement: function (
+    command: es.ContinueStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    agenda.push(instr.contInstr())
+  },
+
+  BreakStatement: function (
+    command: es.BreakStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    agenda.push(instr.breakInstr())
   },
 
   /**
@@ -412,6 +433,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (test) {
       agenda.push(command)
       agenda.push(command.test)
+      agenda.push(instr.contMarkerInstr())
       agenda.push(instr.pushUndefIfNeededInstr()) // The loop returns undefined if the stash is empty
       agenda.push(command.body)
       agenda.push(instr.popInstr()) // Pop previous body value
@@ -432,6 +454,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       agenda.push(command.test)
       agenda.push(instr.popInstr()) // Pop value from update
       agenda.push(command.update)
+      agenda.push(instr.contMarkerInstr())
       agenda.push(instr.pushUndefIfNeededInstr()) // The loop returns undefined if the stash is empty
       agenda.push(command.body)
       agenda.push(instr.popInstr()) // Pop previous body value
@@ -640,44 +663,31 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const array = stash.pop()
     array[index] = value
     stash.push(value)
-  }
+  },
 
-  // [InstrTypes.ARRAY_LENGTH]: function (
-  //   command: IInstr,
-  //   context: Context,
-  //   agenda: Agenda,
-  //   stash: Stash
-  // ) {
-  //   const array = stash.pop()
-  //   stash.push(array.length)
-  // }
+  [InstrType.CONTINUE]: function (command: Instr, context: Context, agenda: Agenda, stash: Stash) {
+    const next = agenda.pop() as AgendaItem
+    if (isInstr(next) && next.instrType == InstrType.CONTINUE_MARKER) {
+      // Encountered continue mark, stop popping
+    } else {
+      // Continue popping from agenda by pushing same instruction on agenda
+      agenda.push(command)
+    }
+  },
 
-  // [InstrTypes.CONTINUE]: function (
-  //   command: IInstr,
-  //   context: Context,
-  //   agenda: Agenda,
-  //   stash: Stash
-  // ) {
-  //   const next = stash.pop()
-  //   if (!isInstr(next) || next.instrType !== InstrTypes.CONTINUE_MARKER) {
-  //     // If no continue marker found,
-  //     // continue loop by pushing same instruction back on agenda
-  //     agenda.push(command)
-  //   }
-  // },
+  [InstrType.CONTINUE_MARKER]: function () {},
 
-  // [InstrTypes.BREAK]: function (command: IInstr, context: Context, agenda: Agenda, stash: Stash) {
-  //   const next = stash.pop()
-  //   if (!isInstr(next) || next.instrType !== InstrTypes.BREAK_MARKER) {
-  //     // If no break marker found
-  //     // continue loop by pushing same instruction back on agenda
-  //     agenda.push(command)
-  //   }
-  // },
+  [InstrType.BREAK]: function (command: Instr, context: Context, agenda: Agenda, stash: Stash) {
+    const next = agenda.pop() as AgendaItem
+    if (isInstr(next) && next.instrType == InstrType.BREAK_MARKER) {
+      // Encountered break mark, stop popping
+    } else {
+      // Continue popping from agenda by pushing same instruction on agenda
+      agenda.push(command)
+    }
+  },
 
-  // [InstrTypes.CONTINUE_MARKER]: function () {},
-
-  // [InstrTypes.BREAK_MARKER]: function () {}
+  [InstrType.BREAK_MARKER]: function () {}
 }
 
 export const createBlockEnvironment = (

@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import {} from '../utils/astCreator'
 import { popInstr } from './instrCreator'
-import { AgendaItem } from './types'
+import { AgendaItem, Instr } from './types'
 
 /**
  * Stack is implemented for agenda and stash registers.
@@ -40,6 +40,16 @@ export class Stack<T> implements IStack<T> {
   public size(): number {
     return this.storage.length
   }
+}
+
+/**
+ * Typeguard for Instr to distinguish between program statements and instructions.
+ *
+ * @param command An AgendaItem
+ * @returns true if the AgendaItem is an instruction and false otherwise.
+ */
+export const isInstr = (command: AgendaItem): command is Instr => {
+  return (command as Instr).instrType !== undefined
 }
 
 /**
@@ -96,7 +106,7 @@ export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
 }
 
 /**
- * To determine if an agenda item is value producing. JavaScript distinguishes value producing
+ * To determine if an agenda item is value producing. JavaScript distinguishes valu producing
  * statements and non-value producing statements.
  * Refer to https://sourceacademy.nus.edu.sg/sicpjs/4.1.2 exercise 4.8.
  *
@@ -108,6 +118,8 @@ export const valueProducing = (command: es.Node): boolean => {
   return (
     type !== 'VariableDeclaration' &&
     type !== 'FunctionDeclaration' &&
+    type !== 'ContinueStatement' &&
+    type !== 'BreakStatement' &&
     (type !== 'BlockStatement' || command.body.some(valueProducing))
   )
 }

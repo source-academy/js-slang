@@ -20,7 +20,11 @@ export enum InstrType {
   ARRAY_ACCESS = 'ArrayAccess',
   ARRAY_ASSIGNMENT = 'ArrayAssignment',
   ARRAY_LENGTH = 'ArrayLength',
-  MARKER = 'Marker'
+  MARKER = 'Marker',
+  CONTINUE = 'Continue',
+  CONTINUE_MARKER = 'ContinueMarker',
+  BREAK = 'Break',
+  BREAK_MARKER = 'BreakMarker'
 }
 
 interface BaseInstr {
