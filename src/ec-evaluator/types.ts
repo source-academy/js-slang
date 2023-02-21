@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { Context } from '..'
-import { Environment, Value } from '../types'
+import { Environment } from '../types'
 import { Agenda, Stash } from './interpreter'
 
 export enum InstrType {
@@ -97,7 +97,7 @@ export type CmdEvaluator = (
   context: Context,
   agenda: Agenda,
   stash: Stash
-) => Value
+) => void
 
 // Special class that cannot be found on the stash so is safe to be used
 // as an indicator of a breakpoint from running the ECE machine
@@ -106,55 +106,3 @@ export class ECEBreak {}
 // Special value that cannot be found on the stash so is safe to be used
 // as an indicator of an error from running the ECE machine
 export class ECError {}
-
-// Tags taken from MicroPython interpreter
-// export enum Tags {
-//   /**
-//    * Source §3 expressions
-//    */
-//   Lit = 'lit',
-//   Nam = 'nam',
-//   UnOp = 'unop',
-//   BinOp = 'binop',
-//   Log = 'log',
-//   CondExpr = 'cond_expr',
-//   App = 'app',
-//   Assmt = 'assmt',
-//   Lam = 'lam',
-//   Spread = 'spread',
-//   ArrLit = 'arr_lit',
-//   ArrAcc = 'arr_acc',
-//   ArrAssmt = 'arr_asmt',
-
-//   /**
-//    * Source §3 Statements
-//    */
-//   Import = 'import',
-//   Seq = 'seq',
-//   CondStmt = 'cond_stmt',
-//   Blk = 'blk',
-//   Let = 'let',
-//   Const = 'const',
-//   Ret = 'ret',
-//   Fun = 'fun',
-//   While = 'while',
-//   For = 'for',
-//   Prop = 'prop',
-
-//   /**
-//    * CSE machine instructions
-//    */
-//   ResetInstr = 'reset_i',
-//   WhileInstr = 'while_i',
-//   AssmtInstr = 'assmt_i',
-//   UnOpInstr = 'unop_i',
-//   BinOpInstr = 'binop_i',
-//   PopInstr = 'pop_i',
-//   AppInstr = 'app_i',
-//   BranchInstr = 'branch_i',
-//   EnvInstr = 'env_i',
-//   PushUndefInstr = 'push_undefined_if_needed_i',
-//   ArrLitInstr = 'arr_lit_i',
-//   ArrAccInstr = 'arr_acc_i',
-//   ArrAssmtInstr = 'arr_assmt_i'
-// }

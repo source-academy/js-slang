@@ -7,14 +7,13 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { uniqueId } from 'lodash'
 
 import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Environment, Frame, Result, Value } from '../types'
+import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -36,7 +35,25 @@ import {
   UnOpInstr,
   WhileInstr
 } from './types'
-import { handleSequence, isIdentifier, isInstr, isNode, Stack } from './utils'
+import {
+  checkNumberOfArguments,
+  checkStackOverFlow,
+  createBlockEnvironment,
+  createEnvironment,
+  currentEnvironment,
+  declareFunctionsAndVariables,
+  defineVariable,
+  getVariable,
+  handleRuntimeError,
+  handleSequence,
+  isInstr,
+  isNode,
+  popEnvironment,
+  pushEnvironment,
+  reduceConditional,
+  setVariable,
+  Stack
+} from './utils'
 
 /**
  * The agenda is a list of commands that still needs to be executed by the machine.
@@ -713,228 +730,4 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   },
 
   [InstrType.BREAK_MARKER]: function () {}
-}
-
-export const createBlockEnvironment = (
-  context: Context,
-  name = 'blockEnvironment',
-  head: Frame = {}
-): Environment => {
-  return {
-    name,
-    tail: currentEnvironment(context),
-    head,
-    id: uniqueId()
-  }
-}
-
-const handleRuntimeError = (context: Context, error: RuntimeSourceError) => {
-  context.errors.push(error)
-  context.runtime.environments = context.runtime.environments.slice(
-    -context.numberOfOuterEnvironments
-  )
-  throw error
-}
-
-const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
-
-function declareIdentifier(context: Context, name: string, node: es.Node) {
-  const environment = currentEnvironment(context)
-  if (environment.head.hasOwnProperty(name)) {
-    const descriptors = Object.getOwnPropertyDescriptors(environment.head)
-
-    return handleRuntimeError(
-      context,
-      new errors.VariableRedeclaration(node, name, descriptors[name].writable)
-    )
-  }
-  environment.head[name] = DECLARED_BUT_NOT_YET_ASSIGNED
-  return environment
-}
-
-function declareVariables(context: Context, node: es.VariableDeclaration) {
-  for (const declaration of node.declarations) {
-    declareIdentifier(context, (declaration.id as es.Identifier).name, node)
-  }
-}
-
-function declareFunctionsAndVariables(context: Context, node: es.BlockStatement) {
-  for (const statement of node.body) {
-    switch (statement.type) {
-      case 'VariableDeclaration':
-        declareVariables(context, statement)
-        break
-      case 'FunctionDeclaration':
-        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
-        break
-    }
-  }
-}
-
-const currentEnvironment = (context: Context) => context.runtime.environments[0]
-
-// const replaceEnvironment = (context: Context, environment: Environment) => {
-//   context.runtime.environments[0] = environment
-//   context.runtime.environmentTree.insert(environment)
-// }
-
-const popEnvironment = (context: Context) => context.runtime.environments.shift()
-
-export const pushEnvironment = (context: Context, environment: Environment) => {
-  context.runtime.environments.unshift(environment)
-  context.runtime.environmentTree.insert(environment)
-}
-
-function defineVariable(
-  context: Context,
-  name: string,
-  value: Value,
-  constant = false,
-  node: es.VariableDeclaration
-) {
-  const environment = currentEnvironment(context)
-
-  if (environment.head[name] !== DECLARED_BUT_NOT_YET_ASSIGNED) {
-    return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
-  }
-
-  Object.defineProperty(environment.head, name, {
-    value,
-    writable: !constant,
-    enumerable: true
-  })
-
-  return environment
-}
-
-const getVariable = (context: Context, name: string, node: es.Identifier) => {
-  let environment: Environment | null = currentEnvironment(context)
-  while (environment) {
-    if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
-        return handleRuntimeError(context, new errors.UnassignedVariable(name, node))
-      } else {
-        return environment.head[name]
-      }
-    } else {
-      environment = environment.tail
-    }
-  }
-  return handleRuntimeError(context, new errors.UndefinedVariable(name, node))
-}
-
-const setVariable = (context: Context, name: string, value: any, node: es.AssignmentExpression) => {
-  let environment: Environment | null = currentEnvironment(context)
-  while (environment) {
-    if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
-        break
-      }
-      const descriptors = Object.getOwnPropertyDescriptors(environment.head)
-      if (descriptors[name].writable) {
-        environment.head[name] = value
-        return undefined
-      }
-      return handleRuntimeError(context, new errors.ConstAssignment(node, name))
-    } else {
-      environment = environment.tail
-    }
-  }
-  return handleRuntimeError(context, new errors.UndefinedVariable(name, node))
-}
-
-const checkNumberOfArguments = (
-  context: Context,
-  callee: Closure | Value,
-  args: Value[],
-  exp: es.CallExpression
-) => {
-  if (callee instanceof Closure) {
-    // User-defined or Pre-defined functions
-    const params = callee.node.params
-    const hasVarArgs = params[params.length - 1]?.type === 'RestElement'
-    if (hasVarArgs ? params.length - 1 > args.length : params.length !== args.length) {
-      return handleRuntimeError(
-        context,
-        new errors.InvalidNumberOfArguments(
-          exp,
-          hasVarArgs ? params.length - 1 : params.length,
-          args.length,
-          hasVarArgs
-        )
-      )
-    }
-  } else {
-    // Pre-built functions
-    const hasVarArgs = callee.minArgsNeeded != undefined
-    if (hasVarArgs ? callee.minArgsNeeded > args.length : callee.length !== args.length) {
-      return handleRuntimeError(
-        context,
-        new errors.InvalidNumberOfArguments(
-          exp,
-          hasVarArgs ? callee.minArgsNeeded : callee.length,
-          args.length,
-          hasVarArgs
-        )
-      )
-    }
-  }
-  return undefined
-}
-
-const createEnvironment = (
-  closure: Closure,
-  args: Value[],
-  callExpression: es.CallExpression
-): Environment => {
-  const environment: Environment = {
-    name: isIdentifier(callExpression.callee) ? callExpression.callee.name : closure.functionName,
-    tail: closure.environment,
-    head: {},
-    id: uniqueId(),
-    callExpression: {
-      ...callExpression,
-      arguments: args.map(ast.primitive)
-    }
-  }
-  closure.node.params.forEach((param, index) => {
-    environment.head[(param as es.Identifier).name] = args[index]
-  })
-  return environment
-}
-
-/**
- * This function can be used to check for a stack overflow.
- * The current limit is set to be an agenda size of 1.0 x 10^5, if the agenda
- * flows beyond this limit an error is thrown.
- * This corresponds to about 10mb of space according to tests ran.
- */
-const checkStackOverFlow = (context: Context, agenda: Agenda) => {
-  if (agenda.size() > 100000) {
-    const stacks: es.CallExpression[] = []
-    let counter = 0
-    for (
-      let i = 0;
-      counter < errors.MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW &&
-      i < context.runtime.environments.length;
-      i++
-    ) {
-      if (context.runtime.environments[i].callExpression) {
-        stacks.unshift(context.runtime.environments[i].callExpression!)
-        counter++
-      }
-    }
-    handleRuntimeError(
-      context,
-      new errors.MaximumStackLimitExceeded(context.runtime.nodes[0], stacks)
-    )
-  }
-}
-
-/**
- * This function is used for ConditionalExpressions and IfStatements, to create the sequence
- * of agenda items to be added.
- */
-const reduceConditional = (node: es.IfStatement | es.ConditionalExpression): AgendaItem[] => {
-  return [instr.branchInstr(node.consequent, node.alternate, node), node.test]
 }

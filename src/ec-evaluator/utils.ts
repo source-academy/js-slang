@@ -1,7 +1,14 @@
 import * as es from 'estree'
+import { uniqueId } from 'lodash'
 
-import {} from '../utils/astCreator'
-import { popInstr } from './instrCreator'
+import { Context } from '..'
+import * as errors from '../errors/errors'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import Closure from '../interpreter/closure'
+import { Environment, Frame, Value } from '../types'
+import * as ast from '../utils/astCreator'
+import * as instr from './instrCreator'
+import { Agenda } from './interpreter'
 import { AgendaItem, Instr } from './types'
 
 /**
@@ -98,11 +105,21 @@ export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
   let valueProduced = false
   for (const command of seq) {
     if (valueProducing(command)) {
-      valueProduced ? result.push(popInstr()) : (valueProduced = true)
+      valueProduced ? result.push(instr.popInstr()) : (valueProduced = true)
     }
     result.push(command)
   }
   return result.reverse()
+}
+
+/**
+ * This function is used for ConditionalExpressions and IfStatements, to create the sequence
+ * of agenda items to be added.
+ */
+export const reduceConditional = (
+  node: es.IfStatement | es.ConditionalExpression
+): AgendaItem[] => {
+  return [instr.branchInstr(node.consequent, node.alternate, node), node.test]
 }
 
 /**
@@ -122,4 +139,228 @@ export const valueProducing = (command: es.Node): boolean => {
     type !== 'BreakStatement' &&
     (type !== 'BlockStatement' || command.body.some(valueProducing))
   )
+}
+
+/**
+ * Environments
+ */
+
+export const currentEnvironment = (context: Context) => context.runtime.environments[0]
+
+export const createEnvironment = (
+  closure: Closure,
+  args: Value[],
+  callExpression: es.CallExpression
+): Environment => {
+  const environment: Environment = {
+    name: isIdentifier(callExpression.callee) ? callExpression.callee.name : closure.functionName,
+    tail: closure.environment,
+    head: {},
+    id: uniqueId(),
+    callExpression: {
+      ...callExpression,
+      arguments: args.map(ast.primitive)
+    }
+  }
+  closure.node.params.forEach((param, index) => {
+    environment.head[(param as es.Identifier).name] = args[index]
+  })
+  return environment
+}
+
+export const popEnvironment = (context: Context) => context.runtime.environments.shift()
+
+export const pushEnvironment = (context: Context, environment: Environment) => {
+  context.runtime.environments.unshift(environment)
+  context.runtime.environmentTree.insert(environment)
+}
+
+export const createBlockEnvironment = (
+  context: Context,
+  name = 'blockEnvironment',
+  head: Frame = {}
+): Environment => {
+  return {
+    name,
+    tail: currentEnvironment(context),
+    head,
+    id: uniqueId()
+  }
+}
+
+/**
+ * Variables
+ */
+
+const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
+
+function declareIdentifier(context: Context, name: string, node: es.Node) {
+  const environment = currentEnvironment(context)
+  if (environment.head.hasOwnProperty(name)) {
+    const descriptors = Object.getOwnPropertyDescriptors(environment.head)
+
+    return handleRuntimeError(
+      context,
+      new errors.VariableRedeclaration(node, name, descriptors[name].writable)
+    )
+  }
+  environment.head[name] = DECLARED_BUT_NOT_YET_ASSIGNED
+  return environment
+}
+
+function declareVariables(context: Context, node: es.VariableDeclaration) {
+  for (const declaration of node.declarations) {
+    declareIdentifier(context, (declaration.id as es.Identifier).name, node)
+  }
+}
+
+export function declareFunctionsAndVariables(context: Context, node: es.BlockStatement) {
+  for (const statement of node.body) {
+    switch (statement.type) {
+      case 'VariableDeclaration':
+        declareVariables(context, statement)
+        break
+      case 'FunctionDeclaration':
+        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
+        break
+    }
+  }
+}
+
+export function defineVariable(
+  context: Context,
+  name: string,
+  value: Value,
+  constant = false,
+  node: es.VariableDeclaration
+) {
+  const environment = currentEnvironment(context)
+
+  if (environment.head[name] !== DECLARED_BUT_NOT_YET_ASSIGNED) {
+    return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
+  }
+
+  Object.defineProperty(environment.head, name, {
+    value,
+    writable: !constant,
+    enumerable: true
+  })
+
+  return environment
+}
+
+export const getVariable = (context: Context, name: string, node: es.Identifier) => {
+  let environment: Environment | null = currentEnvironment(context)
+  while (environment) {
+    if (environment.head.hasOwnProperty(name)) {
+      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
+        return handleRuntimeError(context, new errors.UnassignedVariable(name, node))
+      } else {
+        return environment.head[name]
+      }
+    } else {
+      environment = environment.tail
+    }
+  }
+  return handleRuntimeError(context, new errors.UndefinedVariable(name, node))
+}
+
+export const setVariable = (
+  context: Context,
+  name: string,
+  value: any,
+  node: es.AssignmentExpression
+) => {
+  let environment: Environment | null = currentEnvironment(context)
+  while (environment) {
+    if (environment.head.hasOwnProperty(name)) {
+      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
+        break
+      }
+      const descriptors = Object.getOwnPropertyDescriptors(environment.head)
+      if (descriptors[name].writable) {
+        environment.head[name] = value
+        return undefined
+      }
+      return handleRuntimeError(context, new errors.ConstAssignment(node, name))
+    } else {
+      environment = environment.tail
+    }
+  }
+  return handleRuntimeError(context, new errors.UndefinedVariable(name, node))
+}
+
+export const handleRuntimeError = (context: Context, error: RuntimeSourceError) => {
+  context.errors.push(error)
+  context.runtime.environments = context.runtime.environments.slice(
+    -context.numberOfOuterEnvironments
+  )
+  throw error
+}
+
+export const checkNumberOfArguments = (
+  context: Context,
+  callee: Closure | Value,
+  args: Value[],
+  exp: es.CallExpression
+) => {
+  if (callee instanceof Closure) {
+    // User-defined or Pre-defined functions
+    const params = callee.node.params
+    const hasVarArgs = params[params.length - 1]?.type === 'RestElement'
+    if (hasVarArgs ? params.length - 1 > args.length : params.length !== args.length) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(
+          exp,
+          hasVarArgs ? params.length - 1 : params.length,
+          args.length,
+          hasVarArgs
+        )
+      )
+    }
+  } else {
+    // Pre-built functions
+    const hasVarArgs = callee.minArgsNeeded != undefined
+    if (hasVarArgs ? callee.minArgsNeeded > args.length : callee.length !== args.length) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(
+          exp,
+          hasVarArgs ? callee.minArgsNeeded : callee.length,
+          args.length,
+          hasVarArgs
+        )
+      )
+    }
+  }
+  return undefined
+}
+
+/**
+ * This function can be used to check for a stack overflow.
+ * The current limit is set to be an agenda size of 1.0 x 10^5, if the agenda
+ * flows beyond this limit an error is thrown.
+ * This corresponds to about 10mb of space according to tests ran.
+ */
+export const checkStackOverFlow = (context: Context, agenda: Agenda) => {
+  if (agenda.size() > 100000) {
+    const stacks: es.CallExpression[] = []
+    let counter = 0
+    for (
+      let i = 0;
+      counter < errors.MaximumStackLimitExceeded.MAX_CALLS_TO_SHOW &&
+      i < context.runtime.environments.length;
+      i++
+    ) {
+      if (context.runtime.environments[i].callExpression) {
+        stacks.unshift(context.runtime.environments[i].callExpression!)
+        counter++
+      }
+    }
+    handleRuntimeError(
+      context,
+      new errors.MaximumStackLimitExceeded(context.runtime.nodes[0], stacks)
+    )
+  }
 }
