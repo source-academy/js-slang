@@ -29,6 +29,9 @@
 && \textit{names}   && ::= &\quad &&  \epsilon\ | \  \textit{name}[\texttt{:}\ \textit{type}] \ 
                                                    (\ \textbf{\texttt{,}} \ \textit{name}[\texttt{:}\ \textit{type}]\ ) ...
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{name list}}   \\[1mm]
+&& \textit{typed-names}   && ::= &\quad &&  \epsilon\ | \  \textit{name}\texttt{:}\ \textit{type} \ 
+                                                   (\ \textbf{\texttt{,}} \ \textit{name}\texttt{:}\ \textit{type}\ ) ...
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{name list (typed)}}   \\[1mm]
 && \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
                                    \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{)}}\ 
                                    \textit{block} \\
@@ -93,7 +96,7 @@
 &&                       &&     &      &&  |\ \texttt{undefined}\ |\ \texttt{null}\ |\ \texttt{void}\ |\ \texttt{any}\ && \textrm{basic type}\\
 &&                       && |   &\quad &&  \textit{number}\ |\ \textit{string}\ |\ \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}} && \textrm{literal type}\\
 &&                       && |   &\quad &&  \textit{name}[<\textit{type}\ (\ \textbf{\texttt{,}} \ \textit{type}\ ) ...>]   && \textrm{type reference}\\
-&&                       && |   &\quad &&   (\ \textit{names}\ )\ \texttt{\textbf{=>}}\ \textit{type} && \textrm{function type}\\
+&&                       && |   &\quad &&   (\ \textit{typed-names}\ )\ \texttt{\textbf{=>}}\ \textit{type} && \textrm{function type}\\
 &&                       && |   &\quad &&   \textit{type}\ \texttt{\textbf{|}}\ \textit{type} && \textrm{union type}\\
 &&                       && |   &\quad &&   \textit{Pair<type, type>} && \textrm{pair type}\\
 &&                       && |   &\quad &&   \textit{List<type>} && \textrm{list type}\\
@@ -101,7 +104,7 @@
 &&                       &&     &      &&  |\ \texttt{undefined}\ |\ \texttt{null}\ |\ \texttt{void}\ |\ \texttt{any}\ && \textrm{basic type}\\
 &&                       && |   &\quad &&  \textit{number}\ |\ \textit{string}\ |\ \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}} && \textrm{literal type}\\
 &&                       && |   &\quad &&  \textit{name}[<\textit{alias-type}\ (\ \textbf{\texttt{,}} \ \textit{alias-type}\ ) ...>]   && \textrm{type reference}\\
-&&                       && |   &\quad &&   (\ \textit{names}\ )\ \texttt{\textbf{=>}}\ \textit{alias-type} && \textrm{function type}\\
+&&                       && |   &\quad &&   (\ \textit{typed-names}\ )\ \texttt{\textbf{=>}}\ \textit{alias-type} && \textrm{function type}\\
 &&                       && |   &\quad &&   \textit{alias-type}\ \texttt{\textbf{|}}\ \textit{alias-type} && \textrm{union type}\\
 &&                       && |   &\quad &&   \textit{Pair<alias-type, alias-type>} && \textrm{pair type}\\
 &&                       && |   &\quad &&   \textit{List<alias-type>} && \textrm{list type}\\

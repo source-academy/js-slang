@@ -216,9 +216,9 @@ The derived type of primitive expressions is their literal type, which is an ele
 
 \noindent
 \[
-  \Rule{}{\Gamma \vdash n : \textit{literal type}\ n}
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash n : \textit{literal type}\ n}
   \quad
-  \Rule{}{\Gamma \vdash s : \textit{literal type}\ s}
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash s : \textit{literal type}\ s}
 \]
 \noindent
 
@@ -226,9 +226,9 @@ where $n$ denotes any literal number and $s$ denotes any literal string.
 
 \noindent
 \[
-  \Rule{}{\Gamma \vdash \TruE : \textit{literal type}\ \TruE}
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash \TruE : \textit{literal type}\ \TruE}
   \quad
-  \Rule{}{\Gamma \vdash \FalsE : \textit{literal type}\ \FalsE}
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash \FalsE : \textit{literal type}\ \FalsE}
 \]
 \noindent
 
@@ -236,7 +236,7 @@ For names, the type must be derived from the type environment.
 
 \noindent
 \[
-  \Rule{}{\Gamma \vdash x : \Gamma(x)}
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash x : \Gamma(x)}
 \]
 \noindent
 
@@ -244,13 +244,13 @@ For function applications (including applications of binary and unary operators)
 
 \noindent
 \[
-\Rule{\Gamma \vdash E_0 : (t_1, \ldots, t_n) \rightarrow t \quad \Gamma \vdash E_1 : t'_1, \ldots,  \Gamma \vdash E_n : t'_n
-  \quad (\forall 1 \leq i \leq n)(t'_i \wedge t_i \neq \emptyset)}{\Gamma \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : t}
+\Rule{\Gamma, \Gamma_{alias} \vdash E_0 : (t_1, \ldots, t_n) \rightarrow t \quad \Gamma, \Gamma_{alias} \vdash E_1 : t'_1, \ldots,  \Gamma, \Gamma_{alias} \vdash E_n : t'_n
+  \quad (\forall 1 \leq i \leq n)(t'_i \wedge t_i \neq \emptyset)}{\Gamma, \Gamma_{alias} \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : t}
 \]
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : \Any \quad \Gamma \vdash E_1 : t'_1, \ldots, \Gamma \vdash E_n : t'_n
-    }{\Gamma \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : \Any}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : \Any \quad \Gamma, \Gamma_{alias} \vdash E_1 : t'_1, \ldots, \Gamma, \Gamma_{alias} \vdash E_n : t'_n
+    }{\Gamma, \Gamma_{alias} \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : \Any}
 \]
 \noindent
 
@@ -287,28 +287,28 @@ For the \texttt{+} operator, the following rules are applied, in order of priori
 
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 \subseteq \Number
-    \quad t_1 \wedge \Number \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \Number}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_0 \subseteq \Number
+    \quad t_1 \wedge \Number \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E_0\ + \ E_1 : \Number}
 \]
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 \subseteq \String
-    \quad t_1 \wedge \String \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \String}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_0 \subseteq \String
+    \quad t_1 \wedge \String \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E_0\ + \ E_1 : \String}
 \]
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 \subseteq \Number
-    \quad t_0 \wedge \Number \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \Number}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_1 \subseteq \Number
+    \quad t_0 \wedge \Number \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E_0\ + \ E_1 : \Number}
 \]
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 \subseteq \String
-    \quad t_0 \wedge \String \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \String}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_1 \subseteq \String
+    \quad t_0 \wedge \String \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E_0\ + \ E_1 : \String}
 \]
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_0 \wedge (\Number\ |\ \String) \neq \emptyset
-    \quad t_1 \wedge (\Number\ |\ \String) \neq \emptyset}{\Gamma \vdash E_0\ + \ E_1 : \Number\ |\ \String}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_0 \wedge (\Number\ |\ \String) \neq \emptyset
+    \quad t_1 \wedge (\Number\ |\ \String) \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E_0\ + \ E_1 : \Number\ |\ \String}
 \]
 \noindent
 
@@ -320,7 +320,7 @@ The type of the lambda expression is then the function type with the declared ty
 \noindent
 \[
   \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad \Gamma' \vdash S : t' \quad t' \wedge t \neq \emptyset}{
-    \Gamma \vdash ( \Lp  x_1:\ t_1, \ldots, x_n:\ t_n \Rp :\ t\ \texttt{=>}\ \Lc\ S\ \Rc) : (t_1, \ldots, t_n) \rightarrow t}  
+    \Gamma, \Gamma_{alias} \vdash ( \Lp  x_1:\ t_1, \ldots, x_n:\ t_n \Rp :\ t\ \texttt{=>}\ \Lc\ S\ \Rc) : (t_1, \ldots, t_n) \rightarrow t}  
 \]
 \noindent
 
@@ -329,8 +329,8 @@ The predicate expression of a conditional expression must be a success type of a
 
 \noindent
 \[
-  \Rule{\Gamma \vdash E_{pred} : t_{pred} \quad \Gamma \vdash E_{cons} : t_{cons} \quad \Gamma \vdash E_{alt} : t_{alt}
-    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma \vdash (E_{pred}\ \texttt{?}\ E_{cons} : E_{alt}) : t_{cons}\ |\ t_{alt}}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash E_{cons} : t_{cons} \quad \Gamma, \Gamma_{alias} \vdash E_{alt} : t_{alt}
+    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (E_{pred}\ \texttt{?}\ E_{cons} : E_{alt}) : t_{cons}\ |\ t_{alt}}
 \]
 \noindent
 
@@ -338,7 +338,7 @@ For as expressions, the type to cast the expression to must be a success type of
 
 \noindent
 \[
-  \Rule{\Gamma \vdash E : t' \quad t \wedge t' \neq \emptyset}{\Gamma \vdash (E\ \texttt{as}\ t) : t}  
+  \Rule{\Gamma, \Gamma_{alias} \vdash E : t' \quad t \wedge t' \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (E\ \texttt{as}\ t) : t}  
 \]
 \noindent
 
@@ -349,21 +349,29 @@ The type of the assignment itself is the type of the right expression.
 
 \noindent
 \[
-  \Rule{\Gamma \vdash E_0 : t_0 \quad \Gamma \vdash E_1 : t_1 \quad t_1 \wedge t_0 \neq \emptyset}{
-    \Gamma \vdash (E_0 = E_1) : t_1}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_1 \wedge t_0 \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash (E_0 = E_1) : t_1}
 \]
 \noindent
 
 \subsubsection{Typing Relations on Statements}
 
-For type alias declarations, the binding of name $x$ to type function $<T_1, \ldots, T_n> \rightarrow t$ is added to the type alias environment.
+For type alias declarations, the declared type $t$ for name $x$ is first checked against the type environments.
+Any type parameters declared are temporarily added to the type alias environment when checking the type of $t$
+to ensure that the type parameters are only used within $t$ itself.
+Then, the binding of name $x$ to type function $<T_1, \ldots, T_n> \rightarrow t$ is added to the type alias environment.
 If no type parameters are given, the type function is assumed to take in 0 type arguments.
 
 \noindent
 \[
-  \Rule{\Gamma_{alias} [x \leftarrow <> \rightarrow t] \Gamma_{alias}'}{\Gamma \vdash (\texttt{type}\ x = t \texttt{;}) : \Undefined}
-  \Rule{\Gamma_{alias} [x \leftarrow <T_1, \ldots, T_n> \rightarrow T] \Gamma_{alias}'
-    }{\Gamma \vdash (\texttt{type}\ x<T_1, \ldots, T_n> = t \texttt{;}) : \Undefined}
+  \Rule{\Gamma, \Gamma_{alias} \vdash t : t \quad \Gamma_{alias} [x \leftarrow <> \rightarrow t] \Gamma_{alias}'
+    }{\Gamma, \Gamma_{alias} \vdash (\texttt{type}\ x = t \texttt{;}) : \Undefined}
+\]
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias}[T_1 \leftarrow T_1]\ldots[T_n \leftarrow T_n] \vdash t : t \quad
+    \Gamma_{alias} [x \leftarrow <T_1, \ldots, T_n> \rightarrow T] \Gamma_{alias}'
+    }{\Gamma, \Gamma_{alias} \vdash (\texttt{type}\ x<T_1, \ldots, T_n> = t \texttt{;}) : \Undefined}
 \]
 \noindent
 
@@ -380,12 +388,12 @@ The type of the statement itself is $\Undefined$.
 \noindent
 \[
   \Rule{\Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t_E \quad t_E \wedge t \neq \emptyset}{
-    \Gamma \vdash (\texttt{const/let}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
+    \Gamma, \Gamma_{alias} \vdash (\texttt{const/let}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
 \]
 \noindent
 \[
   \Rule{\Gamma_{alias}(T)<t_1, \ldots, t_n> = t \quad \Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t_E \quad
-    t_E \wedge t \neq \emptyset}{\Gamma \vdash (\texttt{const/let}\ x \texttt{:}\ T<t_1, \ldots, t_n> = E\texttt{;}) : \Undefined}
+    t_E \wedge t \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (\texttt{const/let}\ x \texttt{:}\ T<t_1, \ldots, t_n> = E\texttt{;}) : \Undefined}
 \]
 \noindent
 
@@ -393,9 +401,9 @@ The type of return statements and expression statements is the type of the expre
 
 \noindent
 \[
-  \Rule{\Gamma \vdash E : t}{\Gamma \vdash (\texttt{return}\ E\texttt{;}) : t}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E : t}{\Gamma, \Gamma_{alias} \vdash (\texttt{return}\ E\texttt{;}) : t}
   \quad
-  \Rule{\Gamma \vdash E : t}{\Gamma \vdash (E\texttt{;}) : t}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E : t}{\Gamma, \Gamma_{alias} \vdash (E\texttt{;}) : t}
 \]
 \noindent
 
@@ -403,9 +411,9 @@ The type of break and continue statements is $\Undefined$.
 
 \noindent
 \[
-  \Rule{}{\Gamma \vdash (\texttt{break} \texttt{;}) : \Undefined}
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash (\texttt{break} \texttt{;}) : \Undefined}
   \quad
-  \Rule{}{\Gamma \vdash (\texttt{continue} \texttt{;}) : \Undefined}
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash (\texttt{continue} \texttt{;}) : \Undefined}
 \]
 \noindent
 
@@ -422,14 +430,14 @@ If the block does not contain any return statements, the type is $\Undefined$.
 \[
   \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
     \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is a return statement}}{
-    \Gamma \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
+    \Gamma, \Gamma_{alias} \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
     S_1, \ldots, S_n\} : t'_n}
 \]
 \noindent
 \[
   \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
     \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is not a return statement}}{
-    \Gamma \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
+    \Gamma, \Gamma_{alias} \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
     S_1, \ldots, S_n\} : \Undefined}
 \]
 \noindent
@@ -439,8 +447,8 @@ The predicate expression of a conditional statement must be a success type of a 
 
 \noindent
 \[
-  \Rule{\Gamma \vdash S_{pred} : t_{pred} \quad \Gamma \vdash S_{cons} : t_{cons} \quad \Gamma \vdash S_{alt} : t_{alt}
-    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma \vdash (\texttt{if}\ (S_{pred})\ \{\ S_{cons}\ \}\
+  \Rule{\Gamma, \Gamma_{alias} \vdash S_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash S_{cons} : t_{cons} \quad \Gamma, \Gamma_{alias} \vdash S_{alt} : t_{alt}
+    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (\texttt{if}\ (S_{pred})\ \{\ S_{cons}\ \}\
     \texttt{else}\ \{\ S_{alt}\ \}) : t_{cons}\ |\ t_{alt}}
 \]
 \noindent
@@ -449,8 +457,8 @@ For \texttt{while} statements, the predicate expression must be a success type o
 
 \noindent
 \[
-  \Rule{\Gamma \vdash E_{pred} : t_{pred} \quad \Gamma \vdash S : t \quad t_{pred} \wedge \Bool \neq \emptyset}{
-    \Gamma \vdash (\texttt{while}\ (\ E_{pred}\ )\ \{\ S\ \}) : t}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash S : t \quad t_{pred} \wedge \Bool \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash (\texttt{while}\ (\ E_{pred}\ )\ \{\ S\ \}) : t}
 \]
 \noindent
 
@@ -459,8 +467,8 @@ except with additional type checks for the initialization and assignment express
 
 \noindent
 \[
-  \Rule{\Gamma \vdash E_{init} : t_{init} \quad \Gamma \vdash E_{pred} : t_{pred} \quad \Gamma \vdash E_{assign} : t_{assign} \quad
-    \Gamma \vdash S : t \quad t_{pred} \wedge \Bool \neq \emptyset}{
-    \Gamma \vdash (\texttt{for}\ (\ E_{init} \texttt{;} E_{pred} \texttt{;} E_{assign}\ )\ \{\ S\ \}) : t}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_{init} : t_{init} \quad \Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash E_{assign} : t_{assign} \quad
+    \Gamma, \Gamma_{alias} \vdash S : t \quad t_{pred} \wedge \Bool \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash (\texttt{for}\ (\ E_{init} \texttt{;} E_{pred} \texttt{;} E_{assign}\ )\ \{\ S\ \}) : t}
 \]
 \noindent

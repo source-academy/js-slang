@@ -429,7 +429,7 @@ export class TypeNotFoundError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.TSType, public name: string) {}
+  constructor(public node: tsEs.Node, public name: string) {}
 
   get location() {
     return this.node.loc!
@@ -579,7 +579,7 @@ export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceEr
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.TSTypeReference, public name: string, public expected: number) {}
+  constructor(public node: tsEs.Node, public name: string, public expected: number) {}
 
   get location() {
     return this.node.loc!
@@ -598,7 +598,7 @@ export class TypeNotGenericError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.TSTypeReference, public name: string) {}
+  constructor(public node: tsEs.Node, public name: string) {}
 
   get location() {
     return this.node.loc!

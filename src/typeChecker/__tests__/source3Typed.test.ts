@@ -243,9 +243,9 @@ describe('stream type', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 1: Type '() => Pair<number, number>' is not assignable to type '() => Pair<number, Stream<number>>'.
-      Line 3: Type '() => Pair<number, () => Pair<string, Stream<string>>>' is not assignable to type '() => Pair<string, Stream<string>>'.
-      Line 4: Type '() => Pair<number, Stream<number>>' is not assignable to type '() => Pair<string, Stream<string>>'."
+      "Line 1: Type '() => Pair<number, number>' is not assignable to type 'Stream<number>'.
+      Line 3: Type '() => Pair<number, Stream<string>>' is not assignable to type 'Stream<string>'.
+      Line 4: Type '() => Pair<number, Stream<number>>' is not assignable to type 'Stream<string>'."
     `)
   })
 
@@ -268,8 +268,8 @@ describe('stream library functions (select)', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 2: Type '() => Pair<number, Stream<number>>' is not assignable to type '() => Pair<boolean, Stream<boolean>>'.
-      Line 3: Type '() => Pair<string, Stream<number>>' is not assignable to type '() => Pair<boolean, Stream<boolean>>'."
+      "Line 2: Type '() => Pair<number, Stream<number>>' is not assignable to type 'Stream<boolean>'.
+      Line 3: Type '() => Pair<string, Stream<string>>' is not assignable to type 'Stream<boolean>'."
     `)
   })
 })

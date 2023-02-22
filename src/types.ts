@@ -448,5 +448,5 @@ export type PredicateTest = {
 export type TypeEnvironment = {
   typeMap: Map<string, BindableType>
   declKindMap: Map<string, AllowedDeclarations>
-  typeAliasMap: Map<string, BindableType>
+  typeAliasMap: Map<string, Type | ForAll>
 }[]

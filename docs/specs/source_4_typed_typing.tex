@@ -34,10 +34,10 @@
 
 \section{Type System}  
 
-In Source \S 2 Typed, the Source \S 2 syntax is expanded to include type syntax such as type annotations and type aliases.
+In Source \S 4 Typed, the Source \S 4 syntax is expanded to include type syntax such as type annotations and type aliases.
 This allows names to be explicitly typed, and for type checks to be performed.
 
-Support for \texttt{typeof} operations is also added to Source \S 2 Typed.
+Support for \texttt{typeof} operations is also added to Source \S 4 Typed.
 
 \subsection{Type Environment}
 
@@ -82,15 +82,15 @@ are handled as follows:
 \begin{eqnarray*}
  & &
       \Gamma_{-2}
-                 [ \texttt{===} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool] \\
-&& \hspace{6mm}  [ \texttt{!==} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool] \\
+                 [ \texttt{===} \leftarrow (\Any,\ \Any) \rightarrow \Bool] \\
+&& \hspace{6mm}  [ \texttt{!==} \leftarrow (\Any,\ \Any) \rightarrow \Bool] \\
 && \hspace{6mm}  [ \texttt{>} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool]\\
 && \hspace{6mm}  [ \texttt{>=} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool]\\
 && \hspace{6mm}  [ \texttt{<} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool] \\
 && \hspace{6mm}  [ \texttt{<=} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool]\Gamma_{-1}
 \end{eqnarray*}
 
-The Source \S 2 standard library functions and constants have their types defined as follows:
+The Source \S 4 standard library functions and constants have their types defined as follows:
 
 \begin{tabular}[fragile]{lllllllll}
 $\Gamma_{-1}$
@@ -123,12 +123,12 @@ $\Gamma_{-1}$
 & $[$ & \texttt{math\_imul} & $\leftarrow$  & $(\Number, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_LN2} & $\leftarrow$  & $\Number$ & & & $]$ \\
 & $[$ & \texttt{math\_LN10} & $\leftarrow$  & $\Number$ & & & $]$ \\
-& $[$ & \texttt{math\_log} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
-& $[$ & \texttt{math\_log1p} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
-& $[$ & \texttt{math\_log2} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & \end{tabular}
 
 \begin{tabular}[fragile]{lllllllll}
+& $[$ & \texttt{math\_log} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_log1p} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_log2} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_LOG2E} & $\leftarrow$  & $\Number$ & & & $]$ \\
 & $[$ & \texttt{math\_log10} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
 & $[$ & \texttt{math\_LOG10E} & $\leftarrow$  & $\Number$ & & & $]$ \\
@@ -160,8 +160,17 @@ $\Gamma_{-1}$
 & $[$ & \texttt{list} & $\leftarrow$  & $(T_1, \ldots, T_n)$ & $\rightarrow$ & \textit{List<} $T_1\ |\ \ldots\ |\ T_n$ \textit{>} & $]$ \\
 & $[$ & \texttt{is\_pair} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
 & $[$ & \texttt{is\_null} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
-& $[$ & \texttt{is\_list} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ $\Gamma_0$ \\
+& $[$ & \texttt{is\_list} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{set\_head} & $\leftarrow$  & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $\rightarrow$ & $\Undefined$ & $]$ \\
+& $[$ & \texttt{set\_tail} & $\leftarrow$  & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $\rightarrow$ & $\Undefined$ & $]$ \\
+& $[$ & \texttt{is\_array} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{array\_length} & $\leftarrow$  & $\Any$[] & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{apply\_in\_underlying\_javascript} & $\leftarrow$ & $(\Any,$ \textit{List<} $\Any$ \textit{>}$)$ & $\rightarrow$ & $\Any$ & $]$ \\
+& $[$ & \texttt{tokenize} & $\leftarrow$  & $\String$ & $\rightarrow$ & \textit{List<} $\String$ \textit{>} & $]$ \\
+& $[$ & \texttt{parse} & $\leftarrow$  & $\String$ & $\rightarrow$ & \textit{Program}\ |\ \textit{Statement} & $]$ $\Gamma_0$ \\
 & \end{tabular}
+
+For details on the types used by the parse function, refer to the appendix on parse tree types.
 
 In order to support the definition of type aliases, we define a separate
 \emph{type alias environment}, denoted by $\Gamma_{alias}$. Unlike $\Gamma$,
@@ -181,7 +190,7 @@ $\Gamma_{alias-1}$
 
 \subsection{Success Types}
 
-In order for type checks to be performed in Source \S 3 Typed, we introduce the notion of success types.
+In order for type checks to be performed in Source \S 4 Typed, we introduce the notion of success types.
 
 We first define the special $\Any$ type:
 \begin{definition}
@@ -338,6 +347,18 @@ For as expressions, the type to cast the expression to must be a success type of
 \]
 \noindent
 
+\subsubsection{Typing Relations on Assignments}
+
+For assignments, the type of the right expression must be a success type of the type of the left expression.
+The type of the assignment itself is the type of the right expression.
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_1 \wedge t_0 \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash (E_0 = E_1) : t_1}
+\]
+\noindent
+
 \subsubsection{Typing Relations on Statements}
 
 For type alias declarations, the declared type $t$ for name $x$ is first checked against the type environments.
@@ -359,7 +380,7 @@ If no type parameters are given, the type function is assumed to take in 0 type 
 \]
 \noindent
 
-For constant declarations, the declared type of $x$, $t$, is added to the type environment.
+For constant and variable declarations, the declared type of $x$, $t$, is added to the type environment.
 If the type annotation for $x$ is absent, the declared type $t$ is assumed to be $\Any$.
 
 If the type annotation is a type reference to a type alias with name $T$,
@@ -372,12 +393,12 @@ The type of the statement itself is $\Undefined$.
 \noindent
 \[
   \Rule{\Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t_E \quad t_E \wedge t \neq \emptyset}{
-    \Gamma, \Gamma_{alias} \vdash (\texttt{const}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
+    \Gamma, \Gamma_{alias} \vdash (\texttt{const/let}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
 \]
 \noindent
 \[
   \Rule{\Gamma_{alias}(T)<t_1, \ldots, t_n> = t \quad \Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t_E \quad
-    t_E \wedge t \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (\texttt{const}\ x \texttt{:}\ T<t_1, \ldots, t_n> = E\texttt{;}) : \Undefined}
+    t_E \wedge t \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (\texttt{const/let}\ x \texttt{:}\ T<t_1, \ldots, t_n> = E\texttt{;}) : \Undefined}
 \]
 \noindent
 
@@ -388,6 +409,16 @@ The type of return statements and expression statements is the type of the expre
   \Rule{\Gamma, \Gamma_{alias} \vdash E : t}{\Gamma, \Gamma_{alias} \vdash (\texttt{return}\ E\texttt{;}) : t}
   \quad
   \Rule{\Gamma, \Gamma_{alias} \vdash E : t}{\Gamma, \Gamma_{alias} \vdash (E\texttt{;}) : t}
+\]
+\noindent
+
+The type of break and continue statements is $\Undefined$.
+
+\noindent
+\[
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash (\texttt{break} \texttt{;}) : \Undefined}
+  \quad
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash (\texttt{continue} \texttt{;}) : \Undefined}
 \]
 \noindent
 
@@ -424,5 +455,25 @@ The predicate expression of a conditional statement must be a success type of a 
   \Rule{\Gamma, \Gamma_{alias} \vdash S_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash S_{cons} : t_{cons} \quad \Gamma, \Gamma_{alias} \vdash S_{alt} : t_{alt}
     \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (\texttt{if}\ (S_{pred})\ \{\ S_{cons}\ \}\
     \texttt{else}\ \{\ S_{alt}\ \}) : t_{cons}\ |\ t_{alt}}
+\]
+\noindent
+
+For \texttt{while} statements, the predicate expression must be a success type of $\Bool$. The rest of the statement is treated as a block.
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash S : t \quad t_{pred} \wedge \Bool \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash (\texttt{while}\ (\ E_{pred}\ )\ \{\ S\ \}) : t}
+\]
+\noindent
+
+For \texttt{for} statements, the typing is the same as that of a \texttt{while} statement,
+except with additional type checks for the initialization and assignment expressions.
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_{init} : t_{init} \quad \Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash E_{assign} : t_{assign} \quad
+    \Gamma, \Gamma_{alias} \vdash S : t \quad t_{pred} \wedge \Bool \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash (\texttt{for}\ (\ E_{init} \texttt{;} E_{pred} \texttt{;} E_{assign}\ )\ \{\ S\ \}) : t}
 \]
 \noindent
