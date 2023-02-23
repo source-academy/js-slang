@@ -799,10 +799,15 @@ export interface TSAsExpression extends BaseTSNode {
 export interface TSTypeReference extends BaseTSNode {
   type: 'TSTypeReference'
   typeName: Identifier
-  typeParameters: TSTypeParameterInstantiation
+  typeParameters?: TSTypeParameterInstantiation
 }
 
 export interface TSTypeParameterInstantiation extends BaseTSNode {
   type: 'TSTypeParameterInstantiation'
-  params: TSType[]
+  params: (TSType | TSTypeParameter)[]
+}
+
+export interface TSTypeParameter extends BaseTSNode {
+  type: 'TSTypeParameter'
+  name: string
 }

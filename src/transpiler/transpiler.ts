@@ -91,44 +91,6 @@ export function transformImportDeclarations(
   return [prefix.join(''), declNodes, otherNodes]
 }
 
-/**
- * Hoists import statements in the program to the top
- * Also collates multiple import statements to a module into
- * a single statement
- */
-export function hoistImportDeclarations(program: es.Program) {
-  const importNodes = program.body.filter(
-    node => node.type === 'ImportDeclaration'
-  ) as es.ImportDeclaration[]
-  const specifiers = new Map<
-    string,
-    (es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier)[]
-  >()
-  const baseNodes = new Map<string, es.ImportDeclaration>()
-
-  for (const node of importNodes) {
-    const moduleName = node.source.value as string
-
-    if (!specifiers.has(moduleName)) {
-      specifiers.set(moduleName, node.specifiers)
-      baseNodes.set(moduleName, node)
-    } else {
-      for (const specifier of node.specifiers) {
-        specifiers.get(moduleName)!.push(specifier)
-      }
-    }
-  }
-
-  const newImports = Array.from(baseNodes.entries()).map(([module, node]) => {
-    return {
-      ...node,
-      specifiers: specifiers.get(module)
-    }
-  }) as (es.ModuleDeclaration | es.Statement | es.Declaration)[]
-
-  program.body = newImports.concat(program.body.filter(node => node.type !== 'ImportDeclaration'))
-}
-
 // `useThis` is a temporary indicator used by fullJS
 // export function transformImportDeclarations(program: es.Program, useThis = false) {
 //   const imports = []
@@ -292,6 +254,7 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
       case 'CallExpression':
         expression = expression as es.CallExpression
         const { line, column } = expression.loc!.start
+        const source = expression.loc?.source ?? null
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
 
@@ -303,7 +266,8 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
           create.property('functionName', create.literal(functionName)),
           create.property('arguments', create.arrayExpression(args as es.Expression[])),
           create.property('line', create.literal(line)),
-          create.property('column', create.literal(column))
+          create.property('column', create.literal(column)),
+          create.property('source', create.literal(source))
         ])
       default:
         return create.objectExpression([
@@ -329,12 +293,14 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program, globalId
   simple(program, {
     CallExpression(node: es.CallExpression) {
       const { line, column } = node.loc!.start
+      const source = node.loc?.source ?? null
       const args = node.arguments
 
       node.arguments = [
         node.callee as es.Expression,
         create.literal(line),
         create.literal(column),
+        create.literal(source),
         ...args
       ]
 
@@ -357,7 +323,12 @@ export function checkForUndefinedVariables(
       if (statement.type === 'VariableDeclaration') {
         identifiers.add((statement.declarations[0].id as es.Identifier).name)
       } else if (statement.type === 'FunctionDeclaration') {
-        identifiers.add((statement.id as es.Identifier).name)
+        if (statement.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
+        identifiers.add(statement.id.name)
       } else if (statement.type === 'ImportDeclaration') {
         for (const specifier of statement.specifiers) {
           identifiers.add(specifier.local.name)
@@ -442,11 +413,13 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds
       | es.WhileStatement
   ) {
     const { line, column } = node.loc!.start
+    const source = node.loc?.source ?? null
     const test = node.type === 'LogicalExpression' ? 'left' : 'test'
     node[test] = create.callExpression(globalIds.boolOrErr, [
       node[test],
       create.literal(line),
-      create.literal(column)
+      create.literal(column),
+      create.literal(source)
     ])
   }
 
@@ -475,6 +448,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
   simple(program, {
     BinaryExpression(node: es.BinaryExpression) {
       const { line, column } = node.loc!.start
+      const source = node.loc?.source ?? null
       const { operator, left, right } = node
       create.mutateToCallExpression(node, globalIds.binaryOp, [
         create.literal(operator),
@@ -482,17 +456,20 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
         left,
         right,
         create.literal(line),
-        create.literal(column)
+        create.literal(column),
+        create.literal(source)
       ])
     },
     UnaryExpression(node: es.UnaryExpression) {
       const { line, column } = node.loc!.start
+      const source = node.loc?.source ?? null
       const { operator, argument } = node as es.UnaryExpression
       create.mutateToCallExpression(node, globalIds.unaryOp, [
         create.literal(operator),
         argument,
         create.literal(line),
-        create.literal(column)
+        create.literal(column),
+        create.literal(source)
       ])
     }
   })
@@ -508,12 +485,14 @@ function transformPropertyAssignment(program: es.Program, globalIds: NativeIds) 
       if (node.left.type === 'MemberExpression') {
         const { object, property, computed, loc } = node.left
         const { line, column } = loc!.start
+        const source = loc?.source ?? null
         create.mutateToCallExpression(node, globalIds.setProp, [
           object as es.Expression,
           getComputedProperty(computed, property as es.Expression),
           node.right,
           create.literal(line),
-          create.literal(column)
+          create.literal(column),
+          create.literal(source)
         ])
       }
     }
@@ -525,11 +504,13 @@ function transformPropertyAccess(program: es.Program, globalIds: NativeIds) {
     MemberExpression(node: es.MemberExpression) {
       const { object, property, computed, loc } = node
       const { line, column } = loc!.start
+      const source = loc?.source ?? null
       create.mutateToCallExpression(node, globalIds.getProp, [
         object as es.Expression,
         getComputedProperty(computed, property as es.Expression),
         create.literal(line),
-        create.literal(column)
+        create.literal(column),
+        create.literal(source)
       ])
     }
   })
@@ -550,6 +531,7 @@ function addInfiniteLoopProtection(
         newStatements.push(create.constantDeclaration(startTimeConst, getTimeAst()))
         if (statement.body.type === 'BlockStatement') {
           const { line, column } = statement.loc!.start
+          const source = statement.loc?.source ?? null
           statement.body.body.unshift(
             create.expressionStatement(
               create.callExpression(globalIds.throwIfTimeout, [
@@ -557,7 +539,8 @@ function addInfiniteLoopProtection(
                 create.identifier(startTimeConst),
                 getTimeAst(),
                 create.literal(line),
-                create.literal(column)
+                create.literal(column),
+                create.literal(source)
               ])
             )
           )

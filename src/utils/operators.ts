@@ -23,11 +23,12 @@ export function throwIfTimeout(
   start: number,
   current: number,
   line: number,
-  column: number
+  column: number,
+  source: string | null
 ) {
   if (current - start > nativeStorage.maxExecTime) {
     throw new PotentialInfiniteLoopError(
-      create.locationDummyNode(line, column),
+      create.locationDummyNode(line, column, source),
       nativeStorage.maxExecTime
     )
   }
@@ -89,9 +90,10 @@ export function callIfFuncAndRightArgs(
   candidate: any,
   line: number,
   column: number,
+  source: string | null,
   ...args: any[]
 ) {
-  const dummy = create.callExpression(create.locationDummyNode(line, column), args, {
+  const dummy = create.callExpression(create.locationDummyNode(line, column, source), args, {
     start: { line, column },
     end: { line, column }
   })
@@ -142,9 +144,9 @@ export function callIfFuncAndRightArgs(
   }
 }
 
-export function boolOrErr(candidate: any, line: number, column: number) {
+export function boolOrErr(candidate: any, line: number, column: number, source: string | null) {
   candidate = forceIt(candidate)
-  const error = rttc.checkIfStatement(create.locationDummyNode(line, column), candidate)
+  const error = rttc.checkIfStatement(create.locationDummyNode(line, column, source), candidate)
   if (error === undefined) {
     return candidate
   } else {
@@ -152,10 +154,16 @@ export function boolOrErr(candidate: any, line: number, column: number) {
   }
 }
 
-export function unaryOp(operator: UnaryOperator, argument: any, line: number, column: number) {
+export function unaryOp(
+  operator: UnaryOperator,
+  argument: any,
+  line: number,
+  column: number,
+  source: string | null
+) {
   argument = forceIt(argument)
   const error = rttc.checkUnaryExpression(
-    create.locationDummyNode(line, column),
+    create.locationDummyNode(line, column, source),
     operator,
     argument
   )
@@ -184,12 +192,13 @@ export function binaryOp(
   left: any,
   right: any,
   line: number,
-  column: number
+  column: number,
+  source: string | null
 ) {
   left = forceIt(left)
   right = forceIt(right)
   const error = rttc.checkBinaryExpression(
-    create.locationDummyNode(line, column),
+    create.locationDummyNode(line, column, source),
     operator,
     chapter,
     left,
@@ -241,10 +250,11 @@ export function evaluateBinaryExpression(operator: BinaryOperator, left: any, ri
 export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: any[]) => {
   let line = -1
   let column = -1
+  let source: string | null = null
   const startTime = Date.now()
   const pastCalls: [string, any[]][] = []
   while (true) {
-    const dummy = locationDummyNode(line, column)
+    const dummy = locationDummyNode(line, column, source)
     f = forceIt(f)
     if (typeof f === 'function') {
       if (f.transformedFunction !== undefined) {
@@ -257,7 +267,8 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
         throw new InvalidNumberOfArguments(
           callExpression(dummy, args, {
             start: { line, column },
-            end: { line, column }
+            end: { line, column },
+            source
           }),
           hasVarArgs ? f.minArgsNeeded : expectedLength,
           receivedLength,
@@ -293,6 +304,7 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
       args = res.arguments
       line = res.line
       column = res.column
+      source = res.source
       pastCalls.push([res.functionName, args])
     } else if (res.isTail === false) {
       return res.value
@@ -320,8 +332,15 @@ export const wrap = (
   return wrapped
 }
 
-export const setProp = (obj: any, prop: any, value: any, line: number, column: number) => {
-  const dummy = locationDummyNode(line, column)
+export const setProp = (
+  obj: any,
+  prop: any,
+  value: any,
+  line: number,
+  column: number,
+  source: string | null
+) => {
+  const dummy = locationDummyNode(line, column, source)
   const error = rttc.checkMemberAccess(dummy, obj, prop)
   if (error === undefined) {
     return (obj[prop] = value)
@@ -330,8 +349,14 @@ export const setProp = (obj: any, prop: any, value: any, line: number, column: n
   }
 }
 
-export const getProp = (obj: any, prop: any, line: number, column: number) => {
-  const dummy = locationDummyNode(line, column)
+export const getProp = (
+  obj: any,
+  prop: any,
+  line: number,
+  column: number,
+  source: string | null
+) => {
+  const dummy = locationDummyNode(line, column, source)
   const error = rttc.checkMemberAccess(dummy, obj, prop)
   if (error === undefined) {
     if (obj[prop] !== undefined && !obj.hasOwnProperty(prop)) {

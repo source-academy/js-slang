@@ -1,10 +1,12 @@
 import * as es from 'estree'
+import * as _ from 'lodash'
 import { RawSourceMap } from 'source-map'
 
 import { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
 import { ECEResultPromise, evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
 import { ExceptionError } from '../errors/errors'
+import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
@@ -13,6 +15,7 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
+import preprocessFileImports from '../localImports/preprocessor'
 import { parse } from '../parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
@@ -23,13 +26,13 @@ import {
   redexify
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
-import { hoistImportDeclarations, transpile } from '../transpiler/transpiler'
+import { transpile } from '../transpiler/transpiler'
 import { Context, Scheduler, SourceError, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
-import { determineExecutionMethod } from '.'
+import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
@@ -46,22 +49,19 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   throwInfiniteLoops: true
 }
 
-let previousCode = ''
+let previousCode: {
+  files: Partial<Record<string, string>>
+  entrypointFilePath: string
+} | null = null
 let isPreviousCodeTimeoutError = false
 
-function runConcurrent(
-  code: string,
-  program: es.Program,
-  context: Context,
-  options: IOptions
-): Promise<Result> {
-  if (previousCode === code) {
+function runConcurrent(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+  if (context.shouldIncreaseEvaluationTimeout) {
     context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
   } else {
     context.nativeStorage.maxExecTime = options.originalMaxExecTime
   }
-  context.previousCode.unshift(code)
-  previousCode = code
+
   try {
     return Promise.resolve({
       status: 'finished',
@@ -117,36 +117,37 @@ function runInterpreter(program: es.Program, context: Context, options: IOptions
 }
 
 async function runNative(
-  code: string,
   program: es.Program,
   context: Context,
   options: IOptions
 ): Promise<Result> {
-  if (previousCode === code && isPreviousCodeTimeoutError) {
-    context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-  } else if (!options.isPrelude) {
-    context.nativeStorage.maxExecTime = options.originalMaxExecTime
-  }
-
   if (!options.isPrelude) {
-    context.previousCode.unshift(code)
-    previousCode = code
+    if (context.shouldIncreaseEvaluationTimeout && isPreviousCodeTimeoutError) {
+      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+    } else {
+      context.nativeStorage.maxExecTime = options.originalMaxExecTime
+    }
   }
 
+  // For whatever reason, the transpiler mutates the state of the AST as it is transpiling and inserts
+  // a bunch of global identifiers to it. Once that happens, the infinite loop detection instrumentation
+  // ends up generating code that has syntax errors. As such, we need to make a deep copy here to preserve
+  // the original AST for future use, such as with the infinite loop detector.
+  const transpiledProgram = _.cloneDeep(program)
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    appendModulesToContext(program, context)
+    appendModulesToContext(transpiledProgram, context)
     switch (context.variant) {
       case Variant.GPU:
-        transpileToGPU(program)
+        transpileToGPU(transpiledProgram)
         break
       case Variant.LAZY:
-        transpileToLazy(program)
+        transpileToLazy(transpiledProgram)
         break
     }
 
-    ;({ transpiled, sourceMapJson } = transpile(program, context))
+    ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
     // console.log(transpiled);
     let value = await sandboxedEval(transpiled, context)
 
@@ -166,7 +167,7 @@ async function runNative(
   } catch (error) {
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-      const detectedInfiniteLoop = testForInfiniteLoop(code, context.previousCode.slice(1))
+      const detectedInfiniteLoop = testForInfiniteLoop(program, context.previousPrograms.slice(1))
       if (detectedInfiniteLoop !== undefined) {
         if (options.throwInfiniteLoops) {
           context.errors.push(detectedInfiniteLoop)
@@ -208,55 +209,43 @@ function runECEvaluator(program: es.Program, context: Context, options: IOptions
 }
 
 export async function sourceRunner(
-  code: string,
+  program: es.Program,
   context: Context,
-  verboseErrors: boolean,
+  isVerboseErrorsEnabled: boolean,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
   const theOptions: IOptions = { ...DEFAULT_SOURCE_OPTIONS, ...options }
   context.variant = determineVariant(context, options)
-  context.errors = []
-
-  // Parse and validate
-  const program: es.Program | undefined = parse(code, context)
-  if (!program) {
-    return resolvedErrorPromise
-  }
 
   validateAndAnnotate(program, context)
-  context.unTypecheckedCode.push(code)
-
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
 
-  hoistImportDeclarations(program)
-
   if (context.variant === Variant.CONCURRENT) {
-    return runConcurrent(code, program, context, theOptions)
+    return runConcurrent(program, context, theOptions)
   }
 
   if (theOptions.useSubst) {
     return runSubstitution(program, context, theOptions)
   }
 
-  const isNativeRunnable: boolean = determineExecutionMethod(
-    theOptions,
-    context,
-    program,
-    verboseErrors
-  )
+  determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
 
-  if (isNativeRunnable && context.variant === Variant.NATIVE) {
-    return await fullJSRunner(code, context, theOptions)
+  if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
+    return await fullJSRunner(program, context, theOptions)
   }
 
-  // Handle preludes
+  // All runners after this point evaluate the prelude.
   if (context.prelude !== null) {
-    const prelude = context.prelude
+    context.unTypecheckedCode.push(context.prelude)
+    const prelude = parse(context.prelude, context)
+    if (prelude === null) {
+      return resolvedErrorPromise
+    }
     context.prelude = null
-    await sourceRunner(prelude, context, verboseErrors, { ...options, isPrelude: true })
-    return sourceRunner(code, context, verboseErrors, options)
+    await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true })
+    return sourceRunner(program, context, isVerboseErrorsEnabled, options)
   }
 
   if (context.variant === Variant.EXPLICIT_CONTROL) {
@@ -274,9 +263,47 @@ export async function sourceRunner(
     return runECEvaluator(program, context, theOptions)
   }
 
-  if (isNativeRunnable) {
-    return runNative(code, program, context, theOptions)
+  if (context.executionMethod === 'native') {
+    return runNative(program, context, theOptions)
   }
 
   return runInterpreter(program!, context, theOptions)
+}
+
+export async function sourceFilesRunner(
+  files: Partial<Record<string, string>>,
+  entrypointFilePath: string,
+  context: Context,
+  options: Partial<IOptions> = {}
+): Promise<Result> {
+  const entrypointCode = files[entrypointFilePath]
+  if (entrypointCode === undefined) {
+    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    return resolvedErrorPromise
+  }
+
+  const isVerboseErrorsEnabled = hasVerboseErrors(entrypointCode)
+
+  context.variant = determineVariant(context, options)
+  // FIXME: The type checker does not support the typing of multiple files, so
+  //        we only push the code in the entrypoint file. Ideally, all files
+  //        involved in the program evaluation should be type-checked. Either way,
+  //        the type checker is currently not used at all so this is not very
+  //        urgent.
+  context.unTypecheckedCode.push(entrypointCode)
+
+  const currentCode = {
+    files,
+    entrypointFilePath
+  }
+  context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
+  previousCode = currentCode
+
+  const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
+  if (!preprocessedProgram) {
+    return resolvedErrorPromise
+  }
+  context.previousPrograms.unshift(preprocessedProgram)
+
+  return sourceRunner(preprocessedProgram, context, isVerboseErrorsEnabled, options)
 }

@@ -1,7 +1,7 @@
 import { Context, Result, runInContext } from '../..'
 import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../mocks/context'
-import { FatalSyntaxError } from '../../parser/parser'
+import { FatalSyntaxError } from '../../parser/errors'
 import { Chapter, Finished, Variant } from '../../types'
 import { locationDummyNode } from '../../utils/astCreator'
 import { CodeSnippetTestCase } from '../../utils/testing'
@@ -77,7 +77,7 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
           const a = b;
           `,
     value: undefined,
-    errors: [new UndefinedVariable('b', locationDummyNode(2, 20))]
+    errors: [new UndefinedVariable('b', locationDummyNode(2, 20, 'source'))]
   },
   {
     name: 'SYNTAX ERROR',
@@ -85,7 +85,7 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
     value: undefined,
     errors: [
       new FatalSyntaxError(
-        { start: { line: 1, column: 8 }, end: { line: 1, column: 9 } },
+        { start: { line: 1, column: 8 }, end: { line: 1, column: 9 }, source: undefined },
         'SyntaxError: Unexpected token (1:8)'
       )
     ]
@@ -99,7 +99,7 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
             h();
             `,
     value: undefined,
-    errors: [new UndefinedVariable('g', locationDummyNode(3, 14))]
+    errors: [new UndefinedVariable('g', locationDummyNode(3, 14, 'source'))]
   }
 ]
 

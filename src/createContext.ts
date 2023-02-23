@@ -7,6 +7,7 @@ import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
+import { localImportPrelude } from './stdlib/localImport.prelude'
 import * as misc from './stdlib/misc'
 import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as parser from './stdlib/parser'
@@ -152,7 +153,8 @@ export const createEmptyContext = <T>(
     moduleContexts: {},
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
-    previousCode: []
+    previousPrograms: [],
+    shouldIncreaseEvaluationTimeout: false
   }
 }
 
@@ -395,6 +397,7 @@ function importPrelude(context: Context) {
   let prelude = ''
   if (context.chapter >= 2) {
     prelude += context.variant === Variant.LAZY ? lazyListPrelude : listPrelude
+    prelude += localImportPrelude
   }
   if (context.chapter >= 3) {
     prelude += streamPrelude
@@ -415,8 +418,7 @@ const defaultBuiltIns: CustomBuiltIns = {
   prompt: misc.rawDisplay,
   // See issue #11
   alert: misc.rawDisplay,
-  // TODO: 'v' is defined but never used
-  visualiseList: (v: Value) => {
+  visualiseList: (_v: Value) => {
     throw new Error('List visualizer is not enabled')
   }
 }

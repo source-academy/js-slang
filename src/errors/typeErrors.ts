@@ -429,7 +429,7 @@ export class TypeNotFoundError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.TSType, public name: string) {}
+  constructor(public node: tsEs.Node, public name: string) {}
 
   get location() {
     return this.node.loc!
@@ -482,25 +482,6 @@ export class TypeNotCallableError implements SourceError {
   }
 }
 
-export class NoExplicitAnyError implements SourceError {
-  public type = ErrorType.TYPE
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: tsEs.TSAsExpression) {}
-
-  get location() {
-    return this.node.loc!
-  }
-
-  public explain() {
-    return "Typecasting to 'any' is not allowed."
-  }
-
-  public elaborate() {
-    return this.explain()
-  }
-}
-
 export class TypecastError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
@@ -516,7 +497,7 @@ export class TypecastError implements SourceError {
   }
 
   public explain() {
-    return `Type '${this.originalType}' cannot be casted to type '${this.typeToCastTo}' as '${this.originalType}' is not a superset of '${this.typeToCastTo}'.`
+    return `Type '${this.originalType}' cannot be casted to type '${this.typeToCastTo}' as the two types do not intersect.`
   }
 
   public elaborate() {
@@ -598,7 +579,7 @@ export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceEr
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.TSTypeReference, public name: string, public expected: number) {}
+  constructor(public node: tsEs.Node, public name: string, public expected: number) {}
 
   get location() {
     return this.node.loc!
@@ -606,6 +587,25 @@ export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceEr
 
   public explain() {
     return `Generic type '${this.name}' requires ${this.expected} type argument(s).`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypeNotGenericError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.Node, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.name}' is not generic.`
   }
 
   public elaborate() {
@@ -625,6 +625,25 @@ export class TypeAliasNameNotAllowedError implements SourceError {
 
   public explain() {
     return `Type alias name cannot be '${this.name}'.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypeParameterNameNotAllowedError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.TSTypeParameter, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type parameter name cannot be '${this.name}'.`
   }
 
   public elaborate() {
@@ -682,6 +701,25 @@ export class ConstNotAssignableTypeError implements SourceError {
 
   public explain() {
     return `Cannot assign to '${this.name}' as it is a constant.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class DuplicateTypeAliasError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type alias '${this.name}' has already been declared.`
   }
 
   public elaborate() {

@@ -38,7 +38,7 @@ export function HighlightRulesSelector(
   )[] = []
 ) {
   // @ts-ignore
-  function _SourceHighlightRules(acequire, exports, module) {
+  function _SourceHighlightRules(acequire, exports, _module) {
     'use strict'
 
     const oop = acequire('../lib/oop')
@@ -756,7 +756,7 @@ export function ModeSelector(
   const name = id.toString() + variant + external
 
   // @ts-ignore
-  function _Mode(acequire, exports, module) {
+  function _Mode(acequire, exports, _module) {
     'use strict'
 
     const oop = acequire('../lib/oop')

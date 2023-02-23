@@ -94,7 +94,7 @@ exports[`Ensure no name clashes 1`] = `
     native0.evaller = program => eval(program);
     undefined;
     const boolOrErr = 1;
-    setProp(boolOrErr, 123, 1, 2, 0);
+    setProp(boolOrErr, 123, 1, 2, 0, null);
     const f = wrap90((callIfFuncAndRightArgs, wrap0, wrap1, wrap2, wrap3, wrap4, wrap5, wrap6, wrap7, wrap8, wrap9) => {
       let wrap = 2;
       wrap0;

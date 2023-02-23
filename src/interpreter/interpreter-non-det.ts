@@ -95,7 +95,12 @@ function declareFunctionAndVariableIdentifiers(context: Context, node: es.BlockS
         declareVariables(context, statement)
         break
       case 'FunctionDeclaration':
-        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
+        if (statement.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
+        declareIdentifier(context, statement.id.name, statement)
         break
     }
   }
@@ -332,7 +337,7 @@ function* evaluateConditional(node: es.IfStatement | es.ConditionalExpression, c
 // prettier-ignore
 export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   /** Simple Values */
-  Literal: function*(node: es.Literal, context: Context) {
+  Literal: function*(node: es.Literal, _context: Context) {
     yield node.value
   },
 
@@ -473,8 +478,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
-    const id = node.id as es.Identifier
-    // tslint:disable-next-line:no-any
+    const id = node.id
+    if (id === null) {
+      throw new Error("Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.")
+    }
     const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
     yield undefined
@@ -489,11 +496,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return yield* evaluate(node.expression, context)
   },
 
-  ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
+  ContinueStatement: function*(_node: es.ContinueStatement, _context: Context) {
     yield new ContinueValue()
   },
 
-  BreakStatement: function*(node: es.BreakStatement, context: Context) {
+  BreakStatement: function*(_node: es.BreakStatement, _context: Context) {
     yield new BreakValue()
   },
 
