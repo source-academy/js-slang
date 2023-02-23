@@ -904,6 +904,8 @@ Object {
     "$remove": [Function],
     "$remove_all": [Function],
     "$reverse": [Function],
+    "__access_export__": [Function],
+    "__access_named_export__": [Function],
     "accumulate": [Function],
     "append": [Function],
     "build_list": [Function],
