@@ -672,7 +672,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
           local: spec.local.name
         }
       })
-      
+
       if (!(moduleName in context.moduleContexts)) {
         context.moduleContexts[moduleName] = {
           state: null,

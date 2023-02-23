@@ -4,6 +4,7 @@ import { RawSourceMap } from 'source-map'
 
 import { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
+import { ECEResultPromise, evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -202,6 +203,11 @@ async function runNative(
   }
 }
 
+function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+  const value = ECEvaluate(program, context)
+  return ECEResultPromise(context, value)
+}
+
 export async function sourceRunner(
   program: es.Program,
   context: Context,
@@ -242,11 +248,26 @@ export async function sourceRunner(
     return sourceRunner(program, context, isVerboseErrorsEnabled, options)
   }
 
+  if (context.variant === Variant.EXPLICIT_CONTROL) {
+    return runECEvaluator(program, context, theOptions)
+  }
+
+  if (context.executionMethod === 'ec-evaluator') {
+    if (options.isPrelude) {
+      return runECEvaluator(
+        program,
+        { ...context, runtime: { ...context.runtime, debuggerOn: false } },
+        theOptions
+      )
+    }
+    return runECEvaluator(program, context, theOptions)
+  }
+
   if (context.executionMethod === 'native') {
     return runNative(program, context, theOptions)
   }
 
-  return runInterpreter(program, context, theOptions)
+  return runInterpreter(program!, context, theOptions)
 }
 
 export async function sourceFilesRunner(

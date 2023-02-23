@@ -50,6 +50,25 @@ export function determineExecutionMethod(
     isNativeRunnable = false
   } else if (areBreakpointsSet()) {
     isNativeRunnable = false
+  } else if (theOptions.executionMethod === 'auto') {
+    if (context.executionMethod === 'auto') {
+      if (verboseErrors) {
+        isNativeRunnable = false
+      } else if (areBreakpointsSet()) {
+        isNativeRunnable = false
+      } else {
+        let hasDebuggerStatement = false
+        simple(program, {
+          DebuggerStatement(node: DebuggerStatement) {
+            hasDebuggerStatement = true
+          }
+        })
+        isNativeRunnable = !hasDebuggerStatement
+      }
+      context.executionMethod = isNativeRunnable ? 'native' : 'ec-evaluator'
+    } else {
+      isNativeRunnable = context.executionMethod === 'native'
+    }
   } else {
     let hasDebuggerStatement = false
     simple(program, {
@@ -59,7 +78,8 @@ export function determineExecutionMethod(
     })
     isNativeRunnable = !hasDebuggerStatement
   }
-  context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
+
+  context.executionMethod = isNativeRunnable ? 'native' : 'ec-evaluator'
 }
 
 /**

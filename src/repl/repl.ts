@@ -66,6 +66,10 @@ function validChapterVariant(chapter: any, variant: any) {
   if (variant === 'interpreter') {
     return true
   }
+  // TODO explicit control should only be done with source chapter 4
+  if (variant === 'explicit-control') {
+    return true
+  }
   if (variant === 'substituter' && (chapter === 1 || chapter === 2)) {
     return true
   }
@@ -103,7 +107,9 @@ function main() {
   }
 
   const executionMethod =
-    opt.options.variant === 'interpreter' || opt.options.variant === 'non-det'
+    opt.options.variant === 'interpreter' ||
+    opt.options.variant === 'non-det' ||
+    opt.options.variant === 'explicit-control'
       ? 'interpreter'
       : 'native'
   const useSubst = opt.options.variant === 'substituter'

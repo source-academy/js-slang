@@ -360,3 +360,16 @@ export const whileStatement = (
   body,
   loc
 })
+
+export const forStatement = (
+  init: es.VariableDeclaration | es.Expression,
+  test: es.Expression,
+  update: es.Expression,
+  body: es.Statement
+): es.ForStatement => ({
+  type: 'ForStatement',
+  init,
+  test,
+  update,
+  body
+})
