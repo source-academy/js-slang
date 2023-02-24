@@ -140,11 +140,11 @@ async function runNative(
     appendModulesToContext(transpiledProgram, context)
 
     // Repl module "default_js_slang" function support (Wang Zihan)
-    if( context.moduleContexts['repl'] !== undefined ) {
-      ( context.moduleContexts['repl'] as any ).js_slang = {};
-      ( context.moduleContexts['repl'] as any ).js_slang.sourceFilesRunner = sourceFilesRunner;
-      if( ( context.moduleContexts['repl'] as any ).js_slang.context === undefined )
-        ( context.moduleContexts['repl'] as any ).js_slang.context = context;
+    if (context.moduleContexts['repl'] !== undefined) {
+      ;(context.moduleContexts['repl'] as any).js_slang = {}
+      ;(context.moduleContexts['repl'] as any).js_slang.sourceFilesRunner = sourceFilesRunner
+      if ((context.moduleContexts['repl'] as any).js_slang.context === undefined)
+        (context.moduleContexts['repl'] as any).js_slang.context = context
     }
 
     switch (context.variant) {
