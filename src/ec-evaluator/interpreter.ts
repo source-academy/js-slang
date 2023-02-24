@@ -7,6 +7,7 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
+import { uniqueId } from 'lodash'
 
 import * as constants from '../constants'
 import * as errors from '../errors/errors'
@@ -46,6 +47,7 @@ import {
   getVariable,
   handleRuntimeError,
   handleSequence,
+  isAssmtInstr,
   isInstr,
   isNode,
   popEnvironment,
@@ -428,6 +430,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       context,
       true
     )
+    const next = agenda.peek()
+    if (!(next && isInstr(next) && isAssmtInstr(next))) {
+      if (closure instanceof Closure) {
+        Object.defineProperty(currentEnvironment(context).head, uniqueId(), {
+          value: closure,
+          writable: false,
+          enumerable: true
+        })
+      }
+    }
     stash.push(closure)
   },
 

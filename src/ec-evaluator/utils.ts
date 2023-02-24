@@ -9,7 +9,7 @@ import { Environment, Frame, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import * as instr from './instrCreator'
 import { Agenda } from './interpreter'
-import { AgendaItem, Instr } from './types'
+import { AgendaItem, AssmtInstr, Instr, InstrType } from './types'
 
 /**
  * Stack is implemented for agenda and stash registers.
@@ -89,6 +89,16 @@ export const isExpressionBody = (
   body: es.BlockStatement | es.Expression
 ): body is es.Expression => {
   return body.type !== 'BlockStatement'
+}
+
+/**
+ * Typeguard for AssmtInstr. To verify if an instruction is an assignment instruction.
+ *
+ * @param instr an instruction
+ * @returns true if instr is an AssmtInstr, false otherwise.
+ */
+export const isAssmtInstr = (instr: Instr): instr is AssmtInstr => {
+  return instr.instrType === InstrType.ASSIGNMENT
 }
 
 /**
