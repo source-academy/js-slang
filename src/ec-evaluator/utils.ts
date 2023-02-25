@@ -9,7 +9,7 @@ import { Environment, Frame, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import * as instr from './instrCreator'
 import { Agenda } from './interpreter'
-import { AgendaItem, Instr } from './types'
+import { AgendaItem, AssmtInstr, Instr, InstrType } from './types'
 
 /**
  * Stack is implemented for agenda and stash registers.
@@ -92,6 +92,16 @@ export const isExpressionBody = (
 }
 
 /**
+ * Typeguard for AssmtInstr. To verify if an instruction is an assignment instruction.
+ *
+ * @param instr an instruction
+ * @returns true if instr is an AssmtInstr, false otherwise.
+ */
+export const isAssmtInstr = (instr: Instr): instr is AssmtInstr => {
+  return instr.instrType === InstrType.ASSIGNMENT
+}
+
+/**
  * A helper function for handling sequences of statements.
  * Statements must be pushed in reverse order, and each statement is separated by a pop
  * instruction so that only the result of the last statement remains on stash.
@@ -137,6 +147,7 @@ export const valueProducing = (command: es.Node): boolean => {
     type !== 'FunctionDeclaration' &&
     type !== 'ContinueStatement' &&
     type !== 'BreakStatement' &&
+    type !== 'ReturnStatement' &&
     (type !== 'BlockStatement' || command.body.some(valueProducing))
   )
 }
