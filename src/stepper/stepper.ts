@@ -1762,8 +1762,13 @@ function reduceMain(
           // }
           return [stmt, context, paths, explain(node)]
         } else if (firstStatement.type === 'FunctionDeclaration') {
+          if (firstStatement.id === null) {
+            throw new Error(
+              'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+            )
+          }
           let funDecExp = ast.functionDeclarationExpression(
-            firstStatement.id!,
+            firstStatement.id,
             firstStatement.params,
             firstStatement.body
           ) as FunctionDeclarationExpression
@@ -2974,18 +2979,18 @@ export function getEvaluationSteps(
     // even steps: program before reduction
     // odd steps: program after reduction
     let i = -1
+    let limitExceeded = false
     while ((reducedWithPath[0] as es.Program).body.length > 0) {
+      if (steps.length === limit) {
+        steps[steps.length - 1] = [ast.program([]), [], 'Maximum number of steps exceeded']
+        limitExceeded = true
+        break
+      }
       steps.push([
         reducedWithPath[0] as es.Program,
         reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2],
         reducedWithPath[3]
       ])
-      if (steps.length === limit - 1) {
-        steps[i][1] = reducedWithPath[2]
-        steps[i][2] = reducedWithPath[3]
-        steps.push([ast.program([]), [], 'Maximum number of steps exceeded'])
-        break
-      }
       steps.push([reducedWithPath[0] as es.Program, [], ''])
       if (i > 0) {
         steps[i][1] = reducedWithPath[2].length > 1 ? [reducedWithPath[2][0]] : reducedWithPath[2]
@@ -2994,7 +2999,7 @@ export function getEvaluationSteps(
       reducedWithPath = reduceMain(reducedWithPath[0], context)
       i += 2
     }
-    if (steps.length !== limit) {
+    if (!limitExceeded) {
       steps[steps.length - 1][2] = 'Evaluation complete'
     }
     return steps

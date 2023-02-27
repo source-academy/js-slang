@@ -14,25 +14,21 @@ import {
   ReassignConstError,
   UndefinedIdentifierError
 } from '../errors/typeErrors'
-import { typedParse } from '../parser/parser'
+import { typedParse } from '../parser/utils'
 import {
-  AllowedDeclarations,
-  BindableType,
-  Chapter,
   Context,
   ContiguousArrayElements,
   ForAll,
+  FuncDeclWithInferredTypeAnnotation,
   FunctionType,
   List,
+  NodeWithInferredType,
   Pair,
   PredicateTest,
   PredicateType,
-  Primitive,
   SArray,
   SourceError,
   Type,
-  TypeAnnotatedFuncDecl,
-  TypeAnnotatedNode,
   TypeEnvironment,
   Variable
 } from '../types'
@@ -44,9 +40,26 @@ import {
   TypeError,
   UnifyError
 } from './internalTypeErrors'
+import {
+  lookupDeclKind,
+  lookupType,
+  NEGATIVE_OP,
+  pushEnv,
+  setDeclKind,
+  setType,
+  tArray,
+  tBool,
+  temporaryStreamFuncs,
+  tForAll,
+  tFunc,
+  tList,
+  tNumber,
+  tPair,
+  tString,
+  tUndef,
+  tVar
+} from './utils'
 
-/** Name of Unary negative builtin operator */
-const NEGATIVE_OP = '-_1'
 let typeIdCounter = 0
 
 /**
@@ -57,7 +70,7 @@ let typeIdCounter = 0
  * @param constraints: undefined for first call
  */
 /* tslint:disable cyclomatic-complexity */
-function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) {
+function traverse(node: NodeWithInferredType<es.Node>, constraints?: Constraint[]) {
   if (node === null) {
     // this happens in a holey array [,,,,,]
     return
@@ -72,7 +85,7 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       }
     }
   } else {
-    node.inferredType = tVar(typeIdCounter)
+    node.inferredType = tVar(`T${typeIdCounter}`)
     typeIdCounter++
   }
   switch (node.type) {
@@ -148,7 +161,7 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
       break
     }
     case 'FunctionDeclaration': {
-      const funcDeclNode = node as TypeAnnotatedFuncDecl
+      const funcDeclNode = node as FuncDeclWithInferredTypeAnnotation
       if (constraints) {
         try {
           funcDeclNode.functionInferredType = applyConstraints(
@@ -163,7 +176,7 @@ function traverse(node: TypeAnnotatedNode<es.Node>, constraints?: Constraint[]) 
           }
         }
       } else {
-        funcDeclNode.functionInferredType = tVar(typeIdCounter)
+        funcDeclNode.functionInferredType = tVar(`T${typeIdCounter}`)
       }
       typeIdCounter++
       funcDeclNode.params.forEach(param => {
@@ -207,11 +220,6 @@ function isInternalTypeError(error: any) {
   return error instanceof InternalTypeError
 }
 
-// Type Definitions
-// Our type environment maps variable names to types.
-// it also remembers if names weer declared as const or let
-type Env = TypeEnvironment
-
 type Constraint = [Variable, Type]
 let hasUndefinedIdentifierError = false
 let typeErrors: SourceError[] = []
@@ -229,16 +237,16 @@ function addTypeError(err: SourceError) {
  * @param program Parsed Program
  */
 export function typeCheck(
-  program: TypeAnnotatedNode<es.Program>,
+  program: NodeWithInferredType<es.Program>,
   context: Context
-): [TypeAnnotatedNode<es.Program>, SourceError[]] {
+): [NodeWithInferredType<es.Program>, SourceError[]] {
   function typeCheck_(
-    program: TypeAnnotatedNode<es.Program>
-  ): [TypeAnnotatedNode<es.Program>, SourceError[]] {
+    program: NodeWithInferredType<es.Program>
+  ): [NodeWithInferredType<es.Program>, SourceError[]] {
     typeIdCounter = 0
     hasUndefinedIdentifierError = false
     typeErrors = []
-    const env: Env = context.typeEnvironment
+    const env: TypeEnvironment = context.typeEnvironment
     if (context.chapter >= 3 && env.length === 3) {
       // TODO: this is a hack since we don't infer streams properly yet
       // if chapter is 3 and the prelude was just loaded, we change all the stream functions
@@ -328,6 +336,8 @@ function fresh(monoType: Type, subst: { [typeName: string]: Variable }): Type {
         parameterTypes: monoType.parameterTypes.map(argType => fresh(argType, subst)),
         returnType: fresh(monoType.returnType, subst)
       }
+    default:
+      return monoType
   }
 }
 
@@ -361,6 +371,8 @@ function freeTypeVarsInType(type: Type): Variable[] {
         }, []),
         freeTypeVarsInType(type.returnType)
       )
+    default:
+      return []
   }
 }
 
@@ -438,6 +450,8 @@ function applyConstraints(type: Type, constraints: Constraint[]): Type {
         returnType: applyConstraints(type.returnType, constraints)
       }
     }
+    default:
+      return type
   }
 }
 
@@ -463,6 +477,8 @@ function contains(type: Type, name: string): boolean {
         contains(currentType, name)
       )
       return containedInParamTypes || contains(type.returnType, name)
+    default:
+      return false
   }
 }
 
@@ -497,7 +513,7 @@ function cannotBeResolvedIfAddable(LHS: Variable, RHS: Type): boolean {
   )
 }
 
-function downgradePredicateToFunction(type: PredicateType): FunctionType {
+function downgradePredicateToFunction(_type: PredicateType): FunctionType {
   return {
     kind: 'function',
     parameterTypes: [freshTypeVar(tVar('T'))],
@@ -579,9 +595,9 @@ function addToConstraintList(constraints: Constraint[], [LHS, RHS]: [Type, Type]
 
 // Type checks consequent and alternate in a nested type environment as opposed to the current one.
 function addPredicateTestToConstraintList(
-  node: TypeAnnotatedNode<es.Node>,
+  node: NodeWithInferredType<es.Node>,
   tests: PredicateTest[],
-  consequent: TypeAnnotatedNode<es.Node>,
+  consequent: NodeWithInferredType<es.Node>,
   isTopLevelAndLastValStmt: boolean,
   env: TypeEnvironment,
   constraints: Constraint[]
@@ -630,10 +646,10 @@ function addPredicateTestToConstraintList(
 
 // Type checks consequent and alternate in a nested type environment as opposed to the current one.
 function addPredicateTestConditionalToConstraintList(
-  node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>,
+  node: NodeWithInferredType<es.IfStatement | es.ConditionalExpression>,
   tests: PredicateTest[],
-  consequent: TypeAnnotatedNode<es.Node>,
-  alternate: TypeAnnotatedNode<es.Node> | undefined,
+  consequent: NodeWithInferredType<es.Node>,
+  alternate: NodeWithInferredType<es.Node> | undefined,
   isTopLevelAndLastValStmt: boolean,
   env: TypeEnvironment,
   constraints: Constraint[]
@@ -721,7 +737,7 @@ function stmtHasValueReturningStmt(node: es.Node): boolean {
 // and thus predicate tests in the "negative positions" of those expressions
 // are extracted as well.
 function extractPositiveTypeTests(
-  node: TypeAnnotatedNode<es.Node>,
+  node: NodeWithInferredType<es.Node>,
   env: TypeEnvironment,
   result: PredicateTest[] = []
 ): PredicateTest[] {
@@ -762,7 +778,7 @@ function extractPositiveTypeTests(
 // and thus predicate tests in the "positive positions" of those expressions
 // are extracted as well.
 function extractNegativeTypeTests(
-  node: TypeAnnotatedNode<es.Node>,
+  node: NodeWithInferredType<es.Node>,
   env: TypeEnvironment,
   result: PredicateTest[] = []
 ): PredicateTest[] {
@@ -802,40 +818,10 @@ function returnBlockValueNodeIndexFor(
   }
 }
 
-function lookupType(name: string, env: Env): BindableType | undefined {
-  for (let i = env.length - 1; i >= 0; i--) {
-    if (env[i].typeMap.has(name)) {
-      return env[i].typeMap.get(name)
-    }
-  }
-  return undefined
-}
-
-function lookupDeclKind(name: string, env: Env): AllowedDeclarations | undefined {
-  for (let i = env.length - 1; i >= 0; i--) {
-    if (env[i].declKindMap.has(name)) {
-      return env[i].declKindMap.get(name)
-    }
-  }
-  return undefined
-}
-
-function setType(name: string, type: BindableType, env: Env) {
-  env[env.length - 1].typeMap.set(name, type)
-}
-
-function setDeclKind(name: string, kind: AllowedDeclarations, env: Env) {
-  env[env.length - 1].declKindMap.set(name, kind)
-}
-
-function pushEnv(env: Env) {
-  env.push({ typeMap: new Map(), declKindMap: new Map() })
-}
-
 /* tslint:disable cyclomatic-complexity */
 function infer(
-  node: TypeAnnotatedNode<es.Node>,
-  env: Env,
+  node: NodeWithInferredType<es.Node>,
+  env: TypeEnvironment,
   constraints: Constraint[],
   isTopLevelAndLastValStmt: boolean = false
 ): Constraint[] {
@@ -852,8 +838,8 @@ function infer(
 
 /* tslint:disable cyclomatic-complexity */
 function _infer(
-  node: TypeAnnotatedNode<es.Node>,
-  env: Env,
+  node: NodeWithInferredType<es.Node>,
+  env: TypeEnvironment,
   constraints: Constraint[],
   isTopLevelAndLastValStmt: boolean = false
 ): Constraint[] {
@@ -862,7 +848,7 @@ function _infer(
     case 'UnaryExpression': {
       const op = node.operator === '-' ? NEGATIVE_OP : node.operator
       const funcType = lookupType(op, env) as FunctionType // in either case its a monomorphic type
-      const argNode = node.argument as TypeAnnotatedNode<es.Node>
+      const argNode = node.argument as NodeWithInferredType<es.Node>
       const argType = argNode.inferredType as Variable
       const receivedTypes: Type[] = []
       let newConstraints = infer(argNode, env, constraints)
@@ -895,9 +881,9 @@ function _infer(
       // Note that this doesn't really follow the informal typing in the Source 3 documentation,
       // but we have no choice since we don't have union types, and every logical expression
       // always has a chance of returning the LHS, which is a boolean.
-      const leftNode = node.left as TypeAnnotatedNode<es.Node>
+      const leftNode = node.left as NodeWithInferredType<es.Node>
       const leftType = leftNode.inferredType as Variable
-      const rightNode = node.right as TypeAnnotatedNode<es.Node>
+      const rightNode = node.right as NodeWithInferredType<es.Node>
       const rightType = rightNode.inferredType as Variable
 
       let newConstraints = constraints
@@ -975,9 +961,9 @@ function _infer(
           : envType.kind === 'predicate'
           ? downgradePredicateToFunction(envType)
           : envType
-      const leftNode = node.left as TypeAnnotatedNode<es.Node>
+      const leftNode = node.left as NodeWithInferredType<es.Node>
       const leftType = leftNode.inferredType as Variable
-      const rightNode = node.right as TypeAnnotatedNode<es.Node>
+      const rightNode = node.right as NodeWithInferredType<es.Node>
       const rightType = rightNode.inferredType as Variable
 
       const argNodes = [leftNode, rightNode]
@@ -1004,7 +990,7 @@ function _infer(
       return infer(node.expression, env, addToConstraintList(constraints, [storedType, tUndef]))
     }
     case 'ReturnStatement': {
-      const argNode = node.argument as TypeAnnotatedNode<es.Node>
+      const argNode = node.argument as NodeWithInferredType<es.Node>
       return infer(
         argNode,
         env,
@@ -1012,9 +998,9 @@ function _infer(
       )
     }
     case 'WhileStatement': {
-      const testNode = node.test as TypeAnnotatedNode<es.Node>
+      const testNode = node.test as NodeWithInferredType<es.Node>
       const testType = testNode.inferredType as Variable
-      const bodyNode = node.body as TypeAnnotatedNode<es.Node>
+      const bodyNode = node.body as NodeWithInferredType<es.Node>
       const bodyType = bodyNode.inferredType as Variable
       let newConstraints = addToConstraintList(constraints, [storedType, bodyType])
       try {
@@ -1028,12 +1014,12 @@ function _infer(
       return infer(bodyNode, env, newConstraints, isTopLevelAndLastValStmt)
     }
     case 'ForStatement': {
-      const initNode = node.init as TypeAnnotatedNode<es.Node>
-      const testNode = node.test as TypeAnnotatedNode<es.Node>
+      const initNode = node.init as NodeWithInferredType<es.Node>
+      const testNode = node.test as NodeWithInferredType<es.Node>
       const testType = testNode.inferredType as Variable
-      const bodyNode = node.body as TypeAnnotatedNode<es.Node>
+      const bodyNode = node.body as NodeWithInferredType<es.Node>
       const bodyType = bodyNode.inferredType as Variable
-      const updateNode = node.update as TypeAnnotatedNode<es.Node>
+      const updateNode = node.update as NodeWithInferredType<es.Node>
       let newConstraints = addToConstraintList(constraints, [storedType, bodyType])
       pushEnv(env)
       if (
@@ -1046,7 +1032,7 @@ function _infer(
         const initName = initNode.declarations[0].id.name
         setType(
           initName,
-          (initNode.declarations[0].init as TypeAnnotatedNode<es.Node>).inferredType as Variable,
+          (initNode.declarations[0].init as NodeWithInferredType<es.Node>).inferredType as Variable,
           env
         )
         setDeclKind(initName, initNode.kind, env)
@@ -1055,7 +1041,7 @@ function _infer(
           initName,
           tForAll(
             applyConstraints(
-              (initNode.declarations[0].init as TypeAnnotatedNode<es.Node>)
+              (initNode.declarations[0].init as NodeWithInferredType<es.Node>)
                 .inferredType as Variable,
               newConstraints
             )
@@ -1096,7 +1082,10 @@ function _infer(
       let lastDeclNodeIndex = -1
       let lastDeclFound = false
       let n = lastStatementIndex
-      const declNodes: (TypeAnnotatedFuncDecl | TypeAnnotatedNode<es.VariableDeclaration>)[] = []
+      const declNodes: (
+        | FuncDeclWithInferredTypeAnnotation
+        | NodeWithInferredType<es.VariableDeclaration>
+      )[] = []
       while (n >= 0) {
         const currNode = node.body[n]
         if (currNode.type === 'FunctionDeclaration' || currNode.type === 'VariableDeclaration') {
@@ -1122,16 +1111,17 @@ function _infer(
           const declName = declNode.declarations[0].id.name
           setType(
             declName,
-            (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>).inferredType as Variable,
+            (declNode.declarations[0].init as NodeWithInferredType<es.Node>)
+              .inferredType as Variable,
             env
           )
           setDeclKind(declName, declNode.kind, env)
         }
       })
-      const lastNode = node.body[returnValNodeIndex] as TypeAnnotatedNode<es.Node>
+      const lastNode = node.body[returnValNodeIndex] as NodeWithInferredType<es.Node>
       const lastNodeType = (
         isTopLevelAndLastValStmt && lastNode.type === 'ExpressionStatement'
-          ? (lastNode.expression as TypeAnnotatedNode<es.Node>).inferredType
+          ? (lastNode.expression as NodeWithInferredType<es.Node>).inferredType
           : lastNode.inferredType
       ) as Variable
       let newConstraints = addToConstraintList(constraints, [storedType, lastNodeType])
@@ -1157,7 +1147,7 @@ function _infer(
             declNode.declarations[0].id.name,
             tForAll(
               applyConstraints(
-                (declNode.declarations[0].init as TypeAnnotatedNode<es.Node>)
+                (declNode.declarations[0].init as NodeWithInferredType<es.Node>)
                   .inferredType as Variable,
                 newConstraints
               )
@@ -1185,7 +1175,7 @@ function _infer(
       const literalVal = node.value
       const typeOfLiteral = typeof literalVal
       if (literalVal === null) {
-        return addToConstraintList(constraints, [storedType, tList(tVar(typeIdCounter++))])
+        return addToConstraintList(constraints, [storedType, tList(tVar(`T${typeIdCounter++}`))])
       } else if (typeOfLiteral === 'number') {
         return addToConstraintList(constraints, [storedType, tNumber])
       } else if (typeOfLiteral === 'boolean') {
@@ -1237,11 +1227,11 @@ function _infer(
       //  - an equality constraint between the return type of the condition expression and boolean
       // is added to the constraint set.
 
-      const testNode = node.test as TypeAnnotatedNode<es.Node>
+      const testNode = node.test as NodeWithInferredType<es.Node>
       const testType = testNode.inferredType as Variable
-      const consNode = node.consequent as TypeAnnotatedNode<es.Node>
+      const consNode = node.consequent as NodeWithInferredType<es.Node>
       const consType = consNode.inferredType as Variable
-      const altNode = node.alternate as TypeAnnotatedNode<es.Node>
+      const altNode = node.alternate as NodeWithInferredType<es.Node>
       const altType = altNode.inferredType as Variable
 
       // The basics, these apply to both predicate tests as well as standard conditionals
@@ -1310,12 +1300,12 @@ function _infer(
       pushEnv(env)
       const paramNodes = node.params
       const paramTypes: Variable[] = paramNodes.map(
-        paramNode => (paramNode as TypeAnnotatedNode<es.Node>).inferredType as Variable
+        paramNode => (paramNode as NodeWithInferredType<es.Node>).inferredType as Variable
       )
-      const bodyNode = node.body as TypeAnnotatedNode<es.Node>
+      const bodyNode = node.body as NodeWithInferredType<es.Node>
       paramTypes.push(bodyNode.inferredType as Variable)
       const newConstraints = addToConstraintList(constraints, [storedType, tFunc(...paramTypes)])
-      paramNodes.forEach((paramNode: TypeAnnotatedNode<es.Identifier>) => {
+      paramNodes.forEach((paramNode: NodeWithInferredType<es.Identifier>) => {
         setType(paramNode.name, paramNode.inferredType as Variable, env)
       })
       const result = infer(bodyNode, env, newConstraints)
@@ -1327,19 +1317,19 @@ function _infer(
       return infer(initNode, env, addToConstraintList(constraints, [storedType, tUndef]))
     }
     case 'FunctionDeclaration': {
-      const funcDeclNode = node as TypeAnnotatedFuncDecl
+      const funcDeclNode = node as FuncDeclWithInferredTypeAnnotation
       let newConstraints = addToConstraintList(constraints, [storedType, tUndef])
       pushEnv(env)
       const storedFunctionType = funcDeclNode.functionInferredType as Variable
-      const paramNodes = node.params as TypeAnnotatedNode<es.Pattern>[]
+      const paramNodes = node.params as NodeWithInferredType<es.Pattern>[]
       const paramTypes = paramNodes.map(paramNode => paramNode.inferredType as Variable)
-      const bodyNode = node.body as TypeAnnotatedNode<es.BlockStatement>
+      const bodyNode = node.body as NodeWithInferredType<es.BlockStatement>
       paramTypes.push(bodyNode.inferredType as Variable)
       newConstraints = addToConstraintList(newConstraints, [
         storedFunctionType,
         tFunc(...paramTypes)
       ])
-      paramNodes.forEach((paramNode: TypeAnnotatedNode<es.Identifier>) => {
+      paramNodes.forEach((paramNode: NodeWithInferredType<es.Identifier>) => {
         setType(paramNode.name, paramNode.inferredType as Variable, env)
       })
       const result = infer(bodyNode, env, newConstraints)
@@ -1347,15 +1337,15 @@ function _infer(
       return result
     }
     case 'CallExpression': {
-      const calleeNode = node.callee as TypeAnnotatedNode<es.Node>
+      const calleeNode = node.callee as NodeWithInferredType<es.Node>
       const calleeType = calleeNode.inferredType as Variable
-      const argNodes = node.arguments as TypeAnnotatedNode<es.Node>[]
+      const argNodes = node.arguments as NodeWithInferredType<es.Node>[]
       const argTypes: Variable[] = argNodes.map(argNode => argNode.inferredType as Variable)
       argTypes.push(storedType)
       let newConstraints = constraints
       newConstraints = infer(calleeNode, env, newConstraints)
       const calledFunctionType = applyConstraints(
-        (calleeNode as TypeAnnotatedNode<es.Node>).inferredType!,
+        (calleeNode as NodeWithInferredType<es.Node>).inferredType!,
         newConstraints
       )
       const receivedTypes: Type[] = []
@@ -1388,8 +1378,8 @@ function _infer(
       // 2. LHS is member expression
       // x = ...., need to check that x is not const
       // arr[x]
-      const leftNode = node.left as TypeAnnotatedNode<es.Identifier | es.MemberExpression>
-      const rightNode = node.right as TypeAnnotatedNode<es.Node>
+      const leftNode = node.left as NodeWithInferredType<es.Identifier | es.MemberExpression>
+      const rightNode = node.right as NodeWithInferredType<es.Node>
       const rightType = rightNode.inferredType as Variable
       const leftType = leftNode.inferredType as Variable
       let newConstraints = addToConstraintList(constraints, [storedType, rightType])
@@ -1426,12 +1416,12 @@ function _infer(
     }
     case 'ArrayExpression': {
       let newConstraints = constraints
-      const elements = node.elements as TypeAnnotatedNode<es.Node>[]
+      const elements = node.elements as NodeWithInferredType<es.Node>[]
       // infer the types of array elements
       elements.forEach(element => {
         newConstraints = infer(element, env, newConstraints)
       })
-      const arrayElementType = tVar(typeIdCounter++)
+      const arrayElementType = tVar(`T${typeIdCounter++}`)
       newConstraints = addToConstraintList(newConstraints, [storedType, tArray(arrayElementType)])
       elements.forEach(element => {
         try {
@@ -1457,9 +1447,9 @@ function _infer(
       // object and property
       // need to check that property is number and add constraints that inferredType is array
       // element type
-      const obj = node.object as TypeAnnotatedNode<es.Identifier>
+      const obj = node.object as NodeWithInferredType<es.Identifier>
       const objName = obj.name
-      const property = node.property as TypeAnnotatedNode<es.Node>
+      const property = node.property as NodeWithInferredType<es.Node>
       const propertyType = property.inferredType as Variable
       let newConstraints = infer(property, env, constraints)
       // Check that property is of type number
@@ -1510,237 +1500,4 @@ function _infer(
     default:
       return addToConstraintList(constraints, [storedType, tUndef])
   }
-}
-
-// =======================================
-// Private Helper Parsing Functions
-// =======================================
-
-function tPrimitive(name: Primitive['name']): Primitive {
-  return {
-    kind: 'primitive',
-    name
-  }
-}
-
-export function tVar(name: string | number): Variable {
-  return {
-    kind: 'variable',
-    name: `T${name}`,
-    constraint: 'none'
-  }
-}
-
-function tAddable(name: string): Variable {
-  return {
-    kind: 'variable',
-    name: `${name}`,
-    constraint: 'addable'
-  }
-}
-
-function tPair(var1: Type, var2: Type): Pair {
-  return {
-    kind: 'pair',
-    headType: var1,
-    tailType: var2
-  }
-}
-
-function tList(var1: Type): List {
-  return {
-    kind: 'list',
-    elementType: var1
-  }
-}
-
-export function tForAll(type: Type): ForAll {
-  return {
-    kind: 'forall',
-    polyType: type
-  }
-}
-
-function tArray(var1: Type): SArray {
-  return {
-    kind: 'array',
-    elementType: var1
-  }
-}
-
-const tBool = tPrimitive('boolean')
-const tNumber = tPrimitive('number')
-const tString = tPrimitive('string')
-const tUndef = tPrimitive('undefined')
-
-function tFunc(...types: Type[]): FunctionType {
-  const parameterTypes = types.slice(0, -1)
-  const returnType = types.slice(-1)[0]
-  return {
-    kind: 'function',
-    parameterTypes,
-    returnType
-  }
-}
-
-function tPred(ifTrueType: Type | ForAll): PredicateType {
-  return {
-    kind: 'predicate',
-    ifTrueType
-  }
-}
-
-const predeclaredNames: [string, BindableType][] = [
-  // constants
-  ['Infinity', tNumber],
-  ['NaN', tNumber],
-  ['undefined', tUndef],
-  ['math_E', tNumber],
-  ['math_LN2', tNumber],
-  ['math_LN10', tNumber],
-  ['math_LOG2E', tNumber],
-  ['math_LOG10E', tNumber],
-  ['math_PI', tNumber],
-  ['math_SQRT1_2', tNumber],
-  ['math_SQRT2', tNumber],
-  // is something functions
-  ['is_boolean', tPred(tBool)],
-  ['is_number', tPred(tNumber)],
-  ['is_string', tPred(tString)],
-  ['is_undefined', tPred(tUndef)],
-  ['is_function', tPred(tForAll(tFunc(tVar('T'), tVar('U'))))],
-  // math functions
-  ['math_abs', tFunc(tNumber, tNumber)],
-  ['math_acos', tFunc(tNumber, tNumber)],
-  ['math_acosh', tFunc(tNumber, tNumber)],
-  ['math_asin', tFunc(tNumber, tNumber)],
-  ['math_asinh', tFunc(tNumber, tNumber)],
-  ['math_atan', tFunc(tNumber, tNumber)],
-  ['math_atan2', tFunc(tNumber, tNumber, tNumber)],
-  ['math_atanh', tFunc(tNumber, tNumber)],
-  ['math_cbrt', tFunc(tNumber, tNumber)],
-  ['math_ceil', tFunc(tNumber, tNumber)],
-  ['math_clz32', tFunc(tNumber, tNumber)],
-  ['math_cos', tFunc(tNumber, tNumber)],
-  ['math_cosh', tFunc(tNumber, tNumber)],
-  ['math_exp', tFunc(tNumber, tNumber)],
-  ['math_expm1', tFunc(tNumber, tNumber)],
-  ['math_floor', tFunc(tNumber, tNumber)],
-  ['math_fround', tFunc(tNumber, tNumber)],
-  ['math_hypot', tForAll(tVar('T'))],
-  ['math_imul', tFunc(tNumber, tNumber, tNumber)],
-  ['math_log', tFunc(tNumber, tNumber)],
-  ['math_log1p', tFunc(tNumber, tNumber)],
-  ['math_log2', tFunc(tNumber, tNumber)],
-  ['math_log10', tFunc(tNumber, tNumber)],
-  ['math_max', tForAll(tVar('T'))],
-  ['math_min', tForAll(tVar('T'))],
-  ['math_pow', tFunc(tNumber, tNumber, tNumber)],
-  ['math_random', tFunc(tNumber)],
-  ['math_round', tFunc(tNumber, tNumber)],
-  ['math_sign', tFunc(tNumber, tNumber)],
-  ['math_sin', tFunc(tNumber, tNumber)],
-  ['math_sinh', tFunc(tNumber, tNumber)],
-  ['math_sqrt', tFunc(tNumber, tNumber)],
-  ['math_tan', tFunc(tNumber, tNumber)],
-  ['math_tanh', tFunc(tNumber, tNumber)],
-  ['math_trunc', tFunc(tNumber, tNumber)],
-  // misc functions
-  ['parse_int', tFunc(tString, tNumber, tNumber)],
-  ['prompt', tFunc(tString, tString)],
-  ['get_time', tFunc(tNumber)],
-  ['stringify', tForAll(tFunc(tVar('T'), tString))],
-  ['display', tForAll(tVar('T'))],
-  ['error', tForAll(tVar('T'))]
-]
-
-const headType = tVar('headType')
-const tailType = tVar('tailType')
-
-const pairFuncs: [string, BindableType][] = [
-  ['pair', tForAll(tFunc(headType, tailType, tPair(headType, tailType)))],
-  ['head', tForAll(tFunc(tPair(headType, tailType), headType))],
-  ['tail', tForAll(tFunc(tPair(headType, tailType), tailType))],
-  ['is_pair', tPred(tForAll(tPair(headType, tailType)))],
-  ['is_null', tPred(tForAll(tList(tVar('T'))))],
-  ['is_list', tPred(tForAll(tList(tVar('T'))))]
-]
-
-const mutatingPairFuncs: [string, BindableType][] = [
-  ['set_head', tForAll(tFunc(tPair(headType, tailType), headType, tUndef))],
-  ['set_tail', tForAll(tFunc(tPair(headType, tailType), tailType, tUndef))]
-]
-
-const arrayFuncs: [string, BindableType][] = [
-  ['is_array', tPred(tForAll(tArray(tVar('T'))))],
-  ['array_length', tForAll(tFunc(tArray(tVar('T')), tNumber))]
-]
-
-const listFuncs: [string, BindableType][] = [['list', tForAll(tVar('T1'))]]
-
-const primitiveFuncs: [string, BindableType][] = [
-  [NEGATIVE_OP, tFunc(tNumber, tNumber)],
-  ['!', tFunc(tBool, tBool)],
-  ['&&', tForAll(tFunc(tBool, tVar('T'), tVar('T')))],
-  ['||', tForAll(tFunc(tBool, tVar('T'), tVar('T')))],
-  ['<', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['<=', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['>', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['>=', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['+', tForAll(tFunc(tAddable('A'), tAddable('A'), tAddable('A')))],
-  ['%', tFunc(tNumber, tNumber, tNumber)],
-  ['-', tFunc(tNumber, tNumber, tNumber)],
-  ['*', tFunc(tNumber, tNumber, tNumber)],
-  ['/', tFunc(tNumber, tNumber, tNumber)]
-]
-
-// Source 2 and below restricts === to addables
-const preS3equalityFuncs: [string, BindableType][] = [
-  ['===', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))],
-  ['!==', tForAll(tFunc(tAddable('A'), tAddable('A'), tBool))]
-]
-
-// Source 3 and above allows any values as arguments for ===
-const postS3equalityFuncs: [string, BindableType][] = [
-  ['===', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))],
-  ['!==', tForAll(tFunc(tVar('T1'), tVar('T2'), tBool))]
-]
-
-const temporaryStreamFuncs: [string, BindableType][] = [
-  ['is_stream', tForAll(tFunc(tVar('T1'), tBool))],
-  ['list_to_stream', tForAll(tFunc(tList(tVar('T1')), tVar('T2')))],
-  ['stream_to_list', tForAll(tFunc(tVar('T1'), tList(tVar('T2'))))],
-  ['stream_length', tForAll(tFunc(tVar('T1'), tNumber))],
-  ['stream_map', tForAll(tFunc(tVar('T1'), tVar('T2')))],
-  ['build_stream', tForAll(tFunc(tNumber, tFunc(tNumber, tVar('T1')), tVar('T2')))],
-  ['stream_for_each', tForAll(tFunc(tFunc(tVar('T1'), tVar('T2')), tBool))],
-  ['stream_reverse', tForAll(tFunc(tVar('T1'), tVar('T1')))],
-  ['stream_append', tForAll(tFunc(tVar('T1'), tVar('T1'), tVar('T1')))],
-  ['stream_member', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
-  ['stream_remove', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
-  ['stream_remove_all', tForAll(tFunc(tVar('T1'), tVar('T2'), tVar('T2')))],
-  ['stream_filter', tForAll(tFunc(tFunc(tVar('T1'), tBool), tVar('T2'), tVar('T2')))],
-  ['enum_stream', tForAll(tFunc(tNumber, tNumber, tVar('T1')))],
-  ['integers_from', tForAll(tFunc(tNumber, tVar('T1')))],
-  ['eval_stream', tForAll(tFunc(tVar('T1'), tNumber, tList(tVar('T2'))))],
-  ['stream_ref', tForAll(tFunc(tVar('T1'), tNumber, tVar('T2')))]
-]
-
-export function createTypeEnvironment(chapter: Chapter): Env {
-  const initialTypeMappings = [...predeclaredNames, ...primitiveFuncs]
-  if (chapter >= 2) {
-    initialTypeMappings.push(...pairFuncs, ...listFuncs)
-  }
-  if (chapter >= 3) {
-    initialTypeMappings.push(...postS3equalityFuncs, ...mutatingPairFuncs, ...arrayFuncs)
-  } else {
-    initialTypeMappings.push(...preS3equalityFuncs)
-  }
-
-  return [
-    {
-      typeMap: new Map(initialTypeMappings),
-      declKindMap: new Map(initialTypeMappings.map(val => [val[0], 'const']))
-    }
-  ]
 }

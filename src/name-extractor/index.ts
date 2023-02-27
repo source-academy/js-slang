@@ -4,7 +4,7 @@ import { Context } from '../'
 import { ModuleConnectionError, ModuleNotFoundError } from '../errors/moduleErrors'
 import { findAncestors, findIdentifierNode } from '../finder'
 import { memoizedloadModuleDocs } from '../modules/moduleLoader'
-import syntaxBlacklist from '../parser/syntaxBlacklist'
+import syntaxBlacklist from '../parser/source/syntax'
 
 export interface NameDeclaration {
   name: string
@@ -105,7 +105,7 @@ export function getKeywords(
   function addAllowedKeywords(keywords: { [key: string]: NameDeclaration[] }) {
     Object.entries(keywords)
       .filter(([nodeType]) => context.chapter >= syntaxBlacklist[nodeType])
-      .forEach(([nodeType, decl]) => keywordSuggestions.push(...decl))
+      .forEach(([_nodeType, decl]) => keywordSuggestions.push(...decl))
   }
 
   // The rest of the keywords are only valid at the beginning of a statement

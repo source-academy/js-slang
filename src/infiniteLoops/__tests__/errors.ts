@@ -1,3 +1,5 @@
+import * as es from 'estree'
+
 import { ExceptionError } from '../../errors/errors'
 import { RuntimeSourceError } from '../../errors/runtimeSourceError'
 import { TimeoutError } from '../../errors/timeoutErrors'
@@ -13,6 +15,11 @@ import {
 
 const noBaseCaseError = new InfiniteLoopError('f', false, 'test', InfiniteLoopErrorType.NoBaseCase)
 const fakePos = { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } }
+const emptyProgram: es.Program = {
+  type: 'Program',
+  sourceType: 'module',
+  body: []
+}
 
 test('timeout errors are potential infinite loops', () => {
   const error = new TimeoutError()
@@ -38,12 +45,13 @@ test('other errors are not potential infinite loops', () => {
 test('getInfiniteLoopData works when error is directly reported', () => {
   const context = mockContext(Chapter.SOURCE_4)
   context.errors.push(noBaseCaseError)
-  context.previousCode.push('test')
+
+  context.previousPrograms.push(emptyProgram)
   const result = getInfiniteLoopData(context)
   expect(result).toBeDefined()
   expect(result?.[0]).toBe(InfiniteLoopErrorType.NoBaseCase)
   expect(result?.[3].length).toBe(1)
-  expect(result?.[3]).toContain('test')
+  expect(result?.[3]).toContain(emptyProgram)
 })
 
 test('getInfiniteLoopData works when error hidden in timeout', () => {
@@ -51,12 +59,12 @@ test('getInfiniteLoopData works when error hidden in timeout', () => {
   error.infiniteLoopError = noBaseCaseError
   const context = mockContext(Chapter.SOURCE_4)
   context.errors.push(error)
-  context.previousCode.push('test')
+  context.previousPrograms.push(emptyProgram)
   const result = getInfiniteLoopData(context)
   expect(result).toBeDefined()
   expect(result?.[0]).toBe(InfiniteLoopErrorType.NoBaseCase)
   expect(result?.[3].length).toBe(1)
-  expect(result?.[3]).toContain('test')
+  expect(result?.[3]).toContain(emptyProgram)
 })
 
 test('getInfiniteLoopData works when error hidden in exceptionError', () => {
@@ -64,10 +72,10 @@ test('getInfiniteLoopData works when error hidden in exceptionError', () => {
   innerError.infiniteLoopError = noBaseCaseError
   const context = mockContext(Chapter.SOURCE_4)
   context.errors.push(new ExceptionError(innerError, fakePos))
-  context.previousCode.push('test')
+  context.previousPrograms.push(emptyProgram)
   const result = getInfiniteLoopData(context)
   expect(result).toBeDefined()
   expect(result?.[0]).toBe(InfiniteLoopErrorType.NoBaseCase)
   expect(result?.[3].length).toBe(1)
-  expect(result?.[3]).toContain('test')
+  expect(result?.[3]).toContain(emptyProgram)
 })

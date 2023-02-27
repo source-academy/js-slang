@@ -38,7 +38,7 @@ export function HighlightRulesSelector(
   )[] = []
 ) {
   // @ts-ignore
-  function _SourceHighlightRules(acequire, exports, module) {
+  function _SourceHighlightRules(acequire, exports, _module) {
     'use strict'
 
     const oop = acequire('../lib/oop')
@@ -83,22 +83,33 @@ export function HighlightRulesSelector(
     }
 
     const ChapterKeywordSelector = () => {
-      let output = ''
+      const output = []
       if (id >= 1) {
-        output += 'import|const|else|if|return|function|debugger'
+        output.push('import', 'const', 'else', 'if', 'return', 'function', 'debugger')
       }
       if (id >= 3) {
-        output += '|while|for|break|continue|let'
+        output.push('while', 'for', 'break', 'continue', 'let')
       }
-      return output
+      return output.join('|')
     }
 
-    const ChapterForbbidenWordSelector = () => {
+    const ChapterAndVariantForbiddenWordSelector = () => {
+      const forbiddenWords = []
       if (id < 3) {
-        return 'while|for|break|continue|let'
-      } else {
-        return ''
+        forbiddenWords.push('while', 'for', 'break', 'continue', 'let')
       }
+      if (variant !== Variant.TYPED) {
+        forbiddenWords.push('typeof', 'void')
+      }
+      return forbiddenWords.join('|')
+    }
+
+    const VariantForbiddenRegexSelector = () => {
+      if (variant === Variant.TYPED) {
+        // Removes the part of the regex that highlights singular |, since Typed variant uses union types
+        return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]/
+      }
+      return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]|[^\|]*\|[^\|]/
     }
 
     // @ts-ignore
@@ -120,16 +131,15 @@ export function HighlightRulesSelector(
           'variable.language':
             'this|arguments|' + // Pseudo
             'var|yield|async|await|with|switch|throw|try|eval|' + // forbidden words
-            'typeof|' +
             'class|enum|extends|super|export|implements|private|public|' +
-            'void|interface|package|protected|static|in|of|instanceof|new|' +
+            'interface|package|protected|static|in|of|instanceof|new|' +
             'case|catch|default|delete|do|finally|' +
-            ChapterForbbidenWordSelector()
+            ChapterAndVariantForbiddenWordSelector()
         },
         'identifier'
       )
 
-      // origiinal keywordBeforeRegex = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
+      // original keywordBeforeRegex = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
       const keywordBeforeRegex = 'else|return'
 
       const escapedRegex =
@@ -271,7 +281,7 @@ export function HighlightRulesSelector(
           },
           {
             token: ['variable.language'],
-            regex: /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]|[^\|]*\|[^\|]/
+            regex: VariantForbiddenRegexSelector()
           },
           {
             token: keywordMapper,
@@ -551,6 +561,30 @@ export function HighlightRulesSelector(
         if (!options || options.jsx != false)
           // @ts-ignore
           JSX.call(this)
+
+        // Adding of highlight rules for Source Typed
+        // Code referenced from https://github.com/ajaxorg/ace-builds/blob/master/src/mode-typescript.js
+        if (variant === Variant.TYPED) {
+          // @ts-ignore
+          this.$rules.no_regex.unshift(
+            {
+              token: ['storage.type', 'text', 'entity.name.function.ts'],
+              regex: '(function)(\\s+)([a-zA-Z0-9$_\u00a1-\uffff][a-zA-Z0-9d$_\u00a1-\uffff]*)'
+            },
+            {
+              token: 'keyword',
+              regex: '(?:\\b(as|AS)\\b)'
+            },
+            {
+              token: ['keyword', 'storage.type.variable.ts'],
+              regex: '(type)(\\s+[a-zA-Z0-9_?.$][\\w?.$]*)'
+            },
+            {
+              token: 'keyword',
+              regex: '\\b(?:typeof)\\b'
+            }
+          )
+        }
       }
       // @ts-ignore
       this.embedRules(DocCommentHighlightRules, 'doc-', [
@@ -722,7 +756,7 @@ export function ModeSelector(
   const name = id.toString() + variant + external
 
   // @ts-ignore
-  function _Mode(acequire, exports, module) {
+  function _Mode(acequire, exports, _module) {
     'use strict'
 
     const oop = acequire('../lib/oop')

@@ -695,6 +695,39 @@ Line 1: Missing curly braces around \\"else\\" block.",
 }
 `;
 
+exports[`no anonymous function declarations - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+export default function (x) {
+  return x * x;
+}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 15: The 'function' keyword needs to be followed by a name.
+Function declarations without a name are similar to function expressions, which are banned.
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`no anonymous function declarations: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "export default function (x) {
+  return x * x;
+}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: The 'function' keyword needs to be followed by a name.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`no assigning to reserved keywords - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -833,99 +866,6 @@ Object {
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 1: SyntaxError: The keyword 'yield' is reserved (1:4)",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no export constant - verbose: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "\\"enable verbose\\";
-export const x = 1;",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 2, Column 0: Export named declarations are not allowed
-You are trying to use Export named declarations, which is not allowed (yet).
-",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no export constant: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "export const x = 1;",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 1: Export named declarations are not allowed",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no export default - verbose: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "\\"enable verbose\\";
-const x = 1;
-export default x;",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 3, Column 0: Export default declarations are not allowed
-You are trying to use Export default declarations, which is not allowed (yet).
-",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no export default: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const x = 1;
-export default x;",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 2: Export default declarations are not allowed",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no export function - verbose: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "\\"enable verbose\\";
-export function f(x) {
-return x;
-}",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 2, Column 0: Export named declarations are not allowed
-You are trying to use Export named declarations, which is not allowed (yet).
-",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no export function: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "export function f(x) {
-  return x;
-}",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 1: Export named declarations are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1121,6 +1061,35 @@ Object {
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 1: SyntaxError: The keyword 'interface' is reserved (1:0)",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`no namespace imports - verbose: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"enable verbose\\";
+import * as x from \\"module-name\\";",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2, Column 7: Namespace imports are not allowed
+You are trying to use Namespace imports, which is not allowed (yet).
+",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`no namespace imports: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "import * as x from \\"module-name\\";",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Namespace imports are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

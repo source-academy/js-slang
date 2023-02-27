@@ -187,6 +187,33 @@ test('Cannot have incomplete statements - verbose', () => {
           `)
 })
 
+test('no anonymous function declarations', () => {
+  return expectParsedError(
+    stripIndent`
+    export default function (x) {
+      return x * x;
+    }
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  ).toMatchInlineSnapshot(`"Line 1: The 'function' keyword needs to be followed by a name."`)
+})
+
+test('no anonymous function declarations - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+    "enable verbose";
+    export default function (x) {
+      return x * x;
+    }
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  ).toMatchInlineSnapshot(`
+            "Line 2, Column 15: The 'function' keyword needs to be followed by a name.
+            Function declarations without a name are similar to function expressions, which are banned.
+            "
+           `)
+})
+
 test('Cannot have if without else in chapter <= 2', () => {
   return expectParsedError(
     stripIndent`
@@ -885,81 +912,6 @@ test('no super - verbose', () => {
           `)
 })
 
-test('no export function', () => {
-  return expectParsedError(
-    stripIndent`
-    export function f(x) {
-      return x;
-    }
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"Line 1: Export named declarations are not allowed"`)
-})
-
-test('no export function - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-    "enable verbose";
-    export function f(x) {
-    return x;
-    }
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 2, Column 0: Export named declarations are not allowed
-            You are trying to use Export named declarations, which is not allowed (yet).
-            "
-          `)
-})
-
-test('no export constant', () => {
-  return expectParsedError(
-    stripIndent`
-    export const x = 1;
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"Line 1: Export named declarations are not allowed"`)
-})
-
-test('no export constant - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-    "enable verbose";
-    export const x = 1;
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 2, Column 0: Export named declarations are not allowed
-            You are trying to use Export named declarations, which is not allowed (yet).
-            "
-          `)
-})
-
-test('no export default', () => {
-  return expectParsedError(
-    stripIndent`
-    const x = 1;
-    export default x;
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`"Line 2: Export default declarations are not allowed"`)
-})
-
-test('no export default - verbose', () => {
-  return expectParsedError(
-    stripIndent`
-    "enable verbose";
-    const x = 1;
-    export default x;
-    `,
-    { chapter: Chapter.LIBRARY_PARSER }
-  ).toMatchInlineSnapshot(`
-            "Line 3, Column 0: Export default declarations are not allowed
-            You are trying to use Export default declarations, which is not allowed (yet).
-            "
-          `)
-})
-
 test('no sequence expression', () => {
   return expectParsedError(
     stripIndent`
@@ -1250,6 +1202,29 @@ test('no assigning to reserved keywords - verbose', () => {
             "Line 2, Column 0: No holes are allowed in array literals.
             No holes (empty slots with no content inside) are allowed in array literals.
             You probably have an extra comma, which creates a hole.
+            "
+          `)
+})
+
+test('no namespace imports', () => {
+  return expectParsedError(
+    stripIndent`
+    import * as x from "module-name";
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  ).toMatchInlineSnapshot(`"Line 1: Namespace imports are not allowed"`)
+})
+
+test('no namespace imports - verbose', () => {
+  return expectParsedError(
+    stripIndent`
+    "enable verbose";
+    import * as x from "module-name";
+    `,
+    { chapter: Chapter.LIBRARY_PARSER }
+  ).toMatchInlineSnapshot(`
+            "Line 2, Column 7: Namespace imports are not allowed
+            You are trying to use Namespace imports, which is not allowed (yet).
             "
           `)
 })

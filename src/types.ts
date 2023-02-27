@@ -9,6 +9,7 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
+import { Agenda, Stash } from './ec-evaluator/interpreter'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -44,7 +45,8 @@ export interface SourceError {
 
 export interface Rule<T extends es.Node> {
   name: string
-  disableOn?: number
+  disableFromChapter?: Chapter
+  disableForVariants?: Variant[]
   checkers: {
     [name: string]: (node: T, ancestors: es.Node[]) => SourceError[]
   }
@@ -58,7 +60,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto'
+export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'ec-evaluator'
 
 export enum Chapter {
   SOURCE_1 = 1,
@@ -72,12 +74,14 @@ export enum Chapter {
 
 export enum Variant {
   DEFAULT = 'default',
+  TYPED = 'typed',
   NATIVE = 'native',
   WASM = 'wasm',
   LAZY = 'lazy',
   NON_DET = 'non-det',
   CONCURRENT = 'concurrent',
-  GPU = 'gpu'
+  GPU = 'gpu',
+  EXPLICIT_CONTROL = 'explicit-control'
 }
 
 export interface Language {
@@ -122,7 +126,7 @@ export interface Context<T = any> {
   /** All the errors gathered */
   errors: SourceError[]
 
-  /** Runtime Sepecific state */
+  /** Runtime Specific state */
   runtime: {
     break: boolean
     debuggerOn: boolean
@@ -130,6 +134,8 @@ export interface Context<T = any> {
     environmentTree: EnvTree
     environments: Environment[]
     nodes: es.Node[]
+    agenda?: Agenda
+    stash?: Stash
   }
 
   numberOfOuterEnvironments: number
@@ -183,9 +189,14 @@ export interface Context<T = any> {
   }
 
   /**
-   * Code previously executed in this context
+   * Programs previously executed in this context
    */
-  previousCode: string[]
+  previousPrograms: es.Program[]
+
+  /**
+   * Whether the evaluation timeout should be increased
+   */
+  shouldIncreaseEvaluationTimeout: boolean
 }
 
 export type ModuleContext = {
@@ -255,7 +266,12 @@ export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-n
   value: Value
 }
 
-export type Result = Suspended | SuspendedNonDet | Finished | Error
+export interface SuspendedEcEval {
+  status: 'suspended-ec-eval'
+  context: Context
+}
+
+export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedEcEval
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
@@ -291,11 +307,41 @@ export interface BlockExpression extends es.BaseExpression {
 
 export type substituterNodes = es.Node | BlockExpression
 
-export type TypeAnnotatedNode<T extends es.Node> = TypeAnnotation & T
+export {
+  Instruction as SVMInstruction,
+  Program as SVMProgram,
+  Address as SVMAddress,
+  Argument as SVMArgument,
+  Offset as SVMOffset,
+  SVMFunction
+} from './vm/svml-compiler'
 
-export type TypeAnnotatedFuncDecl = TypeAnnotatedNode<es.FunctionDeclaration> & TypedFuncDecl
+export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>
 
-export type TypeAnnotation = Untypable | Typed | NotYetTyped
+export type ContiguousArrayElements = ContiguousArrayElementExpression[]
+
+// =======================================
+// Types used in type checker for type inference/type error checker for Source Typed variant
+// =======================================
+
+export type PrimitiveType = 'boolean' | 'null' | 'number' | 'string' | 'undefined'
+
+export type TSAllowedTypes = 'any' | 'void'
+
+export const disallowedTypes = ['bigint', 'never', 'object', 'symbol', 'unknown'] as const
+
+export type TSDisallowedTypes = typeof disallowedTypes[number]
+
+// All types recognised by type parser as basic types
+export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes
+
+// Types for nodes used in type inference
+export type NodeWithInferredType<T extends es.Node> = InferredType & T
+
+export type FuncDeclWithInferredTypeAnnotation = NodeWithInferredType<es.FunctionDeclaration> &
+  TypedFuncDecl
+
+export type InferredType = Untypable | Typed | NotYetTyped
 
 export interface TypedFuncDecl {
   functionInferredType?: Type
@@ -316,18 +362,36 @@ export interface Typed {
   inferredType?: Type
 }
 
-export type Type = Primitive | Variable | FunctionType | List | Pair | SArray
+// Constraints used in type inference
 export type Constraint = 'none' | 'addable'
+
+// Types used by both type inferencer and Source Typed
+export type Type =
+  | Primitive
+  | Variable
+  | FunctionType
+  | List
+  | Pair
+  | SArray
+  | UnionType
+  | LiteralType
 
 export interface Primitive {
   kind: 'primitive'
-  name: 'number' | 'boolean' | 'string' | 'undefined'
+  name: PrimitiveType | TSAllowedTypes
+  // Value is needed for Source Typed type error checker due to existence of literal types
+  value?: string | number | boolean
 }
 
+// In Source Typed, Variable type is used for
+// 1. Type parameters
+// 2. Type references of generic types with type arguments
 export interface Variable {
   kind: 'variable'
   name: string
   constraint: Constraint
+  // Used in Source Typed variant to store type arguments of generic types
+  typeArgs?: Type[]
 }
 
 // cannot name Function, conflicts with TS
@@ -336,20 +400,11 @@ export interface FunctionType {
   parameterTypes: Type[]
   returnType: Type
 }
-
-export interface PredicateType {
-  kind: 'predicate'
-  ifTrueType: Type | ForAll
-}
-
 export interface List {
   kind: 'list'
   elementType: Type
-}
-
-export interface SArray {
-  kind: 'array'
-  elementType: Type
+  // Used in Source Typed variants to check for type mismatches against pairs
+  typeAsPair?: Pair
 }
 
 export interface Pair {
@@ -357,34 +412,50 @@ export interface Pair {
   headType: Type
   tailType: Type
 }
+export interface SArray {
+  kind: 'array'
+  elementType: Type
+}
 
-export interface ForAll {
-  kind: 'forall'
-  polyType: Type
+// Union types and literal types are only used in Source Typed for typechecking
+export interface UnionType {
+  kind: 'union'
+  types: Type[]
+}
+
+export interface LiteralType {
+  kind: 'literal'
+  value: string | number | boolean
 }
 
 export type BindableType = Type | ForAll | PredicateType
 
-export type TypeEnvironment = {
-  typeMap: Map<string, BindableType>
-  declKindMap: Map<string, AllowedDeclarations>
-}[]
+// In Source Typed, ForAll type is used for generic types
+export interface ForAll {
+  kind: 'forall'
+  polyType: Type
+  // Used in Source Typed variant to store type parameters of generic types
+  typeParams?: Variable[]
+}
+
+export interface PredicateType {
+  kind: 'predicate'
+  ifTrueType: Type | ForAll
+}
 
 export type PredicateTest = {
-  node: TypeAnnotatedNode<es.CallExpression>
+  node: NodeWithInferredType<es.CallExpression>
   ifTrueType: Type | ForAll
   argVarName: string
 }
 
-export {
-  Instruction as SVMInstruction,
-  Program as SVMProgram,
-  Address as SVMAddress,
-  Argument as SVMArgument,
-  Offset as SVMOffset,
-  SVMFunction
-} from './vm/svml-compiler'
-
-export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>
-
-export type ContiguousArrayElements = ContiguousArrayElementExpression[]
+/**
+ * Each element in the TypeEnvironment array represents a different scope
+ * (e.g. first element is the global scope, last element is the closest).
+ * Within each scope, variable types/declaration kinds, as well as type aliases, are stored.
+ */
+export type TypeEnvironment = {
+  typeMap: Map<string, BindableType>
+  declKindMap: Map<string, AllowedDeclarations>
+  typeAliasMap: Map<string, Type | ForAll>
+}[]

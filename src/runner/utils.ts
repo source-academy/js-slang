@@ -3,7 +3,7 @@ import { DebuggerStatement, Literal, Program } from 'estree'
 
 import { IOptions, Result } from '..'
 import { loadModuleTabs } from '../modules/moduleLoader'
-import { parseAt } from '../parser/parser'
+import { parseAt } from '../parser/utils'
 import { areBreakpointsSet } from '../stdlib/inspector'
 import { Context, Variant } from '../types'
 import { simple } from '../utils/walkers'
@@ -35,32 +35,51 @@ export function determineExecutionMethod(
   context: Context,
   program: Program,
   verboseErrors: boolean
-): boolean {
+): void {
+  if (theOptions.executionMethod !== 'auto') {
+    context.executionMethod = theOptions.executionMethod
+    return
+  }
+
+  if (context.executionMethod !== 'auto') {
+    return
+  }
+
   let isNativeRunnable
-  if (theOptions.executionMethod === 'auto') {
+  if (verboseErrors) {
+    isNativeRunnable = false
+  } else if (areBreakpointsSet()) {
+    isNativeRunnable = false
+  } else if (theOptions.executionMethod === 'auto') {
     if (context.executionMethod === 'auto') {
       if (verboseErrors) {
         isNativeRunnable = false
       } else if (areBreakpointsSet()) {
         isNativeRunnable = false
       } else {
-        let hasDeuggerStatement = false
+        let hasDebuggerStatement = false
         simple(program, {
           DebuggerStatement(node: DebuggerStatement) {
-            hasDeuggerStatement = true
+            hasDebuggerStatement = true
           }
         })
-        isNativeRunnable = !hasDeuggerStatement
+        isNativeRunnable = !hasDebuggerStatement
       }
-      context.executionMethod = isNativeRunnable ? 'native' : 'interpreter'
+      context.executionMethod = isNativeRunnable ? 'native' : 'ec-evaluator'
     } else {
       isNativeRunnable = context.executionMethod === 'native'
     }
   } else {
-    isNativeRunnable = theOptions.executionMethod === 'native'
-    context.executionMethod = theOptions.executionMethod
+    let hasDebuggerStatement = false
+    simple(program, {
+      DebuggerStatement(_node: DebuggerStatement) {
+        hasDebuggerStatement = true
+      }
+    })
+    isNativeRunnable = !hasDebuggerStatement
   }
-  return isNativeRunnable
+
+  context.executionMethod = isNativeRunnable ? 'native' : 'ec-evaluator'
 }
 
 /**

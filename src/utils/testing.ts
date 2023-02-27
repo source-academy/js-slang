@@ -66,15 +66,15 @@ export function createTestContext({
   } else {
     const testContext: TestContext = {
       ...createContext(chapter, variant, [], undefined, {
-        rawDisplay: (str1, str2, externalContext) => {
+        rawDisplay: (str1, str2, _externalContext) => {
           testContext.displayResult.push((str2 === undefined ? '' : str2 + ' ') + str1)
           return str1
         },
-        prompt: (str, externalContext) => {
+        prompt: (str, _externalContext) => {
           testContext.promptResult.push(str)
           return null
         },
-        alert: (str, externalContext) => {
+        alert: (str, _externalContext) => {
           testContext.alertResult.push(str)
         },
         visualiseList: value => {
@@ -124,6 +124,8 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     let pretranspiled: string = ''
     let transpiled: string = ''
     const parsed = parse(code, nativeTestContext)!
+    // Reset errors in context so as not to interfere with actual run.
+    nativeTestContext.errors = []
     if (parsed === undefined) {
       pretranspiled = 'parseError'
     } else {

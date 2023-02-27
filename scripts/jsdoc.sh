@@ -48,6 +48,15 @@ run() {
 	     -d ${DST}/"source_1_lazy"/ \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js
+
+	# Source §1 Typed
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_1_TYPED.md \
+	     -d ${DST}/"source_1_typed"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js
     
     # Source §1 WebAssembly
     
@@ -76,7 +85,17 @@ run() {
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
 	     ${LIB}/list.js
+
+    # Source §2 Typed
     
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_2_TYPED.md \
+	     -d ${DST}/"source_2_typed"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+	     ${LIB}/list.js
+   
     # Source §3
     
     ${JSDOC} -r -t ${TMPL} \
@@ -118,6 +137,18 @@ run() {
 	     ${LIB}/pairmutator.js \
 		 ${LIB}/non-det.js
     
+	# Source §3 Typed
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_3_TYPED.md \
+	     -d ${DST}/"source_3_typed"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+         ${LIB}/list.js \
+	     ${LIB}/stream.js \
+	     ${LIB}/array.js \
+	     ${LIB}/pairmutator.js
     
     # Source §4
     
@@ -145,6 +176,20 @@ run() {
 	     ${LIB}/stream.js \
 	     ${LIB}/array.js \
 	     ${LIB}/pairmutator.js 
+
+	# Source §4 Typed
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_4_TYPED.md \
+	     -d ${DST}/"source_4_typed"/ \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+	     ${LIB}/list.js \
+	     ${LIB}/stream.js \
+	     ${LIB}/array.js \
+	     ${LIB}/pairmutator.js \
+	     ${LIB}/mce.js
     
     # MISC
     

@@ -20,7 +20,7 @@ function transpileCode(
   // use defaults for everything
   const context = createContext(chapter, variant, undefined, undefined)
   const program = parse(code, context)
-  if (program === undefined) {
+  if (program === null) {
     throw Error(parseError(context.errors, true))
   }
   validateAndAnnotate(program as Program, context)

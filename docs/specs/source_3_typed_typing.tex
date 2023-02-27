@@ -1,0 +1,474 @@
+\newcommand{\Rule}[2]{\genfrac{}{}{0.7pt}{}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#1$}}}{{\setlength{\fboxrule}{0pt}\setlength{\fboxsep}{3mm}\fbox{$#2$}}}}
+
+\newcommand{\TruE}{\textbf{\texttt{true}}}
+\newcommand{\FalsE}{\textbf{\texttt{false}}}
+\newcommand{\AndOp}{\texttt{\&\&}}
+\newcommand{\OrOp}{\texttt{||}}
+\newcommand{\ThenOp}{\texttt{?}}
+\newcommand{\ElseOp}{\texttt{:}}
+\newcommand{\Rc}{\texttt{\}}}
+\newcommand{\Lc}{\texttt{\{}}
+\newcommand{\Rp}{\texttt{)}}
+\newcommand{\Lp}{\texttt{(}}
+\newcommand{\Fun}{\textbf{\texttt{function}}}
+\newcommand{\Let}{\textbf{\texttt{let}}}
+\newcommand{\Return}{\textbf{\texttt{return}}}
+\newcommand{\Const}{\textbf{\texttt{const}}}
+\newcommand{\If}{\textbf{\texttt{if}}}
+\newcommand{\Else}{\textbf{\texttt{else}}}
+\newcommand{\Bool}{\texttt{boolean}}
+\newcommand{\Number}{\texttt{number}}
+\newcommand{\String}{\texttt{string}}
+\newcommand{\Undefined}{\texttt{undefined}}
+\newcommand{\Null}{\texttt{null}}
+\newcommand{\Any}{\texttt{any}}
+\newcommand{\Void}{\texttt{void}}
+\newcommand{\Pred}{\textit{Pred}}
+\newcommand{\type}{\textit{type}}
+\newcommand{\polytype}{\textit{polytype}}
+\newcommand{\predtype}{\textit{predtype}}
+\newcommand{\ExtractPos}{\ensuremath{\textit{Extract}^+}}
+\newcommand{\ExtractNeg}{\ensuremath{\textit{Extract}^-}}
+
+\newtheorem{definition}{Definition}[section]
+
+\section{Type System}  
+
+In Source \S 3 Typed, the Source \S 3 syntax is expanded to include type syntax such as type annotations and type aliases.
+This allows names to be explicitly typed, and for type checks to be performed.
+
+Support for \texttt{typeof} operations is also added to Source \S 3 Typed.
+
+\subsection{Type Environment}
+
+In order to keep track of the type of names in a program, we define a
+\emph{type environment}, denoted by $\Gamma$. More formally,
+the partial function $\Gamma$ from names to types expresses a 
+context, in which a name $x$ is associated with type $\Gamma(x)$. 
+
+We define a relation $\Gamma[x \leftarrow t]\Gamma'$ on type environments 
+$\Gamma$, names $x$, types $t$, and type environments $\Gamma'$,
+which constructs a type environment that behaves like the 
+given one, except that the type of $x$ is $t$. More formally, 
+if $\Gamma[x \leftarrow t]\Gamma'$, then $\Gamma'(y)$ is $t$, 
+if $y=x$ and $\Gamma(y)$ 
+otherwise. Obviously, this uniquely identifies $\Gamma'$ for
+a given $\Gamma$, $x$, and $t$, and thus the type environment extension
+relation is functional in its first three arguments.
+
+The set of names, on which a type environment
+$\Gamma$ is defined, is called the domain of $\Gamma$, 
+denoted by $\textit{dom}(\Gamma)$.
+
+For each non-overloaded primitive operator, we add a binding to our initial
+type environment $\Gamma_0$ as follows:
+
+\begin{eqnarray*}
+& &
+       \emptyset[ -_2 \leftarrow  (\Number, \Number) \rightarrow \Number]\\
+&& \hspace{2mm} [ * \leftarrow  (\Number, \Number) \rightarrow \Number]\\
+&& \hspace{2mm} [ / \leftarrow  (\Number, \Number) \rightarrow \Number]\\
+&& \hspace{2mm} [ \% \leftarrow (\Number, \Number) \rightarrow \Number]\\
+&& \hspace{2mm} [ \&\& \leftarrow (\Bool, \texttt{T}) \rightarrow \Bool\ |\ \texttt{T}]\\
+&& \hspace{2mm} [ || \leftarrow   (\Bool, \texttt{T}) \rightarrow \Bool\ |\ \texttt{T}]\\
+&& \hspace{2mm} [ ! \leftarrow \Bool \rightarrow \Bool]\\
+&& \hspace{2mm} [ -_1 \leftarrow \Number \rightarrow \Number]\\
+&& \hspace{2mm} [ \texttt{typeof} \leftarrow \Any \rightarrow \String]\Gamma_{-2}
+\end{eqnarray*}
+
+The overloaded binary primitives (with the exception of \texttt{+}, the handling of which will be elaborated in \nameref{typing-rules})
+are handled as follows:
+
+\begin{eqnarray*}
+ & &
+      \Gamma_{-2}
+                 [ \texttt{===} \leftarrow (\Any,\ \Any) \rightarrow \Bool] \\
+&& \hspace{6mm}  [ \texttt{!==} \leftarrow (\Any,\ \Any) \rightarrow \Bool] \\
+&& \hspace{6mm}  [ \texttt{>} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool]\\
+&& \hspace{6mm}  [ \texttt{>=} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool]\\
+&& \hspace{6mm}  [ \texttt{<} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool] \\
+&& \hspace{6mm}  [ \texttt{<=} \leftarrow (\String,\ \String) \rightarrow \Bool\ |\ (\Number,\ \Number) \rightarrow \Bool]\Gamma_{-1}
+\end{eqnarray*}
+
+The Source \S 3 standard library functions and constants have their types defined as follows:
+
+\begin{tabular}[fragile]{lllllllll}
+$\Gamma_{-1}$
+& $[$ & \texttt{display}      & $\leftarrow$  & $\Any$ & & & $]$ \\
+& $[$ & \texttt{error}      & $\leftarrow$  & $\Any$ & & & $]$ \\
+& $[$ & \texttt{Infinity}      & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{is\_boolean}   & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{is\_function}  & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{is\_number}    & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{is\_string}    & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{is\_undefined} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{math\_abs} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_acos} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_acosh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_asin} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_asinh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_atan} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_atan2} & $\leftarrow$  & $(\Number, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_atanh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_cbrt} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_ceil} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_clz32} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_cos} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_cosh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_exp} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_expm1} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_floor} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_fround} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_hypot} & $\leftarrow$  & $\Any$ & & & $]$ \\
+& $[$ & \texttt{math\_imul} & $\leftarrow$  & $(\Number, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_LN2} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_LN10} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& \end{tabular}
+
+\begin{tabular}[fragile]{lllllllll}
+& $[$ & \texttt{math\_log} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_log1p} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_log2} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_LOG2E} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_log10} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_LOG10E} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_max} & $\leftarrow$  & $\Any$ & & & $]$ \\
+& $[$ & \texttt{math\_min} & $\leftarrow$  & $\Any$ & & & $]$ \\
+& $[$ & \texttt{math\_PI} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_pow} & $\leftarrow$  & $(\Number, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_random} & $\leftarrow$  & $()$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_round} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sign} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sin} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sinh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_sqrt} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_SQRT1\_2} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_SQRT2} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{math\_tan} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_tanh} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{math\_trunc} & $\leftarrow$  & $\Number$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{NaN} & $\leftarrow$  & $\Number$ & & & $]$ \\
+& $[$ & \texttt{parse\_int} & $\leftarrow$  & $(\String, \Number)$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{prompt} & $\leftarrow$  & $\String$ & $\rightarrow$ & $\String$ & $]$ \\
+& $[$ & \texttt{get\_time} & $\leftarrow$  & $()$ & $\rightarrow$ & $\Number$ & $]$ \\
+& $[$ & \texttt{stringify} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\String$ & $]$ \\
+& $[$ & \texttt{undefined} & $\leftarrow$  & $\Undefined$ & & & $]$ \\
+& $[$ & \texttt{null}      & $\leftarrow$  & $\Null$ & & & $]$ \\
+& $[$ & \texttt{pair} & $\leftarrow$  & $(T_1,\ T_2)$ & $\rightarrow$ & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $]$ \\
+& $[$ & \texttt{head} & $\leftarrow$  & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $\rightarrow$ & $T_1$ & $]$ \\
+& $[$ & \texttt{tail} & $\leftarrow$  & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $\rightarrow$ & $T_2$ & $]$ \\
+& $[$ & \texttt{list} & $\leftarrow$  & $(T_1, \ldots, T_n)$ & $\rightarrow$ & \textit{List<} $T_1\ |\ \ldots\ |\ T_n$ \textit{>} & $]$ \\
+& $[$ & \texttt{is\_pair} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{is\_null} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{is\_list} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{set\_head} & $\leftarrow$  & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $\rightarrow$ & $\Undefined$ & $]$ \\
+& $[$ & \texttt{set\_tail} & $\leftarrow$  & \textit{Pair<} $T_1,\ T_2$ \textit{>} & $\rightarrow$ & $\Undefined$ & $]$ \\
+& $[$ & \texttt{is\_array} & $\leftarrow$  & $\Any$ & $\rightarrow$ & $\Bool$ & $]$ \\
+& $[$ & \texttt{array\_length} & $\leftarrow$  & $\Any$[] & $\rightarrow$ & $\Number$ & $]$ $\Gamma_0$ \\
+& \end{tabular}
+
+In order to support the definition of type aliases, we define a separate
+\emph{type alias environment}, denoted by $\Gamma_{alias}$. Unlike $\Gamma$,
+$\Gamma_{alias}$ binds names to special \emph{type functions} of the form $<T_1, \ldots, T_n> \rightarrow t$
+where $T_1 \ldots T_n$ are type parameters $t$ is the return type expressed in terms of $T_1 \ldots T_n$.
+$<>$ is used to differentiate type functions from function types, which are of the form $(t_1, \ldots, t_n) \rightarrow t$.
+
+Since $\Gamma$ and $\Gamma_{alias}$ are separate environments, the same name $x$ can be used for both variables and type aliases.
+
+The initial type alias environment $\Gamma_{alias0}$ is as follows:
+
+\begin{tabular}[fragile]{lllllllll}
+$\Gamma_{alias-1}$
+& $[$ & \texttt{Pair} & $\leftarrow$ & $<T_{head}, T_{tail}>$ & $\rightarrow$ & $Pair<T_{head}, T_{tail}>$ & $]$ \\
+& $[$ & \texttt{List} & $\leftarrow$ & $<T_{elem}>$ & $\rightarrow$ & $List<T_{elem}>$ & $]$ $\Gamma_{alias0}$ \\
+& \end{tabular}
+
+\subsection{Success Types}
+
+In order for type checks to be performed in Source \S 3 Typed, we introduce the notion of success types.
+
+We first define the special $\Any$ type:
+\begin{definition}
+$\Any$ is the union of all possible types.
+\end{definition}
+
+Success typing in Source Typed is defined as follows:
+
+\begin{definition}
+Type $t'$ is a success type of type $t$ if $\exists x (x \in t \wedge x \in t')$.
+Alternatively: $t \wedge t' \neq \emptyset$.
+\end{definition}
+
+In Source Typed, type checks are performed by checking that the actual type is a success type of the expected type.
+This means that type errors will be thrown if and only if a definite clash in types at runtime is detected.
+Given that $\Any$ is the union of all possible types, this also means that the $\Any$ type is guaranteed not to produce any type errors.
+
+\subsection{Typing Relations}
+\label{typing-rules}
+
+To perform type checking on the program, typing relations are applied to every statement and expression in the program.
+
+Names that do not have a type declared will be assumed to have the $\Any$ type.
+
+\subsubsection{Typing Relations on Expressions}
+
+The derived type of primitive expressions is their literal type, which is an element of its corresponding basic type.
+
+\noindent
+\[
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash n : \textit{literal type}\ n}
+  \quad
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash s : \textit{literal type}\ s}
+\]
+\noindent
+
+where $n$ denotes any literal number and $s$ denotes any literal string.
+
+\noindent
+\[
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash \TruE : \textit{literal type}\ \TruE}
+  \quad
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash \FalsE : \textit{literal type}\ \FalsE}
+\]
+\noindent
+
+For names, the type must be derived from the type environment.
+
+\noindent
+\[
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash x : \Gamma(x)}
+\]
+\noindent
+
+For function applications (including applications of binary and unary operators), the following two type rules are used, depending on the type of $E_0$.
+
+\noindent
+\[
+\Rule{\Gamma, \Gamma_{alias} \vdash E_0 : (t_1, \ldots, t_n) \rightarrow t \quad \Gamma, \Gamma_{alias} \vdash E_1 : t'_1, \ldots,  \Gamma, \Gamma_{alias} \vdash E_n : t'_n
+  \quad (\forall 1 \leq i \leq n)(t'_i \wedge t_i \neq \emptyset)}{\Gamma, \Gamma_{alias} \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : t}
+\]
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : \Any \quad \Gamma, \Gamma_{alias} \vdash E_1 : t'_1, \ldots, \Gamma, \Gamma_{alias} \vdash E_n : t'_n
+    }{\Gamma, \Gamma_{alias} \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : \Any}
+\]
+\noindent
+
+The type of the operator must be a function type with the right number of parameters,
+and the type of every argument must be a success type of the corresponding parameter type of the function type.
+If all of the conditions are met, the type of the function application is the same
+as the return type of the function type that is the type of the operator.
+If the type of the operator is $\Any$, the return type will be $\Any$.
+
+Applications of binary and unary operators are treated the same as function applications, with the exception of the \texttt{+} operator.
+We use the $\subseteq$ operator to indicate that a type is a subset of another type, as defined below:
+
+\begin{itemize}
+\item{A type is a subset of type $\Number$ if it is of type $\Number$, literal number type,
+  or a union type containing any number of literal number types.}
+\item{A type is a subset of type $\String$ if it is of type $\String$, literal string type,
+  or a union type containing any number of literal string types.}
+\end{itemize}
+
+For the \texttt{+} operator, the following rules are applied, in order of priority:
+
+\begin{itemize}
+\item{If the expression on the left side is a subset of type $\Number$,
+  check that the other expression is a success type of $\Number$. The return type is $\Number$.}
+\item{If the expression on the left side is a subset of type $\String$,
+  check that the other expression is a success type of $\String$. The return type is $\String$.}
+\item{If the expression on the right side is a subset of type $\Number$,
+  check that the other expression is a success type of $\Number$. The return type is $\Number$.}
+\item{If the expression on the right side is a subset of type $\String$,
+  check that the other expression is a success type of $\String$. The return type is $\String$.}
+\item{If the expression on the left side cannot be narrowed to a subset of either $\Number$ or $\String$, check that both sides are success types of 
+  $\Number\ |\ \String$. The return type is $\Number\ |\ \String$.}
+\end{itemize}
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_0 \subseteq \Number
+    \quad t_1 \wedge \Number \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E_0\ + \ E_1 : \Number}
+\]
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_0 \subseteq \String
+    \quad t_1 \wedge \String \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E_0\ + \ E_1 : \String}
+\]
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_1 \subseteq \Number
+    \quad t_0 \wedge \Number \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E_0\ + \ E_1 : \Number}
+\]
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_1 \subseteq \String
+    \quad t_0 \wedge \String \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E_0\ + \ E_1 : \String}
+\]
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_0 \wedge (\Number\ |\ \String) \neq \emptyset
+    \quad t_1 \wedge (\Number\ |\ \String) \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E_0\ + \ E_1 : \Number\ |\ \String}
+\]
+\noindent
+
+For lambda expressions, we extend $\Gamma$ with the declared types of all the function parameters,
+and check the type of the function body against the declared return type.
+As type syntax is optional, if type annotations are absent for any of the arguments or the return type, the type is assumed to be $\Any$.
+The type of the lambda expression is then the function type with the declared types of the parameters and the return type. 
+
+\noindent
+\[
+  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad \Gamma' \vdash S : t' \quad t' \wedge t \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash ( \Lp  x_1:\ t_1, \ldots, x_n:\ t_n \Rp :\ t\ \texttt{=>}\ \Lc\ S\ \Rc) : (t_1, \ldots, t_n) \rightarrow t}  
+\]
+\noindent
+
+The type of a conditional expression is the union of the type of its consequent expression and its alternate expression.
+The predicate expression of a conditional expression must be a success type of a boolean.
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash E_{cons} : t_{cons} \quad \Gamma, \Gamma_{alias} \vdash E_{alt} : t_{alt}
+    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (E_{pred}\ \texttt{?}\ E_{cons} : E_{alt}) : t_{cons}\ |\ t_{alt}}
+\]
+\noindent
+
+For as expressions, the type to cast the expression to must be a success type of the type of the expression.
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E : t' \quad t \wedge t' \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (E\ \texttt{as}\ t) : t}  
+\]
+\noindent
+
+\subsubsection{Typing Relations on Assignments}
+
+For assignments, the type of the right expression must be a success type of the type of the left expression.
+The type of the assignment itself is the type of the right expression.
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_1 \wedge t_0 \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash (E_0 = E_1) : t_1}
+\]
+\noindent
+
+\subsubsection{Typing Relations on Statements}
+
+For type alias declarations, the declared type $t$ for name $x$ is first checked against the type environments.
+Any type parameters declared are temporarily added to the type alias environment when checking the type of $t$
+to ensure that the type parameters are only used within $t$ itself.
+Then, the binding of name $x$ to type function $<T_1, \ldots, T_n> \rightarrow t$ is added to the type alias environment.
+If no type parameters are given, the type function is assumed to take in 0 type arguments.
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash t : t \quad \Gamma_{alias} [x \leftarrow <> \rightarrow t] \Gamma_{alias}'
+    }{\Gamma, \Gamma_{alias} \vdash (\texttt{type}\ x = t \texttt{;}) : \Undefined}
+\]
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias}[T_1 \leftarrow T_1]\ldots[T_n \leftarrow T_n] \vdash t : t \quad
+    \Gamma_{alias} [x \leftarrow <T_1, \ldots, T_n> \rightarrow T] \Gamma_{alias}'
+    }{\Gamma, \Gamma_{alias} \vdash (\texttt{type}\ x<T_1, \ldots, T_n> = t \texttt{;}) : \Undefined}
+\]
+\noindent
+
+For constant and variable declarations, the declared type of $x$, $t$, is added to the type environment.
+If the type annotation for $x$ is absent, the declared type $t$ is assumed to be $\Any$.
+
+If the type annotation is a type reference to a type alias with name $T$,
+$t$ is first derived by applying the type arguments $t_1, \ldots, t_n$ to the type function for $T$,
+replacing all instances of type variables $T_1, \ldots, T_n$ in $t$ with $t_1, \ldots, t_n$ respectively.
+
+The derived type of the expression $E$, $t_E$, must be a success type of $t$.
+The type of the statement itself is $\Undefined$.
+
+\noindent
+\[
+  \Rule{\Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t_E \quad t_E \wedge t \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash (\texttt{const/let}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
+\]
+\noindent
+\[
+  \Rule{\Gamma_{alias}(T)<t_1, \ldots, t_n> = t \quad \Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t_E \quad
+    t_E \wedge t \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (\texttt{const/let}\ x \texttt{:}\ T<t_1, \ldots, t_n> = E\texttt{;}) : \Undefined}
+\]
+\noindent
+
+The type of return statements and expression statements is the type of the expression in the statement.
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E : t}{\Gamma, \Gamma_{alias} \vdash (\texttt{return}\ E\texttt{;}) : t}
+  \quad
+  \Rule{\Gamma, \Gamma_{alias} \vdash E : t}{\Gamma, \Gamma_{alias} \vdash (E\texttt{;}) : t}
+\]
+\noindent
+
+The type of break and continue statements is $\Undefined$.
+
+\noindent
+\[
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash (\texttt{break} \texttt{;}) : \Undefined}
+  \quad
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash (\texttt{continue} \texttt{;}) : \Undefined}
+\]
+\noindent
+
+For blocks, $\Gamma$ is first extended to include the types of names declared in the block.
+Then, the component statements are checked against the extended type environment.
+
+We assume that whenever there is a return statement or a conditional statement with a return statement within a
+block, it is the last statement in the block. (One could consider a ``dead code'' error otherwise.)
+
+The type of a function body block is the type of the return statement in the block.
+If the block does not contain any return statements, the type is $\Undefined$.
+
+\noindent
+\[
+  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
+    \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is a return statement}}{
+    \Gamma, \Gamma_{alias} \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
+    S_1, \ldots, S_n\} : t'_n}
+\]
+\noindent
+\[
+  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
+    \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is not a return statement}}{
+    \Gamma, \Gamma_{alias} \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
+    S_1, \ldots, S_n\} : \Undefined}
+\]
+\noindent
+
+The type of a conditional statement or if statement is the union of the type of its consequent statement and its alternate statement.
+The predicate expression of a conditional statement must be a success type of a boolean.
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash S_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash S_{cons} : t_{cons} \quad \Gamma, \Gamma_{alias} \vdash S_{alt} : t_{alt}
+    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (\texttt{if}\ (S_{pred})\ \{\ S_{cons}\ \}\
+    \texttt{else}\ \{\ S_{alt}\ \}) : t_{cons}\ |\ t_{alt}}
+\]
+\noindent
+
+For \texttt{while} statements, the predicate expression must be a success type of $\Bool$. The rest of the statement is treated as a block.
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash S : t \quad t_{pred} \wedge \Bool \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash (\texttt{while}\ (\ E_{pred}\ )\ \{\ S\ \}) : t}
+\]
+\noindent
+
+For \texttt{for} statements, the typing is the same as that of a \texttt{while} statement,
+except with additional type checks for the initialization and assignment expressions.
+
+\noindent
+\[
+  \Rule{\Gamma, \Gamma_{alias} \vdash E_{init} : t_{init} \quad \Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash E_{assign} : t_{assign} \quad
+    \Gamma, \Gamma_{alias} \vdash S : t \quad t_{pred} \wedge \Bool \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash (\texttt{for}\ (\ E_{init} \texttt{;} E_{pred} \texttt{;} E_{assign}\ )\ \{\ S\ \}) : t}
+\]
+\noindent

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Options, parse } from 'acorn'
 import { generate } from 'astring'
 import * as es from 'estree'
 import { RawSourceMap } from 'source-map'
@@ -7,49 +6,13 @@ import { RawSourceMap } from 'source-map'
 import { IOptions, Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { FatalSyntaxError } from '../parser/parser'
-import {
-  evallerReplacer,
-  getBuiltins,
-  hoistImportDeclarations,
-  transpile
-} from '../transpiler/transpiler'
+import { hoistAndMergeImports } from '../localImports/transformers/hoistAndMergeImports'
+import { parse } from '../parser/parser'
+import { evallerReplacer, getBuiltins, transpile } from '../transpiler/transpiler'
 import type { Context } from '../types'
 import * as create from '../utils/astCreator'
 import { toSourceError } from './errors'
 import { appendModulesToContext, resolvedErrorPromise } from './utils'
-
-const FULL_JS_PARSER_OPTIONS: Options = {
-  sourceType: 'module',
-  ecmaVersion: 'latest',
-  locations: true
-}
-
-/**
- * Parse code string into AST
- * - any errors in the process of parsing will be added to the context
- *
- * @param code
- * @param context
- * @returns AST of code if there are no syntax errors, otherwise undefined
- */
-function parseFullJS(code: string, context: Context): es.Program | undefined {
-  let program: es.Program | undefined
-  try {
-    program = parse(code, FULL_JS_PARSER_OPTIONS) as unknown as es.Program
-  } catch (error) {
-    if (error instanceof SyntaxError) {
-      const loc = (error as any).loc
-      const location = {
-        start: { line: loc.line, column: loc.column },
-        end: { line: loc.line, column: loc.column + 1 }
-      }
-      context.errors.push(new FatalSyntaxError(location, error.toString()))
-    }
-  }
-
-  return program
-}
 
 function fullJSEval(code: string, { nativeStorage, ...ctx }: Context): any {
   if (nativeStorage.evaller) {
@@ -59,13 +22,16 @@ function fullJSEval(code: string, { nativeStorage, ...ctx }: Context): any {
   }
 }
 
-function preparePrelude(context: Context): es.Statement[] {
+function preparePrelude(context: Context): es.Statement[] | undefined {
   if (context.prelude === null) {
     return []
   }
   const prelude = context.prelude
   context.prelude = null
-  const program: es.Program = parseFullJS(prelude, context)!
+  const program = parse(prelude, context)
+  if (program === null) {
+    return undefined
+  }
 
   return program.body as es.Statement[]
 }
@@ -75,24 +41,22 @@ function containsPrevEval(context: Context): boolean {
 }
 
 export async function fullJSRunner(
-  code: string,
+  program: es.Program,
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
-  // parse + check for syntax errors
-  const program: es.Program | undefined = parseFullJS(code, context)
-  if (!program) {
-    return resolvedErrorPromise
-  }
-
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context
+  const prelude = preparePrelude(context)
+  if (prelude === undefined) {
+    return resolvedErrorPromise
+  }
   const preludeAndBuiltins: es.Statement[] = containsPrevEval(context)
     ? []
-    : [...getBuiltins(context.nativeStorage), ...preparePrelude(context)]
+    : [...getBuiltins(context.nativeStorage), ...prelude]
 
   // modules
-  hoistImportDeclarations(program)
+  hoistAndMergeImports(program)
   appendModulesToContext(program, context)
 
   // evaluate and create a separate block for preludes and builtins

@@ -4,7 +4,7 @@ import { SourceMapConsumer } from 'source-map'
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import { looseParse, parse, parseWithComments, typedParse } from './parser/parser'
+import { looseParse, typedParse } from './parser/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
@@ -13,12 +13,12 @@ import {
   Error as ResultError,
   ExecutionMethod,
   Finished,
+  FuncDeclWithInferredTypeAnnotation,
   ModuleContext,
+  NodeWithInferredType,
   Result,
   SourceError,
   SVMProgram,
-  TypeAnnotatedFuncDecl,
-  TypeAnnotatedNode,
   Variant
 } from './types'
 import { findNodeAt } from './utils/walkers'
@@ -27,8 +27,19 @@ import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
+import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
+import { CannotFindModuleError } from './errors/localImportErrors'
+import { validateFilePath } from './localImports/filePaths'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
-import { fullJSRunner, hasVerboseErrors, htmlRunner, sourceRunner } from './runner'
+import { parse } from './parser/parser'
+import { parseWithComments } from './parser/utils'
+import {
+  fullJSRunner,
+  hasVerboseErrors,
+  htmlRunner,
+  resolvedErrorPromise,
+  sourceFilesRunner
+} from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
 
@@ -56,6 +67,8 @@ let verboseErrors: boolean = false
 
 export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
+    // FIXME: Either refactor the parser to output an ESTree-compliant AST, or modify the ESTree types.
+    const filePath = error.location?.source ? `[${error.location.source}] ` : ''
     const line = error.location ? error.location.start.line : '<unknown>'
     const column = error.location ? error.location.start.column : '<unknown>'
     const explanation = error.explain()
@@ -65,10 +78,10 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
       // way to display it.
       const elaboration = error.elaborate()
       return line < 1
-        ? explanation
-        : `Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
+        ? `${filePath}${explanation}\n${elaboration}\n`
+        : `${filePath}Line ${line}, Column ${column}: ${explanation}\n${elaboration}\n`
     } else {
-      return line < 1 ? explanation : `Line ${line}: ${explanation}`
+      return line < 1 ? explanation : `${filePath}Line ${line}: ${explanation}`
     }
   })
   return errorMessagesArr.join('\n')
@@ -214,11 +227,16 @@ export function getTypeInformation(
     }
 
     // get name of the node
-    const getName = (typedNode: TypeAnnotatedNode<es.Node>) => {
+    const getName = (typedNode: NodeWithInferredType<es.Node>) => {
       let nodeId = ''
       if (typedNode.type) {
         if (typedNode.type === 'FunctionDeclaration') {
-          nodeId = typedNode.id?.name!
+          if (typedNode.id === null) {
+            throw new Error(
+              'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+            )
+          }
+          nodeId = typedNode.id.name
         } else if (typedNode.type === 'VariableDeclaration') {
           nodeId = (typedNode.declarations[0].id as es.Identifier).name
         } else if (typedNode.type === 'Identifier') {
@@ -229,7 +247,7 @@ export function getTypeInformation(
     }
 
     // callback function for findNodeAt function
-    function findByLocationPredicate(t: string, nd: TypeAnnotatedNode<es.Node>) {
+    function findByLocationPredicate(t: string, nd: NodeWithInferredType<es.Node>) {
       if (!nd.inferredType) {
         return false
       }
@@ -258,7 +276,7 @@ export function getTypeInformation(
       return ans
     }
 
-    const node: TypeAnnotatedNode<es.Node> = res.node
+    const node: NodeWithInferredType<es.Node> = res.node
 
     if (node === undefined) {
       return ans
@@ -266,11 +284,11 @@ export function getTypeInformation(
 
     const actualNode =
       node.type === 'VariableDeclaration'
-        ? (node.declarations[0].init! as TypeAnnotatedNode<es.Node>)
+        ? (node.declarations[0].init! as NodeWithInferredType<es.Node>)
         : node
     const type = typeToString(
       actualNode.type === 'FunctionDeclaration'
-        ? (actualNode as TypeAnnotatedFuncDecl).functionInferredType!
+        ? (actualNode as FuncDeclWithInferredTypeAnnotation).functionInferredType!
         : actualNode.inferredType!
     )
     return ans + `At Line ${loc.line} => ${getName(node)}: ${type}`
@@ -284,21 +302,58 @@ export async function runInContext(
   context: Context,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
+  const defaultFilePath = '/default.js'
+  const files: Partial<Record<string, string>> = {}
+  files[defaultFilePath] = code
+  return runFilesInContext(files, defaultFilePath, context, options)
+}
+
+export async function runFilesInContext(
+  files: Partial<Record<string, string>>,
+  entrypointFilePath: string,
+  context: Context,
+  options: Partial<IOptions> = {}
+): Promise<Result> {
+  for (const filePath in files) {
+    const filePathError = validateFilePath(filePath)
+    if (filePathError !== null) {
+      context.errors.push(filePathError)
+      return resolvedErrorPromise
+    }
+  }
+
+  const code = files[entrypointFilePath]
+  if (code === undefined) {
+    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    return resolvedErrorPromise
+  }
+
   if (context.chapter === Chapter.FULL_JS) {
-    return fullJSRunner(code, context, options)
+    const program = parse(code, context)
+    if (program === null) {
+      return resolvedErrorPromise
+    }
+    return fullJSRunner(program, context, options)
   }
 
   if (context.chapter === Chapter.HTML) {
     return htmlRunner(code, context, options)
   }
 
+  // FIXME: Clean up state management so that the `parseError` function is pure.
+  //        This is not a huge priority, but it would be good not to make use of
+  //        global state.
   verboseErrors = hasVerboseErrors(code)
-  return sourceRunner(code, context, verboseErrors, options)
+
+  return sourceFilesRunner(files, entrypointFilePath, context, options)
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
   if (result.status === 'finished' || result.status === 'error') {
     return result
+  } else if (result.status === 'suspended-ec-eval') {
+    const value = resumeEvaluate(result.context)
+    return ECEResultPromise(result.context, value)
   } else {
     return result.scheduler.run(result.it, result.context)
   }

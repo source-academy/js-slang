@@ -64,7 +64,7 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
         }
       },
       FunctionDeclaration(node: FunctionDeclaration, state: any, callback: WalkerCallback<any>) {
-        if (node.id && (node.id as Identifier).name === identifier.name) {
+        if (node.id && node.id.name === identifier.name) {
           declarations.push(node.id)
         } else if (containsNode(node, identifier)) {
           const param = node.params.find(n => (n as Identifier).name === identifier.name)
@@ -85,12 +85,12 @@ export function findDeclarationNode(program: Node, identifier: Identifier): Node
           }
         }
       },
-      VariableDeclarator(node: VariableDeclarator, state: any, callback: WalkerCallback<any>) {
+      VariableDeclarator(node: VariableDeclarator, _state: any, _callback: WalkerCallback<any>) {
         if ((node.id as Identifier).name === identifier.name) {
           declarations.push(node.id)
         }
       },
-      ImportSpecifier(node: ImportSpecifier, state: any, callback: WalkerCallback<any>) {
+      ImportSpecifier(node: ImportSpecifier, _state: any, _callback: WalkerCallback<any>) {
         if ((node.imported as Identifier).name === identifier.name) {
           declarations.push(node.imported)
         }

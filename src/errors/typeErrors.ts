@@ -1,7 +1,8 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { ErrorSeverity, ErrorType, SArray, SourceError, Type, TypeAnnotatedNode } from '../types'
+import * as tsEs from '../typeChecker/tsESTree'
+import { ErrorSeverity, ErrorType, NodeWithInferredType, SArray, SourceError, Type } from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
 
@@ -11,7 +12,7 @@ export class InvalidArrayIndexType implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.Node>, public receivedType: Type) {}
+  constructor(public node: NodeWithInferredType<es.Node>, public receivedType: Type) {}
 
   get location() {
     return this.node.loc!
@@ -31,7 +32,7 @@ export class ArrayAssignmentError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.Node>,
+    public node: NodeWithInferredType<es.Node>,
     public arrayType: SArray,
     public receivedType: SArray
   ) {}
@@ -54,7 +55,7 @@ export class ReassignConstError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.AssignmentExpression>) {}
+  constructor(public node: NodeWithInferredType<es.AssignmentExpression>) {}
 
   get location() {
     return this.node.loc!
@@ -75,7 +76,7 @@ export class DifferentAssignmentError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.AssignmentExpression>,
+    public node: NodeWithInferredType<es.AssignmentExpression>,
     public expectedType: Type,
     public receivedType: Type
   ) {}
@@ -101,8 +102,8 @@ export class DifferentAssignmentError implements SourceError {
   }
 }
 
-function formatAssignment(node: TypeAnnotatedNode<es.AssignmentExpression>): [string, string] {
-  const leftNode = node.left as TypeAnnotatedNode<es.Identifier>
+function formatAssignment(node: NodeWithInferredType<es.AssignmentExpression>): [string, string] {
+  const leftNode = node.left as NodeWithInferredType<es.Identifier>
   const assignmentStr = simplify(generate(node.right))
   return [leftNode.name, assignmentStr]
 }
@@ -111,7 +112,7 @@ export class CyclicReferenceError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.Node>) {}
+  constructor(public node: NodeWithInferredType<es.Node>) {}
 
   get location() {
     return this.node.loc!
@@ -126,11 +127,11 @@ export class CyclicReferenceError implements SourceError {
   }
 }
 
-function stringifyNode(node: TypeAnnotatedNode<es.Node>): string {
+function stringifyNode(node: NodeWithInferredType<es.Node>): string {
   return ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type)
     ? node.type === 'VariableDeclaration'
       ? (node.declarations[0].id as es.Identifier).name
-      : (node as TypeAnnotatedNode<es.FunctionDeclaration>).id?.name!
+      : (node as NodeWithInferredType<es.FunctionDeclaration>).id?.name!
     : node.type === 'Identifier'
     ? node.name
     : JSON.stringify(node) // might not be a good idea
@@ -141,7 +142,7 @@ export class DifferentNumberArgumentsError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.Node>,
+    public node: NodeWithInferredType<es.Node>,
     public numExpectedArgs: number,
     public numReceived: number
   ) {}
@@ -163,8 +164,8 @@ export class InvalidArgumentTypesError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.Node>,
-    public args: TypeAnnotatedNode<es.Node>[],
+    public node: NodeWithInferredType<es.Node>,
+    public args: NodeWithInferredType<es.Node>[],
     public expectedTypes: Type[],
     public receivedTypes: Type[]
   ) {}
@@ -225,7 +226,7 @@ export class InvalidArgumentTypesError implements SourceError {
 }
 
 function formatNodeWithTest(
-  node: TypeAnnotatedNode<
+  node: NodeWithInferredType<
     es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
   >
 ) {
@@ -260,7 +261,7 @@ export class InvalidTestConditionError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<
+    public node: NodeWithInferredType<
       es.IfStatement | es.ConditionalExpression | es.WhileStatement | es.ForStatement
     >,
     public receivedType: Type
@@ -289,7 +290,7 @@ export class UndefinedIdentifierError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.Identifier>, public name: string) {}
+  constructor(public node: NodeWithInferredType<es.Identifier>, public name: string) {}
 
   get location() {
     return this.node.loc!
@@ -313,7 +314,7 @@ export class ConsequentAlternateMismatchError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.IfStatement | es.ConditionalExpression>,
+    public node: NodeWithInferredType<es.IfStatement | es.ConditionalExpression>,
     public consequentType: Type,
     public alternateType: Type
   ) {}
@@ -344,7 +345,7 @@ export class CallingNonFunctionType implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: TypeAnnotatedNode<es.CallExpression>, public callerType: Type) {}
+  constructor(public node: NodeWithInferredType<es.CallExpression>, public callerType: Type) {}
 
   get location() {
     return this.node.loc!
@@ -371,7 +372,7 @@ export class InconsistentPredicateTestError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: TypeAnnotatedNode<es.CallExpression>,
+    public node: NodeWithInferredType<es.CallExpression>,
     public argVarName: string,
     public preUnifyType: Type,
     public predicateType: Type
@@ -392,6 +393,333 @@ export class InconsistentPredicateTestError implements SourceError {
     but could not unify with type
       ${typeToString(this.predicateType)}
     `
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+// Errors for Source Typed error checker
+
+export class TypeMismatchError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(
+    public node: tsEs.Node,
+    public actualTypeString: string,
+    public expectedTypeString: string
+  ) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.actualTypeString}' is not assignable to type '${this.expectedTypeString}'.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypeNotFoundError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.Node, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.name}' not declared.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class FunctionShouldHaveReturnValueError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.FunctionDeclaration | tsEs.ArrowFunctionExpression) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return "A function whose declared type is neither 'void' nor 'any' must return a value."
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypeNotCallableError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.CallExpression, public typeName: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.typeName}' is not callable.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypecastError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(
+    public node: tsEs.TSAsExpression,
+    public originalType: string,
+    public typeToCastTo: string
+  ) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.originalType}' cannot be casted to type '${this.typeToCastTo}' as the two types do not intersect.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypeNotAllowedError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.TSType, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.name}' is not allowed.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class UndefinedVariableTypeError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.Node, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Name ${this.name} not declared.`
+  }
+
+  public elaborate() {
+    return `Before you can read the value of ${this.name}, you need to declare it as a variable or a constant. You can do this using the let or const keywords.`
+  }
+}
+
+export class InvalidNumberOfArgumentsTypeError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  public calleeStr: string
+
+  constructor(
+    public node: tsEs.CallExpression,
+    public expected: number,
+    public got: number,
+    public hasVarArgs = false
+  ) {
+    this.calleeStr = generate(node.callee)
+  }
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Expected ${this.expected} ${this.hasVarArgs ? 'or more ' : ''}arguments, but got ${
+      this.got
+    }.`
+  }
+
+  public elaborate() {
+    const calleeStr = this.calleeStr
+    const pluralS = this.expected === 1 ? '' : 's'
+
+    return `Try calling function ${calleeStr} again, but with ${this.expected} argument${pluralS} instead. Remember that arguments are separated by a ',' (comma).`
+  }
+}
+
+export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.Node, public name: string, public expected: number) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Generic type '${this.name}' requires ${this.expected} type argument(s).`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypeNotGenericError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.Node, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.name}' is not generic.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypeAliasNameNotAllowedError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type alias name cannot be '${this.name}'.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class TypeParameterNameNotAllowedError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.TSTypeParameter, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type parameter name cannot be '${this.name}'.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class InvalidIndexTypeError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.MemberExpression, public typeName: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.typeName}' cannot be used as an index type.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class InvalidArrayAccessTypeError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.MemberExpression, public typeName: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type '${this.typeName}' cannot be accessed as it is not an array.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class ConstNotAssignableTypeError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.WARNING
+
+  constructor(public node: tsEs.AssignmentExpression, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Cannot assign to '${this.name}' as it is a constant.`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
+export class DuplicateTypeAliasError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+
+  constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
+
+  get location() {
+    return this.node.loc!
+  }
+
+  public explain() {
+    return `Type alias '${this.name}' has already been declared.`
   }
 
   public elaborate() {

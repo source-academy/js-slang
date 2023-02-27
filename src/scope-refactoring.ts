@@ -118,9 +118,9 @@ export function scopeVariableDeclaration(node: es.VariableDeclaration): Definiti
 }
 
 /**
- * Scoping fuction declarations is a bit unlike the way we deal with the rest of the block scopes.
+ * Scoping function declarations is a bit unlike the way we deal with the rest of the block scopes.
  * Normally, if there are any definitions locally scoped to the block, we put those DefinitionNodes
- * within the block frame. However, for fucntion definition names (not parameters), we do not put them
+ * within the block frame. However, for function definition names (not parameters), we do not put them
  * inside the BlockFrame of the function, as function definition names should be visible in the parent scope
  * Thus, despite the node's loc property being within the BlockFrame's enclosingLoc, ]
  * we treat it as if it is not in there.
@@ -129,10 +129,15 @@ function scopeFunctionDeclaration(node: es.FunctionDeclaration): {
   definition: DefinitionNode
   body: BlockFrame
 } {
+  if (node.id === null) {
+    throw new Error(
+      'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+    )
+  }
   const definition = {
-    name: (node.id as es.Identifier).name,
+    name: node.id.name,
     type: 'DefinitionNode',
-    loc: (node.id as es.Identifier).loc
+    loc: node.id.loc
   }
   const parameters = node.params.map((param: es.Identifier) => ({
     name: param.name,
@@ -194,13 +199,12 @@ function scopeWhileStatements(nodes: es.WhileStatement[]): BlockFrame[] {
 
 // For statements may declare new variables whose scope is limited to the loop body
 function scopeForStatement(node: es.ForStatement): BlockFrame {
-  const variables = node.init
-    ? (node.init as es.VariableDeclaration).declarations.map((dec: es.VariableDeclarator) => ({
-        type: 'DefinitionNode',
-        name: (dec.id as es.Identifier).name,
-        loc: (dec.id as es.Identifier).loc
-      }))
-    : []
+  const declarations = (node.init as es.VariableDeclaration)?.declarations || []
+  const variables = declarations.map((dec: es.VariableDeclarator) => ({
+    type: 'DefinitionNode',
+    name: (dec.id as es.Identifier).name,
+    loc: (dec.id as es.Identifier).loc
+  }))
   const block = scopeVariables(node.body as es.BlockStatement, node.loc)
   // Any variable declared at the start of the for loop is inserted into the body
   // since its scope is limited to the body

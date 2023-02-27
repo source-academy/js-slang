@@ -1,0 +1,374 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`type aliases TSTypeAliasDeclaration nodes should be removed from program at end of typechecking 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 56,
+          "id": Node {
+            "end": 52,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "line": 2,
+              },
+              "identifierName": "x",
+              "source": undefined,
+              "start": Position {
+                "column": 12,
+                "line": 2,
+              },
+            },
+            "name": "x",
+            "start": 51,
+            "type": "Identifier",
+          },
+          "init": Node {
+            "end": 56,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 17,
+                "line": 2,
+              },
+              "identifierName": undefined,
+              "source": undefined,
+              "start": Position {
+                "column": 16,
+                "line": 2,
+              },
+            },
+            "raw": "1",
+            "start": 55,
+            "type": "Literal",
+            "value": 1,
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 17,
+              "line": 2,
+            },
+            "identifierName": undefined,
+            "source": undefined,
+            "start": Position {
+              "column": 12,
+              "line": 2,
+            },
+          },
+          "start": 51,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 57,
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 18,
+          "line": 2,
+        },
+        "identifierName": undefined,
+        "source": undefined,
+        "start": Position {
+          "column": 6,
+          "line": 2,
+        },
+      },
+      "start": 45,
+      "type": "VariableDeclaration",
+    },
+  ],
+  "end": 62,
+  "interpreter": null,
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 4,
+      "line": 3,
+    },
+    "identifierName": undefined,
+    "source": undefined,
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "type": "Program",
+}
+`;
+
+exports[`typecasting TSAsExpression nodes should be removed from program at end of typechecking 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 29,
+          "id": Node {
+            "end": 25,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 25,
+                "line": 1,
+              },
+              "identifierName": "x1",
+              "source": undefined,
+              "start": Position {
+                "column": 6,
+                "line": 1,
+              },
+            },
+            "name": "x1",
+            "start": 6,
+            "type": "Identifier",
+            "typeAnnotation": Node {
+              "end": 25,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 25,
+                  "line": 1,
+                },
+                "identifierName": undefined,
+                "source": undefined,
+                "start": Position {
+                  "column": 8,
+                  "line": 1,
+                },
+              },
+              "start": 8,
+              "type": "TSTypeAnnotation",
+              "typeAnnotation": Node {
+                "end": 25,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 25,
+                    "line": 1,
+                  },
+                  "identifierName": undefined,
+                  "source": undefined,
+                  "start": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                },
+                "start": 10,
+                "type": "TSUnionType",
+                "types": Array [
+                  Node {
+                    "end": 16,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 16,
+                        "line": 1,
+                      },
+                      "identifierName": undefined,
+                      "source": undefined,
+                      "start": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                    },
+                    "start": 10,
+                    "type": "TSStringKeyword",
+                  },
+                  Node {
+                    "end": 25,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 25,
+                        "line": 1,
+                      },
+                      "identifierName": undefined,
+                      "source": undefined,
+                      "start": Position {
+                        "column": 19,
+                        "line": 1,
+                      },
+                    },
+                    "start": 19,
+                    "type": "TSNumberKeyword",
+                  },
+                ],
+              },
+            },
+          },
+          "init": Node {
+            "end": 29,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 29,
+                "line": 1,
+              },
+              "identifierName": undefined,
+              "source": undefined,
+              "start": Position {
+                "column": 28,
+                "line": 1,
+              },
+            },
+            "raw": "1",
+            "start": 28,
+            "type": "Literal",
+            "value": 1,
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 29,
+              "line": 1,
+            },
+            "identifierName": undefined,
+            "source": undefined,
+            "start": Position {
+              "column": 6,
+              "line": 1,
+            },
+          },
+          "start": 6,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 30,
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 30,
+          "line": 1,
+        },
+        "identifierName": undefined,
+        "source": undefined,
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "start": 0,
+      "type": "VariableDeclaration",
+    },
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 68,
+          "id": Node {
+            "end": 53,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 22,
+                "line": 2,
+              },
+              "identifierName": "x2",
+              "source": undefined,
+              "start": Position {
+                "column": 12,
+                "line": 2,
+              },
+            },
+            "name": "x2",
+            "start": 43,
+            "type": "Identifier",
+            "typeAnnotation": Node {
+              "end": 53,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 22,
+                  "line": 2,
+                },
+                "identifierName": undefined,
+                "source": undefined,
+                "start": Position {
+                  "column": 14,
+                  "line": 2,
+                },
+              },
+              "start": 45,
+              "type": "TSTypeAnnotation",
+              "typeAnnotation": Node {
+                "end": 53,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 22,
+                    "line": 2,
+                  },
+                  "identifierName": undefined,
+                  "source": undefined,
+                  "start": Position {
+                    "column": 16,
+                    "line": 2,
+                  },
+                },
+                "start": 47,
+                "type": "TSStringKeyword",
+              },
+            },
+          },
+          "init": Node {
+            "end": 58,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 27,
+                "line": 2,
+              },
+              "identifierName": "x1",
+              "source": undefined,
+              "start": Position {
+                "column": 25,
+                "line": 2,
+              },
+            },
+            "name": "x1",
+            "start": 56,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 37,
+              "line": 2,
+            },
+            "identifierName": undefined,
+            "source": undefined,
+            "start": Position {
+              "column": 12,
+              "line": 2,
+            },
+          },
+          "start": 43,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 69,
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 38,
+          "line": 2,
+        },
+        "identifierName": undefined,
+        "source": undefined,
+        "start": Position {
+          "column": 6,
+          "line": 2,
+        },
+      },
+      "start": 37,
+      "type": "VariableDeclaration",
+    },
+  ],
+  "end": 74,
+  "interpreter": null,
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 4,
+      "line": 3,
+    },
+    "identifierName": undefined,
+    "source": undefined,
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "type": "Program",
+}
+`;

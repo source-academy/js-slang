@@ -1,7 +1,8 @@
 import * as es from 'estree'
 
-import { parse as sourceParse, tokenize as sourceTokenize } from '../parser/parser'
-import { libraryParserLanguage } from '../parser/syntaxBlacklist'
+import { parse as sourceParse } from '../parser/parser'
+import { SourceParser } from '../parser/source'
+import { libraryParserLanguage } from '../parser/source/syntax'
 import { Context, ContiguousArrayElements, Value } from '../types'
 import { oneLine } from '../utils/formatters'
 import { vector_to_list } from './list'
@@ -270,14 +271,14 @@ const transformers: ASTTransformers = new Map([
 
   [
     'BreakStatement',
-    (node: es.BreakStatement) => {
+    (_node: es.BreakStatement) => {
       return vector_to_list(['break_statement'])
     }
   ],
 
   [
     'ContinueStatement',
-    (node: es.ContinueStatement) => {
+    (_node: es.ContinueStatement) => {
       return vector_to_list(['continue_statement'])
     }
   ],
@@ -341,6 +342,37 @@ const transformers: ASTTransformers = new Map([
   ],
 
   [
+    'ImportDefaultSpecifier',
+    (_node: es.ImportDefaultSpecifier) => {
+      return vector_to_list(['default'])
+    }
+  ],
+
+  [
+    'ExportNamedDeclaration',
+    (node: es.ExportNamedDeclaration) => {
+      return vector_to_list([
+        'export_named_declaration',
+        node.declaration ? transform(node.declaration) : node.specifiers.map(transform)
+      ])
+    }
+  ],
+
+  [
+    'ExportDefaultDeclaration',
+    (node: es.ExportDefaultDeclaration) => {
+      return vector_to_list(['export_default_declaration', transform(node.declaration)])
+    }
+  ],
+
+  [
+    'ExportSpecifier',
+    (node: es.ExportSpecifier) => {
+      return vector_to_list(['name', node.exported.name])
+    }
+  ],
+
+  [
     'ClassDeclaration',
     (node: es.ClassDeclaration) => {
       return vector_to_list([
@@ -394,14 +426,14 @@ const transformers: ASTTransformers = new Map([
 
   [
     'ThisExpression',
-    (node: es.ThisExpression) => {
+    (_node: es.ThisExpression) => {
       return vector_to_list(['this_expression'])
     }
   ],
 
   [
     'Super',
-    (node: es.Super) => {
+    (_node: es.Super) => {
       return vector_to_list(['super_expression'])
     }
   ],
@@ -466,7 +498,7 @@ export function parse(x: string, context: Context): Value {
     throw new ParseError(context.errors[0].explain())
   }
 
-  if (program !== undefined) {
+  if (program) {
     return transform(program)
   } else {
     unreachable()
@@ -475,6 +507,6 @@ export function parse(x: string, context: Context): Value {
 }
 
 export function tokenize(x: string, context: Context): Value {
-  const tokensArr = sourceTokenize(x, context).map(tok => x.substring(tok.start, tok.end))
+  const tokensArr = SourceParser.tokenize(x, context).map(tok => x.substring(tok.start, tok.end))
   return vector_to_list(tokensArr)
 }

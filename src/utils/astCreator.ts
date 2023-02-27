@@ -5,8 +5,8 @@ import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } f
 export const getVariableDecarationName = (decl: es.VariableDeclaration) =>
   (decl.declarations[0].id as es.Identifier).name
 
-export const locationDummyNode = (line: number, column: number) =>
-  literal('Dummy', { start: { line, column }, end: { line, column } })
+export const locationDummyNode = (line: number, column: number, source: string | null) =>
+  literal('Dummy', { start: { line, column }, end: { line, column }, source })
 
 export const identifier = (name: string, loc?: es.SourceLocation | null): es.Identifier => ({
   type: 'Identifier',
@@ -359,4 +359,17 @@ export const whileStatement = (
   test,
   body,
   loc
+})
+
+export const forStatement = (
+  init: es.VariableDeclaration | es.Expression,
+  test: es.Expression,
+  update: es.Expression,
+  body: es.Statement
+): es.ForStatement => ({
+  type: 'ForStatement',
+  init,
+  test,
+  update,
+  body
 })

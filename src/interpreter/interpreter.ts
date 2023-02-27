@@ -139,7 +139,12 @@ function declareFunctionsAndVariables(context: Context, node: es.BlockStatement)
         declareVariables(context, statement)
         break
       case 'FunctionDeclaration':
-        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
+        if (statement.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
+        declareIdentifier(context, statement.id.name, statement)
         break
     }
   }
@@ -335,7 +340,7 @@ function* evaluateBlockStatement(context: Context, node: es.BlockStatement) {
 // prettier-ignore
 export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   /** Simple Values */
-  Literal: function*(node: es.Literal, context: Context) {
+  Literal: function*(node: es.Literal, _context: Context) {
     return node.value
   },
 
@@ -438,11 +443,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return undefined
   },
 
-  ContinueStatement: function*(node: es.ContinueStatement, context: Context) {
+  ContinueStatement: function*(_node: es.ContinueStatement, _context: Context) {
     return new ContinueValue()
   },
 
-  BreakStatement: function*(node: es.BreakStatement, context: Context) {
+  BreakStatement: function*(_node: es.BreakStatement, _context: Context) {
     return new BreakValue()
   },
 
@@ -562,7 +567,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   FunctionDeclaration: function*(node: es.FunctionDeclaration, context: Context) {
-    const id = node.id as es.Identifier
+    const id = node.id
+    if (id === null) {
+      throw new Error("Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.")
+    }
     // tslint:disable-next-line:no-any
     const closure = new Closure(node, currentEnvironment(context), context)
     defineVariable(context, id.name, closure, true)
@@ -664,7 +672,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
           local: spec.local.name
         }
       })
-      
+
       if (!(moduleName in context.moduleContexts)) {
         context.moduleContexts[moduleName] = {
           state: null,
@@ -682,6 +690,27 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     } catch(error) {
       return handleRuntimeError(context, error)
     }
+  },
+
+  ExportNamedDeclaration: function*(_node: es.ExportNamedDeclaration, _context: Context) {
+    // Exports are handled as a separate pre-processing step in 'transformImportedFile'.
+    // Subsequently, they are removed from the AST by 'removeExports' before the AST is evaluated.
+    // As such, there should be no ExportNamedDeclaration nodes in the AST.
+    throw new Error('Encountered an ExportNamedDeclaration node in the AST while evaluating. This suggests that an invariant has been broken.')
+  },
+
+  ExportDefaultDeclaration: function*(_node: es.ExportDefaultDeclaration, _context: Context) {
+    // Exports are handled as a separate pre-processing step in 'transformImportedFile'.
+    // Subsequently, they are removed from the AST by 'removeExports' before the AST is evaluated.
+    // As such, there should be no ExportDefaultDeclaration nodes in the AST.
+    throw new Error('Encountered an ExportDefaultDeclaration node in the AST while evaluating. This suggests that an invariant has been broken.')
+  },
+
+  ExportAllDeclaration: function*(_node: es.ExportAllDeclaration, _context: Context) {
+    // Exports are handled as a separate pre-processing step in 'transformImportedFile'.
+    // Subsequently, they are removed from the AST by 'removeExports' before the AST is evaluated.
+    // As such, there should be no ExportAllDeclaration nodes in the AST.
+    throw new Error('Encountered an ExportAllDeclaration node in the AST while evaluating. This suggests that an invariant has been broken.')
   },
 
   Program: function*(node: es.BlockStatement, context: Context) {

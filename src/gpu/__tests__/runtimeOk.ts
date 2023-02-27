@@ -8,7 +8,7 @@ test('__createKernel with 1 loop returns correct result', () => {
     return 1
   }
   const arr: number[] = []
-  const f2 = function (i: any) {
+  const f2 = function (_i: any) {
     return 1
   }
   __createKernel(bounds, extern, f1, arr, f2)
