@@ -1,5 +1,6 @@
+\allowdisplaybreaks[1]
 \begin{alignat*}{9}
-&& \textit{program}    &&\quad ::= &\quad && \textit{import-directive} ... \ \textit{statement} ...
+&& \textit{program}    &&\quad ::= &\quad && \textit{import-directive} ... \ \textit{type-alias} ... \ \textit{statement} ...
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p6}{program}} \\[1mm]
 && \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{import}}\ \textbf{\texttt{\{}}\ \textit{import-names} \ \textbf{\texttt{\}}}\ \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{;}} \quad
                                                            && \textrm{import directive} \\[1mm]
@@ -8,14 +9,14 @@
                                                             && \textrm{import name list}   \\[1mm]
 && \textit{import-name}   && ::= &\quad &&  \textit{name}\ | \  \textit{name} \ \textbf{\texttt{as}}\ \textit{name} 
                                                             && \textrm{import name}   \\[1mm]
+&& \textit{type-alias}  && ::= &\quad && \textbf{\texttt{type}}\  \textit{name}[<\textit{name}\ (\ \textbf{\texttt{,}} \ \textit{name}\ ) ...>] \ 
+                                                           \textbf{\texttt{=}}\  \textit{alias-type} \textbf{\texttt{;}} && \textrm{type alias declaration}\\
 && \textit{statement}    &&\quad ::= &\quad && \textbf{\texttt{const}}\  \textit{name}[\texttt{:}\ \textit{type}] \ 
                                            \textbf{\texttt{=}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.2\#p2}{constant declaration}} \\
 &&                       && |   &\quad && \textbf{\texttt{function}}\  \textit{name} \ 
                                    \textbf{\texttt{(}}\  \textit{names} \ \textbf{\texttt{)}}[\texttt{:}\ \textit{type}]\ \textit{block} \quad
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{function declaration}}\\
-&&                       && |   &\quad && \textbf{\texttt{type}}\  \textit{name}[<\textit{name}\ (\ \textbf{\texttt{,}} \ \textit{name}\ ) ...>] \ 
-                                                           \textbf{\texttt{=}}\  \textit{alias-type} \textbf{\texttt{;}} && \textrm{type alias declaration}\\
 &&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \ \textbf{\texttt{;}}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{return statement}}\\
 &&                       && |   &\quad && \textit{if-statement} \quad
@@ -42,9 +43,6 @@
                                                             && \textrm{\href{https://sourceacademy.org/sicpjs/1.3.2\#p12}{conditional statement}}   \\[1mm]
 && \textit{block}        && ::= &      && \textbf{\texttt{\{}}\  \textit{statement} ...   \ \textbf{\texttt{\}}} \quad
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.8\#p14}{block statement}}\\[1mm]       
-\end{alignat*}
-
-\begin{alignat*}{9} 
 && \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p3}{primitive number expression}}\\
 &&                       && |   &\quad && \textbf{\texttt{true}}\ |\ \textbf{\texttt{false}}
                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p1}{primitive boolean expression}}\\
