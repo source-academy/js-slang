@@ -250,12 +250,12 @@ For function applications (including applications of binary and unary operators)
 \noindent
 \[
 \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : (t_1, \ldots, t_n) \rightarrow t \quad \Gamma, \Gamma_{alias} \vdash E_1 : t'_1, \ldots,  \Gamma, \Gamma_{alias} \vdash E_n : t'_n
-  \quad (\forall 1 \leq i \leq n)(t'_i \wedge t_i \neq \emptyset)}{\Gamma, \Gamma_{alias} \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : t}
+  \quad (\forall 1 \leq i \leq n)(t'_i \wedge t_i \neq \emptyset)}{\Gamma, \Gamma_{alias} \vdash E_0\ \Lp \ E_1, \ldots, E_n\ \Rp : t}
 \]
 \noindent
 \[
   \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : \Any \quad \Gamma, \Gamma_{alias} \vdash E_1 : t'_1, \ldots, \Gamma, \Gamma_{alias} \vdash E_n : t'_n
-    }{\Gamma, \Gamma_{alias} \vdash (E_0\ \Lp \ E_1, \ldots, E_n\ \Rp) : \Any}
+    }{\Gamma, \Gamma_{alias} \vdash E_0\ \Lp \ E_1, \ldots, E_n\ \Rp : \Any}
 \]
 \noindent
 
@@ -277,7 +277,7 @@ We use the $\subseteq$ operator to indicate that a type is a subset of another t
 
 For the \texttt{+} operator, the following rules are applied, in order of priority:
 
-\begin{itemize}
+\begin{enumerate}
 \item{If the expression on the left side is a subset of type $\Number$,
   check that the other expression is a success type of $\Number$. The return type is $\Number$.}
 \item{If the expression on the left side is a subset of type $\String$,
@@ -288,7 +288,7 @@ For the \texttt{+} operator, the following rules are applied, in order of priori
   check that the other expression is a success type of $\String$. The return type is $\String$.}
 \item{If the expression on the left side cannot be narrowed to a subset of either $\Number$ or $\String$, check that both sides are success types of 
   $\Number\ |\ \String$. The return type is $\Number\ |\ \String$.}
-\end{itemize}
+\end{enumerate}
 
 \noindent
 \[
@@ -317,15 +317,15 @@ For the \texttt{+} operator, the following rules are applied, in order of priori
 \]
 \noindent
 
-For lambda expressions, we extend $\Gamma$ with the declared types of all the function parameters,
+For lambda expressions, we temporarily extend $\Gamma$ with the declared types of all the function parameters,
 and check the type of the function body against the declared return type.
 As type syntax is optional, if type annotations are absent for any of the arguments or the return type, the type is assumed to be $\Any$.
 The type of the lambda expression is then the function type with the declared types of the parameters and the return type. 
 
 \noindent
 \[
-  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad \Gamma' \vdash S : t' \quad t' \wedge t \neq \emptyset}{
-    \Gamma, \Gamma_{alias} \vdash ( \Lp  x_1:\ t_1, \ldots, x_n:\ t_n \Rp :\ t\ \texttt{=>}\ \Lc\ S\ \Rc) : (t_1, \ldots, t_n) \rightarrow t}  
+  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \vdash S : t' \quad t' \wedge t \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash (x_1:\ t_1, \ldots, x_n:\ t_n) :\ t\ \texttt{=>}\ S : (t_1, \ldots, t_n) \rightarrow t}  
 \]
 \noindent
 
@@ -335,7 +335,7 @@ The predicate expression of a conditional expression must be a success type of a
 \noindent
 \[
   \Rule{\Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash E_{cons} : t_{cons} \quad \Gamma, \Gamma_{alias} \vdash E_{alt} : t_{alt}
-    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (E_{pred}\ \texttt{?}\ E_{cons} : E_{alt}) : t_{cons}\ |\ t_{alt}}
+    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E_{pred}\ \texttt{?}\ E_{cons} : E_{alt} : t_{cons}\ |\ t_{alt}}
 \]
 \noindent
 
@@ -343,7 +343,7 @@ For as expressions, the type to cast the expression to must be a success type of
 
 \noindent
 \[
-  \Rule{\Gamma, \Gamma_{alias} \vdash E : t' \quad t \wedge t' \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (E\ \texttt{as}\ t) : t}  
+  \Rule{\Gamma, \Gamma_{alias} \vdash E : t' \quad t \wedge t' \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash E\ \texttt{as}\ t : t}  
 \]
 \noindent
 
@@ -355,36 +355,57 @@ The type of the assignment itself is the type of the right expression.
 \noindent
 \[
   \Rule{\Gamma, \Gamma_{alias} \vdash E_0 : t_0 \quad \Gamma, \Gamma_{alias} \vdash E_1 : t_1 \quad t_1 \wedge t_0 \neq \emptyset}{
-    \Gamma, \Gamma_{alias} \vdash (E_0 = E_1) : t_1}
+    \Gamma, \Gamma_{alias} \vdash E_0 = E_1 : t_1}
 \]
 \noindent
 
 \subsubsection{Typing Relations on Statements}
 
-For type alias declarations, the declared type $t$ for name $x$ is first checked against the type environments.
+Sequences in the top level are handled using the following steps:
+
+\begin{enumerate}
+\item{Type alias declarations are evaluated, which adds type aliases to $\Gamma_{alias}$ to construct $\Gamma'_{alias}$.}
+\item{The declared types of constant/variable declarations are added to $\Gamma$ to construct $\Gamma'$.
+  Note that the declaration statements themselves are yet to be checked.}
+\item{All statements are checked using $\Gamma'$ and $\Gamma'_{alias}$.}
+\item{The type of the sequence is the type of the last value-producing statement.}
+\end{enumerate}
+
+In the below rule, $D_n$ denotes constant/variable declarations of the form $\texttt{const/let}\ x_n \texttt{:}\ t_n = E_n\texttt{;}$.
+If the type annotation for $x_n$ is absent, the declared type $t_n$ is assumed to be $\Any$.
+
+\[
+  \Rule{\begin{minipage}{140mm}
+    $\Gamma_{alias} \vdash A_1 : \Gamma_{alias1}, \ldots, \Gamma_{aliasm-1} \vdash A_m : \Gamma'_{alias} \quad
+    \Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma'$ \\
+    $\Gamma', \Gamma'_{alias} \vdash D_1 : t_1, \ldots, \Gamma', \Gamma'_{alias} \vdash D_n : t_n \quad
+    \Gamma', \Gamma'_{alias} \vdash S_1 : t'_1, \ldots, \Gamma', \Gamma'_{alias} \vdash S_p : t'_p$\\
+    \end{minipage}}{
+    \Gamma, \Gamma_{alias} \vdash \{ A_1, \ldots, A_m, D_1, \ldots, D_n, S_1, \ldots, S_p \} : t'_p, \Gamma', \Gamma'_{alias}}
+\]
+
+For type alias declarations, the declared type $t$ for type alias name $T$ is first checked against the type environments.
 Any type parameters declared are temporarily added to the type alias environment when checking the type of $t$
 to ensure that the type parameters are only used within $t$ itself.
-Then, the binding of name $x$ to type function $<T_1, \ldots, T_n> \rightarrow t$ is added to the type alias environment.
+Then, the binding of $T$ to type function $<T_1, \ldots, T_n> \rightarrow t$ is added to the type alias environment.
 If no type parameters are given, the type function is assumed to take in 0 type arguments.
 
 \noindent
 \[
-  \Rule{\Gamma, \Gamma_{alias} \vdash t : t \quad \Gamma_{alias} [x \leftarrow <> \rightarrow t] \Gamma_{alias}'
-    }{\Gamma, \Gamma_{alias} \vdash (\texttt{type}\ x = t \texttt{;}) : \Undefined}
+  \Rule{\Gamma, \Gamma_{alias} \vdash t : t \quad \Gamma_{alias} [T \leftarrow <> \rightarrow t] \Gamma'_{alias}
+    }{\Gamma, \Gamma_{alias} \vdash \texttt{type}\ T = t \texttt{;} : \Undefined, \Gamma'_{alias}}
 \]
 \noindent
 \[
   \Rule{\Gamma, \Gamma_{alias}[T_1 \leftarrow T_1]\ldots[T_n \leftarrow T_n] \vdash t : t \quad
-    \Gamma_{alias} [x \leftarrow <T_1, \ldots, T_n> \rightarrow T] \Gamma_{alias}'
-    }{\Gamma, \Gamma_{alias} \vdash (\texttt{type}\ x<T_1, \ldots, T_n> = t \texttt{;}) : \Undefined}
+    \Gamma_{alias} [T \leftarrow <T_1, \ldots, T_n> \rightarrow t] \Gamma'_{alias}
+    }{\Gamma, \Gamma_{alias} \vdash \texttt{type}\ T<T_1, \ldots, T_n> = t \texttt{;} : \Undefined, \Gamma'_{alias}}
 \]
 \noindent
 
-For constant and variable declarations, the declared type of $x$, $t$, is added to the type environment.
-If the type annotation for $x$ is absent, the declared type $t$ is assumed to be $\Any$.
-
-If the type annotation is a type reference to a type alias with name $T$,
-$t$ is first derived by applying the type arguments $t_1, \ldots, t_n$ to the type function for $T$,
+For constant and variable declarations, the declared type $t$ is retrieved from the type environment.
+If the declared type is a type reference to a type alias with name $T$,
+$t$ is obtained by applying the type arguments $t_1, \ldots, t_n$ to the type function for $T$,
 replacing all instances of type variables $T_1, \ldots, T_n$ in $t$ with $t_1, \ldots, t_n$ respectively.
 
 The derived type of the expression $E$, $t_E$, must be a success type of $t$.
@@ -392,13 +413,13 @@ The type of the statement itself is $\Undefined$.
 
 \noindent
 \[
-  \Rule{\Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t_E \quad t_E \wedge t \neq \emptyset}{
-    \Gamma, \Gamma_{alias} \vdash (\texttt{const/let}\ x \texttt{:}\ t = E\texttt{;}) : \Undefined}
+  \Rule{\Gamma \vdash E : t_E \quad t_E \wedge t \neq \emptyset}{
+    \Gamma, \Gamma_{alias} \vdash \texttt{const/let}\ x \texttt{:}\ t = E\texttt{;} : \Undefined}
 \]
 \noindent
 \[
-  \Rule{\Gamma_{alias}(T)<t_1, \ldots, t_n> = t \quad \Gamma [x \leftarrow t] \Gamma' \quad \Gamma' \vdash E : t_E \quad
-    t_E \wedge t \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (\texttt{const/let}\ x \texttt{:}\ T<t_1, \ldots, t_n> = E\texttt{;}) : \Undefined}
+  \Rule{\Gamma_{alias}(T)<t_1, \ldots, t_n> = t \quad \Gamma \vdash E : t_E \quad t_E \wedge t \neq \emptyset
+    }{\Gamma, \Gamma_{alias} \vdash \texttt{const/let}\ x \texttt{:}\ T<t_1, \ldots, t_n> = E\texttt{;} : \Undefined}
 \]
 \noindent
 
@@ -406,9 +427,9 @@ The type of return statements and expression statements is the type of the expre
 
 \noindent
 \[
-  \Rule{\Gamma, \Gamma_{alias} \vdash E : t}{\Gamma, \Gamma_{alias} \vdash (\texttt{return}\ E\texttt{;}) : t}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E : t}{\Gamma, \Gamma_{alias} \vdash \texttt{return}\ E\texttt{;} : t}
   \quad
-  \Rule{\Gamma, \Gamma_{alias} \vdash E : t}{\Gamma, \Gamma_{alias} \vdash (E\texttt{;}) : t}
+  \Rule{\Gamma, \Gamma_{alias} \vdash E : t}{\Gamma, \Gamma_{alias} \vdash E\texttt{;} : t}
 \]
 \noindent
 
@@ -416,34 +437,53 @@ The type of break and continue statements is $\Undefined$.
 
 \noindent
 \[
-  \Rule{}{\Gamma, \Gamma_{alias} \vdash (\texttt{break} \texttt{;}) : \Undefined}
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash \texttt{break} \texttt{;} : \Undefined}
   \quad
-  \Rule{}{\Gamma, \Gamma_{alias} \vdash (\texttt{continue} \texttt{;}) : \Undefined}
+  \Rule{}{\Gamma, \Gamma_{alias} \vdash \texttt{continue} \texttt{;} : \Undefined}
 \]
 \noindent
 
-For blocks, $\Gamma$ is first extended to include the types of names declared in the block.
+For blocks, $\Gamma$ is first extended temporarily to include the types of names declared in the block.
 Then, the component statements are checked against the extended type environment.
 
-We assume that whenever there is a return statement or a conditional statement with a return statement within a
-block, it is the last statement in the block. (One could consider a ``dead code'' error otherwise.)
+For function body blocks and if statement blocks, we assume that whenever there is a return statement
+or a conditional statement with a return statement within a block, it is the last statement in the block.
+(One could consider a ``dead code'' error otherwise.)
 
-The type of a function body block is the type of the return statement in the block.
-If the block does not contain any return statements, the type is $\Undefined$.
+The type of a function body or if statement block is the type of the return statement in the block.
+If the block does not contain any return statements, the type is $\Void$,
+which is a special type that is used to denote the return type of a function that does not return anything,
+and changes to $\Undefined$ if unioned with another type that is not $\Void$.
+
+In the below rule, $D_n$ denotes constant/variable declarations of the form $\texttt{const/let}\ x_n \texttt{:}\ t_n = E_n\texttt{;}$.
+If the type annotation for $x_n$ is absent, the declared type $t_n$ is assumed to be $\Any$.
 
 \noindent
 \[
-  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
-    \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is a return statement}}{
-    \Gamma, \Gamma_{alias} \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
-    S_1, \ldots, S_n\} : t'_n}
+  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_m \leftarrow t_m] \Gamma_{temp} \quad
+    \Gamma_{temp} \vdash D_1 : t_1, \ldots, \Gamma_{temp} \vdash D_m : t_m \quad
+    \Gamma_{temp} \vdash S_1 : t'_1, \ldots, \Gamma_{temp} \vdash S_n : t'_n
+    }{\Gamma, \Gamma_{alias} \vdash \{ D_1, \ldots, D_m, S_1, \ldots, S_n\} : 
+      \begin{cases}
+        t'_n & S_n\ \textit{is a return statement} \\
+        \Void & S_n\ \textit{is not a return statement}
+      \end{cases}
+    }
 \]
 \noindent
+
+The type of a block that is not a function body or if statement block is the type of last value-producing statement in the block.
+
+In the below rule, $D_n$ denotes constant/variable declarations of the form $\texttt{const/let}\ x_n \texttt{:}\ t_n = E_n\texttt{;}$.
+If the type annotation for $x_n$ is absent, the declared type $t_n$ is assumed to be $\Any$.
+We also assume that $S_k$ is the last value-producing statement in the block.
+
+\noindent
 \[
-  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_n \leftarrow t_n] \Gamma' \quad
-    \Gamma' \vdash S_1 : t'_1, \ldots, \Gamma' \vdash S_n : t'_n \quad S_n\ \textit{is not a return statement}}{
-    \Gamma, \Gamma_{alias} \vdash \{ (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;}) \ldots (\texttt{const}\ x_1 \texttt{:}\ t_1 = E_1\texttt{;})\
-    S_1, \ldots, S_n\} : \Undefined}
+  \Rule{\Gamma [x_1 \leftarrow t_1] \cdots [x_m \leftarrow t_m] \Gamma_{temp} \quad
+    \Gamma_{temp} \vdash D_1 : t_1, \ldots, \Gamma_{temp} \vdash D_m : t_m \quad
+    \Gamma_{temp} \vdash S_1 : t'_1, \ldots, \Gamma_{temp} \vdash S_n : t'_n
+    }{\Gamma, \Gamma_{alias} \vdash \{ D_1, \ldots, D_m, S_1, \ldots, S_n\} : t'_k}
 \]
 \noindent
 
@@ -453,8 +493,8 @@ The predicate expression of a conditional statement must be a success type of a 
 \noindent
 \[
   \Rule{\Gamma, \Gamma_{alias} \vdash S_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash S_{cons} : t_{cons} \quad \Gamma, \Gamma_{alias} \vdash S_{alt} : t_{alt}
-    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash (\texttt{if}\ (S_{pred})\ \{\ S_{cons}\ \}\
-    \texttt{else}\ \{\ S_{alt}\ \}) : t_{cons}\ |\ t_{alt}}
+    \quad t_{pred} \wedge \Bool \neq \emptyset}{\Gamma, \Gamma_{alias} \vdash \texttt{if}\ (S_{pred})\ S_{cons}\
+    \texttt{else}\ S_{alt} : t_{cons}\ |\ t_{alt}}
 \]
 \noindent
 
@@ -463,7 +503,7 @@ For \texttt{while} statements, the predicate expression must be a success type o
 \noindent
 \[
   \Rule{\Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash S : t \quad t_{pred} \wedge \Bool \neq \emptyset}{
-    \Gamma, \Gamma_{alias} \vdash (\texttt{while}\ (\ E_{pred}\ )\ \{\ S\ \}) : t}
+    \Gamma, \Gamma_{alias} \vdash \texttt{while}\ (\ E_{pred}\ )\ S : t}
 \]
 \noindent
 
@@ -472,8 +512,11 @@ except with additional type checks for the initialization and assignment express
 
 \noindent
 \[
-  \Rule{\Gamma, \Gamma_{alias} \vdash E_{init} : t_{init} \quad \Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad \Gamma, \Gamma_{alias} \vdash E_{assign} : t_{assign} \quad
-    \Gamma, \Gamma_{alias} \vdash S : t \quad t_{pred} \wedge \Bool \neq \emptyset}{
-    \Gamma, \Gamma_{alias} \vdash (\texttt{for}\ (\ E_{init} \texttt{;} E_{pred} \texttt{;} E_{assign}\ )\ \{\ S\ \}) : t}
+  \Rule{\begin{minipage}{140mm}
+    $\Gamma, \Gamma_{alias} \vdash E_{init} : t_{init} \quad \Gamma, \Gamma_{alias} \vdash E_{pred} : t_{pred} \quad
+    \Gamma, \Gamma_{alias} \vdash E_{assign} : t_{assign} \quad$ \\
+    $\Gamma, \Gamma_{alias} \vdash S : t \quad t_{pred} \wedge \Bool \neq \emptyset$\\
+    \end{minipage}}{
+    \Gamma, \Gamma_{alias} \vdash \texttt{for}\ (\ E_{init} \texttt{;} E_{pred} \texttt{;} E_{assign}\ )\ S : t}
 \]
 \noindent
