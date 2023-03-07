@@ -44,7 +44,6 @@ import {
   currentEnvironment,
   declareFunctionsAndVariables,
   defineVariable,
-  getNonEmptyEnv,
   getVariable,
   handleRuntimeError,
   handleSequence,
@@ -186,8 +185,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   Program: function (command: es.BlockStatement, context: Context, agenda: Agenda, stash: Stash) {
     context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
-    pushEnvironment(context, environment)
-    declareFunctionsAndVariables(context, command)
+    // Push the environment only if it is non empty.
+    if (declareFunctionsAndVariables(context, command, environment)) {
+      pushEnvironment(context, environment)
+    }
     agenda.push(...handleSequence(command.body))
   },
 
@@ -196,8 +197,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda.push(instr.envInstr(currentEnvironment(context)))
 
     const environment = createBlockEnvironment(context, 'blockEnvironment')
-    pushEnvironment(context, environment)
-    declareFunctionsAndVariables(context, command)
+    // Push the environment only if it is non empty.
+    if (declareFunctionsAndVariables(context, command, environment)) {
+      pushEnvironment(context, environment)
+    }
 
     // Push block body
     agenda.push(...handleSequence(command.body))
@@ -434,7 +437,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const next = agenda.peek()
     if (!(next && isInstr(next) && isAssmtInstr(next))) {
       if (closure instanceof Closure) {
-        Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(), {
+        Object.defineProperty(currentEnvironment(context).head, uniqueId(), {
           value: closure,
           writable: false,
           enumerable: true

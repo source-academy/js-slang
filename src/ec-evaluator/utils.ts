@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { isEmpty, uniqueId } from 'lodash'
+import { uniqueId } from 'lodash'
 
 import { Context } from '..'
 import * as errors from '../errors/errors'
@@ -200,36 +200,12 @@ export const createBlockEnvironment = (
 }
 
 /**
- * Checks if `env` is empty (that is, head of env is an empty object)
- */
-function isEmptyEnvironment(env: Environment) {
-  return isEmpty(env.head)
-}
-
-/**
- * Extracts the non-empty tail environment from the given environment and
- * returns current environment if tail environment is a null.
- */
-export function getNonEmptyEnv(environment: Environment): Environment {
-  if (isEmptyEnvironment(environment)) {
-    const tailEnvironment = environment.tail
-    if (tailEnvironment === null) {
-      return environment
-    }
-    return getNonEmptyEnv(tailEnvironment)
-  } else {
-    return environment
-  }
-}
-
-/**
  * Variables
  */
 
 const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 
-function declareIdentifier(context: Context, name: string, node: es.Node) {
-  const environment = currentEnvironment(context)
+function declareIdentifier(context: Context, name: string, node: es.Node, environment: Environment) {
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
 
@@ -242,23 +218,27 @@ function declareIdentifier(context: Context, name: string, node: es.Node) {
   return environment
 }
 
-function declareVariables(context: Context, node: es.VariableDeclaration) {
+function declareVariables(context: Context, node: es.VariableDeclaration, environment: Environment) {
   for (const declaration of node.declarations) {
-    declareIdentifier(context, (declaration.id as es.Identifier).name, node)
+    declareIdentifier(context, (declaration.id as es.Identifier).name, node, environment)
   }
 }
 
-export function declareFunctionsAndVariables(context: Context, node: es.BlockStatement) {
+export function declareFunctionsAndVariables(context: Context, node: es.BlockStatement, environment: Environment) {
+  let hasDeclarations: boolean = false;
   for (const statement of node.body) {
     switch (statement.type) {
       case 'VariableDeclaration':
-        declareVariables(context, statement)
+        declareVariables(context, statement, environment)
+        hasDeclarations = true;
         break
       case 'FunctionDeclaration':
-        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
+        declareIdentifier(context, (statement.id as es.Identifier).name, statement, environment)
+        hasDeclarations = true;
         break
     }
   }
+  return hasDeclarations
 }
 
 export function defineVariable(
