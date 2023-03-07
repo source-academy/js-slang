@@ -44,6 +44,7 @@ import {
   currentEnvironment,
   declareFunctionsAndVariables,
   defineVariable,
+  getNonEmptyEnv,
   getVariable,
   handleRuntimeError,
   handleSequence,
@@ -433,7 +434,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const next = agenda.peek()
     if (!(next && isInstr(next) && isAssmtInstr(next))) {
       if (closure instanceof Closure) {
-        Object.defineProperty(currentEnvironment(context).head, uniqueId(), {
+        Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(), {
           value: closure,
           writable: false,
           enumerable: true

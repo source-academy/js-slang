@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { uniqueId } from 'lodash'
+import { isEmpty, uniqueId } from 'lodash'
 
 import { Context } from '..'
 import * as errors from '../errors/errors'
@@ -196,6 +196,29 @@ export const createBlockEnvironment = (
     tail: currentEnvironment(context),
     head,
     id: uniqueId()
+  }
+}
+
+/**
+ * Checks if `env` is empty (that is, head of env is an empty object)
+ */
+function isEmptyEnvironment(env: Environment) {
+  return isEmpty(env.head)
+}
+
+/**
+ * Extracts the non-empty tail environment from the given environment and
+ * returns current environment if tail environment is a null.
+ */
+export function getNonEmptyEnv(environment: Environment): Environment {
+  if (isEmptyEnvironment(environment)) {
+    const tailEnvironment = environment.tail
+    if (tailEnvironment === null) {
+      return environment
+    }
+    return getNonEmptyEnv(tailEnvironment)
+  } else {
+    return environment
   }
 }
 
