@@ -1003,6 +1003,19 @@ describe('import statements', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 
+  it('should only be used at top level', () => {
+    const code = `import { show } from 'rune';
+      {
+        import { heart } from 'rune';
+      }
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 3: SyntaxError: 'import' and 'export' may only appear at the top level (3:8)"`
+    )
+  })
+
   it('defaults to any for all imports', () => {
     const code = `import { show, heart } from 'rune';
       show(heart);
