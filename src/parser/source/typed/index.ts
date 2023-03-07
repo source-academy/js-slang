@@ -25,11 +25,28 @@ export class SourceTypedParser extends SourceParser {
     options?: Partial<AcornOptions>,
     throwOnError?: boolean
   ): Program | null {
-    TypeParser.parse(
-      programStr,
-      createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options)
-    )
+    // Parse with acorn type parser first to catch errors such as
+    // import/export not at top level, trailing commas, missing semicolons
+    try {
+      TypeParser.parse(
+        programStr,
+        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options)
+      )
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        error = new FatalSyntaxError(
+          positionToSourceLocation((error as any).loc, options?.sourceFile),
+          error.toString()
+        )
+      }
 
+      if (throwOnError) throw error
+      context.errors.push(error)
+      return null
+    }
+
+    // Parse again with babel parser to capture all type syntax
+    // and catch remaining syntax errors not caught by acorn type parser
     const ast = babelParse(programStr, {
       ...SourceTypedParser.defaultBabelOptions,
       sourceFilename: options?.sourceFile,
