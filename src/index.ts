@@ -1,5 +1,6 @@
 import { SourceLocation } from 'estree'
 import { SourceMapConsumer } from 'source-map'
+import { Tokenizer, Parser, Translator} from './py-slang/src'
 
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
@@ -330,6 +331,7 @@ export async function runFilesInContext(
 
   if (context.chapter === Chapter.FULL_JS) {
     const program = parse(code, context)
+    // console.dir(program, { depth: null });
     if (program === null) {
       return resolvedErrorPromise
     }
@@ -338,6 +340,21 @@ export async function runFilesInContext(
 
   if (context.chapter === Chapter.HTML) {
     return htmlRunner(code, context, options)
+  }
+
+  if (context.chapter === Chapter.PYTHON_1) {
+    const script = code + '\n'
+    const tokenizer = new Tokenizer(script)
+    const tokens = tokenizer.scanEverything()
+    const pyParser = new Parser(script, tokens)
+    const ast = pyParser.parse()
+    // Only enable once we can properly handle these errors!
+    // const resolver = new Resolver(script, ast)
+    // resolver.resolve(ast)
+    const translator = new Translator(script);
+    const estreeAst = translator.resolve(ast) as unknown as es.Program
+
+    return fullJSRunner(estreeAst, context, options)
   }
 
   // FIXME: Clean up state management so that the `parseError` function is pure.
