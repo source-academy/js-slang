@@ -205,8 +205,12 @@ export const createBlockEnvironment = (
 
 const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 
-function declareIdentifier(context: Context, name: string, node: es.Node) {
-  const environment = currentEnvironment(context)
+function declareIdentifier(
+  context: Context,
+  name: string,
+  node: es.Node,
+  environment: Environment
+) {
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
 
@@ -219,23 +223,35 @@ function declareIdentifier(context: Context, name: string, node: es.Node) {
   return environment
 }
 
-function declareVariables(context: Context, node: es.VariableDeclaration) {
+function declareVariables(
+  context: Context,
+  node: es.VariableDeclaration,
+  environment: Environment
+) {
   for (const declaration of node.declarations) {
-    declareIdentifier(context, (declaration.id as es.Identifier).name, node)
+    declareIdentifier(context, (declaration.id as es.Identifier).name, node, environment)
   }
 }
 
-export function declareFunctionsAndVariables(context: Context, node: es.BlockStatement) {
+export function declareFunctionsAndVariables(
+  context: Context,
+  node: es.BlockStatement,
+  environment: Environment
+) {
+  let hasDeclarations: boolean = false
   for (const statement of node.body) {
     switch (statement.type) {
       case 'VariableDeclaration':
-        declareVariables(context, statement)
+        declareVariables(context, statement, environment)
+        hasDeclarations = true
         break
       case 'FunctionDeclaration':
-        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
+        declareIdentifier(context, (statement.id as es.Identifier).name, statement, environment)
+        hasDeclarations = true
         break
     }
   }
+  return hasDeclarations
 }
 
 export function defineVariable(
@@ -303,9 +319,6 @@ export const setVariable = (
 
 export const handleRuntimeError = (context: Context, error: RuntimeSourceError) => {
   context.errors.push(error)
-  context.runtime.environments = context.runtime.environments.slice(
-    -context.numberOfOuterEnvironments
-  )
   throw error
 }
 
