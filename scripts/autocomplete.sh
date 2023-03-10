@@ -10,9 +10,9 @@ CONST_DECL = "const"
 FUNC_DECL = "func"
 
 
-base_dir = "docs/source"
+base_dir = f"docs{os.path.sep}source"
 src_filename = "global.html"
-out_dir = "src/editors/ace/docTooltip"
+out_dir = f"src{os.path.sep}editors{os.path.sep}ace{os.path.sep}docTooltip"
 
 
 def new_title_node(title):
@@ -76,7 +76,7 @@ def process_function(namespace, element):
 
 def process_dir_globals(target):
     infile = os.path.join(base_dir, target, src_filename)
-    with open(infile) as f:
+    with open(infile, encoding="utf-8") as f:
         contents = "\n".join(f.readlines())
     try:
         tree = etree.HTML(contents)
@@ -96,7 +96,7 @@ def process_dir_globals(target):
 
     Path(out_dir).mkdir(parents=True, exist_ok=True)
     outfile = os.path.join(out_dir, target + ".json")
-    with open(outfile, "w") as f:
+    with open(outfile, "w", encoding="utf-8") as f:
         json.dump(names, f, indent=2)
 
 # Folder names for jsdoc html
