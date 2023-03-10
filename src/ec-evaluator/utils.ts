@@ -319,9 +319,6 @@ export const setVariable = (
 
 export const handleRuntimeError = (context: Context, error: RuntimeSourceError) => {
   context.errors.push(error)
-  context.runtime.environments = context.runtime.environments.slice(
-    -context.numberOfOuterEnvironments
-  )
   throw error
 }
 

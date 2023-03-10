@@ -183,12 +183,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    */
 
   Program: function (command: es.BlockStatement, context: Context, agenda: Agenda, stash: Stash) {
-    context.numberOfOuterEnvironments += 1
     const environment = createBlockEnvironment(context, 'programEnvironment')
     // Push the environment only if it is non empty.
     if (declareFunctionsAndVariables(context, command, environment)) {
       pushEnvironment(context, environment)
     }
+
+    // Push block body
     agenda.push(...handleSequence(command.body))
   },
 
@@ -624,9 +625,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         const result = func(...args)
         stash.push(result)
       } catch (error) {
-        context.runtime.environments = context.runtime.environments.slice(
-          -context.numberOfOuterEnvironments
-        )
         if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
           // The error could've arisen when the builtin called a source function which errored.
           // If the cause was a source error, we don't want to include the error.
