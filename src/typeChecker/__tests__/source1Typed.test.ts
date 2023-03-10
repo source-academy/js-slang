@@ -426,6 +426,19 @@ describe('type aliases', () => {
     expect(program).toMatchSnapshot() // Should not contain TSTypeAliasDeclaration node
   })
 
+  it('should only be used at top level', () => {
+    const code = `type x = string;
+      {
+        type y = number;
+      }
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 3: Type alias declarations may only appear at the top level"`
+    )
+  })
+
   it('should not be used as variables', () => {
     const code = `type x = string | number;
       x;
@@ -988,6 +1001,19 @@ describe('import statements', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('should only be used at top level', () => {
+    const code = `import { show } from 'rune';
+      {
+        import { heart } from 'rune';
+      }
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 3: SyntaxError: 'import' and 'export' may only appear at the top level (3:8)"`
+    )
   })
 
   it('defaults to any for all imports', () => {
