@@ -15,6 +15,7 @@ export function parse<TOptions extends AcornOptions>(
 ): Program | null {
   let parser: Parser<TOptions>
   switch (context.chapter) {
+    case Chapter.PYTHON_1:
     case Chapter.FULL_JS:
       parser = new FullJSParser()
       break
