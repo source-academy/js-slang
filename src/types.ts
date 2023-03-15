@@ -69,6 +69,7 @@ export enum Chapter {
   SOURCE_4 = 4,
   FULL_JS = -1,
   HTML = -2,
+  FULL_TS = -3,
   LIBRARY_PARSER = 100
 }
 

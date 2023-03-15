@@ -14,7 +14,7 @@ import { DEFAULT_ECMA_VERSION } from '../constants'
 import { SourceError } from '../types'
 import { validateAndAnnotate } from '../validator/validator'
 import { MissingSemicolonError, TrailingCommaError } from './errors'
-import { AcornOptions } from './types'
+import { AcornOptions, BabelOptions } from './types'
 
 /**
  * Generates options object for acorn parser
@@ -136,3 +136,8 @@ export const positionToSourceLocation = (position: Position, source?: string): S
   end: { ...position, column: position.column + 1 },
   source
 })
+
+export const defaultBabelOptions: BabelOptions = {
+  sourceType: 'module',
+  plugins: ['typescript', 'estree']
+}
