@@ -17,14 +17,19 @@ export class FullTSParser implements Parser<AcornOptions> {
     options?: Partial<AcornOptions>,
     throwOnError?: boolean
   ): Program | null {
+    // Initialize file to analyze
     const project = createProjectSync({ useInMemoryFileSystem: true })
     const filename = 'program.ts'
-
     project.createSourceFile(filename, programStr)
+
+    // Get TS diagnostics from file, formatted as TS error string
     const diagnostics = ts.getPreEmitDiagnostics(project.createProgram())
     const formattedString = project.formatDiagnosticsWithColorAndContext(diagnostics)
-    const lineNumRegex = /(?<=\[7m)\d+/
 
+    // Reformat TS error string to Source error by getting line number using regex
+    // This is because logic to retrieve line number is only present in
+    // formatDiagnosticsWithColorAndContext and cannot be called directly
+    const lineNumRegex = /(?<=\[7m)\d+/
     diagnostics.forEach(diagnostic => {
       const message = diagnostic.messageText.toString()
       const lineNum = lineNumRegex.exec(formattedString.split(message)[1])
@@ -36,6 +41,7 @@ export class FullTSParser implements Parser<AcornOptions> {
       return null
     }
 
+    // Parse code into Babel AST, which supports type syntax
     const ast = babelParse(programStr, {
       ...defaultBabelOptions,
       sourceFilename: options?.sourceFile,
@@ -57,6 +63,7 @@ export class FullTSParser implements Parser<AcornOptions> {
       return null
     }
 
+    // Transform Babel AST into ESTree AST
     const typedProgram: TypedES.Program = ast.program as TypedES.Program
     const transpiledProgram: Program = removeTSNodes(typedProgram)
     transformBabelASTToESTreeCompliantAST(transpiledProgram)
