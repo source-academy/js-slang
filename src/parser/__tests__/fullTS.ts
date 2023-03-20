@@ -22,6 +22,16 @@ describe('fullTS parser', () => {
     )
   })
 
+  it('allows usage of builtins/preludes', () => {
+    const code = `const xs = list(1);
+      const ys = list(1);
+      equal(xs, ys);
+    `
+
+    parser.parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+
   it('returns ESTree compliant program', () => {
     const code = `type StringOrNumber = string | number;
       const x: StringOrNumber = 1;

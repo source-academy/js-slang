@@ -17,10 +17,37 @@ export class FullTSParser implements Parser<AcornOptions> {
     options?: Partial<AcornOptions>,
     throwOnError?: boolean
   ): Program | null {
+    let code = ''
+    // Add builtins to code
+    // Each declaration is replaced with a single constant declaration with type `any`
+    // to reduce evaluation time
+    for (const builtin of context.nativeStorage.builtins) {
+      code += `const ${builtin[0]}: any = 1\n`
+    }
+    // Add prelude functions to code
+    // Each declaration is replaced with a single constant declaration with type `any`
+    // to reduce evaluation time
+    if (context.prelude) {
+      const preludeFns = context.prelude.split('\nfunction ').slice(1)
+      preludeFns.forEach(fnString => {
+        const fnName = fnString.split('(')[0]
+        // Functions in prelude that start with $ are not added
+        if (fnName.startsWith('$')) {
+          return
+        }
+        code += `const ${fnName}: any = 1\n`
+      })
+    }
+    // Get line offset
+    const lineOffset = code.split('\n').length - 1
+
+    // Add program string to code string,
+    // wrapping it in a block to allow redeclaration of variables
+    code = code + '{' + programStr + '}'
     // Initialize file to analyze
     const project = createProjectSync({ useInMemoryFileSystem: true })
     const filename = 'program.ts'
-    project.createSourceFile(filename, programStr)
+    project.createSourceFile(filename, code)
 
     // Get TS diagnostics from file, formatted as TS error string
     const diagnostics = ts.getPreEmitDiagnostics(project.createProgram())
@@ -32,8 +59,13 @@ export class FullTSParser implements Parser<AcornOptions> {
     const lineNumRegex = /(?<=\[7m)\d+/
     diagnostics.forEach(diagnostic => {
       const message = diagnostic.messageText.toString()
-      const lineNum = lineNumRegex.exec(formattedString.split(message)[1])
-      const position = { line: lineNum === null ? 0 : parseInt(lineNum[0]), column: 0, offset: 0 }
+      const lineNumRegExpArr = lineNumRegex.exec(formattedString.split(message)[1])
+      const lineNum = (lineNumRegExpArr === null ? 0 : parseInt(lineNumRegExpArr[0])) - lineOffset
+      // Ignore any errors that occur in builtins/prelude (line number <= 0)
+      if (lineNum <= 0) {
+        return
+      }
+      const position = { line: lineNum, column: 0, offset: 0 }
       context.errors.push(new FatalSyntaxError(positionToSourceLocation(position), message))
     })
 
