@@ -32,6 +32,15 @@ describe('fullTS parser', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 
+  it('allows usage of imports/modules', () => {
+    const code = `import { show, heart } from "rune";
+      show(heart);
+    `
+
+    parser.parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+
   it('returns ESTree compliant program', () => {
     const code = `type StringOrNumber = string | number;
       const x: StringOrNumber = 1;

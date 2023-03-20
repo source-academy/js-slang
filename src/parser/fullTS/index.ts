@@ -10,6 +10,10 @@ import { transformBabelASTToESTreeCompliantAST } from '../source/typed/utils'
 import { AcornOptions, Parser } from '../types'
 import { defaultBabelOptions, positionToSourceLocation } from '../utils'
 
+const IMPORT_TOP_LEVEL_ERROR =
+  'An import declaration can only be used at the top level of a namespace or module.'
+const START_OF_MODULE_ERROR = 'Cannot find module '
+
 export class FullTSParser implements Parser<AcornOptions> {
   parse(
     programStr: string,
@@ -59,6 +63,11 @@ export class FullTSParser implements Parser<AcornOptions> {
     const lineNumRegex = /(?<=\[7m)\d+/
     diagnostics.forEach(diagnostic => {
       const message = diagnostic.messageText.toString()
+      // Ignore errors regarding imports
+      // as TS does not have information about Source modules
+      if (message === IMPORT_TOP_LEVEL_ERROR || message.startsWith(START_OF_MODULE_ERROR)) {
+        return
+      }
       const lineNumRegExpArr = lineNumRegex.exec(formattedString.split(message)[1])
       const lineNum = (lineNumRegExpArr === null ? 0 : parseInt(lineNumRegExpArr[0])) - lineOffset
       // Ignore any errors that occur in builtins/prelude (line number <= 0)
