@@ -30,6 +30,7 @@ import * as es from 'estree'
 import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
 import { CannotFindModuleError } from './errors/localImportErrors'
 import { validateFilePath } from './localImports/filePaths'
+import preprocessFileImports from './localImports/preprocessor'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
 import { parseWithComments } from './parser/utils'
@@ -371,13 +372,39 @@ export function compile(
   context: Context,
   vmInternalFunctions?: string[]
 ): SVMProgram | undefined {
-  const astProgram = parse(code, context)
-  if (!astProgram) {
+  const defaultFilePath = '/default.js'
+  const files: Partial<Record<string, string>> = {}
+  files[defaultFilePath] = code
+  return compileFiles(files, defaultFilePath, context, vmInternalFunctions)
+}
+
+export function compileFiles(
+  files: Partial<Record<string, string>>,
+  entrypointFilePath: string,
+  context: Context,
+  vmInternalFunctions?: string[]
+): SVMProgram | undefined {
+  for (const filePath in files) {
+    const filePathError = validateFilePath(filePath)
+    if (filePathError !== null) {
+      context.errors.push(filePathError)
+      return undefined
+    }
+  }
+
+  const entrypointCode = files[entrypointFilePath]
+  if (entrypointCode === undefined) {
+    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    return undefined
+  }
+
+  const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
+  if (!preprocessedProgram) {
     return undefined
   }
 
   try {
-    return compileToIns(astProgram, undefined, vmInternalFunctions)
+    return compileToIns(preprocessedProgram, undefined, vmInternalFunctions)
   } catch (error) {
     context.errors.push(error)
     return undefined
