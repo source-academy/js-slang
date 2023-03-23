@@ -1,0 +1,151 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fullTS parser returns ESTree compliant program 1`] = `
+Node {
+  "body": Array [
+    Node {
+      "declarations": Array [
+        Node {
+          "end": 72,
+          "id": Node {
+            "end": 68,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 29,
+                "line": 2,
+              },
+              "identifierName": "x",
+              "source": undefined,
+              "start": Position {
+                "column": 12,
+                "line": 2,
+              },
+            },
+            "name": "x",
+            "start": 51,
+            "type": "Identifier",
+            "typeAnnotation": Node {
+              "end": 68,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 29,
+                  "line": 2,
+                },
+                "identifierName": undefined,
+                "source": undefined,
+                "start": Position {
+                  "column": 13,
+                  "line": 2,
+                },
+              },
+              "start": 52,
+              "type": "TSTypeAnnotation",
+              "typeAnnotation": Node {
+                "end": 68,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 29,
+                    "line": 2,
+                  },
+                  "identifierName": undefined,
+                  "source": undefined,
+                  "start": Position {
+                    "column": 15,
+                    "line": 2,
+                  },
+                },
+                "start": 54,
+                "type": "TSTypeReference",
+                "typeName": Node {
+                  "end": 68,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 29,
+                      "line": 2,
+                    },
+                    "identifierName": "StringOrNumber",
+                    "source": undefined,
+                    "start": Position {
+                      "column": 15,
+                      "line": 2,
+                    },
+                  },
+                  "name": "StringOrNumber",
+                  "start": 54,
+                  "type": "Identifier",
+                },
+              },
+            },
+          },
+          "init": Node {
+            "end": 72,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 33,
+                "line": 2,
+              },
+              "identifierName": undefined,
+              "source": undefined,
+              "start": Position {
+                "column": 32,
+                "line": 2,
+              },
+            },
+            "raw": "1",
+            "start": 71,
+            "type": "Literal",
+            "value": 1,
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 33,
+              "line": 2,
+            },
+            "identifierName": undefined,
+            "source": undefined,
+            "start": Position {
+              "column": 12,
+              "line": 2,
+            },
+          },
+          "start": 51,
+          "type": "VariableDeclarator",
+        },
+      ],
+      "end": 73,
+      "kind": "const",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 34,
+          "line": 2,
+        },
+        "identifierName": undefined,
+        "source": undefined,
+        "start": Position {
+          "column": 6,
+          "line": 2,
+        },
+      },
+      "start": 45,
+      "type": "VariableDeclaration",
+    },
+  ],
+  "end": 78,
+  "interpreter": null,
+  "loc": SourceLocation {
+    "end": Position {
+      "column": 4,
+      "line": 3,
+    },
+    "identifierName": undefined,
+    "source": undefined,
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  "sourceType": "module",
+  "start": 0,
+  "type": "Program",
+}
+`;
