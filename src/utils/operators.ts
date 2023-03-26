@@ -120,7 +120,7 @@ export function callIfFuncAndRightArgs(
     } catch (error) {
       // if we already handled the error, simply pass it on
       if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
-        throw new ExceptionError(error, dummy.loc!)
+        throw new ExceptionError(error, dummy.loc)
       } else {
         throw error
       }
@@ -134,7 +134,7 @@ export function callIfFuncAndRightArgs(
     } catch (error) {
       // if we already handled the error, simply pass it on
       if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
-        throw new ExceptionError(error, dummy.loc!)
+        throw new ExceptionError(error, dummy.loc)
       } else {
         throw error
       }
@@ -292,7 +292,7 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
     } catch (error) {
       // if we already handled the error, simply pass it on
       if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
-        throw new ExceptionError(error, dummy.loc!)
+        throw new ExceptionError(error, dummy.loc)
       } else {
         throw error
       }

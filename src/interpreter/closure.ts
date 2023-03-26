@@ -60,12 +60,12 @@ export default class Closure extends Callable {
       return body.type !== 'BlockStatement'
     }
     const functionBody = isExpressionBody(node.body)
-      ? [returnStatement(node.body, node.body.loc!)]
+      ? [returnStatement(node.body, node.body.loc)]
       : dummyReturn
       ? [node.body, returnStatement(identifier('undefined', dummyLocation()), dummyLocation())]
       : node.body
     const closure = new Closure(
-      blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc!),
+      blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),
       environment,
       context
     )
