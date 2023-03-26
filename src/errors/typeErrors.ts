@@ -1,6 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
+import { UNKNOWN_LOCATION } from '../constants'
 import * as tsEs from '../typeChecker/tsESTree'
 import { ErrorSeverity, ErrorType, NodeWithInferredType, SArray, SourceError, Type } from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
@@ -15,7 +16,7 @@ export class InvalidArrayIndexType implements SourceError {
   constructor(public node: NodeWithInferredType<es.Node>, public receivedType: Type) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -38,7 +39,7 @@ export class ArrayAssignmentError implements SourceError {
   ) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -58,7 +59,7 @@ export class ReassignConstError implements SourceError {
   constructor(public node: NodeWithInferredType<es.AssignmentExpression>) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -82,7 +83,7 @@ export class DifferentAssignmentError implements SourceError {
   ) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -115,7 +116,7 @@ export class CyclicReferenceError implements SourceError {
   constructor(public node: NodeWithInferredType<es.Node>) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -148,7 +149,7 @@ export class DifferentNumberArgumentsError implements SourceError {
   ) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -171,7 +172,7 @@ export class InvalidArgumentTypesError implements SourceError {
   ) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -268,7 +269,7 @@ export class InvalidTestConditionError implements SourceError {
   ) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -293,7 +294,7 @@ export class UndefinedIdentifierError implements SourceError {
   constructor(public node: NodeWithInferredType<es.Identifier>, public name: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -320,7 +321,7 @@ export class ConsequentAlternateMismatchError implements SourceError {
   ) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -348,7 +349,7 @@ export class CallingNonFunctionType implements SourceError {
   constructor(public node: NodeWithInferredType<es.CallExpression>, public callerType: Type) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -379,7 +380,7 @@ export class InconsistentPredicateTestError implements SourceError {
   ) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -413,7 +414,7 @@ export class TypeMismatchError implements SourceError {
   ) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -432,7 +433,7 @@ export class TypeNotFoundError implements SourceError {
   constructor(public node: tsEs.Node, public name: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -451,7 +452,7 @@ export class FunctionShouldHaveReturnValueError implements SourceError {
   constructor(public node: tsEs.FunctionDeclaration | tsEs.ArrowFunctionExpression) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -470,7 +471,7 @@ export class TypeNotCallableError implements SourceError {
   constructor(public node: tsEs.CallExpression, public typeName: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -493,7 +494,7 @@ export class TypecastError implements SourceError {
   ) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -512,7 +513,7 @@ export class TypeNotAllowedError implements SourceError {
   constructor(public node: tsEs.TSType, public name: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -531,7 +532,7 @@ export class UndefinedVariableTypeError implements SourceError {
   constructor(public node: tsEs.Node, public name: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -558,7 +559,7 @@ export class InvalidNumberOfArgumentsTypeError implements SourceError {
   }
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -582,7 +583,7 @@ export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceEr
   constructor(public node: tsEs.Node, public name: string, public expected: number) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -601,7 +602,7 @@ export class TypeNotGenericError implements SourceError {
   constructor(public node: tsEs.Node, public name: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -620,7 +621,7 @@ export class TypeAliasNameNotAllowedError implements SourceError {
   constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -639,7 +640,7 @@ export class TypeParameterNameNotAllowedError implements SourceError {
   constructor(public node: tsEs.TSTypeParameter, public name: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -658,7 +659,7 @@ export class InvalidIndexTypeError implements SourceError {
   constructor(public node: tsEs.MemberExpression, public typeName: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -677,7 +678,7 @@ export class InvalidArrayAccessTypeError implements SourceError {
   constructor(public node: tsEs.MemberExpression, public typeName: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -696,7 +697,7 @@ export class ConstNotAssignableTypeError implements SourceError {
   constructor(public node: tsEs.AssignmentExpression, public name: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -715,7 +716,7 @@ export class DuplicateTypeAliasError implements SourceError {
   constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
