@@ -1,5 +1,6 @@
 import * as es from 'estree'
 
+import { UNKNOWN_LOCATION } from '../constants'
 import { ErrorSeverity, ErrorType, NodeWithInferredType, SourceError, Type } from '../types'
 import { typeToString } from '../utils/stringify'
 import * as tsEs from './tsESTree'
@@ -14,7 +15,7 @@ export class TypeError implements SourceError {
   }
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
   public explain() {
     return this.message
@@ -62,7 +63,7 @@ export class TypecheckError implements SourceError {
   constructor(public node: tsEs.Node | tsEs.TSType, public message: string) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
   public explain() {
     return this.message

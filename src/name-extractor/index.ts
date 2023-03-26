@@ -1,6 +1,7 @@
 import * as es from 'estree'
 
 import { Context } from '../'
+import { UNKNOWN_LOCATION } from '../constants'
 import { ModuleConnectionError, ModuleNotFoundError } from '../errors/moduleErrors'
 import { findAncestors, findIdentifierNode } from '../finder'
 import { memoizedloadModuleDocs } from '../modules/moduleLoader'
@@ -111,7 +112,7 @@ export function getKeywords(
   // The rest of the keywords are only valid at the beginning of a statement
   if (
     ancestors[0].type === 'ExpressionStatement' &&
-    ancestors[0].loc!.start === identifier.loc!.start
+    (ancestors[0].loc ?? UNKNOWN_LOCATION).start === (identifier.loc ?? UNKNOWN_LOCATION).start
   ) {
     addAllowedKeywords(keywordsInBlock)
     // Keywords only allowed in functions

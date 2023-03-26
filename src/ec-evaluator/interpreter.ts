@@ -9,7 +9,7 @@
 import * as es from 'estree'
 import { uniqueId } from 'lodash'
 
-import * as constants from '../constants'
+import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
@@ -629,7 +629,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
           // The error could've arisen when the builtin called a source function which errored.
           // If the cause was a source error, we don't want to include the error.
           // However if the error came from the builtin itself, we need to handle it.
-          const loc = command.srcNode ? command.srcNode.loc! : constants.UNKNOWN_LOCATION
+          const loc = command.srcNode.loc ?? UNKNOWN_LOCATION
           handleRuntimeError(context, new errors.ExceptionError(error, loc))
         }
       }
