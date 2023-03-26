@@ -17,8 +17,9 @@ apply_in_underlying_javascript(times, list(2, 3)); // returns 6
   The tree is represented by the tagged lists on the right; the angle brackets denote recursive application
   of the transformation rules. Implementations are allowed to support more of JavaScript than listed.
 \end{itemize}
-In addition, the Source Academy frontend predeclares the name \lstinline{__PROGRAM__} in all Source languages
-to refer to the string representation of the program in the editor that is being run using ``Run''.
+In addition, the Source Academy frontend predeclares the name \lstinline{__PROGRAM__} in all Source languages to
+refer to the string representation of the entrypoint file of the program in the editor that is being run using ``Run''.
+The entrypoint file is the file containing the code that acts as the entrypoint of the program being run.
 If \lstinline{__PROGRAM__} is used in the REPL, it refers to the string representation of the editor content
 at the time when ``Run'' was last pressed.
 
