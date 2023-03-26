@@ -216,6 +216,7 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash) {
   let command = agenda.pop()
   while (command) {
     if (isNode(command)) {
+      context.runtime.nodes.shift()
       context.runtime.nodes.unshift(command)
       checkEditorBreakpoints(context, command)
       cmdEvaluators[command.type](command, context, agenda, stash)
@@ -225,7 +226,6 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash) {
         // run into a node immediately after.
         return new ECEBreak()
       }
-      context.runtime.nodes.shift()
     } else {
       // Node is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash)

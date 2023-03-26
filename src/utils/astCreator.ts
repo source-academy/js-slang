@@ -373,3 +373,5 @@ export const forStatement = (
   update,
   body
 })
+
+export const debuggerStatement = () : es.DebuggerStatement => ({type: 'DebuggerStatement'})
