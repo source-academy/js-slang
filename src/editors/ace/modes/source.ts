@@ -85,7 +85,7 @@ export function HighlightRulesSelector(
     const ChapterKeywordSelector = () => {
       const output = []
       if (id >= 1) {
-        output.push('import', 'as', 'const', 'else', 'if', 'return', 'function', 'debugger')
+        output.push('import', 'const', 'else', 'if', 'return', 'function', 'debugger')
       }
       if (id >= 2) {
         output.push('export')
