@@ -578,10 +578,6 @@ export function HighlightRulesSelector(
               regex: '(function)(\\s+)([a-zA-Z0-9$_\u00a1-\uffff][a-zA-Z0-9d$_\u00a1-\uffff]*)'
             },
             {
-              token: 'keyword',
-              regex: '(?:\\b(as|AS)\\b)'
-            },
-            {
               token: ['keyword', 'storage.type.variable.ts'],
               regex: '(type)(\\s+[a-zA-Z0-9_?.$][\\w?.$]*)'
             },
