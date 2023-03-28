@@ -360,7 +360,7 @@ export async function runFilesInContext(
     if (context.chapter === Chapter.SCHEME_4) {
     const tokenizer = new scmTokenizer(code)
     const tokens = tokenizer.scanTokens()
-    const schemeParser = new scmParser(tokens)
+    const schemeParser = new scmParser(code, tokens)
     const ast = schemeParser.parse()
 
     return fullJSRunner(ast, context, options)
