@@ -85,7 +85,7 @@ export function HighlightRulesSelector(
     const ChapterKeywordSelector = () => {
       const output = []
       if (id >= 1) {
-        output.push('import', 'as', 'const', 'else', 'if', 'return', 'function', 'debugger')
+        output.push('import', 'const', 'else', 'if', 'return', 'function', 'debugger')
       }
       if (id >= 2) {
         output.push('export')
@@ -576,10 +576,6 @@ export function HighlightRulesSelector(
             {
               token: ['storage.type', 'text', 'entity.name.function.ts'],
               regex: '(function)(\\s+)([a-zA-Z0-9$_\u00a1-\uffff][a-zA-Z0-9d$_\u00a1-\uffff]*)'
-            },
-            {
-              token: 'keyword',
-              regex: '(?:\\b(as|AS)\\b)'
             },
             {
               token: ['keyword', 'storage.type.variable.ts'],
