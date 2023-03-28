@@ -69,7 +69,14 @@ export enum Chapter {
   SOURCE_4 = 4,
   FULL_JS = -1,
   HTML = -2,
-  PYTHON_1 = -3,  
+  PYTHON_1 = -3,
+  PYTHON_2 = -4,
+  PYTHON_3 = -5,
+  PYTHON_4 = -6,
+  SCHEME_1 = -7,
+  SCHEME_2 = -8,
+  SCHEME_3 = -9,
+  SCHEME_4 = -10,
   LIBRARY_PARSER = 100
 }
 

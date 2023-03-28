@@ -43,3 +43,7 @@ export const sourceLanguages: Language[] = [
 export const pyLanguages: Language[] = [
   { chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT},
 ]
+
+export const scmLanguages: Language[] = [
+  { chapter: Chapter.SCHEME_4, variant: Variant.DEFAULT},
+]

@@ -1,7 +1,7 @@
 import { SourceLocation } from 'estree'
 import { SourceMapConsumer } from 'source-map'
-import { Tokenizer, Parser, Translator} from './py-slang/src'
-
+import { Tokenizer as pyTokenizer, Parser as pyParser, Translator as pyTranslator} from './py-slang/src'
+import { Tokenizer as scmTokenizer, Parser as scmParser } from './scm-slang/src'
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
@@ -344,17 +344,26 @@ export async function runFilesInContext(
 
   if (context.chapter === Chapter.PYTHON_1) {
     const script = code + '\n'
-    const tokenizer = new Tokenizer(script)
+    const tokenizer = new pyTokenizer(script)
     const tokens = tokenizer.scanEverything()
-    const pyParser = new Parser(script, tokens)
-    const ast = pyParser.parse()
+    const py_parser = new pyParser(script, tokens)
+    const ast = py_parser.parse()
     // Only enable once we can properly handle these errors!
     // const resolver = new Resolver(script, ast)
     // resolver.resolve(ast)
-    const translator = new Translator(script);
+    const translator = new pyTranslator(script);
     const estreeAst = translator.resolve(ast) as unknown as es.Program
 
     return fullJSRunner(estreeAst, context, options)
+  }
+
+    if (context.chapter === Chapter.SCHEME_4) {
+    const tokenizer = new scmTokenizer(code)
+    const tokens = tokenizer.scanTokens()
+    const schemeParser = new scmParser(tokens)
+    const ast = schemeParser.parse()
+
+    return fullJSRunner(ast, context, options)
   }
 
   // FIXME: Clean up state management so that the `parseError` function is pure.

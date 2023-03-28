@@ -443,6 +443,18 @@ const createContext = <T>(
       chapter: chapter,
       variant: variant
     } as Context
+  } else if (chapter === Chapter.SCHEME_4) {
+    return {
+      ...createContext(
+        Chapter.SOURCE_4, 
+        variant, 
+        externalSymbols, 
+        externalContext,
+        externalBuiltIns
+      ),
+      chapter: chapter,
+      variant: variant
+    } as Context
   }
 
   const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
