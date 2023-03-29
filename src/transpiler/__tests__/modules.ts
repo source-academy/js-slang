@@ -17,22 +17,22 @@ jest.mock('../../modules/moduleLoader', () => ({
       tabs: []
     },
     another_module: {
-      tabs: [],
-    },
-  }),
+      tabs: []
+    }
+  })
 }))
 
 const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
 const mockedModuleFile = asMock(memoizedGetModuleFile)
 
 test('Transform import declarations into variable declarations', () => {
-   mockedModuleFile.mockImplementation((name, type) => {
+  mockedModuleFile.mockImplementation((name, type) => {
     if (type === 'json') {
-      return name === 'one_module' ? '{ foo: \'foo\' }' : '{ bar: \'bar\' }'
+      return name === 'one_module' ? "{ foo: 'foo' }" : "{ bar: 'bar' }"
     } else {
       return 'undefined'
     }
-  }) 
+  })
 
   const code = stripIndent`
     import { foo } from "test/one_module";
@@ -53,7 +53,7 @@ test('Transform import declarations into variable declarations', () => {
 test('Transpiler accounts for user variable names when transforming import statements', () => {
   mockedModuleFile.mockImplementation((name, type) => {
     if (type === 'json') {
-      return name === 'one_module' ? '{ foo: \'foo\' }' : '{ bar: \'bar\' }'
+      return name === 'one_module' ? "{ foo: 'foo' }" : "{ bar: 'bar' }"
     } else {
       return 'undefined'
     }
@@ -94,11 +94,11 @@ test('Transpiler accounts for user variable names when transforming import state
 test('checkForUndefinedVariables accounts for import statements', () => {
   mockedModuleFile.mockImplementation((name, type) => {
     if (type === 'json') {
-      return '{ hello: \'hello\' }'
+      return "{ hello: 'hello' }"
     } else {
       return 'undefined'
     }
-  })  
+  })
 
   const code = stripIndent`
     import { hello } from "one_module";
@@ -110,13 +110,13 @@ test('checkForUndefinedVariables accounts for import statements', () => {
 })
 
 test('importing undefined variables should throw errors', () => {
-    mockedModuleFile.mockImplementation((name, type) => {
+  mockedModuleFile.mockImplementation((name, type) => {
     if (type === 'json') {
       return '{}'
     } else {
       return 'undefined'
     }
-  })  
+  })
 
   const code = stripIndent`
     import { hello } from 'one_module';
@@ -127,7 +127,6 @@ test('importing undefined variables should throw errors', () => {
     transpile(program, context, false)
   } catch (error) {
     expect(error).toBeInstanceOf(UndefinedImportError)
-    expect((error as UndefinedImportError).symbol)
-      .toEqual('hello')
+    expect((error as UndefinedImportError).symbol).toEqual('hello')
   }
 })

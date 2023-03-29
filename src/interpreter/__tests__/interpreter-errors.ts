@@ -1,4 +1,3 @@
-
 // import type { FunctionLike, MockedFunction } from 'jest-mock'
 
 /* tslint:disable:max-line-length */
@@ -25,9 +24,9 @@ jest.mock('../../modules/moduleLoader', () => ({
       tabs: []
     },
     another_module: {
-      tabs: [],
-    },
-  }),
+      tabs: []
+    }
+  })
 }))
 
 // const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
@@ -1146,5 +1145,5 @@ test('Cascading js errors work properly', () => {
 test('Importing unknown variables throws error', () => {
   expectParsedError(stripIndent`
     import { foo1 } from 'one_module';
-  `).toMatchInlineSnapshot('\'one_module\' does not contain definitions for \'foo1\'')
+  `).toMatchInlineSnapshot("'one_module' does not contain definitions for 'foo1'")
 })

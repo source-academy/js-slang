@@ -1019,14 +1019,16 @@ test('Shadowed variables may not be assigned to until declared in the current sc
 
 test('Importing unknown variables throws UndefinedImport error', () => {
   // for getModuleFile
-  mockXMLHttpRequest({ responseText: `{
+  mockXMLHttpRequest({
+    responseText: `{
     "one_module": {
       "tabs": []
     },
     "another_module": {
       "tabs": []
     }
-  }` })
+  }`
+  })
 
   // for bundle body
   mockXMLHttpRequest({
@@ -1039,7 +1041,10 @@ test('Importing unknown variables throws UndefinedImport error', () => {
     `
   })
 
-  return expectParsedError(stripIndent`
+  return expectParsedError(
+    stripIndent`
     import { foo1 } from 'one_module';
-  `, optionEC).toMatchInlineSnapshot('"\'one_module\' does not contain a definition for \'foo1\'"')
+  `,
+    optionEC
+  ).toMatchInlineSnapshot("\"'one_module' does not contain a definition for 'foo1'\"")
 })

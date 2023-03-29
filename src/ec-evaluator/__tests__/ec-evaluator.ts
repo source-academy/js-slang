@@ -19,7 +19,6 @@ const mockXMLHttpRequest = (xhr: Partial<XMLHttpRequest> = {}) => {
   return xhrMock
 }
 
-
 const optionEC = { variant: Variant.EXPLICIT_CONTROL }
 const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
@@ -318,14 +317,16 @@ test('streams can be created and functions with no return statements are still e
 
 test('Imports are properly handled', () => {
   // for getModuleFile
-  mockXMLHttpRequest({ responseText: `{
+  mockXMLHttpRequest({
+    responseText: `{
     "one_module": {
       "tabs": []
     },
     "another_module": {
       "tabs": []
     }
-  }` })
+  }`
+  })
 
   // for bundle body
   mockXMLHttpRequest({
@@ -336,10 +337,13 @@ test('Imports are properly handled', () => {
         }
       }
     `
-  }) 
+  })
 
-  return expectResult(stripIndent`
+  return expectResult(
+    stripIndent`
     import { foo } from 'one_module';
     foo();
-  `, optionEC).toEqual('foo')
+  `,
+    optionEC
+  ).toEqual('foo')
 })
