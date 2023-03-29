@@ -138,6 +138,7 @@ export interface Context<T = any> {
     agenda?: Agenda
     stash?: Stash
     envSteps?: number
+    envStepsTotal?: number
   }
 
   numberOfOuterEnvironments: number

@@ -216,10 +216,9 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
   context.runtime.nodes = []
   let steps = 0
   let command = agenda.pop()
-  console.log('runtime steps: ', context.runtime.envSteps)
   while (command) {
     if (!isPrelude && steps === context.runtime.envSteps) {
-      agenda.push(ast.debuggerStatement())
+      return stash.peek()
     }
     if (isNode(command)) {
       context.runtime.nodes.shift()
@@ -230,11 +229,6 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
         // We can put this under isNode since context.runtime.break
         // will only be updated after a debugger statement and so we will
         // run into a node immediately after.
-        console.log('BROKEN')
-        if (context.runtime.envSteps === -1) {
-          context.runtime.envSteps = steps
-          console.log('eval done', steps)
-        }
         return new ECEBreak()
       }
     } else {
@@ -242,10 +236,13 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
       cmdEvaluators[command.instrType](command, context, agenda, stash)
     }
     command = agenda.pop()
-    if (!isPrelude && context.runtime.envSteps === -1 && !command) {
-      command = ast.debuggerStatement()
-    }
+    // if (!isPrelude && context.runtime.envSteps === -1 && !command) {
+    //   command = ast.debuggerStatement()
+    // }
     steps += 1
+  }
+  if (!isPrelude) {
+    context.runtime.envStepsTotal = steps
   }
   return stash.peek()
 }
