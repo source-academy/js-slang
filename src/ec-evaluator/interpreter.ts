@@ -13,6 +13,7 @@ import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
+import { UndefinedImportError } from '../modules/errors'
 import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
 import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
@@ -96,7 +97,7 @@ export function evaluate(program: es.Program, context: Context): Value {
   try {
     context.runtime.isRunning = true
 
-    const nonImportNodes = evaluateImports(program, context, true)
+    const nonImportNodes = evaluateImports(program, context, true, true)
 
     context.runtime.agenda = new Agenda({
       ...program,
@@ -105,6 +106,7 @@ export function evaluate(program: es.Program, context: Context): Value {
     context.runtime.stash = new Stash()
     return runECEMachine(context, context.runtime.agenda, context.runtime.stash)
   } catch (error) {
+    // console.error('ecerror:', error)
     return new ECError()
   } finally {
     context.runtime.isRunning = false
@@ -130,7 +132,12 @@ export function resumeEvaluate(context: Context) {
   }
 }
 
-function evaluateImports(program: es.Program, context: Context, loadTabs: boolean) {
+function evaluateImports(
+  program: es.Program,
+  context: Context,
+  loadTabs: boolean,
+  checkImports: boolean
+) {
   const [importNodes, otherNodes] = partition(
     program.body,
     ({ type }) => type === 'ImportDeclaration'
@@ -138,28 +145,38 @@ function evaluateImports(program: es.Program, context: Context, loadTabs: boolea
 
   const moduleFunctions: Record<string, ModuleFunctions> = {}
 
-  for (const node of importNodes) {
-    const moduleName = node.source.value
-    if (typeof moduleName !== 'string') {
-      throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
-    }
-
-    if (!(moduleName in moduleFunctions)) {
-      context.moduleContexts[moduleName] = {
-        state: null,
-        tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
+  try {
+    for (const node of importNodes) {
+      const moduleName = node.source.value
+      if (typeof moduleName !== 'string') {
+        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
       }
-      moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
-    }
 
-    const environment = currentEnvironment(context)
-    for (const spec of node.specifiers) {
-      if (spec.type !== 'ImportSpecifier') {
-        throw new Error(`Only ImportSpecifiers are supported, got: ${spec.type}`)
+      if (!(moduleName in moduleFunctions)) {
+        context.moduleContexts[moduleName] = {
+          state: null,
+          tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
+        }
+        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
       }
-      declareIdentifier(context, spec.local.name, node, environment)
-      defineVariable(context, spec.local.name, moduleFunctions[spec.imported.name], true, node)
+
+      const functions = moduleFunctions[moduleName]
+      const environment = currentEnvironment(context)
+      for (const spec of node.specifiers) {
+        if (spec.type !== 'ImportSpecifier') {
+          throw new Error(`Only ImportSpecifiers are supported, got: ${spec.type}`)
+        }
+
+        if (checkImports && !(spec.imported.name in functions)) {
+          throw new UndefinedImportError(spec.imported.name, moduleName, node)
+        }
+
+        declareIdentifier(context, spec.local.name, node, environment)
+        defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
+      }
     }
+  } catch (error) {
+    handleRuntimeError(context, error)
   }
 
   return otherNodes

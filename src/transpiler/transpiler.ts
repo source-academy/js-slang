@@ -6,7 +6,8 @@ import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
-import { memoizedGetModuleFile } from '../modules/moduleLoader'
+import { UndefinedImportError } from '../modules/errors'
+import { memoizedGetModuleFile, memoizedloadModuleDocs } from '../modules/moduleLoader'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/astCreator'
 import {
@@ -40,6 +41,7 @@ export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
 export function transformImportDeclarations(
   program: es.Program,
   usedIdentifiers: Set<string>,
+  checkImports: boolean,
   useThis: boolean = false
 ): [string, es.VariableDeclaration[], es.Program['body']] {
   const prefix: string[] = []
@@ -72,9 +74,21 @@ export function transformImportDeclarations(
       moduleNamespace = moduleNames.get(moduleName)!
     }
 
+    const moduleDocs: Record<string, string> | null = checkImports
+      ? memoizedloadModuleDocs(moduleName, node)
+      : null
+
     return node.specifiers.map(specifier => {
       if (specifier.type !== 'ImportSpecifier') {
-        throw new Error(`Expected import specifier, found: ${node.type}`)
+        throw new Error(`Expected import specifier, found: ${specifier.type}`)
+      }
+
+      if (checkImports) {
+        if (!moduleDocs) {
+          console.warn(`Failed to load docs for ${moduleName}, skipping typechecking`)
+        } else if (!(specifier.imported.name in moduleDocs)) {
+          throw new UndefinedImportError(specifier.imported.name, moduleName, node)
+        }
       }
 
       // Convert each import specifier to its corresponding local variable declaration
@@ -612,7 +626,8 @@ function transpileToSource(
 
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
-    usedIdentifiers
+    usedIdentifiers,
+    true
   )
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
 
@@ -653,7 +668,8 @@ function transpileToFullJS(
 
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
-    usedIdentifiers
+    usedIdentifiers,
+    false
   )
 
   const transpiledProgram: es.Program = create.program([
