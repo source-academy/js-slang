@@ -176,6 +176,7 @@ function evaluateImports(
       }
     }
   } catch (error) {
+    // console.log(error)
     handleRuntimeError(context, error)
   }
 

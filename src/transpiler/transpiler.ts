@@ -105,21 +105,6 @@ export function transformImportDeclarations(
   return [prefix.join(''), declNodes, otherNodes]
 }
 
-// `useThis` is a temporary indicator used by fullJS
-// export function transformImportDeclarations(program: es.Program, useThis = false) {
-//   const imports = []
-//   let result: es.VariableDeclaration[] = []
-//   let moduleCounter = 0
-//   while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
-//     imports.push(program.body.shift() as es.ImportDeclaration)
-//   }
-//   for (const node of imports) {
-//     result = transformSingleImportDeclaration(moduleCounter, node, useThis).concat(result)
-//     moduleCounter++
-//   }
-//   program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
-// }
-
 export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
   return program.body
     .filter(statement => statement.type === 'VariableDeclaration')

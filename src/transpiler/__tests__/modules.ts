@@ -1,6 +1,9 @@
 import type { Identifier, Literal, MemberExpression, VariableDeclaration } from 'estree'
+import type { FunctionLike, MockedFunction } from 'jest-mock'
 
 import { mockContext } from '../../mocks/context'
+import { UndefinedImportError } from '../../modules/errors'
+import { memoizedGetModuleFile } from '../../modules/moduleLoader'
 import { parse } from '../../parser/parser'
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
@@ -8,10 +11,29 @@ import { transformImportDeclarations, transpile } from '../transpiler'
 
 jest.mock('../../modules/moduleLoader', () => ({
   ...jest.requireActual('../../modules/moduleLoader'),
-  memoizedGetModuleFile: () => 'undefined;'
+  memoizedGetModuleFile: jest.fn(),
+  memoizedGetModuleManifest: jest.fn().mockReturnValue({
+    one_module: {
+      tabs: []
+    },
+    another_module: {
+      tabs: [],
+    },
+  }),
 }))
 
+const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
+const mockedModuleFile = asMock(memoizedGetModuleFile)
+
 test('Transform import declarations into variable declarations', () => {
+   mockedModuleFile.mockImplementation((name, type) => {
+    if (type === 'json') {
+      return name === 'one_module' ? '{ foo: \'foo\' }' : '{ bar: \'bar\' }'
+    } else {
+      return 'undefined'
+    }
+  }) 
+
   const code = stripIndent`
     import { foo } from "test/one_module";
     import { bar } from "test/another_module";
@@ -29,6 +51,14 @@ test('Transform import declarations into variable declarations', () => {
 })
 
 test('Transpiler accounts for user variable names when transforming import statements', () => {
+  mockedModuleFile.mockImplementation((name, type) => {
+    if (type === 'json') {
+      return name === 'one_module' ? '{ foo: \'foo\' }' : '{ bar: \'bar\' }'
+    } else {
+      return 'undefined'
+    }
+  })
+
   const code = stripIndent`
     import { foo } from "test/one_module";
     import { bar } from "test/another_module";
@@ -62,11 +92,42 @@ test('Transpiler accounts for user variable names when transforming import state
 })
 
 test('checkForUndefinedVariables accounts for import statements', () => {
+  mockedModuleFile.mockImplementation((name, type) => {
+    if (type === 'json') {
+      return '{ hello: \'hello\' }'
+    } else {
+      return 'undefined'
+    }
+  })  
+
   const code = stripIndent`
-    import { hello } from "module";
+    import { hello } from "one_module";
     hello;
   `
   const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
   transpile(program, context, false)
+})
+
+test('importing undefined variables should throw errors', () => {
+    mockedModuleFile.mockImplementation((name, type) => {
+    if (type === 'json') {
+      return '{}'
+    } else {
+      return 'undefined'
+    }
+  })  
+
+  const code = stripIndent`
+    import { hello } from 'one_module';
+  `
+  const context = mockContext(Chapter.SOURCE_4)
+  const program = parse(code, context)!
+  try {
+    transpile(program, context, false)
+  } catch (error) {
+    expect(error).toBeInstanceOf(UndefinedImportError)
+    expect((error as UndefinedImportError).symbol)
+      .toEqual('hello')
+  }
 })

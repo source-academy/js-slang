@@ -1,5 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Imports are properly handled: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "import { foo } from 'one_module';
+foo();",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "foo",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Simple tail call returns work: expectResult 1`] = `
 Object {
   "alertResult": Array [],
