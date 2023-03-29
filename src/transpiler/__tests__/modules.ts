@@ -41,7 +41,7 @@ test('Transpiler accounts for user variable names when transforming import state
   const [, importNodes, [varDecl0, varDecl1]] = transformImportDeclarations(
     program,
     new Set<string>(['__MODULE_0__', '__MODULE_2__']),
-    false,
+    false
   )
 
   expect(importNodes[0].type).toBe('VariableDeclaration')

@@ -580,7 +580,7 @@ function handleImports(programs: es.Program[]): [string, string[]] {
       const [prefixToAdd, importsToAdd, otherNodes] = transformImportDeclarations(
         program,
         new Set<string>(),
-        false,
+        false
       )
       program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
       prefix.push(prefixToAdd)

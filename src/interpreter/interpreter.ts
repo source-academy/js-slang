@@ -752,7 +752,7 @@ export function* evaluateProgram(
         if (spec.type !== 'ImportSpecifier') {
           throw new Error(`Only Import Specifiers are supported, got ${spec.type}`)
         }
-        
+
         if (checkImports && !(spec.imported.name in functions)) {
           throw new UndefinedImportError(spec.imported.name, moduleName, node)
         }
