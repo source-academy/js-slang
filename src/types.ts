@@ -137,6 +137,7 @@ export interface Context<T = any> {
     nodes: es.Node[]
     agenda?: Agenda
     stash?: Stash
+    envSteps?: number
   }
 
   numberOfOuterEnvironments: number

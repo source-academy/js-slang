@@ -8,6 +8,7 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
 import { partition, uniqueId } from 'lodash'
+import { IOptions } from '..'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
@@ -93,7 +94,7 @@ export class Stash extends Stack<Value> {
  * @param context The context to evaluate the program in.
  * @returns The result of running the ECE machine.
  */
-export function evaluate(program: es.Program, context: Context): Value {
+export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
   try {
     context.runtime.isRunning = true
 
@@ -104,7 +105,7 @@ export function evaluate(program: es.Program, context: Context): Value {
       body: nonImportNodes
     })
     context.runtime.stash = new Stash()
-    return runECEMachine(context, context.runtime.agenda, context.runtime.stash)
+    return runECEMachine(context, context.runtime.agenda, context.runtime.stash, options.isPrelude)
   } catch (error) {
     // console.error('ecerror:', error)
     return new ECError(error)
@@ -124,7 +125,7 @@ export function evaluate(program: es.Program, context: Context): Value {
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!)
+    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!, false)
   } catch (error) {
     return new ECError(error)
   } finally {
@@ -210,11 +211,16 @@ export function ECEResultPromise(context: Context, value: Value): Promise<Result
  * @returns A special break object if the program is interrupted by a break point;
  * else the top value of the stash. It is usually the return value of the program.
  */
-function runECEMachine(context: Context, agenda: Agenda, stash: Stash) {
+function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude: boolean) {
   context.runtime.break = false
   context.runtime.nodes = []
+  let steps = 0
   let command = agenda.pop()
+  console.log('runtime steps: ', context.runtime.envSteps)
   while (command) {
+    if (!isPrelude && steps === context.runtime.envSteps) {
+      agenda.push(ast.debuggerStatement())
+    }
     if (isNode(command)) {
       context.runtime.nodes.shift()
       context.runtime.nodes.unshift(command)
@@ -224,6 +230,11 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash) {
         // We can put this under isNode since context.runtime.break
         // will only be updated after a debugger statement and so we will
         // run into a node immediately after.
+        console.log('BROKEN')
+        if (context.runtime.envSteps === -1) {
+          context.runtime.envSteps = steps
+          console.log('eval done', steps)
+        }
         return new ECEBreak()
       }
     } else {
@@ -231,6 +242,10 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash) {
       cmdEvaluators[command.instrType](command, context, agenda, stash)
     }
     command = agenda.pop()
+    if (!isPrelude && context.runtime.envSteps === -1 && !command) {
+      command = ast.debuggerStatement()
+    }
+    steps += 1
   }
   return stash.peek()
 }
@@ -810,3 +825,5 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   [InstrType.BREAK_MARKER]: function () {}
 }
+
+export function runECEMachineWithSteps(context: Context, agenda: Agenda, stash: Stash) {}
