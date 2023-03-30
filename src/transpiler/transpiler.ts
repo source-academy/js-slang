@@ -4,10 +4,11 @@ import * as es from 'estree'
 import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
-import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
+import { NATIVE_STORAGE_ID, REQUIRE_PROVIDER_ID, UNKNOWN_LOCATION } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
 import { UndefinedImportError } from '../modules/errors'
 import { memoizedGetModuleFile, memoizedloadModuleDocs } from '../modules/moduleLoader'
+import { ModuleDocumentation } from '../modules/moduleTypes'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/astCreator'
 import {
@@ -28,6 +29,7 @@ const globalIdNames = [
   'callIfFuncAndRightArgs',
   'boolOrErr',
   'wrap',
+  'wrapSourceModule',
   'unaryOp',
   'binaryOp',
   'throwIfTimeout',
@@ -42,67 +44,84 @@ export function transformImportDeclarations(
   program: es.Program,
   usedIdentifiers: Set<string>,
   checkImports: boolean,
+  nativeId?: es.Identifier,
   useThis: boolean = false
 ): [string, es.VariableDeclaration[], es.Program['body']] {
-  const prefix: string[] = []
   const [importNodes, otherNodes] = partition(
     program.body,
     node => node.type === 'ImportDeclaration'
   )
-  const moduleNames = new Map<string, string>()
-  let moduleCount = 0
 
-  const declNodes = (importNodes as es.ImportDeclaration[]).flatMap(node => {
-    const moduleName = node.source.value as string
+  if (importNodes.length === 0) return ['', [], otherNodes]
 
-    let moduleNamespace: string
-    if (!moduleNames.has(moduleName)) {
-      // Increment module count until we reach an unused identifier
-      let namespaced = `__MODULE_${moduleCount}__`
-      while (usedIdentifiers.has(namespaced)) {
-        namespaced = `__MODULE_${moduleCount}__`
-        moduleCount++
+  const moduleInfos = importNodes.reduce(
+    (res, node: es.ImportDeclaration) => {
+      const moduleName = node.source.value
+      if (typeof moduleName !== 'string') {
+        throw new Error(
+          `Expected ImportDeclaration to have a source of type string, got ${moduleName}`
+        )
       }
 
-      // The module hasn't been added to the prefix yet, so do that
-      moduleNames.set(moduleName, namespaced)
-      moduleCount++
-      const moduleText = memoizedGetModuleFile(moduleName, 'bundle').trim()
-      prefix.push(`const ${namespaced} = ${moduleText}({ context: ctx });\n`)
-      moduleNamespace = namespaced
-    } else {
-      moduleNamespace = moduleNames.get(moduleName)!
-    }
-
-    const moduleDocs: Record<string, string> | null = checkImports
-      ? memoizedloadModuleDocs(moduleName, node)
-      : null
-
-    return node.specifiers.map(specifier => {
-      if (specifier.type !== 'ImportSpecifier') {
-        throw new Error(`Expected import specifier, found: ${specifier.type}`)
-      }
-
-      if (checkImports) {
-        if (!moduleDocs) {
-          console.warn(`Failed to load docs for ${moduleName}, skipping typechecking`)
-        } else if (!(specifier.imported.name in moduleDocs)) {
-          throw new UndefinedImportError(specifier.imported.name, moduleName, node)
+      if (!(moduleName in res)) {
+        res[moduleName] = {
+          text: memoizedGetModuleFile(moduleName, 'bundle'),
+          nodes: [],
+          docs: checkImports ? memoizedloadModuleDocs(moduleName, node) : null
         }
       }
 
-      // Convert each import specifier to its corresponding local variable declaration
-      return create.constantDeclaration(
-        specifier.local.name,
-        create.memberExpression(
-          create.identifier(`${useThis ? 'this.' : ''}${moduleNamespace}`),
-          specifier.imported.name
+      res[moduleName].nodes.push(node)
+      node.specifiers.forEach(spec => usedIdentifiers.add(spec.local.name))
+      return res
+    },
+    {} as Record<
+      string,
+      {
+        nodes: es.ImportDeclaration[]
+        text: string
+        docs: ModuleDocumentation | null
+      }
+    >
+  )
+
+  const prefix: string[] = []
+  const declNodes = Object.entries(moduleInfos).flatMap(([moduleName, { nodes, text, docs }]) => {
+    const namespaced = getUniqueId(usedIdentifiers, '__MODULE__')
+    prefix.push(`// ${moduleName} module`)
+
+    const modifiedText = nativeId
+      ? `${nativeId.name}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
+      : `(${text})(${REQUIRE_PROVIDER_ID})`
+    prefix.push(`const ${namespaced} = ${modifiedText}\n`)
+
+    return nodes.flatMap(node =>
+      node.specifiers.map(specifier => {
+        if (specifier.type !== 'ImportSpecifier') {
+          throw new Error(`Expected import specifier, found: ${specifier.type}`)
+        }
+
+        if (checkImports) {
+          if (!docs) {
+            console.warn(`Failed to load docs for ${moduleName}, skipping typechecking`)
+          } else if (!(specifier.imported.name in docs)) {
+            throw new UndefinedImportError(specifier.imported.name, moduleName, node)
+          }
+        }
+
+        // Convert each import specifier to its corresponding local variable declaration
+        return create.constantDeclaration(
+          specifier.local.name,
+          create.memberExpression(
+            create.identifier(`${useThis ? 'this.' : ''}${namespaced}`),
+            specifier.imported.name
+          )
         )
-      )
-    })
+      })
+    )
   })
 
-  return [prefix.join(''), declNodes, otherNodes]
+  return [prefix.join('\n'), declNodes, otherNodes]
 }
 
 export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
@@ -612,7 +631,8 @@ function transpileToSource(
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
     usedIdentifiers,
-    true
+    true,
+    globalIds.native
   )
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
 
@@ -654,7 +674,8 @@ function transpileToFullJS(
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
     usedIdentifiers,
-    false
+    false,
+    globalIds.native
   )
 
   const transpiledProgram: es.Program = create.program([

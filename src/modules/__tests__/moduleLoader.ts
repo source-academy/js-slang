@@ -104,11 +104,9 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
   test('Loading a module bundle correctly', () => {
     const sampleManifest = `{ "module": { "tabs": [] } }`
     mockXMLHttpRequest({ responseText: sampleManifest })
-    const sampleResponse = stripIndent`function () { 
-      'use strict'; 
-      function make_empty_array () { return []; } 
+    const sampleResponse = stripIndent`require => { 
       return {
-        make_empty_array
+        make_empty_array: () => []
       }
     }`
     mockXMLHttpRequest({ responseText: sampleResponse })

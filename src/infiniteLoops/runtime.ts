@@ -1,6 +1,6 @@
 import * as es from 'estree'
-import { REQUIRE_PROVIDER_ID } from '../constants'
 
+import { REQUIRE_PROVIDER_ID } from '../constants'
 import createContext from '../createContext'
 import { getRequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'

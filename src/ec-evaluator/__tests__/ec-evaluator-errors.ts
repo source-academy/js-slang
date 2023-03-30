@@ -1033,7 +1033,7 @@ test('Importing unknown variables throws UndefinedImport error', () => {
   // for bundle body
   mockXMLHttpRequest({
     responseText: `
-      function() {
+      require => {
         return {
           foo: () => 'foo',
         }

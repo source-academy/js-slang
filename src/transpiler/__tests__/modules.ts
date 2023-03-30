@@ -19,6 +19,10 @@ jest.mock('../../modules/moduleLoader', () => ({
     another_module: {
       tabs: []
     }
+  }),
+  memoizedloadModuleDocs: jest.fn().mockReturnValue({
+    foo: 'foo',
+    bar: 'bar'
   })
 }))
 
@@ -61,23 +65,23 @@ test('Transpiler accounts for user variable names when transforming import state
 
   const code = stripIndent`
     import { foo } from "test/one_module";
-    import { bar } from "test/another_module";
-    const __MODULE_0__ = 'test0';
-    const __MODULE_2__ = 'test1';
+    import { bar as __MODULE__2 } from "test/another_module";
+    const __MODULE__ = 'test0';
+    const __MODULE__0 = 'test1';
     foo(bar);
   `
   const context = mockContext(4)
   const program = parse(code, context)!
   const [, importNodes, [varDecl0, varDecl1]] = transformImportDeclarations(
     program,
-    new Set<string>(['__MODULE_0__', '__MODULE_2__']),
+    new Set<string>(['__MODULE__', '__MODULE__0']),
     false
   )
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
   expect(
     ((importNodes[0].declarations[0].init as MemberExpression).object as Identifier).name
-  ).toEqual('__MODULE_1__')
+  ).toEqual('__MODULE__1')
 
   expect(varDecl0.type).toBe('VariableDeclaration')
   expect(((varDecl0 as VariableDeclaration).declarations[0].init as Literal).value).toEqual('test0')
@@ -88,7 +92,7 @@ test('Transpiler accounts for user variable names when transforming import state
   expect(importNodes[1].type).toBe('VariableDeclaration')
   expect(
     ((importNodes[1].declarations[0].init as MemberExpression).object as Identifier).name
-  ).toEqual('__MODULE_3__')
+  ).toEqual('__MODULE__3')
 })
 
 test('checkForUndefinedVariables accounts for import statements', () => {
@@ -101,8 +105,8 @@ test('checkForUndefinedVariables accounts for import statements', () => {
   })
 
   const code = stripIndent`
-    import { hello } from "one_module";
-    hello;
+    import { foo } from "one_module";
+    foo;
   `
   const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
