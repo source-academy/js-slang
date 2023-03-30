@@ -1,4 +1,4 @@
-import type { Context } from '../types'
+import type { RequireProvider } from './requireProvider'
 
 export type Modules = {
   [module: string]: {
@@ -6,8 +6,10 @@ export type Modules = {
   }
 }
 
-export type ModuleBundle = (context: { context: Context }) => ModuleFunctions
+export type ModuleBundle = (require: RequireProvider) => ModuleFunctions
 
 export type ModuleFunctions = {
   [functionName: string]: Function
 }
+
+export type ModuleDocumentation = Record<string, string>
