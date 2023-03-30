@@ -19,8 +19,8 @@ export const getRequireProvider = (context: Context) => (x: string) => {
 
   const exports = {
     'js-slang': {
+      ...jsslang,
       dist: {
-        ...jsslang,
         stdlib
       },
       context
