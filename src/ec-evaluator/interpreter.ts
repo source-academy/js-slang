@@ -107,7 +107,7 @@ export function evaluate(program: es.Program, context: Context): Value {
     return runECEMachine(context, context.runtime.agenda, context.runtime.stash)
   } catch (error) {
     // console.error('ecerror:', error)
-    return new ECError()
+    return new ECError(error)
   } finally {
     context.runtime.isRunning = false
   }
@@ -126,7 +126,7 @@ export function resumeEvaluate(context: Context) {
     context.runtime.isRunning = true
     return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!)
   } catch (error) {
-    return new ECError()
+    return new ECError(error)
   } finally {
     context.runtime.isRunning = false
   }
