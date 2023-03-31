@@ -391,6 +391,19 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'forceIt(val)', new LazyBuiltIn(operators.forceIt, true))
     defineBuiltin(context, 'delayIt(xs)', new LazyBuiltIn(operators.delayIt, true))
   }
+
+  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.SCHEME_4) {
+    //do scheme stuff
+    switch (context.chapter) {
+      case Chapter.SCHEME_1:
+      case Chapter.SCHEME_2:
+      case Chapter.SCHEME_3:
+      case Chapter.SCHEME_4:
+        break;
+      default:
+        //should be unreachable
+    }
+  }
 }
 
 function importPrelude(context: Context) {

@@ -1,7 +1,7 @@
 import { SourceLocation } from 'estree'
 import { SourceMapConsumer } from 'source-map'
 import { Tokenizer as pyTokenizer, Parser as pyParser, Translator as pyTranslator} from './py-slang/src'
-import { Tokenizer as scmTokenizer, Parser as scmParser } from './scm-slang/src'
+import { schemeParse } from './parser/scheme/scm-slang/src'
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
@@ -328,7 +328,7 @@ export async function runFilesInContext(
     context.errors.push(new CannotFindModuleError(entrypointFilePath))
     return resolvedErrorPromise
   }
-
+  // This could be refactored to be more eleganc. Possibly use a switch statement.
   if (context.chapter === Chapter.FULL_JS) {
     const program = parse(code, context)
     // console.dir(program, { depth: null });
@@ -357,11 +357,24 @@ export async function runFilesInContext(
     return fullJSRunner(estreeAst, context, options)
   }
 
-    if (context.chapter === Chapter.SCHEME_4) {
-    const tokenizer = new scmTokenizer(code)
-    const tokens = tokenizer.scanTokens()
-    const schemeParser = new scmParser(code, tokens)
-    const ast = schemeParser.parse()
+    if (context.chapter === Chapter.SCHEME_1 
+      || context.chapter === Chapter.SCHEME_2 
+      || context.chapter === Chapter.SCHEME_3 
+      || context.chapter === Chapter.SCHEME_4) {
+      const chapterNum = (() => {switch(context.chapter) {
+        case Chapter.SCHEME_1:
+            return 1;
+        case Chapter.SCHEME_2:
+            return 2;
+        case Chapter.SCHEME_3:
+            return 3;
+        case Chapter.SCHEME_4:
+            return 4;
+        default:
+            // probably should throw an error here
+            return undefined;
+      }})();
+    const ast = schemeParse(code, chapterNum);
 
     return fullJSRunner(ast, context, options)
   }
