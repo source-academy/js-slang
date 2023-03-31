@@ -1,11 +1,12 @@
 import { SourceLocation } from 'estree'
 import { SourceMapConsumer } from 'source-map'
-import { Tokenizer as pyTokenizer, Parser as pyParser, Translator as pyTranslator} from './py-slang/src'
-import { schemeParse } from './parser/scheme/scm-slang/src'
+
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
+import { schemeParse, encodeTree } from './parser/scheme'
 import { looseParse, typedParse } from './parser/utils'
+import { Parser as pyParser, Tokenizer as pyTokenizer, Translator as pyTranslator} from './py-slang/src'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
@@ -375,7 +376,8 @@ export async function runFilesInContext(
             return undefined;
       }})();
     const ast = schemeParse(code, chapterNum);
-
+    // encode the identifiers of the scheme AST
+    encodeTree(ast);
     return fullJSRunner(ast, context, options)
   }
 
