@@ -36,7 +36,7 @@ import { runWithProgram } from '../vm/svml-machine'
 import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
-import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
+import { determineVariant, resolvedErrorPromise } from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
   scheduler: 'async',
@@ -138,8 +138,6 @@ async function runNative(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    appendModulesToContext(transpiledProgram, context)
-
     switch (context.variant) {
       case Variant.GPU:
         transpileToGPU(transpiledProgram)
@@ -149,7 +147,7 @@ async function runNative(
         break
     }
 
-    ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
+    ;({ transpiled, sourceMapJson } = await transpile(transpiledProgram, context))
     let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
@@ -160,16 +158,19 @@ async function runNative(
       isPreviousCodeTimeoutError = false
     }
 
-    return Promise.resolve({
+    return {
       status: 'finished',
       context,
       value
-    })
+    }
   } catch (error) {
     // console.error(error)
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-      const detectedInfiniteLoop = testForInfiniteLoop(program, context.previousPrograms.slice(1))
+      const detectedInfiniteLoop = await testForInfiniteLoop(
+        program,
+        context.previousPrograms.slice(1)
+      )
       if (detectedInfiniteLoop !== undefined) {
         if (options.throwInfiniteLoops) {
           context.errors.push(detectedInfiniteLoop)
@@ -205,8 +206,12 @@ async function runNative(
   }
 }
 
-function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  const value = ECEvaluate(program, context)
+async function runECEvaluator(
+  program: es.Program,
+  context: Context,
+  options: IOptions
+): Promise<Result> {
+  const value = await ECEvaluate(program, context)
   return ECEResultPromise(context, value)
 }
 

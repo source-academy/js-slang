@@ -9,7 +9,7 @@ import {
 } from '../errors/moduleErrors'
 import { Context } from '../types'
 import { wrapSourceModule } from '../utils/operators'
-import { ModuleBundle, ModuleDocumentation, ModuleFunctions, Modules } from './moduleTypes'
+import { ModuleBundle, ModuleDocumentation, ModuleFunctions, ModuleManifest } from './moduleTypes'
 import { getRequireProvider } from './requireProvider'
 
 // Supports both JSDom (Web Browser) environment and Node environment
@@ -46,7 +46,7 @@ export function httpGet(url: string): string {
  * @return Modules
  */
 export const memoizedGetModuleManifest = memoize(getModuleManifest)
-function getModuleManifest(): Modules {
+function getModuleManifest(): ModuleManifest {
   const rawManifest = httpGet(`${MODULES_STATIC_URL}/modules.json`)
   return JSON.parse(rawManifest)
 }

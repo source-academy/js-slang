@@ -1,6 +1,6 @@
 import type { RequireProvider } from './requireProvider'
 
-export type Modules = {
+export type ModuleManifest = {
   [module: string]: {
     tabs: string[]
   }

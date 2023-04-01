@@ -13,7 +13,7 @@ import { evallerReplacer, getBuiltins, transpile } from '../transpiler/transpile
 import type { Context, NativeStorage } from '../types'
 import * as create from '../utils/astCreator'
 import { toSourceError } from './errors'
-import { appendModulesToContext, resolvedErrorPromise } from './utils'
+import { resolvedErrorPromise } from './utils'
 
 function fullJSEval(
   code: string,
@@ -62,7 +62,6 @@ export async function fullJSRunner(
 
   // modules
   hoistAndMergeImports(program)
-  appendModulesToContext(program, context)
 
   // evaluate and create a separate block for preludes and builtins
   const preEvalProgram: es.Program = create.program([
@@ -76,13 +75,14 @@ export async function fullJSRunner(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    ;({ transpiled, sourceMapJson } = transpile(program, context))
-    return Promise.resolve({
+    ;({ transpiled, sourceMapJson } = await transpile(program, context))
+    return {
       status: 'finished',
       context,
       value: await fullJSEval(transpiled, requireProvider, context.nativeStorage)
-    })
+    }
   } catch (error) {
+    // console.log(error)
     context.errors.push(
       error instanceof RuntimeSourceError ? error : await toSourceError(error, sourceMapJson)
     )

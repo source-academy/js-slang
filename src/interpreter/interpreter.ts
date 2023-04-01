@@ -6,9 +6,14 @@ import { UNKNOWN_LOCATION } from '../constants'
 import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { UndefinedImportError } from '../modules/errors'
-import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
+import {
+  UndefinedDefaultImportError,
+  UndefinedImportError,
+  UndefinedNamespaceImportError
+} from '../modules/errors'
+import { loadModuleBundle } from '../modules/moduleLoader'
 import { ModuleFunctions } from '../modules/moduleTypes'
+import { initModuleContext } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
 import * as create from '../utils/astCreator'
@@ -739,26 +744,41 @@ export function* evaluateProgram(
       }
 
       if (!(moduleName in moduleFunctions)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
-        }
+        initModuleContext(moduleName, context, loadTabs, node)
         moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
       }
 
       const functions = moduleFunctions[moduleName]
+      const funcCount = Object.keys(functions).length
 
       for (const spec of node.specifiers) {
-        if (spec.type !== 'ImportSpecifier') {
-          throw new Error(`Only Import Specifiers are supported, got ${spec.type}`)
-        }
-
-        if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, node)
-        }
-
         declareIdentifier(context, spec.local.name, node)
-        defineVariable(context, spec.local.name, functions[spec.imported.name], true)
+        switch (spec.type) {
+          case 'ImportSpecifier': {
+            if (checkImports && !(spec.imported.name in functions)) {
+              throw new UndefinedImportError(spec.imported.name, moduleName, node)
+            }
+
+            defineVariable(context, spec.local.name, functions[spec.imported.name], true)
+            break
+          }
+          case 'ImportDefaultSpecifier': {
+            if (checkImports && !('default' in functions)) {
+              throw new UndefinedDefaultImportError(moduleName, node)
+            }
+
+            defineVariable(context, spec.local.name, functions['default'], true)
+            break
+          }
+          case 'ImportNamespaceSpecifier': {
+            if (checkImports && funcCount === 0) {
+              throw new UndefinedNamespaceImportError(moduleName, node)
+            }
+
+            defineVariable(context, spec.local.name, functions, true)
+            break
+          }
+        }
       }
       yield* leave(context)
     }

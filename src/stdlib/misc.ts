@@ -36,19 +36,19 @@ export function timed(
   }
 }
 
-export function is_number(v: Value) {
+export function is_number(v: Value): v is number {
   return typeof v === 'number'
 }
 
-export function is_undefined(xs: Value) {
+export function is_undefined(xs: Value): xs is undefined {
   return typeof xs === 'undefined'
 }
 
-export function is_string(xs: Value) {
+export function is_string(xs: Value): xs is string {
   return typeof xs === 'string'
 }
 
-export function is_boolean(xs: Value) {
+export function is_boolean(xs: Value): xs is boolean {
   return typeof xs === 'boolean'
 }
 

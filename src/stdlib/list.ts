@@ -27,15 +27,15 @@ export function pair<H, T>(x: H, xs: T): Pair<H, T> {
 
 // is_pair returns true iff arg is a two-element array
 // LOW-LEVEL FUNCTION, NOT SOURCE
-export function is_pair(x: any) {
+export function is_pair<H, T>(x: any): x is Pair<H, T> {
   return array_test(x) && x.length === 2
 }
 
 // head returns the first component of the given pair,
 // throws an exception if the argument is not a pair
 // LOW-LEVEL FUNCTION, NOT SOURCE
-export function head(xs: any) {
-  if (is_pair(xs)) {
+export function head<H, T>(xs: any): H {
+  if (is_pair<H, T>(xs)) {
     return xs[0]
   } else {
     throw new Error('head(xs) expects a pair as argument xs, but encountered ' + stringify(xs))
@@ -45,8 +45,8 @@ export function head(xs: any) {
 // tail returns the second component of the given pair
 // throws an exception if the argument is not a pair
 // LOW-LEVEL FUNCTION, NOT SOURCE
-export function tail(xs: any) {
-  if (is_pair(xs)) {
+export function tail<H, T>(xs: any): T {
+  if (is_pair<H, T>(xs)) {
     return xs[1]
   } else {
     throw new Error('tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs))
@@ -55,7 +55,7 @@ export function tail(xs: any) {
 
 // is_null returns true if arg is exactly null
 // LOW-LEVEL FUNCTION, NOT SOURCE
-export function is_null(xs: List) {
+export function is_null(xs: List): xs is null {
   return xs === null
 }
 
@@ -71,7 +71,7 @@ export function list(...elements: any[]): List {
 
 // recurses down the list and checks that it ends with the empty list null
 // LOW-LEVEL FUNCTION, NOT SOURCE
-export function is_list(xs: List) {
+export function is_list(xs: any): xs is List {
   while (is_pair(xs)) {
     xs = tail(xs)
   }

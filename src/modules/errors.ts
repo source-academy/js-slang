@@ -19,3 +19,30 @@ export class UndefinedImportError extends RuntimeSourceError {
     return "Check your imports and make sure what you're trying to import exists!"
   }
 }
+
+export class UndefinedDefaultImportError extends RuntimeSourceError {
+  constructor(public readonly moduleName: string, node?: ImportDeclaration) {
+    super(node)
+  }
+
+  public explain(): string {
+    return `'${this.moduleName}' does not contain a default export!`
+  }
+
+  public elaborate(): string {
+    return "Check your imports and make sure what you're trying to import exists!"
+  }
+}
+export class UndefinedNamespaceImportError extends RuntimeSourceError {
+  constructor(public readonly moduleName: string, node?: ImportDeclaration) {
+    super(node)
+  }
+
+  public explain(): string {
+    return `'${this.moduleName}' does not export any symbols!`
+  }
+
+  public elaborate(): string {
+    return "Check your imports and make sure what you're trying to import exists!"
+  }
+}

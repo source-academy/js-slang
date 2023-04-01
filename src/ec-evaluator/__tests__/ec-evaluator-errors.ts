@@ -1,6 +1,5 @@
 /* tslint:disable:max-line-length */
-import * as _ from 'lodash'
-
+import * as moduleLoader from '../../modules/moduleLoaderAsync'
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import {
@@ -10,19 +9,26 @@ import {
   expectResult
 } from '../../utils/testing'
 
-jest.spyOn(_, 'memoize').mockImplementation(func => func as any)
+jest.mock('lodash', () => ({
+  ...jest.requireActual('lodash'),
+  memoize: jest.fn(f => f)
+}))
 
-const mockXMLHttpRequest = (xhr: Partial<XMLHttpRequest> = {}) => {
-  const xhrMock: Partial<XMLHttpRequest> = {
-    open: jest.fn(() => {}),
-    send: jest.fn(() => {}),
-    status: 200,
-    responseText: 'Hello World!',
-    ...xhr
-  }
-  jest.spyOn(window, 'XMLHttpRequest').mockImplementationOnce(() => xhrMock as XMLHttpRequest)
-  return xhrMock
-}
+jest.spyOn(moduleLoader, 'memoizedGetModuleManifestAsync').mockResolvedValue({
+  one_module: { tabs: [] },
+  another_module: { tabs: [] }
+})
+jest.spyOn(moduleLoader, 'memoizedGetModuleBundleAsync').mockResolvedValue(`
+  require => ({
+    foo: () => 'foo',
+    bar: () => 'bar'
+  })
+`)
+jest
+  .spyOn(moduleLoader, 'memoizedGetModuleDocsAsync')
+  .mockImplementation(name =>
+    Promise.resolve<Record<string, string>>(name === 'one_module' ? { foo: 'foo' } : { bar: 'bar' })
+  )
 
 const undefinedVariable = stripIndent`
 im_undefined;
@@ -1018,29 +1024,6 @@ test('Shadowed variables may not be assigned to until declared in the current sc
 })
 
 test('Importing unknown variables throws UndefinedImport error', () => {
-  // for getModuleFile
-  mockXMLHttpRequest({
-    responseText: `{
-    "one_module": {
-      "tabs": []
-    },
-    "another_module": {
-      "tabs": []
-    }
-  }`
-  })
-
-  // for bundle body
-  mockXMLHttpRequest({
-    responseText: `
-      require => {
-        return {
-          foo: () => 'foo',
-        }
-      }
-    `
-  })
-
   return expectParsedError(
     stripIndent`
     import { foo1 } from 'one_module';
