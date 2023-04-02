@@ -1,6 +1,7 @@
 import { createEmptyContext } from '../../createContext'
 import { ModuleConnectionError, ModuleInternalError } from '../../errors/moduleErrors'
 import { Variant } from '../../types'
+import { stripIndent } from '../../utils/formatters'
 import * as moduleLoader from '../moduleLoader'
 
 // Mock memoize function from lodash
@@ -103,7 +104,11 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
   test('Loading a module bundle correctly', () => {
     const sampleManifest = `{ "module": { "tabs": [] } }`
     mockXMLHttpRequest({ responseText: sampleManifest })
-    const sampleResponse = `(function () { 'use strict'; function make_empty_array () { return []; } function index(__params) { return { make_empty_array: make_empty_array }; } return index; })();`
+    const sampleResponse = stripIndent`require => { 
+      return {
+        make_empty_array: () => []
+      }
+    }`
     mockXMLHttpRequest({ responseText: sampleResponse })
     const loadedBundle = moduleLoader.loadModuleBundle(
       'module',

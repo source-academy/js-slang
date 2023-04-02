@@ -1,6 +1,6 @@
 import { Program } from 'estree'
 
-import { evaluate } from '../interpreter/interpreter'
+import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { Chapter } from '../types'
@@ -18,7 +18,7 @@ test('Function params and body identifiers are in different environment', () => 
   const context = mockContext(Chapter.SOURCE_4)
   context.prelude = null // hide the unneeded prelude
   const parsed = parse(code, context)
-  const it = evaluate(parsed as any as Program, context)
+  const it = evaluate(parsed as any as Program, context, false, false)
   const stepsToComment = 13 // manually counted magic number
   for (let i = 0; i < stepsToComment; i += 1) {
     it.next()
