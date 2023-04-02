@@ -2,8 +2,7 @@
 import * as es from 'estree'
 import { cloneDeep, uniqueId } from 'lodash'
 
-import * as constants from '../constants'
-import { CUT } from '../constants'
+import { CUT, UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { Context, Environment, Frame, Value } from '../types'
@@ -252,9 +251,9 @@ function* getAmbArgs(context: Context, call: es.CallExpression) {
 
 function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalExpression {
   if (node.operator === '&&') {
-    return conditionalExpression(node.left, node.right, literal(false), node.loc!)
+    return conditionalExpression(node.left, node.right, literal(false), node.loc)
   } else {
-    return conditionalExpression(node.left, literal(true), node.right, node.loc!)
+    return conditionalExpression(node.left, literal(true), node.right, node.loc)
   }
 }
 
@@ -679,7 +678,7 @@ export function* apply(
         -context.numberOfOuterEnvironments
       )
 
-      const loc = node ? node.loc! : constants.UNKNOWN_LOCATION
+      const loc = node.loc ?? UNKNOWN_LOCATION
       if (!(e instanceof RuntimeSourceError || e instanceof errors.ExceptionError)) {
         // The error could've arisen when the builtin called a source function which errored.
         // If the cause was a source error, we don't want to include the error.

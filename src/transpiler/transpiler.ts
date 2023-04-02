@@ -4,7 +4,7 @@ import * as es from 'estree'
 import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
-import { NATIVE_STORAGE_ID } from '../constants'
+import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
 import { memoizedGetModuleFile } from '../modules/moduleLoader'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
@@ -242,18 +242,18 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
           expression.operator,
           expression.left,
           transformLogicalExpression(expression.right),
-          expression.loc!
+          expression.loc
         )
       case 'ConditionalExpression':
         return create.conditionalExpression(
           expression.test,
           transformLogicalExpression(expression.consequent),
           transformLogicalExpression(expression.alternate),
-          expression.loc!
+          expression.loc
         )
       case 'CallExpression':
         expression = expression as es.CallExpression
-        const { line, column } = expression.loc!.start
+        const { line, column } = (expression.loc ?? UNKNOWN_LOCATION).start
         const source = expression.loc?.source ?? null
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
@@ -292,7 +292,7 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
 function transformCallExpressionsToCheckIfFunction(program: es.Program, globalIds: NativeIds) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
-      const { line, column } = node.loc!.start
+      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
       const source = node.loc?.source ?? null
       const args = node.arguments
 
@@ -412,7 +412,7 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds
       | es.ForStatement
       | es.WhileStatement
   ) {
-    const { line, column } = node.loc!.start
+    const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
     const source = node.loc?.source ?? null
     const test = node.type === 'LogicalExpression' ? 'left' : 'test'
     node[test] = create.callExpression(globalIds.boolOrErr, [
@@ -447,7 +447,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
 ) {
   simple(program, {
     BinaryExpression(node: es.BinaryExpression) {
-      const { line, column } = node.loc!.start
+      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
       const source = node.loc?.source ?? null
       const { operator, left, right } = node
       create.mutateToCallExpression(node, globalIds.binaryOp, [
@@ -461,7 +461,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
       ])
     },
     UnaryExpression(node: es.UnaryExpression) {
-      const { line, column } = node.loc!.start
+      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
       const source = node.loc?.source ?? null
       const { operator, argument } = node as es.UnaryExpression
       create.mutateToCallExpression(node, globalIds.unaryOp, [
@@ -484,7 +484,7 @@ function transformPropertyAssignment(program: es.Program, globalIds: NativeIds) 
     AssignmentExpression(node: es.AssignmentExpression) {
       if (node.left.type === 'MemberExpression') {
         const { object, property, computed, loc } = node.left
-        const { line, column } = loc!.start
+        const { line, column } = (loc ?? UNKNOWN_LOCATION).start
         const source = loc?.source ?? null
         create.mutateToCallExpression(node, globalIds.setProp, [
           object as es.Expression,
@@ -503,7 +503,7 @@ function transformPropertyAccess(program: es.Program, globalIds: NativeIds) {
   simple(program, {
     MemberExpression(node: es.MemberExpression) {
       const { object, property, computed, loc } = node
-      const { line, column } = loc!.start
+      const { line, column } = (loc ?? UNKNOWN_LOCATION).start
       const source = loc?.source ?? null
       create.mutateToCallExpression(node, globalIds.getProp, [
         object as es.Expression,
@@ -530,7 +530,7 @@ function addInfiniteLoopProtection(
         const startTimeConst = getUniqueId(usedIdentifiers, 'startTime')
         newStatements.push(create.constantDeclaration(startTimeConst, getTimeAst()))
         if (statement.body.type === 'BlockStatement') {
-          const { line, column } = statement.loc!.start
+          const { line, column } = (statement.loc ?? UNKNOWN_LOCATION).start
           const source = statement.loc?.source ?? null
           statement.body.body.unshift(
             create.expressionStatement(

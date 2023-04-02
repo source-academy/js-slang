@@ -1,5 +1,6 @@
 import * as es from 'estree'
 
+import { UNKNOWN_LOCATION } from '../../../constants'
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
 
 export class NoFunctionDeclarationWithoutIdentifierError implements SourceError {
@@ -9,7 +10,7 @@ export class NoFunctionDeclarationWithoutIdentifierError implements SourceError 
   constructor(public node: es.FunctionDeclaration) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
