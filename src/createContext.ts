@@ -102,7 +102,11 @@ const createEmptyRuntime = () => ({
   environmentTree: new EnvTree(),
   environments: [],
   value: undefined,
-  nodes: []
+  nodes: [],
+  agenda: null,
+  stash: null,
+  envSteps: -1,
+  envStepsTotal: 0
 })
 
 const createEmptyDebugger = () => ({
