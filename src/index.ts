@@ -330,18 +330,13 @@ export async function runFilesInContext(
     return resolvedErrorPromise
   }
 
-  if (context.chapter === Chapter.FULL_JS 
-    || context.chapter === Chapter.FULL_TS
-    || context.chapter === Chapter.SCHEME_1
-    || context.chapter === Chapter.SCHEME_2
-    || context.chapter === Chapter.SCHEME_3
-    || context.chapter === Chapter.SCHEME_4
-    || context.chapter === Chapter.FULL_SCHEME) {
+  if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.FULL_TS) {
     const program = parse(code, context)
     // console.dir(program, { depth: null });
     if (program === null) {
       return resolvedErrorPromise
     }
+    console.log('program', context.prelude)
     return fullJSRunner(program, context, options)
   }
 
