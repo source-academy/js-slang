@@ -1,11 +1,11 @@
 import { SourceLocation } from 'estree'
 import { SourceMapConsumer } from 'source-map'
-import { Tokenizer, Parser, Translator} from './py-slang/src'
 
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { looseParse, typedParse } from './parser/utils'
+import { Parser, Tokenizer, Translator } from './py-slang/src'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
@@ -352,7 +352,7 @@ export async function runFilesInContext(
     // Only enable once we can properly handle these errors!
     // const resolver = new Resolver(script, ast)
     // resolver.resolve(ast)
-    const translator = new Translator(script);
+    const translator = new Translator(script)
     const estreeAst = translator.resolve(ast) as unknown as es.Program
 
     return fullJSRunner(estreeAst, context, options)

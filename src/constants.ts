@@ -40,6 +40,4 @@ export const sourceLanguages: Language[] = [
   { chapter: Chapter.SOURCE_4, variant: Variant.GPU }
 ]
 
-export const pyLanguages: Language[] = [
-  { chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT},
-]
+export const pyLanguages: Language[] = [{ chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT }]

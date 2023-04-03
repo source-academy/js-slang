@@ -80,8 +80,8 @@ function validChapterVariant(chapter: any, variant: any) {
     if (lang.chapter === chapter && lang.variant === variant) return true
   }
   if (chapter < 0) {
-    return true;
-  }  
+    return true
+  }
 
   return false
 }
