@@ -449,8 +449,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         // Scheme math functions
         defineBuiltin(context, 'number$63$(val)', scheme_base.numberQ);
         defineBuiltin(context, 'exact$63$(val)', scheme_base.exactQ);
-        defineBuiltin(context, 'max(val)', scheme_base.max);
-        defineBuiltin(context, 'min(val)', scheme_base.min);
+        defineBuiltin(context, 'max(...vals)', scheme_base.max, 0);
+        defineBuiltin(context, 'min(...vals)', scheme_base.min, 0);
         defineBuiltin(context, 'abs(val)', scheme_base.abs);
         defineBuiltin(context, 'quotient(n, d)', scheme_base.quotient);
         defineBuiltin(context, 'modulo(n, d)', scheme_base.modulo);

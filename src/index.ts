@@ -4,7 +4,6 @@ import { SourceMapConsumer } from 'source-map'
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import { encodeTree,schemeParse } from './parser/scheme'
 import { looseParse, typedParse } from './parser/utils'
 import { Parser as pyParser, Tokenizer as pyTokenizer, Translator as pyTranslator} from './py-slang/src'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
@@ -329,8 +328,13 @@ export async function runFilesInContext(
     context.errors.push(new CannotFindModuleError(entrypointFilePath))
     return resolvedErrorPromise
   }
-  // This could be refactored to be more eleganc. Possibly use a switch statement.
-  if (context.chapter === Chapter.FULL_JS) {
+
+  if (context.chapter === Chapter.FULL_JS
+    || context.chapter === Chapter.SCHEME_1
+    || context.chapter === Chapter.SCHEME_2
+    || context.chapter === Chapter.SCHEME_3
+    || context.chapter === Chapter.SCHEME_4
+    || context.chapter === Chapter.FULL_SCHEME) {
     const program = parse(code, context)
     // console.dir(program, { depth: null });
     if (program === null) {
@@ -356,29 +360,6 @@ export async function runFilesInContext(
     const estreeAst = translator.resolve(ast) as unknown as es.Program
 
     return fullJSRunner(estreeAst, context, options)
-  }
-
-    if (context.chapter === Chapter.SCHEME_1 
-      || context.chapter === Chapter.SCHEME_2 
-      || context.chapter === Chapter.SCHEME_3 
-      || context.chapter === Chapter.SCHEME_4
-      || context.chapter === Chapter.FULL_SCHEME) {
-      const chapterNum = (() => {switch(context.chapter) {
-        case Chapter.SCHEME_1:
-            return 1;
-        case Chapter.SCHEME_2:
-            return 2;
-        case Chapter.SCHEME_3:
-            return 3;
-        case Chapter.SCHEME_4:
-            return 4;
-        default:
-            return undefined;
-      }})();
-    const ast = schemeParse(code, chapterNum);
-    // encode the identifiers of the scheme AST
-    encodeTree(ast);
-    return fullJSRunner(ast, context, options)
   }
 
   // FIXME: Clean up state management so that the `parseError` function is pure.
