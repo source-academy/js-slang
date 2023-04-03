@@ -1,10 +1,10 @@
-import { Program, Node } from 'estree'
+import { Node,Program } from 'estree'
 
 import { Chapter, Context } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
-import { schemeParse, encode } from './scm-slang/src'
+import { encode,schemeParse } from './scm-slang/src'
 const walk = require('acorn-walk')
 
 export { schemeParse, decode } from './scm-slang/src'
@@ -33,7 +33,6 @@ export class SchemeParser implements Parser<AcornOptions> {
           case Chapter.SCHEME_4:
             return 4
           default:
-            // probably should throw an error here
             return undefined
         }
       })()

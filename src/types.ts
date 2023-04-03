@@ -77,6 +77,7 @@ export enum Chapter {
   SCHEME_2 = -8,
   SCHEME_3 = -9,
   SCHEME_4 = -10,
+  FULL_SCHEME = -11,
   LIBRARY_PARSER = 100
 }
 

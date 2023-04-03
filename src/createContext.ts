@@ -27,6 +27,8 @@ import { makeWrapper } from './utils/makeWrapper'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
 
+import * as scheme_base from './parser/scheme/scm-slang/src/stdlib/scheme-base'
+
 export class LazyBuiltIn {
   func: (...arg0: any) => any
   evaluateArgs: boolean
@@ -392,13 +394,84 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'delayIt(xs)', new LazyBuiltIn(operators.delayIt, true))
   }
 
-  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.SCHEME_4) {
+  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
     //do scheme stuff
     switch (context.chapter) {
-      case Chapter.SCHEME_1:
-      case Chapter.SCHEME_2:
-      case Chapter.SCHEME_3:
+      case Chapter.FULL_SCHEME:
       case Chapter.SCHEME_4:
+        // Introduction to eval
+      case Chapter.SCHEME_3:
+        // Introduction to mutable values
+      case Chapter.SCHEME_2:
+        // Scheme pairs
+        defineBuiltin(context, 'cons(left, right)', scheme_base.cons);
+        defineBuiltin(context, 'pair$63$(val)', scheme_base.pairQ);
+        defineBuiltin(context, 'car(xs)', scheme_base.car);
+        defineBuiltin(context, 'cdr(xs)', scheme_base.cdr);
+
+        // Scheme lists
+        defineBuiltin(context, 'list(...values)', scheme_base.list, 0);
+        defineBuiltin(context, 'list$63$(val)', scheme_base.listQ);
+        defineBuiltin(context, 'null$63$(val)', scheme_base.nullQ);
+
+        // Scheme symbols
+        defineBuiltin(context, 'symbol$63$(val)', scheme_base.symbolQ);
+        defineBuiltin(context, 'symbol$61$63$(sym1, sym2)', scheme_base.symbolEQ);
+        defineBuiltin(context, 'symbol$45$$62$string(str)', scheme_base.symbol_Gstring);
+        defineBuiltin(context, 'string$45$$62$symbol(sym)', scheme_base.string_Gsymbol);
+
+      case Chapter.SCHEME_1:
+        // Display
+        defineBuiltin(context, 'display(val)', scheme_base.display);
+        defineBuiltin(context, 'newline()', scheme_base.newline);
+
+        // Scheme truthy and falsy value evaluator
+        defineBuiltin(context, '$36$true(val)', scheme_base.$true);
+
+        // Scheme equality predicates
+        defineBuiltin(context, 'eq$63$(...vals)', scheme_base.eqQ);
+        defineBuiltin(context, 'eqv$63$(...vals)', scheme_base.eqvQ);
+        defineBuiltin(context, 'equal$63$(...vals)', scheme_base.equalQ);
+
+        // Scheme basic arithmetic
+        defineBuiltin(context, '$43$(...vals)', scheme_base.plus, 0);
+        defineBuiltin(context, '$42$(...vals)', scheme_base.multiply, 0);
+        defineBuiltin(context, '$45$(...vals)', scheme_base.minus, 1);
+        defineBuiltin(context, '$47$(...vals)', scheme_base.divide, 1);
+
+        // Scheme comparison
+        defineBuiltin(context, '$61$(...vals)', scheme_base.E, 1);
+        defineBuiltin(context, '$60$(...vals)', scheme_base.L, 1);
+        defineBuiltin(context, '$62$(...vals)', scheme_base.G, 1);
+        defineBuiltin(context, '$60$$61$(...vals)', scheme_base.LE, 1);
+        defineBuiltin(context, '$62$$61$(...vals)', scheme_base.GE, 1);
+
+        // Scheme math functions
+        defineBuiltin(context, 'number$63$(val)', scheme_base.numberQ);
+        defineBuiltin(context, 'exact$63$(val)', scheme_base.exactQ);
+        defineBuiltin(context, 'max(val)', scheme_base.max);
+        defineBuiltin(context, 'min(val)', scheme_base.min);
+        defineBuiltin(context, 'abs(val)', scheme_base.abs);
+        defineBuiltin(context, 'quotient(n, d)', scheme_base.quotient);
+        defineBuiltin(context, 'modulo(n, d)', scheme_base.modulo);
+        defineBuiltin(context, 'remainder(n, d)', scheme_base.remainder);
+        defineBuiltin(context, 'gcd(...vals)', scheme_base.gcd, 0);
+        defineBuiltin(context, 'lcm(...vals)', scheme_base.lcm, 0);
+        defineBuiltin(context, 'floor(val)', scheme_base.floor);
+        defineBuiltin(context, 'ceiling(val)', scheme_base.ceiling);
+        defineBuiltin(context, 'truncate(val)', scheme_base.truncate);
+        defineBuiltin(context, 'round(val)', scheme_base.round);
+        defineBuiltin(context, 'square(val)', scheme_base.square);
+        defineBuiltin(context, 'exact$45$integer$45$sqrt(val)', scheme_base.exact_integer_sqrt);
+        defineBuiltin(context, 'expt(base, exp)', scheme_base.expt);
+
+        // Scheme booleans
+        defineBuiltin(context, 'boolean$63$(val)', scheme_base.booleanQ);
+        defineBuiltin(context, 'boolean$61$$63$(x, y)', scheme_base.booleanEQ);
+        defineBuiltin(context, 'and(...vals)', scheme_base.and, 0);
+        defineBuiltin(context, 'or(...vals)', scheme_base.or, 0);
+        defineBuiltin(context, 'not(val)', scheme_base.not);
+
         break;
       default:
         //should be unreachable
@@ -456,20 +529,7 @@ const createContext = <T>(
       chapter: chapter,
       variant: variant
     } as Context
-  } else if (chapter === Chapter.SCHEME_4) {
-    return {
-      ...createContext(
-        Chapter.SOURCE_4, 
-        variant, 
-        externalSymbols, 
-        externalContext,
-        externalBuiltIns
-      ),
-      chapter: chapter,
-      variant: variant
-    } as Context
-  }
-
+  } 
   const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
 
   importBuiltins(context, externalBuiltIns)
