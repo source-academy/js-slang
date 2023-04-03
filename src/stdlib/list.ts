@@ -129,6 +129,24 @@ export function set_tail(xs: any, x: any) {
   }
 }
 
+export function accumulate<T, U>(acc: (each: T, result: U) => any, init: U, xs: List): U {
+  const recurser = (xs: List, result: U): U => {
+    if (is_null(xs)) return result
+
+    return recurser(tail(xs), acc(head(xs), result))
+  }
+
+  return recurser(xs, init)
+}
+
+export function length(xs: List): number {
+  if (!is_list(xs)) {
+    throw new Error('length(xs) expects a list')
+  }
+
+  return accumulate((_, total) => total + 1, 0, xs)
+}
+
 export function rawDisplayList(display: any, xs: Value, prepend: string) {
   const visited: Set<Value> = new Set() // Everything is put into this set, values, arrays, and even objects if they exist
   const asListObjects: Map<NonEmptyList, NonEmptyList | ListObject> = new Map() // maps original list nodes to new list nodes

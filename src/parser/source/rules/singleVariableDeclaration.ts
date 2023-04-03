@@ -1,6 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
+import { UNKNOWN_LOCATION } from '../../../constants'
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
 
 export class MultipleDeclarationsError implements SourceError {
@@ -18,7 +19,7 @@ export class MultipleDeclarationsError implements SourceError {
   }
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {

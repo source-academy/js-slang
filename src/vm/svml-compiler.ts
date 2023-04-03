@@ -1,5 +1,6 @@
 import * as es from 'estree'
 
+import { UNKNOWN_LOCATION } from '../constants'
 import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { parse } from '../parser/parser'
 import {
@@ -217,7 +218,7 @@ function extractAndRenameNames(
       const node = stmt as es.VariableDeclaration
       let name = (node.declarations[0].id as es.Identifier).name
       if (rename) {
-        const loc = node.loc!.start // should be present
+        const loc = (node.loc ?? UNKNOWN_LOCATION).start
         const oldName = name
         do {
           name = `${name}-${loc.line}-${loc.column}`
@@ -236,7 +237,7 @@ function extractAndRenameNames(
       }
       let name = node.id.name
       if (rename) {
-        const loc = node.loc!.start // should be present
+        const loc = (node.loc ?? UNKNOWN_LOCATION).start
         const oldName = name
         do {
           name = `${name}-${loc.line}-${loc.column}`
@@ -1050,7 +1051,7 @@ function transformForLoopsToWhileLoops(program: es.Program) {
         // loc is used for renaming. It doesn't matter if we use the same location, as the
         // renaming function will notice that they are the same, and rename it further so that
         // there aren't any clashes.
-        const loc = init!.loc!
+        const loc = init!.loc
         const copyOfLoopVarName = 'copy-of-' + loopVarName
         const innerBlock = create.blockStatement([
           create.constantDeclaration(loopVarName, create.identifier(copyOfLoopVarName), loc),

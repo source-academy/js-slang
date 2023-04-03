@@ -3,6 +3,7 @@ import { Program } from 'estree'
 import { Context } from '..'
 import { Chapter, Variant } from '../types'
 import { FullJSParser } from './fullJS'
+import { FullTSParser } from './fullTS'
 import { SchemeParser } from './scheme'
 import { SourceParser } from './source'
 import { SourceTypedParser } from './source/typed'
@@ -26,6 +27,9 @@ export function parse<TOptions extends AcornOptions>(
     case Chapter.PYTHON_1:
     case Chapter.FULL_JS:
       parser = new FullJSParser()
+      break
+    case Chapter.FULL_TS:
+      parser = new FullTSParser()
       break
     default:
       switch (context.variant) {

@@ -7,18 +7,16 @@ import { DEFAULT_ECMA_VERSION } from '../../../constants'
 import * as TypedES from '../../../typeChecker/tsESTree'
 import { checkForTypeErrors } from '../../../typeChecker/typeErrorChecker'
 import { FatalSyntaxError } from '../../errors'
-import { BabelOptions } from '../../types'
-import { createAcornParserOptions, positionToSourceLocation } from '../../utils'
+import {
+  createAcornParserOptions,
+  defaultBabelOptions,
+  positionToSourceLocation
+} from '../../utils'
 import { SourceParser } from '..'
 import TypeParser from './typeParser'
 import { transformBabelASTToESTreeCompliantAST } from './utils'
 
 export class SourceTypedParser extends SourceParser {
-  static defaultBabelOptions: BabelOptions = {
-    sourceType: 'module',
-    plugins: ['typescript', 'estree']
-  }
-
   parse(
     programStr: string,
     context: Context,
@@ -48,7 +46,7 @@ export class SourceTypedParser extends SourceParser {
     // Parse again with babel parser to capture all type syntax
     // and catch remaining syntax errors not caught by acorn type parser
     const ast = babelParse(programStr, {
-      ...SourceTypedParser.defaultBabelOptions,
+      ...defaultBabelOptions,
       sourceFilename: options?.sourceFile,
       errorRecovery: throwOnError ?? true
     })

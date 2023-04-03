@@ -1,4 +1,6 @@
 /* tslint:disable:max-line-length */
+import * as _ from 'lodash'
+
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import {
@@ -7,6 +9,20 @@ import {
   expectParsedErrorNoSnapshot,
   expectResult
 } from '../../utils/testing'
+
+jest.spyOn(_, 'memoize').mockImplementation(func => func as any)
+
+const mockXMLHttpRequest = (xhr: Partial<XMLHttpRequest> = {}) => {
+  const xhrMock: Partial<XMLHttpRequest> = {
+    open: jest.fn(() => {}),
+    send: jest.fn(() => {}),
+    status: 200,
+    responseText: 'Hello World!',
+    ...xhr
+  }
+  jest.spyOn(window, 'XMLHttpRequest').mockImplementationOnce(() => xhrMock as XMLHttpRequest)
+  return xhrMock
+}
 
 const undefinedVariable = stripIndent`
 im_undefined;
@@ -999,4 +1015,36 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   `,
     optionEC3
   ).toMatchInlineSnapshot(`"Line 3: Name variable not declared."`)
+})
+
+test('Importing unknown variables throws UndefinedImport error', () => {
+  // for getModuleFile
+  mockXMLHttpRequest({
+    responseText: `{
+    "one_module": {
+      "tabs": []
+    },
+    "another_module": {
+      "tabs": []
+    }
+  }`
+  })
+
+  // for bundle body
+  mockXMLHttpRequest({
+    responseText: `
+      require => {
+        return {
+          foo: () => 'foo',
+        }
+      }
+    `
+  })
+
+  return expectParsedError(
+    stripIndent`
+    import { foo1 } from 'one_module';
+  `,
+    optionEC
+  ).toMatchInlineSnapshot("\"'one_module' does not contain a definition for 'foo1'\"")
 })

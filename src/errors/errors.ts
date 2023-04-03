@@ -3,6 +3,7 @@
 import { baseGenerator, generate } from 'astring'
 import * as es from 'estree'
 
+import { UNKNOWN_LOCATION } from '../constants'
 import { ErrorSeverity, ErrorType, SourceError, Value } from '../types'
 import { stringify } from '../utils/stringify'
 import { RuntimeSourceError } from './runtimeSourceError'
@@ -24,8 +25,11 @@ export class InterruptedError extends RuntimeSourceError {
 export class ExceptionError implements SourceError {
   public type = ErrorType.RUNTIME
   public severity = ErrorSeverity.ERROR
+  public location: es.SourceLocation
 
-  constructor(public error: Error, public location: es.SourceLocation) {}
+  constructor(public error: Error, location?: es.SourceLocation | null) {
+    this.location = location ?? UNKNOWN_LOCATION
+  }
 
   public explain() {
     return this.error.toString()
@@ -216,7 +220,7 @@ export class GetInheritedPropertyError extends RuntimeSourceError {
 
   constructor(node: es.Node, private obj: Value, private prop: string) {
     super(node)
-    this.location = node.loc!
+    this.location = node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {

@@ -21,7 +21,7 @@ function transformFunctionDeclarationsToArrowFunctions(program: es.Program) {
       node = node as es.VariableDeclaration
       const asArrowFunction = create.callExpression(
         create.identifier('makeLazyFunction', node.loc),
-        [create.blockArrowFunction(params as es.Identifier[], body, node.loc!)],
+        [create.blockArrowFunction(params as es.Identifier[], body, node.loc)],
         node.loc
       )
       node.declarations = [

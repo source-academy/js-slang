@@ -6,6 +6,7 @@ import { Chapter, Language, Variant } from './types'
 export const DEFAULT_ECMA_VERSION = 6
 export const ACORN_PARSE_OPTIONS: AcornOptions = { ecmaVersion: DEFAULT_ECMA_VERSION }
 
+export const REQUIRE_PROVIDER_ID = 'requireProvider'
 export const CUT = 'cut' // cut operator for Source 4.3
 export const TRY_AGAIN = 'retry' // command for Source 4.3
 export const GLOBAL = typeof window === 'undefined' ? global : window

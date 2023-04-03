@@ -36,7 +36,7 @@ export class ModuleNotFoundError extends RuntimeSourceError {
 }
 
 export class ModuleInternalError extends RuntimeSourceError {
-  constructor(public moduleName: string, node?: es.Node) {
+  constructor(public moduleName: string, public error?: any, node?: es.Node) {
     super(node)
   }
 

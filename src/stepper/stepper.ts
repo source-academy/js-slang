@@ -444,7 +444,7 @@ function substituteMain(
         target.operator,
         dummyExpression(),
         dummyExpression(),
-        target.loc!
+        target.loc
       )
       seenBefore.set(target, substedBinaryExpression)
       let nextIndex = index
@@ -462,7 +462,7 @@ function substituteMain(
       const substedUnaryExpression = ast.unaryExpression(
         target.operator,
         dummyExpression(),
-        target.loc!
+        target.loc
       )
       seenBefore.set(target, substedUnaryExpression)
       if (pathNotEnded(index)) {
@@ -480,7 +480,7 @@ function substituteMain(
         dummyExpression(),
         dummyExpression(),
         dummyExpression(),
-        target.loc!
+        target.loc
       )
       seenBefore.set(target, substedConditionalExpression)
       let nextIndex = index
@@ -524,7 +524,7 @@ function substituteMain(
 
     CallExpression(target: es.CallExpression, index: number): es.CallExpression {
       const dummyArgs = target.arguments.map(() => dummyExpression())
-      const substedCallExpression = ast.callExpression(dummyExpression(), dummyArgs, target.loc!)
+      const substedCallExpression = ast.callExpression(dummyExpression(), dummyArgs, target.loc)
       seenBefore.set(target, substedCallExpression)
       const arr: number[] = []
       let nextIndex = index
@@ -971,7 +971,7 @@ function substituteMain(
     },
 
     ReturnStatement(target: es.ReturnStatement, index: number): es.ReturnStatement {
-      const substedReturnStatement = ast.returnStatement(dummyExpression(), target.loc!)
+      const substedReturnStatement = ast.returnStatement(dummyExpression(), target.loc)
       seenBefore.set(target, substedReturnStatement)
       if (pathNotEnded(index)) {
         allPaths[index].push('argument')
@@ -1120,7 +1120,7 @@ function substituteMain(
         dummyExpression(),
         dummyBlockStatement(),
         dummyBlockStatement(),
-        target.loc!
+        target.loc
       )
       seenBefore.set(target, substedIfStatement)
       let nextIndex = index
@@ -1526,7 +1526,7 @@ function reduceMain(
             operator,
             left,
             reducedRight as es.Expression,
-            node.loc!
+            node.loc
           )
           return [reducedExpression, cont, path, str]
         }
@@ -1537,7 +1537,7 @@ function reduceMain(
           operator,
           reducedLeft as es.Expression,
           right,
-          node.loc!
+          node.loc
         )
         return [reducedExpression, cont, path, str]
       }
@@ -1565,7 +1565,7 @@ function reduceMain(
         const reducedExpression = ast.unaryExpression(
           operator,
           reducedArgument as es.Expression,
-          node.loc!
+          node.loc
         )
         return [reducedExpression, cont, path, str]
       }
@@ -1596,7 +1596,7 @@ function reduceMain(
           reducedTest as es.Expression,
           consequent,
           alternate,
-          node.loc!
+          node.loc
         )
         return [reducedExpression, cont, path, str]
       }
@@ -1616,9 +1616,9 @@ function reduceMain(
             node.operator === '&&'
               ? left.value
                 ? right
-                : ast.literal(false, node.loc!)
+                : ast.literal(false, node.loc)
               : left.value
-              ? ast.literal(true, node.loc!)
+              ? ast.literal(true, node.loc)
               : right
           return [result as es.Expression, context, paths, explain(node)]
         }
@@ -1630,7 +1630,7 @@ function reduceMain(
             node.operator,
             reducedLeft as es.Expression,
             right,
-            node.loc!
+            node.loc
           ) as substituterNodes,
           cont,
           path,
@@ -1652,7 +1652,7 @@ function reduceMain(
         paths[0].push('callee')
         const [reducedCallee, cont, path, str] = reduce(callee, context, paths)
         return [
-          ast.callExpression(reducedCallee as es.Expression, args as es.Expression[], node.loc!),
+          ast.callExpression(reducedCallee as es.Expression, args as es.Expression[], node.loc),
           cont,
           path,
           str
@@ -1682,7 +1682,7 @@ function reduceMain(
                 ast.callExpression(
                   callee as es.Expression,
                   reducedArgs as es.Expression[],
-                  node.loc!
+                  node.loc
                 ),
                 cont,
                 path,
@@ -2274,7 +2274,7 @@ function reduceMain(
           reducedTest as es.Expression,
           consequent as es.BlockStatement,
           alternate as es.IfStatement | es.BlockStatement,
-          node.loc!
+          node.loc
         )
         return [reducedIfStatement, cont, path, str]
       }

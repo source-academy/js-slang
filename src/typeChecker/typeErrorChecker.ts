@@ -1524,7 +1524,7 @@ function containsType(
 /**
  * Traverses through the program and removes all TS-related nodes, returning the result.
  */
-function removeTSNodes(node: tsEs.Node | undefined | null): any {
+export function removeTSNodes(node: tsEs.Node | undefined | null): any {
   if (node === undefined || node === null) {
     return node
   }

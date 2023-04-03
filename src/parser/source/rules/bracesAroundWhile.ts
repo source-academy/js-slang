@@ -1,6 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
+import { UNKNOWN_LOCATION } from '../../../constants'
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
 
 export class BracesAroundWhileError implements SourceError {
@@ -10,7 +11,7 @@ export class BracesAroundWhileError implements SourceError {
   constructor(public node: es.WhileStatement) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
