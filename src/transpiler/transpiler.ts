@@ -91,7 +91,7 @@ export function transformImportDeclarations(
     prefix.push(`// ${moduleName} module`)
 
     const modifiedText = nativeId
-      ? `${nativeId.name}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
+      ? `${NATIVE_STORAGE_ID}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
       : `(${text})(${REQUIRE_PROVIDER_ID})`
     prefix.push(`const ${namespaced} = ${modifiedText}\n`)
 
