@@ -336,7 +336,6 @@ export async function runFilesInContext(
     if (program === null) {
       return resolvedErrorPromise
     }
-    console.log('program', context.prelude)
     return fullJSRunner(program, context, options)
   }
 
