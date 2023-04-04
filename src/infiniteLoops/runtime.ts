@@ -1,6 +1,8 @@
 import * as es from 'estree'
 
+import { REQUIRE_PROVIDER_ID } from '../constants'
 import createContext from '../createContext'
+import { getRequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
 import { Chapter, Variant } from '../types'
@@ -319,13 +321,13 @@ export function testForInfiniteLoop(program: es.Program, previousProgramsStack: 
     functionsId,
     stateId,
     builtinsId,
-    'ctx',
+    REQUIRE_PROVIDER_ID,
     // redeclare window so modules don't do anything funny like play sounds
     '{let window = {}; return eval(code)}'
   )
 
   try {
-    sandboxedRun(instrumentedCode, functions, state, newBuiltins, { context })
+    sandboxedRun(instrumentedCode, functions, state, newBuiltins, getRequireProvider(context))
   } catch (error) {
     if (error instanceof InfiniteLoopError) {
       if (state.lastLocation !== undefined) {

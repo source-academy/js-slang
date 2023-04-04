@@ -12,7 +12,7 @@ import { testForInfiniteLoop } from '../runtime'
 
 jest.spyOn(moduleLoader, 'memoizedGetModuleFile').mockImplementationOnce(() => {
   return stripIndent`
-    (function () {
+    require => {
       'use strict';
       var exports = {};
       function repeat(func, n) {
@@ -35,7 +35,7 @@ jest.spyOn(moduleLoader, 'memoizedGetModuleFile').mockImplementationOnce(() => {
         value: true
       });
       return exports;
-    })
+    }
   `
 })
 

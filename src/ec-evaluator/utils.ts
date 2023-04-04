@@ -205,7 +205,7 @@ export const createBlockEnvironment = (
 
 const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 
-function declareIdentifier(
+export function declareIdentifier(
   context: Context,
   name: string,
   node: es.Node,
@@ -259,7 +259,7 @@ export function defineVariable(
   name: string,
   value: Value,
   constant = false,
-  node: es.VariableDeclaration
+  node: es.VariableDeclaration | es.ImportDeclaration
 ) {
   const environment = currentEnvironment(context)
 

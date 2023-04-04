@@ -792,6 +792,19 @@ Object {
 }
 `;
 
+exports[`Importing unknown variables throws UndefinedImport error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "import { foo1 } from 'one_module';",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "'one_module' does not contain a definition for 'foo1'",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`In a block, every going-to-be-defined variable in the block cannot be accessed until it has been defined in the block.: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
