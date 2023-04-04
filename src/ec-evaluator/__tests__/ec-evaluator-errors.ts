@@ -1,5 +1,6 @@
 /* tslint:disable:max-line-length */
 import * as moduleLoader from '../../modules/moduleLoaderAsync'
+import * as moduleUtils from '../../modules/utils'
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import {
@@ -24,11 +25,15 @@ jest.spyOn(moduleLoader, 'memoizedGetModuleBundleAsync').mockResolvedValue(`
     bar: () => 'bar'
   })
 `)
-jest
-  .spyOn(moduleLoader, 'memoizedGetModuleDocsAsync')
-  .mockImplementation(name =>
-    Promise.resolve<Record<string, string>>(name === 'one_module' ? { foo: 'foo' } : { bar: 'bar' })
-  )
+jest.spyOn(moduleLoader, 'memoizedGetModuleDocsAsync').mockResolvedValue({
+    foo: 'foo',
+    bar: 'bar'
+  })
+
+jest.spyOn(moduleUtils, 'initModuleContextAsync').mockImplementation(() => {
+  console.log('called')
+  return Promise.resolve()
+})
 
 const undefinedVariable = stripIndent`
 im_undefined;

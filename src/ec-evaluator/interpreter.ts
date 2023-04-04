@@ -14,7 +14,7 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
-import { reduceImportNodesAsync } from '../modules/utils'
+import { transformImportNodesAsync } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/astCreator'
@@ -105,7 +105,7 @@ export async function evaluate(program: es.Program, context: Context): Promise<V
     context.runtime.stash = new Stash()
     return runECEMachine(context, context.runtime.agenda, context.runtime.stash)
   } catch (error) {
-    // console.error('ecerror:', error)
+    console.error('ecerror:', error)
     return new ECError(error)
   } finally {
     context.runtime.isRunning = false
@@ -146,13 +146,13 @@ async function evaluateImports(
 
   const environment = currentEnvironment(context)
   try {
-    await reduceImportNodesAsync(
+    await transformImportNodesAsync(
       importNodes,
       context,
       loadTabs,
       checkImports,
       (name, node) => loadModuleBundleAsync(name, context, node),
-      (name, info) => (info.content ? new Set(Object.keys(info.content)) : null),
+      (name, info) => Promise.resolve(new Set(Object.keys(info.content))),
       {
         ImportSpecifier: (spec: es.ImportSpecifier, node, info) => {
           declareIdentifier(context, spec.local.name, node, environment)

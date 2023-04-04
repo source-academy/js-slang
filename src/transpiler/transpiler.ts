@@ -10,7 +10,7 @@ import {
   memoizedGetModuleBundleAsync,
   memoizedGetModuleDocsAsync
 } from '../modules/moduleLoaderAsync'
-import { reduceImportNodesAsync } from '../modules/utils'
+import { transformImportNodesAsync } from '../modules/utils'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/astCreator'
 import {
@@ -58,7 +58,7 @@ export async function transformImportDeclarations(
 
   if (importNodes.length === 0) return ['', [], otherNodes]
 
-  const moduleInfos = await reduceImportNodesAsync(
+  const moduleInfos = await transformImportNodesAsync(
     importNodes as es.ImportDeclaration[],
     context,
     loadTabs,

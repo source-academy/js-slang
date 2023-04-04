@@ -1,6 +1,6 @@
 import type { Identifier, Literal, MemberExpression, VariableDeclaration } from 'estree'
-import { runInContext } from '../..'
 
+import { runInContext } from '../..'
 import { mockContext } from '../../mocks/context'
 import { UndefinedImportError } from '../../modules/errors'
 import * as moduleLoader from '../../modules/moduleLoaderAsync'
