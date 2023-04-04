@@ -4,10 +4,10 @@ import { Chapter, Context } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
-import { encode,schemeParse } from './scm-slang/src'
+import { decode, encode, schemeParse } from './scm-slang/src'
 const walk = require('acorn-walk')
 
-export { schemeParse, decode } from './scm-slang/src'
+export { schemeParse } from './scm-slang/src'
 
 export class SchemeParser implements Parser<AcornOptions> {
   private chapter: Chapter
@@ -68,3 +68,9 @@ export function encodeTree(tree: Program): Program {
   });
   return tree
 }
+
+export function decodeString(str: string): string {
+  return str.replace(/\$scheme_[\w$]+|\$\d+\$/g, (match) => {
+    return decode(match)
+  })
+};
