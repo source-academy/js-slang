@@ -26,9 +26,9 @@ jest.spyOn(moduleLoader, 'memoizedGetModuleBundleAsync').mockResolvedValue(`
   })
 `)
 jest.spyOn(moduleLoader, 'memoizedGetModuleDocsAsync').mockResolvedValue({
-    foo: 'foo',
-    bar: 'bar'
-  })
+  foo: 'foo',
+  bar: 'bar'
+})
 
 jest.spyOn(moduleUtils, 'initModuleContextAsync').mockImplementation(() => {
   console.log('called')

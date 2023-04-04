@@ -55,11 +55,11 @@ export type ModuleInfo<T> = {
    * `ImportDeclarations` that import from this module.
    */
   nodes: ImportDeclaration[]
-  
+
   /**
    * Represents the loaded module. It can be the module's functions itself (see the ec-evaluator),
    * or just the module text (see the transpiler), or any other type.
-   * 
+   *
    * This field should not be null when the function returns.
    */
   content: T
@@ -162,13 +162,12 @@ export async function transformImportNodesAsync<Transformed, Content>(
       })
 
       if (checkImports) {
-        // symbolsLoader must run after internalLoader finishes loading as it may need the 
+        // symbolsLoader must run after internalLoader finishes loading as it may need the
         // loaded module.
         loadPromise = loadPromise.then(() => {
-           symbolsLoader(moduleName, res[moduleName], node)
-            .then(docs => {
-              res[moduleName].docs = docs
-            })
+          symbolsLoader(moduleName, res[moduleName], node).then(docs => {
+            res[moduleName].docs = docs
+          })
         })
       }
       promises.push(loadPromise)
