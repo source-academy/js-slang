@@ -102,9 +102,13 @@ export const functionExpression = (
   loc
 })
 
-export const blockStatement = (body: es.Statement[]): es.BlockStatement => ({
+export const blockStatement = (
+  body: es.Statement[],
+  loc?: es.SourceLocation | null
+): es.BlockStatement => ({
   type: 'BlockStatement',
-  body
+  body,
+  loc
 })
 
 export const program = (body: es.Statement[]): es.Program => ({
@@ -365,13 +369,15 @@ export const forStatement = (
   init: es.VariableDeclaration | es.Expression,
   test: es.Expression,
   update: es.Expression,
-  body: es.Statement
+  body: es.Statement,
+  loc?: es.SourceLocation | null
 ): es.ForStatement => ({
   type: 'ForStatement',
   init,
   test,
   update,
-  body
+  body,
+  loc
 })
 
 export const debuggerStatement = (): es.DebuggerStatement => ({ type: 'DebuggerStatement' })

@@ -8,8 +8,8 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
 import { partition, uniqueId } from 'lodash'
-import { IOptions } from '..'
 
+import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -49,6 +49,7 @@ import {
   declareFunctionsAndVariables,
   declareIdentifier,
   defineVariable,
+  envChanging,
   getVariable,
   handleRuntimeError,
   handleSequence,
@@ -235,11 +236,10 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
       // Node is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash)
     }
+    if (command && envChanging(command)) {
+      steps += 1
+    }
     command = agenda.pop()
-    // if (!isPrelude && context.runtime.envSteps === -1 && !command) {
-    //   command = ast.debuggerStatement()
-    // }
-    steps += 1
   }
   if (!isPrelude) {
     context.runtime.envStepsTotal = steps
@@ -301,31 +301,49 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const valueExpression = init.declarations[0].init!
 
       agenda.push(
-        ast.blockStatement([
-          init,
-          ast.forStatement(
-            ast.assignmentExpression(id, valueExpression),
-            test,
-            update,
-            ast.blockStatement([
-              ast.variableDeclaration([
-                ast.variableDeclarator(
-                  ast.identifier(`_copy_of_${id.name}`),
-                  ast.identifier(id.name)
-                )
-              ]),
-              ast.blockStatement([
-                ast.variableDeclaration([
-                  ast.variableDeclarator(
-                    ast.identifier(id.name),
-                    ast.identifier(`_copy_of_${id.name}`)
+        ast.blockStatement(
+          [
+            init,
+            ast.forStatement(
+              ast.assignmentExpression(id, valueExpression),
+              test,
+              update,
+              ast.blockStatement(
+                [
+                  ast.variableDeclaration(
+                    [
+                      ast.variableDeclarator(
+                        ast.identifier(`_copy_of_${id.name}`, command.loc),
+                        ast.identifier(id.name, command.loc),
+                        command.loc
+                      )
+                    ],
+                    command.loc
+                  ),
+                  ast.blockStatement(
+                    [
+                      ast.variableDeclaration(
+                        [
+                          ast.variableDeclarator(
+                            ast.identifier(id.name, command.loc),
+                            ast.identifier(`_copy_of_${id.name}`, command.loc),
+                            command.loc
+                          )
+                        ],
+                        command.loc
+                      ),
+                      command.body
+                    ],
+                    command.loc
                   )
-                ]),
-                command.body
-              ])
-            ])
-          )
-        ])
+                ],
+                command.loc
+              ),
+              command.loc
+            )
+          ],
+          command.loc
+        )
       )
     } else {
       agenda.push(instr.breakMarkerInstr())
