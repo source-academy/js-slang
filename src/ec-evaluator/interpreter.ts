@@ -216,10 +216,14 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
   context.runtime.break = false
   context.runtime.nodes = []
   let steps = 0
+
   let command = agenda.pop()
   while (command) {
     if (!isPrelude && steps === context.runtime.envSteps) {
       return stash.peek()
+    }
+    if (envChanging(command)) {
+      steps += 1
     }
     if (isNode(command)) {
       context.runtime.nodes.shift()
@@ -233,11 +237,8 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
         return new ECEBreak()
       }
     } else {
-      // Node is an instrucion
+      // Command is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash)
-    }
-    if (command && envChanging(command)) {
-      steps += 1
     }
     command = agenda.pop()
   }

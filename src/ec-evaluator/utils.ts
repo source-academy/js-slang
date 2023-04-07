@@ -9,7 +9,7 @@ import { Environment, Frame, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import * as instr from './instrCreator'
 import { Agenda } from './interpreter'
-import { AgendaItem, AssmtInstr, Instr, InstrType } from './types'
+import { AgendaItem, AppInstr, AssmtInstr, Instr, InstrType } from './types'
 
 /**
  * Stack is implemented for agenda and stash registers.
@@ -169,7 +169,11 @@ export const envChanging = (command: AgendaItem): boolean => {
     return type === 'Program' || (type === 'BlockStatement' && hasDeclarations(command))
   } else {
     const type = command.instrType
-    return type === InstrType.ASSIGNMENT || type === InstrType.ARRAY_ASSIGNMENT
+    return (
+      type === InstrType.ASSIGNMENT ||
+      type === InstrType.ARRAY_ASSIGNMENT ||
+      (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs > 0)
+    )
   }
 }
 
