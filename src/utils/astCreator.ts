@@ -379,5 +379,3 @@ export const forStatement = (
   body,
   loc
 })
-
-export const debuggerStatement = (): es.DebuggerStatement => ({ type: 'DebuggerStatement' })

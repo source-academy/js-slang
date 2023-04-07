@@ -139,6 +139,7 @@ export interface Context<T = any> {
     stash: Stash | null
     envSteps: number
     envStepsTotal: number
+    breakpointSteps: number[]
   }
 
   numberOfOuterEnvironments: number
