@@ -2,7 +2,7 @@
 import { start } from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
 
-import { pyLanguages, scmLanguages, sourceLanguages } from '../constants'
+import { scmLanguages, sourceLanguages } from '../constants'
 import { createContext, IOptions, parseError, runInContext } from '../index'
 import Closure from '../interpreter/closure'
 import { ExecutionMethod, Variant } from '../types'
@@ -74,9 +74,6 @@ function validChapterVariant(chapter: any, variant: any) {
     return true
   }
   for (const lang of sourceLanguages) {
-    if (lang.chapter === chapter && lang.variant === variant) return true
-  }
-  for (const lang of pyLanguages) {
     if (lang.chapter === chapter && lang.variant === variant) return true
   }
   for (const lang of scmLanguages) {

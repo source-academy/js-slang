@@ -697,7 +697,7 @@ export function transpile(
   context: Context,
   skipUndefined = false
 ): TranspiledResult {
-  if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.PYTHON_1 ) {
+  if (context.chapter === Chapter.FULL_JS) {
     return transpileToFullJS(program, context, true)
   } else if (context.variant == Variant.NATIVE) {
     return transpileToFullJS(program, context, false)

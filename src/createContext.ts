@@ -401,7 +401,18 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       case Chapter.SCHEME_4:
         // Introduction to eval
       case Chapter.SCHEME_3:
-        // Introduction to mutable values
+        // Introduction to mutable values, streams
+
+        // Scheme pair mutation
+        defineBuiltin(context, 'set$45$car$33$(pair, val)', scheme_base.set_carB);
+        defineBuiltin(context, 'set$45$cdr$33$(pair, val)', scheme_base.set_cdrB);
+
+        // Scheme list mutation
+        defineBuiltin(context, 'list$45$set$33$(xs, n, val)', scheme_base.list_setB);
+
+        // Scheme streams (promise) 
+
+
       case Chapter.SCHEME_2:
         // Scheme pairs
         defineBuiltin(context, 'cons(left, right)', scheme_base.cons);
@@ -410,9 +421,24 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'cdr(xs)', scheme_base.cdr);
 
         // Scheme lists
+        defineBuiltin(context, 'make$45$list(n, val)', scheme_base.make_list, 1);
         defineBuiltin(context, 'list(...values)', scheme_base.list, 0);
         defineBuiltin(context, 'list$63$(val)', scheme_base.listQ);
         defineBuiltin(context, 'null$63$(val)', scheme_base.nullQ);
+        defineBuiltin(context, 'length(xs)', scheme_base.length);
+        defineBuiltin(context, 'append(...xs)', scheme_base.append, 0);
+        defineBuiltin(context, 'reverse(xs)', scheme_base.reverse);
+        defineBuiltin(context, 'list$45$tail(xs, n)', scheme_base.list_tail);
+        defineBuiltin(context, 'list$45$ref(xs, n)', scheme_base.list_ref);
+        defineBuiltin(context, 'memq(item, xs)', scheme_base.memq);
+        defineBuiltin(context, 'memv(item, xs)', scheme_base.memv);
+        defineBuiltin(context, 'member(item, xs)', scheme_base.member);
+        defineBuiltin(context, 'assq(item, xs)', scheme_base.assq);
+        defineBuiltin(context, 'assv(item, xs)', scheme_base.assv);
+        defineBuiltin(context, 'assoc(item, xs)', scheme_base.assoc);
+        defineBuiltin(context, 'list$45$copy(xs)', scheme_base.list_copy);
+
+        // TODO map filter reduce/fold 
 
         // Scheme symbols
         defineBuiltin(context, 'symbol$63$(val)', scheme_base.symbolQ);
@@ -420,10 +446,22 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'symbol$45$$62$string(str)', scheme_base.symbol_Gstring);
         defineBuiltin(context, 'string$45$$62$symbol(sym)', scheme_base.string_Gsymbol);
 
+        // Scheme strings
+        defineBuiltin(context, 'string$45$$62$list(str)', scheme_base.string_Glist);
+        defineBuiltin(context, 'list$45$$62$string(xs)', scheme_base.list_Gstring);
+
       case Chapter.SCHEME_1:
         // Display
-        defineBuiltin(context, 'display(val)', scheme_base.display);
+        defineBuiltin(context, 'display(val)', (val: any) => display(scheme_base.display_helper(val)))
+        defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay, 1)
+        defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify, 1)
         defineBuiltin(context, 'newline()', scheme_base.newline);
+
+        // I/O
+        defineBuiltin(context, 'read(str)', () => prompt(''))
+
+        // Error
+        defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message, 1)
 
         // Scheme truthy and falsy value evaluator
         defineBuiltin(context, '$36$true(val)', scheme_base.$true);
@@ -448,7 +486,17 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
         // Scheme math functions
         defineBuiltin(context, 'number$63$(val)', scheme_base.numberQ);
+        defineBuiltin(context, 'complex$63$(val)', scheme_base.complexQ);
+        defineBuiltin(context, 'real$63$(val)', scheme_base.realQ);
+        defineBuiltin(context, 'rational$63$(val)', scheme_base.rationalQ);
+        defineBuiltin(context, 'integer$63$(val)', scheme_base.integerQ);
         defineBuiltin(context, 'exact$63$(val)', scheme_base.exactQ);
+        defineBuiltin(context, 'exact$45$integer$63$(val)', scheme_base.exact_integerQ);
+        defineBuiltin(context, 'zero$63$(val)', scheme_base.zeroQ);
+        defineBuiltin(context, 'positive$63$(val)', scheme_base.positiveQ);
+        defineBuiltin(context, 'negative$63$(val)', scheme_base.negativeQ);
+        defineBuiltin(context, 'odd$63$(val)', scheme_base.oddQ);
+        defineBuiltin(context, 'even$63$(val)', scheme_base.evenQ);
         defineBuiltin(context, 'max(...vals)', scheme_base.max, 0);
         defineBuiltin(context, 'min(...vals)', scheme_base.min, 0);
         defineBuiltin(context, 'abs(val)', scheme_base.abs);
@@ -464,6 +512,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'square(val)', scheme_base.square);
         defineBuiltin(context, 'exact$45$integer$45$sqrt(val)', scheme_base.exact_integer_sqrt);
         defineBuiltin(context, 'expt(base, exp)', scheme_base.expt);
+        defineBuiltin(context, 'number$45$$62$string(val)', scheme_base.number_Gstring);
 
         // Scheme booleans
         defineBuiltin(context, 'boolean$63$(val)', scheme_base.booleanQ);
@@ -471,6 +520,27 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'and(...vals)', scheme_base.and, 0);
         defineBuiltin(context, 'or(...vals)', scheme_base.or, 0);
         defineBuiltin(context, 'not(val)', scheme_base.not);
+
+        // Scheme strings
+        defineBuiltin(context, 'string$63$(val)', scheme_base.stringQ);
+        defineBuiltin(context, 'make$45$string(n, char)', scheme_base.make_string);
+        defineBuiltin(context, "string(...vals)", scheme_base.string, 0);
+        defineBuiltin(context, 'string$45$length(str)', scheme_base.string_length);
+        defineBuiltin(context, 'string$45$ref(str, k)', scheme_base.string_ref);
+        defineBuiltin(context, 'string$61$63$(str1, str2)', scheme_base.stringEQ);
+        defineBuiltin(context, 'string$60$63$(str1, str2)', scheme_base.stringLQ);
+        defineBuiltin(context, 'string$62$63$(str1, str2)', scheme_base.stringGQ);
+        defineBuiltin(context, 'string$60$$61$63$(str1, str2)', scheme_base.stringLEQ);
+        defineBuiltin(context, 'string$62$$61$63$(str1, str2)', scheme_base.stringGEQ);
+        defineBuiltin(context, 'substring(str, start, end)', scheme_base.substring, 2);
+        defineBuiltin(context, 'string$45$append(...vals)', scheme_base.string_append, 0);
+        defineBuiltin(context, 'string$45$copy(str)', scheme_base.string_copy);
+        defineBuiltin(context, 'string$45$map(f, str)', scheme_base.string_map);
+        defineBuiltin(context, 'string$45$for$45$each(f, str)', scheme_base.string_for_each);
+        defineBuiltin(context, 'string$45$$62$number(str)', scheme_base.string_Gnumber);
+
+        // Scheme procedures
+        defineBuiltin(context, 'procedure$63$(val)', scheme_base.procedureQ);
 
         break;
       default:

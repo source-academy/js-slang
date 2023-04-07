@@ -5,7 +5,6 @@ import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { looseParse, typedParse } from './parser/utils'
-import { Parser as pyParser, Tokenizer as pyTokenizer, Translator as pyTranslator} from './py-slang/src'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
@@ -341,21 +340,6 @@ export async function runFilesInContext(
 
   if (context.chapter === Chapter.HTML) {
     return htmlRunner(code, context, options)
-  }
-
-  if (context.chapter === Chapter.PYTHON_1) {
-    const script = code + '\n'
-    const tokenizer = new pyTokenizer(script)
-    const tokens = tokenizer.scanEverything()
-    const py_parser = new pyParser(script, tokens)
-    const ast = py_parser.parse()
-    // Only enable once we can properly handle these errors!
-    // const resolver = new Resolver(script, ast)
-    // resolver.resolve(ast)
-    const translator = new pyTranslator(script);
-    const estreeAst = translator.resolve(ast) as unknown as es.Program
-
-    return fullJSRunner(estreeAst, context, options)
   }
 
   // FIXME: Clean up state management so that the `parseError` function is pure.
