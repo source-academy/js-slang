@@ -2,6 +2,7 @@
 
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import * as gpu_lib from './gpu/lib'
+import * as scheme_base from './parser/scheme/scm-slang/src/stdlib/scheme-base'
 import { AsyncScheduler } from './schedulers'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
@@ -26,8 +27,6 @@ import {
 import { makeWrapper } from './utils/makeWrapper'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
-
-import * as scheme_base from './parser/scheme/scm-slang/src/stdlib/scheme-base'
 
 export class LazyBuiltIn {
   func: (...arg0: any) => any
@@ -398,8 +397,13 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     //do scheme stuff
     switch (context.chapter) {
       case Chapter.FULL_SCHEME:
+        // Vectors
+
       case Chapter.SCHEME_4:
         // Introduction to eval
+
+        // Scheme apply
+        defineBuiltin(context, 'apply(f, ...args)', scheme_base.apply, 2);
       case Chapter.SCHEME_3:
         // Introduction to mutable values, streams
 
@@ -409,6 +413,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
         // Scheme list mutation
         defineBuiltin(context, 'list$45$set$33$(xs, n, val)', scheme_base.list_setB);
+        //defineBuiltin(context, 'filter$33$(pred, xs)', scheme_base.filterB);
+        //defineBuiltin(context, 'map$33$(f, xs)', scheme_base.mapB);
 
         // Scheme streams (promise) 
 
@@ -439,6 +445,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'list$45$copy(xs)', scheme_base.list_copy);
 
         // TODO map filter reduce/fold 
+        defineBuiltin(context, 'map(f, ...xs)', scheme_base.map, 1);
+        //defineBuiltin(context, 'filter(pred, xs)', scheme_list.filter);
+        //defineBuiltin(context, 'fold(f, init, xs)', scheme_list.fold);
+        //defineBuiltin(context, 'fold$45$right(f, init, xs)', scheme_list.fold_right);
+        //defineBuiltin(context, 'reduce(f, xs)', scheme_list.reduce);
 
         // Scheme symbols
         defineBuiltin(context, 'symbol$63$(val)', scheme_base.symbolQ);
@@ -453,8 +464,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       case Chapter.SCHEME_1:
         // Display
         defineBuiltin(context, 'display(val)', (val: any) => display(scheme_base.display_helper(val)))
-        defineBuiltin(context, 'raw_display(str, prepend = undefined)', rawDisplay, 1)
-        defineBuiltin(context, 'stringify(val, indent = 2, maxLineLength = 80)', stringify, 1)
         defineBuiltin(context, 'newline()', scheme_base.newline);
 
         // I/O
