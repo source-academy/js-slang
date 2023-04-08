@@ -22,7 +22,7 @@ export function parse<TOptions extends AcornOptions>(
     case Chapter.SCHEME_3:
     case Chapter.SCHEME_4:
     case Chapter.FULL_SCHEME:
-      parser = new SchemeParser(context.chapter);
+      parser = new SchemeParser(context.chapter)
       break
     case Chapter.PYTHON_1:
     case Chapter.FULL_JS:

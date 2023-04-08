@@ -1,4 +1,4 @@
-import { Node,Program } from 'estree'
+import { Node, Program } from 'estree'
 
 import { Chapter, Context } from '../../types'
 import { FatalSyntaxError } from '../errors'
@@ -36,9 +36,9 @@ export class SchemeParser implements Parser<AcornOptions> {
             return undefined
         }
       })()
-      const estree = schemeParse(programStr, chapterNum);
+      const estree = schemeParse(programStr, chapterNum)
       // walk the estree and encode all identifiers
-      encodeTree(estree);
+      encodeTree(estree)
       return estree as unknown as Program
     } catch (error) {
       if (error instanceof SyntaxError) {
@@ -65,12 +65,12 @@ export function encodeTree(tree: Program): Program {
     if (node.type === 'Identifier') {
       node.name = encode(node.name)
     }
-  });
+  })
   return tree
 }
 
 export function decodeString(str: string): string {
-  return str.replace(/\$scheme_[\w$]+|\$\d+\$/g, (match) => {
+  return str.replace(/\$scheme_[\w$]+|\$\d+\$/g, match => {
     return decode(match)
   })
-};
+}
