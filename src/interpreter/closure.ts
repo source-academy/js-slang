@@ -54,7 +54,8 @@ export default class Closure extends Callable {
     node: es.ArrowFunctionExpression,
     environment: Environment,
     context: Context,
-    dummyReturn?: boolean
+    dummyReturn?: boolean,
+    predefined?: boolean
   ) {
     function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
       return body.type !== 'BlockStatement'
@@ -67,7 +68,8 @@ export default class Closure extends Callable {
     const closure = new Closure(
       blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),
       environment,
-      context
+      context,
+      predefined
     )
 
     // Set the closure's node to point back at the original one
@@ -83,10 +85,18 @@ export default class Closure extends Callable {
   // tslint:disable-next-line:ban-types
   public fun: Function
 
+  /** Keeps track of whether the closure is a pre-defined function */
+  public preDefined?: boolean
+
   /** The original node that created this Closure */
   public originalNode: es.Function
 
-  constructor(public node: es.Function, public environment: Environment, context: Context) {
+  constructor(
+    public node: es.Function,
+    public environment: Environment,
+    context: Context,
+    isPredefined?: boolean
+  ) {
     super(function (this: any, ...args: any[]) {
       return funJS.apply(this, args)
     })
@@ -104,6 +114,7 @@ export default class Closure extends Callable {
     // .fun seems to only be used in interpreter's NewExpression handler, which uses .fun.prototype.
     const funJS = closureToJS(this, context, this.functionName)
     this.fun = funJS
+    this.preDefined = isPredefined == undefined ? undefined : isPredefined
   }
 
   public toString(): string {

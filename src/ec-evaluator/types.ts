@@ -96,7 +96,8 @@ export type CmdEvaluator = (
   command: AgendaItem,
   context: Context,
   agenda: Agenda,
-  stash: Stash
+  stash: Stash,
+  isPrelude: boolean
 ) => void
 
 // Special class that cannot be found on the stash so is safe to be used

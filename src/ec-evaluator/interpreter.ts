@@ -240,7 +240,7 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
       context.runtime.nodes.shift()
       context.runtime.nodes.unshift(command)
       checkEditorBreakpoints(context, command)
-      cmdEvaluators[command.type](command, context, agenda, stash)
+      cmdEvaluators[command.type](command, context, agenda, stash, isPrelude)
       if (context.runtime.break && context.runtime.debuggerOn) {
         // We can put this under isNode since context.runtime.break
         // will only be updated after a debugger statement and so we will
@@ -249,7 +249,7 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
       }
     } else {
       // Command is an instrucion
-      cmdEvaluators[command.instrType](command, context, agenda, stash)
+      cmdEvaluators[command.instrType](command, context, agenda, stash, isPrelude)
     }
     command = agenda.pop()
   }
@@ -533,24 +533,24 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.ArrowFunctionExpression,
     context: Context,
     agenda: Agenda,
-    stash: Stash
+    stash: Stash,
+    isPrelude: boolean
   ) {
     // Reuses the Closure data structure from legacy interpreter
     const closure: Closure = Closure.makeFromArrowFunction(
       command,
       currentEnvironment(context),
       context,
-      true
+      true,
+      isPrelude
     )
     const next = agenda.peek()
     if (!(next && isInstr(next) && isAssmtInstr(next))) {
-      if (closure instanceof Closure) {
-        Object.defineProperty(currentEnvironment(context).head, uniqueId(), {
-          value: closure,
-          writable: false,
-          enumerable: true
-        })
-      }
+      Object.defineProperty(currentEnvironment(context).head, uniqueId(), {
+        value: closure,
+        writable: false,
+        enumerable: true
+      })
     }
     stash.push(closure)
   },
@@ -718,12 +718,26 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         agenda.push(instr.envInstr(currentEnvironment(context)))
         agenda.push(instr.markerInstr())
       }
-
-      // Push function body on agenda and create environment for function parameters.
+      // Create environment for function parameters if the function isn't nullary.
       // Name the environment if the function call expression is not anonymous
+      if (args.length > 0) {
+        const environment = createEnvironment(func, args, command.srcNode)
+        pushEnvironment(context, environment)
+      } else {
+        context.runtime.environments.unshift(func.environment)
+      }
+
+      // Display the pre-defined functions on the global environment if needed.
+      if (func.preDefined) {
+        Object.defineProperty(context.runtime.environments[1].head, uniqueId(), {
+          value: func,
+          writable: false,
+          enumerable: true
+        })
+      }
+
+      // Push function body on agenda
       agenda.push(func.node.body)
-      const environment = createEnvironment(func, args, command.srcNode)
-      pushEnvironment(context, environment)
     } else if (typeof func === 'function') {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
