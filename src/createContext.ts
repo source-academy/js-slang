@@ -461,7 +461,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       case Chapter.SCHEME_1:
         // Display
         defineBuiltin(context, 'display(val)', (val: any) =>
-          display(scheme_libs.display_helper(val))
+          display(scheme_libs.schemeToString(val))
         )
         defineBuiltin(context, 'newline()', scheme_libs.newline)
 
@@ -531,15 +531,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
         // Scheme strings
         defineBuiltin(context, 'string$63$(val)', scheme_libs.stringQ)
-        defineBuiltin(context, 'make$45$string(n, char)', scheme_libs.make_string)
+        defineBuiltin(context, 'make$45$string(n, char)', scheme_libs.make_string, 1)
         defineBuiltin(context, 'string(...vals)', scheme_libs.string, 0)
         defineBuiltin(context, 'string$45$length(str)', scheme_libs.string_length)
         defineBuiltin(context, 'string$45$ref(str, k)', scheme_libs.string_ref)
-        defineBuiltin(context, 'string$61$63$(str1, str2)', scheme_libs.stringEQ)
-        defineBuiltin(context, 'string$60$63$(str1, str2)', scheme_libs.stringLQ)
-        defineBuiltin(context, 'string$62$63$(str1, str2)', scheme_libs.stringGQ)
-        defineBuiltin(context, 'string$60$$61$63$(str1, str2)', scheme_libs.stringLEQ)
-        defineBuiltin(context, 'string$62$$61$63$(str1, str2)', scheme_libs.stringGEQ)
+        defineBuiltin(context, 'string$61$$63$(str1, str2)', scheme_libs.stringEQ)
+        defineBuiltin(context, 'string$60$$63$(str1, str2)', scheme_libs.stringLQ)
+        defineBuiltin(context, 'string$62$$63$(str1, str2)', scheme_libs.stringGQ)
+        defineBuiltin(context, 'string$60$$61$$63$(str1, str2)', scheme_libs.stringLEQ)
+        defineBuiltin(context, 'string$62$$61$$63$(str1, str2)', scheme_libs.stringGEQ)
         defineBuiltin(context, 'substring(str, start, end)', scheme_libs.substring, 2)
         defineBuiltin(context, 'string$45$append(...vals)', scheme_libs.string_append, 0)
         defineBuiltin(context, 'string$45$copy(str)', scheme_libs.string_copy)
