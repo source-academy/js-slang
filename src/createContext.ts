@@ -394,10 +394,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   }
 
   if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
-    //do scheme stuff
     switch (context.chapter) {
       case Chapter.FULL_SCHEME:
-        // Vectors
 
       case Chapter.SCHEME_4:
         // Introduction to eval
@@ -415,7 +413,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         // Scheme list mutation
         defineBuiltin(context, 'list$45$set$33$(xs, n, val)', scheme_libs.list_setB)
         //defineBuiltin(context, 'filter$33$(pred, xs)', scheme_libs.filterB);
-        
+
         // Scheme promises
         defineBuiltin(context, 'promise$63$()', scheme_libs.promiseQ)
         defineBuiltin(context, 'force(p)', scheme_libs.force)
