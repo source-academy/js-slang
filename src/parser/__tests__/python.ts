@@ -19,6 +19,14 @@ describe('Python parser', () => {
       expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
     })
 
+    it('formats errors correctly', () => {
+      const code = `?`
+
+      parserPython1.parse(code, context)
+      expect(context.errors.slice(-1)[0]).toMatchObject(
+        expect.objectContaining({ message: expect.stringContaining('UnknownTokenError') })
+      )
+    })
     it('allows usage of imports/modules', () => {
       const code = `from rune import (show, heart)`
 
