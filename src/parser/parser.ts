@@ -4,10 +4,10 @@ import { Context } from '..'
 import { Chapter, Variant } from '../types'
 import { FullJSParser } from './fullJS'
 import { FullTSParser } from './fullTS'
+import { PythonParser } from './python'
 import { SourceParser } from './source'
 import { SourceTypedParser } from './source/typed'
 import { AcornOptions, Parser } from './types'
-import { PythonParser } from './python'
 
 export function parse<TOptions extends AcornOptions>(
   programStr: string,

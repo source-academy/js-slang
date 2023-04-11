@@ -1,10 +1,10 @@
 import { Program } from 'estree'
 
+import { parsePythonToEstreeAst } from '../../py-slang/src'
 import { Chapter, Context } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
-import { parsePythonToEstreeAst } from '../../py-slang/src'
 
 export class PythonParser implements Parser<AcornOptions> {
   private chapter: Chapter
