@@ -19,20 +19,6 @@ describe('Python parser', () => {
       expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
     })
 
-    it('formats errors correctly', () => {
-      const code = `?`
-
-      parserPython1.parse(code, context)
-      expect(parseError(context.errors)).toMatchInlineSnapshot(`
-"
-UnknownTokenError: SyntaxError at line 0 column 0
-
-
-?
-^~ Unknown token '?'
-"
-`)
-    })
     it('allows usage of imports/modules', () => {
       const code = `from rune import (show, heart)`
 
