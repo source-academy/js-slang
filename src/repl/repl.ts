@@ -79,10 +79,6 @@ function validChapterVariant(chapter: any, variant: any) {
   for (const lang of scmLanguages) {
     if (lang.chapter === chapter && lang.variant === variant) return true
   }
-  if (chapter < 0) {
-    return true
-  }
-
   return false
 }
 
