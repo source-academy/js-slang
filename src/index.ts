@@ -347,6 +347,18 @@ export async function runFilesInContext(
   //        global state.
   verboseErrors = hasVerboseErrors(code)
 
+  /* not valid yet. need to explore other areas of proper scheme representation.
+  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
+    return sourceFilesRunner(files, entrypointFilePath, context, options).then((result) => {
+      if (result.status === 'finished') {
+        return {
+          ...result,
+          value: schemeToString(result.value)
+        } as Finished
+      }
+      return result
+    })
+  }*/
   return sourceFilesRunner(files, entrypointFilePath, context, options)
 }
 
