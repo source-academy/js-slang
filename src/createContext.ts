@@ -391,6 +391,49 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'forceIt(val)', new LazyBuiltIn(operators.forceIt, true))
     defineBuiltin(context, 'delayIt(xs)', new LazyBuiltIn(operators.delayIt, true))
   }
+
+  if (context.chapter <= Chapter.PYTHON_1 && context.chapter >= Chapter.PYTHON_1)  {
+    if (context.chapter == Chapter.PYTHON_1) {
+      // Display
+      defineBuiltin(context, 'get_time()', misc.get_time)
+      defineBuiltin(context, 'print(val)', display, 1)
+      defineBuiltin(context, 'raw_print(str)', rawDisplay, 1)
+      defineBuiltin(context, 'str(val)', (val: any) => stringify(val, 2, 80), 1)
+      defineBuiltin(context, 'error(str)', misc.error_message, 1)
+      defineBuiltin(context, 'prompt(str)', prompt)
+      defineBuiltin(context, 'is_number(val)', misc.is_number)
+      defineBuiltin(context, 'is_string(val)', misc.is_string)
+      defineBuiltin(context, 'is_function(val)', misc.is_function)
+      defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
+      defineBuiltin(context, 'is_None(val)', misc.is_undefined)
+      defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
+      defineBuiltin(context, 'char_at(str, index)', misc.char_at)
+      defineBuiltin(context, 'arity(f)', misc.arity)
+      defineBuiltin(context, 'None', undefined)
+      defineBuiltin(context, 'NaN', NaN)
+      defineBuiltin(context, 'Infinity', Infinity)
+      // Define all Math libraries
+      const mathLibraryNames = Object.getOwnPropertyNames(Math)
+      // Short param names for stringified version of math functions
+      const parameterNames = [...'abcdefghijklmnopqrstuvwxyz']
+      for (const name of mathLibraryNames) {
+        const value = Math[name]
+        if (typeof value === 'function') {
+          let paramString: string
+          let minArgsNeeded = undefined
+          if (name === 'max' || name === 'min') {
+            paramString = '...values'
+            minArgsNeeded = 0
+          } else {
+            paramString = parameterNames.slice(0, value.length).join(', ')
+          }
+          defineBuiltin(context, `math_${name}(${paramString})`, value, minArgsNeeded)
+        } else {
+          defineBuiltin(context, `math_${name}`, value)
+        }
+      }
+    }
+  }
 }
 
 function importPrelude(context: Context) {
@@ -430,7 +473,7 @@ const createContext = <T>(
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns
 ): Context => {
-  if (chapter === Chapter.FULL_JS || chapter === Chapter.FULL_TS || chapter === Chapter.PYTHON_1) {
+  if (chapter === Chapter.FULL_JS || chapter === Chapter.FULL_TS) {
     // fullJS will include all builtins and preludes of source 4
     return {
       ...createContext(
