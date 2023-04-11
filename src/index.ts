@@ -5,7 +5,6 @@ import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
 import { looseParse, typedParse } from './parser/utils'
-import { Parser, Tokenizer, Translator } from './py-slang/src'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
@@ -330,7 +329,9 @@ export async function runFilesInContext(
     return resolvedErrorPromise
   }
 
-  if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.FULL_TS) {
+  if (context.chapter === Chapter.FULL_JS ||
+    context.chapter === Chapter.FULL_TS ||
+    context.chapter === Chapter.PYTHON_1) {
     const program = parse(code, context)
     // console.dir(program, { depth: null });
     if (program === null) {
@@ -341,21 +342,6 @@ export async function runFilesInContext(
 
   if (context.chapter === Chapter.HTML) {
     return htmlRunner(code, context, options)
-  }
-
-  if (context.chapter === Chapter.PYTHON_1) {
-    const script = code + '\n'
-    const tokenizer = new Tokenizer(script)
-    const tokens = tokenizer.scanEverything()
-    const pyParser = new Parser(script, tokens)
-    const ast = pyParser.parse()
-    // Only enable once we can properly handle these errors!
-    // const resolver = new Resolver(script, ast)
-    // resolver.resolve(ast)
-    const translator = new Translator(script)
-    const estreeAst = translator.resolve(ast) as unknown as es.Program
-
-    return fullJSRunner(estreeAst, context, options)
   }
 
   // FIXME: Clean up state management so that the `parseError` function is pure.
