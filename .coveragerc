@@ -1,6 +1,6 @@
 [run]
-omit = */py-slang/*
+omit = ./src/py-slang/*
 
 [report]
-omit = */py-slang/*
+omit = ./src/py-slang/*
 
