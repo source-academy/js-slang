@@ -392,7 +392,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'delayIt(xs)', new LazyBuiltIn(operators.delayIt, true))
   }
 
-  if (context.chapter <= Chapter.PYTHON_1 && context.chapter >= Chapter.PYTHON_1)  {
+  if (context.chapter <= Chapter.PYTHON_1 && context.chapter >= Chapter.PYTHON_1) {
     if (context.chapter == Chapter.PYTHON_1) {
       // Display
       defineBuiltin(context, 'get_time()', misc.get_time)
