@@ -2,6 +2,8 @@ import { parseError } from '../..'
 import { mockContext } from '../../mocks/context'
 import { Chapter } from '../../types'
 import { PythonParser } from '../python'
+import { parse } from '../parser'
+import { FatalSyntaxError } from '../errors'
 
 const parserPython1 = new PythonParser(Chapter.PYTHON_1)
 let context = mockContext(Chapter.PYTHON_1)
@@ -11,11 +13,23 @@ beforeEach(() => {
 })
 
 describe('Python parser', () => {
+  describe('Overall parser test', () => {
+    it('Generic parse function works', () => {
+      let code = 'x = 1'
+      parse(code, context)
+
+      expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+      expect(parserPython1.toString()).toEqual(expect.stringContaining('PythonParser'))
+    })
+  })
   describe('Python 1 tests', () => {
     it('allows usage of builtins/preludes', () => {
       const code = `display("hello from python")`
 
-      parserPython1.parse(code, context)
+      const prgm = parserPython1.parse(code, context)
+      if (prgm !== null) {
+        expect(parserPython1.validate(prgm, context, false)).toEqual(true)
+      }
       expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
     })
 
@@ -32,6 +46,14 @@ describe('Python parser', () => {
 
       parserPython1.parse(code, context)
       expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+    })
+
+    it('throws on error', () => {
+      const code = `?`
+
+      expect(() => parserPython1.parse(code, context, undefined, true)).toThrowError(
+        FatalSyntaxError
+      )
     })
   })
 })

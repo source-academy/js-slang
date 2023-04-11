@@ -30,7 +30,7 @@ export class PythonParser implements Parser<AcornOptions> {
           //   case Chapter.PYTHON_4:
           //     return 4
           default:
-            return undefined
+            throw new Error('Unreachable path')
         }
       })()
       return parsePythonToEstreeAst(programStr, chapterNum, false)
