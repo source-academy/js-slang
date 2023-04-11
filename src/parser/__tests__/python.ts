@@ -1,9 +1,9 @@
 import { parseError } from '../..'
 import { mockContext } from '../../mocks/context'
 import { Chapter } from '../../types'
-import { PythonParser } from '../python'
-import { parse } from '../parser'
 import { FatalSyntaxError } from '../errors'
+import { parse } from '../parser'
+import { PythonParser } from '../python'
 
 const parserPython1 = new PythonParser(Chapter.PYTHON_1)
 let context = mockContext(Chapter.PYTHON_1)
@@ -15,7 +15,7 @@ beforeEach(() => {
 describe('Python parser', () => {
   describe('Overall parser test', () => {
     it('Generic parse function works', () => {
-      let code = 'x = 1'
+      const code = 'x = 1'
       parse(code, context)
 
       expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
