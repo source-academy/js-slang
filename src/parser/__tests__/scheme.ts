@@ -6,10 +6,11 @@ import { SchemeParser } from '../scheme'
 const parser = new SchemeParser(Chapter.SCHEME_1)
 const parser_full = new SchemeParser(Chapter.FULL_SCHEME)
 let context = mockContext(Chapter.SCHEME_1)
-const context_full = mockContext(Chapter.FULL_SCHEME)
+let context_full = mockContext(Chapter.FULL_SCHEME)
 
 beforeEach(() => {
   context = mockContext(Chapter.SCHEME_1)
+  context_full = mockContext(Chapter.FULL_SCHEME)
 })
 
 describe('Scheme parser', () => {
