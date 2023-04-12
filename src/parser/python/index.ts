@@ -18,11 +18,12 @@ export class PythonParser implements Parser<AcornOptions> {
     throwOnError?: boolean
   ): Program | null {
     try {
-      // parse the scheme code
+      // parse the Python code
       const chapterNum = (() => {
         switch (this.chapter) {
           case Chapter.PYTHON_1:
             return 1
+          // Future additions:
           //   case Chapter.PYTHON_2:
           //     return 2
           //   case Chapter.PYTHON_3:
@@ -36,7 +37,6 @@ export class PythonParser implements Parser<AcornOptions> {
       return parsePythonToEstreeAst(programStr, chapterNum, false)
     } catch (error) {
       if (error instanceof SyntaxError) {
-        // @TODO should translate from the python
         error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())
       }
 

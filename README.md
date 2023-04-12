@@ -35,6 +35,15 @@ $ yarn
 $ yarn build
 ```
 
+This repository uses git submodules. To update existing repositories with a submodule,
+
+```{.}
+# Init is only required on the very first time.
+$ git submodule update --init --recursive
+# Required subsequently every time you want to update the submodules.
+$ git submodule update --recursive --remote
+```
+
 To add \"js-slang\" to your PATH, build it as per the above instructions, then
 run
 
