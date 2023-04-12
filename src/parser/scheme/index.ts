@@ -1,7 +1,8 @@
 import { Node, Program } from 'estree'
 
 import { decode, encode, schemeParse } from '../../scm-slang/src'
-import { Chapter, Context } from '../../types'
+import { Pair } from '../../scm-slang/src/stdlib/source-scheme-library'
+import { Chapter, Context, ErrorType, SourceError } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
@@ -71,8 +72,45 @@ export function encodeTree(tree: Program): Program {
   return tree
 }
 
-export function decodeString(str: string): string {
+function decodeString(str: string): string {
   return str.replace(/\$scheme_[\w$]+|\$\d+\$/g, match => {
     return decode(match)
   })
+}
+
+// Given any value, decode it if and
+// only if an encoded value may exist in it.
+export function decodeValue(x: any): any {
+  // In future: add support for decoding vectors.
+  if (x instanceof Pair) {
+    // May contain encoded strings.
+    return new Pair(decodeValue(x.car), decodeValue(x.cdr))
+  } else if (x instanceof Array) {
+    // May contain encoded strings.
+    return x.map(decodeValue)
+  } else if (x instanceof Function) {
+    const newString = decodeString(x.toString())
+    x.toString = () => newString
+    return x
+  } else {
+    // string, number, boolean, null, undefined
+    // no need to decode.
+    return x
+  }
+}
+
+// Given an error, decode its message if and
+// only if an encoded value may exist in it.
+export function decodeError(error: SourceError): SourceError {
+  if (error.type === ErrorType.SYNTAX) {
+    // Syntax errors are not encoded.
+    return error
+  }
+  const newExplain = decodeString(error.explain())
+  const newElaborate = decodeString(error.elaborate())
+  return {
+    ...error,
+    explain: () => newExplain,
+    elaborate: () => newElaborate
+  }
 }
