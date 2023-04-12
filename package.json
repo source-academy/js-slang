@@ -110,7 +110,8 @@
       "/dist/",
       "/node_modules/",
       "/src/typings/",
-      "/src/utils/testing.ts"
+      "/src/utils/testing.ts",
+      "/src/py-slang/"
     ],
     "reporters": [
       "default",
