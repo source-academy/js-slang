@@ -1,16 +1,16 @@
 import { Node, Program } from 'estree'
 
+import { decode, encode, schemeParse } from '../../scm-slang/src'
 import { Chapter, Context } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
-import { decode, encode, schemeParse } from '../../scm-slang/src'
 const walk = require('acorn-walk')
 
 export class SchemeParser implements Parser<AcornOptions> {
-  private chapter: Chapter
+  private chapter: number
   constructor(chapter: Chapter) {
-    this.chapter = chapter
+    this.chapter = getSchemeChapter(chapter)
   }
   parse(
     programStr: string,
@@ -20,21 +20,7 @@ export class SchemeParser implements Parser<AcornOptions> {
   ): Program | null {
     try {
       // parse the scheme code
-      const chapterNum = (() => {
-        switch (this.chapter) {
-          case Chapter.SCHEME_1:
-            return 1
-          case Chapter.SCHEME_2:
-            return 2
-          case Chapter.SCHEME_3:
-            return 3
-          case Chapter.SCHEME_4:
-            return 4
-          default:
-            return undefined
-        }
-      })()
-      const estree = schemeParse(programStr, chapterNum)
+      const estree = schemeParse(programStr, this.chapter)
       // walk the estree and encode all identifiers
       encodeTree(estree)
       return estree as unknown as Program
@@ -55,6 +41,24 @@ export class SchemeParser implements Parser<AcornOptions> {
 
   toString(): string {
     return `SchemeParser{chapter: ${this.chapter}}`
+  }
+}
+
+function getSchemeChapter(chapter: Chapter): number {
+  switch (chapter) {
+    case Chapter.SCHEME_1:
+      return 1
+    case Chapter.SCHEME_2:
+      return 2
+    case Chapter.SCHEME_3:
+      return 3
+    case Chapter.SCHEME_4:
+      return 4
+    case Chapter.FULL_SCHEME:
+      return Infinity
+    default:
+      // Should never happen
+      throw new Error(`SchemeParser was not given a valid chapter!`)
   }
 }
 
