@@ -112,7 +112,8 @@
       "/node_modules/",
       "/src/typings/",
       "/src/utils/testing.ts",
-      "/src/scm-slang"
+      "/src/scm-slang",
+      "/src/py-slang/"
     ],
     "reporters": [
       "default",
