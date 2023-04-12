@@ -29,7 +29,7 @@ Interpretation of Computer Programs, JavaScript Adaptation
 To build,
 
 ```{.}
-$ git clone https://github.com/source-academy/js-slang.git
+$ git clone --recurse-submodules https://github.com/source-academy/js-slang.git
 $ cd js-slang
 $ yarn
 $ yarn build
