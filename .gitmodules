@@ -1,3 +1,3 @@
-[submodule "src/parser/scheme/scm-slang"]
-	path = src/parser/scheme/scm-slang
-	url = https://github.com/source-academy/scm-slang
+[submodule "src/scm-slang"]
+	path = src/scm-slang
+	url = https://github.com/source-academy/scm-slang.git

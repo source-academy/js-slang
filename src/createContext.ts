@@ -2,7 +2,7 @@
 
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import * as gpu_lib from './gpu/lib'
-import * as scheme_libs from './parser/scheme/scm-slang/src/stdlib/source-scheme-library'
+import * as scheme_libs from './scm-slang/src/stdlib/source-scheme-library'
 import { AsyncScheduler } from './schedulers'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'

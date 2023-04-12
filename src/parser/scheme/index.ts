@@ -4,10 +4,8 @@ import { Chapter, Context } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
-import { decode, encode, schemeParse } from './scm-slang/src'
+import { decode, encode, schemeParse } from '../../scm-slang/src'
 const walk = require('acorn-walk')
-
-export { schemeParse } from './scm-slang/src'
 
 export class SchemeParser implements Parser<AcornOptions> {
   private chapter: Chapter
