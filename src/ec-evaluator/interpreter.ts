@@ -228,11 +228,9 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
     if (isNode(command) && command.type === 'DebuggerStatement') {
       steps += 1
 
-      // Skip debugger if running for the first time
+      // Record debugger step if running for the first time
       if (context.runtime.envSteps === -1) {
-        command = agenda.pop()
         context.runtime.breakpointSteps.push(steps)
-        continue
       }
     }
 
@@ -245,6 +243,7 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
         // We can put this under isNode since context.runtime.break
         // will only be updated after a debugger statement and so we will
         // run into a node immediately after.
+        // With the new evaluator, we don't return a break
         // return new ECEBreak()
       }
     } else {
