@@ -111,7 +111,8 @@
       "/dist/",
       "/node_modules/",
       "/src/typings/",
-      "/src/utils/testing.ts"
+      "/src/utils/testing.ts",
+      "/src/scm-slang"
     ],
     "reporters": [
       "default",

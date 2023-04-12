@@ -13,6 +13,19 @@ beforeEach(() => {
 })
 
 describe('Scheme parser', () => {
+  it('represents itself correctly', () => {
+    expect(parser.toString()).toMatchInlineSnapshot(`"SchemeParser{chapter: 1}"`)
+  })
+
+  it ('throws error if given chapter is wrong', () => {
+    expect(() => new SchemeParser(Chapter.FULL_PYTHON)).toThrow('SchemeParser was not given a valid chapter!')
+  })
+
+  it('throws errors if option throwOnError is selected and parse error is encountered', () => {
+    const code = `(hello))`
+    expect(() => parser.parse(code, context, undefined, true)).toThrow("Unexpected ')'")
+  })
+
   it('formats tokenizer errors correctly', () => {
     const code = `(hello))`
 
