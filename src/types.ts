@@ -74,11 +74,12 @@ export enum Chapter {
   PYTHON_2 = -5,
   PYTHON_3 = -6,
   PYTHON_4 = -7,
-  SCHEME_1 = -8,
-  SCHEME_2 = -9,
-  SCHEME_3 = -10,
-  SCHEME_4 = -11,
-  FULL_SCHEME = -12,
+  FULL_PYTHON = -8,
+  SCHEME_1 = -9,
+  SCHEME_2 = -10,
+  SCHEME_3 = -11,
+  SCHEME_4 = -12,
+  FULL_SCHEME = -13,
   LIBRARY_PARSER = 100
 }
 
