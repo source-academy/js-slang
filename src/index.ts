@@ -329,7 +329,11 @@ export async function runFilesInContext(
     return resolvedErrorPromise
   }
 
-  if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.FULL_TS) {
+  if (
+    context.chapter === Chapter.FULL_JS ||
+    context.chapter === Chapter.FULL_TS ||
+    context.chapter === Chapter.PYTHON_1
+  ) {
     const program = parse(code, context)
     if (program === null) {
       return resolvedErrorPromise

@@ -70,6 +70,7 @@ export enum Chapter {
   FULL_JS = -1,
   HTML = -2,
   FULL_TS = -3,
+  PYTHON_1 = -4,
   LIBRARY_PARSER = 100
 }
 

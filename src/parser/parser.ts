@@ -4,6 +4,7 @@ import { Context } from '..'
 import { Chapter, Variant } from '../types'
 import { FullJSParser } from './fullJS'
 import { FullTSParser } from './fullTS'
+import { PythonParser } from './python'
 import { SourceParser } from './source'
 import { SourceTypedParser } from './source/typed'
 import { AcornOptions, Parser } from './types'
@@ -16,6 +17,9 @@ export function parse<TOptions extends AcornOptions>(
 ): Program | null {
   let parser: Parser<TOptions>
   switch (context.chapter) {
+    case Chapter.PYTHON_1:
+      parser = new PythonParser(context.chapter)
+      break
     case Chapter.FULL_JS:
       parser = new FullJSParser()
       break
