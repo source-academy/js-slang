@@ -9,6 +9,7 @@
 import * as es from 'estree'
 import { partition, uniqueId } from 'lodash'
 
+import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -48,6 +49,7 @@ import {
   declareFunctionsAndVariables,
   declareIdentifier,
   defineVariable,
+  envChanging,
   getVariable,
   handleRuntimeError,
   handleSequence,
@@ -93,7 +95,7 @@ export class Stash extends Stack<Value> {
  * @param context The context to evaluate the program in.
  * @returns The result of running the ECE machine.
  */
-export function evaluate(program: es.Program, context: Context): Value {
+export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
   try {
     context.runtime.isRunning = true
 
@@ -104,7 +106,7 @@ export function evaluate(program: es.Program, context: Context): Value {
       body: nonImportNodes
     })
     context.runtime.stash = new Stash()
-    return runECEMachine(context, context.runtime.agenda, context.runtime.stash)
+    return runECEMachine(context, context.runtime.agenda, context.runtime.stash, options.isPrelude)
   } catch (error) {
     // console.error('ecerror:', error)
     return new ECError(error)
@@ -124,7 +126,7 @@ export function evaluate(program: es.Program, context: Context): Value {
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!)
+    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!, false)
   } catch (error) {
     return new ECError(error)
   } finally {
@@ -210,27 +212,48 @@ export function ECEResultPromise(context: Context, value: Value): Promise<Result
  * @returns A special break object if the program is interrupted by a break point;
  * else the top value of the stash. It is usually the return value of the program.
  */
-function runECEMachine(context: Context, agenda: Agenda, stash: Stash) {
+function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude: boolean) {
   context.runtime.break = false
   context.runtime.nodes = []
+  let steps = 0
+
   let command = agenda.pop()
   while (command) {
+    if (!isPrelude && steps === context.runtime.envSteps) {
+      return stash.peek()
+    }
+    if (envChanging(command)) {
+      steps += 1
+    }
+    if (isNode(command) && command.type === 'DebuggerStatement') {
+      steps += 1
+
+      // Record debugger step if running for the first time
+      if (context.runtime.envSteps === -1) {
+        context.runtime.breakpointSteps.push(steps)
+      }
+    }
+
     if (isNode(command)) {
+      context.runtime.nodes.shift()
       context.runtime.nodes.unshift(command)
       checkEditorBreakpoints(context, command)
-      cmdEvaluators[command.type](command, context, agenda, stash)
+      cmdEvaluators[command.type](command, context, agenda, stash, isPrelude)
       if (context.runtime.break && context.runtime.debuggerOn) {
         // We can put this under isNode since context.runtime.break
         // will only be updated after a debugger statement and so we will
         // run into a node immediately after.
-        return new ECEBreak()
+        // With the new evaluator, we don't return a break
+        // return new ECEBreak()
       }
-      context.runtime.nodes.shift()
     } else {
-      // Node is an instrucion
-      cmdEvaluators[command.instrType](command, context, agenda, stash)
+      // Command is an instrucion
+      cmdEvaluators[command.instrType](command, context, agenda, stash, isPrelude)
     }
     command = agenda.pop()
+  }
+  if (!isPrelude) {
+    context.runtime.envStepsTotal = steps
   }
   return stash.peek()
 }
@@ -289,31 +312,49 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const valueExpression = init.declarations[0].init!
 
       agenda.push(
-        ast.blockStatement([
-          init,
-          ast.forStatement(
-            ast.assignmentExpression(id, valueExpression),
-            test,
-            update,
-            ast.blockStatement([
-              ast.variableDeclaration([
-                ast.variableDeclarator(
-                  ast.identifier(`_copy_of_${id.name}`),
-                  ast.identifier(id.name)
-                )
-              ]),
-              ast.blockStatement([
-                ast.variableDeclaration([
-                  ast.variableDeclarator(
-                    ast.identifier(id.name),
-                    ast.identifier(`_copy_of_${id.name}`)
+        ast.blockStatement(
+          [
+            init,
+            ast.forStatement(
+              ast.assignmentExpression(id, valueExpression),
+              test,
+              update,
+              ast.blockStatement(
+                [
+                  ast.variableDeclaration(
+                    [
+                      ast.variableDeclarator(
+                        ast.identifier(`_copy_of_${id.name}`, command.loc),
+                        ast.identifier(id.name, command.loc),
+                        command.loc
+                      )
+                    ],
+                    command.loc
+                  ),
+                  ast.blockStatement(
+                    [
+                      ast.variableDeclaration(
+                        [
+                          ast.variableDeclarator(
+                            ast.identifier(id.name, command.loc),
+                            ast.identifier(`_copy_of_${id.name}`, command.loc),
+                            command.loc
+                          )
+                        ],
+                        command.loc
+                      ),
+                      command.body
+                    ],
+                    command.loc
                   )
-                ]),
-                command.body
-              ])
-            ])
-          )
-        ])
+                ],
+                command.loc
+              ),
+              command.loc
+            )
+          ],
+          command.loc
+        )
       )
     } else {
       agenda.push(instr.breakMarkerInstr())
@@ -491,24 +532,24 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     command: es.ArrowFunctionExpression,
     context: Context,
     agenda: Agenda,
-    stash: Stash
+    stash: Stash,
+    isPrelude: boolean
   ) {
     // Reuses the Closure data structure from legacy interpreter
     const closure: Closure = Closure.makeFromArrowFunction(
       command,
       currentEnvironment(context),
       context,
-      true
+      true,
+      isPrelude
     )
     const next = agenda.peek()
     if (!(next && isInstr(next) && isAssmtInstr(next))) {
-      if (closure instanceof Closure) {
-        Object.defineProperty(currentEnvironment(context).head, uniqueId(), {
-          value: closure,
-          writable: false,
-          enumerable: true
-        })
-      }
+      Object.defineProperty(currentEnvironment(context).head, uniqueId(), {
+        value: closure,
+        writable: false,
+        enumerable: true
+      })
     }
     stash.push(closure)
   },
@@ -676,12 +717,26 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         agenda.push(instr.envInstr(currentEnvironment(context)))
         agenda.push(instr.markerInstr())
       }
-
-      // Push function body on agenda and create environment for function parameters.
+      // Create environment for function parameters if the function isn't nullary.
       // Name the environment if the function call expression is not anonymous
+      if (args.length > 0) {
+        const environment = createEnvironment(func, args, command.srcNode)
+        pushEnvironment(context, environment)
+      } else {
+        context.runtime.environments.unshift(func.environment)
+      }
+
+      // Display the pre-defined functions on the global environment if needed.
+      if (func.preDefined) {
+        Object.defineProperty(context.runtime.environments[1].head, uniqueId(), {
+          value: func,
+          writable: false,
+          enumerable: true
+        })
+      }
+
+      // Push function body on agenda
       agenda.push(func.node.body)
-      const environment = createEnvironment(func, args, command.srcNode)
-      pushEnvironment(context, environment)
     } else if (typeof func === 'function') {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
@@ -810,3 +865,5 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   [InstrType.BREAK_MARKER]: function () {}
 }
+
+export function runECEMachineWithSteps(context: Context, agenda: Agenda, stash: Stash) {}

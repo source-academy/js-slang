@@ -145,8 +145,11 @@ export interface Context<T = any> {
     environmentTree: EnvTree
     environments: Environment[]
     nodes: es.Node[]
-    agenda?: Agenda
-    stash?: Stash
+    agenda: Agenda | null
+    stash: Stash | null
+    envSteps: number
+    envStepsTotal: number
+    breakpointSteps: number[]
   }
 
   numberOfOuterEnvironments: number

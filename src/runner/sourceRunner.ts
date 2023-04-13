@@ -206,7 +206,7 @@ async function runNative(
 }
 
 function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  const value = ECEvaluate(program, context)
+  const value = ECEvaluate(program, context, options)
   return ECEResultPromise(context, value)
 }
 
