@@ -29,10 +29,19 @@ Interpretation of Computer Programs, JavaScript Adaptation
 To build,
 
 ```{.}
-$ git clone https://github.com/source-academy/js-slang.git
+$ git clone --recurse-submodules https://github.com/source-academy/js-slang.git
 $ cd js-slang
 $ yarn
 $ yarn build
+```
+
+This repository uses git submodules. To update existing repositories with a submodule,
+
+```{.}
+# Init is only required on the very first time.
+$ git submodule update --init --recursive
+# Required subsequently every time you want to update the submodules.
+$ git submodule update --recursive --remote
 ```
 
 To add \"js-slang\" to your PATH, build it as per the above instructions, then

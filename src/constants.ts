@@ -41,3 +41,13 @@ export const sourceLanguages: Language[] = [
   { chapter: Chapter.SOURCE_4, variant: Variant.GPU },
   { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 ]
+
+export const scmLanguages: Language[] = [
+  { chapter: Chapter.SCHEME_1, variant: Variant.DEFAULT },
+  { chapter: Chapter.SCHEME_2, variant: Variant.DEFAULT },
+  { chapter: Chapter.SCHEME_3, variant: Variant.DEFAULT },
+  { chapter: Chapter.SCHEME_4, variant: Variant.DEFAULT },
+  { chapter: Chapter.FULL_SCHEME, variant: Variant.DEFAULT }
+]
+
+export const pyLanguages: Language[] = [{ chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT }]
