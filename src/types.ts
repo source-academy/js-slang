@@ -71,6 +71,15 @@ export enum Chapter {
   HTML = -2,
   FULL_TS = -3,
   PYTHON_1 = -4,
+  PYTHON_2 = -5,
+  PYTHON_3 = -6,
+  PYTHON_4 = -7,
+  FULL_PYTHON = -8,
+  SCHEME_1 = -9,
+  SCHEME_2 = -10,
+  SCHEME_3 = -11,
+  SCHEME_4 = -12,
+  FULL_SCHEME = -13,
   LIBRARY_PARSER = 100
 }
 

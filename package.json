@@ -41,6 +41,7 @@
     "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
     "gpu.js": "^2.10.4",
+    "js-base64": "^3.7.5",
     "lodash": "^4.17.20",
     "node-getopt": "^0.3.2",
     "source-map": "0.7.3",
@@ -111,6 +112,7 @@
       "/node_modules/",
       "/src/typings/",
       "/src/utils/testing.ts",
+      "/src/scm-slang",
       "/src/py-slang/"
     ],
     "reporters": [

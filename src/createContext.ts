@@ -2,6 +2,7 @@
 
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import * as gpu_lib from './gpu/lib'
+import * as scheme_libs from './scm-slang/src/stdlib/source-scheme-library'
 import { AsyncScheduler } from './schedulers'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
@@ -392,6 +393,169 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'delayIt(xs)', new LazyBuiltIn(operators.delayIt, true))
   }
 
+  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
+    switch (context.chapter) {
+      case Chapter.FULL_SCHEME:
+
+      case Chapter.SCHEME_4:
+        // Introduction to eval
+
+        // Scheme apply
+        defineBuiltin(context, 'apply(f, ...args)', scheme_libs.apply, 2)
+
+      case Chapter.SCHEME_3:
+        // Introduction to mutable values, streams
+
+        // Scheme pair mutation
+        defineBuiltin(context, 'set$45$car$33$(pair, val)', scheme_libs.set_carB)
+        defineBuiltin(context, 'set$45$cdr$33$(pair, val)', scheme_libs.set_cdrB)
+
+        // Scheme list mutation
+        defineBuiltin(context, 'list$45$set$33$(xs, n, val)', scheme_libs.list_setB)
+        //defineBuiltin(context, 'filter$33$(pred, xs)', scheme_libs.filterB);
+
+        // Scheme promises
+        defineBuiltin(context, 'promise$63$()', scheme_libs.promiseQ)
+        defineBuiltin(context, 'force(p)', scheme_libs.force)
+
+      case Chapter.SCHEME_2:
+        // Scheme pairs
+        defineBuiltin(context, 'cons(left, right)', scheme_libs.cons)
+        defineBuiltin(context, 'pair$63$(val)', scheme_libs.pairQ)
+        defineBuiltin(context, 'car(xs)', scheme_libs.car)
+        defineBuiltin(context, 'cdr(xs)', scheme_libs.cdr)
+
+        // Scheme lists
+        defineBuiltin(context, 'make$45$list(n, val)', scheme_libs.make_list, 1)
+        defineBuiltin(context, 'list(...values)', scheme_libs.list, 0)
+        defineBuiltin(context, 'list$63$(val)', scheme_libs.listQ)
+        defineBuiltin(context, 'null$63$(val)', scheme_libs.nullQ)
+        defineBuiltin(context, 'length(xs)', scheme_libs.length)
+        defineBuiltin(context, 'append(...xs)', scheme_libs.append, 0)
+        defineBuiltin(context, 'reverse(xs)', scheme_libs.reverse)
+        defineBuiltin(context, 'list$45$tail(xs, n)', scheme_libs.list_tail)
+        defineBuiltin(context, 'list$45$ref(xs, n)', scheme_libs.list_ref)
+        defineBuiltin(context, 'memq(item, xs)', scheme_libs.memq)
+        defineBuiltin(context, 'memv(item, xs)', scheme_libs.memv)
+        defineBuiltin(context, 'member(item, xs)', scheme_libs.member)
+        defineBuiltin(context, 'assq(item, xs)', scheme_libs.assq)
+        defineBuiltin(context, 'assv(item, xs)', scheme_libs.assv)
+        defineBuiltin(context, 'assoc(item, xs)', scheme_libs.assoc)
+        defineBuiltin(context, 'list$45$copy(xs)', scheme_libs.list_copy)
+        defineBuiltin(context, 'map(f, ...xs)', scheme_libs.map, 1)
+        defineBuiltin(context, 'filter(pred, xs)', scheme_libs.filter)
+        defineBuiltin(context, 'fold(f, init, ...xs)', scheme_libs.fold, 2)
+        defineBuiltin(context, 'fold$45$right(f, init, ...xs)', scheme_libs.fold_right, 2)
+        defineBuiltin(context, 'reduce(f, rIdentity, xs)', scheme_libs.reduce)
+
+        // Scheme symbols
+        defineBuiltin(context, 'symbol$63$(val)', scheme_libs.symbolQ)
+        defineBuiltin(context, 'symbol$61$63$(sym1, sym2)', scheme_libs.symbolEQ)
+        defineBuiltin(context, 'symbol$45$$62$string(str)', scheme_libs.symbol_Gstring)
+        defineBuiltin(context, 'string$45$$62$symbol(sym)', scheme_libs.string_Gsymbol)
+
+        // Scheme strings
+        defineBuiltin(context, 'string$45$$62$list(str)', scheme_libs.string_Glist)
+        defineBuiltin(context, 'list$45$$62$string(xs)', scheme_libs.list_Gstring)
+
+      case Chapter.SCHEME_1:
+        // Display
+        defineBuiltin(context, 'display(val)', (val: any) =>
+          display(scheme_libs.schemeToString(val))
+        )
+        defineBuiltin(context, 'newline()', scheme_libs.newline)
+
+        // I/O
+        defineBuiltin(context, 'read(str)', () => prompt(''))
+
+        // Error
+        defineBuiltin(context, 'error(str, prepend = undefined)', misc.error_message, 1)
+
+        // Scheme truthy and falsy value evaluator
+        defineBuiltin(context, '$36$true(val)', scheme_libs.$true)
+
+        // Scheme equality predicates
+        defineBuiltin(context, 'eq$63$(...vals)', scheme_libs.eqQ)
+        defineBuiltin(context, 'eqv$63$(...vals)', scheme_libs.eqvQ)
+        defineBuiltin(context, 'equal$63$(...vals)', scheme_libs.equalQ)
+
+        // Scheme basic arithmetic
+        defineBuiltin(context, '$43$(...vals)', scheme_libs.plus, 0)
+        defineBuiltin(context, '$42$(...vals)', scheme_libs.multiply, 0)
+        defineBuiltin(context, '$45$(...vals)', scheme_libs.minus, 1)
+        defineBuiltin(context, '$47$(...vals)', scheme_libs.divide, 1)
+
+        // Scheme comparison
+        defineBuiltin(context, '$61$(...vals)', scheme_libs.E, 1)
+        defineBuiltin(context, '$60$(...vals)', scheme_libs.L, 1)
+        defineBuiltin(context, '$62$(...vals)', scheme_libs.G, 1)
+        defineBuiltin(context, '$60$$61$(...vals)', scheme_libs.LE, 1)
+        defineBuiltin(context, '$62$$61$(...vals)', scheme_libs.GE, 1)
+
+        // Scheme math functions
+        defineBuiltin(context, 'number$63$(val)', scheme_libs.numberQ)
+        defineBuiltin(context, 'complex$63$(val)', scheme_libs.complexQ)
+        defineBuiltin(context, 'real$63$(val)', scheme_libs.realQ)
+        defineBuiltin(context, 'rational$63$(val)', scheme_libs.rationalQ)
+        defineBuiltin(context, 'integer$63$(val)', scheme_libs.integerQ)
+        defineBuiltin(context, 'exact$63$(val)', scheme_libs.exactQ)
+        defineBuiltin(context, 'exact$45$integer$63$(val)', scheme_libs.exact_integerQ)
+        defineBuiltin(context, 'zero$63$(val)', scheme_libs.zeroQ)
+        defineBuiltin(context, 'positive$63$(val)', scheme_libs.positiveQ)
+        defineBuiltin(context, 'negative$63$(val)', scheme_libs.negativeQ)
+        defineBuiltin(context, 'odd$63$(val)', scheme_libs.oddQ)
+        defineBuiltin(context, 'even$63$(val)', scheme_libs.evenQ)
+        defineBuiltin(context, 'max(...vals)', scheme_libs.max, 0)
+        defineBuiltin(context, 'min(...vals)', scheme_libs.min, 0)
+        defineBuiltin(context, 'abs(val)', scheme_libs.abs)
+        defineBuiltin(context, 'quotient(n, d)', scheme_libs.quotient)
+        defineBuiltin(context, 'modulo(n, d)', scheme_libs.modulo)
+        defineBuiltin(context, 'remainder(n, d)', scheme_libs.remainder)
+        defineBuiltin(context, 'gcd(...vals)', scheme_libs.gcd, 0)
+        defineBuiltin(context, 'lcm(...vals)', scheme_libs.lcm, 0)
+        defineBuiltin(context, 'floor(val)', scheme_libs.floor)
+        defineBuiltin(context, 'ceiling(val)', scheme_libs.ceiling)
+        defineBuiltin(context, 'truncate(val)', scheme_libs.truncate)
+        defineBuiltin(context, 'round(val)', scheme_libs.round)
+        defineBuiltin(context, 'square(val)', scheme_libs.square)
+        defineBuiltin(context, 'exact$45$integer$45$sqrt(val)', scheme_libs.exact_integer_sqrt)
+        defineBuiltin(context, 'expt(base, exp)', scheme_libs.expt)
+        defineBuiltin(context, 'number$45$$62$string(val)', scheme_libs.number_Gstring)
+
+        // Scheme booleans
+        defineBuiltin(context, 'boolean$63$(val)', scheme_libs.booleanQ)
+        defineBuiltin(context, 'boolean$61$$63$(x, y)', scheme_libs.booleanEQ)
+        defineBuiltin(context, 'and(...vals)', scheme_libs.and, 0)
+        defineBuiltin(context, 'or(...vals)', scheme_libs.or, 0)
+        defineBuiltin(context, 'not(val)', scheme_libs.not)
+
+        // Scheme strings
+        defineBuiltin(context, 'string$63$(val)', scheme_libs.stringQ)
+        defineBuiltin(context, 'make$45$string(n, char)', scheme_libs.make_string, 1)
+        defineBuiltin(context, 'string(...vals)', scheme_libs.string, 0)
+        defineBuiltin(context, 'string$45$length(str)', scheme_libs.string_length)
+        defineBuiltin(context, 'string$45$ref(str, k)', scheme_libs.string_ref)
+        defineBuiltin(context, 'string$61$$63$(str1, str2)', scheme_libs.stringEQ)
+        defineBuiltin(context, 'string$60$$63$(str1, str2)', scheme_libs.stringLQ)
+        defineBuiltin(context, 'string$62$$63$(str1, str2)', scheme_libs.stringGQ)
+        defineBuiltin(context, 'string$60$$61$$63$(str1, str2)', scheme_libs.stringLEQ)
+        defineBuiltin(context, 'string$62$$61$$63$(str1, str2)', scheme_libs.stringGEQ)
+        defineBuiltin(context, 'substring(str, start, end)', scheme_libs.substring, 2)
+        defineBuiltin(context, 'string$45$append(...vals)', scheme_libs.string_append, 0)
+        defineBuiltin(context, 'string$45$copy(str)', scheme_libs.string_copy)
+        defineBuiltin(context, 'string$45$map(f, str)', scheme_libs.string_map)
+        defineBuiltin(context, 'string$45$for$45$each(f, str)', scheme_libs.string_for_each)
+        defineBuiltin(context, 'string$45$$62$number(str)', scheme_libs.string_Gnumber)
+
+        // Scheme procedures
+        defineBuiltin(context, 'procedure$63$(val)', scheme_libs.procedureQ)
+
+        break
+      default:
+      //should be unreachable
+    }
+  }
+
   if (context.chapter <= Chapter.PYTHON_1 && context.chapter >= Chapter.PYTHON_1) {
     if (context.chapter == Chapter.PYTHON_1) {
       // Display
@@ -473,7 +637,7 @@ const createContext = <T>(
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns
 ): Context => {
-  if (chapter === Chapter.FULL_JS || chapter === Chapter.FULL_TS) {
+  if (chapter === Chapter.FULL_JS || chapter === Chapter.FULL_TS || chapter === Chapter.PYTHON_1) {
     // fullJS will include all builtins and preludes of source 4
     return {
       ...createContext(
@@ -483,10 +647,10 @@ const createContext = <T>(
         externalContext,
         externalBuiltIns
       ),
-      chapter
+      chapter: chapter,
+      variant: variant
     } as Context
   }
-
   const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
 
   importBuiltins(context, externalBuiltIns)
