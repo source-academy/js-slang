@@ -336,7 +336,6 @@ export async function runFilesInContext(
     context.chapter === Chapter.PYTHON_1
   ) {
     const program = parse(code, context)
-    // console.dir(program, { depth: null });
     if (program === null) {
       return resolvedErrorPromise
     }
