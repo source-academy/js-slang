@@ -642,7 +642,7 @@ const createContext = <T>(
   externalContext?: T,
   externalBuiltIns: CustomBuiltIns = defaultBuiltIns
 ): Context => {
-  if (chapter === Chapter.FULL_JS || chapter === Chapter.FULL_TS || chapter === Chapter.PYTHON_1) {
+  if (chapter === Chapter.FULL_JS || chapter === Chapter.FULL_TS) {
     // fullJS will include all builtins and preludes of source 4
     return {
       ...createContext(
@@ -652,8 +652,7 @@ const createContext = <T>(
         externalContext,
         externalBuiltIns
       ),
-      chapter: chapter,
-      variant: variant
+      chapter
     } as Context
   }
   const context = createEmptyContext(chapter, variant, externalSymbols, externalContext)
