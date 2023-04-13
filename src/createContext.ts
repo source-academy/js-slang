@@ -2,8 +2,8 @@
 
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import * as gpu_lib from './gpu/lib'
-import * as scheme_libs from './scm-slang/src/stdlib/source-scheme-library'
 import { AsyncScheduler } from './schedulers'
+import * as scheme_libs from './scm-slang/src/stdlib/source-scheme-library'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'
@@ -554,6 +554,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
         // Scheme procedures
         defineBuiltin(context, 'procedure$63$(val)', scheme_libs.procedureQ)
+
+        // Special values
+        defineBuiltin(context, 'undefined', undefined)
+        defineBuiltin(context, 'NaN', NaN)
+        defineBuiltin(context, 'Infinity', Infinity)
 
         break
       default:
