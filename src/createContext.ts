@@ -453,6 +453,38 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'fold$45$right(f, init, ...xs)', scheme_libs.fold_right, 2)
         defineBuiltin(context, 'reduce(f, rIdentity, xs)', scheme_libs.reduce)
 
+        // Scheme cxrs
+
+        // Probably can do this better.
+        defineBuiltin(context, 'caar(xs)', scheme_libs.caar)
+        defineBuiltin(context, 'cadr(xs)', scheme_libs.cadr)
+        defineBuiltin(context, 'cdar(xs)', scheme_libs.cdar)
+        defineBuiltin(context, 'cddr(xs)', scheme_libs.cddr)
+        defineBuiltin(context, 'caaar(xs)', scheme_libs.caaar)
+        defineBuiltin(context, 'caadr(xs)', scheme_libs.caadr)
+        defineBuiltin(context, 'cadar(xs)', scheme_libs.cadar)
+        defineBuiltin(context, 'caddr(xs)', scheme_libs.caddr)
+        defineBuiltin(context, 'cdaar(xs)', scheme_libs.cdaar)
+        defineBuiltin(context, 'cdadr(xs)', scheme_libs.cdadr)
+        defineBuiltin(context, 'cddar(xs)', scheme_libs.cddar)
+        defineBuiltin(context, 'cdddr(xs)', scheme_libs.cdddr)
+        defineBuiltin(context, 'caaaar(xs)', scheme_libs.caaaar)
+        defineBuiltin(context, 'caaadr(xs)', scheme_libs.caaadr)
+        defineBuiltin(context, 'caadar(xs)', scheme_libs.caadar)
+        defineBuiltin(context, 'caaddr(xs)', scheme_libs.caaddr)
+        defineBuiltin(context, 'cadaar(xs)', scheme_libs.cadaar)
+        defineBuiltin(context, 'cadadr(xs)', scheme_libs.cadadr)
+        defineBuiltin(context, 'caddar(xs)', scheme_libs.caddar)
+        defineBuiltin(context, 'cadddr(xs)', scheme_libs.cadddr)
+        defineBuiltin(context, 'cdaaar(xs)', scheme_libs.cdaaar)
+        defineBuiltin(context, 'cdaadr(xs)', scheme_libs.cdaadr)
+        defineBuiltin(context, 'cdadar(xs)', scheme_libs.cdadar)
+        defineBuiltin(context, 'cdaddr(xs)', scheme_libs.cdaddr)
+        defineBuiltin(context, 'cddaar(xs)', scheme_libs.cddaar)
+        defineBuiltin(context, 'cddadr(xs)', scheme_libs.cddadr)
+        defineBuiltin(context, 'cdddar(xs)', scheme_libs.cdddar)
+        defineBuiltin(context, 'cddddr(xs)', scheme_libs.cddddr)
+
         // Scheme symbols
         defineBuiltin(context, 'symbol$63$(val)', scheme_libs.symbolQ)
         defineBuiltin(context, 'symbol$61$63$(sym1, sym2)', scheme_libs.symbolEQ)
@@ -465,9 +497,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
       case Chapter.SCHEME_1:
         // Display
-        defineBuiltin(context, 'display(val)', (val: any) =>
-          display(scheme_libs.schemeToString(val))
-        )
+        defineBuiltin(context, 'display(val)', display)
         defineBuiltin(context, 'newline()', scheme_libs.newline)
 
         // I/O
