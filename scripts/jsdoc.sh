@@ -72,6 +72,7 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_2.md \
 	     -d ${DST}/"source_2"/ \
+	     ${LIB}/auxiliary.js \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
 	     ${LIB}/list.js
@@ -82,6 +83,7 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_2_LAZY.md \
 	     -d ${DST}/"source_2_lazy"/ \
+	     ${LIB}/auxiliary.js \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
 	     ${LIB}/list.js
@@ -92,6 +94,7 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_2_TYPED.md \
 	     -d ${DST}/"source_2_typed"/ \
+	     ${LIB}/auxiliary.js \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
 	     ${LIB}/list.js
@@ -102,6 +105,7 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_3.md \
 	     -d ${DST}/"source_3"/ \
+	     ${LIB}/auxiliary.js \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
              ${LIB}/list.js \
@@ -115,6 +119,7 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_3_CONCURRENT.md \
 	     -d ${DST}/"source_3_concurrent"/ \
+	     ${LIB}/auxiliary.js \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
              ${LIB}/list.js \
@@ -129,6 +134,7 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_3_NON-DET.md \
 	     -d ${DST}/"source_3_non-det"/ \
+	     ${LIB}/auxiliary.js \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
          ${LIB}/list.js \
@@ -143,6 +149,7 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_3_TYPED.md \
 	     -d ${DST}/"source_3_typed"/ \
+	     ${LIB}/auxiliary.js \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
          ${LIB}/list.js \
@@ -156,6 +163,7 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_4.md \
 	     -d ${DST}/"source_4"/ \
+	     ${LIB}/auxiliary.js \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
 	     ${LIB}/list.js \
@@ -170,6 +178,7 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_4_GPU.md \
 	     -d ${DST}/"source_4_gpu"/ \
+	     ${LIB}/auxiliary.js \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
 		 ${LIB}/list.js \
@@ -183,6 +192,7 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_4_TYPED.md \
 	     -d ${DST}/"source_4_typed"/ \
+	     ${LIB}/auxiliary.js \
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
 	     ${LIB}/list.js \
@@ -190,7 +200,15 @@ run() {
 	     ${LIB}/array.js \
 	     ${LIB}/pairmutator.js \
 	     ${LIB}/mce.js
-    
+
+    # AUXILIARY
+
+    ${JSDOC} -r -t ${TMPL} \
+       -c docs/jsdoc/conf.json \
+       -R ${MD}/README_AUXILIARY.md \
+       -d ${DST}/AUXILIARY/ \
+       ${LIB}/auxiliary.js
+
     # MISC
     
     ${JSDOC} -r -t ${TMPL} \
@@ -302,8 +320,8 @@ run() {
 	     -c docs/jsdoc/conf.json \
 	     -d "${DST}/PIXNFLIX/" \
 	     -R ${MD}/PIXNFLIX_README.md \
-	     ${LIB}/video_lib.js 
-    
+	     ${LIB}/video_lib.js
+
    # GAME
     
     ${JSDOC} -r -t ${TMPL} \

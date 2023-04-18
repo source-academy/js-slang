@@ -10,6 +10,9 @@ order. Click on a name to see how it is defined and used. They come in
 these groups:
   <ul>
     <li>
+      <a href="../AUXILIARY/">AUXILIARY</a>: Auxiliary constants and functions
+    </li>
+    <li>
       <a href="../MISC/">MISC</a>: Miscellaneous constants and functions
     </li>
     <li>

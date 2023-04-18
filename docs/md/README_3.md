@@ -9,6 +9,9 @@ On the right, you see all predeclared names of Source §3, in alphabetical
 order. Click on a name to see how it is defined and used. They come in these groups:
   <ul>
     <li>
+      <a href="../AUXILIARY/index.html">AUXILIARY</a>: Auxiliary constants and functions
+    </li>
+    <li>
       <a href="../MISC/index.html">MISC</a>: Miscellaneous constants and functions
     </li>
     <li>
