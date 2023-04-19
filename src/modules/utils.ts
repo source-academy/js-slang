@@ -10,6 +10,9 @@ import {
 import { loadModuleTabs } from './moduleLoader'
 import { loadModuleTabsAsync } from './moduleLoaderAsync'
 
+/**
+ * Create the module's context and load its tabs (if `loadTabs` is true)
+ */
 export async function initModuleContext(
   moduleName: string,
   context: Context,
@@ -26,6 +29,9 @@ export async function initModuleContext(
   }
 }
 
+/**
+ * Create the module's context and load its tabs (if `loadTabs` is true)
+ */
 export async function initModuleContextAsync(
   moduleName: string,
   context: Context,
@@ -87,8 +93,8 @@ export type ModuleInfo<T> = {
  */
 export type SpecifierProcessor<Transformed, Content> = (
   spec: ImportDeclaration['specifiers'][0],
-  node: ImportDeclaration,
-  moduleInfo: ModuleInfo<Content>
+  moduleInfo: ModuleInfo<Content>,
+  node: ImportDeclaration
 ) => Transformed
 
 /**
@@ -115,19 +121,19 @@ export type ImportSpecifierType =
  * @param loadTabs Set this to false to prevent tabs from being loaded even if a context is provided.
  * @param checkImports Pass true to enable checking for undefined imports, false to skip these checks
  * @param moduleLoader Function that takes the name of the module and returns its loaded representation.
- * @param symbolsLoader Function that takes a loaded module and returns a set containing its exported symbols
+ * @param symbolsLoader Function that takes a loaded module and returns a set containing its exported symbols. This is used for import checking
  * @param processors Functions for working with each type of import specifier.
  * @param usedIdentifiers Set containing identifiers already used in code. If null, namespacing is not conducted.
  * @returns The loaded modules, along with the transformed versions of the given nodes
  */
-export async function transformImportNodesAsync<Transformed, Content>(
+export async function transformImportNodesAsync<Transformed, LoadedModule>(
   nodes: ImportDeclaration[],
   context: Context | null,
   loadTabs: boolean,
   checkImports: boolean,
-  moduleLoader: (name: string, node?: Node) => Promise<Content>,
-  symbolsLoader: SymbolLoader<Content>,
-  processors: Record<ImportSpecifierType, SpecifierProcessor<Transformed, Content>>,
+  moduleLoader: (name: string, node?: Node) => Promise<LoadedModule>,
+  symbolsLoader: SymbolLoader<LoadedModule>,
+  processors: Record<ImportSpecifierType, SpecifierProcessor<Transformed, LoadedModule>>,
   usedIdentifiers?: Set<string>
 ) {
   const internalLoader = async (name: string, node?: Node) => {
@@ -181,7 +187,7 @@ export async function transformImportNodesAsync<Transformed, Content>(
       node.specifiers.forEach(spec => usedIdentifiers.add(spec.local.name))
     }
     return res
-  }, {} as Record<string, ModuleInfo<Content>>)
+  }, {} as Record<string, ModuleInfo<LoadedModule>>)
 
   // Wait for all module and symbol loading to finish
   await Promise.all(promises)
@@ -227,11 +233,11 @@ export async function transformImportNodesAsync<Transformed, Content>(
             }
             // Finally, transform that specifier into the form needed
             // by the runner
-            return processors[spec.type](spec, node, info)
+            return processors[spec.type](spec, info, node)
           })
         ),
         info
       }
     }
-  }, {} as Record<string, { info: ModuleInfo<Content>; content: Transformed[] }>)
+  }, {} as Record<string, { info: ModuleInfo<LoadedModule>; content: Transformed[] }>)
 }

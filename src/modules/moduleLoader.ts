@@ -2,14 +2,15 @@ import es from 'estree'
 import { memoize } from 'lodash'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
 
-import {
-  ModuleConnectionError,
-  ModuleInternalError,
-  ModuleNotFoundError
-} from '../errors/moduleErrors'
 import { Context } from '../types'
 import { wrapSourceModule } from '../utils/operators'
-import { ModuleBundle, ModuleDocumentation, ModuleFunctions, ModuleManifest } from './moduleTypes'
+import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from './errors'
+import type {
+  ModuleBundle,
+  ModuleDocumentation,
+  ModuleFunctions,
+  ModuleManifest
+} from './moduleTypes'
 import { getRequireProvider } from './requireProvider'
 
 // Supports both JSDom (Web Browser) environment and Node environment
@@ -47,21 +48,35 @@ export function httpGet(url: string): string {
  */
 export const memoizedGetModuleManifest = memoize(getModuleManifest)
 function getModuleManifest(): ModuleManifest {
-  const rawManifest = httpGet(`${MODULES_STATIC_URL}/modules.json`)
-  return JSON.parse(rawManifest)
+  try {
+    const rawManifest = httpGet(`${MODULES_STATIC_URL}/modules.json`)
+    return JSON.parse(rawManifest)
+  } catch (error) {
+    throw new ModuleConnectionError(error)
+  }
 }
 
-/**
- * Send a HTTP GET request to the modules endpoint to retrieve the specified file
- * @return String of module file contents
- */
-
-const memoizedGetModuleFileInternal = memoize(getModuleFile)
-export const memoizedGetModuleFile = (name: string, type: 'tab' | 'bundle' | 'json') =>
-  memoizedGetModuleFileInternal({ name, type })
-function getModuleFile({ name, type }: { name: string; type: 'tab' | 'bundle' | 'json' }): string {
-  return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js${type === 'json' ? 'on' : ''}`)
+export const memoizedGetBundle = memoize(getModuleBundle)
+function getModuleBundle(path: string) {
+  return httpGet(`${MODULES_STATIC_URL}/bundles/${path}.js`)
 }
+
+export const memoizedGetTab = memoize(getModuleTab)
+function getModuleTab(path: string) {
+  return httpGet(`${MODULES_STATIC_URL}/tabs/${path}.js`)
+}
+
+// /**
+//  * Send a HTTP GET request to the modules endpoint to retrieve the specified file
+//  * @return String of module file contents
+//  */
+
+// const memoizedGetModuleFileInternal = memoize(getModuleFile)
+// export const memoizedGetModuleFile = (name: string, type: 'tab' | 'bundle' | 'json') =>
+//   memoizedGetModuleFileInternal({ name, type })
+// function getModuleFile({ name, type }: { name: string; type: 'tab' | 'bundle' | 'json' }): string {
+//   return httpGet(`${MODULES_STATIC_URL}/${type}s/${name}.js${type === 'json' ? 'on' : ''}`)
+// }
 
 /**
  * Loads the respective module package (functions from the module)
@@ -70,7 +85,12 @@ function getModuleFile({ name, type }: { name: string; type: 'tab' | 'bundle' | 
  * @param node import declaration node
  * @returns the module's functions object
  */
-export function loadModuleBundle(path: string, context: Context, node?: es.Node): ModuleFunctions {
+export function loadModuleBundle(
+  path: string,
+  context: Context,
+  wrapModules: boolean,
+  node?: es.Node
+): ModuleFunctions {
   const modules = memoizedGetModuleManifest()
 
   // Check if the module exists
@@ -78,9 +98,10 @@ export function loadModuleBundle(path: string, context: Context, node?: es.Node)
   if (moduleList.includes(path) === false) throw new ModuleNotFoundError(path, node)
 
   // Get module file
-  const moduleText = memoizedGetModuleFile(path, 'bundle')
+  const moduleText = memoizedGetBundle(path)
   try {
     const moduleBundle: ModuleBundle = eval(moduleText)
+    if (wrapModules) return moduleBundle(getRequireProvider(context))
     return wrapSourceModule(path, moduleBundle, getRequireProvider(context))
   } catch (error) {
     // console.error("bundle error: ", error)
@@ -105,7 +126,7 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   const sideContentTabPaths: string[] = modules[path].tabs
   // Load the tabs for the current module
   return sideContentTabPaths.map(path => {
-    const rawTabFile = memoizedGetModuleFile(path, 'tab')
+    const rawTabFile = memoizedGetTab(path)
     try {
       return eval(rawTabFile)
     } catch (error) {
@@ -115,14 +136,14 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   })
 }
 
-export const memoizedloadModuleDocs = memoize(loadModuleDocs)
+export const memoizedGetModuleDocs = memoize(loadModuleDocs)
 export function loadModuleDocs(path: string, node?: es.Node) {
   try {
     const modules = memoizedGetModuleManifest()
     // Check if the module exists
     const moduleList = Object.keys(modules)
     if (!moduleList.includes(path)) throw new ModuleNotFoundError(path, node)
-    const result = getModuleFile({ name: path, type: 'json' })
+    const result = httpGet(`${MODULES_STATIC_URL}/jsons/${path}.json`)
     return JSON.parse(result) as ModuleDocumentation
   } catch (error) {
     console.warn('Failed to load module documentation')

@@ -1,13 +1,13 @@
 import * as jsslang from '..'
 import * as stdlib from '../stdlib'
-import type { Context } from '../types'
+import * as types from '../types'
 
 /**
  * Returns a function that simulates the job of Node's `require`. The require
  * provider is then used by Source modules to access the context and js-slang standard
  * library
  */
-export const getRequireProvider = (context: Context) => (x: string) => {
+export const getRequireProvider = (context: types.Context) => (x: string) => {
   const pathSegments = x.split('/')
 
   const recurser = (obj: Record<string, any>, segments: string[]): any => {
@@ -21,7 +21,8 @@ export const getRequireProvider = (context: Context) => (x: string) => {
     'js-slang': {
       ...jsslang,
       dist: {
-        stdlib
+        stdlib,
+        types
       },
       context
     }

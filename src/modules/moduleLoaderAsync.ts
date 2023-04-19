@@ -2,8 +2,8 @@ import { Node } from 'estree'
 import { memoize } from 'lodash'
 
 import type { Context } from '..'
-import { ModuleInternalError, ModuleNotFoundError } from '../errors/moduleErrors'
 import { wrapSourceModule } from '../utils/operators'
+import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from './errors'
 import { httpGet, MODULES_STATIC_URL } from './moduleLoader'
 import type { ModuleBundle, ModuleDocumentation, ModuleManifest } from './moduleTypes'
 import { getRequireProvider } from './requireProvider'
@@ -24,8 +24,12 @@ async function httpGetAsync(path: string) {
  */
 export const memoizedGetModuleManifestAsync = memoize(getModuleManifestAsync)
 async function getModuleManifestAsync(): Promise<ModuleManifest> {
-  const rawManifest = await httpGetAsync(`${MODULES_STATIC_URL}/modules.json`)
-  return JSON.parse(rawManifest)
+  try {
+    const rawManifest = await httpGetAsync(`${MODULES_STATIC_URL}/modules.json`)
+    return JSON.parse(rawManifest)
+  } catch (error) {
+    throw new ModuleConnectionError(error)
+  }
 }
 
 async function checkModuleExists(moduleName: string, node?: Node) {
@@ -79,12 +83,19 @@ export async function loadModuleTabsAsync(moduleName: string, node?: Node) {
   )
 }
 
-export async function loadModuleBundleAsync(moduleName: string, context: Context, node?: Node) {
+export async function loadModuleBundleAsync(
+  moduleName: string,
+  context: Context,
+  wrapModule: boolean,
+  node?: Node
+) {
   await checkModuleExists(moduleName, node)
   const moduleText = await memoizedGetModuleBundleAsync(moduleName)
   try {
     const moduleBundle: ModuleBundle = eval(moduleText)
-    return wrapSourceModule(moduleName, moduleBundle, getRequireProvider(context))
+
+    if (wrapModule) return wrapSourceModule(moduleName, moduleBundle, getRequireProvider(context))
+    return moduleBundle(getRequireProvider(context))
   } catch (error) {
     // console.error("bundle error: ", error)
     throw new ModuleInternalError(moduleName, error, node)
