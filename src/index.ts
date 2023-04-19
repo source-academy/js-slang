@@ -44,6 +44,7 @@ import {
 } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
+import { decodeError, decodeValue } from './parser/scheme'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -332,7 +333,11 @@ export async function runFilesInContext(
     return resolvedErrorPromise
   }
 
-  if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.FULL_TS) {
+  if (
+    context.chapter === Chapter.FULL_JS ||
+    context.chapter === Chapter.FULL_TS ||
+    context.chapter === Chapter.PYTHON_1
+  ) {
     const program = parse(code, context)
     if (program === null) {
       return resolvedErrorPromise
@@ -344,11 +349,33 @@ export async function runFilesInContext(
     return htmlRunner(code, context, options)
   }
 
+  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
+    // If the language is scheme, we need to format all errors and returned values first
+    // Use the standard runner to get the result
+    const evaluated: Promise<Result> = sourceFilesRunner(
+      files,
+      entrypointFilePath,
+      context,
+      options
+    ).then(result => {
+      // Format the returned value
+      if (result.status === 'finished') {
+        return {
+          ...result,
+          value: decodeValue(result.value)
+        } as Finished
+      }
+      return result
+    })
+    // Format all errors in the context
+    context.errors = context.errors.map(error => decodeError(error))
+    return evaluated
+  }
+
   // FIXME: Clean up state management so that the `parseError` function is pure.
   //        This is not a huge priority, but it would be good not to make use of
   //        global state.
   verboseErrors = hasVerboseErrors(code)
-
   return sourceFilesRunner(files, entrypointFilePath, context, options)
 }
 

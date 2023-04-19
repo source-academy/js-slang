@@ -212,12 +212,8 @@ async function runNative(
   }
 }
 
-async function runECEvaluator(
-  program: es.Program,
-  context: Context,
-  options: IOptions
-): Promise<Result> {
-  const value = await ECEvaluate(program, context, options.importOptions)
+function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+  const value = ECEvaluate(program, context, options)
   return ECEResultPromise(context, value)
 }
 

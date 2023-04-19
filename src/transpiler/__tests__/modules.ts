@@ -1,4 +1,5 @@
 import type { Identifier, Literal, MemberExpression, VariableDeclaration } from 'estree'
+import type { FunctionLike, MockedFunction } from 'jest-mock'
 
 import { runInContext } from '../..'
 import { mockContext } from '../../mocks/context'
@@ -9,28 +10,35 @@ import { Chapter, Value } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { transformImportDeclarations, transpile } from '../transpiler'
 
-jest.mock('lodash', () => ({
-  ...jest.requireActual('lodash'),
-  memoize: jest.fn(f => f)
+jest.mock('../../modules/moduleLoader', () => ({
+  ...jest.requireActual('../../modules/moduleLoader'),
+  memoizedGetModuleFile: jest.fn(),
+  memoizedGetModuleManifest: jest.fn().mockReturnValue({
+    one_module: {
+      tabs: []
+    },
+    another_module: {
+      tabs: []
+    }
+  }),
+  memoizedloadModuleDocs: jest.fn().mockReturnValue({
+    foo: 'foo',
+    bar: 'bar'
+  })
 }))
 
-jest.spyOn(moduleLoader, 'memoizedGetModuleManifestAsync').mockResolvedValue({
-  one_module: { tabs: [] },
-  another_module: { tabs: [] }
-})
-jest.spyOn(moduleLoader, 'memoizedGetModuleBundleAsync').mockResolvedValue(`
-  require => ({
-    foo: () => 'foo',
-    bar: () => 'bar'
-  })
-`)
-jest
-  .spyOn(moduleLoader, 'memoizedGetModuleDocsAsync')
-  .mockImplementation(name =>
-    Promise.resolve<Record<string, string>>(name === 'one_module' ? { foo: 'foo' } : { bar: 'bar' })
-  )
+const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
+const mockedModuleFile = asMock(memoizedGetModuleFile)
 
 test('Transform import declarations into variable declarations', async () => {
+  mockedModuleFile.mockImplementation((name, type) => {
+    if (type === 'json') {
+      return name === 'one_module' ? "{ foo: 'foo' }" : "{ bar: 'bar' }"
+    } else {
+      return 'undefined'
+    }
+  })
+
   const code = stripIndent`
     import { foo } from "test/one_module";
     import { bar } from "test/another_module";
@@ -39,9 +47,9 @@ test('Transform import declarations into variable declarations', async () => {
   const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
   const [, importNodes] = await transformImportDeclarations(program, context, new Set<string>(), {
-    checkImports: false,
+    checkImports: true,
+    wrapModules: true,
     loadTabs: false,
-    wrapModules: false
   })
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
@@ -52,9 +60,17 @@ test('Transform import declarations into variable declarations', async () => {
 })
 
 test('Transpiler accounts for user variable names when transforming import statements', async () => {
+  mockedModuleFile.mockImplementation((name, type) => {
+    if (type === 'json') {
+      return name === 'one_module' ? "{ foo: 'foo' }" : "{ bar: 'bar' }"
+    } else {
+      return 'undefined'
+    }
+  })
+
   const code = stripIndent`
-    import { foo } from "one_module";
-    import { bar as __MODULE__2 } from "another_module";
+    import { foo } from "test/one_module";
+    import { bar as __MODULE__2 } from "test/another_module";
     const __MODULE__ = 'test0';
     const __MODULE__0 = 'test1';
     foo(bar);
@@ -133,6 +149,28 @@ test('importing undefined variables should throw errors', async () => {
   const program = parse(code, context)!
   try {
     await transpile(program, context, false)
+  } catch (error) {
+    expect(error).toBeInstanceOf(UndefinedImportError)
+    expect((error as UndefinedImportError).symbol).toEqual('hello')
+  }
+})
+
+test('importing undefined variables should throw errors', () => {
+  mockedModuleFile.mockImplementation((name, type) => {
+    if (type === 'json') {
+      return '{}'
+    } else {
+      return 'undefined'
+    }
+  })
+
+  const code = stripIndent`
+    import { hello } from 'one_module';
+  `
+  const context = mockContext(Chapter.SOURCE_4)
+  const program = parse(code, context)!
+  try {
+    transpile(program, context, false)
   } catch (error) {
     expect(error).toBeInstanceOf(UndefinedImportError)
     expect((error as UndefinedImportError).symbol).toEqual('hello')
