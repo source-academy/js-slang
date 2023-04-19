@@ -12,7 +12,7 @@ import {
   UndefinedNamespaceImportError
 } from '../modules/errors'
 import { loadModuleBundle } from '../modules/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
+import { ImportTransformOptions, ModuleFunctions } from '../modules/moduleTypes'
 import { initModuleContext } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
@@ -717,8 +717,7 @@ function getNonEmptyEnv(environment: Environment): Environment {
 export function* evaluateProgram(
   program: es.Program,
   context: Context,
-  checkImports: boolean,
-  loadTabs: boolean
+  { checkImports, loadTabs, wrapModules }: ImportTransformOptions
 ) {
   yield* visit(context, program)
 
@@ -745,7 +744,7 @@ export function* evaluateProgram(
 
       if (!(moduleName in moduleFunctions)) {
         initModuleContext(moduleName, context, loadTabs, node)
-        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
+        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, wrapModules, node)
       }
 
       const functions = moduleFunctions[moduleName]

@@ -10,6 +10,7 @@ import {
   memoizedGetModuleBundleAsync,
   memoizedGetModuleDocsAsync
 } from '../modules/moduleLoaderAsync'
+import { ImportTransformOptions } from '../modules/moduleTypes'
 import { transformImportNodesAsync } from '../modules/utils'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/astCreator'
@@ -46,9 +47,7 @@ export async function transformImportDeclarations(
   program: es.Program,
   context: Context | null,
   usedIdentifiers: Set<string>,
-  checkImports: boolean,
-  loadTabs: boolean,
-  nativeId?: es.Identifier,
+  { checkImports, loadTabs, wrapModules }: ImportTransformOptions,
   useThis: boolean = false
 ): Promise<[string, es.VariableDeclaration[], es.Program['body']]> {
   const [importNodes, otherNodes] = partition(
@@ -70,19 +69,19 @@ export async function transformImportDeclarations(
       return new Set(Object.keys(docs))
     },
     {
-      ImportSpecifier(specifier: es.ImportSpecifier, node, { namespaced }) {
+      ImportSpecifier(specifier: es.ImportSpecifier, { namespaced }) {
         return create.constantDeclaration(
           specifier.local.name,
           create.memberExpression(create.identifier(namespaced!), specifier.imported.name)
         )
       },
-      ImportDefaultSpecifier(specifier, node, { namespaced }) {
+      ImportDefaultSpecifier(specifier, { namespaced }) {
         return create.constantDeclaration(
           specifier.local.name,
           create.memberExpression(create.identifier(namespaced!), 'default')
         )
       },
-      ImportNamespaceSpecifier(specifier, node, { namespaced }) {
+      ImportNamespaceSpecifier(specifier, { namespaced }) {
         return create.constantDeclaration(specifier.local.name, create.identifier(namespaced!))
       }
     },
@@ -102,8 +101,8 @@ export async function transformImportDeclarations(
     ) => {
       prefixes.push(`// ${moduleName} module`)
 
-      const modifiedText = nativeId
-        ? `${nativeId.name}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
+      const modifiedText = wrapModules
+        ? `${NATIVE_STORAGE_ID}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
         : `(${text})(${REQUIRE_PROVIDER_ID})`
       prefixes.push(`const ${namespaced} = ${modifiedText}\n`)
 
@@ -111,41 +110,6 @@ export async function transformImportDeclarations(
     },
     [[], []] as [string[], es.VariableDeclaration[]]
   )
-
-  // const declNodes = Object.entries(moduleInfos).flatMap(([moduleName, { nodes, text, docs }]) => {
-  //   const namespaced = getUniqueId(usedIdentifiers, '__MODULE__')
-  //   prefix.push(`// ${moduleName} module`)
-
-  //   const modifiedText = nativeId
-  //     ? `${nativeId.name}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
-  //     : `(${text})(${REQUIRE_PROVIDER_ID})`
-  //   prefix.push(`const ${namespaced} = ${modifiedText}\n`)
-
-  //   return nodes.flatMap(node =>
-  //     node.specifiers.map(specifier => {
-  //       if (specifier.type !== 'ImportSpecifier') {
-  //         throw new Error(`Expected import specifier, found: ${specifier.type}`)
-  //       }
-
-  //       if (checkImports) {
-  //         if (!docs) {
-  //           console.warn(`Failed to load docs for ${moduleName}, skipping typechecking`)
-  //         } else if (!(specifier.imported.name in docs)) {
-  //           throw new UndefinedImportError(specifier.imported.name, moduleName, node)
-  //         }
-  //       }
-
-  //       // Convert each import specifier to its corresponding local variable declaration
-  //       return create.constantDeclaration(
-  //         specifier.local.name,
-  //         create.memberExpression(
-  //           create.identifier(`${useThis ? 'this.' : ''}${namespaced}`),
-  //           specifier.imported.name
-  //         )
-  //       )
-  //     })
-  //   )
-  // })
 
   return [prefix.join('\n'), declNodes, otherNodes]
 }
@@ -658,9 +622,11 @@ async function transpileToSource(
     program,
     context,
     usedIdentifiers,
-    true,
-    true,
-    globalIds.native
+    {
+      checkImports: true,
+      loadTabs: true,
+      wrapModules: true
+    }
   )
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
 
@@ -704,9 +670,11 @@ async function transpileToFullJS(
     program,
     context,
     usedIdentifiers,
-    false,
-    true,
-    wrapSourceModules ? globalIds.native : undefined
+    {
+      checkImports: false,
+      loadTabs: true,
+      wrapModules: false
+    }
   )
 
   const transpiledProgram: es.Program = create.program([

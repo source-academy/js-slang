@@ -31,6 +31,7 @@ import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
 import { CannotFindModuleError } from './errors/localImportErrors'
 import { validateFilePath } from './localImports/filePaths'
 import preprocessFileImports from './localImports/preprocessor'
+import { ImportTransformOptions } from './modules/moduleTypes'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
 import { parseWithComments } from './parser/utils'
@@ -54,6 +55,8 @@ export interface IOptions {
   useSubst: boolean
   isPrelude: boolean
   throwInfiniteLoops: boolean
+
+  importOptions: ImportTransformOptions
 }
 
 // needed to work on browsers

@@ -38,13 +38,11 @@ test('Transform import declarations into variable declarations', async () => {
   `
   const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
-  const [, importNodes] = await transformImportDeclarations(
-    program,
-    context,
-    new Set<string>(),
-    false,
-    false
-  )
+  const [, importNodes] = await transformImportDeclarations(program, context, new Set<string>(), {
+    checkImports: false,
+    loadTabs: false,
+    wrapModules: false
+  })
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
   expect((importNodes[0].declarations[0].id as Identifier).name).toEqual('foo')
@@ -67,8 +65,11 @@ test('Transpiler accounts for user variable names when transforming import state
     program,
     context,
     new Set<string>(['__MODULE__', '__MODULE__0']),
-    false,
-    false
+    {
+      checkImports: false,
+      loadTabs: false,
+      wrapModules: false
+    }
   )
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
@@ -122,4 +123,18 @@ test('Module loading functionality', async () => {
   expect(result.status).toEqual('finished')
 
   expect((result as Value).value).toEqual('foo')
+})
+
+test('importing undefined variables should throw errors', async () => {
+  const code = stripIndent`
+    import { hello } from 'one_module';
+  `
+  const context = mockContext(Chapter.SOURCE_4)
+  const program = parse(code, context)!
+  try {
+    await transpile(program, context, false)
+  } catch (error) {
+    expect(error).toBeInstanceOf(UndefinedImportError)
+    expect((error as UndefinedImportError).symbol).toEqual('hello')
+  }
 })

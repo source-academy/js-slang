@@ -1,7 +1,7 @@
 import { createEmptyContext } from '../../createContext'
-import { ModuleConnectionError, ModuleInternalError } from '../../errors/moduleErrors'
 import { Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
+import { ModuleConnectionError, ModuleInternalError } from '../errors'
 import * as moduleLoader from '../moduleLoader'
 
 // Mock memoize function from lodash
@@ -80,7 +80,7 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     const sampleResponse = `(function () {'use strict'; function index(_params) { return { }; } return index; })();`
     const correctUrl = moduleLoader.MODULES_STATIC_URL + `/bundles/${validModuleBundle}.js`
     const mockedXMLHttpRequest = mockXMLHttpRequest({ responseText: sampleResponse })
-    const response = moduleLoader.memoizedGetModuleFile(validModuleBundle, 'bundle')
+    const response = moduleLoader.memoizedGetBundle(validModuleBundle)
     expect(mockedXMLHttpRequest.open).toHaveBeenCalledTimes(1)
     expect(mockedXMLHttpRequest.open).toHaveBeenCalledWith('GET', correctUrl, false)
     expect(mockedXMLHttpRequest.send).toHaveBeenCalledTimes(1)
@@ -93,7 +93,7 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     const sampleResponse = `(function (React) {});`
     const correctUrl = moduleLoader.MODULES_STATIC_URL + `/tabs/${validModuleTab}.js`
     const mockedXMLHttpRequest = mockXMLHttpRequest({ responseText: sampleResponse })
-    const response = moduleLoader.memoizedGetModuleFile(validModuleTab, 'tab')
+    const response = moduleLoader.memoizedGetTab(validModuleTab)
     expect(mockedXMLHttpRequest.open).toHaveBeenCalledTimes(1)
     expect(mockedXMLHttpRequest.open).toHaveBeenCalledWith('GET', correctUrl, false)
     expect(mockedXMLHttpRequest.send).toHaveBeenCalledTimes(1)
@@ -112,7 +112,8 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     mockXMLHttpRequest({ responseText: sampleResponse })
     const loadedBundle = moduleLoader.loadModuleBundle(
       'module',
-      createEmptyContext(1, Variant.DEFAULT, [])
+      createEmptyContext(1, Variant.DEFAULT, []),
+      false
     )
     expect(loadedBundle.make_empty_array()).toEqual([])
   })
@@ -123,7 +124,7 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     const wrongModuleText = `export function es6_function(params) {};`
     mockXMLHttpRequest({ responseText: wrongModuleText })
     expect(() =>
-      moduleLoader.loadModuleBundle('module', createEmptyContext(1, Variant.DEFAULT, []))
+      moduleLoader.loadModuleBundle('module', createEmptyContext(1, Variant.DEFAULT, []), false)
     ).toThrow(ModuleInternalError)
   })
 

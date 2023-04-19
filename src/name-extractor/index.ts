@@ -2,9 +2,9 @@ import * as es from 'estree'
 
 import { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
-import { ModuleConnectionError, ModuleNotFoundError } from '../errors/moduleErrors'
 import { findAncestors, findIdentifierNode } from '../finder'
-import { memoizedloadModuleDocs } from '../modules/moduleLoader'
+import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
+import { memoizedGetModuleDocs } from '../modules/moduleLoader'
 import syntaxBlacklist from '../parser/source/syntax'
 
 export interface NameDeclaration {
@@ -19,7 +19,7 @@ const KIND_FUNCTION = 'func'
 const KIND_PARAM = 'param'
 const KIND_CONST = 'const'
 
-function isImportDeclaration(node: es.Node): boolean {
+function isImportDeclaration(node: es.Node): node is es.ImportDeclaration {
   return node.type === 'ImportDeclaration'
 }
 
@@ -311,7 +311,7 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))
 
       try {
-        const docs = memoizedloadModuleDocs(node.source.value as string, node)
+        const docs = memoizedGetModuleDocs(node.source.value as string, node)
 
         if (!docs) {
           return specs.map(spec => ({

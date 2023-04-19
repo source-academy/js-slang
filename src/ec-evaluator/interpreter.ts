@@ -14,6 +14,7 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
+import { ImportTransformOptions } from '../modules/moduleTypes'
 import { transformImportNodesAsync } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
@@ -92,11 +93,15 @@ export class Stash extends Stack<Value> {
  * @param context The context to evaluate the program in.
  * @returns The result of running the ECE machine.
  */
-export async function evaluate(program: es.Program, context: Context): Promise<Value> {
+export async function evaluate(
+  program: es.Program,
+  context: Context,
+  options: ImportTransformOptions
+): Promise<Value> {
   try {
     context.runtime.isRunning = true
 
-    const nonImportNodes = await evaluateImports(program, context, true, true)
+    const nonImportNodes = await evaluateImports(program, context, options)
 
     context.runtime.agenda = new Agenda({
       ...program,
@@ -134,8 +139,7 @@ export function resumeEvaluate(context: Context) {
 async function evaluateImports(
   program: es.Program,
   context: Context,
-  loadTabs: boolean,
-  checkImports: boolean
+  { loadTabs, checkImports, wrapModules }: ImportTransformOptions
 ) {
   const [importNodes, otherNodes] = partition(
     program.body,
@@ -151,18 +155,18 @@ async function evaluateImports(
       context,
       loadTabs,
       checkImports,
-      (name, node) => loadModuleBundleAsync(name, context, node),
+      (name, node) => loadModuleBundleAsync(name, context, wrapModules, node),
       (name, info) => Promise.resolve(new Set(Object.keys(info.content))),
       {
-        ImportSpecifier: (spec: es.ImportSpecifier, node, info) => {
+        ImportSpecifier: (spec: es.ImportSpecifier, info, node) => {
           declareIdentifier(context, spec.local.name, node, environment)
           defineVariable(context, spec.local.name, info.content![spec.imported.name], true, node)
         },
-        ImportDefaultSpecifier: (spec, node, info) => {
+        ImportDefaultSpecifier: (spec, info, node) => {
           declareIdentifier(context, spec.local.name, node, environment)
           defineVariable(context, spec.local.name, info.content!['default'], true, node)
         },
-        ImportNamespaceSpecifier: (spec, node, info) => {
+        ImportNamespaceSpecifier: (spec, info, node) => {
           declareIdentifier(context, spec.local.name, node, environment)
           defineVariable(context, spec.local.name, info.content!, true, node)
         }

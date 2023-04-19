@@ -34,8 +34,8 @@ export function is_pair<H, T>(x: any): x is Pair<H, T> {
 // head returns the first component of the given pair,
 // throws an exception if the argument is not a pair
 // LOW-LEVEL FUNCTION, NOT SOURCE
-export function head<H, T>(xs: any): H {
-  if (is_pair<H, T>(xs)) {
+export function head<T extends Pair<any, any>>(xs: any): T[0] {
+  if (is_pair<T[0], T[1]>(xs)) {
     return xs[0]
   } else {
     throw new Error('head(xs) expects a pair as argument xs, but encountered ' + stringify(xs))
@@ -45,8 +45,8 @@ export function head<H, T>(xs: any): H {
 // tail returns the second component of the given pair
 // throws an exception if the argument is not a pair
 // LOW-LEVEL FUNCTION, NOT SOURCE
-export function tail<H, T>(xs: any): T {
-  if (is_pair<H, T>(xs)) {
+export function tail<T extends Pair<any, any>>(xs: any): T[1] {
+  if (is_pair<T[0], T[1]>(xs)) {
     return xs[1]
   } else {
     throw new Error('tail(xs) expects a pair as argument xs, but encountered ' + stringify(xs))
@@ -129,7 +129,7 @@ export function set_tail(xs: any, x: any) {
   }
 }
 
-export function accumulate<T, U>(acc: (each: T, result: U) => any, init: U, xs: List): U {
+export function accumulate<T, U>(acc: (each: T, result: U) => U, init: U, xs: List): U {
   const recurser = (xs: List, result: U): U => {
     if (is_null(xs)) return result
 

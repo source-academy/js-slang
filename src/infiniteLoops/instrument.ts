@@ -581,10 +581,11 @@ async function handleImports(programs: es.Program[]): Promise<[string, string[]]
         program,
         null,
         new Set(),
-        false,
-        false,
-        undefined, // create.identifier(NATIVE_STORAGE_ID),
-        false
+        {
+          checkImports: false,
+          loadTabs: false,
+          wrapModules: false
+        }
       )
 
       program.body = (declNodes as es.Program['body']).concat(otherNodes)

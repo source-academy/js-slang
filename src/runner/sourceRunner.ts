@@ -47,7 +47,12 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   originalMaxExecTime: 1000,
   useSubst: false,
   isPrelude: false,
-  throwInfiniteLoops: true
+  throwInfiniteLoops: true,
+  importOptions: {
+    loadTabs: true,
+    checkImports: true,
+    wrapModules: true
+  }
 }
 
 let previousCode: {
@@ -104,7 +109,7 @@ function runSubstitution(
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context, true, true)
+  let it = evaluate(program, context, options.importOptions)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
     it = nonDetEvaluate(program, context)
@@ -148,6 +153,7 @@ async function runNative(
     }
 
     ;({ transpiled, sourceMapJson } = await transpile(transpiledProgram, context))
+    // console.log(transpiled)
     let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
@@ -211,7 +217,7 @@ async function runECEvaluator(
   context: Context,
   options: IOptions
 ): Promise<Result> {
-  const value = await ECEvaluate(program, context)
+  const value = await ECEvaluate(program, context, options.importOptions)
   return ECEResultPromise(context, value)
 }
 
