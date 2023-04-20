@@ -104,7 +104,7 @@ describe('preprocessFileImports', () => {
     expect(stripLocationInfo(actualProgram)).toEqual(stripLocationInfo(expectedProgram))
   }
 
-  it('returns undefined if the entrypoint file does not exist', () => {
+  it('returns undefined & adds CannotFindModuleError to context if the entrypoint file does not exist', () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;'
     }
@@ -115,7 +115,7 @@ describe('preprocessFileImports', () => {
     )
   })
 
-  it('returns undefined if an imported file does not exist', () => {
+  it('returns undefined & adds CannotFindModuleError to context if an imported file does not exist', () => {
     const files: Record<string, string> = {
       '/a.js': `import { x } from './non-existent-file.js';`
     }
