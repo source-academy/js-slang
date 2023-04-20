@@ -110,6 +110,20 @@ describe('preprocessFileImports', () => {
     }
     const actualProgram = preprocessFileImports(files, '/non-existent-file.js', actualContext)
     expect(actualProgram).toBeUndefined()
+    expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
+      `"Cannot find module '/non-existent-file.js'."`
+    )
+  })
+
+  it('returns undefined if an imported file does not exist', () => {
+    const files: Record<string, string> = {
+      '/a.js': `import { x } from './non-existent-file.js';`
+    }
+    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
+    expect(actualProgram).toBeUndefined()
+    expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
+      `"Cannot find module '/non-existent-file.js'."`
+    )
   })
 
   it('returns the same AST if the entrypoint file does not contain import/export statements', () => {
