@@ -1,4 +1,11 @@
-import type { ExportAllDeclaration, ExportNamedDeclaration, ImportDeclaration, Node } from 'estree'
+import type {
+  ExportAllDeclaration,
+  ExportSpecifier,
+  ImportDefaultSpecifier,
+  ImportNamespaceSpecifier,
+  ImportSpecifier,
+  Node
+} from 'estree'
 
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 
@@ -54,7 +61,7 @@ export class UndefinedImportError extends RuntimeSourceError {
   constructor(
     public readonly symbol: string,
     public readonly moduleName: string,
-    node?: ImportDeclaration | ExportNamedDeclaration | ExportAllDeclaration
+    node?: ImportSpecifier | ExportSpecifier
   ) {
     super(node)
   }
@@ -71,7 +78,7 @@ export class UndefinedImportError extends RuntimeSourceError {
 export class UndefinedDefaultImportError extends RuntimeSourceError {
   constructor(
     public readonly moduleName: string,
-    node?: ImportDeclaration | ExportNamedDeclaration | ExportAllDeclaration
+    node?: ImportSpecifier | ImportDefaultSpecifier | ExportSpecifier
   ) {
     super(node)
   }
@@ -87,7 +94,7 @@ export class UndefinedDefaultImportError extends RuntimeSourceError {
 export class UndefinedNamespaceImportError extends RuntimeSourceError {
   constructor(
     public readonly moduleName: string,
-    node?: ImportDeclaration | ExportNamedDeclaration | ExportAllDeclaration
+    node?: ImportNamespaceSpecifier | ExportAllDeclaration
   ) {
     super(node)
   }

@@ -153,7 +153,7 @@ async function runNative(
     }
 
     ;({ transpiled, sourceMapJson } = await transpile(transpiledProgram, context))
-    // console.log(transpiled)
+    console.log(transpiled)
     let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
@@ -308,7 +308,7 @@ export async function sourceFilesRunner(
   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
   previousCode = currentCode
 
-  const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
+  const preprocessedProgram = await preprocessFileImports(files, entrypointFilePath, context)
   if (!preprocessedProgram) {
     return resolvedErrorPromise
   }

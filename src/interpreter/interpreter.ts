@@ -755,7 +755,7 @@ export function* evaluateProgram(
         switch (spec.type) {
           case 'ImportSpecifier': {
             if (checkImports && !(spec.imported.name in functions)) {
-              throw new UndefinedImportError(spec.imported.name, moduleName, node)
+              throw new UndefinedImportError(spec.imported.name, moduleName, spec)
             }
 
             defineVariable(context, spec.local.name, functions[spec.imported.name], true)
@@ -763,7 +763,7 @@ export function* evaluateProgram(
           }
           case 'ImportDefaultSpecifier': {
             if (checkImports && !('default' in functions)) {
-              throw new UndefinedDefaultImportError(moduleName, node)
+              throw new UndefinedDefaultImportError(moduleName, spec)
             }
 
             defineVariable(context, spec.local.name, functions['default'], true)
@@ -771,7 +771,7 @@ export function* evaluateProgram(
           }
           case 'ImportNamespaceSpecifier': {
             if (checkImports && funcCount === 0) {
-              throw new UndefinedNamespaceImportError(moduleName, node)
+              throw new UndefinedNamespaceImportError(moduleName, spec)
             }
 
             defineVariable(context, spec.local.name, functions, true)

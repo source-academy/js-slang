@@ -9,6 +9,7 @@
 import * as es from 'estree'
 import { partition, uniqueId } from 'lodash'
 
+import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -61,7 +62,6 @@ import {
   setVariable,
   Stack
 } from './utils'
-import { IOptions } from '..'
 
 /**
  * The agenda is a list of commands that still needs to be executed by the machine.

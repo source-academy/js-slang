@@ -4,6 +4,7 @@ import * as _ from 'lodash'
 import { createImportDeclaration, createLiteral } from '../constructors/baseConstructors'
 import { cloneAndStripImportSpecifier } from '../constructors/contextSpecificConstructors'
 import { isImportDeclaration } from '../typeGuards'
+import { isSourceModule } from './removeNonSourceModuleImports'
 
 /**
  * Hoists import declarations to the top of the program & merges duplicate
@@ -78,4 +79,94 @@ export const hoistAndMergeImports = (program: es.Program): void => {
 
   // Hoist the merged import declarations to the top of the program body.
   program.body = [...mergedImportDeclarations, ...nonImportDeclarations]
+}
+
+export default function hoistAndMergeImportsNew(programs: es.Program[]) {
+  const allNodes = programs.flatMap(({ body }) => body)
+
+  const importNodes = allNodes.filter(
+    (node): node is es.ImportDeclaration => node.type === 'ImportDeclaration'
+  )
+  const importsToSpecifiers = new Map<string, Map<string, Set<string>>>()
+  for (const node of importNodes) {
+    const source = node.source!.value as string
+    // We no longer need imports from non-source modules, so we can just ignore them
+    if (!isSourceModule(source)) continue
+
+    if (!importsToSpecifiers.has(source)) {
+      importsToSpecifiers.set(source, new Map())
+    }
+
+    const specifierMap = importsToSpecifiers.get(source)!
+    node.specifiers.forEach(spec => {
+      let importingName: string
+      switch (spec.type) {
+        case 'ImportSpecifier': {
+          importingName = spec.imported.name
+          break
+        }
+        case 'ImportDefaultSpecifier': {
+          importingName = 'default'
+          break
+        }
+        case 'ImportNamespaceSpecifier': {
+          // TODO handle
+          throw new Error()
+        }
+      }
+
+      if (!specifierMap.has(importingName)) {
+        specifierMap.set(importingName, new Set())
+      }
+      specifierMap.get(importingName)!.add(spec.local.name)
+    })
+  }
+
+  // Every distinct source module being imported is given its own ImportDeclaration node
+  const importDeclarations = Array.from(importsToSpecifiers.entries()).map(
+    ([moduleName, imports]) => {
+      // Across different modules, the user may choose to alias some of the declarations, so we keep track,
+      // of all the different aliases used for each unique imported symbol
+      const specifiers = Array.from(imports.entries()).flatMap(([importedName, aliases]) => {
+        if (importedName === 'default') {
+          return Array.from(aliases).map(
+            alias =>
+              ({
+                type: 'ImportDefaultSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: alias
+                }
+              } as es.ImportDefaultSpecifier)
+          ) as (es.ImportSpecifier | es.ImportDefaultSpecifier)[]
+        } else {
+          return Array.from(aliases).map(
+            alias =>
+              ({
+                type: 'ImportSpecifier',
+                imported: {
+                  type: 'Identifier',
+                  name: importedName
+                },
+                local: {
+                  type: 'Identifier',
+                  name: alias
+                }
+              } as es.ImportSpecifier)
+          )
+        }
+      })
+
+      const decl: es.ImportDeclaration = {
+        type: 'ImportDeclaration',
+        source: {
+          type: 'Literal',
+          value: moduleName
+        },
+        specifiers
+      }
+      return decl
+    }
+  )
+  return importDeclarations
 }

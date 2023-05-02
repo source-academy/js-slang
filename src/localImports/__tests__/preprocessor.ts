@@ -104,15 +104,15 @@ describe('preprocessFileImports', () => {
     expect(stripLocationInfo(actualProgram)).toEqual(stripLocationInfo(expectedProgram))
   }
 
-  it('returns undefined if the entrypoint file does not exist', () => {
+  it('returns undefined if the entrypoint file does not exist', async () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;'
     }
-    const actualProgram = preprocessFileImports(files, '/non-existent-file.js', actualContext)
+    const actualProgram = await preprocessFileImports(files, '/non-existent-file.js', actualContext)
     expect(actualProgram).toBeUndefined()
   })
 
-  it('returns the same AST if the entrypoint file does not contain import/export statements', () => {
+  it('returns the same AST if the entrypoint file does not contain import/export statements', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         function square(x) {
@@ -122,11 +122,11 @@ describe('preprocessFileImports', () => {
       `
     }
     const expectedCode = files['/a.js']
-    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
-  it('removes all export-related AST nodes', () => {
+  it('removes all export-related AST nodes', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         export const x = 42;
@@ -151,11 +151,11 @@ describe('preprocessFileImports', () => {
        return x * x * x;
       }
     `
-    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
-  it('ignores Source module imports & removes all non-Source module import-related AST nodes in the preprocessed program', () => {
+  it('ignores Source module imports & removes all non-Source module import-related AST nodes in the preprocessed program', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         import d, { a, b, c } from "source-module";
@@ -191,11 +191,11 @@ describe('preprocessFileImports', () => {
       const y = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "y");
       const z = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "z");
     `
-    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
-  it('collates Source module imports at the start of the top-level environment of the preprocessed program', () => {
+  it('collates Source module imports at the start of the top-level environment of the preprocessed program', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         import { b } from "./b.js";
@@ -243,7 +243,7 @@ describe('preprocessFileImports', () => {
 
       b;
     `
-    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
@@ -327,7 +327,7 @@ describe('preprocessFileImports', () => {
     `)
   })
 
-  it('returns a preprocessed program with all imports', () => {
+  it('returns a preprocessed program with all imports', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         import { a as x, b as y } from "./b.js";
@@ -392,7 +392,7 @@ describe('preprocessFileImports', () => {
 
       x + y;
     `
-    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 })

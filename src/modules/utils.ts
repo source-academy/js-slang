@@ -216,17 +216,17 @@ export async function transformImportNodesAsync<Transformed, LoadedModule>(
               switch (spec.type) {
                 case 'ImportSpecifier': {
                   if (!info.docs.has(spec.imported.name))
-                    throw new UndefinedImportError(spec.imported.name, moduleName, node)
+                    throw new UndefinedImportError(spec.imported.name, moduleName, spec)
                   break
                 }
                 case 'ImportDefaultSpecifier': {
                   if (!info.docs.has('default'))
-                    throw new UndefinedDefaultImportError(moduleName, node)
+                    throw new UndefinedDefaultImportError(moduleName, spec)
                   break
                 }
                 case 'ImportNamespaceSpecifier': {
                   if (info.docs.size === 0)
-                    throw new UndefinedNamespaceImportError(moduleName, node)
+                    throw new UndefinedNamespaceImportError(moduleName, spec)
                   break
                 }
               }

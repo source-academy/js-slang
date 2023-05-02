@@ -6,13 +6,14 @@ import { parse } from '../parser/parser'
 import { AcornOptions } from '../parser/types'
 import { Context } from '../types'
 import { isIdentifier } from '../utils/rttc'
+import performImportAnalysis, { ResolvedLocalModuleInfo } from './analyzer'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import { DirectedGraph } from './directedGraph'
 import {
   transformFilePathToValidFunctionName,
   transformFunctionNameToInvokedFunctionResultVariableName
 } from './filePaths'
-import { hoistAndMergeImports } from './transformers/hoistAndMergeImports'
+import hoistAndMergeImports from './transformers/hoistAndMergeImports'
 import { removeExports } from './transformers/removeExports'
 import {
   isSourceModule,
@@ -57,6 +58,116 @@ export const getImportedLocalModulePaths = (
     }
   })
   return importedLocalModuleNames
+}
+
+const newPreprocessor = async (
+  files: Partial<Record<string, string>>,
+  entrypointFilePath: string,
+  context: Context
+) => {
+  const { moduleInfos, topoOrder } = await performImportAnalysis(files, entrypointFilePath, context)
+
+  // We want to operate on the entrypoint program to get the eventual
+  // preprocessed program.
+  const { ast: entrypointProgram } = moduleInfos[entrypointFilePath] as ResolvedLocalModuleInfo
+  const entrypointDirPath = path.resolve(entrypointFilePath, '..')
+
+  // Create variables to hold the imported statements.
+  const entrypointProgramModuleDeclarations = entrypointProgram.body.filter(isModuleDeclaration)
+  const entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap =
+    getInvokedFunctionResultVariableNameToImportSpecifiersMap(
+      entrypointProgramModuleDeclarations,
+      entrypointDirPath
+    )
+  const entrypointProgramAccessImportStatements = createAccessImportStatements(
+    entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap
+  )
+
+  // Transform all programs into their equivalent function declaration
+  // except for the entrypoint program.
+  const functionDeclarations: Record<string, es.FunctionDeclaration> = {}
+  for (const [filePath, moduleInfo] of Object.entries(moduleInfos)) {
+    if (moduleInfo.type === 'source') continue
+
+    // The entrypoint program does not need to be transformed into its
+    // function declaration equivalent as its enclosing environment is
+    // simply the overall program's (constructed program's) environment.
+    if (filePath === entrypointFilePath) {
+      continue
+    }
+
+    const functionDeclaration = transformProgramToFunctionDeclaration(moduleInfo.ast, filePath)
+    const functionName = functionDeclaration.id?.name
+    if (functionName === undefined) {
+      throw new Error(
+        'A transformed function declaration is missing its name. This should never happen.'
+      )
+    }
+
+    functionDeclarations[functionName] = functionDeclaration
+  }
+
+  // Invoke each of the transformed functions and store the result in a variable.
+  const invokedFunctionResultVariableDeclarations: es.VariableDeclaration[] = []
+  topoOrder.forEach((filePath: string): void => {
+    // As mentioned above, the entrypoint program does not have a function
+    // declaration equivalent, so there is no need to process it.
+    if (filePath === entrypointFilePath) {
+      return
+    }
+
+    if (!filePath.startsWith('/')) return
+
+    const functionName = transformFilePathToValidFunctionName(filePath)
+    const invokedFunctionResultVariableName =
+      transformFunctionNameToInvokedFunctionResultVariableName(functionName)
+
+    const functionDeclaration = functionDeclarations[functionName]
+    const functionParams = functionDeclaration.params.filter(isIdentifier)
+    if (functionParams.length !== functionDeclaration.params.length) {
+      throw new Error(
+        'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
+      )
+    }
+
+    const invokedFunctionResultVariableDeclaration = createInvokedFunctionResultVariableDeclaration(
+      functionName,
+      invokedFunctionResultVariableName,
+      functionParams
+    )
+    invokedFunctionResultVariableDeclarations.push(invokedFunctionResultVariableDeclaration)
+  })
+
+  // Re-assemble the program.
+  const preprocessedProgram: es.Program = {
+    ...entrypointProgram,
+    body: [
+      // ...sourceModuleImports,
+      ...Object.values(functionDeclarations),
+      ...invokedFunctionResultVariableDeclarations,
+      ...entrypointProgramAccessImportStatements,
+      ...entrypointProgram.body
+    ]
+  }
+
+  // After this pre-processing step, all export-related nodes in the AST
+  // are no longer needed and are thus removed.
+  removeExports(preprocessedProgram)
+
+  // Finally, we need to hoist all remaining imports to the top of the
+  // program. These imports should be source module imports since
+  // non-Source module imports would have already been removed. As part
+  // of this step, we also merge imports from the same module so as to
+  // import each unique name per module only once.
+
+  const programs = Object.values(moduleInfos)
+    .filter(({ type }) => type === 'local')
+    .map(({ ast }: ResolvedLocalModuleInfo) => ast)
+  const importNodes = hoistAndMergeImports(programs)
+  const removedImports = preprocessedProgram.body.filter(({ type }) => type !== 'ImportDeclaration')
+  preprocessedProgram.body = [...importNodes, ...removedImports]
+  // console.log(generate(preprocessedProgram))
+  return preprocessedProgram
 }
 
 const parseProgramsAndConstructImportGraph = (
@@ -166,7 +277,7 @@ const getSourceModuleImports = (programs: Record<string, es.Program>): es.Import
  * @param entrypointFilePath The absolute path of the entrypoint file.
  * @param context            The information associated with the program evaluation.
  */
-const preprocessFileImports = (
+export const preprocessFileImports = (
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context
@@ -282,9 +393,9 @@ const preprocessFileImports = (
   // non-Source module imports would have already been removed. As part
   // of this step, we also merge imports from the same module so as to
   // import each unique name per module only once.
-  hoistAndMergeImports(preprocessedProgram)
+  // hoistAndMergeImports(Object.(moduleInfos))
 
   return preprocessedProgram
 }
 
-export default preprocessFileImports
+export default newPreprocessor

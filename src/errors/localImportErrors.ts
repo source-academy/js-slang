@@ -1,3 +1,12 @@
+import {
+  ExportSpecifier,
+  ImportDefaultSpecifier,
+  ImportNamespaceSpecifier,
+  ImportSpecifier,
+  ModuleDeclaration,
+  SourceLocation
+} from 'estree'
+
 import { UNKNOWN_LOCATION } from '../constants'
 import { nonAlphanumericCharEncoding } from '../localImports/filePaths'
 import { ErrorSeverity, ErrorType, SourceError } from '../types'
@@ -72,5 +81,37 @@ export class CircularImportError implements SourceError {
 
   public elaborate() {
     return 'Break the circular import cycle by removing imports from any of the offending files.'
+  }
+}
+
+export class ReexportSymbolError implements SourceError {
+  public severity = ErrorSeverity.ERROR
+  public type = ErrorType.RUNTIME
+  public readonly location: SourceLocation
+  private readonly sourceString: string
+
+  constructor(
+    public readonly modulePath: string,
+    public readonly symbol: string,
+    public readonly nodes: (
+      | ImportSpecifier
+      | ImportDefaultSpecifier
+      | ImportNamespaceSpecifier
+      | ExportSpecifier
+      | ModuleDeclaration
+    )[]
+  ) {
+    this.location = nodes[0].loc ?? UNKNOWN_LOCATION
+    this.sourceString = nodes
+      .map(({ loc }) => `(${loc!.start.line}:${loc!.start.column})`)
+      .join(', ')
+  }
+
+  public explain(): string {
+    return `Multiple export definitions for the symbol '${this.symbol}' at (${this.sourceString})`
+  }
+
+  public elaborate(): string {
+    return 'Check that you are not exporting the same symbol more than once'
   }
 }

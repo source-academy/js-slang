@@ -1,6 +1,6 @@
 import type { Identifier, Literal, MemberExpression, VariableDeclaration } from 'estree'
-import type { FunctionLike, MockedFunction } from 'jest-mock'
 
+// import type { FunctionLike, MockedFunction } from 'jest-mock'
 import { runInContext } from '../..'
 import { mockContext } from '../../mocks/context'
 import { UndefinedImportError } from '../../modules/errors'
@@ -10,34 +10,43 @@ import { Chapter, Value } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { transformImportDeclarations, transpile } from '../transpiler'
 
-jest.mock('../../modules/moduleLoader', () => ({
-  ...jest.requireActual('../../modules/moduleLoader'),
-  memoizedGetModuleFile: jest.fn(),
-  memoizedGetModuleManifest: jest.fn().mockReturnValue({
-    one_module: {
-      tabs: []
-    },
-    another_module: {
-      tabs: []
-    }
-  }),
-  memoizedloadModuleDocs: jest.fn().mockReturnValue({
-    foo: 'foo',
-    bar: 'bar'
-  })
-}))
+// jest.mock('../../modules/moduleLoaderAsync', () => ({
+//   ...jest.requireActual('../../modules/moduleLoaderAsync'),
+//   memoizedGetModuleFile: jest.fn(),
+//   memoizedGetModuleManifest: jest.fn().mockReturnValue({
+//     one_module: {
+//       tabs: []
+//     },
+//     another_module: {
+//       tabs: []
+//     }
+//   }),
+//   memoizedloadModuleDocs: jest.fn().mockReturnValue({
+//     foo: 'foo',
+//     bar: 'bar'
+//   })
+// }))
+jest.spyOn(moduleLoader, 'memoizedGetModuleManifestAsync').mockResolvedValue({
+  one_module: { tabs: ['tab0'] },
+  another_module: { tabs: [] }
+})
 
-const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
-const mockedModuleFile = asMock(memoizedGetModuleFile)
+jest.spyOn(moduleLoader, 'memoizedGetModuleDocsAsync').mockResolvedValue({
+  foo: 'foo',
+  bar: 'bar'
+})
+
+// const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
+// const mockedModuleFile = asMock(memoizedGetModuleFile)
 
 test('Transform import declarations into variable declarations', async () => {
-  mockedModuleFile.mockImplementation((name, type) => {
-    if (type === 'json') {
-      return name === 'one_module' ? "{ foo: 'foo' }" : "{ bar: 'bar' }"
-    } else {
-      return 'undefined'
-    }
-  })
+  // mockedModuleFile.mockImplementation((name, type) => {
+  //   if (type === 'json') {
+  //     return name === 'one_module' ? "{ foo: 'foo' }" : "{ bar: 'bar' }"
+  //   } else {
+  //     return 'undefined'
+  //   }
+  // })
 
   const code = stripIndent`
     import { foo } from "test/one_module";
@@ -49,7 +58,7 @@ test('Transform import declarations into variable declarations', async () => {
   const [, importNodes] = await transformImportDeclarations(program, context, new Set<string>(), {
     checkImports: true,
     wrapModules: true,
-    loadTabs: false,
+    loadTabs: false
   })
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
@@ -60,13 +69,13 @@ test('Transform import declarations into variable declarations', async () => {
 })
 
 test('Transpiler accounts for user variable names when transforming import statements', async () => {
-  mockedModuleFile.mockImplementation((name, type) => {
-    if (type === 'json') {
-      return name === 'one_module' ? "{ foo: 'foo' }" : "{ bar: 'bar' }"
-    } else {
-      return 'undefined'
-    }
-  })
+  // mockedModuleFile.mockImplementation((name, type) => {
+  //   if (type === 'json') {
+  //     return name === 'one_module' ? "{ foo: 'foo' }" : "{ bar: 'bar' }"
+  //   } else {
+  //     return 'undefined'
+  //   }
+  // })
 
   const code = stripIndent`
     import { foo } from "test/one_module";
@@ -156,13 +165,13 @@ test('importing undefined variables should throw errors', async () => {
 })
 
 test('importing undefined variables should throw errors', () => {
-  mockedModuleFile.mockImplementation((name, type) => {
-    if (type === 'json') {
-      return '{}'
-    } else {
-      return 'undefined'
-    }
-  })
+  // mockedModuleFile.mockImplementation((name, type) => {
+  //   if (type === 'json') {
+  //     return '{}'
+  //   } else {
+  //     return 'undefined'
+  //   }
+  // })
 
   const code = stripIndent`
     import { hello } from 'one_module';

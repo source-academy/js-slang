@@ -34,6 +34,7 @@ import preprocessFileImports from './localImports/preprocessor'
 import { ImportTransformOptions } from './modules/moduleTypes'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
+import { decodeError, decodeValue } from './parser/scheme'
 import { parseWithComments } from './parser/utils'
 import {
   fullJSRunner,
@@ -44,7 +45,6 @@ import {
 } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
-import { decodeError, decodeValue } from './parser/scheme'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -401,19 +401,19 @@ export function compile(
   code: string,
   context: Context,
   vmInternalFunctions?: string[]
-): SVMProgram | undefined {
+): Promise<SVMProgram | undefined> {
   const defaultFilePath = '/default.js'
   const files: Partial<Record<string, string>> = {}
   files[defaultFilePath] = code
   return compileFiles(files, defaultFilePath, context, vmInternalFunctions)
 }
 
-export function compileFiles(
+export async function compileFiles(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
   vmInternalFunctions?: string[]
-): SVMProgram | undefined {
+): Promise<SVMProgram | undefined> {
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath)
     if (filePathError !== null) {
@@ -428,7 +428,7 @@ export function compileFiles(
     return undefined
   }
 
-  const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
+  const preprocessedProgram = await preprocessFileImports(files, entrypointFilePath, context)
   if (!preprocessedProgram) {
     return undefined
   }
