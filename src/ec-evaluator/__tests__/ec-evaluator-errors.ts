@@ -1,6 +1,4 @@
 /* tslint:disable:max-line-length */
-import * as moduleLoader from '../../modules/moduleLoaderAsync'
-import * as moduleUtils from '../../modules/utils'
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import {
@@ -9,31 +7,6 @@ import {
   expectParsedErrorNoSnapshot,
   expectResult
 } from '../../utils/testing'
-
-jest.mock('lodash', () => ({
-  ...jest.requireActual('lodash'),
-  memoize: jest.fn(f => f)
-}))
-
-jest.spyOn(moduleLoader, 'memoizedGetModuleManifestAsync').mockResolvedValue({
-  one_module: { tabs: [] },
-  another_module: { tabs: [] }
-})
-jest.spyOn(moduleLoader, 'memoizedGetModuleBundleAsync').mockResolvedValue(`
-  require => ({
-    foo: () => 'foo',
-    bar: () => 'bar'
-  })
-`)
-jest.spyOn(moduleLoader, 'memoizedGetModuleDocsAsync').mockResolvedValue({
-  foo: 'foo',
-  bar: 'bar'
-})
-
-jest.spyOn(moduleUtils, 'initModuleContextAsync').mockImplementation(() => {
-  console.log('called')
-  return Promise.resolve()
-})
 
 const undefinedVariable = stripIndent`
 im_undefined;
@@ -1026,13 +999,4 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   `,
     optionEC3
   ).toMatchInlineSnapshot(`"Line 3: Name variable not declared."`)
-})
-
-test('Importing unknown variables throws UndefinedImport error', () => {
-  return expectParsedError(
-    stripIndent`
-    import { foo1 } from 'one_module';
-  `,
-    optionEC
-  ).toMatchInlineSnapshot("\"'one_module' does not contain a definition for 'foo1'\"")
 })

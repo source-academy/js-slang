@@ -11,24 +11,6 @@ import {
   expectResult
 } from '../../utils/testing'
 
-jest.mock('../../modules/moduleLoader', () => ({
-  ...jest.requireActual('../../modules/moduleLoader'),
-  memoizedGetModuleFile: jest.fn().mockReturnValue(`function() {
-    return {
-      foo: () => undefined,
-      bar: () => undefined,
-    }
-  }`),
-  memoizedGetModuleManifest: jest.fn().mockReturnValue({
-    one_module: {
-      tabs: []
-    },
-    another_module: {
-      tabs: []
-    }
-  })
-}))
-
 // const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
 // const mockedModuleFile = asMock(memoizedGetModuleFile)
 

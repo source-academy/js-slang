@@ -1,9 +1,9 @@
 import { compile, createContext } from '../..'
 import { Chapter } from '../../types'
 
-test('handles if without else', () => {
+test('handles if without else', async () => {
   const context = createContext(Chapter.SOURCE_3)
-  const compiled = compile(`if (true) { 1 + 1; }`, context)
+  const compiled = await compile(`if (true) { 1 + 1; }`, context)
   expect(compiled).toMatchInlineSnapshot(`
     Array [
       0,

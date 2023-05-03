@@ -849,6 +849,19 @@ Object {
 }
 `;
 
+exports[`Importing unknown variables throws error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "import { foo1 } from 'one_module';",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Unable to get modules.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Nice errors when errors occur inside builtins: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],

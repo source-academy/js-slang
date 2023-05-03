@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`hoistAndMergeImports hoists import declarations to the top of the program 1`] = `
+"import x from \\"source-module\\";
+function square(x) {
+  return x * x;
+}
+import {a, b, c} from \\"./a.js\\";
+export {square};
+import x from \\"source-module\\";
+square(3);
+"
+`;
+
+exports[`hoistAndMergeImports merges import declarations from the same module 1`] = `
+"import {a, b, c} from \\"./a.js\\";
+import {d} from \\"./a.js\\";
+import {x} from \\"./b.js\\";
+import {e, f} from \\"./a.js\\";
+"
+`;

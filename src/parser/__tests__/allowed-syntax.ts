@@ -294,7 +294,7 @@ test.each([
   [
     Chapter.LIBRARY_PARSER,
     `
-    import defaultExport from "module-name";
+    import defaultExport from "one_module";
     `
   ],
 

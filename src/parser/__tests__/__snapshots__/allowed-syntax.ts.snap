@@ -4290,7 +4290,7 @@ x[key] = 3;",
 exports[`Syntaxes are allowed in the chapter they are introduced 35: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "import defaultExport from \\"module-name\\";",
+  "code": "import defaultExport from \\"one_module\\";",
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 1: Import default specifiers are not allowed",
@@ -4303,7 +4303,7 @@ Object {
 exports[`Syntaxes are allowed in the chapter they are introduced 35: parse passes 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "parse(\\"import defaultExport from \\\\\\"module-name\\\\\\";\\");",
+  "code": "parse(\\"import defaultExport from \\\\\\"one_module\\\\\\";\\");",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -4318,7 +4318,7 @@ Object {
         null,
       ],
       Array [
-        "module-name",
+        "one_module",
         null,
       ],
     ],
@@ -4331,7 +4331,7 @@ Object {
 exports[`Syntaxes are allowed in the chapter they are introduced 35: passes 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "import defaultExport from \\"module-name\\";",
+  "code": "import defaultExport from \\"one_module\\";",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -4358,6 +4358,100 @@ f(5);",
 `;
 
 exports[`Syntaxes are allowed in the chapter they are introduced 36: parse passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse(\\"export default function f(x) {\\\\n  return x;\\\\n}\\\\nf(5);\\");",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": Array [
+    "sequence",
+    Array [
+      Array [
+        Array [
+          "export_default_declaration",
+          Array [
+            Array [
+              "function_declaration",
+              Array [
+                Array [
+                  "name",
+                  Array [
+                    "f",
+                    null,
+                  ],
+                ],
+                Array [
+                  Array [
+                    Array [
+                      "name",
+                      Array [
+                        "x",
+                        null,
+                      ],
+                    ],
+                    null,
+                  ],
+                  Array [
+                    Array [
+                      "return_statement",
+                      Array [
+                        Array [
+                          "name",
+                          Array [
+                            "x",
+                            null,
+                          ],
+                        ],
+                        null,
+                      ],
+                    ],
+                    null,
+                  ],
+                ],
+              ],
+            ],
+            null,
+          ],
+        ],
+        Array [
+          Array [
+            "application",
+            Array [
+              Array [
+                "name",
+                Array [
+                  "f",
+                  null,
+                ],
+              ],
+              Array [
+                Array [
+                  Array [
+                    "literal",
+                    Array [
+                      5,
+                      null,
+                    ],
+                  ],
+                  null,
+                ],
+                null,
+              ],
+            ],
+          ],
+          null,
+        ],
+      ],
+      null,
+    ],
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 36: parse passes 2`] = `
 Object {
   "alertResult": Array [],
   "code": "parse(\\"export default function f(x) {\\\\n  return x;\\\\n}\\\\nf(5);\\");",
