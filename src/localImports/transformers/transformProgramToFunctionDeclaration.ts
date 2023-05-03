@@ -3,6 +3,13 @@ import * as path from 'path'
 
 import { defaultExportLookupName } from '../../stdlib/localImport.prelude'
 import {
+  isDeclaration,
+  isDirective,
+  isModuleDeclaration,
+  isSourceImport,
+  isStatement
+} from '../../utils/ast/typeGuards'
+import {
   createFunctionDeclaration,
   createIdentifier,
   createLiteral,
@@ -17,8 +24,6 @@ import {
   transformFilePathToValidFunctionName,
   transformFunctionNameToInvokedFunctionResultVariableName
 } from '../filePaths'
-import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from '../typeGuards'
-import { isSourceModule } from './removeNonSourceModuleImports'
 
 type ImportSpecifier = es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
 
@@ -40,7 +45,7 @@ export const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
       )
     }
     // Only handle import declarations for non-Source modules.
-    if (isSourceModule(importSource)) {
+    if (isSourceImport(importSource)) {
       return
     }
     // Different import sources can refer to the same file. For example,

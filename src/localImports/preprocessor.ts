@@ -1,12 +1,20 @@
 import es from 'estree'
 import * as path from 'path'
 
-import { CannotFindModuleError, CircularImportError } from '../errors/localImportErrors'
+import { CircularImportError } from '../errors/localImportErrors'
+import { ModuleNotFoundError } from '../modules/errors'
+import {
+  memoizedGetModuleDocsAsync,
+  memoizedGetModuleManifestAsync
+} from '../modules/moduleLoaderAsync'
+import { ModuleManifest } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
 import { AcornOptions } from '../parser/types'
 import { Context } from '../types'
+import assert from '../utils/assert'
+import { isModuleDeclaration, isSourceImport } from '../utils/ast/typeGuards'
 import { isIdentifier } from '../utils/rttc'
-import performImportAnalysis, { ResolvedLocalModuleInfo } from './analyzer'
+import { validateImportAndExports } from './analyzer'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import { DirectedGraph } from './directedGraph'
 import {
@@ -14,170 +22,45 @@ import {
   transformFunctionNameToInvokedFunctionResultVariableName
 } from './filePaths'
 import hoistAndMergeImports from './transformers/hoistAndMergeImports'
-import { removeExports } from './transformers/removeExports'
-import {
-  isSourceModule,
-  removeNonSourceModuleImports
-} from './transformers/removeNonSourceModuleImports'
+import removeImportsAndExports from './transformers/removeImportsAndExports'
 import {
   createAccessImportStatements,
   getInvokedFunctionResultVariableNameToImportSpecifiersMap,
   transformProgramToFunctionDeclaration
 } from './transformers/transformProgramToFunctionDeclaration'
-import { isImportDeclaration, isModuleDeclaration } from './typeGuards'
 
 /**
- * Returns all absolute local module paths which should be imported.
- * This function makes use of the file path of the current file to
- * determine the absolute local module paths.
- *
- * Note that the current file path must be absolute.
- *
- * @param program         The program to be operated on.
- * @param currentFilePath The file path of the current file.
+ * Error type to indicate that preprocessing has failed but that the context
+ * contains the underlying errors
  */
-export const getImportedLocalModulePaths = (
-  program: es.Program,
-  currentFilePath: string
-): Set<string> => {
-  if (!path.isAbsolute(currentFilePath)) {
-    throw new Error(`Current file path '${currentFilePath}' is not absolute.`)
-  }
+class PreprocessError extends Error {}
 
-  const baseFilePath = path.resolve(currentFilePath, '..')
-  const importedLocalModuleNames: Set<string> = new Set()
-  const importDeclarations = program.body.filter(isImportDeclaration)
-  importDeclarations.forEach((importDeclaration: es.ImportDeclaration): void => {
-    const modulePath = importDeclaration.source.value
-    if (typeof modulePath !== 'string') {
-      throw new Error('Module names must be strings.')
-    }
-    if (!isSourceModule(modulePath)) {
-      const absoluteModulePath = path.resolve(baseFilePath, modulePath)
-      importedLocalModuleNames.add(absoluteModulePath)
-    }
-  })
-  return importedLocalModuleNames
+type ModuleResolutionOptions = {
+  directory?: boolean
+  extensions: string[] | null
 }
 
-const newPreprocessor = async (
-  files: Partial<Record<string, string>>,
-  entrypointFilePath: string,
-  context: Context
-) => {
-  const { moduleInfos, topoOrder } = await performImportAnalysis(files, entrypointFilePath, context)
-
-  // We want to operate on the entrypoint program to get the eventual
-  // preprocessed program.
-  const { ast: entrypointProgram } = moduleInfos[entrypointFilePath] as ResolvedLocalModuleInfo
-  const entrypointDirPath = path.resolve(entrypointFilePath, '..')
-
-  // Create variables to hold the imported statements.
-  const entrypointProgramModuleDeclarations = entrypointProgram.body.filter(isModuleDeclaration)
-  const entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap =
-    getInvokedFunctionResultVariableNameToImportSpecifiersMap(
-      entrypointProgramModuleDeclarations,
-      entrypointDirPath
-    )
-  const entrypointProgramAccessImportStatements = createAccessImportStatements(
-    entrypointProgramInvokedFunctionResultVariableNameToImportSpecifiersMap
-  )
-
-  // Transform all programs into their equivalent function declaration
-  // except for the entrypoint program.
-  const functionDeclarations: Record<string, es.FunctionDeclaration> = {}
-  for (const [filePath, moduleInfo] of Object.entries(moduleInfos)) {
-    if (moduleInfo.type === 'source') continue
-
-    // The entrypoint program does not need to be transformed into its
-    // function declaration equivalent as its enclosing environment is
-    // simply the overall program's (constructed program's) environment.
-    if (filePath === entrypointFilePath) {
-      continue
-    }
-
-    const functionDeclaration = transformProgramToFunctionDeclaration(moduleInfo.ast, filePath)
-    const functionName = functionDeclaration.id?.name
-    if (functionName === undefined) {
-      throw new Error(
-        'A transformed function declaration is missing its name. This should never happen.'
-      )
-    }
-
-    functionDeclarations[functionName] = functionDeclaration
-  }
-
-  // Invoke each of the transformed functions and store the result in a variable.
-  const invokedFunctionResultVariableDeclarations: es.VariableDeclaration[] = []
-  topoOrder.forEach((filePath: string): void => {
-    // As mentioned above, the entrypoint program does not have a function
-    // declaration equivalent, so there is no need to process it.
-    if (filePath === entrypointFilePath) {
-      return
-    }
-
-    if (!filePath.startsWith('/')) return
-
-    const functionName = transformFilePathToValidFunctionName(filePath)
-    const invokedFunctionResultVariableName =
-      transformFunctionNameToInvokedFunctionResultVariableName(functionName)
-
-    const functionDeclaration = functionDeclarations[functionName]
-    const functionParams = functionDeclaration.params.filter(isIdentifier)
-    if (functionParams.length !== functionDeclaration.params.length) {
-      throw new Error(
-        'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
-      )
-    }
-
-    const invokedFunctionResultVariableDeclaration = createInvokedFunctionResultVariableDeclaration(
-      functionName,
-      invokedFunctionResultVariableName,
-      functionParams
-    )
-    invokedFunctionResultVariableDeclarations.push(invokedFunctionResultVariableDeclaration)
-  })
-
-  // Re-assemble the program.
-  const preprocessedProgram: es.Program = {
-    ...entrypointProgram,
-    body: [
-      // ...sourceModuleImports,
-      ...Object.values(functionDeclarations),
-      ...invokedFunctionResultVariableDeclarations,
-      ...entrypointProgramAccessImportStatements,
-      ...entrypointProgram.body
-    ]
-  }
-
-  // After this pre-processing step, all export-related nodes in the AST
-  // are no longer needed and are thus removed.
-  removeExports(preprocessedProgram)
-
-  // Finally, we need to hoist all remaining imports to the top of the
-  // program. These imports should be source module imports since
-  // non-Source module imports would have already been removed. As part
-  // of this step, we also merge imports from the same module so as to
-  // import each unique name per module only once.
-
-  const programs = Object.values(moduleInfos)
-    .filter(({ type }) => type === 'local')
-    .map(({ ast }: ResolvedLocalModuleInfo) => ast)
-  const importNodes = hoistAndMergeImports(programs)
-  const removedImports = preprocessedProgram.body.filter(({ type }) => type !== 'ImportDeclaration')
-  preprocessedProgram.body = [...importNodes, ...removedImports]
-  // console.log(generate(preprocessedProgram))
-  return preprocessedProgram
+const defaultResolutionOptions: Required<ModuleResolutionOptions> = {
+  directory: false,
+  extensions: null
 }
 
-const parseProgramsAndConstructImportGraph = (
+const parseProgramsAndConstructImportGraph = async (
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
-  context: Context
-): {
+  context: Context,
+  allowUndefinedImports: boolean,
+  rawResolutionOptions: Partial<ModuleResolutionOptions> = {}
+): Promise<{
   programs: Record<string, es.Program>
   importGraph: DirectedGraph
-} => {
+  moduleDocs: Record<string, Set<string> | null>
+}> => {
+  const resolutionOptions = {
+    ...defaultResolutionOptions,
+    ...rawResolutionOptions
+  }
+
   const programs: Record<string, es.Program> = {}
   const importGraph = new DirectedGraph()
 
@@ -185,12 +68,76 @@ const parseProgramsAndConstructImportGraph = (
   const numOfFiles = Object.keys(files).length
   const shouldAddSourceFileToAST = numOfFiles > 1
 
-  const parseFile = (currentFilePath: string): void => {
-    const code = files[currentFilePath]
-    if (code === undefined) {
-      context.errors.push(new CannotFindModuleError(entrypointFilePath))
+  const moduleDocs: Record<string, Set<string> | null> = {}
+  let moduleManifest: ModuleManifest | null = null
+
+  // From the given import source, return the absolute path for that import
+  // If the import could not be located, then throw an error
+  async function resolveModule(
+    desiredPath: string,
+    node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
+  ) {
+    const source = node.source?.value
+    assert(
+      typeof source === 'string',
+      `${node.type} should have a source of type string, got ${source}`
+    )
+
+    let modAbsPath: string
+    if (isSourceImport(source)) {
+      if (!moduleManifest) {
+        moduleManifest = await memoizedGetModuleManifestAsync()
+      }
+
+      if (source in moduleManifest) return source
+      modAbsPath = source
+    } else {
+      modAbsPath = path.resolve(desiredPath, '..', source)
+      if (files[modAbsPath] !== undefined) return modAbsPath
+
+      if (resolutionOptions.directory && files[`${modAbsPath}/index`] !== undefined) {
+        return `${modAbsPath}/index`
+      }
+
+      if (resolutionOptions.extensions) {
+        for (const ext of resolutionOptions.extensions) {
+          if (files[`${modAbsPath}.${ext}`] !== undefined) return `${modAbsPath}.${ext}`
+
+          if (resolutionOptions.directory && files[`${modAbsPath}/index.${ext}`] !== undefined) {
+            return `${modAbsPath}/index.${ext}`
+          }
+        }
+      }
+    }
+
+    throw new ModuleNotFoundError(modAbsPath, node)
+  }
+
+  const parseFile = async (currentFilePath: string) => {
+    if (isSourceImport(currentFilePath)) {
+      if (!(currentFilePath in moduleDocs)) {
+        // Will not throw ModuleNotFoundError
+        // If this were invalid, resolveModule would have thrown already
+        if (allowUndefinedImports) {
+          moduleDocs[currentFilePath] = null
+        } else {
+          const docs = await memoizedGetModuleDocsAsync(currentFilePath)
+          if (!docs) {
+            throw new Error(`Failed to load documentation for ${currentFilePath}`)
+          }
+          moduleDocs[currentFilePath] = new Set(Object.keys(docs))
+        }
+      }
       return
     }
+
+    if (currentFilePath in programs) return
+
+    const code = files[currentFilePath]
+    assert(
+      code !== undefined,
+      "Module resolver should've thrown an error if the file path is not resolvable"
+    )
 
     // Tag AST nodes with the source file path for use in error messages.
     const parserOptions: Partial<AcornOptions> = shouldAddSourceFileToAST
@@ -198,66 +145,72 @@ const parseProgramsAndConstructImportGraph = (
           sourceFile: currentFilePath
         }
       : {}
-    const program = parse<AcornOptions>(code, context, parserOptions)
-    if (program === null) {
-      return
+    const program = parse<AcornOptions>(code, context, parserOptions, false)
+    if (!program) {
+      // Due to a bug in the typed parser where throwOnError isn't respected,
+      // we need to throw a quick exit error here instead
+      throw new PreprocessError()
     }
 
+    // assert(program !== null, 'Parser should throw on error and not just return null')
     programs[currentFilePath] = program
 
-    const importedLocalModulePaths = getImportedLocalModulePaths(program, currentFilePath)
-    for (const importedLocalModulePath of importedLocalModulePaths) {
-      // If the source & destination nodes in the import graph are the
-      // same, then the file is trying to import from itself. This is a
-      // special case of circular imports.
-      if (importedLocalModulePath === currentFilePath) {
-        context.errors.push(new CircularImportError([importedLocalModulePath, currentFilePath]))
-        return
+    const dependencies = new Set<string>()
+    for (const node of program.body) {
+      switch (node.type) {
+        case 'ExportNamedDeclaration': {
+          if (!node.source) continue
+        }
+        case 'ExportAllDeclaration':
+        case 'ImportDeclaration': {
+          const modAbsPath = await resolveModule(currentFilePath, node)
+          if (modAbsPath === currentFilePath) {
+            throw new CircularImportError([modAbsPath, currentFilePath])
+          }
+
+          dependencies.add(modAbsPath)
+          node.source!.value = modAbsPath
+          break
+        }
       }
-      // If we traverse the same edge in the import graph twice, it means
-      // that there is a cycle in the graph. We terminate early so as not
-      // to get into an infinite loop (and also because there is no point
-      // in traversing cycles when our goal is to build up the import
-      // graph).
-      if (importGraph.hasEdge(importedLocalModulePath, currentFilePath)) {
-        continue
-      }
-      // Since the file at 'currentFilePath' contains the import statement
-      // from the file at 'importedLocalModulePath', we treat the former
-      // as the destination node and the latter as the source node in our
-      // import graph. This is because when we insert the transformed
-      // function declarations into the resulting program, we need to start
-      // with the function declarations that do not depend on other
-      // function declarations.
-      importGraph.addEdge(importedLocalModulePath, currentFilePath)
-      // Recursively parse imported files.
-      parseFile(importedLocalModulePath)
     }
+
+    await Promise.all(
+      Array.from(dependencies.keys()).map(async dependency => {
+        await parseFile(dependency)
+        if (!isSourceImport(dependency)) {
+          if (importGraph.hasEdge(dependency, currentFilePath)) {
+            throw new PreprocessError()
+          }
+
+          importGraph.addEdge(dependency, currentFilePath)
+        }
+      })
+    )
   }
 
-  parseFile(entrypointFilePath)
+  try {
+    await parseFile(entrypointFilePath)
+  } catch (error) {
+    // console.log(error)
+    if (!(error instanceof PreprocessError)) {
+      context.errors.push(error)
+    }
+  }
 
   return {
     programs,
-    importGraph
+    importGraph,
+    moduleDocs
   }
 }
 
-const getSourceModuleImports = (programs: Record<string, es.Program>): es.ImportDeclaration[] => {
-  const sourceModuleImports: es.ImportDeclaration[] = []
-  Object.values(programs).forEach((program: es.Program): void => {
-    const importDeclarations = program.body.filter(isImportDeclaration)
-    importDeclarations.forEach((importDeclaration: es.ImportDeclaration): void => {
-      const importSource = importDeclaration.source.value
-      if (typeof importSource !== 'string') {
-        throw new Error('Module names must be strings.')
-      }
-      if (isSourceModule(importSource)) {
-        sourceModuleImports.push(importDeclaration)
-      }
-    })
-  })
-  return sourceModuleImports
+export type PreprocessOptions = {
+  allowUndefinedImports?: boolean
+}
+
+const defaultOptions: Required<PreprocessOptions> = {
+  allowUndefinedImports: false
 }
 
 /**
@@ -277,16 +230,23 @@ const getSourceModuleImports = (programs: Record<string, es.Program>): es.Import
  * @param entrypointFilePath The absolute path of the entrypoint file.
  * @param context            The information associated with the program evaluation.
  */
-export const preprocessFileImports = (
+const preprocessFileImports = async (
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
-  context: Context
-): es.Program | undefined => {
+  context: Context,
+  rawOptions: Partial<PreprocessOptions> = {}
+): Promise<es.Program | undefined> => {
+  const { allowUndefinedImports } = {
+    ...defaultOptions,
+    ...rawOptions
+  }
+
   // Parse all files into ASTs and build the import graph.
-  const { programs, importGraph } = parseProgramsAndConstructImportGraph(
+  const { programs, importGraph, moduleDocs } = await parseProgramsAndConstructImportGraph(
     files,
     entrypointFilePath,
-    context
+    context,
+    allowUndefinedImports
   )
   // Return 'undefined' if there are errors while parsing.
   if (context.errors.length !== 0) {
@@ -297,6 +257,18 @@ export const preprocessFileImports = (
   const topologicalOrderResult = importGraph.getTopologicalOrder()
   if (!topologicalOrderResult.isValidTopologicalOrderFound) {
     context.errors.push(new CircularImportError(topologicalOrderResult.firstCycleFound))
+    return undefined
+  }
+
+  try {
+    validateImportAndExports(
+      moduleDocs,
+      programs,
+      topologicalOrderResult.topologicalOrder,
+      allowUndefinedImports
+    )
+  } catch (error) {
+    context.errors.push(error)
     return undefined
   }
 
@@ -329,11 +301,10 @@ export const preprocessFileImports = (
 
     const functionDeclaration = transformProgramToFunctionDeclaration(program, filePath)
     const functionName = functionDeclaration.id?.name
-    if (functionName === undefined) {
-      throw new Error(
-        'A transformed function declaration is missing its name. This should never happen.'
-      )
-    }
+    assert(
+      functionName !== undefined,
+      'A transformed function declaration is missing its name. This should never happen.'
+    )
 
     functionDeclarations[functionName] = functionDeclaration
   }
@@ -353,11 +324,10 @@ export const preprocessFileImports = (
 
     const functionDeclaration = functionDeclarations[functionName]
     const functionParams = functionDeclaration.params.filter(isIdentifier)
-    if (functionParams.length !== functionDeclaration.params.length) {
-      throw new Error(
-        'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
-      )
-    }
+    assert(
+      functionParams.length === functionDeclaration.params.length,
+      'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
+    )
 
     const invokedFunctionResultVariableDeclaration = createInvokedFunctionResultVariableDeclaration(
       functionName,
@@ -367,35 +337,28 @@ export const preprocessFileImports = (
     invokedFunctionResultVariableDeclarations.push(invokedFunctionResultVariableDeclaration)
   })
 
-  // Get all Source module imports across the entrypoint program & all imported programs.
-  const sourceModuleImports = getSourceModuleImports(programs)
-
   // Re-assemble the program.
   const preprocessedProgram: es.Program = {
     ...entrypointProgram,
     body: [
-      ...sourceModuleImports,
       ...Object.values(functionDeclarations),
       ...invokedFunctionResultVariableDeclarations,
       ...entrypointProgramAccessImportStatements,
       ...entrypointProgram.body
     ]
   }
+  // Import and Export related nodes are no longer necessary, so we can remove them from the program entirely
+  removeImportsAndExports(preprocessedProgram)
 
-  // After this pre-processing step, all export-related nodes in the AST
-  // are no longer needed and are thus removed.
-  removeExports(preprocessedProgram)
-  // Likewise, all import-related nodes in the AST which are not Source
-  // module imports are no longer needed and are also removed.
-  removeNonSourceModuleImports(preprocessedProgram)
   // Finally, we need to hoist all remaining imports to the top of the
   // program. These imports should be source module imports since
   // non-Source module imports would have already been removed. As part
   // of this step, we also merge imports from the same module so as to
   // import each unique name per module only once.
-  // hoistAndMergeImports(Object.(moduleInfos))
+  const importDecls = hoistAndMergeImports(Object.values(programs))
+  preprocessedProgram.body = [...importDecls, ...preprocessedProgram.body]
 
   return preprocessedProgram
 }
 
-export default newPreprocessor
+export default preprocessFileImports
