@@ -2,11 +2,6 @@ import { ImportDeclaration, Node } from 'estree'
 
 import { Context } from '..'
 import { getUniqueId } from '../utils/uniqueIds'
-import {
-  UndefinedDefaultImportError,
-  UndefinedImportError,
-  UndefinedNamespaceImportError
-} from './errors'
 import { loadModuleTabs } from './moduleLoader'
 import { loadModuleTabsAsync } from './moduleLoaderAsync'
 
@@ -53,11 +48,6 @@ export async function initModuleContextAsync(
  */
 export type ModuleInfo<T> = {
   /**
-   * List of symbols exported by the module. This field is `null` if `checkImports` is `false`.
-   */
-  docs: Set<string> | null
-
-  /**
    * `ImportDeclarations` that import from this module.
    */
   nodes: ImportDeclaration[]
@@ -97,15 +87,6 @@ export type SpecifierProcessor<Transformed, Content> = (
   node: ImportDeclaration
 ) => Transformed
 
-/**
- * Function to obtain the set of symbols exported by the given module
- */
-type SymbolLoader<T> = (
-  name: string,
-  info: ModuleInfo<T>,
-  node?: Node
-) => Promise<Set<string> | null>
-
 export type ImportSpecifierType =
   | 'ImportSpecifier'
   | 'ImportDefaultSpecifier'
@@ -113,15 +94,13 @@ export type ImportSpecifierType =
 
 /**
  * This function is intended to unify how each of the different Source runners load imports. It handles
- * import checking (if `checkImports` is given as `true`), namespacing (if `usedIdentifiers` is provided),
- * loading the module's context (if `context` is not `null`), loading the module's tabs (if `loadTabs` is given as `true`) and the conversion
+ * namespacing (if `usedIdentifiers` is provided), loading the module's context (if `context` is not `null`),
+ * loading the module's tabs (if `loadTabs` is given as `true`) and the conversion
  * of import specifiers to the relevant type used by the runner.
  * @param nodes Nodes to transform
  * @param context Context to transform with, or `null`. Setting this to null prevents module contexts and tabs from being loaded.
  * @param loadTabs Set this to false to prevent tabs from being loaded even if a context is provided.
- * @param checkImports Pass true to enable checking for undefined imports, false to skip these checks
  * @param moduleLoader Function that takes the name of the module and returns its loaded representation.
- * @param symbolsLoader Function that takes a loaded module and returns a set containing its exported symbols. This is used for import checking
  * @param processors Functions for working with each type of import specifier.
  * @param usedIdentifiers Set containing identifiers already used in code. If null, namespacing is not conducted.
  * @returns The loaded modules, along with the transformed versions of the given nodes
@@ -130,9 +109,7 @@ export async function transformImportNodesAsync<Transformed, LoadedModule>(
   nodes: ImportDeclaration[],
   context: Context | null,
   loadTabs: boolean,
-  checkImports: boolean,
   moduleLoader: (name: string, node?: Node) => Promise<LoadedModule>,
-  symbolsLoader: SymbolLoader<LoadedModule>,
   processors: Record<ImportSpecifierType, SpecifierProcessor<Transformed, LoadedModule>>,
   usedIdentifiers?: Set<string>
 ) {
@@ -158,24 +135,14 @@ export async function transformImportNodesAsync<Transformed, LoadedModule>(
     if (!(moduleName in res)) {
       // First time we are loading this module
       res[moduleName] = {
-        docs: null,
         nodes: [],
         content: null as any,
         namespaced: null
       }
-      let loadPromise = internalLoader(moduleName, node).then(content => {
+      const loadPromise = internalLoader(moduleName, node).then(content => {
         res[moduleName].content = content
       })
 
-      if (checkImports) {
-        // symbolsLoader must run after internalLoader finishes loading as it may need the
-        // loaded module.
-        loadPromise = loadPromise.then(() => {
-          symbolsLoader(moduleName, res[moduleName], node).then(docs => {
-            res[moduleName].docs = docs
-          })
-        })
-      }
       promises.push(loadPromise)
     }
 
@@ -197,10 +164,6 @@ export async function transformImportNodesAsync<Transformed, LoadedModule>(
     const namespaced = usedIdentifiers ? getUniqueId(usedIdentifiers, '__MODULE__') : null
     info.namespaced = namespaced
 
-    if (checkImports && info.docs === null) {
-      console.warn(`Failed to load documentation for ${moduleName}, skipping typechecking`)
-    }
-
     if (info.content === null) {
       throw new Error(`${moduleName} was not loaded properly. This should never happen`)
     }
@@ -210,27 +173,6 @@ export async function transformImportNodesAsync<Transformed, LoadedModule>(
       [moduleName]: {
         content: info.nodes.flatMap(node =>
           node.specifiers.flatMap(spec => {
-            if (checkImports && info.docs) {
-              // Conduct import checking if checkImports is true and the symbols were
-              // successfully loaded (not null)
-              switch (spec.type) {
-                case 'ImportSpecifier': {
-                  if (!info.docs.has(spec.imported.name))
-                    throw new UndefinedImportError(spec.imported.name, moduleName, spec)
-                  break
-                }
-                case 'ImportDefaultSpecifier': {
-                  if (!info.docs.has('default'))
-                    throw new UndefinedDefaultImportError(moduleName, spec)
-                  break
-                }
-                case 'ImportNamespaceSpecifier': {
-                  if (info.docs.size === 0)
-                    throw new UndefinedNamespaceImportError(moduleName, spec)
-                  break
-                }
-              }
-            }
             // Finally, transform that specifier into the form needed
             // by the runner
             return processors[spec.type](spec, info, node)

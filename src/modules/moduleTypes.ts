@@ -15,7 +15,6 @@ export type ModuleFunctions = {
 export type ModuleDocumentation = Record<string, string>
 
 export type ImportTransformOptions = {
-  checkImports: boolean
   loadTabs: boolean
   wrapModules: boolean
   // useThis: boolean;
