@@ -28,7 +28,7 @@ export class SourceTypedParser extends SourceParser {
     try {
       TypeParser.parse(
         programStr,
-        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options)
+        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options, throwOnError)
       )
     } catch (error) {
       if (error instanceof SyntaxError) {
@@ -40,6 +40,7 @@ export class SourceTypedParser extends SourceParser {
 
       if (throwOnError) throw error
       context.errors.push(error)
+
       return null
     }
 
@@ -48,7 +49,7 @@ export class SourceTypedParser extends SourceParser {
     const ast = babelParse(programStr, {
       ...defaultBabelOptions,
       sourceFilename: options?.sourceFile,
-      errorRecovery: throwOnError ?? true
+      errorRecovery: !throwOnError
     })
 
     if (ast.errors.length) {
@@ -66,8 +67,14 @@ export class SourceTypedParser extends SourceParser {
       return null
     }
 
+    // TODO typed parser should be throwing on error
     const typedProgram: TypedES.Program = ast.program as TypedES.Program
     const typedCheckedProgram: Program = checkForTypeErrors(typedProgram, context)
+
+    if (context.errors.length > 0 && throwOnError) {
+      throw context.errors[0]
+    }
+
     transformBabelASTToESTreeCompliantAST(typedCheckedProgram)
 
     return typedCheckedProgram

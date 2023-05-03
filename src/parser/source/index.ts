@@ -42,10 +42,12 @@ export class SourceParser implements Parser<AcornOptions> {
     throwOnError?: boolean
   ): Program | null {
     try {
-      return acornParse(
+      const value = acornParse(
         programStr,
-        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options)
+        createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options, throwOnError)
       ) as unknown as Program
+
+      return value
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(
@@ -53,7 +55,6 @@ export class SourceParser implements Parser<AcornOptions> {
           error.toString()
         )
       }
-
       if (throwOnError) throw error
       context.errors.push(error)
     }
@@ -84,7 +85,9 @@ export class SourceParser implements Parser<AcornOptions> {
         ) => {
           const errors: SourceError[] = checker(node, ancestors)
 
-          if (throwOnError && errors.length > 0) throw errors[0]
+          if (throwOnError && errors.length > 0) {
+            throw errors[0]
+          }
           errors.forEach(e => context.errors.push(e))
         }
         if (validationWalkers.has(syntaxNodeName)) {
