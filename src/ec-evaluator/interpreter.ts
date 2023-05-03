@@ -19,7 +19,7 @@ import { ImportTransformOptions } from '../modules/moduleTypes'
 import { transformImportNodesAsync } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
-import * as ast from '../utils/astCreator'
+import * as ast from '../utils/ast/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as instr from './instrCreator'
@@ -141,7 +141,7 @@ export function resumeEvaluate(context: Context) {
 async function evaluateImports(
   program: es.Program,
   context: Context,
-  { loadTabs, checkImports, wrapModules }: ImportTransformOptions
+  { loadTabs, wrapModules }: ImportTransformOptions
 ) {
   const [importNodes, otherNodes] = partition(
     program.body,
@@ -156,9 +156,7 @@ async function evaluateImports(
       importNodes,
       context,
       loadTabs,
-      checkImports,
       (name, node) => loadModuleBundleAsync(name, context, wrapModules, node),
-      (name, info) => Promise.resolve(new Set(Object.keys(info.content))),
       {
         ImportSpecifier: (spec: es.ImportSpecifier, info, node) => {
           declareIdentifier(context, spec.local.name, node, environment)
@@ -220,16 +218,15 @@ async function evaluateImports(
  * @param value The value of ec evaluating the program.
  * @returns The corresponding promise.
  */
-export function ECEResultPromise(context: Context, value: Value): Promise<Result> {
-  return new Promise((resolve, reject) => {
-    if (value instanceof ECEBreak) {
-      resolve({ status: 'suspended-ec-eval', context })
-    } else if (value instanceof ECError) {
-      resolve({ status: 'error' })
-    } else {
-      resolve({ status: 'finished', context, value })
-    }
-  })
+export async function ECEResultPromise(context: Context, promise: Promise<Value>): Promise<Result> {
+  const value = await promise
+  if (value instanceof ECEBreak) {
+    return { status: 'suspended-ec-eval', context }
+  } else if (value instanceof ECError) {
+    return { status: 'error' }
+  } else {
+    return { status: 'finished', context, value }
+  }
 }
 
 /**
