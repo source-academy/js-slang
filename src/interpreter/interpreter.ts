@@ -6,18 +6,13 @@ import { UNKNOWN_LOCATION } from '../constants'
 import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import {
-  UndefinedDefaultImportError,
-  UndefinedImportError,
-  UndefinedNamespaceImportError
-} from '../modules/errors'
 import { loadModuleBundle } from '../modules/moduleLoader'
 import { ImportTransformOptions, ModuleFunctions } from '../modules/moduleTypes'
 import { initModuleContext } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
-import * as create from '../utils/astCreator'
-import { conditionalExpression, literal, primitive } from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
+import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -717,7 +712,7 @@ function getNonEmptyEnv(environment: Environment): Environment {
 export function* evaluateProgram(
   program: es.Program,
   context: Context,
-  { checkImports, loadTabs, wrapModules }: ImportTransformOptions
+  { loadTabs, wrapModules }: ImportTransformOptions
 ) {
   yield* visit(context, program)
 
@@ -748,32 +743,19 @@ export function* evaluateProgram(
       }
 
       const functions = moduleFunctions[moduleName]
-      const funcCount = Object.keys(functions).length
 
       for (const spec of node.specifiers) {
         declareIdentifier(context, spec.local.name, node)
         switch (spec.type) {
           case 'ImportSpecifier': {
-            if (checkImports && !(spec.imported.name in functions)) {
-              throw new UndefinedImportError(spec.imported.name, moduleName, spec)
-            }
-
             defineVariable(context, spec.local.name, functions[spec.imported.name], true)
             break
           }
           case 'ImportDefaultSpecifier': {
-            if (checkImports && !('default' in functions)) {
-              throw new UndefinedDefaultImportError(moduleName, spec)
-            }
-
             defineVariable(context, spec.local.name, functions['default'], true)
             break
           }
           case 'ImportNamespaceSpecifier': {
-            if (checkImports && funcCount === 0) {
-              throw new UndefinedNamespaceImportError(moduleName, spec)
-            }
-
             defineVariable(context, spec.local.name, functions, true)
             break
           }
