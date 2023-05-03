@@ -56,7 +56,6 @@ test('Transform import declarations into variable declarations', async () => {
   const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
   const [, importNodes] = await transformImportDeclarations(program, context, new Set<string>(), {
-    checkImports: true,
     wrapModules: true,
     loadTabs: false
   })
@@ -91,7 +90,6 @@ test('Transpiler accounts for user variable names when transforming import state
     context,
     new Set<string>(['__MODULE__', '__MODULE__0']),
     {
-      checkImports: false,
       loadTabs: false,
       wrapModules: false
     }

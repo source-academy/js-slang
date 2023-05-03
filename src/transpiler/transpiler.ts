@@ -5,14 +5,12 @@ import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID, REQUIRE_PROVIDER_ID, UNKNOWN_LOCATION } from '../constants'
-import {
-  memoizedGetModuleBundleAsync,
-  memoizedGetModuleDocsAsync
-} from '../modules/moduleLoaderAsync'
+import { memoizedGetModuleBundleAsync } from '../modules/moduleLoaderAsync'
 import { ImportTransformOptions } from '../modules/moduleTypes'
 import { transformImportNodesAsync } from '../modules/utils'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
+import { isImportDeclaration } from '../utils/ast/typeGuards'
 import {
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
@@ -47,66 +45,58 @@ export async function transformImportDeclarations(
   program: es.Program,
   context: Context | null,
   usedIdentifiers: Set<string>,
-  { checkImports, loadTabs, wrapModules }: ImportTransformOptions,
+  { loadTabs, wrapModules }: ImportTransformOptions,
   useThis: boolean = false
 ): Promise<[string, es.VariableDeclaration[], es.Program['body']]> {
-  const [importNodes, otherNodes] = partition(
-    program.body,
-    node => node.type === 'ImportDeclaration'
-  )
+  const [importNodes, otherNodes] = partition(program.body, isImportDeclaration) as [
+    es.ImportDeclaration[],
+    es.Statement[]
+  ]
 
   if (importNodes.length === 0) return ['', [], otherNodes]
 
-  const moduleInfos = await transformImportNodesAsync(
-    importNodes as es.ImportDeclaration[],
+  const infos = await transformImportNodesAsync(
+    importNodes,
     context,
     loadTabs,
-    checkImports,
     (name, node) => memoizedGetModuleBundleAsync(name, node),
-    async (name, info, node) => {
-      const docs = await memoizedGetModuleDocsAsync(name, node)
-      if (!docs) return null
-      return new Set(Object.keys(docs))
-    },
     {
-      ImportSpecifier(specifier: es.ImportSpecifier, { namespaced }) {
-        return create.constantDeclaration(
-          specifier.local.name,
-          create.memberExpression(create.identifier(namespaced!), specifier.imported.name)
-        )
-      },
-      ImportDefaultSpecifier(specifier, { namespaced }) {
-        return create.constantDeclaration(
-          specifier.local.name,
+      ImportSpecifier: (spec: es.ImportSpecifier, { namespaced }) =>
+        create.constantDeclaration(
+          spec.local.name,
+          create.memberExpression(create.identifier(namespaced!), spec.imported.name)
+        ),
+      ImportDefaultSpecifier: (spec, { namespaced }) =>
+        create.constantDeclaration(
+          spec.local.name,
           create.memberExpression(create.identifier(namespaced!), 'default')
-        )
-      },
-      ImportNamespaceSpecifier(specifier, { namespaced }) {
-        return create.constantDeclaration(specifier.local.name, create.identifier(namespaced!))
-      }
+        ),
+      ImportNamespaceSpecifier: (spec, { namespaced }) =>
+        create.constantDeclaration(spec.local.name, create.identifier(namespaced!))
     },
     usedIdentifiers
   )
 
-  const [prefix, declNodes] = Object.entries(moduleInfos).reduce(
+  const [prefix, declNodes] = Object.entries(infos).reduce(
     (
       [prefixes, nodes],
       [
         moduleName,
         {
           content,
-          info: { content: text, namespaced }
+          info: { namespaced, content: text }
         }
       ]
     ) => {
-      prefixes.push(`// ${moduleName} module`)
+      const header = `// ${moduleName} module`
 
       const modifiedText = wrapModules
         ? `${NATIVE_STORAGE_ID}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
         : `(${text})(${REQUIRE_PROVIDER_ID})`
-      prefixes.push(`const ${namespaced} = ${modifiedText}\n`)
-
-      return [prefixes, [...nodes, ...content]]
+      return [
+        [...prefixes, `${header}\nconst ${namespaced!} = ${modifiedText}\n`],
+        [...nodes, ...content]
+      ]
     },
     [[], []] as [string[], es.VariableDeclaration[]]
   )
@@ -605,6 +595,10 @@ async function transpileToSource(
     return { transpiled: '' }
   }
 
+  if (!skipUndefined) {
+    checkForUndefinedVariables(program, usedIdentifiers)
+  }
+
   const functionsToStringMap = generateFunctionsToStringMap(program)
 
   transformReturnStatementsToAllowProperTailCalls(program)
@@ -613,9 +607,7 @@ async function transpileToSource(
   transformSomeExpressionsToCheckIfBoolean(program, globalIds)
   transformPropertyAssignment(program, globalIds)
   transformPropertyAccess(program, globalIds)
-  if (!skipUndefined) {
-    checkForUndefinedVariables(program, usedIdentifiers)
-  }
+
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
@@ -625,7 +617,6 @@ async function transpileToSource(
     context,
     usedIdentifiers,
     {
-      checkImports: true,
       loadTabs: true,
       wrapModules: true
     }
@@ -666,7 +657,7 @@ async function transpileToFullJS(
   ])
 
   const globalIds = getNativeIds(program, usedIdentifiers)
-  Object.keys(globalIds).forEach(usedIdentifiers.add)
+  Object.keys(globalIds).forEach(id => usedIdentifiers.add(id))
 
   if (!skipUndefined) checkForUndefinedVariables(program, usedIdentifiers)
 
@@ -675,9 +666,8 @@ async function transpileToFullJS(
     context,
     usedIdentifiers,
     {
-      checkImports: false,
       loadTabs: true,
-      wrapModules: false
+      wrapModules: wrapSourceModules
     }
   )
 

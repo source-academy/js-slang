@@ -2,68 +2,16 @@ import type * as es from 'estree'
 
 import { UndefinedVariable } from '../errors/errors'
 import assert from '../utils/assert'
-import { recursive } from '../utils/walkers'
-
-function isDeclaration(node: es.Node): node is es.Declaration {
-  return (
-    node.type === 'ClassDeclaration' ||
-    node.type === 'FunctionDeclaration' ||
-    node.type === 'VariableDeclaration'
-  )
-}
-
-function isModuleDeclaration(node: es.Node): node is es.ModuleDeclaration {
-  return [
-    'ExportAllDeclaration',
-    'ExportNamedDeclaration',
-    'ExportDefaultDeclaration',
-    'ImportDeclaration'
-  ].includes(node.type)
-}
+import { extractIdsFromPattern } from '../utils/ast/astUtils'
+import {
+  isDeclaration,
+  isFunctionNode,
+  isModuleDeclaration,
+  isPattern
+} from '../utils/ast/typeGuards'
 
 function isModuleOrRegDeclaration(node: es.Node): node is es.ModuleDeclaration | es.Declaration {
   return isDeclaration(node) || isModuleDeclaration(node)
-}
-
-function isPattern(node: es.Node): node is es.Pattern {
-  return [
-    'ArrayPattern',
-    'AssignmentPattern',
-    'Identifier',
-    'MemberExpression',
-    'ObjectPattern',
-    'RestElement'
-  ].includes(node.type)
-}
-
-function isFunctionNode(
-  node: es.Node
-): node is es.ArrowFunctionExpression | es.FunctionDeclaration | es.FunctionExpression {
-  return ['ArrowFunctionExpression', 'FunctionExpression', 'FunctionDeclaration'].includes(
-    node.type
-  )
-}
-
-function extractIdsFromPattern(pattern: es.Pattern): Set<es.Identifier> {
-  const ids = new Set<es.Identifier>()
-  recursive(pattern, null, {
-    ArrayPattern: ({ elements }: es.ArrayPattern, _state, c) =>
-      elements.forEach(elem => {
-        if (elem) c(elem, null)
-      }),
-    AssignmentPattern: (p: es.AssignmentPattern, _state, c) => {
-      c(p.left, null)
-      c(p.right, null)
-    },
-    Identifier: (id: es.Identifier) => ids.add(id),
-    MemberExpression: () => {
-      throw new Error('MemberExpressions should not be used with extractIdsFromPattern')
-    },
-    ObjectPattern: ({ properties }: es.ObjectPattern, _state, c) =>
-      properties.forEach(prop => c(prop, null)),
-    RestElement: ({ argument }: es.RestElement, _state, c) => c(argument, null)
-  })
-  return ids
 }
 
 function checkPattern(pattern: es.Pattern, identifiers: Set<string>): void {
@@ -322,7 +270,7 @@ function checkStatement(
           // If the init clause declares variables, add them to the list of
           // local identifiers that the for statement should check
           const varDeclResult = checkVariableDeclaration(node.init, identifiers)
-          varDeclResult.forEach(localIdentifiers.add)
+          varDeclResult.forEach(id => localIdentifiers.add(id))
         } else {
           checkExpression(node.init, localIdentifiers)
         }
@@ -339,10 +287,10 @@ function checkStatement(
       const localIdentifiers = new Set(identifiers)
       if (node.left.type === 'VariableDeclaration') {
         const varDeclResult = checkVariableDeclaration(node.left, identifiers)
-        varDeclResult.forEach(localIdentifiers.add)
+        varDeclResult.forEach(id => localIdentifiers.add(id))
       }
       checkExpression(node.right, localIdentifiers)
-      checkBody(node, localIdentifiers)
+      checkBody(node.body, localIdentifiers)
       break
     }
     case 'DoWhileStatement':
@@ -431,7 +379,7 @@ export default function checkForUndefinedVariables(
     if (isModuleOrRegDeclaration(stmt)) {
       checkDeclaration(stmt, localIdentifiers).forEach(id => localIdentifiers.add(id))
     } else if (stmt.type === 'BlockStatement') {
-      checkForUndefinedVariables(node, localIdentifiers)
+      checkForUndefinedVariables(stmt, localIdentifiers)
     } else {
       checkStatement(stmt, localIdentifiers)
     }
