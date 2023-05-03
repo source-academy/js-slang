@@ -2,7 +2,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { transformImportDeclarations } from '../transpiler/transpiler'
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import { recursive, simple, WalkerCallback } from '../utils/walkers'
 // transforms AST of program
 
@@ -582,7 +582,6 @@ async function handleImports(programs: es.Program[]): Promise<[string, string[]]
         null,
         new Set(),
         {
-          checkImports: false,
           loadTabs: false,
           wrapModules: false
         }

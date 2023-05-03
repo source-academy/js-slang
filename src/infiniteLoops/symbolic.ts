@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 
 // data structure for symbolic + hybrid values

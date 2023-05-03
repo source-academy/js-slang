@@ -50,7 +50,6 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   throwInfiniteLoops: true,
   importOptions: {
     loadTabs: true,
-    checkImports: true,
     wrapModules: true
   }
 }
@@ -153,7 +152,7 @@ async function runNative(
     }
 
     ;({ transpiled, sourceMapJson } = await transpile(transpiledProgram, context))
-    console.log(transpiled)
+    // console.log(transpiled)
     let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
@@ -308,11 +307,16 @@ export async function sourceFilesRunner(
   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
   previousCode = currentCode
 
-  const preprocessedProgram = await preprocessFileImports(files, entrypointFilePath, context)
-  if (!preprocessedProgram) {
-    return resolvedErrorPromise
-  }
-  context.previousPrograms.unshift(preprocessedProgram)
+  try {
+    const preprocessedProgram = await preprocessFileImports(files, entrypointFilePath, context)
+    if (!preprocessedProgram) {
+      return resolvedErrorPromise
+    }
+    context.previousPrograms.unshift(preprocessedProgram)
 
-  return sourceRunner(preprocessedProgram, context, isVerboseErrorsEnabled, options)
+    return sourceRunner(preprocessedProgram, context, isVerboseErrorsEnabled, options)
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }

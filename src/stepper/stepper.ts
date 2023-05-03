@@ -11,7 +11,7 @@ import {
   FunctionDeclarationExpression,
   substituterNodes
 } from '../types'
-import * as ast from '../utils/astCreator'
+import * as ast from '../utils/ast/astCreator'
 import {
   dummyBlockExpression,
   dummyBlockStatement,

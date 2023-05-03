@@ -6,12 +6,11 @@ import { RawSourceMap } from 'source-map'
 import { IOptions, Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { hoistAndMergeImports } from '../localImports/transformers/hoistAndMergeImports'
 import { getRequireProvider, RequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'
 import { evallerReplacer, getBuiltins, transpile } from '../transpiler/transpiler'
 import type { Context, NativeStorage } from '../types'
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
 
@@ -59,9 +58,6 @@ export async function fullJSRunner(
   const preludeAndBuiltins: es.Statement[] = containsPrevEval(context)
     ? []
     : [...getBuiltins(context.nativeStorage), ...prelude]
-
-  // modules
-  hoistAndMergeImports(program)
 
   // evaluate and create a separate block for preludes and builtins
   const preEvalProgram: es.Program = create.program([
