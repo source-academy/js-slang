@@ -14,6 +14,10 @@
     "project": "tsconfig.json",
     "sourceType": "module"
   },
+  "ignorePatterns": [
+    "**/__tests__/**",
+    "**/__mocks__/**"
+  ],
   "plugins": [
     "@typescript-eslint",
     "simple-import-sort"
