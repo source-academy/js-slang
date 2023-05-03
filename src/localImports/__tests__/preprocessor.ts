@@ -119,8 +119,7 @@ describe('preprocessFileImports', () => {
 
     program.body = [...hoistAndMergeImports([program]), ...program.body]
 
-    expect(generate(program))
-      .toMatchSnapshot()
+    expect(generate(program)).toMatchSnapshot()
   }
 
   it('returns undefined if the entrypoint file does not exist', async () => {
@@ -417,7 +416,9 @@ describe('preprocessFileImports', () => {
 
       x + y;
     `
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, { allowUndefinedImports: true }) 
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
+      allowUndefinedImports: true
+    })
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 })

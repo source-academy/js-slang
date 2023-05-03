@@ -33,8 +33,7 @@ describe('hoistAndMergeImports', () => {
 
     program.body = [...hoistAndMergeImports([program]), ...program.body]
 
-    expect(generate(program))
-      .toMatchSnapshot()
+    expect(generate(program)).toMatchSnapshot()
   }
 
   test('hoists import declarations to the top of the program', () => {
