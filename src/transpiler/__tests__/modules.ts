@@ -4,53 +4,18 @@ import type { Identifier, Literal, MemberExpression, VariableDeclaration } from 
 import { runInContext } from '../..'
 import { mockContext } from '../../mocks/context'
 import { UndefinedImportError } from '../../modules/errors'
-import * as moduleLoader from '../../modules/moduleLoaderAsync'
 import { parse } from '../../parser/parser'
 import { Chapter, Value } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { transformImportDeclarations, transpile } from '../transpiler'
 
-// jest.mock('../../modules/moduleLoaderAsync', () => ({
-//   ...jest.requireActual('../../modules/moduleLoaderAsync'),
-//   memoizedGetModuleFile: jest.fn(),
-//   memoizedGetModuleManifest: jest.fn().mockReturnValue({
-//     one_module: {
-//       tabs: []
-//     },
-//     another_module: {
-//       tabs: []
-//     }
-//   }),
-//   memoizedloadModuleDocs: jest.fn().mockReturnValue({
-//     foo: 'foo',
-//     bar: 'bar'
-//   })
-// }))
-jest.spyOn(moduleLoader, 'memoizedGetModuleManifestAsync').mockResolvedValue({
-  one_module: { tabs: ['tab0'] },
-  another_module: { tabs: [] }
-})
-
-jest.spyOn(moduleLoader, 'memoizedGetModuleDocsAsync').mockResolvedValue({
-  foo: 'foo',
-  bar: 'bar'
-})
-
 // const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
 // const mockedModuleFile = asMock(memoizedGetModuleFile)
 
 test('Transform import declarations into variable declarations', async () => {
-  // mockedModuleFile.mockImplementation((name, type) => {
-  //   if (type === 'json') {
-  //     return name === 'one_module' ? "{ foo: 'foo' }" : "{ bar: 'bar' }"
-  //   } else {
-  //     return 'undefined'
-  //   }
-  // })
-
   const code = stripIndent`
-    import { foo } from "test/one_module";
-    import { bar } from "test/another_module";
+    import { foo } from "one_module";
+    import { bar } from "another_module";
     foo(bar);
   `
   const context = mockContext(Chapter.SOURCE_4)
@@ -68,17 +33,9 @@ test('Transform import declarations into variable declarations', async () => {
 })
 
 test('Transpiler accounts for user variable names when transforming import statements', async () => {
-  // mockedModuleFile.mockImplementation((name, type) => {
-  //   if (type === 'json') {
-  //     return name === 'one_module' ? "{ foo: 'foo' }" : "{ bar: 'bar' }"
-  //   } else {
-  //     return 'undefined'
-  //   }
-  // })
-
   const code = stripIndent`
-    import { foo } from "test/one_module";
-    import { bar as __MODULE__2 } from "test/another_module";
+    import { foo } from "one_module";
+    import { bar as __MODULE__2 } from "another_module";
     const __MODULE__ = 'test0';
     const __MODULE__0 = 'test1';
     foo(bar);
@@ -112,30 +69,6 @@ test('Transpiler accounts for user variable names when transforming import state
   ).toEqual('__MODULE__3')
 })
 
-test('checkForUndefinedVariables accounts for import statements', async () => {
-  const code = stripIndent`
-    import { foo } from "one_module";
-    foo;
-  `
-  const context = mockContext(Chapter.SOURCE_4)
-  const program = parse(code, context)!
-  await transpile(program, context, false)
-})
-
-test('importing undefined variables should throw errors', async () => {
-  const code = stripIndent`
-    import { hello } from 'one_module';
-  `
-  const context = mockContext(Chapter.SOURCE_4)
-  const program = parse(code, context)!
-  try {
-    await transpile(program, context, false)
-  } catch (error) {
-    expect(error).toBeInstanceOf(UndefinedImportError)
-    expect((error as UndefinedImportError).symbol).toEqual('hello')
-  }
-})
-
 test('Module loading functionality', async () => {
   const code = stripIndent`
     import { foo } from 'one_module';
@@ -156,28 +89,6 @@ test('importing undefined variables should throw errors', async () => {
   const program = parse(code, context)!
   try {
     await transpile(program, context, false)
-  } catch (error) {
-    expect(error).toBeInstanceOf(UndefinedImportError)
-    expect((error as UndefinedImportError).symbol).toEqual('hello')
-  }
-})
-
-test('importing undefined variables should throw errors', () => {
-  // mockedModuleFile.mockImplementation((name, type) => {
-  //   if (type === 'json') {
-  //     return '{}'
-  //   } else {
-  //     return 'undefined'
-  //   }
-  // })
-
-  const code = stripIndent`
-    import { hello } from 'one_module';
-  `
-  const context = mockContext(Chapter.SOURCE_4)
-  const program = parse(code, context)!
-  try {
-    transpile(program, context, false)
   } catch (error) {
     expect(error).toBeInstanceOf(UndefinedImportError)
     expect((error as UndefinedImportError).symbol).toEqual('hello')

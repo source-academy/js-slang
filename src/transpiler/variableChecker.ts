@@ -108,6 +108,8 @@ function checkExpression(
     case 'Property': {
       if (isPattern(node.value)) checkPattern(node.value, identifiers)
       else checkExpression(node.value, identifiers)
+
+      if (node.computed) checkExpression(node.key as es.Expression, identifiers)
       break
     }
     case 'SpreadElement':

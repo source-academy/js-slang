@@ -11,12 +11,12 @@ import { transformImportNodesAsync } from '../modules/utils'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { isImportDeclaration } from '../utils/ast/typeGuards'
+import { simple } from '../utils/ast/walkers'
 import {
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getUniqueId
 } from '../utils/uniqueIds'
-import { simple } from '../utils/walkers'
 import checkForUndefinedVariables from './variableChecker'
 
 /**
