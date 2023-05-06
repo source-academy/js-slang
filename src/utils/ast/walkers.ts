@@ -68,6 +68,25 @@ export const recursive: <TState>(
   base?: RecursiveVisitors<TState>
 ) => void = walkers.recursive as any
 
+type Recurse2Walker<TState, TReturn> = (node: Node, state: TState) => TReturn
+type Recurse2Callback<TState, TReturn> = (
+  node: Node,
+  state: TState,
+  callback: Recurse2Walker<TState, TReturn>
+) => TReturn
+export const recursive2 = <TState, TReturn>(
+  node: Node,
+  state: TState,
+  walkers: Record<string, Recurse2Callback<TState, TReturn>>,
+  onUnsupported: (node: Node) => TReturn = () => {
+    throw new Error(`${node.type} is unsupported!`)
+  }
+): TReturn => {
+  const processor = walkers[node.type]
+  if (!processor) return onUnsupported(node)
+  return processor(node, state, (n, s) => recursive2(n, s, walkers))
+}
+
 export const full: <TState>(
   node: Node,
   callback: FullWalkerCallback<TState>,

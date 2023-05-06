@@ -117,7 +117,7 @@ describe('preprocessFileImports', () => {
       throw parseCodeError
     }
 
-    program.body = [...hoistAndMergeImports([program]), ...program.body]
+    hoistAndMergeImports(program, [program])
 
     expect(generate(program)).toMatchSnapshot()
   }

@@ -1,6 +1,6 @@
 import es from 'estree'
 
-import { full, simple } from '../../utils/walkers'
+import { full, simple } from '../../utils/ast/walkers'
 
 export const parseCodeError = new Error('Unable to parse code')
 

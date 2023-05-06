@@ -3,7 +3,7 @@ import { Node as ESNode, Program } from 'estree'
 
 import { DEFAULT_ECMA_VERSION } from '../../constants'
 import { Chapter, Context, Rule, SourceError, Variant } from '../../types'
-import { ancestor, AncestorWalkerFn } from '../../utils/walkers'
+import { ancestor, AncestorWalkerFn } from '../../utils/ast/walkers'
 import { DisallowedConstructError, FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { createAcornParserOptions, positionToSourceLocation } from '../utils'

@@ -19,7 +19,7 @@ import {
   dummyProgram,
   dummyStatement,
   dummyVariableDeclarator
-} from '../utils/dummyAstCreator'
+} from '../utils/ast/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import { nodeToValue, valueToExpression } from './converter'

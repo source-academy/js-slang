@@ -160,15 +160,15 @@ async function evaluateImports(
       {
         ImportSpecifier: (spec: es.ImportSpecifier, info, node) => {
           declareIdentifier(context, spec.local.name, node, environment)
-          defineVariable(context, spec.local.name, info.content![spec.imported.name], true, node)
+          defineVariable(context, spec.local.name, info.content[spec.imported.name], true, node)
         },
         ImportDefaultSpecifier: (spec, info, node) => {
           declareIdentifier(context, spec.local.name, node, environment)
-          defineVariable(context, spec.local.name, info.content!['default'], true, node)
+          defineVariable(context, spec.local.name, info.content['default'], true, node)
         },
         ImportNamespaceSpecifier: (spec, info, node) => {
           declareIdentifier(context, spec.local.name, node, environment)
-          defineVariable(context, spec.local.name, info.content!, true, node)
+          defineVariable(context, spec.local.name, info.content, true, node)
         }
       }
     )

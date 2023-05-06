@@ -855,7 +855,7 @@ Object {
   "code": "import { foo1 } from 'one_module';",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Unable to get modules.",
+  "parsedErrors": "Line 1: Module \\"one_module\\" not found.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

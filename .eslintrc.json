@@ -16,7 +16,8 @@
   },
   "ignorePatterns": [
     "**/__tests__/**",
-    "**/__mocks__/**"
+    "**/__mocks__/**",
+    "jest.setup.ts"
   ],
   "plugins": [
     "@typescript-eslint",

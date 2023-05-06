@@ -18,7 +18,7 @@ import {
   FullWalkerCallback,
   recursive,
   WalkerCallback
-} from './utils/walkers'
+} from './utils/ast/walkers'
 
 // Finds the innermost node that matches the given location
 export function findIdentifierNode(

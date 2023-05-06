@@ -6,7 +6,7 @@ import { Chapter, NodeWithInferredType } from '../../types'
 import { getVariableDecarationName } from '../../utils/ast/astCreator'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
-import { simple } from '../../utils/walkers'
+import { simple } from '../../utils/ast/walkers'
 import { validateAndAnnotate } from '../validator'
 
 export function toValidatedAst(code: string) {

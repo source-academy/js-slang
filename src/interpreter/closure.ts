@@ -9,7 +9,7 @@ import {
   identifier,
   returnStatement
 } from '../utils/ast/astCreator'
-import { dummyLocation } from '../utils/dummyAstCreator'
+import { dummyLocation } from '../utils/ast/dummyAstCreator'
 import { apply } from './interpreter'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {

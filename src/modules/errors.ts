@@ -57,53 +57,55 @@ export class ModuleInternalError extends RuntimeSourceError {
   }
 }
 
-export class UndefinedImportError extends RuntimeSourceError {
+type SourcedModuleDeclarations =
+  | ImportSpecifier
+  | ImportDefaultSpecifier
+  | ImportNamespaceSpecifier
+  | ExportSpecifier
+  | ExportAllDeclaration
+
+export abstract class UndefinedImportErrorBase extends RuntimeSourceError {
+  constructor(public readonly moduleName: string, node?: SourcedModuleDeclarations) {
+    super(node)
+  }
+
+  public elaborate(): string {
+    return "Check your imports and make sure what you're trying to import exists!"
+  }
+}
+
+export class UndefinedImportError extends UndefinedImportErrorBase {
   constructor(
     public readonly symbol: string,
-    public readonly moduleName: string,
-    node?: ImportSpecifier | ExportSpecifier
+    moduleName: string,
+    node?: ImportSpecifier | ImportDefaultSpecifier | ExportSpecifier
   ) {
-    super(node)
+    super(moduleName, node)
   }
 
   public explain(): string {
     return `'${this.moduleName}' does not contain a definition for '${this.symbol}'`
   }
-
-  public elaborate(): string {
-    return "Check your imports and make sure what you're trying to import exists!"
-  }
 }
 
-export class UndefinedDefaultImportError extends RuntimeSourceError {
+export class UndefinedDefaultImportError extends UndefinedImportErrorBase {
   constructor(
-    public readonly moduleName: string,
+    moduleName: string,
     node?: ImportSpecifier | ImportDefaultSpecifier | ExportSpecifier
   ) {
-    super(node)
+    super(moduleName, node)
   }
 
   public explain(): string {
     return `'${this.moduleName}' does not contain a default export!`
   }
-
-  public elaborate(): string {
-    return "Check your imports and make sure what you're trying to import exists!"
-  }
 }
-export class UndefinedNamespaceImportError extends RuntimeSourceError {
-  constructor(
-    public readonly moduleName: string,
-    node?: ImportNamespaceSpecifier | ExportAllDeclaration
-  ) {
-    super(node)
+export class UndefinedNamespaceImportError extends UndefinedImportErrorBase {
+  constructor(moduleName: string, node?: ImportNamespaceSpecifier | ExportAllDeclaration) {
+    super(moduleName, node)
   }
 
   public explain(): string {
     return `'${this.moduleName}' does not export any symbols!`
-  }
-
-  public elaborate(): string {
-    return "Check your imports and make sure what you're trying to import exists!"
   }
 }

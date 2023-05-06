@@ -1,7 +1,7 @@
 export function loadModuleBundle() {
   return {
     foo: () => 'foo',
-    bar: () => 'bar',
+    bar: () => 'bar'
   }
 }
 
@@ -11,5 +11,5 @@ export function loadModuleTabs() {
 export const memoizedGetModuleManifest = () => ({
   one_module: { tabs: [] },
   other_module: { tabs: [] },
-  another_module: { tabs: [] },
+  another_module: { tabs: [] }
 })

@@ -1,6 +1,6 @@
 import type * as es from 'estree'
 
-import { recursive } from '../walkers'
+import { recursive } from './walkers'
 
 export function extractIdsFromPattern(pattern: es.Pattern): Set<es.Identifier> {
   const ids = new Set<es.Identifier>()

@@ -1,5 +1,5 @@
 import es from 'estree'
-import * as path from 'path'
+import * as pathlib from 'path'
 
 import { CircularImportError } from '../errors/localImportErrors'
 import { ModuleNotFoundError } from '../modules/errors'
@@ -45,7 +45,7 @@ const defaultResolutionOptions: Required<ModuleResolutionOptions> = {
   extensions: null
 }
 
-const parseProgramsAndConstructImportGraph = async (
+export const parseProgramsAndConstructImportGraph = async (
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
@@ -60,7 +60,6 @@ const parseProgramsAndConstructImportGraph = async (
     ...defaultResolutionOptions,
     ...rawResolutionOptions
   }
-
   const programs: Record<string, es.Program> = {}
   const importGraph = new DirectedGraph()
 
@@ -68,7 +67,12 @@ const parseProgramsAndConstructImportGraph = async (
   const numOfFiles = Object.keys(files).length
   const shouldAddSourceFileToAST = numOfFiles > 1
 
+  // docs are only loaded if alloweUndefinedImports is false
+  // otherwise the entry for each module will be null
   const moduleDocs: Record<string, Set<string> | null> = {}
+
+  // If a Source import is never used, then there will be no need to
+  // load the module manifest
   let moduleManifest: ModuleManifest | null = null
 
   // From the given import source, return the absolute path for that import
@@ -92,7 +96,7 @@ const parseProgramsAndConstructImportGraph = async (
       if (source in moduleManifest) return source
       modAbsPath = source
     } else {
-      modAbsPath = path.resolve(desiredPath, '..', source)
+      modAbsPath = pathlib.resolve(desiredPath, '..', source)
       if (files[modAbsPath] !== undefined) return modAbsPath
 
       if (resolutionOptions.directory && files[`${modAbsPath}/index`] !== undefined) {
@@ -169,6 +173,8 @@ const parseProgramsAndConstructImportGraph = async (
           }
 
           dependencies.add(modAbsPath)
+
+          // Replace the source of the node with the resolved path
           node.source!.value = modAbsPath
           break
         }
@@ -178,7 +184,12 @@ const parseProgramsAndConstructImportGraph = async (
     await Promise.all(
       Array.from(dependencies.keys()).map(async dependency => {
         await parseFile(dependency)
+
+        // There is no need to track Source modules as dependencies, as it can be assumed
+        // that they will always have to be loaded first
         if (!isSourceImport(dependency)) {
+          // If the edge has already been traversed before, the import graph
+          // must contain a cycle. Then we can exit early and proceed to find the cycle
           if (importGraph.hasEdge(dependency, currentFilePath)) {
             throw new PreprocessError()
           }
@@ -248,6 +259,7 @@ const preprocessFileImports = async (
     context,
     allowUndefinedImports
   )
+
   // Return 'undefined' if there are errors while parsing.
   if (context.errors.length !== 0) {
     return undefined
@@ -275,7 +287,7 @@ const preprocessFileImports = async (
   // We want to operate on the entrypoint program to get the eventual
   // preprocessed program.
   const entrypointProgram = programs[entrypointFilePath]
-  const entrypointDirPath = path.resolve(entrypointFilePath, '..')
+  const entrypointDirPath = pathlib.resolve(entrypointFilePath, '..')
 
   // Create variables to hold the imported statements.
   const entrypointProgramModuleDeclarations = entrypointProgram.body.filter(isModuleDeclaration)
@@ -355,9 +367,7 @@ const preprocessFileImports = async (
   // non-Source module imports would have already been removed. As part
   // of this step, we also merge imports from the same module so as to
   // import each unique name per module only once.
-  const importDecls = hoistAndMergeImports(Object.values(programs))
-  preprocessedProgram.body = [...importDecls, ...preprocessedProgram.body]
-
+  hoistAndMergeImports(preprocessedProgram, Object.values(programs))
   return preprocessedProgram
 }
 

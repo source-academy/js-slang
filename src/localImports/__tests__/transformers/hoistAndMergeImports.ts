@@ -3,27 +3,27 @@ import { mockContext } from '../../../mocks/context'
 import { parse } from '../../../parser/parser'
 import { Chapter } from '../../../types'
 import hoistAndMergeImports from '../../transformers/hoistAndMergeImports'
-import { parseCodeError } from '../utils'
+import { parseCodeError, stripLocationInfo } from '../utils'
 
 describe('hoistAndMergeImports', () => {
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
-  // let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
+  let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
 
   beforeEach(() => {
     actualContext = mockContext(Chapter.LIBRARY_PARSER)
-    // expectedContext = mockContext(Chapter.LIBRARY_PARSER)
+    expectedContext = mockContext(Chapter.LIBRARY_PARSER)
   })
 
-  // const assertASTsAreEquivalent = (actualCode: string, expectedCode: string): void => {
-  //   const actualProgram = parse(actualCode, actualContext)
-  //   const expectedProgram = parse(expectedCode, expectedContext)
-  //   if (actualProgram === null || expectedProgram === null) {
-  //     throw parseCodeError
-  //   }
+  const assertASTsAreEquivalent = (actualCode: string, expectedCode: string): void => {
+    const actualProgram = parse(actualCode, actualContext)
+    const expectedProgram = parse(expectedCode, expectedContext)
+    if (actualProgram === null || expectedProgram === null) {
+      throw parseCodeError
+    }
 
-  //   actualProgram.body = [...hoistAndMergeImports([actualProgram]), ...actualProgram.body]
-  //   expect(stripLocationInfo(actualProgram)).toEqual(stripLocationInfo(expectedProgram))
-  // }
+    hoistAndMergeImports(actualProgram, [actualProgram])
+    expect(stripLocationInfo(actualProgram)).toEqual(stripLocationInfo(expectedProgram))
+  }
 
   const testAgainstSnapshot = (code: string) => {
     const program = parse(code, actualContext)
@@ -31,8 +31,7 @@ describe('hoistAndMergeImports', () => {
       throw parseCodeError
     }
 
-    program.body = [...hoistAndMergeImports([program]), ...program.body]
-
+    hoistAndMergeImports(program, [program])
     expect(generate(program)).toMatchSnapshot()
   }
 
@@ -51,19 +50,19 @@ describe('hoistAndMergeImports', () => {
       square(3);
     `
     testAgainstSnapshot(actualCode)
-    // const expectedCode = `
-    //   import { a, b, c } from "./a.js";
-    //   import x from "source-module";
+    const expectedCode = `
+      import { a, b, c } from "./a.js";
+      import x from "source-module";
 
-    //   function square(x) {
-    //     return x * x;
-    //   }
+      function square(x) {
+        return x * x;
+      }
 
-    //   export { square };
+      export { square };
 
-    //   square(3);
-    // `
-    // assertASTsAreEquivalent(actualCode, expectedCode)
+      square(3);
+    `
+    assertASTsAreEquivalent(actualCode, expectedCode)
   })
 
   test('merges import declarations from the same module', () => {

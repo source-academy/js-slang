@@ -1,5 +1,5 @@
 /* tslint:disable:max-classes-per-file */
-import * as es from 'estree'
+import type * as es from 'estree'
 import { isEmpty, uniqueId } from 'lodash'
 
 import { UNKNOWN_LOCATION } from '../constants'
@@ -13,6 +13,7 @@ import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
+import { simple } from '../utils/ast/walkers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -746,20 +747,18 @@ export function* evaluateProgram(
 
       for (const spec of node.specifiers) {
         declareIdentifier(context, spec.local.name, node)
-        switch (spec.type) {
-          case 'ImportSpecifier': {
-            defineVariable(context, spec.local.name, functions[spec.imported.name], true)
-            break
-          }
-          case 'ImportDefaultSpecifier': {
-            defineVariable(context, spec.local.name, functions['default'], true)
-            break
-          }
-          case 'ImportNamespaceSpecifier': {
-            defineVariable(context, spec.local.name, functions, true)
-            break
-          }
-        }
+        simple(spec, {
+          ImportSpecifier: () =>
+            defineVariable(
+              context,
+              spec.local.name,
+              functions[(spec as es.ImportSpecifier).imported.name],
+              true
+            ),
+          ImportDefaultSpecifier: () =>
+            defineVariable(context, spec.local.name, functions['default'], true),
+          ImportNamespaceSpecifier: () => defineVariable(context, spec.local.name, functions, true)
+        })
       }
       yield* leave(context)
     }

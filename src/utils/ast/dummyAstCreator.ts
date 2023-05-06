@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { BlockExpression } from '../types'
+import { BlockExpression } from '../../types'
 
 const DUMMY_STRING = '__DUMMY__'
 const DUMMY_UNARY_OPERATOR = '!'
