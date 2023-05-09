@@ -6,7 +6,6 @@ import { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
 import { ECEResultPromise, evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
 import { ExceptionError } from '../errors/errors'
-import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
@@ -15,7 +14,6 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
-import preprocessFileImports from '../localImports/preprocessor'
 import { getRequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
@@ -37,6 +35,8 @@ import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { determineVariant, resolvedErrorPromise } from './utils'
+import preprocessFileImports from '../modules/preprocessor'
+import { ModuleNotFoundError } from '../modules/errors'
 
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
   scheduler: 'async',
@@ -48,12 +48,16 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   useSubst: false,
   isPrelude: false,
   throwInfiniteLoops: true,
+
+  logTranspilerOutput: false,
   importOptions: {
     loadTabs: true,
-    wrapModules: true
+    wrapModules: true,
+    allowUndefinedImports: false
   }
 }
 
+// @ts-ignore
 let previousCode: {
   files: Partial<Record<string, string>>
   entrypointFilePath: string
@@ -152,7 +156,7 @@ async function runNative(
     }
 
     ;({ transpiled, sourceMapJson } = await transpile(transpiledProgram, context))
-    // console.log(transpiled)
+    if (options.logTranspilerOutput) console.log(transpiled)
     let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
@@ -222,7 +226,18 @@ export async function sourceRunner(
   isVerboseErrorsEnabled: boolean,
   options: Partial<IOptions> = {}
 ): Promise<Result> {
-  const theOptions: IOptions = { ...DEFAULT_SOURCE_OPTIONS, ...options }
+  const theOptions: IOptions = {
+    ...DEFAULT_SOURCE_OPTIONS,
+    ...options,
+    importOptions: {
+      ...DEFAULT_SOURCE_OPTIONS.importOptions,
+      ...(options?.importOptions ?? {})
+    }
+  }
+  if (context.chapter === Chapter.FULL_JS) {
+    return fullJSRunner(program, context, theOptions)
+  }
+
   context.variant = determineVariant(context, options)
 
   validateAndAnnotate(program, context)
@@ -241,7 +256,7 @@ export async function sourceRunner(
   determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
 
   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-    return await fullJSRunner(program, context, theOptions)
+    return fullJSRunner(program, context, theOptions)
   }
 
   // All runners after this point evaluate the prelude.
@@ -286,7 +301,7 @@ export async function sourceFilesRunner(
 ): Promise<Result> {
   const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
     return resolvedErrorPromise
   }
 

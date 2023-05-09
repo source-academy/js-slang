@@ -58,6 +58,9 @@ export interface IOptions {
   throwInfiniteLoops: boolean
 
   importOptions: ImportTransformOptions
+
+  /** Set to true to console log the transpiler's transpiled code */
+  logTranspilerOutput: boolean
 }
 
 // needed to work on browsers
@@ -199,7 +202,7 @@ export async function getNames(
   }
   const cursorLoc: es.Position = { line, column: col }
 
-  const [progNames, displaySuggestions] = getProgramNames(program, comments, cursorLoc)
+  const [progNames, displaySuggestions] = await getProgramNames(program, comments, cursorLoc)
   const keywords = getKeywords(program, cursorLoc, context)
   return [progNames.concat(keywords), displaySuggestions]
 }
