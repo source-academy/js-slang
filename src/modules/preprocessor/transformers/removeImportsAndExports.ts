@@ -9,7 +9,7 @@ export default function removeImportsAndExports(program: Program) {
         return processExportDefaultDeclaration(node, {
           ClassDeclaration: decl => [...res, decl],
           FunctionDeclaration: decl => [...res, decl],
-          Expression: () => res,
+          Expression: () => res
         })
       case 'ExportNamedDeclaration':
         return node.declaration ? [...res, node.declaration] : res

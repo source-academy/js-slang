@@ -9,8 +9,8 @@ import type {
   Node,
   SourceLocation
 } from 'estree'
-import { UNKNOWN_LOCATION } from '../constants'
 
+import { UNKNOWN_LOCATION } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { ErrorSeverity, ErrorType, SourceError } from '../types'
 import { nonAlphanumericCharEncoding } from './preprocessor/filePaths'
