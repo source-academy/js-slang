@@ -28,9 +28,6 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
 import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
-import { CannotFindModuleError } from './errors/localImportErrors'
-import { validateFilePath } from './localImports/filePaths'
-import preprocessFileImports from './localImports/preprocessor'
 import { ImportTransformOptions } from './modules/moduleTypes'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
@@ -41,10 +38,13 @@ import {
   hasVerboseErrors,
   htmlRunner,
   resolvedErrorPromise,
-  sourceFilesRunner
+  sourceFilesRunner,
 } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
+import { validateFilePath } from './modules/preprocessor/filePaths'
+import preprocessFileImports from './modules/preprocessor'
+import { ModuleNotFoundError } from './modules/errors'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -336,12 +336,12 @@ export async function runFilesInContext(
 
   const code = files[entrypointFilePath]
   if (code === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
     return resolvedErrorPromise
   }
 
   if (
-    context.chapter === Chapter.FULL_JS ||
+    // context.chapter === Chapter.FULL_JS ||
     context.chapter === Chapter.FULL_TS ||
     context.chapter === Chapter.PYTHON_1
   ) {
@@ -431,7 +431,7 @@ export async function compileFiles(
 
   const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
     return undefined
   }
 
