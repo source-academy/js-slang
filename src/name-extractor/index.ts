@@ -200,10 +200,13 @@ export async function getProgramNames(
   }
 
   const names = await Promise.all(nameQueue.map(node => getNames(node, n => cursorInLoc(n.loc))))
-  const res = names.flat().reduce((prev, each, idx) => ({
-    ...prev,
-    [each.name]: { ...each, score: idx } // Deduplicate, ensure deeper declarations overwrite
-  }), {} as Record<string, NameDeclaration>)
+  const res = names.flat().reduce(
+    (prev, each, idx) => ({
+      ...prev,
+      [each.name]: { ...each, score: idx } // Deduplicate, ensure deeper declarations overwrite
+    }),
+    {} as Record<string, NameDeclaration>
+  )
 
   // const res: any = {}
   // nameQueue
@@ -211,7 +214,7 @@ export async function getProgramNames(
   //   .reduce((prev, cur) => prev.concat(cur), []) // no flatmap feelsbad
   //   .forEach((decl, idx) => {
   //     res[decl.name] = { ...decl, score: idx }
-  //   }) 
+  //   })
   return [Object.values(res), true]
 }
 
@@ -312,7 +315,10 @@ function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean):
  * is located within the node, false otherwise
  * @returns List of found names
  */
-async function getNames(node: es.Node, locTest: (node: es.Node) => boolean): Promise<NameDeclaration[]> {
+async function getNames(
+  node: es.Node,
+  locTest: (node: es.Node) => boolean
+): Promise<NameDeclaration[]> {
   switch (node.type) {
     case 'ImportDeclaration':
       if (!isSourceImport(node.source.value as string)) {
@@ -324,7 +330,7 @@ async function getNames(node: es.Node, locTest: (node: es.Node) => boolean): Pro
       }
 
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))
-      const source = node.source.value as string;
+      const source = node.source.value as string
 
       try {
         const docs = await memoizedGetModuleDocsAsync(source)
@@ -353,7 +359,7 @@ async function getNames(node: es.Node, locTest: (node: es.Node) => boolean): Pro
                 meta: KIND_IMPORT,
                 docHTML: docs[spec.local.name]
               }
-            case 'ImportDefaultSpecifier': 
+            case 'ImportDefaultSpecifier':
               return {
                 name: spec.local.name,
                 meta: KIND_IMPORT,

@@ -1,5 +1,5 @@
 import type { Node } from 'estree'
-import { memoize, MemoizedFunction } from 'lodash'
+import { memoize } from 'lodash'
 
 import type { Context } from '..'
 import { wrapSourceModule } from '../utils/operators'
@@ -120,11 +120,4 @@ export async function loadModuleBundleAsync(
     // console.error("bundle error: ", error)
     throw new ModuleInternalError(moduleName, error, node)
   }
-}
-
-export function resetMemoize() {
-  (memoizedGetModuleBundleAsync as MemoizedFunction).cache.clear!();
-  (memoizedGetModuleManifestAsync as MemoizedFunction).cache.clear!();
-  (memoizedGetModuleTabAsync as MemoizedFunction).cache.clear!();
-  (memoizedGetModuleDocsAsync as MemoizedFunction).cache.clear!()
 }
