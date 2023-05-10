@@ -22,7 +22,8 @@ test('Transform import declarations into variable declarations', async () => {
   const program = parse(code, context)!
   const [, importNodes] = await transformImportDeclarations(program, context, new Set<string>(), {
     wrapModules: true,
-    loadTabs: false
+    loadTabs: false,
+    allowUndefinedImports: false
   })
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
@@ -48,7 +49,8 @@ test('Transpiler accounts for user variable names when transforming import state
     new Set<string>(['__MODULE__', '__MODULE__0']),
     {
       loadTabs: false,
-      wrapModules: false
+      wrapModules: false,
+      allowUndefinedImports: false
     }
   )
 

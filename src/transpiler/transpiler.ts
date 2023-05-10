@@ -59,7 +59,7 @@ export async function transformImportDeclarations(
     importNodes,
     context,
     loadTabs,
-    (name, node) => memoizedGetModuleBundleAsync(name, node),
+    name => memoizedGetModuleBundleAsync(name),
     {
       ImportSpecifier: (spec: es.ImportSpecifier, { namespaced }) =>
         create.constantDeclaration(
@@ -618,9 +618,11 @@ async function transpileToSource(
     usedIdentifiers,
     {
       loadTabs: true,
-      wrapModules: true
+      wrapModules: true,
+      allowUndefinedImports: false
     }
   )
+
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
 
   getGloballyDeclaredIdentifiers(program).forEach(id =>
@@ -659,7 +661,10 @@ async function transpileToFullJS(
   const globalIds = getNativeIds(program, usedIdentifiers)
   Object.keys(globalIds).forEach(id => usedIdentifiers.add(id))
 
-  if (!skipUndefined) checkForUndefinedVariables(program, usedIdentifiers)
+  if (!skipUndefined) {
+    const includingGlobals = new Set([...Object.keys(global), ...usedIdentifiers])
+    checkForUndefinedVariables(program, includingGlobals)
+  }
 
   const [modulePrefix, importNodes, otherNodes] = await transformImportDeclarations(
     program,
@@ -667,7 +672,8 @@ async function transpileToFullJS(
     usedIdentifiers,
     {
       loadTabs: true,
-      wrapModules: wrapSourceModules
+      wrapModules: wrapSourceModules,
+      allowUndefinedImports: true
     }
   )
 

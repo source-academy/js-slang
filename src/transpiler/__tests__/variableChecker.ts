@@ -194,7 +194,8 @@ describe('Test export and import declarations', () => {
 
   testCases('Test ImportDeclarations', [
     ['ImportSpecifiers are accounted for', 'import { hi } from "one_module"; hi;', null],
-    ['ImportDefaultSpecifiers are accounted for', 'import hi from "one_module"; hi;', null]
+    ['ImportDefaultSpecifiers are accounted for', 'import hi from "one_module"; hi;', null],
+    ['ImportNamespaceSpecifiers are accounted for', 'import * as hi from "one_module"; hi;', null]
   ])
 })
 
@@ -264,6 +265,7 @@ testCases('Test BlockStatements', [
 describe('Test For Statements', () => {
   testCases('Test regular for statements', [
     ['Init statement properly declares variables', 'for (let i = 0; i < 5; i++) { i; }', null],
+    ['Works with expression bodies', 'for (let i = 0; i < 5; i++) i++;', null],
     [
       'Test expression is accounted for',
       'for (let i = 0; unknown_var < 5; i++) { i; }',
@@ -278,6 +280,34 @@ describe('Test For Statements', () => {
       'Init is scoped to for statement',
       'for (let i = 0; i < 5; i++) {} i; ',
       { name: 'i', line: 1, col: 31 }
+    ]
+  ])
+
+  testCases('Test for of statements', [
+    ['Init statement properly declares variables', 'for (const i of [1,2,3,4]) { i; }', null],
+    [
+      'Init statement works with patterns',
+      'const obj = {}; for (obj.obj of [1,2,3,4]) { obj }',
+      null
+    ],
+    [
+      'Init is scoped to statement',
+      'for (const x of [1,2,3,4]){} x;',
+      { name: 'x', line: 1, col: 29 }
+    ]
+  ])
+
+  testCases('Test for in statements', [
+    ['Init statement properly declares variables', 'for (const i in [1,2,3,4]) { i; }', null],
+    [
+      'Init statement works with patterns',
+      'const obj = {}; for (obj.obj in [1,2,3,4]) { obj }',
+      null
+    ],
+    [
+      'Init is scoped to statement',
+      'for (const x in [1,2,3,4]){} x;',
+      { name: 'x', line: 1, col: 29 }
     ]
   ])
 })
