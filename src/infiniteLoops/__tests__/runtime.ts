@@ -1,51 +1,17 @@
 import * as es from 'estree'
+import type { MockedFunction } from 'jest-mock'
 
 import { runInContext } from '../..'
 import createContext from '../../createContext'
 import { mockContext } from '../../mocks/context'
-import * as moduleLoader from '../../modules/moduleLoaderAsync'
 import { parse } from '../../parser/parser'
 import { Chapter, Variant } from '../../types'
-import { stripIndent } from '../../utils/formatters'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
 import { testForInfiniteLoop } from '../runtime'
 
-jest.mock('lodash', () => ({
-  ...jest.requireActual('lodash'),
-  memoize: jest.fn(f => f)
-}))
+import * as moduleLoader from '../../modules/moduleLoaderAsync'
 
-jest.spyOn(moduleLoader, 'memoizedGetModuleBundleAsync').mockImplementation(() => {
-  return Promise.resolve(stripIndent`
-    require => {
-      'use strict';
-      var exports = {};
-      function repeat(func, n) {
-        return n === 0 ? function (x) {
-          return x;
-        } : function (x) {
-          return func(repeat(func, n - 1)(x));
-        };
-      }
-      function twice(func) {
-        return repeat(func, 2);
-      }
-      function thrice(func) {
-        return repeat(func, 3);
-      }
-      exports.repeat = repeat;
-      exports.thrice = thrice;
-      exports.twice = twice;
-      Object.defineProperty(exports, '__esModule', {
-        value: true
-      });
-      return exports;
-    }
-  `)
-})
-jest.spyOn(moduleLoader, 'memoizedGetModuleManifestAsync').mockResolvedValue({
-  repeat: { tabs: [] }
-})
+jest.spyOn(moduleLoader, 'memoizedGetModuleBundleAsync')
 
 test('works in runInContext when throwInfiniteLoops is true', async () => {
   const code = `function fib(x) {
@@ -53,6 +19,7 @@ test('works in runInContext when throwInfiniteLoops is true', async () => {
   }
   fib(100000);`
   const context = mockContext(Chapter.SOURCE_4)
+
   await runInContext(code, context, { throwInfiniteLoops: true })
   const lastError = context.errors[context.errors.length - 1]
   expect(lastError instanceof InfiniteLoopError).toBe(true)
@@ -307,6 +274,13 @@ test('cycle detection ignores non deterministic functions', async () => {
 })
 
 test('handle imports properly', async () => {
+  const mockedBundleLoader = moduleLoader.memoizedGetModuleBundleAsync as MockedFunction<
+    typeof moduleLoader.memoizedGetModuleBundleAsync
+  >
+  mockedBundleLoader.mockResolvedValueOnce(`require => ({
+    thrice: f => x => f(f(f(x)))
+  })`)
+
   const code = `import {thrice} from "repeat";
   function f(x) { return is_number(x) ? f(x) : 42; }
   display(f(thrice(x=>x+1)(0)));`
