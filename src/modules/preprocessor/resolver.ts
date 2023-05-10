@@ -15,7 +15,7 @@ export default async function resolveModule(
   ourPath: string,
   source: string,
   getModuleCode: (p: string) => boolean,
-  options: Omit<ImportResolutionOptions, 'allowUndefinedImports'>,
+  options: Omit<ImportResolutionOptions, 'allowUndefinedImports'>
 ): Promise<[resolved: boolean, modAbsPath: string]> {
   if (isSourceImport(source)) {
     const moduleManifest = await memoizedGetModuleManifestAsync()
@@ -32,10 +32,7 @@ export default async function resolveModule(
       for (const ext of options.resolveExtensions) {
         if (getModuleCode(`${modAbsPath}.${ext}`)) return [true, `${modAbsPath}.${ext}`]
 
-        if (
-          options.resolveDirectories &&
-          getModuleCode(`${modAbsPath}/index.${ext}`)
-        ) {
+        if (options.resolveDirectories && getModuleCode(`${modAbsPath}/index.${ext}`)) {
           return [true, `${modAbsPath}/index.${ext}`]
         }
       }
