@@ -26,7 +26,7 @@ import {
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { Context, Scheduler, SourceError, Variant } from '../types'
+import { Chapter, Context, Scheduler, SourceError, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
@@ -57,7 +57,6 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   }
 }
 
-// @ts-ignore
 let previousCode: {
   files: Partial<Record<string, string>>
   entrypointFilePath: string
@@ -156,6 +155,8 @@ async function runNative(
     }
 
     ;({ transpiled, sourceMapJson } = await transpile(transpiledProgram, context))
+
+    console.log(transpiled)
     if (options.logTranspilerOutput) console.log(transpiled)
     let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 

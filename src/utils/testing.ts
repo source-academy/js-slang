@@ -48,6 +48,7 @@ interface TestOptions {
   native?: boolean
   showTranspiledCode?: boolean
   showErrorJSON?: boolean
+  allowUndefinedImports?: boolean
 }
 
 export function createTestContext({
@@ -116,7 +117,12 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     await runInContext(code, interpretedTestContext, {
       scheduler,
       executionMethod: 'interpreter',
-      variant: options.variant
+      variant: options.variant,
+      importOptions: {
+        allowUndefinedImports: !!options.allowUndefinedImports,
+        loadTabs: false,
+        wrapModules: false
+      }
     })
   )
   if (options.native) {
@@ -154,7 +160,12 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       await runInContext(code, nativeTestContext, {
         scheduler,
         executionMethod: 'native',
-        variant: options.variant
+        variant: options.variant,
+        importOptions: {
+          allowUndefinedImports: !!options.allowUndefinedImports,
+          loadTabs: false,
+          wrapModules: false
+        }
       })
     )
     const propertiesThatShouldBeEqual = [
