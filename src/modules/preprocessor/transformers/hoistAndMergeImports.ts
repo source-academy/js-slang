@@ -5,6 +5,7 @@ import {
   createIdentifier,
   createImportDeclaration,
   createImportDefaultSpecifier,
+  createImportNamespaceSpecifier,
   createImportSpecifier,
   createLiteral
 } from '../constructors/baseConstructors'
@@ -22,19 +23,19 @@ import {
  *                hoisted & duplicate imports merged.
  */
 export default function hoistAndMergeImports(program: es.Program, programs: es.Program[]) {
-  const importNodes = programs.flatMap(({ body }) => body)
-    .filter(isImportDeclaration)
-  const importsToSpecifiers = new Map<string, Map<string, Set<string>>>()
+  const importNodes = programs.flatMap(({ body }) => body).filter(isImportDeclaration)
+  const importsToSpecifiers = new Map<string, { namespaceSymbols: Set<string>, imports: Map<string, Set<string>>}>()
 
   for (const node of importNodes) {
-    if (!node.source) continue
-
     const source = node.source!.value as string
     // We no longer need imports from non-source modules, so we can just ignore them
     if (!isSourceImport(source)) continue
 
     if (!importsToSpecifiers.has(source)) {
-      importsToSpecifiers.set(source, new Map())
+      importsToSpecifiers.set(source, {
+        namespaceSymbols: new Set(),
+        imports: new Map()
+      })
     }
     const specifierMap = importsToSpecifiers.get(source)!
     node.specifiers.forEach(spec => {
@@ -49,36 +50,57 @@ export default function hoistAndMergeImports(program: es.Program, programs: es.P
           break
         }
         case 'ImportNamespaceSpecifier': {
-          // TODO handle
-          throw new Error('ImportNamespaceSpecifiers are not supported!')
+          specifierMap.namespaceSymbols.add(spec.local.name)
+          return
         }
       }
 
-      if (!specifierMap.has(importingName)) {
-        specifierMap.set(importingName, new Set())
+      if (!specifierMap.imports.has(importingName)) {
+        specifierMap.imports.set(importingName, new Set())
       }
-      specifierMap.get(importingName)!.add(spec.local.name)
+      specifierMap.imports.get(importingName)!.add(spec.local.name)
     })
   }
 
   // Every distinct source module being imported is given its own ImportDeclaration node
-  const importDeclarations = Array.from(importsToSpecifiers.entries()).map(
-    ([moduleName, imports]) => {
+  const importDeclarations = Array.from(importsToSpecifiers.entries()).flatMap(
+    ([moduleName, { imports, namespaceSymbols }]) => {
       // Across different modules, the user may choose to alias some of the declarations, so we keep track,
       // of all the different aliases used for each unique imported symbol
       const specifiers = Array.from(imports.entries()).flatMap(([importedName, aliases]) => {
-        if (importedName === 'default') {
-          return Array.from(aliases).map(alias =>
-            createImportDefaultSpecifier(createIdentifier(alias))
-          ) as (es.ImportSpecifier | es.ImportDefaultSpecifier)[]
-        } else {
+        if (importedName !== 'default') {
           return Array.from(aliases).map(alias =>
             createImportSpecifier(createIdentifier(alias), createIdentifier(importedName))
           )
+        } else {
+          return []
         }
       })
 
-      return createImportDeclaration(specifiers, createLiteral(moduleName))
+      let output = specifiers.length > 0 ? [createImportDeclaration(specifiers, createLiteral(moduleName))] : []
+      if (imports.has('default')) {
+        // You can't have multiple default specifiers per node, so we need to create
+        // a new node for each
+        output = output.concat(
+          Array.from(imports.get('default')!.values()).map(alias =>
+            createImportDeclaration(
+              [createImportDefaultSpecifier(createIdentifier(alias))],
+              createLiteral(moduleName)
+            )
+          )
+        )
+      }
+
+      if (namespaceSymbols.size > 0) {
+        // You can't have multiple namespace specifiers per node, so we need to create
+        // a new node for each
+        output = output.concat(Array.from(namespaceSymbols).map(alias => createImportDeclaration(
+          [createImportNamespaceSpecifier(createIdentifier(alias))],
+          createLiteral(moduleName)
+        )))
+      }
+
+      return output
     }
   )
   program.body = [...importDeclarations, ...program.body]
