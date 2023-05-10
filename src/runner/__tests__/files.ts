@@ -60,15 +60,17 @@ describe('runFilesInContext', () => {
   it('returns CannotFindModuleError if entrypoint file does not exist', () => {
     const files: Record<string, string> = {}
     runFilesInContext(files, '/a.js', context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Cannot find module '/a.js'."`)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Module \\"/a.js\\" not found."`)
   })
 
   it('returns CannotFindModuleError if entrypoint file does not exist - verbose', () => {
     const files: Record<string, string> = {}
     runFilesInContext(files, '/a.js', context)
     expect(parseError(context.errors, true)).toMatchInlineSnapshot(`
-      "Cannot find module '/a.js'.
-      Check that the module file path resolves to an existing file.
+      "Module \\"/a.js\\" not found.
+
+            You should check your import declarations, and ensure that all are valid modules.
+          
       "
     `)
   })
@@ -132,15 +134,17 @@ describe('compileFiles', () => {
   it('returns CannotFindModuleError if entrypoint file does not exist', () => {
     const files: Record<string, string> = {}
     compileFiles(files, '/a.js', context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Cannot find module '/a.js'."`)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Module \\"/a.js\\" not found."`)
   })
 
   it('returns CannotFindModuleError if entrypoint file does not exist - verbose', () => {
     const files: Record<string, string> = {}
     compileFiles(files, '/a.js', context)
     expect(parseError(context.errors, true)).toMatchInlineSnapshot(`
-      "Cannot find module '/a.js'.
-      Check that the module file path resolves to an existing file.
+      "Module \\"/a.js\\" not found.
+
+            You should check your import declarations, and ensure that all are valid modules.
+          
       "
     `)
   })

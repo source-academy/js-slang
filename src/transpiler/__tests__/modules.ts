@@ -90,7 +90,7 @@ test('importing undefined variables should throw errors', async () => {
   const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
   try {
-    await transpile(program, context, false)
+    await transpile(program, context, { skipUndefined: false })
   } catch (error) {
     expect(error).toBeInstanceOf(UndefinedImportError)
     expect((error as UndefinedImportError).symbol).toEqual('hello')

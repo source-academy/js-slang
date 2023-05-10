@@ -1127,5 +1127,7 @@ test('Cascading js errors work properly', () => {
 test('Importing unknown variables throws error', () => {
   expectParsedError(stripIndent`
     import { foo1 } from 'one_module';
-  `).toMatchInlineSnapshot("'one_module' does not contain definitions for 'foo1'")
+  `).toMatchInlineSnapshot(
+    `"Line 1: 'one_module' does not contain a definition for 'foo1'"`
+  )
 })
