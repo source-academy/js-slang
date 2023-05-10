@@ -1,21 +1,23 @@
 import type es from 'estree'
 import * as pathlib from 'path'
 
-import { CircularImportError, ModuleNotFoundError } from '../errors'
-import { memoizedGetModuleDocsAsync, memoizedGetModuleManifestAsync } from '../moduleLoaderAsync'
-import { ModuleManifest } from '../moduleTypes'
 import { parse } from '../../parser/parser'
 import { AcornOptions } from '../../parser/types'
 import { Context } from '../../types'
 import assert from '../../utils/assert'
 import { isModuleDeclaration, isSourceImport } from '../../utils/ast/typeGuards'
 import { isIdentifier } from '../../utils/rttc'
+import { CircularImportError, ModuleNotFoundError } from '../errors'
+import { memoizedGetModuleDocsAsync } from '../moduleLoaderAsync'
+import { ImportResolutionOptions } from '../moduleTypes'
+import checkForUndefinedImportsAndReexports from './analyzer'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import { DirectedGraph } from './directedGraph'
 import {
   transformFilePathToValidFunctionName,
   transformFunctionNameToInvokedFunctionResultVariableName
 } from './filePaths'
+import resolveModule from './resolver'
 import hoistAndMergeImports from './transformers/hoistAndMergeImports'
 import removeImportsAndExports from './transformers/removeImportsAndExports'
 import {
@@ -23,7 +25,6 @@ import {
   getInvokedFunctionResultVariableNameToImportSpecifiersMap,
   transformProgramToFunctionDeclaration
 } from './transformers/transformProgramToFunctionDeclaration'
-import checkForUndefinedImportsAndReexports from './analyzer'
 
 /**
  * Error type to indicate that preprocessing has failed but that the context
@@ -31,23 +32,18 @@ import checkForUndefinedImportsAndReexports from './analyzer'
  */
 class PreprocessError extends Error {}
 
-type ModuleResolutionOptions = {
-  directory?: boolean
-  extensions: string[] | null
-  allowBuiltins?: boolean
-}
 
-const defaultResolutionOptions: Required<ModuleResolutionOptions> = {
-  directory: false,
-  extensions: null,
-  allowBuiltins: false
+const defaultResolutionOptions: Required<ImportResolutionOptions> = {
+  allowUndefinedImports: false,
+  resolveDirectories: false,
+  resolveExtensions: null,
 }
 
 export const parseProgramsAndConstructImportGraph = async (
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
-  rawResolutionOptions: Partial<ModuleResolutionOptions> = {}
+  rawResolutionOptions: Partial<ImportResolutionOptions> = {}
 ): Promise<{
   programs: Record<string, es.Program>
   importGraph: DirectedGraph
@@ -66,56 +62,21 @@ export const parseProgramsAndConstructImportGraph = async (
 
   const moduleDocs: Record<string, Set<string>> = {}
 
-  // If a Source import is never used, then there will be no need to
-  // load the module manifest
-  let moduleManifest: ModuleManifest | null = null
-
-  function getModuleCode(p: string) {
-    // In the future we can abstract this function out and hopefully interface directly
-    // with actual file systems
-    return files[p]
-  }
-
-  // From the given import source, return the absolute path for that import
-  // If the import could not be located, then throw an error
-  async function resolveModule(
-    desiredPath: string,
-    node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
-  ): Promise<string> {
+  const resolve = async (path: string, node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>) => {
     const source = node.source?.value
     assert(
       typeof source === 'string',
       `${node.type} should have a source of type string, got ${source}`
     )
 
-    let modAbsPath: string
-    if (isSourceImport(source)) {
-      if (!moduleManifest) {
-        moduleManifest = await memoizedGetModuleManifestAsync()
-      }
-
-      if (source in moduleManifest) return source
-      modAbsPath = source
-    } else {
-      modAbsPath = pathlib.resolve(desiredPath, '..', source)
-      if (getModuleCode(modAbsPath) !== undefined) return modAbsPath
-
-      if (resolutionOptions.directory && getModuleCode(`${modAbsPath}/index`) !== undefined) {
-        return `${modAbsPath}/index`
-      }
-
-      if (resolutionOptions.extensions) {
-        for (const ext of resolutionOptions.extensions) {
-          if (getModuleCode(`${modAbsPath}.${ext}`) !== undefined) return `${modAbsPath}.${ext}`
-
-          if (resolutionOptions.directory && getModuleCode(`${modAbsPath}/index.${ext}`) !== undefined) {
-            return `${modAbsPath}/index.${ext}`
-          }
-        }
-      }
-    }
-
-    throw new ModuleNotFoundError(modAbsPath, node)
+    const [resolved, modAbsPath] = await resolveModule(
+      path,
+      source,
+      p => files[p] !== undefined,
+      resolutionOptions
+    )
+    if (!resolved) throw new ModuleNotFoundError(modAbsPath, node)
+    return modAbsPath
   }
 
   async function parseFile(currentFilePath: string): Promise<void> {
@@ -134,7 +95,7 @@ export const parseProgramsAndConstructImportGraph = async (
 
     if (currentFilePath in programs) return
 
-    const code = getModuleCode(currentFilePath)
+    const code = files[currentFilePath]
     assert(
       code !== undefined,
       "Module resolver should've thrown an error if the file path did not resolve"
@@ -164,7 +125,7 @@ export const parseProgramsAndConstructImportGraph = async (
         }
         case 'ExportAllDeclaration':
         case 'ImportDeclaration': {
-          const modAbsPath = await resolveModule(currentFilePath, node)
+          const modAbsPath = await resolve(currentFilePath, node)
           if (modAbsPath === currentFilePath) {
             throw new CircularImportError([modAbsPath, currentFilePath])
           }
@@ -214,9 +175,10 @@ export const parseProgramsAndConstructImportGraph = async (
 
 export type PreprocessOptions = {
   allowUndefinedImports?: boolean
-}
+} & ImportResolutionOptions
 
 const defaultOptions: Required<PreprocessOptions> = {
+  ...defaultResolutionOptions,
   allowUndefinedImports: false
 }
 
@@ -243,7 +205,7 @@ const preprocessFileImports = async (
   context: Context,
   rawOptions: Partial<PreprocessOptions> = {}
 ): Promise<es.Program | undefined> => {
-  const { allowUndefinedImports } = {
+  const { allowUndefinedImports, ...resolutionOptions } = {
     ...defaultOptions,
     ...rawOptions
   }
@@ -252,7 +214,8 @@ const preprocessFileImports = async (
   const { programs, importGraph, moduleDocs } = await parseProgramsAndConstructImportGraph(
     files,
     entrypointFilePath,
-    context
+    context,
+    resolutionOptions,
   )
 
   // Return 'undefined' if there are errors while parsing.

@@ -1,3 +1,4 @@
+import { generate } from 'astring'
 import * as es from 'estree'
 import * as _ from 'lodash'
 import { RawSourceMap } from 'source-map'
@@ -14,6 +15,8 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
+import { ModuleNotFoundError } from '../modules/errors'
+import preprocessFileImports from '../modules/preprocessor'
 import { getRequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
@@ -26,7 +29,7 @@ import {
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, Context, Scheduler, SourceError, Variant } from '../types'
+import { Chapter, Context, RecursivePartial, Scheduler, SourceError, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
@@ -35,8 +38,6 @@ import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { determineVariant, resolvedErrorPromise } from './utils'
-import preprocessFileImports from '../modules/preprocessor'
-import { ModuleNotFoundError } from '../modules/errors'
 
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
   scheduler: 'async',
@@ -50,10 +51,13 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   throwInfiniteLoops: true,
 
   logTranspilerOutput: false,
+  logPreprocessorOutput: true,
   importOptions: {
     loadTabs: true,
     wrapModules: true,
-    allowUndefinedImports: false
+    allowUndefinedImports: false,
+    resolveDirectories: false,
+    resolveExtensions: null
   }
 }
 
@@ -156,7 +160,6 @@ async function runNative(
 
     ;({ transpiled, sourceMapJson } = await transpile(transpiledProgram, context))
 
-    console.log(transpiled)
     if (options.logTranspilerOutput) console.log(transpiled)
     let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 
@@ -225,7 +228,7 @@ export async function sourceRunner(
   program: es.Program,
   context: Context,
   isVerboseErrorsEnabled: boolean,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   const theOptions: IOptions = {
     ...DEFAULT_SOURCE_OPTIONS,
@@ -298,7 +301,7 @@ export async function sourceFilesRunner(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
@@ -323,16 +326,20 @@ export async function sourceFilesRunner(
   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
   previousCode = currentCode
 
-  try {
-    const preprocessedProgram = await preprocessFileImports(files, entrypointFilePath, context)
-    if (!preprocessedProgram) {
-      return resolvedErrorPromise
-    }
-    context.previousPrograms.unshift(preprocessedProgram)
-
-    return sourceRunner(preprocessedProgram, context, isVerboseErrorsEnabled, options)
-  } catch (error) {
-    console.log(error)
-    throw error
+  const preprocessedProgram = await preprocessFileImports(
+    files,
+    entrypointFilePath,
+    context,
+    options.importOptions
+  )
+  if (!preprocessedProgram) {
+    return resolvedErrorPromise
   }
+
+  if (options.logPreprocessorOutput) {
+    console.log(generate(preprocessedProgram))
+  }
+  context.previousPrograms.unshift(preprocessedProgram)
+
+  return sourceRunner(preprocessedProgram, context, isVerboseErrorsEnabled, options)
 }

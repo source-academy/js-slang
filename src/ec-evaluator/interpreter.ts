@@ -15,7 +15,7 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
-import { ImportTransformOptions } from '../modules/moduleTypes'
+import { ImportOptions } from '../modules/moduleTypes'
 import { transformImportNodesAsync } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
@@ -141,7 +141,7 @@ export function resumeEvaluate(context: Context) {
 async function evaluateImports(
   program: es.Program,
   context: Context,
-  { loadTabs, wrapModules }: ImportTransformOptions
+  { loadTabs, wrapModules }: ImportOptions
 ) {
   const [importNodes, otherNodes] = partition(
     program.body,

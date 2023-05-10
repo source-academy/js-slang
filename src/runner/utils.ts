@@ -4,7 +4,7 @@ import { DebuggerStatement, Literal, Program } from 'estree'
 import { IOptions, Result } from '..'
 import { parseAt } from '../parser/utils'
 import { areBreakpointsSet } from '../stdlib/inspector'
-import { Context, Variant } from '../types'
+import type { Context, RecursivePartial, Variant } from '../types'
 import { simple } from '../utils/ast/walkers'
 
 // Context Utils
@@ -21,7 +21,7 @@ import { simple } from '../utils/ast/walkers'
  *
  * @returns The variant that the program is to be run in
  */
-export function determineVariant(context: Context, options: Partial<IOptions>): Variant {
+export function determineVariant(context: Context, options: RecursivePartial<IOptions>): Variant {
   if (options.variant) {
     return options.variant
   } else {

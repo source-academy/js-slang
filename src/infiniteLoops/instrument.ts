@@ -584,7 +584,6 @@ async function handleImports(programs: es.Program[]): Promise<[string, string[]]
         {
           loadTabs: false,
           wrapModules: false,
-          allowUndefinedImports: true
         }
       )
 

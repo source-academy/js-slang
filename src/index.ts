@@ -16,11 +16,11 @@ import {
   FuncDeclWithInferredTypeAnnotation,
   ModuleContext,
   NodeWithInferredType,
+  RecursivePartial,
   Result,
   SourceError,
   SVMProgram,
-  Variant
-} from './types'
+  Variant} from './types'
 import { findNodeAt } from './utils/ast/walkers'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
@@ -28,7 +28,10 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
 import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
-import { ImportTransformOptions } from './modules/moduleTypes'
+import { ModuleNotFoundError } from './modules/errors'
+import { ImportOptions } from './modules/moduleTypes'
+import preprocessFileImports from './modules/preprocessor'
+import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
 import { decodeError, decodeValue } from './parser/scheme'
@@ -38,13 +41,10 @@ import {
   hasVerboseErrors,
   htmlRunner,
   resolvedErrorPromise,
-  sourceFilesRunner,
+  sourceFilesRunner
 } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
-import { validateFilePath } from './modules/preprocessor/filePaths'
-import preprocessFileImports from './modules/preprocessor'
-import { ModuleNotFoundError } from './modules/errors'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -57,10 +57,13 @@ export interface IOptions {
   isPrelude: boolean
   throwInfiniteLoops: boolean
 
-  importOptions: ImportTransformOptions
+  importOptions: ImportOptions
 
   /** Set to true to console log the transpiler's transpiled code */
   logTranspilerOutput: boolean
+
+  /** Set to true to console log the preprocessor's output */
+  logPreprocessorOutput: boolean
 }
 
 // needed to work on browsers
@@ -312,7 +315,7 @@ export function getTypeInformation(
 export async function runInContext(
   code: string,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   const defaultFilePath = '/default.js'
   const files: Partial<Record<string, string>> = {}
@@ -324,7 +327,7 @@ export async function runFilesInContext(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath)
@@ -383,7 +386,10 @@ export async function runFilesInContext(
   //        This is not a huge priority, but it would be good not to make use of
   //        global state.
   verboseErrors = hasVerboseErrors(code)
-  return sourceFilesRunner(files, entrypointFilePath, context, options)
+  return sourceFilesRunner(files, entrypointFilePath, context, {
+    ...options,
+    logPreprocessorOutput: true
+  })
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {

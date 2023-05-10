@@ -9,7 +9,7 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { getRequireProvider, RequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'
 import { evallerReplacer, getBuiltins, transpile } from '../transpiler/transpiler'
-import type { Context, NativeStorage } from '../types'
+import type { Context, NativeStorage, RecursivePartial } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
@@ -47,7 +47,7 @@ function containsPrevEval(context: Context): boolean {
 export async function fullJSRunner(
   program: es.Program,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context
@@ -71,7 +71,7 @@ export async function fullJSRunner(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    ;({ transpiled, sourceMapJson } = await transpile(program, context))
+    ;({ transpiled, sourceMapJson } = await transpile(program, context, options.importOptions))
     if (options.logTranspilerOutput) console.log(transpiled)
     return {
       status: 'finished',
