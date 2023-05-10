@@ -387,10 +387,7 @@ export async function runFilesInContext(
   //        This is not a huge priority, but it would be good not to make use of
   //        global state.
   verboseErrors = hasVerboseErrors(code)
-  return sourceFilesRunner(files, entrypointFilePath, context, {
-    ...options,
-    logPreprocessorOutput: true
-  })
+  return sourceFilesRunner(files, entrypointFilePath, context, options)
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {

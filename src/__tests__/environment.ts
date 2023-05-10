@@ -20,7 +20,7 @@ test('Function params and body identifiers are in different environment', () => 
   const parsed = parse(code, context)
   const it = evaluate(parsed as any as Program, context, {
     loadTabs: false,
-    wrapModules: false,
+    wrapModules: false
   })
   const stepsToComment = 13 // manually counted magic number
   for (let i = 0; i < stepsToComment; i += 1) {

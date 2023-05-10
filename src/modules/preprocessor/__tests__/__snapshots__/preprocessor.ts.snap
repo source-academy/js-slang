@@ -24,8 +24,10 @@ b;
 `;
 
 exports[`preprocessFileImports ignores Source module imports & removes all non-Source module import-related AST nodes in the preprocessed program 1`] = `
-"import d, {a, b, c} from \\"one_module\\";
-import d, {a, b, c} from \\"one_module\\";
+"import {a, b, c} from \\"one_module\\";
+import d from \\"one_module\\";
+import {a, b, c} from \\"one_module\\";
+import d from \\"one_module\\";
 function __$not$$dash$$source$$dash$$module$$dot$$js__() {
   const x = 1;
   const y = 2;
