@@ -146,7 +146,7 @@ export function loadModuleDocs(path: string, node?: es.Node) {
     const result = httpGet(`${MODULES_STATIC_URL}/jsons/${path}.json`)
     return JSON.parse(result) as ModuleDocumentation
   } catch (error) {
-    console.warn('Failed to load module documentation')
+    console.warn(`Failed to load documentation for ${path}:`, error)
     return null
   }
 }

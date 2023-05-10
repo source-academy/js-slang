@@ -1,13 +1,18 @@
 import type {
   ExportAllDeclaration,
+  ExportDefaultDeclaration,
+  ExportNamedDeclaration,
   ExportSpecifier,
   ImportDefaultSpecifier,
   ImportNamespaceSpecifier,
   ImportSpecifier,
-  Node
+  Node,
+  SourceLocation
 } from 'estree'
+import { UNKNOWN_LOCATION } from '../constants'
 
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { ErrorSeverity, ErrorType, SourceError } from '../types'
 
 export class ModuleConnectionError extends RuntimeSourceError {
   private static message: string = `Unable to get modules.`
@@ -107,5 +112,57 @@ export class UndefinedNamespaceImportError extends UndefinedImportErrorBase {
 
   public explain(): string {
     return `'${this.moduleName}' does not export any symbols!`
+  }
+}
+
+export class ReexportSymbolError implements SourceError {
+  public severity = ErrorSeverity.ERROR
+  public type = ErrorType.RUNTIME
+  public readonly location: SourceLocation
+  private readonly sourceString: string
+
+  constructor(
+    public readonly modulePath: string,
+    public readonly symbol: string,
+    public readonly nodes: (
+      | SourcedModuleDeclarations
+      | ExportNamedDeclaration
+      | ExportDefaultDeclaration
+    )[]
+  ) {
+    this.location = nodes[0].loc ?? UNKNOWN_LOCATION
+    this.sourceString = nodes
+      .map(({ loc }) => `(${loc!.start.line}:${loc!.start.column})`)
+      .join(', ')
+  }
+
+  public explain(): string {
+    return `Multiple export definitions for the symbol '${this.symbol}' at (${this.sourceString})`
+  }
+
+  public elaborate(): string {
+    return 'Check that you are not exporting the same symbol more than once'
+  }
+}
+
+export class CircularImportError implements SourceError {
+  public type = ErrorType.TYPE
+  public severity = ErrorSeverity.ERROR
+  public location = UNKNOWN_LOCATION
+
+  constructor(public filePathsInCycle: string[]) {}
+
+  public explain() {
+    // We need to reverse the file paths in the cycle so that the
+    // semantics of "'/a.js' -> '/b.js'" is "'/a.js' imports '/b.js'".
+    const formattedCycle = this.filePathsInCycle
+      .map(filePath => `'${filePath}'`)
+      .reverse()
+      .join(' -> ')
+    return `Circular import detected: ${formattedCycle}.`
+  }
+
+  public elaborate() {
+    return 'Break the circular import cycle by removing imports from any of the offending files.'
   }
 }
