@@ -580,11 +580,12 @@ function getDeclarationsToAccessTranspilerInternals(
 }
 
 export type TranspiledResult = { transpiled: string; sourceMapJson?: RawSourceMap }
+export type TranspileOptions = ImportTransformOptions & { skipUndefined?: boolean }
 
 async function transpileToSource(
   program: es.Program,
   context: Context,
-  skipUndefined: boolean
+  { skipUndefined, ...importOptions }: TranspileOptions,
 ): Promise<TranspiledResult> {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
@@ -616,11 +617,7 @@ async function transpileToSource(
     program,
     context,
     usedIdentifiers,
-    {
-      loadTabs: true,
-      wrapModules: true,
-      allowUndefinedImports: false
-    }
+    importOptions,
   )
 
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
@@ -650,8 +647,7 @@ async function transpileToSource(
 async function transpileToFullJS(
   program: es.Program,
   context: Context,
-  wrapSourceModules: boolean,
-  skipUndefined: boolean
+  { skipUndefined, ...importOptions }: TranspileOptions,
 ): Promise<TranspiledResult> {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
@@ -670,11 +666,7 @@ async function transpileToFullJS(
     program,
     context,
     usedIdentifiers,
-    {
-      loadTabs: true,
-      wrapModules: wrapSourceModules,
-      allowUndefinedImports: true
-    }
+    importOptions
   )
 
   const transpiledProgram: es.Program = create.program([
@@ -694,13 +686,28 @@ async function transpileToFullJS(
 export function transpile(
   program: es.Program,
   context: Context,
-  skipUndefined = false
+  options: Partial<TranspileOptions> = {}
 ): Promise<TranspiledResult> {
   if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.PYTHON_1) {
-    return transpileToFullJS(program, context, true, true)
+    return transpileToFullJS(program, context, { 
+      skipUndefined: true, 
+      loadTabs: true,
+      wrapModules: false,
+      ...options,
+    })
   } else if (context.variant == Variant.NATIVE) {
-    return transpileToFullJS(program, context, false, false)
+    return transpileToFullJS(program, context, {
+      skipUndefined: false,
+      loadTabs: true,
+      wrapModules: true,
+      ...options,
+    })
   } else {
-    return transpileToSource(program, context, skipUndefined)
+    return transpileToSource(program, context, {
+      skipUndefined: false,
+      loadTabs: true,
+      wrapModules: true,
+      ...options
+    })
   }
 }
