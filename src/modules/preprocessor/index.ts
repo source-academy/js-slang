@@ -32,11 +32,10 @@ import {
  */
 class PreprocessError extends Error {}
 
-
 const defaultResolutionOptions: Required<ImportResolutionOptions> = {
   allowUndefinedImports: false,
   resolveDirectories: false,
-  resolveExtensions: null,
+  resolveExtensions: null
 }
 
 export const parseProgramsAndConstructImportGraph = async (
@@ -62,7 +61,10 @@ export const parseProgramsAndConstructImportGraph = async (
 
   const moduleDocs: Record<string, Set<string>> = {}
 
-  const resolve = async (path: string, node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>) => {
+  const resolve = async (
+    path: string,
+    node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
+  ) => {
     const source = node.source?.value
     assert(
       typeof source === 'string',
@@ -215,7 +217,7 @@ const preprocessFileImports = async (
     files,
     entrypointFilePath,
     context,
-    resolutionOptions,
+    resolutionOptions
   )
 
   // Return 'undefined' if there are errors while parsing.

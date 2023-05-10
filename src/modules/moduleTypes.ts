@@ -32,9 +32,9 @@ export type ImportResolutionOptions = {
    * it will then search for that file with the given extension, e.g. `./dir0/file.js`
    */
   resolveExtensions: string[] | null
-  
+
   /**
-   * Set this to true to enforce that imports from modules must be of 
+   * Set this to true to enforce that imports from modules must be of
    * defined symbols
    */
   allowUndefinedImports: boolean

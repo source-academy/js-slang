@@ -4,10 +4,11 @@ export const memoizedGetModuleDocsAsync = jest.fn().mockResolvedValue({
 })
 
 export const memoizedGetModuleBundleAsync = jest.fn().mockResolvedValue(
-`require => ({
+  `require => ({
   foo: () => 'foo',
   bar: () => 'bar',
-})`)
+})`
+)
 
 export const memoizedGetModuleManifestAsync = jest.fn().mockResolvedValue({
   one_module: { tabs: [] },

@@ -158,7 +158,11 @@ async function runNative(
         break
     }
 
-    ;({ transpiled, sourceMapJson } = await transpile(transpiledProgram, context))
+    ;({ transpiled, sourceMapJson } = await transpile(
+      transpiledProgram,
+      context,
+      options.importOptions
+    ))
 
     if (options.logTranspilerOutput) console.log(transpiled)
     let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
@@ -294,7 +298,7 @@ export async function sourceRunner(
     return runNative(program, context, theOptions)
   }
 
-  return runInterpreter(program!, context, theOptions)
+  return runInterpreter(program, context, theOptions)
 }
 
 export async function sourceFilesRunner(

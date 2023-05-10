@@ -20,7 +20,8 @@ import {
   Result,
   SourceError,
   SVMProgram,
-  Variant} from './types'
+  Variant
+} from './types'
 import { findNodeAt } from './utils/ast/walkers'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'

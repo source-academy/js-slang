@@ -585,7 +585,7 @@ export type TranspileOptions = ImportTransformOptions & { skipUndefined?: boolea
 async function transpileToSource(
   program: es.Program,
   context: Context,
-  { skipUndefined, ...importOptions }: TranspileOptions,
+  { skipUndefined, ...importOptions }: TranspileOptions
 ): Promise<TranspiledResult> {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
@@ -617,7 +617,7 @@ async function transpileToSource(
     program,
     context,
     usedIdentifiers,
-    importOptions,
+    importOptions
   )
 
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
@@ -647,7 +647,7 @@ async function transpileToSource(
 async function transpileToFullJS(
   program: es.Program,
   context: Context,
-  { skipUndefined, ...importOptions }: TranspileOptions,
+  { skipUndefined, ...importOptions }: TranspileOptions
 ): Promise<TranspiledResult> {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
@@ -689,18 +689,18 @@ export function transpile(
   options: Partial<TranspileOptions> = {}
 ): Promise<TranspiledResult> {
   if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.PYTHON_1) {
-    return transpileToFullJS(program, context, { 
-      skipUndefined: true, 
+    return transpileToFullJS(program, context, {
+      skipUndefined: true,
       loadTabs: true,
       wrapModules: false,
-      ...options,
+      ...options
     })
   } else if (context.variant == Variant.NATIVE) {
     return transpileToFullJS(program, context, {
       skipUndefined: false,
       loadTabs: true,
       wrapModules: true,
-      ...options,
+      ...options
     })
   } else {
     return transpileToSource(program, context, {

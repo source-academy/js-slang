@@ -583,7 +583,7 @@ async function handleImports(programs: es.Program[]): Promise<[string, string[]]
         new Set(),
         {
           loadTabs: false,
-          wrapModules: false,
+          wrapModules: false
         }
       )
 

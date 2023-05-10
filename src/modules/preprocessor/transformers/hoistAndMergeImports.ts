@@ -24,7 +24,10 @@ import {
  */
 export default function hoistAndMergeImports(program: es.Program, programs: es.Program[]) {
   const importNodes = programs.flatMap(({ body }) => body).filter(isImportDeclaration)
-  const importsToSpecifiers = new Map<string, { namespaceSymbols: Set<string>, imports: Map<string, Set<string>>}>()
+  const importsToSpecifiers = new Map<
+    string,
+    { namespaceSymbols: Set<string>; imports: Map<string, Set<string>> }
+  >()
 
   for (const node of importNodes) {
     const source = node.source!.value as string
@@ -77,7 +80,10 @@ export default function hoistAndMergeImports(program: es.Program, programs: es.P
         }
       })
 
-      let output = specifiers.length > 0 ? [createImportDeclaration(specifiers, createLiteral(moduleName))] : []
+      let output =
+        specifiers.length > 0
+          ? [createImportDeclaration(specifiers, createLiteral(moduleName))]
+          : []
       if (imports.has('default')) {
         // You can't have multiple default specifiers per node, so we need to create
         // a new node for each
@@ -94,10 +100,14 @@ export default function hoistAndMergeImports(program: es.Program, programs: es.P
       if (namespaceSymbols.size > 0) {
         // You can't have multiple namespace specifiers per node, so we need to create
         // a new node for each
-        output = output.concat(Array.from(namespaceSymbols).map(alias => createImportDeclaration(
-          [createImportNamespaceSpecifier(createIdentifier(alias))],
-          createLiteral(moduleName)
-        )))
+        output = output.concat(
+          Array.from(namespaceSymbols).map(alias =>
+            createImportDeclaration(
+              [createImportNamespaceSpecifier(createIdentifier(alias))],
+              createLiteral(moduleName)
+            )
+          )
+        )
       }
 
       return output
