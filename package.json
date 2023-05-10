@@ -96,7 +96,9 @@
       "ts",
       "js"
     ],
-    "setupFilesAfterEnv": ["<rootDir>/jest.setup.ts"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.ts"
+    ],
     "transform": {
       "\\.ts$": "ts-jest",
       "\\.js$": "babel-jest"
