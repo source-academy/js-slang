@@ -12,7 +12,7 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
-import { ModuleBundle, ModuleFunctions } from '../modules/moduleTypes'
+import { ModuleBundle } from '../modules/moduleTypes'
 import { RequireProvider } from '../modules/requireProvider'
 import { Chapter, NativeStorage, Thunk } from '../types'
 import { callExpression, locationDummyNode } from './ast/astCreator'
@@ -118,7 +118,16 @@ export function callIfFuncAndRightArgs(
     }
     try {
       const forcedArgs = args.map(forceIt)
-      return originalCandidate(...forcedArgs)
+      return originalCandidate.call(
+        {
+          __CALL_LOC__: {
+            line,
+            col: column,
+            file: source
+          }
+        },
+        ...forcedArgs
+      )
     } catch (error) {
       // if we already handled the error, simply pass it on
       if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
@@ -338,18 +347,21 @@ export const wrapSourceModule = (
   moduleName: string,
   moduleFunc: ModuleBundle,
   requireProvider: RequireProvider
-) =>
-  Object.entries(moduleFunc(requireProvider)).reduce((res, [name, value]) => {
+) => {
+  // Make sure to keep the original bundle object, as well as all the original functions
+  // Some module code relies on the identities of functions being the same after the bundle
+  // has been wrapped
+  const funcs = moduleFunc(requireProvider)
+  Object.entries(funcs).forEach(([name, value]) => {
     if (typeof value === 'function') {
       const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`
       value[Symbol.toStringTag] = () => repr
       value.toString = () => repr
     }
-    return {
-      ...res,
-      [name]: value
-    }
-  }, {} as ModuleFunctions)
+  })
+
+  return funcs
+}
 
 export const setProp = (
   obj: any,
