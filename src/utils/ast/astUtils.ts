@@ -1,7 +1,7 @@
 import * as es from 'estree'
+
 import assert from '../assert'
 import { isDeclaration } from './typeGuards'
-
 import { recursive } from './walkers'
 
 export function extractIdsFromPattern(pattern: es.Pattern): Set<es.Identifier> {
