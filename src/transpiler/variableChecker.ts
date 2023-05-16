@@ -3,26 +3,15 @@ import type * as es from 'estree'
 import { UndefinedVariable } from '../errors/errors'
 import assert from '../utils/assert'
 import { extractIdsFromPattern, processExportDefaultDeclaration } from '../utils/ast/astUtils'
-import {
-  isDeclaration,
-  isFunctionNode,
-  isModuleDeclaration,
-  isPattern
-} from '../utils/ast/typeGuards'
+import { isPattern } from '../utils/ast/typeGuards'
 
-function isModuleOrRegDeclaration(node: es.Node): node is es.ModuleDeclaration | es.Declaration {
-  return isDeclaration(node) || isModuleDeclaration(node)
-}
-
-function checkPattern(pattern: es.Pattern, identifiers: Set<string>): void {
+function checkPattern(pattern: es.Pattern, scope: Set<string>): void {
   if (pattern.type === 'MemberExpression') {
-    checkExpression(pattern, identifiers)
+    checkExpression(pattern, scope)
     return
   }
 
-  extractIdsFromPattern(pattern).forEach(id => {
-    if (!identifiers.has(id.name)) throw new UndefinedVariable(id.name, id)
-  })
+  extractIdsFromPattern(pattern).forEach(id => checkExpression(id, scope))
 }
 
 /**
@@ -42,7 +31,9 @@ function checkFunction(
 
   if (input.body.type === 'BlockStatement') {
     checkForUndefinedVariables(input.body, innerScope)
-  } else checkExpression(input.body, innerScope)
+  } else {
+    checkExpression(input.body, innerScope)
+  }
 }
 
 function checkExpression(
@@ -145,50 +136,15 @@ function checkExpression(
   }
 }
 
-/**
- * Check that a variable declaration is initialized with defined variables
- * Throws if there are undefined variables, returns the set of identifiers introduced by the
- * declaration otherwise
- */
-function checkVariableDeclaration(
-  { declarations }: es.VariableDeclaration,
-  scope: Set<string>
-): Set<string> {
-  const output = new Set<string>()
-  declarations.forEach(({ id, init }) => {
-    if (init) {
-      if (isFunctionNode(init)) {
-        assert(
-          id.type == 'Identifier',
-          'VariableDeclaration for function expressions should be Identifiers'
-        )
-        // Add the name of the function to the set of identifiers so that
-        // recursive calls are possible
-        const localIdentifiers = new Set([...scope, id.name])
-        checkFunction(init, localIdentifiers)
-      } else if (init.type === 'ClassExpression') {
-        assert(
-          id.type == 'Identifier',
-          'VariableDeclaration for class expressions should be Identifiers'
-        )
-        const localIdentifiers = new Set([...scope, id.name])
-        checkClass(init, localIdentifiers)
-      } else {
-        checkExpression(init, scope)
-      }
-    }
-    extractIdsFromPattern(id).forEach(({ name }) => output.add(name))
-  })
-  return output
-}
-
 function checkClass(
   { body: { body } }: es.ClassDeclaration | es.ClassExpression,
-  localIdentifiers: Set<string>
+  scope: Set<string>
 ) {
+  const classScope = new Set(scope)
+
   body.forEach(item => {
     if (item.type === 'StaticBlock') {
-      checkForUndefinedVariables(item, localIdentifiers)
+      checkForUndefinedVariables(item, classScope)
       return
     }
 
@@ -197,129 +153,92 @@ function checkClass(
         item.key.type !== 'PrivateIdentifier',
         'Computed property should not have PrivateIdentifier key type'
       )
-      checkExpression(item.key, localIdentifiers)
+      checkExpression(item.key, classScope)
     }
 
     if (item.type === 'MethodDefinition') {
-      checkFunction(item.value, localIdentifiers)
+      checkFunction(item.value, classScope)
     } else if (item.value) {
-      checkExpression(item.value, localIdentifiers)
+      checkExpression(item.value, classScope)
     }
   })
 }
 
 /**
- * Check that the given declaration contains no undefined variables. Returns the set of identifiers
- * introduced by the node
- * @param node
- * @param identifiers
- * @returns
+ * Check statements for undefined variables
  */
-function checkDeclaration(
-  node: es.Declaration | es.ModuleDeclaration,
-  identifiers: Set<string>
-): Set<string> {
+function checkStatement(node: Exclude<es.Statement, es.BlockStatement>, scope: Set<string>) {
+  function checkBody(node: es.Statement, scope: Set<string>) {
+    if (node.type === 'BlockStatement') {
+      checkForUndefinedVariables(node, scope)
+    } else {
+      checkStatement(node, scope)
+    }
+  }
+
   switch (node.type) {
     case 'ClassDeclaration': {
-      const localIdentifiers = new Set([...identifiers, node.id!.name])
-      checkClass(node, localIdentifiers)
-      return new Set([node.id!.name])
-    }
-    case 'FunctionDeclaration': {
-      // Add the name of the function to the set of identifiers so that
-      // recursive calls are possible
-      const localIdentifiers = new Set([...identifiers, node.id!.name])
-      checkFunction(node, localIdentifiers)
-      return new Set([node.id!.name])
-    }
-    case 'VariableDeclaration':
-      return checkVariableDeclaration(node, identifiers)
-    case 'ImportDeclaration':
-    case 'ExportAllDeclaration':
-      return new Set()
-    case 'ExportDefaultDeclaration':
-      return processExportDefaultDeclaration(node, {
-        ClassDeclaration: decl => checkDeclaration(decl, identifiers),
-        FunctionDeclaration: decl => checkDeclaration(decl, identifiers),
-        Expression: expr => {
-          checkExpression(expr, identifiers)
-          return new Set()
-        }
-      })
-    case 'ExportNamedDeclaration':
-      return !node.declaration ? new Set() : checkDeclaration(node.declaration, identifiers)
-  }
-}
-
-function checkStatement(
-  node: Exclude<es.Statement, es.Declaration | es.BlockStatement>,
-  identifiers: Set<string>
-): void {
-  const checkBody = (node: es.Statement, localIdentifiers: Set<string>) => {
-    assert(!isDeclaration(node), `${node.type} cannot be found here!`)
-
-    if (node.type === 'BlockStatement') checkForUndefinedVariables(node, localIdentifiers)
-    else checkStatement(node, localIdentifiers)
-  }
-
-  switch (node.type) {
-    case 'ExpressionStatement': {
-      checkExpression(node.expression, identifiers)
-      break
-    }
-    case 'ForStatement': {
-      const localIdentifiers = new Set(identifiers)
-      if (node.init) {
-        if (node.init.type === 'VariableDeclaration') {
-          // If the init clause declares variables, add them to the list of
-          // local identifiers that the for statement should check
-          const varDeclResult = checkVariableDeclaration(node.init, identifiers)
-          varDeclResult.forEach(id => localIdentifiers.add(id))
-        } else {
-          checkExpression(node.init, localIdentifiers)
-        }
-      }
-
-      if (node.test) checkExpression(node.test, localIdentifiers)
-      if (node.update) checkExpression(node.update, localIdentifiers)
-
-      checkBody(node.body, localIdentifiers)
-      break
-    }
-    case 'ForInStatement':
-    case 'ForOfStatement': {
-      const localIdentifiers = new Set(identifiers)
-      if (node.left.type === 'VariableDeclaration') {
-        const varDeclResult = checkVariableDeclaration(node.left, identifiers)
-        varDeclResult.forEach(id => localIdentifiers.add(id))
-      } else {
-        checkPattern(node.left, localIdentifiers)
-      }
-      checkExpression(node.right, localIdentifiers)
-      checkBody(node.body, localIdentifiers)
+      checkClass(node, scope)
       break
     }
     case 'DoWhileStatement':
     case 'WhileStatement': {
-      checkExpression(node.test, identifiers)
-      checkBody(node.body, identifiers)
+      checkExpression(node.test, scope)
+      checkBody(node.body, scope)
+      break
+    }
+    case 'ExpressionStatement': {
+      checkExpression(node.expression, scope)
+      break
+    }
+    case 'ForStatement': {
+      const forStatementScope = new Set(scope)
+      if (node.init) {
+        if (node.init.type === 'VariableDeclaration') {
+          checkVariableDeclaration(node.init, forStatementScope)
+        } else {
+          checkExpression(node.init, forStatementScope)
+        }
+      }
+
+      if (node.test) checkExpression(node.test, forStatementScope)
+      if (node.update) checkExpression(node.update, forStatementScope)
+
+      checkBody(node.body, forStatementScope)
+      break
+    }
+    case 'ForInStatement':
+    case 'ForOfStatement': {
+      const forStatementScope = new Set(scope)
+      if (node.left.type === 'VariableDeclaration') {
+        checkStatement(node.left, forStatementScope)
+      } else {
+        checkPattern(node.left, forStatementScope)
+      }
+      checkExpression(node.right, forStatementScope)
+      checkBody(node.body, forStatementScope)
+      break
+    }
+    case 'FunctionDeclaration': {
+      checkFunction(node, scope)
       break
     }
     case 'IfStatement': {
-      checkBody(node.consequent, identifiers)
-      if (node.alternate) checkBody(node.alternate, identifiers)
-      checkExpression(node.test, identifiers)
-      break
-    }
-    case 'SwitchStatement': {
-      node.cases.forEach(c => {
-        if (c.test) checkExpression(c.test, identifiers)
-        c.consequent.forEach(stmt => checkBody(stmt, identifiers))
-      })
+      checkBody(node.consequent, scope)
+      if (node.alternate) checkBody(node.alternate, scope)
+      checkExpression(node.test, scope)
       break
     }
     case 'LabeledStatement': {
-      checkBody(node.body, identifiers)
+      checkBody(node.body, scope)
+      break
+    }
+    case 'SwitchStatement': {
+      checkExpression(node.discriminant, scope)
+      node.cases.forEach(c => {
+        if (c.test) checkExpression(c.test, scope)
+        c.consequent.forEach(stmt => checkBody(stmt, scope))
+      })
       break
     }
     case 'ReturnStatement': {
@@ -327,57 +246,90 @@ function checkStatement(
       // Case falls through!
     }
     case 'ThrowStatement': {
-      checkExpression(node.argument!, identifiers)
+      checkExpression(node.argument!, scope)
       break
     }
     case 'TryStatement': {
       // Check the try block
-      checkForUndefinedVariables(node.block, identifiers)
+      checkForUndefinedVariables(node.block, scope)
 
       // Check the finally block
-      if (node.finalizer) checkForUndefinedVariables(node.finalizer, identifiers)
+      if (node.finalizer) checkForUndefinedVariables(node.finalizer, scope)
 
       // Check the catch block
       if (node.handler) {
-        const catchIds = new Set(identifiers)
+        const catchScope = new Set(scope)
         if (node.handler.param) {
-          extractIdsFromPattern(node.handler.param).forEach(({ name }) => catchIds.add(name))
+          extractIdsFromPattern(node.handler.param).forEach(({ name }) => catchScope.add(name))
         }
-        checkForUndefinedVariables(node.handler.body, catchIds)
+        checkForUndefinedVariables(node.handler.body, catchScope)
       }
+      break
+    }
+    case 'VariableDeclaration': {
+      checkVariableDeclaration(node, scope)
       break
     }
   }
 }
 
+/**
+ * Add all the identifiers declared by the VariableDeclaration to the provided scope
+ */
+function checkVariableDeclaration({ declarations }: es.VariableDeclaration, scope: Set<string>) {
+  declarations.forEach(({ id, init }) => {
+    extractIdsFromPattern(id).forEach(({ name }) => scope.add(name))
+    if (init) checkExpression(init, scope)
+  })
+}
+
 export default function checkForUndefinedVariables(
   node: es.Program | es.BlockStatement | es.StaticBlock,
-  identifiers: Set<string>
+  outerScope: Set<string>
 ) {
-  const localIdentifiers = new Set(identifiers)
+  const blockScope = new Set(outerScope)
 
   // Hoist class and function declarations
   for (const stmt of node.body) {
     switch (stmt.type) {
       case 'ClassDeclaration':
       case 'FunctionDeclaration': {
-        localIdentifiers.add(stmt.id!.name)
+        assert(
+          !!stmt.id,
+          `Encountered ${node.type} without an id, this should have been caught during parsing`
+        )
+        blockScope.add(stmt.id.name)
+        break
+      }
+      case 'VariableDeclaration': {
+        // Only var declarations are hoisted
+        if (stmt.kind === 'var') {
+          checkVariableDeclaration(stmt, blockScope)
+        }
         break
       }
       case 'ImportDeclaration': {
-        stmt.specifiers.forEach(({ local: { name } }) => localIdentifiers.add(name))
+        stmt.specifiers.forEach(({ local: { name } }) => blockScope.add(name))
         break
       }
-      // NOTE: VariableDeclarations are not hoisted
       case 'ExportNamedDeclaration':
       case 'ExportDefaultDeclaration': {
         if (!stmt.declaration) break
-        if (
-          (stmt.declaration.type === 'ClassDeclaration' ||
-            stmt.declaration.type === 'FunctionDeclaration') &&
-          stmt.declaration.id
-        ) {
-          localIdentifiers.add(stmt.declaration.id.name)
+        switch (stmt.declaration.type) {
+          case 'FunctionDeclaration':
+          case 'ClassDeclaration': {
+            if (stmt.declaration.id) {
+              blockScope.add(stmt.declaration.id.name)
+            }
+            break
+          }
+          case 'VariableDeclaration': {
+            // Only var declarations are hoisted
+            if (stmt.declaration.kind === 'var') {
+              checkVariableDeclaration(stmt.declaration, blockScope)
+            }
+            break
+          }
         }
         break
       }
@@ -385,12 +337,34 @@ export default function checkForUndefinedVariables(
   }
 
   for (const stmt of node.body) {
-    if (isModuleOrRegDeclaration(stmt)) {
-      checkDeclaration(stmt, localIdentifiers).forEach(id => localIdentifiers.add(id))
-    } else if (stmt.type === 'BlockStatement') {
-      checkForUndefinedVariables(stmt, localIdentifiers)
-    } else {
-      checkStatement(stmt, localIdentifiers)
+    switch (stmt.type) {
+      case 'BlockStatement': {
+        checkForUndefinedVariables(stmt, blockScope)
+        break
+      }
+      case 'ExportNamedDeclaration': {
+        if (stmt.declaration) {
+          checkStatement(stmt.declaration, blockScope)
+        } else if (!stmt.source) {
+          stmt.specifiers.forEach(({ local }) => checkExpression(local, blockScope))
+        }
+        break
+      }
+      case 'ExportDefaultDeclaration': {
+        processExportDefaultDeclaration(stmt, {
+          FunctionDeclaration: decl => checkFunction(decl, blockScope),
+          ClassDeclaration: decl => checkClass(decl, blockScope),
+          Expression: decl => checkExpression(decl, blockScope)
+        })
+        break
+      }
+      case 'ExportAllDeclaration':
+      case 'ImportDeclaration':
+        break
+      default: {
+        checkStatement(stmt, blockScope)
+        break
+      }
     }
   }
 }
