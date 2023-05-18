@@ -7,7 +7,7 @@ import { Context } from '../../types'
 import assert from '../../utils/assert'
 import { isModuleDeclaration, isSourceImport } from '../../utils/ast/typeGuards'
 import { isIdentifier } from '../../utils/rttc'
-import { CircularImportError, ModuleNotFoundError } from '../errors'
+import { CircularImportError, ModuleInternalError, ModuleNotFoundError } from '../errors'
 import { memoizedGetModuleDocsAsync } from '../moduleLoaderAsync'
 import { ImportResolutionOptions } from '../moduleTypes'
 import checkForUndefinedImportsAndReexports from './analyzer'
@@ -81,6 +81,13 @@ export const parseProgramsAndConstructImportGraph = async (
     return modAbsPath
   }
 
+  /**
+   * Process each file (as a module) and determine which other (local and source)
+   * modules are required. This function should always be called with absolute
+   * paths
+   *
+   * @param currentFilePath Current absolute file path of the module
+   */
   async function parseFile(currentFilePath: string): Promise<void> {
     if (isSourceImport(currentFilePath)) {
       if (currentFilePath in moduleDocs) return
@@ -89,7 +96,10 @@ export const parseProgramsAndConstructImportGraph = async (
       // If this were invalid, resolveModule would have thrown already
       const docs = await memoizedGetModuleDocsAsync(currentFilePath)
       if (!docs) {
-        throw new Error(`Failed to load documentation for ${currentFilePath}`)
+        throw new ModuleInternalError(
+          currentFilePath,
+          `Failed to load documentation for ${currentFilePath}`
+        )
       }
       moduleDocs[currentFilePath] = new Set(Object.keys(docs))
       return
@@ -116,7 +126,6 @@ export const parseProgramsAndConstructImportGraph = async (
       throw new PreprocessError()
     }
 
-    // assert(program !== null, 'Parser should throw on error and not just return null')
     programs[currentFilePath] = program
 
     const dependencies = new Set<string>()
@@ -235,15 +244,20 @@ const preprocessFileImports = async (
   try {
     // Based on how the import graph is constructed, it could be the case that the entrypoint
     // file is never included in the topo order. This is only an issue for the import export
-    // validator, hence the following code
+    // analyzer, hence the following code
     const fullTopoOrder = topologicalOrderResult.topologicalOrder
     if (!fullTopoOrder.includes(entrypointFilePath)) {
+      // Since it's the entrypoint, it must be loaded last
       fullTopoOrder.push(entrypointFilePath)
     }
 
     // This check is performed after cycle detection because if we tried to resolve export symbols
     // and there is a cycle in the import graph the constructImportGraph function may end up in an
     // infinite loop
+    // For example, a.js: export * from './b.js' and b.js: export * from './a.js'
+    // Then trying to discover what symbols are exported by a.js will require determining what symbols
+    // b.js exports, which would in turn require the symbols exported by a.js
+    // If the topological order exists, then this is guaranteed not to occur
     checkForUndefinedImportsAndReexports(moduleDocs, programs, fullTopoOrder, allowUndefinedImports)
   } catch (error) {
     context.errors.push(error)
