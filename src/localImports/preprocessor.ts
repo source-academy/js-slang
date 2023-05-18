@@ -77,7 +77,7 @@ const parseProgramsAndConstructImportGraph = (
   const parseFile = (currentFilePath: string): void => {
     const code = files[currentFilePath]
     if (code === undefined) {
-      context.errors.push(new CannotFindModuleError(entrypointFilePath))
+      context.errors.push(new CannotFindModuleError(currentFilePath))
       return
     }
 
