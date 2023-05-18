@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "1.0.14",
+  "version": "1.0.23",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
@@ -33,13 +33,15 @@
   "dependencies": {
     "@babel/parser": "^7.19.4",
     "@joeychenofficial/alt-ergo-modified": "^2.4.0",
+    "@ts-morph/bootstrap": "^0.18.0",
     "@types/estree": "0.0.52",
-    "acorn": "^8.0.3",
+    "acorn": "^8.8.2",
     "acorn-class-fields": "^1.0.0",
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
     "gpu.js": "^2.10.4",
+    "js-base64": "^3.7.5",
     "lodash": "^4.17.20",
     "node-getopt": "^0.3.2",
     "source-map": "0.7.3",
@@ -109,7 +111,9 @@
       "/dist/",
       "/node_modules/",
       "/src/typings/",
-      "/src/utils/testing.ts"
+      "/src/utils/testing.ts",
+      "/src/scm-slang",
+      "/src/py-slang/"
     ],
     "reporters": [
       "default",

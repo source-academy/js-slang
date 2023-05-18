@@ -571,24 +571,24 @@ function handleImportDeclarations(node: tsEs.Program) {
  * Type checking is not carried out as this function is only responsible for hoisting declarations.
  */
 function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStatement) {
-  node.body.forEach(node => {
-    switch (node.type) {
+  node.body.forEach(bodyNode => {
+    switch (bodyNode.type) {
       case 'FunctionDeclaration':
-        if (node.id === null) {
+        if (bodyNode.id === null) {
           throw new Error(
             'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
           )
         }
         // Only identifiers/rest elements are used as function params in Source
-        const params = node.params.filter(
+        const params = bodyNode.params.filter(
           (param): param is tsEs.Identifier | tsEs.RestElement =>
             param.type === 'Identifier' || param.type === 'RestElement'
         )
-        if (params.length !== node.params.length) {
-          throw new TypecheckError(node, 'Unknown function parameter type')
+        if (params.length !== bodyNode.params.length) {
+          throw new TypecheckError(bodyNode, 'Unknown function parameter type')
         }
-        const fnName = node.id.name
-        const returnType = getTypeAnnotationType(node.returnType)
+        const fnName = bodyNode.id.name
+        const returnType = getTypeAnnotationType(bodyNode.returnType)
 
         // If the function has variable number of arguments, set function type as any
         // TODO: Add support for variable number of function arguments
@@ -607,46 +607,52 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
         setType(fnName, fnType, env)
         break
       case 'VariableDeclaration':
-        if (node.kind === 'var') {
-          throw new TypecheckError(node, 'Variable declaration using "var" is not allowed')
+        if (bodyNode.kind === 'var') {
+          throw new TypecheckError(bodyNode, 'Variable declaration using "var" is not allowed')
         }
-        if (node.declarations.length !== 1) {
+        if (bodyNode.declarations.length !== 1) {
           throw new TypecheckError(
-            node,
+            bodyNode,
             'Variable declaration should have one and only one declaration'
           )
         }
-        if (node.declarations[0].id.type !== 'Identifier') {
-          throw new TypecheckError(node, 'Variable declaration ID should be an identifier')
+        if (bodyNode.declarations[0].id.type !== 'Identifier') {
+          throw new TypecheckError(bodyNode, 'Variable declaration ID should be an identifier')
         }
-        const id = node.declarations[0].id as tsEs.Identifier
+        const id = bodyNode.declarations[0].id as tsEs.Identifier
         const expectedType = getTypeAnnotationType(id.typeAnnotation)
 
         // Save variable type and decl kind in type env
         setType(id.name, expectedType, env)
-        setDeclKind(id.name, node.kind, env)
+        setDeclKind(id.name, bodyNode.kind, env)
         break
       case 'TSTypeAliasDeclaration':
-        const alias = node.id.name
+        if (node.type === 'BlockStatement') {
+          throw new TypecheckError(
+            bodyNode,
+            'Type alias declarations may only appear at the top level'
+          )
+        }
+        const alias = bodyNode.id.name
         if (Object.values(typeAnnotationKeywordToBasicTypeMap).includes(alias as TSBasicType)) {
-          context.errors.push(new TypeAliasNameNotAllowedError(node, alias))
+          context.errors.push(new TypeAliasNameNotAllowedError(bodyNode, alias))
           break
         }
         if (lookupTypeAlias(alias, env) !== undefined) {
           // Only happens when attempting to declare type aliases that share names with predeclared types (e.g. Pair, List)
           // Declaration of two type aliases with the same name will be caught as syntax error by parser
-          context.errors.push(new DuplicateTypeAliasError(node, alias))
+          context.errors.push(new DuplicateTypeAliasError(bodyNode, alias))
           break
         }
 
         let type: BindableType = tAny
-        if (node.typeParameters && node.typeParameters.params.length > 0) {
+        if (bodyNode.typeParameters && bodyNode.typeParameters.params.length > 0) {
           const typeParams: Variable[] = []
           // Check validity of type parameters
           pushEnv(env)
-          node.typeParameters.params.forEach(param => {
+          bodyNode.typeParameters.params.forEach(param => {
             if (param.type !== 'TSTypeParameter') {
-              throw new TypecheckError(node, 'Invalid type parameter type')
+              throw new TypecheckError(bodyNode, 'Invalid type parameter type')
             }
             const name = param.name
             if (Object.values(typeAnnotationKeywordToBasicTypeMap).includes(name as TSBasicType)) {
@@ -655,10 +661,10 @@ function addTypeDeclarationsToEnvironment(node: tsEs.Program | tsEs.BlockStateme
             }
             typeParams.push(tVar(name))
           })
-          type = tForAll(getTypeAnnotationType(node), typeParams)
+          type = tForAll(getTypeAnnotationType(bodyNode), typeParams)
           env.pop()
         } else {
-          type = getTypeAnnotationType(node)
+          type = getTypeAnnotationType(bodyNode)
         }
         setTypeAlias(alias, type, env)
         break
@@ -1518,7 +1524,7 @@ function containsType(
 /**
  * Traverses through the program and removes all TS-related nodes, returning the result.
  */
-function removeTSNodes(node: tsEs.Node | undefined | null): any {
+export function removeTSNodes(node: tsEs.Node | undefined | null): any {
   if (node === undefined || node === null) {
     return node
   }

@@ -30,6 +30,7 @@ import * as es from 'estree'
 import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
 import { CannotFindModuleError } from './errors/localImportErrors'
 import { validateFilePath } from './localImports/filePaths'
+import preprocessFileImports from './localImports/preprocessor'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
 import { parseWithComments } from './parser/utils'
@@ -42,6 +43,7 @@ import {
 } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
+import { decodeError, decodeValue } from './parser/scheme'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -328,7 +330,11 @@ export async function runFilesInContext(
     return resolvedErrorPromise
   }
 
-  if (context.chapter === Chapter.FULL_JS) {
+  if (
+    context.chapter === Chapter.FULL_JS ||
+    context.chapter === Chapter.FULL_TS ||
+    context.chapter === Chapter.PYTHON_1
+  ) {
     const program = parse(code, context)
     if (program === null) {
       return resolvedErrorPromise
@@ -340,11 +346,33 @@ export async function runFilesInContext(
     return htmlRunner(code, context, options)
   }
 
+  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
+    // If the language is scheme, we need to format all errors and returned values first
+    // Use the standard runner to get the result
+    const evaluated: Promise<Result> = sourceFilesRunner(
+      files,
+      entrypointFilePath,
+      context,
+      options
+    ).then(result => {
+      // Format the returned value
+      if (result.status === 'finished') {
+        return {
+          ...result,
+          value: decodeValue(result.value)
+        } as Finished
+      }
+      return result
+    })
+    // Format all errors in the context
+    context.errors = context.errors.map(error => decodeError(error))
+    return evaluated
+  }
+
   // FIXME: Clean up state management so that the `parseError` function is pure.
   //        This is not a huge priority, but it would be good not to make use of
   //        global state.
   verboseErrors = hasVerboseErrors(code)
-
   return sourceFilesRunner(files, entrypointFilePath, context, options)
 }
 
@@ -371,13 +399,39 @@ export function compile(
   context: Context,
   vmInternalFunctions?: string[]
 ): SVMProgram | undefined {
-  const astProgram = parse(code, context)
-  if (!astProgram) {
+  const defaultFilePath = '/default.js'
+  const files: Partial<Record<string, string>> = {}
+  files[defaultFilePath] = code
+  return compileFiles(files, defaultFilePath, context, vmInternalFunctions)
+}
+
+export function compileFiles(
+  files: Partial<Record<string, string>>,
+  entrypointFilePath: string,
+  context: Context,
+  vmInternalFunctions?: string[]
+): SVMProgram | undefined {
+  for (const filePath in files) {
+    const filePathError = validateFilePath(filePath)
+    if (filePathError !== null) {
+      context.errors.push(filePathError)
+      return undefined
+    }
+  }
+
+  const entrypointCode = files[entrypointFilePath]
+  if (entrypointCode === undefined) {
+    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    return undefined
+  }
+
+  const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
+  if (!preprocessedProgram) {
     return undefined
   }
 
   try {
-    return compileToIns(astProgram, undefined, vmInternalFunctions)
+    return compileToIns(preprocessedProgram, undefined, vmInternalFunctions)
   } catch (error) {
     context.errors.push(error)
     return undefined

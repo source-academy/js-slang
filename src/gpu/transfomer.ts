@@ -155,7 +155,7 @@ class GPUTransformer {
         kernelFunction,
         create.literal(currentKernelId++)
       ],
-      node.loc!
+      node.loc
     )
 
     create.mutateToExpressionStatement(node, createKernelSourceCall)

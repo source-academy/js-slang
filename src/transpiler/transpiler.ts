@@ -4,9 +4,11 @@ import * as es from 'estree'
 import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
-import { NATIVE_STORAGE_ID } from '../constants'
+import { NATIVE_STORAGE_ID, REQUIRE_PROVIDER_ID, UNKNOWN_LOCATION } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
-import { memoizedGetModuleFile } from '../modules/moduleLoader'
+import { UndefinedImportError } from '../modules/errors'
+import { memoizedGetModuleFile, memoizedloadModuleDocs } from '../modules/moduleLoader'
+import { ModuleDocumentation } from '../modules/moduleTypes'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/astCreator'
 import {
@@ -27,6 +29,7 @@ const globalIdNames = [
   'callIfFuncAndRightArgs',
   'boolOrErr',
   'wrap',
+  'wrapSourceModule',
   'unaryOp',
   'binaryOp',
   'throwIfTimeout',
@@ -40,71 +43,86 @@ export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
 export function transformImportDeclarations(
   program: es.Program,
   usedIdentifiers: Set<string>,
+  checkImports: boolean,
+  nativeId?: es.Identifier,
   useThis: boolean = false
 ): [string, es.VariableDeclaration[], es.Program['body']] {
-  const prefix: string[] = []
   const [importNodes, otherNodes] = partition(
     program.body,
     node => node.type === 'ImportDeclaration'
   )
-  const moduleNames = new Map<string, string>()
-  let moduleCount = 0
 
-  const declNodes = (importNodes as es.ImportDeclaration[]).flatMap(node => {
-    const moduleName = node.source.value as string
+  if (importNodes.length === 0) return ['', [], otherNodes]
 
-    let moduleNamespace: string
-    if (!moduleNames.has(moduleName)) {
-      // Increment module count until we reach an unused identifier
-      let namespaced = `__MODULE_${moduleCount}__`
-      while (usedIdentifiers.has(namespaced)) {
-        namespaced = `__MODULE_${moduleCount}__`
-        moduleCount++
-      }
-
-      // The module hasn't been added to the prefix yet, so do that
-      moduleNames.set(moduleName, namespaced)
-      moduleCount++
-      const moduleText = memoizedGetModuleFile(moduleName, 'bundle').trim()
-      prefix.push(`const ${namespaced} = ${moduleText}({ context: ctx });\n`)
-      moduleNamespace = namespaced
-    } else {
-      moduleNamespace = moduleNames.get(moduleName)!
-    }
-
-    return node.specifiers.map(specifier => {
-      if (specifier.type !== 'ImportSpecifier') {
-        throw new Error(`Expected import specifier, found: ${node.type}`)
-      }
-
-      // Convert each import specifier to its corresponding local variable declaration
-      return create.constantDeclaration(
-        specifier.local.name,
-        create.memberExpression(
-          create.identifier(`${useThis ? 'this.' : ''}${moduleNamespace}`),
-          specifier.imported.name
+  const moduleInfos = importNodes.reduce(
+    (res, node: es.ImportDeclaration) => {
+      const moduleName = node.source.value
+      if (typeof moduleName !== 'string') {
+        throw new Error(
+          `Expected ImportDeclaration to have a source of type string, got ${moduleName}`
         )
-      )
-    })
+      }
+
+      if (!(moduleName in res)) {
+        res[moduleName] = {
+          text: memoizedGetModuleFile(moduleName, 'bundle'),
+          nodes: [],
+          docs: checkImports ? memoizedloadModuleDocs(moduleName, node) : null
+        }
+      }
+
+      res[moduleName].nodes.push(node)
+      node.specifiers.forEach(spec => usedIdentifiers.add(spec.local.name))
+      return res
+    },
+    {} as Record<
+      string,
+      {
+        nodes: es.ImportDeclaration[]
+        text: string
+        docs: ModuleDocumentation | null
+      }
+    >
+  )
+
+  const prefix: string[] = []
+  const declNodes = Object.entries(moduleInfos).flatMap(([moduleName, { nodes, text, docs }]) => {
+    const namespaced = getUniqueId(usedIdentifiers, '__MODULE__')
+    prefix.push(`// ${moduleName} module`)
+
+    const modifiedText = nativeId
+      ? `${NATIVE_STORAGE_ID}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
+      : `(${text})(${REQUIRE_PROVIDER_ID})`
+    prefix.push(`const ${namespaced} = ${modifiedText}\n`)
+
+    return nodes.flatMap(node =>
+      node.specifiers.map(specifier => {
+        if (specifier.type !== 'ImportSpecifier') {
+          throw new Error(`Expected import specifier, found: ${specifier.type}`)
+        }
+
+        if (checkImports) {
+          if (!docs) {
+            console.warn(`Failed to load docs for ${moduleName}, skipping typechecking`)
+          } else if (!(specifier.imported.name in docs)) {
+            throw new UndefinedImportError(specifier.imported.name, moduleName, node)
+          }
+        }
+
+        // Convert each import specifier to its corresponding local variable declaration
+        return create.constantDeclaration(
+          specifier.local.name,
+          create.memberExpression(
+            create.identifier(`${useThis ? 'this.' : ''}${namespaced}`),
+            specifier.imported.name
+          )
+        )
+      })
+    )
   })
 
-  return [prefix.join(''), declNodes, otherNodes]
+  return [prefix.join('\n'), declNodes, otherNodes]
 }
-
-// `useThis` is a temporary indicator used by fullJS
-// export function transformImportDeclarations(program: es.Program, useThis = false) {
-//   const imports = []
-//   let result: es.VariableDeclaration[] = []
-//   let moduleCounter = 0
-//   while (program.body.length > 0 && program.body[0].type === 'ImportDeclaration') {
-//     imports.push(program.body.shift() as es.ImportDeclaration)
-//   }
-//   for (const node of imports) {
-//     result = transformSingleImportDeclaration(moduleCounter, node, useThis).concat(result)
-//     moduleCounter++
-//   }
-//   program.body = (result as (es.Statement | es.ModuleDeclaration)[]).concat(program.body)
-// }
 
 export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
   return program.body
@@ -242,18 +260,18 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
           expression.operator,
           expression.left,
           transformLogicalExpression(expression.right),
-          expression.loc!
+          expression.loc
         )
       case 'ConditionalExpression':
         return create.conditionalExpression(
           expression.test,
           transformLogicalExpression(expression.consequent),
           transformLogicalExpression(expression.alternate),
-          expression.loc!
+          expression.loc
         )
       case 'CallExpression':
         expression = expression as es.CallExpression
-        const { line, column } = expression.loc!.start
+        const { line, column } = (expression.loc ?? UNKNOWN_LOCATION).start
         const source = expression.loc?.source ?? null
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
@@ -292,7 +310,7 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
 function transformCallExpressionsToCheckIfFunction(program: es.Program, globalIds: NativeIds) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
-      const { line, column } = node.loc!.start
+      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
       const source = node.loc?.source ?? null
       const args = node.arguments
 
@@ -412,7 +430,7 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds
       | es.ForStatement
       | es.WhileStatement
   ) {
-    const { line, column } = node.loc!.start
+    const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
     const source = node.loc?.source ?? null
     const test = node.type === 'LogicalExpression' ? 'left' : 'test'
     node[test] = create.callExpression(globalIds.boolOrErr, [
@@ -447,7 +465,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
 ) {
   simple(program, {
     BinaryExpression(node: es.BinaryExpression) {
-      const { line, column } = node.loc!.start
+      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
       const source = node.loc?.source ?? null
       const { operator, left, right } = node
       create.mutateToCallExpression(node, globalIds.binaryOp, [
@@ -461,7 +479,7 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
       ])
     },
     UnaryExpression(node: es.UnaryExpression) {
-      const { line, column } = node.loc!.start
+      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
       const source = node.loc?.source ?? null
       const { operator, argument } = node as es.UnaryExpression
       create.mutateToCallExpression(node, globalIds.unaryOp, [
@@ -484,7 +502,7 @@ function transformPropertyAssignment(program: es.Program, globalIds: NativeIds) 
     AssignmentExpression(node: es.AssignmentExpression) {
       if (node.left.type === 'MemberExpression') {
         const { object, property, computed, loc } = node.left
-        const { line, column } = loc!.start
+        const { line, column } = (loc ?? UNKNOWN_LOCATION).start
         const source = loc?.source ?? null
         create.mutateToCallExpression(node, globalIds.setProp, [
           object as es.Expression,
@@ -503,7 +521,7 @@ function transformPropertyAccess(program: es.Program, globalIds: NativeIds) {
   simple(program, {
     MemberExpression(node: es.MemberExpression) {
       const { object, property, computed, loc } = node
-      const { line, column } = loc!.start
+      const { line, column } = (loc ?? UNKNOWN_LOCATION).start
       const source = loc?.source ?? null
       create.mutateToCallExpression(node, globalIds.getProp, [
         object as es.Expression,
@@ -530,7 +548,7 @@ function addInfiniteLoopProtection(
         const startTimeConst = getUniqueId(usedIdentifiers, 'startTime')
         newStatements.push(create.constantDeclaration(startTimeConst, getTimeAst()))
         if (statement.body.type === 'BlockStatement') {
-          const { line, column } = statement.loc!.start
+          const { line, column } = (statement.loc ?? UNKNOWN_LOCATION).start
           const source = statement.loc?.source ?? null
           statement.body.body.unshift(
             create.expressionStatement(
@@ -612,7 +630,9 @@ function transpileToSource(
 
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
-    usedIdentifiers
+    usedIdentifiers,
+    true,
+    globalIds.native
   )
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
 
@@ -653,7 +673,9 @@ function transpileToFullJS(
 
   const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
     program,
-    usedIdentifiers
+    usedIdentifiers,
+    false,
+    globalIds.native
   )
 
   const transpiledProgram: es.Program = create.program([
@@ -675,7 +697,7 @@ export function transpile(
   context: Context,
   skipUndefined = false
 ): TranspiledResult {
-  if (context.chapter === Chapter.FULL_JS) {
+  if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.PYTHON_1) {
     return transpileToFullJS(program, context, true)
   } else if (context.variant == Variant.NATIVE) {
     return transpileToFullJS(program, context, false)

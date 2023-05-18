@@ -9,7 +9,7 @@ import { Environment, Frame, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import * as instr from './instrCreator'
 import { Agenda } from './interpreter'
-import { AgendaItem, AssmtInstr, Instr, InstrType } from './types'
+import { AgendaItem, AppInstr, AssmtInstr, Instr, InstrType } from './types'
 
 /**
  * Stack is implemented for agenda and stash registers.
@@ -133,7 +133,7 @@ export const reduceConditional = (
 }
 
 /**
- * To determine if an agenda item is value producing. JavaScript distinguishes valu producing
+ * To determine if an agenda item is value producing. JavaScript distinguishes value producing
  * statements and non-value producing statements.
  * Refer to https://sourceacademy.nus.edu.sg/sicpjs/4.1.2 exercise 4.8.
  *
@@ -150,6 +150,31 @@ export const valueProducing = (command: es.Node): boolean => {
     type !== 'ReturnStatement' &&
     (type !== 'BlockStatement' || command.body.some(valueProducing))
   )
+}
+
+/**
+ * To determine if an agenda item changes the environment.
+ * There is a change in the environment when
+ *  1. pushEnvironment() is called when creating a new frame, if there are variable declarations.
+ *     Called in Program, BlockStatement, and Application instructions.
+ *  2. there is an assignment.
+ *     Called in Assignment and Array Assignment instructions.
+ *
+ * @param command Agenda item to check against.
+ * @returns true if it changes the environment, false otherwise.
+ */
+export const envChanging = (command: AgendaItem): boolean => {
+  if (isNode(command)) {
+    const type = command.type
+    return type === 'Program' || (type === 'BlockStatement' && hasDeclarations(command))
+  } else {
+    const type = command.instrType
+    return (
+      type === InstrType.ASSIGNMENT ||
+      type === InstrType.ARRAY_ASSIGNMENT ||
+      (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs > 0)
+    )
+  }
 }
 
 /**
@@ -205,8 +230,12 @@ export const createBlockEnvironment = (
 
 const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 
-function declareIdentifier(context: Context, name: string, node: es.Node) {
-  const environment = currentEnvironment(context)
+export function declareIdentifier(
+  context: Context,
+  name: string,
+  node: es.Node,
+  environment: Environment
+) {
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
 
@@ -219,23 +248,44 @@ function declareIdentifier(context: Context, name: string, node: es.Node) {
   return environment
 }
 
-function declareVariables(context: Context, node: es.VariableDeclaration) {
+function declareVariables(
+  context: Context,
+  node: es.VariableDeclaration,
+  environment: Environment
+) {
   for (const declaration of node.declarations) {
-    declareIdentifier(context, (declaration.id as es.Identifier).name, node)
+    declareIdentifier(context, (declaration.id as es.Identifier).name, node, environment)
   }
 }
 
-export function declareFunctionsAndVariables(context: Context, node: es.BlockStatement) {
+export function declareFunctionsAndVariables(
+  context: Context,
+  node: es.BlockStatement,
+  environment: Environment
+) {
+  let hasDeclarations: boolean = false
   for (const statement of node.body) {
     switch (statement.type) {
       case 'VariableDeclaration':
-        declareVariables(context, statement)
+        declareVariables(context, statement, environment)
+        hasDeclarations = true
         break
       case 'FunctionDeclaration':
-        declareIdentifier(context, (statement.id as es.Identifier).name, statement)
+        declareIdentifier(context, (statement.id as es.Identifier).name, statement, environment)
+        hasDeclarations = true
         break
     }
   }
+  return hasDeclarations
+}
+
+function hasDeclarations(node: es.BlockStatement): boolean {
+  for (const statement of node.body) {
+    if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {
+      return true
+    }
+  }
+  return false
 }
 
 export function defineVariable(
@@ -243,7 +293,7 @@ export function defineVariable(
   name: string,
   value: Value,
   constant = false,
-  node: es.VariableDeclaration
+  node: es.VariableDeclaration | es.ImportDeclaration
 ) {
   const environment = currentEnvironment(context)
 
@@ -303,9 +353,6 @@ export const setVariable = (
 
 export const handleRuntimeError = (context: Context, error: RuntimeSourceError) => {
   context.errors.push(error)
-  context.runtime.environments = context.runtime.environments.slice(
-    -context.numberOfOuterEnvironments
-  )
   throw error
 }
 

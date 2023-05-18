@@ -1,6 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
+import { UNKNOWN_LOCATION } from '../../../constants'
 import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
 
 const mutableDeclarators = ['let', 'var']
@@ -12,7 +13,7 @@ export class NoDeclareMutableError implements SourceError {
   constructor(public node: es.VariableDeclaration) {}
 
   get location() {
-    return this.node.loc!
+    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {

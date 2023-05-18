@@ -2,15 +2,6 @@
 
 exports[`debugger; pauses for 1`] = `
 Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`debugger; pauses for 2`] = `
-Object {
   "head": Object {
     "i": 0,
   },
@@ -20,7 +11,7 @@ Object {
 }
 `;
 
-exports[`debugger; pauses for 3`] = `
+exports[`debugger; pauses for 2`] = `
 Object {
   "head": Object {
     "_copy_of_i": 0,
@@ -31,7 +22,7 @@ Object {
 }
 `;
 
-exports[`debugger; pauses for 4`] = `
+exports[`debugger; pauses for 3`] = `
 Object {
   "head": Object {
     "i": 0,
@@ -42,86 +33,68 @@ Object {
 }
 `;
 
+exports[`debugger; pauses for 4`] = `
+Object {
+  "callExpression": Object {
+    "arguments": Array [
+      Object {
+        "loc": undefined,
+        "type": "Literal",
+        "value": 10,
+      },
+    ],
+    "callee": Node {
+      "end": 78,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 7,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 7,
+        },
+      },
+      "name": "a",
+      "start": 77,
+      "type": "Identifier",
+    },
+    "end": 82,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 7,
+        "line": 7,
+      },
+      "start": Position {
+        "column": 2,
+        "line": 7,
+      },
+    },
+    "start": 77,
+    "type": "CallExpression",
+  },
+  "head": Object {
+    "x": 10,
+  },
+  "id": Any<String>,
+  "name": "a",
+  "tail": null,
+}
+`;
+
 exports[`debugger; pauses for 5`] = `
 Object {
-  "head": Object {},
+  "head": Object {
+    "a": [Function],
+  },
   "id": Any<String>,
-  "name": "blockEnvironment",
+  "name": "programEnvironment",
   "tail": null,
 }
 `;
 
 exports[`debugger; pauses for 6`] = `
 Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`debugger; pauses for 7`] = `
-Object {
-  "callExpression": Object {
-    "arguments": Array [
-      Object {
-        "loc": undefined,
-        "type": "Literal",
-        "value": 10,
-      },
-    ],
-    "callee": Node {
-      "end": 78,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 3,
-          "line": 7,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 7,
-        },
-      },
-      "name": "a",
-      "start": 77,
-      "type": "Identifier",
-    },
-    "end": 82,
-    "loc": SourceLocation {
-      "end": Position {
-        "column": 7,
-        "line": 7,
-      },
-      "start": Position {
-        "column": 2,
-        "line": 7,
-      },
-    },
-    "start": 77,
-    "type": "CallExpression",
-  },
-  "head": Object {
-    "x": 10,
-  },
-  "id": Any<String>,
-  "name": "a",
-  "tail": null,
-}
-`;
-
-exports[`debugger; pauses for 8`] = `
-Object {
-  "head": Object {
-    "a": [Function],
-  },
-  "id": Any<String>,
-  "name": "programEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`debugger; pauses for 9`] = `
-Object {
   "head": Object {
     "$accumulate": [Function],
     "$append": [Function],
@@ -175,86 +148,59 @@ Object {
 }
 `;
 
-exports[`debugger; pauses for 10`] = `""`;
+exports[`debugger; pauses for 7`] = `""`;
 
 exports[`debugger; pauses while 1`] = `
 Object {
-  "head": Object {},
+  "callExpression": Object {
+    "arguments": Array [
+      Object {
+        "loc": undefined,
+        "type": "Literal",
+        "value": 10,
+      },
+    ],
+    "callee": Node {
+      "end": 78,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 3,
+          "line": 8,
+        },
+        "start": Position {
+          "column": 2,
+          "line": 8,
+        },
+      },
+      "name": "a",
+      "start": 77,
+      "type": "Identifier",
+    },
+    "end": 82,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 7,
+        "line": 8,
+      },
+      "start": Position {
+        "column": 2,
+        "line": 8,
+      },
+    },
+    "start": 77,
+    "type": "CallExpression",
+  },
+  "head": Object {
+    "x": 10,
+  },
   "id": Any<String>,
-  "name": "blockEnvironment",
+  "name": "a",
   "tail": null,
 }
 `;
 
 exports[`debugger; pauses while 2`] = `
 Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`debugger; pauses while 3`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`debugger; pauses while 4`] = `
-Object {
-  "callExpression": Object {
-    "arguments": Array [
-      Object {
-        "loc": undefined,
-        "type": "Literal",
-        "value": 10,
-      },
-    ],
-    "callee": Node {
-      "end": 78,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 3,
-          "line": 8,
-        },
-        "start": Position {
-          "column": 2,
-          "line": 8,
-        },
-      },
-      "name": "a",
-      "start": 77,
-      "type": "Identifier",
-    },
-    "end": 82,
-    "loc": SourceLocation {
-      "end": Position {
-        "column": 7,
-        "line": 8,
-      },
-      "start": Position {
-        "column": 2,
-        "line": 8,
-      },
-    },
-    "start": 77,
-    "type": "CallExpression",
-  },
-  "head": Object {
-    "x": 10,
-  },
-  "id": Any<String>,
-  "name": "a",
-  "tail": null,
-}
-`;
-
-exports[`debugger; pauses while 5`] = `
-Object {
   "head": Object {
     "a": [Function],
   },
@@ -264,7 +210,7 @@ Object {
 }
 `;
 
-exports[`debugger; pauses while 6`] = `
+exports[`debugger; pauses while 3`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -319,7 +265,7 @@ Object {
 }
 `;
 
-exports[`debugger; pauses while 7`] = `""`;
+exports[`debugger; pauses while 4`] = `""`;
 
 exports[`debugger; statement basic test 1`] = `
 Object {
@@ -472,15 +418,6 @@ Object {
 
 exports[`debugger; statement hoisting 2`] = `
 Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`debugger; statement hoisting 3`] = `
-Object {
   "callExpression": Object {
     "arguments": Array [
       Object {
@@ -528,7 +465,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement hoisting 4`] = `
+exports[`debugger; statement hoisting 3`] = `
 Object {
   "head": Object {
     "a": [Function],
@@ -539,7 +476,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement hoisting 5`] = `
+exports[`debugger; statement hoisting 4`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -594,27 +531,9 @@ Object {
 }
 `;
 
-exports[`debugger; statement hoisting 6`] = `""`;
+exports[`debugger; statement hoisting 5`] = `""`;
 
 exports[`debugger; statement in function 1`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`debugger; statement in function 2`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`debugger; statement in function 3`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -663,7 +582,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement in function 4`] = `
+exports[`debugger; statement in function 2`] = `
 Object {
   "head": Object {
     "a": [Function],
@@ -674,7 +593,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement in function 5`] = `
+exports[`debugger; statement in function 3`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -729,7 +648,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement in function 6`] = `""`;
+exports[`debugger; statement in function 4`] = `""`;
 
 exports[`debugger; statement test function scope 1`] = `
 Object {
@@ -753,15 +672,6 @@ Object {
 `;
 
 exports[`debugger; statement test function scope 2`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`debugger; statement test function scope 3`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -810,7 +720,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement test function scope 4`] = `
+exports[`debugger; statement test function scope 3`] = `
 Object {
   "head": Object {
     "a": [Function],
@@ -821,7 +731,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement test function scope 5`] = `
+exports[`debugger; statement test function scope 4`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -876,7 +786,7 @@ Object {
 }
 `;
 
-exports[`debugger; statement test function scope 6`] = `""`;
+exports[`debugger; statement test function scope 5`] = `""`;
 
 exports[`setBreakpointAtLine basic 1`] = `
 Object {
@@ -993,15 +903,6 @@ Object {
 
 exports[`setBreakpointAtLine for loops 5`] = `
 Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "programEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine for loops 6`] = `
-Object {
   "head": Object {
     "$accumulate": [Function],
     "$append": [Function],
@@ -1055,9 +956,9 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine for loops 7`] = `""`;
+exports[`setBreakpointAtLine for loops 6`] = `""`;
 
-exports[`setBreakpointAtLine for loops 8`] = `
+exports[`setBreakpointAtLine for loops 7`] = `
 Array [
   Object {
     "head": Object {
@@ -1092,12 +993,6 @@ Array [
     "tail": null,
   },
   Object {
-    "head": Object {},
-    "id": "88",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-  Object {
     "head": Object {
       "$accumulate": [Function],
       "$append": [Function],
@@ -1152,9 +1047,9 @@ Array [
 ]
 `;
 
-exports[`setBreakpointAtLine for loops 9`] = `""`;
+exports[`setBreakpointAtLine for loops 8`] = `""`;
 
-exports[`setBreakpointAtLine for loops 10`] = `
+exports[`setBreakpointAtLine for loops 9`] = `
 Array [
   Object {
     "head": Object {
@@ -1189,12 +1084,6 @@ Array [
     "tail": null,
   },
   Object {
-    "head": Object {},
-    "id": "88",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-  Object {
     "head": Object {
       "$accumulate": [Function],
       "$append": [Function],
@@ -1249,9 +1138,9 @@ Array [
 ]
 `;
 
-exports[`setBreakpointAtLine for loops 11`] = `""`;
+exports[`setBreakpointAtLine for loops 10`] = `""`;
 
-exports[`setBreakpointAtLine for loops 12`] = `
+exports[`setBreakpointAtLine for loops 11`] = `
 Array [
   Object {
     "head": Object {
@@ -1286,12 +1175,6 @@ Array [
     "tail": null,
   },
   Object {
-    "head": Object {},
-    "id": "88",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-  Object {
     "head": Object {
       "$accumulate": [Function],
       "$append": [Function],
@@ -1346,17 +1229,11 @@ Array [
 ]
 `;
 
-exports[`setBreakpointAtLine for loops 13`] = `""`;
+exports[`setBreakpointAtLine for loops 12`] = `""`;
 
-exports[`setBreakpointAtLine for loops 14`] = `
+exports[`setBreakpointAtLine for loops 13`] = `
 Array [
   Object {
-    "head": Object {},
-    "id": "88",
-    "name": "programEnvironment",
-    "tail": null,
-  },
-  Object {
     "head": Object {
       "$accumulate": [Function],
       "$append": [Function],
@@ -1411,7 +1288,7 @@ Array [
 ]
 `;
 
-exports[`setBreakpointAtLine for loops 15`] = `""`;
+exports[`setBreakpointAtLine for loops 14`] = `""`;
 
 exports[`setBreakpointAtLine function 1 1`] = `
 Object {
@@ -1483,24 +1360,6 @@ exports[`setBreakpointAtLine function 1 3`] = `""`;
 
 exports[`setBreakpointAtLine function 2 1`] = `
 Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine function 2 2`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine function 2 3`] = `
-Object {
   "callExpression": Object {
     "arguments": Array [
       Object {
@@ -1548,7 +1407,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine function 2 4`] = `
+exports[`setBreakpointAtLine function 2 2`] = `
 Object {
   "head": Object {
     "a": [Function],
@@ -1559,7 +1418,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine function 2 5`] = `
+exports[`setBreakpointAtLine function 2 3`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -1614,7 +1473,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine function 2 6`] = `""`;
+exports[`setBreakpointAtLine function 2 4`] = `""`;
 
 exports[`setBreakpointAtLine function 3 1`] = `
 Object {
@@ -1754,24 +1613,6 @@ exports[`setBreakpointAtLine function 4 3`] = `""`;
 
 exports[`setBreakpointAtLine granularity 1 1`] = `
 Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine granularity 1 2`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine granularity 1 3`] = `
-Object {
   "callExpression": Object {
     "arguments": Array [
       Object {
@@ -1819,7 +1660,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 1 4`] = `
+exports[`setBreakpointAtLine granularity 1 2`] = `
 Object {
   "head": Object {
     "a": [Function],
@@ -1830,7 +1671,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 1 5`] = `
+exports[`setBreakpointAtLine granularity 1 3`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -1885,22 +1726,10 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 1 6`] = `""`;
+exports[`setBreakpointAtLine granularity 1 4`] = `""`;
 
-exports[`setBreakpointAtLine granularity 1 7`] = `
+exports[`setBreakpointAtLine granularity 1 5`] = `
 Array [
-  Object {
-    "head": Object {},
-    "id": "64",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {},
-    "id": "63",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
   Object {
     "callExpression": Object {
       "arguments": Array [
@@ -1948,18 +1777,6 @@ Array [
     "tail": null,
   },
   Object {
-    "head": Object {},
-    "id": "61",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {},
-    "id": "60",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
     "callExpression": Object {
       "arguments": Array [
         Object {
@@ -2003,18 +1820,6 @@ Array [
     },
     "id": "59",
     "name": "a",
-    "tail": null,
-  },
-  Object {
-    "head": Object {},
-    "id": "58",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {},
-    "id": "57",
-    "name": "blockEnvironment",
     "tail": null,
   },
   Object {
@@ -2126,27 +1931,9 @@ Array [
 ]
 `;
 
-exports[`setBreakpointAtLine granularity 1 8`] = `""`;
+exports[`setBreakpointAtLine granularity 1 6`] = `""`;
 
 exports[`setBreakpointAtLine granularity 2 1`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine granularity 2 2`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine granularity 2 3`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -2195,25 +1982,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 2 4`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine granularity 2 5`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine granularity 2 6`] = `
+exports[`setBreakpointAtLine granularity 2 2`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -2262,25 +2031,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 2 7`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine granularity 2 8`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine granularity 2 9`] = `
+exports[`setBreakpointAtLine granularity 2 3`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -2329,7 +2080,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 2 10`] = `
+exports[`setBreakpointAtLine granularity 2 4`] = `
 Object {
   "head": Object {
     "a": [Function],
@@ -2340,7 +2091,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 2 11`] = `
+exports[`setBreakpointAtLine granularity 2 5`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -2395,9 +2146,9 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 2 12`] = `""`;
+exports[`setBreakpointAtLine granularity 2 6`] = `""`;
 
-exports[`setBreakpointAtLine granularity 2 13`] = `
+exports[`setBreakpointAtLine granularity 2 7`] = `
 Array [
   Object {
     "head": Object {
@@ -2462,27 +2213,9 @@ Array [
 ]
 `;
 
-exports[`setBreakpointAtLine granularity 2 14`] = `""`;
+exports[`setBreakpointAtLine granularity 2 8`] = `""`;
 
 exports[`setBreakpointAtLine granularity 3 1`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine granularity 3 2`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine granularity 3 3`] = `
 Object {
   "callExpression": Object {
     "arguments": Array [
@@ -2531,7 +2264,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 3 4`] = `
+exports[`setBreakpointAtLine granularity 3 2`] = `
 Object {
   "head": Object {
     "a": [Function],
@@ -2542,7 +2275,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 3 5`] = `
+exports[`setBreakpointAtLine granularity 3 3`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -2597,22 +2330,10 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine granularity 3 6`] = `""`;
+exports[`setBreakpointAtLine granularity 3 4`] = `""`;
 
-exports[`setBreakpointAtLine granularity 3 7`] = `
+exports[`setBreakpointAtLine granularity 3 5`] = `
 Array [
-  Object {
-    "head": Object {},
-    "id": "83",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {},
-    "id": "82",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
   Object {
     "callExpression": Object {
       "arguments": Array [
@@ -2657,18 +2378,6 @@ Array [
     },
     "id": "81",
     "name": "a",
-    "tail": null,
-  },
-  Object {
-    "head": Object {},
-    "id": "80",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
-  Object {
-    "head": Object {},
-    "id": "79",
-    "name": "blockEnvironment",
     "tail": null,
   },
   Object {
@@ -2780,9 +2489,9 @@ Array [
 ]
 `;
 
-exports[`setBreakpointAtLine granularity 3 8`] = `""`;
+exports[`setBreakpointAtLine granularity 3 6`] = `""`;
 
-exports[`setBreakpointAtLine granularity 3 9`] = `
+exports[`setBreakpointAtLine granularity 3 7`] = `
 Array [
   Object {
     "head": Object {
@@ -2847,18 +2556,9 @@ Array [
 ]
 `;
 
-exports[`setBreakpointAtLine granularity 3 10`] = `""`;
+exports[`setBreakpointAtLine granularity 3 8`] = `""`;
 
 exports[`setBreakpointAtLine while loops 1`] = `
-Object {
-  "head": Object {},
-  "id": Any<String>,
-  "name": "blockEnvironment",
-  "tail": null,
-}
-`;
-
-exports[`setBreakpointAtLine while loops 2`] = `
 Object {
   "head": Object {
     "a": 9,
@@ -2869,7 +2569,7 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine while loops 3`] = `
+exports[`setBreakpointAtLine while loops 2`] = `
 Object {
   "head": Object {
     "$accumulate": [Function],
@@ -2924,16 +2624,10 @@ Object {
 }
 `;
 
-exports[`setBreakpointAtLine while loops 4`] = `""`;
+exports[`setBreakpointAtLine while loops 3`] = `""`;
 
-exports[`setBreakpointAtLine while loops 5`] = `
+exports[`setBreakpointAtLine while loops 4`] = `
 Array [
-  Object {
-    "head": Object {},
-    "id": "105",
-    "name": "blockEnvironment",
-    "tail": null,
-  },
   Object {
     "head": Object {
       "a": 6,
@@ -2997,9 +2691,9 @@ Array [
 ]
 `;
 
-exports[`setBreakpointAtLine while loops 6`] = `""`;
+exports[`setBreakpointAtLine while loops 5`] = `""`;
 
-exports[`setBreakpointAtLine while loops 7`] = `
+exports[`setBreakpointAtLine while loops 6`] = `
 Array [
   Object {
     "head": Object {
@@ -3064,4 +2758,4 @@ Array [
 ]
 `;
 
-exports[`setBreakpointAtLine while loops 8`] = `""`;
+exports[`setBreakpointAtLine while loops 7`] = `""`;

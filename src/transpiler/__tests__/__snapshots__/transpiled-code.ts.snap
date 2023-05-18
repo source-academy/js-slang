@@ -85,6 +85,7 @@ exports[`Ensure no name clashes 1`] = `
     const callIfFuncAndRightArgs0 = native0.operators.get(\\"callIfFuncAndRightArgs\\");
     const boolOrErr0 = native0.operators.get(\\"boolOrErr\\");
     const wrap90 = native0.operators.get(\\"wrap\\");
+    const wrapSourceModule = native0.operators.get(\\"wrapSourceModule\\");
     const unaryOp = native0.operators.get(\\"unaryOp\\");
     const binaryOp = native0.operators.get(\\"binaryOp\\");
     const throwIfTimeout = native0.operators.get(\\"throwIfTimeout\\");
@@ -201,6 +202,7 @@ Object {
     const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
     const boolOrErr = native.operators.get(\\"boolOrErr\\");
     const wrap = native.operators.get(\\"wrap\\");
+    const wrapSourceModule = native.operators.get(\\"wrapSourceModule\\");
     const unaryOp = native.operators.get(\\"unaryOp\\");
     const binaryOp = native.operators.get(\\"binaryOp\\");
     const throwIfTimeout = native.operators.get(\\"throwIfTimeout\\");

@@ -1,0 +1,6 @@
+[submodule "src/scm-slang"]
+	path = src/scm-slang
+	url = https://github.com/source-academy/scm-slang.git
+[submodule "src/py-slang"]
+	path = src/py-slang
+	url = https://github.com/source-academy/py-slang

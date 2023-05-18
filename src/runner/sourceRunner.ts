@@ -12,10 +12,11 @@ import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import { evaluate } from '../interpreter/interpreter'
+import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import preprocessFileImports from '../localImports/preprocessor'
+import { getRequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
@@ -103,7 +104,7 @@ function runSubstitution(
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context)
+  let it = evaluate(program, context, true, true)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
     it = nonDetEvaluate(program, context)
@@ -139,14 +140,6 @@ async function runNative(
   try {
     appendModulesToContext(transpiledProgram, context)
 
-    // Repl module "default_js_slang" function support (Wang Zihan)
-    if (context.moduleContexts['repl'] !== undefined) {
-      ;(context.moduleContexts['repl'] as any).js_slang = {}
-      ;(context.moduleContexts['repl'] as any).js_slang.sourceFilesRunner = sourceFilesRunner
-      if ((context.moduleContexts['repl'] as any).js_slang.context === undefined)
-        (context.moduleContexts['repl'] as any).js_slang.context = context
-    }
-
     switch (context.variant) {
       case Variant.GPU:
         transpileToGPU(transpiledProgram)
@@ -157,8 +150,7 @@ async function runNative(
     }
 
     ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
-    // console.log(transpiled);
-    let value = await sandboxedEval(transpiled, context)
+    let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
       value = forceIt(value)
@@ -174,6 +166,7 @@ async function runNative(
       value
     })
   } catch (error) {
+    // console.error(error)
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
       const detectedInfiniteLoop = testForInfiniteLoop(program, context.previousPrograms.slice(1))
@@ -213,7 +206,7 @@ async function runNative(
 }
 
 function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  const value = ECEvaluate(program, context)
+  const value = ECEvaluate(program, context, options)
   return ECEResultPromise(context, value)
 }
 

@@ -87,6 +87,9 @@ export function HighlightRulesSelector(
       if (id >= 1) {
         output.push('import', 'const', 'else', 'if', 'return', 'function', 'debugger')
       }
+      if (id >= 2) {
+        output.push('export')
+      }
       if (id >= 3) {
         output.push('while', 'for', 'break', 'continue', 'let')
       }
@@ -95,6 +98,9 @@ export function HighlightRulesSelector(
 
     const ChapterAndVariantForbiddenWordSelector = () => {
       const forbiddenWords = []
+      if (id < 2) {
+        forbiddenWords.push('export')
+      }
       if (id < 3) {
         forbiddenWords.push('while', 'for', 'break', 'continue', 'let')
       }
@@ -131,7 +137,7 @@ export function HighlightRulesSelector(
           'variable.language':
             'this|arguments|' + // Pseudo
             'var|yield|async|await|with|switch|throw|try|eval|' + // forbidden words
-            'class|enum|extends|super|export|implements|private|public|' +
+            'class|enum|extends|super|implements|private|public|' +
             'interface|package|protected|static|in|of|instanceof|new|' +
             'case|catch|default|delete|do|finally|' +
             ChapterAndVariantForbiddenWordSelector()
@@ -570,10 +576,6 @@ export function HighlightRulesSelector(
             {
               token: ['storage.type', 'text', 'entity.name.function.ts'],
               regex: '(function)(\\s+)([a-zA-Z0-9$_\u00a1-\uffff][a-zA-Z0-9d$_\u00a1-\uffff]*)'
-            },
-            {
-              token: 'keyword',
-              regex: '(?:\\b(as|AS)\\b)'
             },
             {
               token: ['keyword', 'storage.type.variable.ts'],
