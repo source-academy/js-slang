@@ -7,6 +7,7 @@ import {
   UndefinedNamespaceImportError
 } from '../../modules/errors'
 import ArrayMap from '../../utils/arrayMap'
+import assert from '../../utils/assert'
 import { extractIdsFromPattern } from '../../utils/ast/astUtils'
 import { simple } from '../../utils/ast/walkers'
 
@@ -113,9 +114,7 @@ export default function checkForUndefinedImportsAndReexports(
         if (node.exported) {
           exportedSymbols.add(node.exported.name, node)
         } else {
-          for (const symbol of exports) {
-            exportedSymbols.add(symbol, node)
-          }
+          exports.forEach(symbol => exportedSymbols.add(symbol, node))
         }
       }
     })
@@ -123,6 +122,7 @@ export default function checkForUndefinedImportsAndReexports(
     moduleDocs[name] = new Set(
       exportedSymbols.entries().map(([symbol, nodes]) => {
         if (nodes.length === 1) return symbol
+        assert(nodes.length > 0, 'An exported symbol cannot have zero nodes associated with it')
         throw new ReexportSymbolError(name, symbol, nodes)
       })
     )
