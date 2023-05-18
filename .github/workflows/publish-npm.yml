@@ -1,0 +1,52 @@
+name: Publish to npm
+
+on:
+  pull_request:
+    branches:
+      - master
+    types: [closed]
+
+jobs:
+  verify:
+    name: Verify should publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify PR merged
+        env:
+          IS_MERGED: ${{ github.event.pull_request.merged }}
+        run: |
+          if [ "$IS_MERGED" != "true" ]; then
+            echo "Pull request is not merged"; exit 1;
+          fi
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          submodules: recursive
+      - name: Verify version has changed
+        # We use jq as `npm pkg get version` returns a quoted string
+        run: |
+          if [ "$(cat package.json | jq -r .version)" == "$(npm view js-slang version)" ]; then
+            echo "Version has not changed"; exit 1;
+          fi
+  publish:
+    name: Publish to npm
+    needs: [verify]
+    environment: publish-npm # Await approval from maintainers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          submodules: recursive
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
