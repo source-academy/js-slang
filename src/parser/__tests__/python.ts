@@ -55,5 +55,14 @@ describe('Python parser', () => {
         FatalSyntaxError
       )
     })
+
+    it('throws the right error for translator unsupported syntax', () => {
+      // Note: this test can be removed once we add support in py-slang.
+      const code = `1 is not 2`
+
+      expect(() => parserPython1.parse(code, context, undefined, true)).toThrowError(
+        FatalSyntaxError
+      )
+    })
   })
 })
