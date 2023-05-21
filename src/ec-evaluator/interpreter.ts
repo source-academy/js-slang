@@ -220,13 +220,18 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
   let command = agenda.pop()
   while (command) {
     if (!isPrelude && steps === context.runtime.envSteps) {
+      // Current command not yet executed so it stays on the agenda
+      agenda.push(command)
       return stash.peek()
     }
+    steps += 1
+    // Temporarily commented out the conditional step increases for agenda/stash visualization development/
+    // May be handy later in case we want to separate the visualizations
     if (envChanging(command)) {
-      steps += 1
+    //   steps += 1
     }
     if (isNode(command) && command.type === 'DebuggerStatement') {
-      steps += 1
+      // steps += 1
 
       // Record debugger step if running for the first time
       if (context.runtime.envSteps === -1) {
