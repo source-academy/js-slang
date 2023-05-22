@@ -79,44 +79,28 @@ describe('Test variable declarations', () => {
 })
 
 describe('Test functions', () => {
-  describe('Test function declarations', () => {
-    testCases('Check that function declarations are hoisted', [
-      ['Account for functions within the same scope', 'a(); function a() {}', null],
-      [
-        'Account for functions within different scopes',
-        'a(); function a() { b(); function b() { c(); } } function c() {}',
-        null
-      ],
-      [
-        'Declarations should not be accessible from outer scopes',
-        'function a() { function b() { } } b()',
-        { name: 'b', line: 1, col: 34 }
-      ]
-    ])
-
-    testCases('Test undefined variable checking', [
-      [
-        'Function parameters and name are accounted for',
-        'function hi_there(a, b, c, d) { hi_there; a; b; c; d; }',
-        null
-      ],
-      [
-        'Destructured parameters are accounted for',
-        'function hi_there({a, e: { x: [c], ...d } }, b) { hi_there; a; b; c; d; }',
-        null
-      ],
-      [
-        'Function bodies are checked correctly',
-        'function hi_there() { unknown_var }',
-        { name: 'unknown_var', line: 1, col: 22 }
-      ],
-      [
-        'Identifiers from outside scopes are accounted for',
-        'const known = 0; function hi_there() { return known }',
-        null
-      ]
-    ])
-  })
+  testCases('Test function declarations', [
+    [
+      'Function parameters and name are accounted for',
+      'function hi_there(a, b, c, d) { hi_there; a; b; c; d; }',
+      null
+    ],
+    [
+      'Destructured parameters are accounted for',
+      'function hi_there({a, e: { x: [c], ...d } }, b) { hi_there; a; b; c; d; }',
+      null
+    ],
+    [
+      'Function bodies are checked correctly',
+      'function hi_there() { unknown_var }',
+      { name: 'unknown_var', line: 1, col: 22 }
+    ],
+    [
+      'Identifiers from outside scopes are accounted for',
+      'const known = 0; function hi_there() { return known }',
+      null
+    ]
+  ])
 
   testCases('Test arrow function expressions', [
     [
@@ -199,15 +183,14 @@ describe('Test export and import declarations', () => {
   ])
 })
 
-testCases('Test BlockStatements', [
+testCases('Test block scoping', [
   [
     'BlockStatements are checked properly',
     '{ unknown_var }',
     { name: 'unknown_var', line: 1, col: 2 }
   ],
-  ['BlockStatements properly conduct hoisting', '{ hi(); function hi() {} }', null],
   [
-    'Inner blocks can access the scope of outer blocks',
+    'const declarations can be accessed by inner blocks',
     `
     {
       const x = 0;
@@ -219,7 +202,7 @@ testCases('Test BlockStatements', [
     null
   ],
   [
-    'Nested inner blocks can access the scope of outer blocks',
+    'const declarations can be accessed by nested inner blocks',
     `
     {
       const x = 0;
@@ -235,7 +218,7 @@ testCases('Test BlockStatements', [
     null
   ],
   [
-    'Outer blocks cannot access the scope of inner blocks',
+    'const declarations cannot be accessed by outer blocks ',
     `
   {
     {
@@ -247,7 +230,7 @@ testCases('Test BlockStatements', [
     { name: 'x', line: 6, col: 4 }
   ],
   [
-    'Inner blocks can shadow outer variables',
+    'const declarations can shadow outer variables',
     `
   {
     const x = 0;
@@ -259,6 +242,50 @@ testCases('Test BlockStatements', [
   }
   `,
     null
+  ],
+  [
+    'var declarations are accessible to the global scope and hoisted to the top',
+    `
+    x;
+    {
+      {
+        {
+          var x;
+        }
+      }
+    }`,
+    null
+  ],
+  [
+    'Function declarations are hoisted to the top of a scope',
+    `{
+      hi();
+      function hi() {}
+    }`,
+    null
+  ],
+  [
+    'Function declarations are accessible to inner scopes',
+    `
+    {
+      {
+        hi;
+      }
+      function hi() {}
+    }`,
+    null
+  ],
+  [
+    'Function declarations are not accessible to outer scopes',
+    `{
+      function hi() {}
+    }
+    hi;`,
+    {
+      name: 'hi',
+      line: 4,
+      col: 4
+    }
   ]
 ])
 
