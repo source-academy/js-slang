@@ -1,5 +1,5 @@
 import createContext from '../../../createContext'
-import { CircularImportError, ReexportSymbolError, UndefinedImportErrorBase } from '../../errors'
+import { CircularImportError, ReexportDefaultError, ReexportSymbolError, UndefinedImportErrorBase } from '../../errors'
 import { FatalSyntaxError } from '../../../parser/errors'
 import { Chapter } from '../../../types'
 import { stripIndent } from '../../../utils/formatters'
@@ -19,7 +19,7 @@ async function testCode(
   allowUndefinedImports: boolean
 ) {
   const context = createContext(Chapter.FULL_JS)
-  const { programs, importGraph, moduleDocs } = await parseProgramsAndConstructImportGraph(
+  const { programs, importGraph } = await parseProgramsAndConstructImportGraph(
     files,
     entrypointFilePath,
     context
@@ -41,7 +41,7 @@ async function testCode(
     if (!fullTopoOrder.includes(entrypointFilePath)) {
       fullTopoOrder.push(entrypointFilePath)
     }
-    validateImportAndExports(moduleDocs, programs, fullTopoOrder, allowUndefinedImports)
+    await validateImportAndExports(programs, fullTopoOrder, allowUndefinedImports)
   } catch (error) {
     throw error
   }
@@ -385,17 +385,20 @@ describe('Test reexport symbol errors', () => {
         }
       ],
       [
-        'Duplicate default local exports',
-        {
-          '/a.js': 'export default function a() {}; export * from "/b.js";',
-          '/b.js': 'export default function b() {};'
-        }
-      ],
-      [
         'Duplicate named local and source exports',
         {
           '/a.js': 'export const foo = 5; export * from "one_module";'
         }
       ]
     ])('%# %s', (_, files) => expectFailure(files, '/a.js', ReexportSymbolError)))
+
+  describe('Test default exports', () => test.each([
+    [
+      'Duplicate default local exports',
+      {
+        '/a.js': 'export default function a() {}; export * from "/b.js";',
+        '/b.js': 'export default function b() {};'
+      }
+    ],
+  ])('%# %s', (_, files) => expectFailure(files, '/a.js', ReexportDefaultError)))
 })

@@ -1,4 +1,3 @@
-import type es from 'estree'
 import * as pathlib from 'path'
 
 import { parse } from '../../parser/parser'
@@ -6,9 +5,9 @@ import { AcornOptions } from '../../parser/types'
 import { Context } from '../../types'
 import assert from '../../utils/assert'
 import { isModuleDeclaration, isSourceImport } from '../../utils/ast/typeGuards'
+import type * as es from '../../utils/ast/types'
 import { isIdentifier } from '../../utils/rttc'
-import { CircularImportError, ModuleInternalError, ModuleNotFoundError } from '../errors'
-import { memoizedGetModuleDocsAsync } from '../moduleLoaderAsync'
+import { CircularImportError, ModuleNotFoundError } from '../errors'
 import { ImportResolutionOptions } from '../moduleTypes'
 import checkForUndefinedImportsAndReexports from './analyzer'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
@@ -46,7 +45,6 @@ export const parseProgramsAndConstructImportGraph = async (
 ): Promise<{
   programs: Record<string, es.Program>
   importGraph: DirectedGraph
-  moduleDocs: Record<string, Set<string>>
 }> => {
   const resolutionOptions = {
     ...defaultResolutionOptions,
@@ -59,12 +57,7 @@ export const parseProgramsAndConstructImportGraph = async (
   const numOfFiles = Object.keys(files).length
   const shouldAddSourceFileToAST = numOfFiles > 1
 
-  const moduleDocs: Record<string, Set<string>> = {}
-
-  const resolve = async (
-    path: string,
-    node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
-  ) => {
+  const resolve = async (path: string, node: es.SourcedModuleDeclaration) => {
     const source = node.source?.value
     assert(
       typeof source === 'string',
@@ -89,23 +82,9 @@ export const parseProgramsAndConstructImportGraph = async (
    * @param currentFilePath Current absolute file path of the module
    */
   async function parseFile(currentFilePath: string): Promise<void> {
-    if (isSourceImport(currentFilePath)) {
-      if (currentFilePath in moduleDocs) return
-
-      // Will not throw ModuleNotFoundError
-      // If this were invalid, resolveModule would have thrown already
-      const docs = await memoizedGetModuleDocsAsync(currentFilePath)
-      if (!docs) {
-        throw new ModuleInternalError(
-          currentFilePath,
-          `Failed to load documentation for ${currentFilePath}`
-        )
-      }
-      moduleDocs[currentFilePath] = new Set(Object.keys(docs))
+    if (isSourceImport(currentFilePath) || currentFilePath in programs) {
       return
     }
-
-    if (currentFilePath in programs) return
 
     const code = files[currentFilePath]
     assert(
@@ -126,9 +105,9 @@ export const parseProgramsAndConstructImportGraph = async (
       throw new PreprocessError()
     }
 
+    const dependencies = new Set<string>()
     programs[currentFilePath] = program
 
-    const dependencies = new Set<string>()
     for (const node of program.body) {
       switch (node.type) {
         case 'ExportNamedDeclaration': {
@@ -151,7 +130,7 @@ export const parseProgramsAndConstructImportGraph = async (
     }
 
     await Promise.all(
-      Array.from(dependencies.keys()).map(async dependency => {
+      Array.from(dependencies).map(async dependency => {
         await parseFile(dependency)
 
         // There is no need to track Source modules as dependencies, as it can be assumed
@@ -180,7 +159,6 @@ export const parseProgramsAndConstructImportGraph = async (
   return {
     programs,
     importGraph,
-    moduleDocs
   }
 }
 
@@ -222,7 +200,7 @@ const preprocessFileImports = async (
   }
 
   // Parse all files into ASTs and build the import graph.
-  const { programs, importGraph, moduleDocs } = await parseProgramsAndConstructImportGraph(
+  const { programs, importGraph } = await parseProgramsAndConstructImportGraph(
     files,
     entrypointFilePath,
     context,
@@ -258,7 +236,7 @@ const preprocessFileImports = async (
     // Then trying to discover what symbols are exported by a.js will require determining what symbols
     // b.js exports, which would in turn require the symbols exported by a.js
     // If the topological order exists, then this is guaranteed not to occur
-    checkForUndefinedImportsAndReexports(moduleDocs, programs, fullTopoOrder, allowUndefinedImports)
+    await checkForUndefinedImportsAndReexports(programs, fullTopoOrder, allowUndefinedImports)
   } catch (error) {
     context.errors.push(error)
     return undefined
