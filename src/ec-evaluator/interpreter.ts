@@ -228,7 +228,7 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
     // Temporarily commented out the conditional step increases for agenda/stash visualization development/
     // May be handy later in case we want to separate the visualizations
     if (envChanging(command)) {
-    //   steps += 1
+      //   steps += 1
     }
     if (isNode(command) && command.type === 'DebuggerStatement') {
       // steps += 1
