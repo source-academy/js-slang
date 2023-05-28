@@ -23,6 +23,7 @@ import noUpdateAssignment from './noUpdateAssignment'
 import noVar from './noVar'
 import singleVariableDeclaration from './singleVariableDeclaration'
 import noExportNamedDeclarationWithDefault from './noExportNamedDeclarationWithDefault'
+import noImportSpecifierWithDefault from './noImportSpecifierWithDefault'
 
 const rules: Rule<es.Node>[] = [
   bracesAroundFor,
@@ -34,6 +35,7 @@ const rules: Rule<es.Node>[] = [
   noExportNamedDeclarationWithDefault,
   noFunctionDeclarationWithoutIdentifier,
   noIfWithoutElse,
+  noImportSpecifierWithDefault,
   noImplicitDeclareUndefined,
   noImplicitReturnUndefined,
   noNull,

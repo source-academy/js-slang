@@ -4691,3 +4691,58 @@ export { square as default };",
   "visualiseListResult": Array [],
 }
 `;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 39: fails a chapter below 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "import { default as x } from './a.js';",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Cannot find module '/a.js'.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 39: parse passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse(\\"import defaultExport from \\\\\\"module-name\\\\\\";\\\\n// import { default as x } from './a.js';\\");",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": Array [
+    "import_declaration",
+    Array [
+      Array [
+        Array [
+          "default",
+          null,
+        ],
+        null,
+      ],
+      Array [
+        "module-name",
+        null,
+      ],
+    ],
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 39: passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "import defaultExport from \\"module-name\\";
+// import { default as x } from './a.js';",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;

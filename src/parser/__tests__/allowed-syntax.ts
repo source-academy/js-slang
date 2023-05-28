@@ -325,6 +325,13 @@ test.each([
     }
     export { square as default };
     `
+  ],
+
+  [
+    Chapter.LIBRARY_PARSER,
+    `
+    import { default as x } from './a.js';
+    `
   ]
 ] as [Chapter, string][])(
   'Syntaxes are allowed in the chapter they are introduced %#',
