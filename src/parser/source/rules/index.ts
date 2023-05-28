@@ -22,6 +22,7 @@ import noUnspecifiedOperator from './noUnspecifiedOperator'
 import noUpdateAssignment from './noUpdateAssignment'
 import noVar from './noVar'
 import singleVariableDeclaration from './singleVariableDeclaration'
+import noExportNamedDeclarationWithDefault from './noExportNamedDeclarationWithDefault'
 
 const rules: Rule<es.Node>[] = [
   bracesAroundFor,
@@ -30,6 +31,7 @@ const rules: Rule<es.Node>[] = [
   forStatementMustHaveAllParts,
   noDeclareMutable,
   noDotAbbreviation,
+  noExportNamedDeclarationWithDefault,
   noFunctionDeclarationWithoutIdentifier,
   noIfWithoutElse,
   noImplicitDeclareUndefined,

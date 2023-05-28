@@ -315,6 +315,16 @@ test.each([
     export default x;
     x;
     `
+  ],
+
+  [
+    Chapter.LIBRARY_PARSER,
+    `
+    function square(x) {
+      return x * x;
+    }
+    export { square as default };
+    `
   ]
 ] as [Chapter, string][])(
   'Syntaxes are allowed in the chapter they are introduced %#',
