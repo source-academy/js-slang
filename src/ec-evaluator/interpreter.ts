@@ -49,7 +49,6 @@ import {
   declareFunctionsAndVariables,
   declareIdentifier,
   defineVariable,
-  envChanging,
   getVariable,
   handleRuntimeError,
   handleSequence,
@@ -215,21 +214,24 @@ export function ECEResultPromise(context: Context, value: Value): Promise<Result
 function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude: boolean) {
   context.runtime.break = false
   context.runtime.nodes = []
-  let steps = 0
+  let steps = 1
 
-  let command = agenda.pop()
+  let command = agenda.peek()
+
+  // First node will be a Program
+  context.runtime.nodes.unshift(command as es.Program)
+
   while (command) {
     if (!isPrelude && steps === context.runtime.envSteps) {
-      // Current command not yet executed so it stays on the agenda
-      agenda.push(command)
       return stash.peek()
     }
-    steps += 1
-    // Temporarily commented out the conditional step increases for agenda/stash visualization development/
+
+    // Temporarily commented out the conditional step increases for agenda stash viz development
     // May be handy later in case we want to separate the visualizations
-    if (envChanging(command)) {
-      //   steps += 1
-    }
+    // if (envChanging(command)) {
+    //   steps += 1
+    // }
+
     if (isNode(command) && command.type === 'DebuggerStatement') {
       // steps += 1
 
@@ -239,6 +241,7 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
       }
     }
 
+    agenda.pop()
     if (isNode(command)) {
       context.runtime.nodes.shift()
       context.runtime.nodes.unshift(command)
@@ -255,8 +258,10 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
       // Command is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash, isPrelude)
     }
-    command = agenda.pop()
+    command = agenda.peek()
+    steps += 1
   }
+
   if (!isPrelude) {
     context.runtime.envStepsTotal = steps
   }
