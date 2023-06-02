@@ -223,6 +223,7 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
 
   while (command) {
     if (!isPrelude && steps === context.runtime.envSteps) {
+      console.log('evaluate', command)
       return stash.peek()
     }
 
@@ -326,7 +327,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
           [
             init,
             ast.forStatement(
-              ast.assignmentExpression(id, valueExpression),
+              ast.assignmentExpression(id, valueExpression, command.loc),
               test,
               update,
               ast.blockStatement(
@@ -372,7 +373,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       agenda.push(test)
       agenda.push(instr.popInstr()) // Pop value from init assignment
       agenda.push(init)
-      agenda.push(ast.identifier('undefined')) // Return undefined if there is no loop execution
+      agenda.push(ast.identifier('undefined', command.loc)) // Return undefined if there is no loop execution
     }
   },
 

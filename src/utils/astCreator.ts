@@ -234,12 +234,14 @@ export const arrayExpression = (elements: es.Expression[]): es.ArrayExpression =
 
 export const assignmentExpression = (
   left: es.Identifier | es.MemberExpression,
-  right: es.Expression
+  right: es.Expression,
+  loc?: es.SourceLocation | null
 ): es.AssignmentExpression => ({
   type: 'AssignmentExpression',
   operator: '=',
   left,
-  right
+  right,
+  loc
 })
 
 export const binaryExpression = (
