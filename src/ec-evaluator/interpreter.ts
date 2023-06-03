@@ -223,7 +223,6 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
 
   while (command) {
     if (!isPrelude && steps === context.runtime.envSteps) {
-      console.log('evaluate', command)
       return stash.peek()
     }
 
