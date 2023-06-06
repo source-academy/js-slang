@@ -48,8 +48,8 @@ export class Stack<T> implements IStack<T> {
     return this.storage.length
   }
 
-  public reverseMapStack(mapper: (t: T) => any): T[] {
-    return [...this.storage].reverse().map(mapper)
+  public mapStack(mapper: (t: T) => any): T[] {
+    return [...this.storage].map(mapper)
   }
 }
 
