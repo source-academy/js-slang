@@ -77,7 +77,7 @@ export const expressionStatement = (expression: es.Expression): es.ExpressionSta
 
 export const blockArrowFunction = (
   params: es.Identifier[],
-  body: es.Statement[] | es.BlockStatement,
+  body: es.Statement[] | es.BlockStatement | es.Expression,
   loc?: es.SourceLocation | null
 ): es.ArrowFunctionExpression => ({
   type: 'ArrowFunctionExpression',

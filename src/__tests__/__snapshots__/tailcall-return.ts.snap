@@ -167,3 +167,30 @@ f(5000, 5000);",
   "visualiseListResult": Array [],
 }
 `;
+
+exports[`Tail calls in mutual recursion work: expectResult 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f(x, y) {
+  if (x <= 0) {
+    return y;
+  } else {
+    return g(x-1, y+1);
+  }
+}
+function g(x, y) {
+  if (x <= 0) {
+    return y;
+  } else {
+    return f(x-1, y+1);
+  }
+}
+f(5000, 5000);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 10000,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;

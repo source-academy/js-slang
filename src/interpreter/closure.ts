@@ -9,7 +9,6 @@ import {
   identifier,
   returnStatement
 } from '../utils/astCreator'
-import { dummyLocation } from '../utils/dummyAstCreator'
 import { apply } from './interpreter'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
@@ -60,11 +59,14 @@ export default class Closure extends Callable {
     function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
       return body.type !== 'BlockStatement'
     }
-    const functionBody = isExpressionBody(node.body)
+    const functionBody: es.Statement[] | es.Expression | es.BlockStatement = isExpressionBody(
+      node.body
+    )
       ? [returnStatement(node.body, node.body.loc)]
       : dummyReturn
-      ? [node.body, returnStatement(identifier('undefined', dummyLocation()), dummyLocation())]
+      ? [...node.body.body, returnStatement(identifier('undefined', node.body.loc), node.body.loc)]
       : node.body
+
     const closure = new Closure(
       blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),
       environment,
