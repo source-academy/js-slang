@@ -25,8 +25,7 @@ export async function httpGetAsync(path: string, type: 'json' | 'text') {
         reject(new Error('TIMEOUT'))
       }, 10000)
 
-      resp
-        .text()
+      resp[type]()
         .then(value => {
           clearTimeout(timer)
           resolve(value)
