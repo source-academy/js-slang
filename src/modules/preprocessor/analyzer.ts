@@ -59,20 +59,23 @@ export default async function checkForUndefinedImportsAndReexports(
 
   const getDocs = async (node: es.SourcedModuleDeclaration): Promise<[Set<string>, string]> => {
     const path = node.source!.value as string
-    if (path in moduleDocs) return [moduleDocs[path], path]
+    if (!(path in moduleDocs)) {
+      // Because modules are loaded in topological order, the exported symbols for a local
+      // module should be loaded by the time they are needed
+      // So we can assume that it is the documentation for Source modules that needs to be
+      // loaded here
+      assert(
+        isSourceImport(path),
+        'Local modules should already have been loaded in topological order'
+      )
 
-    // Because modules are loaded in topological order, the exported symbols for a local
-    // module should be loaded by the time they are needed
-    // So we can assume that it is the documentation for Source modules that needs to be
-    // loaded here
-    assert(isSourceImport(path), 'Local modules should\'ve been loaded in topological order')
-    
-    const docs = await memoizedGetModuleDocsAsync(path)
-    if (!docs) {
-      throw new ModuleInternalError(path, `Failed to load documentation for ${path}`)
+      const docs = await memoizedGetModuleDocsAsync(path)
+      if (!docs) {
+        throw new ModuleInternalError(path, `Failed to load documentation for ${path}`)
+      }
+      moduleDocs[path] = new Set(Object.keys(docs))
     }
-
-    return [new Set(Object.keys(docs)), path]
+    return [moduleDocs[path], path]
   }
 
   for (const name of topoOrder) {
