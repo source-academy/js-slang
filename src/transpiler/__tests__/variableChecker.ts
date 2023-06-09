@@ -153,9 +153,14 @@ describe('Test export and import declarations', () => {
       { name: 'unknown_var', line: 1, col: 29 }
     ],
     [
-      'Non declaration exports do not introduce identifiers',
+      'Non declaration named exports do not introduce identifiers',
       "export { hi } from './elsewhere.js'; hi;",
       { name: 'hi', line: 1, col: 37 }
+    ],
+    [
+      'Non declaration named exports are not considered undefined',
+      "export { hi } from './elsewhere.js';",
+      null
     ]
   ])
 
@@ -165,6 +170,11 @@ describe('Test export and import declarations', () => {
       'Export function declarations are checked',
       'hi(); export default function hi() { unknown_var }',
       { name: 'unknown_var', line: 1, col: 37 }
+    ],
+    [
+      'Default exports without an id are still checked',
+      'export default () => { unknown_var }',
+      { name: 'unknown_var', line: 1, col: 23 }
     ]
   ])
 
@@ -173,11 +183,17 @@ describe('Test export and import declarations', () => {
       'Export does not introduce identifiers',
       "export * as hi from './elsewhere.js'; hi;",
       { name: 'hi', line: 1, col: 38 }
-    ]
+    ],
+    ['Exported name is not considered undefined', "export * as hi from 'elsewhere.js';", null]
   ])
 
   testCases('Test ImportDeclarations', [
     ['ImportSpecifiers are accounted for', 'import { hi } from "one_module"; hi;', null],
+    [
+      'Aliased ImportSpecifiers are accounted for',
+      'import { x as hi } from "one_module"; hi;',
+      null
+    ],
     ['ImportDefaultSpecifiers are accounted for', 'import hi from "one_module"; hi;', null],
     ['ImportNamespaceSpecifiers are accounted for', 'import * as hi from "one_module"; hi;', null]
   ])
@@ -286,6 +302,22 @@ testCases('Test block scoping', [
       line: 4,
       col: 4
     }
+  ],
+  [
+    'Imports are hoisted',
+    `
+    x;
+    import { x } from 'one-module';
+    `,
+    null
+  ],
+  [
+    'Export var declarations are hoisted',
+    `
+    x;
+    export var x = 5;
+    `,
+    null
   ]
 ])
 
@@ -338,6 +370,10 @@ describe('Test For Statements', () => {
     ]
   ])
 })
+
+testCases('Test assignment expressions', [
+  ['Assignment expressions are checked', `a = b`, { line: 1, col: 0, name: 'a' }]
+])
 
 testCases('Test MemberExpressions', [
   ['Non computed properties are ignored', 'const obj = {}; obj.hi;', null],
