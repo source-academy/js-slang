@@ -57,20 +57,18 @@ describe('runFilesInContext', () => {
     `)
   })
 
-  it('returns CannotFindModuleError if entrypoint file does not exist', () => {
+  it('returns ModuleNotFoundError if entrypoint file does not exist', async () => {
     const files: Record<string, string> = {}
-    runFilesInContext(files, '/a.js', context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Module \\"/a.js\\" not found."`)
+    await runFilesInContext(files, '/a.js', context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Module '/a.js' not found."`)
   })
 
-  it('returns CannotFindModuleError if entrypoint file does not exist - verbose', () => {
+  it('returns ModuleNotFoundError if entrypoint file does not exist - verbose', async () => {
     const files: Record<string, string> = {}
-    runFilesInContext(files, '/a.js', context)
+    await runFilesInContext(files, '/a.js', context)
     expect(parseError(context.errors, true)).toMatchInlineSnapshot(`
-      "Module \\"/a.js\\" not found.
-
-            You should check your import declarations, and ensure that all are valid modules.
-          
+      "Module '/a.js' not found.
+      You should check your import declarations, and ensure that all are valid modules.
       "
     `)
   })
@@ -131,20 +129,18 @@ describe('compileFiles', () => {
     `)
   })
 
-  it('returns CannotFindModuleError if entrypoint file does not exist', () => {
+  it('returns ModuleNotFoundError if entrypoint file does not exist', async () => {
     const files: Record<string, string> = {}
-    compileFiles(files, '/a.js', context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Module \\"/a.js\\" not found."`)
+    await compileFiles(files, '/a.js', context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Module '/a.js' not found."`)
   })
 
-  it('returns CannotFindModuleError if entrypoint file does not exist - verbose', () => {
+  it('returns ModuleNotFoundError if entrypoint file does not exist - verbose', async () => {
     const files: Record<string, string> = {}
-    compileFiles(files, '/a.js', context)
+    await compileFiles(files, '/a.js', context)
     expect(parseError(context.errors, true)).toMatchInlineSnapshot(`
-      "Module \\"/a.js\\" not found.
-
-            You should check your import declarations, and ensure that all are valid modules.
-          
+      "Module '/a.js' not found.
+      You should check your import declarations, and ensure that all are valid modules.
       "
     `)
   })
