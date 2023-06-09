@@ -14,28 +14,12 @@ export default function checkForUndefinedVariables(program: es.Program, outerSco
   ) {
     const blockScope = new Set(scope)
 
-    // Recursively walk through all variable declarations in the program
-    // and hoist 'var' declarations
-    simple(block, {
-      VariableDeclaration({ declarations, kind }: es.VariableDeclaration) {
-        if (kind === 'var') {
-          declarations.forEach(({ id }) => {
-            extractIdsFromPattern(id).forEach(({ name }) => blockScope.add(name))
-          })
-        }
-      }
-    })
-
     function hoistStatement(
       stmt: Exclude<es.Declaration | es.ModuleDeclaration, es.VariableDeclaration>
     ) {
       // The default walkers are recursive, but we only want to access the top level declarations
       // So just use a simple switch statement instead
       switch (stmt.type) {
-        case 'ImportDeclaration': {
-          stmt.specifiers.forEach(({ local: { name } }) => blockScope.add(name))
-          break
-        }
         case 'ExportNamedDeclaration':
         case 'ExportDefaultDeclaration': {
           if (
@@ -55,7 +39,7 @@ export default function checkForUndefinedVariables(program: es.Program, outerSco
             !!stmt.id,
             `Encountered a ${stmt.type} without an id, this should've been caught during parsing`
           )
-          if (stmt.id) blockScope.add(stmt.id.name)
+          blockScope.add(stmt.id.name)
           break
         }
       }
@@ -100,7 +84,7 @@ export default function checkForUndefinedVariables(program: es.Program, outerSco
       extractIdsFromPattern(param!).forEach(({ name }) => catchScope.add(name))
       c(body, catchScope)
     },
-    // Base walker considers the exported name to be an unidentified variable
+    // Base walker considers the exported names to be unidentified variables
     ExportAllDeclaration() {},
     FunctionDeclaration: processFunction,
     FunctionExpression: processFunction,
@@ -115,7 +99,24 @@ export default function checkForUndefinedVariables(program: es.Program, outerSco
     Identifier(id: es.Identifier, scope) {
       if (!scope.has(id.name)) throw new UndefinedVariable(id.name, id)
     },
-    Program: processBlock,
+    Program(prog: es.Program, scope, c) {
+      simple(prog, {
+        ImportDeclaration({ specifiers }: es.ImportDeclaration) {
+          specifiers.forEach(({ local: { name } }) => scope.add(name))
+        },
+        VariableDeclaration({ declarations, kind }: es.VariableDeclaration) {
+          // Recursively walk through all variable declarations in the program
+          // and hoist 'var' declarations
+          if (kind === 'var') {
+            declarations.forEach(({ id }) => {
+              extractIdsFromPattern(id).forEach(({ name }) => scope.add(name))
+            })
+          }
+        }
+      })
+      processBlock(prog, scope, c)
+    },
+
     StaticBlock: processBlock,
     VariableDeclaration({ declarations, kind }: es.VariableDeclaration, scope, c) {
       declarations.forEach(({ id, init }) => {
