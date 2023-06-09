@@ -1,14 +1,14 @@
 import * as pathlib from 'path'
 
 import { parse } from '../../parser/parser'
-import { AcornOptions } from '../../parser/types'
-import { Context } from '../../types'
+import type { AcornOptions } from '../../parser/types'
+import type { Context } from '../../types'
 import assert from '../../utils/assert'
 import { isModuleDeclaration, isSourceImport } from '../../utils/ast/typeGuards'
 import type * as es from '../../utils/ast/types'
 import { isIdentifier } from '../../utils/rttc'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
-import { ImportResolutionOptions } from '../moduleTypes'
+import type { ImportResolutionOptions } from '../moduleTypes'
 import checkForUndefinedImportsAndReexports from './analyzer'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import { DirectedGraph } from './directedGraph'
@@ -57,15 +57,20 @@ export const parseProgramsAndConstructImportGraph = async (
   const numOfFiles = Object.keys(files).length
   const shouldAddSourceFileToAST = numOfFiles > 1
 
-  const resolve = async (path: string, node: es.SourcedModuleDeclaration) => {
-    const source = node.source?.value
-    assert(
-      typeof source === 'string',
-      `${node.type} should have a source of type string, got ${source}`
-    )
+  async function resolve(path: string, node?: es.SourcedModuleDeclaration) {
+    let source: string
+    if (node) {
+      assert(
+        typeof node.source?.value === 'string',
+        `${node.type} should have a source of type string, got ${node.source}`
+      )
+      source = node.source.value
+    } else {
+      source = path
+    }
 
     const [resolved, modAbsPath] = await resolveModule(
-      path,
+      node ? path : '.',
       source,
       p => files[p] !== undefined,
       resolutionOptions
@@ -149,7 +154,9 @@ export const parseProgramsAndConstructImportGraph = async (
   }
 
   try {
-    await parseFile(entrypointFilePath)
+    // Remember to resolve the entrypoint file too!
+    const entrypointAbsPath = await resolve(entrypointFilePath)
+    await parseFile(entrypointAbsPath)
   } catch (error) {
     if (!(error instanceof PreprocessError)) {
       context.errors.push(error)
@@ -158,7 +165,7 @@ export const parseProgramsAndConstructImportGraph = async (
 
   return {
     programs,
-    importGraph,
+    importGraph
   }
 }
 
