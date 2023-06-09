@@ -1,18 +1,18 @@
+import { UNKNOWN_LOCATION } from '../constants'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { ErrorSeverity, ErrorType, SourceError } from '../types'
 import type {
   ExportAllDeclaration,
-  ExportDefaultDeclaration,
-  ExportNamedDeclaration,
   ExportSpecifier,
   ImportDefaultSpecifier,
   ImportNamespaceSpecifier,
   ImportSpecifier,
+  ImportSpecifiers,
+  ModuleDeclaration,
   Node,
+  SourcedModuleDeclaration,
   SourceLocation
-} from 'estree'
-
-import { UNKNOWN_LOCATION } from '../constants'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { ErrorSeverity, ErrorType, SourceError } from '../types'
+} from '../utils/ast/types'
 import { nonAlphanumericCharEncoding } from './preprocessor/filePaths'
 
 export class ModuleConnectionError extends RuntimeSourceError {
@@ -37,13 +37,11 @@ export class ModuleNotFoundError extends RuntimeSourceError {
   }
 
   public explain() {
-    return `Module "${this.moduleName}" not found.`
+    return `Module '${this.moduleName}' not found.`
   }
 
   public elaborate() {
-    return `
-      You should check your import declarations, and ensure that all are valid modules.
-    `
+    return 'You should check your import declarations, and ensure that all are valid modules.'
   }
 }
 
@@ -63,15 +61,11 @@ export class ModuleInternalError extends RuntimeSourceError {
   }
 }
 
-type SourcedModuleDeclarations =
-  | ImportSpecifier
-  | ImportDefaultSpecifier
-  | ImportNamespaceSpecifier
-  | ExportSpecifier
-  | ExportAllDeclaration
-
 export abstract class UndefinedImportErrorBase extends RuntimeSourceError {
-  constructor(public readonly moduleName: string, node?: SourcedModuleDeclarations) {
+  constructor(
+    public readonly moduleName: string,
+    node?: SourcedModuleDeclaration | ExportSpecifier | ImportSpecifiers
+  ) {
     super(node)
   }
 
@@ -117,25 +111,33 @@ export class UndefinedNamespaceImportError extends UndefinedImportErrorBase {
   }
 }
 
-export class ReexportSymbolError implements SourceError {
+export abstract class ReexportErrorBase implements SourceError {
   public severity = ErrorSeverity.ERROR
   public type = ErrorType.RUNTIME
   public readonly location: SourceLocation
-  private readonly sourceString: string
+  public readonly sourceString: string
 
   constructor(
     public readonly modulePath: string,
-    public readonly symbol: string,
-    public readonly nodes: (
-      | SourcedModuleDeclarations
-      | ExportNamedDeclaration
-      | ExportDefaultDeclaration
-    )[]
+    public readonly nodes: (ModuleDeclaration | ExportSpecifier)[]
   ) {
     this.location = nodes[0].loc ?? UNKNOWN_LOCATION
     this.sourceString = nodes
       .map(({ loc }) => `(${loc!.start.line}:${loc!.start.column})`)
       .join(', ')
+  }
+
+  public abstract explain(): string
+  public abstract elaborate(): string
+}
+
+export class ReexportSymbolError extends ReexportErrorBase {
+  constructor(
+    modulePath: string,
+    public readonly symbol: string,
+    nodes: (ModuleDeclaration | ExportSpecifier)[]
+  ) {
+    super(modulePath, nodes)
   }
 
   public explain(): string {
@@ -144,6 +146,20 @@ export class ReexportSymbolError implements SourceError {
 
   public elaborate(): string {
     return 'Check that you are not exporting the same symbol more than once'
+  }
+}
+
+export class ReexportDefaultError extends ReexportErrorBase {
+  constructor(modulePath: string, nodes: (ModuleDeclaration | ExportSpecifier)[]) {
+    super(modulePath, nodes)
+  }
+
+  public explain(): string {
+    return `Multiple default export definitions for the symbol at (${this.sourceString})`
+  }
+
+  public elaborate(): string {
+    return 'Check that there is only a single default export'
   }
 }
 

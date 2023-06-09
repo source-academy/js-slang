@@ -1,5 +1,10 @@
 import createContext from '../../../createContext'
-import { CircularImportError, ReexportDefaultError, ReexportSymbolError, UndefinedImportErrorBase } from '../../errors'
+import {
+  CircularImportError,
+  ReexportDefaultError,
+  ReexportSymbolError,
+  UndefinedImportErrorBase
+} from '../../errors'
 import { FatalSyntaxError } from '../../../parser/errors'
 import { Chapter } from '../../../types'
 import { stripIndent } from '../../../utils/formatters'
@@ -392,13 +397,21 @@ describe('Test reexport symbol errors', () => {
       ]
     ])('%# %s', (_, files) => expectFailure(files, '/a.js', ReexportSymbolError)))
 
-  describe('Test default exports', () => test.each([
-    [
-      'Duplicate default local exports',
-      {
-        '/a.js': 'export default function a() {}; export * from "/b.js";',
-        '/b.js': 'export default function b() {};'
-      }
-    ],
-  ])('%# %s', (_, files) => expectFailure(files, '/a.js', ReexportDefaultError)))
+  describe('Test default exports', () =>
+    test.each([
+      [
+        'Duplicate default local exports',
+        {
+          '/a.js': 'export default function a() {}; export * from "/b.js";',
+          '/b.js': 'export default function b() {};'
+        }
+      ],
+      [
+        'Duplicate unnamed default local exports',
+        {
+          '/a.js': 'export default () => {}; export * from "/b.js";',
+          '/b.js': 'export default 123;'
+        }
+      ]
+    ])('%# %s', (_, files) => expectFailure(files, '/a.js', ReexportDefaultError)))
 })
