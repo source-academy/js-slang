@@ -139,7 +139,7 @@ export const parseProgramsAndConstructImportGraph = async (
         await parseFile(dependency)
 
         // There is no need to track Source modules as dependencies, as it can be assumed
-        // that they will always have to be loaded first
+        // that they will always come first in the topological order
         if (!isSourceImport(dependency)) {
           // If the edge has already been traversed before, the import graph
           // must contain a cycle. Then we can exit early and proceed to find the cycle

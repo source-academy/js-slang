@@ -3,6 +3,7 @@ import {
   CircularImportError,
   ReexportDefaultError,
   ReexportSymbolError,
+  UndefinedDefaultImportError,
   UndefinedImportErrorBase
 } from '../../errors'
 import { FatalSyntaxError } from '../../../parser/errors'
@@ -12,7 +13,7 @@ import validateImportAndExports from '../analyzer'
 import { parseProgramsAndConstructImportGraph } from '..'
 
 type ErrorInfo = {
-  symbol?: string
+  symbol: string
   line: number
   col: number
   moduleName: string
@@ -53,7 +54,10 @@ async function testCode(
   return true
 }
 
+type Files = Partial<Record<string, string>>
 describe('Test throwing import validation errors', () => {
+  type ImportTestCase = [Files, string, ErrorInfo] | [Files, string]
+
   async function testFailure(
     files: Partial<Record<string, string>>,
     entrypointFilePath: string,
@@ -69,9 +73,12 @@ describe('Test throwing import validation errors', () => {
 
     expect(err).toBeInstanceOf(UndefinedImportErrorBase)
     expect(err.moduleName).toEqual(errInfo.moduleName)
-    if (errInfo.symbol) {
+    if (errInfo.symbol !== 'default') {
       expect(err.symbol).toEqual(errInfo.symbol)
+    } else {
+      expect(err).toBeInstanceOf(UndefinedDefaultImportError)
     }
+
     expect(err.location.start).toMatchObject({
       line: errInfo.line,
       column: errInfo.col
@@ -86,28 +93,37 @@ describe('Test throwing import validation errors', () => {
     return expect(testCode(files, entrypointFilePath, allowUndefinedImports)).resolves.toEqual(true)
   }
 
-  function testCases(
-    desc: string,
-    cases: [
-      files: Partial<Record<string, string>>,
-      entrypointFilePath: string,
-      trueError: false | ErrorInfo,
-      falseError: false | ErrorInfo
-    ][]
-  ) {
+  function testCases(desc: string, cases: ImportTestCase[]) {
     describe(desc, () => {
       test.each(
-        cases.flatMap(([files, entry, trueError, falseError], i) => {
+        cases.flatMap(([files, entry, errorInfo], i) => {
           return [
-            [`Test Case ${i} with allowedUndefinedImports true`, files, entry, true, trueError],
-            [`Test Case ${i} with allowedUndefinedImports false`, files, entry, false, falseError]
+            [
+              `Test Case ${i} with allowedUndefinedImports true: Should not throw an error`,
+              files,
+              entry,
+              true
+            ],
+            [
+              `Test Case ${i} with allowedUndefinedImports false: Should${
+                errorInfo ? '' : ' not'
+              } throw an error`,
+              files,
+              entry,
+              errorInfo
+            ]
           ]
         })
-      )('%s', async (_, files, entrypointFilePath, allowUndefined, error) => {
-        if (error !== false) {
-          await testFailure(files, entrypointFilePath, allowUndefined, error)
+      )('%s', async (_, files, entrypointFilePath, errorInfo) => {
+        if (errorInfo === true) {
+          // we allow undefined imports (should never throw an errors)
+          await testSuccess(files, entrypointFilePath, true)
+        } else if (!errorInfo) {
+          // we don't allow undefined imports, but we don't expect any errors
+          await testSuccess(files, entrypointFilePath, false)
         } else {
-          await testSuccess(files, entrypointFilePath, allowUndefined)
+          // we don't allow undefined imports, and we expect an UndefinedImportError
+          await testFailure(files, entrypointFilePath, false, errorInfo)
         }
       })
     })
@@ -126,9 +142,7 @@ describe('Test throwing import validation errors', () => {
             }
           `
         },
-        '/b.js',
-        false,
-        false
+        '/b.js'
       ],
       [
         {
@@ -142,7 +156,6 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/b.js',
-        false,
         { moduleName: '/a.js', line: 1, col: 12, symbol: 'unknown' }
       ]
     ])
@@ -157,9 +170,7 @@ describe('Test throwing import validation errors', () => {
             }
           `
         },
-        '/a.js',
-        false,
-        false
+        '/a.js'
       ],
       [
         {
@@ -170,9 +181,7 @@ describe('Test throwing import validation errors', () => {
             }
           `
         },
-        '/a.js',
-        false,
-        false
+        '/a.js'
       ]
     ])
 
@@ -190,9 +199,7 @@ describe('Test throwing import validation errors', () => {
             }
           `
         },
-        '/b.js',
-        false,
-        false
+        '/b.js'
       ],
       [
         {
@@ -208,7 +215,6 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/b.js',
-        false,
         { moduleName: 'one_module', line: 2, col: 9, symbol: 'unknown' }
       ],
       [
@@ -225,7 +231,6 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/b.js',
-        false,
         { moduleName: '/a.js', line: 1, col: 12, symbol: 'unknown' }
       ]
     ])
@@ -244,9 +249,7 @@ describe('Test throwing import validation errors', () => {
             }
           `
         },
-        '/b.js',
-        false,
-        false
+        '/b.js'
       ],
       [
         {
@@ -260,8 +263,35 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/b.js',
-        false,
-        { moduleName: '/a.js', line: 1, col: 7 }
+        { moduleName: '/a.js', line: 1, col: 7, symbol: 'default' }
+      ],
+      [
+        {
+          '/a.js': 'export const a = "a";',
+          '/b.js': stripIndent`
+            import unknown from "./a.js";
+
+            export function b() {
+              return a;
+            }
+          `
+        },
+        '/b.js',
+        { moduleName: '/a.js', line: 1, col: 7, symbol: 'default' }
+      ],
+      [
+        {
+          '/a.js': 'export const a = "a";',
+          '/b.js': stripIndent`
+            import { default as unknown } from "./a.js";
+
+            export function b() {
+              return a;
+            }
+          `
+        },
+        '/b.js',
+        { moduleName: '/a.js', line: 1, col: 9, symbol: 'default' }
       ]
     ])
 
@@ -276,17 +306,28 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/a.js',
-        false,
-        { moduleName: 'one_module', line: 1, col: 7 }
+        { moduleName: 'one_module', line: 1, col: 7, symbol: 'default' }
+      ],
+      [
+        {
+          '/a.js': stripIndent`
+            import { default as foo } from "one_module";
+            export function b() {
+              return foo();
+            }
+          `
+        },
+        '/a.js',
+        { moduleName: 'one_module', line: 1, col: 9, symbol: 'default' }
       ]
     ])
 
     testCases('Source and Local imports', [
       [
         {
-          '/a.js': 'export const a = "a";',
+          '/a.js': 'const a = "a"; export default a',
           '/b.js': stripIndent`
-            import { a } from "./a.js";
+            import a from "./a.js";
             import { bar } from 'one_module';
 
             export function b() {
@@ -295,16 +336,14 @@ describe('Test throwing import validation errors', () => {
             }
           `
         },
-        '/b.js',
-        false,
-        false
+        '/b.js'
       ],
       [
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
             import { a } from "./a.js";
-            import { unknown } from 'one_module';
+            import unknown from 'one_module';
 
             export function b() {
               unknown();
@@ -313,15 +352,14 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/b.js',
-        false,
-        { moduleName: 'one_module', line: 2, col: 9, symbol: 'unknown' }
+        { moduleName: 'one_module', line: 2, col: 7, symbol: 'default' }
       ],
       [
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
-            import { a, unknown } from "./a.js";
-            import { foo } from 'one_module';
+            import unknown, { a } from "./a.js";
+            import { default as foo } from 'one_module';
 
             export function b() {
               foo();
@@ -330,11 +368,12 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/b.js',
-        false,
-        { moduleName: '/a.js', line: 1, col: 12, symbol: 'unknown' }
+        { moduleName: '/a.js', line: 1, col: 7, symbol: 'default' }
       ]
     ])
   })
+
+  describe('Test namespace imports', () => {})
 })
 
 describe('Test reexport symbol errors', () => {
@@ -346,7 +385,7 @@ describe('Test reexport symbol errors', () => {
     return expect(testCode(files, entrypointFilePath, false)).rejects.toBeInstanceOf(obj)
   }
 
-  describe('Duplicate named exports', () =>
+  describe('Duplicate named exports should be handled by FatalSyntaxErrors', () =>
     test.each([
       [
         'Duplicate named exports within the same file',
@@ -394,6 +433,30 @@ describe('Test reexport symbol errors', () => {
         {
           '/a.js': 'export const foo = 5; export * from "one_module";'
         }
+      ],
+      [
+        'Multiple ExportAllDeclarations are checked',
+        {
+          '/a.js': 'export * from "/b.js"; export * from "/c.js"',
+          '/b.js': 'export const foo_a = 5;',
+          '/c.js': 'export const foo_a = 5;'
+        }
+      ],
+      [
+        'Exports are checked transitively',
+        {
+          '/a.js': 'export const foo_a = 5; export * from "/b.js"',
+          '/b.js': 'export * from "/c.js"',
+          '/c.js': 'export const foo_a = 5;'
+        }
+      ],
+      [
+        'Named ExportAllDeclarations have their exported name accounted for',
+        {
+          '/a.js': 'export const foo_a = 5; export * from "/b.js"',
+          '/b.js': 'export * as foo_a from "/c.js"',
+          '/c.js': 'export const foo_c = 5;'
+        }
       ]
     ])('%# %s', (_, files) => expectFailure(files, '/a.js', ReexportSymbolError)))
 
@@ -411,6 +474,37 @@ describe('Test reexport symbol errors', () => {
         {
           '/a.js': 'export default () => {}; export * from "/b.js";',
           '/b.js': 'export default 123;'
+        }
+      ],
+      [
+        'Duplicate default exports using ExportNamedDeclarations',
+        {
+          '/a.js': 'const a = 1; export { a as default }; export * from "./b.js";',
+          '/b.js': 'const b = 5; export default b'
+        }
+      ],
+      [
+        'Multiple ExportAllDeclarations are checked',
+        {
+          '/a.js': 'export * from "/b.js"; export * from "/c.js"',
+          '/b.js': 'export default "b";',
+          '/c.js': 'export default "c";'
+        }
+      ],
+      [
+        'Exports are checked transitively',
+        {
+          '/a.js': 'export default "a"; export * from "/b.js"',
+          '/b.js': 'export * from "/c.js"',
+          '/c.js': 'export default "c"'
+        }
+      ],
+      [
+        'Named ExportAllDeclarations have their exported name accounted for',
+        {
+          '/a.js': 'export default "a"; export * from "/b.js"',
+          '/b.js': 'export * as default from "/c.js"',
+          '/c.js': 'export const foo_c = 5;'
         }
       ]
     ])('%# %s', (_, files) => expectFailure(files, '/a.js', ReexportDefaultError)))

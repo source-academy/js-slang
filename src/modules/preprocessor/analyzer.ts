@@ -62,7 +62,7 @@ export default async function checkForUndefinedImportsAndReexports(
     if (!(path in moduleDocs)) {
       // Because modules are loaded in topological order, the exported symbols for a local
       // module should be loaded by the time they are needed
-      // So we can assume that it is the documentation for Source modules that needs to be
+      // So we can assume that it is the documentation for a Source module that needs to be
       // loaded here
       assert(
         isSourceImport(path),
