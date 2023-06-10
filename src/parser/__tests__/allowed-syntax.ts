@@ -1,3 +1,5 @@
+import type { TestResult } from 'jest'
+
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { snapshotFailure, snapshotSuccess } from '../../utils/testing'
@@ -315,24 +317,49 @@ test.each([
     export default x;
     x;
     `
+  ],
+
+  [
+    Chapter.LIBRARY_PARSER,
+    `
+    function square(x) {
+      return x * x;
+    }
+    export { square as default };
+    `
+  ],
+
+  [
+    Chapter.LIBRARY_PARSER,
+    `
+    import { default as x } from './a.js';
+    `,
+    // Skip the success tests because the imported file does not exist.
+    true
   ]
-] as [Chapter, string][])(
+] as [Chapter, string, boolean | undefined][])(
   'Syntaxes are allowed in the chapter they are introduced %#',
-  (chapter: Chapter, snippet: string) => {
+  (chapter: Chapter, snippet: string, skipSuccessTests: boolean = false) => {
     snippet = stripIndent(snippet)
     const parseSnippet = `parse(${JSON.stringify(snippet)});`
-    const tests = [
-      snapshotSuccess(
-        snippet,
-        { chapter, native: chapter !== Chapter.LIBRARY_PARSER, allowUndefinedImports: true },
-        'passes'
-      ),
-      snapshotSuccess(
-        parseSnippet,
-        { chapter: Math.max(4, chapter), native: true, allowUndefinedImports: true },
-        'parse passes'
+
+    const tests: Promise<any>[] = []
+    if (!skipSuccessTests) {
+      tests.push(
+        snapshotSuccess(
+          snippet,
+          { chapter, native: chapter !== Chapter.LIBRARY_PARSER, allowUndefinedImports: true },
+          'passes'
+        )
       )
-    ]
+      tests.push(
+        snapshotSuccess(
+          parseSnippet,
+          { chapter: Math.max(4, chapter), native: true, allowUndefinedImports: true },
+          'parse passes'
+        )
+      )
+    }
     if (chapter > 1) {
       tests.push(snapshotFailure(snippet, { chapter: chapter - 1 }, 'fails a chapter below'))
     }

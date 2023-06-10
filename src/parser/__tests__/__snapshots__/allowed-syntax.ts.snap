@@ -4563,3 +4563,144 @@ x;",
   "visualiseListResult": Array [],
 }
 `;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 38: fails a chapter below 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function square(x) {
+  return x * x;
+}
+export { square as default };",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 4: Export default declarations are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 38: parse passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "parse(\\"function square(x) {\\\\n  return x * x;\\\\n}\\\\nexport { square as default };\\");",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": Array [
+    "sequence",
+    Array [
+      Array [
+        Array [
+          "function_declaration",
+          Array [
+            Array [
+              "name",
+              Array [
+                "square",
+                null,
+              ],
+            ],
+            Array [
+              Array [
+                Array [
+                  "name",
+                  Array [
+                    "x",
+                    null,
+                  ],
+                ],
+                null,
+              ],
+              Array [
+                Array [
+                  "return_statement",
+                  Array [
+                    Array [
+                      "binary_operator_combination",
+                      Array [
+                        "*",
+                        Array [
+                          Array [
+                            "name",
+                            Array [
+                              "x",
+                              null,
+                            ],
+                          ],
+                          Array [
+                            Array [
+                              "name",
+                              Array [
+                                "x",
+                                null,
+                              ],
+                            ],
+                            null,
+                          ],
+                        ],
+                      ],
+                    ],
+                    null,
+                  ],
+                ],
+                null,
+              ],
+            ],
+          ],
+        ],
+        Array [
+          Array [
+            "export_named_declaration",
+            Array [
+              Array [
+                Array [
+                  "name",
+                  Array [
+                    "default",
+                    null,
+                  ],
+                ],
+              ],
+              null,
+            ],
+          ],
+          null,
+        ],
+      ],
+      null,
+    ],
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 38: passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function square(x) {
+  return x * x;
+}
+export { square as default };",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 39: fails a chapter below 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "import { default as x } from './a.js';",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Import default specifiers are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
