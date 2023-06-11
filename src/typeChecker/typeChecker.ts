@@ -1,4 +1,4 @@
-import * as es from 'estree'
+import type * as es from 'estree'
 
 import {
   ArrayAssignmentError,
@@ -15,7 +15,7 @@ import {
   UndefinedIdentifierError
 } from '../errors/typeErrors'
 import { typedParse } from '../parser/utils'
-import {
+import type {
   Context,
   ContiguousArrayElements,
   ForAll,
@@ -32,6 +32,7 @@ import {
   TypeEnvironment,
   Variable
 } from '../types'
+import { isImportDeclaration } from '../utils/ast/typeGuards'
 import { typeToString } from '../utils/stringify'
 import {
   InternalCyclicReferenceError,
@@ -1068,7 +1069,7 @@ function _infer(
     case 'BlockStatement': {
       pushEnv(env)
       for (const statement of node.body) {
-        if (statement.type === 'ImportDeclaration') {
+        if (isImportDeclaration(statement)) {
           for (const specifier of statement.specifiers) {
             if (specifier.type === 'ImportSpecifier' && specifier.local.type === 'Identifier') {
               setType(specifier.local.name, tForAll(tVar('T1')), env)

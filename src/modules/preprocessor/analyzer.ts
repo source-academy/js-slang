@@ -57,7 +57,7 @@ export default async function checkForUndefinedImportsAndReexports(
 ) {
   const moduleDocs: Record<string, Set<string>> = {}
 
-  const getDocs = async (node: es.SourcedModuleDeclaration): Promise<[Set<string>, string]> => {
+  const getDocs = async (node: es.ModuleDeclarationWithSource): Promise<[Set<string>, string]> => {
     const path = node.source!.value as string
     if (!(path in moduleDocs)) {
       // Because modules are loaded in topological order, the exported symbols for a local

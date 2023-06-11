@@ -137,6 +137,3 @@ export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
   }
 }
 
-export const isIdentifier = (node: any): node is es.Identifier => {
-  return (node as es.Identifier).name !== undefined
-}

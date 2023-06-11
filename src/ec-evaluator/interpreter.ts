@@ -6,7 +6,7 @@
  */
 
 /* tslint:disable:max-classes-per-file */
-import * as es from 'estree'
+import type * as es from 'estree'
 import { partition, uniqueId } from 'lodash'
 
 import { IOptions } from '..'
@@ -20,6 +20,7 @@ import { transformImportNodesAsync } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
+import { isImportDeclaration } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as instr from './instrCreator'
@@ -145,10 +146,10 @@ async function evaluateImports(
 ) {
   const [importNodes, otherNodes] = partition(
     program.body,
-    ({ type }) => type === 'ImportDeclaration'
-  ) as [es.ImportDeclaration[], es.Statement[]]
+    isImportDeclaration
+  )
 
-  if (importNodes.length === 0) return otherNodes
+  if (importNodes.length === 0) return otherNodes as es.Statement[]
 
   const environment = currentEnvironment(context)
   try {
@@ -208,7 +209,7 @@ async function evaluateImports(
   //   handleRuntimeError(context, error)
   // }
 
-  return otherNodes
+  return otherNodes as es.Statement[]
 }
 
 /**

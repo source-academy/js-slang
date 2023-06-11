@@ -488,3 +488,6 @@ export type RecursivePartial<T> = T extends Array<any>
       [K in keyof T]: RecursivePartial<T[K]>
     }>
   : T
+
+export type Replace<T, Replacer extends Partial<Record<keyof T, any>>> = Omit<T, keyof Replacer> &
+  Replacer

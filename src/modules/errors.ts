@@ -10,7 +10,7 @@ import type {
   ImportSpecifiers,
   ModuleDeclaration,
   Node,
-  SourcedModuleDeclaration,
+  ModuleDeclarationWithSource,
   SourceLocation
 } from '../utils/ast/types'
 import { nonAlphanumericCharEncoding } from './preprocessor/filePaths'
@@ -64,7 +64,7 @@ export class ModuleInternalError extends RuntimeSourceError {
 export abstract class UndefinedImportErrorBase extends RuntimeSourceError {
   constructor(
     public readonly moduleName: string,
-    node?: SourcedModuleDeclaration | ExportSpecifier | ImportSpecifiers
+    node?: ModuleDeclarationWithSource | ExportSpecifier | ImportSpecifiers
   ) {
     super(node)
   }

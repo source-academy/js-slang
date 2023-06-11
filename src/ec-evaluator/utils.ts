@@ -7,6 +7,7 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { Environment, Frame, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
+import { isIdentifier } from '../utils/ast/typeGuards'
 import * as instr from './instrCreator'
 import { Agenda } from './interpreter'
 import { AgendaItem, AppInstr, AssmtInstr, Instr, InstrType } from './types'
@@ -67,16 +68,6 @@ export const isInstr = (command: AgendaItem): command is Instr => {
  */
 export const isNode = (command: AgendaItem): command is es.Node => {
   return (command as es.Node).type !== undefined
-}
-
-/**
- * Typeguard for esIdentifier. To verify if an esNode is an esIdentifier.
- *
- * @param node an esNode
- * @returns true if node is an esIdentifier, false otherwise.
- */
-export const isIdentifier = (node: es.Node): node is es.Identifier => {
-  return (node as es.Identifier).name !== undefined
 }
 
 /**

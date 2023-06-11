@@ -5,8 +5,9 @@ import { cloneDeep, uniqueId } from 'lodash'
 import { CUT, UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { Context, Environment, Frame, Value } from '../types'
+import type { Context, Environment, Frame, Value } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
+import { isIdentifier } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -357,7 +358,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   CallExpression: function*(node: es.CallExpression, context: Context) {
     const callee = node.callee;
-    if (rttc.isIdentifier(callee)) {
+    if (isIdentifier(callee)) {
       switch (callee.name) {
         case 'amb':
           return yield* getAmbArgs(context, node)

@@ -4,9 +4,8 @@ import { parse } from '../../parser/parser'
 import type { AcornOptions } from '../../parser/types'
 import type { Context } from '../../types'
 import assert from '../../utils/assert'
-import { isModuleDeclaration, isSourceImport } from '../../utils/ast/typeGuards'
+import { isIdentifier, isModuleDeclaration, isSourceImport } from '../../utils/ast/typeGuards'
 import type * as es from '../../utils/ast/types'
-import { isIdentifier } from '../../utils/rttc'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
 import type { ImportResolutionOptions } from '../moduleTypes'
 import checkForUndefinedImportsAndReexports from './analyzer'
@@ -57,7 +56,7 @@ export const parseProgramsAndConstructImportGraph = async (
   const numOfFiles = Object.keys(files).length
   const shouldAddSourceFileToAST = numOfFiles > 1
 
-  async function resolve(path: string, node?: es.SourcedModuleDeclaration) {
+  async function resolve(path: string, node?: es.ModuleDeclarationWithSource) {
     let source: string
     if (node) {
       assert(

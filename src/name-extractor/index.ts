@@ -6,7 +6,7 @@ import { findAncestors, findIdentifierNode } from '../finder'
 import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
 import { memoizedGetModuleDocsAsync } from '../modules/moduleLoaderAsync'
 import syntaxBlacklist from '../parser/source/syntax'
-import { isSourceImport } from '../utils/ast/typeGuards'
+import { isDeclaration, isFunctionNode, isImportDeclaration, isLoop, isSourceImport } from '../utils/ast/typeGuards'
 
 export interface NameDeclaration {
   name: string
@@ -20,25 +20,7 @@ const KIND_FUNCTION = 'func'
 const KIND_PARAM = 'param'
 const KIND_CONST = 'const'
 
-function isImportDeclaration(node: es.Node): node is es.ImportDeclaration {
-  return node.type === 'ImportDeclaration'
-}
 
-function isDeclaration(node: es.Node): boolean {
-  return node.type === 'VariableDeclaration' || node.type === 'FunctionDeclaration'
-}
-
-function isFunction(node: es.Node): boolean {
-  return (
-    node.type === 'FunctionDeclaration' ||
-    node.type === 'FunctionExpression' ||
-    node.type === 'ArrowFunctionExpression'
-  )
-}
-
-function isLoop(node: es.Node): boolean {
-  return node.type === 'WhileStatement' || node.type === 'ForStatement'
-}
 
 // Update this to use exported check from "acorn-loose" package when it is released
 function isDummyName(name: string): boolean {
@@ -117,7 +99,7 @@ export function getKeywords(
   ) {
     addAllowedKeywords(keywordsInBlock)
     // Keywords only allowed in functions
-    if (ancestors.some(node => isFunction(node))) {
+    if (ancestors.some(node => isFunctionNode(node))) {
       addAllowedKeywords(keywordsInFunction)
     }
 
@@ -171,7 +153,7 @@ export async function getProgramNames(
     // Workaround due to minification problem
     // tslint:disable-next-line
     const node = queue.shift()!
-    if (isFunction(node)) {
+    if (isFunctionNode(node)) {
       // This is the only time we want raw identifiers
       nameQueue.push(...(node as any).params)
     }
@@ -390,12 +372,12 @@ async function getNames(
         if (
           !name ||
           isDummyName(name) ||
-          (decl.init && !isFunction(decl.init) && locTest(decl.init)) // Avoid suggesting `let foo = foo`, but suggest recursion with arrow functions
+          (decl.init && !isFunctionNode(decl.init) && locTest(decl.init)) // Avoid suggesting `let foo = foo`, but suggest recursion with arrow functions
         ) {
           continue
         }
 
-        if (node.kind === KIND_CONST && decl.init && isFunction(decl.init)) {
+        if (node.kind === KIND_CONST && decl.init && isFunctionNode(decl.init)) {
           // constant initialized with arrow function will always be a function
           declarations.push({ name, meta: KIND_FUNCTION })
         } else {

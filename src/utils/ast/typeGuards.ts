@@ -1,4 +1,14 @@
-import type es from 'estree'
+import type * as es from '../../utils/ast/types'
+
+export function isDeclaration(node: es.Node): node is es.Declaration {
+  // export type Declaration =
+  //       FunctionDeclaration | VariableDeclaration | ClassDeclaration;
+  return (
+    node.type === 'VariableDeclaration' ||
+    node.type === 'FunctionDeclaration' ||
+    node.type === 'ClassDeclaration'
+  )
+}
 
 // It is necessary to write this type guard like this as the 'type' of both
 // 'Directive' & 'ExpressionStatement' is 'ExpressionStatement'.
@@ -20,6 +30,21 @@ export const isDirective = (node: es.Node): node is es.Directive => {
   return 'directive' in node
 }
 
+export const isFunctionNode = (node: es.Node): node is es.FunctionNode =>
+  ['ArrowFunctionExpression', 'FunctionExpression', 'FunctionDeclaration'].includes(node.type)
+
+export const isIdentifier = (node: es.Node): node is es.Identifier => node.type === 'Identifier'
+
+export const isImportDeclaration = (node: es.Node): node is es.ImportDeclaration =>
+  node.type === 'ImportDeclaration'
+
+export const isLoop = (node: es.Node): node is es.LoopNode => [
+  'WhileStatement',
+  'ForStatement',
+  'ForInStatement',
+  'ForOfStatement',
+].includes(node.type)
+
 export const isModuleDeclaration = (node: es.Node): node is es.ModuleDeclaration => {
   return [
     'ImportDeclaration',
@@ -35,20 +60,6 @@ export const isStatement = (
   return !isDirective(node) && !isModuleDeclaration(node)
 }
 
-export function isDeclaration(node: es.Node): node is es.Declaration {
-  // export type Declaration =
-  //       FunctionDeclaration | VariableDeclaration | ClassDeclaration;
-  return (
-    node.type === 'VariableDeclaration' ||
-    node.type === 'FunctionDeclaration' ||
-    node.type === 'ClassDeclaration'
-  )
-}
-
-export function isImportDeclaration(node: es.Node): node is es.ImportDeclaration {
-  return node.type === 'ImportDeclaration'
-}
-
 export const isSourceImport = (url: string) => !url.startsWith('.') && !url.startsWith('/')
 
 export function isPattern(node: es.Node): node is es.Pattern {
@@ -60,12 +71,4 @@ export function isPattern(node: es.Node): node is es.Pattern {
     'ObjectPattern',
     'RestElement'
   ].includes(node.type)
-}
-
-export function isFunctionNode(
-  node: es.Node
-): node is es.ArrowFunctionExpression | es.FunctionDeclaration | es.FunctionExpression {
-  return ['ArrowFunctionExpression', 'FunctionExpression', 'FunctionDeclaration'].includes(
-    node.type
-  )
 }
