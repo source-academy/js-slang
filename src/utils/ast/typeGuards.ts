@@ -38,12 +38,8 @@ export const isIdentifier = (node: es.Node): node is es.Identifier => node.type 
 export const isImportDeclaration = (node: es.Node): node is es.ImportDeclaration =>
   node.type === 'ImportDeclaration'
 
-export const isLoop = (node: es.Node): node is es.LoopNode => [
-  'WhileStatement',
-  'ForStatement',
-  'ForInStatement',
-  'ForOfStatement',
-].includes(node.type)
+export const isLoop = (node: es.Node): node is es.LoopNode =>
+  ['WhileStatement', 'ForStatement', 'ForInStatement', 'ForOfStatement'].includes(node.type)
 
 export const isModuleDeclaration = (node: es.Node): node is es.ModuleDeclaration => {
   return [

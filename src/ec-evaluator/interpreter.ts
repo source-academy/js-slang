@@ -144,10 +144,7 @@ async function evaluateImports(
   context: Context,
   { loadTabs, wrapModules }: ImportOptions
 ) {
-  const [importNodes, otherNodes] = partition(
-    program.body,
-    isImportDeclaration
-  )
+  const [importNodes, otherNodes] = partition(program.body, isImportDeclaration)
 
   if (importNodes.length === 0) return otherNodes as es.Statement[]
 

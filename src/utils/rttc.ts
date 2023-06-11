@@ -136,4 +136,3 @@ export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
     return new TypeError(node, '', 'object or array', typeOf(obj))
   }
 }
-

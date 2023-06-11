@@ -6,7 +6,13 @@ import { findAncestors, findIdentifierNode } from '../finder'
 import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
 import { memoizedGetModuleDocsAsync } from '../modules/moduleLoaderAsync'
 import syntaxBlacklist from '../parser/source/syntax'
-import { isDeclaration, isFunctionNode, isImportDeclaration, isLoop, isSourceImport } from '../utils/ast/typeGuards'
+import {
+  isDeclaration,
+  isFunctionNode,
+  isImportDeclaration,
+  isLoop,
+  isSourceImport
+} from '../utils/ast/typeGuards'
 
 export interface NameDeclaration {
   name: string
@@ -19,8 +25,6 @@ const KIND_FUNCTION = 'func'
 // const KIND_LET = 'let'
 const KIND_PARAM = 'param'
 const KIND_CONST = 'const'
-
-
 
 // Update this to use exported check from "acorn-loose" package when it is released
 function isDummyName(name: string): boolean {
