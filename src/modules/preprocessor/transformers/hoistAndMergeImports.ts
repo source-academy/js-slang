@@ -1,4 +1,4 @@
-import es from 'estree'
+import type * as es from 'estree'
 
 import { isImportDeclaration, isSourceImport } from '../../../utils/ast/typeGuards'
 import {

@@ -1,5 +1,3 @@
-import type { TestResult } from 'jest'
-
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { snapshotFailure, snapshotSuccess } from '../../utils/testing'
