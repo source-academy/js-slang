@@ -1,6 +1,7 @@
 /* tslint:disable:max-classes-per-file */
 import { generate } from 'astring'
 import * as es from 'estree'
+import { uniqueId } from 'lodash'
 
 import { Context, Environment, Value } from '../types'
 import {
@@ -80,7 +81,10 @@ export default class Closure extends Callable {
     return closure
   }
 
-  /** Unique ID defined for anonymous closure */
+  /** Unique ID defined for closure */
+  public id: string
+
+  /** String representation of the closure */
   public functionName: string
 
   /** Fake closure function */
@@ -103,6 +107,7 @@ export default class Closure extends Callable {
       return funJS.apply(this, args)
     })
     this.originalNode = node
+    this.id = uniqueId()
     if (this.node.type === 'FunctionDeclaration' && this.node.id !== null) {
       this.functionName = this.node.id.name
     } else {
