@@ -1,6 +1,7 @@
-import { ImportDeclaration, Node } from 'estree'
+import type { ImportDeclaration, Node } from 'estree'
 
-import { Context } from '..'
+import type { Context } from '..'
+import assert from '../utils/assert'
 import { getUniqueId } from '../utils/uniqueIds'
 import { loadModuleTabs } from './moduleLoader'
 import { loadModuleTabsAsync } from './moduleLoaderAsync'
@@ -126,11 +127,7 @@ export async function transformImportNodesAsync<Transformed, LoadedModule>(
   const promises: Promise<void>[] = []
   const moduleInfos = nodes.reduce((res, node) => {
     const moduleName = node.source.value
-    if (typeof moduleName !== 'string') {
-      throw new Error(
-        `Expected ImportDeclaration to have a source of type string, got ${moduleName}`
-      )
-    }
+    assert(typeof moduleName === 'string', `Expected ImportDeclaration to have a source of type string, got ${moduleName}`)
 
     if (!(moduleName in res)) {
       // First time we are loading this module
@@ -164,9 +161,7 @@ export async function transformImportNodesAsync<Transformed, LoadedModule>(
     const namespaced = usedIdentifiers ? getUniqueId(usedIdentifiers, '__MODULE__') : null
     info.namespaced = namespaced
 
-    if (info.content === null) {
-      throw new Error(`${moduleName} was not loaded properly. This should never happen`)
-    }
+    assert(info.content !== null, `${moduleName} was not loaded properly. This should never happen`)
 
     return {
       ...res,

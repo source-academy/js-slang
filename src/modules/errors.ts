@@ -1,24 +1,13 @@
 import { UNKNOWN_LOCATION } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { ErrorSeverity, ErrorType, SourceError } from '../types'
-import type {
-  ExportAllDeclaration,
-  ExportSpecifier,
-  ImportDefaultSpecifier,
-  ImportNamespaceSpecifier,
-  ImportSpecifier,
-  ImportSpecifiers,
-  ModuleDeclaration,
-  Node,
-  ModuleDeclarationWithSource,
-  SourceLocation
-} from '../utils/ast/types'
+import type * as es from '../utils/ast/types'
 import { nonAlphanumericCharEncoding } from './preprocessor/filePaths'
 
 export class ModuleConnectionError extends RuntimeSourceError {
   private static message: string = `Unable to get modules.`
   private static elaboration: string = `You should check your Internet connection, and ensure you have used the correct module path.`
-  constructor(public readonly error?: any, node?: Node) {
+  constructor(public readonly error?: any, node?: es.Node) {
     super(node)
   }
 
@@ -32,7 +21,7 @@ export class ModuleConnectionError extends RuntimeSourceError {
 }
 
 export class ModuleNotFoundError extends RuntimeSourceError {
-  constructor(public moduleName: string, node?: Node) {
+  constructor(public moduleName: string, node?: es.Node) {
     super(node)
   }
 
@@ -46,7 +35,7 @@ export class ModuleNotFoundError extends RuntimeSourceError {
 }
 
 export class ModuleInternalError extends RuntimeSourceError {
-  constructor(public moduleName: string, public error?: any, node?: Node) {
+  constructor(public moduleName: string, public error?: any, node?: es.Node) {
     super(node)
   }
 
@@ -64,7 +53,7 @@ export class ModuleInternalError extends RuntimeSourceError {
 export abstract class UndefinedImportErrorBase extends RuntimeSourceError {
   constructor(
     public readonly moduleName: string,
-    node?: ModuleDeclarationWithSource | ExportSpecifier | ImportSpecifiers
+    node?: es.ModuleDeclarationWithSource | es.ExportSpecifier | es.ImportSpecifiers
   ) {
     super(node)
   }
@@ -78,7 +67,7 @@ export class UndefinedImportError extends UndefinedImportErrorBase {
   constructor(
     public readonly symbol: string,
     moduleName: string,
-    node?: ImportSpecifier | ImportDefaultSpecifier | ExportSpecifier
+    node?: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier
   ) {
     super(moduleName, node)
   }
@@ -91,7 +80,7 @@ export class UndefinedImportError extends UndefinedImportErrorBase {
 export class UndefinedDefaultImportError extends UndefinedImportErrorBase {
   constructor(
     moduleName: string,
-    node?: ImportSpecifier | ImportDefaultSpecifier | ExportSpecifier
+    node?: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier
   ) {
     super(moduleName, node)
   }
@@ -102,7 +91,7 @@ export class UndefinedDefaultImportError extends UndefinedImportErrorBase {
 }
 
 export class UndefinedNamespaceImportError extends UndefinedImportErrorBase {
-  constructor(moduleName: string, node?: ImportNamespaceSpecifier | ExportAllDeclaration) {
+  constructor(moduleName: string, node?: es.ImportNamespaceSpecifier | es.ExportAllDeclaration) {
     super(moduleName, node)
   }
 
@@ -114,12 +103,12 @@ export class UndefinedNamespaceImportError extends UndefinedImportErrorBase {
 export abstract class ReexportErrorBase implements SourceError {
   public severity = ErrorSeverity.ERROR
   public type = ErrorType.RUNTIME
-  public readonly location: SourceLocation
+  public readonly location: es.SourceLocation
   public readonly sourceString: string
 
   constructor(
     public readonly modulePath: string,
-    public readonly nodes: (ModuleDeclaration | ExportSpecifier)[]
+    public readonly nodes: (es.ModuleDeclaration | es.ExportSpecifier)[]
   ) {
     this.location = nodes[0].loc ?? UNKNOWN_LOCATION
     this.sourceString = nodes
@@ -135,7 +124,7 @@ export class ReexportSymbolError extends ReexportErrorBase {
   constructor(
     modulePath: string,
     public readonly symbol: string,
-    nodes: (ModuleDeclaration | ExportSpecifier)[]
+    nodes: (es.ModuleDeclaration | es.ExportSpecifier)[]
   ) {
     super(modulePath, nodes)
   }
@@ -150,7 +139,7 @@ export class ReexportSymbolError extends ReexportErrorBase {
 }
 
 export class ReexportDefaultError extends ReexportErrorBase {
-  constructor(modulePath: string, nodes: (ModuleDeclaration | ExportSpecifier)[]) {
+  constructor(modulePath: string, nodes: (es.ModuleDeclaration | es.ExportSpecifier)[]) {
     super(modulePath, nodes)
   }
 
