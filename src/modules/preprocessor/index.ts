@@ -1,3 +1,4 @@
+import { generate } from 'astring'
 import * as pathlib from 'path'
 
 import { parse } from '../../parser/parser'
@@ -12,11 +13,11 @@ import checkForUndefinedImportsAndReexports from './analyzer'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import { DirectedGraph } from './directedGraph'
 import {
-  transformFilePathToValidFunctionName,
   transformFunctionNameToInvokedFunctionResultVariableName
 } from './filePaths'
 import resolveModule from './resolver'
 import hoistAndMergeImports from './transformers/hoistAndMergeImports'
+import reduceExports from './transformers/reduceExports'
 import removeImportsAndExports from './transformers/removeImportsAndExports'
 import {
   createAccessImportStatements,
@@ -36,6 +37,11 @@ const defaultResolutionOptions: Required<ImportResolutionOptions> = {
   resolveExtensions: null
 }
 
+/**
+ * Parse all of the provided files and figure out which modules
+ * are dependent on which, returning that result in the form
+ * of a DAG
+ */
 export const parseProgramsAndConstructImportGraph = async (
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
@@ -248,9 +254,14 @@ const preprocessFileImports = async (
     return undefined
   }
 
+  const newPrograms = reduceExports(programs, [...topologicalOrderResult.topologicalOrder, entrypointFilePath])
+  Object.entries(newPrograms).forEach(([name, program]) => console.log(`${name}:\n${generate(program)}\n`))
+
+  // console.log(generate(newPrograms[entrypointFilePath]))
+
   // We want to operate on the entrypoint program to get the eventual
   // preprocessed program.
-  const entrypointProgram = programs[entrypointFilePath]
+  const entrypointProgram = newPrograms[entrypointFilePath]
   const entrypointDirPath = pathlib.resolve(entrypointFilePath, '..')
 
   // Create variables to hold the imported statements.
@@ -266,63 +277,50 @@ const preprocessFileImports = async (
 
   // Transform all programs into their equivalent function declaration
   // except for the entrypoint program.
-  const functionDeclarations: Record<string, es.FunctionDeclaration> = {}
-  for (const [filePath, program] of Object.entries(programs)) {
+  const [functionDeclarations, invokedFunctionResultVariableDeclarations] = topologicalOrderResult.topologicalOrder
     // The entrypoint program does not need to be transformed into its
     // function declaration equivalent as its enclosing environment is
     // simply the overall program's (constructed program's) environment.
-    if (filePath === entrypointFilePath) {
-      continue
-    }
+    .filter(path => path !== entrypointFilePath)
+    .reduce(([funcDecls, invokeDecls], filePath) => {
+      const program = newPrograms[filePath]
+      const functionDeclaration = transformProgramToFunctionDeclaration(program, filePath)
 
-    const functionDeclaration = transformProgramToFunctionDeclaration(program, filePath)
-    const functionName = functionDeclaration.id?.name
-    assert(
-      functionName !== undefined,
-      'A transformed function declaration is missing its name. This should never happen.'
-    )
+      const functionName = functionDeclaration.id.name
+      const invokedFunctionResultVariableName =
+        transformFunctionNameToInvokedFunctionResultVariableName(functionName)
 
-    functionDeclarations[functionName] = functionDeclaration
-  }
+      const functionParams = functionDeclaration.params.filter(isIdentifier)
+      assert(
+        functionParams.length === functionDeclaration.params.length,
+        'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
+      )
 
-  // Invoke each of the transformed functions and store the result in a variable.
-  const invokedFunctionResultVariableDeclarations: es.VariableDeclaration[] = []
-  topologicalOrderResult.topologicalOrder.forEach((filePath: string): void => {
-    // As mentioned above, the entrypoint program does not have a function
-    // declaration equivalent, so there is no need to process it.
-    if (filePath === entrypointFilePath) {
-      return
-    }
+      // Invoke each of the transformed functions and store the result in a variable.
+      const invokedFunctionResultVariableDeclaration = createInvokedFunctionResultVariableDeclaration(
+        functionName,
+        invokedFunctionResultVariableName,
+        functionParams
+      )
+      
+      return [
+        [...funcDecls, functionDeclaration],
+        [...invokeDecls, invokedFunctionResultVariableDeclaration]
+      ]
+    }, [[], []] as [es.FunctionDeclaration[], es.VariableDeclaration[]])
 
-    const functionName = transformFilePathToValidFunctionName(filePath)
-    const invokedFunctionResultVariableName =
-      transformFunctionNameToInvokedFunctionResultVariableName(functionName)
-
-    const functionDeclaration = functionDeclarations[functionName]
-    const functionParams = functionDeclaration.params.filter(isIdentifier)
-    assert(
-      functionParams.length === functionDeclaration.params.length,
-      'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
-    )
-
-    const invokedFunctionResultVariableDeclaration = createInvokedFunctionResultVariableDeclaration(
-      functionName,
-      invokedFunctionResultVariableName,
-      functionParams
-    )
-    invokedFunctionResultVariableDeclarations.push(invokedFunctionResultVariableDeclaration)
-  })
 
   // Re-assemble the program.
   const preprocessedProgram: es.Program = {
     ...entrypointProgram,
     body: [
-      ...Object.values(functionDeclarations),
+      ...functionDeclarations,
       ...invokedFunctionResultVariableDeclarations,
       ...entrypointProgramAccessImportStatements,
       ...entrypointProgram.body
     ]
   }
+
   // Import and Export related nodes are no longer necessary, so we can remove them from the program entirely
   removeImportsAndExports(preprocessedProgram)
 
@@ -331,7 +329,7 @@ const preprocessFileImports = async (
   // non-Source module imports would have already been removed. As part
   // of this step, we also merge imports from the same module so as to
   // import each unique name per module only once.
-  hoistAndMergeImports(preprocessedProgram, Object.values(programs))
+  hoistAndMergeImports(preprocessedProgram, programs, topologicalOrderResult.topologicalOrder)
   return preprocessedProgram
 }
 

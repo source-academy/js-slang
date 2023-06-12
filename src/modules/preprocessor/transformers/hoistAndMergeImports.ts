@@ -1,4 +1,3 @@
-import { extractIdsFromPattern } from '../../../utils/ast/astUtils'
 import { isImportDeclaration, isSourceImport } from '../../../utils/ast/typeGuards'
 import type * as es from '../../../utils/ast/types'
 import {
@@ -26,52 +25,6 @@ export default function hoistAndMergeImports(program: es.Program, programs: Reco
   // There are two kinds of declarations we need to deal with
   // 1. ImportDeclarations that import from source modules
   // 2. ExportNamedDeclarations that import from source modules 
-
-  const exportMap = topoOrder.reduce((res, moduleName) => {
-    const program = programs[moduleName]
-    const exportedSymbols = new Map<string, string>()
-
-    program.body.forEach(node => {
-      switch (node.type) {
-        case 'ExportDefaultDeclaration': {
-          exportedSymbols.set('default', moduleName)
-          break
-        }
-        case 'ExportNamedDeclaration': {
-          if (node.declaration) {
-            if (node.declaration.type === 'VariableDeclaration') {
-              node.declaration.declarations.forEach(({ id }) => {
-                extractIdsFromPattern(id).forEach(({ name }) => exportedSymbols.set(name, moduleName))
-              })
-              break
-            }
-
-            exportedSymbols.set(node.declaration.id!.name, moduleName)
-          } else if (!node.source) {
-            node.specifiers.forEach(({ exported: { name }}) => exportedSymbols.set(name, moduleName))
-          } else {
-            const source = node.source.value as string
-            node.specifiers.forEach(({ exported: { name }}) => exportedSymbols.set(name, source))
-          }
-          break
-        }
-      }
-    })
-
-    return {
-      ...res,
-      [moduleName]: exportedSymbols
-    }
-  }, {} as Record<string, Map<string, string>>)
-
-  // @ts-ignore
-  function resolveLocalImport(desiredSymbol: string, source: string) {
-    const exportedSymbols = exportMap[source]
-    if (exportedSymbols.has(desiredSymbol)) {
-      // The desired symbol is found inside this 
-    }
-
-  }
 
   const importsToSpecifiers = new Map<
     string,
