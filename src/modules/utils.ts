@@ -127,7 +127,10 @@ export async function transformImportNodesAsync<Transformed, LoadedModule>(
   const promises: Promise<void>[] = []
   const moduleInfos = nodes.reduce((res, node) => {
     const moduleName = node.source.value
-    assert(typeof moduleName === 'string', `Expected ImportDeclaration to have a source of type string, got ${moduleName}`)
+    assert(
+      typeof moduleName === 'string',
+      `Expected ImportDeclaration to have a source of type string, got ${moduleName}`
+    )
 
     if (!(moduleName in res)) {
       // First time we are loading this module
