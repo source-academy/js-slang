@@ -1,7 +1,8 @@
-import es from 'estree'
 import * as path from 'path'
 
-import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
+import { accessExportFunctionName, defaultExportLookupName } from '../../../stdlib/localImport.prelude'
+import assert from '../../../utils/assert'
+import { processExportDefaultDeclaration } from '../../../utils/ast/astUtils'
 import {
   isDeclaration,
   isDirective,
@@ -9,7 +10,9 @@ import {
   isSourceImport,
   isStatement
 } from '../../../utils/ast/typeGuards'
+import type * as es from '../../../utils/ast/types'
 import {
+  createCallExpression,
   createFunctionDeclaration,
   createIdentifier,
   createLiteral,
@@ -25,29 +28,32 @@ import {
   transformFunctionNameToInvokedFunctionResultVariableName
 } from '../filePaths'
 
-type ImportSpecifier = es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
-
 export const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
   nodes: es.ModuleDeclaration[],
   currentDirPath: string
-): Record<string, ImportSpecifier[]> => {
-  const invokedFunctionResultVariableNameToImportSpecifierMap: Record<string, ImportSpecifier[]> =
+): Record<string, (es.ImportSpecifiers | es.ExportSpecifier)[]> => {
+  const invokedFunctionResultVariableNameToImportSpecifierMap: Record<string, (es.ImportSpecifiers | es.ExportSpecifier)[]> =
     {}
   nodes.forEach((node: es.ModuleDeclaration): void => {
-    // Only ImportDeclaration nodes specify imported names.
-    if (node.type !== 'ImportDeclaration') {
-      return
+    switch (node.type) {
+      case 'ExportNamedDeclaration': {
+        if (!node.source) return
+        break
+      }
+      case 'ImportDeclaration':
+        break
+      default:
+        return
     }
-    const importSource = node.source.value
-    if (typeof importSource !== 'string') {
-      throw new Error(
-        'Encountered an ImportDeclaration node with a non-string source. This should never occur.'
-      )
-    }
+
+    const importSource = node.source!.value
+    assert(typeof importSource === 'string', `Encountered an ${node.type} node with a non-string source. This should never occur.`)
+
     // Only handle import declarations for non-Source modules.
     if (isSourceImport(importSource)) {
       return
     }
+
     // Different import sources can refer to the same file. For example,
     // both './b.js' & '../dir/b.js' can refer to the same file if the
     // current file path is '/dir/a.js'. To ensure that every file is
@@ -56,12 +62,14 @@ export const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
     // be imported. Since the absolute file path is guaranteed to be
     // unique, it is also the canonical file path.
     const importFilePath = path.resolve(currentDirPath, importSource)
+
     // Even though we limit the chars that can appear in Source file
     // paths, some chars in file paths (such as '/') cannot be used
     // in function names. As such, we substitute illegal chars with
     // legal ones in a manner that gives us a bijective mapping from
     // file paths to function names.
     const importFunctionName = transformFilePathToValidFunctionName(importFilePath)
+
     // In the top-level environment of the resulting program, for every
     // imported file, we will end up with two different names; one for
     // the function declaration, and another for the variable holding
@@ -76,6 +84,7 @@ export const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
     // Having the two different names helps us to achieve this objective.
     const invokedFunctionResultVariableName =
       transformFunctionNameToInvokedFunctionResultVariableName(importFunctionName)
+
     // If this is the file ImportDeclaration node for the canonical
     // file path, instantiate the entry in the map.
     if (
@@ -88,116 +97,72 @@ export const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
       ...node.specifiers
     )
   })
+  
   return invokedFunctionResultVariableNameToImportSpecifierMap
 }
 
-const getIdentifier = (node: es.Declaration): es.Identifier | null => {
-  switch (node.type) {
-    case 'FunctionDeclaration':
-      if (node.id === null) {
-        throw new Error(
-          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-        )
-      }
-      return node.id
-    case 'VariableDeclaration':
-      const id = node.declarations[0].id
-      // In Source, variable names are Identifiers.
-      if (id.type !== 'Identifier') {
-        throw new Error(`Expected variable name to be an Identifier, but was ${id.type} instead.`)
-      }
-      return id
-    case 'ClassDeclaration':
-      throw new Error('Exporting of class is not supported.')
-  }
-}
-
-const getExportedNameToIdentifierMap = (
-  nodes: es.ModuleDeclaration[]
-): Record<string, es.Identifier> => {
-  const exportedNameToIdentifierMap: Record<string, es.Identifier> = {}
-  nodes.forEach((node: es.ModuleDeclaration): void => {
-    // Only ExportNamedDeclaration nodes specify exported names.
-    if (node.type !== 'ExportNamedDeclaration') {
-      return
-    }
-    if (node.declaration) {
-      const identifier = getIdentifier(node.declaration)
-      if (identifier === null) {
-        return
-      }
-      // When an ExportNamedDeclaration node has a declaration, the
-      // identifier is the same as the exported name (i.e., no renaming).
-      const exportedName = identifier.name
-      exportedNameToIdentifierMap[exportedName] = identifier
-    } else {
-      // When an ExportNamedDeclaration node does not have a declaration,
-      // it contains a list of names to export, i.e., export { a, b as c, d };.
-      // Exported names can be renamed using the 'as' keyword. As such, the
-      // exported names and their corresponding identifiers might be different.
-      node.specifiers.forEach((node: es.ExportSpecifier): void => {
-        const exportedName = node.exported.name
-        const identifier = node.local
-        exportedNameToIdentifierMap[exportedName] = identifier
-      })
-    }
-  })
-  return exportedNameToIdentifierMap
-}
-
-const getDefaultExportExpression = (
+const getExportExpressions = (
   nodes: es.ModuleDeclaration[],
-  exportedNameToIdentifierMap: Partial<Record<string, es.Identifier>>
-): es.Expression | null => {
-  let defaultExport: es.Expression | null = null
+  invokedFunctionResultVariableNameToImportSpecifierMap: Record<string, (es.ImportSpecifiers | es.ExportSpecifier)[]>
+) => {
+  const exportExpressions: Record<string, es.Expression> = {}
 
-  // Handle default exports which are parsed as ExportNamedDeclaration AST nodes.
-  // 'export { name as default };' is equivalent to 'export default name;' but
-  // is represented by an ExportNamedDeclaration node instead of an
-  // ExportedDefaultDeclaration node.
-  //
-  // NOTE: If there is a named export representing the default export, its entry
-  // in the map must be removed to prevent it from being treated as a named export.
-  if (exportedNameToIdentifierMap['default'] !== undefined) {
-    defaultExport = exportedNameToIdentifierMap['default']
-    delete exportedNameToIdentifierMap['default']
+  for (const node of nodes) {
+    switch (node.type) {
+      case 'ExportNamedDeclaration': {
+        if (node.declaration) {
+          let identifier: es.Identifier
+          if (node.declaration.type === 'VariableDeclaration') {
+            const { declarations: [{ id }] } = node.declaration
+            identifier = id as es.Identifier
+          } else {
+            identifier = node.declaration.id!
+          }
+          exportExpressions[identifier.name] = identifier
+        } else if (!node.source) {
+          node.specifiers.forEach(({ exported: { name }, local }) => {
+            exportExpressions[name] = local
+          })
+        }
+        break
+      }
+      case 'ExportDefaultDeclaration': {
+        exportExpressions[defaultExportLookupName] = processExportDefaultDeclaration(node, {
+          ClassDeclaration: ({ id }) => id,
+          FunctionDeclaration: ({ id }) => id,
+          Expression: expr => expr
+        })
+        break
+      }
+    }
   }
 
-  nodes.forEach((node: es.ModuleDeclaration): void => {
-    // Only ExportDefaultDeclaration nodes specify the default export.
-    if (node.type !== 'ExportDefaultDeclaration') {
-      return
+  for (const [source, nodes] of Object.entries(invokedFunctionResultVariableNameToImportSpecifierMap)) {
+    for (const node of nodes) {
+      if (node.type !== 'ExportSpecifier') continue
+
+      const { exported: { name: exportName }, local: { name: localName }} = node
+      exportExpressions[exportName] = createCallExpression(
+        accessExportFunctionName,
+        [
+          createIdentifier(source),
+          createLiteral(localName)
+        ]
+      )
     }
-    if (defaultExport !== null) {
-      // This should never occur because multiple default exports should have
-      // been caught by the Acorn parser when parsing into an AST.
-      throw new Error('Encountered multiple default exports!')
-    }
-    if (isDeclaration(node.declaration)) {
-      const identifier = getIdentifier(node.declaration)
-      if (identifier === null) {
-        return
-      }
-      // When an ExportDefaultDeclaration node has a declaration, the
-      // identifier is the same as the exported name (i.e., no renaming).
-      defaultExport = identifier
-    } else {
-      // When an ExportDefaultDeclaration node does not have a declaration,
-      // it has an expression.
-      defaultExport = node.declaration
-    }
-  })
-  return defaultExport
+  }
+
+  return exportExpressions
 }
 
 export const createAccessImportStatements = (
-  invokedFunctionResultVariableNameToImportSpecifiersMap: Record<string, ImportSpecifier[]>
+  invokedFunctionResultVariableNameToImportSpecifiersMap: Record<string, (es.ImportSpecifiers | es.ExportSpecifier)[]>
 ): es.VariableDeclaration[] => {
   const importDeclarations: es.VariableDeclaration[] = []
   for (const [invokedFunctionResultVariableName, importSpecifiers] of Object.entries(
     invokedFunctionResultVariableNameToImportSpecifiersMap
   )) {
-    importSpecifiers.forEach((importSpecifier: ImportSpecifier): void => {
+    importSpecifiers.forEach(importSpecifier => {
       let importDeclaration
       switch (importSpecifier.type) {
         case 'ImportSpecifier':
@@ -217,6 +182,8 @@ export const createAccessImportStatements = (
         case 'ImportNamespaceSpecifier':
           // In order to support namespace imports, Source would need to first support objects.
           throw new Error('Namespace imports are not supported.')
+        case 'ExportSpecifier':
+          return
       }
       importDeclarations.push(importDeclaration)
     })
@@ -225,12 +192,12 @@ export const createAccessImportStatements = (
 }
 
 const createReturnListArguments = (
-  exportedNameToIdentifierMap: Record<string, es.Identifier>
+  exportedNameToIdentifierMap: Record<string, es.Expression>
 ): Array<es.Expression | es.SpreadElement> => {
   return Object.entries(exportedNameToIdentifierMap).map(
-    ([exportedName, identifier]: [string, es.Identifier]): es.SimpleCallExpression => {
+    ([exportedName, expr]: [string, es.Identifier]): es.SimpleCallExpression => {
       const head = createLiteral(exportedName)
-      const tail = identifier
+      const tail = expr
       return createPairCallExpression(head, tail)
     }
   )
@@ -289,30 +256,26 @@ const removeModuleDeclarations = (
  */
 export const transformProgramToFunctionDeclaration = (
   program: es.Program,
-  currentFilePath: string
-): es.FunctionDeclaration => {
+  currentFilePath: string,
+): es.FunctionDeclarationWithId => {
   const moduleDeclarations = program.body.filter(isModuleDeclaration)
   const currentDirPath = path.resolve(currentFilePath, '..')
 
   // Create variables to hold the imported statements.
   const invokedFunctionResultVariableNameToImportSpecifiersMap =
     getInvokedFunctionResultVariableNameToImportSpecifiersMap(moduleDeclarations, currentDirPath)
+
   const accessImportStatements = createAccessImportStatements(
     invokedFunctionResultVariableNameToImportSpecifiersMap
   )
 
   // Create the return value of all exports for the function.
-  const exportedNameToIdentifierMap = getExportedNameToIdentifierMap(moduleDeclarations)
-  const defaultExportExpression = getDefaultExportExpression(
-    moduleDeclarations,
-    exportedNameToIdentifierMap
-  )
-  const defaultExport = defaultExportExpression ?? createLiteral(null)
+  const { [defaultExportLookupName]: defaultExport, ...exportExpressions } = getExportExpressions(moduleDeclarations, invokedFunctionResultVariableNameToImportSpecifiersMap)
   const namedExports = createListCallExpression(
-    createReturnListArguments(exportedNameToIdentifierMap)
+    createReturnListArguments(exportExpressions)
   )
   const returnStatement = createReturnStatement(
-    createPairCallExpression(defaultExport, namedExports)
+    createPairCallExpression(defaultExport ?? createLiteral(null), namedExports)
   )
 
   // Assemble the function body.

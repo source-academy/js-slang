@@ -30,6 +30,8 @@ export const isDirective = (node: es.Node): node is es.Directive => {
   return 'directive' in node
 }
 
+export const isExportNamedDeclarationWithSource = (node: es.Node): node is es.ExportNamedDeclarationWithSource => node.type === 'ExportNamedDeclaration' && !!node.source
+
 export const isFunctionNode = (node: es.Node): node is es.FunctionNode =>
   ['ArrowFunctionExpression', 'FunctionExpression', 'FunctionDeclaration'].includes(node.type)
 

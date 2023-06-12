@@ -23,7 +23,18 @@ export type FunctionNode =
   | es.FunctionExpression
   | es.ArrowFunctionExpression
 
+export type FunctionDeclarationWithId = Replace<es.FunctionDeclaration, { id: es.Identifier }>
+export type ClassDeclarationWithId = Replace<es.ClassDeclaration, { id: es.Identifier }>
+
 export type ForStatements = es.ForInStatement | es.ForOfStatement | es.ForStatement
 export type LoopNode = es.WhileStatement | ForStatements
+
+/**
+ * Represents exports of the form `export { a, b } from './a.js';`
+ */
+export type ExportNamedDeclarationWithSource = Replace<es.ExportNamedDeclaration, {
+  declaration: null,
+  source: es.Literal
+}>
 
 export * from 'estree'

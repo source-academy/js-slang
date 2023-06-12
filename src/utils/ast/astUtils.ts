@@ -1,7 +1,6 @@
-import * as es from 'estree'
-
 import assert from '../assert'
 import { isDeclaration } from './typeGuards'
+import type * as es from './types'
 import { recursive } from './walkers'
 
 export function extractIdsFromPattern(pattern: es.Pattern): Set<es.Identifier> {
@@ -38,8 +37,8 @@ export function declarationToExpression({
 }
 
 type Processors<T> = {
-  FunctionDeclaration: (node: es.FunctionDeclaration) => T
-  ClassDeclaration: (node: es.ClassDeclaration) => T
+  FunctionDeclaration: (node: es.FunctionDeclarationWithId) => T
+  ClassDeclaration: (node: es.ClassDeclarationWithId) => T
   Expression: (node: es.Expression) => T
 }
 
@@ -56,7 +55,7 @@ export function processExportDefaultDeclaration<T>(
 
     if (declaration.type === 'FunctionDeclaration') {
       if (declaration.id) {
-        return processors.FunctionDeclaration(declaration)
+        return processors.FunctionDeclaration(declaration as es.FunctionDeclarationWithId)
       }
 
       return processors.Expression({
@@ -66,7 +65,7 @@ export function processExportDefaultDeclaration<T>(
     }
 
     if (declaration.id) {
-      return processors.ClassDeclaration(declaration)
+      return processors.ClassDeclaration(declaration as es.ClassDeclarationWithId)
     }
 
     return processors.Expression({
