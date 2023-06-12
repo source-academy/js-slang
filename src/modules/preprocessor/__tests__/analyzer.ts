@@ -19,7 +19,7 @@ type ErrorInfo = {
   moduleName: string
   symbol?: string
   namespace?: boolean
-} 
+}
 
 async function testCode(
   files: Partial<Record<string, string>>,
@@ -382,14 +382,14 @@ describe('Test throwing import validation errors', () => {
       [
         {
           '/a.js': 'export const a = 0;',
-          '/b.js': 'import * as a from "./a.js"',
+          '/b.js': 'import * as a from "./a.js"'
         },
         '/b.js'
       ],
       [
         {
           '/a.js': 'const a = 0;',
-          '/b.js': 'import * as a from "./a.js"',
+          '/b.js': 'import * as a from "./a.js"'
         },
         '/b.js',
         { line: 1, col: 7, moduleName: '/a.js', namespace: true }
@@ -399,7 +399,7 @@ describe('Test throwing import validation errors', () => {
     testCases('Source imports', [
       [
         {
-          '/a.js': 'import * as bar from "one_module";',
+          '/a.js': 'import * as bar from "one_module";'
         },
         '/a.js'
       ]
@@ -435,10 +435,10 @@ describe('Test throwing import validation errors', () => {
         {
           '/a.js': 'export const a = "a"',
           '/b.js': 'export * from "./a.js"',
-          '/c.js': 'export { a } from "./b.js"',
+          '/c.js': 'export { a } from "./b.js"'
         },
         '/c.js'
-      ],
+      ]
     ])
   })
 
@@ -447,14 +447,14 @@ describe('Test throwing import validation errors', () => {
       [
         {
           '/a.js': 'export const a = "a"',
-          '/b.js': 'export * from "./a.js"',
+          '/b.js': 'export * from "./a.js"'
         },
         '/b.js'
       ],
       [
         {
           '/a.js': 'const a = "a"',
-          '/b.js': 'export * from "./a.js"',
+          '/b.js': 'export * from "./a.js"'
         },
         '/b.js',
         { line: 1, col: 0, moduleName: '/a.js', namespace: true }
@@ -463,10 +463,10 @@ describe('Test throwing import validation errors', () => {
         {
           '/a.js': 'export const a = "a"',
           '/b.js': 'export * from "./a.js"',
-          '/c.js': 'export * from "./b.js"',
+          '/c.js': 'export * from "./b.js"'
         },
         '/c.js'
-      ],
+      ]
     ])
   })
 })
