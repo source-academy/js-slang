@@ -119,7 +119,7 @@ export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
   let valueProduced = false
   for (const command of seq) {
     if (valueProducing(command)) {
-      valueProduced ? result.push(instr.popInstr()) : (valueProduced = true)
+      valueProduced ? result.push(instr.popInstr(command)) : (valueProduced = true)
     }
     result.push(command)
   }

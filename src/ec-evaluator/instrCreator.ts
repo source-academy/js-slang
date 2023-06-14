@@ -19,8 +19,9 @@ import {
   WhileInstr
 } from './types'
 
-export const resetInstr = (): Instr => ({
-  instrType: InstrType.RESET
+export const resetInstr = (srcNode: es.Node): Instr => ({
+  instrType: InstrType.RESET,
+  srcNode
 })
 
 export const whileInstr = (
@@ -74,7 +75,7 @@ export const binOpInstr = (symbol: es.BinaryOperator, srcNode: es.Node): BinOpIn
   srcNode
 })
 
-export const popInstr = (): Instr => ({ instrType: InstrType.POP })
+export const popInstr = (srcNode: es.Node): Instr => ({ instrType: InstrType.POP, srcNode })
 
 export const appInstr = (numOfArgs: number, srcNode: es.CallExpression): AppInstr => ({
   instrType: InstrType.APPLICATION,
@@ -93,46 +94,54 @@ export const branchInstr = (
   srcNode
 })
 
-export const envInstr = (env: Environment): EnvInstr => ({
+export const envInstr = (env: Environment, srcNode: es.Node): EnvInstr => ({
   instrType: InstrType.ENVIRONMENT,
-  env
+  env,
+  srcNode
 })
 
-export const pushUndefIfNeededInstr = (): Instr => ({
-  instrType: InstrType.PUSH_UNDEFINED_IF_NEEDED
+export const pushUndefIfNeededInstr = (srcNode: es.Node): Instr => ({
+  instrType: InstrType.PUSH_UNDEFINED_IF_NEEDED,
+  srcNode
 })
 
-export const arrLitInstr = (arity: number): ArrLitInstr => ({
+export const arrLitInstr = (arity: number, srcNode: es.Node): ArrLitInstr => ({
   instrType: InstrType.ARRAY_LITERAL,
-  arity
+  arity,
+  srcNode
 })
 
-export const arrAccInstr = (): Instr => ({
-  instrType: InstrType.ARRAY_ACCESS
+export const arrAccInstr = (srcNode: es.Node): Instr => ({
+  instrType: InstrType.ARRAY_ACCESS,
+  srcNode
 })
 
-export const arrAssmtInstr = (): Instr => ({
-  instrType: InstrType.ARRAY_ASSIGNMENT
+export const arrAssmtInstr = (srcNode: es.Node): Instr => ({
+  instrType: InstrType.ARRAY_ASSIGNMENT,
+  srcNode
 })
 
-export const markerInstr = (): Instr => ({
-  instrType: InstrType.MARKER
+export const markerInstr = (srcNode: es.Node): Instr => ({
+  instrType: InstrType.MARKER,
+  srcNode
 })
 
-export const contInstr = (): Instr => ({
-  instrType: InstrType.CONTINUE
+export const contInstr = (srcNode: es.Node): Instr => ({
+  instrType: InstrType.CONTINUE,
+  srcNode
 })
 
-export const contMarkerInstr = (): Instr => ({
-  instrType: InstrType.CONTINUE_MARKER
+export const contMarkerInstr = (srcNode: es.Node): Instr => ({
+  instrType: InstrType.CONTINUE_MARKER,
+  srcNode
 })
 
-export const breakInstr = (): Instr => ({
-  instrType: InstrType.BREAK
+export const breakInstr = (srcNode: es.Node): Instr => ({
+  instrType: InstrType.BREAK,
+  srcNode
 })
 
-export const breakMarkerInstr = (): Instr => ({
-  instrType: InstrType.BREAK_MARKER
+export const breakMarkerInstr = (srcNode: es.Node): Instr => ({
+  instrType: InstrType.BREAK_MARKER,
+  srcNode
 })
-
-// export const breakMarkerInstr = (): IInstr => ({ instrType: InstrTypes.BREAK_MARKER })

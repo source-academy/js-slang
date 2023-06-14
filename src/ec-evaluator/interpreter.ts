@@ -20,6 +20,7 @@ import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/astCreator'
+import { dummyStatement } from '../utils/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as instr from './instrCreator'
@@ -70,7 +71,7 @@ export class Agenda extends Stack<AgendaItem> {
   public constructor(program: es.Program) {
     super()
     // Evaluation of last statement is undefined if stash is empty
-    this.push(instr.pushUndefIfNeededInstr())
+    this.push(instr.pushUndefIfNeededInstr(dummyStatement()))
 
     // Load program into agenda stack
     this.push(program)
@@ -290,7 +291,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     // To restore environment after block ends
-    agenda.push(instr.envInstr(currentEnvironment(context)))
+    agenda.push(instr.envInstr(currentEnvironment(context), command))
 
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     // Push the environment only if it is non empty.
@@ -303,7 +304,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   },
 
   WhileStatement: function (command: es.WhileStatement, context: Context, agenda: Agenda) {
-    agenda.push(instr.breakMarkerInstr())
+    agenda.push(instr.breakMarkerInstr(command))
     agenda.push(instr.whileInstr(command.test, command.body, command))
     agenda.push(command.test)
     agenda.push(ast.identifier('undefined')) // Return undefined if there is no loop execution
@@ -367,10 +368,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         )
       )
     } else {
-      agenda.push(instr.breakMarkerInstr())
+      agenda.push(instr.breakMarkerInstr(command))
       agenda.push(instr.forInstr(init, test, update, command.body, command))
       agenda.push(test)
-      agenda.push(instr.popInstr()) // Pop value from init assignment
+      agenda.push(instr.popInstr(command)) // Pop value from init assignment
       agenda.push(init)
       agenda.push(ast.identifier('undefined', command.loc)) // Return undefined if there is no loop execution
     }
@@ -403,7 +404,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Parser enforces initialisation during variable declaration
     const init = declaration.init!
 
-    agenda.push(instr.popInstr())
+    agenda.push(instr.popInstr(command))
     agenda.push(instr.assmtInstr(id.name, command.kind === 'const', true, command))
     agenda.push(init)
   },
@@ -429,7 +430,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   ReturnStatement: function (command: es.ReturnStatement, context: Context, agenda: Agenda) {
     // Push return argument onto agenda as well as Reset Instruction to clear to ignore all statements after the return.
-    agenda.push(instr.resetInstr())
+    agenda.push(instr.resetInstr(command))
     if (command.argument) {
       agenda.push(command.argument)
     }
@@ -441,7 +442,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    agenda.push(instr.contInstr())
+    agenda.push(instr.contInstr(command))
   },
 
   BreakStatement: function (
@@ -450,7 +451,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    agenda.push(instr.breakInstr())
+    agenda.push(instr.breakInstr(command))
   },
   ImportDeclaration: function () {
     throw new Error('Import Declarations should already have been removed.')
@@ -470,7 +471,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda
   ) {
     if (command.left.type === 'MemberExpression') {
-      agenda.push(instr.arrAssmtInstr())
+      agenda.push(instr.arrAssmtInstr(command))
       agenda.push(command.right)
       agenda.push(command.left.property)
       agenda.push(command.left.object)
@@ -485,7 +486,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const elems = command.elements as ContiguousArrayElements
     const len = elems.length
 
-    agenda.push(instr.arrLitInstr(len))
+    agenda.push(instr.arrLitInstr(len, command))
     for (const elem of elems) {
       agenda.push(elem)
     }
@@ -497,7 +498,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    agenda.push(instr.arrAccInstr())
+    agenda.push(instr.arrAccInstr(command))
     agenda.push(command.property)
     agenda.push(command.object)
   },
@@ -581,7 +582,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Keep pushing reset instructions until marker is found.
     const cmdNext: AgendaItem | undefined = agenda.pop()
     if (cmdNext && (isNode(cmdNext) || cmdNext.instrType !== InstrType.MARKER)) {
-      agenda.push(instr.resetInstr())
+      agenda.push(instr.resetInstr(command.srcNode))
     }
   },
 
@@ -602,10 +603,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (test) {
       agenda.push(command)
       agenda.push(command.test)
-      agenda.push(instr.contMarkerInstr())
-      agenda.push(instr.pushUndefIfNeededInstr()) // The loop returns undefined if the stash is empty
+      agenda.push(instr.contMarkerInstr(command.srcNode))
+      agenda.push(instr.pushUndefIfNeededInstr(command.srcNode)) // The loop returns undefined if the stash is empty
       agenda.push(command.body)
-      agenda.push(instr.popInstr()) // Pop previous body value
+      agenda.push(instr.popInstr(command.srcNode)) // Pop previous body value
     }
   },
 
@@ -621,12 +622,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (test) {
       agenda.push(command)
       agenda.push(command.test)
-      agenda.push(instr.popInstr()) // Pop value from update
+      agenda.push(instr.popInstr(command.srcNode)) // Pop value from update
       agenda.push(command.update)
-      agenda.push(instr.contMarkerInstr())
-      agenda.push(instr.pushUndefIfNeededInstr()) // The loop returns undefined if the stash is empty
+      agenda.push(instr.contMarkerInstr(command.srcNode))
+      agenda.push(instr.pushUndefIfNeededInstr(command.srcNode)) // The loop returns undefined if the stash is empty
       agenda.push(command.body)
-      agenda.push(instr.popInstr()) // Pop previous body value
+      agenda.push(instr.popInstr(command.srcNode)) // Pop previous body value
     }
   },
 
@@ -719,13 +720,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const next = agenda.peek()
       if (!next || (!isNode(next) && next.instrType === InstrType.ENVIRONMENT)) {
         // Pushing another Env Instruction would be redundant so only Marker needs to be pushed.
-        agenda.push(instr.markerInstr())
+        agenda.push(instr.markerInstr(command.srcNode))
       } else if (!isNode(next) && next.instrType === InstrType.RESET) {
         // Reset Instruction will be replaced by Reset Instruction of new return statement.
         agenda.pop()
       } else {
-        agenda.push(instr.envInstr(currentEnvironment(context)))
-        agenda.push(instr.markerInstr())
+        agenda.push(instr.envInstr(currentEnvironment(context), command.srcNode))
+        agenda.push(instr.markerInstr(command.srcNode))
       }
       // Create environment for function parameters if the function isn't nullary.
       // Name the environment if the function call expression is not anonymous

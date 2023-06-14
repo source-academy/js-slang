@@ -29,12 +29,12 @@ export enum InstrType {
 
 interface BaseInstr {
   instrType: InstrType
+  srcNode: es.Node
 }
 
 export interface WhileInstr extends BaseInstr {
   test: es.Expression
   body: es.Statement
-  srcNode: es.Node
 }
 
 export interface ForInstr extends BaseInstr {
@@ -42,24 +42,20 @@ export interface ForInstr extends BaseInstr {
   test: es.Expression
   update: es.Expression
   body: es.Statement
-  srcNode: es.Node
 }
 
 export interface AssmtInstr extends BaseInstr {
   symbol: string
   constant: boolean
   declaration: boolean
-  srcNode: es.Node
 }
 
 export interface UnOpInstr extends BaseInstr {
   symbol: es.UnaryOperator
-  srcNode: es.Node
 }
 
 export interface BinOpInstr extends BaseInstr {
   symbol: es.BinaryOperator
-  srcNode: es.Node
 }
 
 export interface AppInstr extends BaseInstr {
@@ -70,7 +66,6 @@ export interface AppInstr extends BaseInstr {
 export interface BranchInstr extends BaseInstr {
   consequent: es.Expression | es.Statement
   alternate: es.Expression | es.Statement | null | undefined
-  srcNode: es.Node
 }
 
 export interface EnvInstr extends BaseInstr {
