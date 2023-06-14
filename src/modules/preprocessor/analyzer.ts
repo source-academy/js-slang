@@ -11,7 +11,7 @@ import { reduceAsync } from '../../utils'
 import ArrayMap from '../../utils/arrayMap'
 import assert from '../../utils/assert'
 import * as create from '../../utils/ast/astCreator'
-import { extractIdsFromPattern } from '../../utils/ast/astUtils'
+import { extractIdsFromPattern, processExportNamedDeclaration } from '../../utils/ast/astUtils'
 import { isSourceImport } from '../../utils/ast/typeGuards'
 import type * as es from '../../utils/ast/types'
 import { memoizedGetModuleDocsAsync } from '../moduleLoaderAsync'
@@ -102,7 +102,7 @@ const validateNamespaceImport = (
 
 /**
  * Check for undefined imports, and also for symbols that have multiple export
- * definitions
+ * definitions, and also resolve export and import directives to their sources
  */
 export default async function analyzeImportsAndExports(
   programs: Record<string, es.Program>,
@@ -111,10 +111,29 @@ export default async function analyzeImportsAndExports(
 ) {
   const exportMap: Record<string, ExportSourceMap> = {}
 
+  /**
+    The idea behind this function is to resolve indirect exports
+    For example
+    ```
+    // a.js
+    export const a = "a";
+    // b.js
+    export { a as b } from './a.js'
+    ```
+
+    We want to change the following import statement `import { b } from './b.js'` to
+    `import { a } from './a.js', since the `export` declaration in `b.js` just serves
+    as a redirection and doesn't affect code behaviour
+   */
   function resolveSymbol(source: string, desiredSymbol: string): [string, string] {
     let symbolName: string
     let newSource: string
     let loc: es.SourceLocation
+
+      // So for each exported symbol, we return the path to the file where it is actually
+      // defined and the name it was defined with (since exports can have aliases)
+      // Kind of like a UFDS, where the roots of each set are symbols that are defined within
+      // its own file, or imports from Source modules
 
       // eslint-disable-next-line prefer-const
     ;({ source: newSource, symbolName, loc } = exportMap[source].get(desiredSymbol)!)
@@ -124,7 +143,9 @@ export default async function analyzeImportsAndExports(
     return [newSource, symbolName]
   }
 
-  const getDocs = async (node: es.ModuleDeclarationWithSource): Promise<[ExportSymbolsRecord, string]> => {
+  const getDocs = async (
+    node: es.ModuleDeclarationWithSource
+  ): Promise<[ExportSymbolsRecord, string]> => {
     const path = node.source!.value as string
 
     if (allowUndefinedImports) {
@@ -137,11 +158,15 @@ export default async function analyzeImportsAndExports(
         set: () => {},
         keys: () => ['']
       }
+
+      // When undefined imports are allowed, we substitute the list of exported
+      // symbols for an object that behaves like a set but always returns true when
+      // `has` is queried
       return [
         {
           has: () => true,
           [Symbol.iterator]: () => ({ next: () => ({ done: true, value: null }) }),
-          size: 9999,
+          size: 9999
         },
         path
       ]
@@ -235,62 +260,74 @@ export default async function analyzeImportsAndExports(
             return [...body, node]
           }
           case 'ExportNamedDeclaration': {
-            if (node.declaration) {
-              if (node.declaration.type === 'VariableDeclaration') {
-                for (const declaration of node.declaration.declarations) {
-                  extractIdsFromPattern(declaration.id).forEach(id => {
-                    exportedSymbols.add(id.name, {
+            return await processExportNamedDeclaration(node, {
+              withVarDecl: async ({ declarations }) => {
+                for (const { id } of declarations) {
+                  extractIdsFromPattern(id).forEach(({ name }) => {
+                    exportedSymbols.add(name, {
                       source: moduleName,
-                      symbolName: id.name,
+                      symbolName: name,
                       loc: id.loc!
                     })
                   })
                 }
-              } else {
-                exportedSymbols.add(node.declaration.id!.name, {
+                return [...body, node]
+              },
+              withFunction: async ({ id: { name } }) => {
+                exportedSymbols.add(name, {
                   source: moduleName,
-                  symbolName: node.declaration.id!.name,
-                  loc: node.declaration.loc!
+                  symbolName: name,
+                  loc: node.loc!
                 })
+                return [...body, node]
+              },
+              withClass: async ({ id: { name } }) => {
+                exportedSymbols.add(name, {
+                  source: moduleName,
+                  symbolName: name,
+                  loc: node.loc!
+                })
+                return [...body, node]
+              },
+              localExports: async ({ specifiers }) => {
+                specifiers.forEach(spec =>
+                  exportedSymbols.add(spec.exported.name, {
+                    source: moduleName,
+                    symbolName: spec.local.name,
+                    loc: spec.loc!
+                  })
+                )
+                return [...body, node]
+              },
+              withSource: async node => {
+                const [exports, source] = await getDocs(node)
+                const newDecls = node.specifiers.map(spec => {
+                  if (!allowUndefinedImports) validateImport(spec, source, exports)
+
+                  const [newSource, symbolName] = resolveSymbol(source, spec.local.name)
+                  exportedSymbols.add(spec.exported.name, {
+                    source: newSource,
+                    symbolName,
+                    loc: spec.loc!
+                  })
+
+                  const newDecl: es.ExportNamedDeclarationWithSource = {
+                    type: 'ExportNamedDeclaration',
+                    declaration: null,
+                    source: create.literal(newSource),
+                    specifiers: [
+                      {
+                        type: 'ExportSpecifier',
+                        exported: spec.exported,
+                        local: create.identifier(symbolName)
+                      }
+                    ]
+                  }
+                  return newDecl
+                })
+                return [...body, ...newDecls]
               }
-              return [...body, node]
-            } else if (!node.source) {
-              node.specifiers.forEach(spec =>
-                exportedSymbols.add(spec.exported.name, {
-                  source: moduleName,
-                  symbolName: spec.local.name,
-                  loc: spec.loc!
-                })
-              )
-              return [...body, node]
-            } else {
-              const [exports, source] = await getDocs(node)
-              const newDecls = node.specifiers.map(spec => {
-                if (!allowUndefinedImports) validateImport(spec, source, exports)
-
-                const [newSource, symbolName] = resolveSymbol(source, spec.local.name)
-                exportedSymbols.add(spec.exported.name, {
-                  source: newSource,
-                  symbolName,
-                  loc: spec.loc!
-                })
-
-                const newDecl: es.ExportNamedDeclarationWithSource = {
-                  type: 'ExportNamedDeclaration',
-                  declaration: null,
-                  source: create.literal(newSource),
-                  specifiers: [
-                    {
-                      type: 'ExportSpecifier',
-                      exported: spec.exported,
-                      local: create.identifier(symbolName)
-                    }
-                  ]
-                }
-                return newDecl
-              })
-              return [...body, ...newDecls]
-            }
+            })
           }
           case 'ExportAllDeclaration': {
             if (node.exported) {

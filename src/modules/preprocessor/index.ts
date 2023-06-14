@@ -4,7 +4,12 @@ import { parse } from '../../parser/parser'
 import type { AcornOptions } from '../../parser/types'
 import type { Context } from '../../types'
 import assert from '../../utils/assert'
-import { isIdentifier, isModuleDeclaration, isSourceImport } from '../../utils/ast/typeGuards'
+import {
+  isIdentifier,
+  isModuleDeclaration,
+  isModuleDeclarationWithSource,
+  isSourceImport
+} from '../../utils/ast/typeGuards'
 import type * as es from '../../utils/ast/types'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
 import type { ImportResolutionOptions } from '../moduleTypes'
@@ -63,7 +68,7 @@ export const parseProgramsAndConstructImportGraph = async (
     let source: string
     if (node) {
       assert(
-        typeof node.source?.value === 'string',
+        typeof node.source.value === 'string',
         `${node.type} should have a source of type string, got ${node.source}`
       )
       source = node.source.value
@@ -116,24 +121,17 @@ export const parseProgramsAndConstructImportGraph = async (
     programs[currentFilePath] = program
 
     for (const node of program.body) {
-      switch (node.type) {
-        case 'ExportNamedDeclaration': {
-          if (!node.source) continue
-        }
-        case 'ExportAllDeclaration':
-        case 'ImportDeclaration': {
-          const modAbsPath = await resolve(currentFilePath, node)
-          if (modAbsPath === currentFilePath) {
-            throw new CircularImportError([modAbsPath, currentFilePath])
-          }
+      if (!isModuleDeclarationWithSource(node)) continue
 
-          dependencies.add(modAbsPath)
-
-          // Replace the source of the node with the resolved path
-          node.source!.value = modAbsPath
-          break
-        }
+      const modAbsPath = await resolve(currentFilePath, node)
+      if (modAbsPath === currentFilePath) {
+        throw new CircularImportError([modAbsPath, currentFilePath])
       }
+
+      dependencies.add(modAbsPath)
+
+      // Replace the source of the node with the resolved path
+      node.source.value = modAbsPath
     }
 
     await Promise.all(

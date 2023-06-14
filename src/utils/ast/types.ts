@@ -9,7 +9,6 @@ export type ImportSpecifiers =
   | es.ImportSpecifier
   | es.ImportDefaultSpecifier
   | es.ImportNamespaceSpecifier
-export type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
 export type BlockArrowFunctionExpression = Replace<
   es.ArrowFunctionExpression,
   {
@@ -29,6 +28,32 @@ export type ClassDeclarationWithId = Replace<es.ClassDeclaration, { id: es.Ident
 export type ForStatements = es.ForInStatement | es.ForOfStatement | es.ForStatement
 export type LoopNode = es.WhileStatement | ForStatements
 
+export type ExportNamedVariableDeclaration = Replace<
+  es.ExportNamedDeclaration,
+  {
+    declaration: es.VariableDeclaration
+    source: null
+    specifiers: never[]
+  }
+>
+
+export type ExportNamedFunctionDeclaration = Replace<
+  es.ExportNamedDeclaration,
+  {
+    declaration: FunctionDeclarationWithId
+    source: null
+    specifiers: never[]
+  }
+>
+
+export type ExportNamedLocalDeclaration = Replace<
+  es.ExportNamedDeclaration,
+  {
+    source: null
+    declaration: null
+  }
+>
+
 /**
  * Represents exports of the form `export { a, b } from './a.js';`
  */
@@ -39,5 +64,10 @@ export type ExportNamedDeclarationWithSource = Replace<
     source: es.Literal
   }
 >
+
+export type ModuleDeclarationWithSource =
+  | es.ImportDeclaration
+  | es.ExportAllDeclaration
+  | ExportNamedDeclarationWithSource
 
 export * from 'estree'

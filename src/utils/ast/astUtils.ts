@@ -29,14 +29,14 @@ export function declarationToExpression(node: es.FunctionDeclaration): es.Functi
 export function declarationToExpression({
   type,
   ...node
-}: es.FunctionDeclaration | es.ClassDeclaration): es.FunctionExpression | es.ClassExpression {
+}: es.FunctionDeclaration | es.ClassDeclaration) {
   return {
     ...node,
     type: type === 'FunctionDeclaration' ? 'FunctionExpression' : 'ClassExpression'
   } as es.FunctionExpression | es.ClassExpression
 }
 
-type Processors<T> = {
+type ExportDefaultProcessors<T> = {
   FunctionDeclaration: (node: es.FunctionDeclarationWithId) => T
   ClassDeclaration: (node: es.ClassDeclarationWithId) => T
   Expression: (node: es.Expression) => T
@@ -44,7 +44,7 @@ type Processors<T> = {
 
 export function processExportDefaultDeclaration<T>(
   node: es.ExportDefaultDeclaration,
-  processors: Processors<T>
+  processors: ExportDefaultProcessors<T>
 ) {
   if (isDeclaration(node.declaration)) {
     const declaration = node.declaration
@@ -75,4 +75,32 @@ export function processExportDefaultDeclaration<T>(
   }
 
   return processors.Expression(node.declaration)
+}
+
+type ExportNamedProcessors<T> = {
+  withVarDecl: (node: es.VariableDeclaration) => T
+  withClass: (node: es.ClassDeclarationWithId) => T
+  withFunction: (node: es.FunctionDeclarationWithId) => T
+  localExports: (node: es.ExportNamedLocalDeclaration) => T
+  withSource: (node: es.ExportNamedDeclarationWithSource) => T
+}
+
+export function processExportNamedDeclaration<T>(
+  node: es.ExportNamedDeclaration,
+  processors: ExportNamedProcessors<T>
+) {
+  if (node.declaration) {
+    switch (node.declaration.type) {
+      case 'VariableDeclaration':
+        return processors.withVarDecl(node.declaration)
+      case 'FunctionDeclaration':
+        return processors.withFunction(node.declaration as es.FunctionDeclarationWithId)
+      case 'ClassDeclaration':
+        return processors.withClass(node.declaration as es.ClassDeclarationWithId)
+    }
+  } else if (node.source) {
+    return processors.withSource(node as es.ExportNamedDeclarationWithSource)
+  } else {
+    return processors.localExports(node as es.ExportNamedLocalDeclaration)
+  }
 }

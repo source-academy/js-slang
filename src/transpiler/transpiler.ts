@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
-import * as es from 'estree'
 import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
@@ -10,7 +9,8 @@ import { ImportTransformOptions } from '../modules/moduleTypes'
 import { transformImportNodesAsync } from '../modules/utils'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
-import { isImportDeclaration } from '../utils/ast/typeGuards'
+import { isImportDeclaration, isLoop } from '../utils/ast/typeGuards'
+import type * as es from '../utils/ast/types'
 import { simple } from '../utils/ast/walkers'
 import {
   getIdentifiersInNativeStorage,
@@ -104,39 +104,26 @@ export async function transformImportDeclarations(
   return [prefix.join('\n'), declNodes, otherNodes]
 }
 
-export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
-  return program.body
-    .filter(statement => statement.type === 'VariableDeclaration')
-    .map(
-      ({
-        declarations: {
-          0: { id }
-        },
-        kind
-      }: es.VariableDeclaration) => (id as es.Identifier).name
+export const getGloballyDeclaredIdentifiers = (program: es.Program) =>
+  program.body
+    .filter(
+      (statement): statement is es.VariableDeclaration => statement.type === 'VariableDeclaration'
     )
-}
+    .map(({ declarations: [{ id }] }) => (id as es.Identifier).name)
 
-export function getBuiltins(nativeStorage: NativeStorage): es.Statement[] {
-  const builtinsStatements: es.Statement[] = []
-  nativeStorage.builtins.forEach((_unused, name: string) => {
-    builtinsStatements.push(
-      create.declaration(
-        name,
-        'const',
-        create.callExpression(
-          create.memberExpression(
-            create.memberExpression(create.identifier(NATIVE_STORAGE_ID), 'builtins'),
-            'get'
-          ),
-          [create.literal(name)]
-        )
+export const getBuiltins = (nativeStorage: NativeStorage) =>
+  Array.from(nativeStorage.builtins.keys()).map(name =>
+    create.constantDeclaration(
+      name,
+      create.callExpression(
+        create.memberExpression(
+          create.memberExpression(create.identifier(NATIVE_STORAGE_ID), 'builtins'),
+          'get'
+        ),
+        [create.literal(name)]
       )
     )
-  })
-
-  return builtinsStatements
-}
+  )
 
 export function evallerReplacer(
   nativeStorageId: NativeIds['native'],
@@ -250,8 +237,9 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
           expression.loc
         )
       case 'CallExpression':
-        expression = expression as es.CallExpression
-        const { line, column } = (expression.loc ?? UNKNOWN_LOCATION).start
+        const {
+          start: { line, column }
+        } = expression.loc ?? UNKNOWN_LOCATION
         const source = expression.loc?.source ?? null
         const functionName =
           expression.callee.type === 'Identifier' ? expression.callee.name : '<anonymous>'
@@ -290,7 +278,9 @@ function transformReturnStatementsToAllowProperTailCalls(program: es.Program) {
 function transformCallExpressionsToCheckIfFunction(program: es.Program, globalIds: NativeIds) {
   simple(program, {
     CallExpression(node: es.CallExpression) {
-      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
+      const {
+        start: { line, column }
+      } = node.loc ?? UNKNOWN_LOCATION
       const source = node.loc?.source ?? null
       const args = node.arguments
 
@@ -445,7 +435,9 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
 ) {
   simple(program, {
     BinaryExpression(node: es.BinaryExpression) {
-      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
+      const {
+        start: { line, column }
+      } = node.loc ?? UNKNOWN_LOCATION
       const source = node.loc?.source ?? null
       const { operator, left, right } = node
       create.mutateToCallExpression(node, globalIds.binaryOp, [
@@ -459,9 +451,11 @@ function transformUnaryAndBinaryOperationsToFunctionCalls(
       ])
     },
     UnaryExpression(node: es.UnaryExpression) {
-      const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
+      const {
+        start: { line, column }
+      } = node.loc ?? UNKNOWN_LOCATION
       const source = node.loc?.source ?? null
-      const { operator, argument } = node as es.UnaryExpression
+      const { operator, argument } = node
       create.mutateToCallExpression(node, globalIds.unaryOp, [
         create.literal(operator),
         argument,
@@ -482,7 +476,9 @@ function transformPropertyAssignment(program: es.Program, globalIds: NativeIds) 
     AssignmentExpression(node: es.AssignmentExpression) {
       if (node.left.type === 'MemberExpression') {
         const { object, property, computed, loc } = node.left
-        const { line, column } = (loc ?? UNKNOWN_LOCATION).start
+        const {
+          start: { line, column }
+        } = loc ?? UNKNOWN_LOCATION
         const source = loc?.source ?? null
         create.mutateToCallExpression(node, globalIds.setProp, [
           object as es.Expression,
@@ -501,7 +497,9 @@ function transformPropertyAccess(program: es.Program, globalIds: NativeIds) {
   simple(program, {
     MemberExpression(node: es.MemberExpression) {
       const { object, property, computed, loc } = node
-      const { line, column } = (loc ?? UNKNOWN_LOCATION).start
+      const {
+        start: { line, column }
+      } = loc ?? UNKNOWN_LOCATION
       const source = loc?.source ?? null
       create.mutateToCallExpression(node, globalIds.getProp, [
         object as es.Expression,
@@ -524,11 +522,13 @@ function addInfiniteLoopProtection(
   function instrumentLoops(node: es.Program | es.BlockStatement) {
     const newStatements = []
     for (const statement of node.body) {
-      if (statement.type === 'ForStatement' || statement.type === 'WhileStatement') {
+      if (isLoop(statement)) {
         const startTimeConst = getUniqueId(usedIdentifiers, 'startTime')
         newStatements.push(create.constantDeclaration(startTimeConst, getTimeAst()))
         if (statement.body.type === 'BlockStatement') {
-          const { line, column } = (statement.loc ?? UNKNOWN_LOCATION).start
+          const {
+            start: { line, column }
+          } = statement.loc ?? UNKNOWN_LOCATION
           const source = statement.loc?.source ?? null
           statement.body.body.unshift(
             create.expressionStatement(

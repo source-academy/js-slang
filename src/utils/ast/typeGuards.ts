@@ -30,11 +30,6 @@ export const isDirective = (node: es.Node): node is es.Directive => {
   return 'directive' in node
 }
 
-export const isExportNamedDeclarationWithSource = (
-  node: es.Node
-): node is es.ExportNamedDeclarationWithSource =>
-  node.type === 'ExportNamedDeclaration' && !!node.source
-
 export const isFunctionNode = (node: es.Node): node is es.FunctionNode =>
   ['ArrowFunctionExpression', 'FunctionExpression', 'FunctionDeclaration'].includes(node.type)
 
@@ -53,6 +48,20 @@ export const isModuleDeclaration = (node: es.Node): node is es.ModuleDeclaration
     'ExportDefaultDeclaration',
     'ExportAllDeclaration'
   ].includes(node.type)
+}
+
+export const isModuleDeclarationWithSource = (
+  node: es.Node
+): node is es.ModuleDeclarationWithSource => {
+  switch (node.type) {
+    case 'ExportNamedDeclaration':
+      return !!node.source
+    case 'ExportAllDeclaration':
+    case 'ImportDeclaration':
+      return true
+    default:
+      return false
+  }
 }
 
 export const isStatement = (
