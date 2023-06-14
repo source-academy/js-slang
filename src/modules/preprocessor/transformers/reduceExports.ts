@@ -5,7 +5,7 @@ import type * as es from '../../../utils/ast/types'
 export default function reduceExports(programs: Record<string, es.Program>, topoOrder: string[]) {
   const exportMap = topoOrder.reduce((res, moduleName) => {
     const program = programs[moduleName]
-    const exportedSymbols = new Map<string, { source: string, symbolName: string }>()
+    const exportedSymbols = new Map<string, { source: string; symbolName: string }>()
 
     program.body.forEach(node => {
       switch (node.type) {
@@ -17,7 +17,9 @@ export default function reduceExports(programs: Record<string, es.Program>, topo
           if (node.declaration) {
             if (node.declaration.type === 'VariableDeclaration') {
               node.declaration.declarations.forEach(({ id }) => {
-                extractIdsFromPattern(id).forEach(({ name }) => exportedSymbols.set(name, { source: moduleName, symbolName: name }))
+                extractIdsFromPattern(id).forEach(({ name }) =>
+                  exportedSymbols.set(name, { source: moduleName, symbolName: name })
+                )
               })
               break
             }
@@ -39,17 +41,15 @@ export default function reduceExports(programs: Record<string, es.Program>, topo
       ...res,
       [moduleName]: exportedSymbols
     }
-  }, {} as Record<string, Map<string, { source: string, symbolName: string }>>)
+  }, {} as Record<string, Map<string, { source: string; symbolName: string }>>)
 
-  // Implement this using UFDS?
   function resolveSymbol(source: string, desiredSymbol: string): [string, string] {
     let symbolName: string
     let newSource: string
     ;({ source: newSource, symbolName } = exportMap[source].get(desiredSymbol)!)
     if (isSourceImport(source) || newSource === source) return [newSource, symbolName]
-
-    ;([newSource, symbolName] = resolveSymbol(newSource, symbolName))
-    exportMap[source].set(desiredSymbol, { source: newSource, symbolName})
+    ;[newSource, symbolName] = resolveSymbol(newSource, symbolName)
+    exportMap[source].set(desiredSymbol, { source: newSource, symbolName })
     return [newSource, symbolName]
   }
 
@@ -69,14 +69,16 @@ export default function reduceExports(programs: Record<string, es.Program>, topo
                 type: 'Literal',
                 value: newSource
               },
-              specifiers: [{
-                type: 'ExportSpecifier',
-                exported: spec.exported,
-                local: {
-                  type: 'Identifier',
-                  name: newSymbol
+              specifiers: [
+                {
+                  type: 'ExportSpecifier',
+                  exported: spec.exported,
+                  local: {
+                    type: 'Identifier',
+                    name: newSymbol
+                  }
                 }
-              }]
+              ]
             }
             return newDecl
           })
@@ -85,24 +87,28 @@ export default function reduceExports(programs: Record<string, es.Program>, topo
         case 'ImportDeclaration': {
           const source = node.source.value as string
           const decls = node.specifiers.map(spec => {
-            if (spec.type === 'ImportNamespaceSpecifier') throw new Error('ImportNamespaceSpecifier Not supported!')
+            if (spec.type === 'ImportNamespaceSpecifier')
+              throw new Error('ImportNamespaceSpecifier Not supported!')
 
-            const desiredSymbol = spec.type === 'ImportDefaultSpecifier' ? 'default' : spec.imported.name
+            const desiredSymbol =
+              spec.type === 'ImportDefaultSpecifier' ? 'default' : spec.imported.name
             const [newSource, newSymbol] = resolveSymbol(source, desiredSymbol)
             const newDecl: es.ImportDeclaration = {
               type: 'ImportDeclaration',
               source: {
                 type: 'Literal',
-                value: newSource,
+                value: newSource
               },
-              specifiers: [{
-                type: 'ImportSpecifier',
-                imported: {
-                  type: 'Identifier',
-                  name: newSymbol,
-                },
-                local: spec.local
-              }]
+              specifiers: [
+                {
+                  type: 'ImportSpecifier',
+                  imported: {
+                    type: 'Identifier',
+                    name: newSymbol
+                  },
+                  local: spec.local
+                }
+              ]
             }
             return newDecl
           })

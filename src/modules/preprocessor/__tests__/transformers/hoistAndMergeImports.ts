@@ -31,7 +31,7 @@ describe('hoistAndMergeImports', () => {
       throw parseCodeError
     }
 
-    hoistAndMergeImports(program, [program])
+    hoistAndMergeImports(program, { '': program })
     expect(generate(program)).toMatchSnapshot()
   }
 

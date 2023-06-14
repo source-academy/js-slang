@@ -18,22 +18,20 @@ import {
  * directory. If such a functionality is required, this function will
  * need to be modified.
  *
- * @param program The AST which should have its ImportDeclaration nodes
- *                hoisted & duplicate imports merged.
+ * @param outputProgram The AST which should have its ImportDeclaration nodes
+ *                      hoisted & duplicate imports merged.
  */
-export default function hoistAndMergeImports(program: es.Program, programs: Record<string, es.Program>, topoOrder: string[]) {
-  // There are two kinds of declarations we need to deal with
-  // 1. ImportDeclarations that import from source modules
-  // 2. ExportNamedDeclarations that import from source modules 
-
+export default function hoistAndMergeImports(
+  outputProgram: es.Program,
+  programs: Record<string, es.Program>
+) {
   const importsToSpecifiers = new Map<
     string,
     { namespaceSymbols: Set<string>; imports: Map<string, Set<string>> }
   >()
-  
+
   // Now we go over the programs again
-  topoOrder.forEach(moduleName => {
-    const program = programs[moduleName]
+  Object.values(programs).forEach(program => {
     program.body.forEach(node => {
       if (!isImportDeclaration(node)) return
 
@@ -121,5 +119,5 @@ export default function hoistAndMergeImports(program: es.Program, programs: Reco
       return output
     }
   )
-  program.body = [...importDeclarations, ...program.body]
+  outputProgram.body = [...importDeclarations, ...outputProgram.body]
 }

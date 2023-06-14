@@ -164,6 +164,8 @@ async function runNative(
       options.importOptions
     ))
 
+    // if (!options.isPrelude) console.log(transpiled)
+
     if (options.logTranspilerOutput) console.log(transpiled)
     let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 

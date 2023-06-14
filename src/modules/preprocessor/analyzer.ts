@@ -1,3 +1,4 @@
+import { UNKNOWN_LOCATION } from '../../constants'
 import {
   ModuleInternalError,
   ReexportDefaultError,
@@ -6,17 +7,55 @@ import {
   UndefinedImportError,
   UndefinedNamespaceImportError
 } from '../../modules/errors'
+import { reduceAsync } from '../../utils'
 import ArrayMap from '../../utils/arrayMap'
 import assert from '../../utils/assert'
+import * as create from '../../utils/ast/astCreator'
 import { extractIdsFromPattern } from '../../utils/ast/astUtils'
 import { isSourceImport } from '../../utils/ast/typeGuards'
 import type * as es from '../../utils/ast/types'
 import { memoizedGetModuleDocsAsync } from '../moduleLoaderAsync'
 
+type ExportRecord = {
+  /**
+   * The name of the symbol defined by its source
+   */
+  symbolName: string
+
+  /**
+   * The actual source in which the symbol is defined
+   */
+  source: string
+
+  loc: es.SourceLocation
+}
+
+/**
+ * An abstraction of the `Set<string>` type. When `allowUndefinedImports` is true,
+ * the set is replaced with an object that will never throw an error for any kind
+ * of imported symbol
+ */
+type ExportSymbolsRecord = {
+  has: (symbol: string) => boolean
+  readonly size: number
+  [Symbol.iterator]: () => Iterator<string>
+}
+
+/**
+ * An abstraction of the `Map<string, ExportRecord>` type. When `allowUndefinedImports` is true,
+ * the set is replaced with an object that will ensure no errors are thrown for any kind
+ * of imported symbol
+ */
+type ExportSourceMap = {
+  get: (symbol: string) => ExportRecord | undefined
+  set: (symbol: string, value: ExportRecord) => void
+  keys: () => Iterable<string>
+}
+
 const validateDefaultImport = (
   spec: es.ImportDefaultSpecifier | es.ExportSpecifier | es.ImportSpecifier,
   sourcePath: string,
-  modExported: Set<string>
+  modExported: ExportSymbolsRecord
 ) => {
   if (!modExported.has('default')) {
     throw new UndefinedDefaultImportError(sourcePath, spec)
@@ -24,11 +63,26 @@ const validateDefaultImport = (
 }
 
 const validateImport = (
-  spec: es.ImportSpecifier | es.ExportSpecifier,
+  spec: es.ImportSpecifier | es.ImportDefaultSpecifier | es.ExportSpecifier,
   sourcePath: string,
-  modExported: Set<string>
+  modExported: ExportSymbolsRecord
 ) => {
-  const symbol = spec.type === 'ImportSpecifier' ? spec.imported.name : spec.local.name
+  let symbol: string
+  switch (spec.type) {
+    case 'ExportSpecifier': {
+      symbol = spec.local.name
+      break
+    }
+    case 'ImportSpecifier': {
+      symbol = spec.imported.name
+      break
+    }
+    case 'ImportDefaultSpecifier': {
+      symbol = 'default'
+      break
+    }
+  }
+
   if (symbol === 'default') {
     validateDefaultImport(spec, sourcePath, modExported)
   } else if (!modExported.has(symbol)) {
@@ -39,7 +93,7 @@ const validateImport = (
 const validateNamespaceImport = (
   spec: es.ImportNamespaceSpecifier | es.ExportAllDeclaration,
   sourcePath: string,
-  modExported: Set<string>
+  modExported: ExportSymbolsRecord
 ) => {
   if (modExported.size === 0) {
     throw new UndefinedNamespaceImportError(sourcePath, spec)
@@ -50,115 +104,241 @@ const validateNamespaceImport = (
  * Check for undefined imports, and also for symbols that have multiple export
  * definitions
  */
-export default async function checkForUndefinedImportsAndReexports(
+export default async function analyzeImportsAndExports(
   programs: Record<string, es.Program>,
   topoOrder: string[],
   allowUndefinedImports: boolean
 ) {
-  const moduleDocs: Record<string, Set<string>> = {}
+  const exportMap: Record<string, ExportSourceMap> = {}
 
-  const getDocs = async (node: es.ModuleDeclarationWithSource): Promise<[Set<string>, string]> => {
+  function resolveSymbol(source: string, desiredSymbol: string): [string, string] {
+    let symbolName: string
+    let newSource: string
+    let loc: es.SourceLocation
+
+      // eslint-disable-next-line prefer-const
+    ;({ source: newSource, symbolName, loc } = exportMap[source].get(desiredSymbol)!)
+    if (isSourceImport(source) || newSource === source) return [newSource, symbolName]
+    ;[newSource, symbolName] = resolveSymbol(newSource, symbolName)
+    exportMap[source].set(desiredSymbol, { source: newSource, symbolName, loc })
+    return [newSource, symbolName]
+  }
+
+  const getDocs = async (node: es.ModuleDeclarationWithSource): Promise<[ExportSymbolsRecord, string]> => {
     const path = node.source!.value as string
-    if (!(path in moduleDocs)) {
+
+    if (allowUndefinedImports) {
+      exportMap[path] = {
+        get: (symbol: string) => ({
+          source: path,
+          symbolName: symbol,
+          loc: UNKNOWN_LOCATION
+        }),
+        set: () => {},
+        keys: () => ['']
+      }
+      return [
+        {
+          has: () => true,
+          [Symbol.iterator]: () => ({ next: () => ({ done: true, value: null }) }),
+          size: 9999,
+        },
+        path
+      ]
+    }
+
+    if (!(path in exportMap)) {
       // Because modules are loaded in topological order, the exported symbols for a local
       // module should be loaded by the time they are needed
       // So we can assume that it is the documentation for a Source module that needs to be
       // loaded here
       assert(
         isSourceImport(path),
-        'Local modules should already have been loaded in topological order'
+        `Trying to load: ${path}, local modules should already have been loaded in topological order`
       )
 
       const docs = await memoizedGetModuleDocsAsync(path)
       if (!docs) {
         throw new ModuleInternalError(path, `Failed to load documentation for ${path}`)
       }
-      moduleDocs[path] = new Set(Object.keys(docs))
+      exportMap[path] = new Map(
+        Object.keys(docs).map(symbol => [
+          symbol,
+          { source: path, symbolName: symbol, loc: UNKNOWN_LOCATION }
+        ])
+      )
     }
-    return [moduleDocs[path], path]
+    return [new Set(exportMap[path].keys()), path]
   }
 
-  for (const name of topoOrder) {
-    const program = programs[name]
-    const exportedSymbols = new ArrayMap<string, es.ExportSpecifier | es.ExportDeclaration>()
-    for (const node of program.body) {
-      switch (node.type) {
-        case 'ImportDeclaration': {
-          if (allowUndefinedImports) continue
-          const [exports, source] = await getDocs(node)
+  const newImportDeclaration = (
+    source: string,
+    local: es.Identifier,
+    imported: string
+  ): es.ImportDeclaration => ({
+    type: 'ImportDeclaration',
+    source: create.literal(source),
+    specifiers: [
+      imported === 'default'
+        ? {
+            type: 'ImportDefaultSpecifier',
+            local
+          }
+        : {
+            type: 'ImportSpecifier',
+            local,
+            imported: create.identifier(imported)
+          }
+    ]
+  })
 
-          node.specifiers.forEach(spec => {
-            switch (spec.type) {
-              case 'ImportSpecifier': {
-                validateImport(spec, source, exports)
-                break
+  const newPrograms: Record<string, es.Program> = {}
+  for (const moduleName of topoOrder) {
+    const program = programs[moduleName]
+    const exportedSymbols = new ArrayMap<string, ExportRecord>()
+
+    const newBody = await reduceAsync(
+      program.body,
+      async (body, node) => {
+        switch (node.type) {
+          case 'ImportDeclaration': {
+            const [exports, source] = await getDocs(node)
+            const newDecls = node.specifiers.map(spec => {
+              switch (spec.type) {
+                case 'ImportDefaultSpecifier':
+                case 'ImportSpecifier': {
+                  if (!allowUndefinedImports) validateImport(spec, source, exports)
+
+                  const desiredSymbol =
+                    spec.type === 'ImportSpecifier' ? spec.imported.name : 'default'
+                  const [newSource, symbolName] = resolveSymbol(source, desiredSymbol)
+                  return newImportDeclaration(newSource, spec.local, symbolName)
+                }
+                case 'ImportNamespaceSpecifier': {
+                  throw new Error('Namespace imports are not supported!')
+                  // validateNamespaceImport(spec, source, exports)
+                  // return {
+                  //   ...node,
+                  //   specifiers: [spec]
+                  // }
+                }
               }
-              case 'ImportDefaultSpecifier': {
-                validateDefaultImport(spec, source, exports)
-                break
-              }
-              case 'ImportNamespaceSpecifier': {
-                validateNamespaceImport(spec, source, exports)
-                break
-              }
-            }
-          })
-          break
-        }
-        case 'ExportAllDeclaration': {
-          const [exports, source] = await getDocs(node)
-          if (!allowUndefinedImports) {
-            validateNamespaceImport(node, source, exports)
+            })
+            return [...body, ...newDecls]
           }
-          if (node.exported) {
-            exportedSymbols.add(node.exported.name, node)
-          } else {
-            exports.forEach(symbol => exportedSymbols.add(symbol, node))
+          case 'ExportDefaultDeclaration': {
+            exportedSymbols.add('default', {
+              source: moduleName,
+              symbolName: 'default',
+              loc: node.loc!
+            })
+            return [...body, node]
           }
-          break
-        }
-        case 'ExportDefaultDeclaration': {
-          exportedSymbols.add('default', node)
-          break
-        }
-        case 'ExportNamedDeclaration': {
-          if (node.declaration) {
-            if (node.declaration.type === 'VariableDeclaration') {
-              for (const declaration of node.declaration.declarations) {
-                extractIdsFromPattern(declaration.id).forEach(id => {
-                  exportedSymbols.add(id.name, node)
+          case 'ExportNamedDeclaration': {
+            if (node.declaration) {
+              if (node.declaration.type === 'VariableDeclaration') {
+                for (const declaration of node.declaration.declarations) {
+                  extractIdsFromPattern(declaration.id).forEach(id => {
+                    exportedSymbols.add(id.name, {
+                      source: moduleName,
+                      symbolName: id.name,
+                      loc: id.loc!
+                    })
+                  })
+                }
+              } else {
+                exportedSymbols.add(node.declaration.id!.name, {
+                  source: moduleName,
+                  symbolName: node.declaration.id!.name,
+                  loc: node.declaration.loc!
                 })
               }
+              return [...body, node]
+            } else if (!node.source) {
+              node.specifiers.forEach(spec =>
+                exportedSymbols.add(spec.exported.name, {
+                  source: moduleName,
+                  symbolName: spec.local.name,
+                  loc: spec.loc!
+                })
+              )
+              return [...body, node]
             } else {
-              exportedSymbols.add(node.declaration.id!.name, node)
+              const [exports, source] = await getDocs(node)
+              const newDecls = node.specifiers.map(spec => {
+                if (!allowUndefinedImports) validateImport(spec, source, exports)
+
+                const [newSource, symbolName] = resolveSymbol(source, spec.local.name)
+                exportedSymbols.add(spec.exported.name, {
+                  source: newSource,
+                  symbolName,
+                  loc: spec.loc!
+                })
+
+                const newDecl: es.ExportNamedDeclarationWithSource = {
+                  type: 'ExportNamedDeclaration',
+                  declaration: null,
+                  source: create.literal(newSource),
+                  specifiers: [
+                    {
+                      type: 'ExportSpecifier',
+                      exported: spec.exported,
+                      local: create.identifier(symbolName)
+                    }
+                  ]
+                }
+                return newDecl
+              })
+              return [...body, ...newDecls]
             }
-          } else if (node.source) {
-            const [exports, source] = await getDocs(node)
-            node.specifiers.forEach(spec => {
-              if (!allowUndefinedImports) {
-                validateImport(spec, source, exports)
-              }
-
-              exportedSymbols.add(spec.exported.name, spec)
-            })
-          } else {
-            node.specifiers.forEach(spec => exportedSymbols.add(spec.exported.name, spec))
           }
-          break
-        }
-      }
-    }
+          case 'ExportAllDeclaration': {
+            if (node.exported) {
+              throw new Error('ExportAllDeclarations with exported name are not supported')
+              // exportedSymbols.add(node.exported.name, {
+              //   source,
+              //   symbolName: node.exported.name,
+              //   loc: node.loc!,
+              // })
+            } else {
+              const [exports, source] = await getDocs(node)
+              if (!allowUndefinedImports) validateNamespaceImport(node, source, exports)
 
-    moduleDocs[name] = new Set(
-      exportedSymbols.entries().map(([symbol, nodes]) => {
-        if (nodes.length === 1) return symbol
-        assert(nodes.length > 0, 'An exported symbol cannot have zero nodes associated with it')
+              for (const symbol of exports) {
+                const [newSource, newSymbol] = resolveSymbol(source, symbol)
+                exportedSymbols.add(symbol, {
+                  source: newSource,
+                  symbolName: newSymbol,
+                  loc: node.loc!
+                })
+              }
+            }
+          }
+          default:
+            return [...body, node]
+        }
+      },
+      [] as es.Program['body']
+    )
+
+    exportMap[moduleName] = new Map(
+      exportedSymbols.entries().map(([symbol, records]) => {
+        if (records.length === 1) return [symbol, records[0]]
+        assert(records.length > 0, 'An exported symbol cannot have zero nodes associated with it')
+        const locations = records.map(({ loc }) => loc)
         if (symbol === 'default') {
-          throw new ReexportDefaultError(name, nodes)
+          throw new ReexportDefaultError(moduleName, locations)
         } else {
-          throw new ReexportSymbolError(name, symbol, nodes)
+          throw new ReexportSymbolError(moduleName, symbol, locations)
         }
       })
     )
+
+    newPrograms[moduleName] = {
+      ...program,
+      body: newBody
+    }
   }
+
+  return newPrograms
 }

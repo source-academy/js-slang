@@ -1,4 +1,3 @@
-import { generate } from 'astring'
 import * as pathlib from 'path'
 
 import { parse } from '../../parser/parser'
@@ -9,15 +8,13 @@ import { isIdentifier, isModuleDeclaration, isSourceImport } from '../../utils/a
 import type * as es from '../../utils/ast/types'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
 import type { ImportResolutionOptions } from '../moduleTypes'
-import checkForUndefinedImportsAndReexports from './analyzer'
+import analyzeImportsAndExports from './analyzer'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import { DirectedGraph } from './directedGraph'
-import {
-  transformFunctionNameToInvokedFunctionResultVariableName
-} from './filePaths'
+import { transformFunctionNameToInvokedFunctionResultVariableName } from './filePaths'
 import resolveModule from './resolver'
 import hoistAndMergeImports from './transformers/hoistAndMergeImports'
-import reduceExports from './transformers/reduceExports'
+// import reduceExports from './transformers/reduceExports'
 import removeImportsAndExports from './transformers/removeImportsAndExports'
 import {
   createAccessImportStatements,
@@ -231,6 +228,7 @@ const preprocessFileImports = async (
     return undefined
   }
 
+  let newPrograms: Record<string, es.Program> = {}
   try {
     // Based on how the import graph is constructed, it could be the case that the entrypoint
     // file is never included in the topo order. This is only an issue for the import export
@@ -248,16 +246,11 @@ const preprocessFileImports = async (
     // Then trying to discover what symbols are exported by a.js will require determining what symbols
     // b.js exports, which would in turn require the symbols exported by a.js
     // If the topological order exists, then this is guaranteed not to occur
-    await checkForUndefinedImportsAndReexports(programs, fullTopoOrder, allowUndefinedImports)
+    newPrograms = await analyzeImportsAndExports(programs, fullTopoOrder, allowUndefinedImports)
   } catch (error) {
     context.errors.push(error)
     return undefined
   }
-
-  const newPrograms = reduceExports(programs, [...topologicalOrderResult.topologicalOrder, entrypointFilePath])
-  Object.entries(newPrograms).forEach(([name, program]) => console.log(`${name}:\n${generate(program)}\n`))
-
-  // console.log(generate(newPrograms[entrypointFilePath]))
 
   // We want to operate on the entrypoint program to get the eventual
   // preprocessed program.
@@ -277,38 +270,42 @@ const preprocessFileImports = async (
 
   // Transform all programs into their equivalent function declaration
   // except for the entrypoint program.
-  const [functionDeclarations, invokedFunctionResultVariableDeclarations] = topologicalOrderResult.topologicalOrder
-    // The entrypoint program does not need to be transformed into its
-    // function declaration equivalent as its enclosing environment is
-    // simply the overall program's (constructed program's) environment.
-    .filter(path => path !== entrypointFilePath)
-    .reduce(([funcDecls, invokeDecls], filePath) => {
-      const program = newPrograms[filePath]
-      const functionDeclaration = transformProgramToFunctionDeclaration(program, filePath)
+  const [functionDeclarations, invokedFunctionResultVariableDeclarations] =
+    topologicalOrderResult.topologicalOrder
+      // The entrypoint program does not need to be transformed into its
+      // function declaration equivalent as its enclosing environment is
+      // simply the overall program's (constructed program's) environment.
+      .filter(path => path !== entrypointFilePath)
+      .reduce(
+        ([funcDecls, invokeDecls], filePath) => {
+          const program = newPrograms[filePath]
+          const functionDeclaration = transformProgramToFunctionDeclaration(program, filePath)
 
-      const functionName = functionDeclaration.id.name
-      const invokedFunctionResultVariableName =
-        transformFunctionNameToInvokedFunctionResultVariableName(functionName)
+          const functionName = functionDeclaration.id.name
+          const invokedFunctionResultVariableName =
+            transformFunctionNameToInvokedFunctionResultVariableName(functionName)
 
-      const functionParams = functionDeclaration.params.filter(isIdentifier)
-      assert(
-        functionParams.length === functionDeclaration.params.length,
-        'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
+          const functionParams = functionDeclaration.params.filter(isIdentifier)
+          assert(
+            functionParams.length === functionDeclaration.params.length,
+            'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
+          )
+
+          // Invoke each of the transformed functions and store the result in a variable.
+          const invokedFunctionResultVariableDeclaration =
+            createInvokedFunctionResultVariableDeclaration(
+              functionName,
+              invokedFunctionResultVariableName,
+              functionParams
+            )
+
+          return [
+            [...funcDecls, functionDeclaration],
+            [...invokeDecls, invokedFunctionResultVariableDeclaration]
+          ]
+        },
+        [[], []] as [es.FunctionDeclaration[], es.VariableDeclaration[]]
       )
-
-      // Invoke each of the transformed functions and store the result in a variable.
-      const invokedFunctionResultVariableDeclaration = createInvokedFunctionResultVariableDeclaration(
-        functionName,
-        invokedFunctionResultVariableName,
-        functionParams
-      )
-      
-      return [
-        [...funcDecls, functionDeclaration],
-        [...invokeDecls, invokedFunctionResultVariableDeclaration]
-      ]
-    }, [[], []] as [es.FunctionDeclaration[], es.VariableDeclaration[]])
-
 
   // Re-assemble the program.
   const preprocessedProgram: es.Program = {
@@ -321,6 +318,8 @@ const preprocessFileImports = async (
     ]
   }
 
+  // console.log(generate(preprocessedProgram))
+
   // Import and Export related nodes are no longer necessary, so we can remove them from the program entirely
   removeImportsAndExports(preprocessedProgram)
 
@@ -329,7 +328,7 @@ const preprocessFileImports = async (
   // non-Source module imports would have already been removed. As part
   // of this step, we also merge imports from the same module so as to
   // import each unique name per module only once.
-  hoistAndMergeImports(preprocessedProgram, programs, topologicalOrderResult.topologicalOrder)
+  hoistAndMergeImports(preprocessedProgram, newPrograms)
   return preprocessedProgram
 }
 

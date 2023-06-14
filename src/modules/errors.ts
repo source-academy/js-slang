@@ -106,13 +106,10 @@ export abstract class ReexportErrorBase implements SourceError {
   public readonly location: es.SourceLocation
   public readonly sourceString: string
 
-  constructor(
-    public readonly modulePath: string,
-    public readonly nodes: (es.ModuleDeclaration | es.ExportSpecifier)[]
-  ) {
-    this.location = nodes[0].loc ?? UNKNOWN_LOCATION
-    this.sourceString = nodes
-      .map(({ loc }) => `(${loc!.start.line}:${loc!.start.column})`)
+  constructor(public readonly modulePath: string, public readonly locations: es.SourceLocation[]) {
+    this.location = locations[0] ?? UNKNOWN_LOCATION
+    this.sourceString = locations
+      .map(({ start: { line, column } }) => `(${line}:${column})`)
       .join(', ')
   }
 
@@ -121,12 +118,8 @@ export abstract class ReexportErrorBase implements SourceError {
 }
 
 export class ReexportSymbolError extends ReexportErrorBase {
-  constructor(
-    modulePath: string,
-    public readonly symbol: string,
-    nodes: (es.ModuleDeclaration | es.ExportSpecifier)[]
-  ) {
-    super(modulePath, nodes)
+  constructor(modulePath: string, public readonly symbol: string, locations: es.SourceLocation[]) {
+    super(modulePath, locations)
   }
 
   public explain(): string {
@@ -139,8 +132,8 @@ export class ReexportSymbolError extends ReexportErrorBase {
 }
 
 export class ReexportDefaultError extends ReexportErrorBase {
-  constructor(modulePath: string, nodes: (es.ModuleDeclaration | es.ExportSpecifier)[]) {
-    super(modulePath, nodes)
+  constructor(modulePath: string, locations: es.SourceLocation[]) {
+    super(modulePath, locations)
   }
 
   public explain(): string {

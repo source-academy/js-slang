@@ -32,9 +32,12 @@ export type LoopNode = es.WhileStatement | ForStatements
 /**
  * Represents exports of the form `export { a, b } from './a.js';`
  */
-export type ExportNamedDeclarationWithSource = Replace<es.ExportNamedDeclaration, {
-  declaration: null,
-  source: es.Literal
-}>
+export type ExportNamedDeclarationWithSource = Replace<
+  es.ExportNamedDeclaration,
+  {
+    declaration: null
+    source: es.Literal
+  }
+>
 
 export * from 'estree'

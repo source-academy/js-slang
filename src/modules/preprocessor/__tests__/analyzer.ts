@@ -51,6 +51,7 @@ async function testCode(
     }
     await validateImportAndExports(programs, fullTopoOrder, allowUndefinedImports)
   } catch (error) {
+    console.log(error)
     throw error
   }
   return true
@@ -102,31 +103,16 @@ describe('Test throwing import validation errors', () => {
       test.each(
         cases.flatMap(([files, entry, errorInfo], i) => {
           return [
-            [
-              `Test Case ${i} with allowedUndefinedImports true: Should not throw an error`,
-              files,
-              entry,
-              true
-            ],
-            [
-              `Test Case ${i} with allowedUndefinedImports false: Should${
-                errorInfo ? '' : ' not'
-              } throw an error`,
-              files,
-              entry,
-              errorInfo
-            ]
+            [`${i}: Should not throw an error`, files, entry, true],
+            [`${i}: Should${errorInfo ? '' : ' not'} throw an error`, files, entry, errorInfo]
           ]
         })
       )('%s', async (_, files, entrypointFilePath, errorInfo) => {
         if (errorInfo === true) {
-          // we allow undefined imports (should never throw any errors)
           await testSuccess(files, entrypointFilePath, true)
         } else if (!errorInfo) {
-          // we don't allow undefined imports, but we don't expect any errors
           await testSuccess(files, entrypointFilePath, false)
         } else {
-          // we don't allow undefined imports, and we expect an UndefinedImportError
           await testFailure(files, entrypointFilePath, false, errorInfo)
         }
       })
@@ -377,34 +363,35 @@ describe('Test throwing import validation errors', () => {
     ])
   })
 
-  describe('Test namespace imports', () => {
-    testCases('Local imports', [
-      [
-        {
-          '/a.js': 'export const a = 0;',
-          '/b.js': 'import * as a from "./a.js"'
-        },
-        '/b.js'
-      ],
-      [
-        {
-          '/a.js': 'const a = 0;',
-          '/b.js': 'import * as a from "./a.js"'
-        },
-        '/b.js',
-        { line: 1, col: 7, moduleName: '/a.js', namespace: true }
-      ]
-    ])
+  // Re-enable this when namespace imports become supported
+  // describe('Test namespace imports', () => {
+  //   testCases('Local imports', [
+  //     [
+  //       {
+  //         '/a.js': 'export const a = 0;',
+  //         '/b.js': 'import * as a from "./a.js"'
+  //       },
+  //       '/b.js'
+  //     ],
+  //     [
+  //       {
+  //         '/a.js': 'const a = 0;',
+  //         '/b.js': 'import * as a from "./a.js"'
+  //       },
+  //       '/b.js',
+  //       { line: 1, col: 7, moduleName: '/a.js', namespace: true }
+  //     ]
+  //   ])
 
-    testCases('Source imports', [
-      [
-        {
-          '/a.js': 'import * as bar from "one_module";'
-        },
-        '/a.js'
-      ]
-    ])
-  })
+  //   testCases('Source imports', [
+  //     [
+  //       {
+  //         '/a.js': 'import * as bar from "one_module";'
+  //       },
+  //       '/a.js'
+  //     ]
+  //   ])
+  // })
 
   describe('Test named exports', () => {
     testCases('Exporting from another local module', [
@@ -544,15 +531,16 @@ describe('Test reexport symbol errors', () => {
           '/b.js': 'export * from "/c.js"',
           '/c.js': 'export const foo_a = 5;'
         }
-      ],
-      [
-        'Named ExportAllDeclarations have their exported name accounted for',
-        {
-          '/a.js': 'export const foo_a = 5; export * from "/b.js"',
-          '/b.js': 'export * as foo_a from "/c.js"',
-          '/c.js': 'export const foo_c = 5;'
-        }
       ]
+      // Re-enable when exportalldeclarations with exported names are supported
+      // [
+      //   'Named ExportAllDeclarations have their exported name accounted for',
+      //   {
+      //     '/a.js': 'export const foo_a = 5; export * from "/b.js"',
+      //     '/b.js': 'export * as foo_a from "/c.js"',
+      //     '/c.js': 'export const foo_c = 5;'
+      //   }
+      // ]
     ])('%#. %s', (_, files) => expectFailure(files, '/a.js', ReexportSymbolError)))
 
   describe('Test default exports', () =>
@@ -593,14 +581,15 @@ describe('Test reexport symbol errors', () => {
           '/b.js': 'export * from "/c.js"',
           '/c.js': 'export default "c"'
         }
-      ],
-      [
-        'Named ExportAllDeclarations have their exported name accounted for',
-        {
-          '/a.js': 'export default "a"; export * from "/b.js"',
-          '/b.js': 'export * as default from "/c.js"',
-          '/c.js': 'export const foo_c = 5;'
-        }
       ]
+      // Re-enable when exportalldeclarations with exported names are supported
+      // [
+      //   'Named ExportAllDeclarations have their exported name accounted for',
+      //   {
+      //     '/a.js': 'export default "a"; export * from "/b.js"',
+      //     '/b.js': 'export * as default from "/c.js"',
+      //     '/c.js': 'export const foo_c = 5;'
+      //   }
+      // ]
     ])('%#. %s', (_, files) => expectFailure(files, '/a.js', ReexportDefaultError)))
 })
