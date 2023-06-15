@@ -2,6 +2,7 @@ import type { Node } from 'estree'
 import { memoize } from 'lodash'
 
 import type { Context } from '..'
+import { timeoutPromise } from '../utils'
 import { wrapSourceModule } from '../utils/operators'
 import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from './errors'
 import { MODULES_STATIC_URL } from './moduleLoader'
@@ -19,32 +20,11 @@ export async function httpGetAsync(path: string, type: 'json' | 'text') {
     throw new ModuleConnectionError()
   }
 
+  const promise = type === 'text' ? resp.text() : resp.json()
   if (typeof window === 'undefined') {
-    return new Promise<string>((resolve, reject) => {
-      const timer = setTimeout(() => {
-        reject(new Error('TIMEOUT'))
-      }, 10000)
-
-      resp[type]()
-        .then(value => {
-          clearTimeout(timer)
-          resolve(value)
-        })
-        .catch(reason => {
-          clearTimeout(timer)
-          reject(reason)
-        })
-    })
+    return timeoutPromise(promise, 10000)
   }
-
-  return type === 'text' ? resp.text() : resp.json()
-  // return new Promise<string>((resolve, reject) => {
-  //   try {
-  //     resolve(httpGet(path))
-  //   } catch (error) {
-  //     reject(error)
-  //   }
-  // })
+  return promise
 }
 
 /**

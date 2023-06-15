@@ -28,3 +28,16 @@ export async function mapObjectAsync<
     {} as Record<keyof T, Awaited<ReturnType<Mapper>>>
   )
 }
+
+export const timeoutPromise = <T>(promise: Promise<T>, duration: number) => new Promise<T>((resolve, reject) => {
+  const timeout = setTimeout(() => reject(new Error('Timeout!')), duration)
+  promise
+    .then(result => {
+      clearTimeout(timeout)
+      resolve(result)
+    })
+    .catch(err => {
+      clearTimeout(timeout)
+      reject(err)
+    })
+})
