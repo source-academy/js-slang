@@ -19,7 +19,6 @@ import { DirectedGraph } from './directedGraph'
 import { transformFunctionNameToInvokedFunctionResultVariableName } from './filePaths'
 import resolveModule from './resolver'
 import hoistAndMergeImports from './transformers/hoistAndMergeImports'
-// import reduceExports from './transformers/reduceExports'
 import removeImportsAndExports from './transformers/removeImportsAndExports'
 import {
   createAccessImportStatements,
