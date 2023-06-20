@@ -6,7 +6,16 @@ import type * as es from '../utils/ast/types'
 import { recursive, simple, WalkerCallback } from '../utils/ast/walkers'
 
 type Scope = Set<string>
-export default function checkForUndefinedVariables(program: es.Program, outerScope: Scope) {
+export type UndefinedVariableOptions = {
+  skipUndefined?: boolean
+  hoistVariables?: boolean
+}
+
+export default function checkForUndefinedVariables(
+  program: es.Program,
+  outerScope: Scope,
+  hoist: boolean
+) {
   function processBlock(
     block: es.BlockStatement | es.Program | es.StaticBlock,
     scope: Scope,
@@ -45,7 +54,7 @@ export default function checkForUndefinedVariables(program: es.Program, outerSco
       }
     }
 
-    block.body.forEach(hoistStatement)
+    if (hoist) block.body.forEach(hoistStatement)
     block.body.forEach(stmt => c(stmt, blockScope))
   }
 
