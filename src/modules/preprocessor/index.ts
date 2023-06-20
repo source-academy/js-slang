@@ -93,7 +93,7 @@ export const parseProgramsAndConstructImportGraph = async (
    * @param currentFilePath Current absolute file path of the module
    */
   async function parseFile(currentFilePath: string): Promise<void> {
-    if (isSourceImport(currentFilePath) || currentFilePath in programs) {
+    if (currentFilePath in programs) {
       return
     }
 
@@ -135,11 +135,10 @@ export const parseProgramsAndConstructImportGraph = async (
 
     await Promise.all(
       Array.from(dependencies).map(async dependency => {
-        await parseFile(dependency)
-
         // There is no need to track Source modules as dependencies, as it can be assumed
         // that they will always come first in the topological order
         if (!isSourceImport(dependency)) {
+          await parseFile(dependency)
           // If the edge has already been traversed before, the import graph
           // must contain a cycle. Then we can exit early and proceed to find the cycle
           if (importGraph.hasEdge(dependency, currentFilePath)) {
