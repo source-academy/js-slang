@@ -113,7 +113,7 @@ export async function evaluate(
     context.runtime.stash = new Stash()
     return runECEMachine(context, context.runtime.agenda, context.runtime.stash, options.isPrelude)
   } catch (error) {
-    console.error('ecerror:', error)
+    // console.error('ecerror:', error)
     return new ECError(error)
   } finally {
     context.runtime.isRunning = false
@@ -174,37 +174,6 @@ async function evaluateImports(
     // console.error(error)
     handleRuntimeError(context, error)
   }
-
-  // try {
-  //   for (const node of importNodes) {
-  //     const moduleName = node.source.value
-  //     if (typeof moduleName !== 'string') {
-  //       throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
-  //     }
-
-  //     if (!(moduleName in moduleFunctions)) {
-  //       initModuleContext(moduleName, context, loadTabs, node)
-  //       moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
-  //     }
-
-  //     const functions = moduleFunctions[moduleName]
-  //     for (const spec of node.specifiers) {
-  //       if (spec.type !== 'ImportSpecifier') {
-  //         throw new Error(`Only ImportSpecifiers are supported, got: ${spec.type}`)
-  //       }
-
-  //       if (checkImports && !(spec.imported.name in functions)) {
-  //         throw new UndefinedImportError(spec.imported.name, moduleName, node)
-  //       }
-
-  //       declareIdentifier(context, spec.local.name, node, environment)
-  //       defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
-  //     }
-  //   }
-  // } catch (error) {
-  //   // console.log(error)
-  //   handleRuntimeError(context, error)
-  // }
 
   return otherNodes as es.Statement[]
 }
