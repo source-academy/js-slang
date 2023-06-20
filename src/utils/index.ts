@@ -1,5 +1,7 @@
 /**
  * A form of Array.reduce, but using an async reducer
+ * It doesn't reduce everything asynchronously, but rather waits
+ * for each problem to resolve sequentially
  */
 export async function reduceAsync<T, U, Reducer extends (result: U, each: T) => Promise<U>>(
   arr: Iterable<T>,
@@ -29,15 +31,20 @@ export async function mapObjectAsync<
   )
 }
 
-export const timeoutPromise = <T>(promise: Promise<T>, duration: number) => new Promise<T>((resolve, reject) => {
-  const timeout = setTimeout(() => reject(new Error('Timeout!')), duration)
-  promise
-    .then(result => {
-      clearTimeout(timeout)
-      resolve(result)
-    })
-    .catch(err => {
-      clearTimeout(timeout)
-      reject(err)
-    })
-})
+/**
+ * Wrap an existing promise that will throw an error after the given timeout
+ * duration
+ */
+export const timeoutPromise = <T>(promise: Promise<T>, duration: number) =>
+  new Promise<T>((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error('Timeout!')), duration)
+    promise
+      .then(result => {
+        clearTimeout(timeout)
+        resolve(result)
+      })
+      .catch(err => {
+        clearTimeout(timeout)
+        reject(err)
+      })
+  })
