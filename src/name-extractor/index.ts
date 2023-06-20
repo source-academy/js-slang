@@ -1,6 +1,6 @@
-import * as es from 'estree'
+import type * as es from 'estree'
 
-import { Context } from '../'
+import type { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
 import { findAncestors, findIdentifierNode } from '../finder'
 import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
@@ -305,55 +305,63 @@ async function getNames(
   node: es.Node,
   locTest: (node: es.Node) => boolean
 ): Promise<NameDeclaration[]> {
+  const createDocHtml = (header: string, desc: string) =>
+    `<div><h4>${header}</h4><div class="description">${desc}</div></div>`
+
   switch (node.type) {
     case 'ImportDeclaration':
-      if (!isSourceImport(node.source.value as string)) {
-        return node.specifiers.map(spec => ({
-          name: spec.local.name,
+      const source = node.source.value as string
+      if (!isSourceImport(source)) {
+        return node.specifiers.map(({ local: { name } }) => ({
+          name,
           meta: KIND_IMPORT,
-          docHTML: `No documentation available for <code>${spec.local.name}</code> from <code>${node.source.value}</code>`
+          docHTML: createDocHtml(
+            `Imported symbol ${name} from ${source}`,
+            `No documentation available for <code>${name}</code> from <code>${source}</code>`
+          )
         }))
       }
 
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))
-      const source = node.source.value as string
 
       try {
         const docs = await memoizedGetModuleDocsAsync(source)
 
         if (!docs) {
-          return specs.map(spec => ({
-            name: spec.local.name,
+          return specs.map(({ local: { name } }) => ({
+            name,
             meta: KIND_IMPORT,
-            docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${source} module`
+            docHTML: `Unable to retrieve documentation for <code>${name}</code> from ${source} module`
           }))
         }
 
         return specs.map(spec => {
+          const localName = spec.local.name
+
           if (docs[spec.local.name] === undefined) {
             return {
               name: spec.local.name,
               meta: KIND_IMPORT,
-              docHTML: `No documentation available for <code>${spec.local.name}</code> from ${source} module`
+              docHTML: `No documentation available for <code>${localName}</code> from ${source} module`
             }
           }
 
           switch (spec.type) {
             case 'ImportSpecifier':
               return {
-                name: spec.local.name,
+                name: localName,
                 meta: KIND_IMPORT,
-                docHTML: docs[spec.local.name]
+                docHTML: docs[spec.imported.name]
               }
             case 'ImportDefaultSpecifier':
               return {
-                name: spec.local.name,
+                name: localName,
                 meta: KIND_IMPORT,
                 docHTML: docs['default']
               }
             case 'ImportNamespaceSpecifier':
               return {
-                name: spec.local.name,
+                name: localName,
                 meta: KIND_IMPORT,
                 docHTML: `${source} module namespace import`
               }
@@ -362,10 +370,10 @@ async function getNames(
       } catch (err) {
         if (!(err instanceof ModuleNotFoundError || err instanceof ModuleConnectionError)) throw err
 
-        return specs.map(spec => ({
-          name: spec.local.name,
+        return specs.map(({ local: { name } }) => ({
+          name,
           meta: KIND_IMPORT,
-          docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${source} module`
+          docHTML: `Unable to retrieve documentation for <code>${name}</code> from ${source} module`
         }))
       }
     case 'VariableDeclaration':

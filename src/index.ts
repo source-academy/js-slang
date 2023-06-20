@@ -83,8 +83,10 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
     const filePath = error.location?.source ? `[${error.location.source}] ` : ''
     const line = error.location ? error.location.start.line : '<unknown>'
     const column = error.location ? error.location.start.column : '<unknown>'
-    if (!error.explain as any) {
-      // console.log(error)
+    if ((!error.explain as any) && process.env.NODE_ENV !== 'production') {
+      // If the explain function isn't available, it usually means we received
+      // an unexpected error that should only be possible during development
+      console.error(error)
     }
 
     const explanation = error.explain()
