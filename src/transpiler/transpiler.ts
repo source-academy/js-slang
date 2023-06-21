@@ -17,7 +17,7 @@ import {
   getIdentifiersInProgram,
   getUniqueId
 } from '../utils/uniqueIds'
-import checkForUndefinedVariables, { UndefinedVariableOptions } from './variableChecker'
+import checkForUndefinedVariables from './variableChecker'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -580,12 +580,12 @@ function getDeclarationsToAccessTranspilerInternals(
 }
 
 export type TranspiledResult = { transpiled: string; sourceMapJson?: RawSourceMap }
-export type TranspileOptions = ImportTransformOptions & UndefinedVariableOptions
+export type TranspileOptions = ImportTransformOptions & { skipUndefined?: boolean }
 
 async function transpileToSource(
   program: es.Program,
   context: Context,
-  { skipUndefined, hoistVariables, ...importOptions }: TranspileOptions
+  { skipUndefined, ...importOptions }: TranspileOptions
 ): Promise<TranspiledResult> {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
@@ -597,7 +597,7 @@ async function transpileToSource(
   }
 
   if (!skipUndefined) {
-    checkForUndefinedVariables(program, usedIdentifiers, !!hoistVariables)
+    checkForUndefinedVariables(program, usedIdentifiers)
   }
 
   const functionsToStringMap = generateFunctionsToStringMap(program)
@@ -647,7 +647,7 @@ async function transpileToSource(
 async function transpileToFullJS(
   program: es.Program,
   context: Context,
-  { skipUndefined, hoistVariables, ...importOptions }: TranspileOptions
+  { skipUndefined, ...importOptions }: TranspileOptions
 ): Promise<TranspiledResult> {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
@@ -659,7 +659,7 @@ async function transpileToFullJS(
 
   if (!skipUndefined) {
     const includingGlobals = new Set([...Object.keys(global), ...usedIdentifiers])
-    checkForUndefinedVariables(program, includingGlobals, !!hoistVariables)
+    checkForUndefinedVariables(program, includingGlobals)
   }
 
   const [modulePrefix, importNodes, otherNodes] = await transformImportDeclarations(
@@ -698,7 +698,6 @@ export function transpile(
   } else if (context.variant == Variant.NATIVE) {
     return transpileToFullJS(program, context, {
       skipUndefined: false,
-      hoistVariables: false,
       loadTabs: true,
       wrapModules: true,
       ...options
@@ -706,7 +705,6 @@ export function transpile(
   } else {
     return transpileToSource(program, context, {
       skipUndefined: false,
-      hoistVariables: false,
       loadTabs: true,
       wrapModules: true,
       ...options

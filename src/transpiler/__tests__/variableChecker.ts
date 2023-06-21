@@ -17,7 +17,7 @@ function assertUndefined(code: string, context: Context, errorInfo: ErrorInfo | 
   if (errorInfo !== null) {
     let error: any = null
     try {
-      checkForUndefinedVariables(parsed, new Set(), true)
+      checkForUndefinedVariables(parsed, new Set())
     } catch (e) {
       error = e
     }
@@ -29,7 +29,7 @@ function assertUndefined(code: string, context: Context, errorInfo: ErrorInfo | 
       column: errorInfo.col
     })
   } else {
-    expect(() => checkForUndefinedVariables(parsed, new Set(), true)).not.toThrow()
+    expect(() => checkForUndefinedVariables(parsed, new Set())).not.toThrow()
   }
 }
 
