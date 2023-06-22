@@ -16,6 +16,7 @@ import {
   FuncDeclWithInferredTypeAnnotation,
   ModuleContext,
   NodeWithInferredType,
+  RecursivePartial,
   Result,
   SourceError,
   SVMProgram,
@@ -25,14 +26,16 @@ import { findNodeAt } from './utils/ast/walkers'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
-import * as es from 'estree'
+import type * as es from 'estree'
 
 import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
-import { CannotFindModuleError } from './errors/localImportErrors'
+import { ModuleNotFoundError } from './modules/errors'
+import type { ImportOptions } from './modules/moduleTypes'
+import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
-import preprocessFileImports from './modules/preprocessor/preprocessor'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
+import { decodeError, decodeValue } from './parser/scheme'
 import { parseWithComments } from './parser/utils'
 import {
   fullJSRunner,
@@ -43,7 +46,6 @@ import {
 } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
-import { decodeError, decodeValue } from './parser/scheme'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -55,6 +57,14 @@ export interface IOptions {
   useSubst: boolean
   isPrelude: boolean
   throwInfiniteLoops: boolean
+
+  importOptions: ImportOptions
+
+  /** Set to true to console log the transpiler's transpiled code */
+  logTranspilerOutput: boolean
+
+  /** Set to true to console log the preprocessor's output */
+  logPreprocessorOutput: boolean
 }
 
 // needed to work on browsers
@@ -192,7 +202,7 @@ export async function getNames(
   }
   const cursorLoc: es.Position = { line, column: col }
 
-  const [progNames, displaySuggestions] = getProgramNames(program, comments, cursorLoc)
+  const [progNames, displaySuggestions] = await getProgramNames(program, comments, cursorLoc)
   const keywords = getKeywords(program, cursorLoc, context)
   return [progNames.concat(keywords), displaySuggestions]
 }
@@ -302,7 +312,7 @@ export function getTypeInformation(
 export async function runInContext(
   code: string,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   const defaultFilePath = '/default.js'
   const files: Partial<Record<string, string>> = {}
@@ -314,7 +324,7 @@ export async function runFilesInContext(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath)
@@ -326,12 +336,12 @@ export async function runFilesInContext(
 
   const code = files[entrypointFilePath]
   if (code === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
     return resolvedErrorPromise
   }
 
   if (
-    context.chapter === Chapter.FULL_JS ||
+    // context.chapter === Chapter.FULL_JS ||
     context.chapter === Chapter.FULL_TS ||
     context.chapter === Chapter.PYTHON_1
   ) {
@@ -398,19 +408,19 @@ export function compile(
   code: string,
   context: Context,
   vmInternalFunctions?: string[]
-): SVMProgram | undefined {
+): Promise<SVMProgram | undefined> {
   const defaultFilePath = '/default.js'
   const files: Partial<Record<string, string>> = {}
   files[defaultFilePath] = code
   return compileFiles(files, defaultFilePath, context, vmInternalFunctions)
 }
 
-export function compileFiles(
+export async function compileFiles(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
   vmInternalFunctions?: string[]
-): SVMProgram | undefined {
+): Promise<SVMProgram | undefined> {
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath)
     if (filePathError !== null) {
@@ -421,11 +431,11 @@ export function compileFiles(
 
   const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
     return undefined
   }
 
-  const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
+  const preprocessedProgram = await preprocessFileImports(files, entrypointFilePath, context)
   if (!preprocessedProgram) {
     return undefined
   }

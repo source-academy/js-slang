@@ -1,11 +1,18 @@
-import * as es from 'estree'
+import type * as es from 'estree'
 
-import { Context } from '../'
+import type { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
-import { ModuleConnectionError, ModuleNotFoundError } from '../errors/moduleErrors'
 import { findAncestors, findIdentifierNode } from '../finder'
-import { memoizedloadModuleDocs } from '../modules/moduleLoader'
+import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
+import { memoizedGetModuleDocsAsync } from '../modules/moduleLoaderAsync'
 import syntaxBlacklist from '../parser/source/syntax'
+import {
+  isDeclaration,
+  isFunctionNode,
+  isImportDeclaration,
+  isLoop,
+  isSourceImport
+} from '../utils/ast/typeGuards'
 
 export interface NameDeclaration {
   name: string
@@ -18,26 +25,6 @@ const KIND_FUNCTION = 'func'
 // const KIND_LET = 'let'
 const KIND_PARAM = 'param'
 const KIND_CONST = 'const'
-
-function isImportDeclaration(node: es.Node): boolean {
-  return node.type === 'ImportDeclaration'
-}
-
-function isDeclaration(node: es.Node): boolean {
-  return node.type === 'VariableDeclaration' || node.type === 'FunctionDeclaration'
-}
-
-function isFunction(node: es.Node): boolean {
-  return (
-    node.type === 'FunctionDeclaration' ||
-    node.type === 'FunctionExpression' ||
-    node.type === 'ArrowFunctionExpression'
-  )
-}
-
-function isLoop(node: es.Node): boolean {
-  return node.type === 'WhileStatement' || node.type === 'ForStatement'
-}
 
 // Update this to use exported check from "acorn-loose" package when it is released
 function isDummyName(name: string): boolean {
@@ -116,7 +103,7 @@ export function getKeywords(
   ) {
     addAllowedKeywords(keywordsInBlock)
     // Keywords only allowed in functions
-    if (ancestors.some(node => isFunction(node))) {
+    if (ancestors.some(node => isFunctionNode(node))) {
       addAllowedKeywords(keywordsInFunction)
     }
 
@@ -139,11 +126,11 @@ export function getKeywords(
  * @returns Tuple consisting of the list of suggestions, and a boolean value indicating if
  * suggestions should be displayed, i.e. `[suggestions, shouldPrompt]`
  */
-export function getProgramNames(
+export async function getProgramNames(
   prog: es.Node,
   comments: acorn.Comment[],
   cursorLoc: es.Position
-): [NameDeclaration[], boolean] {
+): Promise<[NameDeclaration[], boolean]> {
   function before(first: es.Position, second: es.Position) {
     return first.line < second.line || (first.line === second.line && first.column <= second.column)
   }
@@ -170,7 +157,7 @@ export function getProgramNames(
     // Workaround due to minification problem
     // tslint:disable-next-line
     const node = queue.shift()!
-    if (isFunction(node)) {
+    if (isFunctionNode(node)) {
       // This is the only time we want raw identifiers
       nameQueue.push(...(node as any).params)
     }
@@ -198,13 +185,22 @@ export function getProgramNames(
     }
   }
 
-  const res: any = {}
-  nameQueue
-    .map(node => getNames(node, n => cursorInLoc(n.loc)))
-    .reduce((prev, cur) => prev.concat(cur), []) // no flatmap feelsbad
-    .forEach((decl, idx) => {
-      res[decl.name] = { ...decl, score: idx }
-    }) // Deduplicate, ensure deeper declarations overwrite
+  const names = await Promise.all(nameQueue.map(node => getNames(node, n => cursorInLoc(n.loc))))
+  const res = names.flat().reduce(
+    (prev, each, idx) => ({
+      ...prev,
+      [each.name]: { ...each, score: idx } // Deduplicate, ensure deeper declarations overwrite
+    }),
+    {} as Record<string, NameDeclaration>
+  )
+
+  // const res: any = {}
+  // nameQueue
+  //   .map(node => getNames(node, n => cursorInLoc(n.loc)))
+  //   .reduce((prev, cur) => prev.concat(cur), []) // no flatmap feelsbad
+  //   .forEach((decl, idx) => {
+  //     res[decl.name] = { ...decl, score: idx }
+  //   })
   return [Object.values(res), true]
 }
 
@@ -305,44 +301,79 @@ function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean):
  * is located within the node, false otherwise
  * @returns List of found names
  */
-function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDeclaration[] {
+async function getNames(
+  node: es.Node,
+  locTest: (node: es.Node) => boolean
+): Promise<NameDeclaration[]> {
+  const createDocHtml = (header: string, desc: string) =>
+    `<div><h4>${header}</h4><div class="description">${desc}</div></div>`
+
   switch (node.type) {
     case 'ImportDeclaration':
+      const source = node.source.value as string
+      if (!isSourceImport(source)) {
+        return node.specifiers.map(({ local: { name } }) => ({
+          name,
+          meta: KIND_IMPORT,
+          docHTML: createDocHtml(
+            `Imported symbol ${name} from ${source}`,
+            `No documentation available for <code>${name}</code> from <code>${source}</code>`
+          )
+        }))
+      }
+
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))
 
       try {
-        const docs = memoizedloadModuleDocs(node.source.value as string, node)
+        const docs = await memoizedGetModuleDocsAsync(source)
 
         if (!docs) {
-          return specs.map(spec => ({
-            name: spec.local.name,
+          return specs.map(({ local: { name } }) => ({
+            name,
             meta: KIND_IMPORT,
-            docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${node.source.value} module`
+            docHTML: `Unable to retrieve documentation for <code>${name}</code> from ${source} module`
           }))
         }
 
         return specs.map(spec => {
-          if (spec.type !== 'ImportSpecifier' || docs[spec.local.name] === undefined) {
+          const localName = spec.local.name
+
+          if (docs[spec.local.name] === undefined) {
             return {
               name: spec.local.name,
               meta: KIND_IMPORT,
-              docHTML: `No documentation available for <code>${spec.local.name}</code> from ${node.source.value} module`
+              docHTML: `No documentation available for <code>${localName}</code> from ${source} module`
             }
-          } else {
-            return {
-              name: spec.local.name,
-              meta: KIND_IMPORT,
-              docHTML: docs[spec.local.name]
-            }
+          }
+
+          switch (spec.type) {
+            case 'ImportSpecifier':
+              return {
+                name: localName,
+                meta: KIND_IMPORT,
+                docHTML: docs[spec.imported.name]
+              }
+            case 'ImportDefaultSpecifier':
+              return {
+                name: localName,
+                meta: KIND_IMPORT,
+                docHTML: docs['default']
+              }
+            case 'ImportNamespaceSpecifier':
+              return {
+                name: localName,
+                meta: KIND_IMPORT,
+                docHTML: `${source} module namespace import`
+              }
           }
         })
       } catch (err) {
         if (!(err instanceof ModuleNotFoundError || err instanceof ModuleConnectionError)) throw err
 
-        return specs.map(spec => ({
-          name: spec.local.name,
+        return specs.map(({ local: { name } }) => ({
+          name,
           meta: KIND_IMPORT,
-          docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${node.source.value} module`
+          docHTML: `Unable to retrieve documentation for <code>${name}</code> from ${source} module`
         }))
       }
     case 'VariableDeclaration':
@@ -353,12 +384,12 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
         if (
           !name ||
           isDummyName(name) ||
-          (decl.init && !isFunction(decl.init) && locTest(decl.init)) // Avoid suggesting `let foo = foo`, but suggest recursion with arrow functions
+          (decl.init && !isFunctionNode(decl.init) && locTest(decl.init)) // Avoid suggesting `let foo = foo`, but suggest recursion with arrow functions
         ) {
           continue
         }
 
-        if (node.kind === KIND_CONST && decl.init && isFunction(decl.init)) {
+        if (node.kind === KIND_CONST && decl.init && isFunctionNode(decl.init)) {
           // constant initialized with arrow function will always be a function
           declarations.push({ name, meta: KIND_FUNCTION })
         } else {

@@ -1,19 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
-import * as es from 'estree'
+import type * as es from 'estree'
 import { RawSourceMap } from 'source-map'
 
 import { IOptions, Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { hoistAndMergeImports } from '../modules/preprocessor/transformers/hoistAndMergeImports'
 import { getRequireProvider, RequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'
 import { evallerReplacer, getBuiltins, transpile } from '../transpiler/transpiler'
-import type { Context, NativeStorage } from '../types'
+import type { Context, NativeStorage, RecursivePartial } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { toSourceError } from './errors'
-import { appendModulesToContext, resolvedErrorPromise } from './utils'
+import { resolvedErrorPromise } from './utils'
 
 function fullJSEval(
   code: string,
@@ -48,7 +47,7 @@ function containsPrevEval(context: Context): boolean {
 export async function fullJSRunner(
   program: es.Program,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context
@@ -59,10 +58,6 @@ export async function fullJSRunner(
   const preludeAndBuiltins: es.Statement[] = containsPrevEval(context)
     ? []
     : [...getBuiltins(context.nativeStorage), ...prelude]
-
-  // modules
-  hoistAndMergeImports(program)
-  appendModulesToContext(program, context)
 
   // evaluate and create a separate block for preludes and builtins
   const preEvalProgram: es.Program = create.program([
@@ -76,13 +71,15 @@ export async function fullJSRunner(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    ;({ transpiled, sourceMapJson } = transpile(program, context))
-    return Promise.resolve({
+    ;({ transpiled, sourceMapJson } = await transpile(program, context, options.importOptions))
+    if (options.logTranspilerOutput) console.log(transpiled)
+    return {
       status: 'finished',
       context,
       value: await fullJSEval(transpiled, requireProvider, context.nativeStorage)
-    })
+    }
   } catch (error) {
+    // console.log(error)
     context.errors.push(
       error instanceof RuntimeSourceError ? error : await toSourceError(error, sourceMapJson)
     )

@@ -6,7 +6,7 @@
  */
 
 /* tslint:disable:max-classes-per-file */
-import * as es from 'estree'
+import type * as es from 'estree'
 import { partition, uniqueId } from 'lodash'
 
 import { IOptions } from '..'
@@ -14,12 +14,13 @@ import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { UndefinedImportError } from '../modules/errors'
-import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
+import { loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
+import { ImportOptions } from '../modules/moduleTypes'
+import { transformImportNodesAsync } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
+import { isImportDeclaration } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as instr from './instrCreator'
@@ -95,11 +96,15 @@ export class Stash extends Stack<Value> {
  * @param context The context to evaluate the program in.
  * @returns The result of running the ECE machine.
  */
-export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
+export async function evaluate(
+  program: es.Program,
+  context: Context,
+  options: IOptions
+): Promise<Value> {
   try {
     context.runtime.isRunning = true
 
-    const nonImportNodes = evaluateImports(program, context, true, true)
+    const nonImportNodes = await evaluateImports(program, context, options.importOptions)
 
     context.runtime.agenda = new Agenda({
       ...program,
@@ -134,55 +139,43 @@ export function resumeEvaluate(context: Context) {
   }
 }
 
-function evaluateImports(
+async function evaluateImports(
   program: es.Program,
   context: Context,
-  loadTabs: boolean,
-  checkImports: boolean
+  { loadTabs, wrapModules }: ImportOptions
 ) {
-  const [importNodes, otherNodes] = partition(
-    program.body,
-    ({ type }) => type === 'ImportDeclaration'
-  ) as [es.ImportDeclaration[], es.Statement[]]
+  const [importNodes, otherNodes] = partition(program.body, isImportDeclaration)
 
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
+  if (importNodes.length === 0) return otherNodes as es.Statement[]
 
+  const environment = currentEnvironment(context)
   try {
-    for (const node of importNodes) {
-      const moduleName = node.source.value
-      if (typeof moduleName !== 'string') {
-        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
-      }
-
-      if (!(moduleName in moduleFunctions)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
+    await transformImportNodesAsync(
+      importNodes,
+      context,
+      loadTabs,
+      (name, node) => loadModuleBundleAsync(name, context, wrapModules, node),
+      {
+        ImportSpecifier: (spec: es.ImportSpecifier, info, node) => {
+          declareIdentifier(context, spec.local.name, node, environment)
+          defineVariable(context, spec.local.name, info.content[spec.imported.name], true, node)
+        },
+        ImportDefaultSpecifier: (spec, info, node) => {
+          declareIdentifier(context, spec.local.name, node, environment)
+          defineVariable(context, spec.local.name, info.content['default'], true, node)
+        },
+        ImportNamespaceSpecifier: (spec, info, node) => {
+          declareIdentifier(context, spec.local.name, node, environment)
+          defineVariable(context, spec.local.name, info.content, true, node)
         }
-        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
       }
-
-      const functions = moduleFunctions[moduleName]
-      const environment = currentEnvironment(context)
-      for (const spec of node.specifiers) {
-        if (spec.type !== 'ImportSpecifier') {
-          throw new Error(`Only ImportSpecifiers are supported, got: ${spec.type}`)
-        }
-
-        if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, node)
-        }
-
-        declareIdentifier(context, spec.local.name, node, environment)
-        defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
-      }
-    }
+    )
   } catch (error) {
-    // console.log(error)
+    // console.error(error)
     handleRuntimeError(context, error)
   }
 
-  return otherNodes
+  return otherNodes as es.Statement[]
 }
 
 /**
@@ -192,16 +185,15 @@ function evaluateImports(
  * @param value The value of ec evaluating the program.
  * @returns The corresponding promise.
  */
-export function ECEResultPromise(context: Context, value: Value): Promise<Result> {
-  return new Promise((resolve, reject) => {
-    if (value instanceof ECEBreak) {
-      resolve({ status: 'suspended-ec-eval', context })
-    } else if (value instanceof ECError) {
-      resolve({ status: 'error' })
-    } else {
-      resolve({ status: 'finished', context, value })
-    }
-  })
+export async function ECEResultPromise(context: Context, promise: Promise<Value>): Promise<Result> {
+  const value = await promise
+  if (value instanceof ECEBreak) {
+    return { status: 'suspended-ec-eval', context }
+  } else if (value instanceof ECError) {
+    return { status: 'error' }
+  } else {
+    return { status: 'finished', context, value }
+  }
 }
 
 /**

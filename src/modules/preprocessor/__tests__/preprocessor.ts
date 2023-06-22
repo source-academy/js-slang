@@ -1,13 +1,19 @@
-import es from 'estree'
+import { generate } from 'astring'
+import type { Program } from 'estree'
+import type { MockedFunction } from 'jest-mock'
 
-import { parseError } from '../../../index'
+import { parseError } from '../../..'
 import { mockContext } from '../../../mocks/context'
-import { parse } from '../../../parser/parser'
-import { accessExportFunctionName, defaultExportLookupName } from '../../../stdlib/localImport.prelude'
 import { Chapter } from '../../../types'
-import preprocessFileImports, { getImportedLocalModulePaths } from '../preprocessor'
-import { parseCodeError, stripLocationInfo } from './utils'
+import { memoizedGetModuleDocsAsync } from '../../moduleLoaderAsync'
+import preprocessFileImports from '..'
+import hoistAndMergeImports from '../transformers/hoistAndMergeImports'
+import { parseCodeError } from './utils'
 
+// The preprocessor now checks for the existence of source modules
+// so this is here to solve that issue
+
+/*
 describe('getImportedLocalModulePaths', () => {
   let context = mockContext(Chapter.LIBRARY_PARSER)
 
@@ -78,55 +84,68 @@ describe('getImportedLocalModulePaths', () => {
     assertCorrectModulePathsAreReturned(code, '/dir/a.js', ['/dir/b.js', '/dir/c.js'])
   })
 })
+*/
 
 describe('preprocessFileImports', () => {
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
-  let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
+  // let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
 
   beforeEach(() => {
     actualContext = mockContext(Chapter.LIBRARY_PARSER)
-    expectedContext = mockContext(Chapter.LIBRARY_PARSER)
+    // expectedContext = mockContext(Chapter.LIBRARY_PARSER)
   })
 
-  const assertASTsAreEquivalent = (
-    actualProgram: es.Program | undefined,
-    expectedCode: string
-  ): void => {
-    if (actualProgram === undefined) {
+  // const assertASTsAreEquivalent = (
+  //   actualProgram: Program | undefined,
+  //   expectedCode: string
+  // ): void => {
+  //   // assert(actualProgram !== undefined, 'Actual program should not be undefined')
+  //   if (!actualProgram) {
+  //     // console.log(actualContext.errors[0], 'occurred at:', actualContext.errors[0].location.start)
+  //     throw new Error('Actual program should not be undefined!')
+  //   }
+
+  //   const expectedProgram = parse(expectedCode, expectedContext)
+  //   if (expectedProgram === null) {
+  //     throw parseCodeError
+  //   }
+
+  //   expect(stripLocationInfo(actualProgram)).toEqual(stripLocationInfo(expectedProgram))
+  // }
+
+  const testAgainstSnapshot = (program: Program | undefined | null) => {
+    if (!program) {
       throw parseCodeError
     }
 
-    const expectedProgram = parse(expectedCode, expectedContext)
-    if (expectedProgram === null) {
-      throw parseCodeError
-    }
+    hoistAndMergeImports(program, { '': program })
 
-    expect(stripLocationInfo(actualProgram)).toEqual(stripLocationInfo(expectedProgram))
+    expect(generate(program)).toMatchSnapshot()
   }
 
-  it('returns undefined & adds CannotFindModuleError to context if the entrypoint file does not exist', () => {
+  it('returns undefined & adds ModuleNotFoundError to context if the entrypoint file does not exist', async () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;'
     }
-    const actualProgram = preprocessFileImports(files, '/non-existent-file.js', actualContext)
+    const actualProgram = await preprocessFileImports(files, '/non-existent-file.js', actualContext)
     expect(actualProgram).toBeUndefined()
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
-      `"Cannot find module '/non-existent-file.js'."`
+      `"Module '/non-existent-file.js' not found."`
     )
   })
 
-  it('returns undefined & adds CannotFindModuleError to context if an imported file does not exist', () => {
+  it('returns undefined & adds ModuleNotFoundError to context if an imported file does not exist', async () => {
     const files: Record<string, string> = {
       '/a.js': `import { x } from './non-existent-file.js';`
     }
-    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
     expect(actualProgram).toBeUndefined()
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
-      `"Cannot find module '/non-existent-file.js'."`
+      `"Line 1: Module '/non-existent-file.js' not found."`
     )
   })
 
-  it('returns the same AST if the entrypoint file does not contain import/export statements', () => {
+  it('returns the same AST if the entrypoint file does not contain import/export statements', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         function square(x) {
@@ -135,12 +154,12 @@ describe('preprocessFileImports', () => {
         square(5);
       `
     }
-    const expectedCode = files['/a.js']
-    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
-    assertASTsAreEquivalent(actualProgram, expectedCode)
+    // const expectedCode = files['/a.js']
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
+    testAgainstSnapshot(actualProgram)
   })
 
-  it('removes all export-related AST nodes', () => {
+  it('removes all export-related AST nodes', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         export const x = 42;
@@ -154,25 +173,35 @@ describe('preprocessFileImports', () => {
         }
       `
     }
-    const expectedCode = `
-      const x = 42;
-      let y = 53;
-      function square(x) {
-       return x * x;
-      }
-      const id = x => x;
-      function cube(x) {
-       return x * x * x;
-      }
-    `
-    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
-    assertASTsAreEquivalent(actualProgram, expectedCode)
+    // const expectedCode = `
+    //   const x = 42;
+    //   let y = 53;
+    //   function square(x) {
+    //    return x * x;
+    //   }
+    //   const id = x => x;
+    //   function cube(x) {
+    //    return x * x * x;
+    //   }
+    // `
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
+    testAgainstSnapshot(actualProgram)
   })
 
-  it('ignores Source module imports & removes all non-Source module import-related AST nodes in the preprocessed program', () => {
+  it('ignores Source module imports & removes all non-Source module import-related AST nodes in the preprocessed program', async () => {
+    const docsMocked = memoizedGetModuleDocsAsync as MockedFunction<
+      typeof memoizedGetModuleDocsAsync
+    >
+    docsMocked.mockResolvedValueOnce({
+      default: '',
+      a: '',
+      b: '',
+      c: ''
+    })
+
     const files: Record<string, string> = {
       '/a.js': `
-        import d, { a, b, c } from "source-module";
+        import d, { a, b, c } from "one_module";
         import w, { x, y, z } from "./not-source-module.js";
       `,
       '/not-source-module.js': `
@@ -184,84 +213,102 @@ describe('preprocessFileImports', () => {
         }
       `
     }
-    const expectedCode = `
-      import { a, b, c } from "source-module";
+    // const expectedCode = `
+    //   import { a, b, c } from "one_module";
 
-      function __$not$$dash$$source$$dash$$module$$dot$$js__() {
-        const x = 1;
-        const y = 2;
-        const z = 3;
-        function square(x) {
-          return x * x;
-        }
+    //   function __$not$$dash$$source$$dash$$module$$dot$$js__() {
+    //     const x = 1;
+    //     const y = 2;
+    //     const z = 3;
+    //     function square(x) {
+    //       return x * x;
+    //     }
 
-        return pair(square, list(pair("x", x), pair("y", y), pair("z", z)));
-      }
+    //     return pair(square, list(pair("x", x), pair("y", y), pair("z", z)));
+    //   }
 
-      const ___$not$$dash$$source$$dash$$module$$dot$$js___ = __$not$$dash$$source$$dash$$module$$dot$$js__();
+    //   const ___$not$$dash$$source$$dash$$module$$dot$$js___ = __$not$$dash$$source$$dash$$module$$dot$$js__();
 
-      const w = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "${defaultExportLookupName}");
-      const x = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "x");
-      const y = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "y");
-      const z = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "z");
-    `
-    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
-    assertASTsAreEquivalent(actualProgram, expectedCode)
+    //   const w = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "${defaultExportLookupName}");
+    //   const x = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "x");
+    //   const y = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "y");
+    //   const z = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "z");
+    // `
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
+      allowUndefinedImports: true
+    })
+    testAgainstSnapshot(actualProgram)
+    // assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
-  it('collates Source module imports at the start of the top-level environment of the preprocessed program', () => {
+  it('collates Source module imports at the start of the top-level environment of the preprocessed program', async () => {
+    const docsMocked = memoizedGetModuleDocsAsync as MockedFunction<
+      typeof memoizedGetModuleDocsAsync
+    >
+    docsMocked.mockResolvedValue({
+      f: '',
+      g: '',
+      h: '',
+      w: '',
+      x: '',
+      y: '',
+      z: ''
+    })
     const files: Record<string, string> = {
       '/a.js': `
         import { b } from "./b.js";
-        import { w, x } from "source-module";
-        import { f, g } from "other-source-module";
+        import { w, x } from "one_module";
+        import { f, g } from "other_module";
 
         b;
       `,
       '/b.js': `
         import { square } from "./c.js";
-        import { x, y } from "source-module";
-        import { h } from "another-source-module";
+        import { x, y } from "one_module";
+        import { h } from "another_module";
 
         export const b = square(5);
       `,
       '/c.js': `
-        import { x, y, z } from "source-module";
+        import { x, y, z } from "one_module";
 
         export const square = x => x * x;
       `
     }
-    const expectedCode = `
-      import { w, x, y, z } from "source-module";
-      import { f, g } from "other-source-module";
-      import { h } from "another-source-module";
+    // const expectedCode = `
+    //   import { w, x, y, z } from "one_module";
+    //   import { f, g } from "other_module";
+    //   import { h } from "another_module";
 
-      function __$b$$dot$$js__(___$c$$dot$$js___) {
-        const square = ${accessExportFunctionName}(___$c$$dot$$js___, "square");
+    //   function __$b$$dot$$js__(___$c$$dot$$js___) {
+    //     const square = ${accessExportFunctionName}(___$c$$dot$$js___, "square");
 
-        const b = square(5);
+    //     const b = square(5);
 
-        return pair(null, list(pair("b", b)));
-      }
+    //     return pair(null, list(pair("b", b)));
+    //   }
 
-      function __$c$$dot$$js__() {
-        const square = x => x * x;
+    //   function __$c$$dot$$js__() {
+    //     const square = x => x * x;
 
-        return pair(null, list(pair("square", square)));
-      }
+    //     return pair(null, list(pair("square", square)));
+    //   }
 
-      const ___$c$$dot$$js___ = __$c$$dot$$js__();
-      const ___$b$$dot$$js___ = __$b$$dot$$js__(___$c$$dot$$js___);
+    //   const ___$c$$dot$$js___ = __$c$$dot$$js__();
+    //   const ___$b$$dot$$js___ = __$b$$dot$$js__(___$c$$dot$$js___);
 
-      const b = ${accessExportFunctionName}(___$b$$dot$$js___, "b");
+    //   const b = ${accessExportFunctionName}(___$b$$dot$$js___, "b");
 
-      b;
-    `
-    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
-    assertASTsAreEquivalent(actualProgram, expectedCode)
+    //   b;
+    // `
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
+      allowUndefinedImports: true
+    })
+    testAgainstSnapshot(actualProgram)
+    // assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
-  it('returns CircularImportError if there are circular imports', () => {
+  it('returns CircularImportError if there are circular imports', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         import { b } from "./b.js";
@@ -279,13 +326,13 @@ describe('preprocessFileImports', () => {
         export const c = 3;
       `
     }
-    preprocessFileImports(files, '/a.js', actualContext)
+    await preprocessFileImports(files, '/a.js', actualContext)
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
-      `"Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'."`
+      `"Circular import detected: '/c.js' -> '/a.js' -> '/b.js' -> '/c.js'."`
     )
   })
 
-  it('returns CircularImportError if there are circular imports - verbose', () => {
+  it('returns CircularImportError if there are circular imports - verbose', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         import { b } from "./b.js";
@@ -303,15 +350,15 @@ describe('preprocessFileImports', () => {
         export const c = 3;
       `
     }
-    preprocessFileImports(files, '/a.js', actualContext)
+    await preprocessFileImports(files, '/a.js', actualContext)
     expect(parseError(actualContext.errors, true)).toMatchInlineSnapshot(`
-      "Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'.
+      "Circular import detected: '/c.js' -> '/a.js' -> '/b.js' -> '/c.js'.
       Break the circular import cycle by removing imports from any of the offending files.
       "
     `)
   })
 
-  it('returns CircularImportError if there are self-imports', () => {
+  it('returns CircularImportError if there are self-imports', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         import { y } from "./a.js";
@@ -319,13 +366,13 @@ describe('preprocessFileImports', () => {
         export { x as y };
       `
     }
-    preprocessFileImports(files, '/a.js', actualContext)
+    await preprocessFileImports(files, '/a.js', actualContext)
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
       `"Circular import detected: '/a.js' -> '/a.js'."`
     )
   })
 
-  it('returns CircularImportError if there are self-imports - verbose', () => {
+  it('returns CircularImportError if there are self-imports - verbose', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         import { y } from "./a.js";
@@ -333,7 +380,7 @@ describe('preprocessFileImports', () => {
         export { x as y };
       `
     }
-    preprocessFileImports(files, '/a.js', actualContext)
+    await preprocessFileImports(files, '/a.js', actualContext)
     expect(parseError(actualContext.errors, true)).toMatchInlineSnapshot(`
       "Circular import detected: '/a.js' -> '/a.js'.
       Break the circular import cycle by removing imports from any of the offending files.
@@ -341,7 +388,7 @@ describe('preprocessFileImports', () => {
     `)
   })
 
-  it('returns a preprocessed program with all imports', () => {
+  it('returns a preprocessed program with all imports', async () => {
     const files: Record<string, string> = {
       '/a.js': `
         import { a as x, b as y } from "./b.js";
@@ -369,44 +416,46 @@ describe('preprocessFileImports', () => {
         export { addTwo as mysteryFunction };
       `
     }
-    const expectedCode = `
-      function __$b$$dot$$js__(___$c$$dot$$js___) {
-        const y = ${accessExportFunctionName}(___$c$$dot$$js___, "${defaultExportLookupName}");
-        const square = ${accessExportFunctionName}(___$c$$dot$$js___, "square");
+    // const expectedCode = `
+    //   function __$b$$dot$$js__(___$c$$dot$$js___) {
+    //     const y = ${accessExportFunctionName}(___$c$$dot$$js___, "${defaultExportLookupName}");
+    //     const square = ${accessExportFunctionName}(___$c$$dot$$js___, "square");
 
-        const a = square(y);
-        const b = 3;
+    //     const a = square(y);
+    //     const b = 3;
 
-        return pair(null, list(pair("a", a), pair("b", b)));
-      }
+    //     return pair(null, list(pair("a", a), pair("b", b)));
+    //   }
 
-      function __$c$$dot$$js__(___$d$$dot$$js___) {
-        const mysteryFunction = ${accessExportFunctionName}(___$d$$dot$$js___, "mysteryFunction");
+    //   function __$c$$dot$$js__(___$d$$dot$$js___) {
+    //     const mysteryFunction = ${accessExportFunctionName}(___$d$$dot$$js___, "mysteryFunction");
 
-        const x = mysteryFunction(5);
-        function square(x) {
-          return x * x;
-        }
+    //     const x = mysteryFunction(5);
+    //     function square(x) {
+    //       return x * x;
+    //     }
 
-        return pair(x, list(pair("square", square)));
-      }
+    //     return pair(x, list(pair("square", square)));
+    //   }
 
-      function __$d$$dot$$js__() {
-        const addTwo = x => x + 2;
+    //   function __$d$$dot$$js__() {
+    //     const addTwo = x => x + 2;
 
-        return pair(null, list(pair("mysteryFunction", addTwo)));
-      }
+    //     return pair(null, list(pair("mysteryFunction", addTwo)));
+    //   }
 
-      const ___$d$$dot$$js___ = __$d$$dot$$js__();
-      const ___$c$$dot$$js___ = __$c$$dot$$js__(___$d$$dot$$js___);
-      const ___$b$$dot$$js___ = __$b$$dot$$js__(___$c$$dot$$js___);
+    //   const ___$d$$dot$$js___ = __$d$$dot$$js__();
+    //   const ___$c$$dot$$js___ = __$c$$dot$$js__(___$d$$dot$$js___);
+    //   const ___$b$$dot$$js___ = __$b$$dot$$js__(___$c$$dot$$js___);
 
-      const x = ${accessExportFunctionName}(___$b$$dot$$js___, "a");
-      const y = ${accessExportFunctionName}(___$b$$dot$$js___, "b");
+    //   const x = ${accessExportFunctionName}(___$b$$dot$$js___, "a");
+    //   const y = ${accessExportFunctionName}(___$b$$dot$$js___, "b");
 
-      x + y;
-    `
-    const actualProgram = preprocessFileImports(files, '/a.js', actualContext)
-    assertASTsAreEquivalent(actualProgram, expectedCode)
+    //   x + y;
+    // `
+    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
+      allowUndefinedImports: true
+    })
+    testAgainstSnapshot(actualProgram)
   })
 })

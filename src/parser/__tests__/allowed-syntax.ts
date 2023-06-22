@@ -294,7 +294,7 @@ test.each([
   [
     Chapter.LIBRARY_PARSER,
     `
-    import defaultExport from "module-name";
+    import defaultExport from "one_module";
     `
   ],
 
@@ -340,15 +340,20 @@ test.each([
   (chapter: Chapter, snippet: string, skipSuccessTests: boolean = false) => {
     snippet = stripIndent(snippet)
     const parseSnippet = `parse(${JSON.stringify(snippet)});`
-    const tests = []
+
+    const tests: Promise<any>[] = []
     if (!skipSuccessTests) {
       tests.push(
-        snapshotSuccess(snippet, { chapter, native: chapter !== Chapter.LIBRARY_PARSER }, 'passes')
+        snapshotSuccess(
+          snippet,
+          { chapter, native: chapter !== Chapter.LIBRARY_PARSER, allowUndefinedImports: true },
+          'passes'
+        )
       )
       tests.push(
         snapshotSuccess(
           parseSnippet,
-          { chapter: Math.max(4, chapter), native: true },
+          { chapter: Math.max(4, chapter), native: true, allowUndefinedImports: true },
           'parse passes'
         )
       )

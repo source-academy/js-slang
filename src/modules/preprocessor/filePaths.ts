@@ -2,7 +2,7 @@ import {
   ConsecutiveSlashesInFilePathError,
   IllegalCharInFilePathError,
   InvalidFilePathError
-} from '../../errors/localImportErrors'
+} from '../../modules/errors'
 
 /**
  * Maps non-alphanumeric characters that are legal in file paths

@@ -995,8 +995,8 @@ describe('if-else statements', () => {
 
 describe('import statements', () => {
   it('identifies imports even if accessed before import statement', () => {
-    const code = `show(heart);
-      import { show, heart } from 'rune';
+    const code = `foo(bar);
+      import { foo, bar } from 'one_module';
     `
 
     parse(code, context)
@@ -1017,11 +1017,11 @@ describe('import statements', () => {
   })
 
   it('defaults to any for all imports', () => {
-    const code = `import { show, heart } from 'rune';
-      show(heart);
-      heart(show);
-      const x1: string = heart;
-      const x2: number = show;
+    const code = `import { foo, bar } from 'one_module';
+      foo(bar);
+      bar(foo);
+      const x1: string = bar;
+      const x2: number = foo;
     `
 
     parse(code, context)

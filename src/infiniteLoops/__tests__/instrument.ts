@@ -37,7 +37,11 @@ function mockFunctionsAndState() {
  * Returns the value saved in the code using the builtin 'output'.
  * e.g. runWithMock('output(2)') --> 2
  */
-function runWithMock(main: string, codeHistory?: string[], builtins: Map<string, any> = new Map()) {
+async function runWithMock(
+  main: string,
+  codeHistory?: string[],
+  builtins: Map<string, any> = new Map()
+) {
   let output = undefined
   builtins.set('output', (x: any) => (output = x))
   builtins.set('undefined', undefined)
@@ -53,7 +57,7 @@ function runWithMock(main: string, codeHistory?: string[], builtins: Map<string,
     previous = restOfCode as Program[]
   }
   const [mockFunctions, mockState] = mockFunctionsAndState()
-  const instrumentedCode = instrument(previous, program as Program, builtins.keys())
+  const instrumentedCode = await instrument(previous, program as Program, builtins.keys())
   const { builtinsId, functionsId, stateId } = InfiniteLoopRuntimeObjectNames
   const sandboxedRun = new Function('code', functionsId, stateId, builtinsId, `return eval(code)`)
   sandboxedRun(instrumentedCode, mockFunctions, mockState, builtins)
@@ -62,12 +66,12 @@ function runWithMock(main: string, codeHistory?: string[], builtins: Map<string,
 
 test('builtins work', () => {
   const main = 'output(2);'
-  expect(runWithMock(main, [])).toBe(2)
+  expect(runWithMock(main, [])).resolves.toBe(2)
 })
 
 test('binary and unary expressions work', () => {
-  expect(runWithMock('output(1+1);', [])).toBe(2)
-  expect(runWithMock('output(!true);', [])).toBe(false)
+  expect(runWithMock('output(1+1);', [])).resolves.toBe(2)
+  expect(runWithMock('output(!true);', [])).resolves.toBe(false)
 })
 
 test('assignment works as expected', () => {
@@ -75,13 +79,13 @@ test('assignment works as expected', () => {
   let a = [];
   a[0] = 3;
   output(x+a[0]);`
-  expect(runWithMock(main)).toBe(5)
+  expect(runWithMock(main)).resolves.toBe(5)
 })
 
 test('globals from old code accessible', () => {
   const main = 'output(z+1);'
   const prev = ['const z = w+1;', 'let w = 10;']
-  expect(runWithMock(main, prev)).toBe(12)
+  expect(runWithMock(main, prev)).resolves.toBe(12)
 })
 
 test('functions run as expected', () => {
@@ -89,7 +93,7 @@ test('functions run as expected', () => {
     return x===0?x:f(x-1,y)+y;
   }
   output(f(5,2));`
-  expect(runWithMock(main)).toBe(10)
+  expect(runWithMock(main)).resolves.toBe(10)
 })
 
 test('nested functions run as expected', () => {
@@ -100,7 +104,7 @@ test('nested functions run as expected', () => {
     return x===0?x:f(x-1,y)+y;
   }
   output(f(5,2));`
-  expect(runWithMock(main)).toBe(2)
+  expect(runWithMock(main)).resolves.toBe(2)
 })
 
 test('higher order functions run as expected', () => {
@@ -108,14 +112,14 @@ test('higher order functions run as expected', () => {
     return f(x+1);
   }
   output(run(x=>x+1, 1));`
-  expect(runWithMock(main)).toBe(3)
+  expect(runWithMock(main)).resolves.toBe(3)
 })
 
 test('loops run as expected', () => {
   const main = `let w = 0;
   for (let i = w; i < 10; i=i+1) {w = i;}
   output(w);`
-  expect(runWithMock(main)).toBe(9)
+  expect(runWithMock(main)).resolves.toBe(9)
 })
 
 test('nested loops run as expected', () => {
@@ -126,13 +130,13 @@ test('nested loops run as expected', () => {
     }
   }
   output(w);`
-  expect(runWithMock(main)).toBe(100)
+  expect(runWithMock(main)).resolves.toBe(100)
 })
 
 test('multidimentional arrays work', () => {
   const main = `const x = [[1],[2]];
   output(x[1] === undefined? undefined: x[1][0]);`
-  expect(runWithMock(main)).toBe(2)
+  expect(runWithMock(main)).resolves.toBe(2)
 })
 
 test('if statements work as expected', () => {
@@ -141,7 +145,7 @@ test('if statements work as expected', () => {
     x = x + 1;
   } else {}
   output(x);`
-  expect(runWithMock(main)).toBe(2)
+  expect(runWithMock(main)).resolves.toBe(2)
 })
 
 test('combination of loops and functions run as expected', () => {
@@ -158,5 +162,5 @@ test('combination of loops and functions run as expected', () => {
     w = minus(w,1);
   }
   output(z);`
-  expect(runWithMock(main)).toBe(100)
+  expect(runWithMock(main)).resolves.toBe(100)
 })

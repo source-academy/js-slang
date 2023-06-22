@@ -48,6 +48,7 @@ interface TestOptions {
   native?: boolean
   showTranspiledCode?: boolean
   showErrorJSON?: boolean
+  allowUndefinedImports?: boolean
 }
 
 export function createTestContext({
@@ -116,7 +117,12 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     await runInContext(code, interpretedTestContext, {
       scheduler,
       executionMethod: 'interpreter',
-      variant: options.variant
+      variant: options.variant,
+      importOptions: {
+        allowUndefinedImports: !!options.allowUndefinedImports,
+        loadTabs: false,
+        wrapModules: false
+      }
     })
   )
   if (options.native) {
@@ -141,7 +147,8 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
           break
       }
       try {
-        transpiled = transpile(parsed, nativeTestContext, true).transpiled
+        transpiled = (await transpile(parsed, nativeTestContext, { skipUndefined: true }))
+          .transpiled
         // replace declaration of builtins since they're repetitive
         transpiled = transpiled.replace(/\n  const \w+ = nativeStorage\..*;/g, '')
         transpiled = transpiled.replace(/\n\s*const \w+ = .*\.operators\..*;/g, '')
@@ -154,7 +161,12 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       await runInContext(code, nativeTestContext, {
         scheduler,
         executionMethod: 'native',
-        variant: options.variant
+        variant: options.variant,
+        importOptions: {
+          allowUndefinedImports: !!options.allowUndefinedImports,
+          loadTabs: false,
+          wrapModules: false
+        }
       })
     )
     const propertiesThatShouldBeEqual = [

@@ -1,0 +1,96 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`preprocessFileImports collates Source module imports at the start of the top-level environment of the preprocessed program 1`] = `
+"import {x, y, z, w} from \\"one_module\\";
+import {h} from \\"another_module\\";
+import {f, g} from \\"other_module\\";
+import {x, y, z, w} from \\"one_module\\";
+import {h} from \\"another_module\\";
+import {f, g} from \\"other_module\\";
+function __$c$$dot$$js__() {
+  const square = x => x * x;
+  return pair(null, list(pair(\\"square\\", square)));
+}
+function __$b$$dot$$js__(___$c$$dot$$js___) {
+  const square = __access_export__(___$c$$dot$$js___, \\"square\\");
+  const b = square(5);
+  return pair(null, list(pair(\\"b\\", b)));
+}
+const ___$c$$dot$$js___ = __$c$$dot$$js__();
+const ___$b$$dot$$js___ = __$b$$dot$$js__(___$c$$dot$$js___);
+const b = __access_export__(___$b$$dot$$js___, \\"b\\");
+b;
+"
+`;
+
+exports[`preprocessFileImports ignores Source module imports & removes all non-Source module import-related AST nodes in the preprocessed program 1`] = `
+"import {a, b, c} from \\"one_module\\";
+import d from \\"one_module\\";
+import {a, b, c} from \\"one_module\\";
+import d from \\"one_module\\";
+function __$not$$dash$$source$$dash$$module$$dot$$js__() {
+  const x = 1;
+  const y = 2;
+  const z = 3;
+  function square(x) {
+    return x * x;
+  }
+  return pair(square, list(pair(\\"x\\", x), pair(\\"y\\", y), pair(\\"z\\", z)));
+}
+const ___$not$$dash$$source$$dash$$module$$dot$$js___ = __$not$$dash$$source$$dash$$module$$dot$$js__();
+const w = __access_export__(___$not$$dash$$source$$dash$$module$$dot$$js___, \\"default\\");
+const x = __access_export__(___$not$$dash$$source$$dash$$module$$dot$$js___, \\"x\\");
+const y = __access_export__(___$not$$dash$$source$$dash$$module$$dot$$js___, \\"y\\");
+const z = __access_export__(___$not$$dash$$source$$dash$$module$$dot$$js___, \\"z\\");
+"
+`;
+
+exports[`preprocessFileImports removes all export-related AST nodes 1`] = `
+"const x = 42;
+let y = 53;
+function square(x) {
+  return x * x;
+}
+const id = x => x;
+function cube(x) {
+  return x * x * x;
+}
+"
+`;
+
+exports[`preprocessFileImports returns a preprocessed program with all imports 1`] = `
+"function __$d$$dot$$js__() {
+  const addTwo = x => x + 2;
+  return pair(null, list(pair(\\"mysteryFunction\\", addTwo)));
+}
+function __$c$$dot$$js__(___$d$$dot$$js___) {
+  const mysteryFunction = __access_export__(___$d$$dot$$js___, \\"mysteryFunction\\");
+  const x = mysteryFunction(5);
+  function square(x) {
+    return x * x;
+  }
+  return pair(x, list(pair(\\"square\\", square)));
+}
+function __$b$$dot$$js__(___$c$$dot$$js___) {
+  const y = __access_export__(___$c$$dot$$js___, \\"default\\");
+  const square = __access_export__(___$c$$dot$$js___, \\"square\\");
+  const a = square(y);
+  const b = 3;
+  return pair(null, list(pair(\\"a\\", a), pair(\\"b\\", b)));
+}
+const ___$d$$dot$$js___ = __$d$$dot$$js__();
+const ___$c$$dot$$js___ = __$c$$dot$$js__(___$d$$dot$$js___);
+const ___$b$$dot$$js___ = __$b$$dot$$js__(___$c$$dot$$js___);
+const x = __access_export__(___$b$$dot$$js___, \\"a\\");
+const y = __access_export__(___$b$$dot$$js___, \\"b\\");
+x + y;
+"
+`;
+
+exports[`preprocessFileImports returns the same AST if the entrypoint file does not contain import/export statements 1`] = `
+"function square(x) {
+  return x * x;
+}
+square(5);
+"
+`;

@@ -9,6 +9,11 @@
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "prettier"
   ],
+  "ignorePatterns": [
+    "**/__tests__/**",
+    "**/__mocks__/**",
+    "jest.setup.ts"
+  ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "tsconfig.json",

@@ -1,3 +1,4 @@
+import { generate } from 'astring'
 import * as es from 'estree'
 import * as _ from 'lodash'
 import { RawSourceMap } from 'source-map'
@@ -6,7 +7,6 @@ import { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
 import { ECEResultPromise, evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
 import { ExceptionError } from '../errors/errors'
-import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
@@ -15,7 +15,8 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
-import preprocessFileImports from '../modules/preprocessor/preprocessor'
+import { ModuleNotFoundError } from '../modules/errors'
+import preprocessFileImports from '../modules/preprocessor'
 import { getRequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
@@ -28,7 +29,7 @@ import {
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { Context, Scheduler, SourceError, Variant } from '../types'
+import { Chapter, Context, RecursivePartial, Scheduler, SourceError, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
@@ -36,7 +37,7 @@ import { runWithProgram } from '../vm/svml-machine'
 import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
-import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
+import { determineVariant, resolvedErrorPromise } from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
   scheduler: 'async',
@@ -47,7 +48,17 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   originalMaxExecTime: 1000,
   useSubst: false,
   isPrelude: false,
-  throwInfiniteLoops: true
+  throwInfiniteLoops: true,
+
+  logTranspilerOutput: false,
+  logPreprocessorOutput: true,
+  importOptions: {
+    loadTabs: true,
+    wrapModules: true,
+    allowUndefinedImports: false,
+    resolveDirectories: false,
+    resolveExtensions: null
+  }
 }
 
 let previousCode: {
@@ -104,7 +115,7 @@ function runSubstitution(
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context, true, true)
+  let it = evaluate(program, context, options.importOptions)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
     it = nonDetEvaluate(program, context)
@@ -138,8 +149,6 @@ async function runNative(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    appendModulesToContext(transpiledProgram, context)
-
     switch (context.variant) {
       case Variant.GPU:
         transpileToGPU(transpiledProgram)
@@ -149,7 +158,15 @@ async function runNative(
         break
     }
 
-    ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
+    ;({ transpiled, sourceMapJson } = await transpile(
+      transpiledProgram,
+      context,
+      options.importOptions
+    ))
+
+    // if (!options.isPrelude) console.log(transpiled)
+
+    if (options.logTranspilerOutput) console.log(transpiled)
     let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
@@ -160,16 +177,19 @@ async function runNative(
       isPreviousCodeTimeoutError = false
     }
 
-    return Promise.resolve({
+    return {
       status: 'finished',
       context,
       value
-    })
+    }
   } catch (error) {
     // console.error(error)
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-      const detectedInfiniteLoop = testForInfiniteLoop(program, context.previousPrograms.slice(1))
+      const detectedInfiniteLoop = await testForInfiniteLoop(
+        program,
+        context.previousPrograms.slice(1)
+      )
       if (detectedInfiniteLoop !== undefined) {
         if (options.throwInfiniteLoops) {
           context.errors.push(detectedInfiniteLoop)
@@ -214,9 +234,20 @@ export async function sourceRunner(
   program: es.Program,
   context: Context,
   isVerboseErrorsEnabled: boolean,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
-  const theOptions: IOptions = { ...DEFAULT_SOURCE_OPTIONS, ...options }
+  const theOptions: IOptions = {
+    ...DEFAULT_SOURCE_OPTIONS,
+    ...options,
+    importOptions: {
+      ...DEFAULT_SOURCE_OPTIONS.importOptions,
+      ...(options?.importOptions ?? {})
+    }
+  }
+  if (context.chapter === Chapter.FULL_JS) {
+    return fullJSRunner(program, context, theOptions)
+  }
+
   context.variant = determineVariant(context, options)
 
   validateAndAnnotate(program, context)
@@ -235,7 +266,7 @@ export async function sourceRunner(
   determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
 
   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-    return await fullJSRunner(program, context, theOptions)
+    return fullJSRunner(program, context, theOptions)
   }
 
   // All runners after this point evaluate the prelude.
@@ -269,18 +300,18 @@ export async function sourceRunner(
     return runNative(program, context, theOptions)
   }
 
-  return runInterpreter(program!, context, theOptions)
+  return runInterpreter(program, context, theOptions)
 }
 
 export async function sourceFilesRunner(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
     return resolvedErrorPromise
   }
 
@@ -301,9 +332,18 @@ export async function sourceFilesRunner(
   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
   previousCode = currentCode
 
-  const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
+  const preprocessedProgram = await preprocessFileImports(
+    files,
+    entrypointFilePath,
+    context,
+    options.importOptions
+  )
   if (!preprocessedProgram) {
     return resolvedErrorPromise
+  }
+
+  if (options.logPreprocessorOutput) {
+    console.log(generate(preprocessedProgram))
   }
   context.previousPrograms.unshift(preprocessedProgram)
 

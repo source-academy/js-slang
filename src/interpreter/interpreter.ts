@@ -1,18 +1,19 @@
 /* tslint:disable:max-classes-per-file */
-import * as es from 'estree'
+import type * as es from 'estree'
 import { isEmpty, uniqueId } from 'lodash'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { UndefinedImportError } from '../modules/errors'
-import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
+import { loadModuleBundle } from '../modules/moduleLoader'
+import type { ImportTransformOptions, ModuleFunctions } from '../modules/moduleTypes'
+import { initModuleContext } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
+import { simple } from '../utils/ast/walkers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -712,8 +713,7 @@ function getNonEmptyEnv(environment: Environment): Environment {
 export function* evaluateProgram(
   program: es.Program,
   context: Context,
-  checkImports: boolean,
-  loadTabs: boolean
+  { loadTabs, wrapModules }: ImportTransformOptions
 ) {
   yield* visit(context, program)
 
@@ -739,26 +739,26 @@ export function* evaluateProgram(
       }
 
       if (!(moduleName in moduleFunctions)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
-        }
-        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
+        initModuleContext(moduleName, context, loadTabs, node)
+        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, wrapModules, node)
       }
 
       const functions = moduleFunctions[moduleName]
 
       for (const spec of node.specifiers) {
-        if (spec.type !== 'ImportSpecifier') {
-          throw new Error(`Only Import Specifiers are supported, got ${spec.type}`)
-        }
-
-        if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, node)
-        }
-
         declareIdentifier(context, spec.local.name, node)
-        defineVariable(context, spec.local.name, functions[spec.imported.name], true)
+        simple(spec, {
+          ImportSpecifier: () =>
+            defineVariable(
+              context,
+              spec.local.name,
+              functions[(spec as es.ImportSpecifier).imported.name],
+              true
+            ),
+          ImportDefaultSpecifier: () =>
+            defineVariable(context, spec.local.name, functions['default'], true),
+          ImportNamespaceSpecifier: () => defineVariable(context, spec.local.name, functions, true)
+        })
       }
       yield* leave(context)
     }

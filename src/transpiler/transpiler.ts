@@ -5,18 +5,27 @@ import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID, REQUIRE_PROVIDER_ID, UNKNOWN_LOCATION } from '../constants'
-import { UndefinedVariable } from '../errors/errors'
-import { UndefinedImportError } from '../modules/errors'
-import { memoizedGetModuleFile, memoizedloadModuleDocs } from '../modules/moduleLoader'
-import { ModuleDocumentation } from '../modules/moduleTypes'
-import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
+import { memoizedGetModuleBundleAsync } from '../modules/moduleLoaderAsync'
+import { ImportTransformOptions } from '../modules/moduleTypes'
+import { initModuleContextAsync } from '../modules/utils'
+import {
+  AllowedDeclarations,
+  Chapter,
+  Context,
+  NativeStorage,
+  RecursivePartial,
+  Variant
+} from '../types'
+import assert from '../utils/assert'
 import * as create from '../utils/ast/astCreator'
+import { isImportDeclaration } from '../utils/ast/typeGuards'
+import { simple } from '../utils/ast/walkers'
 import {
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getUniqueId
 } from '../utils/uniqueIds'
-import { ancestor, simple } from '../utils/ast/walkers'
+import checkForUndefinedVariables from './variableChecker'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -40,88 +49,66 @@ const globalIdNames = [
 
 export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
 
-export function transformImportDeclarations(
+export async function transformImportDeclarations(
   program: es.Program,
   usedIdentifiers: Set<string>,
-  checkImports: boolean,
-  nativeId?: es.Identifier,
-  useThis: boolean = false
-): [string, es.VariableDeclaration[], es.Program['body']] {
-  const [importNodes, otherNodes] = partition(
-    program.body,
-    node => node.type === 'ImportDeclaration'
-  )
+  context: Context | null,
+  { wrapModules, loadTabs }: ImportTransformOptions
+): Promise<[string, es.VariableDeclaration[], es.Program['body']]> {
+  const [importNodes, otherNodes] = partition(program.body, isImportDeclaration)
 
-  if (importNodes.length === 0) return ['', [], otherNodes]
+  if (importNodes.length === 0) return ['', [], otherNodes as es.Statement[]]
 
-  const moduleInfos = importNodes.reduce(
-    (res, node: es.ImportDeclaration) => {
-      const moduleName = node.source.value
-      if (typeof moduleName !== 'string') {
-        throw new Error(
-          `Expected ImportDeclaration to have a source of type string, got ${moduleName}`
-        )
-      }
+  const moduleToNodeMap = importNodes.reduce((res, node) => {
+    const moduleName = node.source.value
+    assert(
+      typeof moduleName === 'string',
+      `Expected ImportDeclaration to have a source of type string!, got ${moduleName}!`
+    )
 
-      if (!(moduleName in res)) {
-        res[moduleName] = {
-          text: memoizedGetModuleFile(moduleName, 'bundle'),
-          nodes: [],
-          docs: checkImports ? memoizedloadModuleDocs(moduleName, node) : null
-        }
-      }
-
-      res[moduleName].nodes.push(node)
-      node.specifiers.forEach(spec => usedIdentifiers.add(spec.local.name))
-      return res
-    },
-    {} as Record<
-      string,
-      {
-        nodes: es.ImportDeclaration[]
-        text: string
-        docs: ModuleDocumentation | null
-      }
-    >
-  )
+    if (!(moduleName in res)) res[moduleName] = []
+    res[moduleName].push(node)
+    node.specifiers.forEach(spec => usedIdentifiers.add(spec.local.name))
+    return res
+  }, {} as Record<string, es.ImportDeclaration[]>)
 
   const prefix: string[] = []
-  const declNodes = Object.entries(moduleInfos).flatMap(([moduleName, { nodes, text, docs }]) => {
-    const namespaced = getUniqueId(usedIdentifiers, '__MODULE__')
-    prefix.push(`// ${moduleName} module`)
+  const importNodeMap = await Promise.all(
+    Object.entries(moduleToNodeMap).map(async ([moduleName, nodes]) => {
+      const namespaced = getUniqueId(usedIdentifiers, '__MODULE__')
 
-    const modifiedText = nativeId
-      ? `${NATIVE_STORAGE_ID}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
-      : `(${text})(${REQUIRE_PROVIDER_ID})`
-    prefix.push(`const ${namespaced} = ${modifiedText}\n`)
+      const [text] = await Promise.all([
+        memoizedGetModuleBundleAsync(moduleName),
+        context
+          ? initModuleContextAsync(moduleName, context, loadTabs, nodes[0])
+          : Promise.resolve()
+      ])
+      const modifiedText = wrapModules
+        ? `${NATIVE_STORAGE_ID}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
+        : `(${text})(${REQUIRE_PROVIDER_ID})`
+      prefix.push(`const ${namespaced} = ${modifiedText}\n`)
 
+      return [namespaced, nodes] as [string, es.ImportDeclaration[]]
+    })
+  )
+
+  const declNodes = importNodeMap.flatMap(([namespaced, nodes]) => {
     return nodes.flatMap(node =>
       node.specifiers.map(specifier => {
         if (specifier.type !== 'ImportSpecifier') {
           throw new Error(`Expected import specifier, found: ${specifier.type}`)
         }
 
-        if (checkImports) {
-          if (!docs) {
-            console.warn(`Failed to load docs for ${moduleName}, skipping typechecking`)
-          } else if (!(specifier.imported.name in docs)) {
-            throw new UndefinedImportError(specifier.imported.name, moduleName, node)
-          }
-        }
-
         // Convert each import specifier to its corresponding local variable declaration
         return create.constantDeclaration(
           specifier.local.name,
-          create.memberExpression(
-            create.identifier(`${useThis ? 'this.' : ''}${namespaced}`),
-            specifier.imported.name
-          )
+          create.memberExpression(create.identifier(namespaced), specifier.imported.name)
         )
       })
     )
   })
 
-  return [prefix.join('\n'), declNodes, otherNodes]
+  return [prefix.join('\n'), declNodes, otherNodes as es.Statement[]]
 }
 
 export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
@@ -327,100 +314,6 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program, globalId
   })
 }
 
-export function checkForUndefinedVariables(
-  program: es.Program,
-  nativeStorage: NativeStorage,
-  globalIds: NativeIds,
-  skipUndefined: boolean
-) {
-  const builtins = nativeStorage.builtins
-  const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
-  function processBlock(node: es.Program | es.BlockStatement) {
-    const identifiers = new Set<string>()
-    for (const statement of node.body) {
-      if (statement.type === 'VariableDeclaration') {
-        identifiers.add((statement.declarations[0].id as es.Identifier).name)
-      } else if (statement.type === 'FunctionDeclaration') {
-        if (statement.id === null) {
-          throw new Error(
-            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-          )
-        }
-        identifiers.add(statement.id.name)
-      } else if (statement.type === 'ImportDeclaration') {
-        for (const specifier of statement.specifiers) {
-          identifiers.add(specifier.local.name)
-        }
-      }
-    }
-    identifiersIntroducedByNode.set(node, identifiers)
-  }
-  function processFunction(
-    node: es.FunctionDeclaration | es.ArrowFunctionExpression,
-    _ancestors: es.Node[]
-  ) {
-    identifiersIntroducedByNode.set(
-      node,
-      new Set(
-        node.params.map(id =>
-          id.type === 'Identifier'
-            ? id.name
-            : ((id as es.RestElement).argument as es.Identifier).name
-        )
-      )
-    )
-  }
-  const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
-  ancestor(program, {
-    Program: processBlock,
-    BlockStatement: processBlock,
-    FunctionDeclaration: processFunction,
-    ArrowFunctionExpression: processFunction,
-    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
-      const init = forStatement.init!
-      if (init.type === 'VariableDeclaration') {
-        identifiersIntroducedByNode.set(
-          forStatement,
-          new Set([(init.declarations[0].id as es.Identifier).name])
-        )
-      }
-    },
-    Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
-      identifiersToAncestors.set(identifier, [...ancestors])
-    },
-    Pattern(node: es.Pattern, ancestors: es.Node[]) {
-      if (node.type === 'Identifier') {
-        identifiersToAncestors.set(node, [...ancestors])
-      } else if (node.type === 'MemberExpression') {
-        if (node.object.type === 'Identifier') {
-          identifiersToAncestors.set(node.object, [...ancestors])
-        }
-      }
-    }
-  })
-  const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
-
-  for (const [identifier, ancestors] of identifiersToAncestors) {
-    const name = identifier.name
-    const isCurrentlyDeclared = ancestors.some(a => identifiersIntroducedByNode.get(a)?.has(name))
-    if (isCurrentlyDeclared) {
-      continue
-    }
-    const isPreviouslyDeclared = nativeStorage.previousProgramsIdentifiers.has(name)
-    if (isPreviouslyDeclared) {
-      continue
-    }
-    const isBuiltin = builtins.has(name)
-    if (isBuiltin) {
-      continue
-    }
-    const isNativeId = nativeInternalNames.has(name)
-    if (!isNativeId && !skipUndefined) {
-      throw new UndefinedVariable(name, identifier)
-    }
-  }
-}
-
 function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds: NativeIds) {
   function transform(
     node:
@@ -600,12 +493,13 @@ function getDeclarationsToAccessTranspilerInternals(
 }
 
 export type TranspiledResult = { transpiled: string; sourceMapJson?: RawSourceMap }
+export type TranspileOptions = ImportTransformOptions & { skipUndefined?: boolean }
 
-function transpileToSource(
+async function transpileToSource(
   program: es.Program,
   context: Context,
-  skipUndefined: boolean
-): TranspiledResult {
+  { skipUndefined, ...importOptions }: TranspileOptions
+): Promise<TranspiledResult> {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage)
@@ -613,6 +507,10 @@ function transpileToSource(
   const globalIds = getNativeIds(program, usedIdentifiers)
   if (program.body.length === 0) {
     return { transpiled: '' }
+  }
+
+  if (!skipUndefined) {
+    checkForUndefinedVariables(program, usedIdentifiers)
   }
 
   const functionsToStringMap = generateFunctionsToStringMap(program)
@@ -623,16 +521,15 @@ function transpileToSource(
   transformSomeExpressionsToCheckIfBoolean(program, globalIds)
   transformPropertyAssignment(program, globalIds)
   transformPropertyAccess(program, globalIds)
-  checkForUndefinedVariables(program, context.nativeStorage, globalIds, skipUndefined)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
 
-  const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
+  const [modulePrefix, importNodes, otherNodes] = await transformImportDeclarations(
     program,
     usedIdentifiers,
-    true,
-    globalIds.native
+    context,
+    importOptions
   )
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
 
@@ -658,24 +555,29 @@ function transpileToSource(
   return { transpiled, sourceMapJson }
 }
 
-function transpileToFullJS(
+async function transpileToFullJS(
   program: es.Program,
   context: Context,
-  skipUndefined: boolean
-): TranspiledResult {
+  { skipUndefined, ...importOptions }: TranspileOptions
+): Promise<TranspiledResult> {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage)
   ])
 
   const globalIds = getNativeIds(program, usedIdentifiers)
-  checkForUndefinedVariables(program, context.nativeStorage, globalIds, skipUndefined)
+  Object.keys(globalIds).forEach(id => usedIdentifiers.add(id))
 
-  const [modulePrefix, importNodes, otherNodes] = transformImportDeclarations(
+  if (!skipUndefined) {
+    const includingGlobals = new Set([...Object.keys(global), ...usedIdentifiers])
+    checkForUndefinedVariables(program, includingGlobals)
+  }
+
+  const [modulePrefix, importNodes, otherNodes] = await transformImportDeclarations(
     program,
     usedIdentifiers,
-    false,
-    globalIds.native
+    context,
+    importOptions
   )
 
   const transpiledProgram: es.Program = create.program([
@@ -695,13 +597,28 @@ function transpileToFullJS(
 export function transpile(
   program: es.Program,
   context: Context,
-  skipUndefined = false
-): TranspiledResult {
+  options: RecursivePartial<TranspileOptions> = {}
+): Promise<TranspiledResult> {
   if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.PYTHON_1) {
-    return transpileToFullJS(program, context, true)
+    return transpileToFullJS(program, context, {
+      skipUndefined: true,
+      loadTabs: true,
+      wrapModules: false,
+      ...options
+    })
   } else if (context.variant == Variant.NATIVE) {
-    return transpileToFullJS(program, context, false)
+    return transpileToFullJS(program, context, {
+      skipUndefined: false,
+      loadTabs: true,
+      wrapModules: true,
+      ...options
+    })
   } else {
-    return transpileToSource(program, context, skipUndefined)
+    return transpileToSource(program, context, {
+      skipUndefined: false,
+      loadTabs: true,
+      wrapModules: true,
+      ...options
+    })
   }
 }
