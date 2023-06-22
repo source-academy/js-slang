@@ -6,6 +6,7 @@ node_modules
 dist/
 .idea/
 coverage/
+yarn-error.log
 
 # emacs backup files
 *~

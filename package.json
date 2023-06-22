@@ -115,6 +115,9 @@
       "/src/scm-slang",
       "/src/py-slang/"
     ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.ts"
+    ],
     "reporters": [
       "default",
       [
