@@ -1,10 +1,13 @@
 import { parse as babelParse } from '@babel/parser'
 import { createProjectSync, ts } from '@ts-morph/bootstrap'
-import { Program } from 'estree'
+import { parse } from 'acorn'
+import type * as es from 'estree'
 
-import { Context } from '../..'
+import type { Context } from '../..'
 import * as TypedES from '../../typeChecker/tsESTree'
 import { removeTSNodes } from '../../typeChecker/typeErrorChecker'
+import { extractIdsFromPattern } from '../../utils/ast/astUtils'
+import { recursive } from '../../utils/ast/walkers'
 import { FatalSyntaxError } from '../errors'
 import { transformBabelASTToESTreeCompliantAST } from '../source/typed/utils'
 import { AcornOptions, Parser } from '../types'
@@ -20,38 +23,50 @@ export class FullTSParser implements Parser<AcornOptions> {
     context: Context,
     options?: Partial<AcornOptions>,
     throwOnError?: boolean
-  ): Program | null {
-    let code = ''
+  ): es.Program | null {
+    // Create a fake declaration file
+    const builtins: string[] = [...context.nativeStorage.builtins.keys()]
+    if (context.prelude) {
+      const prelude = parse(context.prelude, {
+        ecmaVersion: 6,
+        sourceType: 'module'
+      }) as unknown as es.Program
+
+      recursive(prelude, null, {
+        VariableDeclaration({ declarations }: es.VariableDeclaration) {
+          for (const { id } of declarations) {
+            extractIdsFromPattern(id).forEach(({ name }) => builtins.push(name))
+          }
+        },
+        FunctionDeclaration({ id }: es.FunctionDeclaration) {
+          if (id && !id.name.startsWith('$')) {
+            builtins.push(id.name)
+          }
+        }
+        // Preludes shouldn't contain export declarations
+        // ExportNamedDeclaration({ declaration }: es.ExportNamedDeclaration, _state, c) {
+        //   if (declaration) c(declaration, null)
+        // },
+        // ExportDefaultDeclaration({ declaration }: es.ExportDefaultDeclaration, _state, c) {
+        //   if (declaration) c(declaration, null)
+        // }
+      })
+    }
+
     // Add builtins to code
     // Each declaration is replaced with a single constant declaration with type `any`
     // to reduce evaluation time
-    for (const builtin of context.nativeStorage.builtins) {
-      code += `const ${builtin[0]}: any = 1\n`
-    }
-    // Add prelude functions to code
-    // Each declaration is replaced with a single constant declaration with type `any`
-    // to reduce evaluation time
-    if (context.prelude) {
-      const preludeFns = context.prelude.split('\nfunction ').slice(1)
-      preludeFns.forEach(fnString => {
-        const fnName = fnString.split('(')[0]
-        // Functions in prelude that start with $ are not added
-        if (fnName.startsWith('$')) {
-          return
-        }
-        code += `const ${fnName}: any = 1\n`
-      })
-    }
-    // Get line offset
-    const lineOffset = code.split('\n').length - 1
-
-    // Add program string to code string,
-    // wrapping it in a block to allow redeclaration of variables
-    code = code + '{' + programStr + '}'
-    // Initialize file to analyze
-    const project = createProjectSync({ useInMemoryFileSystem: true })
-    const filename = 'program.ts'
-    project.createSourceFile(filename, code)
+    const declarationFile = `export {}; declare global {${builtins
+      .map(name => `const ${name}: any`)
+      .join('\n')}}`
+    const project = createProjectSync({
+      useInMemoryFileSystem: true,
+      compilerOptions: {
+        skipLibCheck: true
+      }
+    })
+    project.createSourceFile('index.d.ts', declarationFile)
+    project.createSourceFile('program.ts', programStr)
 
     // Get TS diagnostics from file, formatted as TS error string
     const diagnostics = ts.getPreEmitDiagnostics(project.createProgram())
@@ -69,11 +84,7 @@ export class FullTSParser implements Parser<AcornOptions> {
         return
       }
       const lineNumRegExpArr = lineNumRegex.exec(formattedString.split(message)[1])
-      const lineNum = (lineNumRegExpArr === null ? 0 : parseInt(lineNumRegExpArr[0])) - lineOffset
-      // Ignore any errors that occur in builtins/prelude (line number <= 0)
-      if (lineNum <= 0) {
-        return
-      }
+      const lineNum = lineNumRegExpArr === null ? 0 : parseInt(lineNumRegExpArr[0])
       const position = { line: lineNum, column: 0, offset: 0 }
       context.errors.push(new FatalSyntaxError(positionToSourceLocation(position), message))
     })
@@ -106,13 +117,13 @@ export class FullTSParser implements Parser<AcornOptions> {
 
     // Transform Babel AST into ESTree AST
     const typedProgram: TypedES.Program = ast.program as TypedES.Program
-    const transpiledProgram: Program = removeTSNodes(typedProgram)
+    const transpiledProgram: es.Program = removeTSNodes(typedProgram)
     transformBabelASTToESTreeCompliantAST(transpiledProgram)
 
     return transpiledProgram
   }
 
-  validate(_ast: Program, _context: Context, _throwOnError: boolean): boolean {
+  validate(_ast: es.Program, _context: Context, _throwOnError: boolean): boolean {
     return true
   }
 
