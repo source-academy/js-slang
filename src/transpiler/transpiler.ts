@@ -16,7 +16,7 @@ import {
   getIdentifiersInProgram,
   getUniqueId
 } from '../utils/uniqueIds'
-import { ancestor, simple } from '../utils/walkers'
+import { ancestor, simple } from '../utils/ast/walkers'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.

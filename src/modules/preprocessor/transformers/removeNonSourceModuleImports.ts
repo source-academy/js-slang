@@ -1,6 +1,6 @@
 import es from 'estree'
 
-import { ancestor } from '../../../utils/walkers'
+import { ancestor } from '../../../utils/ast/walkers'
 import { isFilePath } from '../filePaths'
 
 /**

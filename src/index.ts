@@ -21,7 +21,7 @@ import {
   SVMProgram,
   Variant
 } from './types'
-import { findNodeAt } from './utils/walkers'
+import { findNodeAt } from './utils/ast/walkers'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'

@@ -3,7 +3,7 @@ import * as es from 'estree'
 
 import { transformImportDeclarations } from '../transpiler/transpiler'
 import * as create from '../utils/ast/astCreator'
-import { recursive, simple, WalkerCallback } from '../utils/walkers'
+import { recursive, simple, WalkerCallback } from '../utils/ast/walkers'
 // transforms AST of program
 
 const globalIds = {

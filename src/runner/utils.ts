@@ -6,7 +6,7 @@ import { loadModuleTabs } from '../modules/moduleLoader'
 import { parseAt } from '../parser/utils'
 import { areBreakpointsSet } from '../stdlib/inspector'
 import { Context, Variant } from '../types'
-import { simple } from '../utils/walkers'
+import { simple } from '../utils/ast/walkers'
 
 // Context Utils
 

@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import * as create from '../utils/ast/astCreator'
 import { getIdentifiersInProgram } from '../utils/uniqueIds'
-import { simple } from '../utils/walkers'
+import { simple } from '../utils/ast/walkers'
 
 const lazyPrimitives = new Set(['makeLazyFunction', 'wrapLazyCallee', 'forceIt', 'delayIt'])
 
