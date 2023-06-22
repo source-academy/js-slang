@@ -10,7 +10,7 @@ import { UndefinedImportError } from '../modules/errors'
 import { memoizedGetModuleFile, memoizedloadModuleDocs } from '../modules/moduleLoader'
 import { ModuleDocumentation } from '../modules/moduleTypes'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import {
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,

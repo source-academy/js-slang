@@ -6,7 +6,7 @@ import { getRequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
 import { Chapter, Variant } from '../types'
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import { checkForInfiniteLoop } from './detect'
 import { InfiniteLoopError } from './errors'
 import {

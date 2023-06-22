@@ -11,7 +11,7 @@ import {
   vmPrelude
 } from '../stdlib/vm.prelude'
 import { Context, ContiguousArrayElements } from '../types'
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import { recursive, simple } from '../utils/walkers'
 import OpCodes from './opcodes'
 

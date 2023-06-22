@@ -8,7 +8,7 @@ import {
   callExpression,
   identifier,
   returnStatement
-} from '../utils/astCreator'
+} from '../utils/ast/astCreator'
 import { dummyLocation } from '../utils/dummyAstCreator'
 import { apply } from './interpreter'
 

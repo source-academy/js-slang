@@ -1,5 +1,5 @@
 import { UNKNOWN_LOCATION } from '../constants'
-import { nonAlphanumericCharEncoding } from '../localImports/filePaths'
+import { nonAlphanumericCharEncoding } from '../modules/preprocessor/filePaths'
 import { ErrorSeverity, ErrorType, SourceError } from '../types'
 
 export abstract class InvalidFilePathError implements SourceError {
