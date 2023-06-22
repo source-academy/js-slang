@@ -11,24 +11,6 @@ import {
   expectResult
 } from '../../utils/testing'
 
-jest.mock('../../modules/moduleLoader', () => ({
-  ...jest.requireActual('../../modules/moduleLoader'),
-  memoizedGetModuleFile: jest.fn().mockReturnValue(`function() {
-    return {
-      foo: () => undefined,
-      bar: () => undefined,
-    }
-  }`),
-  memoizedGetModuleManifest: jest.fn().mockReturnValue({
-    one_module: {
-      tabs: []
-    },
-    another_module: {
-      tabs: []
-    }
-  })
-}))
-
 // const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
 // const mockedModuleFile = asMock(memoizedGetModuleFile)
 
@@ -1145,8 +1127,5 @@ test('Cascading js errors work properly', () => {
 test('Importing unknown variables throws error', () => {
   expectParsedError(stripIndent`
     import { foo1 } from 'one_module';
-  `).toMatchInlineSnapshot(
-    "'one_module' does not contain definitions for 'foo1'",
-    `"Line 1: 'one_module' does not contain a definition for 'foo1'"`
-  )
+  `).toMatchInlineSnapshot(`"Line 1: 'one_module' does not contain a definition for 'foo1'"`)
 })
