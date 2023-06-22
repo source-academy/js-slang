@@ -2,7 +2,7 @@
 import { start } from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
 
-import { pyLanguages,scmLanguages, sourceLanguages } from '../constants'
+import { pyLanguages, scmLanguages, sourceLanguages } from '../constants'
 import { createContext, IOptions, parseError, runInContext } from '../index'
 import Closure from '../interpreter/closure'
 import { ExecutionMethod, Variant } from '../types'
