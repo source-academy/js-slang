@@ -1,7 +1,7 @@
 import es from 'estree'
 import * as path from 'path'
 
-import { defaultExportLookupName } from '../../stdlib/localImport.prelude'
+import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
 import {
   createFunctionDeclaration,
   createIdentifier,

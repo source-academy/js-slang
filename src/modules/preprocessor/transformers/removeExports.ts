@@ -1,6 +1,6 @@
 import es from 'estree'
 
-import { ancestor } from '../../utils/walkers'
+import { ancestor } from '../../../utils/walkers'
 import { isDeclaration } from '../typeGuards'
 
 /**

@@ -1,6 +1,6 @@
-import { parseError, runFilesInContext } from '../../index'
-import { mockContext } from '../../mocks/context'
-import { Chapter, Variant } from '../../types'
+import { parseError, runFilesInContext } from '../../../index'
+import { mockContext } from '../../../mocks/context'
+import { Chapter, Variant } from '../../../types'
 
 describe('syntax errors', () => {
   let context = mockContext(Chapter.SOURCE_4)

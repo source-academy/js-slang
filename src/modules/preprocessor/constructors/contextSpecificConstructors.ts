@@ -1,6 +1,6 @@
 import es from 'estree'
 
-import { accessExportFunctionName } from '../../stdlib/localImport.prelude'
+import { accessExportFunctionName } from '../../../stdlib/localImport.prelude'
 import {
   createCallExpression,
   createIdentifier,

@@ -1,11 +1,11 @@
 import es from 'estree'
 import * as path from 'path'
 
-import { CannotFindModuleError, CircularImportError } from '../errors/localImportErrors'
-import { parse } from '../parser/parser'
-import { AcornOptions } from '../parser/types'
-import { Context } from '../types'
-import { isIdentifier } from '../utils/rttc'
+import { CannotFindModuleError, CircularImportError } from '../../errors/localImportErrors'
+import { parse } from '../../parser/parser'
+import { AcornOptions } from '../../parser/types'
+import { Context } from '../../types'
+import { isIdentifier } from '../../utils/rttc'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import { DirectedGraph } from './directedGraph'
 import {

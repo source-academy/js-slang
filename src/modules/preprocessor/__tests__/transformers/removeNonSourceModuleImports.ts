@@ -1,6 +1,6 @@
-import { mockContext } from '../../../mocks/context'
-import { parse } from '../../../parser/parser'
-import { Chapter } from '../../../types'
+import { mockContext } from '../../../../mocks/context'
+import { parse } from '../../../../parser/parser'
+import { Chapter } from '../../../../types'
 import { removeNonSourceModuleImports } from '../../transformers/removeNonSourceModuleImports'
 import { parseCodeError, stripLocationInfo } from '../utils'
 
