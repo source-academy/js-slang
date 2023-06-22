@@ -48,7 +48,10 @@ export class Stack<T> implements IStack<T> {
     return this.storage.length
   }
 
-  public mapStack(mapper: (t: T) => any): T[] {
+  public mapStack(mapper: (t: T) => any, num?: number): T[] {
+    if (num && num <= this.storage.length) {
+      return this.storage.slice(this.storage.length - num).map(mapper)
+    }
     return [...this.storage].map(mapper)
   }
 }
