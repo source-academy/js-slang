@@ -241,7 +241,7 @@ describe('accumulate', () => {
   it('works from right to left', () => {
     return expectResult(
       stripIndent`
-      accumulate((curr, acc) => curr + acc, "", list('4','3','2','1'));`,
+      accumulate((curr, acc) => curr + acc, '1', list('4','3','2'));`,
       { chapter: Chapter.SOURCE_2, native: true }
     ).toMatchInlineSnapshot('"4321"')
   })

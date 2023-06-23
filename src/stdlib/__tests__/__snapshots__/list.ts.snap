@@ -289,7 +289,7 @@ Object {
 exports[`accumulate works from right to left: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "accumulate((curr, acc) => curr + acc, \\"\\", list('4','3','2','1'));",
+  "code": "accumulate((curr, acc) => curr + acc, '1', list('4','3','2'));",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",

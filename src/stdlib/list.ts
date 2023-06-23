@@ -135,7 +135,7 @@ export function set_tail(xs: any, x: any) {
  * and an initial element, resulting in r1, then to the second-last
  * element and r1, resulting in r2, etc, and finally to the first element
  * and r_n-1, where n is the length of the list. `accumulate(op,zero,list(1,2,3))`
- * results in op(1, op(2, op(3, zero)))
+ * results in `op(1, op(2, op(3, zero)))`
  */
 export function accumulate<T, U>(op: (each: T, result: U) => any, initial: U, sequence: List): U {
   if (is_null(sequence)) {
