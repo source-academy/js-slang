@@ -140,9 +140,9 @@ export function set_tail(xs: any, x: any) {
 export function accumulate<T, U>(op: (each: T, result: U) => any, initial: U, sequence: List): U {
   // Use CPS to prevent stack overflow
   function $accumulate(f: typeof op, xs: typeof sequence, cont: (each: U) => U): U {
-    return is_null(xs) ? cont(initial) : $accumulate(f, tail(xs), x => cont(f(head(xs), x)));
+    return is_null(xs) ? cont(initial) : $accumulate(f, tail(xs), x => cont(f(head(xs), x)))
   }
-  return $accumulate(op, sequence, x => x);
+  return $accumulate(op, sequence, x => x)
 }
 
 export function length(xs: List): number {
