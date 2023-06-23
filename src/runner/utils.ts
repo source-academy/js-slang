@@ -2,7 +2,6 @@
 import { DebuggerStatement, Literal, Program } from 'estree'
 
 import { IOptions, Result } from '..'
-import { loadModuleTabs } from '../modules/moduleLoader'
 import { parseAt } from '../parser/utils'
 import { areBreakpointsSet } from '../stdlib/inspector'
 import { Context, RecursivePartial, Variant } from '../types'
@@ -81,31 +80,6 @@ export function determineExecutionMethod(
 
   context.executionMethod = isNativeRunnable ? 'native' : 'ec-evaluator'
 }
-
-/**
- * Add UI tabs needed for modules to program context
- *
- * @param program AST of program to be ran
- * @param context The context of the program
- */
-export function appendModulesToContext(program: Program, context: Context): void {
-  for (const node of program.body) {
-    if (node.type !== 'ImportDeclaration') break
-    const moduleName = (node.source.value as string).trim()
-
-    // Load the module's tabs
-    if (!(moduleName in context.moduleContexts)) {
-      context.moduleContexts[moduleName] = {
-        state: null,
-        tabs: loadModuleTabs(moduleName)
-      }
-    } else if (context.moduleContexts[moduleName].tabs === null) {
-      context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName)
-    }
-  }
-}
-
-// AST Utils
 
 export function hasVerboseErrors(theCode: string): boolean {
   const theProgramFirstExpression = parseAt(theCode, 0)

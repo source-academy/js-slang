@@ -379,3 +379,26 @@ export const forStatement = (
   body,
   loc
 })
+
+export const classDeclaration = (
+  id: es.Identifier,
+  body: (es.MethodDefinition | es.StaticBlock | es.PropertyDefinition)[],
+  loc?: es.SourceLocation
+): es.ClassDeclaration => ({
+  type: 'ClassDeclaration',
+  id,
+  body: {
+    type: 'ClassBody',
+    body
+  },
+  loc
+})
+
+export const exportDefaultDeclaration = (
+  declaration: es.FunctionDeclaration | es.ClassDeclaration | es.Expression,
+  loc?: es.SourceLocation
+): es.ExportDefaultDeclaration => ({
+  type: 'ExportDefaultDeclaration',
+  declaration,
+  loc
+})

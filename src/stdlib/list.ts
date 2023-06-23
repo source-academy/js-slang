@@ -138,11 +138,11 @@ export function set_tail(xs: any, x: any) {
  * results in `op(1, op(2, op(3, zero)))`
  */
 export function accumulate<T, U>(op: (each: T, result: U) => any, initial: U, sequence: List): U {
-  if (is_null(sequence)) {
-    return initial
-  } else {
-    return op(head(sequence), accumulate(op, initial, tail(sequence)))
+  // Use CPS to prevent stack overflow
+  function $accumulate(f: typeof op, xs: typeof sequence, cont: (each: U) => U): U {
+    return is_null(xs) ? cont(initial) : $accumulate(f, tail(xs), x => cont(f(head(xs), x)));
   }
+  return $accumulate(op, sequence, x => x);
 }
 
 export function length(xs: List): number {
