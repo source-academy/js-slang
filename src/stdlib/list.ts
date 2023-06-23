@@ -130,18 +130,18 @@ export function set_tail(xs: any, x: any) {
 }
 
 /**
- * Accumulate applies given operation op to elements of a list 
- * in a right-to-left order, first apply op to the last element 
- * and an initial element, resulting in r1, then to the second-last 
+ * Accumulate applies given operation op to elements of a list
+ * in a right-to-left order, first apply op to the last element
+ * and an initial element, resulting in r1, then to the second-last
  * element and r1, resulting in r2, etc, and finally to the first element
- * and r_n-1, where n is the length of the list. `accumulate(op,zero,list(1,2,3))` 
+ * and r_n-1, where n is the length of the list. `accumulate(op,zero,list(1,2,3))`
  * results in op(1, op(2, op(3, zero)))
-*/
+ */
 export function accumulate<T, U>(op: (each: T, result: U) => any, initial: U, sequence: List): U {
   if (is_null(sequence)) {
-    return initial;
+    return initial
   } else {
-    return op(head(sequence), accumulate(op, initial, tail(sequence)));
+    return op(head(sequence), accumulate(op, initial, tail(sequence)))
   }
 }
 

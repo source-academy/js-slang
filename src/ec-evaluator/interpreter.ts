@@ -153,7 +153,10 @@ async function evaluateImports(
   try {
     const modulesToNodesMap = importNodes.reduce((res, node) => {
       const moduleName = node.source.value
-      assert(typeof moduleName === 'string', `Expected import declaration to have source of type string, got ${moduleName}`)
+      assert(
+        typeof moduleName === 'string',
+        `Expected import declaration to have source of type string, got ${moduleName}`
+      )
 
       if (!(moduleName in res)) {
         res[moduleName] = []
@@ -163,31 +166,35 @@ async function evaluateImports(
       return res
     }, {} as Record<string, es.ImportDeclaration[]>)
 
-    await Promise.all(Object.entries(modulesToNodesMap).map(async ([moduleName, nodes]) => {
-      await initModuleContextAsync(moduleName, context, loadTabs, nodes[0])
-      const moduleFuncs = await loadModuleBundleAsync(moduleName, context, wrapModules, nodes[0])
+    await Promise.all(
+      Object.entries(modulesToNodesMap).map(async ([moduleName, nodes]) => {
+        await initModuleContextAsync(moduleName, context, loadTabs, nodes[0])
+        const moduleFuncs = await loadModuleBundleAsync(moduleName, context, wrapModules, nodes[0])
 
-      nodes.forEach(node => node.specifiers.forEach(spec => {
-        declareIdentifier(context, spec.local.name, spec, environment)
-        let content: any
-        switch (spec.type) {
-          case 'ImportSpecifier': {
-            content = moduleFuncs[spec.imported.name]
-            break
-          }
-          case 'ImportDefaultSpecifier': {
-            content = moduleFuncs['default']
-            break
-          }
-          case 'ImportNamespaceSpecifier': {
-            content = moduleFuncs
-            break
-          }
-        }
+        nodes.forEach(node =>
+          node.specifiers.forEach(spec => {
+            declareIdentifier(context, spec.local.name, spec, environment)
+            let content: any
+            switch (spec.type) {
+              case 'ImportSpecifier': {
+                content = moduleFuncs[spec.imported.name]
+                break
+              }
+              case 'ImportDefaultSpecifier': {
+                content = moduleFuncs['default']
+                break
+              }
+              case 'ImportNamespaceSpecifier': {
+                content = moduleFuncs
+                break
+              }
+            }
 
-        defineVariable(context, spec.local.name, content, true, node)
-      }))
-    }))
+            defineVariable(context, spec.local.name, content, true, node)
+          })
+        )
+      })
+    )
   } catch (error) {
     // console.error(error)
     handleRuntimeError(context, error)
