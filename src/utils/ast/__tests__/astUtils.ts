@@ -1,6 +1,7 @@
 import type * as es from '../types'
 import * as utils from '../astUtils'
 import * as create from '../astCreator'
+import { parse } from 'acorn'
 
 const dummyFunc = create.functionDeclaration(
   create.identifier('test'),
@@ -100,4 +101,26 @@ describe('processExportNamedDeclaration', () => {
     runFunc('test', create.constantDeclaration('test', create.literal(1))))
   it('works with sources', () => runFunc('test', 'test'))
   it('works with local exports', () => runFunc(null))
+})
+
+describe('extractIdsFromPattern', () => {
+  function expectResult(code: string, ...expected: string[]) {
+    const {
+      body: [statement]
+    } = parse(code, { ecmaVersion: 6 }) as unknown as es.Program
+    const {
+      declarations: [{ id }]
+    } = statement as es.VariableDeclaration
+    const result = Array.from(utils.extractIdsFromPattern(id)).map(({ name }) => name)
+    expect(result).toEqual(expected)
+  }
+
+  it('works with identifiers', () => expectResult('let test', 'test'))
+
+  it('works with object patterns', () =>
+    expectResult(`const { a, b: { b, c }, d } = obj`, 'a', 'b', 'c', 'd'))
+
+  it('works with array patterns', () => expectResult(`const [a, b, [, c]] = obj`, 'a', 'b', 'c'))
+  it('works with all patterns', () =>
+    expectResult(`const [a, { b, c: [, { c }] }] = obj`, 'a', 'b', 'c'))
 })
