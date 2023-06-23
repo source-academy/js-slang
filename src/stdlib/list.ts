@@ -129,14 +129,20 @@ export function set_tail(xs: any, x: any) {
   }
 }
 
-export function accumulate<T, U>(acc: (each: T, result: U) => any, init: U, xs: List): U {
-  const recurser = (xs: List, result: U): U => {
-    if (is_null(xs)) return result
-
-    return recurser(tail(xs), acc(head(xs), result))
+/**
+ * Accumulate applies given operation op to elements of a list 
+ * in a right-to-left order, first apply op to the last element 
+ * and an initial element, resulting in r1, then to the second-last 
+ * element and r1, resulting in r2, etc, and finally to the first element
+ * and r_n-1, where n is the length of the list. `accumulate(op,zero,list(1,2,3))` 
+ * results in op(1, op(2, op(3, zero)))
+*/
+export function accumulate<T, U>(op: (each: T, result: U) => any, initial: U, sequence: List): U {
+  if (is_null(sequence)) {
+    return initial;
+  } else {
+    return op(head(sequence), accumulate(op, initial, tail(sequence)));
   }
-
-  return recurser(xs, init)
 }
 
 export function length(xs: List): number {

@@ -286,7 +286,20 @@ Object {
 }
 `;
 
-exports[`accumulate: expectResult 1`] = `
+exports[`accumulate works from right to left: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "accumulate((curr, acc) => curr + acc, \\"\\", list('4','3','2','1'));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "4321",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`accumulate works properly: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));",

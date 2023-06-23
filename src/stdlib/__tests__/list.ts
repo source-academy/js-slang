@@ -228,13 +228,23 @@ test('list_ref', () => {
   ).toMatchInlineSnapshot(`4`)
 })
 
-test('accumulate', () => {
-  return expectResult(
-    stripIndent`
-    accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
-  `,
-    { chapter: Chapter.SOURCE_2, native: true }
-  ).toMatchInlineSnapshot(`10`)
+describe('accumulate', () => {
+  test('works properly', () => {
+    return expectResult(
+      stripIndent`
+      accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
+    `,
+      { chapter: Chapter.SOURCE_2, native: true }
+    ).toMatchInlineSnapshot(`10`)
+  })
+
+  it('works from right to left', () => {
+    return expectResult(
+      stripIndent`
+      accumulate((curr, acc) => curr + acc, "", list('4','3','2','1'));`,
+      { chapter: Chapter.SOURCE_2, native: true }
+    ).toMatchInlineSnapshot('"4321"')
+  })
 })
 
 test('list_to_string', () => {
