@@ -15,10 +15,11 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
-import { ImportOptions } from '../modules/moduleTypes'
-import { transformImportNodesAsync } from '../modules/utils'
+import type { ImportOptions } from '../modules/moduleTypes'
+import { initModuleContextAsync } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Result, Value } from '../types'
+import type { Context, ContiguousArrayElements, Result, Value } from '../types'
+import assert from '../utils/assert'
 import * as ast from '../utils/ast/astCreator'
 import { isImportDeclaration } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
@@ -150,26 +151,43 @@ async function evaluateImports(
 
   const environment = currentEnvironment(context)
   try {
-    await transformImportNodesAsync(
-      importNodes,
-      context,
-      loadTabs,
-      (name, node) => loadModuleBundleAsync(name, context, wrapModules, node),
-      {
-        ImportSpecifier: (spec: es.ImportSpecifier, info, node) => {
-          declareIdentifier(context, spec.local.name, node, environment)
-          defineVariable(context, spec.local.name, info.content[spec.imported.name], true, node)
-        },
-        ImportDefaultSpecifier: (spec, info, node) => {
-          declareIdentifier(context, spec.local.name, node, environment)
-          defineVariable(context, spec.local.name, info.content['default'], true, node)
-        },
-        ImportNamespaceSpecifier: (spec, info, node) => {
-          declareIdentifier(context, spec.local.name, node, environment)
-          defineVariable(context, spec.local.name, info.content, true, node)
-        }
+    const modulesToNodesMap = importNodes.reduce((res, node) => {
+      const moduleName = node.source.value
+      assert(typeof moduleName === 'string', `Expected import declaration to have source of type string, got ${moduleName}`)
+
+      if (!(moduleName in res)) {
+        res[moduleName] = []
       }
-    )
+
+      res[moduleName].push(node)
+      return res
+    }, {} as Record<string, es.ImportDeclaration[]>)
+
+    await Promise.all(Object.entries(modulesToNodesMap).map(async ([moduleName, nodes]) => {
+      await initModuleContextAsync(moduleName, context, loadTabs, nodes[0])
+      const moduleFuncs = await loadModuleBundleAsync(moduleName, context, wrapModules, nodes[0])
+
+      nodes.forEach(node => node.specifiers.forEach(spec => {
+        declareIdentifier(context, spec.local.name, spec, environment)
+        let content: any
+        switch (spec.type) {
+          case 'ImportSpecifier': {
+            content = moduleFuncs[spec.imported.name]
+            break
+          }
+          case 'ImportDefaultSpecifier': {
+            content = moduleFuncs['default']
+            break
+          }
+          case 'ImportNamespaceSpecifier': {
+            content = moduleFuncs
+            break
+          }
+        }
+
+        defineVariable(context, spec.local.name, content, true, node)
+      }))
+    }))
   } catch (error) {
     // console.error(error)
     handleRuntimeError(context, error)
