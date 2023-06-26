@@ -678,6 +678,9 @@ function transpileToFullJS(
     globalIds.native
   )
 
+  getGloballyDeclaredIdentifiers(program).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  )
   const transpiledProgram: es.Program = create.program([
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
     create.expressionStatement(create.identifier('undefined')),
