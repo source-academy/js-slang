@@ -1,9 +1,9 @@
 import * as es from 'estree'
 
+import { UNKNOWN_LOCATION } from '../../../constants'
+import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
 import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
 import syntaxBlacklist from '../syntax'
-import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
-import { UNKNOWN_LOCATION } from '../../../constants'
 
 export class NoExportNamedDeclarationWithDefaultError implements SourceError {
   public type = ErrorType.SYNTAX
