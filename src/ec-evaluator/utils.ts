@@ -47,6 +47,13 @@ export class Stack<T> implements IStack<T> {
   public size(): number {
     return this.storage.length
   }
+
+  public mapStack(mapper: (t: T) => any, num?: number): T[] {
+    if (num && num <= this.storage.length) {
+      return this.storage.slice(this.storage.length - num).map(mapper)
+    }
+    return [...this.storage].map(mapper)
+  }
 }
 
 /**
@@ -115,7 +122,7 @@ export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
   let valueProduced = false
   for (const command of seq) {
     if (valueProducing(command)) {
-      valueProduced ? result.push(instr.popInstr()) : (valueProduced = true)
+      valueProduced ? result.push(instr.popInstr(command)) : (valueProduced = true)
     }
     result.push(command)
   }

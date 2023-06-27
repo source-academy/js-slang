@@ -33,6 +33,7 @@ import { validateFilePath } from './localImports/filePaths'
 import preprocessFileImports from './localImports/preprocessor'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
+import { decodeError, decodeValue } from './parser/scheme'
 import { parseWithComments } from './parser/utils'
 import {
   fullJSRunner,
@@ -43,7 +44,6 @@ import {
 } from './runner'
 import { typeCheck } from './typeChecker/typeChecker'
 import { typeToString } from './utils/stringify'
-import { decodeError, decodeValue } from './parser/scheme'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
