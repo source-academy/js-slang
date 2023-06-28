@@ -29,6 +29,7 @@ export async function httpGetAsync(path: string, type: 'json' | 'text') {
   } catch (error) {
     if (error instanceof TypeError) throw new ModuleConnectionError()
     if (!(error instanceof ModuleConnectionError)) throw new ModuleInternalError(path, error)
+    throw error
   }
 }
 
