@@ -86,6 +86,15 @@ describe('Test httpGetAsync', () => {
     const result = await moduleLoader.httpGetAsync(correctUrl, 'json')
     expect(result).toMatchObject(JSON.parse(sampleResponse))
   })
+
+  test('Handles TypeErrors thrown by fetch', async () => {
+    mockedFetch.mockImplementationOnce(() => {
+      throw new TypeError()
+    })
+    await expectFailure('anyUrl', ModuleConnectionError, () =>
+      moduleLoader.httpGetAsync('anyUrl', 'text')
+    )
+  })
 })
 
 describe('Test bundle loading', () => {
