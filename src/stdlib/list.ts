@@ -137,12 +137,12 @@ export function set_tail(xs: any, x: any) {
  * and r_n-1, where n is the length of the list. `accumulate(op,zero,list(1,2,3))`
  * results in `op(1, op(2, op(3, zero)))`
  */
-export function accumulate<T, U>(op: (each: T, result: U) => any, initial: U, sequence: List): U {
+export function accumulate<T, U>(op: (each: T, result: U) => U, initial: U, sequence: List): U {
   // Use CPS to prevent stack overflow
-  function $accumulate(f: typeof op, xs: typeof sequence, cont: (each: U) => U): U {
-    return is_null(xs) ? cont(initial) : $accumulate(f, tail(xs), x => cont(f(head(xs), x)))
+  function $accumulate(xs: typeof sequence, cont: (each: U) => U): U {
+    return is_null(xs) ? cont(initial) : $accumulate(tail(xs), x => cont(op(head(xs), x)))
   }
-  return $accumulate(op, sequence, x => x)
+  return $accumulate(sequence, x => x)
 }
 
 export function length(xs: List): number {

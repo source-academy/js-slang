@@ -802,6 +802,34 @@ Object {
 }
 `;
 
+exports[`length works with empty lists: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs = list();
+length(xs);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`length works with populated lists: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs = list(1,2,3,4);
+length(xs);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 4,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`list creates list: expectResult 1`] = `
 Object {
   "alertResult": Array [],

@@ -247,6 +247,28 @@ describe('accumulate', () => {
   })
 })
 
+describe('length', () => {
+  test('works with populated lists', () => {
+    return expectResult(
+      stripIndent`
+      const xs = list(1,2,3,4);
+      length(xs);
+      `,
+      { chapter: Chapter.SOURCE_2, native: true }
+    ).toMatchInlineSnapshot('4')
+  })
+
+  test('works with empty lists', () => {
+    return expectResult(
+      stripIndent`
+      const xs = list();
+      length(xs);
+      `,
+      { chapter: Chapter.SOURCE_2, native: true }
+    ).toMatchInlineSnapshot('0')
+  })
+})
+
 test('list_to_string', () => {
   return expectResult(
     stripIndent`
