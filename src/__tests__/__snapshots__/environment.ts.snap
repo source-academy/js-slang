@@ -49,11 +49,11 @@ Object {
     "head": Object {
       "x": 2,
     },
-    "id": "3",
+    "id": "4",
     "name": "f",
     "tail": Object {
       "head": Object {
-        "2": [Function],
+        "3": [Function],
         "f": [Function],
       },
       "id": "1",
@@ -196,7 +196,7 @@ Object {
   "name": "f",
   "tail": Object {
     "head": Object {
-      "2": [Function],
+      "3": [Function],
       "f": [Function],
     },
     "id": "1",
@@ -293,7 +293,7 @@ Object {
 exports[`Function params and body identifiers are in different environment 3`] = `
 Object {
   "head": Object {
-    "2": [Function],
+    "3": [Function],
     "f": [Function],
   },
   "id": Any<String>,
