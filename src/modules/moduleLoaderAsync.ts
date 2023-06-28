@@ -12,19 +12,24 @@ import { getRequireProvider } from './requireProvider'
 export function httpGetAsync(path: string, type: 'json'): Promise<object>
 export function httpGetAsync(path: string, type: 'text'): Promise<string>
 export async function httpGetAsync(path: string, type: 'json' | 'text') {
-  const resp = await fetch(path, {
-    method: 'GET'
-  })
+  try {
+    const resp = await fetch(path, {
+      method: 'GET'
+    })
 
-  if (resp.status !== 200 && resp.status !== 304) {
-    throw new ModuleConnectionError()
-  }
+    if (resp.status !== 200 && resp.status !== 304) {
+      throw new ModuleConnectionError()
+    }
 
-  const promise = type === 'text' ? resp.text() : resp.json()
-  if (typeof window === 'undefined') {
-    return timeoutPromise(promise, 10000)
+    const promise = type === 'text' ? resp.text() : resp.json()
+    if (typeof window === 'undefined') {
+      return timeoutPromise(promise, 10000)
+    }
+    return promise
+  } catch (error) {
+    if (error instanceof TypeError) throw new ModuleConnectionError()
+    if (!(error instanceof ModuleConnectionError)) throw new ModuleInternalError(path, error)
   }
-  return promise
 }
 
 /**
