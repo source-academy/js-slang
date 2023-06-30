@@ -19,6 +19,7 @@ interface IStack<T> {
   pop(): T | undefined
   peek(): T | undefined
   size(): number
+  getStack(): T[]
 }
 
 export class Stack<T> implements IStack<T> {
@@ -48,11 +49,9 @@ export class Stack<T> implements IStack<T> {
     return this.storage.length
   }
 
-  public mapStack(mapper: (t: T) => any, num?: number): T[] {
-    if (num && num <= this.storage.length) {
-      return this.storage.slice(this.storage.length - num).map(mapper)
-    }
-    return [...this.storage].map(mapper)
+  public getStack(): T[] {
+    // return a copy of the stack's contents
+    return [...this.storage]
   }
 }
 
