@@ -20,7 +20,6 @@ import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/astCreator'
-import { dummyStatement } from '../utils/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as instr from './instrCreator'
@@ -70,8 +69,6 @@ import {
 export class Agenda extends Stack<AgendaItem> {
   public constructor(program: es.Program) {
     super()
-    // Evaluation of last statement is undefined if stash is empty
-    this.push(instr.pushUndefIfNeededInstr(dummyStatement()))
 
     // Load program into agenda stack
     this.push(program)
@@ -126,7 +123,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!, false)
+    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!)
   } catch (error) {
     return new ECError(error)
   } finally {
@@ -205,14 +202,16 @@ export function ECEResultPromise(context: Context, value: Value): Promise<Result
 }
 
 /**
+ * The primary runner/loop of the explicit control evaluator.
  *
  * @param context The context to evaluate the program in.
  * @param agenda Points to the current context.runtime.agenda
  * @param stash Points to the current context.runtime.stash
- * @returns A special break object if the program is interrupted by a break point;
+ * @param isPrelude Whether the program we are running is the prelude
+ * @returns A special break object if the program is interrupted by a breakpoint;
  * else the top value of the stash. It is usually the return value of the program.
  */
-function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude: boolean) {
+function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude: boolean = false) {
   context.runtime.break = false
   context.runtime.nodes = []
   let steps = 1
@@ -223,15 +222,10 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
   context.runtime.nodes.unshift(command as es.Program)
 
   while (command) {
+    // Return to capture a snapshot of the agenda and stash after the target step count is reached
     if (!isPrelude && steps === context.runtime.envSteps) {
       return stash.peek()
     }
-
-    // Temporarily commented out the conditional step increases for agenda stash viz development
-    // May be handy later in case we want to separate the visualizations
-    // if (envChanging(command)) {
-    //   steps += 1
-    // }
 
     if (isNode(command) && command.type === 'DebuggerStatement') {
       // steps += 1
@@ -259,6 +253,12 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
       // Command is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash, isPrelude)
     }
+
+    // Push undefined into the stack if both agenda and stash is empty
+    if (agenda.isEmpty() && stash.isEmpty()) {
+      stash.push(undefined)
+    }
+
     command = agenda.peek()
     steps += 1
   }
@@ -876,5 +876,3 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   [InstrType.BREAK_MARKER]: function () {}
 }
-
-export function runECEMachineWithSteps(context: Context, agenda: Agenda, stash: Stash) {}

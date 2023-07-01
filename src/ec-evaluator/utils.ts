@@ -19,6 +19,7 @@ interface IStack<T> {
   pop(): T | undefined
   peek(): T | undefined
   size(): number
+  isEmpty(): boolean
   getStack(): T[]
 }
 
@@ -39,7 +40,7 @@ export class Stack<T> implements IStack<T> {
   }
 
   public peek(): T | undefined {
-    if (this.size() === 0) {
+    if (this.isEmpty()) {
       return undefined
     }
     return this.storage[this.size() - 1]
@@ -47,6 +48,10 @@ export class Stack<T> implements IStack<T> {
 
   public size(): number {
     return this.storage.length
+  }
+
+  public isEmpty(): boolean {
+    return this.size() == 0
   }
 
   public getStack(): T[] {
