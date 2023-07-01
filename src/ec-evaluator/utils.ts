@@ -274,23 +274,19 @@ export function declareFunctionsAndVariables(
   node: es.BlockStatement,
   environment: Environment
 ) {
-  let hasDeclarations: boolean = false
   for (const statement of node.body) {
     switch (statement.type) {
       case 'VariableDeclaration':
         declareVariables(context, statement, environment)
-        hasDeclarations = true
         break
       case 'FunctionDeclaration':
         declareIdentifier(context, (statement.id as es.Identifier).name, statement, environment)
-        hasDeclarations = true
         break
     }
   }
-  return hasDeclarations
 }
 
-function hasDeclarations(node: es.BlockStatement): boolean {
+export function hasDeclarations(node: es.BlockStatement): boolean {
   for (const statement of node.body) {
     if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {
       return true

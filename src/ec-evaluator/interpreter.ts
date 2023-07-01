@@ -30,7 +30,6 @@ import {
   AssmtInstr,
   BinOpInstr,
   BranchInstr,
-  CmdEvaluator,
   ECEBreak,
   ECError,
   EnvInstr,
@@ -52,6 +51,7 @@ import {
   getVariable,
   handleRuntimeError,
   handleSequence,
+  hasDeclarations,
   isAssmtInstr,
   isInstr,
   isNode,
@@ -61,6 +61,14 @@ import {
   setVariable,
   Stack
 } from './utils'
+
+type CmdEvaluator = (
+  command: AgendaItem,
+  context: Context,
+  agenda: Agenda,
+  stash: Stash,
+  isPrelude: boolean
+) => void
 
 /**
  * The agenda is a list of commands that still needs to be executed by the machine.
@@ -279,9 +287,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    */
 
   Program: function (command: es.BlockStatement, context: Context, agenda: Agenda, stash: Stash) {
-    const environment = createBlockEnvironment(context, 'programEnvironment')
-    // Push the environment only if it is non empty.
-    if (declareFunctionsAndVariables(context, command, environment)) {
+    // Create and push the environment only if it is non empty.
+    if (hasDeclarations(command)) {
+      const environment = createBlockEnvironment(context, 'programEnvironment')
+      declareFunctionsAndVariables(context, command, environment)
       pushEnvironment(context, environment)
     }
 
@@ -291,11 +300,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     // To restore environment after block ends
-    agenda.push(instr.envInstr(currentEnvironment(context), command))
+    // If there is another env instruction, we do not need to push another one
+    const next = agenda.peek()
+    if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+      agenda.push(instr.envInstr(currentEnvironment(context), command))
+    }
 
-    const environment = createBlockEnvironment(context, 'blockEnvironment')
-    // Push the environment only if it is non empty.
-    if (declareFunctionsAndVariables(context, command, environment)) {
+    // Create and push the environment only if it is non empty.
+    if (hasDeclarations(command)) {
+      const environment = createBlockEnvironment(context, 'blockEnvironment')
+      declareFunctionsAndVariables(context, command, environment)
       pushEnvironment(context, environment)
     }
 
@@ -303,11 +317,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda.push(...handleSequence(command.body))
   },
 
-  WhileStatement: function (command: es.WhileStatement, context: Context, agenda: Agenda) {
+  WhileStatement: function (
+    command: es.WhileStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
     agenda.push(instr.breakMarkerInstr(command))
     agenda.push(instr.whileInstr(command.test, command.body, command))
     agenda.push(command.test)
-    agenda.push(ast.identifier('undefined')) // Return undefined if there is no loop execution
+    stash.push(undefined) // Return undefined if there is no loop execution
   },
 
   ForStatement: function (command: es.ForStatement, context: Context, agenda: Agenda) {
