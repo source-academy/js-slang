@@ -286,7 +286,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    * Statements
    */
 
-  Program: function (command: es.BlockStatement, context: Context, agenda: Agenda, stash: Stash) {
+  Program: function (
+    command: es.BlockStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash,
+    isPrelude: boolean
+  ) {
     // Create and push the environment only if it is non empty.
     if (hasDeclarations(command)) {
       const environment = createBlockEnvironment(context, 'programEnvironment')
@@ -294,13 +300,19 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       pushEnvironment(context, environment)
     }
 
-    // Push block body
-    agenda.push(...handleSequence(command.body))
+    if (command.body.length == 1) {
+      // If program only consists of one statement, evaluate it immediately
+      const next = command.body[0]
+      cmdEvaluators[next.type](next, context, agenda, stash, isPrelude)
+    } else {
+      // Push block body
+      agenda.push(...handleSequence(command.body))
+    }
   },
 
   BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     // To restore environment after block ends
-    // If there is another env instruction, we do not need to push another one
+    // If there is an env instruction on top of the stack, we do not need to push another one
     const next = agenda.peek()
     if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
       agenda.push(instr.envInstr(currentEnvironment(context), command))
@@ -403,9 +415,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ExpressionStatement: function (
     command: es.ExpressionStatement,
     context: Context,
-    agenda: Agenda
+    agenda: Agenda,
+    stash: Stash,
+    isPrelude: boolean
   ) {
-    agenda.push(command.expression)
+    // Fast forward to the expression
+    // If not the next step will look like it's only removing ';'
+    cmdEvaluators[command.expression.type](command.expression, context, agenda, stash, isPrelude)
   },
 
   DebuggerStatement: function (command: es.DebuggerStatement, context: Context) {

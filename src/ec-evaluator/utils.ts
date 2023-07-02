@@ -126,10 +126,16 @@ export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
   let valueProduced = false
   for (const command of seq) {
     if (valueProducing(command)) {
-      valueProduced ? result.push(instr.popInstr(command)) : (valueProduced = true)
+      // Value producing statements have an extra pop instruction
+      if (valueProduced) {
+        result.push(instr.popInstr(command))
+      } else {
+        valueProduced = true
+      }
     }
     result.push(command)
   }
+  // Push statements in reverse order
   return result.reverse()
 }
 
