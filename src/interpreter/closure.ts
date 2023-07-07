@@ -6,6 +6,7 @@ import { uniqueId } from 'lodash'
 import { Context, Environment, Value } from '../types'
 import {
   blockArrowFunction,
+  blockStatement,
   callExpression,
   identifier,
   returnStatement
@@ -60,12 +61,16 @@ export default class Closure extends Callable {
     function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
       return body.type !== 'BlockStatement'
     }
-    const functionBody: es.Statement[] | es.Expression | es.BlockStatement = isExpressionBody(
-      node.body
-    )
-      ? [returnStatement(node.body, node.body.loc)]
+    const functionBody: es.BlockStatement = isExpressionBody(node.body)
+      ? blockStatement([returnStatement(node.body, node.body.loc)], node.body.loc)
       : dummyReturn
-      ? [...node.body.body, returnStatement(identifier('undefined', node.body.loc), node.body.loc)]
+      ? blockStatement(
+          [
+            ...node.body.body,
+            returnStatement(identifier('undefined', node.body.loc), node.body.loc)
+          ],
+          node.body.loc
+        )
       : node.body
 
     const closure = new Closure(
