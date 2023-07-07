@@ -312,14 +312,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     // To restore environment after block ends
-    // If there is an env instruction on top of the stack, we do not need to push another one
+    // If there is an env instruction on top of the stack, or if there are no declarations
+    // we do not need to push another one
+    const needsEnvironment: boolean = hasDeclarations(command)
     const next = agenda.peek()
-    if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+    if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && needsEnvironment) {
       agenda.push(instr.envInstr(currentEnvironment(context), command))
     }
 
     // Create and push the environment only if it is non empty.
-    if (hasDeclarations(command)) {
+    if (needsEnvironment) {
       const environment = createBlockEnvironment(context, 'blockEnvironment')
       declareFunctionsAndVariables(context, command, environment)
       pushEnvironment(context, environment)
@@ -753,7 +755,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
       const next = agenda.peek()
-      if (!next || (!isNode(next) && next.instrType === InstrType.ENVIRONMENT)) {
+      if (
+        !next ||
+        (!isNode(next) && next.instrType === InstrType.ENVIRONMENT) ||
+        args.length === 0
+      ) {
         // Pushing another Env Instruction would be redundant so only Marker needs to be pushed.
         agenda.push(instr.markerInstr(command.srcNode))
       } else if (!isNode(next) && next.instrType === InstrType.RESET) {
