@@ -91,15 +91,33 @@ export const isIdentifier = (node: es.Node): node is es.Identifier => {
 }
 
 /**
- * Typeguard for esBlockStatement. To verify if a function body is a block statement.
+ * Typeguard for esReturnStatement. To verify if an esNode is an esReturnStatement.
  *
- * @param body the function body
- * @returns true if node is an esIdentifier, false otherwise.
+ * @param node an esNode
+ * @returns true if node is an esReturnStatement, false otherwise.
  */
-export const isExpressionBody = (
-  body: es.BlockStatement | es.Expression
-): body is es.Expression => {
-  return body.type !== 'BlockStatement'
+export const isReturnStatement = (node: es.Node): node is es.ReturnStatement => {
+  return (node as es.ReturnStatement).type == 'ReturnStatement'
+}
+
+/**
+ * Typeguard for esIfStatement. To verify if an esNode is an esIfStatement.
+ *
+ * @param node an esNode
+ * @returns true if node is an esIfStatement, false otherwise.
+ */
+export const isIfStatement = (node: es.Node): node is es.IfStatement => {
+  return (node as es.IfStatement).type == 'IfStatement'
+}
+
+/**
+ * Typeguard for esBlockStatement. To verify if an esNode is a block statement.
+ *
+ * @param node an esNode
+ * @returns true if node is an esBlockStatement, false otherwise.
+ */
+export const isBlockStatement = (node: es.Node): node is es.BlockStatement => {
+  return (node as es.BlockStatement).type == 'BlockStatement'
 }
 
 /**
@@ -434,4 +452,28 @@ export const checkStackOverFlow = (context: Context, agenda: Agenda) => {
       new errors.MaximumStackLimitExceeded(context.runtime.nodes[0], stacks)
     )
   }
+}
+
+/**
+ * Checks whether a function body returns in every possible branch.
+ * Returns true if every branch has a return statement, else returns false.
+ * @param body The function body to be checked
+ */
+export const hasReturnStatement = (body: es.Statement): boolean => {
+  if (!isBlockStatement(body)) return isReturnStatement(body)
+  for (const statement of body.body) {
+    if (isReturnStatement(statement)) {
+      return true
+    }
+    if (isIfStatement(statement)) {
+      const consequent = hasReturnStatement(statement.consequent)
+      if (!consequent) {
+        return false
+      }
+      if (statement.alternate) {
+        return hasReturnStatement(statement.alternate)
+      }
+    }
+  }
+  return false
 }
