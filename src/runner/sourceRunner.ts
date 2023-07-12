@@ -166,7 +166,6 @@ async function runNative(
       value
     })
   } catch (error) {
-    // console.error(error)
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
       const detectedInfiniteLoop = testForInfiniteLoop(program, context.previousPrograms.slice(1))
