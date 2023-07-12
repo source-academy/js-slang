@@ -20,7 +20,6 @@ import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/astCreator'
-import { dummyStatement } from '../utils/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as instr from './instrCreator'
@@ -31,7 +30,6 @@ import {
   AssmtInstr,
   BinOpInstr,
   BranchInstr,
-  CmdEvaluator,
   ECEBreak,
   ECError,
   EnvInstr,
@@ -53,6 +51,7 @@ import {
   getVariable,
   handleRuntimeError,
   handleSequence,
+  hasDeclarations,
   isAssmtInstr,
   isInstr,
   isNode,
@@ -63,6 +62,14 @@ import {
   Stack
 } from './utils'
 
+type CmdEvaluator = (
+  command: AgendaItem,
+  context: Context,
+  agenda: Agenda,
+  stash: Stash,
+  isPrelude: boolean
+) => void
+
 /**
  * The agenda is a list of commands that still needs to be executed by the machine.
  * It contains syntax tree nodes or instructions.
@@ -70,8 +77,6 @@ import {
 export class Agenda extends Stack<AgendaItem> {
   public constructor(program: es.Program) {
     super()
-    // Evaluation of last statement is undefined if stash is empty
-    this.push(instr.pushUndefIfNeededInstr(dummyStatement()))
 
     // Load program into agenda stack
     this.push(program)
@@ -126,7 +131,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!, false)
+    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!)
   } catch (error) {
     return new ECError(error)
   } finally {
@@ -205,14 +210,16 @@ export function ECEResultPromise(context: Context, value: Value): Promise<Result
 }
 
 /**
+ * The primary runner/loop of the explicit control evaluator.
  *
  * @param context The context to evaluate the program in.
  * @param agenda Points to the current context.runtime.agenda
  * @param stash Points to the current context.runtime.stash
- * @returns A special break object if the program is interrupted by a break point;
+ * @param isPrelude Whether the program we are running is the prelude
+ * @returns A special break object if the program is interrupted by a breakpoint;
  * else the top value of the stash. It is usually the return value of the program.
  */
-function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude: boolean) {
+function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude: boolean = false) {
   context.runtime.break = false
   context.runtime.nodes = []
   let steps = 1
@@ -223,15 +230,10 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
   context.runtime.nodes.unshift(command as es.Program)
 
   while (command) {
+    // Return to capture a snapshot of the agenda and stash after the target step count is reached
     if (!isPrelude && steps === context.runtime.envSteps) {
       return stash.peek()
     }
-
-    // Temporarily commented out the conditional step increases for agenda stash viz development
-    // May be handy later in case we want to separate the visualizations
-    // if (envChanging(command)) {
-    //   steps += 1
-    // }
 
     if (isNode(command) && command.type === 'DebuggerStatement') {
       // steps += 1
@@ -259,6 +261,12 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
       // Command is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash, isPrelude)
     }
+
+    // Push undefined into the stack if both agenda and stash is empty
+    if (agenda.isEmpty() && stash.isEmpty()) {
+      stash.push(undefined)
+    }
+
     command = agenda.peek()
     steps += 1
   }
@@ -278,24 +286,44 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    * Statements
    */
 
-  Program: function (command: es.BlockStatement, context: Context, agenda: Agenda, stash: Stash) {
-    const environment = createBlockEnvironment(context, 'programEnvironment')
-    // Push the environment only if it is non empty.
-    if (declareFunctionsAndVariables(context, command, environment)) {
+  Program: function (
+    command: es.BlockStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash,
+    isPrelude: boolean
+  ) {
+    // Create and push the environment only if it is non empty.
+    if (hasDeclarations(command)) {
+      const environment = createBlockEnvironment(context, 'programEnvironment')
+      declareFunctionsAndVariables(context, command, environment)
       pushEnvironment(context, environment)
     }
 
-    // Push block body
-    agenda.push(...handleSequence(command.body))
+    if (command.body.length == 1) {
+      // If program only consists of one statement, evaluate it immediately
+      const next = command.body[0]
+      cmdEvaluators[next.type](next, context, agenda, stash, isPrelude)
+    } else {
+      // Push block body
+      agenda.push(...handleSequence(command.body))
+    }
   },
 
   BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     // To restore environment after block ends
-    agenda.push(instr.envInstr(currentEnvironment(context), command))
+    // If there is an env instruction on top of the stack, or if there are no declarations
+    // we do not need to push another one
+    const needsEnvironment: boolean = hasDeclarations(command)
+    const next = agenda.peek()
+    if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && needsEnvironment) {
+      agenda.push(instr.envInstr(currentEnvironment(context), command))
+    }
 
-    const environment = createBlockEnvironment(context, 'blockEnvironment')
-    // Push the environment only if it is non empty.
-    if (declareFunctionsAndVariables(context, command, environment)) {
+    // Create and push the environment only if it is non empty.
+    if (needsEnvironment) {
+      const environment = createBlockEnvironment(context, 'blockEnvironment')
+      declareFunctionsAndVariables(context, command, environment)
       pushEnvironment(context, environment)
     }
 
@@ -303,11 +331,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda.push(...handleSequence(command.body))
   },
 
-  WhileStatement: function (command: es.WhileStatement, context: Context, agenda: Agenda) {
+  WhileStatement: function (
+    command: es.WhileStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
     agenda.push(instr.breakMarkerInstr(command))
     agenda.push(instr.whileInstr(command.test, command.body, command))
     agenda.push(command.test)
-    agenda.push(ast.identifier('undefined')) // Return undefined if there is no loop execution
+    stash.push(undefined) // Return undefined if there is no loop execution
   },
 
   ForStatement: function (command: es.ForStatement, context: Context, agenda: Agenda) {
@@ -384,9 +417,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ExpressionStatement: function (
     command: es.ExpressionStatement,
     context: Context,
-    agenda: Agenda
+    agenda: Agenda,
+    stash: Stash,
+    isPrelude: boolean
   ) {
-    agenda.push(command.expression)
+    // Fast forward to the expression
+    // If not the next step will look like it's only removing ';'
+    cmdEvaluators[command.expression.type](command.expression, context, agenda, stash, isPrelude)
   },
 
   DebuggerStatement: function (command: es.DebuggerStatement, context: Context) {
@@ -718,7 +755,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
       const next = agenda.peek()
-      if (!next || (!isNode(next) && next.instrType === InstrType.ENVIRONMENT)) {
+      if (
+        !next ||
+        (!isNode(next) && next.instrType === InstrType.ENVIRONMENT) ||
+        args.length === 0
+      ) {
         // Pushing another Env Instruction would be redundant so only Marker needs to be pushed.
         agenda.push(instr.markerInstr(command.srcNode))
       } else if (!isNode(next) && next.instrType === InstrType.RESET) {
@@ -876,5 +917,3 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   [InstrType.BREAK_MARKER]: function () {}
 }
-
-export function runECEMachineWithSteps(context: Context, agenda: Agenda, stash: Stash) {}
