@@ -304,11 +304,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     // To restore environment after block ends
-    // If there is an env instruction on top of the stack, or if there are no declarations
+    // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next agenda item
     // we do not need to push another one
     const needsEnvironment: boolean = hasDeclarations(command)
     const next = agenda.peek()
-    if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && needsEnvironment) {
+    if (next && !(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && needsEnvironment) {
       agenda.push(instr.envInstr(currentEnvironment(context), command))
     }
 
@@ -845,7 +845,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    const arity = command.arity!
+    const arity = command.arity
     const array = []
     for (let i = 0; i < arity; ++i) {
       array.push(stash.pop())
