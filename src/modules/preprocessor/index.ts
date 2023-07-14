@@ -81,6 +81,7 @@ export const parseProgramsAndConstructImportGraph = async (
       p => files[p] !== undefined,
       resolutionOptions
     )
+
     if (!resolved) throw new ModuleNotFoundError(modAbsPath, node)
     return modAbsPath
   }

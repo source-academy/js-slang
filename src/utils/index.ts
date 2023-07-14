@@ -1,3 +1,7 @@
+import type { Node } from "estree"
+
+import { RuntimeSourceError } from "../errors/runtimeSourceError"
+
 /**
  * A form of Array.reduce, but using an async reducer
  * It doesn't reduce everything asynchronously, but rather waits
@@ -31,13 +35,19 @@ export async function mapObjectAsync<
   )
 }
 
+export class TimeoutError extends RuntimeSourceError {
+  constructor(node?: Node) {
+    super(node)
+  }
+}
+
 /**
  * Wrap an existing promise that will throw an error after the given timeout
  * duration
  */
 export const timeoutPromise = <T>(promise: Promise<T>, duration: number) =>
   new Promise<T>((resolve, reject) => {
-    const timeout = setTimeout(() => reject(new Error('Timeout!')), duration)
+    const timeout = setTimeout(() => reject(new TimeoutError()), duration)
     promise
       .then(result => {
         clearTimeout(timeout)

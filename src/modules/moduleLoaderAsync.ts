@@ -2,7 +2,7 @@ import type { Node } from 'estree'
 import { memoize } from 'lodash'
 
 import type { Context } from '..'
-import { timeoutPromise } from '../utils'
+import { TimeoutError, timeoutPromise } from '../utils'
 import { wrapSourceModule } from '../utils/operators'
 import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from './errors'
 import { MODULES_STATIC_URL } from './moduleLoader'
@@ -13,21 +13,20 @@ export function httpGetAsync(path: string, type: 'json'): Promise<object>
 export function httpGetAsync(path: string, type: 'text'): Promise<string>
 export async function httpGetAsync(path: string, type: 'json' | 'text') {
   try {
-    const resp = await fetch(path, {
+    const resp = await timeoutPromise(fetch(path, {
       method: 'GET'
-    })
+    }), 10000)
 
     if (resp.status !== 200 && resp.status !== 304) {
       throw new ModuleConnectionError()
     }
 
     const promise = type === 'text' ? resp.text() : resp.json()
-    if (typeof window === 'undefined') {
-      return timeoutPromise(promise, 10000)
-    }
-    return promise
+    return timeoutPromise(promise, 10000)
   } catch (error) {
-    if (error instanceof TypeError) throw new ModuleConnectionError()
+    if (error instanceof TypeError || error instanceof TimeoutError) {
+      throw new ModuleConnectionError()
+    }
     if (!(error instanceof ModuleConnectionError)) throw new ModuleInternalError(path, error)
     throw error
   }
