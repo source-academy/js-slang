@@ -13,9 +13,12 @@ export function httpGetAsync(path: string, type: 'json'): Promise<object>
 export function httpGetAsync(path: string, type: 'text'): Promise<string>
 export async function httpGetAsync(path: string, type: 'json' | 'text') {
   try {
-    const resp = await timeoutPromise(fetch(path, {
-      method: 'GET'
-    }), 10000)
+    const resp = await timeoutPromise(
+      fetch(path, {
+        method: 'GET'
+      }),
+      10000
+    )
 
     if (resp.status !== 200 && resp.status !== 304) {
       throw new ModuleConnectionError()

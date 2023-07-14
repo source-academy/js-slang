@@ -1,6 +1,6 @@
-import type { Node } from "estree"
+import type { Node } from 'estree'
 
-import { RuntimeSourceError } from "../errors/runtimeSourceError"
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 
 /**
  * A form of Array.reduce, but using an async reducer
