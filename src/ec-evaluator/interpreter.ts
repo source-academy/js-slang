@@ -54,6 +54,7 @@ import {
   hasDeclarations,
   hasImportDeclarations,
   isAssmtInstr,
+  isBlockStatement,
   isInstr,
   isNode,
   popEnvironment,
@@ -81,6 +82,29 @@ export class Agenda extends Stack<AgendaItem> {
 
     // Load program into agenda stack
     this.push(program)
+  }
+
+  public push(...items: AgendaItem[]): void {
+    const itemsNew: AgendaItem[] = Agenda.simplifyBlocksWithoutDeclarations(...items)
+    super.push(...itemsNew)
+  }
+
+  /**
+   * Before pushing block statements on the agenda, we check if the block statement has any declarations.
+   * If not, instead of pushing the entire block, just the body is pushed since the block is not adding any value.
+   * @param items The items being pushed on the agenda.
+   * @returns The same set of agenda items, but with block statements without declarations simplified.
+   */
+  private static simplifyBlocksWithoutDeclarations(...items: AgendaItem[]): AgendaItem[] {
+    const itemsNew: AgendaItem[] = []
+    items.forEach(item => {
+      if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
+        itemsNew.push(...Agenda.simplifyBlocksWithoutDeclarations(...handleSequence(item.body)))
+      } else {
+        itemsNew.push(item)
+      }
+    })
+    return itemsNew
   }
 }
 
@@ -306,18 +330,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // To restore environment after block ends
     // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next agenda item
     // we do not need to push another one
-    const needsEnvironment: boolean = hasDeclarations(command)
+    // The no declarations case is handled by Agenda :: simplifyBlocksWithoutDeclarations, so no blockStatement node
+    // without declarations should end up here.
     const next = agenda.peek()
-    if (next && !(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && needsEnvironment) {
+    if (next && !(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
       agenda.push(instr.envInstr(currentEnvironment(context), command))
     }
 
-    // Create and push the environment only if it is non empty.
-    if (needsEnvironment) {
-      const environment = createBlockEnvironment(context, 'blockEnvironment')
-      declareFunctionsAndVariables(context, command, environment)
-      pushEnvironment(context, environment)
-    }
+    const environment = createBlockEnvironment(context, 'blockEnvironment')
+    declareFunctionsAndVariables(context, command, environment)
+    pushEnvironment(context, environment)
 
     // Push block body
     agenda.push(...handleSequence(command.body))
