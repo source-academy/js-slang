@@ -47,7 +47,8 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   originalMaxExecTime: 1000,
   useSubst: false,
   isPrelude: false,
-  throwInfiniteLoops: true
+  throwInfiniteLoops: true,
+  envSteps: -1
 }
 
 let previousCode: {

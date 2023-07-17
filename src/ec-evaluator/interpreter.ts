@@ -130,7 +130,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     context.runtime.isRunning = true
     context.runtime.agenda = new Agenda(program)
     context.runtime.stash = new Stash()
-    return runECEMachine(context, context.runtime.agenda, context.runtime.stash, options.isPrelude)
+    return runECEMachine(context, context.runtime.agenda, context.runtime.stash, options.envSteps, options.isPrelude)
   } catch (error) {
     // console.error('ecerror:', error)
     return new ECError(error)
@@ -150,7 +150,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!)
+    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!, -1)
   } catch (error) {
     return new ECError(error)
   } finally {
@@ -235,7 +235,13 @@ export function ECEResultPromise(context: Context, value: Value): Promise<Result
  * @returns A special break object if the program is interrupted by a breakpoint;
  * else the top value of the stash. It is usually the return value of the program.
  */
-function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude: boolean = false) {
+function runECEMachine(
+  context: Context,
+  agenda: Agenda,
+  stash: Stash,
+  envSteps: number,
+  isPrelude: boolean = false
+) {
   context.runtime.break = false
   context.runtime.nodes = []
   let steps = 1
@@ -247,14 +253,14 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
 
   while (command) {
     // Return to capture a snapshot of the agenda and stash after the target step count is reached
-    if (!isPrelude && steps === context.runtime.envSteps) {
+    if (!isPrelude && steps === envSteps) {
       return stash.peek()
     }
     if (isNode(command) && command.type === 'DebuggerStatement') {
       // steps += 1
 
       // Record debugger step if running for the first time
-      if (context.runtime.envSteps === -1) {
+      if (envSteps === -1) {
         context.runtime.breakpointSteps.push(steps)
       }
     }
