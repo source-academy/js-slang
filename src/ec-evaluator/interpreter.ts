@@ -61,7 +61,8 @@ import {
   pushEnvironment,
   reduceConditional,
   setVariable,
-  Stack
+  Stack,
+  valueProducing
 } from './utils'
 
 type CmdEvaluator = (
@@ -130,7 +131,14 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     context.runtime.isRunning = true
     context.runtime.agenda = new Agenda(program)
     context.runtime.stash = new Stash()
-    return runECEMachine(context, context.runtime.agenda, context.runtime.stash, options.envSteps, options.isPrelude)
+    return runECEMachine(
+      context,
+      context.runtime.agenda,
+      context.runtime.stash,
+      options.envSteps,
+      options.stepLimit,
+      options.isPrelude
+    )
   } catch (error) {
     // console.error('ecerror:', error)
     return new ECError(error)
@@ -150,7 +158,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!, -1)
+    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!, -1, -1)
   } catch (error) {
     return new ECError(error)
   } finally {
@@ -240,6 +248,7 @@ function runECEMachine(
   agenda: Agenda,
   stash: Stash,
   envSteps: number,
+  stepLimit: number,
   isPrelude: boolean = false
 ) {
   context.runtime.break = false
@@ -256,6 +265,11 @@ function runECEMachine(
     if (!isPrelude && steps === envSteps) {
       return stash.peek()
     }
+    // Step limit reached, stop further evaluation
+    if (!isPrelude && steps === stepLimit) {
+      break
+    }
+
     if (isNode(command) && command.type === 'DebuggerStatement') {
       // steps += 1
 
@@ -843,9 +857,17 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
 
     if (test) {
+      if (!valueProducing(command.consequent)) {
+        agenda.push(ast.identifier('undefined', command.consequent.loc))
+      }
       agenda.push(command.consequent)
     } else if (command.alternate) {
+      if (!valueProducing(command.alternate)) {
+        agenda.push(ast.identifier('undefined', command.consequent.loc))
+      }
       agenda.push(command.alternate)
+    } else {
+      agenda.push(ast.identifier('undefined', command.srcNode.loc))
     }
   },
 

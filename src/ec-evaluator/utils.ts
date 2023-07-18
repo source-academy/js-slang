@@ -184,7 +184,7 @@ export const valueProducing = (command: es.Node): boolean => {
     type !== 'FunctionDeclaration' &&
     type !== 'ContinueStatement' &&
     type !== 'BreakStatement' &&
-    type !== 'DebuggerStatement'  &&
+    type !== 'DebuggerStatement' &&
     (type !== 'BlockStatement' || command.body.some(valueProducing))
   )
 }
