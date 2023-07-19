@@ -16,7 +16,6 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { UndefinedImportError } from '../modules/errors'
 import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/astCreator'
@@ -139,7 +138,6 @@ function evaluateImports(
   loadTabs: boolean,
   checkImports: boolean
 ) {
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
 
   try {
     const moduleName = node.source.value
@@ -147,15 +145,16 @@ function evaluateImports(
       throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
     }
 
-    if (!(moduleName in moduleFunctions)) {
+    if (!(moduleName in context.moduleContexts)) {
       context.moduleContexts[moduleName] = {
         state: null,
         tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
       }
-      moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
+    } else if (loadTabs && context.moduleContexts[moduleName].tabs === null) {
+      context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName)
     }
 
-    const functions = moduleFunctions[moduleName]
+    const functions = loadModuleBundle(moduleName, context, node)
     const environment = currentEnvironment(context)
     for (const spec of node.specifiers) {
       if (spec.type !== 'ImportSpecifier') {
