@@ -138,7 +138,6 @@ function evaluateImports(
   loadTabs: boolean,
   checkImports: boolean
 ) {
-
   try {
     const moduleName = node.source.value
     if (typeof moduleName !== 'string') {
