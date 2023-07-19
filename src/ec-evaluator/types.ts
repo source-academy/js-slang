@@ -1,8 +1,6 @@
 import * as es from 'estree'
 
-import { Context } from '..'
 import { Environment } from '../types'
-import { Agenda, Stash } from './interpreter'
 
 export enum InstrType {
   RESET = 'Reset',
@@ -86,14 +84,6 @@ export type Instr =
   | ArrLitInstr
 
 export type AgendaItem = es.Node | Instr
-
-export type CmdEvaluator = (
-  command: AgendaItem,
-  context: Context,
-  agenda: Agenda,
-  stash: Stash,
-  isPrelude: boolean
-) => void
 
 // Special class that cannot be found on the stash so is safe to be used
 // as an indicator of a breakpoint from running the ECE machine

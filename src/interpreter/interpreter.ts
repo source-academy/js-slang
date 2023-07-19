@@ -107,7 +107,7 @@ const handleRuntimeError = (context: Context, error: RuntimeSourceError): never 
   throw error
 }
 
-const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
+const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement block scope')
 
 function declareIdentifier(context: Context, name: string, node: es.Node) {
   const environment = currentEnvironment(context)

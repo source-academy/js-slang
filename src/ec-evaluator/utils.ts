@@ -19,6 +19,8 @@ interface IStack<T> {
   pop(): T | undefined
   peek(): T | undefined
   size(): number
+  isEmpty(): boolean
+  getStack(): T[]
 }
 
 export class Stack<T> implements IStack<T> {
@@ -38,7 +40,7 @@ export class Stack<T> implements IStack<T> {
   }
 
   public peek(): T | undefined {
-    if (this.size() === 0) {
+    if (this.isEmpty()) {
       return undefined
     }
     return this.storage[this.size() - 1]
@@ -48,11 +50,13 @@ export class Stack<T> implements IStack<T> {
     return this.storage.length
   }
 
-  public mapStack(mapper: (t: T) => any, num?: number): T[] {
-    if (num && num <= this.storage.length) {
-      return this.storage.slice(this.storage.length - num).map(mapper)
-    }
-    return [...this.storage].map(mapper)
+  public isEmpty(): boolean {
+    return this.size() == 0
+  }
+
+  public getStack(): T[] {
+    // return a copy of the stack's contents
+    return [...this.storage]
   }
 }
 
@@ -87,15 +91,33 @@ export const isIdentifier = (node: es.Node): node is es.Identifier => {
 }
 
 /**
- * Typeguard for esBlockStatement. To verify if a function body is a block statement.
+ * Typeguard for esReturnStatement. To verify if an esNode is an esReturnStatement.
  *
- * @param body the function body
- * @returns true if node is an esIdentifier, false otherwise.
+ * @param node an esNode
+ * @returns true if node is an esReturnStatement, false otherwise.
  */
-export const isExpressionBody = (
-  body: es.BlockStatement | es.Expression
-): body is es.Expression => {
-  return body.type !== 'BlockStatement'
+export const isReturnStatement = (node: es.Node): node is es.ReturnStatement => {
+  return (node as es.ReturnStatement).type == 'ReturnStatement'
+}
+
+/**
+ * Typeguard for esIfStatement. To verify if an esNode is an esIfStatement.
+ *
+ * @param node an esNode
+ * @returns true if node is an esIfStatement, false otherwise.
+ */
+export const isIfStatement = (node: es.Node): node is es.IfStatement => {
+  return (node as es.IfStatement).type == 'IfStatement'
+}
+
+/**
+ * Typeguard for esBlockStatement. To verify if an esNode is a block statement.
+ *
+ * @param node an esNode
+ * @returns true if node is an esBlockStatement, false otherwise.
+ */
+export const isBlockStatement = (node: es.Node): node is es.BlockStatement => {
+  return (node as es.BlockStatement).type == 'BlockStatement'
 }
 
 /**
@@ -122,10 +144,16 @@ export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
   let valueProduced = false
   for (const command of seq) {
     if (valueProducing(command)) {
-      valueProduced ? result.push(instr.popInstr(command)) : (valueProduced = true)
+      // Value producing statements have an extra pop instruction
+      if (valueProduced) {
+        result.push(instr.popInstr(command))
+      } else {
+        valueProduced = true
+      }
     }
     result.push(command)
   }
+  // Push statements in reverse order
   return result.reverse()
 }
 
@@ -235,7 +263,7 @@ export const createBlockEnvironment = (
  * Variables
  */
 
-const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
+const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement block scope')
 
 export function declareIdentifier(
   context: Context,
@@ -270,23 +298,19 @@ export function declareFunctionsAndVariables(
   node: es.BlockStatement,
   environment: Environment
 ) {
-  let hasDeclarations: boolean = false
   for (const statement of node.body) {
     switch (statement.type) {
       case 'VariableDeclaration':
         declareVariables(context, statement, environment)
-        hasDeclarations = true
         break
       case 'FunctionDeclaration':
         declareIdentifier(context, (statement.id as es.Identifier).name, statement, environment)
-        hasDeclarations = true
         break
     }
   }
-  return hasDeclarations
 }
 
-function hasDeclarations(node: es.BlockStatement): boolean {
+export function hasDeclarations(node: es.BlockStatement): boolean {
   for (const statement of node.body) {
     if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {
       return true
@@ -428,4 +452,28 @@ export const checkStackOverFlow = (context: Context, agenda: Agenda) => {
       new errors.MaximumStackLimitExceeded(context.runtime.nodes[0], stacks)
     )
   }
+}
+
+/**
+ * Checks whether a function body returns in every possible branch.
+ * Returns true if every branch has a return statement, else returns false.
+ * @param body The function body to be checked
+ */
+export const hasReturnStatement = (body: es.Statement): boolean => {
+  if (!isBlockStatement(body)) return isReturnStatement(body)
+  for (const statement of body.body) {
+    if (isReturnStatement(statement)) {
+      return true
+    }
+    if (isIfStatement(statement)) {
+      const consequent = hasReturnStatement(statement.consequent)
+      if (!consequent) {
+        return false
+      }
+      if (statement.alternate) {
+        return hasReturnStatement(statement.alternate)
+      }
+    }
+  }
+  return false
 }
