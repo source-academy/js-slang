@@ -11,6 +11,7 @@ import { parse } from '../parser/parser'
 import { evallerReplacer, getBuiltins, transpile } from '../transpiler/transpiler'
 import type { Context, NativeStorage, RecursivePartial } from '../types'
 import * as create from '../utils/ast/astCreator'
+import { getIdentifiersInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
 
@@ -64,6 +65,9 @@ export async function fullJSRunner(
     ...preludeAndBuiltins,
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set())
   ])
+  getIdentifiersInProgram(preEvalProgram).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  )
   const preEvalCode: string = generate(preEvalProgram)
   const requireProvider = getRequireProvider(context)
   await fullJSEval(preEvalCode, requireProvider, context.nativeStorage)

@@ -6,23 +6,19 @@
  */
 
 /* tslint:disable:max-classes-per-file */
-import type * as es from 'estree'
-import { partition, uniqueId } from 'lodash'
+import { uniqueId } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
-import type { ImportOptions } from '../modules/moduleTypes'
-import { initModuleContextAsync } from '../modules/utils'
+import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
+import type { ImportTransformOptions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import type { Context, ContiguousArrayElements, Result, Value } from '../types'
-import assert from '../utils/assert'
+import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { isImportDeclaration } from '../utils/ast/typeGuards'
-import { dummyStatement } from '../utils/dummyAstCreator'
+import type * as es from '../utils/ast/types'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as instr from './instrCreator'
@@ -33,7 +29,6 @@ import {
   AssmtInstr,
   BinOpInstr,
   BranchInstr,
-  CmdEvaluator,
   ECEBreak,
   ECError,
   EnvInstr,
@@ -55,6 +50,7 @@ import {
   getVariable,
   handleRuntimeError,
   handleSequence,
+  hasDeclarations,
   isAssmtInstr,
   isInstr,
   isNode,
@@ -65,6 +61,14 @@ import {
   Stack
 } from './utils'
 
+type CmdEvaluator = (
+  command: AgendaItem,
+  context: Context,
+  agenda: Agenda,
+  stash: Stash,
+  isPrelude: boolean
+) => void
+
 /**
  * The agenda is a list of commands that still needs to be executed by the machine.
  * It contains syntax tree nodes or instructions.
@@ -72,8 +76,6 @@ import {
 export class Agenda extends Stack<AgendaItem> {
   public constructor(program: es.Program) {
     super()
-    // Evaluation of last statement is undefined if stash is empty
-    this.push(instr.pushUndefIfNeededInstr(dummyStatement()))
 
     // Load program into agenda stack
     this.push(program)
@@ -104,13 +106,7 @@ export async function evaluate(
 ): Promise<Value> {
   try {
     context.runtime.isRunning = true
-
-    const nonImportNodes = await evaluateImports(program, context, options.importOptions)
-
-    context.runtime.agenda = new Agenda({
-      ...program,
-      body: nonImportNodes
-    })
+    context.runtime.agenda = new Agenda(program)
     context.runtime.stash = new Stash()
     return runECEMachine(context, context.runtime.agenda, context.runtime.stash, options.isPrelude)
   } catch (error) {
@@ -132,7 +128,7 @@ export async function evaluate(
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!, false)
+    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!)
   } catch (error) {
     return new ECError(error)
   } finally {
@@ -140,67 +136,42 @@ export function resumeEvaluate(context: Context) {
   }
 }
 
-async function evaluateImports(
-  program: es.Program,
+function evaluateImports(
+  node: es.ImportDeclaration,
   context: Context,
-  { loadTabs, wrapModules }: ImportOptions
+  { loadTabs, wrapModules }: ImportTransformOptions
 ) {
-  const [importNodes, otherNodes] = partition(program.body, isImportDeclaration)
-
-  if (importNodes.length === 0) return otherNodes as es.Statement[]
-
-  const environment = currentEnvironment(context)
   try {
-    const modulesToNodesMap = importNodes.reduce((res, node) => {
-      const moduleName = node.source.value
-      assert(
-        typeof moduleName === 'string',
-        `Expected import declaration to have source of type string, got ${moduleName}`
-      )
+    const moduleName = node.source.value
+    if (typeof moduleName !== 'string') {
+      throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
+    }
 
-      if (!(moduleName in res)) {
-        res[moduleName] = []
+    if (!(moduleName in context.moduleContexts)) {
+      context.moduleContexts[moduleName] = {
+        state: null,
+        tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
+      }
+    } else if (loadTabs && context.moduleContexts[moduleName].tabs === null) {
+      context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName)
+    }
+
+    const functions = loadModuleBundle(moduleName, context, wrapModules, node)
+    const environment = currentEnvironment(context)
+    for (const spec of node.specifiers) {
+      if (spec.type === 'ImportNamespaceSpecifier') {
+        throw new Error('ImportNamespaceSpecifiers are not supported!')
       }
 
-      res[moduleName].push(node)
-      return res
-    }, {} as Record<string, es.ImportDeclaration[]>)
+      const importedName = spec.type === 'ImportDefaultSpecifier' ? 'default' : spec.imported.name
 
-    await Promise.all(
-      Object.entries(modulesToNodesMap).map(async ([moduleName, nodes]) => {
-        await initModuleContextAsync(moduleName, context, loadTabs, nodes[0])
-        const moduleFuncs = await loadModuleBundleAsync(moduleName, context, wrapModules, nodes[0])
-
-        nodes.forEach(node =>
-          node.specifiers.forEach(spec => {
-            declareIdentifier(context, spec.local.name, spec, environment)
-            let content: any
-            switch (spec.type) {
-              case 'ImportSpecifier': {
-                content = moduleFuncs[spec.imported.name]
-                break
-              }
-              case 'ImportDefaultSpecifier': {
-                content = moduleFuncs['default']
-                break
-              }
-              case 'ImportNamespaceSpecifier': {
-                content = moduleFuncs
-                break
-              }
-            }
-
-            defineVariable(context, spec.local.name, content, true, node)
-          })
-        )
-      })
-    )
+      declareIdentifier(context, spec.local.name, node, environment)
+      defineVariable(context, spec.local.name, functions[importedName], true, node)
+    }
   } catch (error) {
     // console.error(error)
     handleRuntimeError(context, error)
   }
-
-  return otherNodes as es.Statement[]
 }
 
 /**
@@ -222,14 +193,16 @@ export async function ECEResultPromise(context: Context, promise: Promise<Value>
 }
 
 /**
+ * The primary runner/loop of the explicit control evaluator.
  *
  * @param context The context to evaluate the program in.
  * @param agenda Points to the current context.runtime.agenda
  * @param stash Points to the current context.runtime.stash
- * @returns A special break object if the program is interrupted by a break point;
+ * @param isPrelude Whether the program we are running is the prelude
+ * @returns A special break object if the program is interrupted by a breakpoint;
  * else the top value of the stash. It is usually the return value of the program.
  */
-function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude: boolean) {
+function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude: boolean = false) {
   context.runtime.break = false
   context.runtime.nodes = []
   let steps = 1
@@ -240,15 +213,10 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
   context.runtime.nodes.unshift(command as es.Program)
 
   while (command) {
+    // Return to capture a snapshot of the agenda and stash after the target step count is reached
     if (!isPrelude && steps === context.runtime.envSteps) {
       return stash.peek()
     }
-
-    // Temporarily commented out the conditional step increases for agenda stash viz development
-    // May be handy later in case we want to separate the visualizations
-    // if (envChanging(command)) {
-    //   steps += 1
-    // }
 
     if (isNode(command) && command.type === 'DebuggerStatement') {
       // steps += 1
@@ -276,6 +244,12 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
       // Command is an instrucion
       cmdEvaluators[command.instrType](command, context, agenda, stash, isPrelude)
     }
+
+    // Push undefined into the stack if both agenda and stash is empty
+    if (agenda.isEmpty() && stash.isEmpty()) {
+      stash.push(undefined)
+    }
+
     command = agenda.peek()
     steps += 1
   }
@@ -295,24 +269,44 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    * Statements
    */
 
-  Program: function (command: es.BlockStatement, context: Context, agenda: Agenda, stash: Stash) {
-    const environment = createBlockEnvironment(context, 'programEnvironment')
-    // Push the environment only if it is non empty.
-    if (declareFunctionsAndVariables(context, command, environment)) {
+  Program: function (
+    command: es.BlockStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash,
+    isPrelude: boolean
+  ) {
+    // Create and push the environment only if it is non empty.
+    if (hasDeclarations(command)) {
+      const environment = createBlockEnvironment(context, 'programEnvironment')
+      declareFunctionsAndVariables(context, command, environment)
       pushEnvironment(context, environment)
     }
 
-    // Push block body
-    agenda.push(...handleSequence(command.body))
+    if (command.body.length == 1) {
+      // If program only consists of one statement, evaluate it immediately
+      const next = command.body[0]
+      cmdEvaluators[next.type](next, context, agenda, stash, isPrelude)
+    } else {
+      // Push block body
+      agenda.push(...handleSequence(command.body))
+    }
   },
 
   BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     // To restore environment after block ends
-    agenda.push(instr.envInstr(currentEnvironment(context), command))
+    // If there is an env instruction on top of the stack, or if there are no declarations
+    // we do not need to push another one
+    const needsEnvironment: boolean = hasDeclarations(command)
+    const next = agenda.peek()
+    if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && needsEnvironment) {
+      agenda.push(instr.envInstr(currentEnvironment(context), command))
+    }
 
-    const environment = createBlockEnvironment(context, 'blockEnvironment')
-    // Push the environment only if it is non empty.
-    if (declareFunctionsAndVariables(context, command, environment)) {
+    // Create and push the environment only if it is non empty.
+    if (needsEnvironment) {
+      const environment = createBlockEnvironment(context, 'blockEnvironment')
+      declareFunctionsAndVariables(context, command, environment)
       pushEnvironment(context, environment)
     }
 
@@ -320,11 +314,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda.push(...handleSequence(command.body))
   },
 
-  WhileStatement: function (command: es.WhileStatement, context: Context, agenda: Agenda) {
+  WhileStatement: function (
+    command: es.WhileStatement,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
     agenda.push(instr.breakMarkerInstr(command))
     agenda.push(instr.whileInstr(command.test, command.body, command))
     agenda.push(command.test)
-    agenda.push(ast.identifier('undefined')) // Return undefined if there is no loop execution
+    stash.push(undefined) // Return undefined if there is no loop execution
   },
 
   ForStatement: function (command: es.ForStatement, context: Context, agenda: Agenda) {
@@ -401,9 +400,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ExpressionStatement: function (
     command: es.ExpressionStatement,
     context: Context,
-    agenda: Agenda
+    agenda: Agenda,
+    stash: Stash,
+    isPrelude: boolean
   ) {
-    agenda.push(command.expression)
+    // Fast forward to the expression
+    // If not the next step will look like it's only removing ';'
+    cmdEvaluators[command.expression.type](command.expression, context, agenda, stash, isPrelude)
   },
 
   DebuggerStatement: function (command: es.DebuggerStatement, context: Context) {
@@ -470,8 +473,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ) {
     agenda.push(instr.breakInstr(command))
   },
-  ImportDeclaration: function () {
-    throw new Error('Import Declarations should already have been removed.')
+
+  ImportDeclaration: function (command: es.ImportDeclaration, context: Context, agenda: Agenda) {
+    // TODO: Don't hardcode options
+    evaluateImports(command, context, { wrapModules: true, loadTabs: true })
   },
 
   /**
@@ -735,7 +740,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
       const next = agenda.peek()
-      if (!next || (!isNode(next) && next.instrType === InstrType.ENVIRONMENT)) {
+      if (
+        !next ||
+        (!isNode(next) && next.instrType === InstrType.ENVIRONMENT) ||
+        args.length === 0
+      ) {
         // Pushing another Env Instruction would be redundant so only Marker needs to be pushed.
         agenda.push(instr.markerInstr(command.srcNode))
       } else if (!isNode(next) && next.instrType === InstrType.RESET) {
@@ -893,5 +902,3 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   [InstrType.BREAK_MARKER]: function () {}
 }
-
-export function runECEMachineWithSteps(context: Context, agenda: Agenda, stash: Stash) {}

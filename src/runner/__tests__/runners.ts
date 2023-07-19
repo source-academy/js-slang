@@ -179,6 +179,37 @@ describe('Additional JavaScript features are not available in Source Native', ()
   )
 })
 
+describe('Functions in Source libraries (e.g. list, streams) are available in Source Native', () => {
+  test('List functions are present in Source Native', async () => {
+    // Test chapters from Source 2 - 4
+    for (let chapterNum = 2; chapterNum <= 4; chapterNum++) {
+      const sourceNativeContext: Context = mockContext(chapterNum, Variant.NATIVE)
+      // The following snippet is equivalent to sum(list(1..10))
+      const sourceNativeSnippet: string =
+        'accumulate((x, y) => x + y , 0, append(build_list(x => x + 1, 5), enum_list(6, 10)));'
+      const result = await runInContext(sourceNativeSnippet, sourceNativeContext)
+
+      expect(result.status).toStrictEqual('finished')
+      expect((result as any).value).toStrictEqual(55)
+      expect(sourceNativeContext.errors.length).toBe(0)
+    }
+  })
+  test('Stream functions are present in Source Native', async () => {
+    // Test chapters from Source 3 - 4
+    for (let chapterNum = 3; chapterNum <= 4; chapterNum++) {
+      const sourceNativeContext: Context = mockContext(chapterNum, Variant.NATIVE)
+      // The following snippet is equivalent to sum(list(stream(1..10)))
+      const sourceNativeSnippet: string =
+        'accumulate((x, y) => x + y, 0, stream_to_list(stream_append(build_stream(x => x + 1, 5), enum_stream(6, 10))));'
+      const result = await runInContext(sourceNativeSnippet, sourceNativeContext)
+
+      expect(result.status).toStrictEqual('finished')
+      expect((result as any).value).toStrictEqual(55)
+      expect(sourceNativeContext.errors.length).toBe(0)
+    }
+  })
+})
+
 // HTML Unit Tests
 
 test('Error handling script is injected in HTML code', async () => {

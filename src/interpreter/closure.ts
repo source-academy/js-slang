@@ -3,9 +3,11 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import { uniqueId } from 'lodash'
 
+import { hasReturnStatement, isBlockStatement } from '../ec-evaluator/utils'
 import { Context, Environment, Value } from '../types'
 import {
   blockArrowFunction,
+  blockStatement,
   callExpression,
   identifier,
   returnStatement
@@ -57,15 +59,16 @@ export default class Closure extends Callable {
     dummyReturn?: boolean,
     predefined?: boolean
   ) {
-    function isExpressionBody(body: es.BlockStatement | es.Expression): body is es.Expression {
-      return body.type !== 'BlockStatement'
-    }
-    const functionBody: es.Statement[] | es.Expression | es.BlockStatement = isExpressionBody(
-      node.body
-    )
-      ? [returnStatement(node.body, node.body.loc)]
-      : dummyReturn
-      ? [...node.body.body, returnStatement(identifier('undefined', node.body.loc), node.body.loc)]
+    const functionBody: es.BlockStatement = !isBlockStatement(node.body)
+      ? blockStatement([returnStatement(node.body, node.body.loc)], node.body.loc)
+      : dummyReturn && !hasReturnStatement(node.body)
+      ? blockStatement(
+          [
+            ...node.body.body,
+            returnStatement(identifier('undefined', node.body.loc), node.body.loc)
+          ],
+          node.body.loc
+        )
       : node.body
 
     const closure = new Closure(

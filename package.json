@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
@@ -33,7 +33,7 @@
   "dependencies": {
     "@babel/parser": "^7.19.4",
     "@joeychenofficial/alt-ergo-modified": "^2.4.0",
-    "@ts-morph/bootstrap": "^0.18.0",
+    "@ts-morph/bootstrap": "^0.20.0",
     "@types/estree": "0.0.52",
     "acorn": "^8.8.2",
     "acorn-class-fields": "^1.0.0",
@@ -44,7 +44,7 @@
     "js-base64": "^3.7.5",
     "lodash": "^4.17.20",
     "node-getopt": "^0.3.2",
-    "source-map": "0.7.3",
+    "source-map": "0.7.4",
     "xmlhttprequest-ts": "^1.0.1"
   },
   "scripts": {
