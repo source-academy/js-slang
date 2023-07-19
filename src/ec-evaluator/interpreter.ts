@@ -7,7 +7,7 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { partition, uniqueId } from 'lodash'
+import { uniqueId } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
@@ -16,7 +16,6 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { UndefinedImportError } from '../modules/errors'
 import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/astCreator'
@@ -103,13 +102,7 @@ export class Stash extends Stack<Value> {
 export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
   try {
     context.runtime.isRunning = true
-
-    const nonImportNodes = evaluateImports(program, context, true, true)
-
-    context.runtime.agenda = new Agenda({
-      ...program,
-      body: nonImportNodes
-    })
+    context.runtime.agenda = new Agenda(program)
     context.runtime.stash = new Stash()
     return runECEMachine(context, context.runtime.agenda, context.runtime.stash, options.isPrelude)
   } catch (error) {
@@ -140,54 +133,44 @@ export function resumeEvaluate(context: Context) {
 }
 
 function evaluateImports(
-  program: es.Program,
+  node: es.ImportDeclaration,
   context: Context,
   loadTabs: boolean,
   checkImports: boolean
 ) {
-  const [importNodes, otherNodes] = partition(
-    program.body,
-    ({ type }) => type === 'ImportDeclaration'
-  ) as [es.ImportDeclaration[], es.Statement[]]
-
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
-
   try {
-    for (const node of importNodes) {
-      const moduleName = node.source.value
-      if (typeof moduleName !== 'string') {
-        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
+    const moduleName = node.source.value
+    if (typeof moduleName !== 'string') {
+      throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
+    }
+
+    if (!(moduleName in context.moduleContexts)) {
+      context.moduleContexts[moduleName] = {
+        state: null,
+        tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
+      }
+    } else if (loadTabs && context.moduleContexts[moduleName].tabs === null) {
+      context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName)
+    }
+
+    const functions = loadModuleBundle(moduleName, context, node)
+    const environment = currentEnvironment(context)
+    for (const spec of node.specifiers) {
+      if (spec.type !== 'ImportSpecifier') {
+        throw new Error(`Only ImportSpecifiers are supported, got: ${spec.type}`)
       }
 
-      if (!(moduleName in moduleFunctions)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
-        }
-        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
+      if (checkImports && !(spec.imported.name in functions)) {
+        throw new UndefinedImportError(spec.imported.name, moduleName, node)
       }
 
-      const functions = moduleFunctions[moduleName]
-      const environment = currentEnvironment(context)
-      for (const spec of node.specifiers) {
-        if (spec.type !== 'ImportSpecifier') {
-          throw new Error(`Only ImportSpecifiers are supported, got: ${spec.type}`)
-        }
-
-        if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, node)
-        }
-
-        declareIdentifier(context, spec.local.name, node, environment)
-        defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
-      }
+      declareIdentifier(context, spec.local.name, node, environment)
+      defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
     }
   } catch (error) {
     // console.log(error)
     handleRuntimeError(context, error)
   }
-
-  return otherNodes
 }
 
 /**
@@ -490,8 +473,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ) {
     agenda.push(instr.breakInstr(command))
   },
-  ImportDeclaration: function () {
-    throw new Error('Import Declarations should already have been removed.')
+
+  ImportDeclaration: function (command: es.ImportDeclaration, context: Context, agenda: Agenda) {
+    evaluateImports(command, context, true, true)
   },
 
   /**
