@@ -263,7 +263,7 @@ export const createBlockEnvironment = (
  * Variables
  */
 
-const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
+const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement block scope')
 
 export function declareIdentifier(
   context: Context,
