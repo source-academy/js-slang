@@ -937,7 +937,7 @@ test('Check that stack is at most 10k in size', () => {
         return 1 + f(x-1);
       }
     }
-    f(30000);
+    f(300000);
   `,
     optionEC
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))

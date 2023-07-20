@@ -502,7 +502,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   ReturnStatement: function (command: es.ReturnStatement, context: Context, agenda: Agenda) {
     // Push return argument onto agenda as well as Reset Instruction to clear to ignore all statements after the return.
-    agenda.push(instr.resetInstr(command))
+    const next = agenda.peek()
+    if (next && isInstr(next) && next.instrType === InstrType.MARKER) {
+      agenda.pop()
+    } else {
+      agenda.push(instr.resetInstr(command))
+    }
     if (command.argument) {
       agenda.push(command.argument)
     }
