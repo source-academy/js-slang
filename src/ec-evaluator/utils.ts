@@ -215,6 +215,22 @@ export const envChanging = (command: AgendaItem): boolean => {
 }
 
 /**
+ * To determine if the function is simple.
+ * Simple functions contain a single return statement.
+ *
+ * @param node The function to check against.
+ * @returns true if the function is simple, false otherwise.
+ */
+export const isSimpleFunction = (node: es.Function) => {
+  if (node.body.type !== 'BlockStatement') {
+    return true
+  } else {
+    const block = node.body
+    return block.body.length === 1 && block.body[0].type === 'ReturnStatement'
+  }
+}
+
+/**
  * Environments
  */
 

@@ -57,6 +57,7 @@ import {
   isBlockStatement,
   isInstr,
   isNode,
+  isSimpleFunction,
   popEnvironment,
   pushEnvironment,
   reduceConditional,
@@ -353,7 +354,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // The no declarations case is handled by Agenda :: simplifyBlocksWithoutDeclarations, so no blockStatement node
     // without declarations should end up here.
     const next = agenda.peek()
-    if (next && !(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+    if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
       agenda.push(instr.envInstr(currentEnvironment(context), command))
     }
 
@@ -785,31 +786,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
-      // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
-      const next = agenda.peek()
-      if (
-        !next ||
-        (!isNode(next) && next.instrType === InstrType.ENVIRONMENT) ||
-        args.length === 0
-      ) {
-        // Pushing another Env Instruction would be redundant so only Marker needs to be pushed.
-        agenda.push(instr.markerInstr(command.srcNode))
-      } else if (!isNode(next) && next.instrType === InstrType.RESET) {
-        // Reset Instruction will be replaced by Reset Instruction of new return statement.
-        agenda.pop()
-      } else {
-        agenda.push(instr.envInstr(currentEnvironment(context), command.srcNode))
-        agenda.push(instr.markerInstr(command.srcNode))
-      }
-      // Create environment for function parameters if the function isn't nullary.
-      // Name the environment if the function call expression is not anonymous
-      if (args.length > 0) {
-        const environment = createEnvironment(func, args, command.srcNode)
-        pushEnvironment(context, environment)
-      } else {
-        context.runtime.environments.unshift(func.environment)
-      }
-
       // Display the pre-defined functions on the global environment if needed.
       if (func.preDefined) {
         Object.defineProperty(context.runtime.environments[1].head, uniqueId(), {
@@ -819,8 +795,32 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         })
       }
 
-      // Push function body on agenda
-      agenda.push(func.node.body)
+      const next = agenda.peek()
+
+      // Push ENVIRONMENT instruction if needed
+      if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+        agenda.push(instr.envInstr(currentEnvironment(context), command.srcNode))
+      }
+
+      // Create environment for function parameters if the function isn't nullary.
+      // Name the environment if the function call expression is not anonymous
+      if (args.length > 0) {
+        const environment = createEnvironment(func, args, command.srcNode)
+        pushEnvironment(context, environment)
+      } else {
+        context.runtime.environments.unshift(func.environment)
+      }
+
+      // Handle special case if function is simple
+      if (isSimpleFunction(func.node)) {
+        // Closures convert ArrowExpressionStatements to BlockStatements
+        const block = func.node.body as es.BlockStatement
+        const returnStatement = block.body[0] as es.ReturnStatement
+        agenda.push(returnStatement.argument ?? ast.identifier('undefined', returnStatement.loc))
+      } else {
+        agenda.push(instr.markerInstr(command.srcNode))
+        agenda.push(func.node.body)
+      }
     } else if (typeof func === 'function') {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)

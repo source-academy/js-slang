@@ -151,7 +151,7 @@ test('Infinite recursion with a block bodied function', () => {
     function i(n) {
       return n === 0 ? 0 : 1 + i(n-1);
     }
-    i(30000);
+    i(300000);
   `,
     optionEC4
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n *(i\(\d*\)[^i]{2,4}){3}/))
@@ -166,7 +166,7 @@ test('Infinite recursion with function calls in argument', () => {
     function r() {
       return 1;
     }
-    i(30000, 1);
+    i(300000, 1);
   `,
     optionEC4
   ).toEqual(
@@ -183,7 +183,7 @@ test('Infinite recursion of mutually recursive functions', () => {
     function g(n) {
       return 1 + f(n);
     }
-    f(20000);
+    f(200000);
   `,
     optionEC4
   ).toEqual(
