@@ -183,6 +183,7 @@ export const valueProducing = (command: es.Node): boolean => {
     type !== 'ContinueStatement' &&
     type !== 'BreakStatement' &&
     type !== 'ReturnStatement' &&
+    type !== 'ImportDeclaration' &&
     (type !== 'BlockStatement' || command.body.some(valueProducing))
   )
 }
