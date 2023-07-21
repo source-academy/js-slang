@@ -320,6 +320,15 @@ export function hasDeclarations(node: es.BlockStatement): boolean {
   return false
 }
 
+export function hasImportDeclarations(node: es.Program): boolean {
+  for (const statement of node.body) {
+    if (statement.type === 'ImportDeclaration' ) {
+      return true
+    }
+  }
+  return false
+}
+
 export function defineVariable(
   context: Context,
   name: string,
