@@ -322,7 +322,7 @@ export function hasDeclarations(node: es.BlockStatement): boolean {
 
 export function hasImportDeclarations(node: es.Program): boolean {
   for (const statement of node.body) {
-    if (statement.type === 'ImportDeclaration' ) {
+    if (statement.type === 'ImportDeclaration') {
       return true
     }
   }
