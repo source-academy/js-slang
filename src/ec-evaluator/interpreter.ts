@@ -218,7 +218,6 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
 
   let command = agenda.peek()
 
-
   // First node will be a Program
   context.runtime.nodes.unshift(command as es.Program)
 
@@ -297,7 +296,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       pushEnvironment(context, environment)
       evaluateImports(command as unknown as es.Program, context, true, true)
       declareFunctionsAndVariables(context, command, environment)
-
     }
 
     if (command.body.length == 1) {
