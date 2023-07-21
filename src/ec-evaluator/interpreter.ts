@@ -803,7 +803,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const next = agenda.peek()
 
       // Push ENVIRONMENT instruction if needed
-      if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+      if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && args.length !== 0) {
         agenda.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
 
