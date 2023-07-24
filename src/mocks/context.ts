@@ -12,6 +12,27 @@ export function mockContext(
   return createContext(chapter, variant)
 }
 
+export function mockImportDeclaration(): es.ImportDeclaration {
+  const mockImportDecl: es.ImportDeclaration = {
+    type: 'ImportDeclaration',
+    specifiers: [
+      {
+        type: 'ImportDefaultSpecifier',
+        local: {
+          type: 'Identifier',
+          name: 'MockName'
+        }
+      }
+    ],
+    source: {
+      type: 'Literal',
+      value: 'mock-path',
+      raw: "'mock-path'"
+    }
+  }
+  return mockImportDecl
+}
+
 export function mockRuntimeContext(): Context {
   const context = createContext()
   context.runtime = {

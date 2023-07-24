@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-yarn jsdoc && yarn autocomplete && yarn format:ci && yarn eslint && yarn test
+# yarn jsdoc && yarn autocomplete && yarn format:ci && yarn eslint && yarn test

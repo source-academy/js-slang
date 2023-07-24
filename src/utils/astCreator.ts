@@ -91,10 +91,11 @@ export const blockArrowFunction = (
 export const functionExpression = (
   params: es.Pattern[],
   body: es.Statement[] | es.BlockStatement,
-  loc?: es.SourceLocation | null
+  loc?: es.SourceLocation | null,
+  id?: es.Identifier
 ): es.FunctionExpression => ({
   type: 'FunctionExpression',
-  id: null,
+  id: id || null,
   async: false,
   generator: false,
   params,
