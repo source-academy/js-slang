@@ -222,10 +222,6 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
   context.runtime.nodes.unshift(command as es.Program)
 
   while (command) {
-    let isImportDeclaration = false
-    if (isNode(command) && command.type === 'ImportDeclaration') {
-      isImportDeclaration = true
-    }
     // Return to capture a snapshot of the agenda and stash after the target step count is reached
     if (!isPrelude && steps === context.runtime.envSteps) {
       return stash.peek()
@@ -262,10 +258,8 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
       stash.push(undefined)
     }
     command = agenda.peek()
-    // If command is an ImportDeclaration, don't add unnecessary step
-    if (!isImportDeclaration) {
-      steps += 1
-    }
+
+    steps += 1
   }
 
   if (!isPrelude) {
@@ -291,7 +285,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     isPrelude: boolean
   ) {
     // Create and push the environment only if it is non empty.
-    if (hasDeclarations(command) || hasImportDeclarations(command as unknown as es.Program)) {
+    if (hasDeclarations(command) || hasImportDeclarations(command)) {
       const environment = createBlockEnvironment(context, 'programEnvironment')
       pushEnvironment(context, environment)
       evaluateImports(command as unknown as es.Program, context, true, true)
