@@ -52,6 +52,7 @@ import {
   handleRuntimeError,
   handleSequence,
   hasDeclarations,
+  hasImportDeclarations,
   isAssmtInstr,
   isInstr,
   isNode,
@@ -103,13 +104,7 @@ export class Stash extends Stack<Value> {
 export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
   try {
     context.runtime.isRunning = true
-
-    const nonImportNodes = evaluateImports(program, context, true, true)
-
-    context.runtime.agenda = new Agenda({
-      ...program,
-      body: nonImportNodes
-    })
+    context.runtime.agenda = new Agenda(program)
     context.runtime.stash = new Stash()
     return runECEMachine(context, context.runtime.agenda, context.runtime.stash, options.isPrelude)
   } catch (error) {
@@ -145,11 +140,10 @@ function evaluateImports(
   loadTabs: boolean,
   checkImports: boolean
 ) {
-  const [importNodes, otherNodes] = partition(
-    program.body,
-    ({ type }) => type === 'ImportDeclaration'
-  ) as [es.ImportDeclaration[], es.Statement[]]
-
+  const [importNodes] = partition(program.body, ({ type }) => type === 'ImportDeclaration') as [
+    es.ImportDeclaration[],
+    es.Statement[]
+  ]
   const moduleFunctions: Record<string, ModuleFunctions> = {}
 
   try {
@@ -186,8 +180,6 @@ function evaluateImports(
     // console.log(error)
     handleRuntimeError(context, error)
   }
-
-  return otherNodes
 }
 
 /**
@@ -234,7 +226,6 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
     if (!isPrelude && steps === context.runtime.envSteps) {
       return stash.peek()
     }
-
     if (isNode(command) && command.type === 'DebuggerStatement') {
       // steps += 1
 
@@ -266,8 +257,8 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
     if (agenda.isEmpty() && stash.isEmpty()) {
       stash.push(undefined)
     }
-
     command = agenda.peek()
+
     steps += 1
   }
 
@@ -294,10 +285,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     isPrelude: boolean
   ) {
     // Create and push the environment only if it is non empty.
-    if (hasDeclarations(command)) {
+    if (hasDeclarations(command) || hasImportDeclarations(command)) {
       const environment = createBlockEnvironment(context, 'programEnvironment')
-      declareFunctionsAndVariables(context, command, environment)
       pushEnvironment(context, environment)
+      evaluateImports(command as unknown as es.Program, context, true, true)
+      declareFunctionsAndVariables(context, command, environment)
     }
 
     if (command.body.length == 1) {
@@ -490,9 +482,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ) {
     agenda.push(instr.breakInstr(command))
   },
-  ImportDeclaration: function () {
-    throw new Error('Import Declarations should already have been removed.')
-  },
+  ImportDeclaration: function () {},
 
   /**
    * Expressions
