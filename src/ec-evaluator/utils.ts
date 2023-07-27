@@ -143,15 +143,17 @@ export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
   const result: AgendaItem[] = []
   let valueProduced = false
   for (const command of seq) {
-    if (valueProducing(command)) {
-      // Value producing statements have an extra pop instruction
-      if (valueProduced) {
-        result.push(instr.popInstr(command))
-      } else {
-        valueProduced = true
+    if (!isImportDeclaration(command)) {
+      if (valueProducing(command)) {
+        // Value producing statements have an extra pop instruction
+        if (valueProduced) {
+          result.push(instr.popInstr(command))
+        } else {
+          valueProduced = true
+        }
       }
+      result.push(command)
     }
-    result.push(command)
   }
   // Push statements in reverse order
   return result.reverse()
@@ -183,7 +185,6 @@ export const valueProducing = (command: es.Node): boolean => {
     type !== 'ContinueStatement' &&
     type !== 'BreakStatement' &&
     type !== 'ReturnStatement' &&
-    type !== 'ImportDeclaration' &&
     (type !== 'BlockStatement' || command.body.some(valueProducing))
   )
 }
@@ -320,13 +321,17 @@ export function hasDeclarations(node: es.BlockStatement): boolean {
   return false
 }
 
-export function hasImportDeclarations(node: es.Program): boolean {
-  for (const statement of node.body) {
+export function hasImportDeclarations(node: es.BlockStatement): boolean {
+  for (const statement of (node as unknown as es.Program).body) {
     if (statement.type === 'ImportDeclaration') {
       return true
     }
   }
   return false
+}
+
+function isImportDeclaration(node: es.Node): boolean {
+  return node.type === 'ImportDeclaration'
 }
 
 export function defineVariable(
