@@ -25,7 +25,7 @@ import {
 } from '../utils/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import { nodeToValue, valueToExpression } from './converter'
+import { nodeToValue, objectToString, valueToExpression } from './converter'
 import * as builtin from './lib'
 import {
   currentEnvironment,
@@ -2487,6 +2487,13 @@ function jsTreeifyMain(target: substituterNodes, visited: Set<substituterNodes>)
   let verboseCount = 0
   const treeifiers = {
     // Identifier: return
+    Literal: (target: es.Literal): es.Literal => {
+      if (typeof target.value === 'object') {
+        target.raw = objectToString(target.value)
+      }
+      return target
+    },
+
     ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
       return ast.expressionStatement(treeify(target.expression) as es.Expression)
     },
@@ -2543,17 +2550,11 @@ function jsTreeifyMain(target: substituterNodes, visited: Set<substituterNodes>)
       }
       visited.add(target)
       if (target.id) {
-        return ast.callExpression(
-          ast.arrowFunctionExpression(
-            [],
-            ast.functionExpression(
-              target.params,
-              treeify(target.body) as es.BlockStatement,
-              target.loc,
-              target.id
-            )
-          ),
-          []
+        return ast.functionExpression(
+          target.params,
+          treeify(target.body) as es.BlockStatement,
+          target.loc,
+          target.id
         )
       } else {
         return ast.functionExpression(
@@ -2639,7 +2640,7 @@ function jsTreeifyMain(target: substituterNodes, visited: Set<substituterNodes>)
 export const codify = (node: substituterNodes): string => generate(treeifyMain(node))
 
 export const javascriptify = (node: substituterNodes): string =>
-  generate(jsTreeifyMain(node, new Set()))
+  '(' + generate(jsTreeifyMain(node, new Set())) + ');'
 
 /**
  * Recurses down the tree, tracing path to redex

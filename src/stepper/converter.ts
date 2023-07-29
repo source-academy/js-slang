@@ -14,7 +14,7 @@ export function valueToExpression(value: any, context?: Context): es.Expression 
     return {
       type: 'Literal',
       value: value,
-      raw: valueToString(value)
+      raw: objectToString(value)
     } as es.Literal
   }
   if (typeof value === 'function' && context) {
@@ -90,7 +90,7 @@ function evaluateFunctionObject(node: substituterNodes, context: Context) {
   return eval(code)
 }
 
-function valueToString(value: any): string {
+export function objectToString(value: any): string {
   if ('toReplString' in value) {
     return value.toReplString()
   }
