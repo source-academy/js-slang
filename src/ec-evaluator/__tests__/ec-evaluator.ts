@@ -371,6 +371,6 @@ test('Conditional statements are value producing always', () => {
       }
     fact(5);
     `,
-    optionEC4
+    optionEC3
   ).toMatchInlineSnapshot(`120`)
 })

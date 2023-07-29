@@ -508,3 +508,35 @@ export const hasReturnStatement = (body: es.Statement): boolean => {
   }
   return false
 }
+
+export const hasBreakStatement = (block: es.BlockStatement): boolean => {
+  let hasBreak = false
+  for (const statement of block.body) {
+    if (statement.type === 'BreakStatement') {
+      hasBreak = true
+    } else if (statement.type === 'IfStatement') {
+      // Parser enforces that if/else have braces (block statement)
+      hasBreak = hasBreak || hasBreakStatement(statement.consequent as es.BlockStatement)
+      if (statement.alternate) {
+        hasBreak = hasBreak || hasBreakStatement(statement.alternate as es.BlockStatement)
+      }
+    }
+  }
+  return hasBreak
+}
+
+export const hasContinueStatement = (block: es.BlockStatement): boolean => {
+  let hasContinue = false
+  for (const statement of block.body) {
+    if (statement.type === 'ContinueStatement') {
+      hasContinue = true
+    } else if (statement.type === 'IfStatement') {
+      // Parser enforces that if/else have braces (block statement)
+      hasContinue = hasContinue || hasContinueStatement(statement.consequent as es.BlockStatement)
+      if (statement.alternate) {
+        hasContinue = hasContinue || hasContinueStatement(statement.alternate as es.BlockStatement)
+      }
+    }
+  }
+  return hasContinue
+}

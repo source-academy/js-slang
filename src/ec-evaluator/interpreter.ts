@@ -51,6 +51,8 @@ import {
   getVariable,
   handleRuntimeError,
   handleSequence,
+  hasBreakStatement,
+  hasContinueStatement,
   hasDeclarations,
   hasImportDeclarations,
   isAssmtInstr,
@@ -372,7 +374,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    agenda.push(instr.breakMarkerInstr(command))
+    if (hasBreakStatement(command.body as es.BlockStatement)) {
+      agenda.push(instr.breakMarkerInstr(command))
+    }
     agenda.push(instr.whileInstr(command.test, command.body, command))
     agenda.push(command.test)
     stash.push(undefined) // Return undefined if there is no loop execution
@@ -436,7 +440,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         )
       )
     } else {
-      agenda.push(instr.breakMarkerInstr(command))
+      if (hasBreakStatement(command.body as es.BlockStatement)) {
+        agenda.push(instr.breakMarkerInstr(command))
+      }
       agenda.push(instr.forInstr(init, test, update, command.body, command))
       agenda.push(test)
       agenda.push(instr.popInstr(command)) // Pop value from init assignment
@@ -530,6 +536,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ) {
     agenda.push(instr.breakInstr(command))
   },
+
   ImportDeclaration: function () {},
 
   /**
@@ -678,7 +685,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (test) {
       agenda.push(command)
       agenda.push(command.test)
-      agenda.push(instr.contMarkerInstr(command.srcNode))
+      if (hasContinueStatement(command.body as es.BlockStatement)) {
+        agenda.push(instr.contMarkerInstr(command.srcNode))
+      }
       agenda.push(instr.pushUndefIfNeededInstr(command.srcNode)) // The loop returns undefined if the stash is empty
       agenda.push(command.body)
       agenda.push(instr.popInstr(command.srcNode)) // Pop previous body value
@@ -699,7 +708,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       agenda.push(command.test)
       agenda.push(instr.popInstr(command.srcNode)) // Pop value from update
       agenda.push(command.update)
-      agenda.push(instr.contMarkerInstr(command.srcNode))
+      if (hasContinueStatement(command.body as es.BlockStatement)) {
+        agenda.push(instr.contMarkerInstr(command.srcNode))
+      }
       agenda.push(instr.pushUndefIfNeededInstr(command.srcNode)) // The loop returns undefined if the stash is empty
       agenda.push(command.body)
       agenda.push(instr.popInstr(command.srcNode)) // Pop previous body value
@@ -803,7 +814,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const next = agenda.peek()
 
       // Push ENVIRONMENT instruction if needed
-      if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && args.length !== 0) {
+      if (
+        next &&
+        !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
+        args.length !== 0
+      ) {
         agenda.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
 
