@@ -2479,14 +2479,24 @@ function treeifyMain(target: substituterNodes): substituterNodes {
   return treeify(target)
 }
 
-function jsTreeifyMain(target: substituterNodes, visited: Set<substituterNodes>): substituterNodes {
+function jsTreeifyMain(
+  target: substituterNodes,
+  visited: Set<substituterNodes>,
+  readOnly: boolean
+): substituterNodes {
   // recurse down the program like substitute
   // if see a function at expression position,
   //   visited before recursing to this target: replace with the name
-  //   else: replace with a CallExpression "(() => FunctionExpression)()" where the FunctionExpression's body is treeified
+  //   else: replace with a FunctionExpression
   let verboseCount = 0
   const treeifiers = {
-    // Identifier: return
+    Identifier: (target: es.Identifier): es.Identifier => {
+      if (readOnly && target.name.startsWith('anonymous_')) {
+        return ast.identifier('[Function]')
+      }
+      return target
+    },
+
     Literal: (target: es.Literal): es.Literal => {
       if (typeof target.value === 'object') {
         target.raw = objectToString(target.value)
@@ -2542,14 +2552,14 @@ function jsTreeifyMain(target: substituterNodes, visited: Set<substituterNodes>)
     },
 
     // CORE
-    FunctionExpression: (
-      target: es.FunctionExpression
-    ): es.Identifier | es.ArrowFunctionExpression | es.FunctionExpression | es.CallExpression => {
+    FunctionExpression: (target: es.FunctionExpression): es.Identifier | es.FunctionExpression => {
       if (visited.has(target) && target.id) {
         return target.id
       }
       visited.add(target)
-      if (target.id) {
+      if (readOnly && target.id) {
+        return target.id
+      } else if (target.id) {
         return ast.functionExpression(
           target.params,
           treeify(target.body) as es.BlockStatement,
@@ -2640,7 +2650,7 @@ function jsTreeifyMain(target: substituterNodes, visited: Set<substituterNodes>)
 export const codify = (node: substituterNodes): string => generate(treeifyMain(node))
 
 export const javascriptify = (node: substituterNodes): string =>
-  '(' + generate(jsTreeifyMain(node, new Set())) + ');'
+  '(' + generate(jsTreeifyMain(node, new Set(), false)) + ');'
 
 /**
  * Recurses down the tree, tracing path to redex
@@ -2663,7 +2673,7 @@ function pathifyMain(
   const withBrackets = ast.identifier('(@redex)') as substituterNodes
   const pathifiers = {
     ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
-      let exp = jsTreeifyMain(target.expression, visited) as es.Expression
+      let exp = jsTreeifyMain(target.expression, visited, true) as es.Expression
       if (path[pathIndex] === 'expression') {
         if (pathIndex === endIndex) {
           redex = exp
@@ -2680,8 +2690,8 @@ function pathifyMain(
     },
 
     BinaryExpression: (target: es.BinaryExpression) => {
-      let left = jsTreeifyMain(target.left, visited) as es.Expression
-      let right = jsTreeifyMain(target.right, visited) as es.Expression
+      let left = jsTreeifyMain(target.left, visited, true) as es.Expression
+      let right = jsTreeifyMain(target.right, visited, true) as es.Expression
       if (path[pathIndex] === 'left') {
         if (pathIndex === endIndex) {
           redex = left
@@ -2711,7 +2721,7 @@ function pathifyMain(
     },
 
     UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
-      let arg = jsTreeifyMain(target.argument, visited) as es.Expression
+      let arg = jsTreeifyMain(target.argument, visited, true) as es.Expression
       if (path[pathIndex] === 'argument') {
         if (pathIndex === endIndex) {
           redex = arg
@@ -2725,9 +2735,9 @@ function pathifyMain(
     },
 
     ConditionalExpression: (target: es.ConditionalExpression): es.ConditionalExpression => {
-      let test = jsTreeifyMain(target.test, visited) as es.Expression
-      let cons = jsTreeifyMain(target.consequent, visited) as es.Expression
-      let alt = jsTreeifyMain(target.alternate, visited) as es.Expression
+      let test = jsTreeifyMain(target.test, visited, true) as es.Expression
+      let cons = jsTreeifyMain(target.consequent, visited, true) as es.Expression
+      let alt = jsTreeifyMain(target.alternate, visited, true) as es.Expression
       if (path[pathIndex] === 'test') {
         if (pathIndex === endIndex) {
           redex = test
@@ -2757,8 +2767,8 @@ function pathifyMain(
     },
 
     LogicalExpression: (target: es.LogicalExpression) => {
-      let left = jsTreeifyMain(target.left, visited) as es.Expression
-      let right = jsTreeifyMain(target.right, visited) as es.Expression
+      let left = jsTreeifyMain(target.left, visited, true) as es.Expression
+      let right = jsTreeifyMain(target.right, visited, true) as es.Expression
       if (path[pathIndex] === 'left') {
         if (pathIndex === endIndex) {
           redex = left
@@ -2780,8 +2790,8 @@ function pathifyMain(
     },
 
     CallExpression: (target: es.CallExpression): es.CallExpression => {
-      let callee = jsTreeifyMain(target.callee, visited) as es.Expression
-      const args = target.arguments.map(arg => jsTreeifyMain(arg, visited) as es.Expression)
+      let callee = jsTreeifyMain(target.callee, visited, true) as es.Expression
+      const args = target.arguments.map(arg => jsTreeifyMain(arg, visited, true) as es.Expression)
       if (path[pathIndex] === 'callee') {
         if (pathIndex === endIndex) {
           redex = callee
@@ -2816,7 +2826,7 @@ function pathifyMain(
     },
 
     FunctionDeclaration: (target: es.FunctionDeclaration): es.FunctionDeclaration => {
-      let body = jsTreeifyMain(target.body, visited) as es.BlockStatement
+      let body = jsTreeifyMain(target.body, visited, true) as es.BlockStatement
       if (path[pathIndex] === 'body') {
         if (pathIndex === endIndex) {
           redex = body
@@ -2835,7 +2845,7 @@ function pathifyMain(
       if (target.id) {
         return target.id
       } else {
-        let body = jsTreeifyMain(target.body, visited) as es.BlockStatement
+        let body = jsTreeifyMain(target.body, visited, true) as es.BlockStatement
         if (path[pathIndex] === 'body') {
           if (pathIndex === endIndex) {
             redex = body
@@ -2850,7 +2860,7 @@ function pathifyMain(
     },
 
     Program: (target: es.Program): es.Program => {
-      const body = target.body.map(node => jsTreeifyMain(node, visited)) as es.Statement[]
+      const body = target.body.map(node => jsTreeifyMain(node, visited, true)) as es.Statement[]
       let bodyIndex
       const isEnd = pathIndex === endIndex
       for (let i = 0; i < target.body.length; i++) {
@@ -2872,7 +2882,7 @@ function pathifyMain(
     },
 
     BlockStatement: (target: es.BlockStatement): es.BlockStatement => {
-      const body = target.body.map(node => jsTreeifyMain(node, visited)) as es.Statement[]
+      const body = target.body.map(node => jsTreeifyMain(node, visited, true)) as es.Statement[]
       let bodyIndex
       const isEnd = pathIndex === endIndex
       for (let i = 0; i < target.body.length; i++) {
@@ -2894,7 +2904,7 @@ function pathifyMain(
     },
 
     BlockExpression: (target: BlockExpression): es.BlockStatement => {
-      const body = target.body.map(node => jsTreeifyMain(node, visited)) as es.Statement[]
+      const body = target.body.map(node => jsTreeifyMain(node, visited, true)) as es.Statement[]
       let bodyIndex
       const isEnd = pathIndex === endIndex
       for (let i = 0; i < target.body.length; i++) {
@@ -2916,7 +2926,7 @@ function pathifyMain(
     },
 
     ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
-      let arg = jsTreeifyMain(target.argument!, visited) as es.Expression
+      let arg = jsTreeifyMain(target.argument!, visited, true) as es.Expression
       if (path[pathIndex] === 'argument') {
         if (pathIndex === endIndex) {
           redex = arg
@@ -2933,7 +2943,7 @@ function pathifyMain(
     ArrowFunctionExpression: (
       target: es.ArrowFunctionExpression
     ): es.Identifier | es.ArrowFunctionExpression | es.FunctionDeclaration => {
-      let body = jsTreeifyMain(target.body, visited) as es.BlockStatement
+      let body = jsTreeifyMain(target.body, visited, true) as es.BlockStatement
       if (path[pathIndex] === 'body') {
         if (pathIndex === endIndex) {
           redex = body
@@ -2949,7 +2959,7 @@ function pathifyMain(
 
     VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
       const decl = target.declarations.map(node =>
-        jsTreeifyMain(node, visited)
+        jsTreeifyMain(node, visited, true)
       ) as es.VariableDeclarator[]
       let declIndex
       const isEnd = pathIndex === endIndex
@@ -2972,7 +2982,7 @@ function pathifyMain(
     },
 
     VariableDeclarator: (target: es.VariableDeclarator): es.VariableDeclarator => {
-      let init = jsTreeifyMain(target.init!, visited) as es.Expression
+      let init = jsTreeifyMain(target.init!, visited, true) as es.Expression
       if (path[pathIndex] === 'init') {
         if (pathIndex === endIndex) {
           redex = init
@@ -2986,9 +2996,11 @@ function pathifyMain(
     },
 
     IfStatement: (target: es.IfStatement): es.IfStatement => {
-      let test = jsTreeifyMain(target.test, visited) as es.Expression
-      let cons = jsTreeifyMain(target.consequent, visited) as es.BlockStatement
-      let alt = jsTreeifyMain(target.alternate!, visited) as es.BlockStatement | es.IfStatement
+      let test = jsTreeifyMain(target.test, visited, true) as es.Expression
+      let cons = jsTreeifyMain(target.consequent, visited, true) as es.BlockStatement
+      let alt = jsTreeifyMain(target.alternate!, visited, true) as
+        | es.BlockStatement
+        | es.IfStatement
       if (path[pathIndex] === 'test') {
         if (pathIndex === endIndex) {
           redex = test
@@ -3020,7 +3032,7 @@ function pathifyMain(
     // source 2
     ArrayExpression: (target: es.ArrayExpression): es.ArrayExpression => {
       const eles = (target.elements as ContiguousArrayElements).map(node =>
-        jsTreeifyMain(node, visited)
+        jsTreeifyMain(node, visited, true)
       ) as es.Expression[]
       let eleIndex
       const isEnd = pathIndex === endIndex
@@ -3048,14 +3060,14 @@ function pathifyMain(
   function pathify(target: substituterNodes): substituterNodes {
     const pathifier = pathifiers[target.type]
     if (pathifier === undefined) {
-      return jsTreeifyMain(target, visited)
+      return jsTreeifyMain(target, visited, true)
     } else {
       return pathifier(target)
     }
   }
 
   if (path === undefined || path[0] === undefined) {
-    return [jsTreeifyMain(target, visited), ast.program([])]
+    return [jsTreeifyMain(target, visited, true), ast.program([])]
   } else {
     let pathified = pathify(target)
     // runs pathify more than once if more than one substitution path

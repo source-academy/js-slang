@@ -95,7 +95,7 @@ export const functionExpression = (
   id?: es.Identifier
 ): es.FunctionExpression => ({
   type: 'FunctionExpression',
-  id: id || null,
+  id: id ?? null,
   async: false,
   generator: false,
   params,
