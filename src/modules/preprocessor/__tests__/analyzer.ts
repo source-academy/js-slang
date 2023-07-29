@@ -13,6 +13,8 @@ import { stripIndent } from '../../../utils/formatters'
 import validateImportAndExports from '../analyzer'
 import { parseProgramsAndConstructImportGraph } from '..'
 
+jest.mock('../../moduleLoaderAsync')
+
 type ErrorInfo = {
   line: number
   col: number
@@ -51,7 +53,7 @@ async function testCode(
     }
     await validateImportAndExports(programs, fullTopoOrder, allowUndefinedImports)
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     throw error
   }
   return true

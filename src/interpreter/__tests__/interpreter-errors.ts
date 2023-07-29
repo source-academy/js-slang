@@ -1,7 +1,4 @@
-// import type { FunctionLike, MockedFunction } from 'jest-mock'
-
 /* tslint:disable:max-line-length */
-// import { memoizedGetModuleManifest } from '../../modules/moduleLoader'
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import {
@@ -11,8 +8,7 @@ import {
   expectResult
 } from '../../utils/testing'
 
-// const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
-// const mockedModuleFile = asMock(memoizedGetModuleFile)
+jest.mock('../../modules/moduleLoaderAsync')
 
 const undefinedVariable = stripIndent`
 im_undefined;

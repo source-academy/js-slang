@@ -6,9 +6,12 @@ import { ModuleConnectionError, ModuleInternalError } from '../errors'
 import { MODULES_STATIC_URL } from '../moduleLoader'
 import type * as moduleLoaderType from '../moduleLoaderAsync'
 
+jest.mock('../moduleLoaderAsync')
 const moduleLoader: typeof moduleLoaderType = jest.requireActual('../moduleLoaderAsync')
 
+global.fetch = jest.fn()
 const mockedFetch = fetch as MockedFunction<typeof fetch>
+
 function mockResponse(response: string, status: number = 200) {
   mockedFetch.mockResolvedValueOnce({
     text: () => Promise.resolve(response),
@@ -100,11 +103,6 @@ describe('Test httpGetAsync', () => {
 describe('Test bundle loading', () => {
   const sampleModuleName = 'valid_module'
   const sampleModuleUrl = MODULES_STATIC_URL + `/bundles/${sampleModuleName}.js`
-  // const sampleManifest = `{ "${sampleModuleName}": { "tabs": [] } }`
-
-  // beforeEach(() => {
-  //   mockResponse(sampleManifest)
-  // })
 
   test('Http GET module bundle correctly', async () => {
     const sampleResponse = `require => ({ foo: () => 'foo' })`

@@ -12,6 +12,8 @@ import { transformImportDeclarations, transpile } from '../transpiler'
 // const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
 // const mockedModuleFile = asMock(memoizedGetModuleFile)
 
+jest.mock('../../modules/moduleLoaderAsync')
+
 test('Transform import declarations into variable declarations', async () => {
   const code = stripIndent`
     import { foo } from "one_module";

@@ -1,6 +1,8 @@
 import { memoizedGetModuleManifestAsync } from '../../moduleLoaderAsync'
 import resolveModule from '../resolver'
 
+jest.mock('../../moduleLoaderAsync')
+
 beforeEach(() => {
   jest.clearAllMocks()
 })

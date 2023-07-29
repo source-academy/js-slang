@@ -3,6 +3,8 @@ import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { Chapter, Variant } from '../../types'
 
+jest.mock('../../modules/moduleLoader')
+
 let context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
 
 beforeEach(() => {

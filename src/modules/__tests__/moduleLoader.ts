@@ -3,6 +3,7 @@ import { Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { ModuleConnectionError, ModuleInternalError } from '../errors'
 
+jest.mock('../moduleLoader')
 const moduleLoader = jest.requireActual('../moduleLoader')
 
 /**

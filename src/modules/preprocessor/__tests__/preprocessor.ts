@@ -10,6 +10,8 @@ import preprocessFileImports from '..'
 import hoistAndMergeImports from '../transformers/hoistAndMergeImports'
 import { parseCodeError } from './utils'
 
+jest.mock('../../moduleLoaderAsync')
+
 // The preprocessor now checks for the existence of source modules
 // so this is here to solve that issue
 
