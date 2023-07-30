@@ -41,13 +41,14 @@ import { appendModulesToContext, determineVariant, resolvedErrorPromise } from '
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
-  stepLimit: 1000,
+  stepLimit: -1,
   executionMethod: 'auto',
   variant: Variant.DEFAULT,
   originalMaxExecTime: 1000,
   useSubst: false,
   isPrelude: false,
-  throwInfiniteLoops: true
+  throwInfiniteLoops: true,
+  envSteps: -1
 }
 
 let previousCode: {
