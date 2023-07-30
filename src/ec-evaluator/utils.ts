@@ -121,6 +121,16 @@ export const isBlockStatement = (node: es.Node): node is es.BlockStatement => {
 }
 
 /**
+ * Typeguard for esRestElement. To verify if an esNode is a block statement.
+ *
+ * @param node an esNode
+ * @returns true if node is an esRestElement, false otherwise.
+ */
+export const isRestElement = (node: es.Node): node is es.RestElement => {
+  return (node as es.RestElement).type == 'RestElement'
+}
+
+/**
  * Typeguard for AssmtInstr. To verify if an instruction is an assignment instruction.
  *
  * @param instr an instruction
@@ -252,7 +262,11 @@ export const createEnvironment = (
     }
   }
   closure.node.params.forEach((param, index) => {
-    environment.head[(param as es.Identifier).name] = args[index]
+    if (isRestElement(param)) {
+      environment.head[(param.argument as es.Identifier).name] = args.slice(index)
+    } else {
+      environment.head[(param as es.Identifier).name] = args[index]
+    }
   })
   return environment
 }
