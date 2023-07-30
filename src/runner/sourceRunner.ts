@@ -85,6 +85,9 @@ function runSubstitution(
   options: IOptions
 ): Promise<Result> {
   const steps = getEvaluationSteps(program, context, options.stepLimit)
+  if (context.errors.length > 0) {
+    return resolvedErrorPromise
+  }
   const redexedSteps: IStepperPropContents[] = []
   for (const step of steps) {
     const redex = getRedex(step[0], step[1])
