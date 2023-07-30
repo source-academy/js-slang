@@ -7,7 +7,7 @@ import {
   UndefinedImportError,
   UndefinedNamespaceImportError
 } from '../../modules/errors'
-import { reduceAsync } from '../../utils'
+import { reduceAsync } from '../../utils/misc'
 import ArrayMap from '../../utils/arrayMap'
 import assert from '../../utils/assert'
 import * as create from '../../utils/ast/astCreator'

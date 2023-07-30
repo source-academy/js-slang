@@ -2,7 +2,7 @@ import type { Node } from 'estree'
 import { memoize } from 'lodash'
 
 import type { Context } from '..'
-import { TimeoutError, timeoutPromise } from '../utils'
+import { TimeoutError, timeoutPromise } from '../utils/misc'
 import { wrapSourceModule } from '../utils/operators'
 import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from './errors'
 import { MODULES_STATIC_URL } from './moduleLoader'

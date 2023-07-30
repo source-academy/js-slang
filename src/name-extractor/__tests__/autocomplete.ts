@@ -14,8 +14,7 @@ test('Test empty program does not generate names', async () => {
 })
 
 test('Test simple extraction of constant and variable names', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     const foo1 = 1;\n\
     let foo2 = 2;\n\
     f\
@@ -177,8 +176,7 @@ test('Test accessing parameter names inside function', async () => {
 // For-loops
 
 test('Test accessing local block in for-loop parameter', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     let bar = 1;\n\
     let baz = 2;\n\
     for (b) {\
@@ -194,8 +192,7 @@ test('Test accessing local block in for-loop parameter', async () => {
 })
 
 test('Test accessing for-loop parameter in for-loop body', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     for (let foo=10;) {\n\
       f\n\
     }\
@@ -208,8 +205,7 @@ test('Test accessing for-loop parameter in for-loop body', async () => {
 })
 
 test('Test that for-loop local variable cannot be accessed outside loop', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     for (let x=1; x<10; x=x+1) {\n\
       let foo = x;\n\
     }\n\
@@ -225,8 +221,7 @@ test('Test that for-loop local variable cannot be accessed outside loop', async 
 // While-loops
 
 test('Test accessing local block in while-loop parameter', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     let bar = 1;\n\
     let baz = 2;\n\
     while (b) {\
@@ -242,8 +237,7 @@ test('Test accessing local block in while-loop parameter', async () => {
 })
 
 test('Test that while-loop local variable cannot be accessed outside loop', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     while (let x=1; x<10; x=x+1) {\n\
       let foo = x;\n\
     }\n\
@@ -259,8 +253,7 @@ test('Test that while-loop local variable cannot be accessed outside loop', asyn
 // Conditionals
 
 test('Test accessing local block in if-else parameter', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     let bar = 1;\n\
     let baz = 2;\n\
     if (b) {\
@@ -276,8 +269,7 @@ test('Test accessing local block in if-else parameter', async () => {
 })
 
 test('Test that local variable in if-block cannot be accessed in else-block', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     if (true) {\n\
       let foo = x;\n\
     } else {\n\
@@ -331,8 +323,7 @@ test('Test that variable in if cannot be accessed outside if-statement', async (
 // Blocks
 
 test('Test that declaration in blocks cannot be accessed outside block', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     {\n\
       let foo = 1;\n\
     }\n\
@@ -346,8 +337,7 @@ test('Test that declaration in blocks cannot be accessed outside block', async (
 })
 
 test('Test that declaration outside blocks can be accessed inside block', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     let bar = 1;\n\
     {\n\
       let baz = 1;\n\
@@ -407,8 +397,7 @@ test('Test that declaration inside anonymous functions can be accessed in body',
 })
 
 test('Test that declaration inside anonymous functions cannot be accessed outside', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     let foo = (bar1, bar2) => { \n\
       let baz = 1;\n\
     }\n\
@@ -445,8 +434,7 @@ test('Test that local and global variables are available in return statements', 
 
 // Declarations
 test('Test that no prompts are returned when user is declaring variable', async () => {
-  const code: string =
-    '\
+  const code: string = '\
     let bar = 1;\n\
     let b\n\
   '

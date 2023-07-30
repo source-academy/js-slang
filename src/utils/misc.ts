@@ -5,7 +5,7 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 /**
  * A form of Array.reduce, but using an async reducer
  * It doesn't reduce everything asynchronously, but rather waits
- * for each problem to resolve sequentially
+ * for each call to the reducer to resolve sequentially
  */
 export async function reduceAsync<T, U, Reducer extends (result: U, each: T) => Promise<U>>(
   arr: Iterable<T>,
@@ -19,6 +19,9 @@ export async function reduceAsync<T, U, Reducer extends (result: U, each: T) => 
   return result
 }
 
+/**
+ * Maps each key value pair on an object using a function that returns a promise
+ */
 export async function mapObjectAsync<
   T extends Record<any, any>,
   Mapper extends (key: keyof T, value: T[keyof T]) => Promise<any>
