@@ -1,9 +1,9 @@
 import * as es from 'estree'
 
 import * as misc from '../stdlib/misc'
-import { substituterNodes } from '../types'
+import { Context, substituterNodes } from '../types'
 import * as ast from '../utils/astCreator'
-import { nodeToValue, valueToExpression } from './converter'
+import { nodeToValue, nodeToValueWithContext, valueToExpression } from './converter'
 import { codify } from './stepper'
 import { isBuiltinFunction, isNumber } from './util'
 
@@ -105,6 +105,20 @@ export function evaluateMath(mathFn: string, ...args: substituterNodes[]): es.Ex
   }
   const jsArgs = args.map(nodeToValue)
   return valueToExpression(fn(...jsArgs))
+}
+
+// evaluateModuleFunction(mathFn: string, context: Context, ...args: substituterNodes): substituterNodes
+export function evaluateModuleFunction(
+  moduleFn: string,
+  context: Context,
+  ...args: substituterNodes[]
+): es.Expression {
+  const fn = context.runtime.environments[0].head[moduleFn]
+  if (!fn) {
+    throw new Error(`Module function ${moduleFn} not found.`)
+  }
+  const jsArgs = args.map(arg => nodeToValueWithContext(arg, context))
+  return valueToExpression(fn(...jsArgs), context)
 }
 
 // if (context.chapter >= 2) {

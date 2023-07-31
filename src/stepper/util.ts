@@ -1,5 +1,9 @@
 import * as es from 'estree'
 
+import { Context } from '..'
+import * as errors from '../errors/errors'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { Environment, Value } from '../types'
 import { BlockExpression, substituterNodes } from '../types'
 import * as builtin from './lib'
 
@@ -13,6 +17,13 @@ export function isBuiltinFunction(node: substituterNodes): boolean {
         .filter(name => typeof Math[name] === 'function')
         .map(name => 'math_' + name)
         .includes(node.name))
+  )
+}
+
+export function isImportedFunction(node: substituterNodes, context: Context): boolean {
+  return (
+    node.type === 'Identifier' &&
+    Object.keys(context.runtime.environments[0].head).includes(node.name)
   )
 }
 
@@ -58,4 +69,53 @@ export function getDeclaredNames(
     }
   }
   return declaredNames
+}
+
+export const handleRuntimeError = (context: Context, error: RuntimeSourceError) => {
+  context.errors.push(error)
+  throw error
+}
+
+const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
+
+export function declareIdentifier(
+  context: Context,
+  name: string,
+  node: es.Node,
+  environment: Environment
+) {
+  if (environment.head.hasOwnProperty(name)) {
+    const descriptors = Object.getOwnPropertyDescriptors(environment.head)
+
+    return handleRuntimeError(
+      context,
+      new errors.VariableRedeclaration(node, name, descriptors[name].writable)
+    )
+  }
+  environment.head[name] = DECLARED_BUT_NOT_YET_ASSIGNED
+  return environment
+}
+
+export const currentEnvironment = (context: Context) => context.runtime.environments[0]
+
+export function defineVariable(
+  context: Context,
+  name: string,
+  value: Value,
+  constant = false,
+  node: es.VariableDeclaration | es.ImportDeclaration
+) {
+  const environment = currentEnvironment(context)
+
+  if (environment.head[name] !== DECLARED_BUT_NOT_YET_ASSIGNED) {
+    return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
+  }
+
+  Object.defineProperty(environment.head, name, {
+    value,
+    writable: !constant,
+    enumerable: true
+  })
+
+  return environment
 }
