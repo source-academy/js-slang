@@ -41,13 +41,14 @@ import { appendModulesToContext, determineVariant, resolvedErrorPromise } from '
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
-  stepLimit: 1000,
+  stepLimit: -1,
   executionMethod: 'auto',
   variant: Variant.DEFAULT,
   originalMaxExecTime: 1000,
   useSubst: false,
   isPrelude: false,
-  throwInfiniteLoops: true
+  throwInfiniteLoops: true,
+  envSteps: -1
 }
 
 let previousCode: {
@@ -85,6 +86,9 @@ function runSubstitution(
   options: IOptions
 ): Promise<Result> {
   const steps = getEvaluationSteps(program, context, options.stepLimit)
+  if (context.errors.length > 0) {
+    return resolvedErrorPromise
+  }
   const redexedSteps: IStepperPropContents[] = []
   for (const step of steps) {
     const redex = getRedex(step[0], step[1])
