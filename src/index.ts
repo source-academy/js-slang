@@ -55,6 +55,7 @@ export interface IOptions {
   useSubst: boolean
   isPrelude: boolean
   throwInfiniteLoops: boolean
+  envSteps: number
 }
 
 // needed to work on browsers
