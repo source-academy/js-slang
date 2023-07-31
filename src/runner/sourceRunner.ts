@@ -97,7 +97,7 @@ function runSubstitution(
       code: redexed[0],
       redex: redexed[1],
       explanation: step[2],
-      function: callee(redex)
+      function: callee(redex, context)
     })
   }
   return Promise.resolve({
