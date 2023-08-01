@@ -3151,11 +3151,7 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
-async function evaluateImports(
-  program: es.Program,
-  context: Context,
-  loadTabs: boolean,
-) {
+async function evaluateImports(program: es.Program, context: Context, loadTabs: boolean) {
   const importNodes = program.body.filter(
     ({ type }) => type === 'ImportDeclaration'
   ) as es.ImportDeclaration[]
@@ -3180,7 +3176,7 @@ async function evaluateImports(
       const functions = moduleFunctions[moduleName]
       const environment = currentEnvironment(context)
       for (const spec of node.specifiers) {
-        let importedName: string;
+        let importedName: string
         switch (spec.type) {
           case 'ImportSpecifier': {
             importedName = spec.imported.name

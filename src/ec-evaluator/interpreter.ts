@@ -195,13 +195,18 @@ async function evaluateImports(
           state: null,
           tabs: loadTabs ? await loadModuleTabsAsync(moduleName, node) : null
         }
-        moduleFunctions[moduleName] = await loadModuleBundleAsync(moduleName, context, wrapModules, node)
+        moduleFunctions[moduleName] = await loadModuleBundleAsync(
+          moduleName,
+          context,
+          wrapModules,
+          node
+        )
       }
 
       const functions = moduleFunctions[moduleName]
       const environment = currentEnvironment(context)
       for (const spec of node.specifiers) {
-        let importedName: string;
+        let importedName: string
         switch (spec.type) {
           case 'ImportSpecifier': {
             importedName = spec.imported.name
@@ -218,7 +223,6 @@ async function evaluateImports(
 
         declareIdentifier(context, spec.local.name, node, environment)
         defineVariable(context, spec.local.name, functions[importedName], true, node)
-
       }
     }
   } catch (error) {
@@ -346,7 +350,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       pushEnvironment(context, environment)
       evaluateImports(command as unknown as es.Program, context, {
         loadTabs: true,
-        wrapModules: true,
+        wrapModules: true
       })
       declareFunctionsAndVariables(context, command, environment)
     }
