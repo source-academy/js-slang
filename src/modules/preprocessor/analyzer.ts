@@ -7,13 +7,13 @@ import {
   UndefinedImportError,
   UndefinedNamespaceImportError
 } from '../../modules/errors'
-import { reduceAsync } from '../../utils/misc'
 import ArrayMap from '../../utils/arrayMap'
 import assert from '../../utils/assert'
 import * as create from '../../utils/ast/astCreator'
 import { extractIdsFromPattern, processExportNamedDeclaration } from '../../utils/ast/astUtils'
 import { isSourceImport } from '../../utils/ast/typeGuards'
 import type * as es from '../../utils/ast/types'
+import { reduceAsync } from '../../utils/misc'
 import { memoizedGetModuleDocsAsync } from '../moduleLoaderAsync'
 
 type ExportRecord = {
@@ -126,17 +126,20 @@ export default async function analyzeImportsAndExports(
     as a redirection and doesn't affect code behaviour
    */
   function resolveSymbol(source: string, desiredSymbol: string): [string, string] {
-    let symbolName: string
-    let newSource: string
-    let loc: es.SourceLocation
+    const mapResult = exportMap[source].get(desiredSymbol)
 
-      // So for each exported symbol, we return the path to the file where it is actually
-      // defined and the name it was defined with (since exports can have aliases)
-      // Kind of like a UFDS, where the roots of each set are symbols that are defined within
-      // its own file, or imports from Source modules
+    // The export map must already contain the desired symbol. For example:
+    // the declaration `export { a } from './a.js'` would cause `./a.js` to be processed before the
+    // current file due to the topological ordering
+    assert(!!mapResult, 'This should never be null if the topological order provided is correct')
 
-      // eslint-disable-next-line prefer-const
-    ;({ source: newSource, symbolName, loc } = exportMap[source].get(desiredSymbol)!)
+    // eslint-disable-next-line prefer-const
+    let { source: newSource, symbolName, loc } = mapResult
+
+    // So for each exported symbol, we return the path to the file where it is actually
+    // defined and the name it was defined with (since exports can have aliases)
+    // Kind of like a UFDS, where the roots of each set are symbols that are defined within
+    // its own file, or imports from Source modules
     if (isSourceImport(source) || newSource === source) return [newSource, symbolName]
     ;[newSource, symbolName] = resolveSymbol(newSource, symbolName)
     exportMap[source].set(desiredSymbol, { source: newSource, symbolName, loc })

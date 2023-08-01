@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
-import * as es from 'estree'
 import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
@@ -19,6 +18,7 @@ import {
 import assert from '../utils/assert'
 import * as create from '../utils/ast/astCreator'
 import { isImportDeclaration } from '../utils/ast/typeGuards'
+import type * as es from '../utils/ast/types'
 import { simple } from '../utils/ast/walkers'
 import {
   getIdentifiersInNativeStorage,
@@ -47,7 +47,7 @@ const globalIdNames = [
   'builtins'
 ] as const
 
-export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
+export type NativeIds = Record<(typeof globalIdNames)[number], es.Identifier>
 
 export async function transformImportDeclarations(
   program: es.Program,
