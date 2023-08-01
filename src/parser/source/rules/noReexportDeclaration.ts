@@ -1,5 +1,5 @@
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
 import { isExportNamedDeclarationWithSource } from '../../../utils/ast/typeGuards'
 import type {
   ExportNamedDeclaration,
@@ -27,6 +27,7 @@ export class NoReexportDeclaration implements SourceError {
 
 const noReexportDeclaration: Rule<ExportNamedDeclarationWithSource> = {
   name: 'no-reexport-declaration',
+  disableFromChapter: Chapter.FULL_JS,
   checkers: {
     ExportNamedDeclaration(node: ExportNamedDeclaration) {
       if (isExportNamedDeclarationWithSource(node)) {
