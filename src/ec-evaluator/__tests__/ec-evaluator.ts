@@ -310,3 +310,30 @@ test('Imports are properly handled', () => {
     optionEC
   ).toEqual('foo')
 })
+
+test('Conditional statements are value producing always', () => {
+  return expectResult(
+    stripIndent`
+    function fact(n) {
+      if (n === 0) {
+          2;
+          return 1;
+      }
+      if (true) {
+          let i = 1;
+          i = i - 1;
+      } else {
+          2;
+      }
+      if (false) {
+          2;
+      } else {
+          const i = 1;
+      }
+      return n * fact(n - 1);
+      }
+    fact(5);
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`120`)
+})

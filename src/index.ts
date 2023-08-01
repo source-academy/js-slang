@@ -65,6 +65,9 @@ export interface IOptions {
 
   /** Set to true to console log the preprocessor's output */
   logPreprocessorOutput: boolean
+
+  /** Number of steps to evaluate (when using the ec-evaluator) */
+  envSteps: number
 }
 
 // needed to work on browsers

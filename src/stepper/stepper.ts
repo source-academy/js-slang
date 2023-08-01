@@ -2,6 +2,8 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import * as errors from '../errors/errors'
+import { loadModuleBundleAsync, loadModuleTabsAsync } from '../modules/moduleLoaderAsync'
+import { ModuleFunctions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
 import {
   BlockExpression,
@@ -22,9 +24,19 @@ import {
 } from '../utils/ast/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import { nodeToValue, valueToExpression } from './converter'
+import { nodeToValue, objectToString, valueToExpression } from './converter'
 import * as builtin from './lib'
-import { getDeclaredNames, isAllowedLiterals, isBuiltinFunction, isNegNumber } from './util'
+import {
+  currentEnvironment,
+  declareIdentifier,
+  defineVariable,
+  getDeclaredNames,
+  handleRuntimeError,
+  isAllowedLiterals,
+  isBuiltinFunction,
+  isImportedFunction,
+  isNegNumber
+} from './util'
 
 const irreducibleTypes = new Set<string>([
   'Literal',
@@ -33,9 +45,10 @@ const irreducibleTypes = new Set<string>([
   'ArrayExpression'
 ])
 
-function isIrreducible(node: substituterNodes) {
+function isIrreducible(node: substituterNodes, context: Context) {
   return (
     isBuiltinFunction(node) ||
+    isImportedFunction(node, context) ||
     isAllowedLiterals(node) ||
     isNegNumber(node) ||
     irreducibleTypes.has(node.type)
@@ -1298,7 +1311,8 @@ function reduceMain(
       Literal: (target: es.Literal): string =>
         target.raw !== undefined ? target.raw : String(target.value),
 
-      Identifier: (target: es.Identifier): string => target.name,
+      Identifier: (target: es.Identifier): string =>
+        target.name.startsWith('anonymous_') ? 'anonymous function' : target.name,
 
       ExpressionStatement: (target: es.ExpressionStatement): string =>
         bodify(target.expression) + ' finished evaluating',
@@ -1472,7 +1486,9 @@ function reduceMain(
       paths: string[][]
     ): [substituterNodes, Context, string[][], string] {
       // can only be built ins. the rest should have been declared
-      if (!(isAllowedLiterals(node) || isBuiltinFunction(node))) {
+      if (
+        !(isAllowedLiterals(node) || isBuiltinFunction(node) || isImportedFunction(node, context))
+      ) {
         throw new errors.UndefinedVariable(node.name, node)
       } else {
         return [node, context, paths, 'identifier']
@@ -1495,8 +1511,8 @@ function reduceMain(
       paths: string[][]
     ): [substituterNodes, Context, string[][], string] {
       const { operator, left, right } = node
-      if (isIrreducible(left)) {
-        if (isIrreducible(right)) {
+      if (isIrreducible(left, context)) {
+        if (isIrreducible(right, context)) {
           // if the ast are the same, then the values are the same
           if (
             builtin.is_function(left).value &&
@@ -1549,7 +1565,7 @@ function reduceMain(
       paths: string[][]
     ): [substituterNodes, Context, string[][], string] {
       const { operator, argument } = node
-      if (isIrreducible(argument)) {
+      if (isIrreducible(argument, context)) {
         // tslint:disable-next-line
         const argumentValue = nodeToValue(argument)
         const error = rttc.checkUnaryExpression(node, operator, argumentValue, context.chapter)
@@ -1608,7 +1624,7 @@ function reduceMain(
       paths: string[][]
     ): [substituterNodes, Context, string[][], string] {
       const { left, right } = node
-      if (isIrreducible(left)) {
+      if (isIrreducible(left, context)) {
         if (!(left.type === 'Literal' && typeof left.value === 'boolean')) {
           throw new rttc.TypeError(left, ' on left hand side of operation', 'boolean', left.type)
         } else {
@@ -1648,7 +1664,7 @@ function reduceMain(
       const [callee, args] = [node.callee, node.arguments]
       // source 0: discipline: any expression can be transformed into either literal, ident(builtin) or funexp
       // if functor can reduce, reduce functor
-      if (!isIrreducible(callee)) {
+      if (!isIrreducible(callee, context)) {
         paths[0].push('callee')
         const [reducedCallee, cont, path, str] = reduce(callee, context, paths)
         return [
@@ -1674,7 +1690,7 @@ function reduceMain(
         } else {
           for (let i = 0; i < args.length; i++) {
             const currentArg = args[i]
-            if (!isIrreducible(currentArg)) {
+            if (!isIrreducible(currentArg, context)) {
               paths[0].push('arguments[' + i + ']')
               const [reducedCurrentArg, cont, path, str] = reduce(currentArg, context, paths)
               const reducedArgs = [...args.slice(0, i), reducedCurrentArg, ...args.slice(i + 1)]
@@ -1713,8 +1729,15 @@ function reduceMain(
               paths,
               explain(node)
             ]
+          } else if (typeof builtin[(callee as es.Identifier).name] === 'function') {
+            return [builtin[(callee as es.Identifier).name](...args), context, paths, explain(node)]
           }
-          return [builtin[(callee as es.Identifier).name](...args), context, paths, explain(node)]
+          return [
+            builtin.evaluateModuleFunction((callee as es.Identifier).name, context, ...args),
+            context,
+            paths,
+            explain(node)
+          ]
         }
       }
     },
@@ -1750,7 +1773,7 @@ function reduceMain(
           }
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
-          isIrreducible(firstStatement.expression)
+          isIrreducible(firstStatement.expression, context)
         ) {
           // let stmt
           // if (otherStatements.length > 0) {
@@ -1811,7 +1834,7 @@ function reduceMain(
             if (declarator.id.type !== 'Identifier') {
               // TODO: source does not allow destructuring
               return [dummyProgram(), context, paths, 'source does not allow destructuring']
-            } else if (isIrreducible(rhs)) {
+            } else if (isIrreducible(rhs, context)) {
               const remainingProgram = ast.program(otherStatements as es.Statement[])
               // force casting for weird errors
               // substitution within the same program, add " same" so that substituter can differentiate between
@@ -1927,7 +1950,7 @@ function reduceMain(
           }
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
-          isIrreducible(firstStatement.expression)
+          isIrreducible(firstStatement.expression, context)
         ) {
           let stmt
           if (otherStatements.length > 0) {
@@ -1983,7 +2006,7 @@ function reduceMain(
             if (declarator.id.type !== 'Identifier') {
               // TODO: source does not allow destructuring
               return [dummyBlockStatement(), context, paths, 'source does not allow destructuring']
-            } else if (isIrreducible(rhs)) {
+            } else if (isIrreducible(rhs, context)) {
               const remainingBlockStatement = ast.blockStatement(otherStatements as es.Statement[])
               // force casting for weird errors
               // substitution within the same block, add " same" so that substituter can differentiate between
@@ -2103,7 +2126,7 @@ function reduceMain(
           }
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
-          isIrreducible(firstStatement.expression)
+          isIrreducible(firstStatement.expression, context)
         ) {
           let stmt
           if (otherStatements.length > 0) {
@@ -2159,7 +2182,7 @@ function reduceMain(
             if (declarator.id.type !== 'Identifier') {
               // TODO: source does not allow destructuring
               return [dummyBlockExpression(), context, paths, 'source does not allow destructuring']
-            } else if (isIrreducible(rhs)) {
+            } else if (isIrreducible(rhs, context)) {
               const remainingBlockExpression = ast.blockExpression(
                 otherStatements as es.Statement[]
               )
@@ -2455,8 +2478,178 @@ function treeifyMain(target: substituterNodes): substituterNodes {
   return treeify(target)
 }
 
+function jsTreeifyMain(
+  target: substituterNodes,
+  visited: Set<substituterNodes>,
+  readOnly: boolean
+): substituterNodes {
+  // recurse down the program like substitute
+  // if see a function at expression position,
+  //   visited before recursing to this target: replace with the name
+  //   else: replace with a FunctionExpression
+  let verboseCount = 0
+  const treeifiers = {
+    Identifier: (target: es.Identifier): es.Identifier => {
+      if (readOnly && target.name.startsWith('anonymous_')) {
+        return ast.identifier('[Function]')
+      }
+      return target
+    },
+
+    Literal: (target: es.Literal): es.Literal => {
+      if (typeof target.value === 'object') {
+        target.raw = objectToString(target.value)
+      }
+      return target
+    },
+
+    ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
+      return ast.expressionStatement(treeify(target.expression) as es.Expression)
+    },
+
+    BinaryExpression: (target: es.BinaryExpression) => {
+      return ast.binaryExpression(
+        target.operator,
+        treeify(target.left) as es.Expression,
+        treeify(target.right) as es.Expression
+      )
+    },
+
+    UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
+      return ast.unaryExpression(target.operator, treeify(target.argument) as es.Expression)
+    },
+
+    ConditionalExpression: (target: es.ConditionalExpression): es.ConditionalExpression => {
+      return ast.conditionalExpression(
+        treeify(target.test) as es.Expression,
+        treeify(target.consequent) as es.Expression,
+        treeify(target.alternate) as es.Expression
+      )
+    },
+
+    LogicalExpression: (target: es.LogicalExpression) => {
+      return ast.logicalExpression(
+        target.operator,
+        treeify(target.left) as es.Expression,
+        treeify(target.right) as es.Expression
+      )
+    },
+
+    CallExpression: (target: es.CallExpression): es.CallExpression => {
+      return ast.callExpression(
+        treeify(target.callee) as es.Expression,
+        target.arguments.map(arg => treeify(arg) as es.Expression)
+      )
+    },
+
+    FunctionDeclaration: (target: es.FunctionDeclaration): es.FunctionDeclaration => {
+      return ast.functionDeclaration(
+        target.id,
+        target.params,
+        treeify(target.body) as es.BlockStatement
+      )
+    },
+
+    // CORE
+    FunctionExpression: (target: es.FunctionExpression): es.Identifier | es.FunctionExpression => {
+      if (visited.has(target) && target.id) {
+        return target.id
+      }
+      visited.add(target)
+      if (readOnly && target.id) {
+        return target.id
+      } else if (target.id) {
+        return ast.functionExpression(
+          target.params,
+          treeify(target.body) as es.BlockStatement,
+          target.loc,
+          target.id
+        )
+      } else {
+        return ast.functionExpression(
+          target.params,
+          treeify(target.body) as es.BlockStatement,
+          target.loc
+        )
+      }
+    },
+
+    Program: (target: es.Program): es.Program => {
+      return ast.program(target.body.map(stmt => treeify(stmt) as es.Statement))
+    },
+
+    BlockStatement: (target: es.BlockStatement): es.BlockStatement => {
+      return ast.blockStatement(target.body.map(stmt => treeify(stmt) as es.Statement))
+    },
+
+    BlockExpression: (target: BlockExpression): es.BlockStatement => {
+      return ast.blockStatement(target.body.map(node => treeify(node)) as es.Statement[])
+    },
+
+    ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
+      return ast.returnStatement(treeify(target.argument!) as es.Expression)
+    },
+
+    // source 1
+    ArrowFunctionExpression: (
+      target: es.ArrowFunctionExpression
+    ): es.Identifier | es.ArrowFunctionExpression => {
+      if (verboseCount < 5) {
+        // here onwards is guarding against arrow turned function expressions
+        verboseCount++
+        const redacted = ast.arrowFunctionExpression(
+          target.params,
+          treeify(target.body) as es.BlockStatement
+        )
+        verboseCount = 0
+        return redacted
+      } else {
+        // shortens body after 5 iterations
+        return ast.arrowFunctionExpression(target.params, ast.identifier('...'))
+      }
+    },
+
+    VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
+      return ast.variableDeclaration(target.declarations.map(treeify) as es.VariableDeclarator[])
+    },
+
+    VariableDeclarator: (target: es.VariableDeclarator): es.VariableDeclarator => {
+      return ast.variableDeclarator(target.id, treeify(target.init!) as es.Expression)
+    },
+
+    IfStatement: (target: es.IfStatement): es.IfStatement => {
+      return ast.ifStatement(
+        treeify(target.test) as es.Expression,
+        treeify(target.consequent) as es.BlockStatement,
+        treeify(target.alternate!) as es.BlockStatement | es.IfStatement
+      )
+    },
+
+    // source 2
+    ArrayExpression: (target: es.ArrayExpression): es.ArrayExpression => {
+      return ast.arrayExpression(
+        (target.elements as ContiguousArrayElements).map(treeify) as es.Expression[]
+      )
+    }
+  }
+
+  function treeify(target: substituterNodes): substituterNodes {
+    const treeifier = treeifiers[target.type]
+    if (treeifier === undefined) {
+      return target
+    } else {
+      return treeifier(target)
+    }
+  }
+
+  return treeify(target)
+}
+
 // Mainly kept for testing
 export const codify = (node: substituterNodes): string => generate(treeifyMain(node))
+
+export const javascriptify = (node: substituterNodes): string =>
+  '(' + generate(jsTreeifyMain(node, new Set(), false)) + ');'
 
 /**
  * Recurses down the tree, tracing path to redex
@@ -2468,7 +2661,8 @@ export const codify = (node: substituterNodes): string => generate(treeifyMain(n
  */
 function pathifyMain(
   target: substituterNodes,
-  paths: string[][]
+  paths: string[][],
+  visited: Set<substituterNodes>
 ): [substituterNodes, substituterNodes] {
   let pathIndex = 0
   let path = paths[0]
@@ -2476,10 +2670,9 @@ function pathifyMain(
   let endIndex = path === undefined ? 0 : path.length - 1
   const redexMarker = ast.identifier('@redex') as substituterNodes
   const withBrackets = ast.identifier('(@redex)') as substituterNodes
-
   const pathifiers = {
     ExpressionStatement: (target: es.ExpressionStatement): es.ExpressionStatement => {
-      let exp = treeifyMain(target.expression) as es.Expression
+      let exp = jsTreeifyMain(target.expression, visited, true) as es.Expression
       if (path[pathIndex] === 'expression') {
         if (pathIndex === endIndex) {
           redex = exp
@@ -2496,8 +2689,8 @@ function pathifyMain(
     },
 
     BinaryExpression: (target: es.BinaryExpression) => {
-      let left = treeifyMain(target.left) as es.Expression
-      let right = treeifyMain(target.right) as es.Expression
+      let left = jsTreeifyMain(target.left, visited, true) as es.Expression
+      let right = jsTreeifyMain(target.right, visited, true) as es.Expression
       if (path[pathIndex] === 'left') {
         if (pathIndex === endIndex) {
           redex = left
@@ -2527,7 +2720,7 @@ function pathifyMain(
     },
 
     UnaryExpression: (target: es.UnaryExpression): es.UnaryExpression => {
-      let arg = treeifyMain(target.argument) as es.Expression
+      let arg = jsTreeifyMain(target.argument, visited, true) as es.Expression
       if (path[pathIndex] === 'argument') {
         if (pathIndex === endIndex) {
           redex = arg
@@ -2541,9 +2734,9 @@ function pathifyMain(
     },
 
     ConditionalExpression: (target: es.ConditionalExpression): es.ConditionalExpression => {
-      let test = treeifyMain(target.test) as es.Expression
-      let cons = treeifyMain(target.consequent) as es.Expression
-      let alt = treeifyMain(target.alternate) as es.Expression
+      let test = jsTreeifyMain(target.test, visited, true) as es.Expression
+      let cons = jsTreeifyMain(target.consequent, visited, true) as es.Expression
+      let alt = jsTreeifyMain(target.alternate, visited, true) as es.Expression
       if (path[pathIndex] === 'test') {
         if (pathIndex === endIndex) {
           redex = test
@@ -2573,8 +2766,8 @@ function pathifyMain(
     },
 
     LogicalExpression: (target: es.LogicalExpression) => {
-      let left = treeifyMain(target.left) as es.Expression
-      let right = treeifyMain(target.right) as es.Expression
+      let left = jsTreeifyMain(target.left, visited, true) as es.Expression
+      let right = jsTreeifyMain(target.right, visited, true) as es.Expression
       if (path[pathIndex] === 'left') {
         if (pathIndex === endIndex) {
           redex = left
@@ -2596,8 +2789,8 @@ function pathifyMain(
     },
 
     CallExpression: (target: es.CallExpression): es.CallExpression => {
-      let callee = treeifyMain(target.callee) as es.Expression
-      const args = target.arguments.map(arg => treeifyMain(arg) as es.Expression)
+      let callee = jsTreeifyMain(target.callee, visited, true) as es.Expression
+      const args = target.arguments.map(arg => jsTreeifyMain(arg, visited, true) as es.Expression)
       if (path[pathIndex] === 'callee') {
         if (pathIndex === endIndex) {
           redex = callee
@@ -2632,7 +2825,7 @@ function pathifyMain(
     },
 
     FunctionDeclaration: (target: es.FunctionDeclaration): es.FunctionDeclaration => {
-      let body = treeifyMain(target.body) as es.BlockStatement
+      let body = jsTreeifyMain(target.body, visited, true) as es.BlockStatement
       if (path[pathIndex] === 'body') {
         if (pathIndex === endIndex) {
           redex = body
@@ -2651,7 +2844,7 @@ function pathifyMain(
       if (target.id) {
         return target.id
       } else {
-        let body = treeifyMain(target.body) as es.BlockStatement
+        let body = jsTreeifyMain(target.body, visited, true) as es.BlockStatement
         if (path[pathIndex] === 'body') {
           if (pathIndex === endIndex) {
             redex = body
@@ -2666,7 +2859,7 @@ function pathifyMain(
     },
 
     Program: (target: es.Program): es.Program => {
-      const body = target.body.map(treeifyMain) as es.Statement[]
+      const body = target.body.map(node => jsTreeifyMain(node, visited, true)) as es.Statement[]
       let bodyIndex
       const isEnd = pathIndex === endIndex
       for (let i = 0; i < target.body.length; i++) {
@@ -2688,7 +2881,7 @@ function pathifyMain(
     },
 
     BlockStatement: (target: es.BlockStatement): es.BlockStatement => {
-      const body = target.body.map(treeifyMain) as es.Statement[]
+      const body = target.body.map(node => jsTreeifyMain(node, visited, true)) as es.Statement[]
       let bodyIndex
       const isEnd = pathIndex === endIndex
       for (let i = 0; i < target.body.length; i++) {
@@ -2710,7 +2903,7 @@ function pathifyMain(
     },
 
     BlockExpression: (target: BlockExpression): es.BlockStatement => {
-      const body = target.body.map(treeifyMain) as es.Statement[]
+      const body = target.body.map(node => jsTreeifyMain(node, visited, true)) as es.Statement[]
       let bodyIndex
       const isEnd = pathIndex === endIndex
       for (let i = 0; i < target.body.length; i++) {
@@ -2732,7 +2925,7 @@ function pathifyMain(
     },
 
     ReturnStatement: (target: es.ReturnStatement): es.ReturnStatement => {
-      let arg = treeifyMain(target.argument!) as es.Expression
+      let arg = jsTreeifyMain(target.argument!, visited, true) as es.Expression
       if (path[pathIndex] === 'argument') {
         if (pathIndex === endIndex) {
           redex = arg
@@ -2749,7 +2942,7 @@ function pathifyMain(
     ArrowFunctionExpression: (
       target: es.ArrowFunctionExpression
     ): es.Identifier | es.ArrowFunctionExpression | es.FunctionDeclaration => {
-      let body = treeifyMain(target.body) as es.BlockStatement
+      let body = jsTreeifyMain(target.body, visited, true) as es.BlockStatement
       if (path[pathIndex] === 'body') {
         if (pathIndex === endIndex) {
           redex = body
@@ -2760,11 +2953,13 @@ function pathifyMain(
         }
       }
       //localhost:8000
-      return ast.arrowFunctionExpression(target.params, target.body)
+      return ast.arrowFunctionExpression(target.params, body)
     },
 
     VariableDeclaration: (target: es.VariableDeclaration): es.VariableDeclaration => {
-      const decl = target.declarations.map(treeifyMain) as es.VariableDeclarator[]
+      const decl = target.declarations.map(node =>
+        jsTreeifyMain(node, visited, true)
+      ) as es.VariableDeclarator[]
       let declIndex
       const isEnd = pathIndex === endIndex
       for (let i = 0; i < target.declarations.length; i++) {
@@ -2786,7 +2981,7 @@ function pathifyMain(
     },
 
     VariableDeclarator: (target: es.VariableDeclarator): es.VariableDeclarator => {
-      let init = treeifyMain(target.init!) as es.Expression
+      let init = jsTreeifyMain(target.init!, visited, true) as es.Expression
       if (path[pathIndex] === 'init') {
         if (pathIndex === endIndex) {
           redex = init
@@ -2800,9 +2995,11 @@ function pathifyMain(
     },
 
     IfStatement: (target: es.IfStatement): es.IfStatement => {
-      let test = treeifyMain(target.test) as es.Expression
-      let cons = treeifyMain(target.consequent) as es.BlockStatement
-      let alt = treeifyMain(target.alternate!) as es.BlockStatement | es.IfStatement
+      let test = jsTreeifyMain(target.test, visited, true) as es.Expression
+      let cons = jsTreeifyMain(target.consequent, visited, true) as es.BlockStatement
+      let alt = jsTreeifyMain(target.alternate!, visited, true) as
+        | es.BlockStatement
+        | es.IfStatement
       if (path[pathIndex] === 'test') {
         if (pathIndex === endIndex) {
           redex = test
@@ -2833,7 +3030,9 @@ function pathifyMain(
 
     // source 2
     ArrayExpression: (target: es.ArrayExpression): es.ArrayExpression => {
-      const eles = (target.elements as ContiguousArrayElements).map(treeifyMain) as es.Expression[]
+      const eles = (target.elements as ContiguousArrayElements).map(node =>
+        jsTreeifyMain(node, visited, true)
+      ) as es.Expression[]
       let eleIndex
       const isEnd = pathIndex === endIndex
       for (let i = 0; i < target.elements.length; i++) {
@@ -2860,14 +3059,14 @@ function pathifyMain(
   function pathify(target: substituterNodes): substituterNodes {
     const pathifier = pathifiers[target.type]
     if (pathifier === undefined) {
-      return treeifyMain(target)
+      return jsTreeifyMain(target, visited, true)
     } else {
       return pathifier(target)
     }
   }
 
   if (path === undefined || path[0] === undefined) {
-    return [treeifyMain(target), ast.program([])]
+    return [jsTreeifyMain(target, visited, true), ast.program([])]
   } else {
     let pathified = pathify(target)
     // runs pathify more than once if more than one substitution path
@@ -2883,12 +3082,12 @@ function pathifyMain(
 
 // Function to convert array from getEvaluationSteps into text
 export const redexify = (node: substituterNodes, path: string[][]): [string, string] => [
-  generate(pathifyMain(node, path)[0]),
-  generate(pathifyMain(node, path)[1])
+  generate(pathifyMain(node, path, new Set())[0]),
+  generate(pathifyMain(node, path, new Set())[1])
 ]
 
 export const getRedex = (node: substituterNodes, path: string[][]): substituterNodes =>
-  pathifyMain(node, path)[1]
+  pathifyMain(node, path, new Set())[1]
 
 // strategy: we remember how many statements are there originally in program.
 // since listPrelude are just functions, they will be disposed of one by one
@@ -2952,15 +3151,70 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
+async function evaluateImports(
+  program: es.Program,
+  context: Context,
+  loadTabs: boolean,
+) {
+  const importNodes = program.body.filter(
+    ({ type }) => type === 'ImportDeclaration'
+  ) as es.ImportDeclaration[]
+  program.body = program.body.filter(({ type }) => !(type === 'ImportDeclaration'))
+  const moduleFunctions: Record<string, ModuleFunctions> = {}
+
+  try {
+    for (const node of importNodes) {
+      const moduleName = node.source.value
+      if (typeof moduleName !== 'string') {
+        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
+      }
+
+      if (!(moduleName in moduleFunctions)) {
+        context.moduleContexts[moduleName] = {
+          state: null,
+          tabs: loadTabs ? await loadModuleTabsAsync(moduleName, node) : null
+        }
+        moduleFunctions[moduleName] = await loadModuleBundleAsync(moduleName, context, true, node)
+      }
+
+      const functions = moduleFunctions[moduleName]
+      const environment = currentEnvironment(context)
+      for (const spec of node.specifiers) {
+        let importedName: string;
+        switch (spec.type) {
+          case 'ImportSpecifier': {
+            importedName = spec.imported.name
+            break
+          }
+          case 'ImportDefaultSpecifier': {
+            importedName = 'default'
+            break
+          }
+          case 'ImportNamespaceSpecifier': {
+            throw new Error('Namespace imports are not supported!')
+          }
+        }
+
+        declareIdentifier(context, spec.local.name, node, environment)
+        defineVariable(context, spec.local.name, functions[importedName], true, node)
+      }
+    }
+  } catch (error) {
+    // console.log(error)
+    handleRuntimeError(context, error)
+  }
+}
+
 // the context here is for builtins
-export function getEvaluationSteps(
+export async function getEvaluationSteps(
   program: es.Program,
   context: Context,
   stepLimit: number | undefined
-): [es.Program, string[][], string][] {
+): Promise<[es.Program, string[][], string][]> {
   const steps: [es.Program, string[][], string][] = []
   try {
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
+    await evaluateImports(program, context, true)
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns
@@ -3020,11 +3274,14 @@ export function isStepperOutput(output: any): output is IStepperPropContents {
   return 'code' in output
 }
 
-export function callee(content: substituterNodes): es.Expression | undefined | es.Super {
+export function callee(
+  content: substituterNodes,
+  context: Context
+): es.Expression | undefined | es.Super {
   if (content.type === 'CallExpression') {
     let reducedArgs = true
     for (const arg of content.arguments) {
-      if (!isIrreducible(arg)) {
+      if (!isIrreducible(arg, context)) {
         reducedArgs = false
       }
     }

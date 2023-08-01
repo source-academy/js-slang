@@ -121,6 +121,16 @@ export const isBlockStatement = (node: es.Node): node is es.BlockStatement => {
 }
 
 /**
+ * Typeguard for esRestElement. To verify if an esNode is a block statement.
+ *
+ * @param node an esNode
+ * @returns true if node is an esRestElement, false otherwise.
+ */
+export const isRestElement = (node: es.Node): node is es.RestElement => {
+  return (node as es.RestElement).type == 'RestElement'
+}
+
+/**
  * Typeguard for AssmtInstr. To verify if an instruction is an assignment instruction.
  *
  * @param instr an instruction
@@ -143,15 +153,17 @@ export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
   const result: AgendaItem[] = []
   let valueProduced = false
   for (const command of seq) {
-    if (valueProducing(command)) {
-      // Value producing statements have an extra pop instruction
-      if (valueProduced) {
-        result.push(instr.popInstr(command))
-      } else {
-        valueProduced = true
+    if (!isImportDeclaration(command)) {
+      if (valueProducing(command)) {
+        // Value producing statements have an extra pop instruction
+        if (valueProduced) {
+          result.push(instr.popInstr(command))
+        } else {
+          valueProduced = true
+        }
       }
+      result.push(command)
     }
-    result.push(command)
   }
   // Push statements in reverse order
   return result.reverse()
@@ -182,7 +194,7 @@ export const valueProducing = (command: es.Node): boolean => {
     type !== 'FunctionDeclaration' &&
     type !== 'ContinueStatement' &&
     type !== 'BreakStatement' &&
-    type !== 'ReturnStatement' &&
+    type !== 'DebuggerStatement' &&
     (type !== 'BlockStatement' || command.body.some(valueProducing))
   )
 }
@@ -213,6 +225,22 @@ export const envChanging = (command: AgendaItem): boolean => {
 }
 
 /**
+ * To determine if the function is simple.
+ * Simple functions contain a single return statement.
+ *
+ * @param node The function to check against.
+ * @returns true if the function is simple, false otherwise.
+ */
+export const isSimpleFunction = (node: es.Function) => {
+  if (node.body.type !== 'BlockStatement') {
+    return true
+  } else {
+    const block = node.body
+    return block.body.length === 1 && block.body[0].type === 'ReturnStatement'
+  }
+}
+
+/**
  * Environments
  */
 
@@ -234,7 +262,11 @@ export const createEnvironment = (
     }
   }
   closure.node.params.forEach((param, index) => {
-    environment.head[(param as es.Identifier).name] = args[index]
+    if (isRestElement(param)) {
+      environment.head[(param.argument as es.Identifier).name] = args.slice(index)
+    } else {
+      environment.head[(param as es.Identifier).name] = args[index]
+    }
   })
   return environment
 }
@@ -317,6 +349,19 @@ export function hasDeclarations(node: es.BlockStatement): boolean {
     }
   }
   return false
+}
+
+export function hasImportDeclarations(node: es.BlockStatement): boolean {
+  for (const statement of (node as unknown as es.Program).body) {
+    if (statement.type === 'ImportDeclaration') {
+      return true
+    }
+  }
+  return false
+}
+
+function isImportDeclaration(node: es.Node): boolean {
+  return node.type === 'ImportDeclaration'
 }
 
 export function defineVariable(
@@ -476,4 +521,36 @@ export const hasReturnStatement = (body: es.Statement): boolean => {
     }
   }
   return false
+}
+
+export const hasBreakStatement = (block: es.BlockStatement): boolean => {
+  let hasBreak = false
+  for (const statement of block.body) {
+    if (statement.type === 'BreakStatement') {
+      hasBreak = true
+    } else if (statement.type === 'IfStatement') {
+      // Parser enforces that if/else have braces (block statement)
+      hasBreak = hasBreak || hasBreakStatement(statement.consequent as es.BlockStatement)
+      if (statement.alternate) {
+        hasBreak = hasBreak || hasBreakStatement(statement.alternate as es.BlockStatement)
+      }
+    }
+  }
+  return hasBreak
+}
+
+export const hasContinueStatement = (block: es.BlockStatement): boolean => {
+  let hasContinue = false
+  for (const statement of block.body) {
+    if (statement.type === 'ContinueStatement') {
+      hasContinue = true
+    } else if (statement.type === 'IfStatement') {
+      // Parser enforces that if/else have braces (block statement)
+      hasContinue = hasContinue || hasContinueStatement(statement.consequent as es.BlockStatement)
+      if (statement.alternate) {
+        hasContinue = hasContinue || hasContinueStatement(statement.alternate as es.BlockStatement)
+      }
+    }
+  }
+  return hasContinue
 }

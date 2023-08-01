@@ -147,7 +147,6 @@ export interface Context<T = any> {
     nodes: es.Node[]
     agenda: Agenda | null
     stash: Stash | null
-    envSteps: number
     envStepsTotal: number
     breakpointSteps: number[]
   }

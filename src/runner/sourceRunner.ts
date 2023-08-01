@@ -42,7 +42,7 @@ import { determineVariant, resolvedErrorPromise } from './utils'
 const DEFAULT_SOURCE_OPTIONS: IOptions = {
   scheduler: 'async',
   steps: 1000,
-  stepLimit: 1000,
+  stepLimit: -1,
   executionMethod: 'auto',
   variant: Variant.DEFAULT,
   originalMaxExecTime: 1000,
@@ -58,7 +58,8 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
     allowUndefinedImports: false,
     resolveDirectories: false,
     resolveExtensions: null
-  }
+  },
+  envSteps: -1
 }
 
 let previousCode: {
@@ -90,12 +91,15 @@ function runConcurrent(program: es.Program, context: Context, options: IOptions)
   }
 }
 
-function runSubstitution(
+async function runSubstitution(
   program: es.Program,
   context: Context,
   options: IOptions
 ): Promise<Result> {
-  const steps = getEvaluationSteps(program, context, options.stepLimit)
+  const steps = await getEvaluationSteps(program, context, options.stepLimit)
+  if (context.errors.length > 0) {
+    return resolvedErrorPromise
+  }
   const redexedSteps: IStepperPropContents[] = []
   for (const step of steps) {
     const redex = getRedex(step[0], step[1])
@@ -104,7 +108,7 @@ function runSubstitution(
       code: redexed[0],
       redex: redexed[1],
       explanation: step[2],
-      function: callee(redex)
+      function: callee(redex, context)
     })
   }
   return Promise.resolve({

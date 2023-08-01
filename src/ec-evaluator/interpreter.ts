@@ -6,15 +6,15 @@
  */
 
 /* tslint:disable:max-classes-per-file */
-import { uniqueId } from 'lodash'
+import { partition, uniqueId } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
-import type { ImportTransformOptions } from '../modules/moduleTypes'
+import { loadModuleBundleAsync, loadModuleTabsAsync } from '../modules/moduleLoaderAsync'
+import type { ImportTransformOptions, ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
@@ -50,15 +50,21 @@ import {
   getVariable,
   handleRuntimeError,
   handleSequence,
+  hasBreakStatement,
+  hasContinueStatement,
   hasDeclarations,
+  hasImportDeclarations,
   isAssmtInstr,
+  isBlockStatement,
   isInstr,
   isNode,
+  isSimpleFunction,
   popEnvironment,
   pushEnvironment,
   reduceConditional,
   setVariable,
-  Stack
+  Stack,
+  valueProducing
 } from './utils'
 
 type CmdEvaluator = (
@@ -79,6 +85,29 @@ export class Agenda extends Stack<AgendaItem> {
 
     // Load program into agenda stack
     this.push(program)
+  }
+
+  public push(...items: AgendaItem[]): void {
+    const itemsNew: AgendaItem[] = Agenda.simplifyBlocksWithoutDeclarations(...items)
+    super.push(...itemsNew)
+  }
+
+  /**
+   * Before pushing block statements on the agenda, we check if the block statement has any declarations.
+   * If not, instead of pushing the entire block, just the body is pushed since the block is not adding any value.
+   * @param items The items being pushed on the agenda.
+   * @returns The same set of agenda items, but with block statements without declarations simplified.
+   */
+  private static simplifyBlocksWithoutDeclarations(...items: AgendaItem[]): AgendaItem[] {
+    const itemsNew: AgendaItem[] = []
+    items.forEach(item => {
+      if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
+        itemsNew.push(...Agenda.simplifyBlocksWithoutDeclarations(...handleSequence(item.body)))
+      } else {
+        itemsNew.push(item)
+      }
+    })
+    return itemsNew
   }
 }
 
@@ -108,7 +137,14 @@ export async function evaluate(
     context.runtime.isRunning = true
     context.runtime.agenda = new Agenda(program)
     context.runtime.stash = new Stash()
-    return runECEMachine(context, context.runtime.agenda, context.runtime.stash, options.isPrelude)
+    return runECEMachine(
+      context,
+      context.runtime.agenda,
+      context.runtime.stash,
+      options.envSteps,
+      options.stepLimit,
+      options.isPrelude
+    )
   } catch (error) {
     // console.error('ecerror:', error)
     return new ECError(error)
@@ -128,7 +164,7 @@ export async function evaluate(
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!)
+    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!, -1, -1)
   } catch (error) {
     return new ECError(error)
   } finally {
@@ -136,37 +172,54 @@ export function resumeEvaluate(context: Context) {
   }
 }
 
-function evaluateImports(
-  node: es.ImportDeclaration,
+async function evaluateImports(
+  program: es.Program,
   context: Context,
   { loadTabs, wrapModules }: ImportTransformOptions
 ) {
+  const [importNodes] = partition(program.body, ({ type }) => type === 'ImportDeclaration') as [
+    es.ImportDeclaration[],
+    es.Statement[]
+  ]
+  const moduleFunctions: Record<string, ModuleFunctions> = {}
+
   try {
-    const moduleName = node.source.value
-    if (typeof moduleName !== 'string') {
-      throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
-    }
-
-    if (!(moduleName in context.moduleContexts)) {
-      context.moduleContexts[moduleName] = {
-        state: null,
-        tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
-      }
-    } else if (loadTabs && context.moduleContexts[moduleName].tabs === null) {
-      context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName)
-    }
-
-    const functions = loadModuleBundle(moduleName, context, wrapModules, node)
-    const environment = currentEnvironment(context)
-    for (const spec of node.specifiers) {
-      if (spec.type === 'ImportNamespaceSpecifier') {
-        throw new Error('ImportNamespaceSpecifiers are not supported!')
+    for (const node of importNodes) {
+      const moduleName = node.source.value
+      if (typeof moduleName !== 'string') {
+        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
       }
 
-      const importedName = spec.type === 'ImportDefaultSpecifier' ? 'default' : spec.imported.name
+      if (!(moduleName in moduleFunctions)) {
+        context.moduleContexts[moduleName] = {
+          state: null,
+          tabs: loadTabs ? await loadModuleTabsAsync(moduleName, node) : null
+        }
+        moduleFunctions[moduleName] = await loadModuleBundleAsync(moduleName, context, wrapModules, node)
+      }
 
-      declareIdentifier(context, spec.local.name, node, environment)
-      defineVariable(context, spec.local.name, functions[importedName], true, node)
+      const functions = moduleFunctions[moduleName]
+      const environment = currentEnvironment(context)
+      for (const spec of node.specifiers) {
+        let importedName: string;
+        switch (spec.type) {
+          case 'ImportSpecifier': {
+            importedName = spec.imported.name
+            break
+          }
+          case 'ImportDefaultSpecifier': {
+            importedName = 'default'
+            break
+          }
+          case 'ImportNamespaceSpecifier': {
+            throw new Error('Namespace imports are not supported!')
+          }
+        }
+
+        declareIdentifier(context, spec.local.name, node, environment)
+        defineVariable(context, spec.local.name, functions[importedName], true, node)
+
+      }
     }
   } catch (error) {
     // console.error(error)
@@ -202,7 +255,14 @@ export async function ECEResultPromise(context: Context, promise: Promise<Value>
  * @returns A special break object if the program is interrupted by a breakpoint;
  * else the top value of the stash. It is usually the return value of the program.
  */
-function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude: boolean = false) {
+function runECEMachine(
+  context: Context,
+  agenda: Agenda,
+  stash: Stash,
+  envSteps: number,
+  stepLimit: number,
+  isPrelude: boolean = false
+) {
   context.runtime.break = false
   context.runtime.nodes = []
   let steps = 1
@@ -214,15 +274,19 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
 
   while (command) {
     // Return to capture a snapshot of the agenda and stash after the target step count is reached
-    if (!isPrelude && steps === context.runtime.envSteps) {
+    if (!isPrelude && steps === envSteps) {
       return stash.peek()
+    }
+    // Step limit reached, stop further evaluation
+    if (!isPrelude && steps === stepLimit) {
+      break
     }
 
     if (isNode(command) && command.type === 'DebuggerStatement') {
       // steps += 1
 
       // Record debugger step if running for the first time
-      if (context.runtime.envSteps === -1) {
+      if (envSteps === -1) {
         context.runtime.breakpointSteps.push(steps)
       }
     }
@@ -249,8 +313,8 @@ function runECEMachine(context: Context, agenda: Agenda, stash: Stash, isPrelude
     if (agenda.isEmpty() && stash.isEmpty()) {
       stash.push(undefined)
     }
-
     command = agenda.peek()
+
     steps += 1
   }
 
@@ -277,10 +341,14 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     isPrelude: boolean
   ) {
     // Create and push the environment only if it is non empty.
-    if (hasDeclarations(command)) {
+    if (hasDeclarations(command) || hasImportDeclarations(command)) {
       const environment = createBlockEnvironment(context, 'programEnvironment')
-      declareFunctionsAndVariables(context, command, environment)
       pushEnvironment(context, environment)
+      evaluateImports(command as unknown as es.Program, context, {
+        loadTabs: true,
+        wrapModules: true,
+      })
+      declareFunctionsAndVariables(context, command, environment)
     }
 
     if (command.body.length == 1) {
@@ -295,20 +363,18 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
     // To restore environment after block ends
-    // If there is an env instruction on top of the stack, or if there are no declarations
+    // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next agenda item
     // we do not need to push another one
-    const needsEnvironment: boolean = hasDeclarations(command)
+    // The no declarations case is handled by Agenda :: simplifyBlocksWithoutDeclarations, so no blockStatement node
+    // without declarations should end up here.
     const next = agenda.peek()
-    if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && needsEnvironment) {
+    if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
       agenda.push(instr.envInstr(currentEnvironment(context), command))
     }
 
-    // Create and push the environment only if it is non empty.
-    if (needsEnvironment) {
-      const environment = createBlockEnvironment(context, 'blockEnvironment')
-      declareFunctionsAndVariables(context, command, environment)
-      pushEnvironment(context, environment)
-    }
+    const environment = createBlockEnvironment(context, 'blockEnvironment')
+    declareFunctionsAndVariables(context, command, environment)
+    pushEnvironment(context, environment)
 
     // Push block body
     agenda.push(...handleSequence(command.body))
@@ -320,7 +386,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    agenda.push(instr.breakMarkerInstr(command))
+    if (hasBreakStatement(command.body as es.BlockStatement)) {
+      agenda.push(instr.breakMarkerInstr(command))
+    }
     agenda.push(instr.whileInstr(command.test, command.body, command))
     agenda.push(command.test)
     stash.push(undefined) // Return undefined if there is no loop execution
@@ -384,7 +452,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         )
       )
     } else {
-      agenda.push(instr.breakMarkerInstr(command))
+      if (hasBreakStatement(command.body as es.BlockStatement)) {
+        agenda.push(instr.breakMarkerInstr(command))
+      }
       agenda.push(instr.forInstr(init, test, update, command.body, command))
       agenda.push(test)
       agenda.push(instr.popInstr(command)) // Pop value from init assignment
@@ -450,7 +520,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   ReturnStatement: function (command: es.ReturnStatement, context: Context, agenda: Agenda) {
     // Push return argument onto agenda as well as Reset Instruction to clear to ignore all statements after the return.
-    agenda.push(instr.resetInstr(command))
+    const next = agenda.peek()
+    if (next && isInstr(next) && next.instrType === InstrType.MARKER) {
+      agenda.pop()
+    } else {
+      agenda.push(instr.resetInstr(command))
+    }
     if (command.argument) {
       agenda.push(command.argument)
     }
@@ -474,10 +549,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda.push(instr.breakInstr(command))
   },
 
-  ImportDeclaration: function (command: es.ImportDeclaration, context: Context, agenda: Agenda) {
-    // TODO: Don't hardcode options
-    evaluateImports(command, context, { wrapModules: true, loadTabs: true })
-  },
+  ImportDeclaration: function () {},
 
   /**
    * Expressions
@@ -625,7 +697,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (test) {
       agenda.push(command)
       agenda.push(command.test)
-      agenda.push(instr.contMarkerInstr(command.srcNode))
+      if (hasContinueStatement(command.body as es.BlockStatement)) {
+        agenda.push(instr.contMarkerInstr(command.srcNode))
+      }
       agenda.push(instr.pushUndefIfNeededInstr(command.srcNode)) // The loop returns undefined if the stash is empty
       agenda.push(command.body)
       agenda.push(instr.popInstr(command.srcNode)) // Pop previous body value
@@ -646,7 +720,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       agenda.push(command.test)
       agenda.push(instr.popInstr(command.srcNode)) // Pop value from update
       agenda.push(command.update)
-      agenda.push(instr.contMarkerInstr(command.srcNode))
+      if (hasContinueStatement(command.body as es.BlockStatement)) {
+        agenda.push(instr.contMarkerInstr(command.srcNode))
+      }
       agenda.push(instr.pushUndefIfNeededInstr(command.srcNode)) // The loop returns undefined if the stash is empty
       agenda.push(command.body)
       agenda.push(instr.popInstr(command.srcNode)) // Pop previous body value
@@ -738,31 +814,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
-      // For User-defined and Pre-defined functions instruction to restore environment and marker for the reset instruction is required.
-      const next = agenda.peek()
-      if (
-        !next ||
-        (!isNode(next) && next.instrType === InstrType.ENVIRONMENT) ||
-        args.length === 0
-      ) {
-        // Pushing another Env Instruction would be redundant so only Marker needs to be pushed.
-        agenda.push(instr.markerInstr(command.srcNode))
-      } else if (!isNode(next) && next.instrType === InstrType.RESET) {
-        // Reset Instruction will be replaced by Reset Instruction of new return statement.
-        agenda.pop()
-      } else {
-        agenda.push(instr.envInstr(currentEnvironment(context), command.srcNode))
-        agenda.push(instr.markerInstr(command.srcNode))
-      }
-      // Create environment for function parameters if the function isn't nullary.
-      // Name the environment if the function call expression is not anonymous
-      if (args.length > 0) {
-        const environment = createEnvironment(func, args, command.srcNode)
-        pushEnvironment(context, environment)
-      } else {
-        context.runtime.environments.unshift(func.environment)
-      }
-
       // Display the pre-defined functions on the global environment if needed.
       if (func.preDefined) {
         Object.defineProperty(context.runtime.environments[1].head, uniqueId(), {
@@ -772,8 +823,36 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         })
       }
 
-      // Push function body on agenda
-      agenda.push(func.node.body)
+      const next = agenda.peek()
+
+      // Push ENVIRONMENT instruction if needed
+      if (
+        next &&
+        !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
+        args.length !== 0
+      ) {
+        agenda.push(instr.envInstr(currentEnvironment(context), command.srcNode))
+      }
+
+      // Create environment for function parameters if the function isn't nullary.
+      // Name the environment if the function call expression is not anonymous
+      if (args.length > 0) {
+        const environment = createEnvironment(func, args, command.srcNode)
+        pushEnvironment(context, environment)
+      } else {
+        context.runtime.environments.unshift(func.environment)
+      }
+
+      // Handle special case if function is simple
+      if (isSimpleFunction(func.node)) {
+        // Closures convert ArrowExpressionStatements to BlockStatements
+        const block = func.node.body as es.BlockStatement
+        const returnStatement = block.body[0] as es.ReturnStatement
+        agenda.push(returnStatement.argument ?? ast.identifier('undefined', returnStatement.loc))
+      } else {
+        agenda.push(instr.markerInstr(command.srcNode))
+        agenda.push(func.node.body)
+      }
     } else if (typeof func === 'function') {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
@@ -810,9 +889,17 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
 
     if (test) {
+      if (!valueProducing(command.consequent)) {
+        agenda.push(ast.identifier('undefined', command.consequent.loc))
+      }
       agenda.push(command.consequent)
     } else if (command.alternate) {
+      if (!valueProducing(command.alternate)) {
+        agenda.push(ast.identifier('undefined', command.consequent.loc))
+      }
       agenda.push(command.alternate)
+    } else {
+      agenda.push(ast.identifier('undefined', command.srcNode.loc))
     }
   },
 
@@ -840,7 +927,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     agenda: Agenda,
     stash: Stash
   ) {
-    const arity = command.arity!
+    const arity = command.arity
     const array = []
     for (let i = 0; i < arity; ++i) {
       array.push(stash.pop())

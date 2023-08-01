@@ -1467,3 +1467,180 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
     expect(getLastStepAsString(steps)).toEqual('9.33262154439441e+157;')
   })
 })
+
+// describe(`#1223: Stepper: Import statements cause errors`, () => {
+//   test('import a module and invoke its functions', () => {
+//     const code = `
+//     import {circle, show, red, stack} from "rune";
+//     show(stack(red(circle), circle));
+//     `
+//     const program = parse(code, mockContext())!
+//     const steps = getEvaluationSteps(program, mockContext(), 1000)
+//     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
+//       "show(stack(red(circle), circle));
+
+//       show(stack(red(circle), circle));
+
+//       show(stack(<Rune>, circle));
+
+//       show(stack(<Rune>, circle));
+
+//       show(<Rune>);
+
+//       show(<Rune>);
+
+//       <Rune>;
+
+//       <Rune>;
+//       "
+//     `)
+//   })
+
+//   test('return function from module function and invoke built-in with lambda', () => {
+//     const code = `
+//     import {draw_points, make_point} from "curve";
+//     draw_points(100)(t => make_point(t, t));
+//     `
+//     const program = parse(code, mockContext())!
+//     const steps = getEvaluationSteps(program, mockContext(), 1000)
+//     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
+//       "draw_points(100)(t => make_point(t, t));
+
+//       draw_points(100)(t => make_point(t, t));
+
+//       [Function](t => make_point(t, t));
+
+//       [Function](t => make_point(t, t));
+
+//       <CurveDrawn>;
+
+//       <CurveDrawn>;
+//       "
+//     `)
+//   })
+
+//   test('invoke built-in with function expression', () => {
+//     const code = `
+//     import {draw_3D_points, make_3D_point} from "curve";
+//     function f(t) {
+//         return make_3D_point(t, t, t);
+//     }
+//     draw_3D_points(100)(f);
+//     `
+//     const program = parse(code, mockContext())!
+//     const steps = getEvaluationSteps(program, mockContext(), 1000)
+//     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
+//       "function f(t) {
+//         return make_3D_point(t, t, t);
+//       }
+//       draw_3D_points(100)(f);
+
+//       function f(t) {
+//         return make_3D_point(t, t, t);
+//       }
+//       draw_3D_points(100)(f);
+
+//       draw_3D_points(100)(f);
+
+//       draw_3D_points(100)(f);
+
+//       [Function](f);
+
+//       [Function](f);
+
+//       <CurveDrawn>;
+
+//       <CurveDrawn>;
+//       "
+//     `)
+//   })
+
+//   test('recursive function and invoking with module function and object', () => {
+//     const code = `
+//     import { stack, heart, show, make_cross } from "rune";
+//     function repeat(n, f, i) {
+//         return n === 0
+//               ? i
+//               : repeat(n - 1, f, f(i));
+//     }
+//     show(repeat(1, make_cross, heart));
+//     `
+//     const program = parse(code, mockContext())!
+//     const steps = getEvaluationSteps(program, mockContext(), 1000)
+//     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
+//       "function repeat(n, f, i) {
+//         return n === 0 ? i : repeat(n - 1, f, f(i));
+//       }
+//       show(repeat(1, make_cross, heart));
+
+//       function repeat(n, f, i) {
+//         return n === 0 ? i : repeat(n - 1, f, f(i));
+//       }
+//       show(repeat(1, make_cross, heart));
+
+//       show(repeat(1, make_cross, heart));
+
+//       show(repeat(1, make_cross, heart));
+
+//       show(1 === 0 ? heart : repeat(1 - 1, make_cross, make_cross(heart)));
+
+//       show(1 === 0 ? heart : repeat(1 - 1, make_cross, make_cross(heart)));
+
+//       show(false ? heart : repeat(1 - 1, make_cross, make_cross(heart)));
+
+//       show(false ? heart : repeat(1 - 1, make_cross, make_cross(heart)));
+
+//       show(repeat(1 - 1, make_cross, make_cross(heart)));
+
+//       show(repeat(1 - 1, make_cross, make_cross(heart)));
+
+//       show(repeat(0, make_cross, make_cross(heart)));
+
+//       show(repeat(0, make_cross, make_cross(heart)));
+
+//       show(repeat(0, make_cross, <Rune>));
+
+//       show(repeat(0, make_cross, <Rune>));
+
+//       show(0 === 0 ? <Rune> : repeat(0 - 1, make_cross, make_cross(<Rune>)));
+
+//       show(0 === 0 ? <Rune> : repeat(0 - 1, make_cross, make_cross(<Rune>)));
+
+//       show(true ? <Rune> : repeat(0 - 1, make_cross, make_cross(<Rune>)));
+
+//       show(true ? <Rune> : repeat(0 - 1, make_cross, make_cross(<Rune>)));
+
+//       show(<Rune>);
+
+//       show(<Rune>);
+
+//       <Rune>;
+
+//       <Rune>;
+//       "
+//     `)
+//   })
+
+//   test('display unnamed object', () => {
+//     const code = `
+//     import {play, sine_sound} from "sound";
+//     play(sine_sound(440, 5));
+//     `
+//     const program = parse(code, mockContext())!
+//     const steps = getEvaluationSteps(program, mockContext(), 1000)
+//     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
+//       "play(sine_sound(440, 5));
+
+//       play(sine_sound(440, 5));
+
+//       play([Object]);
+
+//       play([Object]);
+
+//       <AudioPlayed>;
+
+//       <AudioPlayed>;
+//       "
+//     `)
+//   })
+// })
