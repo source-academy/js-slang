@@ -1,5 +1,11 @@
-import assert from '../assert'
-import { isDeclaration } from './typeGuards'
+import assert, { AssertionError } from '../assert'
+import {
+  isClassDeclarationWithId,
+  isDeclaration,
+  isExportNamedDeclarationWithSource,
+  isExportNamedLocalDeclaration,
+  isFunctionDeclarationWithId
+} from './typeGuards'
 import type * as es from './types'
 import { recursive } from './walkers'
 
@@ -54,8 +60,8 @@ export function processExportDefaultDeclaration<T>(
     )
 
     if (declaration.type === 'FunctionDeclaration') {
-      if (declaration.id) {
-        return processors.FunctionDeclaration(declaration as es.FunctionDeclarationWithId)
+      if (isFunctionDeclarationWithId(declaration)) {
+        return processors.FunctionDeclaration(declaration)
       }
 
       return processors.Expression({
@@ -64,8 +70,8 @@ export function processExportDefaultDeclaration<T>(
       })
     }
 
-    if (declaration.id) {
-      return processors.ClassDeclaration(declaration as es.ClassDeclarationWithId)
+    if (isClassDeclarationWithId(declaration)) {
+      return processors.ClassDeclaration(declaration)
     }
 
     return processors.Expression({
@@ -93,14 +99,28 @@ export function processExportNamedDeclaration<T>(
     switch (node.declaration.type) {
       case 'VariableDeclaration':
         return processors.withVarDecl(node.declaration)
-      case 'FunctionDeclaration':
-        return processors.withFunction(node.declaration as es.FunctionDeclarationWithId)
-      case 'ClassDeclaration':
-        return processors.withClass(node.declaration as es.ClassDeclarationWithId)
+      case 'FunctionDeclaration': {
+        if (isFunctionDeclarationWithId(node.declaration)) {
+          return processors.withFunction(node.declaration)
+        }
+        throw new AssertionError(
+          'Functions that are declared by an ExportNamedDeclarations need to have an id!'
+        )
+      }
+      case 'ClassDeclaration': {
+        if (isClassDeclarationWithId(node.declaration)) {
+          return processors.withClass(node.declaration)
+        }
+        throw new AssertionError(
+          'Classes that are declared by an ExportNamedDeclarations need to have an id!'
+        )
+      }
     }
-  } else if (node.source) {
-    return processors.withSource(node as es.ExportNamedDeclarationWithSource)
+  } else if (isExportNamedDeclarationWithSource(node)) {
+    return processors.withSource(node)
+  } else if (isExportNamedLocalDeclaration(node)) {
+    return processors.localExports(node)
   } else {
-    return processors.localExports(node as es.ExportNamedLocalDeclaration)
+    throw new AssertionError('Invalid ExportNamedDeclaration encountered!')
   }
 }

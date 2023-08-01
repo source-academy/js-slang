@@ -4,11 +4,11 @@ import type * as es from 'estree'
 
 import type { Replace } from '../../types'
 
-export type ExportDeclaration = Exclude<es.ModuleDeclaration, es.ImportDeclaration>
 export type ImportSpecifiers =
   | es.ImportSpecifier
   | es.ImportDefaultSpecifier
   | es.ImportNamespaceSpecifier
+
 export type BlockArrowFunctionExpression = Replace<
   es.ArrowFunctionExpression,
   {
@@ -32,25 +32,34 @@ export type ExportNamedVariableDeclaration = Replace<
   es.ExportNamedDeclaration,
   {
     declaration: es.VariableDeclaration
-    source: null
-    specifiers: never[]
   }
 >
 
+export type ExportNamedClassDeclaration = Replace<
+  es.ExportNamedDeclaration,
+  {
+    declaration: ClassDeclarationWithId
+  }
+>
+
+/**
+ * Represents exports of the form `export function a() {}`
+ */
 export type ExportNamedFunctionDeclaration = Replace<
   es.ExportNamedDeclaration,
   {
     declaration: FunctionDeclarationWithId
-    source: null
-    specifiers: never[]
   }
 >
 
+/**
+ * Represents exports of the form `export { a, b }`
+ */
 export type ExportNamedLocalDeclaration = Replace<
   es.ExportNamedDeclaration,
   {
-    source: null
-    declaration: null
+    source: null | undefined
+    declaration: null | undefined
   }
 >
 
@@ -60,11 +69,15 @@ export type ExportNamedLocalDeclaration = Replace<
 export type ExportNamedDeclarationWithSource = Replace<
   es.ExportNamedDeclaration,
   {
-    declaration: null
     source: es.Literal
   }
 >
 
+export type ExportDeclaration = Exclude<es.ModuleDeclaration, es.ImportDeclaration>
+
+/**
+ * Represents module declarations that have a `source` field
+ */
 export type ModuleDeclarationWithSource =
   | es.ImportDeclaration
   | es.ExportAllDeclaration

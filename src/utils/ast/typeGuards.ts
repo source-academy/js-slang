@@ -82,3 +82,19 @@ export function isPattern(node: es.Node): node is es.Pattern {
     'RestElement'
   ].includes(node.type)
 }
+
+export const isExportNamedDeclarationWithSource = (
+  node: es.Node
+): node is es.ExportNamedDeclarationWithSource =>
+  node.type === 'ExportNamedDeclaration' && !!node.source
+
+export const isExportNamedLocalDeclaration = (
+  node: es.Node
+): node is es.ExportNamedLocalDeclaration =>
+  node.type === 'ExportNamedDeclaration' && !node.declaration && !node.source
+
+export const isFunctionDeclarationWithId = (node: es.Node): node is es.FunctionDeclarationWithId =>
+  node.type === 'FunctionDeclaration' && !!node.id && isIdentifier(node.id)
+
+export const isClassDeclarationWithId = (node: es.Node): node is es.ClassDeclarationWithId =>
+  node.type === 'ClassDeclaration' && !!node.id && isIdentifier(node.id)
