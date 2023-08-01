@@ -2,7 +2,7 @@ import { parse as acornParse, Token, tokenizer } from 'acorn'
 import { Node as ESNode, Program } from 'estree'
 
 import { DEFAULT_ECMA_VERSION } from '../../constants'
-import { Chapter, Context, Rule, SourceError, Variant } from '../../types'
+import { Chapter, Context, Rule, Variant } from '../../types'
 import { ancestor, AncestorWalkerFn } from '../../utils/ast/walkers'
 import { DisallowedConstructError, FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
@@ -82,7 +82,7 @@ export class SourceParser implements Parser<AcornOptions> {
           _state: any,
           ancestors: ESNode[]
         ) => {
-          const errors: SourceError[] = checker(node, ancestors)
+          const errors = checker(node, ancestors)
 
           if (throwOnError && errors.length > 0) throw errors[0]
           errors.forEach(e => context.errors.push(e))
@@ -98,7 +98,7 @@ export class SourceParser implements Parser<AcornOptions> {
       })
 
     ancestor(ast as ESNode, mapToObj(validationWalkers), undefined, undefined)
-    return context.errors.length == 0
+    return context.errors.length === 0
   }
 
   toString(): string {

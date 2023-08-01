@@ -16,6 +16,7 @@ import noImplicitDeclareUndefined from './noImplicitDeclareUndefined'
 import noImplicitReturnUndefined from './noImplicitReturnUndefined'
 import noImportSpecifierWithDefault from './noImportSpecifierWithDefault'
 import noNull from './noNull'
+import noReexportDeclaration from './noReexportDeclaration'
 import noSpreadInArray from './noSpreadInArray'
 import noTemplateExpression from './noTemplateExpression'
 import noTypeofOperator from './noTypeofOperator'
@@ -33,6 +34,7 @@ const rules: Rule<es.Node>[] = [
   noDeclareMutable,
   noDotAbbreviation,
   noExportNamedDeclarationWithDefault,
+  noReexportDeclaration,
   noFunctionDeclarationWithoutIdentifier,
   noIfWithoutElse,
   noImportSpecifierWithDefault,
