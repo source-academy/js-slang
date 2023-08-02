@@ -2,9 +2,12 @@ import { createEmptyContext } from '../../createContext'
 import { Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { ModuleConnectionError, ModuleInternalError } from '../errors'
+import * as moduleLoader from '../moduleLoader';
 
-jest.mock('../moduleLoader')
-const moduleLoader = jest.requireActual('../moduleLoader')
+jest.mock('lodash', () => ({
+  ...jest.requireActual('lodash'),
+  memoize: jest.fn(x => x)
+}))
 
 /**
  * Mock XMLHttpRequest from jsdom environment

@@ -4,10 +4,12 @@ import { mockContext } from '../../mocks/context'
 import { Chapter, Variant } from '../../types'
 import { ModuleConnectionError, ModuleInternalError } from '../errors'
 import { MODULES_STATIC_URL } from '../moduleLoader'
-import type * as moduleLoaderType from '../moduleLoaderAsync'
+import * as moduleLoader from '../moduleLoaderAsync'
 
-jest.mock('../moduleLoaderAsync')
-const moduleLoader: typeof moduleLoaderType = jest.requireActual('../moduleLoaderAsync')
+jest.mock('lodash', () => ({
+  ...jest.requireActual('lodash'),
+  memoize: jest.fn(x => x)
+}))
 
 global.fetch = jest.fn()
 const mockedFetch = fetch as MockedFunction<typeof fetch>

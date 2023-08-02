@@ -13,6 +13,10 @@ import { testForInfiniteLoop } from '../runtime'
 jest.mock('../../modules/moduleLoaderAsync')
 jest.spyOn(moduleLoader, 'memoizedGetModuleBundleAsync')
 
+beforeAll(() => {
+  global.fetch = jest.fn()
+})
+
 test('works in runInContext when throwInfiniteLoops is true', async () => {
   const code = `function fib(x) {
     return fib(x-1) + fib(x-2);
