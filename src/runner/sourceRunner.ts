@@ -96,7 +96,7 @@ async function runSubstitution(
   context: Context,
   options: IOptions
 ): Promise<Result> {
-  const steps = await getEvaluationSteps(program, context, options.stepLimit)
+  const steps = await getEvaluationSteps(program, context, options.stepLimit, options.importOptions)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
@@ -111,11 +111,11 @@ async function runSubstitution(
       function: callee(redex, context)
     })
   }
-  return Promise.resolve({
+  return {
     status: 'finished',
     context,
     value: redexedSteps
-  })
+  }
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {

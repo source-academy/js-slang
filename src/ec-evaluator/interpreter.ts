@@ -6,18 +6,22 @@
  */
 
 /* tslint:disable:max-classes-per-file */
-import { partition, uniqueId } from 'lodash'
+import { uniqueId } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { loadModuleBundleAsync, loadModuleTabsAsync } from '../modules/moduleLoaderAsync'
-import type { ImportTransformOptions, ModuleFunctions } from '../modules/moduleTypes'
+import { loadModuleBundle } from '../modules/moduleLoader'
+import type { ImportTransformOptions } from '../modules/moduleTypes'
+import { initModuleContext } from '../modules/utils'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Result, Value } from '../types'
+import type { Context, ContiguousArrayElements, Result, Value } from '../types'
+import { arrayMapFrom } from '../utils/arrayMap'
+import assert from '../utils/assert'
 import * as ast from '../utils/ast/astCreator'
+import { isImportDeclaration } from '../utils/ast/typeGuards'
 import type * as es from '../utils/ast/types'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -172,59 +176,78 @@ export function resumeEvaluate(context: Context) {
   }
 }
 
-async function evaluateImports(
+function evaluateImports(
   program: es.Program,
   context: Context,
   { loadTabs, wrapModules }: ImportTransformOptions
 ) {
-  const [importNodes] = partition(program.body, ({ type }) => type === 'ImportDeclaration') as [
-    es.ImportDeclaration[],
-    es.Statement[]
-  ]
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
+  const importNodes = program.body.filter(isImportDeclaration)
 
   try {
-    for (const node of importNodes) {
-      const moduleName = node.source.value
-      if (typeof moduleName !== 'string') {
-        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
-      }
-
-      if (!(moduleName in moduleFunctions)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadTabs ? await loadModuleTabsAsync(moduleName, node) : null
-        }
-        moduleFunctions[moduleName] = await loadModuleBundleAsync(
-          moduleName,
-          context,
-          wrapModules,
-          node
+    const importNodeMap = arrayMapFrom(
+      importNodes.map(node => {
+        const moduleName = node.source.value
+        assert(
+          typeof moduleName === 'string',
+          `ImportDeclarations should have string sources, got ${moduleName}`
         )
-      }
+        return [moduleName, node]
+      })
+    )
 
-      const functions = moduleFunctions[moduleName]
-      const environment = currentEnvironment(context)
-      for (const spec of node.specifiers) {
-        let importedName: string
-        switch (spec.type) {
-          case 'ImportSpecifier': {
-            importedName = spec.imported.name
-            break
+    const environment = currentEnvironment(context)
+    importNodeMap.entries().forEach(([moduleName, nodes]) => {
+      initModuleContext(moduleName, context, loadTabs, nodes[0])
+      const functions = loadModuleBundle(moduleName, context, wrapModules, nodes[0])
+      for (const node of nodes) {
+        for (const spec of node.specifiers) {
+          let importedName: string
+          switch (spec.type) {
+            case 'ImportSpecifier': {
+              importedName = spec.imported.name
+              break
+            }
+            case 'ImportDefaultSpecifier': {
+              importedName = 'default'
+              break
+            }
+            case 'ImportNamespaceSpecifier': {
+              throw new Error('Namespace imports are not supported!')
+            }
           }
-          case 'ImportDefaultSpecifier': {
-            importedName = 'default'
-            break
-          }
-          case 'ImportNamespaceSpecifier': {
-            throw new Error('Namespace imports are not supported!')
-          }
+
+          declareIdentifier(context, spec.local.name, node, environment)
+          defineVariable(context, spec.local.name, functions[importedName], true, node)
         }
-
-        declareIdentifier(context, spec.local.name, node, environment)
-        defineVariable(context, spec.local.name, functions[importedName], true, node)
       }
-    }
+    })
+
+    // await importNodeMap.forEachAsync(async (moduleName, nodes) => {
+    //   await initModuleContextAsync(moduleName, context, loadTabs, nodes[0])
+    //   const functions = await loadModuleBundleAsync(moduleName, context, wrapModules, nodes[0])
+
+    //   for (const node of nodes) {
+    //     for (const spec of node.specifiers) {
+    //       let importedName: string
+    //       switch (spec.type) {
+    //         case 'ImportSpecifier': {
+    //           importedName = spec.imported.name
+    //           break
+    //         }
+    //         case 'ImportDefaultSpecifier': {
+    //           importedName = 'default'
+    //           break
+    //         }
+    //         case 'ImportNamespaceSpecifier': {
+    //           throw new Error('Namespace imports are not supported!')
+    //         }
+    //       }
+
+    //       declareIdentifier(context, spec.local.name, node, environment)
+    //       defineVariable(context, spec.local.name, functions[importedName], true, node)
+    //     }
+    //   }
+    // })
   } catch (error) {
     // console.error(error)
     handleRuntimeError(context, error)

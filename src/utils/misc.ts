@@ -20,9 +20,11 @@ export async function reduceAsync<T, U, Reducer extends (result: U, each: T) => 
 }
 
 /**
- * Maps each key value pair on an object using a function that returns a promise
+ * Calls the mapping function on the object to obtain an array of key value pairs,
+ * then waits for all promises to resolve asynchronously using `Promise.all` before
+ * returning the key value pairs as an object.
  */
-export async function mapObjectAsync<
+export async function transformObjectAsync<
   T extends Record<any, any>,
   Mapper extends (key: keyof T, value: T[keyof T]) => Promise<any>
 >(obj: T, mapper: Mapper) {

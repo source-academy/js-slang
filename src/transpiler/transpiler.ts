@@ -15,9 +15,10 @@ import {
   RecursivePartial,
   Variant
 } from '../types'
+import { arrayMapFrom } from '../utils/arrayMap'
 import assert from '../utils/assert'
 import * as create from '../utils/ast/astCreator'
-import { isImportDeclaration } from '../utils/ast/typeGuards'
+import { importDeclarationFilter } from '../utils/ast/typeGuards'
 import type * as es from '../utils/ast/types'
 import { simple } from '../utils/ast/walkers'
 import {
@@ -55,60 +56,71 @@ export async function transformImportDeclarations(
   context: Context | null,
   { wrapModules, loadTabs }: ImportTransformOptions
 ): Promise<[string, es.VariableDeclaration[], es.Program['body']]> {
-  const [importNodes, otherNodes] = partition(program.body, isImportDeclaration)
+  const [importNodes, otherNodes] = partition(program.body, importDeclarationFilter)
 
-  if (importNodes.length === 0) return ['', [], otherNodes as es.Statement[]]
+  if (importNodes.length === 0) return ['', [], otherNodes]
 
-  const moduleToNodeMap = importNodes.reduce((res, node) => {
-    const moduleName = node.source.value
-    assert(
-      typeof moduleName === 'string',
-      `Expected ImportDeclaration to have a source of type string!, got ${moduleName}!`
-    )
+  const moduleToNodeMap = arrayMapFrom(
+    importNodes.map(node => {
 
-    if (!(moduleName in res)) res[moduleName] = []
-    res[moduleName].push(node)
-    node.specifiers.forEach(spec => usedIdentifiers.add(spec.local.name))
-    return res
-  }, {} as Record<string, es.ImportDeclaration[]>)
-
-  const prefix: string[] = []
-  const importNodeMap = await Promise.all(
-    Object.entries(moduleToNodeMap).map(async ([moduleName, nodes]) => {
-      const namespaced = getUniqueId(usedIdentifiers, '__MODULE__')
-
-      const [text] = await Promise.all([
-        memoizedGetModuleBundleAsync(moduleName),
-        context
-          ? initModuleContextAsync(moduleName, context, loadTabs, nodes[0])
-          : Promise.resolve()
-      ])
-      const modifiedText = wrapModules
-        ? `${NATIVE_STORAGE_ID}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
-        : `(${text})(${REQUIRE_PROVIDER_ID})`
-      prefix.push(`const ${namespaced} = ${modifiedText}\n`)
-
-      return [namespaced, nodes] as [string, es.ImportDeclaration[]]
+      const moduleName = node.source.value
+      assert(
+        typeof moduleName === 'string',
+        `Expected ImportDeclaration to have a source of type string!, got ${moduleName}!`
+      )
+      node.specifiers.forEach(({ local: { name }}) => usedIdentifiers.add(name))
+      return [moduleName, node]
     })
   )
 
-  const declNodes = importNodeMap.flatMap(([namespaced, nodes]) => {
-    return nodes.flatMap(node =>
-      node.specifiers.map(specifier => {
-        if (specifier.type !== 'ImportSpecifier') {
-          throw new Error(`Expected import specifier, found: ${specifier.type}`)
-        }
+  const prefix: string[] = []
 
-        // Convert each import specifier to its corresponding local variable declaration
-        return create.constantDeclaration(
-          specifier.local.name,
-          create.memberExpression(create.identifier(namespaced), specifier.imported.name)
-        )
-      })
+  const namespacedToNodeMap = await moduleToNodeMap.mapAsync(async (moduleName, nodes) => {
+    // Give each module a unique identifier within the program
+    const namespaced = getUniqueId(usedIdentifiers, '__MODULE__')
+
+    const [text] = await Promise.all([
+      memoizedGetModuleBundleAsync(moduleName),
+      context
+        ? initModuleContextAsync(moduleName, context, loadTabs, nodes[0])
+        : Promise.resolve()
+    ])
+    const modifiedText = wrapModules
+      ? `${NATIVE_STORAGE_ID}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
+      : `(${text})(${REQUIRE_PROVIDER_ID})`
+    prefix.push(`const ${namespaced} = ${modifiedText}\n`)
+
+    return [namespaced, nodes] as [string, es.ImportDeclaration[]]
+  })
+
+  const declNodes = namespacedToNodeMap.entries().flatMap(([namespaced, nodes]) => {
+    return nodes.flatMap(node =>
+      node.specifiers.map(spec => {
+      let importedName: string
+      switch (spec.type) {
+        case 'ImportSpecifier': {
+          importedName = spec.imported.name
+          break
+        }
+        case 'ImportDefaultSpecifier': {
+          importedName = 'default'
+          break
+        }
+        case 'ImportNamespaceSpecifier': {
+          throw new Error('Namespace imports are not supported!')
+        }
+      }
+
+      // Convert each import specifier to its corresponding local variable declaration
+      return create.constantDeclaration(
+        spec.local.name,
+        create.memberExpression(create.identifier(namespaced), importedName)
+      )
+    })
     )
   })
 
-  return [prefix.join('\n'), declNodes, otherNodes as es.Statement[]]
+  return [prefix.join('\n'), declNodes, otherNodes]
 }
 
 export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {

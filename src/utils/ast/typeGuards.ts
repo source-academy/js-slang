@@ -98,3 +98,10 @@ export const isFunctionDeclarationWithId = (node: es.Node): node is es.FunctionD
 
 export const isClassDeclarationWithId = (node: es.Node): node is es.ClassDeclarationWithId =>
   node.type === 'ClassDeclaration' && !!node.id && isIdentifier(node.id)
+
+/**
+ * Specific type guard for use with `partition` from lodash on `es.Program['body']`
+ */
+export const importDeclarationFilter = (
+  node: es.Program['body'][0]
+): node is es.ImportDeclaration => isImportDeclaration(node)
