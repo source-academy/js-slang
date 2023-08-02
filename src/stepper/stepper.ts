@@ -1,9 +1,11 @@
 import { generate } from 'astring'
 import * as es from 'estree'
+import { partition } from 'lodash'
 
 import * as errors from '../errors/errors'
-import { loadModuleBundleAsync, loadModuleTabsAsync } from '../modules/moduleLoaderAsync'
-import { ModuleFunctions } from '../modules/moduleTypes'
+import { loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
+import { ImportTransformOptions } from '../modules/moduleTypes'
+import { initModuleContextAsync } from '../modules/utils'
 import { parse } from '../parser/parser'
 import {
   BlockExpression,
@@ -13,6 +15,8 @@ import {
   FunctionDeclarationExpression,
   substituterNodes
 } from '../types'
+import { arrayMapFrom } from '../utils/arrayMap'
+import assert from '../utils/assert'
 import * as ast from '../utils/ast/astCreator'
 import {
   dummyBlockExpression,
@@ -22,6 +26,7 @@ import {
   dummyStatement,
   dummyVariableDeclarator
 } from '../utils/ast/dummyAstCreator'
+import { importDeclarationFilter } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import { nodeToValue, objectToString, valueToExpression } from './converter'
@@ -3151,50 +3156,53 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
-async function evaluateImports(program: es.Program, context: Context, loadTabs: boolean) {
-  const importNodes = program.body.filter(
-    ({ type }) => type === 'ImportDeclaration'
-  ) as es.ImportDeclaration[]
-  program.body = program.body.filter(({ type }) => !(type === 'ImportDeclaration'))
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
+async function evaluateImports(
+  program: es.Program,
+  context: Context,
+  { loadTabs, wrapModules }: ImportTransformOptions
+) {
+  let importNodes: es.ImportDeclaration[]
+  ;[importNodes, program.body] = partition(program.body, importDeclarationFilter)
 
   try {
-    for (const node of importNodes) {
-      const moduleName = node.source.value
-      if (typeof moduleName !== 'string') {
-        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
-      }
+    const importNodeMap = arrayMapFrom(
+      importNodes.map(node => {
+        const moduleName = node.source.value
+        assert(
+          typeof moduleName === 'string',
+          `ImportDeclarations should have string sources, got ${moduleName}`
+        )
+        return [moduleName, node]
+      })
+    )
 
-      if (!(moduleName in moduleFunctions)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadTabs ? await loadModuleTabsAsync(moduleName, node) : null
+    const environment = currentEnvironment(context)
+    await importNodeMap.forEachAsync(async (moduleName, nodes) => {
+      await initModuleContextAsync(moduleName, context, loadTabs, nodes[0])
+      const functions = await loadModuleBundleAsync(moduleName, context, wrapModules, nodes[0])
+
+      for (const node of nodes) {
+        for (const spec of node.specifiers) {
+          let importedName: string
+          switch (spec.type) {
+            case 'ImportSpecifier': {
+              importedName = spec.imported.name
+              break
+            }
+            case 'ImportDefaultSpecifier': {
+              importedName = 'default'
+              break
+            }
+            case 'ImportNamespaceSpecifier': {
+              throw new Error('Namespace imports are not supported!')
+            }
+          }
+
+          declareIdentifier(context, spec.local.name, node, environment)
+          defineVariable(context, spec.local.name, functions[importedName], true, node)
         }
-        moduleFunctions[moduleName] = await loadModuleBundleAsync(moduleName, context, true, node)
       }
-
-      const functions = moduleFunctions[moduleName]
-      const environment = currentEnvironment(context)
-      for (const spec of node.specifiers) {
-        let importedName: string
-        switch (spec.type) {
-          case 'ImportSpecifier': {
-            importedName = spec.imported.name
-            break
-          }
-          case 'ImportDefaultSpecifier': {
-            importedName = 'default'
-            break
-          }
-          case 'ImportNamespaceSpecifier': {
-            throw new Error('Namespace imports are not supported!')
-          }
-        }
-
-        declareIdentifier(context, spec.local.name, node, environment)
-        defineVariable(context, spec.local.name, functions[importedName], true, node)
-      }
-    }
+    })
   } catch (error) {
     // console.log(error)
     handleRuntimeError(context, error)
@@ -3205,12 +3213,13 @@ async function evaluateImports(program: es.Program, context: Context, loadTabs: 
 export async function getEvaluationSteps(
   program: es.Program,
   context: Context,
-  stepLimit: number | undefined
+  stepLimit: number | undefined,
+  importOptions: ImportTransformOptions
 ): Promise<[es.Program, string[][], string][]> {
   const steps: [es.Program, string[][], string][] = []
   try {
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
-    await evaluateImports(program, context, true)
+    await evaluateImports(program, context, importOptions)
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns
