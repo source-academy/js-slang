@@ -10,6 +10,7 @@ import { Chapter, Variant } from '../../types'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
 import { testForInfiniteLoop } from '../runtime'
 
+jest.mock('../../modules/moduleLoaderAsync')
 jest.spyOn(moduleLoader, 'memoizedGetModuleBundleAsync')
 
 test('works in runInContext when throwInfiniteLoops is true', async () => {

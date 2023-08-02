@@ -7,6 +7,9 @@ import { locationDummyNode } from '../../utils/ast/astCreator'
 import { CodeSnippetTestCase } from '../../utils/testing'
 import { htmlErrorHandlingScript } from '../htmlRunner'
 
+jest.mock('../../modules/moduleLoader')
+jest.mock('../../modules/moduleLoaderAsync')
+
 const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
   {
     name: 'LITERAL OBJECT',

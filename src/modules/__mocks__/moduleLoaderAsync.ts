@@ -26,3 +26,7 @@ export function loadModuleBundleAsync() {
 export function loadModuleTabsAsync() {
   return Promise.resolve([])
 }
+
+export function checkModuleExists() {
+  return Promise.resolve(true)
+}
