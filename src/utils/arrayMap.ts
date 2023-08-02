@@ -27,9 +27,7 @@ export default class ArrayMap<K, V> {
    * Similar to `mapAsync`, but for an async mapping function that does not return any value
    */
   public async forEachAsync<F extends (k: K, v: V[]) => Promise<void>>(forEach: F): Promise<void> {
-    await Promise.all(
-      this.entries().map(([key, value]) => forEach(key, value))
-    )
+    await Promise.all(this.entries().map(([key, value]) => forEach(key, value)))
   }
 
   /**
@@ -38,25 +36,24 @@ export default class ArrayMap<K, V> {
    * execute asynchronously
    */
   public async mapAsync<F extends (k: K, v: V[]) => Promise<[any, any[]]>>(mapper: F) {
-    const pairs = await Promise.all(
-      this.entries().map(([key, value]) => mapper(key, value))
-    )
+    const pairs = await Promise.all(this.entries().map(([key, value]) => mapper(key, value)))
 
     type U = Awaited<ReturnType<F>>
     const tempMap = new Map<U[0], U[1]>(pairs)
     return new ArrayMap<U[0], U[1][number]>(tempMap)
   }
 
-  public [Symbol.toStringTag] () {
-    return this.entries()
-      .map(([key, value]) => `${key}: ${value}`)
+  public [Symbol.toStringTag]() {
+    return this.entries().map(([key, value]) => `${key}: ${value}`)
   }
 }
 
 /**
  * Create an ArrayMap from an iterable of key value pairs
  */
-export function arrayMapFrom<K, V extends Array<any>>(pairs: Iterable<[K, V]>): ArrayMap<K, V[number]>
+export function arrayMapFrom<K, V extends Array<any>>(
+  pairs: Iterable<[K, V]>
+): ArrayMap<K, V[number]>
 export function arrayMapFrom<K, V>(pairs: Iterable<[K, V]>): ArrayMap<K, V>
 export function arrayMapFrom<K, V>(pairs: Iterable<[K, V | V[]]>) {
   const res = new ArrayMap<K, V>()

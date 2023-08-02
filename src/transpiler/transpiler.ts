@@ -62,13 +62,12 @@ export async function transformImportDeclarations(
 
   const moduleToNodeMap = arrayMapFrom(
     importNodes.map(node => {
-
       const moduleName = node.source.value
       assert(
         typeof moduleName === 'string',
         `Expected ImportDeclaration to have a source of type string!, got ${moduleName}!`
       )
-      node.specifiers.forEach(({ local: { name }}) => usedIdentifiers.add(name))
+      node.specifiers.forEach(({ local: { name } }) => usedIdentifiers.add(name))
       return [moduleName, node]
     })
   )
@@ -81,9 +80,7 @@ export async function transformImportDeclarations(
 
     const [text] = await Promise.all([
       memoizedGetModuleBundleAsync(moduleName),
-      context
-        ? initModuleContextAsync(moduleName, context, loadTabs, nodes[0])
-        : Promise.resolve()
+      context ? initModuleContextAsync(moduleName, context, loadTabs, nodes[0]) : Promise.resolve()
     ])
     const modifiedText = wrapModules
       ? `${NATIVE_STORAGE_ID}.operators.get("wrapSourceModule")("${moduleName}", ${text}, ${REQUIRE_PROVIDER_ID})`
@@ -96,27 +93,27 @@ export async function transformImportDeclarations(
   const declNodes = namespacedToNodeMap.entries().flatMap(([namespaced, nodes]) => {
     return nodes.flatMap(node =>
       node.specifiers.map(spec => {
-      let importedName: string
-      switch (spec.type) {
-        case 'ImportSpecifier': {
-          importedName = spec.imported.name
-          break
+        let importedName: string
+        switch (spec.type) {
+          case 'ImportSpecifier': {
+            importedName = spec.imported.name
+            break
+          }
+          case 'ImportDefaultSpecifier': {
+            importedName = 'default'
+            break
+          }
+          case 'ImportNamespaceSpecifier': {
+            throw new Error('Namespace imports are not supported!')
+          }
         }
-        case 'ImportDefaultSpecifier': {
-          importedName = 'default'
-          break
-        }
-        case 'ImportNamespaceSpecifier': {
-          throw new Error('Namespace imports are not supported!')
-        }
-      }
 
-      // Convert each import specifier to its corresponding local variable declaration
-      return create.constantDeclaration(
-        spec.local.name,
-        create.memberExpression(create.identifier(namespaced), importedName)
-      )
-    })
+        // Convert each import specifier to its corresponding local variable declaration
+        return create.constantDeclaration(
+          spec.local.name,
+          create.memberExpression(create.identifier(namespaced), importedName)
+        )
+      })
     )
   })
 

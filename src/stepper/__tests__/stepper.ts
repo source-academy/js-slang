@@ -674,7 +674,7 @@ test('negative numbers as arguments', async () => {
   math_sin(-1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "math_sin(-1);
 
@@ -898,7 +898,7 @@ test('const declarations in blocks subst into call expressions', async () => {
   f(undefined);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('6;')
 })
@@ -913,7 +913,7 @@ test('scoping test for lambda expressions nested in blocks', async () => {
   }
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
@@ -926,7 +926,7 @@ test('scoping test for blocks nested in lambda expressions', async () => {
   f(0);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('undefined;')
 })
@@ -943,7 +943,7 @@ test('scoping test for function expressions', async () => {
   f(0);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
@@ -956,7 +956,7 @@ test('scoping test for lambda expressions', async () => {
   f(0);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
@@ -974,7 +974,7 @@ test('scoping test for block expressions', async () => {
   f(0);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
@@ -993,7 +993,7 @@ test('scoping test for block expressions, no renaming', async () => {
   h(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
@@ -1013,7 +1013,7 @@ test('scoping test for block expressions, with renaming', async () => {
   h(f);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('g();')
 })
@@ -1024,7 +1024,7 @@ test('return in nested blocks', async () => {
   f(0);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
@@ -1037,7 +1037,7 @@ test('renaming clash test for lambda function', async () => {
   f(1)(2);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
@@ -1059,7 +1059,7 @@ const w_9 = 0;
 f(1)(2);
 `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
@@ -1073,7 +1073,7 @@ test('renaming clash in replacement for lambda function', async () => {
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('0;')
 })
@@ -1094,7 +1094,7 @@ test(`renaming clash in replacement for function expression`, async () => {
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('0;')
 })
@@ -1115,7 +1115,7 @@ test(`renaming clash in replacement for function declaration`, async () => {
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('0;')
 })
@@ -1137,7 +1137,7 @@ test(`multiple clash for function declaration`, async () => {
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
@@ -1159,7 +1159,7 @@ test(`multiple clash for function expression`, async () => {
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
@@ -1174,7 +1174,7 @@ test(`multiple clash for lambda function`, async () => {
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
@@ -1189,7 +1189,7 @@ test(`multiple clash 2 for lambda function`, async () => {
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
@@ -1211,7 +1211,7 @@ test(`multiple clash 2 for function expression`, async () => {
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
@@ -1233,7 +1233,7 @@ test(`multiple clash 2 for function declaration`, async () => {
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
@@ -1257,7 +1257,7 @@ test(`renaming clash with declaration in replacement for function declaration`, 
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
@@ -1281,7 +1281,7 @@ test(`renaming clash with declaration in replacement for function expression`, a
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('2;')
 })
@@ -1295,7 +1295,7 @@ test(`renaming clash with declaration in replacement for lambda function`, async
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('2;')
 })
@@ -1312,7 +1312,7 @@ test(`renaming clash with parameter of lambda function declaration in block`, as
   f(3)(2);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
@@ -1332,7 +1332,7 @@ test(`renaming clash with parameter of function declaration in block`, async () 
   f(3)(2);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
@@ -1345,7 +1345,7 @@ test(`renaming of outer parameter in lambda function`, async () => {
   f(1)(1);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
@@ -1358,7 +1358,7 @@ test(`correctly avoids capture by other parameter names`, async () => {
   f(y => x + 1, 2);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('x + 1;')
 })
@@ -1373,7 +1373,7 @@ test(`removes debugger statements`, async () => {
   f(3);
   `
   const steps = await testEvalSteps(code)
-  
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('6;')
 })
@@ -1412,7 +1412,7 @@ describe(`#1109: Empty function bodies don't break execution`, () => {
     "Gets returned by normal run";
     `
     const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
-    
+
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('"Gets returned by normal run";')
   })
@@ -1425,7 +1425,7 @@ describe(`#1109: Empty function bodies don't break execution`, () => {
     "Gets returned by normal run";
     `
     const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
-    
+
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('"Gets returned by normal run";')
   })
@@ -1454,7 +1454,7 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
 //     show(stack(red(circle), circle));
 //     `
 //     const steps = await testEvalSteps(code)
-//     
+//
 //     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 //       "show(stack(red(circle), circle));
 
@@ -1481,7 +1481,7 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
 //     draw_points(100)(t => make_point(t, t));
 //     `
 //     const steps = await testEvalSteps(code)
-//     
+//
 //     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 //       "draw_points(100)(t => make_point(t, t));
 
@@ -1507,7 +1507,7 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
 //     draw_3D_points(100)(f);
 //     `
 //     const steps = await testEvalSteps(code)
-//     
+//
 //     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 //       "function f(t) {
 //         return make_3D_point(t, t, t);
@@ -1545,7 +1545,7 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
 //     show(repeat(1, make_cross, heart));
 //     `
 //     const steps = await testEvalSteps(code)
-//     
+//
 //     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 //       "function repeat(n, f, i) {
 //         return n === 0 ? i : repeat(n - 1, f, f(i));
@@ -1606,7 +1606,7 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
 //     play(sine_sound(440, 5));
 //     `
 //     const steps = await testEvalSteps(code)
-//     
+//
 //     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 //       "play(sine_sound(440, 5));
 
