@@ -2,7 +2,7 @@ import { createEmptyContext } from '../../createContext'
 import { Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { ModuleConnectionError, ModuleInternalError } from '../errors'
-import * as moduleLoader from '../moduleLoader';
+import * as moduleLoader from '../moduleLoader'
 
 jest.mock('lodash', () => ({
   ...jest.requireActual('lodash'),
