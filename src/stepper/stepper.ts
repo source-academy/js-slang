@@ -177,7 +177,8 @@ function findMain(
     | es.BlockStatement
     | BlockExpression
     | es.FunctionDeclaration
-    | es.Program
+    | es.Program,
+  seenBefore: Map<substituterNodes, substituterNodes>
 ): string[] {
   const params: string[] = []
   if (
@@ -194,7 +195,6 @@ function findMain(
   }
 
   const freeNames: any[] = []
-  const seenBefore: Map<substituterNodes, substituterNodes> = new Map()
 
   const finders = {
     Identifier(target: es.Identifier): void {
@@ -250,7 +250,7 @@ function findMain(
 
     FunctionDeclaration(target: es.FunctionDeclaration): void {
       seenBefore.set(target, target)
-      const freeInNested = findMain(target)
+      const freeInNested = findMain(target, seenBefore)
       for (const free of freeInNested) {
         let bound = false
         for (const param of params) {
@@ -266,7 +266,7 @@ function findMain(
 
     ArrowFunctionExpression(target: es.ArrowFunctionExpression): void {
       seenBefore.set(target, target)
-      const freeInNested = findMain(target)
+      const freeInNested = findMain(target, seenBefore)
       for (const free of freeInNested) {
         let bound = false
         for (const param of params) {
@@ -585,10 +585,10 @@ function substituteMain(
         replacement.type == 'FunctionExpression' ||
         replacement.type == 'ArrowFunctionExpression'
       ) {
-        freeReplacement = findMain(replacement)
+        freeReplacement = findMain(replacement, new Map())
         boundReplacement = scanOutBoundNames(replacement.body)
       }
-      const freeTarget = findMain(target)
+      const freeTarget = findMain(target, new Map())
       const boundTarget = scanOutBoundNames(target.body)
       for (let i = 0; i < target.params.length; i++) {
         const param = target.params[i]
@@ -664,10 +664,10 @@ function substituteMain(
         replacement.type == 'FunctionExpression' ||
         replacement.type == 'ArrowFunctionExpression'
       ) {
-        freeReplacement = findMain(replacement)
+        freeReplacement = findMain(replacement, new Map())
         boundReplacement = scanOutBoundNames(replacement.body)
       }
-      const freeTarget = findMain(target)
+      const freeTarget = findMain(target, new Map())
       const boundTarget = scanOutBoundNames(target.body)
       for (let i = 0; i < target.params.length; i++) {
         const param = target.params[i]
@@ -741,9 +741,9 @@ function substituteMain(
           replacement.type == 'ArrowFunctionExpression') &&
         !re.test(name.name)
       ) {
-        const freeTarget: string[] = findMain(target)
+        const freeTarget: string[] = findMain(target, new Map())
         const declaredIds: es.Identifier[] = scanOutDeclarations(target)
-        const freeReplacement: string[] = findMain(replacement)
+        const freeReplacement: string[] = findMain(replacement, new Map())
         const boundReplacement: es.Identifier[] = scanOutDeclarations(replacement.body)
         for (const declaredId of declaredIds) {
           if (freeReplacement.includes(declaredId.name)) {
@@ -826,9 +826,9 @@ function substituteMain(
           replacement.type == 'ArrowFunctionExpression') &&
         !re.test(name.name)
       ) {
-        const freeTarget: string[] = findMain(target)
+        const freeTarget: string[] = findMain(target, new Map())
         const declaredIds: es.Identifier[] = scanOutDeclarations(target)
-        const freeReplacement: string[] = findMain(replacement)
+        const freeReplacement: string[] = findMain(replacement, new Map())
         const boundReplacement: es.Identifier[] = scanOutDeclarations(replacement.body)
         for (const declaredId of declaredIds) {
           if (freeReplacement.includes(declaredId.name)) {
@@ -911,9 +911,9 @@ function substituteMain(
           replacement.type == 'ArrowFunctionExpression') &&
         !re.test(name.name)
       ) {
-        const freeTarget: string[] = findMain(target)
+        const freeTarget: string[] = findMain(target, new Map())
         const declaredIds: es.Identifier[] = scanOutDeclarations(target)
-        const freeReplacement: string[] = findMain(replacement)
+        const freeReplacement: string[] = findMain(replacement, new Map())
         const boundReplacement: es.Identifier[] = scanOutDeclarations(replacement.body)
         for (const declaredId of declaredIds) {
           if (freeReplacement.includes(declaredId.name)) {
@@ -1015,7 +1015,7 @@ function substituteMain(
         replacement.type == 'FunctionExpression' ||
         replacement.type == 'ArrowFunctionExpression'
       ) {
-        freeReplacement = findMain(replacement)
+        freeReplacement = findMain(replacement, new Map())
         boundReplacement = scanOutBoundNames(replacement.body)
       }
       for (let i = 0; i < target.params.length; i++) {
@@ -1025,7 +1025,7 @@ function substituteMain(
           substedArrow.expression = target.body.type !== 'BlockStatement'
           return substedArrow
         }
-        const freeTarget = findMain(target)
+        const freeTarget = findMain(target, new Map())
         const boundTarget = scanOutBoundNames(target.body)
         if (param.type == 'Identifier') {
           if (freeReplacement.includes(param.name)) {
@@ -1232,9 +1232,12 @@ function apply(
     const arg = args[i]
 
     if (arg.type === 'ArrowFunctionExpression' || arg.type === 'FunctionExpression') {
-      const freeTarget: string[] = findMain(ast.arrowFunctionExpression(substedParams, substedBody))
+      const freeTarget: string[] = findMain(
+        ast.arrowFunctionExpression(substedParams, substedBody),
+        new Map()
+      )
       const declaredIds: es.Identifier[] = substedParams as es.Identifier[]
-      const freeReplacement: string[] = findMain(arg)
+      const freeReplacement: string[] = findMain(arg, new Map())
       const boundReplacement: es.Identifier[] = scanOutDeclarations(arg.body)
       for (const declaredId of declaredIds) {
         if (freeReplacement.includes(declaredId.name)) {
