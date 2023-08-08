@@ -24,6 +24,9 @@ Interpretation of Computer Programs, JavaScript Adaptation
 
 - node: known working version: v16.14.0
 
+- python: On MacBook Pro with chip Apple M1 Pro, use python 3.10.12. Here is
+[the correct way to set Python 3 as default on a Mac](https://opensource.com/article/19/5/python-3-default-mac).
+
 # Usage
 
 To build,
