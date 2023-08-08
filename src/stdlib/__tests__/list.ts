@@ -246,6 +246,47 @@ test('list_to_string', () => {
   ).toMatchInlineSnapshot(`"[1,[2,[3,null]]]"`)
 })
 
+describe('accumulate', () => {
+  test('works properly', () => {
+    return expectResult(
+      stripIndent`
+      accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));
+    `,
+      { chapter: Chapter.SOURCE_2, native: true }
+    ).toMatchInlineSnapshot(`10`)
+  })
+
+  it('works from right to left', () => {
+    return expectResult(
+      stripIndent`
+      accumulate((curr, acc) => curr + acc, '1', list('4','3','2'));`,
+      { chapter: Chapter.SOURCE_2, native: true }
+    ).toMatchInlineSnapshot('"4321"')
+  })
+})
+
+describe('length', () => {
+  test('works with populated lists', () => {
+    return expectResult(
+      stripIndent`
+      const xs = list(1,2,3,4);
+      length(xs);
+      `,
+      { chapter: Chapter.SOURCE_2, native: true }
+    ).toMatchInlineSnapshot('4')
+  })
+
+  test('works with empty lists', () => {
+    return expectResult(
+      stripIndent`
+      const xs = list();
+      length(xs);
+      `,
+      { chapter: Chapter.SOURCE_2, native: true }
+    ).toMatchInlineSnapshot('0')
+  })
+})
+
 // assoc removed from Source
 test.skip('assoc', () => {
   return expectResult(
