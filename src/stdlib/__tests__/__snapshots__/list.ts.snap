@@ -286,6 +286,32 @@ Object {
 }
 `;
 
+exports[`accumulate works from right to left: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "accumulate((curr, acc) => curr + acc, '1', list('4','3','2'));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "4321",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`accumulate works properly: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 10,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`accumulate: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -784,6 +810,34 @@ Object {
   "numErrors": 0,
   "parsedErrors": "",
   "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`length works with empty lists: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs = list();
+length(xs);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`length works with populated lists: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const xs = list(1,2,3,4);
+length(xs);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 4,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

@@ -27,7 +27,7 @@ export function pair<H, T>(x: H, xs: T): Pair<H, T> {
 
 // is_pair returns true iff arg is a two-element array
 // LOW-LEVEL FUNCTION, NOT SOURCE
-export function is_pair(x: any) {
+export function is_pair(x: any): x is Pair<any, any> {
   return array_test(x) && x.length === 2
 }
 
@@ -55,7 +55,7 @@ export function tail(xs: any) {
 
 // is_null returns true if arg is exactly null
 // LOW-LEVEL FUNCTION, NOT SOURCE
-export function is_null(xs: List) {
+export function is_null(xs: List): xs is null {
   return xs === null
 }
 
@@ -71,7 +71,7 @@ export function list(...elements: any[]): List {
 
 // recurses down the list and checks that it ends with the empty list null
 // LOW-LEVEL FUNCTION, NOT SOURCE
-export function is_list(xs: List) {
+export function is_list(xs: List): xs is List {
   while (is_pair(xs)) {
     xs = tail(xs)
   }
@@ -129,14 +129,20 @@ export function set_tail(xs: any, x: any) {
   }
 }
 
-export function accumulate<T, U>(acc: (each: T, result: U) => any, init: U, xs: List): U {
-  const recurser = (xs: List, result: U): U => {
-    if (is_null(xs)) return result
-
-    return recurser(tail(xs), acc(head(xs), result))
+/**
+ * Accumulate applies given operation op to elements of a list
+ * in a right-to-left order, first apply op to the last element
+ * and an initial element, resulting in r1, then to the second-last
+ * element and r1, resulting in r2, etc, and finally to the first element
+ * and r_n-1, where n is the length of the list. `accumulate(op,zero,list(1,2,3))`
+ * results in `op(1, op(2, op(3, zero)))`
+ */
+export function accumulate<T, U>(op: (each: T, result: U) => U, initial: U, sequence: List): U {
+  // Use CPS to prevent stack overflow
+  function $accumulate(xs: typeof sequence, cont: (each: U) => U): U {
+    return is_null(xs) ? cont(initial) : $accumulate(tail(xs), x => cont(op(head(xs), x)))
   }
-
-  return recurser(xs, init)
+  return $accumulate(sequence, x => x)
 }
 
 export function length(xs: List): number {
