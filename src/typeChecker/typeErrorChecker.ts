@@ -11,6 +11,7 @@ import {
   InvalidIndexTypeError,
   InvalidNumberOfArgumentsTypeError,
   InvalidNumberOfTypeArgumentsForGenericTypeError,
+  NameNotFoundInModuleError,
   TypeAliasNameNotAllowedError,
   TypecastError,
   TypeMismatchError,
@@ -39,6 +40,7 @@ import {
 } from '../types'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
+import { runeTypeDeclarations } from './runeTypes'
 import * as tsEs from './tsESTree'
 import {
   formatTypeString,
@@ -547,21 +549,75 @@ function handleImportDeclarations(node: tsEs.Program) {
   if (importStmts.length === 0) {
     return
   }
-  const modules = memoizedGetModuleManifest()
-  const moduleList = Object.keys(modules)
+  const moduleList = Object.keys(memoizedGetModuleManifest())
+  const importedModuleTypesTextMap: Record<string, string> = {}
+
   importStmts.forEach(stmt => {
     // Source only uses strings for import source value
     const moduleName = stmt.source.value as string
+
+    // Module not found
     if (!moduleList.includes(moduleName)) {
       context.errors.push(new ModuleNotFoundError(moduleName, stmt))
+      // Set all imported names to be of type any to prevent further typecheck errors
+      stmt.specifiers.map(spec => {
+        if (spec.type !== 'ImportSpecifier') {
+          throw new TypecheckError(stmt, 'Unknown specifier type')
+        }
+        setType(spec.local.name, tAny, env)
+      })
+      return
     }
-    stmt.specifiers.map(spec => {
+
+    // TODO: Add logic for fetching module type declarations map from modules repo
+    // after the modules have been properly typed on modules repo.
+    // runeTypes.ts is currently a temporary file added to js-slang as a proof of concept;
+    // the file should be deleted once the module types fetching system has been properly implemented
+    const moduleTypesTextMap = moduleName === 'rune' ? runeTypeDeclarations : undefined
+
+    // Module has no types
+    if (!moduleTypesTextMap) {
+      // Set all imported names to be of type any
+      // TODO: Consider switching to 'Module not supported' error after more modules have been typed
+      stmt.specifiers.map(spec => {
+        if (spec.type !== 'ImportSpecifier') {
+          throw new TypecheckError(stmt, 'Unknown specifier type')
+        }
+        setType(spec.local.name, tAny, env)
+      })
+      return
+    }
+
+    // Add prelude for module, which contains types that are shared by
+    // multiple variables and functions in the module
+    if (!importedModuleTypesTextMap[moduleName]) {
+      importedModuleTypesTextMap[moduleName] = moduleTypesTextMap.prelude
+    }
+
+    stmt.specifiers.forEach(spec => {
       if (spec.type !== 'ImportSpecifier') {
         throw new TypecheckError(stmt, 'Unknown specifier type')
       }
 
-      setType(spec.local.name, tAny, env)
+      const importedName = spec.local.name
+      const importedType = moduleTypesTextMap[importedName]
+      if (!importedType) {
+        context.errors.push(new NameNotFoundInModuleError(stmt, moduleName, importedName))
+        return
+      }
+
+      importedModuleTypesTextMap[moduleName] =
+        importedModuleTypesTextMap[moduleName] + '\n' + importedType
     })
+  })
+
+  // Add module types to type environment
+  Object.values(importedModuleTypesTextMap).forEach(typesText => {
+    const parsedModuleTypes = babelParse(typesText, {
+      sourceType: 'module',
+      plugins: ['typescript', 'estree']
+    }).program as unknown as tsEs.Program
+    typeCheckAndReturnType(parsedModuleTypes)
   })
 }
 
