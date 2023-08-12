@@ -40,7 +40,7 @@
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
-    "gpu.js": "^2.10.4",
+    "gpu.js": "^2.16.0",
     "js-base64": "^3.7.5",
     "lodash": "^4.17.20",
     "node-getopt": "^0.3.2",
