@@ -387,7 +387,8 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
           return tStream(elementType)
         }
       }
-      const calleeType = typeCheckAndReturnType(callee)
+      // Copy of callee type is made so that the type saved in the type environment does not change
+      const calleeType = cloneDeep(typeCheckAndReturnType(callee))
       if (calleeType.kind !== 'function') {
         if (calleeType.kind !== 'primitive' || calleeType.name !== 'any') {
           context.errors.push(new TypeNotCallableError(node, formatTypeString(calleeType)))
@@ -857,7 +858,9 @@ function getTypeVariableMappings(
   expectedType: Type
 ): [string, Type][] {
   // If type variable mapping is found, terminate early
-  if (expectedType.kind === 'variable') {
+  // note that the expected type is only a type variable
+  // if there is no type alias with the same name already saved in the type env
+  if (expectedType.kind === 'variable' && !lookupTypeAlias(expectedType.name, env)) {
     return [[expectedType.name, actualType]]
   }
   // If actual type is a type reference, expand type first
