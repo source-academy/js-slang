@@ -1016,8 +1016,8 @@ describe('import statements', () => {
     )
   })
 
-  it('defaults to any for all imports', () => {
-    const code = `import { show, heart } from 'rune';
+  it('throws error if module does not exist', () => {
+    const code = `import { show, heart } from 'doesnotexist';
       show(heart);
       heart(show);
       const x1: string = heart;
@@ -1025,7 +1025,45 @@ describe('import statements', () => {
     `
 
     parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 1: Module \\"doesnotexist\\" not found."`
+    )
+  })
+
+  it('defaults to any for modules without types', () => {
+    const code = `import { sine_sound } from 'sound';
+      sine_sound(440, 5);
+      sine_sound('440', '5');
+    `
+
+    parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+  })
+
+  it('throws error if name does not exist in typed module', () => {
+    const code = `import { show, doesnotexist } from 'rune';
+      show(doesnotexist);
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(
+      `"Line 1: Module 'rune' has no exported member 'doesnotexist'."`
+    )
+  })
+
+  it('handles types correctly for typed modules', () => {
+    const code = `import { show, heart } from 'rune';
+      show(heart);
+      heart(show);
+      const x1: string = heart; // unfortunately passes typechecking since placeholder for Rune type is currently a string
+      const x2: number = show;
+    `
+
+    parse(code, context)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 3: Type 'Rune' is not callable.
+      Line 5: Type '(Rune) => Rune' is not assignable to type 'number'."
+    `)
   })
 })
 

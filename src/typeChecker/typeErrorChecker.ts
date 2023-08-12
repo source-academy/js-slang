@@ -604,6 +604,8 @@ function handleImportDeclarations(node: tsEs.Program) {
       const importedType = moduleTypesTextMap[importedName]
       if (!importedType) {
         context.errors.push(new NameNotFoundInModuleError(stmt, moduleName, importedName))
+        // Set imported name to be of type any to prevent further typecheck errors
+        setType(importedName, tAny, env)
         return
       }
 
