@@ -754,7 +754,7 @@ export function* evaluateProgram(
         }
 
         if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, node)
+          throw new UndefinedImportError(spec.imported.name, moduleName, spec)
         }
 
         declareIdentifier(context, spec.local.name, node)

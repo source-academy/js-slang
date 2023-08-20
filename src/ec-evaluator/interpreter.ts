@@ -7,7 +7,7 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { partition, uniqueId } from 'lodash'
+import { uniqueId } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
@@ -16,9 +16,11 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { UndefinedImportError } from '../modules/errors'
 import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
+import { ImportTransformOptions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
+import assert from '../utils/assert'
+import { isImportDeclaration } from '../utils/ast/typeGuards'
 import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -172,45 +174,54 @@ export function resumeEvaluate(context: Context) {
 function evaluateImports(
   program: es.Program,
   context: Context,
-  loadTabs: boolean,
-  checkImports: boolean
+  { loadTabs, checkImports }: ImportTransformOptions
 ) {
-  const [importNodes] = partition(program.body, ({ type }) => type === 'ImportDeclaration') as [
-    es.ImportDeclaration[],
-    es.Statement[]
-  ]
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
+  const importNodes = program.body.filter(isImportDeclaration)
 
   try {
-    for (const node of importNodes) {
+    const importNodeMap = importNodes.reduce((res, node) => {
       const moduleName = node.source.value
-      if (typeof moduleName !== 'string') {
-        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
+      assert(
+        typeof moduleName === 'string',
+        `ImportDeclarations should have string sources, got ${moduleName}`
+      )
+
+      if (!(moduleName in res)) {
+        res[moduleName] = []
       }
 
-      if (!(moduleName in moduleFunctions)) {
+      res[moduleName].push(node)
+      return res
+    }, {} as Record<string, es.ImportDeclaration[]>)
+
+    const environment = currentEnvironment(context)
+    Object.entries(importNodeMap).forEach(([moduleName, nodes]) => {
+      if (!(moduleName in context.moduleContexts)) {
         context.moduleContexts[moduleName] = {
           state: null,
-          tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
+          tabs: loadTabs ? loadModuleTabs(moduleName, nodes[0]) : null
         }
-        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
+      } else if (!context.moduleContexts[moduleName].tabs && loadTabs) {
+        context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName, nodes[0])
       }
 
-      const functions = moduleFunctions[moduleName]
-      const environment = currentEnvironment(context)
-      for (const spec of node.specifiers) {
-        if (spec.type !== 'ImportSpecifier') {
-          throw new Error(`Only ImportSpecifiers are supported, got: ${spec.type}`)
-        }
+      const functions = loadModuleBundle(moduleName, context, nodes[0])
+      for (const node of nodes) {
+        for (const spec of node.specifiers) {
+          assert(
+            spec.type === 'ImportSpecifier',
+            `Only ImportSpecifiers are supported, got: ${spec.type}`
+          )
 
-        if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, node)
-        }
+          if (checkImports && !(spec.imported.name in functions)) {
+            throw new UndefinedImportError(spec.imported.name, moduleName, spec)
+          }
 
-        declareIdentifier(context, spec.local.name, node, environment)
-        defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
+          declareIdentifier(context, spec.local.name, node, environment)
+          defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
+        }
       }
-    }
+    })
   } catch (error) {
     // console.log(error)
     handleRuntimeError(context, error)
@@ -335,7 +346,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (hasDeclarations(command) || hasImportDeclarations(command)) {
       const environment = createBlockEnvironment(context, 'programEnvironment')
       pushEnvironment(context, environment)
-      evaluateImports(command as unknown as es.Program, context, true, true)
+      evaluateImports(command as unknown as es.Program, context, {
+        wrapSourceModules: true,
+        checkImports: true,
+        loadTabs: true
+      })
       declareFunctionsAndVariables(context, command, environment)
     }
 
