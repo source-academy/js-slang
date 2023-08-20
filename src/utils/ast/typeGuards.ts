@@ -1,4 +1,7 @@
-import es from 'estree'
+import type * as es from 'estree'
+
+export const isImportDeclaration = (node: es.Program['body'][0]): node is es.ImportDeclaration =>
+  node.type === 'ImportDeclaration'
 
 // It is necessary to write this type guard like this as the 'type' of both
 // 'Directive' & 'ExpressionStatement' is 'ExpressionStatement'.
@@ -43,8 +46,4 @@ export function isDeclaration(node: es.Node): node is es.Declaration {
     node.type === 'FunctionDeclaration' ||
     node.type === 'ClassDeclaration'
   )
-}
-
-export function isImportDeclaration(node: es.Node): node is es.ImportDeclaration {
-  return node.type === 'ImportDeclaration'
 }
