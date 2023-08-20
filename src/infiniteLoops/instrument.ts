@@ -574,25 +574,34 @@ function trackLocations(program: es.Program) {
   })
 }
 
-function handleImports(programs: es.Program[]): [string, string[]] {
-  const [prefixes, imports] = programs.reduce(
-    ([prefix, moduleNames], program) => {
-      const [prefixToAdd, importsToAdd, otherNodes] = transformImportDeclarations(
+async function handleImports(programs: es.Program[]): Promise<[string, string[]]> {
+  const transformed = await Promise.all(
+    programs.map(async program => {
+      const [prefixToAdd, importsToAdd, otherNodes] = await transformImportDeclarations(
         program,
         new Set<string>(),
-        false
+        {
+          wrapSourceModules: false,
+          checkImports: false,
+          loadTabs: false
+        }
       )
       program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
-      prefix.push(prefixToAdd)
-
       const importedNames = importsToAdd.flatMap(node =>
         node.declarations.map(
           decl => ((decl.init as es.MemberExpression).object as es.Identifier).name
         )
       )
-      return [prefix, moduleNames.concat(importedNames)]
-    },
-    [[] as string[], [] as string[]]
+      return [prefixToAdd, importedNames] as [string, string[]]
+    })
+  )
+
+  const [prefixes, imports] = transformed.reduce(
+    ([prefixes, moduleNames], [prefix, importedNames]) => [
+      [...prefixes, prefix],
+      [...moduleNames, ...importedNames]
+    ],
+    [[], []] as [string[], string[]]
   )
 
   return [prefixes.join('\n'), [...new Set<string>(imports)]]
@@ -606,11 +615,11 @@ function handleImports(programs: es.Program[]): [string, string[]] {
  * @param builtins Names of builtin functions.
  * @returns code with instrumentations.
  */
-function instrument(
+async function instrument(
   previous: es.Program[],
   program: es.Program,
   builtins: Iterable<string>
-): string {
+): Promise<string> {
   const { builtinsId, functionsId, stateId } = globalIds
   const predefined = {}
   predefined[builtinsId] = builtinsId
@@ -618,7 +627,7 @@ function instrument(
   predefined[stateId] = stateId
   const innerProgram = { ...program }
 
-  const [prefix, moduleNames] = handleImports([program].concat(previous))
+  const [prefix, moduleNames] = await handleImports([program].concat(previous))
   for (const name of moduleNames) {
     predefined[name] = name
   }
