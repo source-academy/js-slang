@@ -1,6 +1,7 @@
-import * as es from 'estree'
+import type * as es from 'estree'
 import * as _ from 'lodash'
-import { RawSourceMap } from 'source-map'
+import { merge } from 'lodash'
+import type { RawSourceMap } from 'source-map'
 
 import { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
@@ -28,7 +29,7 @@ import {
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { Context, Scheduler, SourceError, Variant } from '../types'
+import { Context, RecursivePartial, Scheduler, SourceError, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
@@ -48,7 +49,12 @@ const DEFAULT_SOURCE_OPTIONS: IOptions = {
   useSubst: false,
   isPrelude: false,
   throwInfiniteLoops: true,
-  envSteps: -1
+  envSteps: -1,
+  importOptions: {
+    wrapSourceModules: true,
+    checkImports: true,
+    loadTabs: true
+  }
 }
 
 let previousCode: {
@@ -80,12 +86,12 @@ function runConcurrent(program: es.Program, context: Context, options: IOptions)
   }
 }
 
-function runSubstitution(
+async function runSubstitution(
   program: es.Program,
   context: Context,
   options: IOptions
 ): Promise<Result> {
-  const steps = getEvaluationSteps(program, context, options.stepLimit)
+  const steps = await getEvaluationSteps(program, context, options)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
@@ -100,11 +106,11 @@ function runSubstitution(
       function: callee(redex, context)
     })
   }
-  return Promise.resolve({
+  return {
     status: 'finished',
     context,
     value: redexedSteps
-  })
+  }
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
@@ -142,7 +148,7 @@ async function runNative(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    appendModulesToContext(transpiledProgram, context)
+    await appendModulesToContext(transpiledProgram, context)
 
     switch (context.variant) {
       case Variant.GPU:
@@ -153,7 +159,11 @@ async function runNative(
         break
     }
 
-    ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
+    ;({ transpiled, sourceMapJson } = await transpile(
+      transpiledProgram,
+      context,
+      options.importOptions
+    ))
     let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
@@ -172,7 +182,10 @@ async function runNative(
   } catch (error) {
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-      const detectedInfiniteLoop = testForInfiniteLoop(program, context.previousPrograms.slice(1))
+      const detectedInfiniteLoop = await testForInfiniteLoop(
+        program,
+        context.previousPrograms.slice(1)
+      )
       if (detectedInfiniteLoop !== undefined) {
         if (options.throwInfiniteLoops) {
           context.errors.push(detectedInfiniteLoop)
@@ -217,9 +230,9 @@ export async function sourceRunner(
   program: es.Program,
   context: Context,
   isVerboseErrorsEnabled: boolean,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
-  const theOptions: IOptions = { ...DEFAULT_SOURCE_OPTIONS, ...options }
+  const theOptions: IOptions = merge(DEFAULT_SOURCE_OPTIONS, options)
   context.variant = determineVariant(context, options)
 
   validateAndAnnotate(program, context)
@@ -238,7 +251,7 @@ export async function sourceRunner(
   determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
 
   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-    return await fullJSRunner(program, context, theOptions)
+    return await fullJSRunner(program, context, theOptions.importOptions)
   }
 
   // All runners after this point evaluate the prelude.
@@ -279,7 +292,7 @@ export async function sourceFilesRunner(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {

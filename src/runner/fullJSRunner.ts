@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
-import * as es from 'estree'
+import type * as es from 'estree'
 import { RawSourceMap } from 'source-map'
 
-import { IOptions, Result } from '..'
+import type { Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { hoistAndMergeImports } from '../localImports/transformers/hoistAndMergeImports'
+import { ImportTransformOptions } from '../modules/moduleTypes'
 import { getRequireProvider, RequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'
 import { evallerReplacer, getBuiltins, transpile } from '../transpiler/transpiler'
@@ -49,7 +50,7 @@ function containsPrevEval(context: Context): boolean {
 export async function fullJSRunner(
   program: es.Program,
   context: Context,
-  options: Partial<IOptions> = {}
+  importOptions: ImportTransformOptions
 ): Promise<Result> {
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context
@@ -63,7 +64,7 @@ export async function fullJSRunner(
 
   // modules
   hoistAndMergeImports(program)
-  appendModulesToContext(program, context)
+  await appendModulesToContext(program, context)
 
   // evaluate and create a separate block for preludes and builtins
   const preEvalProgram: es.Program = create.program([
@@ -80,12 +81,12 @@ export async function fullJSRunner(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    ;({ transpiled, sourceMapJson } = transpile(program, context))
-    return Promise.resolve({
+    ;({ transpiled, sourceMapJson } = await transpile(program, context, importOptions))
+    return {
       status: 'finished',
       context,
       value: await fullJSEval(transpiled, requireProvider, context.nativeStorage)
-    })
+    }
   } catch (error) {
     context.errors.push(
       error instanceof RuntimeSourceError ? error : await toSourceError(error, sourceMapJson)

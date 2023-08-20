@@ -5,7 +5,9 @@ import { IOptions, Result } from '..'
 import { loadModuleTabs } from '../modules/moduleLoader'
 import { parseAt } from '../parser/utils'
 import { areBreakpointsSet } from '../stdlib/inspector'
-import { Context, Variant } from '../types'
+import { Context, RecursivePartial, Variant } from '../types'
+import assert from '../utils/assert'
+import { isImportDeclaration } from '../utils/ast/typeGuards'
 import { simple } from '../utils/walkers'
 
 // Context Utils
@@ -22,7 +24,7 @@ import { simple } from '../utils/walkers'
  *
  * @returns The variant that the program is to be run in
  */
-export function determineVariant(context: Context, options: Partial<IOptions>): Variant {
+export function determineVariant(context: Context, options: RecursivePartial<IOptions>): Variant {
   if (options.variant) {
     return options.variant
   } else {
@@ -88,21 +90,31 @@ export function determineExecutionMethod(
  * @param program AST of program to be ran
  * @param context The context of the program
  */
-export function appendModulesToContext(program: Program, context: Context): void {
-  for (const node of program.body) {
-    if (node.type !== 'ImportDeclaration') break
+export async function appendModulesToContext(program: Program, context: Context) {
+  const importNodes = program.body.filter(isImportDeclaration)
+  const modulesToImport = importNodes.reduce((res, node) => {
     const moduleName = (node.source.value as string).trim()
+    assert(
+      typeof moduleName === 'string',
+      `Expected ImportDeclaration to have a source of type string, got ${moduleName}`
+    )
+    res.add(moduleName)
+    return res
+  }, new Set<string>())
 
-    // Load the module's tabs
-    if (!(moduleName in context.moduleContexts)) {
-      context.moduleContexts[moduleName] = {
-        state: null,
-        tabs: loadModuleTabs(moduleName)
+  await Promise.all(
+    [...modulesToImport].map(async moduleName => {
+      // Load the module's tabs
+      if (!(moduleName in context.moduleContexts)) {
+        context.moduleContexts[moduleName] = {
+          state: null,
+          tabs: loadModuleTabs(moduleName)
+        }
+      } else if (context.moduleContexts[moduleName].tabs === null) {
+        context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName)
       }
-    } else if (context.moduleContexts[moduleName].tabs === null) {
-      context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName)
-    }
-  }
+    })
+  )
 }
 
 // AST Utils
