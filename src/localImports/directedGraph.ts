@@ -1,3 +1,5 @@
+import assert from '../utils/assert'
+
 /**
  * The result of attempting to find a topological ordering
  * of nodes on a DirectedGraph.
@@ -113,9 +115,10 @@ export class DirectedGraph {
     // all nodes have an in-degree of 0 after running Kahn's algorithm.
     // This in turn implies that Kahn's algorithm was able to find a
     // valid topological ordering & that the graph contains no cycles.
-    if (startingNodeInCycle === null) {
-      throw new Error('There are no cycles in this graph. This should never happen.')
-    }
+    assert(
+      startingNodeInCycle !== null,
+      'There are no cycles in this graph. This should never happen.'
+    )
 
     const cycle = [startingNodeInCycle]
     // Then, we keep picking arbitrary nodes with non-zero in-degrees until
@@ -132,9 +135,10 @@ export class DirectedGraph {
       // An in-degree of 0 implies that the node is not part of a cycle,
       // which is a contradiction since the current node was picked because
       // it is part of a cycle.
-      if (neighbours.size === 0) {
-        throw new Error(`Node '${currentNode}' has no incoming edges. This should never happen.`)
-      }
+      assert(
+        neighbours.size > 0,
+        `Node '${currentNode}' has no incoming edges. This should never happen.`
+      )
 
       let nextNodeInCycle: string | null = null
       for (const neighbour of neighbours) {
@@ -146,11 +150,10 @@ export class DirectedGraph {
       // By the invariant stated above, if the current node is part of a cycle,
       // then one of its neighbours must also be part of the same cycle. This
       // is because a cycle contains at least 2 nodes.
-      if (nextNodeInCycle === null) {
-        throw new Error(
-          `None of the neighbours of node '${currentNode}' are part of the same cycle. This should never happen.`
-        )
-      }
+      assert(
+        nextNodeInCycle !== null,
+        `None of the neighbours of node '${currentNode}' are part of the same cycle. This should never happen.`
+      )
 
       // If the next node we pick is already part of the cycle,
       // we drop all elements before the first instance of the

@@ -1,10 +1,12 @@
 import es from 'estree'
-import * as path from 'path'
+import { posix as pathlib } from 'path'
 
 import { CannotFindModuleError, CircularImportError } from '../errors/localImportErrors'
 import { parse } from '../parser/parser'
 import { AcornOptions } from '../parser/types'
 import { Context } from '../types'
+import assert from '../utils/assert'
+import { isImportDeclaration, isModuleDeclaration } from '../utils/ast/typeGuards'
 import { isIdentifier } from '../utils/rttc'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import { DirectedGraph } from './directedGraph'
@@ -23,7 +25,6 @@ import {
   getInvokedFunctionResultVariableNameToImportSpecifiersMap,
   transformProgramToFunctionDeclaration
 } from './transformers/transformProgramToFunctionDeclaration'
-import { isImportDeclaration, isModuleDeclaration } from './typeGuards'
 
 /**
  * Returns all absolute local module paths which should be imported.
@@ -39,11 +40,11 @@ export const getImportedLocalModulePaths = (
   program: es.Program,
   currentFilePath: string
 ): Set<string> => {
-  if (!path.isAbsolute(currentFilePath)) {
+  if (!pathlib.isAbsolute(currentFilePath)) {
     throw new Error(`Current file path '${currentFilePath}' is not absolute.`)
   }
 
-  const baseFilePath = path.resolve(currentFilePath, '..')
+  const baseFilePath = pathlib.resolve(currentFilePath, '..')
   const importedLocalModuleNames: Set<string> = new Set()
   const importDeclarations = program.body.filter(isImportDeclaration)
   importDeclarations.forEach((importDeclaration: es.ImportDeclaration): void => {
@@ -52,7 +53,7 @@ export const getImportedLocalModulePaths = (
       throw new Error('Module names must be strings.')
     }
     if (!isSourceModule(modulePath)) {
-      const absoluteModulePath = path.resolve(baseFilePath, modulePath)
+      const absoluteModulePath = pathlib.resolve(baseFilePath, modulePath)
       importedLocalModuleNames.add(absoluteModulePath)
     }
   })
@@ -192,7 +193,7 @@ const preprocessFileImports = (
   // We want to operate on the entrypoint program to get the eventual
   // preprocessed program.
   const entrypointProgram = programs[entrypointFilePath]
-  const entrypointDirPath = path.resolve(entrypointFilePath, '..')
+  const entrypointDirPath = pathlib.resolve(entrypointFilePath, '..')
 
   // Create variables to hold the imported statements.
   const entrypointProgramModuleDeclarations = entrypointProgram.body.filter(isModuleDeclaration)
@@ -218,11 +219,10 @@ const preprocessFileImports = (
 
     const functionDeclaration = transformProgramToFunctionDeclaration(program, filePath)
     const functionName = functionDeclaration.id?.name
-    if (functionName === undefined) {
-      throw new Error(
-        'A transformed function declaration is missing its name. This should never happen.'
-      )
-    }
+    assert(
+      functionName !== undefined,
+      'A transformed function declaration is missing its name. This should never happen.'
+    )
 
     functionDeclarations[functionName] = functionDeclaration
   }
@@ -242,11 +242,10 @@ const preprocessFileImports = (
 
     const functionDeclaration = functionDeclarations[functionName]
     const functionParams = functionDeclaration.params.filter(isIdentifier)
-    if (functionParams.length !== functionDeclaration.params.length) {
-      throw new Error(
-        'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
-      )
-    }
+    assert(
+      functionParams.length === functionDeclaration.params.length,
+      'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
+    )
 
     const invokedFunctionResultVariableDeclaration = createInvokedFunctionResultVariableDeclaration(
       functionName,
