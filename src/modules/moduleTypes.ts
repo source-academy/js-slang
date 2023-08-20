@@ -1,6 +1,6 @@
 import type { RequireProvider } from './requireProvider'
 
-export type Modules = {
+export type ModuleManifest = {
   [module: string]: {
     tabs: string[]
   }
@@ -13,3 +13,9 @@ export type ModuleFunctions = {
 }
 
 export type ModuleDocumentation = Record<string, string>
+
+export type ImportTransformOptions = {
+  wrapSourceModules: boolean
+  loadTabs: boolean
+  checkImports: boolean
+}
