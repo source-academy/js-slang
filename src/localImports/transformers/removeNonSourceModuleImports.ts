@@ -1,5 +1,6 @@
 import es from 'estree'
 
+import assert from '../../utils/assert'
 import { ancestor } from '../../utils/walkers'
 import { isFilePath } from '../filePaths'
 
@@ -94,9 +95,7 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
   // have any specifiers (thus being functionally useless).
   ancestor(program, {
     ImportDeclaration(node: es.ImportDeclaration, _state: es.Node[], ancestors: es.Node[]): void {
-      if (typeof node.source.value !== 'string') {
-        throw new Error('Module names must be strings.')
-      }
+      assert(typeof node.source.value === 'string', 'Module names must be strings.')
       // ImportDeclaration nodes without any specifiers are functionally useless and are thus removed.
       if (node.specifiers.length === 0) {
         removeImportDeclaration(node, ancestors)

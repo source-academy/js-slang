@@ -1,9 +1,9 @@
 import es from 'estree'
 import * as _ from 'lodash'
 
+import { isImportDeclaration } from '../../utils/ast/typeGuards'
 import { createImportDeclaration, createLiteral } from '../constructors/baseConstructors'
 import { cloneAndStripImportSpecifier } from '../constructors/contextSpecificConstructors'
-import { isImportDeclaration } from '../typeGuards'
 
 /**
  * Hoists import declarations to the top of the program & merges duplicate
