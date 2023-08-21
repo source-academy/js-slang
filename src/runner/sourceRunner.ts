@@ -1,9 +1,8 @@
 import type * as es from 'estree'
 import * as _ from 'lodash'
-import { merge } from 'lodash'
 import type { RawSourceMap } from 'source-map'
 
-import { IOptions, Result } from '..'
+import type { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
 import { ECEResultPromise, evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
 import { ExceptionError } from '../errors/errors'
@@ -29,7 +28,7 @@ import {
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { Context, RecursivePartial, Scheduler, SourceError, Variant } from '../types'
+import { Context, RecursivePartial, Scheduler, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
@@ -37,9 +36,9 @@ import { runWithProgram } from '../vm/svml-machine'
 import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
-import { appendModulesToContext, determineVariant, resolvedErrorPromise } from './utils'
+import { determineVariant, resolvedErrorPromise } from './utils'
 
-const DEFAULT_SOURCE_OPTIONS: IOptions = {
+const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   scheduler: 'async',
   steps: 1000,
   stepLimit: -1,
@@ -148,8 +147,6 @@ async function runNative(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    await appendModulesToContext(transpiledProgram, context)
-
     switch (context.variant) {
       case Variant.GPU:
         transpileToGPU(transpiledProgram)
@@ -174,11 +171,11 @@ async function runNative(
       isPreviousCodeTimeoutError = false
     }
 
-    return Promise.resolve({
+    return {
       status: 'finished',
       context,
       value
-    })
+    }
   } catch (error) {
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
@@ -215,7 +212,7 @@ async function runNative(
       }
     }
 
-    const sourceError: SourceError = await toSourceError(error, sourceMapJson)
+    const sourceError = await toSourceError(error, sourceMapJson)
     context.errors.push(sourceError)
     return resolvedErrorPromise
   }
@@ -232,7 +229,9 @@ export async function sourceRunner(
   isVerboseErrorsEnabled: boolean,
   options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
-  const theOptions: IOptions = merge(DEFAULT_SOURCE_OPTIONS, options)
+  // It is necessary to make a copy of the DEFAULT_SOURCE_OPTIONS object because merge()
+  // will modify it rather than create a new object
+  const theOptions = _.merge({ ...DEFAULT_SOURCE_OPTIONS }, options)
   context.variant = determineVariant(context, options)
 
   validateAndAnnotate(program, context)

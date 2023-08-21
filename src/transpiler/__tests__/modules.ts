@@ -1,6 +1,5 @@
 import type { Identifier, Literal, MemberExpression, VariableDeclaration } from 'estree'
 
-// import type { FunctionLike, MockedFunction } from 'jest-mock'
 import { runInContext } from '../..'
 import { mockContext } from '../../mocks/context'
 import { UndefinedImportError } from '../../modules/errors'
@@ -9,10 +8,8 @@ import { Chapter, Value } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { transformImportDeclarations, transpile } from '../transpiler'
 
-// const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
-// const mockedModuleFile = asMock(memoizedGetModuleFile)
-
 jest.mock('../../modules/moduleLoaderAsync')
+jest.mock('../../modules/moduleLoader')
 
 test('Transform import declarations into variable declarations', async () => {
   const code = stripIndent`
@@ -51,7 +48,7 @@ test('Transpiler accounts for user variable names when transforming import state
     {
       loadTabs: false,
       wrapSourceModules: false,
-      checkImports: true
+      checkImports: false
     }
   )
 

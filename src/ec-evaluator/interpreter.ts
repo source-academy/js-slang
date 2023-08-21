@@ -15,7 +15,7 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { UndefinedImportError } from '../modules/errors'
-import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
+import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
 import { ImportTransformOptions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
@@ -196,15 +196,7 @@ function evaluateImports(
 
     const environment = currentEnvironment(context)
     Object.entries(importNodeMap).forEach(([moduleName, nodes]) => {
-      if (!(moduleName in context.moduleContexts)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadTabs ? loadModuleTabs(moduleName, nodes[0]) : null
-        }
-      } else if (!context.moduleContexts[moduleName].tabs && loadTabs) {
-        context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName, nodes[0])
-      }
-
+      initModuleContext(moduleName, context, loadTabs)
       const functions = loadModuleBundle(moduleName, context, nodes[0])
       for (const node of nodes) {
         for (const spec of node.specifiers) {

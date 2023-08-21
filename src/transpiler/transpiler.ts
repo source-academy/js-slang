@@ -9,11 +9,12 @@ import { UndefinedVariable } from '../errors/errors'
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import { ModuleInternalError, UndefinedImportError } from '../modules/errors'
 import {
+  initModuleContextAsync,
   memoizedGetModuleBundleAsync,
   memoizedGetModuleDocsAsync,
   memoizedGetModuleManifestAsync
 } from '../modules/moduleLoaderAsync'
-import { ImportTransformOptions } from '../modules/moduleTypes'
+import type { ImportTransformOptions } from '../modules/moduleTypes'
 import {
   AllowedDeclarations,
   Chapter,
@@ -57,7 +58,8 @@ export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
 export async function transformImportDeclarations(
   program: es.Program,
   usedIdentifiers: Set<string>,
-  { wrapSourceModules, checkImports }: ImportTransformOptions,
+  { wrapSourceModules, checkImports, loadTabs }: ImportTransformOptions,
+  context?: Context,
   nativeId?: es.Identifier,
   useThis: boolean = false
 ): Promise<[string, es.VariableDeclaration[], es.Program['body']]> {
@@ -91,7 +93,8 @@ export async function transformImportDeclarations(
 
       const [text, docs] = await Promise.all([
         memoizedGetModuleBundleAsync(moduleName),
-        memoizedGetModuleDocsAsync(moduleName)
+        memoizedGetModuleDocsAsync(moduleName),
+        context ? initModuleContextAsync(moduleName, context, loadTabs) : Promise.resolve()
       ])
 
       const namespaced = getUniqueId(usedIdentifiers, '__MODULE__')
@@ -108,7 +111,7 @@ export async function transformImportDeclarations(
         specifiers.map(spec => {
           assert(spec.type === 'ImportSpecifier', `Expected ImportSpecifier, got ${spec.type}`)
 
-          if (!(spec.imported.name in docs!)) {
+          if (checkImports && !(spec.imported.name in docs!)) {
             throw new UndefinedImportError(spec.imported.name, moduleName, spec)
           }
 
@@ -660,6 +663,7 @@ async function transpileToSource(
     program,
     usedIdentifiers,
     importOptions,
+    context,
     globalIds.native
   )
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
@@ -704,6 +708,7 @@ async function transpileToFullJS(
     program,
     usedIdentifiers,
     importOptions,
+    context,
     globalIds.native
   )
 

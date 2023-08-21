@@ -2,7 +2,7 @@ import type { Node } from 'estree'
 import { memoize } from 'lodash'
 
 import type { Context } from '..'
-import { TimeoutError, timeoutPromise } from '../utils/misc'
+import { PromiseTimeoutError, timeoutPromise } from '../utils/misc'
 import { wrapSourceModule } from '../utils/operators'
 import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from './errors'
 import { MODULES_STATIC_URL } from './moduleLoader'
@@ -27,7 +27,7 @@ export async function httpGetAsync(path: string, type: 'json' | 'text') {
     const promise = type === 'text' ? resp.text() : resp.json()
     return timeoutPromise(promise, 10000)
   } catch (error) {
-    if (error instanceof TypeError || error instanceof TimeoutError) {
+    if (error instanceof TypeError || error instanceof PromiseTimeoutError) {
       throw new ModuleConnectionError()
     }
     if (!(error instanceof ModuleConnectionError)) throw new ModuleInternalError(path, error)
@@ -106,5 +106,23 @@ export async function loadModuleBundleAsync(
   } catch (error) {
     // console.error("bundle error: ", error)
     throw new ModuleInternalError(moduleName, error, node)
+  }
+}
+
+/**
+ * Initialize module contexts and add UI tabs needed for modules to program context
+ *
+ * @param program AST of program to be ran
+ * @param context The context of the program
+ */
+export async function initModuleContextAsync(moduleName: string, context: Context, loadTabs: boolean) {
+  // Load the module's tabs
+  if (!(moduleName in context.moduleContexts)) {
+    context.moduleContexts[moduleName] = {
+      state: null,
+      tabs: loadTabs ? await loadModuleTabsAsync(moduleName) : null
+    }
+  } else if (context.moduleContexts[moduleName].tabs === null && loadTabs) {
+    context.moduleContexts[moduleName].tabs = await loadModuleTabsAsync(moduleName)
   }
 }

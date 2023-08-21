@@ -129,3 +129,14 @@ export function loadModuleDocs(path: string, node?: es.Node) {
     return null
   }
 }
+
+export function initModuleContext(moduleName: string, context: Context, loadTabs: boolean, node?: es.Node) {
+  if (!(moduleName in context.moduleContexts)) {
+    context.moduleContexts[moduleName] = {
+      state: null,
+      tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
+    }
+  } else if (context.moduleContexts[moduleName].tabs === null && loadTabs) {
+    context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName, node)
+  }
+}

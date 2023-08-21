@@ -15,7 +15,7 @@ import type { Context, NativeStorage } from '../types'
 import * as create from '../utils/astCreator'
 import { getIdentifiersInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
-import { appendModulesToContext, resolvedErrorPromise } from './utils'
+import { resolvedErrorPromise } from './utils'
 
 function fullJSEval(
   code: string,
@@ -64,7 +64,6 @@ export async function fullJSRunner(
 
   // modules
   hoistAndMergeImports(program)
-  await appendModulesToContext(program, context)
 
   // evaluate and create a separate block for preludes and builtins
   const preEvalProgram: es.Program = create.program([

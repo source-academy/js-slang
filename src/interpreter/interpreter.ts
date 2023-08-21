@@ -7,10 +7,11 @@ import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { UndefinedImportError } from '../modules/errors'
-import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
+import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
 import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
+import assert from '../utils/assert'
 import * as create from '../utils/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
@@ -734,24 +735,17 @@ export function* evaluateProgram(
       yield* visit(context, node)
 
       const moduleName = node.source.value
-      if (typeof moduleName !== 'string') {
-        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
-      }
+      assert(typeof moduleName === 'string',`ImportDeclarations should have string sources, got ${moduleName}`)
 
       if (!(moduleName in moduleFunctions)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
-        }
+        initModuleContext(moduleName, context, loadTabs)
         moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
       }
 
       const functions = moduleFunctions[moduleName]
 
       for (const spec of node.specifiers) {
-        if (spec.type !== 'ImportSpecifier') {
-          throw new Error(`Only Import Specifiers are supported, got ${spec.type}`)
-        }
+        assert(spec.type === 'ImportSpecifier', `Only Import Specifiers are supported, got ${spec.type}`)
 
         if (checkImports && !(spec.imported.name in functions)) {
           throw new UndefinedImportError(spec.imported.name, moduleName, spec)

@@ -584,7 +584,7 @@ async function handleImports(programs: es.Program[]): Promise<[string, string[]]
           wrapSourceModules: false,
           checkImports: false,
           loadTabs: false
-        }
+        },
       )
       program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
       const importedNames = importsToAdd.flatMap(node =>
@@ -618,7 +618,7 @@ async function handleImports(programs: es.Program[]): Promise<[string, string[]]
 async function instrument(
   previous: es.Program[],
   program: es.Program,
-  builtins: Iterable<string>
+  builtins: Iterable<string>,
 ): Promise<string> {
   const { builtinsId, functionsId, stateId } = globalIds
   const predefined = {}

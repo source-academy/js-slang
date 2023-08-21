@@ -5,7 +5,7 @@ import { partition } from 'lodash'
 import { type IOptions } from '..'
 import * as errors from '../errors/errors'
 import { UndefinedImportError } from '../modules/errors'
-import { loadModuleBundleAsync, loadModuleTabsAsync } from '../modules/moduleLoaderAsync'
+import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
 import type { ImportTransformOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
 import {
@@ -3184,15 +3184,7 @@ async function evaluateImports(
   try {
     await Promise.all(
       Object.entries(importNodeMap).map(async ([moduleName, nodes]) => {
-        if (!(moduleName in context.moduleContexts)) {
-          context.moduleContexts[moduleName] = {
-            state: null,
-            tabs: loadTabs ? await loadModuleTabsAsync(moduleName) : null
-          }
-        } else if (!context.moduleContexts[moduleName].tabs && loadTabs) {
-          context.moduleContexts[moduleName].tabs = await loadModuleTabsAsync(moduleName)
-        }
-
+        await initModuleContextAsync(moduleName, context, loadTabs)
         const functions = await loadModuleBundleAsync(
           moduleName,
           context,
