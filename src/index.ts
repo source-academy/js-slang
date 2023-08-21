@@ -307,7 +307,7 @@ export function getTypeInformation(
 export async function runInContext(
   code: string,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   const defaultFilePath = '/default.js'
   const files: Partial<Record<string, string>> = {}
