@@ -4,5 +4,6 @@
   "printWidth": 100,
   "parser": "typescript",
   "trailingComma": "none",
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "endOfLine": "lf"
 }
