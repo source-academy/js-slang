@@ -2,12 +2,9 @@
 import { DebuggerStatement, Literal, Program } from 'estree'
 
 import { IOptions, Result } from '..'
-import { loadModuleTabs } from '../modules/moduleLoader'
 import { parseAt } from '../parser/utils'
 import { areBreakpointsSet } from '../stdlib/inspector'
 import { Context, RecursivePartial, Variant } from '../types'
-import assert from '../utils/assert'
-import { isImportDeclaration } from '../utils/ast/typeGuards'
 import { simple } from '../utils/walkers'
 
 // Context Utils
@@ -82,39 +79,6 @@ export function determineExecutionMethod(
   }
 
   context.executionMethod = isNativeRunnable ? 'native' : 'ec-evaluator'
-}
-
-/**
- * Add UI tabs needed for modules to program context
- *
- * @param program AST of program to be ran
- * @param context The context of the program
- */
-export async function appendModulesToContext(program: Program, context: Context) {
-  const importNodes = program.body.filter(isImportDeclaration)
-  const modulesToImport = importNodes.reduce((res, node) => {
-    const moduleName = (node.source.value as string).trim()
-    assert(
-      typeof moduleName === 'string',
-      `Expected ImportDeclaration to have a source of type string, got ${moduleName}`
-    )
-    res.add(moduleName)
-    return res
-  }, new Set<string>())
-
-  await Promise.all(
-    [...modulesToImport].map(async moduleName => {
-      // Load the module's tabs
-      if (!(moduleName in context.moduleContexts)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadModuleTabs(moduleName)
-        }
-      } else if (context.moduleContexts[moduleName].tabs === null) {
-        context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName)
-      }
-    })
-  )
 }
 
 // AST Utils
