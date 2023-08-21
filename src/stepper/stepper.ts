@@ -26,6 +26,7 @@ import {
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import {
+  getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getUniqueId
@@ -2507,7 +2508,7 @@ function jsTreeifyMain(
     },
 
     Literal: (target: es.Literal): es.Literal => {
-      if (typeof target.value === 'object') {
+      if (typeof target.value === 'object' && !(target.value === null)) {
         target.raw = objectToString(target.value)
       }
       return target
@@ -3238,6 +3239,9 @@ function checkForUndefinedVariables(program: es.Program, context: Context) {
   ])
   const globalIds = getNativeIds(program, usedIdentifiers)
 
+  const preludes = context.prelude
+    ? getFunctionDeclarationNamesInProgram(parse(context.prelude, context)!)
+    : new Set<String>()
   const builtins = context.nativeStorage.builtins
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
   function processBlock(node: es.Program | es.BlockStatement) {
@@ -3317,6 +3321,10 @@ function checkForUndefinedVariables(program: es.Program, context: Context) {
     }
     const isBuiltin = builtins.has(name)
     if (isBuiltin) {
+      continue
+    }
+    const isPrelude = preludes.has(name)
+    if (isPrelude) {
       continue
     }
     const isNativeId = nativeInternalNames.has(name)

@@ -91,7 +91,7 @@ function evaluateFunctionObject(node: substituterNodes, context: Context) {
 }
 
 export function objectToString(value: any): string {
-  if ('toReplString' in value) {
+  if (!(value === null) && 'toReplString' in value) {
     return value.toReplString()
   }
   return '[Object]'
