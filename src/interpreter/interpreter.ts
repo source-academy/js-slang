@@ -735,7 +735,10 @@ export function* evaluateProgram(
       yield* visit(context, node)
 
       const moduleName = node.source.value
-      assert(typeof moduleName === 'string',`ImportDeclarations should have string sources, got ${moduleName}`)
+      assert(
+        typeof moduleName === 'string',
+        `ImportDeclarations should have string sources, got ${moduleName}`
+      )
 
       if (!(moduleName in moduleFunctions)) {
         initModuleContext(moduleName, context, loadTabs)
@@ -745,7 +748,10 @@ export function* evaluateProgram(
       const functions = moduleFunctions[moduleName]
 
       for (const spec of node.specifiers) {
-        assert(spec.type === 'ImportSpecifier', `Only Import Specifiers are supported, got ${spec.type}`)
+        assert(
+          spec.type === 'ImportSpecifier',
+          `Only Import Specifiers are supported, got ${spec.type}`
+        )
 
         if (checkImports && !(spec.imported.name in functions)) {
           throw new UndefinedImportError(spec.imported.name, moduleName, spec)

@@ -1,8 +1,10 @@
-import { PromiseTimeoutError, timeoutPromise } from "../misc"
+import { PromiseTimeoutError, timeoutPromise } from '../misc'
 
 describe('test timeoutPromise', () => {
-  const timedResolvedPromise = (duration: number) => new Promise<void>((resolve) => setTimeout(resolve, duration))
-  const timedRejectedPromise = (duration: number) => new Promise<void>((_, reject) => setTimeout(() => reject(-1), duration))
+  const timedResolvedPromise = (duration: number) =>
+    new Promise<void>(resolve => setTimeout(resolve, duration))
+  const timedRejectedPromise = (duration: number) =>
+    new Promise<void>((_, reject) => setTimeout(() => reject(-1), duration))
 
   test('Regular timeouts', async () => {
     const promise = timeoutPromise(timedResolvedPromise(100), 200)

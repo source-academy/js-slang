@@ -115,7 +115,11 @@ export async function loadModuleBundleAsync(
  * @param program AST of program to be ran
  * @param context The context of the program
  */
-export async function initModuleContextAsync(moduleName: string, context: Context, loadTabs: boolean) {
+export async function initModuleContextAsync(
+  moduleName: string,
+  context: Context,
+  loadTabs: boolean
+) {
   // Load the module's tabs
   if (!(moduleName in context.moduleContexts)) {
     context.moduleContexts[moduleName] = {
