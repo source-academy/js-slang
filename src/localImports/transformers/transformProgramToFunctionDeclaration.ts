@@ -1,5 +1,5 @@
 import es from 'estree'
-import { posix as pathlib } from 'path'
+import * as posixPath from 'path/posix'
 
 import { defaultExportLookupName } from '../../stdlib/localImport.prelude'
 import assert from '../../utils/assert'
@@ -56,7 +56,7 @@ export const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
     // current file path to get the absolute file path of the file to
     // be imported. Since the absolute file path is guaranteed to be
     // unique, it is also the canonical file path.
-    const importFilePath = pathlib.resolve(currentDirPath, importSource)
+    const importFilePath = posixPath.resolve(currentDirPath, importSource)
     // Even though we limit the chars that can appear in Source file
     // paths, some chars in file paths (such as '/') cannot be used
     // in function names. As such, we substitute illegal chars with
@@ -292,7 +292,7 @@ export const transformProgramToFunctionDeclaration = (
   currentFilePath: string
 ): es.FunctionDeclaration => {
   const moduleDeclarations = program.body.filter(isModuleDeclaration)
-  const currentDirPath = pathlib.resolve(currentFilePath, '..')
+  const currentDirPath = posixPath.resolve(currentFilePath, '..')
 
   // Create variables to hold the imported statements.
   const invokedFunctionResultVariableNameToImportSpecifiersMap =
