@@ -3250,7 +3250,7 @@ export function getEvaluationSteps(
       reducedWithPath = reduceMain(reducedWithPath[0], context)
       i += 2
     }
-    if (!limitExceeded) {
+    if (!limitExceeded && steps.length > 0) {
       steps[steps.length - 1][2] = 'Evaluation complete'
     }
     return steps
