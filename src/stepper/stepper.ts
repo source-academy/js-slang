@@ -2508,7 +2508,7 @@ function jsTreeifyMain(
     },
 
     Literal: (target: es.Literal): es.Literal => {
-      if (typeof target.value === 'object' && !(target.value === null)) {
+      if (typeof target.value === 'object' && target.value !== null) {
         target.raw = objectToString(target.value)
       }
       return target

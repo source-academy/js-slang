@@ -184,6 +184,36 @@ test('Test unary and binary boolean operations', () => {
   `)
 })
 
+test('Test ternary operator', () => {
+  const code = `
+  1 + -1 === 0 ? false ? true : Infinity : undefined;
+  `
+  const program = parse(code, mockContext())!
+  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
+    "1 + -1 === 0 ? false ? true : Infinity : undefined;
+
+    1 + -1 === 0 ? false ? true : Infinity : undefined;
+
+    0 === 0 ? false ? true : Infinity : undefined;
+
+    0 === 0 ? false ? true : Infinity : undefined;
+
+    true ? false ? true : Infinity : undefined;
+
+    true ? false ? true : Infinity : undefined;
+
+    false ? true : Infinity;
+
+    false ? true : Infinity;
+
+    Infinity;
+
+    Infinity;
+    "
+  `)
+})
+
 test('Test basic function', () => {
   const code = `
   function f(n) {
