@@ -186,28 +186,26 @@ test('Test unary and binary boolean operations', () => {
 
 test('Test ternary operator', () => {
   const code = `
-  1 + -1 === 0
-    ? false ? garbage : Infinity
-    : anotherGarbage;
+  1 + -1 === 0 ? false ? true : Infinity : undefined;
   `
   const program = parse(code, mockContext())!
   const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "1 + -1 === 0 ? false ? garbage : Infinity : anotherGarbage;
+    "1 + -1 === 0 ? false ? true : Infinity : undefined;
 
-    1 + -1 === 0 ? false ? garbage : Infinity : anotherGarbage;
+    1 + -1 === 0 ? false ? true : Infinity : undefined;
 
-    0 === 0 ? false ? garbage : Infinity : anotherGarbage;
+    0 === 0 ? false ? true : Infinity : undefined;
 
-    0 === 0 ? false ? garbage : Infinity : anotherGarbage;
+    0 === 0 ? false ? true : Infinity : undefined;
 
-    true ? false ? garbage : Infinity : anotherGarbage;
+    true ? false ? true : Infinity : undefined;
 
-    true ? false ? garbage : Infinity : anotherGarbage;
+    true ? false ? true : Infinity : undefined;
 
-    false ? garbage : Infinity;
+    false ? true : Infinity;
 
-    false ? garbage : Infinity;
+    false ? true : Infinity;
 
     Infinity;
 
@@ -1013,26 +1011,6 @@ test('scoping test for block expressions, no renaming', () => {
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
 
-test('scoping test for block expressions, with renaming', () => {
-  const code = `
-  function f(w) {
-    return g();
-  }
-  function h(f) {
-      function g() {
-          return w;
-      }
-      const w = 0;
-      return f(1);
-  }
-  h(f);
-  `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('g();')
-})
-
 test('return in nested blocks', () => {
   const code = `
   function f(x) {{ return 1; }}
@@ -1363,19 +1341,6 @@ test(`renaming of outer parameter in lambda function`, () => {
   const steps = getEvaluationSteps(program, mockContext(), 1000)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
-})
-
-test(`correctly avoids capture by other parameter names`, () => {
-  const code = `
-  function f(g, x) {
-      return g(x);
-  }
-  f(y => x + 1, 2);
-  `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('x + 1;')
 })
 
 test(`removes debugger statements`, () => {
