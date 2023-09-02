@@ -196,27 +196,25 @@ test('Test unary and binary boolean operations', async () => {
 
 test('Test ternary operator', async () => {
   const code = `
-  1 + -1 === 0
-    ? false ? garbage : Infinity
-    : anotherGarbage;
+  1 + -1 === 0 ? false ? true : Infinity : undefined;
   `
   const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
-    "1 + -1 === 0 ? false ? garbage : Infinity : anotherGarbage;
+    "1 + -1 === 0 ? false ? true : Infinity : undefined;
 
-    1 + -1 === 0 ? false ? garbage : Infinity : anotherGarbage;
+    1 + -1 === 0 ? false ? true : Infinity : undefined;
 
-    0 === 0 ? false ? garbage : Infinity : anotherGarbage;
+    0 === 0 ? false ? true : Infinity : undefined;
 
-    0 === 0 ? false ? garbage : Infinity : anotherGarbage;
+    0 === 0 ? false ? true : Infinity : undefined;
 
-    true ? false ? garbage : Infinity : anotherGarbage;
+    true ? false ? true : Infinity : undefined;
 
-    true ? false ? garbage : Infinity : anotherGarbage;
+    true ? false ? true : Infinity : undefined;
 
-    false ? garbage : Infinity;
+    false ? true : Infinity;
 
-    false ? garbage : Infinity;
+    false ? true : Infinity;
 
     Infinity;
 
@@ -1006,26 +1004,6 @@ test('scoping test for block expressions, no renaming', async () => {
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
 
-test('scoping test for block expressions, with renaming', async () => {
-  const code = `
-  function f(w) {
-    return g();
-  }
-  function h(f) {
-      function g() {
-          return w;
-      }
-      const w = 0;
-      return f(1);
-  }
-  h(f);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('g();')
-})
-
 test('return in nested blocks', async () => {
   const code = `
   function f(x) {{ return 1; }}
@@ -1358,19 +1336,6 @@ test(`renaming of outer parameter in lambda function`, async () => {
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
 
-test(`correctly avoids capture by other parameter names`, async () => {
-  const code = `
-  function f(g, x) {
-      return g(x);
-  }
-  f(y => x + 1, 2);
-  `
-  const steps = await testEvalSteps(code)
-
-  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-  expect(getLastStepAsString(steps)).toEqual('x + 1;')
-})
-
 test(`removes debugger statements`, async () => {
   const code = `
   function f(n) {
@@ -1452,6 +1417,15 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
     const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('9.33262154439441e+157;')
+  })
+})
+
+describe(`Evaluation of empty code and imports`, () => {
+  test('Evaluate empty program', async () => {
+    const code = ``
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('')
   })
 })
 

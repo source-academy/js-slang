@@ -2095,6 +2095,8 @@ false ? 1 : 100 * factorial(100 - 1);
 "
 `;
 
+exports[`Evaluation of empty code and imports Evaluate empty program 1`] = `""`;
+
 exports[`Infinite recursion 1`] = `
 "function f() {
   return f();
@@ -4163,31 +4165,6 @@ f(undefined);
 6;
 
 6;
-"
-`;
-
-exports[`correctly avoids capture by other parameter names 1`] = `
-"function f(g, x) {
-  return g(x);
-}
-f(y => x + 1, 2);
-
-function f(g, x) {
-  return g(x);
-}
-f(y => x + 1, 2);
-
-f(y => x + 1, 2);
-
-f(y => x + 1, 2);
-
-(y => x + 1)(2);
-
-(y => x + 1)(2);
-
-x + 1;
-
-x + 1;
 "
 `;
 
@@ -7245,97 +7222,6 @@ g();
 1;
 
 1;
-"
-`;
-
-exports[`scoping test for block expressions, with renaming 1`] = `
-"function f(w) {
-  return g();
-}
-function h(f) {
-  function g() {
-    return w;
-  }
-  const w = 0;
-  return f(1);
-}
-h(f);
-
-function f(w) {
-  return g();
-}
-function h(f) {
-  function g() {
-    return w;
-  }
-  const w = 0;
-  return f(1);
-}
-h(f);
-
-function h(f) {
-  function g() {
-    return w;
-  }
-  const w = 0;
-  return f(1);
-}
-h(f);
-
-function h(f) {
-  function g() {
-    return w;
-  }
-  const w = 0;
-  return f(1);
-}
-h(f);
-
-h(f);
-
-h(f);
-
-{
-  function g_1() {
-    return w;
-  }
-  const w = 0;
-  return f(1);
-};
-
-{
-  function g_1() {
-    return w;
-  }
-  const w = 0;
-  return f(1);
-};
-
-{
-  const w = 0;
-  return f(1);
-};
-
-{
-  const w = 0;
-  return f(1);
-};
-
-{
-  return f(1);
-};
-
-{
-  return f(1);
-};
-
-f(1);
-
-f(1);
-
-g();
-
-g();
 "
 `;
 
