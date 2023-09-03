@@ -3383,8 +3383,11 @@ export function getEvaluationSteps(
       reducedWithPath = reduceMain(reducedWithPath[0], context)
       i += 2
     }
-    if (!limitExceeded) {
+    if (!limitExceeded && steps.length > 0) {
       steps[steps.length - 1][2] = 'Evaluation complete'
+    }
+    if (steps.length === 0) {
+      steps.push([reducedWithPath[0] as es.Program, [], 'Nothing to evaluate'])
     }
     return steps
   } catch (error) {

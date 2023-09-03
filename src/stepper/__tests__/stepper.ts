@@ -1433,6 +1433,16 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
   })
 })
 
+describe(`Evaluation of empty code and imports`, () => {
+  test('Evaluate empty program', () => {
+    const code = ``
+    const program = parse(code, mockContext())!
+    const steps = getEvaluationSteps(program, mockContext(), 1000)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('')
+  })
+})
+
 // describe(`#1223: Stepper: Import statements cause errors`, () => {
 //   test('import a module and invoke its functions', () => {
 //     const code = `
