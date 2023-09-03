@@ -12,6 +12,7 @@ import { ModuleDocumentation } from '../modules/moduleTypes'
 import { AllowedDeclarations, Chapter, Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/astCreator'
 import {
+  getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getUniqueId
@@ -678,6 +679,9 @@ function transpileToFullJS(
     globalIds.native
   )
 
+  getFunctionDeclarationNamesInProgram(program).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  )
   getGloballyDeclaredIdentifiers(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)
   )
