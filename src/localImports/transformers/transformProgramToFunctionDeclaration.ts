@@ -1,5 +1,5 @@
 import es from 'estree'
-import * as posixPath from 'path/posix'
+import { posix as posixPath } from 'path'
 
 import { defaultExportLookupName } from '../../stdlib/localImport.prelude'
 import assert from '../../utils/assert'
