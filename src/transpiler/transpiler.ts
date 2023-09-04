@@ -27,6 +27,7 @@ import assert from '../utils/assert'
 import { isImportDeclaration } from '../utils/ast/typeGuards'
 import * as create from '../utils/astCreator'
 import {
+  getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getUniqueId
@@ -712,6 +713,9 @@ async function transpileToFullJS(
     globalIds.native
   )
 
+  getFunctionDeclarationNamesInProgram(program).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  )
   getGloballyDeclaredIdentifiers(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)
   )
