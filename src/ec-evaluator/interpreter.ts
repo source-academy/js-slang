@@ -20,7 +20,7 @@ import { ImportTransformOptions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import assert from '../utils/assert'
-import { isImportDeclaration } from '../utils/ast/typeGuards'
+import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -176,23 +176,8 @@ function evaluateImports(
   context: Context,
   { loadTabs, checkImports }: ImportTransformOptions
 ) {
-  const importNodes = program.body.filter(isImportDeclaration)
-
   try {
-    const importNodeMap = importNodes.reduce((res, node) => {
-      const moduleName = node.source.value
-      assert(
-        typeof moduleName === 'string',
-        `ImportDeclarations should have string sources, got ${moduleName}`
-      )
-
-      if (!(moduleName in res)) {
-        res[moduleName] = []
-      }
-
-      res[moduleName].push(node)
-      return res
-    }, {} as Record<string, es.ImportDeclaration[]>)
+    const [importNodeMap] = filterImportDeclarations(program)
 
     const environment = currentEnvironment(context)
     Object.entries(importNodeMap).forEach(([moduleName, nodes]) => {

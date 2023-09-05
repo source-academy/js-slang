@@ -1,6 +1,5 @@
 import { generate } from 'astring'
 import type * as es from 'estree'
-import { partition } from 'lodash'
 
 import { type IOptions } from '..'
 import * as errors from '../errors/errors'
@@ -17,7 +16,7 @@ import {
   substituterNodes
 } from '../types'
 import assert from '../utils/assert'
-import { isImportDeclaration } from '../utils/ast/typeGuards'
+import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
 import {
   dummyBlockExpression,
@@ -3171,24 +3170,10 @@ async function evaluateImports(
   context: Context,
   { loadTabs, checkImports, wrapSourceModules }: ImportTransformOptions
 ) {
-  const [importNodes, otherNodes] = partition(program.body, isImportDeclaration)
-
-  const importNodeMap = importNodes.reduce((res, node) => {
-    const moduleName = node.source.value
-    assert(
-      typeof moduleName === 'string',
-      `ImportDeclarations should have string sources, got ${moduleName}`
-    )
-
-    if (!(moduleName in res)) {
-      res[moduleName] = []
-    }
-
-    res[moduleName].push(node)
-    return res
-  }, {} as Record<string, es.ImportDeclaration[]>)
+  const [importNodeMap, otherNodes] = filterImportDeclarations(program)
 
   try {
+    const environment = currentEnvironment(context)
     await Promise.all(
       Object.entries(importNodeMap).map(async ([moduleName, nodes]) => {
         await initModuleContextAsync(moduleName, context, loadTabs)
@@ -3198,7 +3183,6 @@ async function evaluateImports(
           wrapSourceModules,
           nodes[0]
         )
-        const environment = currentEnvironment(context)
         for (const node of nodes) {
           for (const spec of node.specifiers) {
             assert(
