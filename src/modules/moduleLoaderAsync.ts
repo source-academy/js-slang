@@ -8,6 +8,7 @@ import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from 
 import { MODULES_STATIC_URL } from './moduleLoader'
 import type { ModuleBundle, ModuleDocumentation, ModuleManifest } from './moduleTypes'
 import { getRequireProvider } from './requireProvider'
+import { evalRawTab } from './utils'
 
 export function httpGetAsync(path: string, type: 'json'): Promise<object>
 export function httpGetAsync(path: string, type: 'text'): Promise<string>
@@ -81,7 +82,7 @@ export async function loadModuleTabsAsync(moduleName: string, node?: Node) {
     moduleInfo.tabs.map(async path => {
       const rawTabFile = await memoizedGetModuleTabAsync(path)
       try {
-        return eval(rawTabFile)
+        return evalRawTab(rawTabFile)
       } catch (error) {
         // console.error('tab error:', error);
         throw new ModuleInternalError(path, error, node)
@@ -111,9 +112,6 @@ export async function loadModuleBundleAsync(
 
 /**
  * Initialize module contexts and add UI tabs needed for modules to program context
- *
- * @param program AST of program to be ran
- * @param context The context of the program
  */
 export async function initModuleContextAsync(
   moduleName: string,

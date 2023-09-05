@@ -182,4 +182,16 @@ describe('Test tab loading', () => {
     expect(call1Url).toEqual(`${MODULES_STATIC_URL}/tabs/Tab1.js`)
     expect(call2Url).toEqual(`${MODULES_STATIC_URL}/tabs/Tab2.js`)
   })
+
+  test('Able to handle tabs with export default declarations', async () => {
+    mockResponse(sampleManifest)
+    mockResponse(`export default require => ({ foo: () => 'foo' })`)
+    mockResponse(`require => ({ foo: () => 'foo' })`)
+    const [rawTab1, rawTab2] = await moduleLoader.loadModuleTabsAsync('one_module')
+    const tab1 = rawTab1(jest.fn())
+    expect(tab1.foo()).toEqual('foo')
+
+    const tab2 = rawTab2(jest.fn())
+    expect(tab2.foo()).toEqual('foo')
+  })
 })

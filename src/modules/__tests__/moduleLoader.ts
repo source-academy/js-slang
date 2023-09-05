@@ -183,4 +183,17 @@ describe('Testing modules/moduleLoader.ts in a jsdom environment', () => {
     expect(mockedXMLHttpRequest3.send).toHaveBeenCalledTimes(1)
     expect(mockedXMLHttpRequest3.send).toHaveBeenCalledWith(null)
   })
+
+  test('Able to load tabs with export default declarations', () => {
+    mockXMLHttpRequest({ responseText: `{ "valid_module": { "tabs": ["Tab1", "Tab2"] } }` })
+    mockXMLHttpRequest({ responseText: `export default require => ({ foo: () => 'foo' })` })
+    mockXMLHttpRequest({ responseText: `require => ({ foo: () => 'foo' })` })
+
+    const [rawTab1, rawTab2] = moduleLoader.loadModuleTabs('valid_module')
+    const tab1 = rawTab1(jest.fn())
+    expect(tab1.foo()).toEqual('foo')
+
+    const tab2 = rawTab2(jest.fn())
+    expect(tab2.foo()).toEqual('foo')
+  })
 })

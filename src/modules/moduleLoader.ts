@@ -11,6 +11,7 @@ import { Context } from '../types'
 import { wrapSourceModule } from '../utils/operators'
 import { ModuleBundle, ModuleDocumentation, ModuleFunctions, ModuleManifest } from './moduleTypes'
 import { getRequireProvider } from './requireProvider'
+import { evalRawTab } from './utils'
 
 // Supports both JSDom (Web Browser) environment and Node environment
 export const newHttpRequest = () =>
@@ -107,7 +108,7 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   return sideContentTabPaths.map(path => {
     const rawTabFile = memoizedGetModuleFile(path, 'tab')
     try {
-      return eval(rawTabFile)
+      return evalRawTab(rawTabFile)
     } catch (error) {
       // console.error('tab error:', error);
       throw new ModuleInternalError(path, error, node)
