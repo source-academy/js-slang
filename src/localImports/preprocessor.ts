@@ -1,5 +1,5 @@
 import es from 'estree'
-import * as posixPath from 'path/posix'
+import { posix as posixPath } from 'path'
 
 import { CannotFindModuleError, CircularImportError } from '../errors/localImportErrors'
 import { parse } from '../parser/parser'
