@@ -10,10 +10,15 @@ import { hoistAndMergeImports } from '../localImports/transformers/hoistAndMerge
 import { ImportTransformOptions } from '../modules/moduleTypes'
 import { getRequireProvider, RequireProvider } from '../modules/requireProvider'
 import { parse } from '../parser/parser'
-import { evallerReplacer, getBuiltins, transpile } from '../transpiler/transpiler'
+import {
+  evallerReplacer,
+  getBuiltins,
+  getGloballyDeclaredIdentifiers,
+  transpile
+} from '../transpiler/transpiler'
 import type { Context, NativeStorage } from '../types'
 import * as create from '../utils/astCreator'
-import { getIdentifiersInProgram } from '../utils/uniqueIds'
+import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
 
@@ -70,7 +75,10 @@ export async function fullJSRunner(
     ...preludeAndBuiltins,
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set())
   ])
-  getIdentifiersInProgram(preEvalProgram).forEach(id =>
+  getFunctionDeclarationNamesInProgram(preEvalProgram).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  )
+  getGloballyDeclaredIdentifiers(preEvalProgram).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)
   )
   const preEvalCode: string = generate(preEvalProgram)
