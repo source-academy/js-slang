@@ -1,10 +1,12 @@
 import es from 'estree'
-import * as posixPath from 'path/posix'
+import { posix as posixPath } from 'path'
 
 import { CannotFindModuleError, CircularImportError } from '../errors/localImportErrors'
 import { parse } from '../parser/parser'
 import { AcornOptions } from '../parser/types'
 import { Context } from '../types'
+import assert from '../utils/assert'
+import { isImportDeclaration, isModuleDeclaration } from '../utils/ast/typeGuards'
 import { isIdentifier } from '../utils/rttc'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import { DirectedGraph } from './directedGraph'
@@ -23,7 +25,6 @@ import {
   getInvokedFunctionResultVariableNameToImportSpecifiersMap,
   transformProgramToFunctionDeclaration
 } from './transformers/transformProgramToFunctionDeclaration'
-import { isImportDeclaration, isModuleDeclaration } from './typeGuards'
 
 /**
  * Returns all absolute local module paths which should be imported.
@@ -218,11 +219,10 @@ const preprocessFileImports = (
 
     const functionDeclaration = transformProgramToFunctionDeclaration(program, filePath)
     const functionName = functionDeclaration.id?.name
-    if (functionName === undefined) {
-      throw new Error(
-        'A transformed function declaration is missing its name. This should never happen.'
-      )
-    }
+    assert(
+      functionName !== undefined,
+      'A transformed function declaration is missing its name. This should never happen.'
+    )
 
     functionDeclarations[functionName] = functionDeclaration
   }
@@ -242,11 +242,10 @@ const preprocessFileImports = (
 
     const functionDeclaration = functionDeclarations[functionName]
     const functionParams = functionDeclaration.params.filter(isIdentifier)
-    if (functionParams.length !== functionDeclaration.params.length) {
-      throw new Error(
-        'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
-      )
-    }
+    assert(
+      functionParams.length === functionDeclaration.params.length,
+      'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
+    )
 
     const invokedFunctionResultVariableDeclaration = createInvokedFunctionResultVariableDeclaration(
       functionName,

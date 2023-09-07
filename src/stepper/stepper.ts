@@ -1,10 +1,11 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type * as es from 'estree'
 
+import { type IOptions } from '..'
 import * as errors from '../errors/errors'
 import { UndefinedImportError } from '../modules/errors'
-import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
+import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
+import type { ImportTransformOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
 import {
   BlockExpression,
@@ -14,6 +15,8 @@ import {
   FunctionDeclarationExpression,
   substituterNodes
 } from '../types'
+import assert from '../utils/assert'
+import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
 import {
   dummyBlockExpression,
@@ -3162,51 +3165,45 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
-function evaluateImports(
+async function evaluateImports(
   program: es.Program,
   context: Context,
-  loadTabs: boolean,
-  checkImports: boolean
+  { loadTabs, checkImports, wrapSourceModules }: ImportTransformOptions
 ) {
-  const importNodes = program.body.filter(
-    ({ type }) => type === 'ImportDeclaration'
-  ) as es.ImportDeclaration[]
-  program.body = program.body.filter(({ type }) => !(type === 'ImportDeclaration'))
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
+  const [importNodeMap, otherNodes] = filterImportDeclarations(program)
 
   try {
-    for (const node of importNodes) {
-      const moduleName = node.source.value
-      if (typeof moduleName !== 'string') {
-        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
-      }
+    const environment = currentEnvironment(context)
+    await Promise.all(
+      Object.entries(importNodeMap).map(async ([moduleName, nodes]) => {
+        await initModuleContextAsync(moduleName, context, loadTabs)
+        const functions = await loadModuleBundleAsync(
+          moduleName,
+          context,
+          wrapSourceModules,
+          nodes[0]
+        )
+        for (const node of nodes) {
+          for (const spec of node.specifiers) {
+            assert(
+              spec.type === 'ImportSpecifier',
+              `Only ImportSpecifiers are supported, got: ${spec.type}`
+            )
 
-      if (!(moduleName in moduleFunctions)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
+            if (checkImports && !(spec.imported.name in functions)) {
+              throw new UndefinedImportError(spec.imported.name, moduleName, spec)
+            }
+            declareIdentifier(context, spec.local.name, node, environment)
+            defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
+          }
         }
-        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
-      }
-
-      const functions = moduleFunctions[moduleName]
-      const environment = currentEnvironment(context)
-      for (const spec of node.specifiers) {
-        if (spec.type !== 'ImportSpecifier') {
-          throw new Error(`Only ImportSpecifiers are supported, got: ${spec.type}`)
-        }
-
-        if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, node)
-        }
-        declareIdentifier(context, spec.local.name, node, environment)
-        defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
-      }
-    }
+      })
+    )
   } catch (error) {
     // console.log(error)
     handleRuntimeError(context, error)
   }
+  program.body = otherNodes
 }
 
 const globalIdNames = [
@@ -3335,16 +3332,16 @@ function checkForUndefinedVariables(program: es.Program, context: Context) {
 }
 
 // the context here is for builtins
-export function getEvaluationSteps(
+export async function getEvaluationSteps(
   program: es.Program,
   context: Context,
-  stepLimit: number | undefined
-): [es.Program, string[][], string][] {
+  { importOptions, stepLimit }: Pick<IOptions, 'importOptions' | 'stepLimit'>
+): Promise<[es.Program, string[][], string][]> {
   const steps: [es.Program, string[][], string][] = []
   try {
     checkForUndefinedVariables(program, context)
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
-    evaluateImports(program, context, true, true)
+    await evaluateImports(program, context, importOptions)
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns

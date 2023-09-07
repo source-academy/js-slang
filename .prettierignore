@@ -1,2 +1,3 @@
 /src/scm-slang/
 /src/py-slang/
+/src/**/__tests__/**/__snapshots__

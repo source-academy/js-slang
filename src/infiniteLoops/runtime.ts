@@ -305,7 +305,10 @@ functions[FunctionNames.evalU] = sym.evaluateHybridUnary
  * @param previousProgramsStack Any code previously entered in the REPL & parsed into AST.
  * @returns SourceError if an infinite loop was detected, undefined otherwise.
  */
-export function testForInfiniteLoop(program: es.Program, previousProgramsStack: es.Program[]) {
+export async function testForInfiniteLoop(
+  program: es.Program,
+  previousProgramsStack: es.Program[]
+) {
   const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT, undefined, undefined)
   const prelude = parse(context.prelude as string, context) as es.Program
   context.prelude = null
@@ -313,7 +316,7 @@ export function testForInfiniteLoop(program: es.Program, previousProgramsStack: 
   const newBuiltins = prepareBuiltins(context.nativeStorage.builtins)
   const { builtinsId, functionsId, stateId } = InfiniteLoopRuntimeObjectNames
 
-  const instrumentedCode = instrument(previous, program, newBuiltins.keys())
+  const instrumentedCode = await instrument(previous, program, newBuiltins.keys())
   const state = new st.State()
 
   const sandboxedRun = new Function(
@@ -327,7 +330,7 @@ export function testForInfiniteLoop(program: es.Program, previousProgramsStack: 
   )
 
   try {
-    sandboxedRun(instrumentedCode, functions, state, newBuiltins, getRequireProvider(context))
+    await sandboxedRun(instrumentedCode, functions, state, newBuiltins, getRequireProvider(context))
   } catch (error) {
     if (error instanceof InfiniteLoopError) {
       if (state.lastLocation !== undefined) {

@@ -16,6 +16,7 @@ import {
   FuncDeclWithInferredTypeAnnotation,
   ModuleContext,
   NodeWithInferredType,
+  RecursivePartial,
   Result,
   SourceError,
   SVMProgram,
@@ -31,6 +32,7 @@ import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
 import { CannotFindModuleError } from './errors/localImportErrors'
 import { validateFilePath } from './localImports/filePaths'
 import preprocessFileImports from './localImports/preprocessor'
+import type { ImportTransformOptions } from './modules/moduleTypes'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
 import { decodeError, decodeValue } from './parser/scheme'
@@ -56,6 +58,8 @@ export interface IOptions {
   isPrelude: boolean
   throwInfiniteLoops: boolean
   envSteps: number
+
+  importOptions: ImportTransformOptions
 }
 
 // needed to work on browsers
@@ -303,7 +307,7 @@ export function getTypeInformation(
 export async function runInContext(
   code: string,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   const defaultFilePath = '/default.js'
   const files: Partial<Record<string, string>> = {}
@@ -315,7 +319,7 @@ export async function runFilesInContext(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
-  options: Partial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath)
@@ -340,7 +344,13 @@ export async function runFilesInContext(
     if (program === null) {
       return resolvedErrorPromise
     }
-    return fullJSRunner(program, context, options)
+    const fullImportOptions = {
+      loadTabs: true,
+      checkImports: false,
+      wrapSourceModules: false,
+      ...options.importOptions
+    }
+    return fullJSRunner(program, context, fullImportOptions)
   }
 
   if (context.chapter === Chapter.HTML) {

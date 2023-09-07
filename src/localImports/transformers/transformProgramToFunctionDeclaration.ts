@@ -1,7 +1,14 @@
 import es from 'estree'
-import * as posixPath from 'path/posix'
+import { posix as posixPath } from 'path'
 
 import { defaultExportLookupName } from '../../stdlib/localImport.prelude'
+import assert from '../../utils/assert'
+import {
+  isDeclaration,
+  isDirective,
+  isModuleDeclaration,
+  isStatement
+} from '../../utils/ast/typeGuards'
 import {
   createFunctionDeclaration,
   createIdentifier,
@@ -17,7 +24,6 @@ import {
   transformFilePathToValidFunctionName,
   transformFunctionNameToInvokedFunctionResultVariableName
 } from '../filePaths'
-import { isDeclaration, isDirective, isModuleDeclaration, isStatement } from '../typeGuards'
 import { isSourceModule } from './removeNonSourceModuleImports'
 
 type ImportSpecifier = es.ImportSpecifier | es.ImportDefaultSpecifier | es.ImportNamespaceSpecifier
@@ -34,11 +40,11 @@ export const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
       return
     }
     const importSource = node.source.value
-    if (typeof importSource !== 'string') {
-      throw new Error(
-        'Encountered an ImportDeclaration node with a non-string source. This should never occur.'
-      )
-    }
+    assert(
+      typeof importSource === 'string',
+      'Encountered an ImportDeclaration node with a non-string source. This should never occur.'
+    )
+
     // Only handle import declarations for non-Source modules.
     if (isSourceModule(importSource)) {
       return
@@ -89,18 +95,18 @@ export const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
 const getIdentifier = (node: es.Declaration): es.Identifier | null => {
   switch (node.type) {
     case 'FunctionDeclaration':
-      if (node.id === null) {
-        throw new Error(
-          'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-        )
-      }
+      assert(
+        node.id !== null,
+        'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+      )
       return node.id
     case 'VariableDeclaration':
       const id = node.declarations[0].id
       // In Source, variable names are Identifiers.
-      if (id.type !== 'Identifier') {
-        throw new Error(`Expected variable name to be an Identifier, but was ${id.type} instead.`)
-      }
+      assert(
+        id.type === 'Identifier',
+        `Expected variable name to be an Identifier, but was ${id.type} instead.`
+      )
       return id
     case 'ClassDeclaration':
       throw new Error('Exporting of class is not supported.')
@@ -163,11 +169,10 @@ const getDefaultExportExpression = (
     if (node.type !== 'ExportDefaultDeclaration') {
       return
     }
-    if (defaultExport !== null) {
-      // This should never occur because multiple default exports should have
-      // been caught by the Acorn parser when parsing into an AST.
-      throw new Error('Encountered multiple default exports!')
-    }
+    // This should never occur because multiple default exports should have
+    // been caught by the Acorn parser when parsing into an AST.
+    assert(defaultExport === null, 'Encountered multiple default exports!')
+
     if (isDeclaration(node.declaration)) {
       const identifier = getIdentifier(node.declaration)
       if (identifier === null) {

@@ -9,10 +9,10 @@ import { transpile } from '../transpiler'
  *  code being tested from being transformed into eval.
  *  Check for variables being stored back by looking at all the tests.
  */
-test('builtins do get prepended', () => {
+test('builtins do get prepended', async () => {
   const code = '"ensure_builtins";'
   const context = mockContext(Chapter.SOURCE_4)
-  const transpiled = transpile(parse(code, context)!, context).transpiled
+  const { transpiled } = await transpile(parse(code, context)!, context)
   // replace native[<number>] as they may be inconsistent
   const replacedNative = transpiled.replace(/native\[\d+]/g, 'native')
   // replace the line hiding globals as they may differ between environments
@@ -20,7 +20,7 @@ test('builtins do get prepended', () => {
   expect({ code, transpiled: replacedGlobalsLine }).toMatchSnapshot()
 })
 
-test('Ensure no name clashes', () => {
+test('Ensure no name clashes', async () => {
   const code = stripIndent`
     const boolOrErr = 1;
     boolOrErr[123] = 1;
@@ -32,7 +32,7 @@ test('Ensure no name clashes', () => {
     const native = 123;
   `
   const context = mockContext(Chapter.SOURCE_4)
-  const transpiled = transpile(parse(code, context)!, context).transpiled
+  const { transpiled } = await transpile(parse(code, context)!, context)
   const replacedNative = transpiled.replace(/native0\[\d+]/g, 'native')
   const replacedGlobalsLine = replacedNative.replace(/\n\(\(.*\)/, '\n(( <globals redacted> )')
   expect(replacedGlobalsLine).toMatchSnapshot()

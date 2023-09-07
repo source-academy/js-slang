@@ -1,8 +1,8 @@
-import * as es from 'estree'
+import type * as es from 'estree'
 
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
-import { Chapter, substituterNodes } from '../../types'
+import { Chapter, Context, substituterNodes } from '../../types'
 import { codify, getEvaluationSteps } from '../stepper'
 
 function getLastStepAsString(steps: [substituterNodes, string[][], string][]): string {
@@ -45,11 +45,12 @@ describe('Test codify works on non-circular abstract syntax graphs', () => {
 })
 
 describe('Test codify works on circular abstract syntax graphs', () => {
-  test('functions', () => {
+  test('functions', async () => {
     const code = `
     x => x();
   `
     const program = parse(code, mockContext())!
+
     const arrowFunctionExpression = ((program as es.Program).body[0] as es.ExpressionStatement)
       .expression as es.ArrowFunctionExpression
     const callExpression = arrowFunctionExpression.body as es.CallExpression
@@ -62,12 +63,25 @@ describe('Test codify works on circular abstract syntax graphs', () => {
 })
 
 // source 0
-test('Test basic substitution', () => {
+const testEvalSteps = (programStr: string, context?: Context) => {
+  context = context ?? mockContext()
+  const program = parse(programStr, context)!
+  const options = {
+    stepLimit: 1000,
+    importOptions: {
+      loadTabs: false,
+      wrapSourceModules: false,
+      checkImports: false
+    }
+  }
+  return getEvaluationSteps(program, context, options)
+}
+
+test('Test basic substitution', async () => {
   const code = `
     (1 + 2) * (3 + 4);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "(1 + 2) * (3 + 4);
 
@@ -88,13 +102,11 @@ test('Test basic substitution', () => {
   `)
 })
 
-test('Test binary operator error', () => {
+test('Test binary operator error', async () => {
   const code = `
     (1 + 2) * ('a' + 'string');
   `
-  const context = mockContext()
-  const program = parse(code, context)!
-  const steps = getEvaluationSteps(program, context, 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "(1 + 2) * ('a' + 'string');
 
@@ -111,13 +123,12 @@ test('Test binary operator error', () => {
   `)
 })
 
-test('Test two statement substitution', () => {
+test('Test two statement substitution', async () => {
   const code = `
     (1 + 2) * (3 + 4);
     3 * 5;
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(Chapter.SOURCE_4), 1000)
+  const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_4))
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "(1 + 2) * (3 + 4);
     3 * 5;
@@ -154,12 +165,11 @@ test('Test two statement substitution', () => {
   `)
 })
 
-test('Test unary and binary boolean operations', () => {
+test('Test unary and binary boolean operations', async () => {
   const code = `
   !!!true || true;
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "!!!true || true;
 
@@ -184,12 +194,11 @@ test('Test unary and binary boolean operations', () => {
   `)
 })
 
-test('Test ternary operator', () => {
+test('Test ternary operator', async () => {
   const code = `
   1 + -1 === 0 ? false ? true : Infinity : undefined;
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "1 + -1 === 0 ? false ? true : Infinity : undefined;
 
@@ -214,15 +223,14 @@ test('Test ternary operator', () => {
   `)
 })
 
-test('Test basic function', () => {
+test('Test basic function', async () => {
   const code = `
   function f(n) {
     return n;
   }
   f(5+1*6-40);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "function f(n) {
       return n;
@@ -257,15 +265,14 @@ test('Test basic function', () => {
   `)
 })
 
-test('Test basic bifunction', () => {
+test('Test basic bifunction', async () => {
   const code = `
   function f(n, m) {
     return n * m;
   }
   f(5+1*6-40, 2-5);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "function f(n, m) {
       return n * m;
@@ -308,7 +315,7 @@ test('Test basic bifunction', () => {
   `)
 })
 
-test('Test "recursive" function calls', () => {
+test('Test "recursive" function calls', async () => {
   const code = `
   function factorial(n) {
     return n === 0
@@ -317,8 +324,7 @@ test('Test "recursive" function calls', () => {
   }
   factorial(5);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "function factorial(n) {
       return n === 0 ? 1 : n * factorial(n - 1);
@@ -450,12 +456,11 @@ test('Test "recursive" function calls', () => {
 })
 
 // source 0
-test('undefined || 1', () => {
+test('undefined || 1', async () => {
   const code = `
   undefined || 1;
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "undefined || 1;
 
@@ -465,12 +470,11 @@ test('undefined || 1', () => {
 })
 
 // source 0
-test('1 + math_sin', () => {
+test('1 + math_sin', async () => {
   const code = `
   1 + math_sin;
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "1 + math_sin;
 
@@ -480,12 +484,12 @@ test('1 + math_sin', () => {
 })
 
 // source 0
-test('plus undefined', () => {
+test('plus undefined', async () => {
   const code = `
   math_sin(1) + undefined;
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "math_sin(1) + undefined;
 
@@ -499,12 +503,11 @@ test('plus undefined', () => {
 })
 
 // source 0
-test('math_pow', () => {
+test('math_pow', async () => {
   const code = `
   math_pow(2, 20) || NaN;
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "math_pow(2, 20) || NaN;
 
@@ -518,7 +521,7 @@ test('math_pow', () => {
 })
 
 // source 0
-test('expmod', () => {
+test('expmod', async () => {
   const code = `
   function is_even(n) {
     return n % 2 === 0;
@@ -539,26 +542,24 @@ function expmod(base, exp, m) {
 
 expmod(4, 3, 5);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
 })
 
 // source 0
-test('Infinite recursion', () => {
+test('Infinite recursion', async () => {
   const code = `
   function f() {
     return f();
 }
 f();
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
 })
 
 // source 0
-test('subsets', () => {
+test('subsets', async () => {
   const code = `
   function subsets(s) {
     if (is_null(s)) {
@@ -571,20 +572,18 @@ test('subsets', () => {
 
  subsets(list(1, 2, 3));
   `
-  const program = parse(code, mockContext(Chapter.SOURCE_2))!
-  const steps = getEvaluationSteps(program, mockContext(Chapter.SOURCE_2), 1000)
+  const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
 })
 
 // source 0
-test('even odd mutual', () => {
+test('even odd mutual', async () => {
   const code = `
   const odd = n => n === 0 ? false : even(n-1);
   const even = n => n === 0 || odd(n-1);
   even(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(getLastStepAsString(steps)).toEqual('false;')
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "const odd = n => n === 0 ? false : even(n - 1);
@@ -637,13 +636,12 @@ test('even odd mutual', () => {
 })
 
 // source 0
-test('assign undefined', () => {
+test('assign undefined', async () => {
   const code = `
   const a = undefined;
   a;
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(getLastStepAsString(steps)).toEqual('undefined;')
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "const a = undefined;
@@ -659,12 +657,11 @@ test('assign undefined', () => {
   `)
 })
 
-test('builtins return identifiers', () => {
+test('builtins return identifiers', async () => {
   const code = `
   math_sin();
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(getLastStepAsString(steps)).toEqual('NaN;')
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "math_sin();
@@ -678,12 +675,12 @@ test('builtins return identifiers', () => {
   `)
 })
 
-test('negative numbers as arguments', () => {
+test('negative numbers as arguments', async () => {
   const code = `
   math_sin(-1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "math_sin(-1);
 
@@ -696,12 +693,11 @@ test('negative numbers as arguments', () => {
   `)
 })
 
-test('is_function checks for builtin', () => {
+test('is_function checks for builtin', async () => {
   const code = `
     is_function(is_function);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "is_function(is_function);
 
@@ -714,15 +710,14 @@ test('is_function checks for builtin', () => {
   `)
 })
 
-test('triple equals work on function', () => {
+test('triple equals work on function', async () => {
   const code = `
     function f() { return g(); } function g() { return f(); }
     f === f;
     g === g;
     f === g;
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "function f() {
       return g();
@@ -797,7 +792,7 @@ test('triple equals work on function', () => {
   `)
 })
 
-test('constant declarations in blocks are protected', () => {
+test('constant declarations in blocks are protected', async () => {
   const code = `
     const z = 1;
 
@@ -808,8 +803,7 @@ function f(g) {
 
 f(y => y + z);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
     "const z = 1;
     function f(g) {
@@ -875,7 +869,7 @@ f(y => y + z);
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
 
-test('function declarations in blocks are protected', () => {
+test('function declarations in blocks are protected', async () => {
   const code = `
     function repeat_pattern(n, p, r) {
     function twice_p(r) {
@@ -895,13 +889,12 @@ function plus_one(x) {
 repeat_pattern(5, plus_one, 0);
 
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('5;')
 })
 
-test('const declarations in blocks subst into call expressions', () => {
+test('const declarations in blocks subst into call expressions', async () => {
   const code = `
   const z = 1;
   function f(g) {
@@ -910,13 +903,13 @@ test('const declarations in blocks subst into call expressions', () => {
   }
   f(undefined);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('6;')
 })
 
-test('scoping test for lambda expressions nested in blocks', () => {
+test('scoping test for lambda expressions nested in blocks', async () => {
   const code = `
   {
     const f = x => g();
@@ -925,26 +918,26 @@ test('scoping test for lambda expressions nested in blocks', () => {
     f(0);
   }
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
 
-test('scoping test for blocks nested in lambda expressions', () => {
+test('scoping test for blocks nested in lambda expressions', async () => {
   const code = `
   const f = x => { g(); };
   const g = () => { x; };
   const x = 1;
   f(0);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('undefined;')
 })
 
-test('scoping test for function expressions', () => {
+test('scoping test for function expressions', async () => {
   const code = `
   function f(x) {
     return g();
@@ -955,26 +948,26 @@ test('scoping test for function expressions', () => {
   const x = 1;
   f(0);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
 
-test('scoping test for lambda expressions', () => {
+test('scoping test for lambda expressions', async () => {
   const code = `
   const f = x => g();
   const g = () => x;
   const x = 1;
   f(0);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
 
-test('scoping test for block expressions', () => {
+test('scoping test for block expressions', async () => {
   const code = `
   function f(x) {
     const y = x;
@@ -986,13 +979,13 @@ test('scoping test for block expressions', () => {
   const y = 1;
   f(0);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
 
-test('scoping test for block expressions, no renaming', () => {
+test('scoping test for block expressions, no renaming', async () => {
   const code = `
   function h(w) {
     function f(w) {
@@ -1005,37 +998,37 @@ test('scoping test for block expressions, no renaming', () => {
   }
   h(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
 
-test('return in nested blocks', () => {
+test('return in nested blocks', async () => {
   const code = `
   function f(x) {{ return 1; }}
   f(0);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
 
-test('renaming clash test for lambda function', () => {
+test('renaming clash test for lambda function', async () => {
   const code = `
   const f = w_11 => w_10 => w_11 + w_10 + g();
   const g = () => w_10;
   const w_10 = 0;
   f(1)(2);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
 
-test('renaming clash test for functions', () => {
+test('renaming clash test for functions', async () => {
   const code = `
   function f(w_8) {
     function h(w_9) {
@@ -1051,13 +1044,13 @@ function g() {
 const w_9 = 0;
 f(1)(2);
 `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
 
-test('renaming clash in replacement for lambda function', () => {
+test('renaming clash in replacement for lambda function', async () => {
   const code = `
   const g = () => x_1 + x_2;
   const f = x_1 => x_2 => g();
@@ -1065,13 +1058,13 @@ test('renaming clash in replacement for lambda function', () => {
   const x_2 = 0;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('0;')
 })
 
-test(`renaming clash in replacement for function expression`, () => {
+test(`renaming clash in replacement for function expression`, async () => {
   const code = `
   function f(x_1) {
     function h(x_2) {
@@ -1086,13 +1079,13 @@ test(`renaming clash in replacement for function expression`, () => {
   const x_2 = 0;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('0;')
 })
 
-test(`renaming clash in replacement for function declaration`, () => {
+test(`renaming clash in replacement for function declaration`, async () => {
   const code = `
   function g() {
     return x_1 + x_2;
@@ -1107,13 +1100,13 @@ test(`renaming clash in replacement for function declaration`, () => {
   const x_2 = 0;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('0;')
 })
 
-test(`multiple clash for function declaration`, () => {
+test(`multiple clash for function declaration`, async () => {
   const code = `
   function g() {
     return x_2 + x_3;
@@ -1129,13 +1122,13 @@ test(`multiple clash for function declaration`, () => {
   const x_4 = 2;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
 
-test(`multiple clash for function expression`, () => {
+test(`multiple clash for function expression`, async () => {
   const code = `
   function f(x_2) {
     function h(x_3) {
@@ -1151,13 +1144,13 @@ test(`multiple clash for function expression`, () => {
   const x_4 = 2;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
 
-test(`multiple clash for lambda function`, () => {
+test(`multiple clash for lambda function`, async () => {
   const code = `
   const f = x_2 => x_3 => x_4 + g();
   const g = () => x_2 + x_3;
@@ -1166,13 +1159,13 @@ test(`multiple clash for lambda function`, () => {
   const x_4 = 2;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
 
-test(`multiple clash 2 for lambda function`, () => {
+test(`multiple clash 2 for lambda function`, async () => {
   const code = `
   const f = x => x_1 => x_2 + g();
   const g = () => x + x_1;
@@ -1181,13 +1174,13 @@ test(`multiple clash 2 for lambda function`, () => {
   const x = 1;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
 
-test(`multiple clash 2 for function expression`, () => {
+test(`multiple clash 2 for function expression`, async () => {
   const code = `
   function f(x) {
     function h(x_1) {
@@ -1203,13 +1196,13 @@ test(`multiple clash 2 for function expression`, () => {
   const x = 1;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
 
-test(`multiple clash 2 for function declaration`, () => {
+test(`multiple clash 2 for function declaration`, async () => {
   const code = `
   function g() {
     return x + x_1;
@@ -1225,13 +1218,13 @@ test(`multiple clash 2 for function declaration`, () => {
   const x = 1;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
 
-test(`renaming clash with declaration in replacement for function declaration`, () => {
+test(`renaming clash with declaration in replacement for function declaration`, async () => {
   const code = `
   function g() {
     const x_2 = 2;
@@ -1249,13 +1242,13 @@ test(`renaming clash with declaration in replacement for function declaration`, 
   const x = 0;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('3;')
 })
 
-test(`renaming clash with declaration in replacement for function expression`, () => {
+test(`renaming clash with declaration in replacement for function expression`, async () => {
   const code = `
   function f(x) {
     function h(x_1) {
@@ -1273,13 +1266,13 @@ test(`renaming clash with declaration in replacement for function expression`, (
   const x = 0;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('2;')
 })
 
-test(`renaming clash with declaration in replacement for lambda function`, () => {
+test(`renaming clash with declaration in replacement for lambda function`, async () => {
   const code = `
   const f = x => x_1 => g();
   const g = () => { const x_2 = 2; return x_1 + x + x_2; };
@@ -1287,13 +1280,13 @@ test(`renaming clash with declaration in replacement for lambda function`, () =>
   const x_1 = 0;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('2;')
 })
 
-test(`renaming clash with parameter of lambda function declaration in block`, () => {
+test(`renaming clash with parameter of lambda function declaration in block`, async () => {
   const code = `
   const g = () => x_1;
   const f = x_1 => {
@@ -1304,13 +1297,13 @@ test(`renaming clash with parameter of lambda function declaration in block`, ()
   const x_1 = 1;
   f(3)(2);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
 
-test(`renaming clash with parameter of function declaration in block`, () => {
+test(`renaming clash with parameter of function declaration in block`, async () => {
   const code = `
   function g() {
     return x_1;
@@ -1324,26 +1317,26 @@ test(`renaming clash with parameter of function declaration in block`, () => {
   const x_1 = 1;
   f(3)(2);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('4;')
 })
 
-test(`renaming of outer parameter in lambda function`, () => {
+test(`renaming of outer parameter in lambda function`, async () => {
   const code = `
   const g = () =>  w_1;
   const f = w_1 => w_2 => w_1 + g();
   const w_1 = 0;
   f(1)(1);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('1;')
 })
 
-test(`removes debugger statements`, () => {
+test(`removes debugger statements`, async () => {
   const code = `
   function f(n) {
     debugger;
@@ -1352,71 +1345,67 @@ test(`removes debugger statements`, () => {
   debugger;
   f(3);
   `
-  const program = parse(code, mockContext())!
-  const steps = getEvaluationSteps(program, mockContext(), 1000)
+  const steps = await testEvalSteps(code)
+
   expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
   expect(getLastStepAsString(steps)).toEqual('6;')
 })
 
 describe(`redeclaration of predeclared functions work`, () => {
-  test('control', () => {
+  test('control', async () => {
     const code = `
     length(list(1, 2, 3));
     `
-    const context = mockContext(Chapter.SOURCE_2)
-    const program = parse(code, context)!
-    const steps = getEvaluationSteps(program, context, 1000)
+
+    const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('3;')
   })
 
-  test('test', () => {
+  test('test', async () => {
     const code = `
     function length(xs) {
       return 0;
     }
     length(list(1, 2, 3));
     `
-    const context = mockContext(Chapter.SOURCE_2)
-    const program = parse(code, context)!
-    const steps = getEvaluationSteps(program, context, 1000)
+    const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
+
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('0;')
   })
 })
 
 describe(`#1109: Empty function bodies don't break execution`, () => {
-  test('Function declaration', () => {
+  test('Function declaration', async () => {
     const code = `
     function a() {}
     "other statement";
     a();
     "Gets returned by normal run";
     `
-    const context = mockContext(Chapter.SOURCE_2)
-    const program = parse(code, context)!
-    const steps = getEvaluationSteps(program, context, 1000)
+    const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
+
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('"Gets returned by normal run";')
   })
 
-  test('Constant declaration of lambda', () => {
+  test('Constant declaration of lambda', async () => {
     const code = `
     const a = () => {};
     "other statement";
     a();
     "Gets returned by normal run";
     `
-    const context = mockContext(Chapter.SOURCE_2)
-    const program = parse(code, context)!
-    const steps = getEvaluationSteps(program, context, 1000)
+    const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
+
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('"Gets returned by normal run";')
   })
 })
 
 describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
-  test('Program steps equal to Stepper limit', () => {
+  test('Program steps equal to Stepper limit', async () => {
     const code = `
       function factorial(n) {
         return n === 1
@@ -1425,32 +1414,29 @@ describe(`#1342: Test the fix of #1341: Stepper limit off by one`, () => {
       }
       factorial(100);
       `
-    const context = mockContext(Chapter.SOURCE_2)
-    const program = parse(code, context)!
-    const steps = getEvaluationSteps(program, context, 1000)
+    const steps = await testEvalSteps(code, mockContext(Chapter.SOURCE_2))
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('9.33262154439441e+157;')
   })
 })
 
 describe(`Evaluation of empty code and imports`, () => {
-  test('Evaluate empty program', () => {
+  test('Evaluate empty program', async () => {
     const code = ``
-    const program = parse(code, mockContext())!
-    const steps = getEvaluationSteps(program, mockContext(), 1000)
+    const steps = await testEvalSteps(code, mockContext())
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('')
   })
 })
 
 // describe(`#1223: Stepper: Import statements cause errors`, () => {
-//   test('import a module and invoke its functions', () => {
+//   test('import a module and invoke its functions', async () => {
 //     const code = `
 //     import {circle, show, red, stack} from "rune";
 //     show(stack(red(circle), circle));
 //     `
-//     const program = parse(code, mockContext())!
-//     const steps = getEvaluationSteps(program, mockContext(), 1000)
+//     const steps = await testEvalSteps(code)
+//
 //     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 //       "show(stack(red(circle), circle));
 
@@ -1471,13 +1457,13 @@ describe(`Evaluation of empty code and imports`, () => {
 //     `)
 //   })
 
-//   test('return function from module function and invoke built-in with lambda', () => {
+//   test('return function from module function and invoke built-in with lambda', async () => {
 //     const code = `
 //     import {draw_points, make_point} from "curve";
 //     draw_points(100)(t => make_point(t, t));
 //     `
-//     const program = parse(code, mockContext())!
-//     const steps = getEvaluationSteps(program, mockContext(), 1000)
+//     const steps = await testEvalSteps(code)
+//
 //     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 //       "draw_points(100)(t => make_point(t, t));
 
@@ -1494,7 +1480,7 @@ describe(`Evaluation of empty code and imports`, () => {
 //     `)
 //   })
 
-//   test('invoke built-in with function expression', () => {
+//   test('invoke built-in with function expression', async () => {
 //     const code = `
 //     import {draw_3D_points, make_3D_point} from "curve";
 //     function f(t) {
@@ -1502,8 +1488,8 @@ describe(`Evaluation of empty code and imports`, () => {
 //     }
 //     draw_3D_points(100)(f);
 //     `
-//     const program = parse(code, mockContext())!
-//     const steps = getEvaluationSteps(program, mockContext(), 1000)
+//     const steps = await testEvalSteps(code)
+//
 //     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 //       "function f(t) {
 //         return make_3D_point(t, t, t);
@@ -1530,7 +1516,7 @@ describe(`Evaluation of empty code and imports`, () => {
 //     `)
 //   })
 
-//   test('recursive function and invoking with module function and object', () => {
+//   test('recursive function and invoking with module function and object', async () => {
 //     const code = `
 //     import { stack, heart, show, make_cross } from "rune";
 //     function repeat(n, f, i) {
@@ -1540,8 +1526,8 @@ describe(`Evaluation of empty code and imports`, () => {
 //     }
 //     show(repeat(1, make_cross, heart));
 //     `
-//     const program = parse(code, mockContext())!
-//     const steps = getEvaluationSteps(program, mockContext(), 1000)
+//     const steps = await testEvalSteps(code)
+//
 //     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 //       "function repeat(n, f, i) {
 //         return n === 0 ? i : repeat(n - 1, f, f(i));
@@ -1596,13 +1582,13 @@ describe(`Evaluation of empty code and imports`, () => {
 //     `)
 //   })
 
-//   test('display unnamed object', () => {
+//   test('display unnamed object', async () => {
 //     const code = `
 //     import {play, sine_sound} from "sound";
 //     play(sine_sound(440, 5));
 //     `
-//     const program = parse(code, mockContext())!
-//     const steps = getEvaluationSteps(program, mockContext(), 1000)
+//     const steps = await testEvalSteps(code)
+//
 //     expect(steps.map(x => codify(x[0])).join('\n')).toMatchInlineSnapshot(`
 //       "play(sine_sound(440, 5));
 
