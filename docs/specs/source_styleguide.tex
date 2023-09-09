@@ -147,8 +147,8 @@ function signal_error(p, x) {
 
 \section*{Conditional expressions}
 
-The consequent and alternative expressions of conditional expressions are either
-in the same line as the predicate (if they fit),
+The consequent and alternative expressions of conditional expressions
+are either in the same line as the predicate (if they fit),
 or they are aligned under the beginning of the predicate.
 Examples:
 \begin{lstlisting}
@@ -205,6 +205,7 @@ function A(x,y) {
            : y === 1
            ? 2
            : A(x - 1, A(x, y - 1));
+}
 
 // bad style: line too long
 function A(x,y) {
