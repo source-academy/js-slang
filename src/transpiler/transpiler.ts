@@ -769,7 +769,6 @@ export function transpile(
 
     return transpileToFullJS(program, context, fullImportOptions, true)
   } else if (context.variant == Variant.NATIVE) {
-    console.log('hihihi2')
     const fullImportOptions = {
       checkImports: true,
       loadTabs: true,
@@ -778,7 +777,6 @@ export function transpile(
     }
     return transpileToFullJS(program, context, fullImportOptions, false)
   } else {
-    console.log('hihihi')
     const fullImportOptions = {
       checkImports: true,
       loadTabs: true,
