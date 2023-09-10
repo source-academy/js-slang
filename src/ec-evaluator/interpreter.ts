@@ -195,7 +195,9 @@ function evaluateImports(
           }
 
           declareIdentifier(context, spec.local.name, node, environment)
-          defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
+          const importedObj = functions[spec.imported.name]
+          Object.defineProperty(importedObj, 'name', { value: spec.local.name })
+          defineVariable(context, spec.local.name, importedObj, true, node)
         }
       }
     })
