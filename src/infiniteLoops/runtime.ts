@@ -268,6 +268,7 @@ function prepareBuiltins(oldBuiltins: Map<string, any>) {
     }
   }
   newBuiltins.set('undefined', undefined)
+  newBuiltins.set('Object', Object)
   return newBuiltins
 }
 

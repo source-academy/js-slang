@@ -587,7 +587,9 @@ async function handleImports(programs: es.Program[]): Promise<[string, string[]]
         }
       )
       program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
-      const importedNames = importsToAdd.flatMap(node =>
+      const importedNames = (
+        importsToAdd.filter(node => node.type === 'VariableDeclaration') as es.VariableDeclaration[]
+      ).flatMap(node =>
         node.declarations.map(
           decl => ((decl.init as es.MemberExpression).object as es.Identifier).name
         )
