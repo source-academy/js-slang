@@ -147,7 +147,7 @@ export async function transformImportDeclarations(
         })
       )
 
-      return [moduleName, { text, nodes: declNodes, namespaced }] satisfies [
+      return [moduleName, { text, nodes: declNodes, namespaced }] as [
         string,
         {
           text: string
