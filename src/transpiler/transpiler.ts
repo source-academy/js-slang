@@ -63,7 +63,7 @@ export async function transformImportDeclarations(
   context?: Context,
   nativeId?: es.Identifier,
   useThis: boolean = false
-): Promise<[string, es.VariableDeclaration[], es.Program['body']]> {
+): Promise<[string, (es.VariableDeclaration | es.ExpressionStatement)[], es.Program['body']]> {
   const [importNodes, otherNodes] = partition(program.body, isImportDeclaration)
 
   if (importNodes.length === 0) return ['', [], otherNodes]
@@ -147,11 +147,11 @@ export async function transformImportDeclarations(
         })
       )
 
-      return [moduleName, { text, nodes: declNodes, namespaced }] as [
+      return [moduleName, { text, nodes: declNodes, namespaced }] satisfies [
         string,
         {
           text: string
-          nodes: es.VariableDeclaration[]
+          nodes: (es.VariableDeclaration | es.ExpressionStatement)[]
           namespaced: string
         }
       ]
