@@ -838,9 +838,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         agenda.push(returnStatement.argument ?? ast.identifier('undefined', returnStatement.loc))
       } else {
         if (agenda.peek()) {
-	   // push marker if agenda not empty
-	   agenda.push(instr.markerInstr(command.srcNode));
-	}
+          // push marker if agenda not empty
+          agenda.push(instr.markerInstr(command.srcNode))
+        }
         agenda.push(func.node.body)
       }
     } else if (typeof func === 'function') {
