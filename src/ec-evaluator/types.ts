@@ -13,7 +13,6 @@ export enum InstrType {
   APPLICATION = 'Application',
   BRANCH = 'Branch',
   ENVIRONMENT = 'Environment',
-  PUSH_UNDEFINED_IF_NEEDED = 'PushUndefinedIfNeeded',
   ARRAY_LITERAL = 'ArrayLiteral',
   ARRAY_ACCESS = 'ArrayAccess',
   ARRAY_ASSIGNMENT = 'ArrayAssignment',

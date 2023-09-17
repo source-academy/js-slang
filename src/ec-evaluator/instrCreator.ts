@@ -100,11 +100,6 @@ export const envInstr = (env: Environment, srcNode: es.Node): EnvInstr => ({
   srcNode
 })
 
-export const pushUndefIfNeededInstr = (srcNode: es.Node): Instr => ({
-  instrType: InstrType.PUSH_UNDEFINED_IF_NEEDED,
-  srcNode
-})
-
 export const arrLitInstr = (arity: number, srcNode: es.Node): ArrLitInstr => ({
   instrType: InstrType.ARRAY_LITERAL,
   arity,
