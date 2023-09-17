@@ -348,7 +348,8 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // The no declarations case is handled by Agenda :: simplifyBlocksWithoutDeclarations, so no blockStatement node
     // without declarations should end up here.
     const next = agenda.peek()
-    if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+    // Push ENVIRONMENT instruction if needed
+    if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
       agenda.push(instr.envInstr(currentEnvironment(context), command))
     }
 
@@ -680,7 +681,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       if (hasContinueStatement(command.body as es.BlockStatement)) {
         agenda.push(instr.contMarkerInstr(command.srcNode))
       }
-      agenda.push(instr.pushUndefIfNeededInstr(command.srcNode)) // The loop returns undefined if the stash is empty
+      if (!valueProducing(command.body)) {
+        // if loop body is not value-producing, insert undefined expression statement
+        agenda.push(ast.identifier('undefined', command.body.loc))
+      }
       agenda.push(command.body)
       agenda.push(instr.popInstr(command.srcNode)) // Pop previous body value
     }
@@ -703,7 +707,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       if (hasContinueStatement(command.body as es.BlockStatement)) {
         agenda.push(instr.contMarkerInstr(command.srcNode))
       }
-      agenda.push(instr.pushUndefIfNeededInstr(command.srcNode)) // The loop returns undefined if the stash is empty
+      if (!valueProducing(command.body)) {
+        // if loop body is not value-producing, insert undefined expression statement
+        agenda.push(ast.identifier('undefined', command.body.loc))
+      }
       agenda.push(command.body)
       agenda.push(instr.popInstr(command.srcNode)) // Pop previous body value
     }
@@ -830,7 +837,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         const returnStatement = block.body[0] as es.ReturnStatement
         agenda.push(returnStatement.argument ?? ast.identifier('undefined', returnStatement.loc))
       } else {
-        agenda.push(instr.markerInstr(command.srcNode))
+        if (agenda.peek()) {
+	   // push marker if agenda not empty
+	   agenda.push(instr.markerInstr(command.srcNode));
+	}
         agenda.push(func.node.body)
       }
     } else if (typeof func === 'function') {
@@ -887,17 +897,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Restore environment
     while (currentEnvironment(context).id !== command.env.id) {
       popEnvironment(context)
-    }
-  },
-
-  [InstrType.PUSH_UNDEFINED_IF_NEEDED]: function (
-    command: Instr,
-    context: Context,
-    agenda: Agenda,
-    stash: Stash
-  ) {
-    if (stash.size() === 0) {
-      stash.push(undefined)
     }
   },
 
