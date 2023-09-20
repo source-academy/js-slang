@@ -2,6 +2,7 @@ import * as jsslang from '..'
 import * as stdlib from '../stdlib'
 import type { Context } from '../types'
 import * as types from '../types'
+import * as stringify from '../utils/stringify'
 
 /**
  * Returns a function that simulates the job of Node's `require`. The require
@@ -23,7 +24,10 @@ export const getRequireProvider = (context: Context) => (x: string) => {
       ...jsslang,
       dist: {
         stdlib,
-        types
+        types,
+        utils: {
+          stringify
+        }
       },
       context
     }
