@@ -58,6 +58,10 @@ export class Stack<T> implements IStack<T> {
     // return a copy of the stack's contents
     return [...this.storage]
   }
+
+  public some(predicate: (value: T) => boolean): boolean {
+    return this.storage.some(predicate)
+  }
 }
 
 /**
