@@ -374,3 +374,33 @@ test('Conditional statements are value producing always', () => {
     optionEC3
   ).toMatchInlineSnapshot(`120`)
 })
+
+test('Nullary functions properly restore environment 1', () => {
+  return expectResult(
+    stripIndent`
+    function f() {
+      function g(t) {
+          return 0;
+      }
+      return g;
+    }
+    const h = f();
+    h(100);
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`0`)
+})
+
+test('Nullary functions properly restore environment 2', () => {
+  return expectResult(
+    stripIndent`
+    function f() {
+      const a = 1;
+      return a;
+    }
+    const a = f();
+    a;
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`1`)
+})
