@@ -374,7 +374,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
     agenda.push(instr.whileInstr(command.test, command.body, command))
     agenda.push(command.test)
-    stash.push(undefined) // Return undefined if there is no loop execution
+    agenda.push(ast.identifier('undefined', command.loc)) // Return undefined if there is no loop execution
   },
 
   ForStatement: function (command: es.ForStatement, context: Context, agenda: Agenda) {
@@ -818,7 +818,8 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       if (
         next &&
         !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
-        args.length !== 0
+        args.length !== 0 &&
+        agenda.some(isNode)
       ) {
         agenda.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
