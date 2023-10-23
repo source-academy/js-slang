@@ -145,7 +145,6 @@ export function evaluate(program: es.Program, context: Context, options: IOption
       options.isPrelude
     )
   } catch (error) {
-    // console.error('ecerror:', error)
     return new ECError(error)
   } finally {
     context.runtime.isRunning = false
@@ -200,7 +199,6 @@ function evaluateImports(
       }
     })
   } catch (error) {
-    // console.log(error)
     handleRuntimeError(context, error)
   }
 }
@@ -816,7 +814,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       if (
         next &&
         !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
-        args.length !== 0 &&
         agenda.some(isNode)
       ) {
         agenda.push(instr.envInstr(currentEnvironment(context), command.srcNode))
