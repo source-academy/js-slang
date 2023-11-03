@@ -73,7 +73,8 @@ const testEvalSteps = (programStr: string, context?: Context) => {
       wrapSourceModules: false,
       resolverOptions: { extensions: null },
       shouldAddFileName: false,
-      allowUndefinedImports: false
+      allowUndefinedImports: false,
+      throwOnDuplicateNames: true
     }
   }
   return getEvaluationSteps(program, context, options)

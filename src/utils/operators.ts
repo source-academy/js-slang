@@ -12,8 +12,8 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
+import { RequireProvider } from '../modules/loader/requireProvider'
 import { ModuleBundle, ModuleFunctions } from '../modules/moduleTypes'
-import { RequireProvider } from '../modules/requireProvider'
 import { Chapter, NativeStorage, Thunk } from '../types'
 import { callExpression, locationDummyNode } from './astCreator'
 import * as create from './astCreator'
