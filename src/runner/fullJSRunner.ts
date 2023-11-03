@@ -17,7 +17,7 @@ import {
   transpile
 } from '../transpiler/transpiler'
 import type { Context, NativeStorage } from '../types'
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'

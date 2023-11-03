@@ -2,8 +2,8 @@ import type es from 'estree'
 import { partition } from 'lodash'
 
 import assert from '../../../utils/assert'
+import * as create from '../../../utils/ast/astCreator'
 import { isImportDeclaration } from '../../../utils/ast/typeGuards'
-import * as create from '../../../utils/astCreator'
 import Dict from '../../../utils/dict'
 import { isSourceModule } from '../../utils'
 

@@ -3,13 +3,13 @@ import { posix as posixPath } from 'path'
 
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
 import assert from '../../../utils/assert'
+import * as create from '../../../utils/ast/astCreator'
 import {
   isDeclaration,
   isDirective,
   isModuleDeclaration,
   isStatement
 } from '../../../utils/ast/typeGuards'
-import * as create from '../../../utils/astCreator'
 import { isSourceModule } from '../../utils'
 import {
   createImportedNameDeclaration,

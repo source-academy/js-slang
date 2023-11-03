@@ -1,7 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { identifier } from '../utils/astCreator'
+import { identifier } from '../utils/ast/astCreator'
 import * as sym from './symbolic'
 
 // Object + functions called during runtime to check for infinite loops

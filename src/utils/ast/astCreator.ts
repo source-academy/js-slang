@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
+import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../../types'
 
 export const getVariableDeclarationName = (decl: es.VariableDeclaration) =>
   (decl.declarations[0].id as es.Identifier).name

@@ -23,9 +23,9 @@ import {
   Variant
 } from '../types'
 import assert from '../utils/assert'
+import * as create from '../utils/ast/astCreator'
 import { getImportedName } from '../utils/ast/helpers'
 import { isImportDeclaration } from '../utils/ast/typeGuards'
-import * as create from '../utils/astCreator'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,

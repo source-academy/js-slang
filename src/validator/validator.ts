@@ -3,7 +3,7 @@ import * as es from 'estree'
 import { ConstAssignment } from '../errors/errors'
 import { NoAssignmentToForVariable } from '../errors/validityErrors'
 import { Context, NodeWithInferredType } from '../types'
-import { getVariableDeclarationName } from '../utils/astCreator'
+import { getVariableDeclarationName } from '../utils/ast/astCreator'
 import { ancestor, base, FullWalkerCallback } from '../utils/walkers'
 
 class Declaration {

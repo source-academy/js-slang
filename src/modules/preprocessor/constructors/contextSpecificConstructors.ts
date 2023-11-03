@@ -1,7 +1,7 @@
 import type es from 'estree'
 
 import { accessExportFunctionName } from '../../../stdlib/localImport.prelude'
-import * as create from '../../../utils/astCreator'
+import * as create from '../../../utils/ast/astCreator'
 
 /**
  * Constructs a call to the `pair` function.

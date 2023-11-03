@@ -13,8 +13,8 @@ import {
   FunctionDeclarationExpression,
   substituterNodes
 } from '../types'
+import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations } from '../utils/ast/helpers'
-import * as ast from '../utils/astCreator'
 import {
   dummyBlockExpression,
   dummyBlockStatement,

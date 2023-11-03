@@ -15,8 +15,8 @@ import {
 import { RequireProvider } from '../modules/loader/requireProvider'
 import { ModuleBundle, ModuleFunctions } from '../modules/moduleTypes'
 import { Chapter, NativeStorage, Thunk } from '../types'
-import { callExpression, locationDummyNode } from './astCreator'
-import * as create from './astCreator'
+import { callExpression, locationDummyNode } from './ast/astCreator'
+import * as create from './ast/astCreator'
 import { makeWrapper } from './makeWrapper'
 import * as rttc from './rttc'
 
