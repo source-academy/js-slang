@@ -29,10 +29,11 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
 import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
-import { CannotFindModuleError } from './errors/localImportErrors'
-import { validateFilePath } from './localImports/filePaths'
-import preprocessFileImports from './localImports/preprocessor'
-import type { ImportTransformOptions } from './modules/moduleTypes'
+import { ModuleNotFoundError } from './modules/errors'
+import type { ImportOptions } from './modules/moduleTypes'
+import preprocessFileImports from './modules/preprocessor'
+import { validateFilePath } from './modules/preprocessor/filePaths'
+import { mergeImportOptions } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
 import { decodeError, decodeValue } from './parser/scheme'
@@ -59,7 +60,7 @@ export interface IOptions {
   throwInfiniteLoops: boolean
   envSteps: number
 
-  importOptions: ImportTransformOptions
+  importOptions: ImportOptions
 }
 
 // needed to work on browsers
@@ -331,7 +332,7 @@ export async function runFilesInContext(
 
   const code = files[entrypointFilePath]
   if (code === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
     return resolvedErrorPromise
   }
 
@@ -344,12 +345,8 @@ export async function runFilesInContext(
     if (program === null) {
       return resolvedErrorPromise
     }
-    const fullImportOptions = {
-      loadTabs: true,
-      checkImports: false,
-      wrapSourceModules: false,
-      ...options.importOptions
-    }
+
+    const fullImportOptions = mergeImportOptions(options.importOptions)
     return fullJSRunner(program, context, fullImportOptions)
   }
 
@@ -409,19 +406,19 @@ export function compile(
   code: string,
   context: Context,
   vmInternalFunctions?: string[]
-): SVMProgram | undefined {
+): Promise<SVMProgram | undefined> {
   const defaultFilePath = '/default.js'
   const files: Partial<Record<string, string>> = {}
   files[defaultFilePath] = code
   return compileFiles(files, defaultFilePath, context, vmInternalFunctions)
 }
 
-export function compileFiles(
+export async function compileFiles(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
   vmInternalFunctions?: string[]
-): SVMProgram | undefined {
+): Promise<SVMProgram | undefined> {
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath)
     if (filePathError !== null) {
@@ -432,11 +429,11 @@ export function compileFiles(
 
   const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
     return undefined
   }
 
-  const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
+  const preprocessedProgram = await preprocessFileImports(files, entrypointFilePath, context)
   if (!preprocessedProgram) {
     return undefined
   }
