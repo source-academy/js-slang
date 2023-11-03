@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 
-export const getVariableDecarationName = (decl: es.VariableDeclaration) =>
+export const getVariableDeclarationName = (decl: es.VariableDeclaration) =>
   (decl.declarations[0].id as es.Identifier).name
 
 export const locationDummyNode = (line: number, column: number, source: string | null) =>
@@ -11,6 +11,46 @@ export const locationDummyNode = (line: number, column: number, source: string |
 export const identifier = (name: string, loc?: es.SourceLocation | null): es.Identifier => ({
   type: 'Identifier',
   name,
+  loc
+})
+
+export const importDeclaration = (
+  source: string,
+  specifiers: es.ImportDeclaration['specifiers'],
+  loc?: es.SourceLocation | null
+): es.ImportDeclaration => ({
+  type: 'ImportDeclaration',
+  source: literal(source),
+  specifiers,
+  loc
+})
+
+export const importSpecifier = (
+  importedName: string,
+  localName: string,
+  loc?: es.SourceLocation | null
+): es.ImportSpecifier => ({
+  type: 'ImportSpecifier',
+  imported: identifier(importedName),
+  local: identifier(localName),
+  loc
+})
+
+export const importDefaultSpecifier = (
+  localName: string,
+  loc?: es.SourceLocation | null
+): es.ImportDefaultSpecifier => ({
+  type: 'ImportDefaultSpecifier',
+  local: identifier(localName),
+  loc
+})
+
+export const importNamespaceSpecifier = (
+  localName: string,
+  loc?: es.SourceLocation | null
+): es.ImportNamespaceSpecifier => ({
+  type: 'ImportNamespaceSpecifier',
+  local: identifier(localName),
   loc
 })
 
@@ -60,7 +100,7 @@ export const constantDeclaration = (
 
 export const callExpression = (
   callee: es.Expression,
-  args: es.Expression[],
+  args: (es.Expression | es.SpreadElement)[],
   loc?: es.SourceLocation | null
 ): es.CallExpression => ({
   type: 'CallExpression',
