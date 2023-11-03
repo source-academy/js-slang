@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import { REQUIRE_PROVIDER_ID } from '../constants'
 import createContext from '../createContext'
-import { getRequireProvider } from '../modules/requireProvider'
+import { getRequireProvider } from '../modules/loader/requireProvider'
 import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
 import { Chapter, Variant } from '../types'

@@ -2,7 +2,6 @@ import { parse as babelParse } from '@babel/parser'
 import * as es from 'estree'
 import { cloneDeep, isEqual } from 'lodash'
 
-import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
   ConstNotAssignableTypeError,
   DuplicateTypeAliasError,
@@ -21,7 +20,8 @@ import {
   TypeParameterNameNotAllowedError,
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
-import { memoizedGetModuleManifest } from '../modules/moduleLoader'
+import { ModuleNotFoundError } from '../modules/errors'
+import { memoizedGetModuleManifest } from '../modules/loader/moduleLoader'
 import {
   BindableType,
   Chapter,

@@ -1,10 +1,10 @@
-import * as es from 'estree'
+import type * as es from 'estree'
 
 import { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
-import { ModuleConnectionError, ModuleNotFoundError } from '../errors/moduleErrors'
 import { findAncestors, findIdentifierNode } from '../finder'
-import { memoizedloadModuleDocs } from '../modules/moduleLoader'
+import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
+import { memoizedloadModuleDocs } from '../modules/loader/moduleLoader'
 import syntaxBlacklist from '../parser/source/syntax'
 
 export interface NameDeclaration {

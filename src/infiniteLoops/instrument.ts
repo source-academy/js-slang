@@ -580,11 +580,8 @@ async function handleImports(programs: es.Program[]): Promise<[string, string[]]
       const [prefixToAdd, importsToAdd, otherNodes] = await transformImportDeclarations(
         program,
         new Set<string>(),
-        {
-          wrapSourceModules: false,
-          checkImports: false,
-          loadTabs: false
-        }
+        false,
+        false
       )
       program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
       const importedNames = importsToAdd.flatMap(node =>
