@@ -1,14 +1,14 @@
 import type es from 'estree'
 import { partition } from 'lodash'
 
-import UtilMap from '../../../utils/arrayMap'
 import assert from '../../../utils/assert'
 import { isImportDeclaration } from '../../../utils/ast/typeGuards'
 import * as create from '../../../utils/astCreator'
+import Dict from '../../../utils/dict'
 import { isSourceModule } from '../../utils'
 
 type ImportRecord = {
-  regularSpecifiers: UtilMap<string, Set<string>>
+  regularSpecifiers: Dict<string, Set<string>>
   defaultSpecifiers: Set<string>
   namespaces: Set<string>
 }
@@ -16,7 +16,7 @@ type ImportRecord = {
 export default function hoistAndMergeImports(program: es.Program) {
   const [importDeclarations, nonImportDeclarations] = partition(program.body, isImportDeclaration)
 
-  const importRecords = new UtilMap<string, ImportRecord>()
+  const importRecords = new Dict<string, ImportRecord>()
 
   importDeclarations.forEach(decl => {
     const source = decl.source?.value
@@ -27,7 +27,7 @@ export default function hoistAndMergeImports(program: es.Program) {
     // so we only need to be concerned with Source module imports
 
     const { namespaces, regularSpecifiers, defaultSpecifiers } = importRecords.setdefault(source, {
-      regularSpecifiers: new UtilMap(),
+      regularSpecifiers: new Dict(),
       defaultSpecifiers: new Set(),
       namespaces: new Set()
     })

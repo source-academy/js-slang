@@ -1,10 +1,10 @@
 import type * as es from 'estree'
 import { partition } from 'lodash'
 
-import UtilMap, { ArrayMap } from '../../utils/arrayMap'
 import assert from '../../utils/assert'
 import { extractIdsFromPattern, getImportedName } from '../../utils/ast/helpers'
 import { isModuleDeclaration, isVariableDeclaration } from '../../utils/ast/typeGuards'
+import Dict, { ArrayMap } from '../../utils/dict'
 import {
   DuplicateImportNameError,
   UndefinedDefaultImportError,
@@ -18,6 +18,7 @@ export const defaultAnalysisOptions: ImportAnalysisOptions = {
   allowUndefinedImports: false,
   throwOnDuplicateNames: true
 }
+
 /**
  * Options to configure import analysis
  */
@@ -60,7 +61,7 @@ export default async function analyzeImportsAndExports(
           })
         )
       )
-  const declaredNames = new UtilMap<
+  const declaredNames = new Dict<
     string,
     ArrayMap<string, es.ImportDeclaration['specifiers'][number]>
   >()
@@ -124,8 +125,8 @@ export default async function analyzeImportsAndExports(
         }
       } else {
         for (const spec of node.specifiers) {
-          const declaredName = spec.local.name
           if (spec.type !== 'ExportSpecifier' && isSourceModule(dstModule)) {
+            const declaredName = spec.local.name
             declaredNames.setdefault(declaredName, new ArrayMap()).add(dstModule, spec)
           }
 
