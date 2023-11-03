@@ -6,8 +6,7 @@ import { UNKNOWN_LOCATION } from '../constants'
 import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { UndefinedImportError } from '../modules/errors'
-import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
+import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
@@ -710,12 +709,7 @@ function getNonEmptyEnv(environment: Environment): Environment {
   }
 }
 
-export function* evaluateProgram(
-  program: es.Program,
-  context: Context,
-  checkImports: boolean,
-  loadTabs: boolean
-) {
+export function* evaluateProgram(program: es.Program, context: Context, loadTabs: boolean) {
   yield* visit(context, program)
 
   context.numberOfOuterEnvironments += 1
@@ -748,17 +742,25 @@ export function* evaluateProgram(
       const functions = moduleFunctions[moduleName]
 
       for (const spec of node.specifiers) {
-        assert(
-          spec.type === 'ImportSpecifier',
-          `Only Import Specifiers are supported, got ${spec.type}`
-        )
+        declareIdentifier(context, spec.local.name, node)
+        let obj: any
 
-        if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, spec)
+        switch (spec.type) {
+          case 'ImportSpecifier': {
+            obj = functions[spec.imported.name]
+            break
+          }
+          case 'ImportDefaultSpecifier': {
+            obj = functions.default
+            break
+          }
+          case 'ImportNamespaceSpecifier': {
+            obj = functions
+            break
+          }
         }
 
-        declareIdentifier(context, spec.local.name, node)
-        defineVariable(context, spec.local.name, functions[spec.imported.name], true)
+        defineVariable(context, spec.local.name, obj, true)
       }
       yield* leave(context)
     }
