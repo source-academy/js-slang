@@ -1,13 +1,19 @@
 import { Context } from '../../../types'
 
-export const memoizedGetModuleDocsAsync = jest.fn((module: string) => Promise.resolve(module === 'another_module' ? {
-  bar: 'bar',
-  foo: 'foo',
-} : {
-  bar: 'bar',
-  foo: 'foo',
-  default: 'default'
-}))
+export const memoizedGetModuleDocsAsync = jest.fn((module: string) =>
+  Promise.resolve(
+    module === 'another_module'
+      ? {
+          bar: 'bar',
+          foo: 'foo'
+        }
+      : {
+          bar: 'bar',
+          foo: 'foo',
+          default: 'default'
+        }
+  )
+)
 
 export const memoizedGetModuleBundleAsync = jest.fn().mockResolvedValue(
   `require => ({
