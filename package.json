@@ -64,6 +64,7 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.23.2",
     "@types/jest": "^29.0.0",
     "@types/lodash.assignin": "^4.2.6",
     "@types/lodash.clonedeep": "^4.5.6",
@@ -105,7 +106,7 @@
     "testPathIgnorePatterns": [
       "/dist/",
       ".*benchmark.*",
-      ".*/utils\\.ts"
+      "/__tests__/(.*/)?utils\\.ts"
     ],
     "coveragePathIgnorePatterns": [
       "/dist/",
