@@ -1,6 +1,7 @@
 import type * as es from 'estree'
 
 import assert from '../assert'
+import { simple } from '../walkers'
 import { isImportDeclaration } from './typeGuards'
 
 /**
@@ -35,4 +36,31 @@ export function filterImportDeclarations({
       Exclude<es.Program['body'][0], es.ImportDeclaration>[]
     ]
   )
+}
+
+export function extractIdsFromPattern(pattern: es.Pattern) {
+  const identifiers: es.Identifier[] = []
+
+  simple(pattern, {
+    Identifier: (node: es.Identifier) => {
+      identifiers.push(node)
+    }
+  })
+
+  return identifiers
+}
+
+export const getImportedName = (
+  spec:
+    | Exclude<es.ImportDeclaration['specifiers'][number], es.ImportNamespaceSpecifier>
+    | es.ExportSpecifier
+) => {
+  switch (spec.type) {
+    case 'ImportDefaultSpecifier':
+      return 'default'
+    case 'ImportSpecifier':
+      return spec.imported.name
+    case 'ExportSpecifier':
+      return spec.local.name
+  }
 }

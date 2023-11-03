@@ -47,3 +47,8 @@ export function isDeclaration(node: es.Node): node is es.Declaration {
     node.type === 'ClassDeclaration'
   )
 }
+
+export const isIdentifier = (node: es.Node): node is es.Identifier => node.type === 'Identifier'
+
+export const isVariableDeclaration = (node: es.Node): node is es.VariableDeclaration =>
+  node.type === 'VariableDeclaration'

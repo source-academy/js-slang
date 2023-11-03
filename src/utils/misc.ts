@@ -16,3 +16,11 @@ export const timeoutPromise = <T>(promise: Promise<T>, timeout: number) =>
         reject(e)
       })
   })
+
+export function mapAndFilter<T, U>(items: T[], mapper: (input: T) => U | undefined) {
+  return items.reduce((res, item) => {
+    const newItem = mapper(item)
+    if (newItem !== undefined) return [...res, newItem]
+    return res
+  }, [] as U[])
+}
