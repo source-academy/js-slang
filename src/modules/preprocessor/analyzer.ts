@@ -35,7 +35,9 @@ export type ImportAnalysisOptions = {
   throwOnDuplicateNames: boolean
 }
 
-function isNamespaceSpecifier(node: es.ImportDeclaration['specifiers'][0]): node is es.ImportNamespaceSpecifier {
+function isNamespaceSpecifier(
+  node: es.ImportDeclaration['specifiers'][0]
+): node is es.ImportNamespaceSpecifier {
   return node.type === 'ImportNamespaceSpecifier'
 }
 
@@ -45,17 +47,19 @@ export default async function analyzeImportsAndExports(
   sourceModulesToImport: Set<string>,
   options: Partial<ImportAnalysisOptions>
 ) {
-  const moduleDocs: Record<string, Set<string>> = Object.fromEntries(
-    await Promise.all(
-      [...sourceModulesToImport].map(async moduleName => {
-        const docs = await memoizedGetModuleDocsAsync(moduleName)
-        if (docs === null) {
-          throw new Error(`Failed to load documentation for ${moduleName}`)
-        }
-        return [moduleName, new Set(Object.keys(docs))]
-      })
-    )
-  )
+  const moduleDocs: Record<string, Set<string>> = options.allowUndefinedImports
+    ? {}
+    : Object.fromEntries(
+        await Promise.all(
+          [...sourceModulesToImport].map(async moduleName => {
+            const docs = await memoizedGetModuleDocsAsync(moduleName)
+            if (docs === null) {
+              throw new Error(`Failed to load documentation for ${moduleName}`)
+            }
+            return [moduleName, new Set(Object.keys(docs))]
+          })
+        )
+      )
   const declaredNames = new UtilMap<
     string,
     ArrayMap<string, es.ImportDeclaration['specifiers'][number]>
@@ -170,7 +174,10 @@ export default async function analyzeImportsAndExports(
         importedNames.add(importedName)
       })
 
-      if ((namespaceSpecifiers.length > 0 && regularSpecifiers.length > 0) || importedNames.size > 1) {
+      if (
+        (namespaceSpecifiers.length > 0 && regularSpecifiers.length > 0) ||
+        importedNames.size > 1
+      ) {
         // This means that there is more than one unique export being given the same
         // local name
         const specs = [...regularSpecifiers, ...namespaceSpecifiers]
@@ -179,4 +186,3 @@ export default async function analyzeImportsAndExports(
     }
   }
 }
-

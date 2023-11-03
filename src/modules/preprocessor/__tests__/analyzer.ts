@@ -12,8 +12,13 @@ import analyzeImportsAndExports from '../analyzer'
 import { parse } from '../../../parser/parser'
 import { mockContext } from '../../../mocks/context'
 import { Program } from 'estree'
+import { memoizedGetModuleDocsAsync } from '../../loader/moduleLoaderAsync'
 
 jest.mock('../../loader/moduleLoaderAsync')
+
+beforeEach(() => {
+  jest.clearAllMocks()
+})
 
 async function testCode(
   files: Partial<Record<string, string>>,
@@ -512,33 +517,34 @@ describe('Test throwing import validation errors', () => {
 
 describe('Test throwing DuplicateImportNameErrors', () => {
   type TestCase = [string, Files] | [string, Files, string]
-  type FullTestCase = [string, Record<string, Program>, true, string | undefined] | [string, Record<string, Program>, false, undefined]
+  type FullTestCase =
+    | [string, Record<string, Program>, true, string | undefined]
+    | [string, Record<string, Program>, false, undefined]
 
   function testCases(desc: string, cases: TestCase[]) {
     const allCases = cases.flatMap((c, i) => {
       const context = mockContext(Chapter.LIBRARY_PARSER)
-      const programs = Object.entries(c[1]).reduce(
-        (res, [name, file]) => {
-          const parsed = parse(file!, context, { sourceFile: name })
-          if (!parsed) {
-            console.error(context.errors[0])
-            throw new Error('Failed to parse code!')
-          }
-          return ({
-            ...res,
-            [name]: parsed
-          })
-        },
-      {} as Record<string, Program>)
+      const programs = Object.entries(c[1]).reduce((res, [name, file]) => {
+        const parsed = parse(file!, context, { sourceFile: name })
+        if (!parsed) {
+          console.error(context.errors[0])
+          throw new Error('Failed to parse code!')
+        }
+        return {
+          ...res,
+          [name]: parsed
+        }
+      }, {} as Record<string, Program>)
 
       if (c.length === 2) {
         const [desc] = c
         return [
-          [`${i}. ${desc} no error `, programs, false, undefined] as FullTestCase, 
-          [`${i}. ${desc}: no error`, programs, true, undefined] as FullTestCase]
+          [`${i}. ${desc} no error `, programs, false, undefined] as FullTestCase,
+          [`${i}. ${desc}: no error`, programs, true, undefined] as FullTestCase
+        ]
       }
 
-      const [desc, ,errMsg] = c
+      const [desc, , errMsg] = c
       return [
         [`${i}. ${desc}: no error`, programs, false, undefined] as FullTestCase,
         [`${i}. ${desc}: error`, programs, true, errMsg] as FullTestCase
@@ -625,7 +631,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
         '/a.js': `import * as a from 'one_module';`,
         '/b.js': `import * as a from 'another_module';`
       },
-      "(/a.js:1:7), (/b.js:1:7)"
+      '(/a.js:1:7), (/b.js:1:7)'
     ],
     [
       'Three conflicting imports',
@@ -634,8 +640,8 @@ describe('Test throwing DuplicateImportNameErrors', () => {
         '/b.js': `import a from 'another_module';`,
         '/c.js': `import { foo as a } from 'one_module';`
       },
-      "(/a.js:1:7), (/c.js:1:9), (/b.js:1:7)"
-    ],
+      '(/a.js:1:7), (/c.js:1:9), (/b.js:1:7)'
+    ]
   ])
 
   testCases('Imports from the same Source module', [
@@ -698,7 +704,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       {
         '/a.js': `import * as a from 'one_module';`,
         '/b.js': `import a from 'one_module';`,
-        '/c.js': `import * as a from 'one_module';`,
+        '/c.js': `import * as a from 'one_module';`
       },
       '(/b.js:1:7), (/a.js:1:7), (/c.js:1:7)'
     ],
@@ -707,7 +713,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       {
         '/a.js': `import * as a from 'one_module';`,
         '/b.js': `import a from 'one_module';`,
-        '/c.js': `import { foo as a } from 'one_module';`,
+        '/c.js': `import { foo as a } from 'one_module';`
       },
       '(/b.js:1:7), (/c.js:1:9), (/a.js:1:7)'
     ],
@@ -729,8 +735,27 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       'Handles aliasing correctly 3',
       {
         '/a.js': `import { foo as a } from 'one_module';`,
-        '/b.js': `import { a as foo } from 'one_module';`,
+        '/b.js': `import { a as foo } from 'one_module';`
       }
     ]
   ])
+})
+
+test('No modules are loaded when allowUndefinedImports is true', async () => {
+  const files = {
+    '/a.js': `import { foo } from 'one_module';`
+  }
+
+  const context = mockContext(Chapter.LIBRARY_PARSER)
+
+  const result = await parseProgramsAndConstructImportGraph(
+    p => Promise.resolve(files[p]),
+    '/a.js',
+    context
+  )
+  await analyzeImportsAndExports(result!.programs, ['/a.js'], result!.sourceModulesToImport, {
+    allowUndefinedImports: true
+  })
+
+  expect(memoizedGetModuleDocsAsync).toHaveBeenCalledTimes(0)
 })
