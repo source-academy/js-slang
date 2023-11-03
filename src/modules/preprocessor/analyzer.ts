@@ -42,6 +42,11 @@ function isNamespaceSpecifier(
   return node.type === 'ImportNamespaceSpecifier'
 }
 
+/**
+ * Import and Export analyzer:
+ * - Checks for undefined imports
+ * - Checks for different imports being given the same local name
+ */
 export default async function analyzeImportsAndExports(
   programs: Record<string, es.Program>,
   topoOrder: string[],
