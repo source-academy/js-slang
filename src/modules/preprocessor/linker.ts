@@ -9,7 +9,7 @@ import { mapAndFilter } from '../../utils/misc'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
 import { isSourceModule } from '../utils'
 import { DirectedGraph } from './directedGraph'
-import resolveFile, { defaultResolutionOptions,ImportResolutionOptions } from './resolver'
+import resolveFile, { defaultResolutionOptions, ImportResolutionOptions } from './resolver'
 
 type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
 
