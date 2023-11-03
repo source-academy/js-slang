@@ -1,22 +1,19 @@
-import { Context } from '../../types'
+import { Context } from '../../../types'
 
-export function loadModuleBundle() {
-  return {
-    foo: () => 'foo',
-    bar: () => 'bar'
-  }
-}
+export const loadModuleBundle = jest.fn(() => ({
+  foo: () => 'foo',
+  bar: () => 'bar'
+}))
 
-export function loadModuleTabs(_name: string) {
-  return []
-}
-export const memoizedGetModuleManifest = () => ({
+export const loadModuleTabs = jest.fn(_name => [])
+
+export const memoizedGetModuleManifest = jest.fn(() => ({
   one_module: { tabs: [] },
   other_module: { tabs: [] },
   another_module: { tabs: [] }
-})
+}))
 
-export async function initModuleContext(moduleName: string, context: Context, loadTabs: boolean) {
+export function initModuleContext(moduleName: string, context: Context, loadTabs: boolean) {
   // Load the module's tabs
   if (!(moduleName in context.moduleContexts)) {
     context.moduleContexts[moduleName] = {

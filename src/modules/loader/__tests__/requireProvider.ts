@@ -1,8 +1,8 @@
-import { mockContext } from '../../mocks/context'
-import { Chapter } from '../../types'
+import { mockContext } from '../../../mocks/context'
+import { Chapter } from '../../../types'
 import { getRequireProvider } from '../requireProvider'
 
-jest.mock('../../stdlib', () => ({
+jest.mock('../../../stdlib', () => ({
   bar: jest.fn().mockReturnValue('bar'),
   list: {
     foo: jest.fn().mockReturnValue('foo')

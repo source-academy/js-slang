@@ -1,7 +1,7 @@
-import { createEmptyContext } from '../../createContext'
-import { ModuleConnectionError, ModuleInternalError } from '../../errors/moduleErrors'
-import { Variant } from '../../types'
-import { stripIndent } from '../../utils/formatters'
+import { createEmptyContext } from '../../../createContext'
+import { ModuleConnectionError, ModuleInternalError } from '../../errors'
+import { Variant } from '../../../types'
+import { stripIndent } from '../../../utils/formatters'
 import * as moduleLoader from '../moduleLoader'
 
 // Mock memoize function from lodash

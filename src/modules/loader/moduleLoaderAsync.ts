@@ -1,14 +1,14 @@
 import type { Node } from 'estree'
 import { memoize } from 'lodash'
 
-import type { Context } from '..'
-import { PromiseTimeoutError, timeoutPromise } from '../utils/misc'
-import { wrapSourceModule } from '../utils/operators'
-import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from './errors'
+import type { Context } from '../..'
+import { PromiseTimeoutError, timeoutPromise } from '../../utils/misc'
+import { wrapSourceModule } from '../../utils/operators'
+import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from '../errors'
+import type { ModuleBundle, ModuleDocumentation, ModuleManifest } from '../moduleTypes'
+import { removeExportDefault } from '../utils'
 import { MODULES_STATIC_URL } from './moduleLoader'
-import type { ModuleBundle, ModuleDocumentation, ModuleManifest } from './moduleTypes'
 import { getRequireProvider } from './requireProvider'
-import { evalRawTab } from './utils'
 
 export function httpGetAsync(path: string, type: 'json'): Promise<object>
 export function httpGetAsync(path: string, type: 'text'): Promise<string>
@@ -55,12 +55,14 @@ async function checkModuleExists(moduleName: string, node?: Node) {
 
 export const memoizedGetModuleBundleAsync = memoize(getModuleBundleAsync)
 async function getModuleBundleAsync(moduleName: string): Promise<string> {
-  return httpGetAsync(`${MODULES_STATIC_URL}/bundles/${moduleName}.js`, 'text')
+  const result = await httpGetAsync(`${MODULES_STATIC_URL}/bundles/${moduleName}.js`, 'text')
+  return removeExportDefault(result)
 }
 
 export const memoizedGetModuleTabAsync = memoize(getModuleTabAsync)
-function getModuleTabAsync(tabName: string): Promise<string> {
-  return httpGetAsync(`${MODULES_STATIC_URL}/tabs/${tabName}.js`, 'text')
+async function getModuleTabAsync(tabName: string): Promise<string> {
+  const result = await httpGetAsync(`${MODULES_STATIC_URL}/tabs/${tabName}.js`, 'text')
+  return removeExportDefault(result)
 }
 
 export const memoizedGetModuleDocsAsync = memoize(getModuleDocsAsync)
@@ -82,7 +84,7 @@ export async function loadModuleTabsAsync(moduleName: string, node?: Node) {
     moduleInfo.tabs.map(async path => {
       const rawTabFile = await memoizedGetModuleTabAsync(path)
       try {
-        return evalRawTab(rawTabFile)
+        return eval(rawTabFile)
       } catch (error) {
         // console.error('tab error:', error);
         throw new ModuleInternalError(path, error, node)
@@ -105,7 +107,7 @@ export async function loadModuleBundleAsync(
     if (wrapModule) return wrapSourceModule(moduleName, moduleBundle, getRequireProvider(context))
     return moduleBundle(getRequireProvider(context))
   } catch (error) {
-    // console.error("bundle error: ", error)
+    // console.error("bundle error: ", error, moduleText)
     throw new ModuleInternalError(moduleName, error, node)
   }
 }

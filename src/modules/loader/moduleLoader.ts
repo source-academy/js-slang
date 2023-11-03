@@ -2,16 +2,12 @@ import es from 'estree'
 import { memoize } from 'lodash'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
 
-import {
-  ModuleConnectionError,
-  ModuleInternalError,
-  ModuleNotFoundError
-} from '../errors/moduleErrors'
-import { Context } from '../types'
-import { wrapSourceModule } from '../utils/operators'
-import { ModuleBundle, ModuleDocumentation, ModuleFunctions, ModuleManifest } from './moduleTypes'
+import { Context } from '../../types'
+import { wrapSourceModule } from '../../utils/operators'
+import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from '../errors'
+import { ModuleBundle, ModuleDocumentation, ModuleFunctions, ModuleManifest } from '../moduleTypes'
+import { removeExportDefault } from '../utils'
 import { getRequireProvider } from './requireProvider'
-import { evalRawTab } from './utils'
 
 // Supports both JSDom (Web Browser) environment and Node environment
 export const newHttpRequest = () =>
@@ -79,7 +75,7 @@ export function loadModuleBundle(path: string, context: Context, node?: es.Node)
   if (moduleList.includes(path) === false) throw new ModuleNotFoundError(path, node)
 
   // Get module file
-  const moduleText = memoizedGetModuleFile(path, 'bundle')
+  const moduleText = removeExportDefault(memoizedGetModuleFile(path, 'bundle'))
   try {
     const moduleBundle: ModuleBundle = eval(moduleText)
     return wrapSourceModule(path, moduleBundle, getRequireProvider(context))
@@ -106,9 +102,9 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   const sideContentTabPaths: string[] = modules[path].tabs
   // Load the tabs for the current module
   return sideContentTabPaths.map(path => {
-    const rawTabFile = memoizedGetModuleFile(path, 'tab')
+    const rawTabFile = removeExportDefault(memoizedGetModuleFile(path, 'tab'))
     try {
-      return evalRawTab(rawTabFile)
+      return eval(removeExportDefault(rawTabFile))
     } catch (error) {
       // console.error('tab error:', error);
       throw new ModuleInternalError(path, error, node)

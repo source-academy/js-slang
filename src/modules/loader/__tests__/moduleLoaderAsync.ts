@@ -1,8 +1,8 @@
 import type { MockedFunction } from 'jest-mock'
 
-import { mockContext } from '../../mocks/context'
-import { Chapter, Variant } from '../../types'
-import { ModuleConnectionError, ModuleInternalError } from '../errors'
+import { mockContext } from '../../../mocks/context'
+import { Chapter, Variant } from '../../../types'
+import { ModuleConnectionError, ModuleInternalError } from '../../errors'
 import { MODULES_STATIC_URL } from '../moduleLoader'
 import * as moduleLoader from '../moduleLoaderAsync'
 
@@ -10,6 +10,8 @@ jest.mock('lodash', () => ({
   ...jest.requireActual('lodash'),
   memoize: jest.fn(x => x)
 }))
+
+jest.spyOn(moduleLoader, 'memoizedGetModuleManifestAsync')
 
 global.fetch = jest.fn()
 const mockedFetch = fetch as MockedFunction<typeof fetch>
@@ -120,6 +122,21 @@ describe('Test bundle loading', () => {
     expect(bundleText).toEqual(sampleResponse)
   })
 
+  test('memoizedGetModuleBundleAsync does not load module manifest', async () => {
+    mockResponse('')
+    await moduleLoader.memoizedGetModuleBundleAsync('')
+
+    expect(moduleLoader.memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(0)
+  })
+
+  test('loadModuleBundleAsync does not load module manifest', async () => {
+    const mockedContext = mockContext(Chapter.LIBRARY_PARSER)
+    mockResponse('require => ({ foo: () => "foo" })')
+    await moduleLoader.loadModuleBundleAsync('', mockedContext, true)
+
+    expect(moduleLoader.memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(0)
+  })
+
   test('Loading a correctly implemented module bundle', async () => {
     const context = mockContext(Chapter.SOURCE_4, Variant.DEFAULT)
     const sampleResponse = `require => ({ foo: () => 'foo' })`
@@ -144,6 +161,14 @@ describe('Test bundle loading', () => {
     ).rejects.toBeInstanceOf(ModuleInternalError)
 
     expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+  test('Able to handle bundles with export default declarations', async () => {
+    const mockedContext = mockContext(Chapter.LIBRARY_PARSER)
+
+    mockResponse(`export default require => ({ foo: () => 'foo' })`)
+    const loadedBundle = await moduleLoader.loadModuleBundleAsync('one_module', mockedContext, true)
+    expect(loadedBundle.foo()).toEqual('foo')
   })
 })
 

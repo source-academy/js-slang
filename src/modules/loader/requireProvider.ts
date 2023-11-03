@@ -1,8 +1,10 @@
-import * as jsslang from '..'
-import * as stdlib from '../stdlib'
-import type { Context } from '../types'
-import * as types from '../types'
-import * as stringify from '../utils/stringify'
+import _ from 'lodash'
+
+import * as jsslang from '../..'
+import * as stdlib from '../../stdlib'
+import type { Context } from '../../types'
+import * as types from '../../types'
+import * as stringify from '../../utils/stringify'
 
 /**
  * Returns a function that simulates the job of Node's `require`. The require
@@ -30,7 +32,8 @@ export const getRequireProvider = (context: Context) => (x: string) => {
         }
       },
       context
-    }
+    },
+    lodash: _
   }
 
   return recurser(exports, pathSegments)
