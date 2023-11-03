@@ -6,9 +6,9 @@ import { RawSourceMap } from 'source-map'
 import type { Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { hoistAndMergeImports } from '../localImports/transformers/hoistAndMergeImports'
-import { ImportTransformOptions } from '../modules/moduleTypes'
-import { getRequireProvider, RequireProvider } from '../modules/requireProvider'
+import { getRequireProvider, RequireProvider } from '../modules/loader/requireProvider'
+import { ImportOptions } from '../modules/moduleTypes'
+import hoistAndMergeImports from '../modules/preprocessor/transformers/hoistAndMergeImports'
 import { parse } from '../parser/parser'
 import {
   evallerReplacer,
@@ -55,7 +55,7 @@ function containsPrevEval(context: Context): boolean {
 export async function fullJSRunner(
   program: es.Program,
   context: Context,
-  importOptions: ImportTransformOptions
+  importOptions: ImportOptions
 ): Promise<Result> {
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context

@@ -1,4 +1,6 @@
-import type { RequireProvider } from './requireProvider'
+import type { RequireProvider } from './loader/requireProvider'
+import { ImportAnalysisOptions } from './preprocessor/analyzer'
+import { LinkerOptions } from './preprocessor/linker'
 
 export type ModuleManifest = {
   [module: string]: {
@@ -14,8 +16,8 @@ export type ModuleFunctions = {
 
 export type ModuleDocumentation = Record<string, string>
 
-export type ImportTransformOptions = {
+export type ImportOptions = {
   wrapSourceModules: boolean
   loadTabs: boolean
-  checkImports: boolean
-}
+} & ImportAnalysisOptions &
+  LinkerOptions
