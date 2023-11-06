@@ -171,14 +171,10 @@ export default async function analyzeImportsAndExports(
 
       const [[, specifiers]] = moduleToSpecifierMap
       const [namespaceSpecifiers, regularSpecifiers] = partition(specifiers, isNamespaceSpecifier)
-      const importedNames = new Set<string>()
 
       // For the given local name, it can only represent one imported name from
       // the module. Collect specifiers referring to the same export.
-      regularSpecifiers.forEach(spec => {
-        const importedName = getImportedName(spec)
-        importedNames.add(importedName)
-      })
+      const importedNames = new Set(regularSpecifiers.map(getImportedName))
 
       if (
         (namespaceSpecifiers.length > 0 && regularSpecifiers.length > 0) ||
