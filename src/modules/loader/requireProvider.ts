@@ -4,6 +4,7 @@ import * as jsslang from '../..'
 import * as stdlib from '../../stdlib'
 import type { Context } from '../../types'
 import * as types from '../../types'
+import * as assert from '../../utils/assert'
 import * as stringify from '../../utils/stringify'
 
 /**
@@ -28,6 +29,7 @@ export const getRequireProvider = (context: Context) => (x: string) => {
         stdlib,
         types,
         utils: {
+          assert,
           stringify
         }
       },
