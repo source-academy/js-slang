@@ -42,7 +42,6 @@ export default function hoistAndMergeImports(program: es.Program) {
         }
         case 'ImportDefaultSpecifier': {
           defaultSpecifiers.add(declaredName)
-
           break
         }
         case 'ImportSpecifier': {
@@ -55,8 +54,7 @@ export default function hoistAndMergeImports(program: es.Program) {
   })
 
   const combinedImports = importRecords
-    .entries()
-    .flatMap(([source, { regularSpecifiers, defaultSpecifiers, namespaces }]) => {
+    .flatMap((source, { regularSpecifiers, defaultSpecifiers, namespaces }) => {
       const declarations: es.ImportDeclaration[] = []
       namespaces.forEach(name => {
         declarations.push(create.importDeclaration(source, [create.importNamespaceSpecifier(name)]))

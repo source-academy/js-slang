@@ -51,7 +51,7 @@ export default async function analyzeImportsAndExports(
   programs: Record<string, es.Program>,
   topoOrder: string[],
   sourceModulesToImport: Set<string>,
-  options: Partial<ImportAnalysisOptions>
+  options: Partial<ImportAnalysisOptions> = {}
 ) {
   const moduleDocs: Record<string, Set<string>> = options.allowUndefinedImports
     ? {}

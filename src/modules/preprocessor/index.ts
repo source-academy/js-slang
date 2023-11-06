@@ -88,10 +88,7 @@ const preprocessFileImports = async (
   if (fullTopoOrder.length === 0) fullTopoOrder.push(entrypointFilePath)
 
   try {
-    await analyzeImportsAndExports(programs, fullTopoOrder, sourceModulesToImport, {
-      allowUndefinedImports: !!options?.importOptions?.allowUndefinedImports,
-      throwOnDuplicateNames: true
-    })
+    await analyzeImportsAndExports(programs, fullTopoOrder, sourceModulesToImport, options?.importOptions)
   } catch (error) {
     context.errors.push(error)
     return undefined
