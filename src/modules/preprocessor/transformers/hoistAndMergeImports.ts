@@ -13,6 +13,10 @@ type ImportRecord = {
   namespaces: Set<string>
 }
 
+/**
+ * Collates import declarations from each module and creates corresponding combined
+ * import declarations. Will also filter out non-Source module imports
+ */
 export default function hoistAndMergeImports(program: es.Program) {
   const [importDeclarations, nonImportDeclarations] = partition(program.body, isImportDeclaration)
 
@@ -53,8 +57,8 @@ export default function hoistAndMergeImports(program: es.Program) {
     })
   })
 
-  const combinedImports = importRecords
-    .flatMap((source, { regularSpecifiers, defaultSpecifiers, namespaces }) => {
+  const combinedImports = importRecords.flatMap(
+    (source, { regularSpecifiers, defaultSpecifiers, namespaces }) => {
       const declarations: es.ImportDeclaration[] = []
       namespaces.forEach(name => {
         declarations.push(create.importDeclaration(source, [create.importNamespaceSpecifier(name)]))
@@ -67,20 +71,19 @@ export default function hoistAndMergeImports(program: es.Program) {
         })
       })
 
-      if (defaultSpecifiers.size === 1) {
-        // If there is only one default import, we can combine its declaration
-        // with regular import specifiers
-        const [localName] = [...defaultSpecifiers]
+      if (defaultSpecifiers.size > 0) {
+        const [first, ...others] = defaultSpecifiers
 
+        // We can combine only one default specifier with regular import specifiers
         // Insert it at the front of the array because when acorn parses the AST
         // its usually the first specifier. When we compare ASTs in tests
         // the specifier will then be in the right place
-        specifiers.unshift(create.importDefaultSpecifier(localName))
-      } else if (defaultSpecifiers.size > 1) {
+        specifiers.unshift(create.importDefaultSpecifier(first))
+
         // If there is more than 1 default specifier,
         // then we need to create a separate declaration for each
         // since one ImportDeclaration cannot have multiple ImportDefaultSpecifiers
-        defaultSpecifiers.forEach(localName => {
+        others.forEach(localName => {
           declarations.push(
             create.importDeclaration(source, [create.importDefaultSpecifier(localName)])
           )
@@ -93,7 +96,8 @@ export default function hoistAndMergeImports(program: es.Program) {
         declarations.push(create.importDeclaration(source, specifiers))
       }
       return declarations
-    })
+    }
+  )
 
   program.body = [...combinedImports, ...nonImportDeclarations]
 }
