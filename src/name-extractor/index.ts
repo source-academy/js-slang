@@ -4,8 +4,11 @@ import { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
 import { findAncestors, findIdentifierNode } from '../finder'
 import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
-import { memoizedloadModuleDocs } from '../modules/loader/moduleLoader'
+import { memoizedGetModuleDocsAsync } from '../modules/loader/moduleLoaderAsync'
 import syntaxBlacklist from '../parser/source/syntax'
+import assert from '../utils/assert'
+import { getImportedName } from '../utils/ast/helpers'
+import { isDeclaration, isImportDeclaration } from '../utils/ast/typeGuards'
 
 export interface NameDeclaration {
   name: string
@@ -19,15 +22,9 @@ const KIND_FUNCTION = 'func'
 const KIND_PARAM = 'param'
 const KIND_CONST = 'const'
 
-function isImportDeclaration(node: es.Node): boolean {
-  return node.type === 'ImportDeclaration'
-}
 
-function isDeclaration(node: es.Node): boolean {
-  return node.type === 'VariableDeclaration' || node.type === 'FunctionDeclaration'
-}
-
-function isFunction(node: es.Node): boolean {
+type FunctionType = es.FunctionDeclaration | es.ArrowFunctionExpression | es.FunctionExpression
+function isFunction(node: es.Node): node is FunctionType {
   return (
     node.type === 'FunctionDeclaration' ||
     node.type === 'FunctionExpression' ||
@@ -35,7 +32,8 @@ function isFunction(node: es.Node): boolean {
   )
 }
 
-function isLoop(node: es.Node): boolean {
+type LoopNode = es.WhileStatement | es.ForStatement
+function isLoop(node: es.Node): node is LoopNode {
   return node.type === 'WhileStatement' || node.type === 'ForStatement'
 }
 
@@ -95,7 +93,7 @@ export function getKeywords(
   // In the init part of a for statement, `let` is the only valid keyword
   if (
     ancestors[0].type === 'ForStatement' &&
-    identifier === (ancestors[0] as es.ForStatement).init
+    identifier === ancestors[0].init
   ) {
     return context.chapter >= syntaxBlacklist.AssignmentExpression
       ? keywordsInBlock.AssignmentExpression
@@ -139,11 +137,11 @@ export function getKeywords(
  * @returns Tuple consisting of the list of suggestions, and a boolean value indicating if
  * suggestions should be displayed, i.e. `[suggestions, shouldPrompt]`
  */
-export function getProgramNames(
+export async function getProgramNames(
   prog: es.Node,
   comments: acorn.Comment[],
   cursorLoc: es.Position
-): [NameDeclaration[], boolean] {
+): Promise<[NameDeclaration[], boolean]> {
   function before(first: es.Position, second: es.Position) {
     return first.line < second.line || (first.line === second.line && first.column <= second.column)
   }
@@ -172,12 +170,12 @@ export function getProgramNames(
     const node = queue.shift()!
     if (isFunction(node)) {
       // This is the only time we want raw identifiers
-      nameQueue.push(...(node as any).params)
+      nameQueue.push(...node.params)
     }
 
     const body = getNodeChildren(node)
     for (const child of body) {
-      if (isImportDeclaration(child)) {
+      if (isImportDeclaration(child as any)) {
         nameQueue.push(child)
       }
 
@@ -198,19 +196,26 @@ export function getProgramNames(
     }
   }
 
-  const res: any = {}
-  nameQueue
-    .map(node => getNames(node, n => cursorInLoc(n.loc)))
-    .reduce((prev, cur) => prev.concat(cur), []) // no flatmap feelsbad
-    .forEach((decl, idx) => {
+  const nameResults = await Promise.all(nameQueue.map(node => getNames(node, n => cursorInLoc(n.loc))))
+  const res = nameResults.reduce((res, arr) => {
+    arr.forEach((decl, idx) => {
+     // Deduplicate, ensure deeper declarations overwrite
       res[decl.name] = { ...decl, score: idx }
-    }) // Deduplicate, ensure deeper declarations overwrite
+    })
+
+    return res
+  }, {})
+
   return [Object.values(res), true]
 }
 
 function isNotNull<T>(x: T): x is Exclude<T, null> {
   // This function exists to appease the mighty typescript type checker
   return x !== null
+}
+
+function isNotNullOrUndefined<T>(x: T): x is Exclude<T, null | undefined> {
+  return x !== undefined && isNotNull(x)
 }
 
 function getNodeChildren(node: es.Node): es.Node[] {
@@ -223,13 +228,14 @@ function getNodeChildren(node: es.Node): es.Node[] {
       return [node.test, node.body]
     case 'ForStatement':
       return [node.init, node.test, node.update, node.body].filter(
-        n => n !== undefined && n !== null
-      ) as es.Node[]
+        isNotNullOrUndefined
+        // n => n !== undefined && n !== null
+      )
     case 'ExpressionStatement':
       return [node.expression]
     case 'IfStatement':
       const children = [node.test, node.consequent]
-      if (node.alternate !== undefined && node.alternate !== null) {
+      if (isNotNullOrUndefined(node.alternate)) {
         children.push(node.alternate)
       }
       return children
@@ -239,8 +245,9 @@ function getNodeChildren(node: es.Node): es.Node[] {
       return [node.body]
     case 'VariableDeclaration':
       return node.declarations
-        .map(getNodeChildren)
-        .reduce((prev: es.Node[], cur: es.Node[]) => prev.concat(cur))
+        .flatMap(getNodeChildren)
+        // .map(getNodeChildren)
+        // .reduce((prev: es.Node[], cur: es.Node[]) => prev.concat(cur))
     case 'VariableDeclarator':
       return node.init ? [node.init] : []
     case 'ArrowFunctionExpression':
@@ -305,13 +312,14 @@ function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean):
  * is located within the node, false otherwise
  * @returns List of found names
  */
-function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDeclaration[] {
+async function getNames(node: es.Node, locTest: (node: es.Node) => boolean): Promise<NameDeclaration[]> {
   switch (node.type) {
     case 'ImportDeclaration':
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))
 
       try {
-        const docs = memoizedloadModuleDocs(node.source.value as string, node)
+        assert(typeof node.source?.value === 'string', 'ImportDeclaration should have sources of type string!')
+        const docs = await memoizedGetModuleDocsAsync(node.source.value)
 
         if (!docs) {
           return specs.map(spec => ({
@@ -322,9 +330,19 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
         }
 
         return specs.map(spec => {
-          if (spec.type !== 'ImportSpecifier' || docs[spec.local.name] === undefined) {
+          if (spec.type === 'ImportNamespaceSpecifier') {
             return {
-              name: spec.local.name,
+              name: node.source.value as string,
+              meta: KIND_IMPORT,
+              docHTML: `Namespace import ${node.source.value}`
+            }
+          }
+
+          const importedName = getImportedName(spec)
+
+          if (docs[importedName] === undefined) {
+            return {
+              name: importedName,
               meta: KIND_IMPORT,
               docHTML: `No documentation available for <code>${spec.local.name}</code> from ${node.source.value} module`
             }
@@ -332,7 +350,7 @@ function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDecla
             return {
               name: spec.local.name,
               meta: KIND_IMPORT,
-              docHTML: docs[spec.local.name]
+              docHTML: docs[importedName]
             }
           }
         })
