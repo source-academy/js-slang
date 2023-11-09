@@ -86,6 +86,6 @@ describe('hoistAndMergeImports', () => {
       `
       import { b } from 'one_module';
       `
-    ],
+    ]
   ])('%#', (actualCode, expectedCode) => assertASTsAreEqual(actualCode, expectedCode))
 })
