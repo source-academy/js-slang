@@ -31,6 +31,13 @@ export const defaultLinkerOptions: LinkerOptions = {
   resolverOptions: defaultResolutionOptions
 }
 
+/**
+ * Starting from the entrypoint file, parse all imported local modules and create
+ * a dependency graph.
+ *
+ * @param fileGetter A function that, when given a file path, either returns the contents
+ * of that file as a string, or if it doesn't exist, `undefined`
+ */
 export default async function parseProgramsAndConstructImportGraph(
   fileGetter: (path: string) => Promise<string | undefined>,
   entrypointFilePath: string,
@@ -63,6 +70,7 @@ export default async function parseProgramsAndConstructImportGraph(
       `Expected module declaration source to be of type string, got ${node.source?.value}`
     )
 
+    // TODO: Move file path validation here
     const [absDstPath, resolved] = await resolveFileWrapper(fromModule, node.source.value)
 
     if (!resolved) {

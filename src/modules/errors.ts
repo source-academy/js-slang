@@ -165,13 +165,17 @@ export class ConsecutiveSlashesInFilePathError extends InvalidFilePathError {
 export class DuplicateImportNameError extends ImportError {
   public readonly locString: string
 
+  public get location() {
+    return this.nodes[0].loc ?? UNKNOWN_LOCATION
+  }
+
   constructor(public readonly name: string, public readonly nodes: es.Node[]) {
     super()
 
     this.locString = nodes
       .map(({ loc }) => {
         const { source, start } = loc ?? UNKNOWN_LOCATION
-        return `(${source}:${start.line}:${start.column})`
+        return `(${source ?? 'Unknown File'}:${start.line}:${start.column})`
       })
       .join(', ')
   }
@@ -181,6 +185,7 @@ export class DuplicateImportNameError extends ImportError {
   }
 
   public elaborate() {
-    return 'Please change the offending names to avoid this conflict'
+    return `You cannot have different symbols across different files being given the same declared name, for example: \`import { foo as a } from 'one_module';\` and \`import { bar as a } from 'another_module';
+    You also cannot have different symbols from the same module with the same declared name, for example: \`import { foo as a } from 'one_module';\` and \`import { bar as a } from 'one_module'; `
   }
 }

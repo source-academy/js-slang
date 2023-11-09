@@ -83,7 +83,7 @@ const preprocessFileImports = async (
 
   // If the entrypoint file doesn't import anything, it may be left out
   // of the topological ordering. The import analyzer requires that it
-  // be in the topological ordering, so we add it, just for the analyzer
+  // be in the topological ordering, so we add it
   const fullTopoOrder = topologicalOrderResult.topologicalOrder
   if (fullTopoOrder.length === 0) fullTopoOrder.push(entrypointFilePath)
 
