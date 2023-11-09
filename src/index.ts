@@ -61,6 +61,12 @@ export interface IOptions {
   envSteps: number
 
   importOptions: ImportOptions
+
+  /**
+   * Set this to true if source file information should be
+   * added when parsing programs into ASTs
+   */
+  shouldAddFileName: boolean
 }
 
 // needed to work on browsers

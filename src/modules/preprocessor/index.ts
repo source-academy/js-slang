@@ -65,7 +65,8 @@ const preprocessFileImports = async (
     p => Promise.resolve(files[p]),
     entrypointFilePath,
     context,
-    options?.importOptions
+    options?.importOptions,
+    options?.shouldAddFileName ?? Object.keys(files).length > 0
   )
   // Return 'undefined' if there are errors while parsing.
   if (!importGraphResult || context.errors.length !== 0) {

@@ -22,12 +22,10 @@ export type LinkerResult = {
 }
 
 export type LinkerOptions = {
-  shouldAddFileName: boolean
   resolverOptions: ImportResolutionOptions
 }
 
 export const defaultLinkerOptions: LinkerOptions = {
-  shouldAddFileName: false,
   resolverOptions: defaultResolutionOptions
 }
 
@@ -42,7 +40,8 @@ export default async function parseProgramsAndConstructImportGraph(
   fileGetter: (path: string) => Promise<string | undefined>,
   entrypointFilePath: string,
   context: Context,
-  options: RecursivePartial<LinkerOptions> = defaultLinkerOptions
+  options: RecursivePartial<LinkerOptions> = defaultLinkerOptions,
+  shouldAddFileName: boolean
 ): Promise<LinkerResult | undefined> {
   const importGraph = new DirectedGraph()
   const programs: Record<string, es.Program> = {}
@@ -117,7 +116,7 @@ export default async function parseProgramsAndConstructImportGraph(
       fileText !== undefined,
       "If the file does not exist, an error should've already been thrown"
     )
-    const parseOptions = options.shouldAddFileName
+    const parseOptions = shouldAddFileName
       ? {
           sourceFile: fromModule
         }

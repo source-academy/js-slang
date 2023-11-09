@@ -14,7 +14,6 @@ import {
   substituterNodes
 } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { filterImportDeclarations } from '../utils/ast/helpers'
 import {
   dummyBlockExpression,
   dummyBlockStatement,
@@ -23,6 +22,7 @@ import {
   dummyStatement,
   dummyVariableDeclarator
 } from '../utils/ast/dummyAstCreator'
+import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import {
