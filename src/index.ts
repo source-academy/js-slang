@@ -65,8 +65,10 @@ export interface IOptions {
   /**
    * Set this to true if source file information should be
    * added when parsing programs into ASTs
+   * 
+   * Set to null to let js-slang decide automatically
    */
-  shouldAddFileName: boolean
+  shouldAddFileName: boolean | null
 }
 
 // needed to work on browsers

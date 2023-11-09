@@ -56,7 +56,8 @@ const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
     ...defaultLinkerOptions,
     wrapSourceModules: true,
     loadTabs: true
-  }
+  },
+  shouldAddFileName: null
 }
 
 let previousCode: {
