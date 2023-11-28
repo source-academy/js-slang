@@ -233,8 +233,8 @@ describe('preprocessFileImports', () => {
     const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
       importOptions: {
         allowUndefinedImports: true,
-        shouldAddFileName: true
-      }
+      },
+      shouldAddFileName: true
     })
     assertASTsAreEquivalent(actualProgram, expectedCode, true)
   })
@@ -302,8 +302,8 @@ describe('preprocessFileImports', () => {
     const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
       importOptions: {
         allowUndefinedImports: true,
-        shouldAddFileName: true
-      }
+      },
+      shouldAddFileName: true
     })
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
@@ -327,9 +327,7 @@ describe('preprocessFileImports', () => {
       `
     }
     await preprocessFileImports(files, '/a.js', actualContext, {
-      importOptions: {
-        shouldAddFileName: true
-      }
+      shouldAddFileName: true
     })
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
       `"Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'."`
@@ -461,8 +459,8 @@ describe('preprocessFileImports', () => {
     const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
       importOptions: {
         allowUndefinedImports: true,
-        shouldAddFileName: true
-      }
+      },
+      shouldAddFileName: true
     })
 
     assertASTsAreEquivalent(actualProgram, expectedCode)

@@ -66,7 +66,7 @@ const preprocessFileImports = async (
     entrypointFilePath,
     context,
     options?.importOptions,
-    options?.shouldAddFileName ?? Object.keys(files).length > 0
+    options?.shouldAddFileName ?? Object.keys(files).length > 1
   )
   // Return 'undefined' if there are errors while parsing.
   if (!importGraphResult || context.errors.length !== 0) {

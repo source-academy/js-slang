@@ -31,7 +31,8 @@ async function testCode(
     p => Promise.resolve(files[p]),
     entrypointFilePath,
     context,
-    { shouldAddFileName: true }
+    {},
+    true
   )
 
   // Return 'undefined' if there are errors while parsing.
@@ -751,7 +752,9 @@ test('No modules are loaded when allowUndefinedImports is true', async () => {
   const result = await parseProgramsAndConstructImportGraph(
     p => Promise.resolve(files[p]),
     '/a.js',
-    context
+    context,
+    {},
+    true
   )
   await analyzeImportsAndExports(result!.programs, ['/a.js'], result!.sourceModulesToImport, {
     allowUndefinedImports: true
