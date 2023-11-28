@@ -232,7 +232,7 @@ describe('preprocessFileImports', () => {
     `
     const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
       importOptions: {
-        allowUndefinedImports: true,
+        allowUndefinedImports: true
       },
       shouldAddFileName: true
     })
@@ -301,7 +301,7 @@ describe('preprocessFileImports', () => {
     `
     const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
       importOptions: {
-        allowUndefinedImports: true,
+        allowUndefinedImports: true
       },
       shouldAddFileName: true
     })
@@ -458,7 +458,7 @@ describe('preprocessFileImports', () => {
     `
     const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
       importOptions: {
-        allowUndefinedImports: true,
+        allowUndefinedImports: true
       },
       shouldAddFileName: true
     })
