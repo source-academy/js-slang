@@ -24,7 +24,8 @@
     "suppressImplicitAnyIndexErrors": true,
     "resolveJsonModule": true,
     "noUnusedLocals": true,
-    "incremental": true
+    "incremental": true,
+    "typeRoots": [ "./node_modules/@webgpu/types", "./node_modules/@types"]
   },
   "exclude": [
     "src/stdlib/metacircular-interpreter",

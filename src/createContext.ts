@@ -14,6 +14,7 @@ import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
+import { wgslPrelude } from './stdlib/wgsl.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils'
 import {
   Chapter,
@@ -27,6 +28,7 @@ import {
 import { makeWrapper } from './utils/makeWrapper'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
+import * as wgslLib from './wgsl/lib'
 
 export class LazyBuiltIn {
   func: (...arg0: any) => any
@@ -391,6 +393,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     )
   }
 
+  if (context.variant === Variant.WGSL) {
+    defineBuiltin(context, 'play(sound)', wgslLib.play(context))
+    defineBuiltin(context, 'make_sound(func, length)', wgslLib.make_sound)
+    defineBuiltin(context, 'get_duration(sound)', wgslLib.get_duration)
+    defineBuiltin(context, 'get_wave(sound)', wgslLib.get_wave)
+    defineBuiltin(context, '_random()', wgslLib._random)
+    defineBuiltin(context, 'is_sound(x)', wgslLib.is_sound)
+  }
+
   if (context.variant === Variant.LAZY) {
     defineBuiltin(context, 'wrapLazyCallee(f)', new LazyBuiltIn(operators.wrapLazyCallee, true))
     defineBuiltin(context, 'makeLazyFunction(f)', new LazyBuiltIn(operators.makeLazyFunction, true))
@@ -652,6 +663,10 @@ function importPrelude(context: Context) {
 
   if (context.variant === Variant.NON_DET) {
     prelude += nonDetPrelude
+  }
+
+  if (context.variant === Variant.WGSL) {
+    prelude += wgslPrelude
   }
 
   if (prelude !== '') {

@@ -35,6 +35,7 @@
     "@joeychenofficial/alt-ergo-modified": "^2.4.0",
     "@ts-morph/bootstrap": "^0.18.0",
     "@types/estree": "0.0.52",
+    "@webgpu/types": "0.1.31",
     "acorn": "^8.8.2",
     "acorn-class-fields": "^1.0.0",
     "acorn-loose": "^8.0.0",

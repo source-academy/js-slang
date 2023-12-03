@@ -10,6 +10,7 @@ import * as es from 'estree'
 
 import { EnvTree } from './createContext'
 import { Agenda, Stash } from './ec-evaluator/interpreter'
+import { Agenda as Agenda_WGSL, Stash as Stash_WGSL } from './wgsl/interpreter'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -92,7 +93,8 @@ export enum Variant {
   NON_DET = 'non-det',
   CONCURRENT = 'concurrent',
   GPU = 'gpu',
-  EXPLICIT_CONTROL = 'explicit-control'
+  EXPLICIT_CONTROL = 'explicit-control',
+  WGSL = 'wgsl'
 }
 
 export interface Language {
@@ -146,7 +148,9 @@ export interface Context<T = any> {
     environments: Environment[]
     nodes: es.Node[]
     agenda: Agenda | null
+    agenda_wgsl?: Agenda_WGSL
     stash: Stash | null
+    stash_wgsl?: Stash_WGSL
     envStepsTotal: number
     breakpointSteps: number[]
   }
