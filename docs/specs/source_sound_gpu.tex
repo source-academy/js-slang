@@ -1,0 +1,84 @@
+\subsection*{Sound Support}
+
+The following sound module functions are supported:
+
+\begin{itemize}
+
+\item \lstinline{make_sound(wave, duration)}: Returns a \lstinline{sound} with given \lstinline{wave} function and \lstinline{duration}. The \lstinline{wave} function is a function: number -> number that takes in a non-negative input time and returns an amplitude between -1 and 1.
+
+\item \lstinline{get_wave(sound)}: Returns the \lstinline{wave} function of a given \lstinline{sound}.
+
+\item \lstinline{get_duration(sound)}: Returns the \lstinline{duration} of a given \lstinline{sound}.
+
+\item \lstinline{is_sound(x)}: Returns \lstinline{true} if \lstinline{x} is a \lstinline{sound}, and \lstinline{false} otherwise.
+
+\item \lstinline{play_wave(wave, duration)}: Plays the given \lstinline{wave} using the computer's sound device, for the specified \lstinline{duration}. The process is accelerated by GPU.
+
+\item \lstinline{play(sound)}: Plays the given \lstinline{sound} using the computer's sound device. The process is accelerated by GPU.
+
+\item \lstinline{noise_sound(duration)}: Returns a noise \lstinline{sound} with given \lstinline{duration}.
+
+\item \lstinline{silence_sound(duration)}: Returns a silence \lstinline{sound} with given \lstinline{duration}.
+
+\item \lstinline{sine_sound(freq, duration)}: Returns a sine wave \lstinline{sound} with given \lstinline{frequency} and \lstinline{duration}.
+
+\item \lstinline{square_sound(freq, duration)}: Returns a square wave \lstinline{sound} with given \lstinline{frequency} and \lstinline{duration}.
+
+\item \lstinline{triangle_sound(freq, duration)}: Returns a triangle wave \lstinline{sound} with given \lstinline{frequency} and \lstinline{duration}.
+
+\item \lstinline{sawtooth_sound(freq, duration)}: Returns a sawtooth wave \lstinline{sound} with given \lstinline{frequency} and \lstinline{duration}.
+
+\item \lstinline{consecutively(list_of_sounds)}: Returns a new \lstinline{sound} by combining the sounds in a given list where the second Sound is appended to the end of the first Sound, the third Sound is appended to the end of the second Sound, and so on. The effect is that the Sounds in the list are joined end-to-end.
+
+\item \lstinline{simultaneously(list_of_sounds)}: Returns a new \lstinline{sound} by combining the sounds in a given list where all the sounds are overlapped on top of each other.
+
+\item \lstinline{adsr(attack_ratio, decay_ratio, sustain_level, release_ratio)}: Returns a \lstinline{sound} transformer that transforms a Sound by applying an ADSR envelope specified by four ratio parameters. All four ratios are between 0 and 1, and their sum is equal to 1.
+
+\item \lstinline{stacking_adsr(waveform, base_frequency, duration, envelopes)}: Returns a \lstinline{sound} that results from applying a list of envelopes to a given wave form. The wave form is a Sound generator that takes a frequency and a duration as arguments and produces a Sound with the given frequency and duration. Each envelope is applied to a harmonic: the first harmonic has the given frequency, 
+the second has twice the frequency, the third three times the frequency etc. The harmonics are then layered simultaneously to produce the resulting Sound.
+
+\item \lstinline{phase_mod(freq, duration, amount)}: Returns a \lstinline{sound} Returns a Sound transformer which uses its argument to modulate the phase of a (carrier) sine wave of given frequency and duration with a given Sound. 
+Modulating with a low frequency Sound results in a vibrato effect. Modulating with a Sound with frequencies comparable to the sine wave frequency results in more complex wave forms.
+
+\item \lstinline{letter_name_to_midi_note(note)}: Converts a letter name to its corresponding MIDI note. The letter name is represented in standard pitch notation. Examples are \lstinline{A5}, \lstinline{Db3}, \lstinline{C#7}.
+
+\item \lstinline{midi_note_to_frequency(note)}: Converts a MIDI note to its corresponding frequency.
+
+\item \lstinline{letter_name_to_frequency(note)}: Converts a letter name to its corresponding frequency.
+
+\item \lstinline{bell(note, duration)}: Returns a \lstinline{sound} reminiscent of a bell, playing a given \lstinline{note} for a given \lstinline{duration}.
+
+\item \lstinline{cello(note, duration)}: Returns a \lstinline{sound} reminiscent of a cello, playing a given \lstinline{note} for a given \lstinline{duration}.
+
+\item \lstinline{piano(note, duration)}: Returns a \lstinline{sound} reminiscent of a piano, playing a given \lstinline{note} for a given \lstinline{duration}.
+
+\item \lstinline{trombone(note, duration)}: Returns a \lstinline{sound} reminiscent of a trombone, playing a given \lstinline{note} for a given \lstinline{duration}.
+
+\item \lstinline{violin(note, duration)}: Returns a \lstinline{sound} reminiscent of a violin, playing a given \lstinline{note} for a given \lstinline{duration}.
+
+\end{itemize}
+
+\subsubsection*{Restrictions}
+
+Even if the program is logically correct and runnable in Source \S 2, improper use of built-in function in the \lstinline{wave} function of 
+a \lstinline{sound} may cause the transpiling process to fail. Specifically, wrapping some built-in functions directly acound the parameter of the 
+\lstinline{wave} function will block the partial evaluation. In such cases, the program will automatically switch to running on the CPU.
+
+\subsubsection*{Examples}
+
+Below are some examples of accelerable and unaccelerable usage of built-in functions:\\
+
+\textbf{Accelerable} - Proper use of built-in functions (Although \lstinline{list} is used in \lstinline{wave}, it is not called directly on the \lstinline{wave} function parameter):
+\begin{verbatim}
+play(consecutively(list(piano(48, 1), piano(49, 1), piano(50, 1))));
+\end{verbatim}
+
+\textbf{Unaccelerable} - Apply built-in functions (e.g. \lstinline{list}) on \lstinline{wave} function parameter \lstinline{t}:
+\begin{verbatim}
+play_wave(t => head(map(x => math_sin(2 * 440 * math_PI * x), list(t))), 2);
+\end{verbatim}
+
+\textbf{Accelerable} - The equivalent version of the above example:
+\begin{verbatim}
+play_wave(t => math_sin(2 * 440 * math_PI * t), 2);
+\end{verbatim}

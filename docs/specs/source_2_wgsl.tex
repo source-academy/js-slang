@@ -1,0 +1,60 @@
+\input source_header.tex
+
+\begin{document}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\docheader{2023}{Source}{\S 2 WGSL}{Martin Henz, Wang Ziwen}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input source_intro.tex
+
+\section{Changes}
+
+Source \S 2 WGSL utilizes the WebGPU API to accelerate GPU-based operations for Source programs. 
+This modern web standard enables efficient rendering and data processing directly from web browsers. 
+Specifically, in Source \S 2 WGSL, when a Source program invokes the play function from the Sound module, 
+the wave function of the sound to be played undergoes partial evaluation and is transpiled into the WebGPU Shading Language (WGSL). 
+This process significantly enhances sound processing speed on the GPU using WebGPU APIs. 
+Comparative experiments have demonstrated that Source \S 2 WGSL achieves significantly higher performance speeds, 
+being orders of magnitude faster than Source \S 2 for sound processing tasks.
+
+\input source_bnf.tex
+
+\input source_2_bnf.tex
+
+\newpage
+
+\input source_return
+
+\input source_import
+
+\input source_boolean_operators
+
+\input source_names_lang
+
+\input source_numbers
+
+\input source_strings
+
+\input source_comments
+
+\input source_typing
+
+\section{Standard Libraries}
+
+The following libraries are always available in this language.
+
+\input source_misc
+
+\input source_math
+
+\input source_lists
+
+\input source_sound_gpu
+
+\input source_js_differences
+
+\newpage
+
+\input source_list_library
+
+\end{document}

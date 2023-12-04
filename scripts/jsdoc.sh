@@ -98,6 +98,18 @@ run() {
 	     ${LIB}/misc.js \
 	     ${LIB}/math.js \
 	     ${LIB}/list.js
+
+		# Source §2 WebGPU
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_2_WGSL.md \
+	     -d ${DST}/"source_2_wgsl"/ \
+	     ${LIB}/auxiliary.js \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+	     ${LIB}/list.js \
+			 ${LIB}/sound_gpu.js
    
     # Source §3
     
@@ -298,13 +310,21 @@ run() {
 	     ${LIB}/webGLcurve.js \
 	     ${LIB}/webGLhi_graph.js
 
-     # SOUNDS
+    # SOUNDS
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
 	     -d ${DST}/SOUNDS/ \
 	     -R ${MD}/SOUNDS_README.md \
 	     ${LIB}/sound
+		
+		# SOUNDS_GPU
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -d ${DST}/SOUNDS_GPU/ \
+	     -R ${MD}/README_SOUNDS_GPU.md \
+	     ${LIB}/sound_gpu.js
 
     # BINARYTREES
     
