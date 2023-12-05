@@ -4,7 +4,7 @@ import { expectResult, snapshotFailure } from '../../utils/testing'
 
 test.each([
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     display('message');
     `,
@@ -13,7 +13,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     error('error!');
     `,
@@ -22,7 +22,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_undefined(undefined);
     `,
@@ -58,7 +58,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_string('string');
     `,
@@ -67,7 +67,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_string('true');
     `,
@@ -76,7 +76,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_string('1');
     `,
@@ -85,7 +85,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_string(true);
     `,
@@ -94,7 +94,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_string(1);
     `,
@@ -103,7 +103,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_number('string');
     `,
@@ -112,7 +112,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_number('true');
     `,
@@ -121,7 +121,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_number('1');
     `,
@@ -130,7 +130,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_number(true);
     `,
@@ -139,7 +139,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_number(1);
     `,
@@ -148,7 +148,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_boolean('string');
     `,
@@ -157,7 +157,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_boolean('true');
     `,
@@ -166,7 +166,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_boolean('1');
     `,
@@ -175,7 +175,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_boolean(true);
     `,
@@ -184,7 +184,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_boolean(1);
     `,
@@ -193,7 +193,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_function(display);
     `,
@@ -202,7 +202,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_function(x => x);
     `,
@@ -211,7 +211,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     function f(x) {
       return x;
@@ -223,7 +223,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_function(1);
     `,
@@ -268,7 +268,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     parse_int('10', 10);
     `,
@@ -277,7 +277,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     parse_int('10', 2);
     `,
@@ -286,7 +286,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     is_number(get_time());
     `,
@@ -295,7 +295,7 @@ test.each([
   ],
 
   [
-    Chapter.SOURCE_1,
+    Chapter.SOURCE_2,
     `
     const start = get_time();
     function repeatUntilDifferentTime() {
@@ -433,14 +433,10 @@ test.each([
     if (passing) {
       return expectResult(stripIndent(snippet), {
         chapter,
-        variant: Variant.EXPLICIT_CONTROL
+        variant: Variant.WGSL
       }).toEqual(returnValue)
     } else {
-      return snapshotFailure(
-        stripIndent(snippet),
-        { chapter, variant: Variant.EXPLICIT_CONTROL },
-        'fails'
-      )
+      return snapshotFailure(stripIndent(snippet), { chapter, variant: Variant.WGSL }, 'fails')
     }
   }
 )

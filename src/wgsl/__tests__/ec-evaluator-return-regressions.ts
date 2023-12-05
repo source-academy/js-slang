@@ -6,8 +6,8 @@
 import { Chapter, Variant } from '../../types'
 import { expectParsedError, expectResult } from '../../utils/testing'
 
-const optionEC = { variant: Variant.EXPLICIT_CONTROL }
-const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
+const optionEC = { chapter: Chapter.SOURCE_2, variant: Variant.WGSL }
+const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.WGSL }
 
 // This is bad practice. Don't do this!
 test('Calling unreachable results in error', () => {

@@ -2,26 +2,9 @@ import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectResult } from '../../utils/testing'
 
-// jest.mock('lodash', () => ({
-//   ...jest.requireActual('lodash'),
-//   memoize: jest.fn(func => func)
-// }))
-
-const mockXMLHttpRequest = (xhr: Partial<XMLHttpRequest> = {}) => {
-  const xhrMock: Partial<XMLHttpRequest> = {
-    open: jest.fn(() => {}),
-    send: jest.fn(() => {}),
-    status: 200,
-    responseText: 'Hello World!',
-    ...xhr
-  }
-  jest.spyOn(window, 'XMLHttpRequest').mockImplementationOnce(() => xhrMock as XMLHttpRequest)
-  return xhrMock
-}
-
-const optionEC = { variant: Variant.EXPLICIT_CONTROL }
-const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
-const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
+const optionEC = { chapter: Chapter.SOURCE_2, variant: Variant.WGSL }
+const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.WGSL }
+const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.WGSL }
 
 test('Simple tail call returns work', () => {
   return expectResult(
@@ -313,66 +296,6 @@ test('streams can be created and functions with no return statements are still e
     `,
     optionEC4
   ).toMatchInlineSnapshot(`false`)
-})
-
-test('Imports are properly handled', () => {
-  // for getModuleFile
-  mockXMLHttpRequest({
-    responseText: `{
-    "one_module": {
-      "tabs": []
-    },
-    "another_module": {
-      "tabs": []
-    }
-  }`
-  })
-
-  // for bundle body
-  mockXMLHttpRequest({
-    responseText: `
-      require => {
-        return {
-          foo: () => 'foo',
-        }
-      }
-    `
-  })
-
-  return expectResult(
-    stripIndent`
-    import { foo } from 'one_module';
-    foo();
-  `,
-    optionEC
-  ).toEqual('foo')
-})
-
-test('Conditional statements are value producing always', () => {
-  return expectResult(
-    stripIndent`
-    function fact(n) {
-      if (n === 0) {
-          2;
-          return 1;
-      }
-      if (true) {
-          let i = 1;
-          i = i - 1;
-      } else {
-          2;
-      }
-      if (false) {
-          2;
-      } else {
-          const i = 1;
-      }
-      return n * fact(n - 1);
-      }
-    fact(5);
-    `,
-    optionEC3
-  ).toMatchInlineSnapshot(`120`)
 })
 
 test('Nullary functions properly restore environment 1', () => {

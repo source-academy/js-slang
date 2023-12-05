@@ -12,18 +12,6 @@ import {
 
 jest.spyOn(_, 'memoize').mockImplementation(func => func as any)
 
-const mockXMLHttpRequest = (xhr: Partial<XMLHttpRequest> = {}) => {
-  const xhrMock: Partial<XMLHttpRequest> = {
-    open: jest.fn(() => {}),
-    send: jest.fn(() => {}),
-    status: 200,
-    responseText: 'Hello World!',
-    ...xhr
-  }
-  jest.spyOn(window, 'XMLHttpRequest').mockImplementationOnce(() => xhrMock as XMLHttpRequest)
-  return xhrMock
-}
-
 const undefinedVariable = stripIndent`
 im_undefined;
 `
@@ -31,14 +19,13 @@ const undefinedVariableVerbose = stripIndent`
 "enable verbose";
 im_undefined;
 `
-const optionEC = { variant: Variant.EXPLICIT_CONTROL }
-const optionEC1 = { chapter: Chapter.SOURCE_1, variant: Variant.EXPLICIT_CONTROL }
-const optionEC2 = { chapter: Chapter.SOURCE_2, variant: Variant.EXPLICIT_CONTROL }
-const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
-const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
+const optionEC1 = { chapter: Chapter.SOURCE_1, variant: Variant.WGSL }
+const optionEC2 = { chapter: Chapter.SOURCE_2, variant: Variant.WGSL }
+const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.WGSL }
+const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.WGSL }
 
 test('Undefined variable error is thrown', () => {
-  return expectParsedError(undefinedVariable, optionEC).toMatchInlineSnapshot(
+  return expectParsedError(undefinedVariable, optionEC2).toMatchInlineSnapshot(
     `"Line 1: Name im_undefined not declared."`
   )
 })
@@ -52,7 +39,7 @@ test('Undefined variable error is thrown - verbose', () => {
 })
 
 test('Undefined variable error message differs from verbose version', () => {
-  return expectDifferentParsedErrors(undefinedVariable, undefinedVariableVerbose, optionEC).toBe(
+  return expectDifferentParsedErrors(undefinedVariable, undefinedVariableVerbose, optionEC2).toBe(
     undefined
   )
 })
@@ -82,7 +69,7 @@ test('Error when assigning to builtin - verbose', () => {
 
 test('Assigning to builtin error message differs from verbose version', () => {
   return expectDifferentParsedErrors(assignToBuiltin, assignToBuiltinVerbose, {
-    variant: Variant.EXPLICIT_CONTROL
+    variant: Variant.WGSL
   }).toBe(undefined)
 })
 
@@ -111,7 +98,7 @@ test('Error when assigning to builtin - verbose', () => {
 
 test('Assigning to builtin error message differs from verbose version', () => {
   return expectDifferentParsedErrors(assignToBuiltin1, assignToBuiltinVerbose1, {
-    variant: Variant.EXPLICIT_CONTROL
+    variant: Variant.WGSL
   }).toBe(undefined)
 })
 
@@ -203,13 +190,13 @@ const callingNonFunctionValueUndefinedVerbose = stripIndent`
 `
 // should not be different when error passing is fixed
 test('Error when calling non function value undefined', () => {
-  return expectParsedError(callingNonFunctionValueUndefined, optionEC).toMatchInlineSnapshot(
+  return expectParsedError(callingNonFunctionValueUndefined, optionEC2).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value undefined."`
   )
 })
 
 test('Error when calling non function value undefined - verbose', () => {
-  return expectParsedError(callingNonFunctionValueUndefinedVerbose, optionEC)
+  return expectParsedError(callingNonFunctionValueUndefinedVerbose, optionEC2)
     .toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value undefined.
             Because undefined is not a function, you cannot run undefined().
@@ -221,7 +208,7 @@ test('Calling non function value undefined error message differs from verbose ve
   return expectDifferentParsedErrors(
     callingNonFunctionValueUndefined,
     callingNonFunctionValueUndefinedVerbose,
-    optionEC
+    optionEC2
   ).toBe(undefined)
 })
 
@@ -235,13 +222,13 @@ const callingNonFunctionValueUndefinedArgsVerbose = stripIndent`
 `
 // should not be different when error passing is fixed
 test('Error when calling non function value undefined with arguments', () => {
-  return expectParsedError(callingNonFunctionValueUndefinedArgs, optionEC).toMatchInlineSnapshot(
+  return expectParsedError(callingNonFunctionValueUndefinedArgs, optionEC2).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value undefined."`
   )
 })
 
 test('Error when calling non function value undefined with arguments - verbose', () => {
-  return expectParsedError(callingNonFunctionValueUndefinedArgsVerbose, optionEC)
+  return expectParsedError(callingNonFunctionValueUndefinedArgsVerbose, optionEC2)
     .toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value undefined.
             Because undefined is not a function, you cannot run undefined(1, true).
@@ -253,7 +240,7 @@ test('Calling non function value undefined with arguments error message differs 
   return expectDifferentParsedErrors(
     callingNonFunctionValueUndefinedArgs,
     callingNonFunctionValueUndefinedArgsVerbose,
-    optionEC
+    optionEC2
   ).toBe(undefined)
 })
 
@@ -267,13 +254,13 @@ const callingNonFunctionValueNullVerbose = stripIndent`
 `
 
 test('Error when calling non function value null', () => {
-  return expectParsedError(callingNonFunctionValueNull, optionEC).toMatchInlineSnapshot(
+  return expectParsedError(callingNonFunctionValueNull, optionEC1).toMatchInlineSnapshot(
     `"Line 1: null literals are not allowed."`
   )
 })
 
 test('Error when calling non function value null - verbose', () => {
-  return expectParsedError(callingNonFunctionValueNullVerbose, optionEC).toMatchInlineSnapshot(`
+  return expectParsedError(callingNonFunctionValueNullVerbose, optionEC1).toMatchInlineSnapshot(`
             "Line 2, Column 2: null literals are not allowed.
             They're not part of the Source §1 specs.
             "
@@ -284,7 +271,7 @@ test('Calling non function value null error message differs from verbose version
   return expectDifferentParsedErrors(
     callingNonFunctionValueNull,
     callingNonFunctionValueNullVerbose,
-    optionEC
+    optionEC2
   ).toBe(undefined)
 })
 
@@ -297,13 +284,13 @@ const callingNonFunctionValueTrueVerbose = stripIndent`
 `
 
 test('Error when calling non function value true', () => {
-  return expectParsedError(callingNonFunctionValueTrue, optionEC).toMatchInlineSnapshot(
+  return expectParsedError(callingNonFunctionValueTrue, optionEC2).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value true."`
   )
 })
 
 test('Error when calling non function value true - verbose', () => {
-  return expectParsedError(callingNonFunctionValueTrueVerbose, optionEC).toMatchInlineSnapshot(`
+  return expectParsedError(callingNonFunctionValueTrueVerbose, optionEC2).toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value true.
             Because true is not a function, you cannot run true().
             "
@@ -314,7 +301,7 @@ test('Calling non function value true error message differs from verbose version
   return expectDifferentParsedErrors(
     callingNonFunctionValueTrue,
     callingNonFunctionValueTrueVerbose,
-    optionEC
+    optionEC2
   ).toBe(undefined)
 })
 
@@ -328,13 +315,13 @@ const callingNonFunctionValue0Verbose = stripIndent`
 `
 
 test('Error when calling non function value 0', () => {
-  return expectParsedError(callingNonFunctionValue0, optionEC).toMatchInlineSnapshot(
+  return expectParsedError(callingNonFunctionValue0, optionEC2).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value 0."`
   )
 })
 
 test('Error when calling non function value 0 - verbose', () => {
-  return expectParsedError(callingNonFunctionValue0Verbose, optionEC).toMatchInlineSnapshot(`
+  return expectParsedError(callingNonFunctionValue0Verbose, optionEC2).toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value 0.
             Because 0 is not a function, you cannot run 0(). If you were planning to perform multiplication by 0, you need to use the * operator.
             "
@@ -345,7 +332,7 @@ test('Calling non function value 0 error message differs from verbose version', 
   return expectDifferentParsedErrors(
     callingNonFunctionValue0,
     callingNonFunctionValue0Verbose,
-    optionEC
+    optionEC2
   ).toBe(undefined)
 })
 
@@ -359,13 +346,13 @@ const callingNonFunctionValueStringVerbose = stripIndent`
 `
 
 test('Error when calling non function value "string"', () => {
-  return expectParsedError(callingNonFunctionValueString, optionEC).toMatchInlineSnapshot(
+  return expectParsedError(callingNonFunctionValueString, optionEC2).toMatchInlineSnapshot(
     `"Line 1: Calling non-function value \\"string\\"."`
   )
 })
 
 test('Error when calling non function value "string" - verbose', () => {
-  return expectParsedError(callingNonFunctionValueStringVerbose, optionEC).toMatchInlineSnapshot(`
+  return expectParsedError(callingNonFunctionValueStringVerbose, optionEC2).toMatchInlineSnapshot(`
             "Line 2, Column 2: Calling non-function value \\"string\\".
             Because \\"string\\" is not a function, you cannot run \\"string\\"().
             "
@@ -376,7 +363,7 @@ test('Calling non function value string error message differs from verbose versi
   return expectDifferentParsedErrors(
     callingNonFunctionValueString,
     callingNonFunctionValueStringVerbose,
-    optionEC
+    optionEC2
   ).toBe(undefined)
 })
 
@@ -407,7 +394,7 @@ test('Calling non function value array error message differs from verbose versio
   return expectDifferentParsedErrors(
     callingNonFunctionValueArray,
     callingNonFunctionValueArrayVerbose,
-    optionEC
+    optionEC2
   ).toBe(undefined)
 })
 
@@ -423,7 +410,7 @@ test('Calling non function value object error message differs from verbose versi
   return expectDifferentParsedErrors(
     callingNonFunctionValueObject,
     callingNonFunctionValueObjectVerbose,
-    optionEC
+    optionEC2
   ).toBe(undefined)
 })
 
@@ -435,7 +422,7 @@ test('Error when calling function with too few arguments', () => {
     }
     f();
   `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0."`)
 })
 
@@ -448,7 +435,7 @@ test('Error when calling function with too few arguments - verbose', () => {
       }
       f();
     `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`
             "Line 5, Column 2: Expected 1 arguments, but got 0.
             Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
@@ -464,7 +451,7 @@ test('Error when calling function with too many arguments', () => {
     }
     f(1, 2);
   `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2."`)
 })
 
@@ -477,7 +464,7 @@ test('Error when calling function with too many arguments - verbose', () => {
       }
       f(1, 2);
     `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`
             "Line 5, Column 2: Expected 1 arguments, but got 2.
             Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
@@ -491,7 +478,7 @@ test('Error when calling arrow function with too few arguments', () => {
     const f = x => x;
     f();
   `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0."`)
 })
 
@@ -502,7 +489,7 @@ test('Error when calling arrow function with too few arguments - verbose', () =>
     const f = x => x;
     f();
   `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`
             "Line 3, Column 2: Expected 1 arguments, but got 0.
             Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
@@ -516,7 +503,7 @@ test('Error when calling arrow function with too many arguments', () => {
     const f = x => x;
     f(1, 2);
   `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
 })
 
@@ -527,7 +514,7 @@ test('Error when calling arrow function with too many arguments - verbose', () =
       const f = x => x;
       f(1, 2);
     `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`
             "Line 3, Column 2: Expected 1 arguments, but got 2.
             Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
@@ -568,7 +555,7 @@ test('Error when calling arrow function in tail call with too many arguments - v
     const f = x => g(x);
     f(1);
   `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`
             "Line 3, Column 15: Expected 0 arguments, but got 1.
             Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
@@ -583,7 +570,7 @@ test('Error when calling arrow function in tail call with too many arguments', (
     const f = x => g(x);
     f(1);
   `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1."`)
 })
 
@@ -592,7 +579,7 @@ test('Error when calling builtin function in with too many arguments', () => {
     stripIndent`
     is_number(1, 2, 3);
   `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 3."`)
 })
 
@@ -601,7 +588,7 @@ test('Error when calling builtin function in with too few arguments', () => {
     stripIndent`
     parse_int("");
   `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 1: Expected 2 arguments, but got 1."`)
 })
 
@@ -875,7 +862,7 @@ test('Type error with non boolean in if statement, error line at if statement, n
       2;
     } else {}
     `,
-    optionEC1
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 1: Expected boolean as condition, got number."`)
 })
 
@@ -886,7 +873,7 @@ test('Type error with <number> * <nonnumber>, error line at <number>, not <nonnu
     *
     'string';
     `,
-    optionEC1
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 1: Expected number on right hand side of operation, got string."`)
 })
 
@@ -939,7 +926,7 @@ test('Check that stack is at most 10k in size', () => {
     }
     f(300000);
   `,
-    optionEC
+    optionEC2
   ).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))
 }, 10000)
 
@@ -970,7 +957,7 @@ test('No hoisting of functions. Only the name is hoisted like let and const', ()
       }
       v;
     `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 1: Name f declared later in current scope but not yet assigned"`)
 }, 30000)
 
@@ -984,7 +971,7 @@ test('Error when accessing temporal dead zone', () => {
     }
     f();
     `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 3: Name a declared later in current scope but not yet assigned"`)
 }, 30000)
 
@@ -998,7 +985,7 @@ test('In a block, every going-to-be-defined variable in the block cannot be acce
         const a = 10;
       }
     `,
-    optionEC
+    optionEC2
   ).toMatchInlineSnapshot(`"Line 3: Name a declared later in current scope but not yet assigned"`)
 }, 30000)
 
@@ -1015,36 +1002,4 @@ test('Shadowed variables may not be assigned to until declared in the current sc
   `,
     optionEC3
   ).toMatchInlineSnapshot(`"Line 3: Name variable not declared."`)
-})
-
-test('Importing unknown variables throws UndefinedImport error', () => {
-  // for getModuleFile
-  mockXMLHttpRequest({
-    responseText: `{
-    "one_module": {
-      "tabs": []
-    },
-    "another_module": {
-      "tabs": []
-    }
-  }`
-  })
-
-  // for bundle body
-  mockXMLHttpRequest({
-    responseText: `
-      require => {
-        return {
-          foo: () => 'foo',
-        }
-      }
-    `
-  })
-
-  return expectParsedError(
-    stripIndent`
-    import { foo1 } from 'one_module';
-  `,
-    optionEC
-  ).toMatchInlineSnapshot("\"'one_module' does not contain a definition for 'foo1'\"")
 })
