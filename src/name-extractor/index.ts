@@ -1,10 +1,11 @@
 import type * as es from 'estree'
 
-import { Context } from '../'
+import type { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
 import { findAncestors, findIdentifierNode } from '../finder'
 import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
 import { memoizedGetModuleDocsAsync } from '../modules/loader/moduleLoaderAsync'
+import { isSourceModule } from '../modules/utils'
 import syntaxBlacklist from '../parser/source/syntax'
 import assert from '../utils/assert'
 import { getImportedName } from '../utils/ast/helpers'
@@ -327,19 +328,22 @@ async function getNames(
   switch (node.type) {
     case 'ImportDeclaration':
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))
+      const moduleName = node.source?.value
+      assert(
+        typeof moduleName === 'string',
+        'ImportDeclaration should have sources of type string!'
+      )
+      // Don't try to load documentation for local modules
+      if (!isSourceModule(moduleName)) return []
 
       try {
-        assert(
-          typeof node.source?.value === 'string',
-          'ImportDeclaration should have sources of type string!'
-        )
-        const docs = await memoizedGetModuleDocsAsync(node.source.value)
+        const docs = await memoizedGetModuleDocsAsync(moduleName)
 
         if (!docs) {
           return specs.map(spec => ({
             name: spec.local.name,
             meta: DeclarationKind.KIND_IMPORT,
-            docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${node.source.value} module`
+            docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${moduleName} module`
           }))
         }
 
@@ -348,7 +352,7 @@ async function getNames(
             return {
               name: node.source.value as string,
               meta: DeclarationKind.KIND_IMPORT,
-              docHTML: `Namespace import ${node.source.value}`
+              docHTML: `Namespace import ${moduleName}`
             }
           }
 
@@ -358,7 +362,7 @@ async function getNames(
             return {
               name: importedName,
               meta: DeclarationKind.KIND_IMPORT,
-              docHTML: `No documentation available for <code>${spec.local.name}</code> from ${node.source.value} module`
+              docHTML: `No documentation available for <code>${spec.local.name}</code> from ${moduleName} module`
             }
           } else {
             return {
@@ -374,7 +378,7 @@ async function getNames(
         return specs.map(spec => ({
           name: spec.local.name,
           meta: DeclarationKind.KIND_IMPORT,
-          docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${node.source.value} module`
+          docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${moduleName} module`
         }))
       }
     case 'VariableDeclaration':
