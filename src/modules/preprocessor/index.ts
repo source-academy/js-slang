@@ -1,8 +1,8 @@
 import type * as es from 'estree'
 import { posix as posixPath } from 'path'
 
-import { Context, IOptions } from '../..'
-import { RecursivePartial } from '../../types'
+import type { Context, IOptions } from '../..'
+import type { RecursivePartial } from '../../types'
 import assert from '../../utils/assert'
 import { isIdentifier, isImportDeclaration, isModuleDeclaration } from '../../utils/ast/typeGuards'
 import { CircularImportError } from '../errors'

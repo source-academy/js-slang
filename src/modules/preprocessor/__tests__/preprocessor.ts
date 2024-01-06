@@ -15,82 +15,6 @@ import {
 
 jest.mock('../../loader/moduleLoaderAsync')
 
-// The preprocessor now checks for the existence of source modules
-// so this is here to solve that issue
-
-/*
-describe('getImportedLocalModulePaths', () => {
-  let context = mockContext(Chapter.LIBRARY_PARSER)
-
-  beforeEach(() => {
-    context = mockContext(Chapter.LIBRARY_PARSER)
-  })
-
-  const assertCorrectModulePathsAreReturned = (
-    code: string,
-    baseFilePath: string,
-    expectedModulePaths: string[]
-  ): void => {
-    const program = parse(code, context)
-    if (program === null) {
-      throw parseCodeError
-    }
-    expect(getImportedLocalModulePaths(program, baseFilePath)).toEqual(new Set(expectedModulePaths))
-  }
-
-  it('throws an error if the current file path is not absolute', () => {
-    const code = ''
-    const program = parse(code, context)
-    if (program === null) {
-      throw parseCodeError
-    }
-    expect(() => getImportedLocalModulePaths(program, 'a.js')).toThrowError(
-      "Current file path 'a.js' is not absolute."
-    )
-  })
-
-  it('returns local (relative) module imports', () => {
-    const code = `
-      import { x } from "./dir2/b.js";
-      import { y } from "../dir3/c.js";
-    `
-    assertCorrectModulePathsAreReturned(code, '/dir/a.js', ['/dir/dir2/b.js', '/dir3/c.js'])
-  })
-
-  it('returns local (absolute) module imports', () => {
-    const code = `
-      import { x } from "/dir/dir2/b.js";
-      import { y } from "/dir3/c.js";
-    `
-    assertCorrectModulePathsAreReturned(code, '/dir/a.js', ['/dir/dir2/b.js', '/dir3/c.js'])
-  })
-
-  it('does not return Source module imports', () => {
-    const code = `
-      import { x } from "rune";
-      import { y } from "sound";
-    `
-    assertCorrectModulePathsAreReturned(code, '/dir/a.js', [])
-  })
-
-  it('gracefully handles overly long sequences of double dots (..)', () => {
-    const code = `import { x } from "../../../../../../../../../b.js";
-    `
-    assertCorrectModulePathsAreReturned(code, '/dir/a.js', ['/b.js'])
-  })
-
-  it('returns unique module paths', () => {
-    const code = `
-      import { a } from "./b.js";
-      import { b } from "./b.js";
-      import { c } from "./c.js";
-      import { d } from "./c.js";
-    `
-    assertCorrectModulePathsAreReturned(code, '/dir/a.js', ['/dir/b.js', '/dir/c.js'])
-  })
-})
-*/
-
 describe('preprocessFileImports', () => {
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
   let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
@@ -105,9 +29,7 @@ describe('preprocessFileImports', () => {
     expectedCode: string,
     log: boolean = false
   ): void => {
-    // assert(actualProgram !== undefined, 'Actual program should not be undefined')
     if (!actualProgram) {
-      // console.log(actualContext.errors[0], 'occurred at:', actualContext.errors[0].location.start)
       throw new Error('Actual program should not be undefined!')
     }
 

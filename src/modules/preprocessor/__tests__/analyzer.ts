@@ -11,7 +11,7 @@ import parseProgramsAndConstructImportGraph from '../linker'
 import analyzeImportsAndExports from '../analyzer'
 import { parse } from '../../../parser/parser'
 import { mockContext } from '../../../mocks/context'
-import { Program } from 'estree'
+import type { Program } from 'estree'
 import { memoizedGetModuleDocsAsync } from '../../loader/moduleLoaderAsync'
 
 jest.mock('../../loader/moduleLoaderAsync')
@@ -19,41 +19,6 @@ jest.mock('../../loader/moduleLoaderAsync')
 beforeEach(() => {
   jest.clearAllMocks()
 })
-
-async function testCode(
-  files: Partial<Record<string, string>>,
-  entrypointFilePath: string,
-  allowUndefinedImports: boolean,
-  throwOnDuplicateNames: boolean
-) {
-  const context = createContext(Chapter.FULL_JS)
-  const importGraphResult = await parseProgramsAndConstructImportGraph(
-    p => Promise.resolve(files[p]),
-    entrypointFilePath,
-    context,
-    {},
-    true
-  )
-
-  // Return 'undefined' if there are errors while parsing.
-  if (context.errors.length !== 0 || !importGraphResult) {
-    throw context.errors[0]
-  }
-
-  const { programs, importGraph, sourceModulesToImport } = importGraphResult
-
-  // Check for circular imports.
-  const topologicalOrderResult = importGraph.getTopologicalOrder()
-  expect(topologicalOrderResult.isValidTopologicalOrderFound).toEqual(true)
-
-  const topoOrder = topologicalOrderResult.topologicalOrder!
-  if (topoOrder.length === 0) topoOrder.push(entrypointFilePath)
-  await analyzeImportsAndExports(programs, topoOrder, sourceModulesToImport, {
-    allowUndefinedImports,
-    throwOnDuplicateNames
-  })
-  return true
-}
 
 type Files = Partial<Record<string, string>>
 
@@ -78,7 +43,44 @@ describe('Test throwing import validation errors', () => {
 
   // Providing an ErrorInfo object indicates that the test case should throw
   // the corresponding error
-  type ImportTestCase = [Files, string, ErrorInfo] | [Files, string]
+  type ImportTestCaseWithNoError = [Files, string]
+  type ImportTestCaseWithError = [...ImportTestCaseWithNoError, ErrorInfo]
+  type ImportTestCase = ImportTestCaseWithError | ImportTestCaseWithNoError
+
+  async function testCode(
+    files: Partial<Record<string, string>>,
+    entrypointFilePath: string,
+    allowUndefinedImports: boolean,
+    throwOnDuplicateNames: boolean
+  ) {
+    const context = createContext(Chapter.FULL_JS)
+    const importGraphResult = await parseProgramsAndConstructImportGraph(
+      p => Promise.resolve(files[p]),
+      entrypointFilePath,
+      context,
+      {},
+      true
+    )
+
+    // Return 'undefined' if there are errors while parsing.
+    if (context.errors.length !== 0 || !importGraphResult) {
+      throw context.errors[0]
+    }
+
+    const { programs, importGraph, sourceModulesToImport } = importGraphResult
+
+    // Check for circular imports.
+    const topologicalOrderResult = importGraph.getTopologicalOrder()
+    expect(topologicalOrderResult.isValidTopologicalOrderFound).toEqual(true)
+
+    const topoOrder = topologicalOrderResult.topologicalOrder!
+    if (topoOrder.length === 0) topoOrder.push(entrypointFilePath)
+    await analyzeImportsAndExports(programs, topoOrder, sourceModulesToImport, {
+      allowUndefinedImports,
+      throwOnDuplicateNames
+    })
+    return true
+  }
 
   async function testFailure(
     files: Partial<Record<string, string>>,
@@ -404,35 +406,34 @@ describe('Test throwing import validation errors', () => {
     ])
   })
 
-  // Re-enable this when namespace imports become supported
-  // describe('Test namespace imports', () => {
-  //   testCases('Local imports', [
-  //     [
-  //       {
-  //         '/a.js': 'export const a = 0;',
-  //         '/b.js': 'import * as a from "./a.js"'
-  //       },
-  //       '/b.js'
-  //     ],
-  //     [
-  //       {
-  //         '/a.js': 'const a = 0;',
-  //         '/b.js': 'import * as a from "./a.js"'
-  //       },
-  //       '/b.js',
-  //       { line: 1, col: 7, moduleName: '/a.js', namespace: true }
-  //     ]
-  //   ])
+  describe('Test namespace imports', () => {
+    testCases('Local imports', [
+      [
+        {
+          '/a.js': 'export const a = 0;',
+          '/b.js': 'import * as a from "./a.js"'
+        },
+        '/b.js'
+      ],
+      [
+        {
+          '/a.js': 'const a = 0;',
+          '/b.js': 'import * as a from "./a.js"'
+        },
+        '/b.js',
+        { line: 1, col: 7, moduleName: '/a.js', namespace: true }
+      ]
+    ])
 
-  //   testCases('Source imports', [
-  //     [
-  //       {
-  //         '/a.js': 'import * as bar from "one_module";'
-  //       },
-  //       '/a.js'
-  //     ]
-  //   ])
-  // })
+    testCases('Source imports', [
+      [
+        {
+          '/a.js': 'import * as bar from "one_module";'
+        },
+        '/a.js'
+      ]
+    ])
+  })
 
   describe('Test named exports', () => {
     testCases('Exporting from another local module', [
@@ -517,7 +518,22 @@ describe('Test throwing import validation errors', () => {
 })
 
 describe('Test throwing DuplicateImportNameErrors', () => {
-  type TestCase = [string, Files] | [string, Files, string]
+  /**
+   * [Description, Files]
+   * Use this test case specification to specify that no error is expected
+   */
+  type TestCaseWithNoError = [description: string, files: Files]
+
+  /**
+   * [Description, Files, Expected location string]
+   * Use this test case specification to specify that an error is expected.
+   * The given string represents the location string
+   */
+  type TestCaseWithError = [description: string, files: Files, expectedError: string]
+
+  type TestCase = TestCaseWithError | TestCaseWithNoError
+  const isTestCaseWithNoError = (c: TestCase): c is TestCaseWithNoError => c.length === 2
+
   type FullTestCase =
     | [string, Record<string, Program>, true, string | undefined]
     | [string, Record<string, Program>, false, undefined]
@@ -537,19 +553,28 @@ describe('Test throwing DuplicateImportNameErrors', () => {
         }
       }, {} as Record<string, Program>)
 
-      if (c.length === 2) {
+      // For each test case, split it into the case where throwOnDuplicateImports is true
+      // and when it is false. No errors should ever be thrown when throwOnDuplicateImports is false
+      if (isTestCaseWithNoError(c)) {
+        // No error message was given, so no error is expected to be thrown,
+        // regardless of the value of throwOnDuplicateImports
         const [desc] = c
         return [
-          [`${i}. ${desc} no error `, programs, false, undefined] as FullTestCase,
-          [`${i}. ${desc}: no error`, programs, true, undefined] as FullTestCase
-        ]
+          [
+            `${i}. ${desc} with throwOnDuplicateImports false: no error `,
+            programs,
+            false,
+            undefined
+          ],
+          [`${i}. ${desc} with throwOnDuplicateImports true: no error`, programs, true, undefined]
+        ] as FullTestCase[]
       }
 
       const [desc, , errMsg] = c
       return [
-        [`${i}. ${desc}: no error`, programs, false, undefined] as FullTestCase,
-        [`${i}. ${desc}: error`, programs, true, errMsg] as FullTestCase
-      ]
+        [`${i}. ${desc} with throwOnDuplicateImports false: no error`, programs, false, undefined],
+        [`${i}. ${desc} with throwOnDuplicateImports true: error`, programs, true, errMsg]
+      ] as FullTestCase[]
     })
 
     describe(desc, () =>
@@ -561,27 +586,16 @@ describe('Test throwing DuplicateImportNameErrors', () => {
           throwOnDuplicateNames: shouldThrow
         })
 
-        if (!shouldThrow) {
-          // Setting throwOnDuplicateNames to false should never throw
-          return expect(promise).resolves.toEqual(undefined)
+        if (!shouldThrow || errMsg === undefined) {
+          return expect(promise).resolves.not.toThrow()
         }
 
-        let err: any = null
         try {
           await promise
-        } catch (error) {
-          err = error
+        } catch (err) {
+          expect(err).toBeInstanceOf(DuplicateImportNameError)
+          expect(err.locString).toEqual(errMsg)
         }
-
-        if (errMsg === undefined) {
-          // If no error message is provided, the analyzer
-          // was not expected to throw
-          expect(err).toEqual(null)
-          return
-        }
-
-        expect(err).toBeInstanceOf(DuplicateImportNameError)
-        expect((err as DuplicateImportNameError).locString).toEqual(errMsg)
       })
     )
   }
@@ -742,7 +756,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
   ])
 })
 
-test('No modules are loaded when allowUndefinedImports is true', async () => {
+test('No module documentation is loaded when allowUndefinedImports is true', async () => {
   const files = {
     '/a.js': `import { foo } from 'one_module';`
   }

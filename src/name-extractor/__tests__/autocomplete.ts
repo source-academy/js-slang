@@ -1,9 +1,8 @@
-// import { parse } from '../../parser/parser'
 import { pick } from 'lodash'
 import { createContext } from '../..'
 import { getNames } from '../../index'
 import { Chapter } from '../../types'
-import { DeclarationKind, NameDeclaration } from '../index'
+import { DeclarationKind, type NameDeclaration } from '../index'
 
 jest.mock('../../modules/loader/moduleLoaderAsync')
 

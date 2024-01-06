@@ -1,4 +1,4 @@
-import es from 'estree'
+import type es from 'estree'
 
 import { simple } from '../../../utils/walkers'
 

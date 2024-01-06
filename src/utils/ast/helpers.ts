@@ -2,7 +2,7 @@ import type * as es from 'estree'
 
 import assert from '../assert'
 import { simple } from '../walkers'
-import { isImportDeclaration } from './typeGuards'
+import { isImportDeclaration, isVariableDeclaration } from './typeGuards'
 
 /**
  * Filters out all import declarations from a program, and sorts them by
@@ -48,6 +48,12 @@ export function extractIdsFromPattern(pattern: es.Pattern) {
   })
 
   return identifiers
+}
+
+export function getIdsFromDeclaration(decl: es.Declaration) {
+  return isVariableDeclaration(decl)
+    ? decl.declarations.flatMap(({ id }) => extractIdsFromPattern(id))
+    : [decl.id]
 }
 
 export const getImportedName = (

@@ -1,15 +1,15 @@
 import type * as es from 'estree'
 import { posix as posixPath } from 'path'
 
-import { Context } from '../..'
+import type { Context } from '../..'
 import { parse } from '../../parser/parser'
-import { RecursivePartial } from '../../types'
+import type { RecursivePartial } from '../../types'
 import assert from '../../utils/assert'
 import { mapAndFilter } from '../../utils/misc'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
 import { isSourceModule } from '../utils'
 import { DirectedGraph } from './directedGraph'
-import resolveFile, { defaultResolutionOptions, ImportResolutionOptions } from './resolver'
+import resolveFile, { defaultResolutionOptions, type ImportResolutionOptions } from './resolver'
 
 type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
 
@@ -48,8 +48,8 @@ export default async function parseProgramsAndConstructImportGraph(
   const sourceModulesToImport = new Set<string>()
 
   // Wrapper around resolve file to make calling it more convenient
-  function resolveFileWrapper(fromPath: string, toPath: string) {
-    return resolveFile(
+  async function resolveFileWrapper(fromPath: string, toPath: string, node?: es.Node) {
+    const [absPath, resolved] = await resolveFile(
       fromPath,
       toPath,
       async str => {
@@ -58,23 +58,22 @@ export default async function parseProgramsAndConstructImportGraph(
       },
       options.resolverOptions
     )
+
+    if (!resolved) {
+      throw new ModuleNotFoundError(absPath, node)
+    }
+
+    return absPath
   }
 
-  async function resolveAndParseFile(
-    fromModule: string,
-    node: ModuleDeclarationWithSource
-  ): Promise<string> {
+  async function resolveAndParseFile(fromModule: string, node: ModuleDeclarationWithSource) {
     assert(
       typeof node.source?.value === 'string',
       `Expected module declaration source to be of type string, got ${node.source?.value}`
     )
 
     // TODO: Move file path validation here
-    const [absDstPath, resolved] = await resolveFileWrapper(fromModule, node.source.value)
-
-    if (!resolved) {
-      throw new ModuleNotFoundError(absDstPath, node)
-    }
+    const absDstPath = await resolveFileWrapper(fromModule, node.source.value, node)
 
     // Special case of circular import: the module specifier
     // refers to the current file
@@ -99,8 +98,6 @@ export default async function parseProgramsAndConstructImportGraph(
       importGraph.addEdge(absDstPath, fromModule)
       await enumerateModuleDeclarations(absDstPath)
     }
-
-    return absDstPath
   }
 
   async function enumerateModuleDeclarations(fromModule: string) {
@@ -149,13 +146,8 @@ export default async function parseProgramsAndConstructImportGraph(
   }
 
   try {
-    const [entrypointAbsPath, entrypointResolved] = await resolveFileWrapper(
-      '/',
-      entrypointFilePath
-    )
-    if (!entrypointResolved) {
-      throw new ModuleNotFoundError(entrypointAbsPath)
-    }
+    const entrypointAbsPath = await resolveFileWrapper('/', entrypointFilePath)
+
     await enumerateModuleDeclarations(entrypointAbsPath)
   } catch (error) {
     if (!(error instanceof LinkerError)) {

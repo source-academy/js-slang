@@ -2,8 +2,8 @@ import type * as es from 'estree'
 import { partition } from 'lodash'
 
 import assert from '../../utils/assert'
-import { extractIdsFromPattern, getImportedName } from '../../utils/ast/helpers'
-import { isModuleDeclaration, isVariableDeclaration } from '../../utils/ast/typeGuards'
+import { getIdsFromDeclaration, getImportedName } from '../../utils/ast/helpers'
+import { isModuleDeclaration, isNamespaceSpecifier } from '../../utils/ast/typeGuards'
 import Dict, { ArrayMap } from '../../utils/dict'
 import {
   DuplicateImportNameError,
@@ -34,12 +34,6 @@ export type ImportAnalysisOptions = {
    * the same declared name
    */
   throwOnDuplicateNames: boolean
-}
-
-function isNamespaceSpecifier(
-  node: es.ImportDeclaration['specifiers'][0]
-): node is es.ImportNamespaceSpecifier {
-  return node.type === 'ImportNamespaceSpecifier'
 }
 
 /**
@@ -88,11 +82,11 @@ export default async function analyzeImportsAndExports(
       } else if (node.type === 'ExportNamedDeclaration') {
         if (node.declaration) {
           if (!options.allowUndefinedImports) {
-            const ids = isVariableDeclaration(node.declaration)
-              ? node.declaration.declarations.flatMap(({ id }) => extractIdsFromPattern(id))
-              : [node.declaration.id!]
-
-            ids.forEach(({ name }) => moduleDocs[sourceModule].add(name))
+            const ids = getIdsFromDeclaration(node.declaration)
+            ids.forEach(id => {
+              assert(id !== null, 'Encountered a null identifier!')
+              return moduleDocs[sourceModule].add(id.name)
+            })
           }
           continue
         }
@@ -170,7 +164,10 @@ export default async function analyzeImportsAndExports(
       }
 
       const [[, specifiers]] = moduleToSpecifierMap
-      const [namespaceSpecifiers, regularSpecifiers] = partition(specifiers, isNamespaceSpecifier)
+      const [namespaceSpecifiers, regularSpecifiers] = partition<
+        es.ImportDeclaration['specifiers'][number],
+        es.ImportNamespaceSpecifier
+      >(specifiers, isNamespaceSpecifier)
 
       // For the given local name, it can only represent one imported name from
       // the module. Collect specifiers referring to the same export.

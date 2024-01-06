@@ -52,3 +52,6 @@ export const isIdentifier = (node: es.Node): node is es.Identifier => node.type 
 
 export const isVariableDeclaration = (node: es.Node): node is es.VariableDeclaration =>
   node.type === 'VariableDeclaration'
+
+export const isNamespaceSpecifier = (node: es.Node): node is es.ImportNamespaceSpecifier =>
+  node.type === 'ImportNamespaceSpecifier'
