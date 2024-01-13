@@ -132,7 +132,7 @@ describe('Test bundle loading', () => {
   test('loadModuleBundleAsync does not load module manifest', async () => {
     const mockedContext = mockContext(Chapter.LIBRARY_PARSER)
     mockResponse('require => ({ foo: () => "foo" })')
-    await moduleLoader.loadModuleBundleAsync('', mockedContext, true)
+    await moduleLoader.loadModuleBundleAsync('', mockedContext)
 
     expect(moduleLoader.memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(0)
   })
@@ -142,7 +142,7 @@ describe('Test bundle loading', () => {
     const sampleResponse = `require => ({ foo: () => 'foo' })`
     mockResponse(sampleResponse)
 
-    const loadedModule = await moduleLoader.loadModuleBundleAsync(sampleModuleName, context, false)
+    const loadedModule = await moduleLoader.loadModuleBundleAsync(sampleModuleName, context)
 
     expect(loadedModule.foo()).toEqual('foo')
     expect(fetch).toHaveBeenCalledTimes(1)
@@ -157,7 +157,7 @@ describe('Test bundle loading', () => {
     const wrongModuleText = `export function es6_function(params) {};`
     mockResponse(wrongModuleText)
     await expect(() =>
-      moduleLoader.loadModuleBundleAsync(sampleModuleName, context, true)
+      moduleLoader.loadModuleBundleAsync(sampleModuleName, context)
     ).rejects.toBeInstanceOf(ModuleInternalError)
 
     expect(fetch).toHaveBeenCalledTimes(1)
@@ -167,7 +167,7 @@ describe('Test bundle loading', () => {
     const mockedContext = mockContext(Chapter.LIBRARY_PARSER)
 
     mockResponse(`export default require => ({ foo: () => 'foo' })`)
-    const loadedBundle = await moduleLoader.loadModuleBundleAsync('one_module', mockedContext, true)
+    const loadedBundle = await moduleLoader.loadModuleBundleAsync('one_module', mockedContext)
     expect(loadedBundle.foo()).toEqual('foo')
   })
 })

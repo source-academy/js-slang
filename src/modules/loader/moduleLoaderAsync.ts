@@ -96,16 +96,13 @@ export async function loadModuleTabsAsync(moduleName: string, node?: Node) {
 export async function loadModuleBundleAsync(
   moduleName: string,
   context: Context,
-  wrapModule: boolean,
   node?: Node
 ) {
   // await checkModuleExists(moduleName, node)
   const moduleText = await memoizedGetModuleBundleAsync(moduleName)
   try {
     const moduleBundle: ModuleBundle = eval(moduleText)
-
-    if (wrapModule) return wrapSourceModule(moduleName, moduleBundle, getRequireProvider(context))
-    return moduleBundle(getRequireProvider(context))
+    return wrapSourceModule(moduleName, moduleBundle, getRequireProvider(context))
   } catch (error) {
     // console.error("bundle error: ", error, moduleText)
     throw new ModuleInternalError(moduleName, error, node)

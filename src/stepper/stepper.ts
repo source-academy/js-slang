@@ -3170,7 +3170,7 @@ async function evaluateImports(program: es.Program, context: Context, loadTabs: 
     await Promise.all(
       Object.entries(importNodeMap).map(async ([moduleName, nodes]) => {
         await initModuleContextAsync(moduleName, context, loadTabs)
-        const functions = await loadModuleBundleAsync(moduleName, context, true, nodes[0])
+        const functions = await loadModuleBundleAsync(moduleName, context, nodes[0])
         for (const node of nodes) {
           for (const spec of node.specifiers) {
             declareIdentifier(context, spec.local.name, node, environment)
