@@ -1,7 +1,6 @@
-import es from 'estree'
+import type es from 'estree'
 
-import { isDeclaration } from '../../../utils/ast/typeGuards'
-import { ancestor } from '../../../utils/walkers'
+import { mapAndFilter } from '../../../utils/misc'
 
 /**
  * Removes all export-related nodes from the AST.
@@ -13,54 +12,25 @@ import { ancestor } from '../../../utils/walkers'
  *
  * @param program The AST which should be stripped of export-related nodes.
  */
-export const removeExports = (program: es.Program): void => {
-  ancestor(program, {
-    // TODO: Handle other export AST nodes.
-    ExportNamedDeclaration(
-      node: es.ExportNamedDeclaration,
-      _state: es.Node[],
-      ancestors: es.Node[]
-    ) {
-      // The ancestors array contains the current node, meaning that the
-      // parent node is the second last node of the array.
-      const parent = ancestors[ancestors.length - 2]
-      // The parent node of an ExportNamedDeclaration node must be a Program node.
-      if (parent.type !== 'Program') {
-        return
-      }
-      const nodeIndex = parent.body.findIndex(n => n === node)
-      if (node.declaration) {
-        // If the ExportNamedDeclaration node contains a declaration, replace
-        // it with the declaration node in its parent node's body.
-        parent.body[nodeIndex] = node.declaration
-      } else {
-        // Otherwise, remove the ExportNamedDeclaration node in its parent node's body.
-        parent.body.splice(nodeIndex, 1)
-      }
-    },
-    ExportDefaultDeclaration(
-      node: es.ExportDefaultDeclaration,
-      _state: es.Node[],
-      ancestors: es.Node[]
-    ) {
-      // The ancestors array contains the current node, meaning that the
-      // parent node is the second last node of the array.
-      const parent = ancestors[ancestors.length - 2]
-      // The parent node of an ExportNamedDeclaration node must be a Program node.
-      if (parent.type !== 'Program') {
-        return
-      }
-      const nodeIndex = parent.body.findIndex(n => n === node)
-      // 'node.declaration' can be either a Declaration or an Expression.
-      if (isDeclaration(node.declaration)) {
+export default function removeExports(program: es.Program): void {
+  program.body = mapAndFilter(program.body, node => {
+    switch (node.type) {
+      case 'ExportDefaultDeclaration':
+        // 'node.declaration' can be either a Declaration or an Expression.
         // If the ExportDefaultDeclaration node contains a declaration, replace
         // it with the declaration node in its parent node's body.
-        parent.body[nodeIndex] = node.declaration
-      } else {
-        // Otherwise, the ExportDefaultDeclaration node contains a statement.
-        // Remove the ExportDefaultDeclaration node in its parent node's body.
-        parent.body.splice(nodeIndex, 1)
-      }
+        return node.declaration.type === 'FunctionDeclaration' ||
+          node.declaration.type === 'ClassDeclaration'
+          ? node.declaration
+          : undefined
+      case 'ExportNamedDeclaration':
+        // If the ExportNamedDeclaration node contains a declaration, replace
+        // it with the declaration node in its parent node's body.
+        return !node.declaration ? undefined : node.declaration
+      case 'ExportAllDeclaration':
+        return undefined
+      default:
+        return node
     }
   })
 }
