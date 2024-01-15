@@ -1,8 +1,8 @@
 import type es from 'estree'
 import { partition } from 'lodash'
 
-import assert from '../../../utils/assert'
 import * as create from '../../../utils/ast/astCreator'
+import { getModuleDeclarationSource } from '../../../utils/ast/helpers'
 import { isImportDeclaration } from '../../../utils/ast/typeGuards'
 import Dict from '../../../utils/dict'
 import { isSourceModule } from '../../utils'
@@ -23,9 +23,7 @@ export default function hoistAndMergeImports(program: es.Program) {
   const importRecords = new Dict<string, ImportRecord>()
 
   importDeclarations.forEach(decl => {
-    const source = decl.source?.value
-    assert(typeof source === 'string', 'ImportDeclarations should have source of type string!')
-
+    const source = getModuleDeclarationSource(decl)
     if (!isSourceModule(source)) return
     // Non-Source module imports should have already been dealt with at this point
     // so we only need to be concerned with Source module imports

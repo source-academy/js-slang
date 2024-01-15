@@ -70,3 +70,13 @@ export const getImportedName = (
       return spec.local.name
   }
 }
+
+export function getModuleDeclarationSource(
+  node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
+): string {
+  assert(
+    typeof node.source?.value === 'string',
+    `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`
+  )
+  return node.source.value
+}

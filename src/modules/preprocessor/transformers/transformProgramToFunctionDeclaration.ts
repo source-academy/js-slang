@@ -1,12 +1,14 @@
-import es from 'estree'
+import type es from 'estree'
 import { posix as posixPath } from 'path'
 
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
 import assert from '../../../utils/assert'
 import * as create from '../../../utils/ast/astCreator'
+import { getModuleDeclarationSource } from '../../../utils/ast/helpers'
 import {
   isDeclaration,
   isDirective,
+  isImportDeclaration,
   isModuleDeclaration,
   isStatement
 } from '../../../utils/ast/typeGuards'
@@ -31,14 +33,9 @@ export const getInvokedFunctionResultVariableNameToImportSpecifiersMap = (
     {}
   nodes.forEach((node: es.ModuleDeclaration): void => {
     // Only ImportDeclaration nodes specify imported names.
-    if (node.type !== 'ImportDeclaration') {
-      return
-    }
-    const importSource = node.source.value
-    assert(
-      typeof importSource === 'string',
-      'Encountered an ImportDeclaration node with a non-string source. This should never occur.'
-    )
+    if (!isImportDeclaration(node)) return
+
+    const importSource = getModuleDeclarationSource(node)
 
     // Only handle import declarations for non-Source modules.
     if (isSourceModule(importSource)) {

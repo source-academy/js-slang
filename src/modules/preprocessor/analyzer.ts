@@ -1,8 +1,12 @@
-import type * as es from 'estree'
+import type es from 'estree'
 import { partition } from 'lodash'
 
 import assert from '../../utils/assert'
-import { getIdsFromDeclaration, getImportedName } from '../../utils/ast/helpers'
+import {
+  getIdsFromDeclaration,
+  getImportedName,
+  getModuleDeclarationSource
+} from '../../utils/ast/helpers'
 import { isModuleDeclaration, isNamespaceSpecifier } from '../../utils/ast/typeGuards'
 import Dict, { ArrayMap } from '../../utils/dict'
 import {
@@ -100,9 +104,7 @@ export default async function analyzeImportsAndExports(
         continue
       }
 
-      const dstModule = node.source?.value
-      assert(typeof dstModule === 'string', 'Node source value should not be null here')
-
+      const dstModule = getModuleDeclarationSource(node)
       const dstModuleDocs = moduleDocs[dstModule]
 
       if (node.type === 'ExportAllDeclaration') {

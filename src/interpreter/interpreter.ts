@@ -10,9 +10,9 @@ import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoa
 import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
-import assert from '../utils/assert'
 import * as create from '../utils/ast/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
+import { getModuleDeclarationSource } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -728,11 +728,7 @@ export function* evaluateProgram(program: es.Program, context: Context, loadTabs
 
       yield* visit(context, node)
 
-      const moduleName = node.source.value
-      assert(
-        typeof moduleName === 'string',
-        `ImportDeclarations should have string sources, got ${moduleName}`
-      )
+      const moduleName = getModuleDeclarationSource(node)
 
       if (!(moduleName in moduleFunctions)) {
         initModuleContext(moduleName, context, loadTabs)

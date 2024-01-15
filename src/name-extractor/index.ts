@@ -7,8 +7,7 @@ import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
 import { memoizedGetModuleDocsAsync } from '../modules/loader/moduleLoaderAsync'
 import { isSourceModule } from '../modules/utils'
 import syntaxBlacklist from '../parser/source/syntax'
-import assert from '../utils/assert'
-import { getImportedName } from '../utils/ast/helpers'
+import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
 import { isDeclaration, isImportDeclaration } from '../utils/ast/typeGuards'
 
 export enum DeclarationKind {
@@ -328,11 +327,8 @@ async function getNames(
   switch (node.type) {
     case 'ImportDeclaration':
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))
-      const moduleName = node.source?.value
-      assert(
-        typeof moduleName === 'string',
-        'ImportDeclaration should have sources of type string!'
-      )
+      const moduleName = getModuleDeclarationSource(node)
+
       // Don't try to load documentation for local modules
       if (!isSourceModule(moduleName)) return []
 
@@ -350,7 +346,7 @@ async function getNames(
         return specs.map(spec => {
           if (spec.type === 'ImportNamespaceSpecifier') {
             return {
-              name: node.source.value as string,
+              name: moduleName,
               meta: DeclarationKind.KIND_IMPORT,
               docHTML: `Namespace import ${moduleName}`
             }

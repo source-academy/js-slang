@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 import { posix as posixPath } from 'path'
 
 import type { Context } from '../..'
@@ -69,7 +69,7 @@ export default async function parseProgramsAndConstructImportGraph(
   async function resolveAndParseFile(fromModule: string, node: ModuleDeclarationWithSource) {
     assert(
       typeof node.source?.value === 'string',
-      `Expected module declaration source to be of type string, got ${node.source?.value}`
+      `Expected ${node.type} to have source of type string, got ${node.source?.value}`
     )
 
     // TODO: Move file path validation here

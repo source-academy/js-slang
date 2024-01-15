@@ -1,9 +1,10 @@
-import type * as es from 'estree'
+import type es from 'estree'
 import { posix as posixPath } from 'path'
 
 import type { Context, IOptions } from '../..'
 import type { RecursivePartial } from '../../types'
 import assert from '../../utils/assert'
+import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { isIdentifier, isImportDeclaration, isModuleDeclaration } from '../../utils/ast/typeGuards'
 import { CircularImportError } from '../errors'
 import { isSourceModule } from '../utils'
@@ -15,7 +16,7 @@ import {
 } from './filePaths'
 import parseProgramsAndConstructImportGraph from './linker'
 import hoistAndMergeImports from './transformers/hoistAndMergeImports'
-import { removeExports } from './transformers/removeExports'
+import removeExports from './transformers/removeExports'
 import {
   createAccessImportStatements,
   getInvokedFunctionResultVariableNameToImportSpecifiersMap,
@@ -27,11 +28,7 @@ const getSourceModuleImports = (programs: Record<string, es.Program>): es.Import
     return program.body.filter((stmt): stmt is es.ImportDeclaration => {
       if (!isImportDeclaration(stmt)) return false
 
-      const importSource = stmt.source.value
-      assert(
-        typeof importSource === 'string',
-        'ImportDeclarations must have source of type string!'
-      )
+      const importSource = getModuleDeclarationSource(stmt)
       return isSourceModule(importSource)
     })
   })
@@ -55,18 +52,18 @@ const getSourceModuleImports = (programs: Record<string, es.Program>): es.Import
  * @param context            The information associated with the program evaluation.
  */
 const preprocessFileImports = async (
-  files: Partial<Record<string, string>>,
+  files: Partial<Record<string, string>> | ((p: string) => Promise<string | undefined>),
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {}
 ): Promise<es.Program | undefined> => {
   // Parse all files into ASTs and build the import graph.
   const importGraphResult = await parseProgramsAndConstructImportGraph(
-    p => Promise.resolve(files[p]),
+    typeof files === 'function' ? files : p => Promise.resolve(files[p]),
     entrypointFilePath,
     context,
     options?.importOptions,
-    options?.shouldAddFileName ?? Object.keys(files).length > 1
+    options?.shouldAddFileName ?? (typeof files === 'function' || Object.keys(files).length > 1)
   )
   // Return 'undefined' if there are errors while parsing.
   if (!importGraphResult || context.errors.length !== 0) {
