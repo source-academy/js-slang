@@ -1,6 +1,6 @@
 import type { RequireProvider } from './loader/requireProvider'
-import { ImportAnalysisOptions } from './preprocessor/analyzer'
-import { LinkerOptions } from './preprocessor/linker'
+import type { ImportAnalysisOptions } from './preprocessor/analyzer'
+import type { LinkerOptions } from './preprocessor/linker'
 
 export type ModuleManifest = {
   [module: string]: {

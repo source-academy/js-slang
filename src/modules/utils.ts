@@ -18,4 +18,7 @@ export function mergeImportOptions(src?: RecursivePartial<ImportOptions>): Impor
   return _.merge(baseOptions, src as any)
 }
 
+/**
+ * Checks if the given string refers to a Source module instead of a local module
+ */
 export const isSourceModule = (path: string) => !path.startsWith('.') && !path.startsWith('/')

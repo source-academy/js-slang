@@ -320,7 +320,12 @@ export async function sourceFilesRunner(
   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
   previousCode = currentCode
 
-  const preprocessedProgram = await preprocessFileImports(files, entrypointFilePath, context, options)
+  const preprocessedProgram = await preprocessFileImports(
+    files,
+    entrypointFilePath,
+    context,
+    options
+  )
   if (!preprocessedProgram) {
     return resolvedErrorPromise
   }

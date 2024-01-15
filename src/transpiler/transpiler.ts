@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
-import * as es from 'estree'
+import type * as es from 'estree'
 import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
@@ -17,15 +17,14 @@ import { mergeImportOptions } from '../modules/utils'
 import {
   AllowedDeclarations,
   Chapter,
-  Context,
+  type Context,
   NativeStorage,
-  RecursivePartial,
+  type RecursivePartial,
   Variant
 } from '../types'
-import assert from '../utils/assert'
 import * as create from '../utils/ast/astCreator'
-import { getImportedName } from '../utils/ast/helpers'
-import { isImportDeclaration } from '../utils/ast/typeGuards'
+import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
+import { isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -69,11 +68,7 @@ export async function transformImportDeclarations(
 
   if (importNodes.length === 0) return ['', [], otherNodes]
   const importNodeMap = importNodes.reduce((res, node) => {
-    const moduleName = node.source.value
-    assert(
-      typeof moduleName === 'string',
-      `Expected ImportDeclaration to have a source of type string, got ${moduleName}`
-    )
+    const moduleName = getModuleDeclarationSource(node)
 
     if (!(moduleName in res)) {
       res[moduleName] = []
@@ -102,7 +97,7 @@ export async function transformImportDeclarations(
 
       const declNodes = nodes.flatMap(({ specifiers }) =>
         specifiers.map(spec => {
-          if (spec.type === 'ImportNamespaceSpecifier') {
+          if (isNamespaceSpecifier(spec)) {
             return create.constantDeclaration(spec.local.name, create.identifier(namespaced))
           }
 

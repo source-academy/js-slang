@@ -93,11 +93,7 @@ export async function loadModuleTabsAsync(moduleName: string, node?: Node) {
   )
 }
 
-export async function loadModuleBundleAsync(
-  moduleName: string,
-  context: Context,
-  node?: Node
-) {
+export async function loadModuleBundleAsync(moduleName: string, context: Context, node?: Node) {
   // await checkModuleExists(moduleName, node)
   const moduleText = await memoizedGetModuleBundleAsync(moduleName)
   try {
