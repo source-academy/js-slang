@@ -47,6 +47,9 @@
     "source-map": "0.7.3",
     "xmlhttprequest-ts": "^1.0.1"
   },
+  "resolutions": {
+    "**/gl": "^6.0.2"
+  },
   "scripts": {
     "build": "yarn docs && tsc --build --force",
     "build:slang": "tsc --build --force",
