@@ -18,6 +18,7 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y texlive texlive-fonts-extra texlive-lang-cjk latexmk
+          sudo apt-get install -y --no-install-recommends libxi-dev libgl1-mesa-dev
       - name: Fetch Yarn dependencies
         run: yarn install --frozen-lockfile
       - name: Build
