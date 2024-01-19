@@ -28,3 +28,16 @@ export function mapAndFilter<T, U>(items: T[], mapper: (input: T) => U | undefin
     return res
   }, [] as U[])
 }
+
+export function mapObject<T extends Record<any, any>, U>(
+  obj: T,
+  mapper: (item: T[keyof T]) => U
+): Record<keyof T, U> {
+  return Object.entries(obj).reduce(
+    (res, [key, value]) => ({
+      ...res,
+      [key]: mapper(value)
+    }),
+    {} as Record<keyof T, U>
+  )
+}

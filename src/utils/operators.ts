@@ -12,8 +12,6 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
-import { RequireProvider } from '../modules/loader/requireProvider'
-import { ModuleBundle, ModuleFunctions } from '../modules/moduleTypes'
 import { Chapter, NativeStorage, Thunk } from '../types'
 import { callExpression, locationDummyNode } from './ast/astCreator'
 import * as create from './ast/astCreator'
@@ -333,23 +331,6 @@ export const wrap = (
   wrapped.toString = () => stringified
   return wrapped
 }
-
-export const wrapSourceModule = (
-  moduleName: string,
-  moduleFunc: ModuleBundle,
-  requireProvider: RequireProvider
-) =>
-  Object.entries(moduleFunc(requireProvider)).reduce((res, [name, value]) => {
-    if (typeof value === 'function') {
-      const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`
-      value[Symbol.toStringTag] = () => repr
-      value.toString = () => repr
-    }
-    return {
-      ...res,
-      [name]: value
-    }
-  }, {} as ModuleFunctions)
 
 export const setProp = (
   obj: any,

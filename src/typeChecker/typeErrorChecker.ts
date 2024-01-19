@@ -1,5 +1,5 @@
 import { parse as babelParse } from '@babel/parser'
-import * as es from 'estree'
+import type * as es from 'estree'
 import { cloneDeep, isEqual } from 'lodash'
 
 import {
@@ -21,7 +21,7 @@ import {
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
 import { ModuleNotFoundError } from '../modules/errors'
-import { memoizedGetModuleManifest } from '../modules/loader/moduleLoader'
+import { memoizedGetModuleManifestAsync } from '../modules/loader/moduleLoaderAsync'
 import {
   BindableType,
   Chapter,
@@ -37,6 +37,7 @@ import {
   TypeEnvironment,
   Variable
 } from '../types'
+import { isImportDeclaration } from '../utils/ast/typeGuards'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
 import * as tsEs from './tsESTree'
@@ -540,14 +541,12 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
  * Adds types for imported functions to the type environment.
  * All imports have their types set to the "any" primitive type.
  */
-function handleImportDeclarations(node: tsEs.Program) {
-  const importStmts: tsEs.ImportDeclaration[] = node.body.filter(
-    (stmt): stmt is tsEs.ImportDeclaration => stmt.type === 'ImportDeclaration'
-  )
+async function handleImportDeclarations(node: tsEs.Program) {
+  const importStmts: tsEs.ImportDeclaration[] = node.body.filter(isImportDeclaration)
   if (importStmts.length === 0) {
     return
   }
-  const modules = memoizedGetModuleManifest()
+  const modules = await memoizedGetModuleManifestAsync()
   const moduleList = Object.keys(modules)
   importStmts.forEach(stmt => {
     // Source only uses strings for import source value

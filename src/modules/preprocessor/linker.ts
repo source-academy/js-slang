@@ -42,7 +42,7 @@ export default async function parseProgramsAndConstructImportGraph(
   context: Context,
   options: RecursivePartial<LinkerOptions> = defaultLinkerOptions,
   shouldAddFileName: boolean
-): Promise<LinkerResult | undefined> {
+): Promise<LinkerResult> {
   const importGraph = new DirectedGraph()
   const programs: Record<string, es.Program> = {}
   const sourceModulesToImport = new Set<string>()
@@ -147,13 +147,11 @@ export default async function parseProgramsAndConstructImportGraph(
 
   try {
     const entrypointAbsPath = await resolveFileWrapper('/', entrypointFilePath)
-
     await enumerateModuleDeclarations(entrypointAbsPath)
   } catch (error) {
     if (!(error instanceof LinkerError)) {
-      context.errors.push(error)
+      throw error
     }
-    return undefined
   }
 
   return {

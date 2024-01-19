@@ -1,6 +1,7 @@
 import type es from 'estree'
 import { partition } from 'lodash'
 
+import { Context } from '../..'
 import assert from '../../utils/assert'
 import {
   getIdsFromDeclaration,
@@ -9,13 +10,13 @@ import {
 } from '../../utils/ast/helpers'
 import { isModuleDeclaration, isNamespaceSpecifier } from '../../utils/ast/typeGuards'
 import Dict, { ArrayMap } from '../../utils/dict'
+import { mapObject } from '../../utils/misc'
 import {
   DuplicateImportNameError,
   UndefinedDefaultImportError,
   UndefinedImportError,
   UndefinedNamespaceImportError
 } from '../errors'
-import { memoizedGetModuleDocsAsync } from '../loader/moduleLoaderAsync'
 import { isSourceModule } from '../utils'
 
 export const defaultAnalysisOptions: ImportAnalysisOptions = {
@@ -45,25 +46,13 @@ export type ImportAnalysisOptions = {
  * - Checks for undefined imports
  * - Checks for different imports being given the same local name
  */
-export default async function analyzeImportsAndExports(
+export default function analyzeImportsAndExports(
   programs: Record<string, es.Program>,
   topoOrder: string[],
-  sourceModulesToImport: Set<string>,
+  { nativeStorage: { loadedModules } }: Context,
   options: Partial<ImportAnalysisOptions> = {}
 ) {
-  const moduleDocs: Record<string, Set<string>> = options.allowUndefinedImports
-    ? {}
-    : Object.fromEntries(
-        await Promise.all(
-          [...sourceModulesToImport].map(async moduleName => {
-            const docs = await memoizedGetModuleDocsAsync(moduleName)
-            if (docs === null) {
-              throw new Error(`Failed to load documentation for ${moduleName}`)
-            }
-            return [moduleName, new Set(Object.keys(docs))]
-          })
-        )
-      )
+  const moduleDocs: Record<string, Set<string>> = mapObject(loadedModules, ({ symbols }) => symbols)
   const declaredNames = new Dict<
     string,
     ArrayMap<string, es.ImportDeclaration['specifiers'][number]>

@@ -6,13 +6,12 @@ import { UNKNOWN_LOCATION } from '../constants'
 import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
 import { getModuleDeclarationSource } from '../utils/ast/helpers'
+import { isImportDeclaration } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -709,7 +708,7 @@ function getNonEmptyEnv(environment: Environment): Environment {
   }
 }
 
-export function* evaluateProgram(program: es.Program, context: Context, loadTabs: boolean) {
+export function* evaluateProgram(program: es.Program, context: Context) {
   yield* visit(context, program)
 
   context.numberOfOuterEnvironments += 1
@@ -717,11 +716,10 @@ export function* evaluateProgram(program: es.Program, context: Context, loadTabs
   pushEnvironment(context, environment)
 
   const otherNodes: es.Statement[] = []
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
 
   try {
     for (const node of program.body) {
-      if (node.type !== 'ImportDeclaration') {
+      if (!isImportDeclaration(node)) {
         otherNodes.push(node as es.Statement)
         continue
       }
@@ -729,34 +727,11 @@ export function* evaluateProgram(program: es.Program, context: Context, loadTabs
       yield* visit(context, node)
 
       const moduleName = getModuleDeclarationSource(node)
-
-      if (!(moduleName in moduleFunctions)) {
-        initModuleContext(moduleName, context, loadTabs)
-        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
-      }
-
-      const functions = moduleFunctions[moduleName]
+      const functions = context.nativeStorage.loadedModules[moduleName]
 
       for (const spec of node.specifiers) {
         declareIdentifier(context, spec.local.name, node)
-        let obj: any
-
-        switch (spec.type) {
-          case 'ImportSpecifier': {
-            obj = functions[spec.imported.name]
-            break
-          }
-          case 'ImportDefaultSpecifier': {
-            obj = functions.default
-            break
-          }
-          case 'ImportNamespaceSpecifier': {
-            obj = functions
-            break
-          }
-        }
-
-        defineVariable(context, spec.local.name, obj, true)
+        defineVariable(context, spec.local.name, functions.get(spec), true)
       }
       yield* leave(context)
     }

@@ -10,6 +10,7 @@ import * as es from 'estree'
 
 import { EnvTree } from './createContext'
 import { Agenda, Stash } from './ec-evaluator/interpreter'
+import { ModuleBundle } from './modules/moduleTypes'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -126,6 +127,8 @@ export interface NativeStorage {
   surrounding scope, so we cannot set evaller to `eval` directly. subsequent assignments to evaller will
   close in the surrounding values, so no problem
    */
+
+  loadedModules: Record<string, ModuleBundle>
 }
 
 export interface Context<T = any> {
@@ -151,6 +154,8 @@ export interface Context<T = any> {
     envStepsTotal: number
     breakpointSteps: number[]
   }
+
+  isPreviousCodeTimeoutError: boolean
 
   numberOfOuterEnvironments: number
 

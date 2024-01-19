@@ -26,12 +26,12 @@ import { findNodeAt } from './utils/walkers'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
 import { ModuleNotFoundError } from './modules/errors'
 import type { ImportOptions } from './modules/moduleTypes'
-import preprocessFileImports from './modules/preprocessor'
+import preprocessFileImports, { Preprocessor } from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { mergeImportOptions } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
@@ -87,6 +87,11 @@ export function parseError(errors: SourceError[], verbose: boolean = verboseErro
     const filePath = error.location?.source ? `[${error.location.source}] ` : ''
     const line = error.location ? error.location.start.line : '<unknown>'
     const column = error.location ? error.location.start.column : '<unknown>'
+    if (!error.explain) {
+      console.error(error)
+      return ''
+    }
+
     const explanation = error.explain()
 
     if (verbose) {
@@ -319,13 +324,13 @@ export async function runInContext(
   options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
   const defaultFilePath = '/default.js'
-  const files: Partial<Record<string, string>> = {}
+  const files: Record<string, string> = {}
   files[defaultFilePath] = code
   return runFilesInContext(files, defaultFilePath, context, options)
 }
 
 export async function runFilesInContext(
-  files: Partial<Record<string, string>>,
+  files: Record<string, string>,
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {}
@@ -416,13 +421,13 @@ export function compile(
   vmInternalFunctions?: string[]
 ): Promise<SVMProgram | undefined> {
   const defaultFilePath = '/default.js'
-  const files: Partial<Record<string, string>> = {}
+  const files: Record<string, string> = {}
   files[defaultFilePath] = code
   return compileFiles(files, defaultFilePath, context, vmInternalFunctions)
 }
 
 export async function compileFiles(
-  files: Partial<Record<string, string>>,
+  files: Record<string, string>,
   entrypointFilePath: string,
   context: Context,
   vmInternalFunctions?: string[]
@@ -441,7 +446,9 @@ export async function compileFiles(
     return undefined
   }
 
-  const preprocessedProgram = await preprocessFileImports(files, entrypointFilePath, context)
+  const preprocessor = new Preprocessor(files, context, entrypointFilePath, {})
+
+  const preprocessedProgram = await preprocessFileImports(preprocessor)
   if (!preprocessedProgram) {
     return undefined
   }
@@ -455,3 +462,5 @@ export async function compileFiles(
 }
 
 export { createContext, Context, ModuleContext, Result, setBreakpointAtLine, assemble }
+
+export { astToString } from './utils/ast/astToString'

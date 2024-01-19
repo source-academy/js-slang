@@ -16,7 +16,7 @@ import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import { ModuleNotFoundError } from '../modules/errors'
 import { getRequireProvider } from '../modules/loader/requireProvider'
-import preprocessFileImports from '../modules/preprocessor'
+import preprocessFileImports, { Preprocessor } from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
@@ -117,7 +117,7 @@ async function runSubstitution(
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context, options.importOptions.loadTabs)
+  let it = evaluate(program, context)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
     it = nonDetEvaluate(program, context)
@@ -292,7 +292,7 @@ export async function sourceRunner(
 }
 
 export async function sourceFilesRunner(
-  files: Partial<Record<string, string>>,
+  files: Record<string, string>,
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {}
@@ -320,15 +320,13 @@ export async function sourceFilesRunner(
   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
   previousCode = currentCode
 
-  const preprocessedProgram = await preprocessFileImports(
-    files,
-    entrypointFilePath,
-    context,
-    options
-  )
+  const preprocessor = new Preprocessor(files, context, entrypointFilePath, options)
+
+  const preprocessedProgram = await preprocessFileImports(preprocessor)
   if (!preprocessedProgram) {
     return resolvedErrorPromise
   }
+
   context.previousPrograms.unshift(preprocessedProgram)
 
   return sourceRunner(preprocessedProgram, context, isVerboseErrorsEnabled, options)

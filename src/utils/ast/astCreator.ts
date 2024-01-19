@@ -65,13 +65,28 @@ export const literal = (
 
 export const memberExpression = (
   object: es.Expression,
-  property: string | number
+  property: string | number,
+  loc?: es.SourceLocation | null
 ): es.MemberExpression => ({
   type: 'MemberExpression',
   object,
   computed: typeof property === 'number',
   optional: false,
-  property: typeof property === 'number' ? literal(property) : identifier(property)
+  property: typeof property === 'number' ? literal(property) : identifier(property),
+  loc
+})
+
+export const computedMemberExpression = (
+  object: es.Expression,
+  property: string | number,
+  loc?: es.SourceLocation | null
+): es.MemberExpression => ({
+  type: 'MemberExpression',
+  object,
+  computed: true,
+  optional: false,
+  property: literal(property),
+  loc
 })
 
 export const declaration = (
@@ -144,7 +159,7 @@ export const functionExpression = (
 })
 
 export const blockStatement = (
-  body: es.Statement[],
+  body: (es.Statement | es.Declaration)[],
   loc?: es.SourceLocation | null
 ): es.BlockStatement => ({
   type: 'BlockStatement',
@@ -152,7 +167,7 @@ export const blockStatement = (
   loc
 })
 
-export const program = (body: es.Statement[]): es.Program => ({
+export const program = (body: es.Program['body']): es.Program => ({
   type: 'Program',
   sourceType: 'module',
   body
@@ -177,7 +192,7 @@ export const property = (key: string, value: es.Expression): es.Property => ({
   kind: 'init'
 })
 
-export const objectExpression = (properties: es.Property[]): es.ObjectExpression => ({
+export const objectExpression = (properties: (es.SpreadElement | es.Property)[]): es.ObjectExpression => ({
   type: 'ObjectExpression',
   properties
 })

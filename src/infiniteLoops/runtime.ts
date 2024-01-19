@@ -1,8 +1,9 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { REQUIRE_PROVIDER_ID } from '../constants'
 import createContext from '../createContext'
 import { getRequireProvider } from '../modules/loader/requireProvider'
+import { Runner } from '../newRunner'
 import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
 import { Chapter, Variant } from '../types'
@@ -282,22 +283,23 @@ function trackLoc(loc: es.SourceLocation | undefined, state: st.State, ignoreMe?
   }
 }
 
-const functions = {}
-functions[FunctionNames.nothingFunction] = nothingFunction
-functions[FunctionNames.concretize] = sym.shallowConcretize
-functions[FunctionNames.hybridize] = hybridize
-functions[FunctionNames.wrapArg] = wrapArgIfFunction
-functions[FunctionNames.dummify] = sym.makeDummyHybrid
-functions[FunctionNames.saveBool] = saveBoolIfHybrid
-functions[FunctionNames.saveVar] = saveVarIfHybrid
-functions[FunctionNames.preFunction] = preFunction
-functions[FunctionNames.returnFunction] = returnFunction
-functions[FunctionNames.postLoop] = postLoop
-functions[FunctionNames.enterLoop] = enterLoop
-functions[FunctionNames.exitLoop] = exitLoop
-functions[FunctionNames.trackLoc] = trackLoc
-functions[FunctionNames.evalB] = sym.evaluateHybridBinary
-functions[FunctionNames.evalU] = sym.evaluateHybridUnary
+const functions = {
+  [FunctionNames.nothingFunction]: nothingFunction,
+  [FunctionNames.concretize]: sym.shallowConcretize,
+  [FunctionNames.hybridize]: hybridize,
+  [FunctionNames.wrapArg]: wrapArgIfFunction,
+  [FunctionNames.dummify]: sym.makeDummyHybrid,
+  [FunctionNames.saveBool]: saveBoolIfHybrid,
+  [FunctionNames.saveVar]: saveVarIfHybrid,
+  [FunctionNames.preFunction]: preFunction,
+  [FunctionNames.returnFunction]: returnFunction,
+  [FunctionNames.postLoop]: postLoop,
+  [FunctionNames.enterLoop]: enterLoop,
+  [FunctionNames.exitLoop]: exitLoop,
+  [FunctionNames.trackLoc]: trackLoc,
+  [FunctionNames.evalB]: sym.evaluateHybridBinary,
+  [FunctionNames.evalU]: sym.evaluateHybridUnary,
+}
 
 /**
  * Tests the given program for infinite loops.
@@ -331,6 +333,46 @@ export async function testForInfiniteLoop(
 
   try {
     await sandboxedRun(instrumentedCode, functions, state, newBuiltins, getRequireProvider(context))
+  } catch (error) {
+    if (error instanceof InfiniteLoopError) {
+      if (state.lastLocation !== undefined) {
+        error.location = state.lastLocation
+      }
+      return error
+    }
+    // Programs that exceed the maximum call stack size are okay as long as they terminate.
+    if (error instanceof RangeError && error.message === 'Maximum call stack size exceeded') {
+      return undefined
+    }
+    throw error
+  }
+  return undefined
+}
+
+export const infiniteLoopRunner: Runner<InfiniteLoopError | undefined> = async (program, oldContext) => {
+  const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT, undefined, undefined)
+  context.nativeStorage.loadedModules = oldContext.nativeStorage.loadedModules
+
+  const prelude = parse(context.prelude as string, context) as es.Program
+  context.prelude = null
+  // const previous: es.Program[] = [...previousProgramsStack, prelude]
+  const newBuiltins = prepareBuiltins(context.nativeStorage.builtins)
+  const { builtinsId, functionsId, stateId, nativeId } = InfiniteLoopRuntimeObjectNames
+  const instrumentedCode = instrument([prelude], program, newBuiltins.keys())
+  const state = new st.State()
+
+  const sandboxedRun = new Function(
+    'code',
+    functionsId,
+    stateId,
+    builtinsId,
+    nativeId,
+    // redeclare window so modules don't do anything funny like play sounds
+    '{let window = {}; return eval(code)}'
+  )
+
+  try {
+    sandboxedRun(instrumentedCode, functions, state, newBuiltins, context.nativeStorage)
   } catch (error) {
     if (error instanceof InfiniteLoopError) {
       if (state.lastLocation !== undefined) {

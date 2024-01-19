@@ -1,9 +1,9 @@
 import { generate } from 'astring'
 import type * as es from 'estree'
+import { partition } from 'lodash'
 
 import { type IOptions } from '..'
 import * as errors from '../errors/errors'
-import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/loader/moduleLoaderAsync'
 import { parse } from '../parser/parser'
 import {
   BlockExpression,
@@ -22,7 +22,8 @@ import {
   dummyStatement,
   dummyVariableDeclarator
 } from '../utils/ast/dummyAstCreator'
-import { filterImportDeclarations } from '../utils/ast/helpers'
+import { getModuleDeclarationSource } from '../utils/ast/helpers'
+import { isImportDeclaration } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import {
@@ -3162,40 +3163,22 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
-async function evaluateImports(program: es.Program, context: Context, loadTabs: boolean) {
-  const [importNodeMap, otherNodes] = filterImportDeclarations(program)
+async function evaluateImports(program: es.Program, context: Context) {
+  const [importNodes, otherNodes] = partition(program.body, isImportDeclaration)
 
   try {
     const environment = currentEnvironment(context)
-    await Promise.all(
-      Object.entries(importNodeMap).map(async ([moduleName, nodes]) => {
-        await initModuleContextAsync(moduleName, context, loadTabs)
-        const functions = await loadModuleBundleAsync(moduleName, context, nodes[0])
-        for (const node of nodes) {
-          for (const spec of node.specifiers) {
-            declareIdentifier(context, spec.local.name, node, environment)
-            let obj: any
+    importNodes.forEach(node => {
+      if (!isImportDeclaration(node)) return
 
-            switch (spec.type) {
-              case 'ImportSpecifier': {
-                obj = functions[spec.imported.name]
-                break
-              }
-              case 'ImportDefaultSpecifier': {
-                obj = functions.default
-                break
-              }
-              case 'ImportNamespaceSpecifier': {
-                obj = functions
-                break
-              }
-            }
+      const source = getModuleDeclarationSource(node)
+      const bundle = context.nativeStorage.loadedModules[source]
 
-            defineVariable(context, spec.local.name, obj, true, node)
-          }
-        }
+      node.specifiers.forEach(spec => {
+        declareIdentifier(context, spec.local.name, node, environment)
+        defineVariable(context, spec.local.name, bundle.get(spec), true, node)
       })
-    )
+    })
   } catch (error) {
     // console.log(error)
     handleRuntimeError(context, error)
@@ -3332,13 +3315,13 @@ function checkForUndefinedVariables(program: es.Program, context: Context) {
 export async function getEvaluationSteps(
   program: es.Program,
   context: Context,
-  { importOptions, stepLimit }: Pick<IOptions, 'importOptions' | 'stepLimit'>
+  { stepLimit }: Pick<IOptions, 'stepLimit'>
 ): Promise<[es.Program, string[][], string][]> {
   const steps: [es.Program, string[][], string][] = []
   try {
     checkForUndefinedVariables(program, context)
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
-    await evaluateImports(program, context, importOptions.loadTabs)
+    await evaluateImports(program, context)
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns

@@ -135,7 +135,8 @@ const createNativeStorage = (): NativeStorage => ({
   operators: new Map(Object.entries(operators)),
   gpu: new Map(Object.entries(gpu_lib)),
   maxExecTime: JSSLANG_PROPERTIES.maxExecTime,
-  evaller: null
+  evaller: null,
+  loadedModules: {}
 })
 
 export const createEmptyContext = <T>(
@@ -160,7 +161,8 @@ export const createEmptyContext = <T>(
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
     previousPrograms: [],
-    shouldIncreaseEvaluationTimeout: false
+    shouldIncreaseEvaluationTimeout: false,
+    isPreviousCodeTimeoutError: false
   }
 }
 
