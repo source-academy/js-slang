@@ -6,12 +6,12 @@ programming courses for computer science majors, following Structure and
 Interpretation of Computer Programs, JavaScript Adaptation
 (<https://sourceacademy.org/sicpjs/>).
 
-# Table of Contents
+## Table of Contents
 
-- [Requirements](#requirements)
+- [Prerequisites](#prerequisites)
 - [Usage](#usage)
 - [Documentation](#documentation)
-- [Requirements](#requirements-1)
+- [Requirements](#requirements)
 - [Testing](#testing)
 - [Error messages](#error-messages)
 - [Using your js-slang in Source Academy](#using-your-js-slang-in-source-academy)
@@ -20,14 +20,13 @@ Interpretation of Computer Programs, JavaScript Adaptation
 - [Talks and Presentations](#talks-and-presentations)
 - [License](#license)
 
-# Requirements
+## Prerequisites
 
-- node: known working version: v16.14.0
-
-- python: On MacBook Pro with chip Apple M1 Pro, use python 3.10.12. Here is
+- NodeJS v20
+- Python: On MacBook Pro with chip Apple M1 Pro, use python 3.10.12. Here is
 [the correct way to set Python 3 as default on a Mac](https://opensource.com/article/19/5/python-3-default-mac).
 
-# Usage
+## Usage
 
 To build,
 
@@ -103,11 +102,11 @@ Hint: In `bash` you can take the `PROGRAM_STRING` out of a file as follows:
 $ js-slang -n --chapter=1 -e "$(< my_source_program.js)"
 ```
 
-# Documentation
+## Documentation
 
 Source is documented here: <https://docs.sourceacademy.org/>
 
-# Requirements
+### Requirements
 
 - `bash`: known working version: GNU bash, version 5.0.16
 - `latexmk`: Version 4.52c
@@ -145,7 +144,7 @@ in `src/editors/ace/docTooltip/*.json` files. This script is run by
 edit `src/editors/ace/docTooltip/index.ts`
 and`./scripts/updateAutocompleteDocs.py`.
 
-# Testing
+## Testing
 
 `js-slang` comes with an extensive test suite. To run the tests after you made
 your modifications, run `yarn test`. Regression tests are run automatically when
@@ -159,7 +158,7 @@ changes are at fault, you can update the regression tests as follows:
 $ yarn test -- --updateSnapshot
 ```
 
-# Error messages
+## Error messages
 
 To enable verbose messages, have the statement `"enable verbose";` as the first
 line of your program. This also causes the program to be run by the interpreter.
@@ -178,7 +177,7 @@ guides, should be left to `elaborate()`.
 Please remember to write test cases to reflect your added functionalities. The
 god of this repository is self-professed to be very particular about test cases.
 
-# Using your js-slang in Source Academy
+## Using your js-slang in Source Academy
 
 js-slang is used by the [Source Academy](https://sourceacademy.org), the
 immersive online experiential environment for learning programming. For this,
@@ -187,7 +186,7 @@ js-slang is
 frontend of the Source Academy then includes the js-slang package in its
 deployment bundle.
 
-# Using your js-slang in your local Source Academy
+## Using your js-slang in your local Source Academy
 
 A common issue when developing modifications to js-slang is how to test it using
 your own local frontend. Assume that you have built your own frontend locally,
@@ -211,7 +210,7 @@ $ yarn link "js-slang"
 
 Then start the frontend and the new js-slang will be used.
 
-# Building and publishing SICP package
+## Building and publishing SICP package
 
 To build SICP package
 
@@ -228,12 +227,12 @@ $ cd js-slang/sicp_publish
 $ npm publish
 ```
 
-# Talks and Presentations
+## Talks and Presentations
 
 - **How `js-slang` works under the hood** [17th Jan 2023][The
   Gathering][[slides](https://docs.google.com/presentation/d/1GFR39iznBZxWv948zUsmcbCSSDasm4xYs3Jc5GF7A3I/edit?usp=sharing)]
 
-# License
+## License
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 All sources in this repository are licensed under the
