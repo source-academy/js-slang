@@ -7,27 +7,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Use Node.js
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: 20
+          cache: yarn
       - name: Install TeX Live
         run: |
           sudo apt-get update -y
           sudo apt-get install -y texlive texlive-fonts-extra texlive-lang-cjk latexmk
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          sudo apt-get install -y --no-install-recommends libxi-dev libgl1-mesa-dev
       - name: Fetch Yarn dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
       - name: Build
         run: |
           yarn run jsdoc prepare
