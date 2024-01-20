@@ -63,7 +63,7 @@ export async function transformImportDeclarations(
   context?: Context,
   nativeId?: es.Identifier,
   useThis: boolean = false
-): Promise<[string, es.VariableDeclaration[], es.Program['body']]> {
+): Promise<[string, (es.VariableDeclaration | es.ExpressionStatement)[], es.Program['body']]> {
   const [importNodes, otherNodes] = partition(program.body, isImportDeclaration)
 
   if (importNodes.length === 0) return ['', [], otherNodes]
@@ -109,21 +109,41 @@ export async function transformImportDeclarations(
       }
 
       const declNodes = nodes.flatMap(({ specifiers }) =>
-        specifiers.map(spec => {
+        specifiers.flatMap(spec => {
           assert(spec.type === 'ImportSpecifier', `Expected ImportSpecifier, got ${spec.type}`)
 
           if (checkImports && !(spec.imported.name in docs!)) {
             throw new UndefinedImportError(spec.imported.name, moduleName, spec)
           }
 
-          // Convert each import specifier to its corresponding local variable declaration
-          return create.constantDeclaration(
-            spec.local.name,
-            create.memberExpression(
-              create.identifier(`${useThis ? 'this.' : ''}${namespaced}`),
-              spec.imported.name
+          return [
+            // Convert each import specifier to its corresponding local variable declaration
+            create.constantDeclaration(
+              spec.local.name,
+              create.memberExpression(
+                create.identifier(`${useThis ? 'this.' : ''}${namespaced}`),
+                spec.imported.name
+              )
+            ),
+            // Update the specifier's name property with the new name. This is so that calling
+            // `function.name` will return the aliased name. Equivalent to:
+            // Object.defineProperty(spec.imported.name, 'name', { value: spec.local.name });
+            create.expressionStatement(
+              create.callExpression(
+                create.memberExpression(create.identifier('Object'), 'defineProperty'),
+                [
+                  create.memberExpression(
+                    create.identifier(`${useThis ? 'this.' : ''}${namespaced}`),
+                    spec.imported.name
+                  ),
+                  create.literal('name'),
+                  create.objectExpression([
+                    create.property('value', create.literal(spec.local.name))
+                  ])
+                ]
+              )
             )
-          )
+          ]
         })
       )
 
@@ -131,7 +151,7 @@ export async function transformImportDeclarations(
         string,
         {
           text: string
-          nodes: es.VariableDeclaration[]
+          nodes: (es.VariableDeclaration | es.ExpressionStatement)[]
           namespaced: string
         }
       ]

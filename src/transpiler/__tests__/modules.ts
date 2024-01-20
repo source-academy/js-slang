@@ -11,11 +11,12 @@ import { transformImportDeclarations, transpile } from '../transpiler'
 jest.mock('../../modules/moduleLoaderAsync')
 jest.mock('../../modules/moduleLoader')
 
-test('Transform import declarations into variable declarations', async () => {
+// One import declaration is transformed into two AST nodes
+const IMPORT_DECLARATION_NODE_COUNT = 2
+
+test('Transform import declarations to correct number of nodes', async () => {
   const code = stripIndent`
     import { foo } from "one_module";
-    import { bar } from "another_module";
-    foo(bar);
   `
   const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
@@ -24,12 +25,51 @@ test('Transform import declarations into variable declarations', async () => {
     loadTabs: false,
     checkImports: true
   })
+  expect(importNodes.length).toEqual(IMPORT_DECLARATION_NODE_COUNT)
+})
 
-  expect(importNodes[0].type).toBe('VariableDeclaration')
-  expect((importNodes[0].declarations[0].id as Identifier).name).toEqual('foo')
+test('Transform import declarations into variable declarations', async () => {
+  const code = stripIndent`
+    import { foo } from "one_module";
+    import { bar } from "another_module";
+    foo(bar);
+  `
+  const identifiers = ['foo', 'bar'] as const
+  const context = mockContext(Chapter.SOURCE_4)
+  const program = parse(code, context)!
+  const [, importNodes] = await transformImportDeclarations(program, new Set<string>(), {
+    wrapSourceModules: true,
+    loadTabs: false,
+    checkImports: true
+  })
 
-  expect(importNodes[1].type).toBe('VariableDeclaration')
-  expect((importNodes[1].declarations[0].id as Identifier).name).toEqual('bar')
+  identifiers.forEach((ident, index) => {
+    const idx = IMPORT_DECLARATION_NODE_COUNT * index
+    expect(importNodes[idx].type).toBe('VariableDeclaration')
+    const node = importNodes[idx] as VariableDeclaration
+    expect((node.declarations[0].id as Identifier).name).toEqual(ident)
+  })
+})
+
+test('Transform import declarations with correctly aliased names (expression statements)', async () => {
+  const code = stripIndent`
+    import { foo } from "one_module";
+    import { bar as alias } from "another_module";
+    foo(bar);
+  `
+  const aliases = ['foo', 'alias'] as const
+  const context = mockContext(Chapter.SOURCE_4)
+  const program = parse(code, context)!
+  const [, importNodes] = await transformImportDeclarations(program, new Set<string>(), {
+    wrapSourceModules: true,
+    loadTabs: false,
+    checkImports: true
+  })
+
+  aliases.forEach((_, index) => {
+    const idx = IMPORT_DECLARATION_NODE_COUNT * index + 1
+    expect(importNodes[idx].type).toBe('ExpressionStatement')
+  })
 })
 
 test('Transpiler accounts for user variable names when transforming import statements', async () => {
@@ -54,7 +94,10 @@ test('Transpiler accounts for user variable names when transforming import state
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
   expect(
-    ((importNodes[0].declarations[0].init as MemberExpression).object as Identifier).name
+    (
+      ((importNodes[0] as VariableDeclaration).declarations[0].init as MemberExpression)
+        .object as Identifier
+    ).name
   ).toEqual('__MODULE__1')
 
   expect(varDecl0.type).toBe('VariableDeclaration')
@@ -63,9 +106,12 @@ test('Transpiler accounts for user variable names when transforming import state
   expect(varDecl1.type).toBe('VariableDeclaration')
   expect(((varDecl1 as VariableDeclaration).declarations[0].init as Literal).value).toEqual('test1')
 
-  expect(importNodes[1].type).toBe('VariableDeclaration')
+  expect(importNodes[2].type).toBe('VariableDeclaration')
   expect(
-    ((importNodes[1].declarations[0].init as MemberExpression).object as Identifier).name
+    (
+      ((importNodes[2] as VariableDeclaration).declarations[0].init as MemberExpression)
+        .object as Identifier
+    ).name
   ).toEqual('__MODULE__3')
 })
 

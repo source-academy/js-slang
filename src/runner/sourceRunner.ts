@@ -284,7 +284,7 @@ export async function sourceRunner(
     return runNative(program, context, theOptions)
   }
 
-  return runInterpreter(program!, context, theOptions)
+  return runInterpreter(program, context, theOptions)
 }
 
 export async function sourceFilesRunner(
