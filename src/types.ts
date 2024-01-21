@@ -9,7 +9,7 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
-import { Agenda, Stash } from './ec-evaluator/interpreter'
+import { Agenda, Stash } from './cse-machine/interpreter'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -60,7 +60,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'ec-evaluator'
+export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
 
 export enum Chapter {
   SOURCE_1 = 1,

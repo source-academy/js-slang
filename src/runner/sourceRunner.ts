@@ -4,7 +4,7 @@ import type { RawSourceMap } from 'source-map'
 
 import type { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
-import { ECEResultPromise, evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
+import { ECEResultPromise, evaluate as ECEvaluate } from '../cse-machine/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -269,7 +269,7 @@ export async function sourceRunner(
     return runECEvaluator(program, context, theOptions)
   }
 
-  if (context.executionMethod === 'ec-evaluator') {
+  if (context.executionMethod === 'cse-machine') {
     if (options.isPrelude) {
       return runECEvaluator(
         program,

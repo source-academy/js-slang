@@ -28,7 +28,7 @@ import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
-import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
+import { ECEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { CannotFindModuleError } from './errors/localImportErrors'
 import { validateFilePath } from './localImports/filePaths'
 import preprocessFileImports from './localImports/preprocessor'
