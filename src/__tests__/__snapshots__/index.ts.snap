@@ -59,6 +59,22 @@ arr[0] === 1 && arr[1] === 4 && arr[2] === 4;",
 }
 `;
 
+exports[`Array assignment has value: expectResult 2`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let arr = [];
+const a = arr[0] = 1;
+const b = arr[1] = arr[2] = 4;
+arr[0] === 1 && arr[1] === 4 && arr[2] === 4;",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Arrays toString matches up with JS: expect to match JS 1`] = `
 Object {
   "alertResult": Array [],

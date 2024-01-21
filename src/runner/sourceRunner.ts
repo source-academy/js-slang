@@ -218,7 +218,7 @@ async function runNative(
   }
 }
 
-function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+function runCSEMachine(program: es.Program, context: Context, options: IOptions): Promise<Result> {
   const value = ECEvaluate(program, context, options)
   return ECEResultPromise(context, value)
 }
@@ -266,18 +266,18 @@ export async function sourceRunner(
   }
 
   if (context.variant === Variant.EXPLICIT_CONTROL) {
-    return runECEvaluator(program, context, theOptions)
+    return runCSEMachine(program, context, theOptions)
   }
 
   if (context.executionMethod === 'cse-machine') {
     if (options.isPrelude) {
-      return runECEvaluator(
+      return runCSEMachine(
         program,
         { ...context, runtime: { ...context.runtime, debuggerOn: false } },
         theOptions
       )
     }
-    return runECEvaluator(program, context, theOptions)
+    return runCSEMachine(program, context, theOptions)
   }
 
   if (context.executionMethod === 'native') {
