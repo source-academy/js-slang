@@ -82,7 +82,7 @@ export type Instr =
   | EnvInstr
   | ArrLitInstr
 
-export type AgendaItem = es.Node | Instr
+export type ControlItem = es.Node | Instr
 
 // Special class that cannot be found on the stash so is safe to be used
 // as an indicator of a breakpoint from running the ECE machine

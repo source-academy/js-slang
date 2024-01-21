@@ -9,7 +9,7 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
-import { Agenda, Stash } from './cse-machine/interpreter'
+import { Control, Stash } from './cse-machine/interpreter'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -145,7 +145,7 @@ export interface Context<T = any> {
     environmentTree: EnvTree
     environments: Environment[]
     nodes: es.Node[]
-    agenda: Agenda | null
+    control: Control | null
     stash: Stash | null
     envStepsTotal: number
     breakpointSteps: number[]
