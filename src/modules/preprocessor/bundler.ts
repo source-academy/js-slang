@@ -34,8 +34,7 @@ export type Bundler = (
   programs: Record<string, es.Program>,
   context: Context,
   entrypointFilePath: string,
-  topoOrder: string[],
-
+  topoOrder: string[]
 ) => es.Program
 
 const defaultBundler: Bundler = (
@@ -138,4 +137,4 @@ const defaultBundler: Bundler = (
   return preprocessedProgram
 }
 
-export default defaultBundler;
+export default defaultBundler

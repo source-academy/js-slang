@@ -3,7 +3,7 @@ import type { MockedFunction } from 'jest-mock'
 import { mockContext } from '../../../mocks/context'
 import { Chapter, Variant } from '../../../types'
 import { ModuleConnectionError, ModuleInternalError } from '../../errors'
-import { MODULES_STATIC_URL } from '../moduleLoader'
+import { MODULES_STATIC_URL } from '../moduleLoaderAsync'
 import * as moduleLoader from '../moduleLoaderAsync'
 
 jest.mock('lodash', () => ({

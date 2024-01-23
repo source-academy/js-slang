@@ -19,7 +19,6 @@ const mockXMLHttpRequest = (xhr: Partial<XMLHttpRequest> = {}) => {
   return xhrMock
 }
 
-jest.mock('../../modules/loader/moduleLoader')
 jest.mock('../../modules/loader/moduleLoaderAsync')
 
 const optionEC = { variant: Variant.EXPLICIT_CONTROL }

@@ -298,7 +298,7 @@ const functions = {
   [FunctionNames.exitLoop]: exitLoop,
   [FunctionNames.trackLoc]: trackLoc,
   [FunctionNames.evalB]: sym.evaluateHybridBinary,
-  [FunctionNames.evalU]: sym.evaluateHybridUnary,
+  [FunctionNames.evalU]: sym.evaluateHybridUnary
 }
 
 /**
@@ -349,7 +349,10 @@ export async function testForInfiniteLoop(
   return undefined
 }
 
-export const infiniteLoopRunner: Runner<InfiniteLoopError | undefined> = async (program, oldContext) => {
+export const infiniteLoopRunner: Runner<InfiniteLoopError | undefined> = async (
+  program,
+  oldContext
+) => {
   const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT, undefined, undefined)
   context.nativeStorage.loadedModules = oldContext.nativeStorage.loadedModules
 

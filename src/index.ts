@@ -31,7 +31,7 @@ import type es from 'estree'
 import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
 import { ModuleNotFoundError } from './modules/errors'
 import type { ImportOptions } from './modules/moduleTypes'
-import preprocessFileImports, { Preprocessor } from './modules/preprocessor'
+import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { mergeImportOptions } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
@@ -446,9 +446,7 @@ export async function compileFiles(
     return undefined
   }
 
-  const preprocessor = new Preprocessor(files, context, entrypointFilePath, {})
-
-  const preprocessedProgram = await preprocessFileImports(preprocessor)
+  const preprocessedProgram = await preprocessFileImports(files, context, entrypointFilePath, {})
   if (!preprocessedProgram) {
     return undefined
   }

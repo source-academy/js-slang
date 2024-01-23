@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 import * as _ from 'lodash'
 import type { RawSourceMap } from 'source-map'
 
@@ -16,7 +16,7 @@ import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import { ModuleNotFoundError } from '../modules/errors'
 import { getRequireProvider } from '../modules/loader/requireProvider'
-import preprocessFileImports, { Preprocessor } from '../modules/preprocessor'
+import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
@@ -66,7 +66,9 @@ let previousCode: {
 } | null = null
 let isPreviousCodeTimeoutError = false
 
-function runConcurrent(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+type Runner = (program: es.Program, context: Context, options: IOptions) => Promise<Result>
+
+const runConcurrent: Runner = (program, context, options) => {
   if (context.shouldIncreaseEvaluationTimeout) {
     context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
   } else {
@@ -89,12 +91,8 @@ function runConcurrent(program: es.Program, context: Context, options: IOptions)
   }
 }
 
-async function runSubstitution(
-  program: es.Program,
-  context: Context,
-  options: IOptions
-): Promise<Result> {
-  const steps = await getEvaluationSteps(program, context, options)
+const runSubstitution: Runner = (program, context, options) => {
+  const steps = getEvaluationSteps(program, context, options)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
@@ -109,14 +107,14 @@ async function runSubstitution(
       function: callee(redex, context)
     })
   }
-  return {
+  return Promise.resolve({
     status: 'finished',
     context,
     value: redexedSteps
-  }
+  })
 }
 
-function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+const runInterpreter: Runner = (program, context, options) => {
   let it = evaluate(program, context)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
@@ -130,11 +128,7 @@ function runInterpreter(program: es.Program, context: Context, options: IOptions
   return scheduler.run(it, context)
 }
 
-async function runNative(
-  program: es.Program,
-  context: Context,
-  options: IOptions
-): Promise<Result> {
+const runNative: Runner = async (program, context, options) => {
   if (!options.isPrelude) {
     if (context.shouldIncreaseEvaluationTimeout && isPreviousCodeTimeoutError) {
       context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
@@ -222,7 +216,7 @@ async function runNative(
   }
 }
 
-function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+const runECEvaluator: Runner = (program, context, options) => {
   const value = ECEvaluate(program, context, options)
   return ECEResultPromise(context, value)
 }
@@ -320,9 +314,12 @@ export async function sourceFilesRunner(
   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
   previousCode = currentCode
 
-  const preprocessor = new Preprocessor(files, context, entrypointFilePath, options)
-
-  const preprocessedProgram = await preprocessFileImports(preprocessor)
+  const preprocessedProgram = await preprocessFileImports(
+    files,
+    context,
+    entrypointFilePath,
+    options
+  )
   if (!preprocessedProgram) {
     return resolvedErrorPromise
   }

@@ -1,18 +1,26 @@
-import { generate } from "astring";
-import type es from "estree";
-import { partial } from "lodash";
+import { generate } from 'astring'
+import type es from 'estree'
+import { partial } from 'lodash'
 
-import { Context } from "..";
-import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from "../constants";
-import { Bundler } from "../modules/preprocessor/bundler";
-import { Chapter } from "../types";
-import assert from "../utils/assert";
+import { Context } from '..'
+import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
+import { Bundler } from '../modules/preprocessor/bundler'
+import { Chapter } from '../types'
+import assert from '../utils/assert'
 import * as ast from '../utils/ast/astCreator'
-import { getIdsFromDeclaration, getImportedName, getModuleDeclarationSource } from "../utils/ast/helpers";
-import { isModuleDeclaration, isNamespaceSpecifier } from "../utils/ast/typeGuards";
-import { getIdentifiersInNativeStorage, getIdentifiersInProgram, getUniqueId } from "../utils/uniqueIds";
-import { simple } from "../utils/walkers";
-import { NativeIds } from "./transpiler";
+import {
+  getIdsFromDeclaration,
+  getImportedName,
+  getModuleDeclarationSource
+} from '../utils/ast/helpers'
+import { isModuleDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
+import {
+  getIdentifiersInNativeStorage,
+  getIdentifiersInProgram,
+  getUniqueId
+} from '../utils/uniqueIds'
+import { simple } from '../utils/walkers'
+import { NativeIds } from './transpiler'
 
 type ExportPair = [string, es.Expression] | es.SpreadElement
 type NativeBundler = (
@@ -30,145 +38,120 @@ function getNativeEvaller(usedIdentifiers: Set<string>) {
   const evallerId = ast.identifier(getUniqueId(usedIdentifiers, '__PROGRAM__'))
   return ast.expressionStatement(
     ast.assignmentExpression(
-      ast.memberExpression(
-        ast.identifier(NATIVE_STORAGE_ID),
-        'evaller'
-      ),
+      ast.memberExpression(ast.identifier(NATIVE_STORAGE_ID), 'evaller'),
       ast.arrowFunctionExpression(
         [evallerId],
-        ast.callExpression(
-          ast.identifier('eval'),
-          [evallerId]
-        )
+        ast.callExpression(ast.identifier('eval'), [evallerId])
       )
     )
   )
 }
 
-function processModuleDeclarations(program: es.Program, modulesObj: es.Expression): [(es.Statement | es.Declaration)[], ExportPair[]] {
-  return program.body.reduce(([nodes, pairs], node) => {
-    if (node.type === 'ExportDefaultDeclaration') {
-      switch (node.declaration.type) {
-        case 'ClassDeclaration':
-        case 'FunctionDeclaration': {
-          if (node.declaration.id) {
-            return [
-              [
-                node.declaration,
-                ...nodes,
-              ],
-              [
-                ...pairs,
-                ['default', node.declaration.id] as ExportPair
+function processModuleDeclarations(
+  program: es.Program,
+  modulesObj: es.Expression
+): [(es.Statement | es.Declaration)[], ExportPair[]] {
+  return program.body.reduce(
+    ([nodes, pairs], node) => {
+      if (node.type === 'ExportDefaultDeclaration') {
+        switch (node.declaration.type) {
+          case 'ClassDeclaration':
+          case 'FunctionDeclaration': {
+            if (node.declaration.id) {
+              return [
+                [node.declaration, ...nodes],
+                [...pairs, ['default', node.declaration.id] as ExportPair]
               ]
-            ]
+            }
+
+            // Case falls through
           }
-
-          // Case falls through
         }
+
+        return [nodes, [...pairs, ['default', node.declaration] as ExportPair]]
+      } else if (node.type === 'ExportNamedDeclaration') {
+        if (node.declaration) {
+          const exportedExprs = getIdsFromDeclaration(node.declaration).map(id => {
+            assert(id !== null, 'Encountered a null identifier')
+            return [id.name, id] as ExportPair
+          })
+          return [
+            [...nodes, node.declaration],
+            [...pairs, ...exportedExprs]
+          ]
+        }
+
+        if (!node.source) {
+          return [
+            nodes,
+            [
+              ...pairs,
+              ...node.specifiers.map(spec => [spec.exported.name, spec.local] as ExportPair)
+            ]
+          ]
+        }
+      } else if (!isModuleDeclaration(node)) {
+        return [[...nodes, node], pairs]
       }
 
-      return [
-        nodes,
-        [
-          ...pairs,
-          ['default', node.declaration] as ExportPair
-        ]
-      ]
-    } else if (node.type === 'ExportNamedDeclaration') {
-      if (node.declaration) {
-        const exportedExprs = getIdsFromDeclaration(node.declaration).map(id => {
-          assert(id !== null, 'Encountered a null identifier')
-          return [id.name, id] as ExportPair;
-        })
-        return [
-          [
-            ...nodes,
-            node.declaration
-          ],
-          [
-            ...pairs,
-            ...exportedExprs
-          ]
-        ]
-      }
+      const source = getModuleDeclarationSource(node)
+      const moduleExpr = ast.memberExpression(modulesObj, source)
 
-      if (!node.source) {
-        return [
-          nodes,
-          [
-            ...pairs,
-            ...node.specifiers.map(spec => [spec.exported.name, spec.local] as ExportPair)
+      switch (node.type) {
+        case 'ExportAllDeclaration':
+          return [
+            nodes,
+            [
+              ...pairs,
+              (node.exported
+                ? [node.exported.name, moduleExpr]
+                : {
+                    type: 'SpreadElement',
+                    argument: moduleExpr
+                  }) as ExportPair
+            ]
           ]
-        ]
-      }
-    } else if (!isModuleDeclaration(node)) {
-      return [
-        [
-          ...nodes,
-          node
-        ],
-        pairs
-      ]
-    }
-
-    const source = getModuleDeclarationSource(node)
-    const moduleExpr = ast.memberExpression(modulesObj, source)
-
-    switch (node.type) {
-      case 'ExportAllDeclaration':
-        return [
-          nodes,
-          [
-            ...pairs,
-            (node.exported ? [node.exported.name, moduleExpr] : { 
-              type: 'SpreadElement',
-              argument: moduleExpr
-            }) as ExportPair
-          ] 
-        ]
-      case 'ExportNamedDeclaration':
-        return [
-          nodes,
-          [
-            ...pairs,
-            ...node.specifiers.map(spec => [spec.exported.name, ast.memberExpression(moduleExpr, spec.local.name)] as ExportPair)
+        case 'ExportNamedDeclaration':
+          return [
+            nodes,
+            [
+              ...pairs,
+              ...node.specifiers.map(
+                spec =>
+                  [
+                    spec.exported.name,
+                    ast.memberExpression(moduleExpr, spec.local.name)
+                  ] as ExportPair
+              )
+            ]
           ]
-        ]
-      case 'ImportDeclaration':
-        return [
-          [
-            ...node.specifiers.map(spec => {
-              if (isNamespaceSpecifier(spec)) {
+        case 'ImportDeclaration':
+          return [
+            [
+              ...node.specifiers.map(spec => {
+                if (isNamespaceSpecifier(spec)) {
+                  return ast.constantDeclaration(
+                    spec.local.name,
+                    ast.memberExpression(moduleExpr, 'rawBundle')
+                  )
+                }
+
                 return ast.constantDeclaration(
                   spec.local.name,
-                  ast.memberExpression(
-                    moduleExpr,
-                    'rawBundle'
-                  )
-                )
-              }
-
-              return ast.constantDeclaration(
-                spec.local.name,
-                ast.callExpression(
-                  ast.memberExpression(
-                    moduleExpr,
-                    'getWithName'
-                  ),
-                  [
+                  ast.callExpression(ast.memberExpression(moduleExpr, 'getWithName'), [
                     ast.literal(getImportedName(spec)),
                     ast.literal(spec.local.name)
-                  ]
+                  ])
                 )
-              )
-            }),
-            ...nodes
-          ],
-          pairs
-        ]
-    }
-  }, [[], []] as [(es.Statement | es.Declaration)[], ExportPair[]])
+              }),
+              ...nodes
+            ],
+            pairs
+          ]
+      }
+    },
+    [[], []] as [(es.Statement | es.Declaration)[], ExportPair[]]
+  )
 }
 
 const sourceFileBundler: FileTranspiler = (program, usedIdentifiers, context: Context) => {
@@ -481,7 +464,7 @@ const sourceFileBundler: FileTranspiler = (program, usedIdentifiers, context: Co
   ): es.VariableDeclaration[] {
     return Object.entries(globalIds).map(([key, { name }]) => {
       let value: es.Expression
-      
+
       if (key === 'native') {
         value = ast.identifier(NATIVE_STORAGE_ID)
       } else if (key === 'globals') {
@@ -511,10 +494,13 @@ const sourceFileBundler: FileTranspiler = (program, usedIdentifiers, context: Co
       'builtins'
     ] as const
 
-    return Object.values(globalIdNames).reduce((res, id) => ({
-      ...res,
-      [id]: ast.identifier(getUniqueId(usedIdentifiers, id))
-    }), {} as NativeIds)
+    return Object.values(globalIdNames).reduce(
+      (res, id) => ({
+        ...res,
+        [id]: ast.identifier(getUniqueId(usedIdentifiers, id))
+      }),
+      {} as NativeIds
+    )
   }
 
   const globalIds = getNativeIds(program, usedIdentifiers)
@@ -532,31 +518,35 @@ const sourceFileBundler: FileTranspiler = (program, usedIdentifiers, context: Co
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
 
-  return ast.program([
-    ...getDeclarationsToAccessTranspilerInternals(globalIds),
-    ...program.body
-  ])
+  return ast.program([...getDeclarationsToAccessTranspilerInternals(globalIds), ...program.body])
 }
 
-const nativeBundler: NativeBundler = (fileTranspiler, programs, context, entrypointFilePath, topoOrder) => {
-  function bundleFileToCallExpression(programName: string, globalIdentifiers: Set<string>, includeExports: boolean) {
+const nativeBundler: NativeBundler = (
+  fileTranspiler,
+  programs,
+  context,
+  entrypointFilePath,
+  topoOrder
+) => {
+  function bundleFileToCallExpression(
+    programName: string,
+    globalIdentifiers: Set<string>,
+    includeExports: boolean
+  ) {
     const program = programs[programName]
-    const localIdentifiers = new Set([
-      ...globalIdentifiers,
-      ...getIdentifiersInProgram(program)
-    ])
+    const localIdentifiers = new Set([...globalIdentifiers, ...getIdentifiersInProgram(program)])
 
     const modulesObj = ast.identifier(getUniqueId(localIdentifiers, '__MODULES__'))
-    const [newBody, exportPairs] = processModuleDeclarations(fileTranspiler(program, localIdentifiers, context), modulesObj)
+    const [newBody, exportPairs] = processModuleDeclarations(
+      fileTranspiler(program, localIdentifiers, context),
+      modulesObj
+    )
 
     if (includeExports) {
       newBody.push(
         ast.expressionStatement(
           ast.assignmentExpression(
-            ast.computedMemberExpression(
-              modulesObj,
-              programName
-            ),
+            ast.computedMemberExpression(modulesObj, programName),
             ast.objectExpression(
               exportPairs.map(each => {
                 if (Array.isArray(each)) {
@@ -570,10 +560,7 @@ const nativeBundler: NativeBundler = (fileTranspiler, programs, context, entrypo
       )
     }
 
-    return ast.arrowFunctionExpression(
-      [modulesObj],
-      ast.blockStatement(newBody)
-    )
+    return ast.arrowFunctionExpression([modulesObj], ast.blockStatement(newBody))
   }
 
   const entrypointProgram = programs[entrypointFilePath]
@@ -584,10 +571,7 @@ const nativeBundler: NativeBundler = (fileTranspiler, programs, context, entrypo
 
   const [entrypointTranspiled] = processModuleDeclarations(
     fileTranspiler(entrypointProgram, usedIdentifiers, context),
-    ast.memberExpression(
-      ast.identifier(NATIVE_STORAGE_ID),
-      'loadedModules'
-    )
+    ast.memberExpression(ast.identifier(NATIVE_STORAGE_ID), 'loadedModules')
   )
 
   const globModulesObj = ast.identifier(getUniqueId(usedIdentifiers, '__MODULES__'))
@@ -596,31 +580,25 @@ const nativeBundler: NativeBundler = (fileTranspiler, programs, context, entrypo
     .filter(path => path !== entrypointFilePath)
     .map(programName => {
       const arrowFunc = bundleFileToCallExpression(programName, usedIdentifiers, true)
-      return ast.expressionStatement(
-        ast.callExpression(
-          arrowFunc,
-          [globModulesObj]
-        )
-      )
+      return ast.expressionStatement(ast.callExpression(arrowFunc, [globModulesObj]))
     })
 
   const builtins: (es.Statement | es.Declaration)[] = []
 
   if (!context.nativeStorage.evaller) {
     for (const builtin of context.nativeStorage.builtins.keys()) {
-      builtins.push(ast.constantDeclaration(
-        builtin,
-        ast.callExpression(
-          ast.memberExpression(
+      builtins.push(
+        ast.constantDeclaration(
+          builtin,
+          ast.callExpression(
             ast.memberExpression(
-              ast.identifier(NATIVE_STORAGE_ID),
-              'builtins'
+              ast.memberExpression(ast.identifier(NATIVE_STORAGE_ID), 'builtins'),
+              'get'
             ),
-            'get'
-          ),
-          [ast.literal(builtin)]
+            [ast.literal(builtin)]
+          )
         )
-      ))
+      )
     }
 
     // And add prelude?
@@ -632,7 +610,7 @@ const nativeBundler: NativeBundler = (fileTranspiler, programs, context, entrypo
     ast.blockStatement([
       getNativeEvaller(usedIdentifiers),
       ast.expressionStatement(ast.identifier('undefined')),
-      ...entrypointTranspiled,
+      ...entrypointTranspiled
     ])
   ])
 }

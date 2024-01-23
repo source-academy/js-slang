@@ -3163,7 +3163,7 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
-async function evaluateImports(program: es.Program, context: Context) {
+function evaluateImports(program: es.Program, context: Context) {
   const [importNodes, otherNodes] = partition(program.body, isImportDeclaration)
 
   try {
@@ -3312,16 +3312,16 @@ function checkForUndefinedVariables(program: es.Program, context: Context) {
 }
 
 // the context here is for builtins
-export async function getEvaluationSteps(
+export function getEvaluationSteps(
   program: es.Program,
   context: Context,
   { stepLimit }: Pick<IOptions, 'stepLimit'>
-): Promise<[es.Program, string[][], string][]> {
+): [es.Program, string[][], string][] {
   const steps: [es.Program, string[][], string][] = []
   try {
     checkForUndefinedVariables(program, context)
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
-    await evaluateImports(program, context)
+    evaluateImports(program, context)
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns

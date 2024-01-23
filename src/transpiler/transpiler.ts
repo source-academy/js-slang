@@ -611,7 +611,7 @@ async function transpileToSource(
 
   const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = generate(program, { sourceMap: map })
-  console.log(transpiled)
+  // console.log(transpiled)
   const sourceMapJson = map.toJSON()
   return { transpiled, sourceMapJson }
 }

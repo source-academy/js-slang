@@ -611,7 +611,7 @@ function instrument(
     [builtinsId]: builtinsId,
     [functionsId]: functionsId,
     [stateId]: stateId,
-    [nativeId]: nativeId,
+    [nativeId]: nativeId
   }
 
   const innerProgram = { ...program }

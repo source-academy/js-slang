@@ -192,7 +192,9 @@ export const property = (key: string, value: es.Expression): es.Property => ({
   kind: 'init'
 })
 
-export const objectExpression = (properties: (es.SpreadElement | es.Property)[]): es.ObjectExpression => ({
+export const objectExpression = (
+  properties: (es.SpreadElement | es.Property)[]
+): es.ObjectExpression => ({
   type: 'ObjectExpression',
   properties
 })
