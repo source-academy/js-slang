@@ -1,8 +1,8 @@
 import * as es from 'estree'
 
 import createContext, { EnvTree } from '../createContext'
+import { createBlockEnvironment } from '../ec-evaluator/utils'
 import Closure from '../interpreter/closure'
-import { createBlockEnvironment } from '../interpreter/interpreter'
 import { Chapter, Context, Environment, Frame, Variant } from '../types'
 
 export function mockContext(

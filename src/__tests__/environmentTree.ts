@@ -1,5 +1,5 @@
 import { createGlobalEnvironment, EnvTree, EnvTreeNode } from '../createContext'
-import { pushEnvironment } from '../interpreter/interpreter'
+import { pushEnvironment } from '../ec-evaluator/utils'
 import { mockContext, mockEnvironment } from '../mocks/context'
 import { Chapter } from '../types'
 
