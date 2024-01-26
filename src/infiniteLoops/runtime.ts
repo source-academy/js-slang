@@ -1,12 +1,9 @@
 import type es from 'estree'
 
-import { REQUIRE_PROVIDER_ID } from '../constants'
 import createContext from '../createContext'
-import { getRequireProvider } from '../modules/loader/requireProvider'
-import { Runner } from '../newRunner'
 import { parse } from '../parser/parser'
 import * as stdList from '../stdlib/list'
-import { Chapter, Variant } from '../types'
+import { Chapter, Context, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { checkForInfiniteLoop } from './detect'
 import { InfiniteLoopError } from './errors'
@@ -307,61 +304,19 @@ const functions = {
  * @param previousProgramsStack Any code previously entered in the REPL & parsed into AST.
  * @returns SourceError if an infinite loop was detected, undefined otherwise.
  */
-export async function testForInfiniteLoop(
+export function testForInfiniteLoop(
   program: es.Program,
-  previousProgramsStack: es.Program[]
+  previousProgramsStack: es.Program[],
+  oldContext: Context
 ) {
   const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT, undefined, undefined)
   const prelude = parse(context.prelude as string, context) as es.Program
   context.prelude = null
   const previous: es.Program[] = [...previousProgramsStack, prelude]
   const newBuiltins = prepareBuiltins(context.nativeStorage.builtins)
-  const { builtinsId, functionsId, stateId } = InfiniteLoopRuntimeObjectNames
-
-  const instrumentedCode = await instrument(previous, program, newBuiltins.keys())
-  const state = new st.State()
-
-  const sandboxedRun = new Function(
-    'code',
-    functionsId,
-    stateId,
-    builtinsId,
-    REQUIRE_PROVIDER_ID,
-    // redeclare window so modules don't do anything funny like play sounds
-    '{let window = {}; return eval(code)}'
-  )
-
-  try {
-    await sandboxedRun(instrumentedCode, functions, state, newBuiltins, getRequireProvider(context))
-  } catch (error) {
-    if (error instanceof InfiniteLoopError) {
-      if (state.lastLocation !== undefined) {
-        error.location = state.lastLocation
-      }
-      return error
-    }
-    // Programs that exceed the maximum call stack size are okay as long as they terminate.
-    if (error instanceof RangeError && error.message === 'Maximum call stack size exceeded') {
-      return undefined
-    }
-    throw error
-  }
-  return undefined
-}
-
-export const infiniteLoopRunner: Runner<InfiniteLoopError | undefined> = async (
-  program,
-  oldContext
-) => {
-  const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT, undefined, undefined)
-  context.nativeStorage.loadedModules = oldContext.nativeStorage.loadedModules
-
-  const prelude = parse(context.prelude as string, context) as es.Program
-  context.prelude = null
-  // const previous: es.Program[] = [...previousProgramsStack, prelude]
-  const newBuiltins = prepareBuiltins(context.nativeStorage.builtins)
   const { builtinsId, functionsId, stateId, nativeId } = InfiniteLoopRuntimeObjectNames
-  const instrumentedCode = instrument([prelude], program, newBuiltins.keys())
+
+  const instrumentedCode = instrument(previous, program, newBuiltins.keys())
   const state = new st.State()
 
   const sandboxedRun = new Function(
@@ -375,7 +330,7 @@ export const infiniteLoopRunner: Runner<InfiniteLoopError | undefined> = async (
   )
 
   try {
-    sandboxedRun(instrumentedCode, functions, state, newBuiltins, context.nativeStorage)
+    sandboxedRun(instrumentedCode, functions, state, newBuiltins, oldContext.nativeStorage)
   } catch (error) {
     if (error instanceof InfiniteLoopError) {
       if (state.lastLocation !== undefined) {

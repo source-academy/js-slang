@@ -5,52 +5,50 @@ import createContext from '../../createContext'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { Chapter, Variant } from '../../types'
-import { stripIndent } from '../../utils/formatters'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
 import { testForInfiniteLoop } from '../runtime'
+import loadSourceModules from '../../modules/loader'
+import * as loaders from '../../modules/loader/loaders'
 
-jest.mock('../../modules/loader/moduleLoaderAsync', () => ({
-  memoizedGetModuleBundleAsync: jest.fn(() =>
-    Promise.resolve(stripIndent`
-    require => {
-      'use strict';
-      var exports = {};
-      function repeat(func, n) {
-        return n === 0 ? function (x) {
-          return x;
-        } : function (x) {
-          return func(repeat(func, n - 1)(x));
-        };
-      }
-      function twice(func) {
-        return repeat(func, 2);
-      }
-      function thrice(func) {
-        return repeat(func, 3);
-      }
-      exports.repeat = repeat;
-      exports.thrice = thrice;
-      exports.twice = twice;
-      Object.defineProperty(exports, '__esModule', {
-        value: true
-      });
-      return exports;
+jest.spyOn(loaders, 'memoizedGetModuleManifestAsync').mockResolvedValue({
+  repeat: { tabs: [] }
+})
+
+jest.spyOn(loaders, 'memoizedGetModuleDocsAsync').mockResolvedValue({
+  repeat: '',
+  twice: '',
+  thrice: ''
+})
+
+jest.mock(
+  `${jest.requireActual('../../modules/loader/loaders').MODULES_STATIC_URL}/bundles/repeat.js`,
+  () => {
+    function repeat<T>(func: (arg: T) => T, n: number): (arg: T) => T {
+      return n === 0
+        ? function (x) {
+            return x
+          }
+        : function (x) {
+            return func(repeat(func, n - 1)(x))
+          }
     }
-  `)
-  ),
-  memoizedGetModuleManifestAsync: jest.fn(() =>
-    Promise.resolve({
-      repeat: { tabs: [] }
-    })
-  ),
-  memoizedGetModuleDocsAsync: jest.fn(() =>
-    Promise.resolve({
-      repeat: '',
-      twice: '',
-      thrice: ''
-    })
-  )
-}))
+    function twice<T>(func: (arg: T) => T) {
+      return repeat(func, 2)
+    }
+    function thrice<T>(func: (arg: T) => T) {
+      return repeat(func, 3)
+    }
+
+    return {
+      default: () => ({
+        repeat,
+        twice,
+        thrice
+      })
+    }
+  },
+  { virtual: true }
+)
 
 test('works in runInContext when throwInfiniteLoops is true', async () => {
   const code = `function fib(x) {
@@ -81,13 +79,15 @@ test('works in runInContext when throwInfiniteLoops is false', async () => {
   expect(result?.[1]).toBe(false)
 })
 
-const testForInfiniteLoopWithCode = (code: string, previousPrograms: es.Program[]) => {
+const testForInfiniteLoopWithCode = async (code: string, previousPrograms: es.Program[]) => {
   const context = createContext(Chapter.SOURCE_4, Variant.DEFAULT)
   const program = parse(code, context)
   if (program === null) {
     throw new Error('Unable to parse code.')
   }
-  return testForInfiniteLoop(program, previousPrograms)
+
+  await loadSourceModules(new Set(['repeat']), context, false)
+  return testForInfiniteLoop(program, previousPrograms, context)
 }
 
 test('non-infinite recursion not detected', async () => {

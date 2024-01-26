@@ -57,7 +57,8 @@ const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
     wrapSourceModules: true,
     loadTabs: true
   },
-  shouldAddFileName: null
+  shouldAddFileName: null,
+  logTranspilerOutput: process.env.NODE_ENV === 'development'
 }
 
 let previousCode: {
@@ -154,12 +155,9 @@ const runNative: Runner = async (program, context, options) => {
         break
     }
 
-    ;({ transpiled, sourceMapJson } = await transpile(
-      transpiledProgram,
-      context,
-      options.importOptions
-    ))
-    let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
+    ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
+    if (options.logTranspilerOutput) console.log(transpiled)
+    let value = sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
       value = forceIt(value)
@@ -177,9 +175,10 @@ const runNative: Runner = async (program, context, options) => {
   } catch (error) {
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-      const detectedInfiniteLoop = await testForInfiniteLoop(
+      const detectedInfiniteLoop = testForInfiniteLoop(
         program,
-        context.previousPrograms.slice(1)
+        context.previousPrograms.slice(1),
+        context
       )
       if (detectedInfiniteLoop !== undefined) {
         if (options.throwInfiniteLoops) {
@@ -248,7 +247,7 @@ export async function sourceRunner(
   determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
 
   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-    return await fullJSRunner(program, context, theOptions.importOptions)
+    return await fullJSRunner(program, context, theOptions)
   }
 
   // All runners after this point evaluate the prelude.

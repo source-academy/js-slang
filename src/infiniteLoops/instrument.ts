@@ -1,5 +1,5 @@
 import { generate } from 'astring'
-import type * as es from 'estree'
+import type es from 'estree'
 
 import { NATIVE_STORAGE_ID } from '../constants'
 import { transformImportDeclarations } from '../transpiler/transpiler'
@@ -580,14 +580,11 @@ function handleImports(programs: es.Program[]): string[] {
   const allNames = programs.flatMap(program => {
     const [importsToAdd, otherNodes] = transformImportDeclarations(
       program,
-      new Set<string>(),
       create.identifier(NATIVE_STORAGE_ID)
     )
 
     program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
-    return importsToAdd.map(
-      ({ declarations: [{ init }] }) => ((init as es.MemberExpression).object as es.Identifier).name
-    )
+    return importsToAdd.map(({ declarations: [{ id }] }) => (id as es.Identifier).name)
   })
 
   return [...new Set<string>(allNames)]

@@ -3,11 +3,10 @@ import { generate } from 'astring'
 import type * as es from 'estree'
 import { RawSourceMap } from 'source-map'
 
-import type { Result } from '..'
+import type { IOptions, Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { getRequireProvider, RequireProvider } from '../modules/loader/requireProvider'
-import { ImportOptions } from '../modules/moduleTypes'
 import hoistAndMergeImports from '../modules/preprocessor/transformers/hoistAndMergeImports'
 import { parse } from '../parser/parser'
 import {
@@ -16,7 +15,7 @@ import {
   getGloballyDeclaredIdentifiers,
   transpile
 } from '../transpiler/transpiler'
-import type { Context, NativeStorage } from '../types'
+import type { Context, NativeStorage, RecursivePartial } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
@@ -55,7 +54,7 @@ function containsPrevEval(context: Context): boolean {
 export async function fullJSRunner(
   program: es.Program,
   context: Context,
-  importOptions: ImportOptions
+  options: RecursivePartial<IOptions>
 ): Promise<Result> {
   // prelude & builtins
   // only process builtins and preludes if it is a fresh eval context
@@ -88,7 +87,10 @@ export async function fullJSRunner(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    ;({ transpiled, sourceMapJson } = await transpile(program, context, importOptions))
+    ;({ transpiled, sourceMapJson } = await transpile(program, context))
+
+    if (options?.logTranspilerOutput) console.log(transpiled)
+
     return {
       status: 'finished',
       context,

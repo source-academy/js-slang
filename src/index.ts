@@ -33,7 +33,6 @@ import { ModuleNotFoundError } from './modules/errors'
 import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
-import { mergeImportOptions } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
 import { decodeError, decodeValue } from './parser/scheme'
@@ -69,6 +68,8 @@ export interface IOptions {
    * Set to null to let js-slang decide automatically
    */
   shouldAddFileName: boolean | null
+
+  logTranspilerOutput: boolean
 }
 
 // needed to work on browsers
@@ -359,8 +360,7 @@ export async function runFilesInContext(
       return resolvedErrorPromise
     }
 
-    const fullImportOptions = mergeImportOptions(options.importOptions)
-    return fullJSRunner(program, context, fullImportOptions)
+    return fullJSRunner(program, context, options)
   }
 
   if (context.chapter === Chapter.HTML) {
