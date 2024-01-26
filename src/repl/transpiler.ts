@@ -35,7 +35,7 @@ async function transpileCode(
   if (pretranspile) {
     return generate(program)
   } else {
-    const { transpiled } = await transpile(program as Program, context)
+    const { transpiled } = transpile(program as Program, context)
     return transpiled
   }
 }

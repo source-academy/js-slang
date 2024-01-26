@@ -87,7 +87,7 @@ export async function fullJSRunner(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    ;({ transpiled, sourceMapJson } = await transpile(program, context))
+    ;({ transpiled, sourceMapJson } = transpile(program, context))
 
     if (options?.logTranspilerOutput) console.log(transpiled)
 
