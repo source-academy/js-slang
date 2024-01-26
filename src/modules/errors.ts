@@ -78,7 +78,10 @@ export class UndefinedNamespaceImportError extends ImportError {
   }
 
   public elaborate(): string {
-    return "Check your imports and make sure what you're trying to import exists!"
+    return `
+      Check your imports and make sure what you're trying to import exists!
+      Hint: Exports of the form \`export * from "./a.js"\` do not reexport default exports!
+    `
   }
 }
 

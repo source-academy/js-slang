@@ -5,6 +5,7 @@ import { Context } from '../..'
 import assert from '../../utils/assert'
 import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { isIdentifier, isImportDeclaration, isModuleDeclaration } from '../../utils/ast/typeGuards'
+import { mapAndFilter } from '../../utils/misc'
 import { isSourceModule } from '../utils'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import {
@@ -32,14 +33,13 @@ const getSourceModuleImports = (programs: Record<string, es.Program>): es.Import
 
 export type Bundler = (
   programs: Record<string, es.Program>,
-  context: Context,
   entrypointFilePath: string,
-  topoOrder: string[]
+  topoOrder: string[],
+  context: Context
 ) => es.Program
 
 const defaultBundler: Bundler = (
   programs: Record<string, es.Program>,
-  context: Context,
   entrypointFilePath: string,
   topoOrder: string[]
 ) => {
@@ -81,32 +81,35 @@ const defaultBundler: Bundler = (
   }
 
   // Invoke each of the transformed functions and store the result in a variable.
-  const invokedFunctionResultVariableDeclarations: es.VariableDeclaration[] = []
-  topoOrder.forEach((filePath: string): void => {
-    // As mentioned above, the entrypoint program does not have a function
-    // declaration equivalent, so there is no need to process it.
-    if (filePath === entrypointFilePath) {
-      return
+  const invokedFunctionResultVariableDeclarations: es.VariableDeclaration[] = mapAndFilter(
+    topoOrder,
+    filePath => {
+      // As mentioned above, the entrypoint program does not have a function
+      // declaration equivalent, so there is no need to process it.
+      if (filePath === entrypointFilePath) {
+        return undefined
+      }
+
+      const functionName = transformFilePathToValidFunctionName(filePath)
+      const invokedFunctionResultVariableName =
+        transformFunctionNameToInvokedFunctionResultVariableName(functionName)
+
+      const functionDeclaration = functionDeclarations[functionName]
+      const functionParams = functionDeclaration.params.filter(isIdentifier)
+      assert(
+        functionParams.length === functionDeclaration.params.length,
+        'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
+      )
+
+      const invokedFunctionResultVariableDeclaration =
+        createInvokedFunctionResultVariableDeclaration(
+          functionName,
+          invokedFunctionResultVariableName,
+          functionParams
+        )
+      return invokedFunctionResultVariableDeclaration
     }
-
-    const functionName = transformFilePathToValidFunctionName(filePath)
-    const invokedFunctionResultVariableName =
-      transformFunctionNameToInvokedFunctionResultVariableName(functionName)
-
-    const functionDeclaration = functionDeclarations[functionName]
-    const functionParams = functionDeclaration.params.filter(isIdentifier)
-    assert(
-      functionParams.length === functionDeclaration.params.length,
-      'Function declaration contains non-Identifier AST nodes as params. This should never happen.'
-    )
-
-    const invokedFunctionResultVariableDeclaration = createInvokedFunctionResultVariableDeclaration(
-      functionName,
-      invokedFunctionResultVariableName,
-      functionParams
-    )
-    invokedFunctionResultVariableDeclarations.push(invokedFunctionResultVariableDeclaration)
-  })
+  )
 
   // Get all Source module imports across the entrypoint program & all imported programs.
   const sourceModuleImports = getSourceModuleImports(programs)
