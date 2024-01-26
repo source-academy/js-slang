@@ -727,7 +727,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
         runTest()
       } catch (err) {
         expect(err).toBeInstanceOf(DuplicateImportNameError)
-        
+
         // Make sure the locations are always displayed in order
         // for consistency across tests (ok since locString should be order agnostic)
         const segments = (err.locString as string).split(',').map(each => each.trim())

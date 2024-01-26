@@ -54,10 +54,7 @@ export default function analyzeImportsAndExports(
   { nativeStorage: { loadedModules } }: Context,
   options: Partial<ImportAnalysisOptions> = {}
 ) {
-  const moduleDocs = mapObject(
-    loadedModules,
-    each => new Set(Object.keys(each))
-  )
+  const moduleDocs = mapObject(loadedModules, each => new Set(Object.keys(each)))
 
   // Given the imports below
   // import { a as x } from 'module1'; import { b as x } from 'module1'; import { x } from 'module2';
