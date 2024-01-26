@@ -1,4 +1,4 @@
-import { Context } from '../../../types'
+import type { Context } from '../../../types'
 
 export const memoizedGetModuleDocsAsync = jest.fn((module: string) =>
   Promise.resolve(
@@ -15,29 +15,22 @@ export const memoizedGetModuleDocsAsync = jest.fn((module: string) =>
   )
 )
 
-export const memoizedGetModuleBundleAsync = jest.fn().mockResolvedValue(
-  `require => ({
-    foo: () => 'foo',
-    bar: () => 'bar',
-  })`
-)
-
 export const memoizedGetModuleManifestAsync = jest.fn().mockResolvedValue({
   one_module: { tabs: [] },
-  other_module: { tabs: [] },
-  another_module: { tabs: [] }
+  another_module: { tabs: [] },
+  other_module: { tabs: [] }
 })
 
-export function loadModuleBundleAsync() {
-  return Promise.resolve({
+export const loadModuleBundleAsync = jest.fn((name: string) => {
+  const baseModule = {
     foo: () => 'foo',
     bar: () => 'bar'
-  })
-}
+  }
 
-export function loadModuleTabsAsync(_name: string) {
-  return Promise.resolve([])
-}
+  return name === 'another_module' ? baseModule : { ...baseModule, default: () => 'def' }
+})
+
+export const loadModuleTabsAsync = jest.fn().mockResolvedValue([])
 
 export async function initModuleContextAsync(
   moduleName: string,
