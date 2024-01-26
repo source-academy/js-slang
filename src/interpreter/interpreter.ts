@@ -10,8 +10,8 @@ import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
-import { getModuleDeclarationSource } from '../utils/ast/helpers'
-import { isImportDeclaration } from '../utils/ast/typeGuards'
+import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
+import { isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -731,7 +731,12 @@ export function* evaluateProgram(program: es.Program, context: Context) {
 
       for (const spec of node.specifiers) {
         declareIdentifier(context, spec.local.name, node)
-        defineVariable(context, spec.local.name, functions.get(spec), true)
+        defineVariable(
+          context,
+          spec.local.name,
+          isNamespaceSpecifier(spec) ? functions : functions[getImportedName(spec)],
+          true
+        )
       }
       yield* leave(context)
     }

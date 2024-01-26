@@ -6,7 +6,7 @@
  */
 
 /* tslint:disable:max-classes-per-file */
-import type * as es from 'estree'
+import type es from 'estree'
 import { partition, uniqueId } from 'lodash'
 
 import { IOptions } from '..'
@@ -17,8 +17,8 @@ import Closure from '../interpreter/closure'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { getModuleDeclarationSource } from '../utils/ast/helpers'
-import { isImportDeclaration } from '../utils/ast/typeGuards'
+import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
+import { isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import * as instr from './instrCreator'
@@ -178,7 +178,13 @@ function evaluateImports(program: es.Program, context: Context) {
 
     node.specifiers.forEach(spec => {
       declareIdentifier(context, spec.local.name, node, environment)
-      defineVariable(context, spec.local.name, bundle.get(spec), true, node)
+      defineVariable(
+        context,
+        spec.local.name,
+        isNamespaceSpecifier(spec) ? bundle : bundle[getImportedName(spec)],
+        true,
+        node
+      )
     })
   })
 }

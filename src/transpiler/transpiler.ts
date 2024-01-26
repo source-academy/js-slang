@@ -6,15 +6,7 @@ import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
 import { UndefinedVariable } from '../errors/errors'
-import type { ImportOptions } from '../modules/moduleTypes'
-import {
-  AllowedDeclarations,
-  Chapter,
-  type Context,
-  NativeStorage,
-  type RecursivePartial,
-  Variant
-} from '../types'
+import { AllowedDeclarations, Chapter, type Context, NativeStorage, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
 import { isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
@@ -50,9 +42,7 @@ export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
 
 export function transformImportDeclarations(
   program: es.Program,
-  usedIdentifiers: Set<string>,
-  nativeId: es.Expression,
-  useThis: boolean = false
+  nativeId: es.Expression
 ): [es.VariableDeclaration[], es.Program['body']] {
   const [importNodes, otherNodes] = partition(program.body, isImportDeclaration)
 
@@ -63,18 +53,12 @@ export function transformImportDeclarations(
 
     return node.specifiers.map(spec => {
       if (isNamespaceSpecifier(spec)) {
-        return create.constantDeclaration(
-          spec.local.name,
-          create.memberExpression(moduleExpr, 'rawBundle')
-        )
+        return create.constantDeclaration(spec.local.name, moduleExpr)
       }
 
       return create.constantDeclaration(
         spec.local.name,
-        create.callExpression(create.memberExpression(moduleExpr, 'getWithName'), [
-          create.literal(getImportedName(spec)),
-          create.literal(spec.local.name)
-        ])
+        create.memberExpression(moduleExpr, getImportedName(spec))
       )
     })
   })
@@ -559,11 +543,11 @@ function getDeclarationsToAccessTranspilerInternals(
 
 export type TranspiledResult = { transpiled: string; sourceMapJson?: RawSourceMap }
 
-async function transpileToSource(
+function transpileToSource(
   program: es.Program,
   context: Context,
   skipUndefined: boolean
-): Promise<TranspiledResult> {
+): TranspiledResult {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage)
@@ -588,7 +572,6 @@ async function transpileToSource(
 
   const [importNodes, otherNodes] = transformImportDeclarations(
     program,
-    usedIdentifiers,
     create.identifier(NATIVE_STORAGE_ID)
   )
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
@@ -611,16 +594,15 @@ async function transpileToSource(
 
   const map = new SourceMapGenerator({ file: 'source' })
   const transpiled = generate(program, { sourceMap: map })
-  // console.log(transpiled)
   const sourceMapJson = map.toJSON()
   return { transpiled, sourceMapJson }
 }
 
-async function transpileToFullJS(
+function transpileToFullJS(
   program: es.Program,
   context: Context,
   skipUndefined: boolean
-): Promise<TranspiledResult> {
+): TranspiledResult {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage)
@@ -631,7 +613,6 @@ async function transpileToFullJS(
 
   const [importNodes, otherNodes] = transformImportDeclarations(
     program,
-    usedIdentifiers,
     create.identifier(NATIVE_STORAGE_ID)
   )
 
@@ -658,9 +639,8 @@ async function transpileToFullJS(
 export function transpile(
   program: es.Program,
   context: Context,
-  importOptions: RecursivePartial<ImportOptions> = {},
   skipUndefined = false
-): Promise<TranspiledResult> {
+): TranspiledResult {
   if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.PYTHON_1) {
     return transpileToFullJS(program, context, true)
   } else if (context.variant == Variant.NATIVE) {
