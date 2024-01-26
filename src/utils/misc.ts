@@ -29,6 +29,10 @@ export function mapAndFilter<T, U>(items: T[], mapper: (input: T) => U | undefin
   }, [] as U[])
 }
 
+/**
+ * Takes an object and transforms all its values using the given mapping function
+ * Each new value remains associated with its original key
+ */
 export function mapObject<T extends Record<any, any>, U>(
   obj: T,
   mapper: (item: T[keyof T]) => U

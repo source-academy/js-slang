@@ -3,6 +3,8 @@ import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { Chapter, Variant } from '../../types'
 
+jest.mock('../../modules/loader/loaders')
+
 let context = mockContext(Chapter.SOURCE_1, Variant.TYPED)
 
 beforeEach(() => {
@@ -1000,7 +1002,7 @@ describe('import statements', () => {
     `
 
     parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`"Line 1: Name show not declared."`)
   })
 
   it('should only be used at top level', () => {
@@ -1025,7 +1027,12 @@ describe('import statements', () => {
     `
 
     parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 2: Name show not declared.
+      Line 3: Name heart not declared.
+      Line 4: Name heart not declared.
+      Line 5: Name show not declared."
+    `)
   })
 })
 

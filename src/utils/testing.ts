@@ -143,7 +143,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
           break
       }
       try {
-        ;({ transpiled } = await transpile(parsed, nativeTestContext, options.importOptions))
+        ;({ transpiled } = await transpile(parsed, nativeTestContext))
         // replace declaration of builtins since they're repetitive
         transpiled = transpiled.replace(/\n  const \w+ = nativeStorage\..*;/g, '')
         transpiled = transpiled.replace(/\n\s*const \w+ = .*\.operators\..*;/g, '')
