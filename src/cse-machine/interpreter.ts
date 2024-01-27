@@ -32,8 +32,8 @@ import {
   BinOpInstr,
   BranchInstr,
   ControlItem,
-  ECEBreak,
-  ECError,
+  CSEBreak,
+  CSError,
   EnvInstr,
   ForInstr,
   Instr,
@@ -129,14 +129,14 @@ export class Stash extends Stack<Value> {
  *
  * @param program The program to evaluate.
  * @param context The context to evaluate the program in.
- * @returns The result of running the ECE machine.
+ * @returns The result of running the CSE machine.
  */
 export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
   try {
     context.runtime.isRunning = true
     context.runtime.control = new Control(program)
     context.runtime.stash = new Stash()
-    return runECEMachine(
+    return runCSEMachine(
       context,
       context.runtime.control,
       context.runtime.stash,
@@ -145,7 +145,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
       options.isPrelude
     )
   } catch (error) {
-    return new ECError(error)
+    return new CSError(error)
   } finally {
     context.runtime.isRunning = false
   }
@@ -157,14 +157,14 @@ export function evaluate(program: es.Program, context: Context, options: IOption
  * This should only be called after the first 'evaluate' function has been called so that
  * context.runtime.control and context.runtime.stash are defined.
  * @param context The context to continue evaluating the program in.
- * @returns The result of running the ECE machine.
+ * @returns The result of running the CSE machine.
  */
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runECEMachine(context, context.runtime.control!, context.runtime.stash!, -1, -1)
+    return runCSEMachine(context, context.runtime.control!, context.runtime.stash!, -1, -1)
   } catch (error) {
-    return new ECError(error)
+    return new CSError(error)
   } finally {
     context.runtime.isRunning = false
   }
@@ -210,11 +210,11 @@ function evaluateImports(
  * @param value The value of ec evaluating the program.
  * @returns The corresponding promise.
  */
-export function ECEResultPromise(context: Context, value: Value): Promise<Result> {
+export function CSEResultPromise(context: Context, value: Value): Promise<Result> {
   return new Promise((resolve, reject) => {
-    if (value instanceof ECEBreak) {
+    if (value instanceof CSEBreak) {
       resolve({ status: 'suspended-ec-eval', context })
-    } else if (value instanceof ECError) {
+    } else if (value instanceof CSError) {
       resolve({ status: 'error' })
     } else {
       resolve({ status: 'finished', context, value })
@@ -232,7 +232,7 @@ export function ECEResultPromise(context: Context, value: Value): Promise<Result
  * @returns A special break object if the program is interrupted by a breakpoint;
  * else the top value of the stash. It is usually the return value of the program.
  */
-function runECEMachine(
+function runCSEMachine(
   context: Context,
   control: Control,
   stash: Stash,
@@ -279,7 +279,7 @@ function runECEMachine(
         // will only be updated after a debugger statement and so we will
         // run into a node immediately after.
         // With the new evaluator, we don't return a break
-        // return new ECEBreak()
+        // return new CSEBreak()
       }
     } else {
       // Command is an instrucion

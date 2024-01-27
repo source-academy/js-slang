@@ -4,7 +4,7 @@ import type { RawSourceMap } from 'source-map'
 
 import type { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
-import { ECEResultPromise, evaluate as ECEvaluate } from '../cse-machine/interpreter'
+import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -219,8 +219,8 @@ async function runNative(
 }
 
 function runCSEMachine(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  const value = ECEvaluate(program, context, options)
-  return ECEResultPromise(context, value)
+  const value = CSEvaluate(program, context, options)
+  return CSEResultPromise(context, value)
 }
 
 export async function sourceRunner(
