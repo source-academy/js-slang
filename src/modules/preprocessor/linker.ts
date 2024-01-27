@@ -165,9 +165,9 @@ export default async function parseProgramsAndConstructImportGraph(
     )
   }
 
-   try {
-     const entrypointAbsPath = await resolveFileWrapper('/', entrypointFilePath)
-     await enumerateModuleDeclarations(entrypointAbsPath)
+  try {
+    const entrypointAbsPath = await resolveFileWrapper('/', entrypointFilePath)
+    await enumerateModuleDeclarations(entrypointAbsPath)
 
     const topoOrder = checkForCycle(importGraph)
     return {
@@ -176,7 +176,7 @@ export default async function parseProgramsAndConstructImportGraph(
       sourceModulesToImport,
       entrypointAbsPath
     }
-   } catch (error) {
+  } catch (error) {
     if (error instanceof LinkerError) {
       // If the LinkerError was caused by a parsing error,
       // then we return undefined straight away
@@ -192,8 +192,8 @@ export default async function parseProgramsAndConstructImportGraph(
     } else {
       // Any other error that occurs is just appended to the context
       // and we return undefined
-       context.errors.push(error)
-       return undefined
-     }
-   }
+      context.errors.push(error)
+      return undefined
+    }
+  }
 }
