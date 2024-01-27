@@ -134,12 +134,16 @@ export class Stash extends Stack<Value> {
  */
 export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
   try {
+    checkProgramForUndefinedVariables(program, context)
+  } catch (error) {
+    context.errors.push(error)
+    return new ECError(error)
+  }
+
+  try {
     context.runtime.isRunning = true
     context.runtime.agenda = new Agenda(program)
     context.runtime.stash = new Stash()
-
-    checkProgramForUndefinedVariables(program, context)
-
     return runECEMachine(
       context,
       context.runtime.agenda,
