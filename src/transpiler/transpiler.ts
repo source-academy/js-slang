@@ -551,7 +551,7 @@ export function checkProgramForUndefinedVariables(program: es.Program, context: 
     if (isPrelude) {
       continue
     }
-    const isInEnv = (name in env)
+    const isInEnv = name in env
     if (isInEnv) {
       continue
     }
