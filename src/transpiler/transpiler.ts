@@ -452,6 +452,19 @@ export function checkForUndefinedVariables(
   }
 }
 
+export function checkProgramForUndefinedVariables(
+  program: es.Program,
+  context: Context
+) {
+  const usedIdentifiers = new Set<string>([
+    ...getIdentifiersInProgram(program),
+    ...getIdentifiersInNativeStorage(context.nativeStorage)
+  ])
+  const globalIds = getNativeIds(program, usedIdentifiers)
+
+  checkForUndefinedVariables(program, context.nativeStorage, globalIds, false)
+}
+
 function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds: NativeIds) {
   function transform(
     node:
