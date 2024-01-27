@@ -465,6 +465,8 @@ export function checkProgramForUndefinedVariables(program: es.Program, context: 
     : new Set<String>()
 
   const builtins = context.nativeStorage.builtins
+  const env = context.runtime.environments[0].head
+
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
   function processBlock(node: es.Program | es.BlockStatement) {
     const identifiers = new Set<string>()
@@ -547,6 +549,10 @@ export function checkProgramForUndefinedVariables(program: es.Program, context: 
     }
     const isPrelude = preludes.has(name)
     if (isPrelude) {
+      continue
+    }
+    const isInEnv = (name in env)
+    if (isInEnv) {
       continue
     }
     const isNativeId = nativeInternalNames.has(name)
