@@ -13,12 +13,22 @@ import resolveFile, { defaultResolutionOptions, type ImportResolutionOptions } f
 
 type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
 
-class LinkerError extends Error {}
+/**
+ * Helper error type. Thrown to cause any Promise.all calls
+ * to reject immediately instead of just returning undefined,
+ * which would still require all promises to be resolved
+ */
+class LinkerError extends Error {
+  constructor(public readonly isProgramError: boolean) {
+    super()
+  }
+}
 
 export type LinkerResult = {
-  importGraph: DirectedGraph
   programs: Record<string, es.Program>
   sourceModulesToImport: Set<string>
+  entrypointAbsPath: string
+  topoOrder: string[]
 }
 
 export type LinkerOptions = {
@@ -27,6 +37,16 @@ export type LinkerOptions = {
 
 export const defaultLinkerOptions: LinkerOptions = {
   resolverOptions: defaultResolutionOptions
+}
+
+function checkForCycle(graph: DirectedGraph) {
+  // Check for circular imports.
+  const topologicalOrderResult = graph.getTopologicalOrder()
+  if (!topologicalOrderResult.isValidTopologicalOrderFound) {
+    throw new CircularImportError(topologicalOrderResult.firstCycleFound)
+  }
+
+  return topologicalOrderResult.topologicalOrder
 }
 
 /**
@@ -84,7 +104,7 @@ export default async function parseProgramsAndConstructImportGraph(
     if (importGraph.hasEdge(absDstPath, fromModule)) {
       // If we've seen this edge before, then we must have a cycle
       // so exit early and proceed to locate the cycle
-      throw new LinkerError()
+      throw new LinkerError(false)
     }
 
     // Update the node's source value with the resolved path
@@ -123,7 +143,7 @@ export default async function parseProgramsAndConstructImportGraph(
     if (!program) {
       // The program has syntax errors or something,
       // exit early
-      throw new LinkerError()
+      throw new LinkerError(true)
     }
 
     programs[fromModule] = program
@@ -145,20 +165,35 @@ export default async function parseProgramsAndConstructImportGraph(
     )
   }
 
-  try {
-    const entrypointAbsPath = await resolveFileWrapper('/', entrypointFilePath)
+   try {
+     const entrypointAbsPath = await resolveFileWrapper('/', entrypointFilePath)
+     await enumerateModuleDeclarations(entrypointAbsPath)
 
-    await enumerateModuleDeclarations(entrypointAbsPath)
-  } catch (error) {
-    if (!(error instanceof LinkerError)) {
-      context.errors.push(error)
+    const topoOrder = checkForCycle(importGraph)
+    return {
+      topoOrder,
+      programs,
+      sourceModulesToImport,
+      entrypointAbsPath
     }
-    return undefined
-  }
+   } catch (error) {
+    if (error instanceof LinkerError) {
+      // If the LinkerError was caused by a parsing error,
+      // then we return undefined straight away
+      if (error.isProgramError) return undefined
 
-  return {
-    importGraph,
-    programs,
-    sourceModulesToImport
-  }
+      // Otherwise it was because we have to find an import cycle
+      // so proceed to do that
+      checkForCycle(importGraph)
+
+      // We're guaranteed a cycle, so findCycle should throw an error
+      // and enter the catch block
+      return {} as never
+    } else {
+      // Any other error that occurs is just appended to the context
+      // and we return undefined
+       context.errors.push(error)
+       return undefined
+     }
+   }
 }

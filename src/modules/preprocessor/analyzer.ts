@@ -47,6 +47,7 @@ export type ImportAnalysisOptions = {
  */
 export default async function analyzeImportsAndExports(
   programs: Record<string, es.Program>,
+  entrypointAbsPath: string,
   topoOrder: string[],
   sourceModulesToImport: Set<string>,
   options: Partial<ImportAnalysisOptions> = {}
@@ -69,7 +70,7 @@ export default async function analyzeImportsAndExports(
     ArrayMap<string, es.ImportDeclaration['specifiers'][number]>
   >()
 
-  for (const sourceModule of topoOrder) {
+  for (const sourceModule of [...topoOrder, entrypointAbsPath]) {
     const program = programs[sourceModule]
     moduleDocs[sourceModule] = new Set()
 

@@ -6,7 +6,6 @@ import type { RecursivePartial } from '../../types'
 import assert from '../../utils/assert'
 import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { isIdentifier, isImportDeclaration, isModuleDeclaration } from '../../utils/ast/typeGuards'
-import { CircularImportError } from '../errors'
 import { isSourceModule } from '../utils'
 import analyzeImportsAndExports from './analyzer'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
@@ -70,25 +69,13 @@ const preprocessFileImports = async (
     return undefined
   }
 
-  const { programs, importGraph, sourceModulesToImport } = importGraphResult
-
-  // Check for circular imports.
-  const topologicalOrderResult = importGraph.getTopologicalOrder()
-  if (!topologicalOrderResult.isValidTopologicalOrderFound) {
-    context.errors.push(new CircularImportError(topologicalOrderResult.firstCycleFound))
-    return undefined
-  }
-
-  // If the entrypoint file doesn't import anything, it may be left out
-  // of the topological ordering. The import analyzer requires that it
-  // be in the topological ordering, so we add it
-  const fullTopoOrder = topologicalOrderResult.topologicalOrder
-  if (fullTopoOrder.length === 0) fullTopoOrder.push(entrypointFilePath)
+  const { programs, topoOrder, entrypointAbsPath, sourceModulesToImport } = importGraphResult
 
   try {
     await analyzeImportsAndExports(
       programs,
-      fullTopoOrder,
+      entrypointAbsPath,
+      topoOrder,
       sourceModulesToImport,
       options?.importOptions
     )
@@ -136,7 +123,7 @@ const preprocessFileImports = async (
 
   // Invoke each of the transformed functions and store the result in a variable.
   const invokedFunctionResultVariableDeclarations: es.VariableDeclaration[] = []
-  topologicalOrderResult.topologicalOrder.forEach((filePath: string): void => {
+  topoOrder.forEach((filePath: string): void => {
     // As mentioned above, the entrypoint program does not have a function
     // declaration equivalent, so there is no need to process it.
     if (filePath === entrypointFilePath) {

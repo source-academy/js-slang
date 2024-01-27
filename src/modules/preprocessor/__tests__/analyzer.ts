@@ -67,15 +67,8 @@ describe('Test throwing import validation errors', () => {
       throw context.errors[0]
     }
 
-    const { programs, importGraph, sourceModulesToImport } = importGraphResult
-
-    // Check for circular imports.
-    const topologicalOrderResult = importGraph.getTopologicalOrder()
-    expect(topologicalOrderResult.isValidTopologicalOrderFound).toEqual(true)
-
-    const topoOrder = topologicalOrderResult.topologicalOrder!
-    if (topoOrder.length === 0) topoOrder.push(entrypointFilePath)
-    await analyzeImportsAndExports(programs, topoOrder, sourceModulesToImport, {
+    const { programs, topoOrder, entrypointAbsPath, sourceModulesToImport } = importGraphResult
+    await analyzeImportsAndExports(programs, entrypointAbsPath, topoOrder, sourceModulesToImport, {
       allowUndefinedImports,
       throwOnDuplicateNames
     })
@@ -579,9 +572,9 @@ describe('Test throwing DuplicateImportNameErrors', () => {
 
     describe(desc, () =>
       test.each(allCases)('%s', async (_, programs, shouldThrow, errMsg) => {
-        const topoOrder = Object.keys(programs)
+        const [entrypointPath, ...topoOrder] = Object.keys(programs)
 
-        const promise = analyzeImportsAndExports(programs, topoOrder, new Set(), {
+        const promise = analyzeImportsAndExports(programs, entrypointPath, topoOrder, new Set(), {
           allowUndefinedImports: true,
           throwOnDuplicateNames: shouldThrow
         })
@@ -594,7 +587,9 @@ describe('Test throwing DuplicateImportNameErrors', () => {
           await promise
         } catch (err) {
           expect(err).toBeInstanceOf(DuplicateImportNameError)
-          expect(err.locString).toEqual(errMsg)
+          const rawErrString = (err.locString as string).split(',').map(each => each.trim())
+          rawErrString.sort()
+          expect(rawErrString.join(', ')).toEqual(errMsg)
         }
       })
     )
@@ -655,7 +650,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
         '/b.js': `import a from 'another_module';`,
         '/c.js': `import { foo as a } from 'one_module';`
       },
-      '(/a.js:1:7), (/c.js:1:9), (/b.js:1:7)'
+      '(/a.js:1:7), (/b.js:1:7), (/c.js:1:9)'
     ]
   ])
 
@@ -712,7 +707,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
         '/a.js': `import * as a from 'one_module';`,
         '/b.js': `import a from 'one_module';`
       },
-      '(/b.js:1:7), (/a.js:1:7)'
+      '(/a.js:1:7), (/b.js:1:7)'
     ],
     [
       'Different types of imports across multiple files 3',
@@ -721,7 +716,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
         '/b.js': `import a from 'one_module';`,
         '/c.js': `import * as a from 'one_module';`
       },
-      '(/b.js:1:7), (/a.js:1:7), (/c.js:1:7)'
+      '(/a.js:1:7), (/b.js:1:7), (/c.js:1:7)'
     ],
     [
       'Different types of imports across multiple files 4',
@@ -730,7 +725,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
         '/b.js': `import a from 'one_module';`,
         '/c.js': `import { foo as a } from 'one_module';`
       },
-      '(/b.js:1:7), (/c.js:1:9), (/a.js:1:7)'
+      '(/a.js:1:7), (/b.js:1:7), (/c.js:1:9)'
     ],
     [
       'Handles aliasing correctly 1',
@@ -770,7 +765,7 @@ test('No module documentation is loaded when allowUndefinedImports is true', asy
     {},
     true
   )
-  await analyzeImportsAndExports(result!.programs, ['/a.js'], result!.sourceModulesToImport, {
+  await analyzeImportsAndExports(result!.programs, '/a.js', [], result!.sourceModulesToImport, {
     allowUndefinedImports: true
   })
 
