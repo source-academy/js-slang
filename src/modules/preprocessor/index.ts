@@ -1,8 +1,8 @@
 import type { Context, IOptions } from '../..'
-import { type RecursivePartial } from '../../types'
+import type { RecursivePartial } from '../../types'
 import loadSourceModules from '../loader'
 import analyzeImportsAndExports from './analyzer'
-import bundlePrograms, { Bundler } from './bundler'
+import bundlePrograms, { type Bundler } from './bundler'
 import parseProgramsAndConstructImportGraph from './linker'
 
 export default async function preprocessFileImports(

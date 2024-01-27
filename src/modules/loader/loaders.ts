@@ -3,7 +3,7 @@ import { memoize } from 'lodash'
 
 import type { Context } from '../..'
 import { timeoutPromise } from '../../utils/misc'
-import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from '../errors'
+import { ModuleConnectionError, ModuleInternalError } from '../errors'
 import type { ModuleDocumentation, ModuleManifest } from '../moduleTypes'
 import { getRequireProvider, RequireProvider } from './requireProvider'
 
@@ -14,15 +14,21 @@ export function setModulesStaticURL(value: string) {
 }
 
 type Importer<T> = (p: string) => Promise<{ default: T }>
-const wrapImporter =
-  <T>(importer: Importer<T>, timeout: number = 10000): Importer<T> =>
+const wrapImporter = <T>(importer: Importer<T>, timeout: number = 10000): Importer<T> =>
   async p => {
     try {
       const result = await timeoutPromise(importer(p), timeout)
       return result
     } catch (error) {
-      if (error instanceof TypeError) {
-        // Import statements should throw TypeError if the destination is unreachable
+      // Before calling this function, the import analyzer should've been used to make sure
+      // that the module being imported already exists, so the following errors should
+      // be thrown only if the modules server is unreachable
+
+      if (
+        // In the browser, import statements should throw TypeError
+        error instanceof TypeError ||
+        // In Node a different error is thrown with the given code instead
+        error.code === 'MODULE_NOT_FOUND') {
         throw new ModuleConnectionError()
       }
       throw error
@@ -40,21 +46,13 @@ const rawImporter: (p: string) => Promise<{ default: (prov: RequireProvider) => 
 const importer = wrapImporter(rawImporter)
 
 // Also specifically in the browser the import type assertion is required, but not allowed in js-slang itself because js-slang
-// compiles to CommonJS, which does not support type assertions
+// compiles to CommonJS, which does not support import attributes
 const rawDocsImporter: (p: string) => Promise<{ default: Record<string, any> }> =
   typeof window !== undefined && process.env.NODE_ENV !== 'test'
     ? (new Function('path', 'return import(path, { assert: { type: "json" } })') as any)
     : p => import(p)
 
 const docsImporter = wrapImporter(rawDocsImporter)
-
-async function checkModuleExists(moduleName: string, node?: Node) {
-  const modules = await memoizedGetModuleManifestAsync()
-  // Check if the module exists
-  if (!(moduleName in modules)) throw new ModuleNotFoundError(moduleName, node)
-
-  return modules[moduleName]
-}
 
 export const memoizedGetModuleDocsAsync = memoize(getModuleDocsAsync)
 async function getModuleDocsAsync(moduleName: string): Promise<ModuleDocumentation | null> {
@@ -67,18 +65,17 @@ async function getModuleDocsAsync(moduleName: string): Promise<ModuleDocumentati
   }
 }
 
-/**
- * Send a HTTP GET request to the modules endpoint to retrieve the manifest
- * @return Modules
- */
 export const memoizedGetModuleManifestAsync = memoize(getModuleManifestAsync)
 async function getModuleManifestAsync(): Promise<ModuleManifest> {
   const { default: result } = await docsImporter(`${MODULES_STATIC_URL}/modules.json`)
   return result as ModuleManifest
 }
 
+export const sourceModuleObject = Symbol()
+
 export async function loadModuleTabsAsync(moduleName: string, node?: Node) {
-  const moduleInfo = await checkModuleExists(moduleName, node)
+  const modules = await memoizedGetModuleManifestAsync()
+  const moduleInfo = modules[moduleName]
 
   // Load the tabs for the current module
   return Promise.all(
@@ -93,8 +90,6 @@ export async function loadModuleTabsAsync(moduleName: string, node?: Node) {
     })
   )
 }
-
-export const sourceModuleObject = Symbol()
 
 export async function loadModuleBundleAsync(moduleName: string, context: Context, node?: Node) {
   const { default: bundleFunc } = await importer(`${MODULES_STATIC_URL}/bundles/${moduleName}.js`)

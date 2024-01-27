@@ -185,7 +185,7 @@ export default async function parseProgramsAndConstructImportGraph(
       // Otherwise it was because we have to find an import cycle
       // so proceed to do that
       findCycle(importGraph)
-
+      
       // We're guaranteed a cycle, so findCycle should throw an error
       // and enter the catch block
       return {} as never
