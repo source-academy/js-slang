@@ -29,13 +29,6 @@ import {
 } from '../utils/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import {
-  getFunctionDeclarationNamesInProgram,
-  getIdentifiersInNativeStorage,
-  getIdentifiersInProgram,
-  getUniqueId
-} from '../utils/uniqueIds'
-import { ancestor } from '../utils/walkers'
 import { nodeToValue, objectToString, valueToExpression } from './converter'
 import * as builtin from './lib'
 import {

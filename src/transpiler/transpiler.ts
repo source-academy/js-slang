@@ -452,10 +452,7 @@ export function checkForUndefinedVariables(
   }
 }
 
-export function checkProgramForUndefinedVariables(
-  program: es.Program,
-  context: Context
-) {
+export function checkProgramForUndefinedVariables(program: es.Program, context: Context) {
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage)

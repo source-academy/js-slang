@@ -17,7 +17,6 @@ import Closure from '../interpreter/closure'
 import { UndefinedImportError } from '../modules/errors'
 import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
 import { ImportTransformOptions } from '../modules/moduleTypes'
-import { parse } from '../parser/parser'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
@@ -26,13 +25,6 @@ import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import {
-  getFunctionDeclarationNamesInProgram,
-  getIdentifiersInNativeStorage,
-  getIdentifiersInProgram,
-  getUniqueId
-} from '../utils/uniqueIds'
-import { ancestor } from '../utils/walkers'
 import * as instr from './instrCreator'
 import {
   AgendaItem,
