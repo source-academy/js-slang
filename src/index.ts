@@ -4,7 +4,7 @@ import { SourceMapConsumer } from 'source-map'
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import { looseParse, typedParse } from './parser/utils'
+import { looseParse } from './parser/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
@@ -13,16 +13,16 @@ import {
   Error as ResultError,
   ExecutionMethod,
   Finished,
-  FuncDeclWithInferredTypeAnnotation,
+  // FuncDeclWithInferredTypeAnnotation,
   ModuleContext,
-  NodeWithInferredType,
+  // NodeWithInferredType,
   RecursivePartial,
   Result,
   SourceError,
   SVMProgram,
   Variant
 } from './types'
-import { findNodeAt } from './utils/walkers'
+// import { findNodeAt } from './utils/walkers'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
@@ -44,8 +44,8 @@ import {
   resolvedErrorPromise,
   sourceFilesRunner
 } from './runner'
-import { typeCheck } from './typeChecker/typeChecker'
-import { typeToString } from './utils/stringify'
+// import { typeCheck } from './typeChecker/typeChecker'
+// import { typeToString } from './utils/stringify'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -202,107 +202,107 @@ export async function getNames(
   return [progNames.concat(keywords), displaySuggestions]
 }
 
-export function getTypeInformation(
-  code: string,
-  context: Context,
-  loc: { line: number; column: number },
-  name: string
-): string {
-  try {
-    // parse the program into typed nodes and parse error
-    const program = typedParse(code, context)
-    if (program === null) {
-      return ''
-    }
-    if (context.prelude !== null) {
-      typeCheck(typedParse(context.prelude, context)!, context)
-    }
-    const [typedProgram, error] = typeCheck(program, context)
-    const parsedError = parseError(error)
-    if (context.prelude !== null) {
-      // the env of the prelude was added, we now need to remove it
-      context.typeEnvironment.pop()
-    }
+// export function getTypeInformation(
+//   code: string,
+//   context: Context,
+//   loc: { line: number; column: number },
+//   name: string
+// ): string {
+//   try {
+//     // parse the program into typed nodes and parse error
+//     const program = typedParse(code, context)
+//     if (program === null) {
+//       return ''
+//     }
+//     if (context.prelude !== null) {
+//       typeCheck(typedParse(context.prelude, context)!, context)
+//     }
+//     const [typedProgram, error] = typeCheck(program, context)
+//     const parsedError = parseError(error)
+//     if (context.prelude !== null) {
+//       // the env of the prelude was added, we now need to remove it
+//       context.typeEnvironment.pop()
+//     }
 
-    // initialize the ans string
-    let ans = ''
-    if (parsedError) {
-      ans += parsedError + '\n'
-    }
-    if (!typedProgram) {
-      return ans
-    }
+//     // initialize the ans string
+//     let ans = ''
+//     if (parsedError) {
+//       ans += parsedError + '\n'
+//     }
+//     if (!typedProgram) {
+//       return ans
+//     }
 
-    // get name of the node
-    const getName = (typedNode: NodeWithInferredType<es.Node>) => {
-      let nodeId = ''
-      if (typedNode.type) {
-        if (typedNode.type === 'FunctionDeclaration') {
-          if (typedNode.id === null) {
-            throw new Error(
-              'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-            )
-          }
-          nodeId = typedNode.id.name
-        } else if (typedNode.type === 'VariableDeclaration') {
-          nodeId = (typedNode.declarations[0].id as es.Identifier).name
-        } else if (typedNode.type === 'Identifier') {
-          nodeId = typedNode.name
-        }
-      }
-      return nodeId
-    }
+//     // get name of the node
+//     const getName = (typedNode: NodeWithInferredType<es.Node>) => {
+//       let nodeId = ''
+//       if (typedNode.type) {
+//         if (typedNode.type === 'FunctionDeclaration') {
+//           if (typedNode.id === null) {
+//             throw new Error(
+//               'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+//             )
+//           }
+//           nodeId = typedNode.id.name
+//         } else if (typedNode.type === 'VariableDeclaration') {
+//           nodeId = (typedNode.declarations[0].id as es.Identifier).name
+//         } else if (typedNode.type === 'Identifier') {
+//           nodeId = typedNode.name
+//         }
+//       }
+//       return nodeId
+//     }
 
-    // callback function for findNodeAt function
-    function findByLocationPredicate(t: string, nd: NodeWithInferredType<es.Node>) {
-      if (!nd.inferredType) {
-        return false
-      }
+//     // callback function for findNodeAt function
+//     function findByLocationPredicate(t: string, nd: NodeWithInferredType<es.Node>) {
+//       if (!nd.inferredType) {
+//         return false
+//       }
 
-      const isInLoc = (nodeLoc: SourceLocation): boolean => {
-        return !(
-          nodeLoc.start.line > loc.line ||
-          nodeLoc.end.line < loc.line ||
-          (nodeLoc.start.line === loc.line && nodeLoc.start.column > loc.column) ||
-          (nodeLoc.end.line === loc.line && nodeLoc.end.column < loc.column)
-        )
-      }
+//       const isInLoc = (nodeLoc: SourceLocation): boolean => {
+//         return !(
+//           nodeLoc.start.line > loc.line ||
+//           nodeLoc.end.line < loc.line ||
+//           (nodeLoc.start.line === loc.line && nodeLoc.start.column > loc.column) ||
+//           (nodeLoc.end.line === loc.line && nodeLoc.end.column < loc.column)
+//         )
+//       }
 
-      const location = nd.loc
-      if (nd.type && location) {
-        return getName(nd) === name && isInLoc(location)
-      }
-      return false
-    }
+//       const location = nd.loc
+//       if (nd.type && location) {
+//         return getName(nd) === name && isInLoc(location)
+//       }
+//       return false
+//     }
 
-    // report both as the type inference
+//     // report both as the type inference
 
-    const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
+//     const res = findNodeAt(typedProgram, undefined, undefined, findByLocationPredicate)
 
-    if (res === undefined) {
-      return ans
-    }
+//     if (res === undefined) {
+//       return ans
+//     }
 
-    const node: NodeWithInferredType<es.Node> = res.node
+//     const node: NodeWithInferredType<es.Node> = res.node
 
-    if (node === undefined) {
-      return ans
-    }
+//     if (node === undefined) {
+//       return ans
+//     }
 
-    const actualNode =
-      node.type === 'VariableDeclaration'
-        ? (node.declarations[0].init! as NodeWithInferredType<es.Node>)
-        : node
-    const type = typeToString(
-      actualNode.type === 'FunctionDeclaration'
-        ? (actualNode as FuncDeclWithInferredTypeAnnotation).functionInferredType!
-        : actualNode.inferredType!
-    )
-    return ans + `At Line ${loc.line} => ${getName(node)}: ${type}`
-  } catch (error) {
-    return ''
-  }
-}
+//     const actualNode =
+//       node.type === 'VariableDeclaration'
+//         ? (node.declarations[0].init! as NodeWithInferredType<es.Node>)
+//         : node
+//     const type = typeToString(
+//       actualNode.type === 'FunctionDeclaration'
+//         ? (actualNode as FuncDeclWithInferredTypeAnnotation).functionInferredType!
+//         : actualNode.inferredType!
+//     )
+//     return ans + `At Line ${loc.line} => ${getName(node)}: ${type}`
+//   } catch (error) {
+//     return ''
+//   }
+// }
 
 export async function runInContext(
   code: string,
