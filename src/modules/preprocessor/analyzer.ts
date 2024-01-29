@@ -49,7 +49,7 @@ export type ImportAnalysisOptions = {
  */
 export default function analyzeImportsAndExports(
   programs: Record<string, es.Program>,
-  entrypointFilePath: string,
+  entrypointAbsPath: string,
   topoOrder: string[],
   { nativeStorage: { loadedModules } }: Context,
   options: Partial<ImportAnalysisOptions> = {}
@@ -77,7 +77,7 @@ export default function analyzeImportsAndExports(
     ArrayMap<string, es.ImportDeclaration['specifiers'][number]>
   >()
 
-  for (const sourceModule of [...topoOrder, entrypointFilePath]) {
+  for (const sourceModule of [...topoOrder, entrypointAbsPath]) {
     const program = programs[sourceModule]
     moduleDocs[sourceModule] = new Set()
 

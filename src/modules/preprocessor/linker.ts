@@ -25,10 +25,10 @@ class LinkerError extends Error {
 }
 
 export type LinkerResult = {
-  topoOrder: string[]
-  programs: Record<`/${string}`, es.Program>
+  programs: Record<string, es.Program>
   sourceModulesToImport: Set<string>
   entrypointAbsPath: string
+  topoOrder: string[]
 }
 
 export type LinkerOptions = {
@@ -39,7 +39,7 @@ export const defaultLinkerOptions: LinkerOptions = {
   resolverOptions: defaultResolutionOptions
 }
 
-function findCycle(graph: DirectedGraph) {
+function checkForCycle(graph: DirectedGraph) {
   // Check for circular imports.
   const topologicalOrderResult = graph.getTopologicalOrder()
   if (!topologicalOrderResult.isValidTopologicalOrderFound) {
@@ -165,18 +165,18 @@ export default async function parseProgramsAndConstructImportGraph(
     )
   }
 
-  try {
-    const entrypointAbsPath = await resolveFileWrapper('/', entrypointFilePath)
-    await enumerateModuleDeclarations(entrypointAbsPath)
+   try {
+     const entrypointAbsPath = await resolveFileWrapper('/', entrypointFilePath)
+     await enumerateModuleDeclarations(entrypointAbsPath)
 
-    const topoOrder = findCycle(importGraph)
+    const topoOrder = checkForCycle(importGraph)
     return {
       topoOrder,
       programs,
       sourceModulesToImport,
       entrypointAbsPath
     }
-  } catch (error) {
+   } catch (error) {
     if (error instanceof LinkerError) {
       // If the LinkerError was caused by a parsing error,
       // then we return undefined straight away
@@ -184,7 +184,7 @@ export default async function parseProgramsAndConstructImportGraph(
 
       // Otherwise it was because we have to find an import cycle
       // so proceed to do that
-      findCycle(importGraph)
+      checkForCycle(importGraph)
 
       // We're guaranteed a cycle, so findCycle should throw an error
       // and enter the catch block
@@ -192,8 +192,8 @@ export default async function parseProgramsAndConstructImportGraph(
     } else {
       // Any other error that occurs is just appended to the context
       // and we return undefined
-      context.errors.push(error)
-      return undefined
-    }
-  }
+       context.errors.push(error)
+       return undefined
+     }
+   }
 }
