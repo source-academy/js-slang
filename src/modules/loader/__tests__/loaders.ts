@@ -76,7 +76,7 @@ describe('bundle loading', () => {
 })
 
 describe('tab loading', () => {
-  test('Load a module\'s tabs', async () => {
+  test("Load a module's tabs", async () => {
     const tabs = await moduleLoader.loadModuleTabsAsync('one_module')
 
     expect(tabs[0]({} as any)).toEqual('tab1')

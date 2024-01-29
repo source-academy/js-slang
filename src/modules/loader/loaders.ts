@@ -14,7 +14,8 @@ export function setModulesStaticURL(value: string) {
 }
 
 type Importer<T> = (p: string) => Promise<{ default: T }>
-const wrapImporter = <T>(importer: Importer<T>, timeout: number = 10000): Importer<T> =>
+const wrapImporter =
+  <T>(importer: Importer<T>, timeout: number = 10000): Importer<T> =>
   async p => {
     try {
       const result = await timeoutPromise(importer(p), timeout)
@@ -28,7 +29,8 @@ const wrapImporter = <T>(importer: Importer<T>, timeout: number = 10000): Import
         // In the browser, import statements should throw TypeError
         error instanceof TypeError ||
         // In Node a different error is thrown with the given code instead
-        error.code === 'MODULE_NOT_FOUND') {
+        error.code === 'MODULE_NOT_FOUND'
+      ) {
         throw new ModuleConnectionError()
       }
       throw error
