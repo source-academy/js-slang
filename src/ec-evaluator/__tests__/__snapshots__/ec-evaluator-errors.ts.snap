@@ -1042,3 +1042,21 @@ Object {
   "visualiseListResult": Array [],
 }
 `;
+
+exports[`Undefined variables are caught even when unreached: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = 1;
+if (false) {
+  im_undefined;
+} else {
+  a;
+}",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3: Name im_undefined not declared.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;

@@ -18,6 +18,7 @@ import { UndefinedImportError } from '../modules/errors'
 import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
 import { ImportTransformOptions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
+import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
 import assert from '../utils/assert'
 import { filterImportDeclarations } from '../utils/ast/helpers'
@@ -132,6 +133,13 @@ export class Stash extends Stack<Value> {
  * @returns The result of running the ECE machine.
  */
 export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
+  try {
+    checkProgramForUndefinedVariables(program, context)
+  } catch (error) {
+    context.errors.push(error)
+    return new ECError(error)
+  }
+
   try {
     context.runtime.isRunning = true
     context.runtime.agenda = new Agenda(program)
