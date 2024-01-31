@@ -137,7 +137,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     checkProgramForUndefinedVariables(program, context)
   } catch (error) {
     context.errors.push(error)
-    return new ECError(error)
+    return new CSError(error)
   }
 
   try {
@@ -212,16 +212,16 @@ function evaluateImports(
 }
 
 /**
- * Function that returns the appropriate Promise<Result> given the output of ec evaluating, depending
+ * Function that returns the appropriate Promise<Result> given the output of CSE machine evaluating, depending
  * on whether the program is finished evaluating, ran into a breakpoint or ran into an error.
  * @param context The context of the program.
- * @param value The value of ec evaluating the program.
+ * @param value The value of CSE machine evaluating the program.
  * @returns The corresponding promise.
  */
 export function CSEResultPromise(context: Context, value: Value): Promise<Result> {
   return new Promise((resolve, reject) => {
     if (value instanceof CSEBreak) {
-      resolve({ status: 'suspended-ec-eval', context })
+      resolve({ status: 'suspended-cse-eval', context })
     } else if (value instanceof CSError) {
       resolve({ status: 'error' })
     } else {
