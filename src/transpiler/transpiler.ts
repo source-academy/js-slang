@@ -14,6 +14,7 @@ import {
 } from '../modules/loader/moduleLoaderAsync'
 import type { ImportOptions } from '../modules/moduleTypes'
 import { mergeImportOptions } from '../modules/utils'
+import { parse } from '../parser/parser'
 import {
   AllowedDeclarations,
   Chapter,
@@ -439,6 +440,114 @@ export function checkForUndefinedVariables(
   }
 }
 
+export function checkProgramForUndefinedVariables(program: es.Program, context: Context) {
+  const usedIdentifiers = new Set<string>([
+    ...getIdentifiersInProgram(program),
+    ...getIdentifiersInNativeStorage(context.nativeStorage)
+  ])
+  const globalIds = getNativeIds(program, usedIdentifiers)
+
+  const preludes = context.prelude
+    ? getFunctionDeclarationNamesInProgram(parse(context.prelude, context)!)
+    : new Set<String>()
+
+  const builtins = context.nativeStorage.builtins
+  const env = context.runtime.environments[0].head
+
+  const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
+  function processBlock(node: es.Program | es.BlockStatement) {
+    const identifiers = new Set<string>()
+    for (const statement of node.body) {
+      if (statement.type === 'VariableDeclaration') {
+        identifiers.add((statement.declarations[0].id as es.Identifier).name)
+      } else if (statement.type === 'FunctionDeclaration') {
+        if (statement.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
+        identifiers.add(statement.id.name)
+      } else if (statement.type === 'ImportDeclaration') {
+        for (const specifier of statement.specifiers) {
+          identifiers.add(specifier.local.name)
+        }
+      }
+    }
+    identifiersIntroducedByNode.set(node, identifiers)
+  }
+  function processFunction(
+    node: es.FunctionDeclaration | es.ArrowFunctionExpression,
+    _ancestors: es.Node[]
+  ) {
+    identifiersIntroducedByNode.set(
+      node,
+      new Set(
+        node.params.map(id =>
+          id.type === 'Identifier'
+            ? id.name
+            : ((id as es.RestElement).argument as es.Identifier).name
+        )
+      )
+    )
+  }
+  const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
+  ancestor(program, {
+    Program: processBlock,
+    BlockStatement: processBlock,
+    FunctionDeclaration: processFunction,
+    ArrowFunctionExpression: processFunction,
+    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
+      const init = forStatement.init!
+      if (init.type === 'VariableDeclaration') {
+        identifiersIntroducedByNode.set(
+          forStatement,
+          new Set([(init.declarations[0].id as es.Identifier).name])
+        )
+      }
+    },
+    Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
+      identifiersToAncestors.set(identifier, [...ancestors])
+    },
+    Pattern(node: es.Pattern, ancestors: es.Node[]) {
+      if (node.type === 'Identifier') {
+        identifiersToAncestors.set(node, [...ancestors])
+      } else if (node.type === 'MemberExpression') {
+        if (node.object.type === 'Identifier') {
+          identifiersToAncestors.set(node.object, [...ancestors])
+        }
+      }
+    }
+  })
+  const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
+
+  for (const [identifier, ancestors] of identifiersToAncestors) {
+    const name = identifier.name
+    const isCurrentlyDeclared = ancestors.some(a => identifiersIntroducedByNode.get(a)?.has(name))
+    if (isCurrentlyDeclared) {
+      continue
+    }
+    const isPreviouslyDeclared = context.nativeStorage.previousProgramsIdentifiers.has(name)
+    if (isPreviouslyDeclared) {
+      continue
+    }
+    const isBuiltin = builtins.has(name)
+    if (isBuiltin) {
+      continue
+    }
+    const isPrelude = preludes.has(name)
+    if (isPrelude) {
+      continue
+    }
+    const isInEnv = name in env
+    if (isInEnv) {
+      continue
+    }
+    const isNativeId = nativeInternalNames.has(name)
+    if (!isNativeId) {
+      throw new UndefinedVariable(name, identifier)
+    }
+  }
+}
 function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds: NativeIds) {
   function transform(
     node:

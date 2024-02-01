@@ -39,6 +39,21 @@ test('Undefined variable error is thrown - verbose', () => {
           `)
 })
 
+const undefinedUnreachedVariable = stripIndent`
+const a = 1;
+if (false) {
+  im_undefined;
+} else {
+  a;
+}
+`
+
+test('Undefined variables are caught even when unreached', () => {
+  return expectParsedError(undefinedUnreachedVariable, optionEC).toMatchInlineSnapshot(
+    `"Line 3: Name im_undefined not declared."`
+  )
+})
+
 test('Undefined variable error message differs from verbose version', () => {
   return expectDifferentParsedErrors(undefinedVariable, undefinedVariableVerbose, optionEC).toBe(
     undefined

@@ -407,3 +407,30 @@ test('Nullary functions properly restore environment 2', () => {
     optionEC3
   ).toMatchInlineSnapshot(`1`)
 })
+
+test('Array literals work as expected', () => {
+  return expectResult(
+    stripIndent`
+    let c = [1, 2, 3];
+    c;
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`
+    Array [
+      1,
+      2,
+      3,
+    ]
+  `)
+})
+
+test('Array literals are unpacked in the correct order', () => {
+  return expectResult(
+    stripIndent`
+    let d = 0;
+    let c = [ d = d * 10 + 1, d = d * 10 + 2, d = d * 10 + 3];
+    d;
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`123`)
+})
