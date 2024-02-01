@@ -104,7 +104,7 @@ const createEmptyRuntime = () => ({
   environments: [],
   value: undefined,
   nodes: [],
-  agenda: null,
+  control: null,
   stash: null,
   envSteps: -1,
   envStepsTotal: 0,

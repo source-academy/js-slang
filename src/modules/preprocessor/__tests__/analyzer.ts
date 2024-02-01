@@ -67,10 +67,15 @@ describe('Test throwing import validation errors', () => {
       throw context.errors[0]
     }
 
+<<<<<<< HEAD
     const { programs, topoOrder, sourceModulesToImport } = importGraphResult
     await loadSourceModules(sourceModulesToImport, context, false)
 
     analyzeImportsAndExports(programs, entrypointFilePath, topoOrder, context, {
+=======
+    const { programs, topoOrder, entrypointAbsPath, sourceModulesToImport } = importGraphResult
+    await analyzeImportsAndExports(programs, entrypointAbsPath, topoOrder, sourceModulesToImport, {
+>>>>>>> import-checker
       allowUndefinedImports,
       throwOnDuplicateNames
     })
@@ -703,6 +708,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       [[], []] as [FullTestCase[], FullTestCase[]]
     )
 
+<<<<<<< HEAD
     const caseTester: (...args: FullTestCase) => Promise<void> = async (
       _,
       programs,
@@ -716,6 +722,13 @@ describe('Test throwing DuplicateImportNameErrors', () => {
 
       const runTest = () =>
         analyzeImportsAndExports(programs, entrypointFilePath, topoOrder, context, {
+=======
+    describe(desc, () =>
+      test.each(allCases)('%s', async (_, programs, shouldThrow, errMsg) => {
+        const [entrypointPath, ...topoOrder] = Object.keys(programs)
+
+        const promise = analyzeImportsAndExports(programs, entrypointPath, topoOrder, new Set(), {
+>>>>>>> import-checker
           allowUndefinedImports: true,
           throwOnDuplicateNames: shouldThrow
         })
@@ -728,6 +741,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(DuplicateImportNameError)
 
+<<<<<<< HEAD
         // Make sure the locations are always displayed in order
         // for consistency across tests (ok since locString should be order agnostic)
         const segments = (err.locString as string).split(',').map(each => each.trim())
@@ -741,6 +755,18 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       test.each(allNoCases)('%s', caseTester))
     describe(`${desc} with throwOnDuplicateImports true`, () =>
       test.each(allYesCases)('%s', caseTester))
+=======
+        try {
+          await promise
+        } catch (err) {
+          expect(err).toBeInstanceOf(DuplicateImportNameError)
+          const rawErrString = (err.locString as string).split(',').map(each => each.trim())
+          rawErrString.sort()
+          expect(rawErrString.join(', ')).toEqual(errMsg)
+        }
+      })
+    )
+>>>>>>> import-checker
   }
 
   testCases('Imports from different modules', [
@@ -898,3 +924,27 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     ]
   ])
 })
+<<<<<<< HEAD
+=======
+
+test('No module documentation is loaded when allowUndefinedImports is true', async () => {
+  const files = {
+    '/a.js': `import { foo } from 'one_module';`
+  }
+
+  const context = mockContext(Chapter.LIBRARY_PARSER)
+
+  const result = await parseProgramsAndConstructImportGraph(
+    p => Promise.resolve(files[p]),
+    '/a.js',
+    context,
+    {},
+    true
+  )
+  await analyzeImportsAndExports(result!.programs, '/a.js', [], result!.sourceModulesToImport, {
+    allowUndefinedImports: true
+  })
+
+  expect(memoizedGetModuleDocsAsync).toHaveBeenCalledTimes(0)
+})
+>>>>>>> import-checker

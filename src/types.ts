@@ -9,7 +9,7 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
-import { Agenda, Stash } from './ec-evaluator/interpreter'
+import { Control, Stash } from './cse-machine/interpreter'
 import { ModuleBundle } from './modules/moduleTypes'
 
 /**
@@ -62,7 +62,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'ec-evaluator'
+export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
 
 export enum Chapter {
   SOURCE_1 = 1,
@@ -149,7 +149,7 @@ export interface Context<T = any> {
     environmentTree: EnvTree
     environments: Environment[]
     nodes: es.Node[]
-    agenda: Agenda | null
+    control: Control | null
     stash: Stash | null
     envStepsTotal: number
     breakpointSteps: number[]
@@ -285,12 +285,12 @@ export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-n
   value: Value
 }
 
-export interface SuspendedEcEval {
-  status: 'suspended-ec-eval'
+export interface SuspendedCseEval {
+  status: 'suspended-cse-eval'
   context: Context
 }
 
-export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedEcEval
+export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedCseEval
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
