@@ -1,5 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Array literals are unpacked in the correct order: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let d = 0;
+let c = [ d = d * 10 + 1, d = d * 10 + 2, d = d * 10 + 3];
+d;",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 123,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Array literals work as expected: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let c = [1, 2, 3];
+c;",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": Array [
+    1,
+    2,
+    3,
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Conditional statements are value producing always: expectResult 1`] = `
 Object {
   "alertResult": Array [],

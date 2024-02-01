@@ -7,7 +7,7 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { uniqueId } from 'lodash'
+import { reverse, uniqueId } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
@@ -570,6 +570,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   ArrayExpression: function (command: es.ArrayExpression, context: Context, control: Control) {
     const elems = command.elements as ContiguousArrayElements
+    reverse(elems)
     const len = elems.length
 
     control.push(instr.arrLitInstr(len, command))
@@ -922,6 +923,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     for (let i = 0; i < arity; ++i) {
       array.push(stash.pop())
     }
+    reverse(array)
     stash.push(array)
   },
 
