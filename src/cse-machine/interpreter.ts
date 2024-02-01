@@ -34,7 +34,7 @@ import {
   BranchInstr,
   ControlItem,
   CSEBreak,
-  CSError,
+  CseError,
   EnvInstr,
   ForInstr,
   Instr,
@@ -137,7 +137,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     checkProgramForUndefinedVariables(program, context)
   } catch (error) {
     context.errors.push(error)
-    return new CSError(error)
+    return new CseError(error)
   }
 
   try {
@@ -153,7 +153,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
       options.isPrelude
     )
   } catch (error) {
-    return new CSError(error)
+    return new CseError(error)
   } finally {
     context.runtime.isRunning = false
   }
@@ -172,7 +172,7 @@ export function resumeEvaluate(context: Context) {
     context.runtime.isRunning = true
     return runCSEMachine(context, context.runtime.control!, context.runtime.stash!, -1, -1)
   } catch (error) {
-    return new CSError(error)
+    return new CseError(error)
   } finally {
     context.runtime.isRunning = false
   }
@@ -222,7 +222,7 @@ export function CSEResultPromise(context: Context, value: Value): Promise<Result
   return new Promise((resolve, reject) => {
     if (value instanceof CSEBreak) {
       resolve({ status: 'suspended-cse-eval', context })
-    } else if (value instanceof CSError) {
+    } else if (value instanceof CseError) {
       resolve({ status: 'error' })
     } else {
       resolve({ status: 'finished', context, value })

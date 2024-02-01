@@ -90,6 +90,6 @@ export class CSEBreak {}
 
 // Special value that cannot be found on the stash so is safe to be used
 // as an indicator of an error from running the CSE machine
-export class CSError {
+export class CseError {
   constructor(public readonly error: any) {}
 }

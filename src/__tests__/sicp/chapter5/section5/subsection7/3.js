@@ -1,5 +1,5 @@
-function start_cse_eval() {
+function start_eceval() {
     the_global_environment = setup_environment();
-    set_register_contents(cse-eval, "flag", false);
-    return start(cse-eval);
+    set_register_contents(eceval, "flag", false);
+    return start(eceval);
 }

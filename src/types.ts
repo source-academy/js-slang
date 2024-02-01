@@ -279,12 +279,12 @@ export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-n
   value: Value
 }
 
-export interface SuspendedCSEval {
+export interface SuspendedCseEval {
   status: 'suspended-cse-eval'
   context: Context
 }
 
-export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedCSEval
+export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedCseEval
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
