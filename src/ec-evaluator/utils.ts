@@ -299,7 +299,6 @@ export const createBlockEnvironment = (
  * Variables
  */
 
-// const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement block scope')
 const UNASSIGNED_CONST = Symbol("const declaration");
 const UNASSIGNED_LET = Symbol("let declaration");
 
@@ -318,10 +317,7 @@ export function declareIdentifier(
       new errors.VariableRedeclaration(node, name, descriptors[name].writable)
     )
   }
-  // const constant = CheckConstantDeclaration(node)
-  // environment.head[name] = DECLARED_BUT_NOT_YET_ASSIGNED
   environment.head[name] = constant ? UNASSIGNED_CONST : UNASSIGNED_LET
-  console.log(environment.head[name].description)
   return environment
 }
 
