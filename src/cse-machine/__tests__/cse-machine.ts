@@ -431,3 +431,23 @@ test('Array literals are unpacked in the correct order', () => {
     optionEC3
   ).toMatchInlineSnapshot(`123`)
 })
+
+test('Breaks and continues are detected properly inside loops', () => {
+  return expectResult(
+    stripIndent`
+    let i = 0;
+    while(i < 10) {
+        i = i + 1;
+        if (i === 1) {
+            break;
+        } else if (i === 2) {
+            i = i + 1;
+        } else {
+            continue;
+        }
+    }
+    i;
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`1`)
+})

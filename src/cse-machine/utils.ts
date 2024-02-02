@@ -503,28 +503,52 @@ export const checkStackOverFlow = (context: Context, control: Control) => {
   }
 }
 
-/**
- * Checks whether a function body returns in every possible branch.
- * Returns true if every branch has a return statement, else returns false.
- * @param body The function body to be checked
- */
-export const hasReturnStatement = (body: es.Statement): boolean => {
-  if (!isBlockStatement(body)) return isReturnStatement(body)
-  for (const statement of body.body) {
-    if (isReturnStatement(statement)) {
-      return true
+export const hasReturnStatementIf = (statement: es.IfStatement): boolean => {
+  let hasReturn = false
+  // Parser enforces that if/else have braces (block statement)
+  hasReturn = hasReturn || hasReturnStatement(statement.consequent as es.BlockStatement)
+  if (statement.alternate) {
+    if (statement.alternate.type === 'IfStatement') {
+      hasReturn = hasReturn || hasReturnStatementIf(statement.alternate as es.IfStatement)
+    } else if (statement.alternate.type === 'BlockStatement') {
+      hasReturn = hasReturn || hasReturnStatement(statement.alternate as es.BlockStatement)
     }
-    if (isIfStatement(statement)) {
-      const consequent = hasReturnStatement(statement.consequent)
-      if (!consequent) {
-        return false
-      }
+  }
+  return hasReturn
+}
+
+export const hasReturnStatement = (block: es.BlockStatement): boolean => {
+  let hasReturn = false
+  for (const statement of block.body) {
+    if (statement.type === 'ReturnStatement') {
+      hasReturn = true
+    } else if (statement.type === 'IfStatement') {
+      // Parser enforces that if/else have braces (block statement)
+      hasReturn = hasReturn || hasReturnStatement(statement.consequent as es.BlockStatement)
       if (statement.alternate) {
-        return hasReturnStatement(statement.alternate)
+        if (statement.alternate.type === 'IfStatement') {
+          hasReturn = hasReturn || hasReturnStatementIf(statement.alternate as es.IfStatement)
+        } else if (statement.alternate.type === 'BlockStatement') {
+          hasReturn = hasReturn || hasReturnStatement(statement.alternate as es.BlockStatement)
+        }
       }
     }
   }
-  return false
+  return hasReturn
+}
+
+export const hasBreakStatementIf = (statement: es.IfStatement): boolean => {
+  let hasBreak = false
+  // Parser enforces that if/else have braces (block statement)
+  hasBreak = hasBreak || hasBreakStatement(statement.consequent as es.BlockStatement)
+  if (statement.alternate) {
+    if (statement.alternate.type === 'IfStatement') {
+      hasBreak = hasBreak || hasBreakStatementIf(statement.alternate as es.IfStatement)
+    } else if (statement.alternate.type === 'BlockStatement') {
+      hasBreak = hasBreak || hasBreakStatement(statement.alternate as es.BlockStatement)
+    }
+  }
+  return hasBreak
 }
 
 export const hasBreakStatement = (block: es.BlockStatement): boolean => {
@@ -536,11 +560,29 @@ export const hasBreakStatement = (block: es.BlockStatement): boolean => {
       // Parser enforces that if/else have braces (block statement)
       hasBreak = hasBreak || hasBreakStatement(statement.consequent as es.BlockStatement)
       if (statement.alternate) {
-        hasBreak = hasBreak || hasBreakStatement(statement.alternate as es.BlockStatement)
+        if (statement.alternate.type === 'IfStatement') {
+          hasBreak = hasBreak || hasBreakStatementIf(statement.alternate as es.IfStatement)
+        } else if (statement.alternate.type === 'BlockStatement') {
+          hasBreak = hasBreak || hasBreakStatement(statement.alternate as es.BlockStatement)
+        }
       }
     }
   }
   return hasBreak
+}
+
+export const hasContinueStatementIf = (statement: es.IfStatement): boolean => {
+  let hasContinue = false
+  // Parser enforces that if/else have braces (block statement)
+  hasContinue = hasContinue || hasContinueStatement(statement.consequent as es.BlockStatement)
+  if (statement.alternate) {
+    if (statement.alternate.type === 'IfStatement') {
+      hasContinue = hasContinue || hasContinueStatementIf(statement.alternate as es.IfStatement)
+    } else if (statement.alternate.type === 'BlockStatement') {
+      hasContinue = hasContinue || hasContinueStatement(statement.alternate as es.BlockStatement)
+    }
+  }
+  return hasContinue
 }
 
 export const hasContinueStatement = (block: es.BlockStatement): boolean => {
@@ -552,7 +594,12 @@ export const hasContinueStatement = (block: es.BlockStatement): boolean => {
       // Parser enforces that if/else have braces (block statement)
       hasContinue = hasContinue || hasContinueStatement(statement.consequent as es.BlockStatement)
       if (statement.alternate) {
-        hasContinue = hasContinue || hasContinueStatement(statement.alternate as es.BlockStatement)
+        if (statement.alternate.type === 'IfStatement') {
+          hasContinue = hasContinue || hasContinueStatementIf(statement.alternate as es.IfStatement)
+        } else if (statement.alternate.type === 'BlockStatement') {
+          hasContinue =
+            hasContinue || hasContinueStatement(statement.alternate as es.BlockStatement)
+        }
       }
     }
   }
