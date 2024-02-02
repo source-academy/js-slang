@@ -82,14 +82,14 @@ export type Instr =
   | EnvInstr
   | ArrLitInstr
 
-export type ControlItem = es.Node | Instr
+export type AgendaItem = es.Node | Instr
 
 // Special class that cannot be found on the stash so is safe to be used
-// as an indicator of a breakpoint from running the CSE machine
-export class CSEBreak {}
+// as an indicator of a breakpoint from running the ECE machine
+export class ECEBreak {}
 
 // Special value that cannot be found on the stash so is safe to be used
-// as an indicator of an error from running the CSE machine
-export class CseError {
+// as an indicator of an error from running the ECE machine
+export class ECError {
   constructor(public readonly error: any) {}
 }

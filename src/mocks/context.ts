@@ -53,7 +53,7 @@ export function mockRuntimeContext(): Context {
         range: [0, 1]
       }
     ],
-    control: null,
+    agenda: null,
     stash: null,
     envStepsTotal: 0,
     breakpointSteps: []

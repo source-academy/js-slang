@@ -3,7 +3,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import { uniqueId } from 'lodash'
 
-import { hasReturnStatement, isBlockStatement } from '../cse-machine/utils'
+import { hasReturnStatement, isBlockStatement } from '../ec-evaluator/utils'
 import { Context, Environment, Value } from '../types'
 import {
   blockArrowFunction,

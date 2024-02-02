@@ -4,7 +4,7 @@ import type { RawSourceMap } from 'source-map'
 
 import type { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
-import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpreter'
+import { ECEResultPromise, evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -218,9 +218,9 @@ async function runNative(
   }
 }
 
-function runCSEMachine(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  const value = CSEvaluate(program, context, options)
-  return CSEResultPromise(context, value)
+function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+  const value = ECEvaluate(program, context, options)
+  return ECEResultPromise(context, value)
 }
 
 export async function sourceRunner(
@@ -266,18 +266,18 @@ export async function sourceRunner(
   }
 
   if (context.variant === Variant.EXPLICIT_CONTROL) {
-    return runCSEMachine(program, context, theOptions)
+    return runECEvaluator(program, context, theOptions)
   }
 
-  if (context.executionMethod === 'cse-machine') {
+  if (context.executionMethod === 'ec-evaluator') {
     if (options.isPrelude) {
-      return runCSEMachine(
+      return runECEvaluator(
         program,
         { ...context, runtime: { ...context.runtime, debuggerOn: false } },
         theOptions
       )
     }
-    return runCSEMachine(program, context, theOptions)
+    return runECEvaluator(program, context, theOptions)
   }
 
   if (context.executionMethod === 'native') {
