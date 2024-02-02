@@ -14,10 +14,7 @@ import {
   ReassignConstError,
   UndefinedIdentifierError
 } from '../errors/typeErrors'
-import { typedParse } from '../parser/utils'
 import {
-  Context,
-  ContiguousArrayElements,
   ForAll,
   FuncDeclWithInferredTypeAnnotation,
   FunctionType,
@@ -37,7 +34,6 @@ import {
   InternalCyclicReferenceError,
   InternalDifferentNumberArgumentsError,
   InternalTypeError,
-  TypeError,
   UnifyError
 } from './internalTypeErrors'
 import {
@@ -49,7 +45,6 @@ import {
   setType,
   tArray,
   tBool,
-  temporaryStreamFuncs,
   tForAll,
   tFunc,
   tList,
@@ -61,145 +56,6 @@ import {
 } from './utils'
 
 let typeIdCounter = 0
-
-/**
- * Called before and after type inference. First to add typeVar attribute to node, second to resolve
- * the type
- * FunctionDeclaration nodes have the functionTypeVar attribute as well
- * @param node
- * @param constraints: undefined for first call
- */
-/* tslint:disable cyclomatic-complexity */
-function traverse(node: NodeWithInferredType<es.Node>, constraints?: Constraint[]) {
-  if (node === null) {
-    // this happens in a holey array [,,,,,]
-    return
-  }
-  if (constraints && node.typability !== 'Untypable') {
-    try {
-      node.inferredType = applyConstraints(node.inferredType as Type, constraints)
-      node.typability = 'Typed'
-    } catch (e) {
-      if (isInternalTypeError(e) && !(e instanceof InternalCyclicReferenceError)) {
-        addTypeError(new TypeError(node, e))
-      }
-    }
-  } else {
-    node.inferredType = tVar(`T${typeIdCounter}`)
-    typeIdCounter++
-  }
-  switch (node.type) {
-    case 'Program': {
-      node.body.forEach(nodeBody => {
-        traverse(nodeBody, constraints)
-      })
-      break
-    }
-    case 'UnaryExpression': {
-      traverse(node.argument, constraints)
-      break
-    }
-    case 'LogicalExpression': // both cases are the same
-    case 'BinaryExpression': {
-      traverse(node.left, constraints)
-      traverse(node.right, constraints)
-      break
-    }
-    case 'ExpressionStatement': {
-      traverse(node.expression, constraints)
-      break
-    }
-    case 'BlockStatement': {
-      node.body.forEach(nodeBody => {
-        traverse(nodeBody, constraints)
-      })
-      break
-    }
-    case 'WhileStatement': {
-      traverse(node.test, constraints)
-      traverse(node.body, constraints)
-      break
-    }
-    case 'ForStatement': {
-      traverse(node.init!, constraints)
-      traverse(node.test!, constraints)
-      traverse(node.update!, constraints)
-      traverse(node.body, constraints)
-      break
-    }
-    case 'ConditionalExpression': // both cases are the same
-    case 'IfStatement': {
-      traverse(node.test, constraints)
-      traverse(node.consequent, constraints)
-      if (node.alternate) {
-        traverse(node.alternate, constraints)
-      }
-      break
-    }
-    case 'CallExpression': {
-      traverse(node.callee, constraints)
-      node.arguments.forEach(arg => {
-        traverse(arg, constraints)
-      })
-      break
-    }
-    case 'ReturnStatement': {
-      const arg = node.argument!
-      traverse(arg, constraints)
-      break
-    }
-    case 'VariableDeclaration': {
-      const init = node.declarations[0].init!
-      traverse(init, constraints)
-      break
-    }
-    case 'ArrowFunctionExpression': {
-      node.params.forEach(param => {
-        traverse(param, constraints)
-      })
-      traverse(node.body, constraints)
-      break
-    }
-    case 'FunctionDeclaration': {
-      const funcDeclNode = node as FuncDeclWithInferredTypeAnnotation
-      if (constraints) {
-        try {
-          funcDeclNode.functionInferredType = applyConstraints(
-            funcDeclNode.functionInferredType as Type,
-            constraints
-          )
-        } catch (e) {
-          if (e instanceof InternalCyclicReferenceError) {
-            addTypeError(new CyclicReferenceError(node))
-          } else if (isInternalTypeError(e)) {
-            addTypeError(new TypeError(node, e))
-          }
-        }
-      } else {
-        funcDeclNode.functionInferredType = tVar(`T${typeIdCounter}`)
-      }
-      typeIdCounter++
-      funcDeclNode.params.forEach(param => {
-        traverse(param, constraints)
-      })
-      traverse(funcDeclNode.body, constraints)
-      break
-    }
-    case 'AssignmentExpression':
-      traverse(node.left, constraints)
-      traverse(node.right, constraints)
-      break
-    case 'ArrayExpression':
-      ;(node.elements as ContiguousArrayElements).forEach(element => traverse(element, constraints))
-      break
-    case 'MemberExpression':
-      traverse(node.object, constraints)
-      traverse(node.property, constraints)
-      break
-    default:
-      return
-  }
-}
 
 function isPair(type: Type): type is Pair {
   return type.kind === 'pair'
@@ -216,13 +72,9 @@ function getListType(type: Type): Type | null {
   return null
 }
 
-function isInternalTypeError(error: any) {
-  return error instanceof InternalTypeError
-}
-
 type Constraint = [Variable, Type]
 let hasUndefinedIdentifierError = false
-let typeErrors: SourceError[] = []
+const typeErrors: SourceError[] = []
 
 function addTypeError(err: SourceError) {
   if (err instanceof UndefinedIdentifierError && hasUndefinedIdentifierError) {
@@ -230,66 +82,6 @@ function addTypeError(err: SourceError) {
   }
   hasUndefinedIdentifierError = true
   typeErrors.push(err)
-}
-
-/**
- * An additional layer of typechecking to be done right after parsing.
- * @param program Parsed Program
- */
-export function typeCheck(
-  program: NodeWithInferredType<es.Program>,
-  context: Context
-): [NodeWithInferredType<es.Program>, SourceError[]] {
-  function typeCheck_(
-    program: NodeWithInferredType<es.Program>
-  ): [NodeWithInferredType<es.Program>, SourceError[]] {
-    typeIdCounter = 0
-    hasUndefinedIdentifierError = false
-    typeErrors = []
-    const env: TypeEnvironment = context.typeEnvironment
-    if (context.chapter >= 3 && env.length === 3) {
-      // TODO: this is a hack since we don't infer streams properly yet
-      // if chapter is 3 and the prelude was just loaded, we change all the stream functions
-      const latestEnv = env[2].typeMap
-      for (const [name, type] of temporaryStreamFuncs) {
-        latestEnv.set(name, type)
-      }
-    }
-    const constraints: Constraint[] = []
-    traverse(program)
-    try {
-      infer(program, env, constraints, true)
-    } catch (e) {
-      // any errors here are either UX bugs or some actual logical bug
-      // we should have either processed them from a InternalTypeError into a SourceError with better explanations
-      // or the error is some other issue and we should add a generic runtime error to say something has gone wrong
-      if (isInternalTypeError(e)) {
-        addTypeError(
-          new TypeError(
-            program,
-            'Uncaught internal type error during typechecking, report this to the adminstrators!\n' +
-              e.message
-          )
-        )
-      } else {
-        addTypeError(
-          new TypeError(
-            program,
-            'Uncaught error during typechecking, report this to the adminstrators!\n' + e.message
-          )
-        )
-      }
-    }
-    traverse(program, constraints)
-    return [program, typeErrors]
-  }
-
-  for (const code of context.unTypecheckedCode) {
-    typeCheck_(typedParse(code, context)!)
-  }
-
-  context.unTypecheckedCode = []
-  return typeCheck_(program)
 }
 
 /**
