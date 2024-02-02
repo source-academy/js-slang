@@ -64,7 +64,7 @@ export function determineExecutionMethod(
         })
         isNativeRunnable = !hasDebuggerStatement
       }
-      context.executionMethod = isNativeRunnable ? 'native' : 'ec-evaluator'
+      context.executionMethod = isNativeRunnable ? 'native' : 'cse-machine'
     } else {
       isNativeRunnable = context.executionMethod === 'native'
     }
@@ -78,7 +78,7 @@ export function determineExecutionMethod(
     isNativeRunnable = !hasDebuggerStatement
   }
 
-  context.executionMethod = isNativeRunnable ? 'native' : 'ec-evaluator'
+  context.executionMethod = isNativeRunnable ? 'native' : 'cse-machine'
 }
 
 // AST Utils

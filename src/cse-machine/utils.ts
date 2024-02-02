@@ -8,11 +8,11 @@ import Closure from '../interpreter/closure'
 import { Environment, Frame, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import * as instr from './instrCreator'
-import { Agenda } from './interpreter'
-import { AgendaItem, AppInstr, AssmtInstr, Instr, InstrType } from './types'
+import { Control } from './interpreter'
+import { AppInstr, AssmtInstr, ControlItem, Instr, InstrType } from './types'
 
 /**
- * Stack is implemented for agenda and stash registers.
+ * Stack is implemented for control and stash registers.
  */
 interface IStack<T> {
   push(...items: T[]): void
@@ -67,20 +67,20 @@ export class Stack<T> implements IStack<T> {
 /**
  * Typeguard for Instr to distinguish between program statements and instructions.
  *
- * @param command An AgendaItem
- * @returns true if the AgendaItem is an instruction and false otherwise.
+ * @param command A ControlItem
+ * @returns true if the ControlItem is an instruction and false otherwise.
  */
-export const isInstr = (command: AgendaItem): command is Instr => {
+export const isInstr = (command: ControlItem): command is Instr => {
   return (command as Instr).instrType !== undefined
 }
 
 /**
  * Typeguard for esNode to distinguish between program statements and instructions.
  *
- * @param command An AgendaItem
- * @returns true if the AgendaItem is an esNode and false if it is an instruction.
+ * @param command A ControlItem
+ * @returns true if the ControlItem is an esNode and false if it is an instruction.
  */
-export const isNode = (command: AgendaItem): command is es.Node => {
+export const isNode = (command: ControlItem): command is es.Node => {
   return (command as es.Node).type !== undefined
 }
 
@@ -151,10 +151,10 @@ export const isAssmtInstr = (instr: Instr): instr is AssmtInstr => {
  * Value producing statements have an extra pop instruction.
  *
  * @param seq Array of statements.
- * @returns Array of commands to be pushed into agenda.
+ * @returns Array of commands to be pushed into control.
  */
-export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
-  const result: AgendaItem[] = []
+export const handleSequence = (seq: es.Statement[]): ControlItem[] => {
+  const result: ControlItem[] = []
   let valueProduced = false
   for (const command of seq) {
     if (!isImportDeclaration(command)) {
@@ -175,20 +175,20 @@ export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
 
 /**
  * This function is used for ConditionalExpressions and IfStatements, to create the sequence
- * of agenda items to be added.
+ * of control items to be added.
  */
 export const reduceConditional = (
   node: es.IfStatement | es.ConditionalExpression
-): AgendaItem[] => {
+): ControlItem[] => {
   return [instr.branchInstr(node.consequent, node.alternate, node), node.test]
 }
 
 /**
- * To determine if an agenda item is value producing. JavaScript distinguishes value producing
+ * To determine if a control item is value producing. JavaScript distinguishes value producing
  * statements and non-value producing statements.
  * Refer to https://sourceacademy.nus.edu.sg/sicpjs/4.1.2 exercise 4.8.
  *
- * @param command Agenda item to determine if it is value producing.
+ * @param command Control item to determine if it is value producing.
  * @returns true if it is value producing, false otherwise.
  */
 export const valueProducing = (command: es.Node): boolean => {
@@ -204,17 +204,17 @@ export const valueProducing = (command: es.Node): boolean => {
 }
 
 /**
- * To determine if an agenda item changes the environment.
+ * To determine if a control item changes the environment.
  * There is a change in the environment when
  *  1. pushEnvironment() is called when creating a new frame, if there are variable declarations.
  *     Called in Program, BlockStatement, and Application instructions.
  *  2. there is an assignment.
  *     Called in Assignment and Array Assignment instructions.
  *
- * @param command Agenda item to check against.
+ * @param command Control item to check against.
  * @returns true if it changes the environment, false otherwise.
  */
-export const envChanging = (command: AgendaItem): boolean => {
+export const envChanging = (command: ControlItem): boolean => {
   if (isNode(command)) {
     const type = command.type
     return type === 'Program' || (type === 'BlockStatement' && hasDeclarations(command))
@@ -477,12 +477,12 @@ export const checkNumberOfArguments = (
 
 /**
  * This function can be used to check for a stack overflow.
- * The current limit is set to be an agenda size of 1.0 x 10^5, if the agenda
+ * The current limit is set to be a control size of 1.0 x 10^5, if the control
  * flows beyond this limit an error is thrown.
  * This corresponds to about 10mb of space according to tests ran.
  */
-export const checkStackOverFlow = (context: Context, agenda: Agenda) => {
-  if (agenda.size() > 100000) {
+export const checkStackOverFlow = (context: Context, control: Control) => {
+  if (control.size() > 100000) {
     const stacks: es.CallExpression[] = []
     let counter = 0
     for (
