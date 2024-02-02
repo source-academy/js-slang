@@ -78,8 +78,8 @@ Object {
 map = 5;",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant map.
-As map was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+  "parsedErrors": "Line 2, Column 0: Name map not declared.
+Before you can read the value of map, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -94,8 +94,8 @@ Object {
 undefined = 5;",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2, Column 0: Cannot assign new value to constant undefined.
-As undefined was declared as a constant, its value cannot be changed. You will have to declare a new variable.
+  "parsedErrors": "Line 2, Column 0: Name undefined not declared.
+Before you can read the value of undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -109,7 +109,7 @@ Object {
   "code": "map = 5;",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 1: Cannot assign new value to constant map.",
+  "parsedErrors": "Line 1: Name map not declared.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -122,7 +122,7 @@ Object {
   "code": "undefined = 5;",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 1: Cannot assign new value to constant undefined.",
+  "parsedErrors": "Line 1: Name undefined not declared.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -138,8 +138,8 @@ const f = x => g(x);
 f(1);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 3, Column 15: Expected 0 arguments, but got 1.
-Try calling function g again, but with 0 arguments instead. Remember that arguments are separated by a ',' (comma).
+  "parsedErrors": "Line 2, Column 0: Redeclaring name g.
+You will need to declare another variable, as g is read-only.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -155,7 +155,7 @@ const f = x => g(x);
 f(1);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2: Expected 0 arguments, but got 1.",
+  "parsedErrors": "Line 1: Redeclaring name g.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -170,8 +170,8 @@ Object {
   f();",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 0.
-Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+  "parsedErrors": "Line 2, Column 2: Redeclaring name f.
+You will need to declare another variable, as f is read-only.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -186,7 +186,7 @@ Object {
 f();",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2: Expected 1 arguments, but got 0.",
+  "parsedErrors": "Line 1: Redeclaring name f.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -201,8 +201,8 @@ Object {
   f(1, 2);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
-Try calling function f again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+  "parsedErrors": "Line 2, Column 2: Redeclaring name f.
+You will need to declare another variable, as f is read-only.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -217,7 +217,7 @@ Object {
 f(1, 2);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "parsedErrors": "Line 1: Redeclaring name f.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -258,8 +258,8 @@ Object {
   f[0](1, 2);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 3, Column 2: Expected 1 arguments, but got 2.
-Try calling function f[0] again, but with 1 argument instead. Remember that arguments are separated by a ',' (comma).
+  "parsedErrors": "Line 2, Column 2: Redeclaring name f.
+You will need to declare another variable, as f is read-only.
 ",
   "result": undefined,
   "resultStatus": "error",
@@ -274,7 +274,7 @@ Object {
 f[0](1, 2);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "parsedErrors": "Line 1: Redeclaring name f.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -815,7 +815,7 @@ Object {
 }",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 3: Name a declared later in current scope but not yet assigned",
+  "parsedErrors": "Line 1: Redeclaring name a.",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
