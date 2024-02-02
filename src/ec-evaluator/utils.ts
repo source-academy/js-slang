@@ -299,15 +299,15 @@ export const createBlockEnvironment = (
  * Variables
  */
 
-const UNASSIGNED_CONST = Symbol("const declaration");
-const UNASSIGNED_LET = Symbol("let declaration");
+const UNASSIGNED_CONST = Symbol('const declaration')
+const UNASSIGNED_LET = Symbol('let declaration')
 
 export function declareIdentifier(
   context: Context,
   name: string,
   node: es.Node,
   environment: Environment,
-  constant: boolean = false,
+  constant: boolean = false
 ) {
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
@@ -328,7 +328,7 @@ function declareVariables(
 ) {
   for (const declaration of node.declarations) {
     // Retrieve declaration type from node
-    const constant = node.kind === "const"
+    const constant = node.kind === 'const'
     declareIdentifier(context, (declaration.id as es.Identifier).name, node, environment, constant)
   }
 }
@@ -345,7 +345,13 @@ export function declareFunctionsAndVariables(
         break
       case 'FunctionDeclaration':
         // FunctionDeclaration is always of type constant
-        declareIdentifier(context, (statement.id as es.Identifier).name, statement, environment, true)
+        declareIdentifier(
+          context,
+          (statement.id as es.Identifier).name,
+          statement,
+          environment,
+          true
+        )
         break
     }
   }
@@ -399,7 +405,10 @@ export const getVariable = (context: Context, name: string, node: es.Identifier)
   let environment: Environment | null = currentEnvironment(context)
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === UNASSIGNED_CONST || environment.head[name] === UNASSIGNED_LET) {
+      if (
+        environment.head[name] === UNASSIGNED_CONST ||
+        environment.head[name] === UNASSIGNED_LET
+      ) {
         return handleRuntimeError(context, new errors.UnassignedVariable(name, node))
       } else {
         return environment.head[name]
@@ -420,7 +429,10 @@ export const setVariable = (
   let environment: Environment | null = currentEnvironment(context)
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === UNASSIGNED_CONST || environment.head[name] === UNASSIGNED_LET) {
+      if (
+        environment.head[name] === UNASSIGNED_CONST ||
+        environment.head[name] === UNASSIGNED_LET
+      ) {
         break
       }
       const descriptors = Object.getOwnPropertyDescriptors(environment.head)
