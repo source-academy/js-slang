@@ -7,7 +7,7 @@
 
 /* tslint:disable:max-classes-per-file */
 import type es from 'estree'
-import { partition, reverse,uniqueId } from 'lodash'
+import { partition, reverse, uniqueId } from 'lodash'
 
 import type { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
