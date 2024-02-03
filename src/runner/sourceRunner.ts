@@ -215,7 +215,7 @@ const runNative: Runner = async (program, context, options) => {
   }
 }
 
-function runCSEMachine(program: es.Program, context: Context, options: IOptions): Promise<Result> {
+const runCSEMachine: Runner = (program, context, options) => {
   const value = CSEvaluate(program, context, options)
   return CSEResultPromise(context, value)
 }
