@@ -503,20 +503,30 @@ export const checkStackOverFlow = (context: Context, control: Control) => {
   }
 }
 
+/**
+ * Checks whether an `if` statement returns in every possible branch.
+ * @param body The `if` statement to be checked
+ * @return `true` if every branch has a return statement, else `false`.
+ */
 export const hasReturnStatementIf = (statement: es.IfStatement): boolean => {
-  let hasReturn = false
+  let hasReturn = true
   // Parser enforces that if/else have braces (block statement)
-  hasReturn = hasReturn || hasReturnStatement(statement.consequent as es.BlockStatement)
+  hasReturn = hasReturn && hasReturnStatement(statement.consequent as es.BlockStatement)
   if (statement.alternate) {
     if (isIfStatement(statement.alternate)) {
-      hasReturn = hasReturn || hasReturnStatementIf(statement.alternate as es.IfStatement)
+      hasReturn = hasReturn && hasReturnStatementIf(statement.alternate as es.IfStatement)
     } else if (isBlockStatement(statement.alternate)) {
-      hasReturn = hasReturn || hasReturnStatement(statement.alternate as es.BlockStatement)
+      hasReturn = hasReturn && hasReturnStatement(statement.alternate as es.BlockStatement)
     }
   }
   return hasReturn
 }
 
+/**
+ * Checks whether a block returns in every possible branch.
+ * @param body The block to be checked
+ * @return `true` if every branch has a return statement, else `false`.
+ */
 export const hasReturnStatement = (block: es.BlockStatement): boolean => {
   let hasReturn = false
   for (const statement of block.body) {
@@ -524,18 +534,7 @@ export const hasReturnStatement = (block: es.BlockStatement): boolean => {
       hasReturn = true
     } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
-      hasReturn = hasReturn || hasReturnStatement(statement.consequent as es.BlockStatement)
-      if (statement.alternate) {
-        if (isIfStatement(statement.alternate)) {
-          hasReturn = hasReturn || hasReturnStatementIf(statement.alternate as es.IfStatement)
-        } else if (isBlockStatement(statement.alternate)) {
-          hasReturn = hasReturn || hasReturnStatement(statement.alternate as es.BlockStatement)
-        }
-      }
-    } else if (statement.type === 'ForStatement') {
-      hasReturn = hasReturn || hasReturnStatement(statement.body as es.BlockStatement)
-    } else if (statement.type === 'WhileStatement') {
-      hasReturn = hasReturn || hasReturnStatement(statement.body as es.BlockStatement)
+      hasReturn = hasReturn || hasReturnStatementIf(statement as es.IfStatement)
     }
   }
   return hasReturn
@@ -555,6 +554,11 @@ export const hasBreakStatementIf = (statement: es.IfStatement): boolean => {
   return hasBreak
 }
 
+/**
+ * Checks whether a block has a `break` statement.
+ * @param body The block to be checked
+ * @return `true` if there is a `break` statement, else `false`.
+ */
 export const hasBreakStatement = (block: es.BlockStatement): boolean => {
   let hasBreak = false
   for (const statement of block.body) {
@@ -562,14 +566,7 @@ export const hasBreakStatement = (block: es.BlockStatement): boolean => {
       hasBreak = true
     } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
-      hasBreak = hasBreak || hasBreakStatement(statement.consequent as es.BlockStatement)
-      if (statement.alternate) {
-        if (isIfStatement(statement.alternate)) {
-          hasBreak = hasBreak || hasBreakStatementIf(statement.alternate as es.IfStatement)
-        } else if (isBlockStatement(statement.alternate)) {
-          hasBreak = hasBreak || hasBreakStatement(statement.alternate as es.BlockStatement)
-        }
-      }
+      hasBreak = hasBreak || hasBreakStatementIf(statement as es.IfStatement)
     }
   }
   return hasBreak
@@ -589,6 +586,11 @@ export const hasContinueStatementIf = (statement: es.IfStatement): boolean => {
   return hasContinue
 }
 
+/**
+ * Checks whether a block has a `continue` statement.
+ * @param body The block to be checked
+ * @return `true` if there is a `continue` statement, else `false`.
+ */
 export const hasContinueStatement = (block: es.BlockStatement): boolean => {
   let hasContinue = false
   for (const statement of block.body) {
@@ -596,15 +598,7 @@ export const hasContinueStatement = (block: es.BlockStatement): boolean => {
       hasContinue = true
     } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
-      hasContinue = hasContinue || hasContinueStatement(statement.consequent as es.BlockStatement)
-      if (statement.alternate) {
-        if (isIfStatement(statement.alternate)) {
-          hasContinue = hasContinue || hasContinueStatementIf(statement.alternate as es.IfStatement)
-        } else if (isBlockStatement(statement.alternate)) {
-          hasContinue =
-            hasContinue || hasContinueStatement(statement.alternate as es.BlockStatement)
-        }
-      }
+      hasContinue = hasContinue || hasContinueStatementIf(statement as es.IfStatement)
     }
   }
   return hasContinue
