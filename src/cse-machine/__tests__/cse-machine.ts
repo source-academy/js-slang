@@ -441,11 +441,15 @@ test('Breaks, continues and returns are detected properly inside loops', () => {
           i = i + 1;
           if (i === 1) {
             i = 1;
+            i = 1;
           } else if (i === 2) {
+            i = 2;
             continue;
           } else if (i === 3) {
+            i = 3;
             return i;
           } else if (i === 4) {
+            i = 4;
             break;
           }
       }

@@ -532,6 +532,10 @@ export const hasReturnStatement = (block: es.BlockStatement): boolean => {
           hasReturn = hasReturn || hasReturnStatement(statement.alternate as es.BlockStatement)
         }
       }
+    } else if (statement.type === 'ForStatement') {
+      hasReturn = hasReturn || hasReturnStatement(statement.body as es.BlockStatement)
+    } else if (statement.type === 'WhileStatement') {
+      hasReturn = hasReturn || hasReturnStatement(statement.body as es.BlockStatement)
     }
   }
   return hasReturn
