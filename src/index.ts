@@ -28,7 +28,7 @@ import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
 import * as es from 'estree'
 
-import { ECEResultPromise, resumeEvaluate } from './ec-evaluator/interpreter'
+import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { CannotFindModuleError } from './errors/localImportErrors'
 import { validateFilePath } from './localImports/filePaths'
 import preprocessFileImports from './localImports/preprocessor'
@@ -390,9 +390,9 @@ export async function runFilesInContext(
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
   if (result.status === 'finished' || result.status === 'error') {
     return result
-  } else if (result.status === 'suspended-ec-eval') {
+  } else if (result.status === 'suspended-cse-eval') {
     const value = resumeEvaluate(result.context)
-    return ECEResultPromise(result.context, value)
+    return CSEResultPromise(result.context, value)
   } else {
     return result.scheduler.run(result.it, result.context)
   }
