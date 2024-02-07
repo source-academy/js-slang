@@ -362,7 +362,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     declareFunctionsAndVariables(context, command, environment)
     pushEnvironment(context, environment)
-
     // Push block body
     control.push(...handleSequence(command.body))
   },
