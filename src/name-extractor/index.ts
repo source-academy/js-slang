@@ -1,3 +1,4 @@
+import acorn from 'acorn'
 import * as es from 'estree'
 
 import { Context } from '../'
