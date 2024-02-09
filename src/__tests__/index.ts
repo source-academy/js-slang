@@ -471,8 +471,8 @@ class SourceLocationTestResult {
   start: Position
   end: Position
   constructor(startLine: number, startCol: number, endLine: number, endCol: number) {
-    this.start = { line: startLine, column: startCol, offset: 0 }
-    this.end = { line: endLine, column: endCol, offset: 0 }
+    this.start = { line: startLine, column: startCol }
+    this.end = { line: endLine, column: endCol }
   }
 }
 
