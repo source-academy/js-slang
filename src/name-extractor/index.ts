@@ -1,4 +1,5 @@
-import type * as es from 'estree'
+import acorn from 'acorn'
+import type es from 'estree'
 
 import type { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
