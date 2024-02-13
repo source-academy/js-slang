@@ -26,7 +26,10 @@ async function testCode<T extends Record<string, string>>(files: T, entrypointFi
   ]
 }
 
-async function expectError<T extends Record<string, string>>(files: T, entrypointFilePath: keyof T) {
+async function expectError<T extends Record<string, string>>(
+  files: T,
+  entrypointFilePath: keyof T
+) {
   const [context, result] = await testCode(files, entrypointFilePath)
   expect(result).toBeUndefined()
   expect(context.errors.length).toBeGreaterThanOrEqual(1)
@@ -55,7 +58,7 @@ test.skip('Longer cycle causes also causes CircularImportError', async () => {
       '/b.js': 'import { a } from "./a.js";',
       '/c.js': 'import { b } from "./b.js";',
       '/d.js': 'import { c } from "./c.js";',
-      '/e.js': 'import { d } from "./d.js";',
+      '/e.js': 'import { d } from "./d.js";'
     },
     '/e.js'
   )
@@ -104,24 +107,30 @@ test('Parse errors cause a short circuiting of the linker', async () => {
 })
 
 test('ModuleNotFoundErrors short circuit the linker', async () => {
-  const [error] = await expectError({
-    '/a.js': 'export const a = "a";',
-    '/b.js': `
+  const [error] = await expectError(
+    {
+      '/a.js': 'export const a = "a";',
+      '/b.js': `
       import { c } from './c.js';
       import { a } from './a.js';
     `,
-    '/d.js': 'import { b } from "./b.js";'
-  }, '/d.js')
+      '/d.js': 'import { b } from "./b.js";'
+    },
+    '/d.js'
+  )
 
   expect(error).toBeInstanceOf(ModuleNotFoundError)
   expect(resolver.default).not.toHaveBeenCalledWith('./a.js')
 })
 
 test('Linker does tree-shaking', async () => {
-  const [{ errors }, result] = await testCode({
-    '/a.js': 'export const a = 5;',
-    '/b.js': 'import { a } from "./a.js";'
-  }, '/a.js')
+  const [{ errors }, result] = await testCode(
+    {
+      '/a.js': 'export const a = 5;',
+      '/b.js': 'import { a } from "./a.js";'
+    },
+    '/a.js'
+  )
 
   expect(errors.length).toEqual(0)
   expect(result).toBeDefined()

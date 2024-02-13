@@ -23,7 +23,7 @@ export type LinkerResult = {
   programs: Record<string, es.Program>
   sourceModulesToImport: Set<string>
   entrypointAbsPath: string
-  topoOrder: string[],
+  topoOrder: string[]
 }
 
 export type LinkerOptions = {
@@ -176,7 +176,7 @@ export default async function parseProgramsAndConstructImportGraph(
       topoOrder: topologicalOrderResult.topologicalOrder,
       programs,
       sourceModulesToImport,
-      entrypointAbsPath,
+      entrypointAbsPath
     }
   } catch (error) {
     if (!(error instanceof LinkerError)) {
