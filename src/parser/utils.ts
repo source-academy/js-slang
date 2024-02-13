@@ -78,7 +78,7 @@ export function parseWithComments(
   programStr: string,
   ecmaVersion: ecmaVersion = DEFAULT_ECMA_VERSION
 ): [Program, Comment[]] {
-  let comments: acorn.Comment[] = []
+  let comments: Comment[] = []
   const acornOptions: AcornOptions = createAcornParserOptions(
     ecmaVersion,
     undefined,
