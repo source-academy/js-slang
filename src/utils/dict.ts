@@ -38,6 +38,13 @@ export default class Dict<K, V> {
     return this.get(key)!
   }
 
+  public update(key: K, defaultVal: V, updater: (oldV: V) => V) {
+    const value = this.setdefault(key, defaultVal)
+    const newValue = updater(value)
+    this.set(key, newValue)
+    return newValue
+  }
+
   public entries() {
     return [...this.internalMap.entries()]
   }
