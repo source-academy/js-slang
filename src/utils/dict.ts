@@ -83,9 +83,11 @@ export class ArrayMap<K, V> extends Dict<K, V[]> {
 /**
  * Create an ArrayMap from an iterable of key value pairs
  */
-export function dictFrom<K, V extends Array<any>>(pairs: Iterable<[K, V]>): ArrayMap<K, V[number]>
-export function dictFrom<K, V>(pairs: Iterable<[K, V]>): ArrayMap<K, V>
-export function dictFrom<K, V>(pairs: Iterable<[K, V | V[]]>) {
+export function arrayMapFrom<K, V extends Array<any>>(
+  pairs: Iterable<[K, V]>
+): ArrayMap<K, V[number]>
+export function arrayMapFrom<K, V>(pairs: Iterable<[K, V]>): ArrayMap<K, V>
+export function arrayMapFrom<K, V>(pairs: Iterable<[K, V | V[]]>) {
   const res = new ArrayMap<K, V>()
   for (const [k, v] of pairs) {
     if (Array.isArray(v)) {
