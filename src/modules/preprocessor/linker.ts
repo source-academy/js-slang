@@ -5,7 +5,6 @@ import type { Context } from '../..'
 import { parse } from '../../parser/parser'
 import type { RecursivePartial } from '../../types'
 import assert from '../../utils/assert'
-import { mapAndFilter } from '../../utils/misc'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
 import { isSourceModule } from '../utils'
 import { DirectedGraph } from './directedGraph'
@@ -18,17 +17,13 @@ type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaul
  * to reject immediately instead of just returning undefined,
  * which would still require all promises to be resolved
  */
-class LinkerError extends Error {
-  constructor(public readonly isProgramError: boolean) {
-    super()
-  }
-}
+class LinkerError extends Error {}
 
 export type LinkerResult = {
   programs: Record<string, es.Program>
   sourceModulesToImport: Set<string>
   entrypointAbsPath: string
-  topoOrder: string[]
+  topoOrder: string[],
 }
 
 export type LinkerOptions = {
@@ -37,16 +32,6 @@ export type LinkerOptions = {
 
 export const defaultLinkerOptions: LinkerOptions = {
   resolverOptions: defaultResolutionOptions
-}
-
-function checkForCycle(graph: DirectedGraph) {
-  // Check for circular imports.
-  const topologicalOrderResult = graph.getTopologicalOrder()
-  if (!topologicalOrderResult.isValidTopologicalOrderFound) {
-    throw new CircularImportError(topologicalOrderResult.firstCycleFound)
-  }
-
-  return topologicalOrderResult.topologicalOrder
 }
 
 /**
@@ -83,32 +68,31 @@ export default async function parseProgramsAndConstructImportGraph(
       throw new ModuleNotFoundError(absPath, node)
     }
 
+    // Special case of circular import: the module specifier
+    // refers to the current file
+    if (absPath === fromPath) {
+      throw new CircularImportError([absPath, absPath])
+    }
+
     return absPath
   }
 
-  async function resolveAndParseFile(fromModule: string, node: ModuleDeclarationWithSource) {
-    assert(
-      typeof node.source?.value === 'string',
-      `Expected ${node.type} to have source of type string, got ${node.source?.value}`
-    )
-
+  async function resolveDependency(fromModule: string, node: ModuleDeclarationWithSource) {
     // TODO: Move file path validation here
-    const absDstPath = await resolveFileWrapper(fromModule, node.source.value, node)
+    const absDstPath = await resolveFileWrapper(fromModule, node.source!.value as string, node)
 
-    // Special case of circular import: the module specifier
-    // refers to the current file
-    if (absDstPath === fromModule) {
-      throw new CircularImportError([absDstPath, absDstPath])
-    }
+    // This condition can never be true: To see an existing edge
+    // would require having to parse the fromModule again
+    // But parseAndEnumerateModuleDeclarations already guards against this.
 
-    if (importGraph.hasEdge(absDstPath, fromModule)) {
-      // If we've seen this edge before, then we must have a cycle
-      // so exit early and proceed to locate the cycle
-      throw new LinkerError(false)
-    }
+    // if (importGraph.hasEdge(absDstPath, fromModule)) {
+    //   // If we've seen this edge before, then we must have a cycle
+    //   // so exit early and proceed to locate the cycle
+    //   throw new LinkerError(false)
+    // }
 
     // Update the node's source value with the resolved path
-    node.source.value = absDstPath
+    node.source!.value = absDstPath
 
     // We assume that Source modules always have to be loaded
     // first, so we don't need to add those to the import graph
@@ -116,16 +100,16 @@ export default async function parseProgramsAndConstructImportGraph(
       sourceModulesToImport.add(absDstPath)
     } else {
       importGraph.addEdge(absDstPath, fromModule)
-      await enumerateModuleDeclarations(absDstPath)
+      await parseAndEnumerateModuleDeclarations(absDstPath)
     }
   }
 
-  async function enumerateModuleDeclarations(fromModule: string) {
+  async function parseAndEnumerateModuleDeclarations(fromModule: string) {
     // No need to parse programs we've already parsed before
     if (fromModule in programs) return
     assert(
       posixPath.isAbsolute(fromModule),
-      `${enumerateModuleDeclarations.name} should only be used with absolute paths`
+      `${parseAndEnumerateModuleDeclarations.name} should only be used with absolute paths`
     )
 
     const fileText = await fileGetter(fromModule)
@@ -143,57 +127,63 @@ export default async function parseProgramsAndConstructImportGraph(
     if (!program) {
       // The program has syntax errors or something,
       // exit early
-      throw new LinkerError(true)
+      throw new LinkerError()
     }
 
     programs[fromModule] = program
 
-    await Promise.all(
-      mapAndFilter(program.body, node => {
-        switch (node.type) {
-          case 'ExportNamedDeclaration': {
-            if (!node.source) return undefined
-            // case falls through!
-          }
-          case 'ImportDeclaration':
-          case 'ExportAllDeclaration':
-            return resolveAndParseFile(fromModule, node)
-          default:
-            return undefined
+    // We only really need to pay attention to the first node that imports
+    // from each specific module
+    const modulesToNodeMap = program.body.reduce((res, node) => {
+      switch (node.type) {
+        case 'ExportNamedDeclaration': {
+          if (!node.source) return res
+          // case falls through!
         }
-      })
-    )
+        case 'ImportDeclaration':
+        case 'ExportAllDeclaration': {
+          const sourceValue = node.source?.value
+          assert(
+            typeof sourceValue === 'string',
+            `Expected type string for module source for ${node.type}, got ${sourceValue}`
+          )
+
+          if (sourceValue in res) return res
+          return {
+            ...res,
+            [sourceValue]: resolveDependency(fromModule, node)
+          }
+        }
+        default:
+          return res
+      }
+    }, {} as Record<string, Promise<void>>)
+
+    await Promise.all(Object.values(modulesToNodeMap))
   }
 
   try {
     const entrypointAbsPath = await resolveFileWrapper('/', entrypointFilePath)
-    await enumerateModuleDeclarations(entrypointAbsPath)
+    await parseAndEnumerateModuleDeclarations(entrypointAbsPath)
 
-    const topoOrder = checkForCycle(importGraph)
+    const topologicalOrderResult = importGraph.getTopologicalOrder()
+    if (!topologicalOrderResult.isValidTopologicalOrderFound) {
+      context.errors.push(new CircularImportError(topologicalOrderResult.firstCycleFound))
+      return undefined
+    }
+
     return {
-      topoOrder,
+      topoOrder: topologicalOrderResult.topologicalOrder,
       programs,
       sourceModulesToImport,
-      entrypointAbsPath
+      entrypointAbsPath,
     }
   } catch (error) {
-    if (error instanceof LinkerError) {
-      // If the LinkerError was caused by a parsing error,
-      // then we return undefined straight away
-      if (error.isProgramError) return undefined
-
-      // Otherwise it was because we have to find an import cycle
-      // so proceed to do that
-      checkForCycle(importGraph)
-
-      // We're guaranteed a cycle, so findCycle should throw an error
-      // and enter the catch block
-      return {} as never
-    } else {
+    if (!(error instanceof LinkerError)) {
       // Any other error that occurs is just appended to the context
       // and we return undefined
       context.errors.push(error)
-      return undefined
     }
+    return undefined
   }
 }
