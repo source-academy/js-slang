@@ -43,20 +43,20 @@ describe('Test throwing import validation errors', () => {
 
   // Providing an ErrorInfo object indicates that the test case should throw
   // the corresponding error
-  type ImportTestCaseWithNoError = [Files, string]
-  type ImportTestCaseWithError = [...ImportTestCaseWithNoError, ErrorInfo]
-  type ImportTestCase = ImportTestCaseWithError | ImportTestCaseWithNoError
+  type ImportTestCaseWithNoError<T extends Files> = [T, keyof T]
+  type ImportTestCaseWithError<T extends Files> = [...ImportTestCaseWithNoError<T>, ErrorInfo]
+  type ImportTestCase<T extends Files> = ImportTestCaseWithError<T> | ImportTestCaseWithNoError<T>
 
-  async function testCode(
-    files: Partial<Record<string, string>>,
-    entrypointFilePath: string,
+  async function testCode<T extends Files>(
+    files: T,
+    entrypointFilePath: keyof T,
     allowUndefinedImports: boolean,
     throwOnDuplicateNames: boolean
   ) {
     const context = createContext(Chapter.FULL_JS)
     const importGraphResult = await parseProgramsAndConstructImportGraph(
       p => Promise.resolve(files[p]),
-      entrypointFilePath,
+      entrypointFilePath as string,
       context,
       {},
       true
@@ -75,9 +75,9 @@ describe('Test throwing import validation errors', () => {
     return true
   }
 
-  async function testFailure(
-    files: Partial<Record<string, string>>,
-    entrypointFilePath: string,
+  async function testFailure<T extends Files>(
+    files: T,
+    entrypointFilePath: keyof T,
     allowUndefinedImports: boolean,
     errInfo: ErrorInfo
   ) {
@@ -106,9 +106,9 @@ describe('Test throwing import validation errors', () => {
     })
   }
 
-  function testSuccess(
-    files: Partial<Record<string, string>>,
-    entrypointFilePath: string,
+  function testSuccess<T extends Files>(
+    files: T,
+    entrypointFilePath: keyof T,
     allowUndefinedImports: boolean
   ) {
     return expect(
@@ -116,7 +116,7 @@ describe('Test throwing import validation errors', () => {
     ).resolves.toEqual(true)
   }
 
-  function testCases(desc: string, cases: ImportTestCase[]) {
+  function testCases<T extends Files>(desc: string, cases: ImportTestCase<T>[]) {
     describe(desc, () => {
       test.each(
         cases.flatMap(([files, entry, errorInfo], i) => {

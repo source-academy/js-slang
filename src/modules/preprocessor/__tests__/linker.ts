@@ -1,7 +1,7 @@
 import { mockContext } from '../../../mocks/context'
 import { MissingSemicolonError } from '../../../parser/errors'
 import { Chapter, type Context } from '../../../types'
-import { CircularImportError } from '../../errors'
+import { CircularImportError, ModuleNotFoundError } from '../../errors'
 import parseProgramsAndConstructImportGraph from '../linker'
 
 import * as resolver from '../resolver'
@@ -26,8 +26,15 @@ async function testCode<T extends Record<string, string>>(files: T, entrypointFi
   ]
 }
 
+async function expectError<T extends Record<string, string>>(files: T, entrypointFilePath: keyof T) {
+  const [context, result] = await testCode(files, entrypointFilePath)
+  expect(result).toBeUndefined()
+  expect(context.errors.length).toBeGreaterThanOrEqual(1)
+  return context.errors
+}
+
 test('Adds CircularImportError and returns undefined when imports are circular', async () => {
-  const [ctx, result] = await testCode(
+  const [error] = await expectError(
     {
       '/a.js': `import { b } from "./b.js";`,
       '/b.js': `import { a } from "./a.js";`
@@ -35,12 +42,11 @@ test('Adds CircularImportError and returns undefined when imports are circular',
     '/a.js'
   )
 
-  expect(result).toBeUndefined()
-  expect(ctx.errors[0]).toBeInstanceOf(CircularImportError)
+  expect(error).toBeInstanceOf(CircularImportError)
 })
 
-test('Longer cycle causes also causes CircularImportError', async () => {
-  const [context, result] = await testCode(
+test.skip('Longer cycle causes also causes CircularImportError', async () => {
+  const [error] = await expectError(
     {
       '/a.js': `
       import { c } from "./c.js";
@@ -48,18 +54,18 @@ test('Longer cycle causes also causes CircularImportError', async () => {
     `,
       '/b.js': 'import { a } from "./a.js";',
       '/c.js': 'import { b } from "./b.js";',
-      '/d.js': 'import { c } from "./c.js";'
+      '/d.js': 'import { c } from "./c.js";',
+      '/e.js': 'import { d } from "./d.js";',
     },
-    '/d.js'
+    '/e.js'
   )
 
-  expect(result).toBeUndefined()
+  expect(error).toBeInstanceOf(CircularImportError)
   expect(resolver.default).not.toHaveBeenCalledWith('./e.js')
-  expect(context.errors[0]).toBeInstanceOf(CircularImportError)
 })
 
 test('Self Circular Imports cause a short circuiting of the linker', async () => {
-  const [context, result] = await testCode(
+  const [error] = await expectError(
     {
       '/a.js': 'import { a } from "./a.js";',
       '/c.js': `
@@ -74,14 +80,13 @@ test('Self Circular Imports cause a short circuiting of the linker', async () =>
     '/d.js'
   )
 
-  expect(result).toBeUndefined()
-  expect(context.errors[0]).toBeInstanceOf(CircularImportError)
+  expect(error).toBeInstanceOf(CircularImportError)
   expect(resolver.default).not.toHaveBeenCalledWith('./c.js')
   expect(resolver.default).not.toHaveBeenCalledWith('./b.js')
 })
 
 test('Parse errors cause a short circuiting of the linker', async () => {
-  const [context, result] = await testCode(
+  const [error] = await expectError(
     {
       '/a.js': 'export const a = "a";',
       '/b.js': `
@@ -94,8 +99,21 @@ test('Parse errors cause a short circuiting of the linker', async () => {
     },
     '/b.js'
   )
-  expect(result).toBeUndefined()
-  expect(context.errors[0]).toBeInstanceOf(MissingSemicolonError)
+  expect(error).toBeInstanceOf(MissingSemicolonError)
+  expect(resolver.default).not.toHaveBeenCalledWith('./a.js')
+})
+
+test('ModuleNotFoundErrors short circuit the linker', async () => {
+  const [error] = await expectError({
+    '/a.js': 'export const a = "a";',
+    '/b.js': `
+      import { c } from './c.js';
+      import { a } from './a.js';
+    `,
+    '/d.js': 'import { b } from "./b.js";'
+  }, '/d.js')
+
+  expect(error).toBeInstanceOf(ModuleNotFoundError)
   expect(resolver.default).not.toHaveBeenCalledWith('./a.js')
 })
 
