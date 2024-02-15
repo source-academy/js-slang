@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
     "module": "commonjs",
     "declaration": true,
     "target": "es2016",
@@ -17,6 +16,7 @@
     "moduleResolution": "node",
     "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
@@ -29,8 +29,6 @@
   "exclude": [
     "src/stdlib/metacircular-interpreter",
     "src/stdlib/**/*.js",
-    "src/**/__tests__/**",
-    "src/**/__mocks__/**",
     "node_modules",
     "dist",
     "sicp_publish",

@@ -1,7 +1,7 @@
-import Dict, { dictFrom } from '../dict'
+import Dict, { arrayMapFrom } from '../dict'
 
-test('dictFrom', () => {
-  const arrMap = dictFrom([
+test('arrayMapFrom', () => {
+  const arrMap = arrayMapFrom([
     [1, [1, 2, 3]],
     [2, [2, 4, 6]]
   ])

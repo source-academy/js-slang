@@ -43,20 +43,20 @@ describe('Test throwing import validation errors', () => {
 
   // Providing an ErrorInfo object indicates that the test case should throw
   // the corresponding error
-  type ImportTestCaseWithNoError = [string, Files, `/${string}`]
-  type ImportTestCaseWithError = [...ImportTestCaseWithNoError, ErrorInfo]
-  type ImportTestCase = ImportTestCaseWithError | ImportTestCaseWithNoError
+  type ImportTestCaseWithNoError<T extends Files> = [string, T, keyof T]
+  type ImportTestCaseWithError<T extends Files> = [...ImportTestCaseWithNoError<T>, ErrorInfo]
+  type ImportTestCase<T extends Files> = ImportTestCaseWithError<T> | ImportTestCaseWithNoError<T>
 
-  async function testCode(
-    files: Partial<Record<string, string>>,
-    entrypointFilePath: string,
+  async function testCode<T extends Files>(
+    files: T,
+    entrypointFilePath: keyof T,
     allowUndefinedImports: boolean,
     throwOnDuplicateNames: boolean
   ) {
     const context = createContext(Chapter.FULL_JS)
     const importGraphResult = await parseProgramsAndConstructImportGraph(
       p => Promise.resolve(files[p]),
-      entrypointFilePath,
+      entrypointFilePath as string,
       context,
       {},
       true
@@ -70,16 +70,16 @@ describe('Test throwing import validation errors', () => {
     const { programs, topoOrder, sourceModulesToImport } = importGraphResult
     await loadSourceModules(sourceModulesToImport, context, false)
 
-    analyzeImportsAndExports(programs, entrypointFilePath, topoOrder, context, {
+    analyzeImportsAndExports(programs, entrypointFilePath as string, topoOrder, context, {
       allowUndefinedImports,
       throwOnDuplicateNames
     })
     return true
   }
 
-  async function testFailure(
-    files: Partial<Record<string, string>>,
-    entrypointFilePath: string,
+  async function testFailure<T extends Files>(
+    files: T,
+    entrypointFilePath: keyof T,
     allowUndefinedImports: boolean,
     errInfo: ErrorInfo
   ) {
@@ -114,9 +114,9 @@ describe('Test throwing import validation errors', () => {
     })
   }
 
-  function testSuccess(
-    files: Partial<Record<string, string>>,
-    entrypointFilePath: string,
+  function testSuccess<T extends Files>(
+    files: T,
+    entrypointFilePath: keyof T,
     allowUndefinedImports: boolean
   ) {
     return expect(
@@ -124,14 +124,13 @@ describe('Test throwing import validation errors', () => {
     ).resolves.toEqual(true)
   }
 
-  type FullTestCase = [string, Files, string, ErrorInfo | boolean]
-  function testCases(desc: string, cases: ImportTestCase[]) {
+  type FullTestCase = [string, Files, `/${string}`, ErrorInfo | boolean]
+  function testCases<T extends Files>(desc: string, cases: ImportTestCase<T>[]) {
     const [allNoCases, allYesCases] = cases.reduce(
       ([noThrow, yesThrow], [desc, files, entry, errorInfo], i) => {
         return [
           [
             ...noThrow,
-            // Test each case with allowUndefinedImports being both true and false
             [`${i + 1}: ${desc} should not throw an error`, files, entry, true] as FullTestCase
           ],
           [
