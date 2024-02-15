@@ -17,6 +17,7 @@ import {
   UndefinedImportError,
   UndefinedNamespaceImportError
 } from '../errors'
+import type { AbsolutePath } from '../moduleTypes'
 import { isSourceModule } from '../utils'
 
 export const defaultAnalysisOptions: ImportAnalysisOptions = {
@@ -48,8 +49,8 @@ export type ImportAnalysisOptions = {
  * Throws errors instead of appending errors to context
  */
 export default function analyzeImportsAndExports(
-  programs: Record<string, es.Program>,
-  entrypointAbsPath: string,
+  programs: Record<AbsolutePath, es.Program>,
+  entrypointFilePath: AbsolutePath,
   topoOrder: string[],
   { nativeStorage: { loadedModules } }: Context,
   options: Partial<ImportAnalysisOptions> = {}
@@ -77,7 +78,7 @@ export default function analyzeImportsAndExports(
     ArrayMap<string, es.ImportDeclaration['specifiers'][number]>
   >()
 
-  for (const sourceModule of [...topoOrder, entrypointAbsPath]) {
+  for (const sourceModule of [...topoOrder, entrypointFilePath]) {
     const program = programs[sourceModule]
     moduleDocs[sourceModule] = new Set()
 

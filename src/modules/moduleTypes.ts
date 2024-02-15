@@ -16,3 +16,8 @@ export type ImportOptions = {
   loadTabs: boolean
 } & ImportAnalysisOptions &
   LinkerOptions
+
+export type AbsolutePath = `/${string}`
+
+export type FileGetter = (p: string) => Promise<string | undefined>
+export type SourceFiles = Record<AbsolutePath, string>

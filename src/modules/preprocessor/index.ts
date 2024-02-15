@@ -1,14 +1,15 @@
 import type { Context, IOptions } from '../..'
 import type { RecursivePartial } from '../../types'
 import loadSourceModules from '../loader'
+import type { AbsolutePath, FileGetter } from '../moduleTypes'
 import analyzeImportsAndExports from './analyzer'
 import bundlePrograms, { type Bundler } from './bundler'
 import parseProgramsAndConstructImportGraph from './linker'
 
 export default async function preprocessFileImports(
-  files: ((p: string) => Promise<string | undefined>) | Record<string, string>,
+  files: FileGetter | Record<string, string>,
   context: Context,
-  entrypointFilePath: string,
+  entrypointFilePath: AbsolutePath,
   options: RecursivePartial<IOptions> = {},
   bundler: Bundler = bundlePrograms
 ) {
@@ -23,7 +24,7 @@ export default async function preprocessFileImports(
   )
   if (!linkerResult) return undefined
 
-  const { programs, topoOrder, sourceModulesToImport, entrypointAbsPath } = linkerResult
+  const { programs, topoOrder, sourceModulesToImport } = linkerResult
 
   try {
     await loadSourceModules(
@@ -33,12 +34,12 @@ export default async function preprocessFileImports(
     )
     analyzeImportsAndExports(
       programs,
-      entrypointAbsPath,
+      entrypointFilePath,
       topoOrder,
       context,
       options?.importOptions
     )
-    return bundler(programs, entrypointAbsPath, topoOrder, context)
+    return bundler(programs, entrypointFilePath, topoOrder, context)
   } catch (error) {
     context.errors.push(error)
     return undefined

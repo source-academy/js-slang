@@ -1,12 +1,11 @@
 import type es from 'estree'
-import { posix as posixPath } from 'path'
 
 import type { Context } from '../..'
 import { parse } from '../../parser/parser'
 import type { RecursivePartial } from '../../types'
 import assert from '../../utils/assert'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
-import { isSourceModule } from '../utils'
+import type { AbsolutePath, FileGetter } from '../moduleTypes'
 import { DirectedGraph } from './directedGraph'
 import resolveFile, { defaultResolutionOptions, type ImportResolutionOptions } from './resolver'
 
@@ -20,10 +19,9 @@ type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaul
 class LinkerError extends Error {}
 
 export type LinkerResult = {
-  programs: Record<string, es.Program>
+  programs: Record<AbsolutePath, es.Program>
   sourceModulesToImport: Set<string>
-  entrypointAbsPath: string
-  topoOrder: string[]
+  topoOrder: AbsolutePath[]
 }
 
 export type LinkerOptions = {
@@ -42,8 +40,8 @@ export const defaultLinkerOptions: LinkerOptions = {
  * of that file as a string, or if it doesn't exist, `undefined`
  */
 export default async function parseProgramsAndConstructImportGraph(
-  fileGetter: (path: string) => Promise<string | undefined>,
-  entrypointFilePath: string,
+  fileGetter: FileGetter,
+  entrypointFilePath: AbsolutePath,
   context: Context,
   options: RecursivePartial<LinkerOptions> = defaultLinkerOptions,
   shouldAddFileName: boolean
@@ -53,8 +51,8 @@ export default async function parseProgramsAndConstructImportGraph(
   const sourceModulesToImport = new Set<string>()
 
   // Wrapper around resolve file to make calling it more convenient
-  async function resolveFileWrapper(fromPath: string, toPath: string, node?: es.Node) {
-    const [absPath, resolved] = await resolveFile(
+  async function resolveFileWrapper(fromPath: AbsolutePath, toPath: string, node?: es.Node) {
+    const resolveResult = await resolveFile(
       fromPath,
       toPath,
       async str => {
@@ -64,9 +62,11 @@ export default async function parseProgramsAndConstructImportGraph(
       options?.resolverOptions
     )
 
-    if (!resolved) {
-      throw new ModuleNotFoundError(absPath, node)
+    if (!resolveResult) {
+      throw new ModuleNotFoundError(toPath, node)
     }
+
+    const { path: absPath } = resolveResult
 
     // Special case of circular import: the module specifier
     // refers to the current file
@@ -74,12 +74,16 @@ export default async function parseProgramsAndConstructImportGraph(
       throw new CircularImportError([absPath, absPath])
     }
 
-    return absPath
+    return resolveResult
   }
 
-  async function resolveDependency(fromModule: string, node: ModuleDeclarationWithSource) {
+  async function resolveDependency(fromModule: AbsolutePath, node: ModuleDeclarationWithSource) {
     // TODO: Move file path validation here
-    const absDstPath = await resolveFileWrapper(fromModule, node.source!.value as string, node)
+    const { type: moduleType, path: absDstPath } = await resolveFileWrapper(
+      fromModule,
+      node.source!.value as string,
+      node
+    )
 
     // This condition can never be true: To see an existing edge
     // would require having to parse the fromModule again
@@ -96,7 +100,7 @@ export default async function parseProgramsAndConstructImportGraph(
 
     // We assume that Source modules always have to be loaded
     // first, so we don't need to add those to the import graph
-    if (isSourceModule(absDstPath)) {
+    if (moduleType === 'source') {
       sourceModulesToImport.add(absDstPath)
     } else {
       importGraph.addEdge(absDstPath, fromModule)
@@ -104,13 +108,9 @@ export default async function parseProgramsAndConstructImportGraph(
     }
   }
 
-  async function parseAndEnumerateModuleDeclarations(fromModule: string) {
+  async function parseAndEnumerateModuleDeclarations(fromModule: AbsolutePath) {
     // No need to parse programs we've already parsed before
     if (fromModule in programs) return
-    assert(
-      posixPath.isAbsolute(fromModule),
-      `${parseAndEnumerateModuleDeclarations.name} should only be used with absolute paths`
-    )
 
     const fileText = await fileGetter(fromModule)
     assert(
@@ -163,8 +163,12 @@ export default async function parseProgramsAndConstructImportGraph(
   }
 
   try {
-    const entrypointAbsPath = await resolveFileWrapper('/', entrypointFilePath)
-    await parseAndEnumerateModuleDeclarations(entrypointAbsPath)
+    const entrypointCode = await fileGetter(entrypointFilePath)
+    if (entrypointCode === undefined) {
+      throw new ModuleNotFoundError(entrypointFilePath)
+    }
+
+    await parseAndEnumerateModuleDeclarations(entrypointFilePath)
 
     const topologicalOrderResult = importGraph.getTopologicalOrder()
     if (!topologicalOrderResult.isValidTopologicalOrderFound) {
@@ -173,10 +177,9 @@ export default async function parseProgramsAndConstructImportGraph(
     }
 
     return {
-      topoOrder: topologicalOrderResult.topologicalOrder,
+      topoOrder: topologicalOrderResult.topologicalOrder as AbsolutePath[],
       programs,
-      sourceModulesToImport,
-      entrypointAbsPath
+      sourceModulesToImport
     }
   } catch (error) {
     if (!(error instanceof LinkerError)) {

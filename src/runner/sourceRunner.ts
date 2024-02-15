@@ -16,6 +16,7 @@ import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import { ModuleNotFoundError } from '../modules/errors'
 import { getRequireProvider } from '../modules/loader/requireProvider'
+import type { AbsolutePath, SourceFiles } from '../modules/moduleTypes'
 import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
@@ -285,8 +286,8 @@ export async function sourceRunner(
 }
 
 export async function sourceFilesRunner(
-  files: Record<string, string>,
-  entrypointFilePath: string,
+  files: SourceFiles,
+  entrypointFilePath: AbsolutePath,
   context: Context,
   options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {

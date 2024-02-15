@@ -50,8 +50,9 @@ const importer = wrapImporter(rawImporter)
 // Also specifically in the browser the import type assertion is required, but not allowed in js-slang itself because js-slang
 // compiles to CommonJS, which does not support import attributes
 const rawDocsImporter: (p: string) => Promise<{ default: Record<string, any> }> =
-  typeof window !== undefined && process.env.NODE_ENV !== 'test'
-    ? (new Function('path', 'return import(path, { assert: { type: "json" } })') as any)
+  typeof window !== 'undefined' && process.env.NODE_ENV !== 'test'
+    ? // TODO: Change when import attributes become supported
+      (new Function('path', 'return import(path, { assert: { type: "json" } })') as any)
     : p => import(p)
 
 const docsImporter = wrapImporter(rawDocsImporter)

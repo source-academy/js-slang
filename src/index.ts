@@ -30,6 +30,7 @@ import { ModuleNotFoundError } from './modules/errors'
 import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
+import { isAbsolutePath } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
 import { decodeError, decodeValue } from './parser/scheme'
@@ -237,6 +238,10 @@ export async function runFilesInContext(
     }
   }
 
+  if (!isAbsolutePath(entrypointFilePath)) {
+    throw new Error('Entrypoint file path must be absolute!')
+  }
+
   const code = files[entrypointFilePath]
   if (code === undefined) {
     context.errors.push(new ModuleNotFoundError(entrypointFilePath))
@@ -339,6 +344,9 @@ export async function compileFiles(
     return undefined
   }
 
+  if (!isAbsolutePath(entrypointFilePath)) {
+    throw new Error('Entrypoint file path must be absolute!')
+  }
   const preprocessedProgram = await preprocessFileImports(files, context, entrypointFilePath, {})
   if (!preprocessedProgram) {
     return undefined

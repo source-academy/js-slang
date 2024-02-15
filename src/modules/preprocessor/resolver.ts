@@ -1,7 +1,6 @@
-import { posix as posixPath } from 'path'
-
 import { memoizedGetModuleManifestAsync } from '../loader/loaders'
-import { isSourceModule } from '../utils'
+import type { AbsolutePath } from '../moduleTypes'
+import { isSourceModule, resolvePath } from '../utils'
 
 /**
  * Options for resolving modules given a path
@@ -23,6 +22,17 @@ export const defaultResolutionOptions: ImportResolutionOptions = {
   extensions: ['js']
 }
 
+export type ResolverResult =
+  | {
+      type: 'local'
+      path: AbsolutePath
+    }
+  | {
+      type: 'source'
+      path: string
+    }
+  | undefined
+
 /**
  * Resolve a relative module path to an absolute path.
  *
@@ -35,26 +45,36 @@ export default async function resolveFile(
   toPath: string,
   filePredicate: (str: string) => Promise<boolean>,
   options: Partial<ImportResolutionOptions> = defaultResolutionOptions
-): Promise<[string, boolean]> {
+): Promise<ResolverResult> {
   if (isSourceModule(toPath)) {
     const manifest = await memoizedGetModuleManifestAsync()
-    if (toPath in manifest) return [toPath, true]
-    return [toPath, false]
+    return toPath in manifest
+      ? {
+          type: 'source',
+          path: toPath
+        }
+      : undefined
   }
 
-  const absPath = posixPath.resolve(fromPath, '..', toPath)
+  const absPath = resolvePath(fromPath, '..', toPath)
 
   if (await filePredicate(absPath)) {
-    return [absPath, true]
+    return {
+      type: 'local',
+      path: absPath
+    }
   }
 
   if (options.extensions) {
     for (const ext of options.extensions) {
       if (await filePredicate(`${absPath}.${ext}`)) {
-        return [`${absPath}.${ext}`, true]
+        return {
+          type: 'local',
+          path: `${absPath}.${ext}`
+        }
       }
     }
   }
 
-  return [absPath, false]
+  return undefined
 }
