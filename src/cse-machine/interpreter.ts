@@ -19,7 +19,7 @@ import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
 import { ImportTransformOptions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
-import { Context, ContiguousArrayElements, Result, Value } from '../types'
+import { Context, ContiguousArrayElements, RawBlockStatement, Result, Value } from '../types'
 import assert from '../utils/assert'
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
@@ -62,6 +62,7 @@ import {
   isBlockStatement,
   isInstr,
   isNode,
+  isRawBlockStatement,
   isSimpleFunction,
   popEnvironment,
   pushEnvironment,
@@ -97,15 +98,20 @@ export class Control extends Stack<ControlItem> {
   }
 
   /**
-   * Before pushing block statements on the control, we check if the block statement has any declarations.
-   * If not, instead of pushing the entire block, just the body is pushed since the block is not adding any value.
+   * Before pushing block statements on the control stack, we check if the block statement has any declarations.
+   * If not (and its not a raw block statement), instead of pushing the entire block, just the body is pushed since the block is not adding any value.
    * @param items The items being pushed on the control.
    * @returns The same set of control items, but with block statements without declarations simplified.
    */
   private static simplifyBlocksWithoutDeclarations(...items: ControlItem[]): ControlItem[] {
     const itemsNew: ControlItem[] = []
     items.forEach(item => {
-      if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
+      if (
+        isNode(item) &&
+        isBlockStatement(item) &&
+        !hasDeclarations(item) &&
+        !isRawBlockStatement(item)
+      ) {
         itemsNew.push(...Control.simplifyBlocksWithoutDeclarations(...handleSequence(item.body)))
       } else {
         itemsNew.push(item)
@@ -275,7 +281,6 @@ function runCSEMachine(
         context.runtime.breakpointSteps.push(steps)
       }
     }
-
     control.pop()
     if (isNode(command)) {
       context.runtime.nodes.shift()
@@ -293,7 +298,6 @@ function runCSEMachine(
       // Command is an instrucion
       cmdEvaluators[command.instrType](command, context, control, stash, isPrelude)
     }
-
     // Push undefined into the stack if both control and stash is empty
     if (control.isEmpty() && stash.isEmpty()) {
       stash.push(undefined)
@@ -342,28 +346,38 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const next = command.body[0]
       cmdEvaluators[next.type](next, context, control, stash, isPrelude)
     } else {
-      // Push block body
-      control.push(...handleSequence(command.body))
+      // Push raw block statement
+      command.type = 'BlockStatement'
+      ;(command as RawBlockStatement).isRawBlock = 'true'
+      control.push(command)
     }
   },
 
   BlockStatement: function (command: es.BlockStatement, context: Context, control: Control) {
-    // To restore environment after block ends
-    // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next control item
-    // we do not need to push another one
-    // The no declarations case is handled by Control :: simplifyBlocksWithoutDeclarations, so no blockStatement node
-    // without declarations should end up here.
-    const next = control.peek()
-    // Push ENVIRONMENT instruction if needed
-    if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
-      control.push(instr.envInstr(currentEnvironment(context), command))
-    }
+    // normal block statement: do environment setup
+    if (!isRawBlockStatement(command)) {
+      // To restore environment after block ends
+      // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next control item
+      // we do not need to push another one
+      // The no declarations case is handled by Control :: simplifyBlocksWithoutDeclarations, so no blockStatement node
+      // without declarations should end up here.
+      const next = control.peek()
+      // Push ENVIRONMENT instruction if needed
+      if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+        control.push(instr.envInstr(currentEnvironment(context), command))
+      }
 
-    const environment = createBlockEnvironment(context, 'blockEnvironment')
-    declareFunctionsAndVariables(context, command, environment)
-    pushEnvironment(context, environment)
-    // Push block body
-    control.push(...handleSequence(command.body))
+      const environment = createBlockEnvironment(context, 'blockEnvironment')
+      declareFunctionsAndVariables(context, command, environment)
+      pushEnvironment(context, environment)
+      ;(command as RawBlockStatement).isRawBlock = 'true'
+      control.push(command as RawBlockStatement)
+    }
+    // raw block statement: unpack and push body
+    else {
+      // Push block body
+      control.push(...handleSequence(command.body))
+    }
   },
 
   WhileStatement: function (

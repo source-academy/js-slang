@@ -5,7 +5,7 @@ import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { Environment, Frame, Value } from '../types'
+import { Environment, Frame, Value, RawBlockStatement } from '../types'
 import * as ast from '../utils/astCreator'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
@@ -122,6 +122,16 @@ export const isIfStatement = (node: es.Node): node is es.IfStatement => {
  */
 export const isBlockStatement = (node: es.Node): node is es.BlockStatement => {
   return (node as es.BlockStatement).type == 'BlockStatement'
+}
+
+/**
+ * Typeguard for RawBlockStatement. To verify if an esNode is a raw block statement (i.e. passed environment creation).
+ *
+ * @param node an esNode
+ * @returns true if node is a RawBlockStatement, false otherwise.
+ */
+export const isRawBlockStatement = (node: es.Node): node is RawBlockStatement => {
+  return (node as RawBlockStatement).isRawBlock === 'true'
 }
 
 /**
