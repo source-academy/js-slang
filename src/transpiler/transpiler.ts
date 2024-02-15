@@ -30,7 +30,6 @@ const globalIdNames = [
   'callIfFuncAndRightArgs',
   'boolOrErr',
   'wrap',
-  'wrapSourceModule',
   'unaryOp',
   'binaryOp',
   'throwIfTimeout',

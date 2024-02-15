@@ -15,3 +15,5 @@ export default async function loadSourceModules(
   )
   context.nativeStorage.loadedModules = Object.fromEntries(entries)
 }
+
+export { setModulesStaticURL } from './loaders'
