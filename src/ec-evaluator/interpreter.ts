@@ -83,11 +83,11 @@ type CmdEvaluator = (
  * It contains syntax tree nodes or instructions.
  */
 export class Agenda extends Stack<AgendaItem> {
-  public constructor(program: es.Program) {
+  public constructor(program?: es.Program) {
     super()
 
     // Load program into agenda stack
-    this.push(program)
+    program ? this.push(program) : null
   }
 
   public push(...items: AgendaItem[]): void {
@@ -112,6 +112,13 @@ export class Agenda extends Stack<AgendaItem> {
     })
     return itemsNew
   }
+
+  public copy(): Agenda {
+    const newAgenda = new Agenda()
+    const stackCopy = super.getStack()
+    newAgenda.push(...stackCopy)
+    return newAgenda
+  }
 }
 
 /**
@@ -120,6 +127,28 @@ export class Agenda extends Stack<AgendaItem> {
 export class Stash extends Stack<Value> {
   public constructor() {
     super()
+  }
+
+  public copy(): Stash {
+    const newStash = new Stash()
+    const stackCopy = super.getStack()
+    newStash.push(...stackCopy)
+    return newStash
+  }
+}
+
+/**
+ * An object representing a continuation of the ECE machine.
+ * Used to enable first-class continuations for scm-slang.
+ * When instantiated, it copies the agenda and stack, but pops 2 items from its (the continuation's) stack.
+ * This pops the continuation itself, and the call to the lambda using the continuation.
+ */
+export class Continuation {
+  agenda: Agenda
+  stash: Stash
+  public constructor(agenda: Agenda, stash: Stash) {
+    this.agenda = agenda.copy()
+    this.stash = stash.copy()
   }
 }
 
@@ -793,8 +822,8 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       args.unshift(stash.pop())
     }
 
-    // Get function from the stash
-    const func: Closure | Function = stash.pop()
+    // Get object from the stash
+    const func: Closure | Function | Continuation = stash.pop()
     if (func instanceof Closure) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
@@ -857,6 +886,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
           handleRuntimeError(context, new errors.ExceptionError(error, loc))
         }
       }
+    } else if (func instanceof Continuation) {
+      // We are trying to apply a continuation
+      // set the agenda to the continuation's agenda
+      // set the stash to the continuation's stash
+      agenda = func.agenda
+      stash = func.stash
+      // then evaluate the single argument given to the continuation
+
+      const arg = args[0]
+      stash.push(arg)
     } else {
       handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
     }
