@@ -5,6 +5,7 @@
 import * as es from 'estree'
 
 import { Environment } from '../types'
+import { Continuation } from './interpreter'
 import {
   AppInstr,
   ArrLitInstr,
@@ -13,8 +14,10 @@ import {
   BranchInstr,
   EnvInstr,
   ForInstr,
+  GenContInstr,
   Instr,
   InstrType,
+  ResumeContInstr,
   UnOpInstr,
   WhileInstr
 } from './types'
@@ -139,4 +142,20 @@ export const breakInstr = (srcNode: es.Node): Instr => ({
 export const breakMarkerInstr = (srcNode: es.Node): Instr => ({
   instrType: InstrType.BREAK_MARKER,
   srcNode
+})
+
+export const genContInstr = (srcNode: es.Node): GenContInstr => ({
+  instrType: InstrType.GENERATE_CONT,
+  srcNode
+})
+
+export const resumeContInstr = (
+  continuation: Continuation,
+  expression: es.Expression,
+  srcNode: es.Node
+): ResumeContInstr => ({
+  instrType: InstrType.RESUME_CONT,
+  srcNode,
+  continuation: continuation,
+  expression: expression
 })

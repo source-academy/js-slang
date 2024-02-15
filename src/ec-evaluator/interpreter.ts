@@ -79,6 +79,15 @@ type CmdEvaluator = (
 ) => void
 
 /**
+ * A dummy function used to detect for the call/cc function object.
+ * If the interpreter sees this specific object, a continuation at the current
+ * point of evaluation is executed instead of a regular function call.
+ */
+export function call_with_current_continuation(f: any) {
+  return f()
+}
+
+/**
  * The agenda is a list of commands that still needs to be executed by the machine.
  * It contains syntax tree nodes or instructions.
  */
@@ -823,7 +832,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
 
     // Get object from the stash
-    const func: Closure | Function | Continuation = stash.pop()
+    const func: Closure | Function = stash.pop()
+    // Check if function is call_with_current_continuation
+    if (func === call_with_current_continuation) {
+      console.log('bingo!')
+      return
+    }
     if (func instanceof Closure) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
@@ -886,16 +900,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
           handleRuntimeError(context, new errors.ExceptionError(error, loc))
         }
       }
-    } else if (func instanceof Continuation) {
-      // We are trying to apply a continuation
-      // set the agenda to the continuation's agenda
-      // set the stash to the continuation's stash
-      agenda = func.agenda
-      stash = func.stash
-      // then evaluate the single argument given to the continuation
-
-      const arg = args[0]
-      stash.push(arg)
     } else {
       handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
     }
@@ -1003,5 +1007,47 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.BREAK_MARKER]: function () {}
+  [InstrType.BREAK_MARKER]: function () {},
+
+  // how will we use this?
+
+  /*
+    const continuation = GENCONT()
+    const wrapped_continuation = val => RESUMECONT(continuation, val)
+
+    but the issue with this is that GENCONT() will need to be able to access the current agenda and stash
+    and we can't do that without passing it as an argument
+
+    or we could turn the ECE machine into a class and have the GENCONT method be a method of the class,
+    but again the context would need the ECE machine as a property
+  */
+
+  [InstrType.GENERATE_CONT]: function (
+    command: Instr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const continuation = new Continuation(agenda.copy(), stash.copy())
+    stash.push(continuation)
+  },
+
+  // how do we use this?
+
+  /*
+    RESUMNECONT(continuation, val)
+  */
+
+  [InstrType.RESUME_CONT]: function (
+    command: Instr,
+    context: Context,
+    agenda: Agenda,
+    stash: Stash
+  ) {
+    const expression = stash.pop()
+    const continuation = stash.pop()
+    agenda = continuation.agenda
+    stash = continuation.stash
+    stash.push(expression)
+  }
 }
