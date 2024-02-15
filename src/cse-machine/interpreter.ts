@@ -347,9 +347,14 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       cmdEvaluators[next.type](next, context, control, stash, isPrelude)
     } else {
       // Push raw block statement
-      command.type = 'BlockStatement'
-      ;(command as RawBlockStatement).isRawBlock = 'true'
-      control.push(command)
+      const rawCopy: RawBlockStatement = {
+        type: 'BlockStatement',
+        range: command.range,
+        loc: command.loc,
+        body: command.body,
+        isRawBlock: 'true'
+      }
+      control.push(rawCopy)
     }
   },
 
@@ -370,8 +375,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const environment = createBlockEnvironment(context, 'blockEnvironment')
       declareFunctionsAndVariables(context, command, environment)
       pushEnvironment(context, environment)
-      ;(command as RawBlockStatement).isRawBlock = 'true'
-      control.push(command as RawBlockStatement)
+
+      // push raw block statement
+      const rawCopy: RawBlockStatement = {
+        type: 'BlockStatement',
+        range: command.range,
+        loc: command.loc,
+        body: command.body,
+        isRawBlock: 'true'
+      }
+      control.push(rawCopy)
     }
     // raw block statement: unpack and push body
     else {
