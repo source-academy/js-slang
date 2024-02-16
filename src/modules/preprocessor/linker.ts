@@ -1,4 +1,5 @@
 import type es from 'estree'
+import { memoize } from 'lodash'
 
 import type { Context } from '../..'
 import { parse } from '../../parser/parser'
@@ -25,11 +26,21 @@ export type LinkerResult = {
 }
 
 export type LinkerOptions = {
+  /**
+   * Options to pass to `resolveFile`
+   */
   resolverOptions: ImportResolutionOptions
+
+  /**
+   * Set to true to memoize the file getter passed to
+   * the linker (useful if reading using `fs`)
+   */
+  memoizeGetter: boolean
 }
 
 export const defaultLinkerOptions: LinkerOptions = {
-  resolverOptions: defaultResolutionOptions
+  resolverOptions: defaultResolutionOptions,
+  memoizeGetter: false
 }
 
 /**
@@ -38,6 +49,9 @@ export const defaultLinkerOptions: LinkerOptions = {
  *
  * @param fileGetter A function that, when given a file path, either returns the contents
  * of that file as a string, or if it doesn't exist, `undefined`
+ *
+ * @param shouldAddFileName Set to `true` if file name information should be included
+ * when parsing files
  */
 export default async function parseProgramsAndConstructImportGraph(
   fileGetter: FileGetter,
@@ -49,6 +63,7 @@ export default async function parseProgramsAndConstructImportGraph(
   const importGraph = new DirectedGraph()
   const programs: Record<string, es.Program> = {}
   const sourceModulesToImport = new Set<string>()
+  const getter = options.memoizeGetter ? memoize(fileGetter) : fileGetter
 
   // Wrapper around resolve file to make calling it more convenient
   async function resolveFileWrapper(fromPath: AbsolutePath, toPath: string, node?: es.Node) {
@@ -56,7 +71,7 @@ export default async function parseProgramsAndConstructImportGraph(
       fromPath,
       toPath,
       async str => {
-        const file = await fileGetter(str)
+        const file = await getter(str)
         return file !== undefined
       },
       options?.resolverOptions
@@ -112,7 +127,7 @@ export default async function parseProgramsAndConstructImportGraph(
     // No need to parse programs we've already parsed before
     if (fromModule in programs) return
 
-    const fileText = await fileGetter(fromModule)
+    const fileText = await getter(fromModule)
     assert(
       fileText !== undefined,
       "If the file does not exist, an error should've already been thrown"

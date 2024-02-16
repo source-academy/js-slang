@@ -22,6 +22,10 @@ export const defaultResolutionOptions: ImportResolutionOptions = {
   extensions: ['js']
 }
 
+/**
+ * Represents the type of module the path resolved to, or `undefined`
+ * if the path did not resolve to anything
+ */
 export type ResolverResult =
   | {
       type: 'local'
@@ -34,11 +38,11 @@ export type ResolverResult =
   | undefined
 
 /**
- * Resolve a relative module path to an absolute path.
+ * Gets the absolute path referred to by `toPath` relative to `fromModule`.
  *
- * @returns A tuple of `[string, boolean]`. The string value
- * represents the absolute path the relative path resolved to. The boolean
- * value indicates if the file at the absolute path exists.
+ * @param filePredicate Function that returns a `Promise<boolean>` indicating if the
+ * file at the given path exists
+ *
  */
 export default async function resolveFile(
   fromPath: string,
