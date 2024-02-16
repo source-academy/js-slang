@@ -63,7 +63,9 @@ const docsImporter = wrapImporter(rawDocsImporter)
 function createDocsGetter() {
   const memoizedDocs: Map<string, ModuleDocumentation> = new Map()
 
-  const func = async (moduleName: string, throwOnError: boolean = false) => {
+  function func(moduleName: string, throwOnError?: false): Promise<ModuleDocumentation | null>
+  function func(moduleName: string, throwOnError: true): Promise<ModuleDocumentation>
+  async function func(moduleName: string, throwOnError?: boolean) {
     if (!memoizedDocs.has(moduleName)) {
       try {
         const { default: result } = await docsImporter(
