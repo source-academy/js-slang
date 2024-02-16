@@ -56,7 +56,8 @@ const rawDocsImporter: (p: string) => Promise<{ default: Record<string, any> }> 
     ? // TODO: Change when import attributes become supported
       (new Function('path', 'return import(path, { assert: { type: "json" } })') as any)
     : p => import(p)
-const docsImporter = wrapImporter(rawDocsImporter)
+// Exported for testing
+export const docsImporter = wrapImporter(rawDocsImporter)
 
 // By default, lodash's memoize will just memoize errors. We use custom
 // memoizers that won't memoize errors

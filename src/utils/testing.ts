@@ -1,4 +1,5 @@
 import { generate } from 'astring'
+import type { MockedFunction } from 'jest-mock'
 
 import { default as createContext, defineBuiltin } from '../createContext'
 import { transpileToGPU } from '../gpu/gpu'
@@ -365,4 +366,8 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   expect(timeTaken).toBeLessThan(timeout * 5)
   expect(timeTaken).toBeGreaterThanOrEqual(timeout)
   return parseError(context.errors)
+}
+
+export function funcAsMockedFunc<T extends (...args: any[]) => any>(func: T) {
+  return func as MockedFunction<T>
 }
