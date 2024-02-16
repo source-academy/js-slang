@@ -100,6 +100,7 @@
       "ts",
       "js"
     ],
+    "resolver": "<rootDir>/src/modules/loader/__tests__/testResolver.js",
     "transform": {
       "\\.ts$": "ts-jest",
       "\\.js$": "babel-jest"

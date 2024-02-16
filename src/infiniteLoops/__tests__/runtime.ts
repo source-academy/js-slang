@@ -21,7 +21,7 @@ jest.spyOn(loaders, 'memoizedGetModuleDocsAsync').mockResolvedValue({
 })
 
 jest.mock(
-  `${jest.requireActual('../../modules/loader/loaders').MODULES_STATIC_URL}/bundles/repeat.js`,
+  `mockModules/bundles/repeat.js`,
   () => {
     function repeat<T>(func: (arg: T) => T, n: number): (arg: T) => T {
       return n === 0

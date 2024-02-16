@@ -1,5 +1,4 @@
 import type { Node } from 'estree'
-import { memoize } from 'lodash'
 
 import type { Context } from '../..'
 import { timeoutPromise } from '../../utils/misc'
@@ -18,7 +17,9 @@ const wrapImporter =
   <T>(importer: Importer<T>, timeout: number = 10000): Importer<T> =>
   async p => {
     try {
-      const result = await timeoutPromise(importer(p), timeout)
+      // We add an arbitrary query parameter to the import URL so that the import cache
+      // is always invalidated, allowing us to handle the memoization on our side
+      const result = await timeoutPromise(importer(`${p}?q=${Date.now()}`), timeout)
       return result
     } catch (error) {
       // Before calling this function, the import analyzer should've been used to make sure
@@ -29,7 +30,9 @@ const wrapImporter =
         // In the browser, import statements should throw TypeError
         error instanceof TypeError ||
         // In Node a different error is thrown with the given code instead
-        error.code === 'MODULE_NOT_FOUND'
+        error.code === 'MODULE_NOT_FOUND' ||
+        // Thrown specifically by jest
+        error.code === 'ENOENT'
       ) {
         throw new ModuleConnectionError()
       }
@@ -39,7 +42,6 @@ const wrapImporter =
 
 // In the browser, the import statement needs to be wrapped in the function constructor because webpack will try to resolve it
 // at compile time
-// Not sure about running it purely using node tho....
 // However, doing this prevents jest from properly mocking the import() call, so in tests we need to use the actual import call
 const rawImporter: (p: string) => Promise<{ default: (prov: RequireProvider) => any }> =
   process.env.NODE_ENV !== 'test'
@@ -54,25 +56,54 @@ const rawDocsImporter: (p: string) => Promise<{ default: Record<string, any> }> 
     ? // TODO: Change when import attributes become supported
       (new Function('path', 'return import(path, { assert: { type: "json" } })') as any)
     : p => import(p)
-
 const docsImporter = wrapImporter(rawDocsImporter)
 
-export const memoizedGetModuleDocsAsync = memoize(getModuleDocsAsync)
-async function getModuleDocsAsync(moduleName: string): Promise<ModuleDocumentation | null> {
-  try {
-    const { default: result } = await docsImporter(`${MODULES_STATIC_URL}/jsons/${moduleName}.json`)
-    return result as ModuleDocumentation
-  } catch (error) {
-    console.warn(`Failed to load documentation for ${moduleName}:`, error)
-    return null
-  }
-}
+// By default, lodash's memoize will just memoize errors. We use custom
+// memoizers that won't memoize errors
+function createDocsGetter() {
+  const memoizedDocs: Map<string, ModuleDocumentation> = new Map()
 
-export const memoizedGetModuleManifestAsync = memoize(getModuleManifestAsync)
-async function getModuleManifestAsync(): Promise<ModuleManifest> {
-  const { default: result } = await docsImporter(`${MODULES_STATIC_URL}/modules.json`)
-  return result as ModuleManifest
+  const func = async (moduleName: string, throwOnError: boolean = false) => {
+    if (!memoizedDocs.has(moduleName)) {
+      try {
+        const { default: result } = await docsImporter(
+          `${MODULES_STATIC_URL}/jsons/${moduleName}.json`
+        )
+        memoizedDocs.set(moduleName, result)
+      } catch (error) {
+        if (throwOnError) throw error
+
+        console.warn(`Failed to load documentation for ${moduleName}:`, error)
+        return null
+      }
+    }
+
+    return memoizedDocs.get(moduleName)!
+  }
+
+  func.cache = memoizedDocs
+  return func
 }
+export const memoizedGetModuleDocsAsync = createDocsGetter()
+
+function createManifestGetter() {
+  let memoizedManifest: ModuleManifest | null = null
+
+  const func = async () => {
+    if (memoizedManifest === null) {
+      ;({ default: memoizedManifest } = await docsImporter(`${MODULES_STATIC_URL}/modules.json`))
+    }
+
+    return memoizedManifest
+  }
+
+  func.reset = () => {
+    memoizedManifest = null
+  }
+
+  return func
+}
+export const memoizedGetModuleManifestAsync = createManifestGetter()
 
 export const sourceModuleObject = Symbol()
 

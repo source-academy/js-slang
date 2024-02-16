@@ -2,6 +2,7 @@ node_modules
 *.js
 !docs/jsdoc/templates/**/*.js
 !docs/lib/**/*.js
+!src/modules/loader/__tests__/testResolver.js
 *.map
 dist/
 .idea/

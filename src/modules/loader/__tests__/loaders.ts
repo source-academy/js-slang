@@ -10,8 +10,16 @@ jest.mock('lodash', () => ({
 
 const moduleMocker = jest.fn()
 
+beforeAll(() => {
+  moduleLoader.setModulesStaticURL('mockModules')
+})
+
+// Using virtual modules, we can pretend the modules with the given
+// import path actually exist
+// When testing the import loader we can generally rely on the mocked versions
+// under __mocks__ instead.
 jest.mock(
-  `${jest.requireActual('../loaders').MODULES_STATIC_URL}/bundles/one_module.js`,
+  'mockModules/bundles/one_module.js',
   () => ({
     default: moduleMocker
   }),
@@ -19,7 +27,7 @@ jest.mock(
 )
 
 jest.mock(
-  `${jest.requireActual('../loaders').MODULES_STATIC_URL}/modules.json`,
+  `mockModules/modules.json`,
   () => ({
     default: {
       one_module: { tabs: ['tab1', 'tab2'] }
@@ -29,7 +37,7 @@ jest.mock(
 )
 
 jest.mock(
-  `${jest.requireActual('../loaders').MODULES_STATIC_URL}/tabs/tab1.js`,
+  `mockModules/tabs/tab1.js`,
   () => ({
     default: () => 'tab1'
   }),
@@ -37,7 +45,7 @@ jest.mock(
 )
 
 jest.mock(
-  `${jest.requireActual('../loaders').MODULES_STATIC_URL}/tabs/tab2.js`,
+  `mockModules/tabs/tab2.js`,
   () => ({
     default: () => 'tab2'
   }),
