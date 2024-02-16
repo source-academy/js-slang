@@ -1,4 +1,4 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { runInContext } from '../..'
 import createContext from '../../createContext'

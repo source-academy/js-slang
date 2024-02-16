@@ -10,10 +10,6 @@ jest.mock('lodash', () => ({
 
 const moduleMocker = jest.fn()
 
-beforeAll(() => {
-  moduleLoader.setModulesStaticURL('mockModules')
-})
-
 // Using virtual modules, we can pretend the modules with the given
 // import path actually exist
 // When testing the import loader we can generally rely on the mocked versions
