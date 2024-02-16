@@ -2,8 +2,8 @@ import { mockContext } from '../../../mocks/context'
 import { Chapter, Variant } from '../../../types'
 import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
 import * as moduleLoader from '../loaders'
-import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes';
-import { funcAsMockedFunc } from '../../../utils/testing';
+import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
+import { funcAsMockedFunc } from '../../../utils/testing'
 
 const moduleMocker = jest.fn()
 
@@ -144,7 +144,7 @@ describe('docs loading', () => {
     beforeEach(() => {
       moduleLoader.memoizedGetModuleDocsAsync.cache.clear()
     })
-    
+
     test('docs are memoized on success', async () => {
       const mockDocs: ModuleDocumentation = {
         foo: 'foo'
@@ -154,7 +154,6 @@ describe('docs loading', () => {
       const docs = await moduleLoader.memoizedGetModuleDocsAsync('one_module')
       expect(docs).toMatchObject(mockDocs)
 
-
       const docs2 = await moduleLoader.memoizedGetModuleDocsAsync('one_module')
       expect(docs2).toMatchObject(mockDocs)
 
@@ -162,7 +161,6 @@ describe('docs loading', () => {
 
       const docs3 = await moduleLoader.memoizedGetModuleDocsAsync('another_module')
       expect(docs3).toMatchObject(mockDocs)
-
 
       const docs4 = await moduleLoader.memoizedGetModuleDocsAsync('another_module')
       expect(docs4).toMatchObject(mockDocs)
