@@ -62,7 +62,7 @@ export interface Comment {
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'ec-evaluator'
 
-export enum Chapter {
+export const enum Chapter {
   SOURCE_1 = 1,
   SOURCE_2 = 2,
   SOURCE_3 = 3,
@@ -80,6 +80,7 @@ export enum Chapter {
   SCHEME_3 = -11,
   SCHEME_4 = -12,
   FULL_SCHEME = -13,
+  FULL_C = -14,
   LIBRARY_PARSER = 100
 }
 
