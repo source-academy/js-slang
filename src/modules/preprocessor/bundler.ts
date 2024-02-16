@@ -1,12 +1,12 @@
 import type es from 'estree'
-import { posix as posixPath } from 'path'
 
 import type { Context } from '../..'
 import assert from '../../utils/assert'
 import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { isIdentifier, isImportDeclaration, isModuleDeclaration } from '../../utils/ast/typeGuards'
 import { mapAndFilter } from '../../utils/misc'
-import { isSourceModule } from '../utils'
+import type { AbsolutePath } from '../moduleTypes'
+import { isSourceModule, resolvePath } from '../utils'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import {
   transformFilePathToValidFunctionName,
@@ -31,22 +31,22 @@ const getSourceModuleImports = (programs: Record<string, es.Program>): es.Import
   })
 }
 
+/**
+ * A function that when, given the topological ordering of some programs,
+ * bundles them into a single program
+ */
 export type Bundler = (
-  programs: Record<string, es.Program>,
-  entrypointFilePath: string,
-  topoOrder: string[],
+  programs: Record<AbsolutePath, es.Program>,
+  entrypointFilePath: AbsolutePath,
+  topoOrder: AbsolutePath[],
   context: Context
 ) => es.Program
 
-const defaultBundler: Bundler = (
-  programs: Record<string, es.Program>,
-  entrypointFilePath: string,
-  topoOrder: string[]
-) => {
+const defaultBundler: Bundler = (programs, entrypointFilePath, topoOrder) => {
   // We want to operate on the entrypoint program to get the eventual
   // preprocessed program.
   const entrypointProgram = programs[entrypointFilePath]
-  const entrypointDirPath = posixPath.resolve(entrypointFilePath, '..')
+  const entrypointDirPath = resolvePath(entrypointFilePath, '..')
 
   // Create variables to hold the imported statements.
   const entrypointProgramModuleDeclarations = entrypointProgram.body.filter(isModuleDeclaration)

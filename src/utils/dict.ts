@@ -38,6 +38,10 @@ export default class Dict<K, V> {
     return this.get(key)!
   }
 
+  /**
+   * Updates the value of the given key with the given function. If
+   * the key does not exist in the dict, then `defaultVal` is used.
+   */
   public update(key: K, defaultVal: V, updater: (oldV: V) => V) {
     const value = this.setdefault(key, defaultVal)
     const newValue = updater(value)

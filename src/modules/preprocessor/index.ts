@@ -1,13 +1,13 @@
 import type { Context, IOptions } from '../..'
 import type { RecursivePartial } from '../../types'
 import loadSourceModules from '../loader'
-import type { AbsolutePath, FileGetter } from '../moduleTypes'
+import type { AbsolutePath, FileGetter, SourceFiles } from '../moduleTypes'
 import analyzeImportsAndExports from './analyzer'
 import bundlePrograms, { type Bundler } from './bundler'
 import parseProgramsAndConstructImportGraph from './linker'
 
 export default async function preprocessFileImports(
-  files: FileGetter | Record<string, string>,
+  files: FileGetter | SourceFiles,
   context: Context,
   entrypointFilePath: AbsolutePath,
   options: RecursivePartial<IOptions> = {},
