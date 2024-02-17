@@ -42,10 +42,7 @@ async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: key
   ]
 }
 
-async function expectError<T extends SourceFiles>(
-  files: T,
-  entrypointFilePath: keyof T
-) {
+async function expectError<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
   const [context, result] = await testCode(files, entrypointFilePath)
   expectResultFailure(result)
   expect(context.errors.length).toBeGreaterThanOrEqual(1)
@@ -58,7 +55,6 @@ async function expectSuccess<T extends SourceFiles>(files: T, entrypointFilePath
   expect(context.errors.length).toBeGreaterThanOrEqual(0)
   return result
 }
-
 
 test('Adds CircularImportError and returns undefined when imports are circular', async () => {
   const [[error]] = await expectError(
@@ -164,36 +160,45 @@ describe('Check verbose error detection', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
-  test('with file that doesn\'t have verbose errors', async () => {
-    const result = await expectSuccess({
-      '/a.js': `
+  test("with file that doesn't have verbose errors", async () => {
+    const result = await expectSuccess(
+      {
+        '/a.js': `
         1 + 1;
       `
-    }, '/a.js')
+      },
+      '/a.js'
+    )
 
     expect(result.isVerboseErrorsEnabled).toEqual(false)
     expect(parser.parse).toHaveBeenCalledTimes(1)
   })
 
   it('outputs as per normal with files that have no errors', async () => {
-    const result = await expectSuccess({
-      '/a.js': `
+    const result = await expectSuccess(
+      {
+        '/a.js': `
         'enable verbose';
         1 + 1;
       `
-    }, '/a.js')
+      },
+      '/a.js'
+    )
 
     expect(result.isVerboseErrorsEnabled).toEqual(true)
     expect(parser.parse).toHaveBeenCalledTimes(1)
   })
 
   it('outputs even if entrypoint file has syntax errors', async () => {
-    const [[error], result] = await expectError({
-      '/a.js': `
+    const [[error], result] = await expectError(
+      {
+        '/a.js': `
         'enable verbose';
         1 + 1
       `
-    }, '/a.js')
+      },
+      '/a.js'
+    )
 
     expect(error).toBeInstanceOf(MissingSemicolonError)
     expect(parser.parse).toHaveBeenCalledTimes(1)
@@ -201,13 +206,16 @@ describe('Check verbose error detection', () => {
   })
 
   it('outputs even if other files have errors', async () => {
-    const [[error], result] = await expectError({
-      '/a.js': `
+    const [[error], result] = await expectError(
+      {
+        '/a.js': `
         'enable verbose';
         import { b } from './b.js';
       `,
-      '/b.js': 'export const b = 1 + 1'
-    }, '/a.js')
+        '/b.js': 'export const b = 1 + 1'
+      },
+      '/a.js'
+    )
 
     expect(error).toBeInstanceOf(MissingSemicolonError)
     expect(parser.parse).toHaveBeenCalledTimes(2)

@@ -12,7 +12,7 @@ const resolveModule = (
   toPath: string,
   pred: (p: string) => boolean,
   options: ImportResolutionOptions
-) => resolveFile(fromPath, toPath, p => Promise.resolve(pred(p)), options)
+) => resolveFile(fromPath, toPath, p => Promise.resolve(pred(p) ? '' : undefined), options)
 
 test('If only local imports are used, the module manifest is not loaded', async () => {
   await resolveModule('/a.js', '/b.js', () => true, defaultResolutionOptions)

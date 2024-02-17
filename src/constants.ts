@@ -52,7 +52,9 @@ export const scmLanguages = [
 ] satisfies Language[]
 export type SchemeLanguage = (typeof scmLanguages)[number]
 
-export const pyLanguages = [{ chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT }] satisfies Language[]
+export const pyLanguages = [
+  { chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT }
+] satisfies Language[]
 export type PythonLanguage = (typeof pyLanguages)[number]
 
 export type ValidLanguage = SourceLanguage | SchemeLanguage | PythonLanguage

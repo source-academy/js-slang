@@ -307,5 +307,3 @@ export async function compileFiles(
 }
 
 export { createContext, Context, ModuleContext, Result, setBreakpointAtLine, assemble }
-
-export { astToString } from './utils/ast/astToString'

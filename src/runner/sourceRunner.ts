@@ -338,7 +338,7 @@ function determineExecutionMethod(
       console.warn(
         `Chapter given as ${chapterName}, which requires execution method ${method}, but execution method was given as ${specifiedExecMethod}, ignoring...`
       )
-    } 
+    }
     return `Chapter given as ${chapterName}, using ${method}`
   }
 
@@ -414,7 +414,8 @@ export async function runFilesInSource(
   const theOptions = _.merge({ ...DEFAULT_SOURCE_OPTIONS }, options)
   context.variant = determineVariant(context, options)
 
-  const getter: FileGetter = typeof fileGetter === 'function' ? fileGetter : p => Promise.resolve(fileGetter[p])
+  const getter: FileGetter =
+    typeof fileGetter === 'function' ? fileGetter : p => Promise.resolve(fileGetter[p])
 
   if (context.chapter === Chapter.HTML) {
     const entrypointCode = await getter(entrypointFilePath)
@@ -431,7 +432,8 @@ export async function runFilesInSource(
     entrypointFilePath,
     context,
     theOptions.importOptions,
-    options.shouldAddFileName ?? (typeof fileGetter === 'function' || Object.keys(fileGetter).length > 1)
+    options.shouldAddFileName ??
+      (typeof fileGetter === 'function' || Object.keys(fileGetter).length > 1)
   )
 
   if (context.verboseErrors === null) {
@@ -462,107 +464,3 @@ export async function runFilesInSource(
   const runner = runners[execMethod]
   return runner(linkerResult, entrypointFilePath, context, theOptions)
 }
-
-// export async function sourceRunner(
-//   program: es.Program,
-//   context: Context,
-//   isVerboseErrorsEnabled: boolean,
-//   options: RecursivePartial<IOptions> = {}
-// ): Promise<Result> {
-//   // It is necessary to make a copy of the DEFAULT_SOURCE_OPTIONS object because merge()
-//   // will modify it rather than create a new object
-//   const theOptions = _.merge({ ...DEFAULT_SOURCE_OPTIONS }, options)
-//   context.variant = determineVariant(context, options)
-
-//   validateAndAnnotate(program, context)
-//   if (context.errors.length > 0) {
-//     return resolvedErrorPromise
-//   }
-
-//   if (context.variant === Variant.CONCURRENT) {
-//     return runConcurrent(program, context, theOptions)
-//   }
-
-//   if (theOptions.useSubst) {
-//     return runSubstitution(program, context, theOptions)
-//   }
-
-//   determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
-
-//   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-//     return await fullJSRunner(program, context, theOptions)
-//   }
-
-//   // All runners after this point evaluate the prelude.
-//   if (context.prelude !== null) {
-//     context.unTypecheckedCode.push(context.prelude)
-//     const prelude = parse(context.prelude, context)
-//     if (prelude === null) {
-//       return resolvedErrorPromise
-//     }
-//     context.prelude = null
-//     await sourceRunner(prelude, context, isVerboseErrorsEnabled, { ...options, isPrelude: true })
-//     return sourceRunner(program, context, isVerboseErrorsEnabled, options)
-//   }
-
-//   if (context.variant === Variant.EXPLICIT_CONTROL) {
-//     return runCSEMachine(program, context, theOptions)
-//   }
-
-//   if (context.executionMethod === 'cse-machine') {
-//     if (options.isPrelude) {
-//       return runCSEMachine(
-//         program,
-//         { ...context, runtime: { ...context.runtime, debuggerOn: false } },
-//         theOptions
-//       )
-//     }
-//     return runCSEMachine(program, context, theOptions)
-//   }
-
-//   if (context.executionMethod === 'native') {
-//     return runNative(program, context, theOptions)
-//   }
-
-//   return runInterpreter(program!, context, theOptions)
-// }
-
-// export async function sourceFilesRunner(
-//   files: SourceFiles,
-//   entrypointFilePath: AbsolutePath,
-//   context: Context,
-//   options: RecursivePartial<IOptions> = {}
-// ): Promise<Result> {
-//   const entrypointCode = files[entrypointFilePath]
-//   if (entrypointCode === undefined) {
-//     context.errors.push(new ModuleNotFoundError(entrypointFilePath))
-//     return resolvedErrorPromise
-//   }
-
-//   const isVerboseErrorsEnabled = hasVerboseErrors(entrypointCode)
-
-//   context.variant = determineVariant(context, options)
-
-//   context.unTypecheckedCode.push(entrypointCode)
-
-//   const currentCode = {
-//     files,
-//     entrypointFilePath
-//   }
-//   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
-//   previousCode = currentCode
-
-//   const preprocessedProgram = await preprocessFileImports(
-//     files,
-//     context,
-//     entrypointFilePath,
-//     options
-//   )
-//   if (!preprocessedProgram) {
-//     return resolvedErrorPromise
-//   }
-
-//   context.previousPrograms.unshift(preprocessedProgram)
-
-//   return sourceRunner(preprocessedProgram, context, isVerboseErrorsEnabled, options)
-// }
