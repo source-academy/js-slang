@@ -8,10 +8,8 @@ import { looseParse } from './parser/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
-  Chapter,
   Context,
   Error as ResultError,
-  ExecutionMethod,
   Finished,
   ModuleContext,
   RecursivePartial,
@@ -27,27 +25,18 @@ import type es from 'estree'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { ModuleNotFoundError } from './modules/errors'
-import type { ImportOptions } from './modules/moduleTypes'
+import type { ImportOptions, SourceFiles } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { isAbsolutePath } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
-import { parse } from './parser/parser'
-import { decodeError, decodeValue } from './parser/scheme'
 import { parseWithComments } from './parser/utils'
-import {
-  fullJSRunner,
-  hasVerboseErrors,
-  htmlRunner,
-  resolvedErrorPromise,
-  sourceFilesRunner
-} from './runner'
+import { resolvedErrorPromise, runFilesInSource, type AllExecutionMethods } from './runner'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
   stepLimit: number
-  executionMethod: ExecutionMethod
   variant: Variant
   originalMaxExecTime: number
   useSubst: boolean
@@ -66,6 +55,10 @@ export interface IOptions {
   shouldAddFileName: boolean | null
 
   logTranspilerOutput: boolean
+}
+
+export interface IOptionsWithExecMethod extends IOptions {
+  executionMethod: AllExecutionMethods
 }
 
 // needed to work on browsers
@@ -216,11 +209,12 @@ export async function getNames(
 export async function runInContext(
   code: string,
   context: Context,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<IOptionsWithExecMethod> = {}
 ): Promise<Result> {
   const defaultFilePath = '/default.js'
-  const files: Record<string, string> = {}
-  files[defaultFilePath] = code
+  const files: SourceFiles = {
+    [defaultFilePath]: code
+  }
   return runFilesInContext(files, defaultFilePath, context, options)
 }
 
@@ -228,7 +222,7 @@ export async function runFilesInContext(
   files: Record<string, string>,
   entrypointFilePath: string,
   context: Context,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<IOptionsWithExecMethod> = {}
 ): Promise<Result> {
   for (const filePath in files) {
     const filePathError = validateFilePath(filePath)
@@ -248,51 +242,7 @@ export async function runFilesInContext(
     return resolvedErrorPromise
   }
 
-  if (
-    context.chapter === Chapter.FULL_JS ||
-    context.chapter === Chapter.FULL_TS ||
-    context.chapter === Chapter.PYTHON_1
-  ) {
-    const program = parse(code, context)
-    if (program === null) {
-      return resolvedErrorPromise
-    }
-
-    return fullJSRunner(program, context, options)
-  }
-
-  if (context.chapter === Chapter.HTML) {
-    return htmlRunner(code, context, options)
-  }
-
-  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
-    // If the language is scheme, we need to format all errors and returned values first
-    // Use the standard runner to get the result
-    const evaluated: Promise<Result> = sourceFilesRunner(
-      files,
-      entrypointFilePath,
-      context,
-      options
-    ).then(result => {
-      // Format the returned value
-      if (result.status === 'finished') {
-        return {
-          ...result,
-          value: decodeValue(result.value)
-        } as Finished
-      }
-      return result
-    })
-    // Format all errors in the context
-    context.errors = context.errors.map(error => decodeError(error))
-    return evaluated
-  }
-
-  // FIXME: Clean up state management so that the `parseError` function is pure.
-  //        This is not a huge priority, but it would be good not to make use of
-  //        global state.
-  verboseErrors = hasVerboseErrors(code)
-  return sourceFilesRunner(files, entrypointFilePath, context, options)
+  return runFilesInSource(p => Promise.resolve(files[p]), entrypointFilePath, context, options)
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {

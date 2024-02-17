@@ -3,13 +3,14 @@ import { start } from 'repl' // 'repl' here refers to the module named 'repl' in
 import { inspect } from 'util'
 
 import { pyLanguages, scmLanguages, sourceLanguages } from '../constants'
-import { createContext, IOptions, parseError, runInContext } from '../index'
+import { createContext, parseError, runInContext, type IOptionsWithExecMethod } from '../index'
 import Closure from '../interpreter/closure'
-import { ExecutionMethod, Variant } from '../types'
+import { Variant } from '../types'
+import type { AllExecutionMethods } from '../runner'
 
 function startRepl(
   chapter = 1,
-  executionMethod: ExecutionMethod = 'interpreter',
+  executionMethod: AllExecutionMethods = 'interpreter',
   variant: Variant = Variant.DEFAULT,
   useSubst: boolean = false,
   useRepl: boolean,
@@ -17,7 +18,7 @@ function startRepl(
 ) {
   // use defaults for everything
   const context = createContext(chapter, variant, undefined, undefined)
-  const options: Partial<IOptions> = {
+  const options: Partial<IOptionsWithExecMethod> = {
     scheduler: 'preemptive',
     executionMethod,
     variant,

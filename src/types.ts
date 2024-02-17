@@ -11,6 +11,7 @@ import * as es from 'estree'
 import { EnvTree } from './createContext'
 import { Control, Stash } from './cse-machine/interpreter'
 import { ModuleBundle } from './modules/moduleTypes'
+import type { AllExecutionMethods } from './runner'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -62,7 +63,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
+// export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
 
 export enum Chapter {
   SOURCE_1 = 1,
@@ -186,7 +187,7 @@ export interface Context<T = any> {
   /**
    * Describes the language processor to be used for evaluation
    */
-  executionMethod: ExecutionMethod
+  executionMethod: AllExecutionMethods
 
   /**
    * Describes the strategy / paradigm to be used for evaluation
@@ -349,7 +350,7 @@ export type TSAllowedTypes = 'any' | 'void'
 
 export const disallowedTypes = ['bigint', 'never', 'object', 'symbol', 'unknown'] as const
 
-export type TSDisallowedTypes = typeof disallowedTypes[number]
+export type TSDisallowedTypes = (typeof disallowedTypes)[number]
 
 // All types recognised by type parser as basic types
 export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes
@@ -486,10 +487,11 @@ export type TypeEnvironment = {
  * By default, `Partial<Array<T>>` is equivalent to `Array<T | undefined>`. For this type, `Array<T>` will be
  * transformed to Array<Partial<T>> instead
  */
-export type RecursivePartial<T> = T extends Array<any>
-  ? Array<RecursivePartial<T[number]>>
-  : T extends Record<any, any>
-  ? Partial<{
-      [K in keyof T]: RecursivePartial<T[K]>
-    }>
-  : T
+export type RecursivePartial<T> =
+  T extends Array<any>
+    ? Array<RecursivePartial<T[number]>>
+    : T extends Record<any, any>
+      ? Partial<{
+          [K in keyof T]: RecursivePartial<T[K]>
+        }>
+      : T

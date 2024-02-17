@@ -3,7 +3,15 @@ import * as repl from 'repl' // 'repl' here refers to the module named 'repl' in
 import { inspect } from 'util'
 
 import { CUT, TRY_AGAIN } from '../constants'
-import { createContext, IOptions, parseError, Result, resume, runInContext } from '../index'
+import {
+  createContext,
+  IOptions,
+  parseError,
+  Result,
+  resume,
+  runInContext,
+  type IOptionsWithExecMethod
+} from '../index'
 import Closure from '../interpreter/closure'
 import { Chapter, Context, SuspendedNonDet, Variant } from '../types'
 
@@ -81,7 +89,7 @@ function _run(
 function _startRepl(chapter: Chapter = Chapter.SOURCE_1, useSubst: boolean, prelude = '') {
   // use defaults for everything
   const context = createContext(chapter, Variant.NON_DET)
-  const options: Partial<IOptions> = {
+  const options: Partial<IOptionsWithExecMethod> = {
     executionMethod: 'interpreter',
     useSubst
   }

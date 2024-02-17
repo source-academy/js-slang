@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { DebuggerStatement, Literal, Program } from 'estree'
+import { Literal } from 'estree'
 
 import { IOptions, Result } from '..'
 import { parseAt } from '../parser/utils'
-import { areBreakpointsSet } from '../stdlib/inspector'
 import { Context, RecursivePartial, Variant } from '../types'
-import { simple } from '../utils/walkers'
 
 // Context Utils
 
@@ -29,57 +27,57 @@ export function determineVariant(context: Context, options: RecursivePartial<IOp
   }
 }
 
-export function determineExecutionMethod(
-  theOptions: IOptions,
-  context: Context,
-  program: Program,
-  verboseErrors: boolean
-): void {
-  if (theOptions.executionMethod !== 'auto') {
-    context.executionMethod = theOptions.executionMethod
-    return
-  }
+// export function determineExecutionMethod(
+//   theOptions: IOptions,
+//   context: Context,
+//   program: Program,
+//   verboseErrors: boolean
+// ): void {
+//   if (theOptions.executionMethod !== 'auto') {
+//     context.executionMethod = theOptions.executionMethod
+//     return
+//   }
 
-  if (context.executionMethod !== 'auto') {
-    return
-  }
+//   if (context.executionMethod !== 'auto') {
+//     return
+//   }
 
-  let isNativeRunnable
-  if (verboseErrors) {
-    isNativeRunnable = false
-  } else if (areBreakpointsSet()) {
-    isNativeRunnable = false
-  } else if (theOptions.executionMethod === 'auto') {
-    if (context.executionMethod === 'auto') {
-      if (verboseErrors) {
-        isNativeRunnable = false
-      } else if (areBreakpointsSet()) {
-        isNativeRunnable = false
-      } else {
-        let hasDebuggerStatement = false
-        simple(program, {
-          DebuggerStatement(node: DebuggerStatement) {
-            hasDebuggerStatement = true
-          }
-        })
-        isNativeRunnable = !hasDebuggerStatement
-      }
-      context.executionMethod = isNativeRunnable ? 'native' : 'cse-machine'
-    } else {
-      isNativeRunnable = context.executionMethod === 'native'
-    }
-  } else {
-    let hasDebuggerStatement = false
-    simple(program, {
-      DebuggerStatement(_node: DebuggerStatement) {
-        hasDebuggerStatement = true
-      }
-    })
-    isNativeRunnable = !hasDebuggerStatement
-  }
+//   let isNativeRunnable
+//   if (verboseErrors) {
+//     isNativeRunnable = false
+//   } else if (areBreakpointsSet()) {
+//     isNativeRunnable = false
+//   } else if (theOptions.executionMethod === 'auto') {
+//     if (context.executionMethod === 'auto') {
+//       if (verboseErrors) {
+//         isNativeRunnable = false
+//       } else if (areBreakpointsSet()) {
+//         isNativeRunnable = false
+//       } else {
+//         let hasDebuggerStatement = false
+//         simple(program, {
+//           DebuggerStatement(node: DebuggerStatement) {
+//             hasDebuggerStatement = true
+//           }
+//         })
+//         isNativeRunnable = !hasDebuggerStatement
+//       }
+//       context.executionMethod = isNativeRunnable ? 'native' : 'cse-machine'
+//     } else {
+//       isNativeRunnable = context.executionMethod === 'native'
+//     }
+//   } else {
+//     let hasDebuggerStatement = false
+//     simple(program, {
+//       DebuggerStatement(_node: DebuggerStatement) {
+//         hasDebuggerStatement = true
+//       }
+//     })
+//     isNativeRunnable = !hasDebuggerStatement
+//   }
 
-  context.executionMethod = isNativeRunnable ? 'native' : 'cse-machine'
-}
+//   context.executionMethod = isNativeRunnable ? 'native' : 'cse-machine'
+// }
 
 // AST Utils
 
