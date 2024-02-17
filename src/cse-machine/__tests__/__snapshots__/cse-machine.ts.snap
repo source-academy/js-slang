@@ -97,6 +97,19 @@ fact(5);",
 }
 `;
 
+exports[`Environment reset is inserted when only instructions are in control stack: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = (v => v)(0);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Imports are properly handled: expectResult 1`] = `
 Object {
   "alertResult": Array [],
