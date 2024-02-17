@@ -105,7 +105,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       alertResult: context.alertResult,
       visualiseListResult: context.visualiseListResult,
       numErrors: context.errors.length,
-      parsedErrors: parseError(context.errors),
+      parsedErrors: parseError(context),
       resultStatus: result.status,
       result: result.status === 'finished' ? result.value : undefined
     }
@@ -365,7 +365,7 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   const timeTaken = Date.now() - start
   expect(timeTaken).toBeLessThan(timeout * 5)
   expect(timeTaken).toBeGreaterThanOrEqual(timeout)
-  return parseError(context.errors)
+  return parseError(context)
 }
 
 export function funcAsMockedFunc<T extends (...args: any[]) => any>(func: T) {

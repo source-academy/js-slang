@@ -8,15 +8,15 @@ import { looseParse } from './parser/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
-  Context,
-  Error as ResultError,
-  Finished,
-  ModuleContext,
-  RecursivePartial,
-  Result,
-  SourceError,
-  SVMProgram,
-  Variant
+  type Context,
+  type Error as ResultError,
+  type Finished,
+  type ModuleContext,
+  type RecursivePartial,
+  type Result,
+  type SVMProgram,
+  Variant,
+  type SourceError
 } from './types'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
@@ -24,10 +24,10 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 import type es from 'estree'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
-import { ModuleNotFoundError } from './modules/errors'
+import { AbsoluteFilePathError, ModuleNotFoundError } from './modules/errors'
 import type { ImportOptions, SourceFiles } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
-import { validateFilePath } from './modules/preprocessor/filePaths'
+import { validateFilePaths } from './modules/preprocessor/filePaths'
 import { isAbsolutePath } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parseWithComments } from './parser/utils'
@@ -40,7 +40,7 @@ export interface IOptions {
   variant: Variant
   originalMaxExecTime: number
   useSubst: boolean
-  isPrelude: boolean
+  // isPrelude: boolean
   throwInfiniteLoops: boolean
   envSteps: number
 
@@ -55,6 +55,7 @@ export interface IOptions {
   shouldAddFileName: boolean | null
 
   logTranspilerOutput: boolean
+  auditExecutionMethod: boolean
 }
 
 export interface IOptionsWithExecMethod extends IOptions {
@@ -69,9 +70,12 @@ if (typeof window !== 'undefined') {
   })
 }
 
-let verboseErrors: boolean = false
+export function parseError(context: Context): string
+export function parseError(errors: SourceError[], verboseErrors?: boolean): string
+export function parseError(arg: Context | SourceError[], verboseErrors?: boolean): string {
+  const errors = Array.isArray(arg) ? arg : arg.errors
+  const verbose = Array.isArray(arg) ? verboseErrors : arg.verboseErrors
 
-export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
     // FIXME: Either refactor the parser to output an ESTree-compliant AST, or modify the ESTree types.
     const filePath = error.location?.source ? `[${error.location.source}] ` : ''
@@ -224,25 +228,18 @@ export async function runFilesInContext(
   context: Context,
   options: RecursivePartial<IOptionsWithExecMethod> = {}
 ): Promise<Result> {
-  for (const filePath in files) {
-    const filePathError = validateFilePath(filePath)
-    if (filePathError !== null) {
-      context.errors.push(filePathError)
-      return resolvedErrorPromise
-    }
-  }
-
-  if (!isAbsolutePath(entrypointFilePath)) {
-    throw new Error('Entrypoint file path must be absolute!')
-  }
-
-  const code = files[entrypointFilePath]
-  if (code === undefined) {
-    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
+  try {
+    validateFilePaths(files)
+  } catch (filePathError) {
+    context.errors.push(filePathError)
     return resolvedErrorPromise
   }
 
-  return runFilesInSource(p => Promise.resolve(files[p]), entrypointFilePath, context, options)
+  if (!isAbsolutePath(entrypointFilePath)) {
+    throw new AbsoluteFilePathError(entrypointFilePath)
+  }
+
+  return runFilesInSource(files, entrypointFilePath, context, options)
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
@@ -280,12 +277,11 @@ export async function compileFiles(
   context: Context,
   vmInternalFunctions?: string[]
 ): Promise<SVMProgram | undefined> {
-  for (const filePath in files) {
-    const filePathError = validateFilePath(filePath)
-    if (filePathError !== null) {
-      context.errors.push(filePathError)
-      return undefined
-    }
+  try {
+    validateFilePaths(files)
+  } catch (filePathError) {
+    context.errors.push(filePathError)
+    return undefined
   }
 
   const entrypointCode = files[entrypointFilePath]

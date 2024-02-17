@@ -165,7 +165,8 @@ export const createEmptyContext = <T>(
     typeEnvironment: createTypeEnvironment(chapter),
     previousPrograms: [],
     shouldIncreaseEvaluationTimeout: false,
-    isPreviousCodeTimeoutError: false
+    isPreviousCodeTimeoutError: false,
+    verboseErrors: null
   }
 }
 

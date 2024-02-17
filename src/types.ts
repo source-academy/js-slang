@@ -217,6 +217,8 @@ export interface Context<T = any> {
    * Whether the evaluation timeout should be increased
    */
   shouldIncreaseEvaluationTimeout: boolean
+
+  verboseErrors: boolean | null
 }
 
 export type ModuleContext = {
