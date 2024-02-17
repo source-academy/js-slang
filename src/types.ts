@@ -10,7 +10,7 @@ import * as es from 'estree'
 
 import { EnvTree } from './createContext'
 import { Control, Stash } from './cse-machine/interpreter'
-import { ModuleBundle } from './modules/moduleTypes'
+import { ModuleBundle, type AbsolutePath, type SourceFiles } from './modules/moduleTypes'
 import type { AllExecutionMethods } from './runner'
 
 /**
@@ -213,10 +213,10 @@ export interface Context<T = any> {
    */
   previousPrograms: es.Program[]
 
-  /**
-   * Whether the evaluation timeout should be increased
-   */
-  shouldIncreaseEvaluationTimeout: boolean
+  previousCode: {
+    entrypointFilePath: AbsolutePath
+    files: SourceFiles
+  } | null
 
   verboseErrors: boolean | null
 }
