@@ -17,11 +17,11 @@ const wrapImporter =
   <T>(importer: Importer<T>, timeout: number = 10000): Importer<T> =>
   async p => {
     try {
-      // We add an arbitrary query parameter to the import URL so that the import cache
-      // is always invalidated, allowing us to handle the memoization on our side
-      const result = await timeoutPromise(importer(`${p}?q=${Date.now()}`), timeout)
+      const result = await timeoutPromise(importer(p), timeout)
       return result
     } catch (error) {
+      console.error(error)
+
       // Before calling this function, the import analyzer should've been used to make sure
       // that the module being imported already exists, so the following errors should
       // be thrown only if the modules server is unreachable
@@ -31,7 +31,6 @@ const wrapImporter =
         error instanceof TypeError ||
         // In Node a different error is thrown with the given code instead
         error.code === 'MODULE_NOT_FOUND' ||
-        // Thrown specifically by jest
         error.code === 'ENOENT'
       ) {
         throw new ModuleConnectionError()
@@ -45,7 +44,9 @@ const wrapImporter =
 // However, doing this prevents jest from properly mocking the import() call, so in tests we need to use the actual import call
 const rawImporter: (p: string) => Promise<{ default: (prov: RequireProvider) => any }> =
   process.env.NODE_ENV !== 'test'
-    ? (new Function('path', 'return import(path)') as any)
+    ? // We add an arbitrary query parameter to the import URL so that the import cache
+      // is always invalidated, allowing us to handle the memoization on our side
+      (new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any)
     : p => import(p)
 const importer = wrapImporter(rawImporter)
 
@@ -54,8 +55,20 @@ const importer = wrapImporter(rawImporter)
 const rawDocsImporter: (p: string) => Promise<{ default: Record<string, any> }> =
   typeof window !== 'undefined' && process.env.NODE_ENV !== 'test'
     ? // TODO: Change when import attributes become supported
-      (new Function('path', 'return import(path, { assert: { type: "json" } })') as any)
-    : p => import(p)
+      (new Function(
+        'path',
+        'return import(`${path}?q=${Date.now()}`, { assert: { type: "json" } })'
+      ) as any)
+    : async p => {
+      // Unfortunately node is way too inconsistent in handling how
+      // json files get imported, so we just have to fallback to using
+      // fetch
+      const resp = await fetch(p)
+      return {
+        default: await resp.json()
+      }
+    }
+        
 // Exported for testing
 export const docsImporter = wrapImporter(rawDocsImporter)
 
@@ -133,8 +146,17 @@ export async function loadModuleBundleAsync(moduleName: string, context: Context
   try {
     const bundle: Record<string, any> = bundleFunc(getRequireProvider(context))
 
-    for (const value of Object.values(bundle)) {
+    for (const [name, value] of Object.entries(bundle)) {
       value[sourceModuleObject] = true
+
+      if (typeof value === 'function') {
+        const repr = `function ${name} {
+          [Function from ${moduleName}] module
+          Implementation hidden
+        }`
+
+        value.toString = () => repr;
+      }
     }
 
     return bundle

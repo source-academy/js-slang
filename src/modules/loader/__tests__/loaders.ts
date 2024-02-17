@@ -20,16 +20,6 @@ jest.mock(
 )
 
 jest.mock(
-  `mockModules/modules.json`,
-  () => ({
-    default: {
-      one_module: { tabs: ['tab1', 'tab2'] }
-    }
-  }),
-  { virtual: true }
-)
-
-jest.mock(
   `mockModules/tabs/tab1.js`,
   () => ({
     default: () => 'tab1'
@@ -48,6 +38,7 @@ jest.mock(
 jest.spyOn(moduleLoader, 'docsImporter')
 
 global.fetch = jest.fn()
+const mockedFetch = funcAsMockedFunc(fetch)
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -80,6 +71,13 @@ describe('bundle loading', () => {
 
 describe('tab loading', () => {
   test("Load a module's tabs", async () => {
+    mockedFetch.mockResolvedValueOnce({
+      json: () => Promise.resolve({
+        one_module: {
+          tabs: ['tab1', 'tab2']
+        }
+      })
+    } as any)
     const tabs = await moduleLoader.loadModuleTabsAsync('one_module')
 
     expect(tabs[0]({} as any)).toEqual('tab1')
