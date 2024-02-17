@@ -48,3 +48,5 @@ export function mapObject<T extends Record<any, any>, U>(
 
 export const objectKeys = <T extends string | symbol | number>(rec: Record<T, any>) =>
   Object.keys(rec) as T[]
+
+export const objectValues = <T>(rec: Record<any, T>) => Object.values(rec) as T[]

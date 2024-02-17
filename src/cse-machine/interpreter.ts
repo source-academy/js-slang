@@ -129,7 +129,12 @@ export class Stash extends Stack<Value> {
  * @param context The context to evaluate the program in.
  * @returns The result of running the CSE machine.
  */
-export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
+export function evaluate(
+  program: es.Program,
+  context: Context,
+  options: IOptions,
+  isPrelude: boolean
+): Value {
   try {
     checkProgramForUndefinedVariables(program, context)
   } catch (error) {
@@ -147,7 +152,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
       context.runtime.stash,
       options.envSteps,
       options.stepLimit,
-      options.isPrelude
+      isPrelude
     )
   } catch (error) {
     return new CseError(error)

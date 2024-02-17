@@ -48,6 +48,7 @@ import { ModuleNotFoundError } from '../modules/errors'
 import { parse } from '../parser/parser'
 import assert from '../utils/assert'
 import { areBreakpointsSet } from '../stdlib/inspector'
+import { objectKeys } from '../utils/misc'
 
 const DEFAULT_SOURCE_OPTIONS: Readonly<IOptionsWithExecMethod> = {
   scheduler: 'async',
@@ -71,11 +72,6 @@ const DEFAULT_SOURCE_OPTIONS: Readonly<IOptionsWithExecMethod> = {
   logTranspilerOutput: process.env.NODE_ENV === 'development',
   auditExecutionMethod: process.env.NODE_ENV === 'development'
 }
-
-let previousCode: {
-  files: Partial<Record<string, string>>
-  entrypointFilePath: string
-} | null = null
 
 type Runner = (
   linkerResult: LinkerSuccessResult,
@@ -139,21 +135,27 @@ function createSourceRunner(
       assert(prelude !== null, 'Prelude should not have parsing errors!')
       const preludeResult = await runner(prelude, context, options, true)
 
-      assert(preludeResult.status === 'finished', 'Prelude should not do anything but declare things and have no evaluation errors')
+      assert(preludeResult.status !== 'error', 'Prelude should have no evaluation errors')
     }
 
+    const currentCode = {
+      files: linkerResult.files,
+      entrypointFilePath
+    }
+    const shouldIncreaseEvaluationTimeout = _.isEqual(context.previousCode, currentCode)
+    context.previousCode = currentCode
+
+    if (shouldIncreaseEvaluationTimeout) {
+      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+    } else {
+      context.nativeStorage.maxExecTime = options.originalMaxExecTime
+    }
     return runner(bundledProgram, context, options, false)
   }
 }
 
 export const runners = {
   concurrent: createSourceRunner((program, context, options) => {
-    if (context.shouldIncreaseEvaluationTimeout) {
-      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-    } else {
-      context.nativeStorage.maxExecTime = options.originalMaxExecTime
-    }
-
     try {
       return Promise.resolve({
         status: 'finished',
@@ -188,14 +190,6 @@ export const runners = {
     return scheduler.run(it, context)
   }),
   native: createSourceRunner(async (program, context, options, isPrelude) => {
-    if (!isPrelude) {
-      if (context.shouldIncreaseEvaluationTimeout && context.isPreviousCodeTimeoutError) {
-        context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-      } else {
-        context.nativeStorage.maxExecTime = options.originalMaxExecTime
-      }
-    }
-
     if (context.variant === Variant.NATIVE) {
       return fullJSRunner(program, context, options)
     }
@@ -339,13 +333,12 @@ function determineExecutionMethod(
   }
 
   function warnCorrectMethodForChapter(chapter: Chapter, method: SourceExecutionMethod) {
-    const chapterName = Object.keys(Chapter).find(name => Chapter[name] === chapter)!
+    const chapterName = objectKeys(Chapter).find(name => Chapter[name] === chapter)!
     if (specifiedExecMethod !== 'auto' && specifiedExecMethod !== method) {
       console.warn(
         `Chapter given as ${chapterName}, which requires execution method ${method}, but execution method was given as ${specifiedExecMethod}, ignoring...`
       )
-    } else {
-    }
+    } 
     return `Chapter given as ${chapterName}, using ${method}`
   }
 
@@ -421,7 +414,7 @@ export async function runFilesInSource(
   const theOptions = _.merge({ ...DEFAULT_SOURCE_OPTIONS }, options)
   context.variant = determineVariant(context, options)
 
-  const getter: FileGetter = typeof fileGetter === 'function' ? fileGetter : p => Promise.resolve(files[p])
+  const getter: FileGetter = typeof fileGetter === 'function' ? fileGetter : p => Promise.resolve(fileGetter[p])
 
   if (context.chapter === Chapter.HTML) {
     const entrypointCode = await getter(entrypointFilePath)
@@ -459,13 +452,6 @@ export async function runFilesInSource(
     console.log(reason)
   }
 
-  const currentCode = {
-    files,
-    entrypointFilePath
-  }
-  context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
-  previousCode = currentCode
-
   // FIXME: The type checker does not support the typing of multiple files, so
   //        we only push the code in the entrypoint file. Ideally, all files
   //        involved in the program evaluation should be type-checked. Either way,
@@ -474,7 +460,6 @@ export async function runFilesInSource(
   context.unTypecheckedCode.push(files[entrypointFilePath])
 
   const runner = runners[execMethod]
-  // console.log(`Executing with runner ${execMethod}`)
   return runner(linkerResult, entrypointFilePath, context, theOptions)
 }
 
