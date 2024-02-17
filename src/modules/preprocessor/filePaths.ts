@@ -1,6 +1,7 @@
-import { ConsecutiveSlashesInFilePathError } from '../errors'
+import { AbsoluteFilePathError, ConsecutiveSlashesInFilePathError } from '../errors'
 import { IllegalCharInFilePathError } from '../errors'
-import { InvalidFilePathError } from '../errors'
+import type { SourceFiles } from '../moduleTypes'
+import { isAbsolutePath } from '../utils'
 
 /**
  * Maps non-alphanumeric characters that are legal in file paths
@@ -78,9 +79,9 @@ const isAlphanumeric = (char: string): boolean => {
  *
  * @param filePath The file path to check.
  */
-export const validateFilePath = (filePath: string): InvalidFilePathError | null => {
+export function validateFilePath(filePath: string) {
   if (filePath.includes('//')) {
-    return new ConsecutiveSlashesInFilePathError(filePath)
+    throw new ConsecutiveSlashesInFilePathError(filePath)
   }
   for (const char of filePath) {
     if (isAlphanumeric(char)) {
@@ -89,9 +90,17 @@ export const validateFilePath = (filePath: string): InvalidFilePathError | null 
     if (char in nonAlphanumericCharEncoding) {
       continue
     }
-    return new IllegalCharInFilePathError(filePath)
+    throw new IllegalCharInFilePathError(filePath)
   }
-  return null
+}
+
+export function validateFilePaths(files: Record<string, string>): asserts files is SourceFiles {
+  for (const filePath in files) {
+    validateFilePath(filePath)
+    if (!isAbsolutePath(filePath)) {
+      throw new AbsoluteFilePathError(filePath)
+    }
+  }
 }
 
 /**

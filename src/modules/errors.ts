@@ -162,6 +162,16 @@ export class IllegalCharInFilePathError extends InvalidFilePathError {
   }
 }
 
+export class AbsoluteFilePathError extends InvalidFilePathError {
+  public explain() {
+    return `Expected an absolute file path here, ${this.filePath} is not absolute!`
+  }
+
+  public elaborate(): string {
+    return 'js-slang expects an absolute file path to be used here, make sure you have properly resolved the file paths you are using'
+  }
+}
+
 export class ConsecutiveSlashesInFilePathError extends InvalidFilePathError {
   public explain() {
     return `File path '${this.filePath}' cannot contain consecutive slashes '//'.`
