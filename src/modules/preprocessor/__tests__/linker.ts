@@ -1,16 +1,31 @@
 import { mockContext } from '../../../mocks/context'
 import { MissingSemicolonError } from '../../../parser/errors'
-import { Chapter, type Context } from '../../../types'
+import { Chapter, type Context, type SourceError } from '../../../types'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
 import type { AbsolutePath, SourceFiles } from '../../moduleTypes'
-import parseProgramsAndConstructImportGraph from '../linker'
+import parseProgramsAndConstructImportGraph, {
+  type LinkerErrorResult,
+  type LinkerResult,
+  type LinkerSuccessResult
+} from '../linker'
 
 import * as resolver from '../resolver'
 jest.spyOn(resolver, 'default')
 
+import * as parser from '../../../parser/parser'
+jest.spyOn(parser, 'parse')
+
 beforeEach(() => {
   jest.clearAllMocks()
 })
+
+function expectResultSuccess(result: LinkerResult): asserts result is LinkerSuccessResult {
+  expect(result.ok).toEqual(true)
+}
+
+function expectResultFailure(result: LinkerResult): asserts result is LinkerErrorResult {
+  expect(result.ok).toEqual(false)
+}
 
 async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
   const context = mockContext(Chapter.SOURCE_4)
@@ -27,18 +42,26 @@ async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: key
   ]
 }
 
-async function expectError<T extends Record<string, string>>(
+async function expectError<T extends SourceFiles>(
   files: T,
   entrypointFilePath: keyof T
 ) {
   const [context, result] = await testCode(files, entrypointFilePath)
-  expect(result).toBeUndefined()
+  expectResultFailure(result)
   expect(context.errors.length).toBeGreaterThanOrEqual(1)
-  return context.errors
+  return [context.errors, result] as [SourceError[], LinkerErrorResult]
 }
 
+async function expectSuccess<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
+  const [context, result] = await testCode(files, entrypointFilePath)
+  expectResultSuccess(result)
+  expect(context.errors.length).toBeGreaterThanOrEqual(0)
+  return result
+}
+
+
 test('Adds CircularImportError and returns undefined when imports are circular', async () => {
-  const [error] = await expectError(
+  const [[error]] = await expectError(
     {
       '/a.js': `import { b } from "./b.js";`,
       '/b.js': `import { a } from "./a.js";`
@@ -69,7 +92,7 @@ test.skip('Longer cycle causes also causes CircularImportError', async () => {
 })
 
 test('Self Circular Imports cause a short circuiting of the linker', async () => {
-  const [error] = await expectError(
+  const [[error]] = await expectError(
     {
       '/a.js': 'import { a } from "./a.js";',
       '/c.js': `
@@ -90,7 +113,7 @@ test('Self Circular Imports cause a short circuiting of the linker', async () =>
 })
 
 test('Parse errors cause a short circuiting of the linker', async () => {
-  const [error] = await expectError(
+  const [[error]] = await expectError(
     {
       '/a.js': 'export const a = "a";',
       '/b.js': `
@@ -108,7 +131,7 @@ test('Parse errors cause a short circuiting of the linker', async () => {
 })
 
 test('ModuleNotFoundErrors short circuit the linker', async () => {
-  const [error] = await expectError(
+  const [[error]] = await expectError(
     {
       '/a.js': 'export const a = "a";',
       '/b.js': `
@@ -125,7 +148,7 @@ test('ModuleNotFoundErrors short circuit the linker', async () => {
 })
 
 test('Linker does tree-shaking', async () => {
-  const [{ errors }, result] = await testCode(
+  const result = await expectSuccess(
     {
       '/a.js': 'export const a = 5;',
       '/b.js': 'import { a } from "./a.js";'
@@ -133,8 +156,61 @@ test('Linker does tree-shaking', async () => {
     '/a.js'
   )
 
-  expect(errors.length).toEqual(0)
-  expect(result).toBeDefined()
   expect(resolver.default).not.toHaveBeenCalledWith('./b.js')
-  expect(Object.keys(result!.programs)).not.toContain('/b.js')
+  expect(Object.keys(result.programs)).not.toContain('/b.js')
+})
+
+describe('Check verbose error detection', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+  test('with file that doesn\'t have verbose errors', async () => {
+    const result = await expectSuccess({
+      '/a.js': `
+        1 + 1;
+      `
+    }, '/a.js')
+
+    expect(result.isVerboseErrorsEnabled).toEqual(false)
+    expect(parser.parse).toHaveBeenCalledTimes(1)
+  })
+
+  it('outputs as per normal with files that have no errors', async () => {
+    const result = await expectSuccess({
+      '/a.js': `
+        'enable verbose';
+        1 + 1;
+      `
+    }, '/a.js')
+
+    expect(result.isVerboseErrorsEnabled).toEqual(true)
+    expect(parser.parse).toHaveBeenCalledTimes(1)
+  })
+
+  it('outputs even if entrypoint file has syntax errors', async () => {
+    const [[error], result] = await expectError({
+      '/a.js': `
+        'enable verbose';
+        1 + 1
+      `
+    }, '/a.js')
+
+    expect(error).toBeInstanceOf(MissingSemicolonError)
+    expect(parser.parse).toHaveBeenCalledTimes(1)
+    expect(result.isVerboseErrorsEnabled).toEqual(true)
+  })
+
+  it('outputs even if other files have errors', async () => {
+    const [[error], result] = await expectError({
+      '/a.js': `
+        'enable verbose';
+        import { b } from './b.js';
+      `,
+      '/b.js': 'export const b = 1 + 1'
+    }, '/a.js')
+
+    expect(error).toBeInstanceOf(MissingSemicolonError)
+    expect(parser.parse).toHaveBeenCalledTimes(2)
+    expect(result.isVerboseErrorsEnabled).toEqual(true)
+  })
 })

@@ -63,7 +63,7 @@ describe('Test throwing import validation errors', () => {
     )
 
     // Return 'undefined' if there are errors while parsing.
-    if (context.errors.length !== 0 || !importGraphResult) {
+    if (context.errors.length !== 0 || !importGraphResult.ok) {
       throw context.errors[0]
     }
 

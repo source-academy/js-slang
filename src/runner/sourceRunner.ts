@@ -10,15 +10,15 @@ import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import { evaluateProgram as evaluate } from '../interpreter/interpreter'
+import { evaluateProgram as interpreterEval } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
-import { getRequireProvider } from '../modules/loader/requireProvider'
-import type { AbsolutePath, FileGetter } from '../modules/moduleTypes'
+import type { AbsolutePath, FileGetter, SourceFiles } from '../modules/moduleTypes'
 import analyzeImportsAndExports, { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import parseProgramsAndConstructImportGraph, {
   defaultLinkerOptions,
-  type LinkerResult
+  isLinkerSuccess,
+  type LinkerSuccessResult
 } from '../modules/preprocessor/linker'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
@@ -57,7 +57,6 @@ const DEFAULT_SOURCE_OPTIONS: Readonly<IOptionsWithExecMethod> = {
   variant: Variant.DEFAULT,
   originalMaxExecTime: 1000,
   useSubst: false,
-  isPrelude: false,
   throwInfiniteLoops: true,
   envSteps: -1,
   importOptions: {
@@ -67,7 +66,10 @@ const DEFAULT_SOURCE_OPTIONS: Readonly<IOptionsWithExecMethod> = {
     loadTabs: true
   },
   shouldAddFileName: null,
-  logTranspilerOutput: process.env.NODE_ENV === 'development'
+
+  // Debugging options
+  logTranspilerOutput: process.env.NODE_ENV === 'development',
+  auditExecutionMethod: process.env.NODE_ENV === 'development'
 }
 
 let previousCode: {
@@ -76,14 +78,19 @@ let previousCode: {
 } | null = null
 
 type Runner = (
-  linkerResult: LinkerResult,
+  linkerResult: LinkerSuccessResult,
   entrypointFilePath: AbsolutePath,
   context: Context,
   options: IOptions
 ) => Promise<Result>
 
 function createSourceRunner(
-  runner: (program: Program, context: Context, options: IOptions) => Promise<Result>,
+  runner: (
+    program: Program,
+    context: Context,
+    options: IOptions,
+    isPrelude: boolean
+  ) => Promise<Result>,
   doValidation: boolean = true,
   evaluatePreludes: boolean = true,
   bundler: Bundler = defaultBundler
@@ -91,25 +98,15 @@ function createSourceRunner(
   return async (linkerResult, entrypointFilePath, context, options) => {
     const { programs, topoOrder, sourceModulesToImport } = linkerResult
 
-    if (doValidation) {
-      // Step 2
-      // Validation and Annotation
-      // Source specific syntax errors are caught here
-      for (const program of Object.values(programs)) {
-        validateAndAnnotate(program, context)
-      }
-      if (context.errors.length > 0) return resolvedErrorPromise
-    }
-
     try {
-      // Step 3 Load Source modules
+      // Step 2 Load Source modules
       await loadSourceModules(
         sourceModulesToImport,
         context,
         options.importOptions?.loadTabs ?? true
       )
 
-      // Step 4 Check for undefined imports and duplicate imports
+      // Step 3 Check for undefined imports and duplicate imports
       analyzeImportsAndExports(
         programs,
         entrypointFilePath,
@@ -122,21 +119,30 @@ function createSourceRunner(
       return resolvedErrorPromise
     }
 
-    // Step 5 Take the multiple programs and turn them into 1
+    // Step 4 Take the multiple programs and turn them into 1
     const bundledProgram = bundler(programs, entrypointFilePath, topoOrder, context)
+    if (doValidation) {
+      // Step 5
+      // Validation and Annotation
+
+      // Source specific syntax errors are caught here
+      validateAndAnnotate(bundledProgram, context)
+      if (context.errors.length > 0) return resolvedErrorPromise
+    }
 
     context.previousPrograms.unshift(bundledProgram)
 
     if (context.prelude !== null && evaluatePreludes) {
       context.unTypecheckedCode.push(context.prelude)
       const prelude = parse(context.prelude, context)
+
       assert(prelude !== null, 'Prelude should not have parsing errors!')
-      context.prelude = null
-      await runner(prelude, context, { ...options, isPrelude: true })
-      return runner(bundledProgram, context, options)
+      const preludeResult = await runner(prelude, context, options, true)
+
+      assert(preludeResult.status === 'finished', 'Prelude should not do anything but declare things and have no evaluation errors')
     }
 
-    return runner(bundledProgram, context, options)
+    return runner(bundledProgram, context, options, false)
   }
 }
 
@@ -163,13 +169,13 @@ export const runners = {
       return resolvedErrorPromise
     }
   }),
-  ['cse-machine']: createSourceRunner((program, context, options) => {
-    const value = CSEvaluate(program, context, options)
+  ['cse-machine']: createSourceRunner((program, context, options, isPrelude) => {
+    const value = CSEvaluate(program, context, options, isPrelude)
     return CSEResultPromise(context, value)
   }),
   fullJS: createSourceRunner(fullJSRunner, false),
   interpreter: createSourceRunner((program, context, options) => {
-    let it = evaluate(program, context)
+    let it = interpreterEval(program, context)
     let scheduler: Scheduler
     if (context.variant === Variant.NON_DET) {
       it = nonDetEvaluate(program, context)
@@ -181,17 +187,17 @@ export const runners = {
     }
     return scheduler.run(it, context)
   }),
-  native: createSourceRunner(async (program, context, options) => {
-    if (context.variant === Variant.NATIVE) {
-      return fullJSRunner(program, context, options)
-    }
-
-    if (!options.isPrelude) {
+  native: createSourceRunner(async (program, context, options, isPrelude) => {
+    if (!isPrelude) {
       if (context.shouldIncreaseEvaluationTimeout && context.isPreviousCodeTimeoutError) {
         context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
       } else {
         context.nativeStorage.maxExecTime = options.originalMaxExecTime
       }
+    }
+
+    if (context.variant === Variant.NATIVE) {
+      return fullJSRunner(program, context, options)
     }
 
     // For whatever reason, the transpiler mutates the state of the AST as it is transpiling and inserts
@@ -213,13 +219,13 @@ export const runners = {
 
       ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
       if (options.logTranspilerOutput) console.log(transpiled)
-      let value = sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
+      let value = sandboxedEval(transpiled, context.nativeStorage)
 
       if (context.variant === Variant.LAZY) {
         value = forceIt(value)
       }
 
-      if (!options.isPrelude) {
+      if (!isPrelude) {
         context.isPreviousCodeTimeoutError = false
       }
 
@@ -314,44 +320,81 @@ function determineExecutionMethod(
   options: IOptionsWithExecMethod,
   context: Context,
   verboseErrors: boolean
-): SourceExecutionMethod {
+): [method: SourceExecutionMethod, reason: string] {
+  const specifiedExecMethod =
+    options.executionMethod !== 'auto' ? options.executionMethod : context.executionMethod
+  assert(
+    specifiedExecMethod !== 'html',
+    "If execution method is HTML this function shouldn't have been called"
+  )
+
+  function warnCorrectMethodForVariant(variant: Variant, method: SourceExecutionMethod) {
+    if (specifiedExecMethod !== 'auto' && specifiedExecMethod !== method) {
+      console.warn(
+        `Variant given as ${variant}, which requires execution method ${method}, but execution method was given as ${specifiedExecMethod}, ignoring...`
+      )
+    }
+
+    return `Variant given as ${variant}, using ${method}`
+  }
+
+  function warnCorrectMethodForChapter(chapter: Chapter, method: SourceExecutionMethod) {
+    const chapterName = Object.keys(Chapter).find(name => Chapter[name] === chapter)!
+    if (specifiedExecMethod !== 'auto' && specifiedExecMethod !== method) {
+      console.warn(
+        `Chapter given as ${chapterName}, which requires execution method ${method}, but execution method was given as ${specifiedExecMethod}, ignoring...`
+      )
+    } else {
+    }
+    return `Chapter given as ${chapterName}, using ${method}`
+  }
+
   if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
-    return 'scheme'
+    return ['scheme', warnCorrectMethodForChapter(context.chapter, 'scheme')]
   }
 
   // TODO: Remove and make frontend specify stepper explicitly
-  if (options.useSubst) return 'stepper'
+  if (options.useSubst) {
+    return ['stepper', `useSubst is true, using stepper`]
+  }
+
+  switch (context.variant) {
+    case Variant.CONCURRENT: {
+      return ['concurrent', warnCorrectMethodForVariant(context.variant, 'concurrent')]
+    }
+    case Variant.EXPLICIT_CONTROL: {
+      return ['cse-machine', warnCorrectMethodForVariant(context.variant, 'cse-machine')]
+    }
+    case Variant.LAZY:
+    case Variant.GPU: {
+      return ['native', warnCorrectMethodForVariant(context.variant, 'native')]
+    }
+  }
 
   if (
     context.chapter === Chapter.FULL_JS ||
     context.chapter === Chapter.FULL_TS ||
     context.chapter === Chapter.PYTHON_1
   ) {
-    return 'fullJS'
+    return ['fullJS', warnCorrectMethodForChapter(context.chapter, 'fullJS')]
   }
 
-  if (options.executionMethod !== 'auto') {
-    if (options.executionMethod === 'html') {
-      throw new Error(
-        `Invalid language combination: You cannot use html execution method when chapter = ${context.chapter}`
-      )
-    }
-    return options.executionMethod
+  if (specifiedExecMethod !== 'auto') {
+    return [
+      specifiedExecMethod,
+      `Execution method was specified manually as ${specifiedExecMethod}`
+    ]
   }
 
-  if (context.executionMethod !== 'auto') {
-    if (context.executionMethod === 'html') {
-      throw new Error(
-        `Invalid language combination: You cannot use html execution method when chapter = ${context.chapter}`
-      )
-    }
-
-    return context.executionMethod
+  if (verboseErrors) {
+    return ['cse-machine', 'verboseErrors is true, using cse-machine']
   }
 
-  if (verboseErrors || areBreakpointsSet()) return 'cse-machine'
+  if (areBreakpointsSet()) {
+    return ['cse-machine', 'There are breakpoints, using cse-machine']
+  }
 
-  for (const program of Object.values(programs)) {
+  for (const [name, program] of Object.entries(programs)) {
     let hasDebuggerStatement = false
     simple(program, {
       DebuggerStatement() {
@@ -359,13 +402,16 @@ function determineExecutionMethod(
       }
     })
 
-    if (hasDebuggerStatement) return 'cse-machine'
+    if (hasDebuggerStatement) {
+      return ['cse-machine', `Detected DebuggerStatement in ${name}, using cse-machine`]
+    }
   }
-  return 'native'
+
+  return ['native', 'Using native by default']
 }
 
 export async function runFilesInSource(
-  fileGetter: FileGetter,
+  fileGetter: FileGetter | SourceFiles,
   entrypointFilePath: AbsolutePath,
   context: Context,
   options: RecursivePartial<IOptionsWithExecMethod> = {}
@@ -375,8 +421,10 @@ export async function runFilesInSource(
   const theOptions = _.merge({ ...DEFAULT_SOURCE_OPTIONS }, options)
   context.variant = determineVariant(context, options)
 
+  const getter: FileGetter = typeof fileGetter === 'function' ? fileGetter : p => Promise.resolve(files[p])
+
   if (context.chapter === Chapter.HTML) {
-    const entrypointCode = await fileGetter(entrypointFilePath)
+    const entrypointCode = await getter(entrypointFilePath)
     if (entrypointCode === undefined) {
       context.errors.push(new ModuleNotFoundError(entrypointFilePath))
       return resolvedErrorPromise
@@ -386,17 +434,30 @@ export async function runFilesInSource(
   }
 
   const linkerResult = await parseProgramsAndConstructImportGraph(
-    fileGetter,
+    getter,
     entrypointFilePath,
     context,
     theOptions.importOptions,
-    !!theOptions.shouldAddFileName
+    options.shouldAddFileName ?? (typeof fileGetter === 'function' || Object.keys(fileGetter).length > 1)
   )
-  if (!linkerResult) return resolvedErrorPromise
+
+  if (context.verboseErrors === null) {
+    context.verboseErrors = linkerResult.isVerboseErrorsEnabled
+  }
+
+  if (!isLinkerSuccess(linkerResult)) return resolvedErrorPromise
 
   const { programs, files, isVerboseErrorsEnabled } = linkerResult
 
-  const execMethod = determineExecutionMethod(programs, theOptions, context, isVerboseErrorsEnabled)
+  const [execMethod, reason] = determineExecutionMethod(
+    programs,
+    theOptions,
+    context,
+    isVerboseErrorsEnabled
+  )
+  if (options.auditExecutionMethod) {
+    console.log(reason)
+  }
 
   const currentCode = {
     files,
@@ -413,6 +474,7 @@ export async function runFilesInSource(
   context.unTypecheckedCode.push(files[entrypointFilePath])
 
   const runner = runners[execMethod]
+  // console.log(`Executing with runner ${execMethod}`)
   return runner(linkerResult, entrypointFilePath, context, theOptions)
 }
 

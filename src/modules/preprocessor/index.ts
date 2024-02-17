@@ -22,7 +22,7 @@ export default async function preprocessFileImports(
     options?.importOptions,
     options.shouldAddFileName ?? (typeof files === 'function' || Object.keys(files).length > 1)
   )
-  if (!linkerResult) return undefined
+  if (!linkerResult.ok) return undefined
 
   const { programs, topoOrder, sourceModulesToImport } = linkerResult
 

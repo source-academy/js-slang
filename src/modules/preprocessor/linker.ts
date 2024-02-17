@@ -9,6 +9,8 @@ import { CircularImportError, ModuleNotFoundError } from '../errors'
 import type { AbsolutePath, FileGetter, SourceFiles } from '../moduleTypes'
 import { DirectedGraph } from './directedGraph'
 import resolveFile, { defaultResolutionOptions, type ImportResolutionOptions } from './resolver'
+import { parseAt } from '../../parser/utils'
+import { isDirective } from '../../utils/ast/typeGuards'
 
 type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
 
@@ -19,13 +21,21 @@ type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaul
  */
 class LinkerError extends Error {}
 
-export type LinkerResult = {
+export interface LinkerSuccessResult {
+  ok: true
   programs: Record<AbsolutePath, es.Program>
   sourceModulesToImport: Set<string>
   topoOrder: AbsolutePath[]
   isVerboseErrorsEnabled: boolean
   files: SourceFiles
 }
+
+export interface LinkerErrorResult {
+  ok: false
+  isVerboseErrorsEnabled: boolean
+}
+
+export type LinkerResult = LinkerErrorResult | LinkerSuccessResult
 
 export type LinkerOptions = {
   /**
@@ -45,15 +55,6 @@ export const defaultLinkerOptions: LinkerOptions = {
   memoizeGetter: false
 }
 
-function hasVerboseErrors({ body: [firstStatement] }: es.Program) {
-  if (firstStatement.type !== 'ExpressionStatement') return false
-
-  const { expression } = firstStatement
-  if (expression.type !== 'Literal') return false
-
-  return expression.value === 'enable verbose'
-}
-
 /**
  * Starting from the entrypoint file, parse all imported local modules and create
  * a dependency graph.
@@ -70,12 +71,13 @@ export default async function parseProgramsAndConstructImportGraph(
   context: Context,
   options: RecursivePartial<LinkerOptions> = defaultLinkerOptions,
   shouldAddFileName: boolean
-): Promise<LinkerResult | undefined> {
+): Promise<LinkerResult> {
   const importGraph = new DirectedGraph()
   const programs: Record<AbsolutePath, es.Program> = {}
   const files: SourceFiles = {}
   const sourceModulesToImport = new Set<string>()
   const getter = options.memoizeGetter ? memoize(fileGetter) : fileGetter
+  let entrypointCode: string | undefined = undefined
 
   // Wrapper around resolve file to make calling it more convenient
   async function resolveFileWrapper(fromPath: AbsolutePath, toPath: string, node?: es.Node) {
@@ -176,26 +178,56 @@ export default async function parseProgramsAndConstructImportGraph(
     await Promise.all(Object.values(modulesToNodeMap))
   }
 
+  function hasVerboseErrors() {
+    let statement: es.Node | null = null
+    if (!programs[entrypointFilePath]) {
+      if (entrypointCode == undefined) {
+        // non-existent entrypoint
+        return false
+      }
+      // There are syntax errors in the entrypoint file
+      // we use parseAt to try parse the first line
+      statement = parseAt(entrypointCode, 0) as es.Node | null
+    } else {
+      // Otherwise we can use the entrypoint program as it has been passed
+      const entrypointProgram = programs[entrypointFilePath]
+
+      // Check if the program had any code at all
+      if (entrypointProgram.body.length === 0) return false
+      ;[statement] = entrypointProgram.body
+    }
+
+    if (statement === null) return false
+
+    // The two different parsers end up with two different ASTs
+    // These are the two cases where 'enable verbose' appears
+    // as a directive
+    if (isDirective(statement)) {
+      return statement.directive === 'enable verbose'
+    }
+
+    return statement.type === 'Literal' && statement.value === 'enable verbose'
+  }
+
   try {
-    const entrypointCode = await fileGetter(entrypointFilePath)
+    entrypointCode = await fileGetter(entrypointFilePath)
     if (entrypointCode === undefined) {
       throw new ModuleNotFoundError(entrypointFilePath)
     }
 
     await parseAndEnumerateModuleDeclarations(entrypointFilePath, entrypointCode)
-
     const topologicalOrderResult = importGraph.getTopologicalOrder()
     if (!topologicalOrderResult.isValidTopologicalOrderFound) {
-      context.errors.push(new CircularImportError(topologicalOrderResult.firstCycleFound))
-      return undefined
+      throw new CircularImportError(topologicalOrderResult.firstCycleFound)
     }
 
     return {
+      ok: true,
       topoOrder: topologicalOrderResult.topologicalOrder as AbsolutePath[],
       programs,
       sourceModulesToImport,
       files,
-      isVerboseErrorsEnabled: hasVerboseErrors(programs[entrypointFilePath])
+      isVerboseErrorsEnabled: hasVerboseErrors()
     }
   } catch (error) {
     if (!(error instanceof LinkerError)) {
@@ -203,6 +235,14 @@ export default async function parseProgramsAndConstructImportGraph(
       // and we return undefined
       context.errors.push(error)
     }
-    return undefined
+
+    // Even if we encountered some error, we might still
+    // be able to infer verboseErrors
+    return {
+      ok: false,
+      isVerboseErrorsEnabled: hasVerboseErrors()
+    }
   }
 }
+
+export const isLinkerSuccess = (result: LinkerResult): result is LinkerSuccessResult => result.ok
