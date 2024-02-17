@@ -5135,11 +5135,6 @@ node-abi@^3.3.0:
   dependencies:
     semver "^7.3.5"
 
-node-getopt@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.npmjs.org/node-getopt/-/node-getopt-0.3.2.tgz"
-  integrity sha512-yqkmYrMbK1wPrfz7mgeYvA4tBperLg9FQ4S3Sau3nSAkpOA0x0zC8nQ1siBwozy1f4SE8vq2n1WKv99r+PCa1Q==
-
 node-gyp@^9.2.0:
   version "9.4.1"
   resolved "https://registry.yarnpkg.com/node-gyp/-/node-gyp-9.4.1.tgz#8a1023e0d6766ecb52764cc3a734b36ff275e185"
@@ -6123,11 +6118,6 @@ ts-jest@^29.0.0:
     semver "7.x"
     yargs-parser "^21.0.1"
 
-tslib@^1.9.2:
-  version "1.14.1"
-  resolved "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz"
-  integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
-
 tunnel-agent@^0.6.0:
   version "0.6.0"
   resolved "https://registry.npmjs.org/tunnel-agent/-/tunnel-agent-0.6.0.tgz"
@@ -6421,13 +6411,6 @@ xmlcreate@^2.0.4:
   version "2.0.4"
   resolved "https://registry.npmjs.org/xmlcreate/-/xmlcreate-2.0.4.tgz"
   integrity sha512-nquOebG4sngPmGPICTS5EnxqhKbCmz5Ox5hsszI2T6U5qdrJizBc+0ilYSEjTSzU0yZcmvppztXe/5Al5fUwdg==
-
-xmlhttprequest-ts@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/xmlhttprequest-ts/-/xmlhttprequest-ts-1.0.1.tgz"
-  integrity sha1-ezy0oZeu44zy1PndYYnR0h8INbI=
-  dependencies:
-    tslib "^1.9.2"
 
 "xtend@>=4.0.0 <4.1.0-0":
   version "4.0.2"

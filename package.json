@@ -28,7 +28,7 @@
     "dist"
   ],
   "bin": {
-    "js-slang": "dist/repl/repl.js"
+    "js-slang": "dist/repl/index.js"
   },
   "dependencies": {
     "@babel/parser": "^7.19.4",
@@ -45,9 +45,7 @@
     "gpu.js": "^2.16.0",
     "js-base64": "^3.7.5",
     "lodash": "^4.17.20",
-    "node-getopt": "^0.3.2",
-    "source-map": "0.7.3",
-    "xmlhttprequest-ts": "^1.0.1"
+    "source-map": "0.7.3"
   },
   "resolutions": {
     "**/gl": "^6.0.2"
