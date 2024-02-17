@@ -27,7 +27,7 @@ export const JSSLANG_PROPERTIES = {
   factorToIncreaseBy: 10
 }
 
-export const sourceLanguages: Language[] = [
+export const sourceLanguages = [
   { chapter: Chapter.SOURCE_1, variant: Variant.DEFAULT },
   { chapter: Chapter.SOURCE_1, variant: Variant.TYPED },
   { chapter: Chapter.SOURCE_1, variant: Variant.WASM },
@@ -40,14 +40,19 @@ export const sourceLanguages: Language[] = [
   { chapter: Chapter.SOURCE_4, variant: Variant.DEFAULT },
   { chapter: Chapter.SOURCE_4, variant: Variant.GPU },
   { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
-]
+] satisfies Language[]
+export type SourceLanguage = (typeof sourceLanguages)[number]
 
-export const scmLanguages: Language[] = [
+export const scmLanguages = [
   { chapter: Chapter.SCHEME_1, variant: Variant.DEFAULT },
   { chapter: Chapter.SCHEME_2, variant: Variant.DEFAULT },
   { chapter: Chapter.SCHEME_3, variant: Variant.DEFAULT },
   { chapter: Chapter.SCHEME_4, variant: Variant.DEFAULT },
   { chapter: Chapter.FULL_SCHEME, variant: Variant.DEFAULT }
-]
+] satisfies Language[]
+export type SchemeLanguage = (typeof scmLanguages)[number]
 
-export const pyLanguages: Language[] = [{ chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT }]
+export const pyLanguages = [{ chapter: Chapter.PYTHON_1, variant: Variant.DEFAULT }] satisfies Language[]
+export type PythonLanguage = (typeof pyLanguages)[number]
+
+export type ValidLanguage = SourceLanguage | SchemeLanguage | PythonLanguage

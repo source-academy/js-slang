@@ -1,5 +1,6 @@
 import { Option } from '@commander-js/extra-typings'
-import { Chapter, Variant } from '../types'
+import { Chapter, Variant, type Language } from '../types'
+import { sourceLanguages, type SourceLanguage, type ValidLanguage, scmLanguages, pyLanguages } from '../constants'
 
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined
@@ -8,21 +9,54 @@ export function chapterParser(str: string): Chapter {
     // Chapter is fully numeric
     const value = parseInt(str)
     foundChapter = Object.keys(Chapter).find(chapterName => Chapter[chapterName] === value)
+
+    if (foundChapter === undefined) {
+      throw new Error(`Invalid chapter value: ${str}`)
+    }
   } else {
     foundChapter = str
   }
 
-  if (foundChapter === undefined) {
-    throw new Error(`Invalid chapter value: ${str}`)
+  if (foundChapter in Chapter) {
+    return Chapter[foundChapter]
   }
+  throw new Error(`Invalid chapter value: ${str}`)
 
-  return Chapter[foundChapter]
 }
 
-export const chapterOption = new Option('--chapter <chapter>')
-  .default(Chapter.SOURCE_4)
-  .argParser(chapterParser)
+export const getChapterOption = <T extends Chapter>(
+  defaultValue: T,
+  argParser: (value: string) => T
+) => {
+  return new Option('--chapter <chapter>').default(defaultValue).argParser(argParser)
+}
 
-export const variantOption = new Option('--variant <variant>')
-  .default(Variant.DEFAULT)
-  .choices(Object.values(Variant))
+export const getVariantOption = <T extends Variant>(defaultValue: T, choices: T[]) => {
+  return new Option('--variant <variant>').default(defaultValue).choices(choices)
+}
+
+export function validateChapterAndVariantCombo(language: Language): language is SourceLanguage {
+  for (const { chapter, variant } of sourceLanguages) {
+    if (language.chapter === chapter && language.variant === variant) return true
+  }
+  return false
+}
+
+/**
+ * Returns true iff the given chapter and variant combination is supported.
+ */
+export function validChapterVariant(language: Language): language is ValidLanguage {
+  const { chapter, variant } = language
+
+  for (const lang of sourceLanguages) {
+    if (lang.chapter === chapter && lang.variant === variant) return true
+  }
+  for (const lang of scmLanguages) {
+    if (lang.chapter === chapter && lang.variant === variant) return true
+  }
+  for (const lang of pyLanguages) {
+    if (lang.chapter === chapter && lang.variant === variant) return true
+  }
+
+  return false
+}

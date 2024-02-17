@@ -38,7 +38,7 @@ function startRepl(
               if (obj.status === 'finished' || obj.status === 'suspended-non-det') {
                 callback(null, obj.value)
               } else {
-                callback(new Error(parseError(context.errors)), undefined)
+                callback(new Error(parseError(context)), undefined)
               }
             })
           },
@@ -55,7 +55,7 @@ function startRepl(
         }
       )
     } else {
-      console.error(parseError(context.errors))
+      console.error(parseError(context))
     }
   })
 }

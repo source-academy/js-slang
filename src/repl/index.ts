@@ -1,7 +1,12 @@
 import type fslib from 'fs/promises'
 import { Command } from '@commander-js/extra-typings'
-import { chapterOption, variantOption } from './utils'
-import { createContext, parseError, runInContext } from '..'
+import {
+  chapterParser,
+  getChapterOption,
+  getVariantOption,
+  validChapterVariant,
+} from './utils'
+import { createContext, parseError, runInContext, type IOptionsWithExecMethod } from '..'
 import { resolve } from 'path'
 import { runFilesInSource } from '../runner'
 import type { AbsolutePath } from '../modules/moduleTypes'
@@ -10,38 +15,65 @@ import { start } from 'repl'
 import { inspect } from 'util'
 import Closure from '../interpreter/closure'
 import { setModulesStaticURL } from '../modules/loader'
+import { Chapter, Variant, type RecursivePartial } from '../types'
+import { objectValues } from '../utils/misc'
 
 new Command()
-  .addOption(chapterOption)
-  .addOption(variantOption)
+  .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
+  .addOption(getVariantOption(Variant.DEFAULT, objectValues(Variant)))
   .option('-v, --verbose', 'Enable verbose errors')
   .option('--modulesBackend <backend>')
-  .option('-r, --repl', 'Start a REPL after evaluating the files')
+  .option('-r, --repl', 'Start a REPL after evaluating files')
+  .option('--optionsFile <file>', 'Specify a JSON file to read options from')
   .argument('[filename]')
-  .action(async (filename, opts) => {
+  .action(async (filename, { modulesBackend, optionsFile, repl, verbose, ...lang }) => {
+    if (!validChapterVariant(lang)) {
+      console.log('Invalid language combination!')
+      return
+    }
+
     const fs: typeof fslib = require('fs/promises')
 
-    const context = createContext(opts.chapter, opts.variant)
+    const context = createContext(lang.chapter, lang.variant)
 
-    if (opts.modulesBackend !== undefined) {
-      setModulesStaticURL(opts.modulesBackend)
+    if (verbose !== undefined) {
+      context.verboseErrors = verbose
+    }
+
+    if (modulesBackend !== undefined) {
+      setModulesStaticURL(modulesBackend)
+    }
+
+    let options: RecursivePartial<IOptionsWithExecMethod> = {}
+    if (optionsFile !== undefined) {
+      const rawText = await fs.readFile(optionsFile, 'utf-8')
+      options = JSON.parse(rawText)
     }
 
     if (filename !== undefined) {
       const entrypointFilePath = resolve(filename) as AbsolutePath
       const result = await runFilesInSource(
-        p => fs.readFile(p, 'utf-8'),
+        async p => {
+          try{
+            const text = await fs.readFile(p, 'utf-8')
+            return text
+          } catch (error) {
+            if (error.code === 'ENOENT') return undefined
+            throw error
+          }
+        },
         entrypointFilePath,
-        context
+        context,
+        options
       )
 
       if (result.status === 'finished') {
         console.log(stringify(result.value))
       } else if (result.status === 'error') {
-        console.log(parseError(context.errors, opts.verbose))
+        console.log(parseError(context))
       }
 
-      if (!opts.repl) return
+      if (!repl) return
     }
 
     start(
@@ -49,11 +81,11 @@ new Command()
       {
         eval: (cmd, unusedContext, unusedFilename, callback) => {
           context.errors = []
-          runInContext(cmd, context).then(obj => {
+          runInContext(cmd, context, options).then(obj => {
             if (obj.status === 'finished' || obj.status === 'suspended-non-det') {
               callback(null, obj.value)
             } else {
-              callback(new Error(parseError(context.errors)), undefined)
+              callback(new Error(parseError(context)), undefined)
             }
           })
         },
