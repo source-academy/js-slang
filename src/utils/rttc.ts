@@ -130,8 +130,8 @@ export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
     return isArrayIndex(prop)
       ? undefined
       : isNumber(prop)
-      ? new TypeError(node, ' as prop', 'array index', 'other number')
-      : new TypeError(node, ' as prop', 'array index', typeOf(prop))
+        ? new TypeError(node, ' as prop', 'array index', 'other number')
+        : new TypeError(node, ' as prop', 'array index', typeOf(prop))
   } else {
     return new TypeError(node, '', 'object or array', typeOf(obj))
   }

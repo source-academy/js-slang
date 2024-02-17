@@ -1640,8 +1640,8 @@ function reduceMain(
                 ? right
                 : ast.literal(false, node.loc)
               : left.value
-              ? ast.literal(true, node.loc)
-              : right
+                ? ast.literal(true, node.loc)
+                : right
           return [result as es.Expression, context, paths, explain(node)]
         }
       } else {

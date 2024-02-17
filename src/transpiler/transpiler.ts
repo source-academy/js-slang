@@ -38,7 +38,7 @@ const globalIdNames = [
   'builtins'
 ] as const
 
-export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
+export type NativeIds = Record<(typeof globalIdNames)[number], es.Identifier>
 
 export function transformImportDeclarations(
   program: es.Program,

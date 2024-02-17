@@ -1,5 +1,5 @@
 import { memoizedGetModuleManifestAsync } from '../loader/loaders'
-import type { AbsolutePath } from '../moduleTypes'
+import type { AbsolutePath, FileGetter } from '../moduleTypes'
 import { isSourceModule, resolvePath } from '../utils'
 
 /**
@@ -30,6 +30,7 @@ export type ResolverResult =
   | {
       type: 'local'
       path: AbsolutePath
+      code: string
     }
   | {
       type: 'source'
@@ -40,14 +41,14 @@ export type ResolverResult =
 /**
  * Gets the absolute path referred to by `toPath` relative to `fromModule`.
  *
- * @param filePredicate Function that returns a `Promise<boolean>` indicating if the
+ * @param getter Function that returns a `Promise<boolean>` indicating if the
  * file at the given path exists
  *
  */
 export default async function resolveFile(
   fromPath: string,
   toPath: string,
-  filePredicate: (str: string) => Promise<boolean>,
+  getter: FileGetter,
   options: Partial<ImportResolutionOptions> = defaultResolutionOptions
 ): Promise<ResolverResult> {
   if (isSourceModule(toPath)) {
@@ -62,19 +63,23 @@ export default async function resolveFile(
 
   const absPath = resolvePath(fromPath, '..', toPath)
 
-  if (await filePredicate(absPath)) {
+  let code = await getter(absPath)
+  if (code !== undefined) {
     return {
       type: 'local',
-      path: absPath
+      path: absPath,
+      code
     }
   }
 
   if (options.extensions) {
     for (const ext of options.extensions) {
-      if (await filePredicate(`${absPath}.${ext}`)) {
+      code = await getter(`${absPath}.${ext}`)
+      if (code !== undefined) {
         return {
           type: 'local',
-          path: `${absPath}.${ext}`
+          path: `${absPath}.${ext}`,
+          code
         }
       }
     }
