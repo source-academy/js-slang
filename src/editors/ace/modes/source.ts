@@ -861,7 +861,7 @@ export function ModeSelector(
 
       // @ts-ignore
       this.$id = 'ace/mode/source' + name
-    }.call(Mode.prototype))
+    }).call(Mode.prototype)
 
     exports.Mode = Mode
   }
