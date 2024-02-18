@@ -3,14 +3,14 @@ import { memoize } from 'lodash'
 
 import type { Context } from '../..'
 import { parse } from '../../parser/parser'
+import { parseAt } from '../../parser/utils'
 import type { RecursivePartial } from '../../types'
 import assert from '../../utils/assert'
+import { isDirective } from '../../utils/ast/typeGuards'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
 import type { AbsolutePath, FileGetter, SourceFiles } from '../moduleTypes'
 import { DirectedGraph } from './directedGraph'
-import resolveFile, { defaultResolutionOptions, type ImportResolutionOptions } from './resolver'
-import { parseAt } from '../../parser/utils'
-import { isDirective } from '../../utils/ast/typeGuards'
+import resolveFile, { type ImportResolutionOptions, defaultResolutionOptions } from './resolver'
 
 type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
 
@@ -79,9 +79,10 @@ export default async function parseProgramsAndConstructImportGraph(
   const getter = options.memoizeGetter ? memoize(fileGetter) : fileGetter
   let entrypointCode: string | undefined = undefined
 
-  // Wrapper around resolve file to make calling it more convenient
-  async function resolveFileWrapper(fromPath: AbsolutePath, toPath: string, node?: es.Node) {
-    const resolveResult = await resolveFile(fromPath, toPath, getter, options?.resolverOptions)
+  async function resolveDependency(fromModule: AbsolutePath, node: ModuleDeclarationWithSource) {
+    // TODO: Move file path validation here
+    const toPath = node.source!.value as string
+    const resolveResult = await resolveFile(fromModule, toPath, getter, options?.resolverOptions)
 
     if (!resolveResult) {
       throw new ModuleNotFoundError(toPath, node)
@@ -91,16 +92,9 @@ export default async function parseProgramsAndConstructImportGraph(
 
     // Special case of circular import: the module specifier
     // refers to the current file
-    if (absPath === fromPath) {
+    if (absPath === fromModule) {
       throw new CircularImportError([absPath, absPath])
     }
-
-    return resolveResult
-  }
-
-  async function resolveDependency(fromModule: AbsolutePath, node: ModuleDeclarationWithSource) {
-    // TODO: Move file path validation here
-    const resolveResult = await resolveFileWrapper(fromModule, node.source!.value as string, node)
 
     // This condition can never be true: To see an existing edge
     // would require having to parse the fromModule again
@@ -120,13 +114,13 @@ export default async function parseProgramsAndConstructImportGraph(
     if (resolveResult.type === 'source') {
       sourceModulesToImport.add(resolveResult.path)
     } else {
+      // No need to parse programs we've already parsed before
       importGraph.addEdge(resolveResult.path, fromModule)
       await parseAndEnumerateModuleDeclarations(resolveResult.path, resolveResult.code)
     }
   }
 
   async function parseAndEnumerateModuleDeclarations(fromModule: AbsolutePath, fileText: string) {
-    // No need to parse programs we've already parsed before
     if (fromModule in programs) return
 
     const parseOptions = shouldAddFileName
@@ -216,6 +210,7 @@ export default async function parseProgramsAndConstructImportGraph(
     }
 
     await parseAndEnumerateModuleDeclarations(entrypointFilePath, entrypointCode)
+
     const topologicalOrderResult = importGraph.getTopologicalOrder()
     if (!topologicalOrderResult.isValidTopologicalOrderFound) {
       throw new CircularImportError(topologicalOrderResult.firstCycleFound)
