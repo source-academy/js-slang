@@ -6,11 +6,11 @@
 /* tslint:disable:max-classes-per-file */
 
 import { SourceLocation } from 'acorn'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { EnvTree } from './createContext'
 import { Control, Stash } from './cse-machine/interpreter'
-import { ModuleBundle, type AbsolutePath, type SourceFiles } from './modules/moduleTypes'
+import type { ModuleBundle } from './modules/moduleTypes'
 import type { AllExecutionMethods } from './runner'
 
 /**
@@ -212,11 +212,6 @@ export interface Context<T = any> {
    * Programs previously executed in this context
    */
   previousPrograms: es.Program[]
-
-  previousCode: {
-    entrypointFilePath: AbsolutePath
-    files: SourceFiles
-  } | null
 
   verboseErrors: boolean | null
 }

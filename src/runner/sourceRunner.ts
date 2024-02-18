@@ -80,6 +80,23 @@ type Runner = (
   options: IOptions
 ) => Promise<Result>
 
+let previousCode: {
+  entrypointFilePath: AbsolutePath
+  files: SourceFiles
+} | null = null
+
+type RunnerOptions = {
+  evaluatePreludes: boolean
+  doValidation: boolean
+  increaseExecTimeOnTimeout: boolean
+}
+
+const defaultRunnerOptions: RunnerOptions = {
+  evaluatePreludes: true,
+  doValidation: true,
+  increaseExecTimeOnTimeout: false
+}
+
 function createSourceRunner(
   runner: (
     program: Program,
@@ -87,10 +104,14 @@ function createSourceRunner(
     options: IOptions,
     isPrelude: boolean
   ) => Promise<Result>,
-  doValidation: boolean = true,
-  evaluatePreludes: boolean = true,
+  runnerOptions: Partial<RunnerOptions> = {},
   bundler: Bundler = defaultBundler
 ): Runner {
+  const { doValidation, evaluatePreludes, increaseExecTimeOnTimeout } = {
+    ...defaultRunnerOptions,
+    ...runnerOptions
+  }
+
   return async (linkerResult, entrypointFilePath, context, options) => {
     const { programs, topoOrder, sourceModulesToImport } = linkerResult
 
@@ -142,13 +163,15 @@ function createSourceRunner(
       files: linkerResult.files,
       entrypointFilePath
     }
-    const shouldIncreaseEvaluationTimeout = _.isEqual(context.previousCode, currentCode)
-    context.previousCode = currentCode
+    const shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
+    previousCode = currentCode
 
-    if (shouldIncreaseEvaluationTimeout) {
-      context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-    } else {
-      context.nativeStorage.maxExecTime = options.originalMaxExecTime
+    if (increaseExecTimeOnTimeout) {
+      if (shouldIncreaseEvaluationTimeout) {
+        context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
+      } else {
+        context.nativeStorage.maxExecTime = options.originalMaxExecTime
+      }
     }
     return runner(bundledProgram, context, options, false)
   }
@@ -170,12 +193,14 @@ export const runners = {
       context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
       return resolvedErrorPromise
     }
-  }),
+  }, { increaseExecTimeOnTimeout: true }),
   ['cse-machine']: createSourceRunner((program, context, options, isPrelude) => {
     const value = CSEvaluate(program, context, options, isPrelude)
     return CSEResultPromise(context, value)
   }),
-  fullJS: createSourceRunner(fullJSRunner, false),
+  fullJS: createSourceRunner(fullJSRunner, {
+    doValidation: false
+  }),
   interpreter: createSourceRunner((program, context, options) => {
     let it = interpreterEval(program, context)
     let scheduler: Scheduler
@@ -269,7 +294,7 @@ export const runners = {
       context.errors.push(sourceError)
       return resolvedErrorPromise
     }
-  }),
+  }, { increaseExecTimeOnTimeout: true }),
   scheme: createSourceRunner(async (program, context, options) => {
     const result = await fullJSRunner(program, context, options)
     if (result.status === 'finished') {

@@ -164,7 +164,6 @@ export const createEmptyContext = <T>(
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
     previousPrograms: [],
-    previousCode: null,
     isPreviousCodeTimeoutError: false,
     verboseErrors: null
   }
