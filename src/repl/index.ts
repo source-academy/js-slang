@@ -1,7 +1,8 @@
 import { Command } from '@commander-js/extra-typings'
-import { transpilerCommand } from './transpiler'
+
 import { replCommand } from './repl'
 import { nonDetCommand } from './repl-non-det'
+import { transpilerCommand } from './transpiler'
 
 new Command()
   .addCommand(transpilerCommand)

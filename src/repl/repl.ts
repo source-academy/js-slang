@@ -1,17 +1,18 @@
-import type fslib from 'fs/promises'
 import { Command } from '@commander-js/extra-typings'
-import { chapterParser, getChapterOption, getVariantOption, validChapterVariant } from './utils'
-import { createContext, parseError, runInContext, type IOptionsWithExecMethod } from '..'
+import type fslib from 'fs/promises'
 import { resolve } from 'path'
-import { runFilesInSource } from '../runner'
-import type { AbsolutePath } from '../modules/moduleTypes'
-import { stringify } from '../utils/stringify'
 import { start } from 'repl'
 import { inspect } from 'util'
+
+import { type IOptionsWithExecMethod, createContext, parseError, runInContext } from '..'
 import Closure from '../interpreter/closure'
 import { setModulesStaticURL } from '../modules/loader'
-import { Chapter, Variant, type RecursivePartial } from '../types'
+import type { AbsolutePath } from '../modules/moduleTypes'
+import { runFilesInSource } from '../runner'
+import { type RecursivePartial, Chapter, Variant } from '../types'
 import { objectValues } from '../utils/misc'
+import { stringify } from '../utils/stringify'
+import { chapterParser, getChapterOption, getVariantOption, validChapterVariant } from './utils'
 
 export const replCommand = new Command('run')
   .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))

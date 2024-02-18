@@ -1,3 +1,4 @@
+import type { Program } from 'estree'
 import * as _ from 'lodash'
 import type { RawSourceMap } from 'source-map'
 
@@ -13,14 +14,19 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluateProgram as interpreterEval } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
+import { ModuleNotFoundError } from '../modules/errors'
+import loadSourceModules from '../modules/loader'
 import type { AbsolutePath, FileGetter, SourceFiles } from '../modules/moduleTypes'
 import analyzeImportsAndExports, { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
+import defaultBundler, { type Bundler } from '../modules/preprocessor/bundler'
 import parseProgramsAndConstructImportGraph, {
+  type LinkerSuccessResult,
   defaultLinkerOptions,
-  isLinkerSuccess,
-  type LinkerSuccessResult
-} from '../modules/preprocessor/linker'
+  isLinkerSuccess} from '../modules/preprocessor/linker'
+import { parse } from '../parser/parser'
+import { decodeError, decodeValue } from '../parser/scheme'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
+import { areBreakpointsSet } from '../stdlib/inspector'
 import {
   callee,
   getEvaluationSteps,
@@ -31,24 +37,17 @@ import {
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
 import { Chapter, Context, RecursivePartial, Scheduler, Variant } from '../types'
+import assert from '../utils/assert'
+import { objectKeys } from '../utils/misc'
 import { forceIt } from '../utils/operators'
+import { simple } from '../utils/walkers'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
-import { determineVariant, resolvedErrorPromise } from './utils'
-import type { Program } from 'estree'
-import { simple } from '../utils/walkers'
-import loadSourceModules from '../modules/loader'
-import defaultBundler, { type Bundler } from '../modules/preprocessor/bundler'
-import { decodeError, decodeValue } from '../parser/scheme'
 import { htmlRunner } from './htmlRunner'
-import { ModuleNotFoundError } from '../modules/errors'
-import { parse } from '../parser/parser'
-import assert from '../utils/assert'
-import { areBreakpointsSet } from '../stdlib/inspector'
-import { objectKeys } from '../utils/misc'
+import { determineVariant, resolvedErrorPromise } from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: Readonly<IOptionsWithExecMethod> = {
   scheduler: 'async',

@@ -1,20 +1,19 @@
+import { Command } from '@commander-js/extra-typings'
 import type fslib from 'fs/promises'
 import * as repl from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
 
 import { CUT, TRY_AGAIN } from '../constants'
 import {
+  type IOptionsWithExecMethod,
   createContext,
   IOptions,
   parseError,
   Result,
   resume,
-  runInContext,
-  type IOptionsWithExecMethod
-} from '../index'
+  runInContext} from '../index'
 import Closure from '../interpreter/closure'
 import { Chapter, Context, SuspendedNonDet, Variant } from '../types'
-import { Command } from '@commander-js/extra-typings'
 
 const NO_MORE_VALUES_MESSAGE: string = 'There are no more values of: '
 let previousInput: string | undefined // stores the input which is then shown when there are no more values for the program

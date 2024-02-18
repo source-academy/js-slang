@@ -1,25 +1,25 @@
 #!/usr/bin/env node
-import type fslib from 'fs/promises'
+import { Command } from '@commander-js/extra-typings'
 import { generate } from 'astring'
+import type fslib from 'fs/promises'
+import { resolve } from 'path'
 
 import { transpileToGPU } from '../gpu/gpu'
 import { createContext, parseError } from '../index'
 import { transpileToLazy } from '../lazy/lazy'
+import defaultBundler from '../modules/preprocessor/bundler'
+import parseProgramsAndConstructImportGraph, {
+  isLinkerSuccess
+} from '../modules/preprocessor/linker'
+import { resolvePath } from '../modules/utils'
 import { transpile } from '../transpiler/transpiler'
 import { Chapter, Variant } from '../types'
-import { Command } from '@commander-js/extra-typings'
 import {
   chapterParser,
   getChapterOption,
   getVariantOption,
   validateChapterAndVariantCombo
 } from './utils'
-import parseProgramsAndConstructImportGraph, {
-  isLinkerSuccess
-} from '../modules/preprocessor/linker'
-import { resolvePath } from '../modules/utils'
-import defaultBundler from '../modules/preprocessor/bundler'
-import { resolve } from 'path'
 
 export const transpilerCommand = new Command()
   .addOption(

@@ -14,10 +14,9 @@ import {
   type ModuleContext,
   type RecursivePartial,
   type Result,
+  type SourceError,
   type SVMProgram,
-  Variant,
-  type SourceError
-} from './types'
+  Variant} from './types'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
@@ -26,13 +25,13 @@ import type es from 'estree'
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { AbsoluteFilePathError, ModuleNotFoundError } from './modules/errors'
 import type { ImportOptions, SourceFiles } from './modules/moduleTypes'
+import defaultBundler from './modules/preprocessor/bundler'
 import { validateFilePaths } from './modules/preprocessor/filePaths'
+import parseProgramsAndConstructImportGraph from './modules/preprocessor/linker'
 import { isAbsolutePath } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parseWithComments } from './parser/utils'
-import { resolvedErrorPromise, runFilesInSource, type AllExecutionMethods } from './runner'
-import parseProgramsAndConstructImportGraph from './modules/preprocessor/linker'
-import defaultBundler from './modules/preprocessor/bundler'
+import { type AllExecutionMethods,resolvedErrorPromise, runFilesInSource } from './runner'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
