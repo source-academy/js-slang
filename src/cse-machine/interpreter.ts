@@ -281,6 +281,7 @@ function runCSEMachine(
         context.runtime.breakpointSteps.push(steps)
       }
     }
+
     control.pop()
     if (isNode(command)) {
       context.runtime.nodes.shift()
@@ -298,6 +299,7 @@ function runCSEMachine(
       // Command is an instrucion
       cmdEvaluators[command.instrType](command, context, control, stash, isPrelude)
     }
+
     // Push undefined into the stack if both control and stash is empty
     if (control.isEmpty() && stash.isEmpty()) {
       stash.push(undefined)
@@ -359,38 +361,37 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   },
 
   BlockStatement: function (command: es.BlockStatement, context: Context, control: Control) {
-    // normal block statement: do environment setup
-    if (!isRawBlockStatement(command)) {
-      // To restore environment after block ends
-      // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next control item
-      // we do not need to push another one
-      // The no declarations case is handled by Control :: simplifyBlocksWithoutDeclarations, so no blockStatement node
-      // without declarations should end up here.
-      const next = control.peek()
-      // Push ENVIRONMENT instruction if needed
-      if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
-        control.push(instr.envInstr(currentEnvironment(context), command))
-      }
-
-      const environment = createBlockEnvironment(context, 'blockEnvironment')
-      declareFunctionsAndVariables(context, command, environment)
-      pushEnvironment(context, environment)
-
-      // push raw block statement
-      const rawCopy: RawBlockStatement = {
-        type: 'BlockStatement',
-        range: command.range,
-        loc: command.loc,
-        body: command.body,
-        isRawBlock: 'true'
-      }
-      control.push(rawCopy)
-    }
-    // raw block statement: unpack and push body
-    else {
-      // Push block body
+    if (isRawBlockStatement(command)) {
+      // Raw block statement: unpack and push body
+      // Push block body only
       control.push(...handleSequence(command.body))
+      return
     }
+    // Normal block statement: do environment setup
+    // To restore environment after block ends
+    // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next control item
+    // we do not need to push another one
+    // The no declarations case is handled by Control :: simplifyBlocksWithoutDeclarations, so no blockStatement node
+    // without declarations should end up here.
+    const next = control.peek()
+    // Push ENVIRONMENT instruction if needed
+    if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+      control.push(instr.envInstr(currentEnvironment(context), command))
+    }
+
+    const environment = createBlockEnvironment(context, 'blockEnvironment')
+    declareFunctionsAndVariables(context, command, environment)
+    pushEnvironment(context, environment)
+
+    // Push raw block statement
+    const rawCopy: RawBlockStatement = {
+      type: 'BlockStatement',
+      range: command.range,
+      loc: command.loc,
+      body: command.body,
+      isRawBlock: 'true'
+    }
+    control.push(rawCopy)
   },
 
   WhileStatement: function (
