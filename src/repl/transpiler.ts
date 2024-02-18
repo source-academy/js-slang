@@ -44,7 +44,7 @@ export const transpilerCommand = new Command()
 
     const linkerResult = await parseProgramsAndConstructImportGraph(
       async p => {
-        try{
+        try {
           const text = await fs.readFile(p, 'utf-8')
           return text
         } catch (error) {
@@ -94,5 +94,3 @@ export const transpilerCommand = new Command()
       console.log(transpiled)
     }
   })
-
-transpilerCommand.parseAsync()

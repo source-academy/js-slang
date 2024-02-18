@@ -1,4 +1,4 @@
-import * as fs from 'fs'
+import type fslib from 'fs/promises'
 import * as repl from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
 
@@ -14,6 +14,7 @@ import {
 } from '../index'
 import Closure from '../interpreter/closure'
 import { Chapter, Context, SuspendedNonDet, Variant } from '../types'
+import { Command } from '@commander-js/extra-typings'
 
 const NO_MORE_VALUES_MESSAGE: string = 'There are no more values of: '
 let previousInput: string | undefined // stores the input which is then shown when there are no more values for the program
@@ -30,7 +31,7 @@ function _handleResult(
     if (result.value === CUT) result.value = undefined
     callback(null, result.value)
   } else {
-    const error = new Error(parseError(context.errors))
+    const error = new Error(parseError(context))
     // we do not display the stack trace, because the stack trace points to code within this REPL
     // program, rather than the erroneous line in the user's program. Such a trace is too low level
     // to be helpful.
@@ -116,25 +117,21 @@ function _startRepl(chapter: Chapter = Chapter.SOURCE_1, useSubst: boolean, prel
         }
       )
     } else {
-      throw new Error(parseError(context.errors))
+      throw new Error(parseError(context))
     }
   })
 }
 
-function main() {
-  const firstArg = process.argv[2]
-  if (process.argv.length === 3 && String(Number(firstArg)) !== firstArg.trim()) {
-    fs.readFile(firstArg, 'utf8', (err, data) => {
-      if (err) {
-        throw err
-      }
-      _startRepl(Chapter.SOURCE_3, false, data)
-    })
-  } else {
-    const chapter = Chapter.SOURCE_3
-    const useSubst = process.argv.length > 3 ? process.argv[3] === 'subst' : false
-    _startRepl(chapter, useSubst)
-  }
-}
+export const nonDetCommand = new Command('non-det')
+  .option('--useSubst')
+  .argument('<filename>')
+  .action(async (fileName, { useSubst }) => {
+    if (fileName !== undefined) {
+      const fs: typeof fslib = require('fs/promises')
+      const data = await fs.readFile(fileName, 'utf-8')
 
-main()
+      _startRepl(Chapter.SOURCE_3, false, data)
+    } else {
+      _startRepl(Chapter.SOURCE_3, !!useSubst)
+    }
+  })

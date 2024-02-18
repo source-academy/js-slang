@@ -1,6 +1,12 @@
 import { Option } from '@commander-js/extra-typings'
 import { Chapter, Variant, type Language } from '../types'
-import { sourceLanguages, type SourceLanguage, type ValidLanguage, scmLanguages, pyLanguages } from '../constants'
+import {
+  sourceLanguages,
+  type SourceLanguage,
+  type ValidLanguage,
+  scmLanguages,
+  pyLanguages
+} from '../constants'
 
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined
@@ -21,7 +27,6 @@ export function chapterParser(str: string): Chapter {
     return Chapter[foundChapter]
   }
   throw new Error(`Invalid chapter value: ${str}`)
-
 }
 
 export const getChapterOption = <T extends Chapter>(

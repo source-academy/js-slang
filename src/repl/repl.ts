@@ -1,128 +1,99 @@
-#!/usr/bin/env node
-import { start } from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
+import type fslib from 'fs/promises'
+import { Command } from '@commander-js/extra-typings'
+import { chapterParser, getChapterOption, getVariantOption, validChapterVariant } from './utils'
+import { createContext, parseError, runInContext, type IOptionsWithExecMethod } from '..'
+import { resolve } from 'path'
+import { runFilesInSource } from '../runner'
+import type { AbsolutePath } from '../modules/moduleTypes'
+import { stringify } from '../utils/stringify'
+import { start } from 'repl'
 import { inspect } from 'util'
-
-import { pyLanguages, scmLanguages, sourceLanguages } from '../constants'
-import { createContext, parseError, runInContext, type IOptionsWithExecMethod } from '../index'
 import Closure from '../interpreter/closure'
-import { Variant } from '../types'
-import type { AllExecutionMethods } from '../runner'
+import { setModulesStaticURL } from '../modules/loader'
+import { Chapter, Variant, type RecursivePartial } from '../types'
+import { objectValues } from '../utils/misc'
 
-function startRepl(
-  chapter = 1,
-  executionMethod: AllExecutionMethods = 'interpreter',
-  variant: Variant = Variant.DEFAULT,
-  useSubst: boolean = false,
-  useRepl: boolean,
-  prelude = ''
-) {
-  // use defaults for everything
-  const context = createContext(chapter, variant, undefined, undefined)
-  const options: Partial<IOptionsWithExecMethod> = {
-    scheduler: 'preemptive',
-    executionMethod,
-    variant,
-    useSubst
-  }
-  runInContext(prelude, context, options).then(preludeResult => {
-    if (preludeResult.status === 'finished' || preludeResult.status === 'suspended-non-det') {
-      console.dir(preludeResult.value, { depth: null })
-      if (!useRepl) {
-        return
-      }
-      start(
-        // the object being passed as argument fits the interface ReplOptions in the repl module.
-        {
-          eval: (cmd, unusedContext, unusedFilename, callback) => {
-            runInContext(cmd, context, options).then(obj => {
-              if (obj.status === 'finished' || obj.status === 'suspended-non-det') {
-                callback(null, obj.value)
-              } else {
-                callback(new Error(parseError(context)), undefined)
-              }
-            })
-          },
-          // set depth to a large number so that `parse()` output will not be folded,
-          // setting to null also solves the problem, however a reference loop might crash
-          writer: output => {
-            return output instanceof Closure || typeof output === 'function'
-              ? output.toString()
-              : inspect(output, {
-                  depth: 1000,
-                  colors: true
-                })
-          }
-        }
-      )
-    } else {
-      console.error(parseError(context))
+export const replCommand = new Command('run')
+  .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
+  .addOption(getVariantOption(Variant.DEFAULT, objectValues(Variant)))
+  .option('-v, --verbose', 'Enable verbose errors')
+  .option('--modulesBackend <backend>')
+  .option('-r, --repl', 'Start a REPL after evaluating files')
+  .option('--optionsFile <file>', 'Specify a JSON file to read options from')
+  .argument('[filename]')
+  .action(async (filename, { modulesBackend, optionsFile, repl, verbose, ...lang }) => {
+    if (!validChapterVariant(lang)) {
+      console.log('Invalid language combination!')
+      return
     }
-  })
-}
 
-/**
- * Returns true iff the given chapter and variant combination is supported.
- */
-function validChapterVariant(chapter: any, variant: any) {
-  if (variant === 'interpreter') {
-    return true
-  }
-  // TODO explicit control should only be done with source chapter 4
-  if (variant === 'explicit-control') {
-    return true
-  }
-  if (variant === 'substituter' && (chapter === 1 || chapter === 2)) {
-    return true
-  }
-  for (const lang of sourceLanguages) {
-    if (lang.chapter === chapter && lang.variant === variant) return true
-  }
-  for (const lang of scmLanguages) {
-    if (lang.chapter === chapter && lang.variant === variant) return true
-  }
-  for (const lang of pyLanguages) {
-    if (lang.chapter === chapter && lang.variant === variant) return true
-  }
+    const fs: typeof fslib = require('fs/promises')
 
-  return false
-}
+    const context = createContext(lang.chapter, lang.variant)
 
-function main() {
-  const opt = require('node-getopt')
-    .create([
-      ['c', 'chapter=CHAPTER', 'set the Source chapter number (i.e., 1-4)', '1'],
-      [
-        'v',
-        'variant=VARIANT',
-        'set the Source variant (i.e., default, interpreter, substituter, lazy, non-det, concurrent, wasm, gpu)',
-        'default'
-      ],
-      ['h', 'help', 'display this help'],
-      ['e', 'eval', "don't show REPL, only display output of evaluation"]
-    ])
-    .bindHelp()
-    .setHelp('Usage: js-slang [PROGRAM_STRING] [OPTION]\n\n[[OPTIONS]]')
-    .parseSystem()
+    if (verbose !== undefined) {
+      context.verboseErrors = verbose
+    }
 
-  const variant = opt.options.variant
-  const chapter = parseInt(opt.options.chapter, 10)
-  const areValidChapterVariant: boolean = validChapterVariant(chapter, variant)
-  if (!areValidChapterVariant) {
-    throw new Error(
-      'The chapter and variant combination provided is unsupported. Use the -h option to view valid chapters and variants.'
+    if (modulesBackend !== undefined) {
+      setModulesStaticURL(modulesBackend)
+    }
+
+    let options: RecursivePartial<IOptionsWithExecMethod> = {}
+    if (optionsFile !== undefined) {
+      const rawText = await fs.readFile(optionsFile, 'utf-8')
+      options = JSON.parse(rawText)
+    }
+
+    if (filename !== undefined) {
+      const entrypointFilePath = resolve(filename) as AbsolutePath
+      const result = await runFilesInSource(
+        async p => {
+          try {
+            const text = await fs.readFile(p, 'utf-8')
+            return text
+          } catch (error) {
+            if (error.code === 'ENOENT') return undefined
+            throw error
+          }
+        },
+        entrypointFilePath,
+        context,
+        options
+      )
+
+      if (result.status === 'finished') {
+        console.log(stringify(result.value))
+      } else if (result.status === 'error') {
+        console.log(parseError(context))
+      }
+
+      if (!repl) return
+    }
+
+    start(
+      // the object being passed as argument fits the interface ReplOptions in the repl module.
+      {
+        eval: (cmd, unusedContext, unusedFilename, callback) => {
+          context.errors = []
+          runInContext(cmd, context, options).then(obj => {
+            if (obj.status === 'finished' || obj.status === 'suspended-non-det') {
+              callback(null, obj.value)
+            } else {
+              callback(new Error(parseError(context)), undefined)
+            }
+          })
+        },
+        // set depth to a large number so that `parse()` output will not be folded,
+        // setting to null also solves the problem, however a reference loop might crash
+        writer: output => {
+          return output instanceof Closure || typeof output === 'function'
+            ? output.toString()
+            : inspect(output, {
+                depth: 1000,
+                colors: true
+              })
+        }
+      }
     )
-  }
-
-  const executionMethod =
-    opt.options.variant === 'interpreter' ||
-    opt.options.variant === 'non-det' ||
-    opt.options.variant === 'explicit-control'
-      ? 'interpreter'
-      : 'native'
-  const useSubst = opt.options.variant === 'substituter'
-  const useRepl = !opt.options.e
-  const prelude = opt.argv[0] ?? ''
-  startRepl(chapter, executionMethod, variant, useSubst, useRepl, prelude)
-}
-
-main()
+  })
