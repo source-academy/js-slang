@@ -1455,7 +1455,7 @@ describe(`Evaluation of empty code and imports`, () => {
   test('Evaluate empty program', async () => {
     const code = ``
     const steps = await testEvalSteps(code, mockContext())
-    // expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('')
   })
 })
