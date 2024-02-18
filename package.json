@@ -52,7 +52,7 @@
   },
   "scripts": {
     "build": "yarn docs && yarn build:slang",
-    "build:slang": "tsc --project tsconfig.prod.json",
+    "build:slang": "tsc --build tsconfig.prod.json",
     "eslint": "eslint --ext \".ts,.tsx\" src",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:ci": "prettier --list-different \"src/**/*.{ts,tsx}\"",
