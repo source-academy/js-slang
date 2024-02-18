@@ -78,7 +78,7 @@
     "ace-builds": "^1.4.12",
     "coveralls": "^3.1.0",
     "escodegen": "^2.0.0",
-    "eslint": "^7.11.0",
+    "eslint": "^8.56.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "husky": "^8.0.1",
