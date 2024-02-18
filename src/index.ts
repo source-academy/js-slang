@@ -26,12 +26,13 @@ import type es from 'estree'
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { AbsoluteFilePathError, ModuleNotFoundError } from './modules/errors'
 import type { ImportOptions, SourceFiles } from './modules/moduleTypes'
-import preprocessFileImports from './modules/preprocessor'
 import { validateFilePaths } from './modules/preprocessor/filePaths'
 import { isAbsolutePath } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parseWithComments } from './parser/utils'
 import { resolvedErrorPromise, runFilesInSource, type AllExecutionMethods } from './runner'
+import parseProgramsAndConstructImportGraph from './modules/preprocessor/linker'
+import defaultBundler from './modules/preprocessor/bundler'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -291,14 +292,23 @@ export async function compileFiles(
   }
 
   if (!isAbsolutePath(entrypointFilePath)) {
-    throw new Error('Entrypoint file path must be absolute!')
-  }
-  const preprocessedProgram = await preprocessFileImports(files, context, entrypointFilePath, {})
-  if (!preprocessedProgram) {
-    return undefined
+    throw new AbsoluteFilePathError(entrypointFilePath)
   }
 
+  const linkerResult = await parseProgramsAndConstructImportGraph(
+    p => Promise.resolve(files[p]),
+    entrypointFilePath,
+    context,
+    {},
+    Object.keys(files).length > 1
+  )
+
+  if (!linkerResult.ok) return undefined
+
   try {
+    const { programs, topoOrder } = linkerResult
+    const preprocessedProgram = defaultBundler(programs, entrypointFilePath, topoOrder, context)
+
     return compileToIns(preprocessedProgram, undefined, vmInternalFunctions)
   } catch (error) {
     context.errors.push(error)

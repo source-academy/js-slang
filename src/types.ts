@@ -492,3 +492,7 @@ export type RecursivePartial<T> =
           [K in keyof T]: RecursivePartial<T[K]>
         }>
       : T
+
+// Why not just use keyof? Sometimes typescript does a bad job of
+// inferring the key type
+export type RecordKey<T> = T extends Record<infer K, any> ? K : never

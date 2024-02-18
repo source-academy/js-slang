@@ -1,6 +1,6 @@
 import { mockContext } from '../../../mocks/context'
 import { MissingSemicolonError } from '../../../parser/errors'
-import { Chapter, type Context, type SourceError } from '../../../types'
+import { Chapter, type Context, type RecordKey, type SourceError } from '../../../types'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
 import type { AbsolutePath, SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph, {
@@ -27,7 +27,7 @@ function expectResultFailure(result: LinkerResult): asserts result is LinkerErro
   expect(result.ok).toEqual(false)
 }
 
-async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
+async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: RecordKey<T>) {
   const context = mockContext(Chapter.SOURCE_4)
   const result = await parseProgramsAndConstructImportGraph(
     p => Promise.resolve(files[p]),
@@ -42,17 +42,17 @@ async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: key
   ]
 }
 
-async function expectError<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
+async function expectError<T extends SourceFiles>(files: T, entrypointFilePath: RecordKey<T>) {
   const [context, result] = await testCode(files, entrypointFilePath)
   expectResultFailure(result)
   expect(context.errors.length).toBeGreaterThanOrEqual(1)
   return [context.errors, result] as [SourceError[], LinkerErrorResult]
 }
 
-async function expectSuccess<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
+async function expectSuccess<T extends SourceFiles>(files: T, entrypointFilePath: RecordKey<T>) {
   const [context, result] = await testCode(files, entrypointFilePath)
   expectResultSuccess(result)
-  expect(context.errors.length).toBeGreaterThanOrEqual(0)
+  expect(context.errors.length).toEqual(0)
   return result
 }
 
@@ -212,7 +212,11 @@ describe('Check verbose error detection', () => {
         'enable verbose';
         import { b } from './b.js';
       `,
-        '/b.js': 'export const b = 1 + 1'
+        '/b.js': `
+          import { c } from './c.js';
+          export const b = "b"
+        `,
+        '/c.js': 'export const c = 1 + 1;'
       },
       '/a.js'
     )

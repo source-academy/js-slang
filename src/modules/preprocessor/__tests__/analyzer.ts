@@ -5,7 +5,7 @@ import {
   UndefinedImportError,
   UndefinedNamespaceImportError
 } from '../../errors'
-import { Chapter } from '../../../types'
+import { Chapter, type RecordKey } from '../../../types'
 import { stripIndent } from '../../../utils/formatters'
 import parseProgramsAndConstructImportGraph from '../linker'
 import analyzeImportsAndExports from '../analyzer'
@@ -13,7 +13,7 @@ import { parse } from '../../../parser/parser'
 import { mockContext } from '../../../mocks/context'
 import type { Program } from 'estree'
 import loadSourceModules from '../../loader'
-import type { AbsolutePath, SourceFiles as Files } from '../../moduleTypes'
+import type { AbsolutePath, SourceFiles } from '../../moduleTypes'
 import { objectKeys } from '../../../utils/misc'
 
 jest.mock('../../loader/loaders')
@@ -43,13 +43,15 @@ describe('Test throwing import validation errors', () => {
 
   // Providing an ErrorInfo object indicates that the test case should throw
   // the corresponding error
-  type ImportTestCaseWithNoError<T extends Files> = [string, T, keyof T]
-  type ImportTestCaseWithError<T extends Files> = [...ImportTestCaseWithNoError<T>, ErrorInfo]
-  type ImportTestCase<T extends Files> = ImportTestCaseWithError<T> | ImportTestCaseWithNoError<T>
+  type ImportTestCaseWithNoError<T extends SourceFiles> = [string, T, RecordKey<T>]
+  type ImportTestCaseWithError<T extends SourceFiles> = [...ImportTestCaseWithNoError<T>, ErrorInfo]
+  type ImportTestCase<T extends SourceFiles> =
+    | ImportTestCaseWithError<T>
+    | ImportTestCaseWithNoError<T>
 
-  async function testCode<T extends Files>(
+  async function testCode<T extends SourceFiles>(
     files: T,
-    entrypointFilePath: keyof T,
+    entrypointFilePath: RecordKey<T>,
     allowUndefinedImports: boolean,
     throwOnDuplicateNames: boolean
   ) {
@@ -70,16 +72,16 @@ describe('Test throwing import validation errors', () => {
     const { programs, topoOrder, sourceModulesToImport } = importGraphResult
     await loadSourceModules(sourceModulesToImport, context, false)
 
-    analyzeImportsAndExports(programs, entrypointFilePath as AbsolutePath, topoOrder, context, {
+    analyzeImportsAndExports(programs, entrypointFilePath, topoOrder, context, {
       allowUndefinedImports,
       throwOnDuplicateNames
     })
     return true
   }
 
-  async function testFailure<T extends Files>(
+  async function testFailure<T extends SourceFiles>(
     files: T,
-    entrypointFilePath: keyof T,
+    entrypointFilePath: RecordKey<T>,
     allowUndefinedImports: boolean,
     errInfo: ErrorInfo
   ) {
@@ -114,9 +116,9 @@ describe('Test throwing import validation errors', () => {
     })
   }
 
-  function testSuccess<T extends Files>(
+  function testSuccess<T extends SourceFiles>(
     files: T,
-    entrypointFilePath: keyof T,
+    entrypointFilePath: RecordKey<T>,
     allowUndefinedImports: boolean
   ) {
     return expect(
@@ -124,8 +126,8 @@ describe('Test throwing import validation errors', () => {
     ).resolves.toEqual(true)
   }
 
-  type FullTestCase = [string, Files, `/${string}`, ErrorInfo | boolean]
-  function testCases<T extends Files>(desc: string, cases: ImportTestCase<T>[]) {
+  type FullTestCase = [string, SourceFiles, AbsolutePath, ErrorInfo | boolean]
+  function testCases<T extends SourceFiles>(desc: string, cases: ImportTestCase<T>[]) {
     const [allNoCases, allYesCases] = cases.reduce(
       ([noThrow, yesThrow], [desc, files, entry, errorInfo], i) => {
         return [
@@ -630,24 +632,29 @@ describe('Test throwing DuplicateImportNameErrors', () => {
    * [Description, Files]
    * Use this test case specification to specify that no error is expected
    */
-  type TestCaseWithNoError<T extends Files> = [description: string, files: T]
+  type TestCaseWithNoError<T extends SourceFiles> = [description: string, files: T]
 
   /**
    * [Description, Files, Expected location string]
    * Use this test case specification to specify that an error is expected.
    * The given string represents the location string
    */
-  type TestCaseWithError<T extends Files> = [description: string, files: T, expectedError: string]
+  type TestCaseWithError<T extends SourceFiles> = [
+    description: string,
+    files: T,
+    expectedError: string
+  ]
 
-  type TestCase<T extends Files> = TestCaseWithError<T> | TestCaseWithNoError<T>
-  const isTestCaseWithNoError = <T extends Files>(c: TestCase<T>): c is TestCaseWithNoError<T> =>
-    c.length === 2
+  type TestCase<T extends SourceFiles> = TestCaseWithError<T> | TestCaseWithNoError<T>
+  const isTestCaseWithNoError = <T extends SourceFiles>(
+    c: TestCase<T>
+  ): c is TestCaseWithNoError<T> => c.length === 2
 
   type FullTestCase =
     | [string, Record<AbsolutePath, Program>, true, string | undefined]
     | [string, Record<AbsolutePath, Program>, false, undefined]
 
-  function testCases<T extends Files>(desc: string, cases: TestCase<T>[]) {
+  function testCases<T extends SourceFiles>(desc: string, cases: TestCase<T>[]) {
     const [allNoCases, allYesCases] = cases.reduce(
       ([noThrow, yesThrow], c, i) => {
         const context = mockContext(Chapter.LIBRARY_PARSER)
@@ -663,7 +670,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
               [name]: parsed
             }
           },
-          {} as Record<string, Program>
+          {} as Record<AbsolutePath, Program>
         )
 
         // For each test case, split it into the case where throwOnDuplicateImports is true

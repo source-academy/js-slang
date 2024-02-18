@@ -1,17 +1,17 @@
 import type { Program } from 'estree'
-import type { MockedFunction } from 'jest-mock'
 
-import { parseError } from '../../..'
+import { parseError, type Context, type IOptions } from '../../..'
 import { mockContext } from '../../../mocks/context'
-import { Chapter } from '../../../types'
-import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
-import preprocessFileImports from '..'
+import { Chapter, type RecursivePartial } from '../../../types'
 import { parseCodeError, sanitizeAST } from './utils'
 import { parse } from '../../../parser/parser'
 import {
   accessExportFunctionName,
   defaultExportLookupName
 } from '../../../stdlib/localImport.prelude'
+import type { AbsolutePath, SourceFiles } from '../../moduleTypes'
+import parseProgramsAndConstructImportGraph from '../linker'
+import defaultBundler from '../bundler'
 
 jest.mock('../../loader/loaders')
 
@@ -41,8 +41,30 @@ describe('preprocessFileImports', () => {
     expect(sanitizeAST(actualProgram)).toMatchObject(sanitizeAST(expectedProgram))
   }
 
+  const preprocessFileImports = async <T extends SourceFiles>(
+    files: T,
+    context: Context,
+    entrypointFilePath: AbsolutePath,
+    options: RecursivePartial<IOptions> = {}
+  ) => {
+    const linkerResult = await parseProgramsAndConstructImportGraph(
+      p => Promise.resolve(files[p]),
+      entrypointFilePath,
+      context,
+      options.importOptions,
+      options.shouldAddFileName ?? Object.keys(files).length > 1
+    )
+
+    context.verboseErrors = linkerResult.isVerboseErrorsEnabled
+
+    if (!linkerResult.ok) return undefined
+
+    const { programs, topoOrder } = linkerResult
+    return defaultBundler(programs, entrypointFilePath, topoOrder, context)
+  }
+
   it('returns undefined & adds ModuleNotFoundError to context if the entrypoint file does not exist', async () => {
-    const files: Record<string, string> = {
+    const files: SourceFiles = {
       '/a.js': '1 + 2;'
     }
     const actualProgram = await preprocessFileImports(files, actualContext, '/non-existent-file.js')
@@ -53,7 +75,7 @@ describe('preprocessFileImports', () => {
   })
 
   it('returns undefined & adds ModuleNotFoundError to context if an imported file does not exist', async () => {
-    const files: Record<string, string> = {
+    const files: SourceFiles = {
       '/a.js': `import { x } from './non-existent-file.js';`
     }
     const actualProgram = await preprocessFileImports(files, actualContext, '/a.js')
@@ -64,7 +86,7 @@ describe('preprocessFileImports', () => {
   })
 
   it('returns the same AST if the entrypoint file does not contain import/export statements', async () => {
-    const files: Record<string, string> = {
+    const files: SourceFiles = {
       '/a.js': `
         function square(x) {
           return x * x;
@@ -78,7 +100,7 @@ describe('preprocessFileImports', () => {
   })
 
   it('removes all export-related AST nodes', async () => {
-    const files: Record<string, string> = {
+    const files: SourceFiles = {
       '/a.js': `
         export const x = 42;
         export let y = 53;
@@ -107,17 +129,7 @@ describe('preprocessFileImports', () => {
   })
 
   it('ignores Source module imports & removes all non-Source module import-related AST nodes in the preprocessed program', async () => {
-    const docsMocked = memoizedGetModuleDocsAsync as MockedFunction<
-      typeof memoizedGetModuleDocsAsync
-    >
-    docsMocked.mockResolvedValueOnce({
-      default: '',
-      a: '',
-      b: '',
-      c: ''
-    })
-
-    const files: Record<string, string> = {
+    const files: SourceFiles = {
       '/a.js': `
         import d, { a, b, c } from "one_module";
         import w, { x, y, z } from "./not-source-module.js";
@@ -153,28 +165,13 @@ describe('preprocessFileImports', () => {
       const z = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "z");
     `
     const actualProgram = await preprocessFileImports(files, actualContext, '/a.js', {
-      importOptions: {
-        allowUndefinedImports: true
-      },
       shouldAddFileName: true
     })
     assertASTsAreEquivalent(actualProgram, expectedCode, true)
   })
 
   it('collates Source module imports at the start of the top-level environment of the preprocessed program', async () => {
-    const docsMocked = memoizedGetModuleDocsAsync as MockedFunction<
-      typeof memoizedGetModuleDocsAsync
-    >
-    docsMocked.mockResolvedValue({
-      f: '',
-      g: '',
-      h: '',
-      w: '',
-      x: '',
-      y: '',
-      z: ''
-    })
-    const files: Record<string, string> = {
+    const files: SourceFiles = {
       '/a.js': `
         import { b } from "./b.js";
         import { w, x } from "one_module";
@@ -222,16 +219,13 @@ describe('preprocessFileImports', () => {
       b;
     `
     const actualProgram = await preprocessFileImports(files, actualContext, '/a.js', {
-      importOptions: {
-        allowUndefinedImports: true
-      },
       shouldAddFileName: true
     })
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
   it('returns CircularImportError if there are circular imports', async () => {
-    const files: Record<string, string> = {
+    const files: SourceFiles = {
       '/a.js': `
         import { b } from "./b.js";
 
@@ -257,7 +251,7 @@ describe('preprocessFileImports', () => {
   })
 
   it('returns CircularImportError if there are circular imports - verbose', async () => {
-    const files: Record<string, string> = {
+    const files: SourceFiles = {
       '/a.js': `
         import { b } from "./b.js";
 
@@ -283,7 +277,7 @@ describe('preprocessFileImports', () => {
   })
 
   it('returns CircularImportError if there are self-imports', async () => {
-    const files: Record<string, string> = {
+    const files: SourceFiles = {
       '/a.js': `
         import { y } from "./a.js";
         const x = 1;
@@ -297,7 +291,7 @@ describe('preprocessFileImports', () => {
   })
 
   it('returns CircularImportError if there are self-imports - verbose', async () => {
-    const files: Record<string, string> = {
+    const files: SourceFiles = {
       '/a.js': `
         import { y } from "./a.js";
         const x = 1;
@@ -313,7 +307,7 @@ describe('preprocessFileImports', () => {
   })
 
   it('returns a preprocessed program with all imports', async () => {
-    const files: Record<string, string> = {
+    const files: SourceFiles = {
       '/a.js': `
         import { a as x, b as y } from "./b.js";
 
@@ -379,9 +373,6 @@ describe('preprocessFileImports', () => {
       x + y;
     `
     const actualProgram = await preprocessFileImports(files, actualContext, '/a.js', {
-      importOptions: {
-        allowUndefinedImports: true
-      },
       shouldAddFileName: true
     })
 
