@@ -582,7 +582,7 @@ export const hasBreakStatementIf = (statement: es.IfStatement): boolean => {
 }
 
 /**
- * Checks whether a block has a `break` statement.
+ * Checks whether a block OR any of its child blocks has a `break` statement.
  * @param body The block to be checked
  * @return `true` if there is a `break` statement, else `false`.
  */
@@ -594,6 +594,8 @@ export const hasBreakStatement = (block: es.BlockStatement): boolean => {
     } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
       hasBreak = hasBreak || hasBreakStatementIf(statement as es.IfStatement)
+    } else if (isBlockStatement(statement)) {
+      hasBreak = hasBreak || hasBreakStatement(statement as es.BlockStatement)
     }
   }
   return hasBreak
@@ -614,7 +616,7 @@ export const hasContinueStatementIf = (statement: es.IfStatement): boolean => {
 }
 
 /**
- * Checks whether a block has a `continue` statement.
+ * Checks whether a block OR any of its child blocks has a `continue` statement.
  * @param body The block to be checked
  * @return `true` if there is a `continue` statement, else `false`.
  */
@@ -626,6 +628,8 @@ export const hasContinueStatement = (block: es.BlockStatement): boolean => {
     } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
       hasContinue = hasContinue || hasContinueStatementIf(statement as es.IfStatement)
+    } else if (isBlockStatement(statement)) {
+      hasContinue = hasContinue || hasContinueStatement(statement as es.BlockStatement)
     }
   }
   return hasContinue

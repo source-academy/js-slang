@@ -854,7 +854,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       if (
         next &&
         !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
-        control.some(isNode)
+        !control.isEmpty()
       ) {
         control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
