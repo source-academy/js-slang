@@ -66,11 +66,10 @@ function isStatementsReducible(progs: es.Program, context: Context): boolean {
 
   const [lastStatement] = progs.body
 
-  if (lastStatement.type === 'ExpressionStatement') {
-    return !isIrreducible(lastStatement.expression, context)
-  } else {
+  if (lastStatement.type !== 'ExpressionStatement') {
     return true
   }
+  return !isIrreducible(lastStatement.expression, context)
 }
 
 type irreducibleNodes =
