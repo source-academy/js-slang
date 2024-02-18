@@ -178,22 +178,25 @@ function createSourceRunner(
 }
 
 export const runners = {
-  concurrent: createSourceRunner((program, context, options) => {
-    try {
-      return Promise.resolve({
-        status: 'finished',
-        context,
-        value: runWithProgram(compileForConcurrent(program, context), context)
-      })
-    } catch (error) {
-      if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
-        context.errors.push(error) // use ExceptionErrors for non Source Errors
+  concurrent: createSourceRunner(
+    (program, context, options) => {
+      try {
+        return Promise.resolve({
+          status: 'finished',
+          context,
+          value: runWithProgram(compileForConcurrent(program, context), context)
+        })
+      } catch (error) {
+        if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
+          context.errors.push(error) // use ExceptionErrors for non Source Errors
+          return resolvedErrorPromise
+        }
+        context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
         return resolvedErrorPromise
       }
-      context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
-      return resolvedErrorPromise
-    }
-  }, { increaseExecTimeOnTimeout: true }),
+    },
+    { increaseExecTimeOnTimeout: true }
+  ),
   ['cse-machine']: createSourceRunner((program, context, options, isPrelude) => {
     const value = CSEvaluate(program, context, options, isPrelude)
     return CSEResultPromise(context, value)
@@ -214,87 +217,91 @@ export const runners = {
     }
     return scheduler.run(it, context)
   }),
-  native: createSourceRunner(async (program, context, options, isPrelude) => {
-    if (context.variant === Variant.NATIVE) {
-      return fullJSRunner(program, context, options)
-    }
-
-    // For whatever reason, the transpiler mutates the state of the AST as it is transpiling and inserts
-    // a bunch of global identifiers to it. Once that happens, the infinite loop detection instrumentation
-    // ends up generating code that has syntax errors. As such, we need to make a deep copy here to preserve
-    // the original AST for future use, such as with the infinite loop detector.
-    const transpiledProgram = _.cloneDeep(program)
-    let transpiled
-    let sourceMapJson: RawSourceMap | undefined
-    try {
-      switch (context.variant) {
-        case Variant.GPU:
-          transpileToGPU(transpiledProgram)
-          break
-        case Variant.LAZY:
-          transpileToLazy(transpiledProgram)
-          break
+  native: createSourceRunner(
+    async (program, context, options, isPrelude) => {
+      if (context.variant === Variant.NATIVE) {
+        return fullJSRunner(program, context, options)
       }
 
-      ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
-      if (options.logTranspilerOutput) console.log(transpiled)
-      let value = sandboxedEval(transpiled, context.nativeStorage)
+      // For whatever reason, the transpiler mutates the state of the AST as it is transpiling and inserts
+      // a bunch of global identifiers to it. Once that happens, the infinite loop detection instrumentation
+      // ends up generating code that has syntax errors. As such, we need to make a deep copy here to preserve
+      // the original AST for future use, such as with the infinite loop detector.
+      const transpiledProgram = _.cloneDeep(program)
+      let transpiled
+      let sourceMapJson: RawSourceMap | undefined
+      try {
+        switch (context.variant) {
+          case Variant.GPU:
+            transpileToGPU(transpiledProgram)
+            break
+          case Variant.LAZY:
+            transpileToLazy(transpiledProgram)
+            break
+        }
 
-      if (context.variant === Variant.LAZY) {
-        value = forceIt(value)
-      }
+        ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
+        if (options.logTranspilerOutput) console.log(transpiled)
+        let value = sandboxedEval(transpiled, context.nativeStorage)
 
-      if (!isPrelude) {
-        context.isPreviousCodeTimeoutError = false
-      }
+        if (context.variant === Variant.LAZY) {
+          value = forceIt(value)
+        }
 
-      return {
-        status: 'finished',
-        context,
-        value
-      }
-    } catch (error) {
-      const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
-      if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-        const detectedInfiniteLoop = testForInfiniteLoop(
-          program,
-          context.previousPrograms.slice(1),
-          context
-        )
-        if (detectedInfiniteLoop !== undefined) {
-          if (options.throwInfiniteLoops) {
-            context.errors.push(detectedInfiniteLoop)
-            return resolvedErrorPromise
-          } else {
-            error.infiniteLoopError = detectedInfiniteLoop
-            if (error instanceof ExceptionError) {
-              ;(error.error as any).infiniteLoopError = detectedInfiniteLoop
+        if (!isPrelude) {
+          context.isPreviousCodeTimeoutError = false
+        }
+
+        return {
+          status: 'finished',
+          context,
+          value
+        }
+      } catch (error) {
+        const isDefaultVariant =
+          options.variant === undefined || options.variant === Variant.DEFAULT
+        if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
+          const detectedInfiniteLoop = testForInfiniteLoop(
+            program,
+            context.previousPrograms.slice(1),
+            context
+          )
+          if (detectedInfiniteLoop !== undefined) {
+            if (options.throwInfiniteLoops) {
+              context.errors.push(detectedInfiniteLoop)
+              return resolvedErrorPromise
+            } else {
+              error.infiniteLoopError = detectedInfiniteLoop
+              if (error instanceof ExceptionError) {
+                ;(error.error as any).infiniteLoopError = detectedInfiniteLoop
+              }
             }
           }
         }
-      }
-      if (error instanceof RuntimeSourceError) {
-        context.errors.push(error)
-        if (error instanceof TimeoutError) {
-          context.isPreviousCodeTimeoutError = true
+        if (error instanceof RuntimeSourceError) {
+          context.errors.push(error)
+          if (error instanceof TimeoutError) {
+            context.isPreviousCodeTimeoutError = true
+          }
+          return resolvedErrorPromise
         }
+        if (error instanceof ExceptionError) {
+          // if we know the location of the error, just throw it
+          if (error.location.start.line !== -1) {
+            context.errors.push(error)
+            return resolvedErrorPromise
+          } else {
+            error = error.error // else we try to get the location from source map
+          }
+        }
+
+        const sourceError = await toSourceError(error, sourceMapJson)
+        context.errors.push(sourceError)
         return resolvedErrorPromise
       }
-      if (error instanceof ExceptionError) {
-        // if we know the location of the error, just throw it
-        if (error.location.start.line !== -1) {
-          context.errors.push(error)
-          return resolvedErrorPromise
-        } else {
-          error = error.error // else we try to get the location from source map
-        }
-      }
-
-      const sourceError = await toSourceError(error, sourceMapJson)
-      context.errors.push(sourceError)
-      return resolvedErrorPromise
-    }
-  }, { increaseExecTimeOnTimeout: true }),
+    },
+    { increaseExecTimeOnTimeout: true }
+  ),
   scheme: createSourceRunner(async (program, context, options) => {
     const result = await fullJSRunner(program, context, options)
     if (result.status === 'finished') {

@@ -72,11 +72,12 @@ describe('bundle loading', () => {
 describe('tab loading', () => {
   test("Load a module's tabs", async () => {
     mockedFetch.mockResolvedValueOnce({
-      json: () => Promise.resolve({
-        one_module: {
-          tabs: ['tab1', 'tab2']
-        }
-      })
+      json: () =>
+        Promise.resolve({
+          one_module: {
+            tabs: ['tab1', 'tab2']
+          }
+        })
     } as any)
     const tabs = await moduleLoader.loadModuleTabsAsync('one_module')
 

@@ -60,15 +60,15 @@ const rawDocsImporter: (p: string) => Promise<{ default: Record<string, any> }> 
         'return import(`${path}?q=${Date.now()}`, { assert: { type: "json" } })'
       ) as any)
     : async p => {
-      // Unfortunately node is way too inconsistent in handling how
-      // json files get imported, so we just have to fallback to using
-      // fetch
-      const resp = await fetch(p)
-      return {
-        default: await resp.json()
+        // Unfortunately node is way too inconsistent in handling how
+        // json files get imported, so we just have to fallback to using
+        // fetch
+        const resp = await fetch(p)
+        return {
+          default: await resp.json()
+        }
       }
-    }
-        
+
 // Exported for testing
 export const docsImporter = wrapImporter(rawDocsImporter)
 
@@ -155,7 +155,7 @@ export async function loadModuleBundleAsync(moduleName: string, context: Context
           Implementation hidden
         }`
 
-        value.toString = () => repr;
+        value.toString = () => repr
       }
     }
 
