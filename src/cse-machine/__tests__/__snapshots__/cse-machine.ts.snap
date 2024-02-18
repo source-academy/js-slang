@@ -1,5 +1,71 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Array literals are unpacked in the correct order: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let d = 0;
+let c = [ d = d * 10 + 1, d = d * 10 + 2, d = d * 10 + 3];
+d;",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 123,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Array literals work as expected: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let c = [1, 2, 3];
+c;",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": Array [
+    1,
+    2,
+    3,
+  ],
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Breaks, continues and returns are detected properly inside loops: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "function f() {
+  let i = 0;
+  while(i < 10) {
+      i = i + 1;
+      if (i === 1) {
+        i = 1;
+        i = 1;
+      } else if (i === 2) {
+        i = 2;
+        continue;
+      } else if (i === 3) {
+        i = 3;
+        return i;
+      } else if (i === 4) {
+        i = 4;
+        break;
+      }
+  }
+  return i;
+}
+f();",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Conditional statements are value producing always: expectResult 1`] = `
 Object {
   "alertResult": Array [],
