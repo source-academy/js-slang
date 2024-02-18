@@ -19,7 +19,7 @@ import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
 import { ImportTransformOptions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
-import { Context, ContiguousArrayElements, Result, Value } from '../types'
+import { Context, ContiguousArrayElements, RawBlockStatement, Result, Value } from '../types'
 import assert from '../utils/assert'
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
@@ -62,6 +62,7 @@ import {
   isBlockStatement,
   isInstr,
   isNode,
+  isRawBlockStatement,
   isSimpleFunction,
   popEnvironment,
   pushEnvironment,
@@ -97,15 +98,20 @@ export class Control extends Stack<ControlItem> {
   }
 
   /**
-   * Before pushing block statements on the control, we check if the block statement has any declarations.
-   * If not, instead of pushing the entire block, just the body is pushed since the block is not adding any value.
+   * Before pushing block statements on the control stack, we check if the block statement has any declarations.
+   * If not (and its not a raw block statement), instead of pushing the entire block, just the body is pushed since the block is not adding any value.
    * @param items The items being pushed on the control.
    * @returns The same set of control items, but with block statements without declarations simplified.
    */
   private static simplifyBlocksWithoutDeclarations(...items: ControlItem[]): ControlItem[] {
     const itemsNew: ControlItem[] = []
     items.forEach(item => {
-      if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
+      if (
+        isNode(item) &&
+        isBlockStatement(item) &&
+        !hasDeclarations(item) &&
+        !isRawBlockStatement(item)
+      ) {
         itemsNew.push(...Control.simplifyBlocksWithoutDeclarations(...handleSequence(item.body)))
       } else {
         itemsNew.push(item)
@@ -342,12 +348,26 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const next = command.body[0]
       cmdEvaluators[next.type](next, context, control, stash, isPrelude)
     } else {
-      // Push block body
-      control.push(...handleSequence(command.body))
+      // Push raw block statement
+      const rawCopy: RawBlockStatement = {
+        type: 'BlockStatement',
+        range: command.range,
+        loc: command.loc,
+        body: command.body,
+        isRawBlock: 'true'
+      }
+      control.push(rawCopy)
     }
   },
 
   BlockStatement: function (command: es.BlockStatement, context: Context, control: Control) {
+    if (isRawBlockStatement(command)) {
+      // Raw block statement: unpack and push body
+      // Push block body only
+      control.push(...handleSequence(command.body))
+      return
+    }
+    // Normal block statement: do environment setup
     // To restore environment after block ends
     // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next control item
     // we do not need to push another one
@@ -362,8 +382,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     declareFunctionsAndVariables(context, command, environment)
     pushEnvironment(context, environment)
-    // Push block body
-    control.push(...handleSequence(command.body))
+
+    // Push raw block statement
+    const rawCopy: RawBlockStatement = {
+      type: 'BlockStatement',
+      range: command.range,
+      loc: command.loc,
+      body: command.body,
+      isRawBlock: 'true'
+    }
+    control.push(rawCopy)
   },
 
   WhileStatement: function (
