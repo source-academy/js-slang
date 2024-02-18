@@ -320,7 +320,7 @@ function runECEMachine(
         // return new ECEBreak()
       }
     } else {
-      // Command is an instrucion
+      // Command is an instruction
       cmdEvaluators[command.instrType](command, context, agenda, stash, isPrelude)
     }
 
@@ -835,7 +835,65 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const func: Closure | Function = stash.pop()
     // Check if function is call_with_current_continuation
     if (func === call_with_current_continuation) {
-      console.log('bingo!')
+      // Check for number of arguments mismatch error
+      checkNumberOfArguments(context, func, args, command.srcNode)
+
+      // Get the callee
+      const cont_callee: Value = args[0]
+
+      // currently hardcoded, i don't like it
+      const callExpression: es.CallExpression = {
+        type: 'CallExpression',
+        optional: false,
+        callee: {
+          type: 'Identifier',
+          name: 'f'
+        },
+        arguments: [
+          {
+            type: 'Identifier',
+            name: 'cont'
+          }
+        ]
+      }
+
+      // push the lambda function, GENCONT,
+      // and the function call to the agenda
+      agenda.push(instr.appInstr(command.numOfArgs, callExpression))
+      agenda.push(instr.genContInstr(callExpression.arguments[0]))
+      // push the callee back onto the stash
+      stash.push(cont_callee)
+      return
+    }
+
+    // check if the continuation field is present on the function
+    if ('continuation' in func) {
+      // then the function is actually a continuation
+
+      // the continuation was given a single argument
+      const expression: Value = args[0]
+
+      // currently hardcoded, i don't like it
+      const callExpression: es.CallExpression = {
+        type: 'CallExpression',
+        optional: false,
+        callee: {
+          type: 'Identifier',
+          name: 'cont'
+        },
+        arguments: [
+          {
+            type: 'Identifier',
+            name: 'e'
+          }
+        ]
+      }
+      // push the continuation back onto the stash
+      stash.push(func)
+      // push the single argument back onto the stash
+      stash.push(expression)
+      // now push resumecont onto the agenda
+      agenda.push(instr.resumeContInstr(callExpression))
       return
     }
     if (func instanceof Closure) {
@@ -889,7 +947,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       checkNumberOfArguments(context, func, args, command.srcNode)
       // Directly stash result of applying pre-built functions without the ASE machine.
       try {
-        const result = func(...args)
+        const result = (func as Function)(...args)
         stash.push(result)
       } catch (error) {
         if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
@@ -1009,34 +1067,32 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
   [InstrType.BREAK_MARKER]: function () {},
 
-  // how will we use this?
-
-  /*
-    const continuation = GENCONT()
-    const wrapped_continuation = val => RESUMECONT(continuation, val)
-
-    but the issue with this is that GENCONT() will need to be able to access the current agenda and stash
-    and we can't do that without passing it as an argument
-
-    or we could turn the ECE machine into a class and have the GENCONT method be a method of the class,
-    but again the context would need the ECE machine as a property
-  */
-
   [InstrType.GENERATE_CONT]: function (
     command: Instr,
     context: Context,
     agenda: Agenda,
     stash: Stash
   ) {
-    const continuation = new Continuation(agenda.copy(), stash.copy())
-    stash.push(continuation)
+    const contAgenda = agenda.copy()
+    const contStash = stash.copy()
+
+    // Remove all data related to the continuation-consuming function
+    contAgenda.pop()
+    contStash.pop()
+
+    // Now this will accurately represent the slice of the
+    // program execution at the time of the call/cc call
+    const continuation = new Continuation(contAgenda, contStash)
+
+    // Wrapped continuation is a dummy identity
+    // function that will never be called
+    const wrappedContinuation = (x: any) => x
+
+    // So that continuations can be used as functions,
+    // we attach the continuation to the function
+    wrappedContinuation.continuation = continuation
+    stash.push(wrappedContinuation)
   },
-
-  // how do we use this?
-
-  /*
-    RESUMNECONT(continuation, val)
-  */
 
   [InstrType.RESUME_CONT]: function (
     command: Instr,
@@ -1045,9 +1101,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash: Stash
   ) {
     const expression = stash.pop()
-    const continuation = stash.pop()
-    agenda = continuation.agenda
-    stash = continuation.stash
+    const wrappedContinuation = stash.pop()
+
+    // we need to unwrap the continuation
+    const continuation = wrappedContinuation.continuation
+
+    agenda.setTo(continuation.agenda)
+    stash.setTo(continuation.stash)
     stash.push(expression)
   }
 }

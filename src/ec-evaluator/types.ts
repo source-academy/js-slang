@@ -1,7 +1,6 @@
 import * as es from 'estree'
 
 import { Environment } from '../types'
-import { Continuation } from './interpreter'
 
 export enum InstrType {
   RESET = 'Reset',
@@ -78,10 +77,7 @@ export interface ArrLitInstr extends BaseInstr {
 
 export type GenContInstr = BaseInstr
 
-export interface ResumeContInstr extends BaseInstr {
-  continuation: Continuation
-  expression: es.Expression
-}
+export type ResumeContInstr = BaseInstr
 
 export type Instr =
   | BaseInstr

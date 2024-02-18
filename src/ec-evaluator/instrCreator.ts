@@ -5,7 +5,6 @@
 import * as es from 'estree'
 
 import { Environment } from '../types'
-import { Continuation } from './interpreter'
 import {
   AppInstr,
   ArrLitInstr,
@@ -149,13 +148,7 @@ export const genContInstr = (srcNode: es.Node): GenContInstr => ({
   srcNode
 })
 
-export const resumeContInstr = (
-  continuation: Continuation,
-  expression: es.Expression,
-  srcNode: es.Node
-): ResumeContInstr => ({
+export const resumeContInstr = (srcNode: es.Node): ResumeContInstr => ({
   instrType: InstrType.RESUME_CONT,
-  srcNode,
-  continuation: continuation,
-  expression: expression
+  srcNode
 })
