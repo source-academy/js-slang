@@ -5,7 +5,7 @@ import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { Environment, Frame, Value } from '../types'
+import { Environment, Frame, RawBlockStatement, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
@@ -122,6 +122,16 @@ export const isIfStatement = (node: es.Node): node is es.IfStatement => {
  */
 export const isBlockStatement = (node: es.Node): node is es.BlockStatement => {
   return (node as es.BlockStatement).type == 'BlockStatement'
+}
+
+/**
+ * Typeguard for RawBlockStatement. To verify if an esNode is a raw block statement (i.e. passed environment creation).
+ *
+ * @param node an esNode
+ * @returns true if node is a RawBlockStatement, false otherwise.
+ */
+export const isRawBlockStatement = (node: es.Node): node is RawBlockStatement => {
+  return (node as RawBlockStatement).isRawBlock === 'true'
 }
 
 /**
@@ -572,7 +582,7 @@ export const hasBreakStatementIf = (statement: es.IfStatement): boolean => {
 }
 
 /**
- * Checks whether a block has a `break` statement.
+ * Checks whether a block OR any of its child blocks has a `break` statement.
  * @param body The block to be checked
  * @return `true` if there is a `break` statement, else `false`.
  */
@@ -584,6 +594,8 @@ export const hasBreakStatement = (block: es.BlockStatement): boolean => {
     } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
       hasBreak = hasBreak || hasBreakStatementIf(statement as es.IfStatement)
+    } else if (isBlockStatement(statement)) {
+      hasBreak = hasBreak || hasBreakStatement(statement as es.BlockStatement)
     }
   }
   return hasBreak
@@ -604,7 +616,7 @@ export const hasContinueStatementIf = (statement: es.IfStatement): boolean => {
 }
 
 /**
- * Checks whether a block has a `continue` statement.
+ * Checks whether a block OR any of its child blocks has a `continue` statement.
  * @param body The block to be checked
  * @return `true` if there is a `continue` statement, else `false`.
  */
@@ -616,6 +628,8 @@ export const hasContinueStatement = (block: es.BlockStatement): boolean => {
     } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
       hasContinue = hasContinue || hasContinueStatementIf(statement as es.IfStatement)
+    } else if (isBlockStatement(statement)) {
+      hasContinue = hasContinue || hasContinueStatement(statement as es.BlockStatement)
     }
   }
   return hasContinue
