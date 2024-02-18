@@ -12,7 +12,7 @@ import {
   identifier,
   returnStatement
 } from '../utils/astCreator'
-import { apply } from './interpreter'
+import { apply } from './interpreter-non-det'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
   function DummyClass(this: Closure) {

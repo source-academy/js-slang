@@ -117,7 +117,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     interpretedTestContext,
     await runInContext(code, interpretedTestContext, {
       scheduler,
-      executionMethod: 'interpreter',
+      executionMethod: 'ec-evaluator',
       variant: options.variant
     })
   )

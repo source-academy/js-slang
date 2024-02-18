@@ -4,7 +4,7 @@ import type { RawSourceMap } from 'source-map'
 
 import type { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
-import { ECEResultPromise, evaluate as ECEvaluate } from '../ec-evaluator/interpreter'
+import { ECEResultPromise, evaluate } from '../ec-evaluator/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -12,7 +12,6 @@ import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import preprocessFileImports from '../localImports/preprocessor'
@@ -113,7 +112,7 @@ async function runSubstitution(
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context, true, true)
+  let it = evaluate(program, context, options)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
     it = nonDetEvaluate(program, context)
@@ -219,7 +218,7 @@ async function runNative(
 }
 
 function runECEvaluator(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  const value = ECEvaluate(program, context, options)
+  const value = evaluate(program, context, options)
   return ECEResultPromise(context, value)
 }
 
@@ -277,7 +276,9 @@ export async function sourceRunner(
         theOptions
       )
     }
-    return runECEvaluator(program, context, theOptions)
+    const res = await runECEvaluator(program, context, theOptions)
+    console.log(res)
+    return Promise.resolve(res)
   }
 
   if (context.executionMethod === 'native') {

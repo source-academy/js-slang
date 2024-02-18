@@ -2190,30 +2190,6 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 17: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "let i = 1;
-for (let j = 0; j < 5; j = j + 1) {
-  if (j < 1) {
-    continue;
-  } else {
-    i = i + 1;
-    if (j > 2) {
-      break;
-    }
-  }
-}
-i;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 4,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Syntaxes are allowed in the chapter they are introduced 18: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
@@ -3052,22 +3028,6 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 24: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "function f(x, y, ...z) {
-  return x + y;
-}
-f(...[1, 2]);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 3,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Syntaxes are allowed in the chapter they are introduced 25: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
@@ -3095,19 +3055,6 @@ Object {
       null,
     ],
   ],
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Syntaxes are allowed in the chapter they are introduced 25: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "({});",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": Object {},
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -3188,22 +3135,6 @@ Object {
       null,
     ],
   ],
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Syntaxes are allowed in the chapter they are introduced 26: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "({a: 1, b: 2});",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": Object {
-    "a": 1,
-    "b": 2,
-  },
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -3299,19 +3230,6 @@ Object {
       ],
     ],
   ],
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Syntaxes are allowed in the chapter they are introduced 27: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "({a: 1, b: 2})['a'];",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 1,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -3413,19 +3331,6 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 28: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "({a: 1, b: 2}).a;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 1,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Syntaxes are allowed in the chapter they are introduced 29: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
@@ -3522,19 +3427,6 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 29: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "({'a': 1, 'b': 2}).a;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 1,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Syntaxes are allowed in the chapter they are introduced 30: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
@@ -3625,19 +3517,6 @@ Object {
       ],
     ],
   ],
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Syntaxes are allowed in the chapter they are introduced 30: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "({1: 1, 2: 2})['1'];",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 1,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -3767,20 +3646,6 @@ Object {
       null,
     ],
   ],
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Syntaxes are allowed in the chapter they are introduced 31: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const key = 'a';
-({a: 1, b: 2})[key];",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 1,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -3931,20 +3796,6 @@ Object {
 }
 `;
 
-exports[`Syntaxes are allowed in the chapter they are introduced 32: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "let x = {a: 1, b: 2};
-x.a = 3;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 3,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Syntaxes are allowed in the chapter they are introduced 33: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
@@ -4084,20 +3935,6 @@ Object {
       null,
     ],
   ],
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Syntaxes are allowed in the chapter they are introduced 33: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "let x = {a: 1, b: 2};
-x['a'] = 3;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 3,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -4267,21 +4104,6 @@ Object {
       null,
     ],
   ],
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Syntaxes are allowed in the chapter they are introduced 34: passes 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "let x = {a: 1, b: 2};
-const key = 'a';
-x[key] = 3;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 3,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

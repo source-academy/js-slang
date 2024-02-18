@@ -9,7 +9,7 @@ import { ExecutionMethod, Variant } from '../types'
 
 function startRepl(
   chapter = 1,
-  executionMethod: ExecutionMethod = 'interpreter',
+  executionMethod: ExecutionMethod = 'ec-evaluator',
   variant: Variant = Variant.DEFAULT,
   useSubst: boolean = false,
   useRepl: boolean,
@@ -113,10 +113,10 @@ function main() {
   }
 
   const executionMethod =
-    opt.options.variant === 'interpreter' ||
-    opt.options.variant === 'non-det' ||
-    opt.options.variant === 'explicit-control'
+    opt.options.variant === 'non-det'
       ? 'interpreter'
+      : opt.options.variant === 'explicit-control'
+      ? 'ec-evaluator'
       : 'native'
   const useSubst = opt.options.variant === 'substituter'
   const useRepl = !opt.options.e

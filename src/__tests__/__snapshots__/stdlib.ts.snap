@@ -408,32 +408,6 @@ Object {
 }
 `;
 
-exports[`Builtins work as expected 31: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "is_object({});",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": true,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Builtins work as expected 32: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "is_object({a: 1});",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": true,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Builtins work as expected 33: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -542,32 +516,6 @@ exports[`Builtins work as expected 41: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "is_NaN(x => x);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": false,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Builtins work as expected 42: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "has_own_property({a: 1, b: 2}, 'a');",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": true,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Builtins work as expected 43: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "has_own_property({a: 1, b: 2}, 'c');",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",

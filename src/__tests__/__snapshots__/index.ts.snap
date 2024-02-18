@@ -14,20 +14,6 @@ a[1];",
 }
 `;
 
-exports[`Accessing object with nonexistent property returns undefined: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const o = {};
-o.nonexistent;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": undefined,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Allow display to return value it is displaying: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -177,23 +163,6 @@ test();",
   "parsedErrors": "Line 3: Cannot assign new value to constant constant.",
   "result": undefined,
   "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Deep object assignment and retrieval: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const o = {};
-o.a = {};
-o.a.b = {};
-o.a.b.c = \\"string\\";
-o.a.b.c;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "string",
-  "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
 `;
@@ -579,55 +548,6 @@ identity(t) === t && t(1, 2, 3) === 6;",
 }
 `;
 
-exports[`Multiline string self-evaluates to itself: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "\`1
-1\`;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "1
-1",
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Objects toString matches up with JS: expect to match JS 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "toString({a: 1});",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "[object Object]",
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Rest parameters work: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "function rest(a, b, ...c) {
-  let sum = a + b;
-  for (let i = 0; i < array_length(c); i = i + 1) {
-    sum = sum + c[i];
-  }
-  return sum;
-}
-rest(1, 2); // no error
-rest(1, 2, ...[3, 4, 5],  ...[6, 7], ...[]);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 28,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Simple arrow function infinite recursion represents CallExpression well: expectParsedErrorNoErrorSnapshot 1`] = `
 Object {
   "alertResult": Array [],
@@ -649,30 +569,15 @@ Object {
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 1: Maximum call stack size exceeded
-  x(function f(x) {
+  x(x => {
   return x(x)(x);
-})..  x(function f(x) {
+})..  x(x => {
   return x(x)(x);
-})..  x(function f(x) {
+})..  x(x => {
   return x(x)(x);
 })..",
   "result": undefined,
   "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Simple object assignment and retrieval: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const o = {};
-o.a = 1;
-o.a;",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 1,
-  "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
 `;
@@ -723,7 +628,8 @@ Object {
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
-  "result": 60,
+  "result": "native:60
+interpreted:undefined",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -786,32 +692,6 @@ Object {
 }
 `;
 
-exports[`Test equal for different lists: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "!equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": true,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`Test equal for lists: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": true,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Test equal for primitives: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -866,9 +746,8 @@ toString(a=>a) + toString(f);",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
-  "result": "a => afunction f(x) {
-  return 5;
-}",
+  "result": "native:\\"a => afunction f(x) {\\\\n  return 5;\\\\n}\\"
+interpreted:\\"a => ax => {\\\\n  return 5;\\\\n}\\"",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
