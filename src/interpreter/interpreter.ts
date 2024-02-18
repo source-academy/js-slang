@@ -1,7 +1,7 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
 
-import { createBlockEnvironment, pushEnvironment } from '../ec-evaluator/utils'
+import { createBlockEnvironment, pushEnvironment } from '../cse-machine/utils'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { UndefinedImportError } from '../modules/errors'

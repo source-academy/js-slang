@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import createContext, { EnvTree } from '../createContext'
-import { createBlockEnvironment } from '../ec-evaluator/utils'
+import { createBlockEnvironment } from '../cse-machine/utils'
 import Closure from '../interpreter/closure'
 import { Chapter, Context, Environment, Frame, Variant } from '../types'
 
