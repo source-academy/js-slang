@@ -461,6 +461,15 @@ test('Breaks, continues and returns are detected properly inside loops', () => {
   ).toMatchInlineSnapshot(`3`)
 })
 
+test('Environment reset is inserted when only instructions are in control stack', () => {
+  return expectResult(
+    stripIndent`
+    const a = (v => v)(0);
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`undefined`)
+})
+
 test('breaks, continues are properly detected in child blocks 1', () => {
   return expectResult(
     stripIndent`
