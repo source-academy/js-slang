@@ -97,6 +97,19 @@ fact(5);",
 }
 `;
 
+exports[`Environment reset is inserted when only instructions are in control stack: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "const a = (v => v)(0);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": undefined,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Imports are properly handled: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -312,6 +325,66 @@ f(5000, 5000);",
   "numErrors": 0,
   "parsedErrors": "",
   "result": 10000,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`breaks, continues are properly detected in child blocks 1: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let i = 0;
+for (i = 1; i < 5; i = i + 1) {
+    {
+        const a = i;
+        if (i === 1) {
+            continue;
+        }
+    }
+    
+    {
+        const a = i;
+        if (i === 2) {
+            break;
+        }
+    }
+}
+i;",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`breaks, continues are properly detected in child blocks 2: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let a = 0;
+for (let i = 1; i < 5; i = i + 1) {
+    {
+        const x = 0;
+        a = i;
+        if (i === 1) {
+            continue;
+        }
+    }
+    
+    {
+        const x = 0;
+        a = i;
+        if (i === 2) {
+            break;
+        }
+    }
+}
+a;",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
