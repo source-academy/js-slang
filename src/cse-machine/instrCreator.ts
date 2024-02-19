@@ -1,5 +1,5 @@
 /**
- * Utility functions for creating the various agenda instructions.
+ * Utility functions for creating the various control instructions.
  */
 
 import * as es from 'estree'
