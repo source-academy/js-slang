@@ -29,40 +29,47 @@ export function isCallWithCurrentContinuation(f: Function): boolean {
  * BUT as a shallow copy (top level array is separate, but point to the same
  * environment frames)
  */
-export class Continuation {
+export interface Continuation extends Function {
   control: Control
   stash: Stash
-  envs: Environment[]
-  public constructor(control: Control, stash: Stash, envs: Environment[]) {
-    this.control = control.copy()
-    this.stash = stash.copy()
-    this.envs = [...envs]
-  }
+  env: Environment[]
 }
 
-/**
- * Wrap a continuation into a dummy function to allow it to be treated
- * first-class as a function/procedure.
- */
-export function wrapContinuation(c: Continuation): Function {
-  const fn = (x: any) => x
-  fn.continuation = c
-  return fn
+// As the continuation needs to be immutable (we can call it several times)
+// we need to copy its elements whenever we access them
+export function getContinuationControl(cn: Continuation): Control {
+  return cn.control.copy()
 }
 
-/**
- * Given a wrapped continuation, extract the continuation
- * from the dummy wrapper function.
- */
-export function unwrapContinuation(f: Function): Continuation {
-  return (f as any).continuation
+export function getContinuationStash(cn: Continuation): Stash {
+  return cn.stash.copy()
+}
+
+export function getContinuationEnv(cn: Continuation): Environment[] {
+  return [...cn.env]
+}
+
+export function makeContinuation(control: Control, stash: Stash, env: Environment[]): Function {
+  // Cast a function into a continuation
+  const fn: any = (x: any) => x
+  const cn: Continuation = fn as Continuation
+
+  // Set the control, stash and environment
+  // as shallow copies of the given program equivalents
+  cn.control = control.copy()
+  cn.stash = stash.copy()
+  cn.env = [...env]
+
+  // Return the continuation as a function so that
+  // the type checker allows it to be called
+  return cn as Function
 }
 
 /**
  * Checks whether a given function is actually a continuation.
  */
-export function isWrappedContinuation(f: Function): boolean {
-  return 'continuation' in f
+export function isContinuation(f: Function): f is Continuation {
+  return 'control' in f && 'stash' in f && 'env' in f
 }
 
 /**
