@@ -859,6 +859,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Get function from the stash
     const func: Closure | Function = stash.pop()
 
+    if (!(func instanceof Closure || func instanceof Function)) {
+      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
+    }
+
     if (isCallWithCurrentContinuation(func)) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
@@ -940,24 +944,25 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         }
         control.push(func.node.body)
       }
-    } else if (typeof func === 'function') {
-      // Check for number of arguments mismatch error
-      checkNumberOfArguments(context, func, args, command.srcNode)
-      // Directly stash result of applying pre-built functions without the ASE machine.
-      try {
-        const result = func(...args)
-        stash.push(result)
-      } catch (error) {
-        if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
-          // The error could've arisen when the builtin called a source function which errored.
-          // If the cause was a source error, we don't want to include the error.
-          // However if the error came from the builtin itself, we need to handle it.
-          const loc = command.srcNode.loc ?? UNKNOWN_LOCATION
-          handleRuntimeError(context, new errors.ExceptionError(error, loc))
-        }
+
+      return
+    }
+
+    // Value is a function
+    // Check for number of arguments mismatch error
+    checkNumberOfArguments(context, func, args, command.srcNode)
+    // Directly stash result of applying pre-built functions without the ASE machine.
+    try {
+      const result = func(...args)
+      stash.push(result)
+    } catch (error) {
+      if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
+        // The error could've arisen when the builtin called a source function which errored.
+        // If the cause was a source error, we don't want to include the error.
+        // However if the error came from the builtin itself, we need to handle it.
+        const loc = command.srcNode.loc ?? UNKNOWN_LOCATION
+        handleRuntimeError(context, new errors.ExceptionError(error, loc))
       }
-    } else {
-      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
     }
   },
 
