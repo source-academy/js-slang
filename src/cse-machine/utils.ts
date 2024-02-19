@@ -64,7 +64,7 @@ export class Stack<T> implements IStack<T> {
   }
 
   // required for first-class continuations,
-  // which directly set the stack
+  // which directly mutate this stack globally.
   public setTo(otherStack: Stack<T>): void {
     this.storage = otherStack.storage
   }

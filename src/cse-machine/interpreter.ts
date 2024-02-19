@@ -26,8 +26,8 @@ import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import {
-  call_with_current_continuation,
   Continuation,
+  isCallWithCurrentContinuation,
   isWrappedContinuation,
   makeDummyContCallExpression,
   unwrapContinuation,
@@ -858,44 +858,42 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
     // Get object from the stash
     const func: Closure | Function = stash.pop()
-    // Check if function is call_with_current_continuation
-    if (func === call_with_current_continuation) {
+
+    if (isCallWithCurrentContinuation(func)) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
       // Get the callee
       const cont_callee: Value = args[0]
 
-      // create a dummy function call expression
       const dummyFCallExpression = makeDummyContCallExpression('f', 'cont')
 
-      // push the lambda function, GENCONT,
-      // and the function call to the control
+      // Prepare a function call for the continuation-consuming function
+      // along with a newly generated continuation
       control.push(instr.appInstr(command.numOfArgs, dummyFCallExpression))
       control.push(instr.genContInstr(dummyFCallExpression.arguments[0]))
-      // push the callee back onto the stash
       stash.push(cont_callee)
       return
     }
 
-    // check if the continuation field is present on the function
     if (isWrappedContinuation(func)) {
-      // then the function is actually a continuation
+      // Check for number of arguments mismatch error
+      checkNumberOfArguments(context, func, args, command.srcNode)
 
-      // the continuation was given a single argument
+      // A continuation is always given a single argument
       const expression: Value = args[0]
 
-      // create a dummy function call expression
       const dummyContCallExpression = makeDummyContCallExpression('f', 'cont')
 
-      // push the continuation back onto the stash
+      // Restore the state of the stash,
+      // but replace the function application instruction with
+      // a resume continuation instruction
       stash.push(func)
-      // push the single argument back onto the stash
       stash.push(expression)
-      // push RESUMECONT onto the control
       control.push(instr.resumeContInstr(dummyContCallExpression))
       return
     }
+
     if (func instanceof Closure) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
@@ -1081,6 +1079,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ) {
     const contControl = control.copy()
     const contStash = stash.copy()
+    const contEnvs = context.runtime.environments
 
     // Remove all data related to the continuation-consuming function
     contControl.pop()
@@ -1088,12 +1087,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
     // Now this will accurately represent the slice of the
     // program execution at the time of the call/cc call
-    const continuation = new Continuation(contControl, contStash, context.runtime.environments)
+    const continuation = new Continuation(contControl, contStash, contEnvs)
 
-    // Wrapped continuation is a dummy identity
-    // function that will never be called
-    // this is done so that we can treat continuations
-    // as function values
+    // Wrap the continuation into a function
     const wrappedContinuation = wrapContinuation(continuation)
     stash.push(wrappedContinuation)
   },
@@ -1107,22 +1103,23 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const expression = stash.pop()
     const wrappedContinuation = stash.pop()
 
-    // we need to unwrap the continuation
+    // Unwrap the continuation
     const continuation: Continuation = unwrapContinuation(wrappedContinuation)
-    // the continuation's control, stash and environment pointer
-    // should be immutable, so we need to work on copies of them
+
+    // The continuation's control, stash and environment pointer
+    // should be immutable, so we make shallow copies of them to work with
     const contControl = continuation.control.copy()
     const contStash = continuation.stash.copy()
     const contEnvs = [...continuation.envs]
 
-    // set the control and stash to the continuation's control and stash
+    // Set the control and stash to the continuation's control and stash
     control.setTo(contControl)
     stash.setTo(contStash)
 
-    // now we can push the expression onto the stash
+    // Push the expression given to the continuation onto the stash
     stash.push(expression)
 
-    // finally we restr
+    // Restore the environment pointer to that of the continuation
     context.runtime.environments = contEnvs
   }
 }

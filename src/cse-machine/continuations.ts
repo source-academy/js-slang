@@ -5,12 +5,19 @@ import { Control, Stash } from './interpreter'
 
 /**
  * A dummy function used to detect for the call/cc function object.
- * If the interpreter sees this specific object, a continuation at the current
+ * If the interpreter sees this specific function, a continuation at the current
  * point of evaluation is executed instead of a regular function call.
  */
 
-export function call_with_current_continuation(f: any) {
+export function call_with_current_continuation(f: any): any {
   return f()
+}
+
+/**
+ * Checks if the function refers to the designated function object call/cc.
+ */
+export function isCallWithCurrentContinuation(f: Function): boolean {
+  return f === call_with_current_continuation
 }
 
 /**
@@ -22,7 +29,6 @@ export function call_with_current_continuation(f: any) {
  * BUT as a shallow copy (top level array is separate, but point to the same
  * environment frames)
  */
-
 export class Continuation {
   control: Control
   stash: Stash
@@ -34,20 +40,36 @@ export class Continuation {
   }
 }
 
+/**
+ * Wrap a continuation into a dummy function to allow it to be treated
+ * first-class as a function/procedure.
+ */
 export function wrapContinuation(c: Continuation): Function {
   const fn = (x: any) => x
   fn.continuation = c
   return fn
 }
 
+/**
+ * Given a wrapped continuation, extract the continuation
+ * from the dummy wrapper function.
+ */
 export function unwrapContinuation(f: Function): Continuation {
   return (f as any).continuation
 }
 
+/**
+ * Checks whether a given function is actually a continuation.
+ */
 export function isWrappedContinuation(f: Function): boolean {
   return 'continuation' in f
 }
 
+/**
+ * Provides an adequate representation of what calling
+ * call/cc or continuations looks like, to give to the
+ * GENERATE_CONT and RESUME_CONT instructions.
+ */
 export function makeDummyContCallExpression(callee: string, argument: string): es.CallExpression {
   return {
     type: 'CallExpression',
