@@ -856,7 +856,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       args.unshift(stash.pop())
     }
 
-    // Get object from the stash
+    // Get function from the stash
     const func: Closure | Function = stash.pop()
 
     if (isCallWithCurrentContinuation(func)) {
@@ -945,7 +945,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       checkNumberOfArguments(context, func, args, command.srcNode)
       // Directly stash result of applying pre-built functions without the ASE machine.
       try {
-        const result = (func as Function)(...args)
+        const result = func(...args)
         stash.push(result)
       } catch (error) {
         if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
