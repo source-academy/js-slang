@@ -22,12 +22,11 @@ export function isCallWithCurrentContinuation(f: Function): boolean {
 
 /**
  * An object representing a continuation of the ECE machine.
- * Used to enable first-class continuations for scm-slang.
- * When instantiated, it copies the control and stack, but pops 2 items from its (the continuation's) stack.
- * This pops the continuation itself, and the call to the lambda using the continuation.
- * It also takes in the current environment (plus history of environments) at the point of capture.
- * BUT as a shallow copy (top level array is separate, but point to the same
- * environment frames)
+ * When instantiated, it copies the control stack, and
+ * current environment at the point of capture.
+ *
+ * Continuations and functions are treated as the same by
+ * the typechecker so that they can be first-class values.
  */
 export interface Continuation extends Function {
   control: Control
