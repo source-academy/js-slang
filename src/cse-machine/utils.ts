@@ -62,6 +62,12 @@ export class Stack<T> implements IStack<T> {
   public some(predicate: (value: T) => boolean): boolean {
     return this.storage.some(predicate)
   }
+
+  // required for first-class continuations,
+  // which directly mutate this stack globally.
+  public setTo(otherStack: Stack<T>): void {
+    this.storage = otherStack.storage
+  }
 }
 
 /**
