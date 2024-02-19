@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic call/cc works: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (+ 1 2 (call/cc (lambda (k) (k 3))) 4)
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 10,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`call/cc can be stored as a value: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    ;; storing a continuation
+    (define a #f)
+
+    (+ 1 2 3 (call/cc (lambda (k) (set! a k) 0)) 4 5)
+
+    ;; continuations are treated as functions
+    ;; so we can do this:
+    (procedure? a)
+    ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`call/cc can be used to escape a computation: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (define test 1)
+    (call/cc (lambda (k) 
+                (set! test 2) 
+                (k 'escaped)
+                (set! test 3)))
+    ;; test should be 2
+    test
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;

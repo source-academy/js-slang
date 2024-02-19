@@ -32,30 +32,46 @@ test('call/cc can be used to escape a computation', () => {
 test('call/cc can be stored as a value', () => {
   return expectResult(
     `
-    ;; storing a continuation and calling it
+    ;; storing a continuation
     (define a #f)
 
-    (+ 1 2 3 (call/cc (lambda (k) (set! a k))) 4 5)
+    (+ 1 2 3 (call/cc (lambda (k) (set! a k) 0)) 4 5)
 
-    ;; as continuations are represented with dummy 
-    ;; identity functions, we should not expect to see 6
-    (a 6)
+    ;; continuations are treated as functions
+    ;; so we can do this:
+    (procedure? a)
     `,
     optionECScm
-  ).toMatchInlineSnapshot(`21`)
+  ).toMatchInlineSnapshot(`true`)
 })
 
-// test('even when stored as a value, calling a continuation should alter the execution flow', () => {
+// both of the following tests generate infinite loops so they are omitted
+
+// test('call/cc can be stored as a value and called', () => {
 //   return expectResult(
 //     `
 //     ;; storing a continuation and calling it
 //     (define a #f)
 
-//     (+ 1 2 3 (call/cc (lambda (k) (set! a k))) 4 5)
+//     (+ 1 2 3 (call/cc (lambda (k) (set! a k) 0)) 4 5)
+
+//     ;; as continuations are represented with dummy
+//     ;; identity functions, we should not expect to see 6
+//     (a 6)
+//     `,
+//     optionECScm
+//   ).toMatchInlineSnapshot(`21`)
+// })
+
+// test('when stored as a value, calling a continuation should alter the execution flow', () => {
+//   return expectResult(
+//     `
+//     ;; storing a continuation and calling it
+//     (define a #f)
+//     (+ 1 2 3 (call/cc (lambda (k) (set! a k) 0)) 4 5)
 
 //     ;; the following addition should be ignored
-
-//     (+ (a 6) 7)
+//     (+ 7 (a 6))
 //     `,
 //     optionECScm
 //   ).toMatchInlineSnapshot(`21`)
