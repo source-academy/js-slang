@@ -1169,6 +1169,27 @@ function hasTypeMismatchErrors(
       if (actualType.kind !== 'list') {
         return true
       }
+      if (actualType.typeAsPair !== undefined) {
+        // Match each element of the list with the expected type
+        return (
+          hasTypeMismatchErrors(
+            node,
+            actualType.typeAsPair.headType,
+            expectedType.elementType,
+            visitedTypeAliasesForActualType,
+            visitedTypeAliasesForExpectedType,
+            skipTypeAliasExpansion
+          ) ||
+          hasTypeMismatchErrors(
+            node,
+            actualType.typeAsPair.tailType,
+            expectedType,
+            visitedTypeAliasesForActualType,
+            visitedTypeAliasesForExpectedType,
+            skipTypeAliasExpansion
+          )
+        )
+      }
       return hasTypeMismatchErrors(
         node,
         actualType.elementType,

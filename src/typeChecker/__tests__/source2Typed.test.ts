@@ -97,6 +97,7 @@ describe('list', () => {
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
       "Line 3: Type 'List<string>' is not assignable to type 'List<number>'.
       Line 4: Type 'number' is not assignable to type 'List<number>'.
+      Line 5: Type 'List<number | string>' is not assignable to type 'List<number>'.
       Line 6: Type 'List<number | string>' is not assignable to type 'List<boolean>'.
       Line 8: Generic type 'List' requires 1 type argument(s)."
     `)
