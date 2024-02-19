@@ -1077,7 +1077,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   [InstrType.BREAK_MARKER]: function () {},
 
   [InstrType.GENERATE_CONT]: function (
-    command: Instr,
+    _command: Instr,
     context: Context,
     control: Control,
     stash: Stash
@@ -1100,7 +1100,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   },
 
   [InstrType.RESUME_CONT]: function (
-    command: Instr,
+    _command: Instr,
     context: Context,
     control: Control,
     stash: Stash

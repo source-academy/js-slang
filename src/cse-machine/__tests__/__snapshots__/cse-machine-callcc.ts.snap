@@ -4,7 +4,9 @@ exports[`basic call/cc works: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "
-    (+ 1 2 (call/cc (lambda (k) (k 3))) 4)
+    (+ 1 2 (call/cc
+              (lambda (k) (k 3)))
+            4)
   ",
   "displayResult": Array [],
   "numErrors": 0,
@@ -42,8 +44,8 @@ Object {
   "alertResult": Array [],
   "code": "
     (define test 1)
-    (call/cc (lambda (k) 
-                (set! test 2) 
+    (call/cc (lambda (k)
+                (set! test 2)
                 (k 'escaped)
                 (set! test 3)))
     ;; test should be 2
@@ -54,6 +56,73 @@ Object {
   "parsedErrors": "",
   "result": 2,
   "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`call/cc throws error given >1 argument: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (+ 1 2 (call/cc
+              (lambda (k) (k 3))
+              'wrongwrongwrong!)
+            4)
+  ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`call/cc throws error given no arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (+ 1 2 (call/cc) 4)
+  ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 2: Expected 1 arguments, but got 0.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`cont throws error given >1 argument: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (+ 1 2 (call/cc
+              (lambda (k) (k 3 'wrongwrongwrong!)))
+            4)
+  ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3: Expected 1 arguments, but got 2.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`cont throws error given no arguments: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    (+ 1 2 (call/cc
+              (lambda (k) (k)))
+            4)
+  ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3: Expected 1 arguments, but got 0.",
+  "result": undefined,
+  "resultStatus": "error",
   "visualiseListResult": Array [],
 }
 `;
