@@ -21,7 +21,9 @@ export enum InstrType {
   CONTINUE = 'Continue',
   CONTINUE_MARKER = 'ContinueMarker',
   BREAK = 'Break',
-  BREAK_MARKER = 'BreakMarker'
+  BREAK_MARKER = 'BreakMarker',
+  GENERATE_CONT = 'GenerateContinuation',
+  RESUME_CONT = 'ResumeContinuation'
 }
 
 interface BaseInstr {
@@ -73,6 +75,10 @@ export interface ArrLitInstr extends BaseInstr {
   arity: number
 }
 
+export type GenContInstr = BaseInstr
+
+export type ResumeContInstr = BaseInstr
+
 export type Instr =
   | BaseInstr
   | WhileInstr
@@ -81,6 +87,8 @@ export type Instr =
   | BranchInstr
   | EnvInstr
   | ArrLitInstr
+  | GenContInstr
+  | ResumeContInstr
 
 export type ControlItem = es.Node | Instr
 
