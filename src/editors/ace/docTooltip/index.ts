@@ -51,7 +51,7 @@ export const SourceDocumentation = {
     '3_non-det': resolveImportInconsistency(source_3_non_det),
     '3_typed': resolveImportInconsistency(source_3_typed),
     '4': resolveImportInconsistency(source_4),
-    '4_typed': resolveImportInconsistency(source_4_typed),
+    '4_typed': resolveImportInconsistency(source_4_typed)
   },
   ext_lib
 }
