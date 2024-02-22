@@ -27,7 +27,9 @@ import {
   Chapter,
   Context,
   disallowedTypes,
+  LiteralType,
   Pair,
+  Primitive,
   PrimitiveType,
   SArray,
   TSAllowedTypes,
@@ -1060,11 +1062,11 @@ function hasTypeMismatchErrors(
       }
       // If both are union types, there are no type errors as long as one of the types match
       for (const type of actualType.types) {
-        if (containsType(node, expectedType.types, type)) {
-          return false
+        if (!containsType(node, expectedType.types, type)) {
+          return true
         }
       }
-      return true
+      return false
     case 'literal':
       if (actualType.kind !== 'literal' && actualType.kind !== 'primitive') {
         return true
@@ -1217,6 +1219,30 @@ function hasTypeMismatchErrors(
       }
       if (actualType.kind !== 'array') {
         return true
+      }
+      if (expectedType.elementType.kind === 'union') {
+        return hasTypeMismatchErrors(
+          node,
+          actualType.elementType,
+          expectedType.elementType,
+          visitedTypeAliasesForActualType,
+          visitedTypeAliasesForExpectedType,
+          skipTypeAliasExpansion
+        )
+      }
+      if (actualType.elementType.kind === 'union') {
+        const types: Type[] = actualType.elementType.types.map((type: Primitive) => {
+          return { kind: 'literal', value: type.value } as LiteralType
+        });
+        const literalArrayType = { kind: 'array', elementType: tUnion(...types) } as SArray;
+        return hasTypeMismatchErrors(
+          node,
+          literalArrayType,
+          expectedType.elementType,
+          visitedTypeAliasesForActualType,
+          visitedTypeAliasesForExpectedType,
+          skipTypeAliasExpansion
+        )
       }
       return hasTypeMismatchErrors(
         node,
