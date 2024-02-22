@@ -1233,8 +1233,8 @@ function hasTypeMismatchErrors(
       if (actualType.elementType.kind === 'union') {
         const types: Type[] = actualType.elementType.types.map((type: Primitive) => {
           return { kind: 'literal', value: type.value } as LiteralType
-        });
-        const literalArrayType = { kind: 'array', elementType: tUnion(...types) } as SArray;
+        })
+        const literalArrayType = { kind: 'array', elementType: tUnion(...types) } as SArray
         return hasTypeMismatchErrors(
           node,
           literalArrayType,
