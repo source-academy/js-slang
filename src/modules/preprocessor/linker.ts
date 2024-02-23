@@ -1,5 +1,4 @@
 import type es from 'estree'
-import { memoize } from 'lodash'
 
 import type { Context } from '../..'
 import { parse } from '../../parser/parser'
@@ -42,17 +41,10 @@ export type LinkerOptions = {
    * Options to pass to `resolveFile`
    */
   resolverOptions: ImportResolutionOptions
-
-  /**
-   * Set to true to memoize the file getter passed to
-   * the linker (useful if reading using `fs`)
-   */
-  memoizeGetter: boolean
 }
 
 export const defaultLinkerOptions: LinkerOptions = {
   resolverOptions: defaultResolutionOptions,
-  memoizeGetter: false
 }
 
 /**
@@ -76,7 +68,10 @@ export default async function parseProgramsAndConstructImportGraph(
   const programs: Record<AbsolutePath, es.Program> = {}
   const files: SourceFiles = {}
   const sourceModulesToImport = new Set<string>()
-  const getter = options.memoizeGetter ? memoize(fileGetter) : fileGetter
+  const getter: FileGetter = path => {
+    if (path in files) return Promise.resolve(files[path])
+    return fileGetter(path)
+  }
   let entrypointCode: string | undefined = undefined
 
   async function resolveDependency(fromModule: AbsolutePath, node: ModuleDeclarationWithSource) {
