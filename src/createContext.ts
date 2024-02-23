@@ -1,6 +1,7 @@
 // Variable determining chapter of Source is contained in this file.
 
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
+import { call_with_current_continuation } from './cse-machine/continuations'
 import * as gpu_lib from './gpu/lib'
 import { AsyncScheduler } from './schedulers'
 import * as scheme_libs from './scm-slang/src/stdlib/source-scheme-library'
@@ -406,6 +407,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
     switch (context.chapter) {
       case Chapter.FULL_SCHEME:
+        // Introduction to call/cc
+        defineBuiltin(context, 'call$47$cc(f)', call_with_current_continuation)
 
       case Chapter.SCHEME_4:
         // Introduction to eval

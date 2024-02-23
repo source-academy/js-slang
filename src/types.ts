@@ -324,6 +324,14 @@ export interface BlockExpression extends es.BaseExpression {
 
 export type substituterNodes = es.Node | BlockExpression
 
+/**
+ * For use in the CSE machine: block statements are handled in two steps:
+ * environment creation, then unpacking
+ */
+export interface RawBlockStatement extends es.BlockStatement {
+  isRawBlock: 'true'
+}
+
 export {
   Instruction as SVMInstruction,
   Program as SVMProgram,

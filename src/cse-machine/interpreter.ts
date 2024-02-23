@@ -16,12 +16,22 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
-import { Context, ContiguousArrayElements, Result, Value } from '../types'
+import { Context, ContiguousArrayElements, RawBlockStatement, Result, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
 import { isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import {
+  Continuation,
+  getContinuationControl,
+  getContinuationEnv,
+  getContinuationStash,
+  isCallWithCurrentContinuation,
+  isContinuation,
+  makeContinuation,
+  makeDummyContCallExpression
+} from './continuations'
 import * as instr from './instrCreator'
 import {
   AppInstr,
@@ -59,6 +69,7 @@ import {
   isBlockStatement,
   isInstr,
   isNode,
+  isRawBlockStatement,
   isSimpleFunction,
   popEnvironment,
   pushEnvironment,
@@ -81,11 +92,11 @@ type CmdEvaluator = (
  * It contains syntax tree nodes or instructions.
  */
 export class Control extends Stack<ControlItem> {
-  public constructor(program: es.Program) {
+  public constructor(program?: es.Program) {
     super()
 
     // Load program into control stack
-    this.push(program)
+    program ? this.push(program) : null
   }
 
   public push(...items: ControlItem[]): void {
@@ -94,21 +105,33 @@ export class Control extends Stack<ControlItem> {
   }
 
   /**
-   * Before pushing block statements on the control, we check if the block statement has any declarations.
-   * If not, instead of pushing the entire block, just the body is pushed since the block is not adding any value.
+   * Before pushing block statements on the control stack, we check if the block statement has any declarations.
+   * If not (and its not a raw block statement), instead of pushing the entire block, just the body is pushed since the block is not adding any value.
    * @param items The items being pushed on the control.
    * @returns The same set of control items, but with block statements without declarations simplified.
    */
   private static simplifyBlocksWithoutDeclarations(...items: ControlItem[]): ControlItem[] {
     const itemsNew: ControlItem[] = []
     items.forEach(item => {
-      if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
+      if (
+        isNode(item) &&
+        isBlockStatement(item) &&
+        !hasDeclarations(item) &&
+        !isRawBlockStatement(item)
+      ) {
         itemsNew.push(...Control.simplifyBlocksWithoutDeclarations(...handleSequence(item.body)))
       } else {
         itemsNew.push(item)
       }
     })
     return itemsNew
+  }
+
+  public copy(): Control {
+    const newControl = new Control()
+    const stackCopy = super.getStack()
+    newControl.push(...stackCopy)
+    return newControl
   }
 }
 
@@ -118,6 +141,13 @@ export class Control extends Stack<ControlItem> {
 export class Stash extends Stack<Value> {
   public constructor() {
     super()
+  }
+
+  public copy(): Stash {
+    const newStash = new Stash()
+    const stackCopy = super.getStack()
+    newStash.push(...stackCopy)
+    return newStash
   }
 }
 
@@ -281,7 +311,7 @@ function runCSEMachine(
         // return new CSEBreak()
       }
     } else {
-      // Command is an instrucion
+      // Command is an instruction
       cmdEvaluators[command.instrType](command, context, control, stash, isPrelude)
     }
 
@@ -329,12 +359,26 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const next = command.body[0]
       cmdEvaluators[next.type](next, context, control, stash, isPrelude)
     } else {
-      // Push block body
-      control.push(...handleSequence(command.body))
+      // Push raw block statement
+      const rawCopy: RawBlockStatement = {
+        type: 'BlockStatement',
+        range: command.range,
+        loc: command.loc,
+        body: command.body,
+        isRawBlock: 'true'
+      }
+      control.push(rawCopy)
     }
   },
 
   BlockStatement: function (command: es.BlockStatement, context: Context, control: Control) {
+    if (isRawBlockStatement(command)) {
+      // Raw block statement: unpack and push body
+      // Push block body only
+      control.push(...handleSequence(command.body))
+      return
+    }
+    // Normal block statement: do environment setup
     // To restore environment after block ends
     // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next control item
     // we do not need to push another one
@@ -349,8 +393,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     declareFunctionsAndVariables(context, command, environment)
     pushEnvironment(context, environment)
-    // Push block body
-    control.push(...handleSequence(command.body))
+
+    // Push raw block statement
+    const rawCopy: RawBlockStatement = {
+      type: 'BlockStatement',
+      range: command.range,
+      loc: command.loc,
+      body: command.body,
+      isRawBlock: 'true'
+    }
+    control.push(rawCopy)
   },
 
   WhileStatement: function (
@@ -795,6 +847,46 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
     // Get function from the stash
     const func: Closure | Function = stash.pop()
+
+    if (!(func instanceof Closure || func instanceof Function)) {
+      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
+    }
+
+    if (isCallWithCurrentContinuation(func)) {
+      // Check for number of arguments mismatch error
+      checkNumberOfArguments(context, func, args, command.srcNode)
+
+      // Get the callee
+      const cont_callee: Value = args[0]
+
+      const dummyFCallExpression = makeDummyContCallExpression('f', 'cont')
+
+      // Prepare a function call for the continuation-consuming function
+      // along with a newly generated continuation
+      control.push(instr.appInstr(command.numOfArgs, dummyFCallExpression))
+      control.push(instr.genContInstr(dummyFCallExpression.arguments[0]))
+      stash.push(cont_callee)
+      return
+    }
+
+    if (isContinuation(func)) {
+      // Check for number of arguments mismatch error
+      checkNumberOfArguments(context, func, args, command.srcNode)
+
+      // A continuation is always given a single argument
+      const expression: Value = args[0]
+
+      const dummyContCallExpression = makeDummyContCallExpression('f', 'cont')
+
+      // Restore the state of the stash,
+      // but replace the function application instruction with
+      // a resume continuation instruction
+      stash.push(func)
+      stash.push(expression)
+      control.push(instr.resumeContInstr(dummyContCallExpression))
+      return
+    }
+
     if (func instanceof Closure) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
@@ -814,7 +906,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       if (
         next &&
         !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
-        control.some(isNode)
+        !control.isEmpty()
       ) {
         control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
@@ -841,24 +933,25 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         }
         control.push(func.node.body)
       }
-    } else if (typeof func === 'function') {
-      // Check for number of arguments mismatch error
-      checkNumberOfArguments(context, func, args, command.srcNode)
-      // Directly stash result of applying pre-built functions without the ASE machine.
-      try {
-        const result = func(...args)
-        stash.push(result)
-      } catch (error) {
-        if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
-          // The error could've arisen when the builtin called a source function which errored.
-          // If the cause was a source error, we don't want to include the error.
-          // However if the error came from the builtin itself, we need to handle it.
-          const loc = command.srcNode.loc ?? UNKNOWN_LOCATION
-          handleRuntimeError(context, new errors.ExceptionError(error, loc))
-        }
+
+      return
+    }
+
+    // Value is a function
+    // Check for number of arguments mismatch error
+    checkNumberOfArguments(context, func, args, command.srcNode)
+    // Directly stash result of applying pre-built functions without the ASE machine.
+    try {
+      const result = func(...args)
+      stash.push(result)
+    } catch (error) {
+      if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
+        // The error could've arisen when the builtin called a source function which errored.
+        // If the cause was a source error, we don't want to include the error.
+        // However if the error came from the builtin itself, we need to handle it.
+        const loc = command.srcNode.loc ?? UNKNOWN_LOCATION
+        handleRuntimeError(context, new errors.ExceptionError(error, loc))
       }
-    } else {
-      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
     }
   },
 
@@ -970,5 +1063,50 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.BREAK_MARKER]: function () {}
+  [InstrType.BREAK_MARKER]: function () {},
+
+  [InstrType.GENERATE_CONT]: function (
+    _command: Instr,
+    context: Context,
+    control: Control,
+    stash: Stash
+  ) {
+    const contControl = control.copy()
+    const contStash = stash.copy()
+    const contEnv = context.runtime.environments
+
+    // Remove all data related to the continuation-consuming function
+    contControl.pop()
+    contStash.pop()
+
+    // Now this will accurately represent the slice of the
+    // program execution at the time of the call/cc call
+    const continuation = makeContinuation(contControl, contStash, contEnv)
+
+    stash.push(continuation)
+  },
+
+  [InstrType.RESUME_CONT]: function (
+    _command: Instr,
+    context: Context,
+    control: Control,
+    stash: Stash
+  ) {
+    const expression = stash.pop()
+    const cn: Continuation = stash.pop() as Continuation
+
+    const contControl = getContinuationControl(cn)
+    const contStash = getContinuationStash(cn)
+    const contEnv = getContinuationEnv(cn)
+
+    // Set the control and stash to the continuation's control and stash
+    control.setTo(contControl)
+    stash.setTo(contStash)
+
+    // Push the expression given to the continuation onto the stash
+    stash.push(expression)
+
+    // Restore the environment pointer to that of the continuation
+    context.runtime.environments = contEnv
+  }
 }

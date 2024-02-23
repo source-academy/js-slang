@@ -58,6 +58,18 @@ function isIrreducible(node: substituterNodes, context: Context) {
   )
 }
 
+function isStatementsReducible(progs: es.Program, context: Context): boolean {
+  if (progs.body.length === 0) return false
+  if (progs.body.length > 1) return true
+
+  const [lastStatement] = progs.body
+
+  if (lastStatement.type !== 'ExpressionStatement') {
+    return true
+  }
+  return !isIrreducible(lastStatement.expression, context)
+}
+
 type irreducibleNodes =
   | es.FunctionExpression
   | es.ArrowFunctionExpression
@@ -3204,24 +3216,32 @@ export function getEvaluationSteps(
     // and remove debugger statements.
     start = removeDebuggerStatements(start)
 
-    // then add in path and explanation string
+    // then add in path and explanation string and push it into steps
     let reducedWithPath: [substituterNodes, Context, string[][], string] = [
       start,
       context,
       [],
       'Start of evaluation'
     ]
+    steps.push([
+      reducedWithPath[0] as es.Program,
+      reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2],
+      reducedWithPath[3]
+    ])
+    steps.push([reducedWithPath[0] as es.Program, [], ''])
     // reduces program until evaluation completes
     // even steps: program before reduction
     // odd steps: program after reduction
-    let i = -1
+    let i = 1
     let limitExceeded = false
-    while ((reducedWithPath[0] as es.Program).body.length > 0) {
+    while (isStatementsReducible(reducedWithPath[0] as es.Program, context)) {
+      //Should work on isReducibleStatement instead of checking body.length
       if (steps.length === limit) {
         steps[steps.length - 1] = [ast.program([]), [], 'Maximum number of steps exceeded']
         limitExceeded = true
         break
       }
+      reducedWithPath = reduceMain(reducedWithPath[0], context)
       steps.push([
         reducedWithPath[0] as es.Program,
         reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2],
@@ -3232,7 +3252,6 @@ export function getEvaluationSteps(
         steps[i][1] = reducedWithPath[2].length > 1 ? [reducedWithPath[2][0]] : reducedWithPath[2]
         steps[i][2] = reducedWithPath[3]
       }
-      reducedWithPath = reduceMain(reducedWithPath[0], context)
       i += 2
     }
     if (!limitExceeded && steps.length > 0) {

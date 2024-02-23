@@ -28,6 +28,7 @@ jobs:
         exit 0
     - name: Install dependencies (apt)
       run: |
+        sudo apt-get update && \
         sudo apt-get install -y --no-install-recommends libxi-dev libgl1-mesa-dev
     - name: Setup Node
       uses: actions/setup-node@v4

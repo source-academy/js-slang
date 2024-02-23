@@ -80,6 +80,37 @@ const testEvalSteps = (programStr: string, context?: Context) => {
   return getEvaluationSteps(program, context, options)
 }
 
+describe('Test single line of code is evaluated', () => {
+  test('Constants Declaration', async () => {
+    const code = `
+    const x = 10;
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.length).toBe(4)
+    expect(getLastStepAsString(steps)).toEqual('')
+  })
+
+  test('Function Declaration', async () => {
+    const code = `
+    function x () {
+      return 10;
+    }
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.length).toBe(4)
+    expect(getLastStepAsString(steps)).toEqual('')
+  })
+
+  test('Value', async () => {
+    const code = `
+    10;
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.length).toBe(2)
+    expect(getLastStepAsString(steps)).toEqual('10;')
+  })
+})
+
 test('Test basic substitution', async () => {
   const code = `
     (1 + 2) * (3 + 4);
