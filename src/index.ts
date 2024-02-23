@@ -16,7 +16,8 @@ import {
   type Result,
   type SourceError,
   type SVMProgram,
-  Variant} from './types'
+  Variant
+} from './types'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
@@ -31,7 +32,7 @@ import parseProgramsAndConstructImportGraph from './modules/preprocessor/linker'
 import { isAbsolutePath } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parseWithComments } from './parser/utils'
-import { type AllExecutionMethods,resolvedErrorPromise, runFilesInSource } from './runner'
+import { type AllExecutionMethods, resolvedErrorPromise, runFilesInSource } from './runner'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'

@@ -3,7 +3,6 @@ import type fslib from 'fs/promises'
 import * as repl from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
 
-import { CUT, TRY_AGAIN } from '../constants'
 import {
   type IOptionsWithExecMethod,
   createContext,
@@ -11,7 +10,9 @@ import {
   parseError,
   Result,
   resume,
-  runInContext} from '../index'
+  runInContext
+} from '..'
+import { CUT, TRY_AGAIN } from '../constants'
 import Closure from '../interpreter/closure'
 import { Chapter, Context, SuspendedNonDet, Variant } from '../types'
 

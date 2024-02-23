@@ -43,7 +43,7 @@ export type Instruction = [
   Argument?,
   Argument?
 ]
-export type Argument = number | boolean | string   | Address
+export type Argument = number | boolean | string | Address
 export type SVMFunction = [
   number, // stack size
   number, // environment size

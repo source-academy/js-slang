@@ -22,7 +22,8 @@ import defaultBundler, { type Bundler } from '../modules/preprocessor/bundler'
 import parseProgramsAndConstructImportGraph, {
   type LinkerSuccessResult,
   defaultLinkerOptions,
-  isLinkerSuccess} from '../modules/preprocessor/linker'
+  isLinkerSuccess
+} from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
 import { decodeError, decodeValue } from '../parser/scheme'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
@@ -84,16 +85,18 @@ let previousCode: {
   files: SourceFiles
 } | null = null
 
-type RunnerOptions = {
+interface RunnerOptions {
   evaluatePreludes: boolean
   doValidation: boolean
   increaseExecTimeOnTimeout: boolean
+  bundler: Bundler
 }
 
 const defaultRunnerOptions: RunnerOptions = {
   evaluatePreludes: true,
   doValidation: true,
-  increaseExecTimeOnTimeout: false
+  increaseExecTimeOnTimeout: false,
+  bundler: defaultBundler
 }
 
 function createSourceRunner(
@@ -103,10 +106,9 @@ function createSourceRunner(
     options: IOptions,
     isPrelude: boolean
   ) => Promise<Result>,
-  runnerOptions: Partial<RunnerOptions> = {},
-  bundler: Bundler = defaultBundler
+  runnerOptions: Partial<RunnerOptions> = {}
 ): Runner {
-  const { doValidation, evaluatePreludes, increaseExecTimeOnTimeout } = {
+  const { doValidation, evaluatePreludes, increaseExecTimeOnTimeout, bundler } = {
     ...defaultRunnerOptions,
     ...runnerOptions
   }
@@ -178,7 +180,7 @@ function createSourceRunner(
 
 export const runners = {
   concurrent: createSourceRunner(
-    (program, context, options) => {
+    (program, context) => {
       try {
         return Promise.resolve({
           status: 'finished',
@@ -393,6 +395,8 @@ function determineExecutionMethod(
     case Variant.GPU: {
       return ['native', warnCorrectMethodForVariant(context.variant, 'native')]
     }
+    case Variant.NON_DET:
+      return ['interpreter', warnCorrectMethodForVariant(context.variant, 'interpreter')]
   }
 
   if (
