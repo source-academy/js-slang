@@ -44,7 +44,7 @@ export type LinkerOptions = {
 }
 
 export const defaultLinkerOptions: LinkerOptions = {
-  resolverOptions: defaultResolutionOptions,
+  resolverOptions: defaultResolutionOptions
 }
 
 /**

@@ -28,6 +28,7 @@
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/no-base-to-string": "warn",
     "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-duplicate-type-constituents": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-floating-promises": "off",
     "@typescript-eslint/no-implied-eval": "off",
