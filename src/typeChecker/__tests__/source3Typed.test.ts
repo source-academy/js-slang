@@ -13,22 +13,23 @@ describe('array type', () => {
   it('handles type mismatches correctly', () => {
     const code = `const arr1: number[] = [1, 2, 3]; // no error
       const arr2: string[] = ['1', '2', '3']; // no error
-      const arr3: number[] = [1, '2', 3]; // no error
+      const arr3: number[] = [1, '2', 3]; // error
       const arr4: boolean[] = [1, '2', 3]; // error
       const arr5: (number | string)[] = [1, '2', 3]; // no error
       const arr6: number[] = []; // no error
     `
 
     parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(
-      `"Line 4: Type '(number | string)[]' is not assignable to type 'boolean[]'."`
-    )
+    expect(parseError(context.errors)).toMatchInlineSnapshot(`
+      "Line 3: Type '(number | string)[]' is not assignable to type 'number[]'.
+      Line 4: Type '(number | string)[]' is not assignable to type 'boolean[]'."
+      `)
   })
 
   it('handles nested array types', () => {
     const code = `const arr1: number[][] = [[1], [2], [3]]; // no error
       const arr2: string[][] = [['1'], ['2'], ['3']]; // no error
-      const arr3: number[][] = [[1], ['2'], [3]]; // no error
+      const arr3: number[][] = [[1], ['2'], [3]]; // error
       const arr4: boolean[][] = [[1], ['2'], [3]]; // error
       const arr5: (number | string)[][] = [[1], ['2'], [3]]; // no error
       const arr6: number[][] = []; // no error
@@ -37,7 +38,8 @@ describe('array type', () => {
 
     parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`
-      "Line 4: Type '(number[] | string[])[]' is not assignable to type 'boolean[][]'.
+      "Line 3: Type '(number[] | string[])[]' is not assignable to type 'number[][]'.
+      Line 4: Type '(number[] | string[])[]' is not assignable to type 'boolean[][]'.
       Line 7: Type 'number[]' is not assignable to type 'number[][]'."
     `)
   })

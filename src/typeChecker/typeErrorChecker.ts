@@ -28,9 +28,7 @@ import {
   Context,
   disallowedTypes,
   Pair,
-  Primitive,
   PrimitiveType,
-  SArray,
   TSAllowedTypes,
   TSBasicType,
   TSDisallowedTypes,
@@ -951,13 +949,21 @@ function hasTypeMismatchErrors(
     // If the expected type is not a union type but the actual type is a union type,
     // Check if the expected type matches any of the actual types
     // This removes the need to check if the actual type is a union type in all of the switch cases
-    return !containsType(
-      node,
-      actualType.types,
-      expectedType,
-      visitedTypeAliasesForActualType,
-      visitedTypeAliasesForExpectedType
-    )
+    for (const type of actualType.types) {
+      if (
+        !hasTypeMismatchErrors(
+          node,
+          type,
+          expectedType,
+          visitedTypeAliasesForActualType,
+          visitedTypeAliasesForExpectedType,
+          skipTypeAliasExpansion
+        )
+      ) {
+        return false
+      }
+    }
+    return true
   }
   switch (expectedType.kind) {
     case 'variable':
@@ -1200,49 +1206,28 @@ function hasTypeMismatchErrors(
         skipTypeAliasExpansion
       )
     case 'array':
-      if (actualType.kind === 'union') {
-        // Special case: number[] | string[] matches with (number | string)[]
-        const types = actualType.types.filter((type): type is SArray => type.kind === 'array')
-        if (types.length !== actualType.types.length) {
-          return true
-        }
-        const combinedType = types.map(type => type.elementType)
-        return hasTypeMismatchErrors(
-          node,
-          tUnion(...combinedType),
-          expectedType.elementType,
-          visitedTypeAliasesForActualType,
-          visitedTypeAliasesForExpectedType,
-          skipTypeAliasExpansion
-        )
-      }
       if (actualType.kind !== 'array') {
         return true
       }
-      if (expectedType.elementType.kind === 'union') {
-        return hasTypeMismatchErrors(
-          node,
-          actualType.elementType,
-          expectedType.elementType,
-          visitedTypeAliasesForActualType,
-          visitedTypeAliasesForExpectedType,
-          skipTypeAliasExpansion
-        )
-      }
       if (actualType.elementType.kind === 'union') {
-        const types: Type[] = actualType.elementType.types.map((type: Primitive) => {
-          return tLiteral(type.value!)
-        })
-        const literalArrayType = tArray(tUnion(...types))
-
-        return hasTypeMismatchErrors(
-          node,
-          literalArrayType,
-          expectedType.elementType,
-          visitedTypeAliasesForActualType,
-          visitedTypeAliasesForExpectedType,
-          skipTypeAliasExpansion
-        )
+        // If actual elementType is a union type, return true if any one of
+        // the types in the union does not match the expected elementType.
+        // This serves to tighten the type checking for array elements.
+        for (const type of actualType.elementType.types) {
+          if (
+            hasTypeMismatchErrors(
+              node,
+              type,
+              expectedType.elementType,
+              visitedTypeAliasesForActualType,
+              visitedTypeAliasesForExpectedType,
+              skipTypeAliasExpansion
+            )
+          ) {
+            return true
+          }
+        }
+        return false
       }
       return hasTypeMismatchErrors(
         node,
