@@ -33,7 +33,7 @@ export const getRequireProvider = (context: Context) => (x: string) => {
         parser: {
           parser
         },
-        'ec-evaluator': {
+        'cse-machine': {
           interpreter
         }
       },
