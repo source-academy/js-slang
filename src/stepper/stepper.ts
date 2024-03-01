@@ -1795,15 +1795,39 @@ function reduceMain(
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
         ) {
-          // let stmt
-          // if (otherStatements.length > 0) {
-          paths[0].push('body[0]')
-          paths.push([])
-          const stmt = ast.program(otherStatements as es.Statement[])
-          // } else {
-          //   stmt = ast.expressionStatement(firstStatement.expression)
-          // }
-          return [stmt, context, paths, explain(node)]
+          const [secondStatement] = otherStatements
+          // if the first statement is irreducible, reduce second statement if it's reducible
+          // else reduce the first statement
+          if (
+            secondStatement !== undefined &&
+            secondStatement.type == 'ExpressionStatement' &&
+            isIrreducible(secondStatement.expression, context)
+          ) {
+            paths[0].push('body[0]')
+            paths.push([])
+            const stmt = ast.program(otherStatements as es.Statement[])
+            return [stmt, context, paths, explain(node)]
+          } else {
+            // Reduce the second statement and preserve the first statement
+            const [reduced, cont, path, str] = reducers['Program'](
+              ast.program(otherStatements as es.Statement[]),
+              context,
+              paths
+            )
+
+            // Fix path highlighting after preserving first statement
+            path.forEach(pathStep => {
+              pathStep.forEach((_, i) => {
+                pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
+              })
+            })
+
+            const stmt = ast.program([
+              firstStatement,
+              ...((reduced as es.Program).body as es.Statement[])
+            ])
+            return [stmt, cont, path, str]
+          }
         } else if (firstStatement.type === 'FunctionDeclaration') {
           if (firstStatement.id === null) {
             throw new Error(
