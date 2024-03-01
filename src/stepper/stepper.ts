@@ -2010,7 +2010,7 @@ function reduceMain(
           ) {
             paths[0].push('body[0]')
             paths.push([])
-            let stmt = ast.blockStatement(otherStatements as es.Statement[])
+            const stmt = ast.blockStatement(otherStatements as es.Statement[])
             return [stmt, context, paths, explain(node)]
           } else {
             // Reduce the second statement and preserve the first statement
@@ -2216,7 +2216,7 @@ function reduceMain(
           ) {
             paths[0].push('body[0]')
             paths.push([])
-            let stmt = ast.blockExpression(otherStatements as es.Statement[])
+            const stmt = ast.blockExpression(otherStatements as es.Statement[])
             return [stmt, context, paths, explain(node)]
           } else {
             // Reduce the second statement and preserve the first statement
