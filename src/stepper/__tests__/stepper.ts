@@ -77,6 +77,43 @@ const testEvalSteps = (programStr: string, context?: Context) => {
   return getEvaluationSteps(program, context, options)
 }
 
+describe('Test correct evaluation sequence when first statement is a value', () => {
+  test('Reducible second statement', async () => {
+    const code = `
+    'value';
+    const x = 10;
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual("'value';")
+  })
+
+  test('Irreducible second statement', async () => {
+    const code = `
+    'value';
+    'also a value';
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual("'also a value';")
+  })
+
+  test('Mix statements', async () => {
+    const code = `
+    'value';
+    const x = 10;
+    function f() {20;}
+    const z = 30;
+    'also a value';
+    'another value';
+    const a = 40;
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual("'another value';")
+  })
+})
+
 describe('Test single line of code is evaluated', () => {
   test('Constants Declaration', async () => {
     const code = `
@@ -185,9 +222,11 @@ test('Test two statement substitution', async () => {
     21;
     3 * 5;
 
-    3 * 5;
+    21;
+    15;
 
-    3 * 5;
+    21;
+    15;
 
     15;
 
@@ -800,21 +839,25 @@ test('triple equals work on function', async () => {
     g === g;
     f === g;
 
-    g === g;
+    true;
+    true;
     f === g;
 
-    g === g;
-    f === g;
-
+    true;
     true;
     f === g;
 
     true;
     f === g;
 
+    true;
     f === g;
 
-    f === g;
+    true;
+    false;
+
+    true;
+    false;
 
     false;
 
