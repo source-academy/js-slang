@@ -4116,7 +4116,73 @@ f();
 "
 `;
 
-exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement 1`] = `
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in block 1`] = `
+"{
+  'value';
+  'also a value';
+}
+
+{
+  'value';
+  'also a value';
+}
+
+{
+  'also a value';
+}
+
+{
+  'also a value';
+}
+
+'also a value';
+
+'also a value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in functions 1`] = `
+"function f() {
+  'value';
+  'also a value';
+}
+f();
+
+function f() {
+  'value';
+  'also a value';
+}
+f();
+
+f();
+
+f();
+
+{
+  'value';
+  'also a value';
+};
+
+{
+  'value';
+  'also a value';
+};
+
+{
+  'also a value';
+};
+
+{
+  'also a value';
+};
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in program 1`] = `
 "'value';
 'also a value';
 
@@ -4134,9 +4200,17 @@ exports[`Test correct evaluation sequence when first statement is a value Mix st
 const x = 10;
 function f() {
   20;
+  function p() {
+    22;
+  }
 }
 const z = 30;
 'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
 'another value';
 const a = 40;
 
@@ -4144,57 +4218,159 @@ const a = 40;
 const x = 10;
 function f() {
   20;
+  function p() {
+    22;
+  }
 }
 const z = 30;
 'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
 'another value';
 const a = 40;
 
 'value';
 function f() {
   20;
+  function p() {
+    22;
+  }
 }
 const z = 30;
 'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
 'another value';
 const a = 40;
 
 'value';
 function f() {
   20;
+  function p() {
+    22;
+  }
 }
 const z = 30;
 'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
 'another value';
 const a = 40;
 
 'value';
 const z = 30;
 'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
 'another value';
 const a = 40;
 
 'value';
 const z = 30;
 'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
 'another value';
 const a = 40;
 
 'value';
 'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
 'another value';
 const a = 40;
 
 'value';
 'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
 'another value';
 const a = 40;
 
 'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
 'another value';
 const a = 40;
 
 'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  'another value';
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  'another value';
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+40;
+'another value';
+const a = 40;
+
+'also a value';
+40;
+'another value';
+const a = 40;
+
+40;
+'another value';
+const a = 40;
+
+40;
 'another value';
 const a = 40;
 
@@ -4210,7 +4386,73 @@ const a = 40;
 "
 `;
 
-exports[`Test correct evaluation sequence when first statement is a value Reducible second statement 1`] = `
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in block 1`] = `
+"{
+  'value';
+  const x = 10;
+}
+
+{
+  'value';
+  const x = 10;
+}
+
+{
+  'value';
+}
+
+{
+  'value';
+}
+
+'value';
+
+'value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in function 1`] = `
+"function f() {
+  'value';
+  const x = 10;
+}
+f();
+
+function f() {
+  'value';
+  const x = 10;
+}
+f();
+
+f();
+
+f();
+
+{
+  'value';
+  const x = 10;
+};
+
+{
+  'value';
+  const x = 10;
+};
+
+{
+  'value';
+};
+
+{
+  'value';
+};
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in program 1`] = `
 "'value';
 const x = 10;
 

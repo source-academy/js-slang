@@ -78,7 +78,7 @@ const testEvalSteps = (programStr: string, context?: Context) => {
 }
 
 describe('Test correct evaluation sequence when first statement is a value', () => {
-  test('Reducible second statement', async () => {
+  test('Reducible second statement in program', async () => {
     const code = `
     'value';
     const x = 10;
@@ -88,7 +88,7 @@ describe('Test correct evaluation sequence when first statement is a value', () 
     expect(getLastStepAsString(steps)).toEqual("'value';")
   })
 
-  test('Irreducible second statement', async () => {
+  test('Irreducible second statement in program', async () => {
     const code = `
     'value';
     'also a value';
@@ -98,13 +98,71 @@ describe('Test correct evaluation sequence when first statement is a value', () 
     expect(getLastStepAsString(steps)).toEqual("'also a value';")
   })
 
+  test('Reducible second statement in block', async () => {
+    const code = `
+    {
+      'value';
+      const x = 10;
+    }
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual("'value';")
+  })
+
+  test('Irreducible second statement in block', async () => {
+    const code = `
+    {
+      'value';
+      'also a value';
+    }
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual("'also a value';")
+  })
+
+  test('Reducible second statement in function', async () => {
+    const code = `
+    function f () {
+      'value';
+      const x = 10;
+    }
+    f();
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Irreducible second statement in functions', async () => {
+    const code = `
+    function f () {
+      'value';
+      'also a value';
+    }
+    f();
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
   test('Mix statements', async () => {
     const code = `
     'value';
     const x = 10;
-    function f() {20;}
+    function f() {
+      20;
+      function p() {
+        22;
+      }
+    }
     const z = 30;
     'also a value';
+    {
+      'another value';
+      const a = 40;
+      a;
+    }
     'another value';
     const a = 40;
     `
