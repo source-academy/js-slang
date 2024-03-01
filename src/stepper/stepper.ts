@@ -1796,8 +1796,6 @@ function reduceMain(
           isIrreducible(firstStatement.expression, context)
         ) {
           const [secondStatement] = otherStatements
-          // if the first statement is irreducible, reduce second statement if it's reducible
-          // else reduce the first statement
           if (
             secondStatement !== undefined &&
             secondStatement.type == 'ExpressionStatement' &&
