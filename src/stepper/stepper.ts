@@ -2215,8 +2215,9 @@ function reduceMain(
             const stmt = ast.identifier('undefined')
             return [stmt, context, paths, explain(node)]
           } else if (
-            secondStatement.type == 'ExpressionStatement' &&
-            isIrreducible(secondStatement.expression, context)
+            (secondStatement.type == 'ExpressionStatement' &&
+              isIrreducible(secondStatement.expression, context)) ||
+            secondStatement.type === 'ReturnStatement'
           ) {
             paths[0].push('body[0]')
             paths.push([])
