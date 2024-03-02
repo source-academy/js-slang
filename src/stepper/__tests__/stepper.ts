@@ -77,6 +77,33 @@ const testEvalSteps = (programStr: string, context?: Context) => {
   return getEvaluationSteps(program, context, options)
 }
 
+describe('Test reducing of empty block into epsilon', () => {
+  test('Empty block in program', async () => {
+    const code = `
+    3;
+    {}
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('3;')
+  })
+
+  test('Empty blocks in block', async () => {
+    const code = `
+    {
+      3;
+      {
+        {}
+        {}
+      }
+    }
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('3;')
+  })
+})
+
 describe('Test correct evaluation sequence when first statement is a value', () => {
   test('Reducible second statement in program', async () => {
     const code = `
