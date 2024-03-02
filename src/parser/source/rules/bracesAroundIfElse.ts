@@ -9,10 +9,7 @@ export class BracesAroundIfElseError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
 
-  constructor(
-    public node: es.IfStatement,
-    private branch: 'consequent' | 'alternate'
-  ) {}
+  constructor(public node: es.IfStatement, private branch: 'consequent' | 'alternate') {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION

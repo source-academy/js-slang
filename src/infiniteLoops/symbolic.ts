@@ -60,7 +60,7 @@ export const hybridValueConstructor = (
     concrete: concrete,
     symbolic: symbolic,
     validity: validity
-  }) as HybridValue
+  } as HybridValue)
 
 export function makeDummyHybrid(concrete: any): HybridValue {
   if (!isConcreteValue(concrete)) {
@@ -97,7 +97,7 @@ export const hybridArrayConstructor = (
     symbolic: symbolic,
     listHeads: listHeads,
     validity: Validity.Valid
-  }) as HybridArray
+  } as HybridArray)
 
 function makeHybridArray(name: string, concrete: any[]): HybridArray {
   // note single quotes used in generated indentifiers: quick hack to avoid name clashes

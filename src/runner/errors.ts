@@ -45,8 +45,8 @@ function getBrowserType(): BrowserType {
   return userAgent.indexOf('chrome') > -1
     ? BrowserType.Chrome
     : userAgent.indexOf('firefox') > -1
-      ? BrowserType.FireFox
-      : BrowserType.Unsupported
+    ? BrowserType.FireFox
+    : BrowserType.Unsupported
 }
 
 function extractErrorLocation(

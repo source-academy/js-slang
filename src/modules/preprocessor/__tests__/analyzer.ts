@@ -658,20 +658,17 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     const [allNoCases, allYesCases] = cases.reduce(
       ([noThrow, yesThrow], c, i) => {
         const context = mockContext(Chapter.LIBRARY_PARSER)
-        const programs = Object.entries(c[1]).reduce(
-          (res, [name, file]) => {
-            const parsed = parse(file!, context, { sourceFile: name })
-            if (!parsed) {
-              console.error(context.errors[0])
-              throw new Error('Failed to parse code!')
-            }
-            return {
-              ...res,
-              [name]: parsed
-            }
-          },
-          {} as Record<AbsolutePath, Program>
-        )
+        const programs = Object.entries(c[1]).reduce((res, [name, file]) => {
+          const parsed = parse(file!, context, { sourceFile: name })
+          if (!parsed) {
+            console.error(context.errors[0])
+            throw new Error('Failed to parse code!')
+          }
+          return {
+            ...res,
+            [name]: parsed
+          }
+        }, {} as Record<AbsolutePath, Program>)
 
         // For each test case, split it into the case where throwOnDuplicateImports is true
         // and when it is false. No errors should ever be thrown when throwOnDuplicateImports is false

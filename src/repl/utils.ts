@@ -1,13 +1,12 @@
 import { Option } from '@commander-js/extra-typings'
 
 import {
-  type SourceLanguage,
-  type ValidLanguage,
   pyLanguages,
   scmLanguages,
-  sourceLanguages
-} from '../constants'
-import { type Language, Chapter, Variant } from '../types'
+  type SourceLanguage,
+  sourceLanguages,
+  type ValidLanguage} from '../constants'
+import { Chapter, type Language, Variant } from '../types'
 
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined
