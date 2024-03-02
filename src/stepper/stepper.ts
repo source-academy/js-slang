@@ -1795,7 +1795,9 @@ function reduceMain(
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
         ) {
+          // Intentionally ignore the remaining statements
           const [secondStatement] = otherStatements
+
           if (
             secondStatement !== undefined &&
             secondStatement.type == 'ExpressionStatement' &&
@@ -1999,6 +2001,7 @@ function reduceMain(
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
         ) {
+          // Intentionally ignore the remaining statements
           const [secondStatement] = otherStatements
 
           if (secondStatement == undefined) {
@@ -2205,6 +2208,7 @@ function reduceMain(
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
         ) {
+          // Intentionally ignore the remaining statements
           const [secondStatement] = otherStatements
 
           if (secondStatement == undefined) {
