@@ -102,6 +102,18 @@ describe('Test reducing of empty block into epsilon', () => {
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
     expect(getLastStepAsString(steps)).toEqual('3;')
   })
+
+  test('Empty block in function', async () => {
+    const code = `
+    function f() {
+      3;
+      {}
+    }
+    f();
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
 })
 
 describe('Test correct evaluation sequence when first statement is a value', () => {

@@ -4465,6 +4465,47 @@ const x = 10;
 "
 `;
 
+exports[`Test reducing of empty block into epsilon Empty block in function 1`] = `
+"function f() {
+  3;
+  {}
+}
+f();
+
+function f() {
+  3;
+  {}
+}
+f();
+
+f();
+
+f();
+
+{
+  3;
+  {}
+};
+
+{
+  3;
+  {}
+};
+
+{
+  3;
+};
+
+{
+  3;
+};
+
+undefined;
+
+undefined;
+"
+`;
+
 exports[`Test reducing of empty block into epsilon Empty block in program 1`] = `
 "3;
 {}
