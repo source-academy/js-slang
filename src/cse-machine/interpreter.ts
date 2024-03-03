@@ -372,15 +372,21 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const next = command.body[0]
       cmdEvaluators[next.type](next, context, control, stash, isPrelude)
     } else {
-      // Push raw block statement
-      const rawCopy: RawBlockStatement = {
-        type: 'BlockStatement',
-        range: command.range,
-        loc: command.loc,
-        body: command.body,
-        isRawBlock: 'true'
+      // If program has top-level declarations, push raw block statement as intermediate step
+      if (hasDeclarations(command) || hasImportDeclarations(command)) {
+        const rawCopy: RawBlockStatement = {
+          type: 'BlockStatement',
+          range: command.range,
+          loc: command.loc,
+          body: command.body,
+          isRawBlock: 'true'
+        }
+        control.push(rawCopy)
       }
-      control.push(rawCopy)
+      // Otherwise unpack and push the block body directly
+      else {
+        control.push(...handleSequence(command.body))
+      }
     }
   },
 
