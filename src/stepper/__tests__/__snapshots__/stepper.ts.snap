@@ -4145,12 +4145,14 @@ exports[`Test correct evaluation sequence when first statement is a value Irredu
 "function f() {
   'value';
   'also a value';
+  return 'another value';
 }
 f();
 
 function f() {
   'value';
   'also a value';
+  return 'another value';
 }
 f();
 
@@ -4161,24 +4163,36 @@ f();
 {
   'value';
   'also a value';
+  return 'another value';
 };
 
 {
   'value';
   'also a value';
+  return 'another value';
 };
 
 {
   'also a value';
+  return 'another value';
 };
 
 {
   'also a value';
+  return 'another value';
 };
 
-undefined;
+{
+  return 'another value';
+};
 
-undefined;
+{
+  return 'another value';
+};
+
+'another value';
+
+'another value';
 "
 `;
 
@@ -4415,12 +4429,14 @@ exports[`Test correct evaluation sequence when first statement is a value Reduci
 "function f() {
   'value';
   const x = 10;
+  return 'another value';
 }
 f();
 
 function f() {
   'value';
   const x = 10;
+  return 'another value';
 }
 f();
 
@@ -4431,24 +4447,36 @@ f();
 {
   'value';
   const x = 10;
+  return 'another value';
 };
 
 {
   'value';
   const x = 10;
+  return 'another value';
 };
 
 {
   'value';
+  return 'another value';
 };
 
 {
   'value';
+  return 'another value';
 };
 
-undefined;
+{
+  return 'another value';
+};
 
-undefined;
+{
+  return 'another value';
+};
+
+'another value';
+
+'another value';
 "
 `;
 

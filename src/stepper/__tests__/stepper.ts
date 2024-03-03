@@ -166,6 +166,7 @@ describe('Test correct evaluation sequence when first statement is a value', () 
     function f () {
       'value';
       const x = 10;
+      return 'another value';
     }
     f();
     `
@@ -178,6 +179,7 @@ describe('Test correct evaluation sequence when first statement is a value', () 
     function f () {
       'value';
       'also a value';
+      return 'another value';
     }
     f();
     `
