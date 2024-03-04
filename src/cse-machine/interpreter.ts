@@ -7,7 +7,7 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { partition, uniqueId } from 'lodash'
+import { reverse, uniqueId } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
@@ -15,23 +15,36 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { UndefinedImportError } from '../modules/errors'
-import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
+import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
+import { ImportTransformOptions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Result, Value } from '../types'
+import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
+import { Context, ContiguousArrayElements, RawBlockStatement, Result, Value } from '../types'
+import assert from '../utils/assert'
+import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import {
+  Continuation,
+  getContinuationControl,
+  getContinuationEnv,
+  getContinuationStash,
+  isCallWithCurrentContinuation,
+  isContinuation,
+  makeContinuation,
+  makeDummyContCallExpression
+} from './continuations'
 import * as instr from './instrCreator'
 import {
-  AgendaItem,
   AppInstr,
   ArrLitInstr,
   AssmtInstr,
   BinOpInstr,
   BranchInstr,
-  ECEBreak,
-  ECError,
+  ControlItem,
+  CSEBreak,
+  CseError,
   EnvInstr,
   ForInstr,
   Instr,
@@ -59,6 +72,7 @@ import {
   isBlockStatement,
   isInstr,
   isNode,
+  isRawBlockStatement,
   isSimpleFunction,
   popEnvironment,
   pushEnvironment,
@@ -69,46 +83,58 @@ import {
 } from './utils'
 
 type CmdEvaluator = (
-  command: AgendaItem,
+  command: ControlItem,
   context: Context,
-  agenda: Agenda,
+  control: Control,
   stash: Stash,
   isPrelude: boolean
 ) => void
 
 /**
- * The agenda is a list of commands that still needs to be executed by the machine.
+ * The control is a list of commands that still needs to be executed by the machine.
  * It contains syntax tree nodes or instructions.
  */
-export class Agenda extends Stack<AgendaItem> {
-  public constructor(program: es.Program) {
+export class Control extends Stack<ControlItem> {
+  public constructor(program?: es.Program) {
     super()
 
-    // Load program into agenda stack
-    this.push(program)
+    // Load program into control stack
+    program ? this.push(program) : null
   }
 
-  public push(...items: AgendaItem[]): void {
-    const itemsNew: AgendaItem[] = Agenda.simplifyBlocksWithoutDeclarations(...items)
+  public push(...items: ControlItem[]): void {
+    const itemsNew: ControlItem[] = Control.simplifyBlocksWithoutDeclarations(...items)
     super.push(...itemsNew)
   }
 
   /**
-   * Before pushing block statements on the agenda, we check if the block statement has any declarations.
-   * If not, instead of pushing the entire block, just the body is pushed since the block is not adding any value.
-   * @param items The items being pushed on the agenda.
-   * @returns The same set of agenda items, but with block statements without declarations simplified.
+   * Before pushing block statements on the control stack, we check if the block statement has any declarations.
+   * If not (and its not a raw block statement), instead of pushing the entire block, just the body is pushed since the block is not adding any value.
+   * @param items The items being pushed on the control.
+   * @returns The same set of control items, but with block statements without declarations simplified.
    */
-  private static simplifyBlocksWithoutDeclarations(...items: AgendaItem[]): AgendaItem[] {
-    const itemsNew: AgendaItem[] = []
+  private static simplifyBlocksWithoutDeclarations(...items: ControlItem[]): ControlItem[] {
+    const itemsNew: ControlItem[] = []
     items.forEach(item => {
-      if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
-        itemsNew.push(...Agenda.simplifyBlocksWithoutDeclarations(...handleSequence(item.body)))
+      if (
+        isNode(item) &&
+        isBlockStatement(item) &&
+        !hasDeclarations(item) &&
+        !isRawBlockStatement(item)
+      ) {
+        itemsNew.push(...Control.simplifyBlocksWithoutDeclarations(...handleSequence(item.body)))
       } else {
         itemsNew.push(item)
       }
     })
     return itemsNew
+  }
+
+  public copy(): Control {
+    const newControl = new Control()
+    const stackCopy = super.getStack()
+    newControl.push(...stackCopy)
+    return newControl
   }
 }
 
@@ -119,6 +145,13 @@ export class Stash extends Stack<Value> {
   public constructor() {
     super()
   }
+
+  public copy(): Stash {
+    const newStash = new Stash()
+    const stackCopy = super.getStack()
+    newStash.push(...stackCopy)
+    return newStash
+  }
 }
 
 /**
@@ -127,24 +160,30 @@ export class Stash extends Stack<Value> {
  *
  * @param program The program to evaluate.
  * @param context The context to evaluate the program in.
- * @returns The result of running the ECE machine.
+ * @returns The result of running the CSE machine.
  */
 export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
   try {
+    checkProgramForUndefinedVariables(program, context)
+  } catch (error) {
+    context.errors.push(error)
+    return new CseError(error)
+  }
+
+  try {
     context.runtime.isRunning = true
-    context.runtime.agenda = new Agenda(program)
+    context.runtime.control = new Control(program)
     context.runtime.stash = new Stash()
-    return runECEMachine(
+    return runCSEMachine(
       context,
-      context.runtime.agenda,
+      context.runtime.control,
       context.runtime.stash,
       options.envSteps,
       options.stepLimit,
       options.isPrelude
     )
   } catch (error) {
-    // console.error('ecerror:', error)
-    return new ECError(error)
+    return new CseError(error)
   } finally {
     context.runtime.isRunning = false
   }
@@ -154,16 +193,16 @@ export function evaluate(program: es.Program, context: Context, options: IOption
  * Function that is called when a user wishes to resume evaluation after
  * hitting a breakpoint.
  * This should only be called after the first 'evaluate' function has been called so that
- * context.runtime.agenda and context.runtime.stash are defined.
+ * context.runtime.control and context.runtime.stash are defined.
  * @param context The context to continue evaluating the program in.
- * @returns The result of running the ECE machine.
+ * @returns The result of running the CSE machine.
  */
 export function resumeEvaluate(context: Context) {
   try {
     context.runtime.isRunning = true
-    return runECEMachine(context, context.runtime.agenda!, context.runtime.stash!, -1, -1)
+    return runCSEMachine(context, context.runtime.control!, context.runtime.stash!, -1, -1)
   } catch (error) {
-    return new ECError(error)
+    return new CseError(error)
   } finally {
     context.runtime.isRunning = false
   }
@@ -172,63 +211,48 @@ export function resumeEvaluate(context: Context) {
 function evaluateImports(
   program: es.Program,
   context: Context,
-  loadTabs: boolean,
-  checkImports: boolean
+  { loadTabs, checkImports }: ImportTransformOptions
 ) {
-  const [importNodes] = partition(program.body, ({ type }) => type === 'ImportDeclaration') as [
-    es.ImportDeclaration[],
-    es.Statement[]
-  ]
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
-
   try {
-    for (const node of importNodes) {
-      const moduleName = node.source.value
-      if (typeof moduleName !== 'string') {
-        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
-      }
+    const [importNodeMap] = filterImportDeclarations(program)
 
-      if (!(moduleName in moduleFunctions)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
+    const environment = currentEnvironment(context)
+    Object.entries(importNodeMap).forEach(([moduleName, nodes]) => {
+      initModuleContext(moduleName, context, loadTabs)
+      const functions = loadModuleBundle(moduleName, context, nodes[0])
+      for (const node of nodes) {
+        for (const spec of node.specifiers) {
+          assert(
+            spec.type === 'ImportSpecifier',
+            `Only ImportSpecifiers are supported, got: ${spec.type}`
+          )
+
+          if (checkImports && !(spec.imported.name in functions)) {
+            throw new UndefinedImportError(spec.imported.name, moduleName, spec)
+          }
+
+          declareIdentifier(context, spec.local.name, node, environment)
+          defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
         }
-        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
       }
-
-      const functions = moduleFunctions[moduleName]
-      const environment = currentEnvironment(context)
-      for (const spec of node.specifiers) {
-        if (spec.type !== 'ImportSpecifier') {
-          throw new Error(`Only ImportSpecifiers are supported, got: ${spec.type}`)
-        }
-
-        if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, node)
-        }
-
-        declareIdentifier(context, spec.local.name, node, environment)
-        defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
-      }
-    }
+    })
   } catch (error) {
-    // console.log(error)
     handleRuntimeError(context, error)
   }
 }
 
 /**
- * Function that returns the appropriate Promise<Result> given the output of ec evaluating, depending
+ * Function that returns the appropriate Promise<Result> given the output of CSE machine evaluating, depending
  * on whether the program is finished evaluating, ran into a breakpoint or ran into an error.
  * @param context The context of the program.
- * @param value The value of ec evaluating the program.
+ * @param value The value of CSE machine evaluating the program.
  * @returns The corresponding promise.
  */
-export function ECEResultPromise(context: Context, value: Value): Promise<Result> {
+export function CSEResultPromise(context: Context, value: Value): Promise<Result> {
   return new Promise((resolve, reject) => {
-    if (value instanceof ECEBreak) {
-      resolve({ status: 'suspended-ec-eval', context })
-    } else if (value instanceof ECError) {
+    if (value instanceof CSEBreak) {
+      resolve({ status: 'suspended-cse-eval', context })
+    } else if (value instanceof CseError) {
       resolve({ status: 'error' })
     } else {
       resolve({ status: 'finished', context, value })
@@ -240,15 +264,15 @@ export function ECEResultPromise(context: Context, value: Value): Promise<Result
  * The primary runner/loop of the explicit control evaluator.
  *
  * @param context The context to evaluate the program in.
- * @param agenda Points to the current context.runtime.agenda
+ * @param control Points to the current context.runtime.control
  * @param stash Points to the current context.runtime.stash
  * @param isPrelude Whether the program we are running is the prelude
  * @returns A special break object if the program is interrupted by a breakpoint;
  * else the top value of the stash. It is usually the return value of the program.
  */
-function runECEMachine(
+function runCSEMachine(
   context: Context,
-  agenda: Agenda,
+  control: Control,
   stash: Stash,
   envSteps: number,
   stepLimit: number,
@@ -258,13 +282,13 @@ function runECEMachine(
   context.runtime.nodes = []
   let steps = 1
 
-  let command = agenda.peek()
+  let command = control.peek()
 
   // First node will be a Program
   context.runtime.nodes.unshift(command as es.Program)
 
   while (command) {
-    // Return to capture a snapshot of the agenda and stash after the target step count is reached
+    // Return to capture a snapshot of the control and stash after the target step count is reached
     if (!isPrelude && steps === envSteps) {
       return stash.peek()
     }
@@ -282,29 +306,29 @@ function runECEMachine(
       }
     }
 
-    agenda.pop()
+    control.pop()
     if (isNode(command)) {
       context.runtime.nodes.shift()
       context.runtime.nodes.unshift(command)
       checkEditorBreakpoints(context, command)
-      cmdEvaluators[command.type](command, context, agenda, stash, isPrelude)
+      cmdEvaluators[command.type](command, context, control, stash, isPrelude)
       if (context.runtime.break && context.runtime.debuggerOn) {
         // We can put this under isNode since context.runtime.break
         // will only be updated after a debugger statement and so we will
         // run into a node immediately after.
         // With the new evaluator, we don't return a break
-        // return new ECEBreak()
+        // return new CSEBreak()
       }
     } else {
-      // Command is an instrucion
-      cmdEvaluators[command.instrType](command, context, agenda, stash, isPrelude)
+      // Command is an instruction
+      cmdEvaluators[command.instrType](command, context, control, stash, isPrelude)
     }
 
-    // Push undefined into the stack if both agenda and stash is empty
-    if (agenda.isEmpty() && stash.isEmpty()) {
+    // Push undefined into the stack if both control and stash is empty
+    if (control.isEmpty() && stash.isEmpty()) {
       stash.push(undefined)
     }
-    command = agenda.peek()
+    command = control.peek()
 
     steps += 1
   }
@@ -317,7 +341,7 @@ function runECEMachine(
 
 /**
  * Dictionary of functions which handle the logic for the response of the three registers of
- * the ASE machine to each AgendaItem.
+ * the ASE machine to each ControlItem.
  */
 const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   /**
@@ -327,7 +351,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   Program: function (
     command: es.BlockStatement,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash,
     isPrelude: boolean
   ) {
@@ -335,54 +359,80 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (hasDeclarations(command) || hasImportDeclarations(command)) {
       const environment = createBlockEnvironment(context, 'programEnvironment')
       pushEnvironment(context, environment)
-      evaluateImports(command as unknown as es.Program, context, true, true)
+      evaluateImports(command as unknown as es.Program, context, {
+        wrapSourceModules: true,
+        checkImports: true,
+        loadTabs: true
+      })
       declareFunctionsAndVariables(context, command, environment)
     }
 
     if (command.body.length == 1) {
       // If program only consists of one statement, evaluate it immediately
       const next = command.body[0]
-      cmdEvaluators[next.type](next, context, agenda, stash, isPrelude)
+      cmdEvaluators[next.type](next, context, control, stash, isPrelude)
     } else {
-      // Push block body
-      agenda.push(...handleSequence(command.body))
+      // Push raw block statement
+      const rawCopy: RawBlockStatement = {
+        type: 'BlockStatement',
+        range: command.range,
+        loc: command.loc,
+        body: command.body,
+        isRawBlock: 'true'
+      }
+      control.push(rawCopy)
     }
   },
 
-  BlockStatement: function (command: es.BlockStatement, context: Context, agenda: Agenda) {
+  BlockStatement: function (command: es.BlockStatement, context: Context, control: Control) {
+    if (isRawBlockStatement(command)) {
+      // Raw block statement: unpack and push body
+      // Push block body only
+      control.push(...handleSequence(command.body))
+      return
+    }
+    // Normal block statement: do environment setup
     // To restore environment after block ends
-    // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next agenda item
+    // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next control item
     // we do not need to push another one
-    // The no declarations case is handled by Agenda :: simplifyBlocksWithoutDeclarations, so no blockStatement node
+    // The no declarations case is handled by Control :: simplifyBlocksWithoutDeclarations, so no blockStatement node
     // without declarations should end up here.
-    const next = agenda.peek()
-    if (!(next && isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
-      agenda.push(instr.envInstr(currentEnvironment(context), command))
+    const next = control.peek()
+    // Push ENVIRONMENT instruction if needed
+    if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+      control.push(instr.envInstr(currentEnvironment(context), command))
     }
 
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     declareFunctionsAndVariables(context, command, environment)
     pushEnvironment(context, environment)
 
-    // Push block body
-    agenda.push(...handleSequence(command.body))
+    // Push raw block statement
+    const rawCopy: RawBlockStatement = {
+      type: 'BlockStatement',
+      range: command.range,
+      loc: command.loc,
+      body: command.body,
+      isRawBlock: 'true'
+    }
+    control.push(rawCopy)
   },
 
   WhileStatement: function (
     command: es.WhileStatement,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
     if (hasBreakStatement(command.body as es.BlockStatement)) {
-      agenda.push(instr.breakMarkerInstr(command))
+      control.push(instr.breakMarkerInstr(command))
     }
-    agenda.push(instr.whileInstr(command.test, command.body, command))
-    agenda.push(command.test)
-    stash.push(undefined) // Return undefined if there is no loop execution
+    control.push(instr.whileInstr(command.test, command.body, command))
+    control.push(command.test)
+    control.push(ast.identifier('undefined', command.loc)) // Return undefined if there is no loop execution
   },
 
-  ForStatement: function (command: es.ForStatement, context: Context, agenda: Agenda) {
+  ForStatement: function (command: es.ForStatement, context: Context, control: Control) {
     // All 3 parts will be defined due to parser rules
     const init = command.init!
     const test = command.test!
@@ -394,7 +444,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const id = init.declarations[0].id as es.Identifier
       const valueExpression = init.declarations[0].init!
 
-      agenda.push(
+      control.push(
         ast.blockStatement(
           [
             init,
@@ -441,30 +491,35 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       )
     } else {
       if (hasBreakStatement(command.body as es.BlockStatement)) {
-        agenda.push(instr.breakMarkerInstr(command))
+        control.push(instr.breakMarkerInstr(command))
       }
-      agenda.push(instr.forInstr(init, test, update, command.body, command))
-      agenda.push(test)
-      agenda.push(instr.popInstr(command)) // Pop value from init assignment
-      agenda.push(init)
-      agenda.push(ast.identifier('undefined', command.loc)) // Return undefined if there is no loop execution
+      control.push(instr.forInstr(init, test, update, command.body, command))
+      control.push(test)
+      control.push(instr.popInstr(command)) // Pop value from init assignment
+      control.push(init)
+      control.push(ast.identifier('undefined', command.loc)) // Return undefined if there is no loop execution
     }
   },
 
-  IfStatement: function (command: es.IfStatement, context: Context, agenda: Agenda, stash: Stash) {
-    agenda.push(...reduceConditional(command))
+  IfStatement: function (
+    command: es.IfStatement,
+    context: Context,
+    control: Control,
+    stash: Stash
+  ) {
+    control.push(...reduceConditional(command))
   },
 
   ExpressionStatement: function (
     command: es.ExpressionStatement,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash,
     isPrelude: boolean
   ) {
     // Fast forward to the expression
     // If not the next step will look like it's only removing ';'
-    cmdEvaluators[command.expression.type](command.expression, context, agenda, stash, isPrelude)
+    cmdEvaluators[command.expression.type](command.expression, context, control, stash, isPrelude)
   },
 
   DebuggerStatement: function (command: es.DebuggerStatement, context: Context) {
@@ -474,7 +529,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   VariableDeclaration: function (
     command: es.VariableDeclaration,
     context: Context,
-    agenda: Agenda
+    control: Control
   ) {
     const declaration: es.VariableDeclarator = command.declarations[0]
     const id = declaration.id as es.Identifier
@@ -482,15 +537,15 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Parser enforces initialisation during variable declaration
     const init = declaration.init!
 
-    agenda.push(instr.popInstr(command))
-    agenda.push(instr.assmtInstr(id.name, command.kind === 'const', true, command))
-    agenda.push(init)
+    control.push(instr.popInstr(command))
+    control.push(instr.assmtInstr(id.name, command.kind === 'const', true, command))
+    control.push(init)
   },
 
   FunctionDeclaration: function (
     command: es.FunctionDeclaration,
     context: Context,
-    agenda: Agenda
+    control: Control
   ) {
     // Function declaration desugared into constant declaration.
     const lambdaExpression: es.ArrowFunctionExpression = ast.blockArrowFunction(
@@ -503,38 +558,38 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       lambdaExpression,
       command.loc
     )
-    agenda.push(lambdaDeclaration)
+    control.push(lambdaDeclaration)
   },
 
-  ReturnStatement: function (command: es.ReturnStatement, context: Context, agenda: Agenda) {
-    // Push return argument onto agenda as well as Reset Instruction to clear to ignore all statements after the return.
-    const next = agenda.peek()
+  ReturnStatement: function (command: es.ReturnStatement, context: Context, control: Control) {
+    // Push return argument onto control as well as Reset Instruction to clear to ignore all statements after the return.
+    const next = control.peek()
     if (next && isInstr(next) && next.instrType === InstrType.MARKER) {
-      agenda.pop()
+      control.pop()
     } else {
-      agenda.push(instr.resetInstr(command))
+      control.push(instr.resetInstr(command))
     }
     if (command.argument) {
-      agenda.push(command.argument)
+      control.push(command.argument)
     }
   },
 
   ContinueStatement: function (
     command: es.ContinueStatement,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
-    agenda.push(instr.contInstr(command))
+    control.push(instr.contInstr(command))
   },
 
   BreakStatement: function (
     command: es.BreakStatement,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
-    agenda.push(instr.breakInstr(command))
+    control.push(instr.breakInstr(command))
   },
 
   ImportDeclaration: function () {},
@@ -543,79 +598,80 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    * Expressions
    */
 
-  Literal: function (command: es.Literal, context: Context, agenda: Agenda, stash: Stash) {
+  Literal: function (command: es.Literal, context: Context, control: Control, stash: Stash) {
     stash.push(command.value)
   },
 
   AssignmentExpression: function (
     command: es.AssignmentExpression,
     context: Context,
-    agenda: Agenda
+    control: Control
   ) {
     if (command.left.type === 'MemberExpression') {
-      agenda.push(instr.arrAssmtInstr(command))
-      agenda.push(command.right)
-      agenda.push(command.left.property)
-      agenda.push(command.left.object)
+      control.push(instr.arrAssmtInstr(command))
+      control.push(command.right)
+      control.push(command.left.property)
+      control.push(command.left.object)
     } else if (command.left.type === 'Identifier') {
       const id = command.left
-      agenda.push(instr.assmtInstr(id.name, false, false, command))
-      agenda.push(command.right)
+      control.push(instr.assmtInstr(id.name, false, false, command))
+      control.push(command.right)
     }
   },
 
-  ArrayExpression: function (command: es.ArrayExpression, context: Context, agenda: Agenda) {
+  ArrayExpression: function (command: es.ArrayExpression, context: Context, control: Control) {
     const elems = command.elements as ContiguousArrayElements
+    reverse(elems)
     const len = elems.length
 
-    agenda.push(instr.arrLitInstr(len, command))
+    control.push(instr.arrLitInstr(len, command))
     for (const elem of elems) {
-      agenda.push(elem)
+      control.push(elem)
     }
   },
 
   MemberExpression: function (
     command: es.MemberExpression,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
-    agenda.push(instr.arrAccInstr(command))
-    agenda.push(command.property)
-    agenda.push(command.object)
+    control.push(instr.arrAccInstr(command))
+    control.push(command.property)
+    control.push(command.object)
   },
 
   ConditionalExpression: function (
     command: es.ConditionalExpression,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
-    agenda.push(...reduceConditional(command))
+    control.push(...reduceConditional(command))
   },
 
-  Identifier: function (command: es.Identifier, context: Context, agenda: Agenda, stash: Stash) {
+  Identifier: function (command: es.Identifier, context: Context, control: Control, stash: Stash) {
     stash.push(getVariable(context, command.name, command))
   },
 
-  UnaryExpression: function (command: es.UnaryExpression, context: Context, agenda: Agenda) {
-    agenda.push(instr.unOpInstr(command.operator, command))
-    agenda.push(command.argument)
+  UnaryExpression: function (command: es.UnaryExpression, context: Context, control: Control) {
+    control.push(instr.unOpInstr(command.operator, command))
+    control.push(command.argument)
   },
 
-  BinaryExpression: function (command: es.BinaryExpression, context: Context, agenda: Agenda) {
-    agenda.push(instr.binOpInstr(command.operator, command))
-    agenda.push(command.right)
-    agenda.push(command.left)
+  BinaryExpression: function (command: es.BinaryExpression, context: Context, control: Control) {
+    control.push(instr.binOpInstr(command.operator, command))
+    control.push(command.right)
+    control.push(command.left)
   },
 
-  LogicalExpression: function (command: es.LogicalExpression, context: Context, agenda: Agenda) {
+  LogicalExpression: function (command: es.LogicalExpression, context: Context, control: Control) {
     if (command.operator === '&&') {
-      agenda.push(
+      control.push(
         ast.conditionalExpression(command.left, command.right, ast.literal(false), command.loc)
       )
     } else {
-      agenda.push(
+      control.push(
         ast.conditionalExpression(command.left, ast.literal(true), command.right, command.loc)
       )
     }
@@ -624,7 +680,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ArrowFunctionExpression: function (
     command: es.ArrowFunctionExpression,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash,
     isPrelude: boolean
   ) {
@@ -636,7 +692,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       true,
       isPrelude
     )
-    const next = agenda.peek()
+    const next = control.peek()
     if (!(next && isInstr(next) && isAssmtInstr(next))) {
       Object.defineProperty(currentEnvironment(context).head, uniqueId(), {
         value: closure,
@@ -647,31 +703,31 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash.push(closure)
   },
 
-  CallExpression: function (command: es.CallExpression, context: Context, agenda: Agenda) {
-    // Push application instruction, function arguments and function onto agenda.
-    agenda.push(instr.appInstr(command.arguments.length, command))
+  CallExpression: function (command: es.CallExpression, context: Context, control: Control) {
+    // Push application instruction, function arguments and function onto control.
+    control.push(instr.appInstr(command.arguments.length, command))
     for (let index = command.arguments.length - 1; index >= 0; index--) {
-      agenda.push(command.arguments[index])
+      control.push(command.arguments[index])
     }
-    agenda.push(command.callee)
+    control.push(command.callee)
   },
 
   /**
    * Instructions
    */
 
-  [InstrType.RESET]: function (command: Instr, context: Context, agenda: Agenda, stash: Stash) {
+  [InstrType.RESET]: function (command: Instr, context: Context, control: Control, stash: Stash) {
     // Keep pushing reset instructions until marker is found.
-    const cmdNext: AgendaItem | undefined = agenda.pop()
+    const cmdNext: ControlItem | undefined = control.pop()
     if (cmdNext && (isNode(cmdNext) || cmdNext.instrType !== InstrType.MARKER)) {
-      agenda.push(instr.resetInstr(command.srcNode))
+      control.push(instr.resetInstr(command.srcNode))
     }
   },
 
   [InstrType.WHILE]: function (
     command: WhileInstr,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
     const test = stash.pop()
@@ -683,18 +739,21 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
 
     if (test) {
-      agenda.push(command)
-      agenda.push(command.test)
+      control.push(command)
+      control.push(command.test)
       if (hasContinueStatement(command.body as es.BlockStatement)) {
-        agenda.push(instr.contMarkerInstr(command.srcNode))
+        control.push(instr.contMarkerInstr(command.srcNode))
       }
-      agenda.push(instr.pushUndefIfNeededInstr(command.srcNode)) // The loop returns undefined if the stash is empty
-      agenda.push(command.body)
-      agenda.push(instr.popInstr(command.srcNode)) // Pop previous body value
+      if (!valueProducing(command.body)) {
+        // if loop body is not value-producing, insert undefined expression statement
+        control.push(ast.identifier('undefined', command.body.loc))
+      }
+      control.push(command.body)
+      control.push(instr.popInstr(command.srcNode)) // Pop previous body value
     }
   },
 
-  [InstrType.FOR]: function (command: ForInstr, context: Context, agenda: Agenda, stash: Stash) {
+  [InstrType.FOR]: function (command: ForInstr, context: Context, control: Control, stash: Stash) {
     const test = stash.pop()
 
     // Check if test condition is a boolean
@@ -704,23 +763,26 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
 
     if (test) {
-      agenda.push(command)
-      agenda.push(command.test)
-      agenda.push(instr.popInstr(command.srcNode)) // Pop value from update
-      agenda.push(command.update)
+      control.push(command)
+      control.push(command.test)
+      control.push(instr.popInstr(command.srcNode)) // Pop value from update
+      control.push(command.update)
       if (hasContinueStatement(command.body as es.BlockStatement)) {
-        agenda.push(instr.contMarkerInstr(command.srcNode))
+        control.push(instr.contMarkerInstr(command.srcNode))
       }
-      agenda.push(instr.pushUndefIfNeededInstr(command.srcNode)) // The loop returns undefined if the stash is empty
-      agenda.push(command.body)
-      agenda.push(instr.popInstr(command.srcNode)) // Pop previous body value
+      if (!valueProducing(command.body)) {
+        // if loop body is not value-producing, insert undefined expression statement
+        control.push(ast.identifier('undefined', command.body.loc))
+      }
+      control.push(command.body)
+      control.push(instr.popInstr(command.srcNode)) // Pop previous body value
     }
   },
 
   [InstrType.ASSIGNMENT]: function (
     command: AssmtInstr,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
     command.declaration
@@ -742,7 +804,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   [InstrType.UNARY_OP]: function (
     command: UnOpInstr,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
     const argument = stash.pop()
@@ -761,7 +823,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   [InstrType.BINARY_OP]: function (
     command: BinOpInstr,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
     const right = stash.pop()
@@ -779,17 +841,17 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash.push(evaluateBinaryExpression(command.symbol as es.BinaryOperator, left, right))
   },
 
-  [InstrType.POP]: function (command: Instr, context: Context, agenda: Agenda, stash: Stash) {
+  [InstrType.POP]: function (command: Instr, context: Context, control: Control, stash: Stash) {
     stash.pop()
   },
 
   [InstrType.APPLICATION]: function (
     command: AppInstr,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
-    checkStackOverFlow(context, agenda)
+    checkStackOverFlow(context, control)
     // Get function arguments from the stash
     const args: Value[] = []
     for (let index = 0; index < command.numOfArgs; index++) {
@@ -798,6 +860,46 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
     // Get function from the stash
     const func: Closure | Function = stash.pop()
+
+    if (!(func instanceof Closure || func instanceof Function)) {
+      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
+    }
+
+    if (isCallWithCurrentContinuation(func)) {
+      // Check for number of arguments mismatch error
+      checkNumberOfArguments(context, func, args, command.srcNode)
+
+      // Get the callee
+      const cont_callee: Value = args[0]
+
+      const dummyFCallExpression = makeDummyContCallExpression('f', 'cont')
+
+      // Prepare a function call for the continuation-consuming function
+      // along with a newly generated continuation
+      control.push(instr.appInstr(command.numOfArgs, dummyFCallExpression))
+      control.push(instr.genContInstr(dummyFCallExpression.arguments[0]))
+      stash.push(cont_callee)
+      return
+    }
+
+    if (isContinuation(func)) {
+      // Check for number of arguments mismatch error
+      checkNumberOfArguments(context, func, args, command.srcNode)
+
+      // A continuation is always given a single argument
+      const expression: Value = args[0]
+
+      const dummyContCallExpression = makeDummyContCallExpression('f', 'cont')
+
+      // Restore the state of the stash,
+      // but replace the function application instruction with
+      // a resume continuation instruction
+      stash.push(func)
+      stash.push(expression)
+      control.push(instr.resumeContInstr(dummyContCallExpression))
+      return
+    }
+
     if (func instanceof Closure) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
@@ -811,15 +913,15 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         })
       }
 
-      const next = agenda.peek()
+      const next = control.peek()
 
       // Push ENVIRONMENT instruction if needed
       if (
         next &&
         !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
-        args.length !== 0
+        !control.isEmpty()
       ) {
-        agenda.push(instr.envInstr(currentEnvironment(context), command.srcNode))
+        control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
 
       // Create environment for function parameters if the function isn't nullary.
@@ -836,36 +938,40 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         // Closures convert ArrowExpressionStatements to BlockStatements
         const block = func.node.body as es.BlockStatement
         const returnStatement = block.body[0] as es.ReturnStatement
-        agenda.push(returnStatement.argument ?? ast.identifier('undefined', returnStatement.loc))
+        control.push(returnStatement.argument ?? ast.identifier('undefined', returnStatement.loc))
       } else {
-        agenda.push(instr.markerInstr(command.srcNode))
-        agenda.push(func.node.body)
-      }
-    } else if (typeof func === 'function') {
-      // Check for number of arguments mismatch error
-      checkNumberOfArguments(context, func, args, command.srcNode)
-      // Directly stash result of applying pre-built functions without the ASE machine.
-      try {
-        const result = func(...args)
-        stash.push(result)
-      } catch (error) {
-        if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
-          // The error could've arisen when the builtin called a source function which errored.
-          // If the cause was a source error, we don't want to include the error.
-          // However if the error came from the builtin itself, we need to handle it.
-          const loc = command.srcNode.loc ?? UNKNOWN_LOCATION
-          handleRuntimeError(context, new errors.ExceptionError(error, loc))
+        if (control.peek()) {
+          // push marker if control not empty
+          control.push(instr.markerInstr(command.srcNode))
         }
+        control.push(func.node.body)
       }
-    } else {
-      handleRuntimeError(context, new errors.CallingNonFunctionValue(func, command.srcNode))
+
+      return
+    }
+
+    // Value is a function
+    // Check for number of arguments mismatch error
+    checkNumberOfArguments(context, func, args, command.srcNode)
+    // Directly stash result of applying pre-built functions without the ASE machine.
+    try {
+      const result = func(...args)
+      stash.push(result)
+    } catch (error) {
+      if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
+        // The error could've arisen when the builtin called a source function which errored.
+        // If the cause was a source error, we don't want to include the error.
+        // However if the error came from the builtin itself, we need to handle it.
+        const loc = command.srcNode.loc ?? UNKNOWN_LOCATION
+        handleRuntimeError(context, new errors.ExceptionError(error, loc))
+      }
     }
   },
 
   [InstrType.BRANCH]: function (
     command: BranchInstr,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
     const test = stash.pop()
@@ -878,16 +984,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
     if (test) {
       if (!valueProducing(command.consequent)) {
-        agenda.push(ast.identifier('undefined', command.consequent.loc))
+        control.push(ast.identifier('undefined', command.consequent.loc))
       }
-      agenda.push(command.consequent)
+      control.push(command.consequent)
     } else if (command.alternate) {
       if (!valueProducing(command.alternate)) {
-        agenda.push(ast.identifier('undefined', command.consequent.loc))
+        control.push(ast.identifier('undefined', command.consequent.loc))
       }
-      agenda.push(command.alternate)
+      control.push(command.alternate)
     } else {
-      agenda.push(ast.identifier('undefined', command.srcNode.loc))
+      control.push(ast.identifier('undefined', command.srcNode.loc))
     }
   },
 
@@ -898,21 +1004,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.PUSH_UNDEFINED_IF_NEEDED]: function (
-    command: Instr,
-    context: Context,
-    agenda: Agenda,
-    stash: Stash
-  ) {
-    if (stash.size() === 0) {
-      stash.push(undefined)
-    }
-  },
-
   [InstrType.ARRAY_LITERAL]: function (
     command: ArrLitInstr,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
     const arity = command.arity
@@ -920,13 +1015,14 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     for (let i = 0; i < arity; ++i) {
       array.push(stash.pop())
     }
+    reverse(array)
     stash.push(array)
   },
 
   [InstrType.ARRAY_ACCESS]: function (
     command: Instr,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
     const index = stash.pop()
@@ -937,7 +1033,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   [InstrType.ARRAY_ASSIGNMENT]: function (
     command: Instr,
     context: Context,
-    agenda: Agenda,
+    control: Control,
     stash: Stash
   ) {
     const value = stash.pop()
@@ -947,33 +1043,83 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash.push(value)
   },
 
-  [InstrType.CONTINUE]: function (command: Instr, context: Context, agenda: Agenda, stash: Stash) {
-    const next = agenda.pop() as AgendaItem
+  [InstrType.CONTINUE]: function (
+    command: Instr,
+    context: Context,
+    control: Control,
+    stash: Stash
+  ) {
+    const next = control.pop() as ControlItem
     if (isInstr(next) && next.instrType == InstrType.CONTINUE_MARKER) {
       // Encountered continue mark, stop popping
     } else if (isInstr(next) && next.instrType == InstrType.ENVIRONMENT) {
-      agenda.push(command)
-      agenda.push(next) // Let instruction evaluate to restore env
+      control.push(command)
+      control.push(next) // Let instruction evaluate to restore env
     } else {
-      // Continue popping from agenda by pushing same instruction on agenda
-      agenda.push(command)
+      // Continue popping from control by pushing same instruction on control
+      control.push(command)
     }
   },
 
   [InstrType.CONTINUE_MARKER]: function () {},
 
-  [InstrType.BREAK]: function (command: Instr, context: Context, agenda: Agenda, stash: Stash) {
-    const next = agenda.pop() as AgendaItem
+  [InstrType.BREAK]: function (command: Instr, context: Context, control: Control, stash: Stash) {
+    const next = control.pop() as ControlItem
     if (isInstr(next) && next.instrType == InstrType.BREAK_MARKER) {
       // Encountered break mark, stop popping
     } else if (isInstr(next) && next.instrType == InstrType.ENVIRONMENT) {
-      agenda.push(command)
-      agenda.push(next) // Let instruction evaluate to restore env
+      control.push(command)
+      control.push(next) // Let instruction evaluate to restore env
     } else {
-      // Continue popping from agenda by pushing same instruction on agenda
-      agenda.push(command)
+      // Continue popping from control by pushing same instruction on control
+      control.push(command)
     }
   },
 
-  [InstrType.BREAK_MARKER]: function () {}
+  [InstrType.BREAK_MARKER]: function () {},
+
+  [InstrType.GENERATE_CONT]: function (
+    _command: Instr,
+    context: Context,
+    control: Control,
+    stash: Stash
+  ) {
+    const contControl = control.copy()
+    const contStash = stash.copy()
+    const contEnv = context.runtime.environments
+
+    // Remove all data related to the continuation-consuming function
+    contControl.pop()
+    contStash.pop()
+
+    // Now this will accurately represent the slice of the
+    // program execution at the time of the call/cc call
+    const continuation = makeContinuation(contControl, contStash, contEnv)
+
+    stash.push(continuation)
+  },
+
+  [InstrType.RESUME_CONT]: function (
+    _command: Instr,
+    context: Context,
+    control: Control,
+    stash: Stash
+  ) {
+    const expression = stash.pop()
+    const cn: Continuation = stash.pop() as Continuation
+
+    const contControl = getContinuationControl(cn)
+    const contStash = getContinuationStash(cn)
+    const contEnv = getContinuationEnv(cn)
+
+    // Set the control and stash to the continuation's control and stash
+    control.setTo(contControl)
+    stash.setTo(contStash)
+
+    // Push the expression given to the continuation onto the stash
+    stash.push(expression)
+
+    // Restore the environment pointer to that of the continuation
+    context.runtime.environments = contEnv
+  }
 }

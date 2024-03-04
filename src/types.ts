@@ -9,7 +9,7 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
-import { Agenda, Stash } from './ec-evaluator/interpreter'
+import { Control, Stash } from './cse-machine/interpreter'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -60,7 +60,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'ec-evaluator'
+export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
 
 export const enum Chapter {
   SOURCE_1 = 1,
@@ -146,7 +146,7 @@ export interface Context<T = any> {
     environmentTree: EnvTree
     environments: Environment[]
     nodes: es.Node[]
-    agenda: Agenda | null
+    control: Control | null
     stash: Stash | null
     envStepsTotal: number
     breakpointSteps: number[]
@@ -280,12 +280,12 @@ export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-n
   value: Value
 }
 
-export interface SuspendedEcEval {
-  status: 'suspended-ec-eval'
+export interface SuspendedCseEval {
+  status: 'suspended-cse-eval'
   context: Context
 }
 
-export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedEcEval
+export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedCseEval
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
@@ -321,6 +321,14 @@ export interface BlockExpression extends es.BaseExpression {
 
 export type substituterNodes = es.Node | BlockExpression
 
+/**
+ * For use in the CSE machine: block statements are handled in two steps:
+ * environment creation, then unpacking
+ */
+export interface RawBlockStatement extends es.BlockStatement {
+  isRawBlock: 'true'
+}
+
 export {
   Instruction as SVMInstruction,
   Program as SVMProgram,
@@ -344,7 +352,7 @@ export type TSAllowedTypes = 'any' | 'void'
 
 export const disallowedTypes = ['bigint', 'never', 'object', 'symbol', 'unknown'] as const
 
-export type TSDisallowedTypes = typeof disallowedTypes[number]
+export type TSDisallowedTypes = (typeof disallowedTypes)[number]
 
 // All types recognised by type parser as basic types
 export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes
@@ -473,3 +481,18 @@ export type TypeEnvironment = {
   declKindMap: Map<string, AllowedDeclarations>
   typeAliasMap: Map<string, Type | ForAll>
 }[]
+
+/**
+ * Helper type to recursively make properties that are also objects
+ * partial
+ *
+ * By default, `Partial<Array<T>>` is equivalent to `Array<T | undefined>`. For this type, `Array<T>` will be
+ * transformed to Array<Partial<T>> instead
+ */
+export type RecursivePartial<T> = T extends Array<any>
+  ? Array<RecursivePartial<T[number]>>
+  : T extends Record<any, any>
+  ? Partial<{
+      [K in keyof T]: RecursivePartial<T[K]>
+    }>
+  : T

@@ -29,6 +29,8 @@
   "exclude": [
     "src/stdlib/metacircular-interpreter",
     "src/stdlib/**/*.js",
+    "src/**/__tests__/**",
+    "src/**/__mocks__/**",
     "node_modules",
     "dist",
     "sicp_publish",

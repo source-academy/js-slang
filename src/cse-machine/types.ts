@@ -13,7 +13,6 @@ export enum InstrType {
   APPLICATION = 'Application',
   BRANCH = 'Branch',
   ENVIRONMENT = 'Environment',
-  PUSH_UNDEFINED_IF_NEEDED = 'PushUndefinedIfNeeded',
   ARRAY_LITERAL = 'ArrayLiteral',
   ARRAY_ACCESS = 'ArrayAccess',
   ARRAY_ASSIGNMENT = 'ArrayAssignment',
@@ -22,7 +21,9 @@ export enum InstrType {
   CONTINUE = 'Continue',
   CONTINUE_MARKER = 'ContinueMarker',
   BREAK = 'Break',
-  BREAK_MARKER = 'BreakMarker'
+  BREAK_MARKER = 'BreakMarker',
+  GENERATE_CONT = 'GenerateContinuation',
+  RESUME_CONT = 'ResumeContinuation'
 }
 
 interface BaseInstr {
@@ -74,6 +75,10 @@ export interface ArrLitInstr extends BaseInstr {
   arity: number
 }
 
+export type GenContInstr = BaseInstr
+
+export type ResumeContInstr = BaseInstr
+
 export type Instr =
   | BaseInstr
   | WhileInstr
@@ -82,15 +87,17 @@ export type Instr =
   | BranchInstr
   | EnvInstr
   | ArrLitInstr
+  | GenContInstr
+  | ResumeContInstr
 
-export type AgendaItem = es.Node | Instr
+export type ControlItem = es.Node | Instr
 
 // Special class that cannot be found on the stash so is safe to be used
-// as an indicator of a breakpoint from running the ECE machine
-export class ECEBreak {}
+// as an indicator of a breakpoint from running the CSE machine
+export class CSEBreak {}
 
 // Special value that cannot be found on the stash so is safe to be used
-// as an indicator of an error from running the ECE machine
-export class ECError {
+// as an indicator of an error from running the CSE machine
+export class CseError {
   constructor(public readonly error: any) {}
 }

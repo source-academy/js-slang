@@ -1,11 +1,13 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type * as es from 'estree'
 
+import { type IOptions } from '..'
 import * as errors from '../errors/errors'
 import { UndefinedImportError } from '../modules/errors'
-import { loadModuleBundle, loadModuleTabs } from '../modules/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
+import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
+import type { ImportTransformOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
+import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
 import {
   BlockExpression,
   Context,
@@ -14,6 +16,8 @@ import {
   FunctionDeclarationExpression,
   substituterNodes
 } from '../types'
+import assert from '../utils/assert'
+import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
 import {
   dummyBlockExpression,
@@ -54,6 +58,18 @@ function isIrreducible(node: substituterNodes, context: Context) {
     isNegNumber(node) ||
     irreducibleTypes.has(node.type)
   )
+}
+
+function isStatementsReducible(progs: es.Program, context: Context): boolean {
+  if (progs.body.length === 0) return false
+  if (progs.body.length > 1) return true
+
+  const [lastStatement] = progs.body
+
+  if (lastStatement.type !== 'ExpressionStatement') {
+    return true
+  }
+  return !isIrreducible(lastStatement.expression, context)
 }
 
 type irreducibleNodes =
@@ -1775,19 +1791,53 @@ function reduceMain(
               str
             ]
           }
+        } else if (firstStatement.type === 'BlockStatement' && firstStatement.body.length === 0) {
+          paths[0].push('body[0]')
+          paths.push([])
+          const stmt = ast.program(otherStatements as es.Statement[])
+          return [stmt, context, paths, explain(firstStatement)]
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
         ) {
-          // let stmt
-          // if (otherStatements.length > 0) {
-          paths[0].push('body[0]')
-          paths.push([])
-          const stmt = ast.program(otherStatements as es.Statement[])
-          // } else {
-          //   stmt = ast.expressionStatement(firstStatement.expression)
-          // }
-          return [stmt, context, paths, explain(node)]
+          // Intentionally ignore the remaining statements
+          const [secondStatement] = otherStatements
+
+          if (
+            secondStatement !== undefined &&
+            secondStatement.type == 'ExpressionStatement' &&
+            isIrreducible(secondStatement.expression, context)
+          ) {
+            paths[0].push('body[0]')
+            paths.push([])
+            const stmt = ast.program(otherStatements as es.Statement[])
+            return [stmt, context, paths, explain(node)]
+          } else {
+            // Reduce the second statement and preserve the first statement
+            // Pass in a new path to avoid modifying the original path
+            const newPath = [[]]
+            const [reduced, cont, path, str] = reducers['Program'](
+              ast.program(otherStatements as es.Statement[]),
+              context,
+              newPath
+            )
+
+            // Fix path highlighting after preserving first statement
+            path.forEach(pathStep => {
+              pathStep.forEach((_, i) => {
+                if (i == 0) {
+                  pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
+                }
+              })
+            })
+            paths[0].push(...path[0])
+
+            const stmt = ast.program([
+              firstStatement,
+              ...((reduced as es.Program).body as es.Statement[])
+            ])
+            return [stmt, cont, path, str]
+          }
         } else if (firstStatement.type === 'FunctionDeclaration') {
           if (firstStatement.id === null) {
             throw new Error(
@@ -1952,19 +2002,55 @@ function reduceMain(
               str
             ]
           }
+        } else if (firstStatement.type === 'BlockStatement' && firstStatement.body.length === 0) {
+          paths[0].push('body[0]')
+          paths.push([])
+          const stmt = ast.blockStatement(otherStatements as es.Statement[])
+          return [stmt, context, paths, explain(firstStatement)]
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
         ) {
-          let stmt
-          if (otherStatements.length > 0) {
+          // Intentionally ignore the remaining statements
+          const [secondStatement] = otherStatements
+
+          if (secondStatement == undefined) {
+            const stmt = ast.expressionStatement(firstStatement.expression)
+            return [stmt, context, paths, explain(node)]
+          } else if (
+            secondStatement.type == 'ExpressionStatement' &&
+            isIrreducible(secondStatement.expression, context)
+          ) {
             paths[0].push('body[0]')
             paths.push([])
-            stmt = ast.blockStatement(otherStatements as es.Statement[])
+            const stmt = ast.blockStatement(otherStatements as es.Statement[])
+            return [stmt, context, paths, explain(node)]
           } else {
-            stmt = ast.expressionStatement(firstStatement.expression)
+            // Reduce the second statement and preserve the first statement
+            // Pass in a new path to avoid modifying the original path
+            const newPath = [[]]
+            const [reduced, cont, path, str] = reducers['BlockStatement'](
+              ast.blockStatement(otherStatements as es.Statement[]),
+              context,
+              newPath
+            )
+
+            // Fix path highlighting after preserving first statement
+            path.forEach(pathStep => {
+              pathStep.forEach((_, i) => {
+                if (i == 0) {
+                  pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
+                }
+              })
+            })
+            paths[0].push(...path[0])
+
+            const stmt = ast.blockStatement([
+              firstStatement,
+              ...((reduced as es.BlockStatement).body as es.Statement[])
+            ])
+            return [stmt, cont, paths, str]
           }
-          return [stmt, context, paths, explain(node)]
         } else if (firstStatement.type === 'FunctionDeclaration') {
           let funDecExp = ast.functionDeclarationExpression(
             firstStatement.id!,
@@ -2128,19 +2214,56 @@ function reduceMain(
               str
             ]
           }
+        } else if (firstStatement.type === 'BlockStatement' && firstStatement.body.length === 0) {
+          paths[0].push('body[0]')
+          paths.push([])
+          const stmt = ast.blockExpression(otherStatements as es.Statement[])
+          return [stmt, context, paths, explain(firstStatement)]
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
         ) {
-          let stmt
-          if (otherStatements.length > 0) {
+          // Intentionally ignore the remaining statements
+          const [secondStatement] = otherStatements
+
+          if (secondStatement == undefined) {
+            const stmt = ast.identifier('undefined')
+            return [stmt, context, paths, explain(node)]
+          } else if (
+            (secondStatement.type == 'ExpressionStatement' &&
+              isIrreducible(secondStatement.expression, context)) ||
+            secondStatement.type === 'ReturnStatement'
+          ) {
             paths[0].push('body[0]')
             paths.push([])
-            stmt = ast.blockExpression(otherStatements as es.Statement[])
+            const stmt = ast.blockExpression(otherStatements as es.Statement[])
+            return [stmt, context, paths, explain(node)]
           } else {
-            stmt = ast.identifier('undefined')
+            // Reduce the second statement and preserve the first statement
+            // Pass in a new path to avoid modifying the original path
+            const newPath = [[]]
+            const [reduced, cont, path, str] = reducers['BlockExpression'](
+              ast.blockExpression(otherStatements as es.Statement[]),
+              context,
+              newPath
+            )
+
+            // Fix path highlighting after preserving first statement
+            path.forEach(pathStep => {
+              pathStep.forEach((_, i) => {
+                if (i == 0) {
+                  pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
+                }
+              })
+            })
+            paths[0].push(...path[0])
+
+            const stmt = ast.blockExpression([
+              firstStatement,
+              ...((reduced as es.BlockStatement).body as es.Statement[])
+            ])
+            return [stmt, cont, paths, str]
           }
-          return [stmt, context, paths, explain(node)]
         } else if (firstStatement.type === 'FunctionDeclaration') {
           let funDecExp = ast.functionDeclarationExpression(
             firstStatement.id!,
@@ -2501,7 +2624,7 @@ function jsTreeifyMain(
     },
 
     Literal: (target: es.Literal): es.Literal => {
-      if (typeof target.value === 'object') {
+      if (typeof target.value === 'object' && target.value !== null) {
         target.raw = objectToString(target.value)
       }
       return target
@@ -3155,63 +3278,58 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
-function evaluateImports(
+async function evaluateImports(
   program: es.Program,
   context: Context,
-  loadTabs: boolean,
-  checkImports: boolean
+  { loadTabs, checkImports, wrapSourceModules }: ImportTransformOptions
 ) {
-  const importNodes = program.body.filter(
-    ({ type }) => type === 'ImportDeclaration'
-  ) as es.ImportDeclaration[]
-  program.body = program.body.filter(({ type }) => !(type === 'ImportDeclaration'))
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
+  const [importNodeMap, otherNodes] = filterImportDeclarations(program)
 
   try {
-    for (const node of importNodes) {
-      const moduleName = node.source.value
-      if (typeof moduleName !== 'string') {
-        throw new Error(`ImportDeclarations should have string sources, got ${moduleName}`)
-      }
+    const environment = currentEnvironment(context)
+    await Promise.all(
+      Object.entries(importNodeMap).map(async ([moduleName, nodes]) => {
+        await initModuleContextAsync(moduleName, context, loadTabs)
+        const functions = await loadModuleBundleAsync(
+          moduleName,
+          context,
+          wrapSourceModules,
+          nodes[0]
+        )
+        for (const node of nodes) {
+          for (const spec of node.specifiers) {
+            assert(
+              spec.type === 'ImportSpecifier',
+              `Only ImportSpecifiers are supported, got: ${spec.type}`
+            )
 
-      if (!(moduleName in moduleFunctions)) {
-        context.moduleContexts[moduleName] = {
-          state: null,
-          tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
+            if (checkImports && !(spec.imported.name in functions)) {
+              throw new UndefinedImportError(spec.imported.name, moduleName, spec)
+            }
+            declareIdentifier(context, spec.local.name, node, environment)
+            defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
+          }
         }
-        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
-      }
-
-      const functions = moduleFunctions[moduleName]
-      const environment = currentEnvironment(context)
-      for (const spec of node.specifiers) {
-        if (spec.type !== 'ImportSpecifier') {
-          throw new Error(`Only ImportSpecifiers are supported, got: ${spec.type}`)
-        }
-
-        if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, node)
-        }
-        declareIdentifier(context, spec.local.name, node, environment)
-        defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
-      }
-    }
+      })
+    )
   } catch (error) {
     // console.log(error)
     handleRuntimeError(context, error)
   }
+  program.body = otherNodes
 }
 
 // the context here is for builtins
-export function getEvaluationSteps(
+export async function getEvaluationSteps(
   program: es.Program,
   context: Context,
-  stepLimit: number | undefined
-): [es.Program, string[][], string][] {
+  { importOptions, stepLimit }: Pick<IOptions, 'importOptions' | 'stepLimit'>
+): Promise<[es.Program, string[][], string][]> {
   const steps: [es.Program, string[][], string][] = []
   try {
+    checkProgramForUndefinedVariables(program, context)
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
-    evaluateImports(program, context, true, true)
+    await evaluateImports(program, context, importOptions)
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns
@@ -3219,24 +3337,32 @@ export function getEvaluationSteps(
     // and remove debugger statements.
     start = removeDebuggerStatements(start)
 
-    // then add in path and explanation string
+    // then add in path and explanation string and push it into steps
     let reducedWithPath: [substituterNodes, Context, string[][], string] = [
       start,
       context,
       [],
       'Start of evaluation'
     ]
+    steps.push([
+      reducedWithPath[0] as es.Program,
+      reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2],
+      reducedWithPath[3]
+    ])
+    steps.push([reducedWithPath[0] as es.Program, [], ''])
     // reduces program until evaluation completes
     // even steps: program before reduction
     // odd steps: program after reduction
-    let i = -1
+    let i = 1
     let limitExceeded = false
-    while ((reducedWithPath[0] as es.Program).body.length > 0) {
+    while (isStatementsReducible(reducedWithPath[0] as es.Program, context)) {
+      //Should work on isReducibleStatement instead of checking body.length
       if (steps.length === limit) {
         steps[steps.length - 1] = [ast.program([]), [], 'Maximum number of steps exceeded']
         limitExceeded = true
         break
       }
+      reducedWithPath = reduceMain(reducedWithPath[0], context)
       steps.push([
         reducedWithPath[0] as es.Program,
         reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2],
@@ -3247,11 +3373,13 @@ export function getEvaluationSteps(
         steps[i][1] = reducedWithPath[2].length > 1 ? [reducedWithPath[2][0]] : reducedWithPath[2]
         steps[i][2] = reducedWithPath[3]
       }
-      reducedWithPath = reduceMain(reducedWithPath[0], context)
       i += 2
     }
-    if (!limitExceeded) {
+    if (!limitExceeded && steps.length > 0) {
       steps[steps.length - 1][2] = 'Evaluation complete'
+    }
+    if (steps.length === 0) {
+      steps.push([reducedWithPath[0] as es.Program, [], 'Nothing to evaluate'])
     }
     return steps
   } catch (error) {

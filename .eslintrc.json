@@ -9,6 +9,7 @@
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "prettier"
   ],
+  "ignorePatterns": ["src/**/__tests__/**", "src/**/__mocks__/**"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "tsconfig.json",
@@ -45,5 +46,12 @@
     "@typescript-eslint/unbound-method": "off",
     "prefer-rest-params": "off",
     "simple-import-sort/imports": "warn"
-  }
+  },
+  "overrides": [{
+    "files": ["src/**/__tests__/**", "src/**/__mocks__/**"],
+    "plugins": ["simple-import-sort"],
+    "rules": {
+      "simple-import-sort/imports": "warn"
+    }
+  }]
 }

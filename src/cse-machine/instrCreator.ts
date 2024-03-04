@@ -1,5 +1,5 @@
 /**
- * Utility functions for creating the various agenda instructions.
+ * Utility functions for creating the various control instructions.
  */
 
 import * as es from 'estree'
@@ -13,8 +13,10 @@ import {
   BranchInstr,
   EnvInstr,
   ForInstr,
+  GenContInstr,
   Instr,
   InstrType,
+  ResumeContInstr,
   UnOpInstr,
   WhileInstr
 } from './types'
@@ -100,11 +102,6 @@ export const envInstr = (env: Environment, srcNode: es.Node): EnvInstr => ({
   srcNode
 })
 
-export const pushUndefIfNeededInstr = (srcNode: es.Node): Instr => ({
-  instrType: InstrType.PUSH_UNDEFINED_IF_NEEDED,
-  srcNode
-})
-
 export const arrLitInstr = (arity: number, srcNode: es.Node): ArrLitInstr => ({
   instrType: InstrType.ARRAY_LITERAL,
   arity,
@@ -143,5 +140,15 @@ export const breakInstr = (srcNode: es.Node): Instr => ({
 
 export const breakMarkerInstr = (srcNode: es.Node): Instr => ({
   instrType: InstrType.BREAK_MARKER,
+  srcNode
+})
+
+export const genContInstr = (srcNode: es.Node): GenContInstr => ({
+  instrType: InstrType.GENERATE_CONT,
+  srcNode
+})
+
+export const resumeContInstr = (srcNode: es.Node): ResumeContInstr => ({
+  instrType: InstrType.RESUME_CONT,
   srcNode
 })

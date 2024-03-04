@@ -9,8 +9,9 @@ import {
 } from '../errors/moduleErrors'
 import { Context } from '../types'
 import { wrapSourceModule } from '../utils/operators'
-import { ModuleBundle, ModuleDocumentation, ModuleFunctions, Modules } from './moduleTypes'
+import { ModuleBundle, ModuleDocumentation, ModuleFunctions, ModuleManifest } from './moduleTypes'
 import { getRequireProvider } from './requireProvider'
+import { evalRawTab } from './utils'
 
 // Supports both JSDom (Web Browser) environment and Node environment
 export const newHttpRequest = () =>
@@ -46,7 +47,7 @@ export function httpGet(url: string): string {
  * @return Modules
  */
 export const memoizedGetModuleManifest = memoize(getModuleManifest)
-function getModuleManifest(): Modules {
+function getModuleManifest(): ModuleManifest {
   const rawManifest = httpGet(`${MODULES_STATIC_URL}/modules.json`)
   return JSON.parse(rawManifest)
 }
@@ -107,7 +108,7 @@ export function loadModuleTabs(path: string, node?: es.Node) {
   return sideContentTabPaths.map(path => {
     const rawTabFile = memoizedGetModuleFile(path, 'tab')
     try {
-      return eval(rawTabFile)
+      return evalRawTab(rawTabFile)
     } catch (error) {
       // console.error('tab error:', error);
       throw new ModuleInternalError(path, error, node)
@@ -127,5 +128,21 @@ export function loadModuleDocs(path: string, node?: es.Node) {
   } catch (error) {
     console.warn('Failed to load module documentation')
     return null
+  }
+}
+
+export function initModuleContext(
+  moduleName: string,
+  context: Context,
+  loadTabs: boolean,
+  node?: es.Node
+) {
+  if (!(moduleName in context.moduleContexts)) {
+    context.moduleContexts[moduleName] = {
+      state: null,
+      tabs: loadTabs ? loadModuleTabs(moduleName, node) : null
+    }
+  } else if (context.moduleContexts[moduleName].tabs === null && loadTabs) {
+    context.moduleContexts[moduleName].tabs = loadModuleTabs(moduleName, node)
   }
 }

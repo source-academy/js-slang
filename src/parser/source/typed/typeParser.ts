@@ -1,6 +1,9 @@
 // Code taken from https://github.com/patternfly/patternfly-org/blob/main/packages/ast-helpers/acorn-typescript.js
 // Some cases such as arrow function expressions are not properly handled
-import { getLineInfo, lineBreak, Parser, tokTypes } from 'acorn'
+import { getLineInfo, Parser, tokTypes } from 'acorn'
+
+// Taken from https://github.com/acornjs/acorn/blob/6770c2ecbf8e01470f6c9a2f59c786f014045baf/acorn/src/whitespace.js#L4C1-L5C1
+const lineBreak = /\r\n?|\n|\u2028|\u2029/
 
 class DestructuringErrors {
   shorthandAssign: number
