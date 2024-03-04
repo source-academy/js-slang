@@ -149,9 +149,9 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       return tPrimitive(typeof node.value as PrimitiveType, node.value)
     }
     case 'TemplateLiteral': {
-      // Quasis array should only have one element as 
+      // Quasis array should only have one element as
       // string interpolation is not allowed in Source
-      return tPrimitive('string', node.quasis[0].value.raw);
+      return tPrimitive('string', node.quasis[0].value.raw)
     }
     case 'Identifier': {
       const varName = node.name
