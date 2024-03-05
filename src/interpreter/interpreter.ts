@@ -25,13 +25,20 @@ class ReturnValue {
 }
 
 class TailCallReturnValue {
-  constructor(public callee: Closure, public args: Value[], public node: es.CallExpression) {}
+  constructor(
+    public callee: Closure,
+    public args: Value[],
+    public node: es.CallExpression
+  ) {}
 }
 
 class Thunk {
   public value: Value
   public isMemoized: boolean
-  constructor(public exp: es.Node, public env: Environment) {
+  constructor(
+    public exp: es.Node,
+    public env: Environment
+  ) {
     this.isMemoized = false
     this.value = null
   }

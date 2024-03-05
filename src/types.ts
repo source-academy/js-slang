@@ -492,13 +492,14 @@ export type TypeEnvironment = {
  * By default, `Partial<Array<T>>` is equivalent to `Array<T | undefined>`. For this type, `Array<T>` will be
  * transformed to Array<Partial<T>> instead
  */
-export type RecursivePartial<T> = T extends Array<any>
-  ? Array<RecursivePartial<T[number]>>
-  : T extends Record<any, any>
-  ? Partial<{
-      [K in keyof T]: RecursivePartial<T[K]>
-    }>
-  : T
+export type RecursivePartial<T> =
+  T extends Array<any>
+    ? Array<RecursivePartial<T[number]>>
+    : T extends Record<any, any>
+      ? Partial<{
+          [K in keyof T]: RecursivePartial<T[K]>
+        }>
+      : T
 
 // Why not just use keyof? Sometimes typescript does a bad job of
 // inferring the key type

@@ -9,7 +9,7 @@ import { isDirective } from '../../utils/ast/typeGuards'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
 import type { AbsolutePath, FileGetter, SourceFiles } from '../moduleTypes'
 import { DirectedGraph } from './directedGraph'
-import resolveFile, { defaultResolutionOptions,type ImportResolutionOptions } from './resolver'
+import resolveFile, { type ImportResolutionOptions,defaultResolutionOptions } from './resolver'
 
 type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
 
@@ -136,30 +136,33 @@ export default async function parseProgramsAndConstructImportGraph(
 
     // We only really need to pay attention to the first node that imports
     // from each specific module
-    const modulesToNodeMap = program.body.reduce((res, node) => {
-      switch (node.type) {
-        case 'ExportNamedDeclaration': {
-          if (!node.source) return res
-          // case falls through!
-        }
-        case 'ImportDeclaration':
-        case 'ExportAllDeclaration': {
-          const sourceValue = node.source?.value
-          assert(
-            typeof sourceValue === 'string',
-            `Expected type string for module source for ${node.type}, got ${sourceValue}`
-          )
-
-          if (sourceValue in res) return res
-          return {
-            ...res,
-            [sourceValue]: resolveDependency(fromModule, node)
+    const modulesToNodeMap = program.body.reduce(
+      (res, node) => {
+        switch (node.type) {
+          case 'ExportNamedDeclaration': {
+            if (!node.source) return res
+            // case falls through!
           }
+          case 'ImportDeclaration':
+          case 'ExportAllDeclaration': {
+            const sourceValue = node.source?.value
+            assert(
+              typeof sourceValue === 'string',
+              `Expected type string for module source for ${node.type}, got ${sourceValue}`
+            )
+
+            if (sourceValue in res) return res
+            return {
+              ...res,
+              [sourceValue]: resolveDependency(fromModule, node)
+            }
+          }
+          default:
+            return res
         }
-        default:
-          return res
-      }
-    }, {} as Record<string, Promise<void>>)
+      },
+      {} as Record<string, Promise<void>>
+    )
 
     await Promise.all(Object.values(modulesToNodeMap))
   }
