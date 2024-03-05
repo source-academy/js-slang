@@ -20,9 +20,9 @@ import type { AbsolutePath, FileGetter, SourceFiles } from '../modules/moduleTyp
 import analyzeImportsAndExports, { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import defaultBundler, { type Bundler } from '../modules/preprocessor/bundler'
 import parseProgramsAndConstructImportGraph, {
-  type LinkerSuccessResult,
   defaultLinkerOptions,
-  isLinkerSuccess
+  isLinkerSuccess,
+  type LinkerSuccessResult
 } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
 import { decodeError, decodeValue } from '../parser/scheme'
