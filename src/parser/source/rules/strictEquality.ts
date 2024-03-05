@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 export class StrictEqualityError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -30,7 +30,7 @@ const strictEquality: Rule<es.BinaryExpression> = {
   name: 'strict-equality',
 
   checkers: {
-    BinaryExpression(node: es.BinaryExpression, _ancestors: [es.Node]) {
+    BinaryExpression(node: es.BinaryExpression, _ancestors: [Node]) {
       if (node.operator === '==' || node.operator === '!=') {
         return [new StrictEqualityError(node)]
       } else {

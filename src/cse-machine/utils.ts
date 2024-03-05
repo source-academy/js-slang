@@ -5,7 +5,7 @@ import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { Environment, Frame, RawBlockStatement, Value } from '../types'
+import { Environment, Frame, Node, StatementSequence, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
@@ -84,69 +84,69 @@ export const isInstr = (command: ControlItem): command is Instr => {
  * Typeguard for esNode to distinguish between program statements and instructions.
  *
  * @param command A ControlItem
- * @returns true if the ControlItem is an esNode and false if it is an instruction.
+ * @returns true if the ControlItem is a Node or StatementSequence, false if it is an instruction.
  */
-export const isNode = (command: ControlItem): command is es.Node => {
-  return (command as es.Node).type !== undefined
+export const isNode = (command: ControlItem): command is Node => {
+  return (command as Node).type !== undefined
 }
 
 /**
- * Typeguard for esIdentifier. To verify if an esNode is an esIdentifier.
+ * Typeguard for esIdentifier. To verify if a Node is an esIdentifier.
  *
- * @param node an esNode
+ * @param node a Node
  * @returns true if node is an esIdentifier, false otherwise.
  */
-export const isIdentifier = (node: es.Node): node is es.Identifier => {
+export const isIdentifier = (node: Node): node is es.Identifier => {
   return (node as es.Identifier).name !== undefined
 }
 
 /**
- * Typeguard for esReturnStatement. To verify if an esNode is an esReturnStatement.
+ * Typeguard for esReturnStatement. To verify if a Node is an esReturnStatement.
  *
- * @param node an esNode
+ * @param node a Node
  * @returns true if node is an esReturnStatement, false otherwise.
  */
-export const isReturnStatement = (node: es.Node): node is es.ReturnStatement => {
+export const isReturnStatement = (node: Node): node is es.ReturnStatement => {
   return (node as es.ReturnStatement).type == 'ReturnStatement'
 }
 
 /**
- * Typeguard for esIfStatement. To verify if an esNode is an esIfStatement.
+ * Typeguard for esIfStatement. To verify if a Node is an esIfStatement.
  *
- * @param node an esNode
+ * @param node a Node
  * @returns true if node is an esIfStatement, false otherwise.
  */
-export const isIfStatement = (node: es.Node): node is es.IfStatement => {
+export const isIfStatement = (node: Node): node is es.IfStatement => {
   return (node as es.IfStatement).type == 'IfStatement'
 }
 
 /**
- * Typeguard for esBlockStatement. To verify if an esNode is a block statement.
+ * Typeguard for esBlockStatement. To verify if a Node is a block statement.
  *
- * @param node an esNode
+ * @param node a Node
  * @returns true if node is an esBlockStatement, false otherwise.
  */
-export const isBlockStatement = (node: es.Node): node is es.BlockStatement => {
+export const isBlockStatement = (node: Node): node is es.BlockStatement => {
   return (node as es.BlockStatement).type == 'BlockStatement'
 }
 
 /**
- * Typeguard for RawBlockStatement. To verify if an esNode is a raw block statement (i.e. passed environment creation).
+ * Typeguard for StatementSequence. To verify if a ControlItem is a statement sequence.
  *
- * @param node an esNode
- * @returns true if node is a RawBlockStatement, false otherwise.
+ * @param node a ControlItem
+ * @returns true if node is a StatementSequence, false otherwise.
  */
-export const isRawBlockStatement = (node: es.Node): node is RawBlockStatement => {
-  return (node as RawBlockStatement).isRawBlock === 'true'
+export const isStatementSequence = (node: ControlItem): node is StatementSequence => {
+  return (node as StatementSequence).type == 'StatementSequence'
 }
 
 /**
- * Typeguard for esRestElement. To verify if an esNode is a block statement.
+ * Typeguard for esRestElement. To verify if a Node is a block statement.
  *
- * @param node an esNode
+ * @param node a Node
  * @returns true if node is an esRestElement, false otherwise.
  */
-export const isRestElement = (node: es.Node): node is es.RestElement => {
+export const isRestElement = (node: Node): node is es.RestElement => {
   return (node as es.RestElement).type == 'RestElement'
 }
 
@@ -207,7 +207,7 @@ export const reduceConditional = (
  * @param command Control item to determine if it is value producing.
  * @returns true if it is value producing, false otherwise.
  */
-export const valueProducing = (command: es.Node): boolean => {
+export const valueProducing = (command: Node): boolean => {
   const type = command.type
   return (
     type !== 'VariableDeclaration' &&
@@ -233,7 +233,7 @@ export const valueProducing = (command: es.Node): boolean => {
 export const envChanging = (command: ControlItem): boolean => {
   if (isNode(command)) {
     const type = command.type
-    return type === 'Program' || (type === 'BlockStatement' && hasDeclarations(command))
+    return type === 'Program' || type === 'BlockStatement'
   } else {
     const type = command.instrType
     return (
@@ -321,7 +321,7 @@ const UNASSIGNED_LET = Symbol('let declaration')
 export function declareIdentifier(
   context: Context,
   name: string,
-  node: es.Node,
+  node: Node,
   environment: Environment,
   constant: boolean = false
 ) {
@@ -391,7 +391,7 @@ export function hasImportDeclarations(node: es.BlockStatement): boolean {
   return false
 }
 
-function isImportDeclaration(node: es.Node): boolean {
+function isImportDeclaration(node: Node): boolean {
   return node.type === 'ImportDeclaration'
 }
 

@@ -2,7 +2,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Rule, Node, SourceError } from '../../../types'
 
 export class BracesAroundWhileError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -30,7 +30,7 @@ const bracesAroundWhile: Rule<es.WhileStatement> = {
   name: 'braces-around-while',
 
   checkers: {
-    WhileStatement(node: es.WhileStatement, _ancestors: [es.Node]) {
+    WhileStatement(node: es.WhileStatement, _ancestors: [Node]) {
       if (node.body.type !== 'BlockStatement') {
         return [new BracesAroundWhileError(node)]
       } else {

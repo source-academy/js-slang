@@ -1,8 +1,7 @@
-import * as es from 'estree'
-
 import { UNKNOWN_LOCATION } from '../constants'
 import { ErrorSeverity, ErrorType, NodeWithInferredType, SourceError, Type } from '../types'
 import { typeToString } from '../utils/stringify'
+import { Node } from '../types'
 import * as tsEs from './tsESTree'
 
 // tslint:disable:max-classes-per-file
@@ -10,7 +9,7 @@ export class TypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: NodeWithInferredType<es.Node>, public message: string) {
+  constructor(public node: NodeWithInferredType<Node>, public message: string) {
     node.typability = 'Untypable'
   }
 

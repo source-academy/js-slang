@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 import { stripIndent } from '../../../utils/formatters'
 
 export class NoImplicitReturnUndefinedError implements SourceError {
@@ -32,7 +32,7 @@ const noImplicitReturnUndefined: Rule<es.ReturnStatement> = {
   name: 'no-implicit-return-undefined',
 
   checkers: {
-    ReturnStatement(node: es.ReturnStatement, _ancestors: [es.Node]) {
+    ReturnStatement(node: es.ReturnStatement, _ancestors: [Node]) {
       if (!node.argument) {
         return [new NoImplicitReturnUndefinedError(node)]
       } else {

@@ -4,6 +4,7 @@ import * as es from 'estree'
 import { transformImportDeclarations } from '../transpiler/transpiler'
 import * as create from '../utils/astCreator'
 import { recursive, simple, WalkerCallback } from '../utils/walkers'
+import { Node } from '../types'
 // transforms AST of program
 
 const globalIds = {
@@ -37,7 +38,7 @@ enum FunctionNames {
  * E.g. "function f(f)..." -> "function f_0(f_1)..."
  * @param predefined A table of [key: string, value:string], where variables named 'key' will be renamed to 'value'
  */
-function unshadowVariables(program: es.Node, predefined = {}) {
+function unshadowVariables(program: Node, predefined = {}) {
   for (const name of Object.values(globalIds)) {
     predefined[name] = name
   }
@@ -232,7 +233,7 @@ function transformLogicalExpressions(program: es.Program) {
  * Changes -ary operations to functions that accept hybrid values as arguments.
  * E.g. "1+1" -> "functions.evalB('+',1,1)"
  */
-function hybridizeBinaryUnaryOperations(program: es.Node) {
+function hybridizeBinaryUnaryOperations(program: Node) {
   simple(program, {
     BinaryExpression(node: es.BinaryExpression) {
       const { operator, left, right } = node
@@ -252,7 +253,7 @@ function hybridizeBinaryUnaryOperations(program: es.Node) {
   })
 }
 
-function hybridizeVariablesAndLiterals(program: es.Node) {
+function hybridizeVariablesAndLiterals(program: Node) {
   recursive(program, true, {
     Identifier(node: es.Identifier, state: boolean, _callback: WalkerCallback<boolean>) {
       if (state) {
@@ -298,7 +299,7 @@ function hybridizeVariablesAndLiterals(program: es.Node) {
  * For assignments to elements of arrays we concretize the RHS.
  * E.g. "a[1] = y;" -> "a[1] = concretize(y);"
  */
-function trackVariableAssignment(program: es.Node) {
+function trackVariableAssignment(program: Node) {
   simple(program, {
     AssignmentExpression(node: es.AssignmentExpression) {
       if (node.left.type === 'Identifier') {
@@ -357,7 +358,7 @@ function inPlaceEnclose(node: es.Statement, prepend?: es.Statement, append?: es.
 /**
  * Add tracking to if statements and conditional expressions in the state using saveTheTest.
  */
-function trackIfStatements(program: es.Node) {
+function trackIfStatements(program: Node) {
   const theFunction = (node: es.IfStatement | es.ConditionalExpression) => saveTheTest(node)
   simple(program, { IfStatement: theFunction, ConditionalExpression: theFunction })
 }
@@ -373,7 +374,7 @@ function trackIfStatements(program: es.Node) {
  *          exitLoop(state);"
  * Where postLoop should return the value of its (optional) second argument.
  */
-function trackLoops(program: es.Node) {
+function trackLoops(program: Node) {
   const makeCallStatement = (name: FunctionNames, args: es.Expression[]) =>
     create.expressionStatement(create.callExpression(callFunction(name), args))
   const stateExpr = create.identifier(globalIds.stateId)
@@ -415,7 +416,7 @@ function trackLoops(program: es.Node) {
  *         }"
  * where returnFunction should return its first argument 'x'.
  */
-function trackFunctions(program: es.Node) {
+function trackFunctions(program: Node) {
   const preFunction = (name: string, params: es.Pattern[]) => {
     const args = params
       .filter(x => x.type === 'Identifier')

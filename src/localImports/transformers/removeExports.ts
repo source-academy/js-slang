@@ -2,6 +2,7 @@ import es from 'estree'
 
 import { isDeclaration } from '../../utils/ast/typeGuards'
 import { ancestor } from '../../utils/walkers'
+import { Node } from '../../types'
 
 /**
  * Removes all export-related nodes from the AST.
@@ -16,11 +17,7 @@ import { ancestor } from '../../utils/walkers'
 export const removeExports = (program: es.Program): void => {
   ancestor(program, {
     // TODO: Handle other export AST nodes.
-    ExportNamedDeclaration(
-      node: es.ExportNamedDeclaration,
-      _state: es.Node[],
-      ancestors: es.Node[]
-    ) {
+    ExportNamedDeclaration(node: es.ExportNamedDeclaration, _state: Node[], ancestors: Node[]) {
       // The ancestors array contains the current node, meaning that the
       // parent node is the second last node of the array.
       const parent = ancestors[ancestors.length - 2]
@@ -38,11 +35,7 @@ export const removeExports = (program: es.Program): void => {
         parent.body.splice(nodeIndex, 1)
       }
     },
-    ExportDefaultDeclaration(
-      node: es.ExportDefaultDeclaration,
-      _state: es.Node[],
-      ancestors: es.Node[]
-    ) {
+    ExportDefaultDeclaration(node: es.ExportDefaultDeclaration, _state: Node[], ancestors: Node[]) {
       // The ancestors array contains the current node, meaning that the
       // parent node is the second last node of the array.
       const parent = ancestors[ancestors.length - 2]
