@@ -19,16 +19,20 @@ a();
 (() => {})();
 \\"Gets returned by normal run\\";
 
-(() => {})();
-\\"Gets returned by normal run\\";
-
-(() => {})();
-\\"Gets returned by normal run\\";
-
+\\"other statement\\";
 {};
 \\"Gets returned by normal run\\";
 
+\\"other statement\\";
 {};
+\\"Gets returned by normal run\\";
+
+\\"other statement\\";
+undefined;
+\\"Gets returned by normal run\\";
+
+\\"other statement\\";
+undefined;
 \\"Gets returned by normal run\\";
 
 undefined;
@@ -62,16 +66,20 @@ a();
 a();
 \\"Gets returned by normal run\\";
 
-a();
-\\"Gets returned by normal run\\";
-
-a();
-\\"Gets returned by normal run\\";
-
+\\"other statement\\";
 {};
 \\"Gets returned by normal run\\";
 
+\\"other statement\\";
 {};
+\\"Gets returned by normal run\\";
+
+\\"other statement\\";
+undefined;
+\\"Gets returned by normal run\\";
+
+\\"other statement\\";
+undefined;
 \\"Gets returned by normal run\\";
 
 undefined;
@@ -4105,6 +4113,492 @@ f();
 
 f();
 
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in block 1`] = `
+"{
+  'value';
+  'also a value';
+}
+
+{
+  'value';
+  'also a value';
+}
+
+{
+  'also a value';
+}
+
+{
+  'also a value';
+}
+
+'also a value';
+
+'also a value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in functions 1`] = `
+"function f() {
+  'value';
+  'also a value';
+  return 'another value';
+}
+f();
+
+function f() {
+  'value';
+  'also a value';
+  return 'another value';
+}
+f();
+
+f();
+
+f();
+
+{
+  'value';
+  'also a value';
+  return 'another value';
+};
+
+{
+  'value';
+  'also a value';
+  return 'another value';
+};
+
+{
+  'also a value';
+  return 'another value';
+};
+
+{
+  'also a value';
+  return 'another value';
+};
+
+{
+  return 'another value';
+};
+
+{
+  return 'another value';
+};
+
+'another value';
+
+'another value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in program 1`] = `
+"'value';
+'also a value';
+
+'value';
+'also a value';
+
+'also a value';
+
+'also a value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Mix statements 1`] = `
+"'value';
+const x = 10;
+function f() {
+  20;
+  function p() {
+    22;
+  }
+}
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+const x = 10;
+function f() {
+  20;
+  function p() {
+    22;
+  }
+}
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+function f() {
+  20;
+  function p() {
+    22;
+  }
+}
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+function f() {
+  20;
+  function p() {
+    22;
+  }
+}
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  'another value';
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  'another value';
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+40;
+'another value';
+const a = 40;
+
+'also a value';
+40;
+'another value';
+const a = 40;
+
+40;
+'another value';
+const a = 40;
+
+40;
+'another value';
+const a = 40;
+
+'another value';
+const a = 40;
+
+'another value';
+const a = 40;
+
+'another value';
+
+'another value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in block 1`] = `
+"{
+  'value';
+  const x = 10;
+}
+
+{
+  'value';
+  const x = 10;
+}
+
+{
+  'value';
+}
+
+{
+  'value';
+}
+
+'value';
+
+'value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in function 1`] = `
+"function f() {
+  'value';
+  const x = 10;
+  return 'another value';
+}
+f();
+
+function f() {
+  'value';
+  const x = 10;
+  return 'another value';
+}
+f();
+
+f();
+
+f();
+
+{
+  'value';
+  const x = 10;
+  return 'another value';
+};
+
+{
+  'value';
+  const x = 10;
+  return 'another value';
+};
+
+{
+  'value';
+  return 'another value';
+};
+
+{
+  'value';
+  return 'another value';
+};
+
+{
+  return 'another value';
+};
+
+{
+  return 'another value';
+};
+
+'another value';
+
+'another value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in program 1`] = `
+"'value';
+const x = 10;
+
+'value';
+const x = 10;
+
+'value';
+
+'value';
+"
+`;
+
+exports[`Test reducing of empty block into epsilon Empty block in function 1`] = `
+"function f() {
+  3;
+  {}
+}
+f();
+
+function f() {
+  3;
+  {}
+}
+f();
+
+f();
+
+f();
+
+{
+  3;
+  {}
+};
+
+{
+  3;
+  {}
+};
+
+{
+  3;
+};
+
+{
+  3;
+};
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Test reducing of empty block into epsilon Empty block in program 1`] = `
+"3;
+{}
+
+3;
+{}
+
+3;
+
+3;
+"
+`;
+
+exports[`Test reducing of empty block into epsilon Empty blocks in block 1`] = `
+"{
+  3;
+  {
+    {}
+    {}
+  }
+}
+
+{
+  3;
+  {
+    {}
+    {}
+  }
+}
+
+{
+  3;
+  {
+    {}
+  }
+}
+
+{
+  3;
+  {
+    {}
+  }
+}
+
+{
+  3;
+  {}
+}
+
+{
+  3;
+  {}
+}
+
+{
+  3;
+}
+
+{
+  3;
+}
+
+3;
+
+3;
 "
 `;
 

@@ -148,6 +148,11 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       // Casting is safe here as above check already narrows type to string, number or boolean
       return tPrimitive(typeof node.value as PrimitiveType, node.value)
     }
+    case 'TemplateLiteral': {
+      // Quasis array should only have one element as
+      // string interpolation is not allowed in Source
+      return tPrimitive('string', node.quasis[0].value.raw)
+    }
     case 'Identifier': {
       const varName = node.name
       const varType = lookupTypeAndRemoveForAllAndPredicateTypes(varName)
