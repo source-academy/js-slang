@@ -20,8 +20,6 @@ import {
   TypeParameterNameNotAllowedError,
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
-import { ModuleNotFoundError } from '../modules/errors'
-import { memoizedGetModuleManifestAsync } from '../modules/loader/loaders'
 import {
   BindableType,
   Chapter,
@@ -34,9 +32,9 @@ import {
   TSBasicType,
   TSDisallowedTypes,
   Type,
+  TypeEnvironment,
   Variable
 } from '../types'
-import { isImportDeclaration } from '../utils/ast/typeGuards'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
 import * as tsEs from './tsESTree'
@@ -78,7 +76,7 @@ import {
 export function checkForTypeErrors(program: tsEs.Program, context: Context): es.Program {
   // Deep copy type environment to avoid modifying type environment in the context,
   // which might affect the type inference checker
-  const env = cloneDeep(context.typeEnvironment)
+  const env: TypeEnvironment = cloneDeep(context.typeEnvironment)
   // Override predeclared function types
   for (const [name, type] of getTypeOverrides(context.chapter)) {
     setType(name, type, env)
@@ -107,7 +105,7 @@ export function checkForTypeErrors(program: tsEs.Program, context: Context): es.
           )
     )
   }
-  // Reset global variables
+
   return removeTSNodes(program)
 
   /**
@@ -138,6 +136,11 @@ export function checkForTypeErrors(program: tsEs.Program, context: Context): es.
         }
         // Casting is safe here as above check already narrows type to string, number or boolean
         return tPrimitive(typeof node.value as PrimitiveType, node.value)
+      }
+      case 'TemplateLiteral': {
+        // Quasis array should only have one element as
+        // string interpolation is not allowed in Source
+        return tPrimitive('string', node.quasis[0].value.raw)
       }
       case 'Identifier': {
         const varName = node.name
@@ -531,23 +534,27 @@ export function checkForTypeErrors(program: tsEs.Program, context: Context): es.
    * Adds types for imported functions to the type environment.
    * All imports have their types set to the "any" primitive type.
    */
-  async function handleImportDeclarations(node: tsEs.Program) {
-    const importStmts: tsEs.ImportDeclaration[] = node.body.filter(isImportDeclaration)
+  function handleImportDeclarations(node: tsEs.Program) {
+    const importStmts: tsEs.ImportDeclaration[] = node.body.filter(
+      (stmt): stmt is tsEs.ImportDeclaration => stmt.type === 'ImportDeclaration'
+    )
     if (importStmts.length === 0) {
       return
     }
-    const modules = await memoizedGetModuleManifestAsync()
-    const moduleList = Object.keys(modules)
+    // const modules = memoizedGetModuleManifest()
+    // const moduleList = Object.keys(modules)
     importStmts.forEach(stmt => {
       // Source only uses strings for import source value
-      const moduleName = stmt.source.value as string
-      if (!moduleList.includes(moduleName)) {
-        context.errors.push(new ModuleNotFoundError(moduleName, stmt))
-      }
+
+      // const moduleName = stmt.source.value as string
+      // if (!moduleList.includes(moduleName)) {
+      // context.errors.push(new ModuleNotFoundError(moduleName, stmt))
+      // }
       stmt.specifiers.map(spec => {
-        // if (spec.type !== 'ImportSpecifier') {
-        //   throw new TypecheckError(stmt, 'Unknown specifier type')
-        // }
+        if (spec.type !== 'ImportSpecifier') {
+          throw new TypecheckError(stmt, 'Unknown specifier type')
+        }
+
         setType(spec.local.name, tAny, env)
       })
     })

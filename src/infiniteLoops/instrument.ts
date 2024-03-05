@@ -4,7 +4,7 @@ import type es from 'estree'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { transformImportDeclarations } from '../transpiler/transpiler'
 import * as create from '../utils/ast/astCreator'
-import { type WalkerCallback,recursive, simple } from '../utils/walkers'
+import { type WalkerCallback, recursive, simple } from '../utils/walkers'
 // transforms AST of program
 
 const globalIds = {

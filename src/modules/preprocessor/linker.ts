@@ -9,7 +9,7 @@ import { isDirective } from '../../utils/ast/typeGuards'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
 import type { AbsolutePath, FileGetter, SourceFiles } from '../moduleTypes'
 import { DirectedGraph } from './directedGraph'
-import resolveFile, { type ImportResolutionOptions,defaultResolutionOptions } from './resolver'
+import resolveFile, { type ImportResolutionOptions, defaultResolutionOptions } from './resolver'
 
 type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
 

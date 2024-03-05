@@ -22,7 +22,8 @@ import defaultBundler, { type Bundler } from '../modules/preprocessor/bundler'
 import parseProgramsAndConstructImportGraph, {
   type LinkerSuccessResult,
   defaultLinkerOptions,
-  isLinkerSuccess} from '../modules/preprocessor/linker'
+  isLinkerSuccess
+} from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
 import { decodeError, decodeValue } from '../parser/scheme'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'

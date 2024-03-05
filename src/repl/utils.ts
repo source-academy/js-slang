@@ -5,7 +5,8 @@ import {
   type ValidLanguage,
   pyLanguages,
   scmLanguages,
-  sourceLanguages} from '../constants'
+  sourceLanguages
+} from '../constants'
 import { type Language, Chapter, Variant } from '../types'
 
 export function chapterParser(str: string): Chapter {

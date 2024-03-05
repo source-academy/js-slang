@@ -1789,6 +1789,11 @@ function reduceMain(
               str
             ]
           }
+        } else if (firstStatement.type === 'BlockStatement' && firstStatement.body.length === 0) {
+          paths[0].push('body[0]')
+          paths.push([])
+          const stmt = ast.program(otherStatements as es.Statement[])
+          return [stmt, context, paths, explain(firstStatement)]
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
@@ -1995,6 +2000,11 @@ function reduceMain(
               str
             ]
           }
+        } else if (firstStatement.type === 'BlockStatement' && firstStatement.body.length === 0) {
+          paths[0].push('body[0]')
+          paths.push([])
+          const stmt = ast.blockStatement(otherStatements as es.Statement[])
+          return [stmt, context, paths, explain(firstStatement)]
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
@@ -2202,6 +2212,11 @@ function reduceMain(
               str
             ]
           }
+        } else if (firstStatement.type === 'BlockStatement' && firstStatement.body.length === 0) {
+          paths[0].push('body[0]')
+          paths.push([])
+          const stmt = ast.blockExpression(otherStatements as es.Statement[])
+          return [stmt, context, paths, explain(firstStatement)]
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
