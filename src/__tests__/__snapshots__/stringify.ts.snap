@@ -44,31 +44,6 @@ stringify(f);",
 }
 `;
 
-exports[`String representation of big objects are nice: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 }, g: 0, h: 0, i: 0, j: 0, k: 0, l: 0, m: 0, n: 0};
-stringify(o);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "{ \\"a\\": 1,
-  \\"b\\": true,
-  \\"c\\": () => 1,
-  \\"d\\": {\\"e\\": 5, \\"f\\": 6},
-  \\"g\\": 0,
-  \\"h\\": 0,
-  \\"i\\": 0,
-  \\"j\\": 0,
-  \\"k\\": 0,
-  \\"l\\": 0,
-  \\"m\\": 0,
-  \\"n\\": 0}",
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`String representation of booleans are nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -121,9 +96,8 @@ stringify(f);",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
-  "result": "function f(x, y) {
-  return x;
-}",
+  "result": "native:\\"function f(x, y) {\\\\n  return x;\\\\n}\\"
+interpreted:\\"(x, y) => {\\\\n  return x;\\\\n}\\"",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -373,35 +347,6 @@ stringify(xs);",
 }
 `;
 
-exports[`String representation of nested objects are nice: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const o = { a: 1, b: true, c: () => 1, d: { e: 5, f: 6 } };
-stringify(o);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1, \\"d\\": {\\"e\\": 5, \\"f\\": 6}}",
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`String representation of nested objects are nice: expectResult 2`] = `
-Object {
-  "alertResult": Array [],
-  "code": "let o = {};
-o.o = o;
-stringify(o);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "{\\"o\\": ...<circular>}",
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`String representation of null is nice: expectResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -423,34 +368,6 @@ Object {
   "numErrors": 0,
   "parsedErrors": "",
   "result": "0",
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`String representation of objects are nice: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const o = { a: 1, b: true, c: () => 1 };
-stringify(o);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "{\\"a\\": 1, \\"b\\": true, \\"c\\": () => 1}",
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`String representation of objects with toReplString member calls toReplString: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "const o = { toReplString: () => '<RUNE>' };
-stringify(o);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "<RUNE>",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

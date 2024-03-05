@@ -4,7 +4,7 @@ import type { RawSourceMap } from 'source-map'
 
 import type { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
-import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpreter'
+import { CSEResultPromise, evaluate } from '../cse-machine/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -12,7 +12,6 @@ import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import preprocessFileImports from '../localImports/preprocessor'
@@ -113,7 +112,7 @@ async function runSubstitution(
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context, true, true)
+  let it = evaluate(program, context, options)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
     it = nonDetEvaluate(program, context)
@@ -219,7 +218,7 @@ async function runNative(
 }
 
 function runCSEMachine(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  const value = CSEvaluate(program, context, options)
+  const value = evaluate(program, context, options)
   return CSEResultPromise(context, value)
 }
 

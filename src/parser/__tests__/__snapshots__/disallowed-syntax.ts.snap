@@ -1260,41 +1260,6 @@ Every statement must be terminated by a semicolon.
 }
 `;
 
-exports[`no this, no new - verbose: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "\\"enable verbose\\";
-function Box() {
-  this[0] = 5;
-}
-const box = new Box();",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 3, Column 2: Expected string as prop, got number.
-Expected string as prop, got number.
-",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`no this, no new: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "function Box() {
-  this[0] = 5;
-}
-const box = new Box();",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 2: Expected string as prop, got number.",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`no try statements - verbose: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],

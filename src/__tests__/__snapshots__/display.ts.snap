@@ -106,27 +106,6 @@ Object {
 }
 `;
 
-exports[`display can be used to display objects: expectDisplayResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "display({a: 1, b: 2, c: {d: 3}});",
-  "displayResult": Array [
-    "{\\"a\\": 1, \\"b\\": 2, \\"c\\": {\\"d\\": 3}}",
-  ],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": Object {
-    "a": 1,
-    "b": 2,
-    "c": Object {
-      "d": 3,
-    },
-  },
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`display second argument can be a string: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],

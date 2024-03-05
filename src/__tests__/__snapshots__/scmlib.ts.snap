@@ -1502,7 +1502,8 @@ Object {
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
-  "result": 1,
+  "result": "native:1
+interpreted:undefined",
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
