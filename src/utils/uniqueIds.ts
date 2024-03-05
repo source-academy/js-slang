@@ -19,8 +19,10 @@ export function getUniqueId(usedIdentifiers: Set<string>, uniqueId = 'unique') {
 }
 
 export function getIdentifiersInNativeStorage(nativeStorage: NativeStorage) {
-  const used = new Set(...nativeStorage.builtins.keys())
-  nativeStorage.previousProgramsIdentifiers.forEach(id => used.add(id))
+  const used = new Set([
+    ...nativeStorage.previousProgramsIdentifiers,
+    ...nativeStorage.builtins.keys()
+  ])
   return used
 }
 

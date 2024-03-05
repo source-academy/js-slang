@@ -1,4 +1,5 @@
-import type { RequireProvider } from './requireProvider'
+import type { ImportAnalysisOptions } from './preprocessor/analyzer'
+import type { LinkerOptions } from './preprocessor/linker'
 
 export type ModuleManifest = {
   [module: string]: {
@@ -6,16 +7,17 @@ export type ModuleManifest = {
   }
 }
 
-export type ModuleBundle = (require: RequireProvider) => ModuleFunctions
-
-export type ModuleFunctions = {
-  [functionName: string]: Function
-}
+export type ModuleBundle = Record<string, any>
 
 export type ModuleDocumentation = Record<string, string>
 
-export type ImportTransformOptions = {
+export type ImportOptions = {
   wrapSourceModules: boolean
   loadTabs: boolean
-  checkImports: boolean
-}
+} & ImportAnalysisOptions &
+  LinkerOptions
+
+export type AbsolutePath = `/${string}`
+
+export type FileGetter = (p: string) => Promise<string | undefined>
+export type SourceFiles = Record<AbsolutePath, string>

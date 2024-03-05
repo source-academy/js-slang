@@ -27,7 +27,10 @@ export class ExceptionError implements SourceError {
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
-  constructor(public error: Error, location?: es.SourceLocation | null) {
+  constructor(
+    public error: Error,
+    location?: es.SourceLocation | null
+  ) {
     this.location = location ?? UNKNOWN_LOCATION
   }
 
@@ -54,7 +57,10 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
     }
   }
 
-  constructor(node: es.Node, private calls: es.CallExpression[]) {
+  constructor(
+    node: es.Node,
+    private calls: es.CallExpression[]
+  ) {
     super(node)
   }
 
@@ -71,7 +77,10 @@ export class MaximumStackLimitExceeded extends RuntimeSourceError {
 }
 
 export class CallingNonFunctionValue extends RuntimeSourceError {
-  constructor(private callee: Value, private node: es.Node) {
+  constructor(
+    private callee: Value,
+    private node: es.Node
+  ) {
     super(node)
   }
 
@@ -100,7 +109,10 @@ export class CallingNonFunctionValue extends RuntimeSourceError {
 }
 
 export class UndefinedVariable extends RuntimeSourceError {
-  constructor(public name: string, node: es.Node) {
+  constructor(
+    public name: string,
+    node: es.Node
+  ) {
     super(node)
   }
 
@@ -114,7 +126,10 @@ export class UndefinedVariable extends RuntimeSourceError {
 }
 
 export class UnassignedVariable extends RuntimeSourceError {
-  constructor(public name: string, node: es.Node) {
+  constructor(
+    public name: string,
+    node: es.Node
+  ) {
     super(node)
   }
 
@@ -155,7 +170,11 @@ export class InvalidNumberOfArguments extends RuntimeSourceError {
 }
 
 export class VariableRedeclaration extends RuntimeSourceError {
-  constructor(private node: es.Node, private name: string, private writable?: boolean) {
+  constructor(
+    private node: es.Node,
+    private name: string,
+    private writable?: boolean
+  ) {
     super(node)
   }
 
@@ -186,7 +205,10 @@ export class VariableRedeclaration extends RuntimeSourceError {
 }
 
 export class ConstAssignment extends RuntimeSourceError {
-  constructor(node: es.Node, private name: string) {
+  constructor(
+    node: es.Node,
+    private name: string
+  ) {
     super(node)
   }
 
@@ -200,7 +222,11 @@ export class ConstAssignment extends RuntimeSourceError {
 }
 
 export class GetPropertyError extends RuntimeSourceError {
-  constructor(node: es.Node, private obj: Value, private prop: string) {
+  constructor(
+    node: es.Node,
+    private obj: Value,
+    private prop: string
+  ) {
     super(node)
   }
 
@@ -218,7 +244,11 @@ export class GetInheritedPropertyError extends RuntimeSourceError {
   public severity = ErrorSeverity.ERROR
   public location: es.SourceLocation
 
-  constructor(node: es.Node, private obj: Value, private prop: string) {
+  constructor(
+    node: es.Node,
+    private obj: Value,
+    private prop: string
+  ) {
     super(node)
     this.location = node.loc ?? UNKNOWN_LOCATION
   }
@@ -233,7 +263,11 @@ export class GetInheritedPropertyError extends RuntimeSourceError {
 }
 
 export class SetPropertyError extends RuntimeSourceError {
-  constructor(node: es.Node, private obj: Value, private prop: string) {
+  constructor(
+    node: es.Node,
+    private obj: Value,
+    private prop: string
+  ) {
     super(node)
   }
 

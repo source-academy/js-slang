@@ -9,7 +9,7 @@ import {
   VARARGS_NUM_ARGS
 } from '../stdlib/vm.prelude'
 import { Context } from '../types'
-import { locationDummyNode } from '../utils/astCreator'
+import { locationDummyNode } from '../utils/ast/astCreator'
 import { stringify } from '../utils/stringify'
 import OpCodes from './opcodes'
 import { Address, Instruction, Program, SVMFunction } from './svml-compiler'
@@ -657,24 +657,24 @@ function node_kind(x: number) {
   return x === NUMBER_TAG
     ? 'number'
     : x === BOOL_TAG
-    ? 'boolean'
-    : x === CLOSURE_TAG
-    ? 'closure'
-    : x === RTS_FRAME_TAG
-    ? 'RTS frame'
-    : x === OS_TAG
-    ? 'OS'
-    : x === ENV_TAG
-    ? 'environment'
-    : x === UNDEFINED_TAG
-    ? 'undefined'
-    : x === NULL_TAG
-    ? 'null'
-    : x === STRING_TAG
-    ? 'string'
-    : x === ARRAY_TAG
-    ? 'array'
-    : ' (unknown node kind)'
+      ? 'boolean'
+      : x === CLOSURE_TAG
+        ? 'closure'
+        : x === RTS_FRAME_TAG
+          ? 'RTS frame'
+          : x === OS_TAG
+            ? 'OS'
+            : x === ENV_TAG
+              ? 'environment'
+              : x === UNDEFINED_TAG
+                ? 'undefined'
+                : x === NULL_TAG
+                  ? 'null'
+                  : x === STRING_TAG
+                    ? 'string'
+                    : x === ARRAY_TAG
+                      ? 'array'
+                      : ' (unknown node kind)'
 }
 export function show_heap(s: string) {
   const len = HEAP.length

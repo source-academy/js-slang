@@ -13,7 +13,10 @@ export class InvalidArrayIndexType implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: NodeWithInferredType<es.Node>, public receivedType: Type) {}
+  constructor(
+    public node: NodeWithInferredType<es.Node>,
+    public receivedType: Type
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -134,8 +137,8 @@ function stringifyNode(node: NodeWithInferredType<es.Node>): string {
       ? (node.declarations[0].id as es.Identifier).name
       : (node as NodeWithInferredType<es.FunctionDeclaration>).id?.name!
     : node.type === 'Identifier'
-    ? node.name
-    : JSON.stringify(node) // might not be a good idea
+      ? node.name
+      : JSON.stringify(node) // might not be a good idea
 }
 
 export class DifferentNumberArgumentsError implements SourceError {
@@ -291,7 +294,10 @@ export class UndefinedIdentifierError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: NodeWithInferredType<es.Identifier>, public name: string) {}
+  constructor(
+    public node: NodeWithInferredType<es.Identifier>,
+    public name: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -346,7 +352,10 @@ export class CallingNonFunctionType implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: NodeWithInferredType<es.CallExpression>, public callerType: Type) {}
+  constructor(
+    public node: NodeWithInferredType<es.CallExpression>,
+    public callerType: Type
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -430,7 +439,10 @@ export class TypeNotFoundError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.Node, public name: string) {}
+  constructor(
+    public node: tsEs.Node,
+    public name: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -468,7 +480,10 @@ export class TypeNotCallableError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.CallExpression, public typeName: string) {}
+  constructor(
+    public node: tsEs.CallExpression,
+    public typeName: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -510,7 +525,10 @@ export class TypeNotAllowedError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.TSType, public name: string) {}
+  constructor(
+    public node: tsEs.TSType,
+    public name: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -529,7 +547,10 @@ export class UndefinedVariableTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.Node, public name: string) {}
+  constructor(
+    public node: tsEs.Node,
+    public name: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -580,7 +601,11 @@ export class InvalidNumberOfTypeArgumentsForGenericTypeError implements SourceEr
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.Node, public name: string, public expected: number) {}
+  constructor(
+    public node: tsEs.Node,
+    public name: string,
+    public expected: number
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -599,7 +624,10 @@ export class TypeNotGenericError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.Node, public name: string) {}
+  constructor(
+    public node: tsEs.Node,
+    public name: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -618,7 +646,10 @@ export class TypeAliasNameNotAllowedError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
+  constructor(
+    public node: tsEs.TSTypeAliasDeclaration,
+    public name: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -637,7 +668,10 @@ export class TypeParameterNameNotAllowedError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.TSTypeParameter, public name: string) {}
+  constructor(
+    public node: tsEs.TSTypeParameter,
+    public name: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -656,7 +690,10 @@ export class InvalidIndexTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.MemberExpression, public typeName: string) {}
+  constructor(
+    public node: tsEs.MemberExpression,
+    public typeName: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -675,7 +712,10 @@ export class InvalidArrayAccessTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.MemberExpression, public typeName: string) {}
+  constructor(
+    public node: tsEs.MemberExpression,
+    public typeName: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -694,7 +734,10 @@ export class ConstNotAssignableTypeError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: tsEs.AssignmentExpression, public name: string) {}
+  constructor(
+    public node: tsEs.AssignmentExpression,
+    public name: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -713,7 +756,10 @@ export class DuplicateTypeAliasError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.ERROR
 
-  constructor(public node: tsEs.TSTypeAliasDeclaration, public name: string) {}
+  constructor(
+    public node: tsEs.TSTypeAliasDeclaration,
+    public name: string
+  ) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION

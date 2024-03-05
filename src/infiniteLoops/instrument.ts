@@ -1,15 +1,17 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
 
+import { NATIVE_STORAGE_ID } from '../constants'
 import { transformImportDeclarations } from '../transpiler/transpiler'
-import * as create from '../utils/astCreator'
-import { recursive, simple, WalkerCallback } from '../utils/walkers'
+import * as create from '../utils/ast/astCreator'
+import { recursive, simple, type WalkerCallback } from '../utils/walkers'
 // transforms AST of program
 
 const globalIds = {
   builtinsId: 'builtins',
   functionsId: '__InfLoopFns',
-  stateId: '__InfLoopState'
+  stateId: '__InfLoopState',
+  nativeId: NATIVE_STORAGE_ID
 }
 
 enum FunctionNames {
@@ -574,37 +576,18 @@ function trackLocations(program: es.Program) {
   })
 }
 
-async function handleImports(programs: es.Program[]): Promise<[string, string[]]> {
-  const transformed = await Promise.all(
-    programs.map(async program => {
-      const [prefixToAdd, importsToAdd, otherNodes] = await transformImportDeclarations(
-        program,
-        new Set<string>(),
-        {
-          wrapSourceModules: false,
-          checkImports: false,
-          loadTabs: false
-        }
-      )
-      program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
-      const importedNames = importsToAdd.flatMap(node =>
-        node.declarations.map(
-          decl => ((decl.init as es.MemberExpression).object as es.Identifier).name
-        )
-      )
-      return [prefixToAdd, importedNames] as [string, string[]]
-    })
-  )
+function handleImports(programs: es.Program[]): string[] {
+  const allNames = programs.flatMap(program => {
+    const [importsToAdd, otherNodes] = transformImportDeclarations(
+      program,
+      create.identifier(NATIVE_STORAGE_ID)
+    )
 
-  const [prefixes, imports] = transformed.reduce(
-    ([prefixes, moduleNames], [prefix, importedNames]) => [
-      [...prefixes, prefix],
-      [...moduleNames, ...importedNames]
-    ],
-    [[], []] as [string[], string[]]
-  )
+    program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
+    return importsToAdd.map(({ declarations: [{ id }] }) => (id as es.Identifier).name)
+  })
 
-  return [prefixes.join('\n'), [...new Set<string>(imports)]]
+  return [...new Set<string>(allNames)]
 }
 
 /**
@@ -615,19 +598,22 @@ async function handleImports(programs: es.Program[]): Promise<[string, string[]]
  * @param builtins Names of builtin functions.
  * @returns code with instrumentations.
  */
-async function instrument(
+function instrument(
   previous: es.Program[],
   program: es.Program,
   builtins: Iterable<string>
-): Promise<string> {
-  const { builtinsId, functionsId, stateId } = globalIds
-  const predefined = {}
-  predefined[builtinsId] = builtinsId
-  predefined[functionsId] = functionsId
-  predefined[stateId] = stateId
+): string {
+  const { builtinsId, functionsId, stateId, nativeId } = globalIds
+  const predefined = {
+    [builtinsId]: builtinsId,
+    [functionsId]: functionsId,
+    [stateId]: stateId,
+    [nativeId]: nativeId
+  }
+
   const innerProgram = { ...program }
 
-  const [prefix, moduleNames] = await handleImports([program].concat(previous))
+  const moduleNames = handleImports([program].concat(previous))
   for (const name of moduleNames) {
     predefined[name] = name
   }
@@ -649,7 +635,7 @@ async function instrument(
   addStateToIsNull(program)
   wrapCallArguments(program)
   const code = generate(program)
-  return prefix + code
+  return code
 }
 
 export {

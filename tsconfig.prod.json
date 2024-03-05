@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "noEmit": false
+  },
+  // Excludes are overwritten when using extends, so we
+  // list all the excludes again
+  "exclude": [
+    "src/stdlib/metacircular-interpreter",
+    "src/stdlib/**/*.js",
+    "node_modules",
+    "dist",
+    "sicp_publish",
+    "src/**/__tests__/**",
+    "src/**/__mocks__/**",
+  ]
+}

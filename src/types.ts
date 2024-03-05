@@ -6,10 +6,12 @@
 /* tslint:disable:max-classes-per-file */
 
 import { SourceLocation } from 'acorn'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { EnvTree } from './createContext'
 import { Control, Stash } from './cse-machine/interpreter'
+import type { ModuleBundle } from './modules/moduleTypes'
+import type { AllExecutionMethods } from './runner'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -24,9 +26,10 @@ export interface CustomBuiltIns {
 }
 
 export enum ErrorType {
+  IMPORT = 'Import',
+  RUNTIME = 'Runtime',
   SYNTAX = 'Syntax',
-  TYPE = 'Type',
-  RUNTIME = 'Runtime'
+  TYPE = 'Type'
 }
 
 export enum ErrorSeverity {
@@ -60,7 +63,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
+// export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
 
 export enum Chapter {
   SOURCE_1 = 1,
@@ -125,6 +128,8 @@ export interface NativeStorage {
   surrounding scope, so we cannot set evaller to `eval` directly. subsequent assignments to evaller will
   close in the surrounding values, so no problem
    */
+
+  loadedModules: Record<string, ModuleBundle>
 }
 
 export interface Context<T = any> {
@@ -150,6 +155,8 @@ export interface Context<T = any> {
     envStepsTotal: number
     breakpointSteps: number[]
   }
+
+  isPreviousCodeTimeoutError: boolean
 
   numberOfOuterEnvironments: number
 
@@ -180,7 +187,7 @@ export interface Context<T = any> {
   /**
    * Describes the language processor to be used for evaluation
    */
-  executionMethod: ExecutionMethod
+  executionMethod: AllExecutionMethods
 
   /**
    * Describes the strategy / paradigm to be used for evaluation
@@ -206,10 +213,7 @@ export interface Context<T = any> {
    */
   previousPrograms: es.Program[]
 
-  /**
-   * Whether the evaluation timeout should be increased
-   */
-  shouldIncreaseEvaluationTimeout: boolean
+  verboseErrors: boolean | null
 }
 
 export type ModuleContext = {
@@ -488,10 +492,15 @@ export type TypeEnvironment = {
  * By default, `Partial<Array<T>>` is equivalent to `Array<T | undefined>`. For this type, `Array<T>` will be
  * transformed to Array<Partial<T>> instead
  */
-export type RecursivePartial<T> = T extends Array<any>
-  ? Array<RecursivePartial<T[number]>>
-  : T extends Record<any, any>
-  ? Partial<{
-      [K in keyof T]: RecursivePartial<T[K]>
-    }>
-  : T
+export type RecursivePartial<T> =
+  T extends Array<any>
+    ? Array<RecursivePartial<T[number]>>
+    : T extends Record<any, any>
+      ? Partial<{
+          [K in keyof T]: RecursivePartial<T[K]>
+        }>
+      : T
+
+// Why not just use keyof? Sometimes typescript does a bad job of
+// inferring the key type
+export type RecordKey<T> = T extends Record<infer K, any> ? K : never

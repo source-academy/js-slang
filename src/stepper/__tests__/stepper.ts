@@ -71,7 +71,10 @@ const testEvalSteps = (programStr: string, context?: Context) => {
     importOptions: {
       loadTabs: false,
       wrapSourceModules: false,
-      checkImports: false
+      resolverOptions: { extensions: null },
+      shouldAddFileName: false,
+      allowUndefinedImports: false,
+      throwOnDuplicateNames: true
     }
   }
   return getEvaluationSteps(program, context, options)

@@ -71,7 +71,10 @@ export class EnvTree {
 export class EnvTreeNode {
   private _children: EnvTreeNode[] = []
 
-  constructor(readonly environment: Environment, public parent: EnvTreeNode | null) {}
+  constructor(
+    readonly environment: Environment,
+    public parent: EnvTreeNode | null
+  ) {}
 
   get children(): EnvTreeNode[] {
     return this._children
@@ -136,7 +139,8 @@ const createNativeStorage = (): NativeStorage => ({
   operators: new Map(Object.entries(operators)),
   gpu: new Map(Object.entries(gpu_lib)),
   maxExecTime: JSSLANG_PROPERTIES.maxExecTime,
-  evaller: null
+  evaller: null,
+  loadedModules: {}
 })
 
 export const createEmptyContext = <T>(
@@ -161,7 +165,8 @@ export const createEmptyContext = <T>(
     unTypecheckedCode: [],
     typeEnvironment: createTypeEnvironment(chapter),
     previousPrograms: [],
-    shouldIncreaseEvaluationTimeout: false
+    isPreviousCodeTimeoutError: false,
+    verboseErrors: null
   }
 }
 

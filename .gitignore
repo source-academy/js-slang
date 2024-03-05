@@ -2,6 +2,7 @@ node_modules
 *.js
 !docs/jsdoc/templates/**/*.js
 !docs/lib/**/*.js
+!src/modules/loader/__tests__/testResolver.js
 *.map
 dist/
 .idea/
@@ -12,7 +13,7 @@ coverage/
 .DS_Store
 
 .vscode/
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 test-report.html
 
 yarn-error.log

@@ -3,7 +3,7 @@ import { NullableMappedPosition, RawSourceMap, SourceMapConsumer } from 'source-
 import { UNKNOWN_LOCATION } from '../constants'
 import { ConstAssignment, ExceptionError, UndefinedVariable } from '../errors/errors'
 import { SourceError } from '../types'
-import { locationDummyNode } from '../utils/astCreator'
+import { locationDummyNode } from '../utils/ast/astCreator'
 
 enum BrowserType {
   Chrome = 'Chrome',
@@ -45,8 +45,8 @@ function getBrowserType(): BrowserType {
   return userAgent.indexOf('chrome') > -1
     ? BrowserType.Chrome
     : userAgent.indexOf('firefox') > -1
-    ? BrowserType.FireFox
-    : BrowserType.Unsupported
+      ? BrowserType.FireFox
+      : BrowserType.Unsupported
 }
 
 function extractErrorLocation(

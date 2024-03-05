@@ -1,9 +1,18 @@
-import * as fs from 'fs'
+import { Command } from '@commander-js/extra-typings'
+import type fslib from 'fs/promises'
 import * as repl from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
 
+import {
+  createContext,
+  IOptions,
+  type IOptionsWithExecMethod,
+  parseError,
+  Result,
+  resume,
+  runInContext
+} from '..'
 import { CUT, TRY_AGAIN } from '../constants'
-import { createContext, IOptions, parseError, Result, resume, runInContext } from '../index'
 import Closure from '../interpreter/closure'
 import { Chapter, Context, SuspendedNonDet, Variant } from '../types'
 
@@ -22,7 +31,7 @@ function _handleResult(
     if (result.value === CUT) result.value = undefined
     callback(null, result.value)
   } else {
-    const error = new Error(parseError(context.errors))
+    const error = new Error(parseError(context))
     // we do not display the stack trace, because the stack trace points to code within this REPL
     // program, rather than the erroneous line in the user's program. Such a trace is too low level
     // to be helpful.
@@ -81,7 +90,7 @@ function _run(
 function _startRepl(chapter: Chapter = Chapter.SOURCE_1, useSubst: boolean, prelude = '') {
   // use defaults for everything
   const context = createContext(chapter, Variant.NON_DET)
-  const options: Partial<IOptions> = {
+  const options: Partial<IOptionsWithExecMethod> = {
     executionMethod: 'interpreter',
     useSubst
   }
@@ -108,25 +117,21 @@ function _startRepl(chapter: Chapter = Chapter.SOURCE_1, useSubst: boolean, prel
         }
       )
     } else {
-      throw new Error(parseError(context.errors))
+      throw new Error(parseError(context))
     }
   })
 }
 
-function main() {
-  const firstArg = process.argv[2]
-  if (process.argv.length === 3 && String(Number(firstArg)) !== firstArg.trim()) {
-    fs.readFile(firstArg, 'utf8', (err, data) => {
-      if (err) {
-        throw err
-      }
-      _startRepl(Chapter.SOURCE_3, false, data)
-    })
-  } else {
-    const chapter = Chapter.SOURCE_3
-    const useSubst = process.argv.length > 3 ? process.argv[3] === 'subst' : false
-    _startRepl(chapter, useSubst)
-  }
-}
+export const nonDetCommand = new Command('non-det')
+  .option('--useSubst')
+  .argument('<filename>')
+  .action(async (fileName, { useSubst }) => {
+    if (fileName !== undefined) {
+      const fs: typeof fslib = require('fs/promises')
+      const data = await fs.readFile(fileName, 'utf-8')
 
-main()
+      _startRepl(Chapter.SOURCE_3, false, data)
+    } else {
+      _startRepl(Chapter.SOURCE_3, !!useSubst)
+    }
+  })

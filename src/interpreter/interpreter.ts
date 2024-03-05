@@ -6,14 +6,12 @@ import { UNKNOWN_LOCATION } from '../constants'
 import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { UndefinedImportError } from '../modules/errors'
-import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
-import assert from '../utils/assert'
-import * as create from '../utils/astCreator'
-import { conditionalExpression, literal, primitive } from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
+import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
+import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
+import { isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -27,13 +25,20 @@ class ReturnValue {
 }
 
 class TailCallReturnValue {
-  constructor(public callee: Closure, public args: Value[], public node: es.CallExpression) {}
+  constructor(
+    public callee: Closure,
+    public args: Value[],
+    public node: es.CallExpression
+  ) {}
 }
 
 class Thunk {
   public value: Value
   public isMemoized: boolean
-  constructor(public exp: es.Node, public env: Environment) {
+  constructor(
+    public exp: es.Node,
+    public env: Environment
+  ) {
     this.isMemoized = false
     this.value = null
   }
@@ -710,12 +715,7 @@ function getNonEmptyEnv(environment: Environment): Environment {
   }
 }
 
-export function* evaluateProgram(
-  program: es.Program,
-  context: Context,
-  checkImports: boolean,
-  loadTabs: boolean
-) {
+export function* evaluateProgram(program: es.Program, context: Context) {
   yield* visit(context, program)
 
   context.numberOfOuterEnvironments += 1
@@ -723,42 +723,27 @@ export function* evaluateProgram(
   pushEnvironment(context, environment)
 
   const otherNodes: es.Statement[] = []
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
 
   try {
     for (const node of program.body) {
-      if (node.type !== 'ImportDeclaration') {
+      if (!isImportDeclaration(node)) {
         otherNodes.push(node as es.Statement)
         continue
       }
 
       yield* visit(context, node)
 
-      const moduleName = node.source.value
-      assert(
-        typeof moduleName === 'string',
-        `ImportDeclarations should have string sources, got ${moduleName}`
-      )
-
-      if (!(moduleName in moduleFunctions)) {
-        initModuleContext(moduleName, context, loadTabs)
-        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
-      }
-
-      const functions = moduleFunctions[moduleName]
+      const moduleName = getModuleDeclarationSource(node)
+      const functions = context.nativeStorage.loadedModules[moduleName]
 
       for (const spec of node.specifiers) {
-        assert(
-          spec.type === 'ImportSpecifier',
-          `Only Import Specifiers are supported, got ${spec.type}`
-        )
-
-        if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, spec)
-        }
-
         declareIdentifier(context, spec.local.name, node)
-        defineVariable(context, spec.local.name, functions[spec.imported.name], true)
+        defineVariable(
+          context,
+          spec.local.name,
+          isNamespaceSpecifier(spec) ? functions : functions[getImportedName(spec)],
+          true
+        )
       }
       yield* leave(context)
     }

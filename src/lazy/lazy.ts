@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import { getIdentifiersInProgram } from '../utils/uniqueIds'
 import { simple } from '../utils/walkers'
 

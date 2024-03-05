@@ -3,7 +3,7 @@ import * as es from 'estree'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { Chapter, NodeWithInferredType } from '../../types'
-import { getVariableDecarationName } from '../../utils/astCreator'
+import { getVariableDeclarationName } from '../../utils/ast/astCreator'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
 import { simple } from '../../utils/walkers'
@@ -57,7 +57,7 @@ test('testing typability', () => {
   simple(ast, {
     VariableDeclaration(node: NodeWithInferredType<es.VariableDeclaration>) {
       let expectedTypability = ''
-      switch (getVariableDecarationName(node)) {
+      switch (getVariableDeclarationName(node)) {
         case 'a':
         case 'b':
           expectedTypability = 'NotYetTyped'

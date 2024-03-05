@@ -1,11 +1,12 @@
 import { generate } from 'astring'
+import type { MockedFunction } from 'jest-mock'
 
 import { default as createContext, defineBuiltin } from '../createContext'
 import { transpileToGPU } from '../gpu/gpu'
 import { parseError, Result, runInContext } from '../index'
 import { transpileToLazy } from '../lazy/lazy'
 import { mockContext } from '../mocks/context'
-import { ImportTransformOptions } from '../modules/moduleTypes'
+import { ImportOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
 import { Chapter, Context, CustomBuiltIns, SourceError, Value, Variant } from '../types'
@@ -49,7 +50,7 @@ interface TestOptions {
   native?: boolean
   showTranspiledCode?: boolean
   showErrorJSON?: boolean
-  importOptions?: Partial<ImportTransformOptions>
+  importOptions?: Partial<ImportOptions>
 }
 
 export function createTestContext({
@@ -104,7 +105,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       alertResult: context.alertResult,
       visualiseListResult: context.visualiseListResult,
       numErrors: context.errors.length,
-      parsedErrors: parseError(context.errors),
+      parsedErrors: parseError(context),
       resultStatus: result.status,
       result: result.status === 'finished' ? result.value : undefined
     }
@@ -143,7 +144,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
           break
       }
       try {
-        ;({ transpiled } = await transpile(parsed, nativeTestContext, options.importOptions))
+        ;({ transpiled } = transpile(parsed, nativeTestContext))
         // replace declaration of builtins since they're repetitive
         transpiled = transpiled.replace(/\n  const \w+ = nativeStorage\..*;/g, '')
         transpiled = transpiled.replace(/\n\s*const \w+ = .*\.operators\..*;/g, '')
@@ -364,5 +365,9 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   const timeTaken = Date.now() - start
   expect(timeTaken).toBeLessThan(timeout * 5)
   expect(timeTaken).toBeGreaterThanOrEqual(timeout)
-  return parseError(context.errors)
+  return parseError(context)
+}
+
+export function funcAsMockedFunc<T extends (...args: any[]) => any>(func: T) {
+  return func as MockedFunction<T>
 }

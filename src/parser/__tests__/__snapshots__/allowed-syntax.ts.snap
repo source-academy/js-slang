@@ -4290,7 +4290,7 @@ x[key] = 3;",
 exports[`Syntaxes are allowed in the chapter they are introduced 35: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "import defaultExport from \\"module-name\\";",
+  "code": "import defaultExport from \\"one_module\\";",
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 1: Import default specifiers are not allowed",
@@ -4303,7 +4303,7 @@ Object {
 exports[`Syntaxes are allowed in the chapter they are introduced 35: parse passes 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "parse(\\"import defaultExport from \\\\\\"module-name\\\\\\";\\");",
+  "code": "parse(\\"import defaultExport from \\\\\\"one_module\\\\\\";\\");",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -4318,7 +4318,7 @@ Object {
         null,
       ],
       Array [
-        "module-name",
+        "one_module",
         null,
       ],
     ],
@@ -4331,7 +4331,7 @@ Object {
 exports[`Syntaxes are allowed in the chapter they are introduced 35: passes 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "import defaultExport from \\"module-name\\";",
+  "code": "import defaultExport from \\"one_module\\";",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -4699,6 +4699,19 @@ Object {
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 1: Import default specifiers are not allowed",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Syntaxes are allowed in the chapter they are introduced 40: fails a chapter below 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "import * as a from 'one_module';",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Namespace imports are not allowed",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

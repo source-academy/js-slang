@@ -19,6 +19,8 @@ const mockXMLHttpRequest = (xhr: Partial<XMLHttpRequest> = {}) => {
   return xhrMock
 }
 
+jest.mock('../../modules/loader/loaders')
+
 const optionEC = { variant: Variant.EXPLICIT_CONTROL }
 const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }

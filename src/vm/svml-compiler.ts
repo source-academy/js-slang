@@ -11,7 +11,7 @@ import {
   vmPrelude
 } from '../stdlib/vm.prelude'
 import { Context, ContiguousArrayElements } from '../types'
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import { recursive, simple } from '../utils/walkers'
 import OpCodes from './opcodes'
 
@@ -43,7 +43,7 @@ export type Instruction = [
   Argument?,
   Argument?
 ]
-export type Argument = number | boolean | string | Offset | Address
+export type Argument = number | boolean | string | Address
 export type SVMFunction = [
   number, // stack size
   number, // environment size

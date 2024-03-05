@@ -2,7 +2,7 @@ import { Node } from 'estree'
 
 import { UnassignedVariable } from '../../errors/errors'
 import { decode, encode } from '../../scm-slang/src'
-import { dummyExpression } from '../../utils/dummyAstCreator'
+import { dummyExpression } from '../../utils/ast/dummyAstCreator'
 import { decodeError, decodeValue } from '../scheme'
 
 describe('Scheme encoder and decoder', () => {

@@ -16,3 +16,37 @@ export const timeoutPromise = <T>(promise: Promise<T>, timeout: number) =>
         reject(e)
       })
   })
+
+/**
+ * Run the mapping function over the items, filtering out any items that
+ * that the mapping function returned `undefined` for
+ */
+export function mapAndFilter<T, U>(items: T[], mapper: (input: T) => U | undefined) {
+  return items.reduce((res, item) => {
+    const newItem = mapper(item)
+    if (newItem !== undefined) return [...res, newItem]
+    return res
+  }, [] as U[])
+}
+
+/**
+ * Takes an object and transforms all its values using the given mapping function
+ * Each new value remains associated with its original key
+ */
+export function mapObject<T extends Record<any, any>, U>(
+  obj: T,
+  mapper: (item: T[keyof T]) => U
+): Record<keyof T, U> {
+  return Object.entries(obj).reduce(
+    (res, [key, value]) => ({
+      ...res,
+      [key]: mapper(value)
+    }),
+    {} as Record<keyof T, U>
+  )
+}
+
+export const objectKeys = <T extends string | symbol | number>(rec: Record<T, any>) =>
+  Object.keys(rec) as T[]
+
+export const objectValues = <T>(rec: Record<any, T>) => Object.values(rec) as T[]

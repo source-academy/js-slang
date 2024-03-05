@@ -11,7 +11,7 @@ import {
   callExpression,
   identifier,
   returnStatement
-} from '../utils/astCreator'
+} from '../utils/ast/astCreator'
 import { apply } from './interpreter'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
@@ -62,14 +62,14 @@ export default class Closure extends Callable {
     const functionBody: es.BlockStatement = !isBlockStatement(node.body)
       ? blockStatement([returnStatement(node.body, node.body.loc)], node.body.loc)
       : dummyReturn && !hasReturnStatement(node.body)
-      ? blockStatement(
-          [
-            ...node.body.body,
-            returnStatement(identifier('undefined', node.body.loc), node.body.loc)
-          ],
-          node.body.loc
-        )
-      : node.body
+        ? blockStatement(
+            [
+              ...node.body.body,
+              returnStatement(identifier('undefined', node.body.loc), node.body.loc)
+            ],
+            node.body.loc
+          )
+        : node.body
 
     const closure = new Closure(
       blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),

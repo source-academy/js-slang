@@ -2,7 +2,7 @@ import * as es from 'estree'
 
 import * as misc from '../stdlib/misc'
 import { Context, substituterNodes } from '../types'
-import * as ast from '../utils/astCreator'
+import * as ast from '../utils/ast/astCreator'
 import { nodeToValue, nodeToValueWithContext, valueToExpression } from './converter'
 import { codify } from './stepper'
 import { isBuiltinFunction, isNumber } from './util'

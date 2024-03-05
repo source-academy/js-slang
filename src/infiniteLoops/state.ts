@@ -1,7 +1,7 @@
 import { generate } from 'astring'
 import * as es from 'estree'
 
-import { identifier } from '../utils/astCreator'
+import { identifier } from '../utils/ast/astCreator'
 import * as sym from './symbolic'
 
 // Object + functions called during runtime to check for infinite loops
@@ -13,13 +13,13 @@ export type Transition = {
   cachedSymbolicValue: number
 }
 const makeTransition = (name: string, value: any, id: number) =>
-  ({ name: name, value: value, cachedSymbolicValue: id } as Transition)
+  ({ name: name, value: value, cachedSymbolicValue: id }) as Transition
 type FunctionStackFrame = {
   name: string
   transitions: Transition[]
 }
 const makeFunctionStackFrame = (name: string, transitions: Transition[]) =>
-  ({ name: name, transitions: transitions } as FunctionStackFrame)
+  ({ name: name, transitions: transitions }) as FunctionStackFrame
 type Iteration = {
   loc: string
   paths: Path

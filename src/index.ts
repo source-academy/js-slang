@@ -8,53 +8,59 @@ import { looseParse } from './parser/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
-  Chapter,
-  Context,
-  Error as ResultError,
-  ExecutionMethod,
-  Finished,
-  ModuleContext,
-  RecursivePartial,
-  Result,
-  SourceError,
-  SVMProgram,
+  type Context,
+  type Error as ResultError,
+  type Finished,
+  type ModuleContext,
+  type RecursivePartial,
+  type Result,
+  type SourceError,
+  type SVMProgram,
   Variant
 } from './types'
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
-import { CannotFindModuleError } from './errors/localImportErrors'
-import { validateFilePath } from './localImports/filePaths'
-import preprocessFileImports from './localImports/preprocessor'
-import type { ImportTransformOptions } from './modules/moduleTypes'
+import { AbsoluteFilePathError, ModuleNotFoundError } from './modules/errors'
+import type { ImportOptions, SourceFiles } from './modules/moduleTypes'
+import defaultBundler from './modules/preprocessor/bundler'
+import { validateFilePaths } from './modules/preprocessor/filePaths'
+import parseProgramsAndConstructImportGraph from './modules/preprocessor/linker'
+import { isAbsolutePath } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
-import { parse } from './parser/parser'
-import { decodeError, decodeValue } from './parser/scheme'
 import { parseWithComments } from './parser/utils'
-import {
-  fullJSRunner,
-  hasVerboseErrors,
-  htmlRunner,
-  resolvedErrorPromise,
-  sourceFilesRunner
-} from './runner'
+import { type AllExecutionMethods, resolvedErrorPromise, runFilesInSource } from './runner'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
   steps: number
   stepLimit: number
-  executionMethod: ExecutionMethod
   variant: Variant
   originalMaxExecTime: number
   useSubst: boolean
-  isPrelude: boolean
+  // isPrelude: boolean
   throwInfiniteLoops: boolean
   envSteps: number
 
-  importOptions: ImportTransformOptions
+  importOptions: ImportOptions
+
+  /**
+   * Set this to true if source file information should be
+   * added when parsing programs into ASTs
+   *
+   * Set to null to let js-slang decide automatically
+   */
+  shouldAddFileName: boolean | null
+
+  logTranspilerOutput: boolean
+  auditExecutionMethod: boolean
+}
+
+export interface IOptionsWithExecMethod extends IOptions {
+  executionMethod: AllExecutionMethods
 }
 
 // needed to work on browsers
@@ -65,14 +71,22 @@ if (typeof window !== 'undefined') {
   })
 }
 
-let verboseErrors: boolean = false
+export function parseError(context: Context): string
+export function parseError(errors: SourceError[], verboseErrors?: boolean): string
+export function parseError(arg: Context | SourceError[], verboseErrors?: boolean): string {
+  const errors = Array.isArray(arg) ? arg : arg.errors
+  const verbose = Array.isArray(arg) ? verboseErrors : arg.verboseErrors
 
-export function parseError(errors: SourceError[], verbose: boolean = verboseErrors): string {
   const errorMessagesArr = errors.map(error => {
     // FIXME: Either refactor the parser to output an ESTree-compliant AST, or modify the ESTree types.
     const filePath = error.location?.source ? `[${error.location.source}] ` : ''
     const line = error.location ? error.location.start.line : '<unknown>'
     const column = error.location ? error.location.start.column : '<unknown>'
+    if (!error.explain) {
+      console.error(error)
+      return ''
+    }
+
     const explanation = error.explain()
 
     if (verbose) {
@@ -192,7 +206,7 @@ export async function getNames(
   }
   const cursorLoc: es.Position = { line, column: col }
 
-  const [progNames, displaySuggestions] = getProgramNames(program, comments, cursorLoc)
+  const [progNames, displaySuggestions] = await getProgramNames(program, comments, cursorLoc)
   const keywords = getKeywords(program, cursorLoc, context)
   return [progNames.concat(keywords), displaySuggestions]
 }
@@ -200,84 +214,33 @@ export async function getNames(
 export async function runInContext(
   code: string,
   context: Context,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<IOptionsWithExecMethod> = {}
 ): Promise<Result> {
   const defaultFilePath = '/default.js'
-  const files: Partial<Record<string, string>> = {}
-  files[defaultFilePath] = code
+  const files: SourceFiles = {
+    [defaultFilePath]: code
+  }
   return runFilesInContext(files, defaultFilePath, context, options)
 }
 
 export async function runFilesInContext(
-  files: Partial<Record<string, string>>,
+  files: Record<string, string>,
   entrypointFilePath: string,
   context: Context,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<IOptionsWithExecMethod> = {}
 ): Promise<Result> {
-  for (const filePath in files) {
-    const filePathError = validateFilePath(filePath)
-    if (filePathError !== null) {
-      context.errors.push(filePathError)
-      return resolvedErrorPromise
-    }
-  }
-
-  const code = files[entrypointFilePath]
-  if (code === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+  try {
+    validateFilePaths(files)
+  } catch (filePathError) {
+    context.errors.push(filePathError)
     return resolvedErrorPromise
   }
 
-  if (
-    context.chapter === Chapter.FULL_JS ||
-    context.chapter === Chapter.FULL_TS ||
-    context.chapter === Chapter.PYTHON_1
-  ) {
-    const program = parse(code, context)
-    if (program === null) {
-      return resolvedErrorPromise
-    }
-    const fullImportOptions = {
-      loadTabs: true,
-      checkImports: false,
-      wrapSourceModules: false,
-      ...options.importOptions
-    }
-    return fullJSRunner(program, context, fullImportOptions)
+  if (!isAbsolutePath(entrypointFilePath)) {
+    throw new AbsoluteFilePathError(entrypointFilePath)
   }
 
-  if (context.chapter === Chapter.HTML) {
-    return htmlRunner(code, context, options)
-  }
-
-  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
-    // If the language is scheme, we need to format all errors and returned values first
-    // Use the standard runner to get the result
-    const evaluated: Promise<Result> = sourceFilesRunner(
-      files,
-      entrypointFilePath,
-      context,
-      options
-    ).then(result => {
-      // Format the returned value
-      if (result.status === 'finished') {
-        return {
-          ...result,
-          value: decodeValue(result.value)
-        } as Finished
-      }
-      return result
-    })
-    // Format all errors in the context
-    context.errors = context.errors.map(error => decodeError(error))
-    return evaluated
-  }
-
-  // FIXME: Clean up state management so that the `parseError` function is pure.
-  //        This is not a huge priority, but it would be good not to make use of
-  //        global state.
-  verboseErrors = hasVerboseErrors(code)
-  return sourceFilesRunner(files, entrypointFilePath, context, options)
+  return runFilesInSource(files, entrypointFilePath, context, options)
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
@@ -302,39 +265,50 @@ export function compile(
   code: string,
   context: Context,
   vmInternalFunctions?: string[]
-): SVMProgram | undefined {
+): Promise<SVMProgram | undefined> {
   const defaultFilePath = '/default.js'
-  const files: Partial<Record<string, string>> = {}
+  const files: Record<string, string> = {}
   files[defaultFilePath] = code
   return compileFiles(files, defaultFilePath, context, vmInternalFunctions)
 }
 
-export function compileFiles(
-  files: Partial<Record<string, string>>,
+export async function compileFiles(
+  files: Record<string, string>,
   entrypointFilePath: string,
   context: Context,
   vmInternalFunctions?: string[]
-): SVMProgram | undefined {
-  for (const filePath in files) {
-    const filePathError = validateFilePath(filePath)
-    if (filePathError !== null) {
-      context.errors.push(filePathError)
-      return undefined
-    }
+): Promise<SVMProgram | undefined> {
+  try {
+    validateFilePaths(files)
+  } catch (filePathError) {
+    context.errors.push(filePathError)
+    return undefined
   }
 
   const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
     return undefined
   }
 
-  const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
-  if (!preprocessedProgram) {
-    return undefined
+  if (!isAbsolutePath(entrypointFilePath)) {
+    throw new AbsoluteFilePathError(entrypointFilePath)
   }
+
+  const linkerResult = await parseProgramsAndConstructImportGraph(
+    p => Promise.resolve(files[p]),
+    entrypointFilePath,
+    context,
+    {},
+    Object.keys(files).length > 1
+  )
+
+  if (!linkerResult.ok) return undefined
 
   try {
+    const { programs, topoOrder } = linkerResult
+    const preprocessedProgram = defaultBundler(programs, entrypointFilePath, topoOrder, context)
+
     return compileToIns(preprocessedProgram, undefined, vmInternalFunctions)
   } catch (error) {
     context.errors.push(error)

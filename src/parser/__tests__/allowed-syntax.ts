@@ -2,6 +2,8 @@ import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { snapshotFailure, snapshotSuccess } from '../../utils/testing'
 
+jest.mock('../../modules/loader/loaders')
+
 test.each([
   [Chapter.SOURCE_1, ''],
 
@@ -294,7 +296,7 @@ test.each([
   [
     Chapter.LIBRARY_PARSER,
     `
-    import defaultExport from "module-name";
+    import defaultExport from "one_module";
     `
   ],
 
@@ -334,13 +336,14 @@ test.each([
     `,
     // Skip the success tests because the imported file does not exist.
     true
-  ]
+  ],
+  [Chapter.LIBRARY_PARSER, `import * as a from 'one_module';`, true]
 ] as [Chapter, string, boolean | undefined][])(
   'Syntaxes are allowed in the chapter they are introduced %#',
   (chapter: Chapter, snippet: string, skipSuccessTests: boolean = false) => {
     snippet = stripIndent(snippet)
     const parseSnippet = `parse(${JSON.stringify(snippet)});`
-    const tests = []
+    const tests: ReturnType<typeof snapshotSuccess>[] = []
     if (!skipSuccessTests) {
       tests.push(
         snapshotSuccess(snippet, { chapter, native: chapter !== Chapter.LIBRARY_PARSER }, 'passes')

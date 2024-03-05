@@ -3,7 +3,7 @@ import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../mocks/context'
 import { FatalSyntaxError } from '../../parser/errors'
 import { Chapter, Finished, Variant } from '../../types'
-import { locationDummyNode } from '../../utils/astCreator'
+import { locationDummyNode } from '../../utils/ast/astCreator'
 import { CodeSnippetTestCase } from '../../utils/testing'
 import { htmlErrorHandlingScript } from '../htmlRunner'
 

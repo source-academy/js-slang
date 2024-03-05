@@ -6,23 +6,20 @@
  */
 
 /* tslint:disable:max-classes-per-file */
-import * as es from 'estree'
-import { reverse, uniqueId } from 'lodash'
+import type es from 'estree'
+import { partition, reverse, uniqueId } from 'lodash'
 
-import { IOptions } from '..'
+import type { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { UndefinedImportError } from '../modules/errors'
-import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
-import { ImportTransformOptions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
 import { Context, ContiguousArrayElements, RawBlockStatement, Result, Value } from '../types'
-import assert from '../utils/assert'
-import { filterImportDeclarations } from '../utils/ast/helpers'
-import * as ast from '../utils/astCreator'
+import * as ast from '../utils/ast/astCreator'
+import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
+import { isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import {
@@ -162,7 +159,12 @@ export class Stash extends Stack<Value> {
  * @param context The context to evaluate the program in.
  * @returns The result of running the CSE machine.
  */
-export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
+export function evaluate(
+  program: es.Program,
+  context: Context,
+  options: IOptions,
+  isPrelude: boolean
+): Value {
   try {
     checkProgramForUndefinedVariables(program, context)
   } catch (error) {
@@ -180,7 +182,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
       context.runtime.stash,
       options.envSteps,
       options.stepLimit,
-      options.isPrelude
+      isPrelude
     )
   } catch (error) {
     return new CseError(error)
@@ -208,37 +210,26 @@ export function resumeEvaluate(context: Context) {
   }
 }
 
-function evaluateImports(
-  program: es.Program,
-  context: Context,
-  { loadTabs, checkImports }: ImportTransformOptions
-) {
-  try {
-    const [importNodeMap] = filterImportDeclarations(program)
+function evaluateImports(program: es.Program, context: Context) {
+  const [importNodes] = partition(program.body, isImportDeclaration)
+  const environment = currentEnvironment(context)
+  importNodes.forEach(node => {
+    if (!isImportDeclaration(node)) return
 
-    const environment = currentEnvironment(context)
-    Object.entries(importNodeMap).forEach(([moduleName, nodes]) => {
-      initModuleContext(moduleName, context, loadTabs)
-      const functions = loadModuleBundle(moduleName, context, nodes[0])
-      for (const node of nodes) {
-        for (const spec of node.specifiers) {
-          assert(
-            spec.type === 'ImportSpecifier',
-            `Only ImportSpecifiers are supported, got: ${spec.type}`
-          )
+    const source = getModuleDeclarationSource(node)
+    const bundle = context.nativeStorage.loadedModules[source]
 
-          if (checkImports && !(spec.imported.name in functions)) {
-            throw new UndefinedImportError(spec.imported.name, moduleName, spec)
-          }
-
-          declareIdentifier(context, spec.local.name, node, environment)
-          defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
-        }
-      }
+    node.specifiers.forEach(spec => {
+      declareIdentifier(context, spec.local.name, node, environment)
+      defineVariable(
+        context,
+        spec.local.name,
+        isNamespaceSpecifier(spec) ? bundle : bundle[getImportedName(spec)],
+        true,
+        node
+      )
     })
-  } catch (error) {
-    handleRuntimeError(context, error)
-  }
+  })
 }
 
 /**
@@ -359,11 +350,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (hasDeclarations(command) || hasImportDeclarations(command)) {
       const environment = createBlockEnvironment(context, 'programEnvironment')
       pushEnvironment(context, environment)
-      evaluateImports(command as unknown as es.Program, context, {
-        wrapSourceModules: true,
-        checkImports: true,
-        loadTabs: true
-      })
+      evaluateImports(command as unknown as es.Program, context)
       declareFunctionsAndVariables(context, command, environment)
     }
 
