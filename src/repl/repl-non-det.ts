@@ -4,9 +4,9 @@ import * as repl from 'repl' // 'repl' here refers to the module named 'repl' in
 import { inspect } from 'util'
 
 import {
-  type IOptionsWithExecMethod,
   createContext,
   IOptions,
+  type IOptionsWithExecMethod,
   parseError,
   Result,
   resume,

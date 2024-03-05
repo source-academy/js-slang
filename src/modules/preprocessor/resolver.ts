@@ -41,9 +41,6 @@ export type ResolverResult =
 /**
  * Gets the absolute path referred to by `toPath` relative to `fromModule`.
  *
- * @param getter Function that returns a `Promise<boolean>` indicating if the
- * file at the given path exists
- *
  */
 export default async function resolveFile(
   fromPath: string,
