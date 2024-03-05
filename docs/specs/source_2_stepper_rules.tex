@@ -42,7 +42,7 @@ to the node at which the replacement happens.
 \sEntry{Program-intro}{In a sequence of statements, we can always reduce the
     first one that isn't a value statement.}
 \gentzen{
-    \sVar{statement} \rightarrow \sVar{statement}'
+    \sVar{statement} \Rightarrow \sVar{statement}'
 }{
     [\sVar{value}\sKw{;}]\sKw{ }\sVar{statement}\ldots \Rightarrow
     [\sVar{value}\sKw{;}]\sKw{ }\sVar{statement}'\ldots
@@ -376,7 +376,7 @@ reducible if its body is reducible.
         return \sVar{return-expression}; 
         \sVar{statement}$\ldots$\}
     }
-    \rightarrow
+    \Rightarrow
     \sCode{
         \{return \sVar{return-expression}; \sVar{statement}$\ldots$\}
     }
@@ -402,7 +402,7 @@ reducible if its body is reducible.
 \gentzen{}{
     \sKw{\{} \sKw{return } \sVar{value} \sKw{; }
     \sVar{statement\ldots} \sKw{\}}
-    \rightarrow
+    \Rightarrow
     \sVar{value}
 }
 
@@ -746,11 +746,10 @@ x
 }
 \]
 
-\pagebreak
 \textbf{Function declaration}: All occurrences of $x$ in the body of a function are substituted with $e_x$ under given circumstances.
-\begin{enumerate}[label=\large\protect\textcircled{\small\arabic*}]
+\begin{enumerate}
     \item Function declaration where $x$ has the same name as a parameter.
-\end{enumerate}
+
     \[
     \frac{
       \exists \, i \in \{1, \cdots, n\} \text{ s.t. } x \ = \ x_i
@@ -760,13 +759,9 @@ x
       \textbf{\texttt{function}}\  \textit{name} \ \textbf{\texttt{(}}\ x_1 \ldots x_n \ \textbf{\texttt{)}}\ \textit{block}
     }
     \]
-\vspace{3mm}
-\begin{enumerate}[label=\large\protect\textcircled{\small\arabic*}, start=2]
     \item Function declaration where $x$ does not have the same name as a parameter.
-    \begin{enumerate}[label=(\,\roman*\,)]
+    \begin{enumerate}
         \item No parameter of the function occurs free in $e_x$.
-    \end{enumerate}
-\end{enumerate}
         \[
         \frac{
           \forall \, i \in \{1, \cdots, n\} \text{ s.t. } x \ \neq \ x_i \text{, } \ \forall \, j \in \{1, \cdots, n\} \text{ s.t. } x_j \text{ does not occur free in $e_x$}
@@ -774,13 +769,7 @@ x
           \substack{\substack{\displaystyle{(\textbf{\texttt{function}}\  \textit{name} \ \textbf{\texttt{(}}\ x_1 \ldots x_n \ \textbf{\texttt{)}}\ \textit{block})[x := e_x]} \vspace{1.5mm} \\ \vspace{0.5mm} \displaystyle{=}} \\  \displaystyle{ \textbf{\texttt{function}}\  \textit{name} \ \textbf{\texttt{(}}\ x_1 \ldots x_n \ \textbf{\texttt{)}}\ \textit{block}[x := e_x]}}
         }
         \]
-\vspace{3mm}
-\begin{enumerate}
-    \item[]
-    \begin{enumerate}[label=(\,\roman*\,), start=2]
         \item A parameter of the function occurs free in $e_x$.
-    \end{enumerate}
-\end{enumerate}
         \[
         \frac{
           \forall \, i \in \{1, \cdots, n\} \text{ s.t. } x \ \neq \ x_i \text{, } \ \exists \, j \in \{1, \cdots, n\} \text{ s.t. } x_j \text{ occurs free in $e_x$}
@@ -788,21 +777,14 @@ x
           \substack{\substack{\displaystyle{(\textbf{\texttt{function}}\  \textit{name} \ \textbf{\texttt{(}}\ x_1 \ldots x_j \ldots x_n \ \textbf{\texttt{)}}\ \textit{block})[x := e_x]} \vspace{1.5mm} \\ \vspace{0.5mm} \displaystyle{=}} \\  \displaystyle{(\textbf{\texttt{function}}\  \textit{name} \ \textbf{\texttt{(}}\ x_1 \ldots y \ldots x_n \ \textbf{\texttt{)}}\ \textit{block}[x_j := y])[x := e_x]}}
         }
         \]
-
-\begin{enumerate}
-    \item[]
-    \begin{enumerate}[label=\roman*., start=2]
-        \item[]
-        \vspace{3mm}
         Substitution is applied to the whole expression again as to recursively detect and rename all parameters of the function declaration that clash with variables that occur free in $e_x$, at which point (\,i\,) takes place. Note that the name $y$ is not declared in, nor occurs in \textit{block} and $e_x$.
     \end{enumerate}
-\end{enumerate}
+    \end{enumerate}
 
 \vspace{10mm}
 \textbf{Lambda expression}: All occurrences of $x$ in the body of a lambda expression are substituted with $e_x$ under given circumstances.
-\begin{enumerate}[label=\large\protect\textcircled{\small\arabic*}]
+\begin{enumerate}
     \item Lambda expression where $x$ has the same name as a parameter.
-\end{enumerate}
     \[
     \frac{
       \exists \, i \in \{1, \cdots, n\} \text{ s.t. } x \ = \ x_i
@@ -812,13 +794,9 @@ x
       \textbf{\texttt{(}}\ x_1 \ldots x_n \ \textbf{\texttt{)}}\ \textbf{\texttt{=>}}\ \textit{block}
     }
     \]
-\vspace{3mm}
-\begin{enumerate}[label=\large\protect\textcircled{\small\arabic*}, start=2]
     \item Lambda expression where $x$ does not have the same name as a parameter.
-    \begin{enumerate}[label=(\,\roman*\,)]
+    \begin{enumerate}
         \item No parameter of the lambda expression occurs free in $e_x$.
-    \end{enumerate}
-\end{enumerate}
         \[
         \frac{
           \forall \, i \in \{1, \cdots, n\} \text{ s.t. } x \ \neq \ x_i \text{, } \ \forall \, j \in \{1, \cdots, n\} \text{ s.t. } x_j \text{ does not occur free in $e_x$}
@@ -828,13 +806,7 @@ x
           \textbf{\texttt{(}}\ x_1 \ldots x_n \ \textbf{\texttt{)}}\ \textbf{\texttt{=>}}\ \textit{block}[x := e_x]
         }
         \]
-\vspace{3mm}
-\begin{enumerate}
-    \item[]
-    \begin{enumerate}[label=(\,\roman*\,), start=2]
         \item A parameter of the lambda expression occurs free in $e_x$.
-    \end{enumerate}
-\end{enumerate}
         \[
         \frac{
           \forall \, i \in \{1, \cdots, n\} \text{ s.t. } x \ \neq \ x_i \text{, } \ \exists \, j \in \{1, \cdots, n\} \text{ s.t. } x_j \text{ occurs free in $e_x$}
@@ -844,20 +816,14 @@ x
           (\textbf{\texttt{(}}\ x_1 \ldots y \ldots x_n \ \textbf{\texttt{)}}\ \textbf{\texttt{=>}}\ \textit{block}[x_j := y])[x := e_x]
         }
         \]
-\begin{enumerate}
-    \item[]
-    \begin{enumerate}[label=\roman*., start=2]
-        \item[]
-        \vspace{3mm}
         Substitution is applied to the whole expression again as to recursively detect and rename all parameters of the lambda expression that clash with variables that occur free in $e_x$, at which point (\,i\,) takes place. Note that the name $y$ is not declared in, nor occurs in \textit{block} and $e_x$.
-    \end{enumerate}
-\end{enumerate}
+        \end{enumerate}
+        \end{enumerate}
 
 \pagebreak
 \textbf{Block expression}: All occurrences of $x$ in the statements of a block expression are substituted with $e_x$ under given circumstances.
-\begin{enumerate}[label=\large\protect\textcircled{\small\arabic*}]
+\begin{enumerate}
     \item Block expression in which $x$ is declared.
-\end{enumerate}
     \[
     \frac{
       x \text{ is declared in \textit{block}}
@@ -867,13 +833,9 @@ x
       \textit{block}
     }
     \]
-\vspace{3mm}
-\begin{enumerate}[label=\large\protect\textcircled{\small\arabic*}, start=2]
     \item Block expression in which $x$ is not declared.
-    \begin{enumerate}[label=(\,\roman*\,)]
+    \begin{enumerate}
         \item No names declared in the block occurs free in $e_x$.
-    \end{enumerate}
-\end{enumerate}
         \[
         \frac{
            x \text{ is not declared in \textit{block}}\text{, } \ \textit{name} \text{ declared in \textit{block} does not occur free in } e_x
@@ -883,13 +845,7 @@ x
           [\textit{block}[0][x := e_x] \text{, } \ldots \text{, } \textit{block}[n][x := e_x]]
         }
         \]
-\vspace{3mm}
-\begin{enumerate}
-    \item[]
-    \begin{enumerate}[label=(\,\roman*\,), start=2]
         \item A name declared in the block occurs free in $e_x$.
-    \end{enumerate}
-\end{enumerate}
         \[
         \frac{
           x \text{ is not declared in \textit{block}}\text{, } \ \textit{name} \text{ declared in \textit{block} occurs free in } e_x
@@ -899,14 +855,9 @@ x
           [\textit{block}[0][\textit{name} := y] \text{, } \ldots \text{, } \textit{block}[n][\textit{name} := y]][x := e_x]
         }
         \]
-\begin{enumerate}
-    \item[]
-    \begin{enumerate}[label=\roman*., start=2]
-        \item[]
-        \vspace{3mm}
         Substitution is applied to the whole expression again as to recursively detect and rename all declared names of the block expression that clash with variables that occur free in $e_x$, at which point (\,i\,) takes place. Note that the name $y$ is not declared in, nor occurs in \textit{block} and $e_x$.
-    \end{enumerate}
-\end{enumerate}
+        \end{enumerate}
+        \end{enumerate}
 
 \vspace{10mm}
 \textbf{Variable declaration}: All occurrences of $x$ in the declarators of a variable declaration are substituted with $e_x$.
