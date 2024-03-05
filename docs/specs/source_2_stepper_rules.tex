@@ -42,7 +42,7 @@ to the node at which the replacement happens.
 \sEntry{Program-intro}{In a sequence of statements, we can always reduce the
     first one that isn't a value statement.}
 \gentzen{
-    \sVar{statement} \rightarrow \sVar{statement}'
+    \sVar{statement} \Rightarrow \sVar{statement}'
 }{
     [\sVar{value}\sKw{;}]\sKw{ }\sVar{statement}\ldots \Rightarrow
     [\sVar{value}\sKw{;}]\sKw{ }\sVar{statement}'\ldots
@@ -376,7 +376,7 @@ reducible if its body is reducible.
         return \sVar{return-expression}; 
         \sVar{statement}$\ldots$\}
     }
-    \rightarrow
+    \Rightarrow
     \sCode{
         \{return \sVar{return-expression}; \sVar{statement}$\ldots$\}
     }
@@ -402,7 +402,7 @@ reducible if its body is reducible.
 \gentzen{}{
     \sKw{\{} \sKw{return } \sVar{value} \sKw{; }
     \sVar{statement\ldots} \sKw{\}}
-    \rightarrow
+    \Rightarrow
     \sVar{value}
 }
 
