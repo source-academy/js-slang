@@ -13,7 +13,7 @@ jobs:
         run: |
           sudo apt-get update && \
           sudo apt-get install -y --no-install-recommends \
-          texlive texlive-fonts-extra texlive-lang-cjk latexmk \
+          texlive texlive-fonts-extra texlive-lang-cjk latexmk latex-cjk-all \
           libxi-dev libgl1-mesa-dev
       - name: Use Node.js
         uses: actions/setup-node@v4
