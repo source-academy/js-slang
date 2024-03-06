@@ -1,7 +1,19 @@
 import { Node, Program } from 'estree'
 
 import { decode, encode, schemeParse } from '../../scm-slang/src'
-import { Pair } from '../../scm-slang/src/stdlib/source-scheme-library'
+import {
+  car,
+  cdr,
+  circular$45$list$63$,
+  cons,
+  last$45$pair,
+  list$45$tail,
+  pair$63$,
+  procedure$63$,
+  set$45$cdr$33$,
+  vector$63$
+} from '../../scm-slang/src/stdlib/base'
+import { List, Pair } from '../../stdlib/list'
 import { Chapter, Context, ErrorType, SourceError } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
@@ -81,14 +93,49 @@ function decodeString(str: string): string {
 // Given any value, decode it if and
 // only if an encoded value may exist in it.
 export function decodeValue(x: any): any {
+  // helper version of list_tail that ensures non-null return value
+  function list_tail(xs: List, i: number): List {
+    if (i === 0) {
+      return xs
+    } else {
+      return list_tail(list$45$tail(xs), i - 1)
+    }
+  }
   // In future: add support for decoding vectors.
-  if (x instanceof Pair) {
+  if (circular$45$list$63$(x)) {
+    // May contain encoded strings, but we want to avoid a stack overflow.
+    let circular_pair_index = -1
+    const all_pairs: Pair<any, any>[] = []
+
+    // iterate through all pairs in the list until we find the circular pair
+    let current = x
+    while (current !== null) {
+      if (all_pairs.includes(current)) {
+        circular_pair_index = all_pairs.indexOf(current)
+        break
+      }
+      all_pairs.push(current)
+      current = cdr(current)
+    }
+
+    // assemble a new list using the elements in all_pairs
+    let new_list = null
+    for (let i = all_pairs.length - 1; i >= 0; i--) {
+      new_list = cons(decodeValue(car(all_pairs[i])), new_list)
+    }
+
+    // finally we can set the last cdr of the new list to the circular-pair itself
+
+    const circular_pair = list_tail(new_list, circular_pair_index)
+    set$45$cdr$33$(last$45$pair(new_list), circular_pair)
+    return new_list
+  } else if (pair$63$(x)) {
     // May contain encoded strings.
-    return new Pair(decodeValue(x.car), decodeValue(x.cdr))
-  } else if (x instanceof Array) {
+    return cons(decodeValue(car(x)), decodeValue(cdr(x)))
+  } else if (vector$63$(x)) {
     // May contain encoded strings.
     return x.map(decodeValue)
-  } else if (x instanceof Function) {
+  } else if (procedure$63$(x)) {
     const newString = decodeString(x.toString())
     x.toString = () => newString
     return x
