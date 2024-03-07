@@ -11,7 +11,10 @@ Object {
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
-  "result": 10,
+  "result": SchemeInteger {
+    "numberType": 1,
+    "value": 10n,
+  },
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }
@@ -54,7 +57,10 @@ Object {
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
-  "result": 2,
+  "result": SchemeInteger {
+    "numberType": 1,
+    "value": 2n,
+  },
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

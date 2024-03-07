@@ -367,6 +367,39 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       declareFunctionsAndVariables(context, command, environment)
     }
 
+    // A strange bug occurs here when successive REPL commands are run, as they
+    // are each evaluated as separate programs. This causes the environment to be
+    // pushed multiple times.
+
+    // As such, we need to "append" the tail environment to the current environment
+    // if and only if the tail environment is a previous program environment.
+
+    const currEnv = currentEnvironment(context)
+    if (currEnv && currEnv.tail && currEnv.tail.name === 'programEnvironment') {
+      console.log(currEnv.head)
+      // we need to take that tail environment and append its items to the current environment
+      const oldEnv = currEnv.tail
+
+      console.log(oldEnv.head)
+      // separate the tail environment from the environments list
+      currEnv.tail = oldEnv.tail
+
+      // we will recycle the old environment's item list
+      // add the items from the current environment to the tail environment
+      // this is fine, especially as the older program will never
+      // need to use the old environment's items again
+      for (const key in currEnv.head) {
+        oldEnv.head[key] = currEnv.head[key]
+      }
+
+      // set the current environment to the old one
+      // this will work across successive programs as well
+
+      // this will also allow continuations to read newer program
+      // values from their "outdated" program environment
+      currEnv.head = oldEnv.head
+    }
+
     if (command.body.length == 1) {
       // If program only consists of one statement, evaluate it immediately
       const next = command.body[0]
@@ -1119,7 +1152,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Push the expression given to the continuation onto the stash
     stash.push(expression)
 
-    // Restore the environment pointer to that of the continuation
+    // Restore the environment pointer to that of the continuation's environment
     context.runtime.environments = contEnv
   }
 }

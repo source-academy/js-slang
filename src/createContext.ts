@@ -599,11 +599,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, '$47$(...vals)', scheme_libs.$47$, 1)
 
         // Scheme comparison
-        defineBuiltin(context, '$61$(...vals)', scheme_libs.$61$, 1)
-        defineBuiltin(context, '$60$(...vals)', scheme_libs.$60$, 1)
-        defineBuiltin(context, '$62$(...vals)', scheme_libs.$62$, 1)
-        defineBuiltin(context, '$60$$61$(...vals)', scheme_libs.$60$$61$, 1)
-        defineBuiltin(context, '$62$$61$(...vals)', scheme_libs.$62$$61$, 1)
+        defineBuiltin(context, '$61$(...vals)', scheme_libs.$61$, 2)
+        defineBuiltin(context, '$60$(...vals)', scheme_libs.$60$, 2)
+        defineBuiltin(context, '$62$(...vals)', scheme_libs.$62$, 2)
+        defineBuiltin(context, '$60$$61$(...vals)', scheme_libs.$60$$61$, 2)
+        defineBuiltin(context, '$62$$61$(...vals)', scheme_libs.$62$$61$, 2)
 
         // Scheme math functions
         defineBuiltin(context, 'number$63$(val)', scheme_libs.number$63$)
