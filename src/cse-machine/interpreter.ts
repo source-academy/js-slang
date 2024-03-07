@@ -393,8 +393,15 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
     // Normal block statement: do environment setup
     // To restore environment after block ends
-    // Push ENVIRONMENT instruction
-    control.push(instr.envInstr(currentEnvironment(context), command))
+    // If there is an env instruction on top of the stack, or if there are no declarations
+    // we do not need to push another one
+    // The no declarations case is handled by Control :: simplifyBlocksWithoutDeclarations, so no blockStatement node
+    // without declarations should end up here.
+    const next = control.peek()
+    // Push ENVIRONMENT instruction if needed
+    if (!next || !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+      control.push(instr.envInstr(currentEnvironment(context), command))
+    }
 
     const environment = createBlockEnvironment(context, 'blockEnvironment')
     declareFunctionsAndVariables(context, command, environment)
@@ -906,9 +913,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         })
       }
 
-      // Push ENVIRONMENT instruction regardless of whether the function is simple or
-      // a builtin.
-      control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
+      const next = control.peek()
+
+      // Push ENVIRONMENT instruction if needed - if next instruction
+      // is empty or not an environment instruction
+      if (
+        !next ||
+        (!(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && !control.isEmpty())
+      ) {
+        control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
+      }
 
       // Create environment for function parameters if the function isn't nullary.
       // Name the environment if the function call expression is not anonymous
