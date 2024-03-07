@@ -375,12 +375,15 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // if and only if the tail environment is a previous program environment.
 
     const currEnv = currentEnvironment(context)
-    if (currEnv && currEnv.tail && currEnv.tail.name === 'programEnvironment') {
-      console.log(currEnv.head)
+    if (
+      currEnv &&
+      currEnv.name === 'programEnvironment' &&
+      currEnv.tail &&
+      currEnv.tail.name === 'programEnvironment'
+    ) {
       // we need to take that tail environment and append its items to the current environment
       const oldEnv = currEnv.tail
 
-      console.log(oldEnv.head)
       // separate the tail environment from the environments list
       currEnv.tail = oldEnv.tail
 
