@@ -25,6 +25,7 @@ import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import * as seq from '../utils/statementSeqTransform'
 import {
   Continuation,
   getContinuationControl,
@@ -166,6 +167,8 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     context.errors.push(error)
     return new CseError(error)
   }
+
+  seq.transform(program)
 
   try {
     context.runtime.isRunning = true
@@ -935,7 +938,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Value is a function
     // Check for number of arguments mismatch error
     checkNumberOfArguments(context, func, args, command.srcNode)
-    // Directly stash result of applying pre-built functions without the ASE machine.
+    // Directly stash result of applying pre-built functions without the CSE machine.
     try {
       const result = func(...args)
       stash.push(result)
