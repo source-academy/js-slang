@@ -29,9 +29,9 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
     (node: es.BlockStatement) => {
       node.body.map((x: Node) => transform(x))
       if (hasDeclarations(node)) {
-        return ast.statementSequence(node.body, node.loc)
-      } else {
         return node
+      } else {
+        return ast.statementSequence(node.body, node.loc)
       }
     }
   ],
