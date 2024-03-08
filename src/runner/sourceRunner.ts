@@ -289,7 +289,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'FunctionDeclaration',
     (node: es.FunctionDeclaration) => {
-      node.params.map((x: Node) => transform(node))
+      node.params.map((x: Node) => transform(x))
       node.body = transform(node.body)
       if (node.id) {
         node.id = transform(node.id)
@@ -312,7 +312,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'VariableDeclaration',
     (node: es.VariableDeclaration) => {
-      node.declarations.map((x: Node) => transform(node))
+      node.declarations.map((x: Node) => transform(x))
       return node
     }
   ],
