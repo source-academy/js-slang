@@ -1,4 +1,5 @@
-import { Node, SourceLocation } from 'estree'
+import { SourceLocation } from 'estree'
+import { Node } from '../types'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import { ErrorSeverity, ErrorType, SourceError } from '../types'

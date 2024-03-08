@@ -111,13 +111,15 @@ export class Control extends Stack<ControlItem> {
    * If not, the block is converted to a StatementSequence.
    * @param items The items being pushed on the control.
    * @returns The same set of control items, but with block statements without declarations converted to StatementSequences.
-   * NOTE: this function should ideally never be called, since simplification is done at the parse stage
+   * NOTE: this function should ideally never be called, since simplification is done at the transform stage
    */
   private static simplifyBlocksWithoutDeclarations(...items: ControlItem[]): ControlItem[] {
     const itemsNew: ControlItem[] = []
     items.forEach(item => {
       if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
-        itemsNew.push(...Control.simplifyBlocksWithoutDeclarations(...handleSequence(item.body)))
+        // Push block body as statement sequence
+        const seq: StatementSequence = ast.statementSequence(item.body, item.loc)
+        itemsNew.push(seq)
       } else {
         itemsNew.push(item)
       }
@@ -377,8 +379,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // To restore environment after block ends
     // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next control item
     // we do not need to push another one
-    // The no declarations case is handled by Control :: simplifyBlocksWithoutDeclarations, so no blockStatement node
-    // without declarations should end up here.
+    // The no declarations case is handled at the transform stage, so no blockStatement node without declarations should end up here.
     const next = control.peek()
     // Push ENVIRONMENT instruction if needed
     if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
