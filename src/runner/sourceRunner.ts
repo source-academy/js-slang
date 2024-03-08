@@ -659,7 +659,6 @@ export async function sourceRunner(
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
-  const transformedProgram = transform(program)
 
   if (context.variant === Variant.CONCURRENT) {
     return runConcurrent(program, context, theOptions)
@@ -690,18 +689,20 @@ export async function sourceRunner(
 
   // testing AST transform with CSE machine first
   if (context.variant === Variant.EXPLICIT_CONTROL) {
-    return runCSEMachine(transformedProgram, context, theOptions)
+    transform(program)
+    return runCSEMachine(program, context, theOptions)
   }
 
   if (context.executionMethod === 'cse-machine') {
+    transform(program)
     if (options.isPrelude) {
       return runCSEMachine(
-        transformedProgram,
+        program,
         { ...context, runtime: { ...context.runtime, debuggerOn: false } },
         theOptions
       )
     }
-    return runCSEMachine(transformedProgram, context, theOptions)
+    return runCSEMachine(program, context, theOptions)
   }
 
   if (context.executionMethod === 'native') {
