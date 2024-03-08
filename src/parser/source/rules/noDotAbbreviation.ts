@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Rule, Node, SourceError } from '../../../types'
+import { Chapter, ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 export class NoDotAbbreviationError implements SourceError {
   public type = ErrorType.SYNTAX

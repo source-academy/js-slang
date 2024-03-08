@@ -1,4 +1,5 @@
 import type * as es from 'estree'
+
 import { Node } from '../../types'
 
 export const isImportDeclaration = (node: es.Program['body'][0]): node is es.ImportDeclaration =>

@@ -1,5 +1,6 @@
 import * as es from 'estree'
-import { StatementSequence, Node } from '../types'
+
+import { Node, StatementSequence } from '../types'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 
 export const getVariableDecarationName = (decl: es.VariableDeclaration) =>

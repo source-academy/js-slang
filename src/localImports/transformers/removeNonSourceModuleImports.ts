@@ -1,9 +1,9 @@
 import es from 'estree'
 
+import { Node } from '../../types'
 import assert from '../../utils/assert'
 import { ancestor } from '../../utils/walkers'
 import { isFilePath } from '../filePaths'
-import { Node } from '../../types'
 
 /**
  * Returns whether a module name refers to a Source module.

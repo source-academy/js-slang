@@ -1,6 +1,7 @@
 import type * as es from 'estree'
-import { Node } from '../types'
+
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { Node } from '../types'
 
 export class UndefinedImportError extends RuntimeSourceError {
   constructor(

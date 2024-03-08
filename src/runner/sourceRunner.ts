@@ -29,6 +29,7 @@ import {
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
 import { Context, Node, RecursivePartial, Scheduler, StatementSequence, Variant } from '../types'
+import * as ast from '../utils/astCreator'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
@@ -37,7 +38,6 @@ import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { determineVariant, resolvedErrorPromise } from './utils'
-import * as ast from '../utils/astCreator'
 
 const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   scheduler: 'async',
@@ -233,15 +233,15 @@ function hasDeclarations(node: es.BlockStatement): boolean {
   return false
 }
 
-type NodeTransformer = (node : Node) => Node
+type NodeTransformer = (node: Node) => Node
 
-type ASTTransformers = Map<string,  NodeTransformer>
+type ASTTransformers = Map<string, NodeTransformer>
 
 const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'Program',
     (node: es.Program) => {
-      node.body.map((x) => transform(x))
+      node.body.map(x => transform(x))
       return node
     }
   ],
@@ -249,11 +249,10 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'BlockStatement',
     (node: es.BlockStatement) => {
-      node.body.map((x : Node) => transform(x))
+      node.body.map((x: Node) => transform(x))
       if (hasDeclarations(node)) {
         return ast.statementSequence(node.body, node.loc)
-      } 
-      else { 
+      } else {
         return node
       }
     }
@@ -262,7 +261,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'StatementSequence',
     (node: StatementSequence) => {
-      node.body.map((x : Node) => transform(x))
+      node.body.map((x: Node) => transform(x))
       return node
     }
   ],
@@ -290,7 +289,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'FunctionDeclaration',
     (node: es.FunctionDeclaration) => {
-      node.params.map((x : Node) => transform(node))
+      node.params.map((x: Node) => transform(node))
       node.body = transform(node.body)
       if (node.id) {
         node.id = transform(node.id)
@@ -298,7 +297,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
       return node
     }
   ],
-  
+
   [
     'VariableDeclarator',
     (node: es.VariableDeclarator) => {
@@ -313,7 +312,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'VariableDeclaration',
     (node: es.VariableDeclaration) => {
-      node.declarations.map((x : Node) => transform(node))
+      node.declarations.map((x: Node) => transform(node))
       return node
     }
   ],
@@ -332,7 +331,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
     'CallExpression',
     (node: es.SimpleCallExpression) => {
       node.callee = transform(node.callee)
-      node.arguments.map((x : Node) => transform(x))
+      node.arguments.map((x: Node) => transform(x))
       return node
     }
   ],
@@ -376,7 +375,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'ArrowFunctionExpression',
     (node: es.ArrowFunctionExpression) => {
-      node.params.map((x : Node) => transform(x))
+      node.params.map((x: Node) => transform(x))
       node.body = transform(node.body)
       return node
     }
@@ -399,7 +398,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'ArrayExpression',
     (node: es.ArrayExpression) => {
-      node.elements.map((x : Node | null) => (x) ? transform(x) : null)
+      node.elements.map((x: Node | null) => (x ? transform(x) : null))
       return node
     }
   ],
@@ -462,7 +461,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'ObjectExpression',
     (node: es.ObjectExpression) => {
-      node.properties.map((x : Node) => transform(x))
+      node.properties.map((x: Node) => transform(x))
       return node
     }
   ],
@@ -488,7 +487,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'ImportDeclaration',
     (node: es.ImportDeclaration) => {
-      node.specifiers.map((x : Node) => transform(x))
+      node.specifiers.map((x: Node) => transform(x))
       node.source = transform(node.source)
       return node
     }
@@ -517,7 +516,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
       if (node.declaration) {
         node.declaration = transform(node.declaration)
       }
-      node.specifiers.map((x : Node) => transform(x))
+      node.specifiers.map((x: Node) => transform(x))
       if (node.source) {
         transform(node.source)
       }
@@ -559,7 +558,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'NewExpression',
     (node: es.NewExpression) => {
-      node.arguments.map((x : Node) => transform(x))
+      node.arguments.map((x: Node) => transform(x))
       return node
     }
   ],
@@ -579,7 +578,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
       if (node.id) {
         node.id = transform(node.id)
       }
-      node.params.map((x : Node) => transform(x))
+      node.params.map((x: Node) => transform(x))
       node.body = transform(node.body)
       return node
     }
@@ -635,7 +634,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   ]
 ])
 
-function transform<NodeType extends Node>(node: NodeType) : NodeType {
+function transform<NodeType extends Node>(node: NodeType): NodeType {
   if (transformers.has(node.type)) {
     const transformer = transformers.get(node.type) as (n: NodeType) => NodeType
     const transformed = transformer(node)

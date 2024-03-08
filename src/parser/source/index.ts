@@ -77,11 +77,7 @@ export class SourceParser implements Parser<AcornOptions> {
       .map(rule => Object.entries(rule.checkers))
       .flat()
       .forEach(([syntaxNodeName, checker]) => {
-        const langWalker: AncestorWalkerFn<any> = (
-          node: Node,
-          _state: any,
-          ancestors: Node[]
-        ) => {
+        const langWalker: AncestorWalkerFn<any> = (node: Node, _state: any, ancestors: Node[]) => {
           const errors: SourceError[] = checker(node, ancestors)
 
           if (throwOnError && errors.length > 0) throw errors[0]

@@ -1,6 +1,6 @@
 /* tslint:disable: max-classes-per-file */
-import { RuntimeSourceError } from './runtimeSourceError'
 import { Node } from '../types'
+import { RuntimeSourceError } from './runtimeSourceError'
 
 export class ModuleConnectionError extends RuntimeSourceError {
   private static message: string = `Unable to get modules.`

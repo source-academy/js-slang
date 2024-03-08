@@ -1,8 +1,8 @@
 import es from 'estree'
 
+import { Node } from '../../types'
 import { isDeclaration } from '../../utils/ast/typeGuards'
 import { ancestor } from '../../utils/walkers'
-import { Node } from '../../types'
 
 /**
  * Removes all export-related nodes from the AST.

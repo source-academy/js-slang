@@ -293,7 +293,7 @@ export interface Scheduler {
 /**
  * StatementSequence : A sequence of statements not surrounded by braces.
  * It is *not* a block, and thus does not trigger environment creation when evaluated.
- * 
+ *
  * The current ESTree specification does not have this node type, so we define it here.
  */
 export interface StatementSequence extends es.BaseStatement {

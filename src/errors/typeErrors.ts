@@ -4,9 +4,9 @@ import * as es from 'estree'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as tsEs from '../typeChecker/tsESTree'
 import { ErrorSeverity, ErrorType, NodeWithInferredType, SArray, SourceError, Type } from '../types'
+import { Node } from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
-import { Node } from '../types'
 
 // tslint:disable:max-classes-per-file
 

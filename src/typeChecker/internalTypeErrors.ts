@@ -1,7 +1,7 @@
 import { UNKNOWN_LOCATION } from '../constants'
 import { ErrorSeverity, ErrorType, NodeWithInferredType, SourceError, Type } from '../types'
-import { typeToString } from '../utils/stringify'
 import { Node } from '../types'
+import { typeToString } from '../utils/stringify'
 import * as tsEs from './tsESTree'
 
 // tslint:disable:max-classes-per-file

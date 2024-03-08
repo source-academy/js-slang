@@ -2,9 +2,9 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { transformImportDeclarations } from '../transpiler/transpiler'
+import { Node } from '../types'
 import * as create from '../utils/astCreator'
 import { recursive, simple, WalkerCallback } from '../utils/walkers'
-import { Node } from '../types'
 // transforms AST of program
 
 const globalIds = {
