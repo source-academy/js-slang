@@ -1,4 +1,5 @@
 import * as astring from 'astring'
+
 import { Node } from '../types'
 
 function reindent(state: any, text: any, indent: any, lineEnd: any) {
