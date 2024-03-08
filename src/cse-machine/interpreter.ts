@@ -167,7 +167,6 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     context.errors.push(error)
     return new CseError(error)
   }
-
   seq.transform(program)
 
   try {

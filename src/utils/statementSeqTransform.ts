@@ -19,7 +19,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'Program',
     (node: es.Program) => {
-      node.body.map(x => transform(x))
+      node.body = node.body.map(x => transform(x))
       return node
     }
   ],
@@ -27,7 +27,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'BlockStatement',
     (node: es.BlockStatement) => {
-      node.body.map((x: Node) => transform(x))
+      node.body = node.body.map(x => transform(x))
       if (hasDeclarations(node)) {
         return node
       } else {
@@ -39,7 +39,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'StatementSequence',
     (node: StatementSequence) => {
-      node.body.map((x: Node) => transform(x))
+      node.body = node.body.map(x => transform(x))
       return node
     }
   ],
@@ -67,7 +67,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'FunctionDeclaration',
     (node: es.FunctionDeclaration) => {
-      node.params.map((x: Node) => transform(x))
+      node.params = node.params.map(x => transform(x))
       node.body = transform(node.body)
       if (node.id) {
         node.id = transform(node.id)
@@ -90,7 +90,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'VariableDeclaration',
     (node: es.VariableDeclaration) => {
-      node.declarations.map((x: Node) => transform(x))
+      node.declarations = node.declarations.map(x => transform(x))
       return node
     }
   ],
@@ -109,7 +109,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
     'CallExpression',
     (node: es.SimpleCallExpression) => {
       node.callee = transform(node.callee)
-      node.arguments.map((x: Node) => transform(x))
+      node.arguments = node.arguments.map(x => transform(x))
       return node
     }
   ],
@@ -153,7 +153,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'ArrowFunctionExpression',
     (node: es.ArrowFunctionExpression) => {
-      node.params.map((x: Node) => transform(x))
+      node.params = node.params.map(x => transform(x))
       node.body = transform(node.body)
       return node
     }
@@ -176,7 +176,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'ArrayExpression',
     (node: es.ArrayExpression) => {
-      node.elements.map((x: Node | null) => (x ? transform(x) : null))
+      node.elements = node.elements.map(x => (x ? transform(x) : null))
       return node
     }
   ],
@@ -239,7 +239,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'ObjectExpression',
     (node: es.ObjectExpression) => {
-      node.properties.map((x: Node) => transform(x))
+      node.properties = node.properties.map(x => transform(x))
       return node
     }
   ],
@@ -265,7 +265,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'ImportDeclaration',
     (node: es.ImportDeclaration) => {
-      node.specifiers.map((x: Node) => transform(x))
+      node.specifiers = node.specifiers.map(x => transform(x))
       node.source = transform(node.source)
       return node
     }
@@ -294,7 +294,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
       if (node.declaration) {
         node.declaration = transform(node.declaration)
       }
-      node.specifiers.map((x: Node) => transform(x))
+      node.specifiers = node.specifiers.map(x => transform(x))
       if (node.source) {
         transform(node.source)
       }
@@ -336,7 +336,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'NewExpression',
     (node: es.NewExpression) => {
-      node.arguments.map((x: Node) => transform(x))
+      node.arguments = node.arguments.map(x => transform(x))
       return node
     }
   ],
@@ -356,7 +356,7 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
       if (node.id) {
         node.id = transform(node.id)
       }
-      node.params.map((x: Node) => transform(x))
+      node.params = node.params.map(x => transform(x))
       node.body = transform(node.body)
       return node
     }

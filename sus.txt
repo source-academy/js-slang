@@ -1,0 +1,5027 @@
+
+{
+  type: 'Program',
+  start: 0,
+  end: 247,
+  loc: SourceLocation {
+    start: Position { line: 1, column: 0 },
+    end: Position { line: 15, column: 2 }
+  },
+  body: [
+    Node {
+      type: 'FunctionDeclaration',
+      start: 5,
+      end: 81,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 86,
+      end: 124,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [Array],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    }
+  ],
+  sourceType: 'module'
+}
+Control {
+  storage: [
+    {
+      type: 'Program',
+      start: 0,
+      end: 247,
+      loc: [SourceLocation],
+      body: [Array],
+      sourceType: 'module'
+    }
+  ]
+}
+Stash { storage: [] }
+{
+  tail: null,
+  name: 'global',
+  head: {
+    get_time: [Function: get_time] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    display: [Function: display] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: 1
+    },
+    raw_display: [Function: rawDisplay] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: 1
+    },
+    stringify: [Function: stringify] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: 1
+    },
+    error: [Function: error_message] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: 1
+    },
+    prompt: [Function: prompt] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    is_number: [Function: is_number] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    is_string: [Function: is_string] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    is_function: [Function: is_function] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    is_boolean: [Function: is_boolean] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    is_undefined: [Function: is_undefined] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    parse_int: [Function: parse_int] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    char_at: [Function: char_at] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    arity: [Function: arity] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    undefined: undefined,
+    NaN: NaN,
+    Infinity: Infinity,
+    math_abs: [Function: abs] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_acos: [Function: acos] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_acosh: [Function: acosh] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_asin: [Function: asin] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_asinh: [Function: asinh] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_atan: [Function: atan] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_atanh: [Function: atanh] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_atan2: [Function: atan2] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_ceil: [Function: ceil] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_cbrt: [Function: cbrt] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_expm1: [Function: expm1] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_clz32: [Function: clz32] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_cos: [Function: cos] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_cosh: [Function: cosh] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_exp: [Function: exp] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_floor: [Function: floor] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_fround: [Function: fround] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_hypot: [Function: hypot] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_imul: [Function: imul] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_log: [Function: log] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_log1p: [Function: log1p] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_log2: [Function: log2] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_log10: [Function: log10] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_max: [Function: max] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: 0
+    },
+    math_min: [Function: min] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: 0
+    },
+    math_pow: [Function: pow] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_random: [Function: random] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_round: [Function: round] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_sign: [Function: sign] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_sin: [Function: sin] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_sinh: [Function: sinh] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_sqrt: [Function: sqrt] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_tan: [Function: tan] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_tanh: [Function: tanh] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_trunc: [Function: trunc] {
+      toString: [Function (anonymous)],
+      minArgsNeeded: undefined
+    },
+    math_E: 2.718281828459045,
+    math_LN10: 2.302585092994046,
+    math_LN2: 0.6931471805599453,
+    math_LOG10E: 0.4342944819032518,
+    math_LOG2E: 1.4426950408889634,
+    math_PI: 3.141592653589793,
+    math_SQRT1_2: 0.7071067811865476,
+    math_SQRT2: 1.4142135623730951
+  },
+  id: '-1'
+}
+{
+  type: 'StatementSequence',
+  body: [
+    Node {
+      type: 'FunctionDeclaration',
+      start: 5,
+      end: 81,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 86,
+      end: 124,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [Array],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    }
+  ],
+  loc: SourceLocation {
+    start: Position { line: 1, column: 0 },
+    end: Position { line: 15, column: 2 }
+  }
+}
+Control {
+  storage: [
+    { type: 'StatementSequence', body: [Array], loc: [SourceLocation] }
+  ]
+}
+Stash { storage: [] }
+{
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: Symbol(const declaration),
+    id: Symbol(const declaration),
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+Node {
+  type: 'FunctionDeclaration',
+  start: 5,
+  end: 81,
+  loc: SourceLocation {
+    start: Position { line: 2, column: 4 },
+    end: Position { line: 4, column: 5 }
+  },
+  id: Node {
+    type: 'Identifier',
+    start: 14,
+    end: 25,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    name: 'unreachable'
+  },
+  expression: false,
+  generator: false,
+  params: [],
+  body: {
+    type: 'StatementSequence',
+    body: [ [Node] ],
+    loc: SourceLocation { start: [Position], end: [Position] }
+  },
+  typability: 'NotYetTyped'
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 86,
+      end: 124,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [Array],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 5,
+      end: 81,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    }
+  ]
+}
+Stash { storage: [] }
+{
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: Symbol(const declaration),
+    id: Symbol(const declaration),
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  type: 'VariableDeclaration',
+  declarations: [ { type: 'VariableDeclarator', id: [Object], init: [Object] } ],
+  kind: 'const',
+  loc: SourceLocation {
+    start: Position { line: 2, column: 4 },
+    end: Position { line: 4, column: 5 }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 86,
+      end: 124,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [Array],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    {
+      type: 'VariableDeclaration',
+      declarations: [Array],
+      kind: 'const',
+      loc: [SourceLocation]
+    }
+  ]
+}
+Stash { storage: [] }
+{
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: Symbol(const declaration),
+    id: Symbol(const declaration),
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  type: 'ArrowFunctionExpression',
+  expression: false,
+  generator: false,
+  params: [],
+  body: {
+    type: 'StatementSequence',
+    body: [ [Node] ],
+    loc: SourceLocation { start: [Position], end: [Position] }
+  },
+  loc: SourceLocation {
+    start: Position { line: 2, column: 4 },
+    end: Position { line: 4, column: 5 }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 86,
+      end: 124,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [Array],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    { instrType: 'Pop', srcNode: [Object] },
+    {
+      instrType: 'Assignment',
+      symbol: 'unreachable',
+      constant: true,
+      declaration: true,
+      srcNode: [Object]
+    },
+    {
+      type: 'ArrowFunctionExpression',
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      loc: [SourceLocation]
+    }
+  ]
+}
+Stash { storage: [] }
+{
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: Symbol(const declaration),
+    id: Symbol(const declaration),
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  instrType: 'Assignment',
+  symbol: 'unreachable',
+  constant: true,
+  declaration: true,
+  srcNode: {
+    type: 'VariableDeclaration',
+    declarations: [ [Object] ],
+    kind: 'const',
+    loc: SourceLocation { start: [Position], end: [Position] }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 86,
+      end: 124,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [Array],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    { instrType: 'Pop', srcNode: [Object] },
+    {
+      instrType: 'Assignment',
+      symbol: 'unreachable',
+      constant: true,
+      declaration: true,
+      srcNode: [Object]
+    }
+  ]
+}
+Stash {
+  storage: [
+    [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Object],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  ]
+}
+{
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: Symbol(const declaration),
+    id: Symbol(const declaration),
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  instrType: 'Pop',
+  srcNode: {
+    type: 'VariableDeclaration',
+    declarations: [ [Object] ],
+    kind: 'const',
+    loc: SourceLocation { start: [Position], end: [Position] }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 86,
+      end: 124,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [Array],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    { instrType: 'Pop', srcNode: [Object] }
+  ]
+}
+Stash {
+  storage: [
+    [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Object],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  ]
+}
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: Symbol(const declaration),
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+Node {
+  type: 'FunctionDeclaration',
+  start: 86,
+  end: 124,
+  loc: SourceLocation {
+    start: Position { line: 5, column: 4 },
+    end: Position { line: 7, column: 5 }
+  },
+  id: Node {
+    type: 'Identifier',
+    start: 95,
+    end: 97,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    name: 'id'
+  },
+  expression: false,
+  generator: false,
+  params: [
+    Node {
+      type: 'Identifier',
+      start: 98,
+      end: 99,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  ],
+  body: {
+    type: 'StatementSequence',
+    body: [ [Node] ],
+    loc: SourceLocation { start: [Position], end: [Position] }
+  },
+  typability: 'NotYetTyped'
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 86,
+      end: 124,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [Array],
+      body: [Object],
+      typability: 'NotYetTyped'
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: Symbol(const declaration),
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  type: 'VariableDeclaration',
+  declarations: [ { type: 'VariableDeclarator', id: [Object], init: [Object] } ],
+  kind: 'const',
+  loc: SourceLocation {
+    start: Position { line: 5, column: 4 },
+    end: Position { line: 7, column: 5 }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    {
+      type: 'VariableDeclaration',
+      declarations: [Array],
+      kind: 'const',
+      loc: [SourceLocation]
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: Symbol(const declaration),
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  type: 'ArrowFunctionExpression',
+  expression: false,
+  generator: false,
+  params: [
+    Node {
+      type: 'Identifier',
+      start: 98,
+      end: 99,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  ],
+  body: {
+    type: 'StatementSequence',
+    body: [ [Node] ],
+    loc: SourceLocation { start: [Position], end: [Position] }
+  },
+  loc: SourceLocation {
+    start: Position { line: 5, column: 4 },
+    end: Position { line: 7, column: 5 }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    { instrType: 'Pop', srcNode: [Object] },
+    {
+      instrType: 'Assignment',
+      symbol: 'id',
+      constant: true,
+      declaration: true,
+      srcNode: [Object]
+    },
+    {
+      type: 'ArrowFunctionExpression',
+      expression: false,
+      generator: false,
+      params: [Array],
+      body: [Object],
+      loc: [SourceLocation]
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: Symbol(const declaration),
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  instrType: 'Assignment',
+  symbol: 'id',
+  constant: true,
+  declaration: true,
+  srcNode: {
+    type: 'VariableDeclaration',
+    declarations: [ [Object] ],
+    kind: 'const',
+    loc: SourceLocation { start: [Position], end: [Position] }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    { instrType: 'Pop', srcNode: [Object] },
+    {
+      instrType: 'Assignment',
+      symbol: 'id',
+      constant: true,
+      declaration: true,
+      srcNode: [Object]
+    }
+  ]
+}
+Stash {
+  storage: [
+    [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Object],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  ]
+}
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: Symbol(const declaration),
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  instrType: 'Pop',
+  srcNode: {
+    type: 'VariableDeclaration',
+    declarations: [ [Object] ],
+    kind: 'const',
+    loc: SourceLocation { start: [Position], end: [Position] }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    },
+    { instrType: 'Pop', srcNode: [Object] }
+  ]
+}
+Stash {
+  storage: [
+    [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Object],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  ]
+}
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+Node {
+  type: 'FunctionDeclaration',
+  start: 129,
+  end: 235,
+  loc: SourceLocation {
+    start: Position { line: 8, column: 4 },
+    end: Position { line: 13, column: 5 }
+  },
+  id: Node {
+    type: 'Identifier',
+    start: 138,
+    end: 139,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    name: 'f'
+  },
+  expression: false,
+  generator: false,
+  params: [],
+  body: {
+    type: 'StatementSequence',
+    body: [ [Node], [Node], [Node], [Node] ],
+    loc: SourceLocation { start: [Position], end: [Position] }
+  },
+  typability: 'NotYetTyped'
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'FunctionDeclaration',
+      start: 129,
+      end: 235,
+      loc: [SourceLocation],
+      id: [Node],
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      typability: 'NotYetTyped'
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  type: 'VariableDeclaration',
+  declarations: [ { type: 'VariableDeclarator', id: [Object], init: [Object] } ],
+  kind: 'const',
+  loc: SourceLocation {
+    start: Position { line: 8, column: 4 },
+    end: Position { line: 13, column: 5 }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    {
+      type: 'VariableDeclaration',
+      declarations: [Array],
+      kind: 'const',
+      loc: [SourceLocation]
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  type: 'ArrowFunctionExpression',
+  expression: false,
+  generator: false,
+  params: [],
+  body: {
+    type: 'StatementSequence',
+    body: [ [Node], [Node], [Node], [Node] ],
+    loc: SourceLocation { start: [Position], end: [Position] }
+  },
+  loc: SourceLocation {
+    start: Position { line: 8, column: 4 },
+    end: Position { line: 13, column: 5 }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Object] },
+    {
+      instrType: 'Assignment',
+      symbol: 'f',
+      constant: true,
+      declaration: true,
+      srcNode: [Object]
+    },
+    {
+      type: 'ArrowFunctionExpression',
+      expression: false,
+      generator: false,
+      params: [],
+      body: [Object],
+      loc: [SourceLocation]
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  instrType: 'Assignment',
+  symbol: 'f',
+  constant: true,
+  declaration: true,
+  srcNode: {
+    type: 'VariableDeclaration',
+    declarations: [ [Object] ],
+    kind: 'const',
+    loc: SourceLocation { start: [Position], end: [Position] }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Object] },
+    {
+      instrType: 'Assignment',
+      symbol: 'f',
+      constant: true,
+      declaration: true,
+      srcNode: [Object]
+    }
+  ]
+}
+Stash {
+  storage: [
+    [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Object],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  ]
+}
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: Symbol(const declaration)
+  },
+  id: '1'
+}
+{
+  instrType: 'Pop',
+  srcNode: {
+    type: 'VariableDeclaration',
+    declarations: [ [Object] ],
+    kind: 'const',
+    loc: SourceLocation { start: [Position], end: [Position] }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Object] }
+  ]
+}
+Stash {
+  storage: [
+    [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Object],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  ]
+}
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  },
+  id: '1'
+}
+Node {
+  type: 'ExpressionStatement',
+  start: 240,
+  end: 244,
+  loc: SourceLocation {
+    start: Position { line: 14, column: 4 },
+    end: Position { line: 14, column: 8 }
+  },
+  expression: Node {
+    type: 'CallExpression',
+    start: 240,
+    end: 243,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 240,
+      end: 241,
+      loc: [SourceLocation],
+      name: 'f'
+    },
+    arguments: []
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 240,
+      end: 244,
+      loc: [SourceLocation],
+      expression: [Node]
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  },
+  id: '1'
+}
+Node {
+  type: 'Identifier',
+  start: 240,
+  end: 241,
+  loc: SourceLocation {
+    start: Position { line: 14, column: 4 },
+    end: Position { line: 14, column: 5 }
+  },
+  name: 'f'
+}
+Control {
+  storage: [
+    { instrType: 'Application', numOfArgs: 0, srcNode: [Node] },
+    Node {
+      type: 'Identifier',
+      start: 240,
+      end: 241,
+      loc: [SourceLocation],
+      name: 'f'
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  },
+  id: '1'
+}
+{
+  instrType: 'Application',
+  numOfArgs: 0,
+  srcNode: Node {
+    type: 'CallExpression',
+    start: 240,
+    end: 243,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 240,
+      end: 241,
+      loc: [SourceLocation],
+      name: 'f'
+    },
+    arguments: []
+  }
+}
+Control {
+  storage: [ { instrType: 'Application', numOfArgs: 0, srcNode: [Node] } ]
+}
+Stash {
+  storage: [
+    [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Object],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  ]
+}
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  },
+  id: '1'
+}
+{
+  type: 'StatementSequence',
+  body: [
+    Node {
+      type: 'ReturnStatement',
+      start: 150,
+      end: 171,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    }
+  ],
+  loc: SourceLocation {
+    start: Position { line: 8, column: 17 },
+    end: Position { line: 13, column: 5 }
+  }
+}
+Control {
+  storage: [
+    { type: 'StatementSequence', body: [Array], loc: [SourceLocation] }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  },
+  id: '1'
+}
+Node {
+  type: 'ReturnStatement',
+  start: 150,
+  end: 171,
+  loc: SourceLocation {
+    start: Position { line: 9, column: 6 },
+    end: Position { line: 9, column: 27 }
+  },
+  argument: Node {
+    type: 'BinaryExpression',
+    start: 157,
+    end: 170,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    left: Node {
+      type: 'CallExpression',
+      start: 157,
+      end: 162,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    },
+    operator: '+',
+    right: Node {
+      type: 'CallExpression',
+      start: 165,
+      end: 170,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 150,
+      end: 171,
+      loc: [SourceLocation],
+      argument: [Node]
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  },
+  id: '1'
+}
+Node {
+  type: 'BinaryExpression',
+  start: 157,
+  end: 170,
+  loc: SourceLocation {
+    start: Position { line: 9, column: 13 },
+    end: Position { line: 9, column: 26 }
+  },
+  left: Node {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Node] ]
+  },
+  operator: '+',
+  right: Node {
+    type: 'CallExpression',
+    start: 165,
+    end: 170,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 165,
+      end: 167,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Node] ]
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    Node {
+      type: 'BinaryExpression',
+      start: 157,
+      end: 170,
+      loc: [SourceLocation],
+      left: [Node],
+      operator: '+',
+      right: [Node]
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  },
+  id: '1'
+}
+Node {
+  type: 'CallExpression',
+  start: 157,
+  end: 162,
+  loc: SourceLocation {
+    start: Position { line: 9, column: 13 },
+    end: Position { line: 9, column: 18 }
+  },
+  callee: Node {
+    type: 'Identifier',
+    start: 157,
+    end: 159,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    name: 'id'
+  },
+  arguments: [
+    Node {
+      type: 'Literal',
+      start: 160,
+      end: 161,
+      loc: [SourceLocation],
+      value: 1,
+      raw: '1'
+    }
+  ]
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    { instrType: 'BinaryOperation', symbol: '+', srcNode: [Node] },
+    Node {
+      type: 'CallExpression',
+      start: 165,
+      end: 170,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    },
+    Node {
+      type: 'CallExpression',
+      start: 157,
+      end: 162,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  },
+  id: '1'
+}
+Node {
+  type: 'Identifier',
+  start: 157,
+  end: 159,
+  loc: SourceLocation {
+    start: Position { line: 9, column: 13 },
+    end: Position { line: 9, column: 15 }
+  },
+  name: 'id'
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    { instrType: 'BinaryOperation', symbol: '+', srcNode: [Node] },
+    Node {
+      type: 'CallExpression',
+      start: 165,
+      end: 170,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    },
+    { instrType: 'Application', numOfArgs: 1, srcNode: [Node] },
+    Node {
+      type: 'Literal',
+      start: 160,
+      end: 161,
+      loc: [SourceLocation],
+      value: 1,
+      raw: '1'
+    },
+    Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    }
+  ]
+}
+Stash { storage: [] }
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  },
+  id: '1'
+}
+Node {
+  type: 'Literal',
+  start: 160,
+  end: 161,
+  loc: SourceLocation {
+    start: Position { line: 9, column: 16 },
+    end: Position { line: 9, column: 17 }
+  },
+  value: 1,
+  raw: '1'
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    { instrType: 'BinaryOperation', symbol: '+', srcNode: [Node] },
+    Node {
+      type: 'CallExpression',
+      start: 165,
+      end: 170,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    },
+    { instrType: 'Application', numOfArgs: 1, srcNode: [Node] },
+    Node {
+      type: 'Literal',
+      start: 160,
+      end: 161,
+      loc: [SourceLocation],
+      value: 1,
+      raw: '1'
+    }
+  ]
+}
+Stash {
+  storage: [
+    [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Object],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  ]
+}
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  },
+  id: '1'
+}
+{
+  instrType: 'Application',
+  numOfArgs: 1,
+  srcNode: Node {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Node] ]
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    { instrType: 'BinaryOperation', symbol: '+', srcNode: [Node] },
+    Node {
+      type: 'CallExpression',
+      start: 165,
+      end: 170,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    },
+    { instrType: 'Application', numOfArgs: 1, srcNode: [Node] }
+  ]
+}
+Stash {
+  storage: [
+    [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Object],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    1
+  ]
+}
+<ref *1> {
+  name: 'programEnvironment',
+  tail: {
+    tail: null,
+    name: 'global',
+    head: {
+      get_time: [Function],
+      display: [Function],
+      raw_display: [Function],
+      stringify: [Function],
+      error: [Function],
+      prompt: [Function],
+      is_number: [Function],
+      is_string: [Function],
+      is_function: [Function],
+      is_boolean: [Function],
+      is_undefined: [Function],
+      parse_int: [Function],
+      char_at: [Function],
+      arity: [Function],
+      undefined: undefined,
+      NaN: NaN,
+      Infinity: Infinity,
+      math_abs: [Function],
+      math_acos: [Function],
+      math_acosh: [Function],
+      math_asin: [Function],
+      math_asinh: [Function],
+      math_atan: [Function],
+      math_atanh: [Function],
+      math_atan2: [Function],
+      math_ceil: [Function],
+      math_cbrt: [Function],
+      math_expm1: [Function],
+      math_clz32: [Function],
+      math_cos: [Function],
+      math_cosh: [Function],
+      math_exp: [Function],
+      math_floor: [Function],
+      math_fround: [Function],
+      math_hypot: [Function],
+      math_imul: [Function],
+      math_log: [Function],
+      math_log1p: [Function],
+      math_log2: [Function],
+      math_log10: [Function],
+      math_max: [Function],
+      math_min: [Function],
+      math_pow: [Function],
+      math_random: [Function],
+      math_round: [Function],
+      math_sign: [Function],
+      math_sin: [Function],
+      math_sinh: [Function],
+      math_sqrt: [Function],
+      math_tan: [Function],
+      math_tanh: [Function],
+      math_trunc: [Function],
+      math_E: 2.718281828459045,
+      math_LN10: 2.302585092994046,
+      math_LN2: 0.6931471805599453,
+      math_LOG10E: 0.4342944819032518,
+      math_LOG2E: 1.4426950408889634,
+      math_PI: 3.141592653589793,
+      math_SQRT1_2: 0.7071067811865476,
+      math_SQRT2: 1.4142135623730951
+    },
+    id: '-1'
+  },
+  head: {
+    unreachable: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '2',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    id: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '3',
+      functionName: 'x => ...',
+      fun: [Function],
+      preDefined: false
+    },
+    f: [Function (anonymous)] Closure {
+      node: [Object],
+      environment: [Circular *1],
+      originalNode: [Object],
+      id: '4',
+      functionName: '() => ...',
+      fun: [Function],
+      preDefined: false
+    }
+  },
+  id: '1'
+}
+{
+  type: 'StatementSequence',
+  body: [
+    Node {
+      type: 'ReturnStatement',
+      start: 109,
+      end: 118,
+      loc: [SourceLocation],
+      argument: [Node]
+    }
+  ],
+  loc: SourceLocation {
+    start: Position { line: 5, column: 19 },
+    end: Position { line: 7, column: 5 }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    { instrType: 'BinaryOperation', symbol: '+', srcNode: [Node] },
+    Node {
+      type: 'CallExpression',
+      start: 165,
+      end: 170,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    },
+    { instrType: 'Environment', env: [Object], srcNode: [Node] },
+    { type: 'StatementSequence', body: [Array], loc: [SourceLocation] }
+  ]
+}
+Stash { storage: [] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+Node {
+  type: 'ReturnStatement',
+  start: 109,
+  end: 118,
+  loc: SourceLocation {
+    start: Position { line: 6, column: 6 },
+    end: Position { line: 6, column: 15 }
+  },
+  argument: Node {
+    type: 'Identifier',
+    start: 116,
+    end: 117,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    name: 'x'
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    { instrType: 'BinaryOperation', symbol: '+', srcNode: [Node] },
+    Node {
+      type: 'CallExpression',
+      start: 165,
+      end: 170,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    },
+    { instrType: 'Environment', env: [Object], srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 109,
+      end: 118,
+      loc: [SourceLocation],
+      argument: [Node]
+    }
+  ]
+}
+Stash { storage: [] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+Node {
+  type: 'Identifier',
+  start: 116,
+  end: 117,
+  loc: SourceLocation {
+    start: Position { line: 6, column: 13 },
+    end: Position { line: 6, column: 14 }
+  },
+  name: 'x'
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    { instrType: 'BinaryOperation', symbol: '+', srcNode: [Node] },
+    Node {
+      type: 'CallExpression',
+      start: 165,
+      end: 170,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    },
+    { instrType: 'Environment', env: [Object], srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  ]
+}
+Stash { storage: [] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+{
+  instrType: 'Reset',
+  srcNode: Node {
+    type: 'ReturnStatement',
+    start: 109,
+    end: 118,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    argument: Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    { instrType: 'BinaryOperation', symbol: '+', srcNode: [Node] },
+    Node {
+      type: 'CallExpression',
+      start: 165,
+      end: 170,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    },
+    { instrType: 'Environment', env: [Object], srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] }
+  ]
+}
+Stash { storage: [ 1 ] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+{
+  instrType: 'Reset',
+  srcNode: Node {
+    type: 'ReturnStatement',
+    start: 109,
+    end: 118,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    argument: Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    { instrType: 'BinaryOperation', symbol: '+', srcNode: [Node] },
+    Node {
+      type: 'CallExpression',
+      start: 165,
+      end: 170,
+      loc: [SourceLocation],
+      callee: [Node],
+      arguments: [Array]
+    },
+    { instrType: 'Reset', srcNode: [Node] }
+  ]
+}
+Stash { storage: [ 1 ] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+{
+  instrType: 'Reset',
+  srcNode: Node {
+    type: 'ReturnStatement',
+    start: 109,
+    end: 118,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    argument: Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    { instrType: 'BinaryOperation', symbol: '+', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] }
+  ]
+}
+Stash { storage: [ 1 ] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+{
+  instrType: 'Reset',
+  srcNode: Node {
+    type: 'ReturnStatement',
+    start: 109,
+    end: 118,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    argument: Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] }
+  ]
+}
+Stash { storage: [ 1 ] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+{
+  instrType: 'Reset',
+  srcNode: Node {
+    type: 'ReturnStatement',
+    start: 109,
+    end: 118,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    argument: Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] }
+  ]
+}
+Stash { storage: [ 1 ] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+{
+  instrType: 'Reset',
+  srcNode: Node {
+    type: 'ReturnStatement',
+    start: 109,
+    end: 118,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    argument: Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ExpressionStatement',
+      start: 178,
+      end: 192,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Reset', srcNode: [Node] }
+  ]
+}
+Stash { storage: [ 1 ] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+{
+  instrType: 'Reset',
+  srcNode: Node {
+    type: 'ReturnStatement',
+    start: 109,
+    end: 118,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    argument: Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] }
+  ]
+}
+Stash { storage: [ 1 ] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+{
+  instrType: 'Reset',
+  srcNode: Node {
+    type: 'ReturnStatement',
+    start: 109,
+    end: 118,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    argument: Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    Node {
+      type: 'ReturnStatement',
+      start: 199,
+      end: 208,
+      loc: [SourceLocation],
+      argument: [Node]
+    },
+    { instrType: 'Reset', srcNode: [Node] }
+  ]
+}
+Stash { storage: [ 1 ] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+{
+  instrType: 'Reset',
+  srcNode: Node {
+    type: 'ReturnStatement',
+    start: 109,
+    end: 118,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    argument: Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Pop', srcNode: [Node] },
+    { instrType: 'Reset', srcNode: [Node] }
+  ]
+}
+Stash { storage: [ 1 ] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+{
+  instrType: 'Reset',
+  srcNode: Node {
+    type: 'ReturnStatement',
+    start: 109,
+    end: 118,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    argument: Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  }
+}
+Control {
+  storage: [
+    Node {
+      type: 'ExpressionStatement',
+      start: 215,
+      end: 229,
+      loc: [SourceLocation],
+      expression: [Node]
+    },
+    { instrType: 'Reset', srcNode: [Node] }
+  ]
+}
+Stash { storage: [ 1 ] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
+{
+  instrType: 'Reset',
+  srcNode: Node {
+    type: 'ReturnStatement',
+    start: 109,
+    end: 118,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    argument: Node {
+      type: 'Identifier',
+      start: 116,
+      end: 117,
+      loc: [SourceLocation],
+      name: 'x'
+    }
+  }
+}
+Control { storage: [ { instrType: 'Reset', srcNode: [Node] } ] }
+Stash { storage: [ 1 ] }
+{
+  name: 'id',
+  tail: {
+    name: 'programEnvironment',
+    tail: { tail: null, name: 'global', head: [Object], id: '-1' },
+    head: { unreachable: [Closure], id: [Closure], f: [Closure] },
+    id: '1'
+  },
+  head: { x: 1 },
+  id: '5',
+  callExpression: {
+    type: 'CallExpression',
+    start: 157,
+    end: 162,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    callee: Node {
+      type: 'Identifier',
+      start: 157,
+      end: 159,
+      loc: [SourceLocation],
+      name: 'id'
+    },
+    arguments: [ [Object] ]
+  }
+}
