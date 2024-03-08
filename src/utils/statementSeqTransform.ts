@@ -413,15 +413,11 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
 ])
 
 export function transform<NodeType extends Node>(node: NodeType): NodeType {
-  console.log('transform')
-  console.log(node)
   if (transformers.has(node.type)) {
     const transformer = transformers.get(node.type) as (n: NodeType) => NodeType
     const transformed = transformer(node)
-    console.log('end trans')
     return transformed
   } else {
-    console.log('no trans')
     return node
   }
 }
