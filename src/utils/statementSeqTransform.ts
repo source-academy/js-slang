@@ -1,4 +1,5 @@
 import * as es from 'estree'
+
 import { Node, StatementSequence } from '../types'
 import * as ast from './astCreator'
 function hasDeclarations(node: es.BlockStatement): boolean {
