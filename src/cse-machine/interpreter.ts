@@ -419,13 +419,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
     // Normal block statement: do environment setup
     // To restore environment after block ends
-    // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next control item
+    // If there is an env instruction on top of the stack, or if there are no declarations
     // we do not need to push another one
     // The no declarations case is handled by Control :: simplifyBlocksWithoutDeclarations, so no blockStatement node
     // without declarations should end up here.
     const next = control.peek()
     // Push ENVIRONMENT instruction if needed
-    if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+    if (!next || !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
       control.push(instr.envInstr(currentEnvironment(context), command))
     }
 
@@ -941,11 +941,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       const next = control.peek()
 
-      // Push ENVIRONMENT instruction if needed
+      // Push ENVIRONMENT instruction if needed - if next instruction
+      // is empty or not an environment instruction
       if (
-        next &&
-        !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
-        !control.isEmpty()
+        !next ||
+        (!(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && !control.isEmpty())
       ) {
         control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
