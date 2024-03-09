@@ -24,10 +24,25 @@
 }}
 
 Start 
+    = Statement 
+
+Statement 
+    =  SimpleStatement
+
+SimpleStatement
+    = ExpressionStatement
+
+ExpressionStatement
+   = expression: Expression { 
+        return { type: "ExpressionStatement", expression: expression } 
+     }
+
+Expression
     = AdditiveExpression
 
 PrimaryExpression 
     = Literal
+    / "(" _ expression: Expression _ ")" { return expression }
 
 Literal
     = BasicLit
