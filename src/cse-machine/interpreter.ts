@@ -278,6 +278,31 @@ function runCSEMachine(
   stepLimit: number,
   isPrelude: boolean = false
 ) {
+  const eceState = generateCSEMachineStateStream(
+    context,
+    control,
+    stash,
+    envSteps,
+    stepLimit,
+    isPrelude
+  )
+
+  // Done intentionally as the state is not needed
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  for (const _ of eceState) {
+  }
+
+  return stash.peek()
+}
+
+export function* generateCSEMachineStateStream(
+  context: Context,
+  control: Control,
+  stash: Stash,
+  envSteps: number,
+  stepLimit: number,
+  isPrelude: boolean = false
+) {
   context.runtime.break = false
   context.runtime.nodes = []
   let steps = 1
@@ -290,7 +315,8 @@ function runCSEMachine(
   while (command) {
     // Return to capture a snapshot of the control and stash after the target step count is reached
     if (!isPrelude && steps === envSteps) {
-      return stash.peek()
+      yield { stash, control, steps }
+      return
     }
     // Step limit reached, stop further evaluation
     if (!isPrelude && steps === stepLimit) {
@@ -331,12 +357,12 @@ function runCSEMachine(
     command = control.peek()
 
     steps += 1
+    yield { stash, control, steps }
   }
 
   if (!isPrelude) {
     context.runtime.envStepsTotal = steps
   }
-  return stash.peek()
 }
 
 /**
