@@ -41,6 +41,7 @@ import {
   resolvedErrorPromise,
   sourceFilesRunner
 } from './runner'
+import { goRunner } from './go-slang'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -233,6 +234,7 @@ export async function runFilesInContext(
     if (program === null) {
       return resolvedErrorPromise
     }
+    return goRunner(program, context)
   }
 
   if (
