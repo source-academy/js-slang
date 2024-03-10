@@ -120,6 +120,61 @@ AdditiveOperator
     / "|" 
     / "^"
 
+/* Tokens */
+
+BREAK_TOKEN         = "break"
+DEFAULT_TOKEN       = "default"
+FUNC_TOKEN          = "func"
+INTERFACE_TOKEN     = "interface"
+SELECT_TOKEN        = "select"
+CASE_TOKEN          = "case"
+DEFER_TOKEN         = "defer"
+GO_TOKEN            = "go"
+MAP_TOKEN           = "map"
+STRUCT_TOKEN        = "struct"
+CHAN_TOKEN          = "chan"
+ELSE_TOKEN          = "else"
+GOTO_TOKEN          = "goto"
+PACKAGE_TOKEN       = "package"
+SWITCH_TOKEN        = "switch"
+CONST_TOKEN         = "const"
+FALLTHROUGH_TOKEN   = "fallthrough"
+IF_TOKEN            = "if"
+RANGE_TOKEN         = "range"
+TYPE_TOKEN          = "type"
+CONTINUE_TOKEN      = "continue"
+FOR_TOKEN           = "for"
+IMPORT_TOKEN        = "import"
+RETURN_TOKEN        = "return"
+VAR_TOKEN           = "var"
+
+Keyword
+    = BREAK_TOKEN    
+    / DEFAULT_TOKEN
+    / FUNC_TOKEN
+    / INTERFACE_TOKEN
+    / SELECT_TOKEN
+    / CASE_TOKEN
+    / DEFER_TOKEN
+    / GO_TOKEN
+    / MAP_TOKEN
+    / STRUCT_TOKEN
+    / CHAN_TOKEN
+    / ELSE_TOKEN
+    / GOTO_TOKEN
+    / PACKAGE_TOKEN
+    / SWITCH_TOKEN
+    / CONST_TOKEN  
+    / FALLTHROUGH_TOKEN
+    / IF_TOKEN
+    / RANGE_TOKEN
+    / TYPE_TOKEN    
+    / CONTINUE_TOKEN
+    / FOR_TOKEN 
+    / IMPORT_TOKEN
+    / RETURN_TOKEN   
+    / VAR_TOKEN   
+
 /* Separators */
 
 _  = [ \t\r\n]* // optional whitespace
