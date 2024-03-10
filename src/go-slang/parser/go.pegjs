@@ -128,10 +128,10 @@ RelationalExpression
 RelationalOperator
     = "=="
     / "!="
-    / "<" 
     / "<=" 
-    / ">" 
+    / "<" 
     / ">="
+    / ">" 
 
 /* Tokens */
 
