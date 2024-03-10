@@ -38,7 +38,34 @@ function evaluateBitwiseOp(operator: BinaryOperator, left: any, right: any): any
     }
 
     return result
-} 
+}
+
+function evaluateRelationalOp(operator: BinaryOperator, left: any, right: any): any {
+  let result = undefined
+
+  switch (operator) {
+      case '==':
+        result = left === right
+        break
+      case '!=':
+        result = left !== right
+        break
+      case '<':
+        result = left < right
+        break
+      case '<=':
+        result = left <= right
+        break
+      case '>':
+        result = left > right
+        break
+      case '>=':
+        result = left >= right
+        break
+  }
+
+  return result
+}
 
 export function evaluateBinaryOp(operator: BinaryOperator,left: any, right: any): any {
     let result = undefined
@@ -54,6 +81,14 @@ export function evaluateBinaryOp(operator: BinaryOperator,left: any, right: any)
         case '|':
         case '^':
           result = evaluateBitwiseOp(operator, left, right)
+          break
+        case '==':
+        case '!=':
+        case '<':
+        case '<=':
+        case '>':
+        case '>=':
+          result = evaluateRelationalOp(operator, left, right)
           break
     }
 

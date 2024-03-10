@@ -32,7 +32,20 @@ export interface UnaryExpression extends Node {
   argument: Expression
 }
 
-export type BinaryOperator = '+' | '-' | '*' | '/' | '%' | '|' | '^'
+export type BinaryOperator =
+  | '+'
+  | '-'
+  | '*'
+  | '/'
+  | '%'
+  | '|'
+  | '^'
+  | '=='
+  | '!='
+  | '<'
+  | '<='
+  | '>'
+  | '>='
 
 export interface BinaryExpression extends Node {
   type: NodeType.BinaryExpression

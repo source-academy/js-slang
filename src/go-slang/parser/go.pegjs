@@ -38,7 +38,7 @@ ExpressionStatement
      }
 
 Expression
-    = AdditiveExpression
+    = RelationalExpression 
 
 PrimaryExpression 
     = Literal
@@ -119,6 +119,19 @@ AdditiveOperator
     / "-" 
     / "|" 
     / "^"
+
+RelationalExpression
+    = head:AdditiveExpression
+      tail:(_ RelationalOperator _ AdditiveExpression)*
+      { return buildBinaryExpression(head, tail); }
+
+RelationalOperator
+    = "=="
+    / "!="
+    / "<" 
+    / "<=" 
+    / ">" 
+    / ">="
 
 /* Tokens */
 
