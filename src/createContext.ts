@@ -671,9 +671,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
         // Special values
         defineBuiltin(context, 'undefined', undefined)
-        defineBuiltin(context, 'NaN', NaN)
-        defineBuiltin(context, 'Infinity', Infinity)
-
         break
       default:
       //should be unreachable
