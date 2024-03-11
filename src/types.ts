@@ -62,7 +62,7 @@ export interface Comment {
 
 export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
 
-export const enum Chapter {
+export enum Chapter {
   SOURCE_1 = 1,
   SOURCE_2 = 2,
   SOURCE_3 = 3,
