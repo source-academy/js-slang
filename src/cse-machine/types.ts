@@ -77,7 +77,9 @@ export interface ArrLitInstr extends BaseInstr {
 
 export type GenContInstr = BaseInstr
 
-export type ResumeContInstr = BaseInstr
+export interface ResumeContInstr extends BaseInstr {
+  numOfArgs: number
+}
 
 export type Instr =
   | BaseInstr

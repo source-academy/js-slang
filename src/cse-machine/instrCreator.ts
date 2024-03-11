@@ -148,7 +148,8 @@ export const genContInstr = (srcNode: es.Node): GenContInstr => ({
   srcNode
 })
 
-export const resumeContInstr = (srcNode: es.Node): ResumeContInstr => ({
+export const resumeContInstr = (numOfArgs: number, srcNode: es.Node): ResumeContInstr => ({
+  numOfArgs: numOfArgs,
   instrType: InstrType.RESUME_CONT,
   srcNode
 })
