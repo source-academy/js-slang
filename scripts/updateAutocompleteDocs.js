@@ -13,12 +13,16 @@ const OUT_DIR = "src/editors/ace/docTooltip"
 const TARGETS = [
   "source_1",
   "source_1_wasm",
+  "source_1_typed",
   "source_2",
+  "source_2_typed",
   "source_3",
   "source_3_concurrent",
   "source_3_non-det",
+  "source_3_typed",
   "source_4",
-  "External libraries",
+  "source_4_typed",
+  "External libraries"
 ]
 
 function newTitleNode(title, document) {

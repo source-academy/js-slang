@@ -9,7 +9,7 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
-import { Agenda, Stash } from './ec-evaluator/interpreter'
+import { Control, Stash } from './cse-machine/interpreter'
 import { Agenda as Agenda_WGSL, Stash as Stash_WGSL } from './wgsl/interpreter'
 
 /**
@@ -61,7 +61,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'ec-evaluator'
+export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
 
 export enum Chapter {
   SOURCE_1 = 1,
@@ -81,6 +81,7 @@ export enum Chapter {
   SCHEME_3 = -11,
   SCHEME_4 = -12,
   FULL_SCHEME = -13,
+  FULL_C = -14,
   LIBRARY_PARSER = 100
 }
 
@@ -147,7 +148,7 @@ export interface Context<T = any> {
     environmentTree: EnvTree
     environments: Environment[]
     nodes: es.Node[]
-    agenda: Agenda | null
+    control: Control | null
     agenda_wgsl?: Agenda_WGSL
     stash: Stash | null
     stash_wgsl?: Stash_WGSL
@@ -283,12 +284,12 @@ export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-n
   value: Value
 }
 
-export interface SuspendedEcEval {
-  status: 'suspended-ec-eval'
+export interface SuspendedCseEval {
+  status: 'suspended-cse-eval'
   context: Context
 }
 
-export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedEcEval
+export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedCseEval
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
@@ -324,6 +325,14 @@ export interface BlockExpression extends es.BaseExpression {
 
 export type substituterNodes = es.Node | BlockExpression
 
+/**
+ * For use in the CSE machine: block statements are handled in two steps:
+ * environment creation, then unpacking
+ */
+export interface RawBlockStatement extends es.BlockStatement {
+  isRawBlock: 'true'
+}
+
 export {
   Instruction as SVMInstruction,
   Program as SVMProgram,
@@ -347,7 +356,7 @@ export type TSAllowedTypes = 'any' | 'void'
 
 export const disallowedTypes = ['bigint', 'never', 'object', 'symbol', 'unknown'] as const
 
-export type TSDisallowedTypes = typeof disallowedTypes[number]
+export type TSDisallowedTypes = (typeof disallowedTypes)[number]
 
 // All types recognised by type parser as basic types
 export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes

@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "1.0.37",
+  "version": "1.0.47",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
@@ -43,10 +43,13 @@
     "astring": "^1.4.3",
     "gpu.js": "^2.16.0",
     "js-base64": "^3.7.5",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "node-getopt": "^0.3.2",
     "source-map": "0.7.3",
     "xmlhttprequest-ts": "^1.0.1"
+  },
+  "resolutions": {
+    "**/gl": "^6.0.2"
   },
   "scripts": {
     "build": "yarn docs && tsc --build --force",
@@ -66,9 +69,8 @@
   },
   "devDependencies": {
     "@types/jest": "^29.0.0",
-    "@types/lodash.assignin": "^4.2.6",
-    "@types/lodash.clonedeep": "^4.5.6",
-    "@types/node": "^17.0.5",
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^20.0.0",
     "@types/offscreencanvas": "^2019.7.0",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",

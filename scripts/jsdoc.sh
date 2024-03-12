@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+set -e
+
 JSDOC="node_modules/.bin/jsdoc"
 TMPL="docs/jsdoc/templates/template"
 DST="docs/source"

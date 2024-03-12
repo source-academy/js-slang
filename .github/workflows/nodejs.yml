@@ -5,21 +5,20 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
     - name: Check for package-lock.json
       run: |
         if [ -e package-lock.json ]; then
@@ -27,15 +26,16 @@ jobs:
           exit 1
         fi
         exit 0
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - name: Install dependencies (apt)
+      run: |
+        sudo apt-get update && \
+        sudo apt-get install -y --no-install-recommends libxi-dev libgl1-mesa-dev
+    - name: Setup Node
+      uses: actions/setup-node@v4
       with:
-        submodules: recursive
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: yarn
+        node-version: 20
+        cache: yarn
+    - run: yarn install --frozen-lockfile
     - run: yarn build
     - run: yarn format:ci
     - run: yarn eslint

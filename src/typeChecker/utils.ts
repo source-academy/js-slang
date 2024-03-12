@@ -465,18 +465,7 @@ export const source4TypeOverrides: [string, BindableType][] = [
   ['parse', tFunc(tString, tUnion(tVar('Program', []), tVar('Statement', [])))]
 ]
 
-const predeclaredConstTypes: [string, Type][] = [
-  ['Infinity', tLiteral(Infinity)],
-  ['NaN', tLiteral(NaN)],
-  ['math_E', tLiteral(Math.E)],
-  ['math_LN2', tLiteral(Math.LN2)],
-  ['math_LN10', tLiteral(Math.LN10)],
-  ['math_LOG2E', tLiteral(Math.LOG2E)],
-  ['math_LOG10E', tLiteral(Math.LOG10E)],
-  ['math_PI', tLiteral(Math.PI)],
-  ['math_SQRT1_2', tLiteral(Math.SQRT1_2)],
-  ['math_SQRT2', tLiteral(Math.SQRT2)]
-]
+const predeclaredConstTypes: [string, Type][] = []
 
 const pairTypeAlias: [string, ForAll] = [
   'Pair',

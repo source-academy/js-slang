@@ -404,3 +404,120 @@ test('Nullary functions properly restore environment 2', () => {
     optionEC3
   ).toMatchInlineSnapshot(`1`)
 })
+
+test('Array literals work as expected', () => {
+  return expectResult(
+    stripIndent`
+    let c = [1, 2, 3];
+    c;
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`
+    Array [
+      1,
+      2,
+      3,
+    ]
+  `)
+})
+
+test('Array literals are unpacked in the correct order', () => {
+  return expectResult(
+    stripIndent`
+    let d = 0;
+    let c = [ d = d * 10 + 1, d = d * 10 + 2, d = d * 10 + 3];
+    d;
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`123`)
+})
+
+test('Breaks, continues and returns are detected properly inside loops', () => {
+  return expectResult(
+    stripIndent`
+    function f() {
+      let i = 0;
+      while(i < 10) {
+          i = i + 1;
+          if (i === 1) {
+            i = 1;
+            i = 1;
+          } else if (i === 2) {
+            i = 2;
+            continue;
+          } else if (i === 3) {
+            i = 3;
+            return i;
+          } else if (i === 4) {
+            i = 4;
+            break;
+          }
+      }
+      return i;
+    }
+    f();
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`3`)
+})
+
+test('Environment reset is inserted when only instructions are in control stack', () => {
+  return expectResult(
+    stripIndent`
+    const a = (v => v)(0);
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`undefined`)
+})
+
+test('breaks, continues are properly detected in child blocks 1', () => {
+  return expectResult(
+    stripIndent`
+    let i = 0;
+    for (i = 1; i < 5; i = i + 1) {
+        {
+            const a = i;
+            if (i === 1) {
+                continue;
+            }
+        }
+        
+        {
+            const a = i;
+            if (i === 2) {
+                break;
+            }
+        }
+    }
+    i;
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`2`)
+})
+
+test('breaks, continues are properly detected in child blocks 2', () => {
+  return expectResult(
+    stripIndent`
+    let a = 0;
+    for (let i = 1; i < 5; i = i + 1) {
+        {
+            const x = 0;
+            a = i;
+            if (i === 1) {
+                continue;
+            }
+        }
+        
+        {
+            const x = 0;
+            a = i;
+            if (i === 2) {
+                break;
+            }
+        }
+    }
+    a;
+    `,
+    optionEC3
+  ).toMatchInlineSnapshot(`2`)
+})

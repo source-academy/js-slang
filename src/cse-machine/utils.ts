@@ -5,14 +5,14 @@ import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { Environment, Frame, Value } from '../types'
+import { Environment, Frame, RawBlockStatement, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import * as instr from './instrCreator'
-import { Agenda } from './interpreter'
-import { AgendaItem, AppInstr, AssmtInstr, Instr, InstrType } from './types'
+import { Control } from './interpreter'
+import { AppInstr, AssmtInstr, ControlItem, Instr, InstrType } from './types'
 
 /**
- * Stack is implemented for agenda and stash registers.
+ * Stack is implemented for control and stash registers.
  */
 interface IStack<T> {
   push(...items: T[]): void
@@ -62,25 +62,31 @@ export class Stack<T> implements IStack<T> {
   public some(predicate: (value: T) => boolean): boolean {
     return this.storage.some(predicate)
   }
+
+  // required for first-class continuations,
+  // which directly mutate this stack globally.
+  public setTo(otherStack: Stack<T>): void {
+    this.storage = otherStack.storage
+  }
 }
 
 /**
  * Typeguard for Instr to distinguish between program statements and instructions.
  *
- * @param command An AgendaItem
- * @returns true if the AgendaItem is an instruction and false otherwise.
+ * @param command A ControlItem
+ * @returns true if the ControlItem is an instruction and false otherwise.
  */
-export const isInstr = (command: AgendaItem): command is Instr => {
+export const isInstr = (command: ControlItem): command is Instr => {
   return (command as Instr).instrType !== undefined
 }
 
 /**
  * Typeguard for esNode to distinguish between program statements and instructions.
  *
- * @param command An AgendaItem
- * @returns true if the AgendaItem is an esNode and false if it is an instruction.
+ * @param command A ControlItem
+ * @returns true if the ControlItem is an esNode and false if it is an instruction.
  */
-export const isNode = (command: AgendaItem): command is es.Node => {
+export const isNode = (command: ControlItem): command is es.Node => {
   return (command as es.Node).type !== undefined
 }
 
@@ -125,6 +131,16 @@ export const isBlockStatement = (node: es.Node): node is es.BlockStatement => {
 }
 
 /**
+ * Typeguard for RawBlockStatement. To verify if an esNode is a raw block statement (i.e. passed environment creation).
+ *
+ * @param node an esNode
+ * @returns true if node is a RawBlockStatement, false otherwise.
+ */
+export const isRawBlockStatement = (node: es.Node): node is RawBlockStatement => {
+  return (node as RawBlockStatement).isRawBlock === 'true'
+}
+
+/**
  * Typeguard for esRestElement. To verify if an esNode is a block statement.
  *
  * @param node an esNode
@@ -151,10 +167,10 @@ export const isAssmtInstr = (instr: Instr): instr is AssmtInstr => {
  * Value producing statements have an extra pop instruction.
  *
  * @param seq Array of statements.
- * @returns Array of commands to be pushed into agenda.
+ * @returns Array of commands to be pushed into control.
  */
-export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
-  const result: AgendaItem[] = []
+export const handleSequence = (seq: es.Statement[]): ControlItem[] => {
+  const result: ControlItem[] = []
   let valueProduced = false
   for (const command of seq) {
     if (!isImportDeclaration(command)) {
@@ -175,20 +191,20 @@ export const handleSequence = (seq: es.Statement[]): AgendaItem[] => {
 
 /**
  * This function is used for ConditionalExpressions and IfStatements, to create the sequence
- * of agenda items to be added.
+ * of control items to be added.
  */
 export const reduceConditional = (
   node: es.IfStatement | es.ConditionalExpression
-): AgendaItem[] => {
+): ControlItem[] => {
   return [instr.branchInstr(node.consequent, node.alternate, node), node.test]
 }
 
 /**
- * To determine if an agenda item is value producing. JavaScript distinguishes value producing
+ * To determine if a control item is value producing. JavaScript distinguishes value producing
  * statements and non-value producing statements.
  * Refer to https://sourceacademy.nus.edu.sg/sicpjs/4.1.2 exercise 4.8.
  *
- * @param command Agenda item to determine if it is value producing.
+ * @param command Control item to determine if it is value producing.
  * @returns true if it is value producing, false otherwise.
  */
 export const valueProducing = (command: es.Node): boolean => {
@@ -204,17 +220,17 @@ export const valueProducing = (command: es.Node): boolean => {
 }
 
 /**
- * To determine if an agenda item changes the environment.
+ * To determine if a control item changes the environment.
  * There is a change in the environment when
  *  1. pushEnvironment() is called when creating a new frame, if there are variable declarations.
  *     Called in Program, BlockStatement, and Application instructions.
  *  2. there is an assignment.
  *     Called in Assignment and Array Assignment instructions.
  *
- * @param command Agenda item to check against.
+ * @param command Control item to check against.
  * @returns true if it changes the environment, false otherwise.
  */
-export const envChanging = (command: AgendaItem): boolean => {
+export const envChanging = (command: ControlItem): boolean => {
   if (isNode(command)) {
     const type = command.type
     return type === 'Program' || (type === 'BlockStatement' && hasDeclarations(command))
@@ -299,13 +315,15 @@ export const createBlockEnvironment = (
  * Variables
  */
 
-const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement block scope')
+const UNASSIGNED_CONST = Symbol('const declaration')
+const UNASSIGNED_LET = Symbol('let declaration')
 
 export function declareIdentifier(
   context: Context,
   name: string,
   node: es.Node,
-  environment: Environment
+  environment: Environment,
+  constant: boolean = false
 ) {
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
@@ -315,7 +333,7 @@ export function declareIdentifier(
       new errors.VariableRedeclaration(node, name, descriptors[name].writable)
     )
   }
-  environment.head[name] = DECLARED_BUT_NOT_YET_ASSIGNED
+  environment.head[name] = constant ? UNASSIGNED_CONST : UNASSIGNED_LET
   return environment
 }
 
@@ -325,7 +343,9 @@ function declareVariables(
   environment: Environment
 ) {
   for (const declaration of node.declarations) {
-    declareIdentifier(context, (declaration.id as es.Identifier).name, node, environment)
+    // Retrieve declaration type from node
+    const constant = node.kind === 'const'
+    declareIdentifier(context, (declaration.id as es.Identifier).name, node, environment, constant)
   }
 }
 
@@ -340,7 +360,14 @@ export function declareFunctionsAndVariables(
         declareVariables(context, statement, environment)
         break
       case 'FunctionDeclaration':
-        declareIdentifier(context, (statement.id as es.Identifier).name, statement, environment)
+        // FunctionDeclaration is always of type constant
+        declareIdentifier(
+          context,
+          (statement.id as es.Identifier).name,
+          statement,
+          environment,
+          true
+        )
         break
     }
   }
@@ -377,7 +404,7 @@ export function defineVariable(
 ) {
   const environment = currentEnvironment(context)
 
-  if (environment.head[name] !== DECLARED_BUT_NOT_YET_ASSIGNED) {
+  if (environment.head[name] !== UNASSIGNED_CONST && environment.head[name] !== UNASSIGNED_LET) {
     return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
   }
 
@@ -394,7 +421,10 @@ export const getVariable = (context: Context, name: string, node: es.Identifier)
   let environment: Environment | null = currentEnvironment(context)
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
+      if (
+        environment.head[name] === UNASSIGNED_CONST ||
+        environment.head[name] === UNASSIGNED_LET
+      ) {
         return handleRuntimeError(context, new errors.UnassignedVariable(name, node))
       } else {
         return environment.head[name]
@@ -415,7 +445,10 @@ export const setVariable = (
   let environment: Environment | null = currentEnvironment(context)
   while (environment) {
     if (environment.head.hasOwnProperty(name)) {
-      if (environment.head[name] === DECLARED_BUT_NOT_YET_ASSIGNED) {
+      if (
+        environment.head[name] === UNASSIGNED_CONST ||
+        environment.head[name] === UNASSIGNED_LET
+      ) {
         break
       }
       const descriptors = Object.getOwnPropertyDescriptors(environment.head)
@@ -477,12 +510,12 @@ export const checkNumberOfArguments = (
 
 /**
  * This function can be used to check for a stack overflow.
- * The current limit is set to be an agenda size of 1.0 x 10^5, if the agenda
+ * The current limit is set to be a control size of 1.0 x 10^5, if the control
  * flows beyond this limit an error is thrown.
  * This corresponds to about 10mb of space according to tests ran.
  */
-export const checkStackOverFlow = (context: Context, agenda: Agenda) => {
-  if (agenda.size() > 100000) {
+export const checkStackOverFlow = (context: Context, control: Control) => {
+  if (control.size() > 100000) {
     const stacks: es.CallExpression[] = []
     let counter = 0
     for (
@@ -504,56 +537,105 @@ export const checkStackOverFlow = (context: Context, agenda: Agenda) => {
 }
 
 /**
- * Checks whether a function body returns in every possible branch.
- * Returns true if every branch has a return statement, else returns false.
- * @param body The function body to be checked
+ * Checks whether an `if` statement returns in every possible branch.
+ * @param body The `if` statement to be checked
+ * @return `true` if every branch has a return statement, else `false`.
  */
-export const hasReturnStatement = (body: es.Statement): boolean => {
-  if (!isBlockStatement(body)) return isReturnStatement(body)
-  for (const statement of body.body) {
-    if (isReturnStatement(statement)) {
-      return true
-    }
-    if (isIfStatement(statement)) {
-      const consequent = hasReturnStatement(statement.consequent)
-      if (!consequent) {
-        return false
-      }
-      if (statement.alternate) {
-        return hasReturnStatement(statement.alternate)
-      }
+export const hasReturnStatementIf = (statement: es.IfStatement): boolean => {
+  let hasReturn = true
+  // Parser enforces that if/else have braces (block statement)
+  hasReturn = hasReturn && hasReturnStatement(statement.consequent as es.BlockStatement)
+  if (statement.alternate) {
+    if (isIfStatement(statement.alternate)) {
+      hasReturn = hasReturn && hasReturnStatementIf(statement.alternate as es.IfStatement)
+    } else if (isBlockStatement(statement.alternate)) {
+      hasReturn = hasReturn && hasReturnStatement(statement.alternate as es.BlockStatement)
     }
   }
-  return false
+  return hasReturn
 }
 
-export const hasBreakStatement = (block: es.BlockStatement): boolean => {
-  let hasBreak = false
+/**
+ * Checks whether a block returns in every possible branch.
+ * @param body The block to be checked
+ * @return `true` if every branch has a return statement, else `false`.
+ */
+export const hasReturnStatement = (block: es.BlockStatement): boolean => {
+  let hasReturn = false
   for (const statement of block.body) {
-    if (statement.type === 'BreakStatement') {
-      hasBreak = true
-    } else if (statement.type === 'IfStatement') {
+    if (isReturnStatement(statement)) {
+      hasReturn = true
+    } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
-      hasBreak = hasBreak || hasBreakStatement(statement.consequent as es.BlockStatement)
-      if (statement.alternate) {
-        hasBreak = hasBreak || hasBreakStatement(statement.alternate as es.BlockStatement)
-      }
+      hasReturn = hasReturn || hasReturnStatementIf(statement as es.IfStatement)
+    }
+  }
+  return hasReturn
+}
+
+export const hasBreakStatementIf = (statement: es.IfStatement): boolean => {
+  let hasBreak = false
+  // Parser enforces that if/else have braces (block statement)
+  hasBreak = hasBreak || hasBreakStatement(statement.consequent as es.BlockStatement)
+  if (statement.alternate) {
+    if (isIfStatement(statement.alternate)) {
+      hasBreak = hasBreak || hasBreakStatementIf(statement.alternate as es.IfStatement)
+    } else if (isBlockStatement(statement.alternate)) {
+      hasBreak = hasBreak || hasBreakStatement(statement.alternate as es.BlockStatement)
     }
   }
   return hasBreak
 }
 
+/**
+ * Checks whether a block OR any of its child blocks has a `break` statement.
+ * @param body The block to be checked
+ * @return `true` if there is a `break` statement, else `false`.
+ */
+export const hasBreakStatement = (block: es.BlockStatement): boolean => {
+  let hasBreak = false
+  for (const statement of block.body) {
+    if (statement.type === 'BreakStatement') {
+      hasBreak = true
+    } else if (isIfStatement(statement)) {
+      // Parser enforces that if/else have braces (block statement)
+      hasBreak = hasBreak || hasBreakStatementIf(statement as es.IfStatement)
+    } else if (isBlockStatement(statement)) {
+      hasBreak = hasBreak || hasBreakStatement(statement as es.BlockStatement)
+    }
+  }
+  return hasBreak
+}
+
+export const hasContinueStatementIf = (statement: es.IfStatement): boolean => {
+  let hasContinue = false
+  // Parser enforces that if/else have braces (block statement)
+  hasContinue = hasContinue || hasContinueStatement(statement.consequent as es.BlockStatement)
+  if (statement.alternate) {
+    if (isIfStatement(statement.alternate)) {
+      hasContinue = hasContinue || hasContinueStatementIf(statement.alternate as es.IfStatement)
+    } else if (isBlockStatement(statement.alternate)) {
+      hasContinue = hasContinue || hasContinueStatement(statement.alternate as es.BlockStatement)
+    }
+  }
+  return hasContinue
+}
+
+/**
+ * Checks whether a block OR any of its child blocks has a `continue` statement.
+ * @param body The block to be checked
+ * @return `true` if there is a `continue` statement, else `false`.
+ */
 export const hasContinueStatement = (block: es.BlockStatement): boolean => {
   let hasContinue = false
   for (const statement of block.body) {
     if (statement.type === 'ContinueStatement') {
       hasContinue = true
-    } else if (statement.type === 'IfStatement') {
+    } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
-      hasContinue = hasContinue || hasContinueStatement(statement.consequent as es.BlockStatement)
-      if (statement.alternate) {
-        hasContinue = hasContinue || hasContinueStatement(statement.alternate as es.BlockStatement)
-      }
+      hasContinue = hasContinue || hasContinueStatementIf(statement as es.IfStatement)
+    } else if (isBlockStatement(statement)) {
+      hasContinue = hasContinue || hasContinueStatement(statement as es.BlockStatement)
     }
   }
   return hasContinue
