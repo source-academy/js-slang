@@ -23,10 +23,10 @@
     }
 }}
 
-Start 
+Start
     = Statement 
 
-Statement 
+Statement
     =  SimpleStatement
 
 SimpleStatement
@@ -40,7 +40,7 @@ ExpressionStatement
 Expression
     = RelationalExpression 
 
-PrimaryExpression 
+PrimaryExpression
     = Literal
     / "(" _ expression: Expression _ ")" { return expression }
 
@@ -95,7 +95,7 @@ UnaryExpression
         return {type: "UnaryExpression", operator: operator, argument: argument}
  	  }
  
-UnaryOperator 
+UnaryOperator
     = "+" 
     / "-"
 
@@ -190,5 +190,5 @@ Keyword
 
 /* Separators */
 
-_  = [ \t\r\n]* // optional whitespace
-__ = [ \t\r\n]+ // required whitespace
+_  "whitespace" = [ \t\r\n]* // optional whitespace
+__ "whitespace" = [ \t\r\n]+ // required whitespace
