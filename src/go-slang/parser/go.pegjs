@@ -41,8 +41,22 @@ Expression
     = RelationalExpression 
 
 PrimaryExpression
-    = Literal
+    = Identifier
+    / Literal
     / "(" _ expression: Expression _ ")" { return expression }
+
+Identifier
+    = !Keyword Letter IdentifierPart* { 
+        return { type: "Identifier", name: text() } 
+      }
+
+Letter
+    = UnicodeLetter
+    / "_"
+
+IdentifierPart
+    = Letter
+    / UnicodeDigit
 
 Literal
     = BasicLit
@@ -135,31 +149,31 @@ RelationalOperator
 
 /* Tokens */
 
-BREAK_TOKEN         = "break"
-DEFAULT_TOKEN       = "default"
-FUNC_TOKEN          = "func"
-INTERFACE_TOKEN     = "interface"
-SELECT_TOKEN        = "select"
-CASE_TOKEN          = "case"
-DEFER_TOKEN         = "defer"
-GO_TOKEN            = "go"
-MAP_TOKEN           = "map"
-STRUCT_TOKEN        = "struct"
-CHAN_TOKEN          = "chan"
-ELSE_TOKEN          = "else"
-GOTO_TOKEN          = "goto"
-PACKAGE_TOKEN       = "package"
-SWITCH_TOKEN        = "switch"
-CONST_TOKEN         = "const"
-FALLTHROUGH_TOKEN   = "fallthrough"
-IF_TOKEN            = "if"
-RANGE_TOKEN         = "range"
-TYPE_TOKEN          = "type"
-CONTINUE_TOKEN      = "continue"
-FOR_TOKEN           = "for"
-IMPORT_TOKEN        = "import"
-RETURN_TOKEN        = "return"
-VAR_TOKEN           = "var"
+BREAK_TOKEN         = "break"          !IdentifierPart
+DEFAULT_TOKEN       = "default"        !IdentifierPart
+FUNC_TOKEN          = "func"           !IdentifierPart
+INTERFACE_TOKEN     = "interface"      !IdentifierPart
+SELECT_TOKEN        = "select"         !IdentifierPart
+CASE_TOKEN          = "case"           !IdentifierPart
+DEFER_TOKEN         = "defer"          !IdentifierPart
+GO_TOKEN            = "go"             !IdentifierPart
+MAP_TOKEN           = "map"            !IdentifierPart
+STRUCT_TOKEN        = "struct"         !IdentifierPart
+CHAN_TOKEN          = "chan"           !IdentifierPart
+ELSE_TOKEN          = "else"           !IdentifierPart
+GOTO_TOKEN          = "goto"           !IdentifierPart
+PACKAGE_TOKEN       = "package"        !IdentifierPart
+SWITCH_TOKEN        = "switch"         !IdentifierPart
+CONST_TOKEN         = "const"          !IdentifierPart
+FALLTHROUGH_TOKEN   = "fallthrough"    !IdentifierPart
+IF_TOKEN            = "if"             !IdentifierPart
+RANGE_TOKEN         = "range"          !IdentifierPart
+TYPE_TOKEN          = "type"           !IdentifierPart
+CONTINUE_TOKEN      = "continue"       !IdentifierPart
+FOR_TOKEN           = "for"            !IdentifierPart
+IMPORT_TOKEN        = "import"         !IdentifierPart
+RETURN_TOKEN        = "return"         !IdentifierPart
+VAR_TOKEN           = "var"            !IdentifierPart
 
 Keyword
     = BREAK_TOKEN    
