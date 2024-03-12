@@ -140,7 +140,7 @@ export function resumeEvaluate(context: Context) {
 export function ECEResultPromise(context: Context, value: Value): Promise<Result> {
   return new Promise((resolve, reject) => {
     if (value instanceof ECEBreak) {
-      resolve({ status: 'suspended-ec-eval', context })
+      resolve({ status: 'suspended-cse-eval', context })
     } else if (value instanceof ECError) {
       resolve({ status: 'error' })
     } else {
