@@ -31,8 +31,13 @@
     }
 }}
 
-Start
-    = Statement 
+SourceFile
+    = topLevelDecls: TopLevelDeclaration* {
+        return { type: "SourceFile", topLevelDecls }
+      }
+
+TopLevelDeclaration
+    = Declaration
 
 Statement
     = Declaration
@@ -161,7 +166,7 @@ RelationalOperator
     / ">"
 
 VariableDeclaration
-    = VAR_TOKEN __ declarations:VarSpec {
+    = VAR_TOKEN __ declarations:VarSpec EOS {
         return { type: "VariableDeclaration", ...declarations }
       }
 
@@ -237,6 +242,16 @@ Keyword
     / VAR_TOKEN   
 
 /* Separators */
+
+EOS
+  = _ LineTerminatorSequence?
+
+LineTerminatorSequence "end of line"
+  = "\n"
+  / "\r\n"
+  / "\r"
+  / "\u2028"
+  / "\u2029"
 
 _  "whitespace" = [ \t\r\n]* // optional whitespace
 __ "whitespace" = [ \t\r\n]+ // required whitespace
