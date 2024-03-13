@@ -42,7 +42,8 @@ Declaration
     = VariableDeclaration
 
 SimpleStatement
-    = ExpressionStatement
+    = ShortVariableDeclaration
+    / ExpressionStatement
 
 ExpressionStatement
    = expression: Expression { 
@@ -154,10 +155,10 @@ RelationalExpression
 RelationalOperator
     = "=="
     / "!="
-    / "<=" 
-    / "<" 
+    / "<="
+    / "<"
     / ">="
-    / ">" 
+    / ">"
 
 VariableDeclaration
     = VAR_TOKEN __ declarations:VarSpec {
@@ -167,6 +168,11 @@ VariableDeclaration
 VarSpec
     = ids:IdentifierList _ exprs:("=" _ ExpressionList)? {
         return { declarations: ids, expressions: exprs && exprs[2] }
+      }
+
+ShortVariableDeclaration
+    = ids:IdentifierList _ ":=" _ exprs:ExpressionList {
+        return { type: "VariableDeclaration", declarations: ids, expressions: exprs }
       }
 
 IdentifierList
