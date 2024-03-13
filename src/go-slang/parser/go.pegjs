@@ -1,4 +1,12 @@
 {{
+    function extractList(list, index) {
+        return list.map(element => element[index]);
+    }
+    
+    function buildList(head, tail, index) {
+        return [head].concat(extractList(tail, index));
+    }
+
     function buildInteger(str, base) {
         // note: we discard the "_" delimiters
         return parseInt(str.replaceAll("_", ""), base)
@@ -27,7 +35,11 @@ Start
     = Statement 
 
 Statement
-    =  SimpleStatement
+    = Declaration
+    / SimpleStatement
+
+Declaration
+    = VariableDeclaration
 
 SimpleStatement
     = ExpressionStatement
@@ -146,6 +158,22 @@ RelationalOperator
     / "<" 
     / ">="
     / ">" 
+
+VariableDeclaration
+    = VAR_TOKEN __ declarations:VarSpec {
+        return { type: "VariableDeclaration", ...declarations }
+      }
+
+VarSpec
+    = ids:IdentifierList _ exprs:("=" _ ExpressionList)? {
+        return { declarations: ids, expressions: exprs && exprs[2] }
+      }
+
+IdentifierList
+    = head:Identifier _ tail:(_ "," _ Identifier)* { return buildList(head, tail, 3); }
+
+ExpressionList
+    = head:Expression _ tail:(_ "," _ Expression)* { return buildList(head, tail, 3); }
 
 /* Tokens */
 
