@@ -80,6 +80,173 @@ const testEvalSteps = (programStr: string, context?: Context) => {
   return getEvaluationSteps(program, context, options)
 }
 
+describe('Test reducing of empty block into epsilon', () => {
+  test('Empty block in program', async () => {
+    const code = `
+    3;
+    {}
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('3;')
+  })
+
+  test('Empty blocks in block', async () => {
+    const code = `
+    {
+      3;
+      {
+        {}
+        {}
+      }
+    }
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('3;')
+  })
+
+  test('Empty block in function', async () => {
+    const code = `
+    function f() {
+      3;
+      {}
+    }
+    f();
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+})
+
+describe('Test correct evaluation sequence when first statement is a value', () => {
+  test('Reducible second statement in program', async () => {
+    const code = `
+    'value';
+    const x = 10;
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual("'value';")
+  })
+
+  test('Irreducible second statement in program', async () => {
+    const code = `
+    'value';
+    'also a value';
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual("'also a value';")
+  })
+
+  test('Reducible second statement in block', async () => {
+    const code = `
+    {
+      'value';
+      const x = 10;
+    }
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual("'value';")
+  })
+
+  test('Irreducible second statement in block', async () => {
+    const code = `
+    {
+      'value';
+      'also a value';
+    }
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual("'also a value';")
+  })
+
+  test('Reducible second statement in function', async () => {
+    const code = `
+    function f () {
+      'value';
+      const x = 10;
+      return 'another value';
+    }
+    f();
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Irreducible second statement in functions', async () => {
+    const code = `
+    function f () {
+      'value';
+      'also a value';
+      return 'another value';
+    }
+    f();
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Mix statements', async () => {
+    const code = `
+    'value';
+    const x = 10;
+    function f() {
+      20;
+      function p() {
+        22;
+      }
+    }
+    const z = 30;
+    'also a value';
+    {
+      'another value';
+      const a = 40;
+      a;
+    }
+    'another value';
+    const a = 40;
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual("'another value';")
+  })
+})
+
+describe('Test single line of code is evaluated', () => {
+  test('Constants Declaration', async () => {
+    const code = `
+    const x = 10;
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.length).toBe(4)
+    expect(getLastStepAsString(steps)).toEqual('')
+  })
+
+  test('Function Declaration', async () => {
+    const code = `
+    function x () {
+      return 10;
+    }
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.length).toBe(4)
+    expect(getLastStepAsString(steps)).toEqual('')
+  })
+
+  test('Value', async () => {
+    const code = `
+    10;
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.length).toBe(2)
+    expect(getLastStepAsString(steps)).toEqual('10;')
+  })
+})
+
 test('Test basic substitution', async () => {
   const code = `
     (1 + 2) * (3 + 4);
@@ -157,9 +324,11 @@ test('Test two statement substitution', async () => {
     21;
     3 * 5;
 
-    3 * 5;
+    21;
+    15;
 
-    3 * 5;
+    21;
+    15;
 
     15;
 
@@ -772,21 +941,25 @@ test('triple equals work on function', async () => {
     g === g;
     f === g;
 
-    g === g;
+    true;
+    true;
     f === g;
 
-    g === g;
-    f === g;
-
+    true;
     true;
     f === g;
 
     true;
     f === g;
 
+    true;
     f === g;
 
-    f === g;
+    true;
+    false;
+
+    true;
+    false;
 
     false;
 

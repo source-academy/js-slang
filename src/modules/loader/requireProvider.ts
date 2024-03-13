@@ -1,6 +1,8 @@
 import * as _ from 'lodash'
 
 import * as jsslang from '../..'
+import * as interpreter from '../../cse-machine/interpreter'
+import * as parser from '../../parser/parser'
 import * as stdlib from '../../stdlib'
 import type { Context } from '../../types'
 import * as types from '../../types'
@@ -31,6 +33,12 @@ export const getRequireProvider = (context: Context) => (x: string) => {
         utils: {
           assert,
           stringify
+        },
+        parser: {
+          parser
+        },
+        'cse-machine': {
+          interpreter
         }
       },
       context

@@ -57,6 +57,18 @@ function isIrreducible(node: substituterNodes, context: Context) {
   )
 }
 
+function isStatementsReducible(progs: es.Program, context: Context): boolean {
+  if (progs.body.length === 0) return false
+  if (progs.body.length > 1) return true
+
+  const [lastStatement] = progs.body
+
+  if (lastStatement.type !== 'ExpressionStatement') {
+    return true
+  }
+  return !isIrreducible(lastStatement.expression, context)
+}
+
 type irreducibleNodes =
   | es.FunctionExpression
   | es.ArrowFunctionExpression
@@ -1776,19 +1788,53 @@ function reduceMain(
               str
             ]
           }
+        } else if (firstStatement.type === 'BlockStatement' && firstStatement.body.length === 0) {
+          paths[0].push('body[0]')
+          paths.push([])
+          const stmt = ast.program(otherStatements as es.Statement[])
+          return [stmt, context, paths, explain(firstStatement)]
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
         ) {
-          // let stmt
-          // if (otherStatements.length > 0) {
-          paths[0].push('body[0]')
-          paths.push([])
-          const stmt = ast.program(otherStatements as es.Statement[])
-          // } else {
-          //   stmt = ast.expressionStatement(firstStatement.expression)
-          // }
-          return [stmt, context, paths, explain(node)]
+          // Intentionally ignore the remaining statements
+          const [secondStatement] = otherStatements
+
+          if (
+            secondStatement !== undefined &&
+            secondStatement.type == 'ExpressionStatement' &&
+            isIrreducible(secondStatement.expression, context)
+          ) {
+            paths[0].push('body[0]')
+            paths.push([])
+            const stmt = ast.program(otherStatements as es.Statement[])
+            return [stmt, context, paths, explain(node)]
+          } else {
+            // Reduce the second statement and preserve the first statement
+            // Pass in a new path to avoid modifying the original path
+            const newPath = [[]]
+            const [reduced, cont, path, str] = reducers['Program'](
+              ast.program(otherStatements as es.Statement[]),
+              context,
+              newPath
+            )
+
+            // Fix path highlighting after preserving first statement
+            path.forEach(pathStep => {
+              pathStep.forEach((_, i) => {
+                if (i == 0) {
+                  pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
+                }
+              })
+            })
+            paths[0].push(...path[0])
+
+            const stmt = ast.program([
+              firstStatement,
+              ...((reduced as es.Program).body as es.Statement[])
+            ])
+            return [stmt, cont, path, str]
+          }
         } else if (firstStatement.type === 'FunctionDeclaration') {
           if (firstStatement.id === null) {
             throw new Error(
@@ -1953,19 +1999,55 @@ function reduceMain(
               str
             ]
           }
+        } else if (firstStatement.type === 'BlockStatement' && firstStatement.body.length === 0) {
+          paths[0].push('body[0]')
+          paths.push([])
+          const stmt = ast.blockStatement(otherStatements as es.Statement[])
+          return [stmt, context, paths, explain(firstStatement)]
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
         ) {
-          let stmt
-          if (otherStatements.length > 0) {
+          // Intentionally ignore the remaining statements
+          const [secondStatement] = otherStatements
+
+          if (secondStatement == undefined) {
+            const stmt = ast.expressionStatement(firstStatement.expression)
+            return [stmt, context, paths, explain(node)]
+          } else if (
+            secondStatement.type == 'ExpressionStatement' &&
+            isIrreducible(secondStatement.expression, context)
+          ) {
             paths[0].push('body[0]')
             paths.push([])
-            stmt = ast.blockStatement(otherStatements as es.Statement[])
+            const stmt = ast.blockStatement(otherStatements as es.Statement[])
+            return [stmt, context, paths, explain(node)]
           } else {
-            stmt = ast.expressionStatement(firstStatement.expression)
+            // Reduce the second statement and preserve the first statement
+            // Pass in a new path to avoid modifying the original path
+            const newPath = [[]]
+            const [reduced, cont, path, str] = reducers['BlockStatement'](
+              ast.blockStatement(otherStatements as es.Statement[]),
+              context,
+              newPath
+            )
+
+            // Fix path highlighting after preserving first statement
+            path.forEach(pathStep => {
+              pathStep.forEach((_, i) => {
+                if (i == 0) {
+                  pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
+                }
+              })
+            })
+            paths[0].push(...path[0])
+
+            const stmt = ast.blockStatement([
+              firstStatement,
+              ...((reduced as es.BlockStatement).body as es.Statement[])
+            ])
+            return [stmt, cont, paths, str]
           }
-          return [stmt, context, paths, explain(node)]
         } else if (firstStatement.type === 'FunctionDeclaration') {
           let funDecExp = ast.functionDeclarationExpression(
             firstStatement.id!,
@@ -2129,19 +2211,56 @@ function reduceMain(
               str
             ]
           }
+        } else if (firstStatement.type === 'BlockStatement' && firstStatement.body.length === 0) {
+          paths[0].push('body[0]')
+          paths.push([])
+          const stmt = ast.blockExpression(otherStatements as es.Statement[])
+          return [stmt, context, paths, explain(firstStatement)]
         } else if (
           firstStatement.type === 'ExpressionStatement' &&
           isIrreducible(firstStatement.expression, context)
         ) {
-          let stmt
-          if (otherStatements.length > 0) {
+          // Intentionally ignore the remaining statements
+          const [secondStatement] = otherStatements
+
+          if (secondStatement == undefined) {
+            const stmt = ast.identifier('undefined')
+            return [stmt, context, paths, explain(node)]
+          } else if (
+            (secondStatement.type == 'ExpressionStatement' &&
+              isIrreducible(secondStatement.expression, context)) ||
+            secondStatement.type === 'ReturnStatement'
+          ) {
             paths[0].push('body[0]')
             paths.push([])
-            stmt = ast.blockExpression(otherStatements as es.Statement[])
+            const stmt = ast.blockExpression(otherStatements as es.Statement[])
+            return [stmt, context, paths, explain(node)]
           } else {
-            stmt = ast.identifier('undefined')
+            // Reduce the second statement and preserve the first statement
+            // Pass in a new path to avoid modifying the original path
+            const newPath = [[]]
+            const [reduced, cont, path, str] = reducers['BlockExpression'](
+              ast.blockExpression(otherStatements as es.Statement[]),
+              context,
+              newPath
+            )
+
+            // Fix path highlighting after preserving first statement
+            path.forEach(pathStep => {
+              pathStep.forEach((_, i) => {
+                if (i == 0) {
+                  pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
+                }
+              })
+            })
+            paths[0].push(...path[0])
+
+            const stmt = ast.blockExpression([
+              firstStatement,
+              ...((reduced as es.BlockStatement).body as es.Statement[])
+            ])
+            return [stmt, cont, paths, str]
           }
-          return [stmt, context, paths, explain(node)]
         } else if (firstStatement.type === 'FunctionDeclaration') {
           let funDecExp = ast.functionDeclarationExpression(
             firstStatement.id!,
@@ -3215,24 +3334,32 @@ export async function getEvaluationSteps(
     // and remove debugger statements.
     start = removeDebuggerStatements(start)
 
-    // then add in path and explanation string
+    // then add in path and explanation string and push it into steps
     let reducedWithPath: [substituterNodes, Context, string[][], string] = [
       start,
       context,
       [],
       'Start of evaluation'
     ]
+    steps.push([
+      reducedWithPath[0] as es.Program,
+      reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2],
+      reducedWithPath[3]
+    ])
+    steps.push([reducedWithPath[0] as es.Program, [], ''])
     // reduces program until evaluation completes
     // even steps: program before reduction
     // odd steps: program after reduction
-    let i = -1
+    let i = 1
     let limitExceeded = false
-    while ((reducedWithPath[0] as es.Program).body.length > 0) {
+    while (isStatementsReducible(reducedWithPath[0] as es.Program, context)) {
+      //Should work on isReducibleStatement instead of checking body.length
       if (steps.length === limit) {
         steps[steps.length - 1] = [ast.program([]), [], 'Maximum number of steps exceeded']
         limitExceeded = true
         break
       }
+      reducedWithPath = reduceMain(reducedWithPath[0], context)
       steps.push([
         reducedWithPath[0] as es.Program,
         reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2],
@@ -3243,7 +3370,6 @@ export async function getEvaluationSteps(
         steps[i][1] = reducedWithPath[2].length > 1 ? [reducedWithPath[2][0]] : reducedWithPath[2]
         steps[i][2] = reducedWithPath[3]
       }
-      reducedWithPath = reduceMain(reducedWithPath[0], context)
       i += 2
     }
     if (!limitExceeded && steps.length > 0) {
