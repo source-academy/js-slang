@@ -357,11 +357,11 @@ export function* generateCSEMachineStateStream(
     command = control.peek()
 
     steps += 1
-    yield { stash, control, steps }
-  }
+    if (!isPrelude) {
+      context.runtime.envStepsTotal = steps
+    }
 
-  if (!isPrelude) {
-    context.runtime.envStepsTotal = steps
+    yield { stash, control, steps }
   }
 }
 
