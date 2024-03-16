@@ -2,9 +2,18 @@ import * as es from 'estree'
 
 import { Node, StatementSequence } from '../types'
 import * as ast from './astCreator'
-function hasDeclarations(node: es.BlockStatement): boolean {
+function hasDeclarations(node: es.BlockStatement | es.Program): boolean {
   for (const statement of node.body) {
     if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {
+      return true
+    }
+  }
+  return false
+}
+
+function hasImportDeclarations(node: es.Program): boolean {
+  for (const statement of node.body) {
+    if (statement.type === 'ImportDeclaration') {
       return true
     }
   }
@@ -19,8 +28,11 @@ const transformers: ASTTransformers = new Map<string, NodeTransformer>([
   [
     'Program',
     (node: es.Program) => {
-      node.body = node.body.map(x => transform(x))
-      return node
+      if (hasDeclarations(node) || hasImportDeclarations(node)) {
+        return node
+      } else {
+        return ast.statementSequence(node.body as es.Statement[], node.loc)
+      }
     }
   ],
 

@@ -81,7 +81,7 @@ export const isInstr = (command: ControlItem): command is Instr => {
 }
 
 /**
- * Typeguard for esNode to distinguish between program statements and instructions.
+ * Typeguard for Node to distinguish between program statements and instructions.
  *
  * @param command A ControlItem
  * @returns true if the ControlItem is a Node or StatementSequence, false if it is an instruction.

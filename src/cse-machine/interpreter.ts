@@ -95,7 +95,7 @@ type CmdEvaluator = (
  * It contains syntax tree nodes or instructions.
  */
 export class Control extends Stack<ControlItem> {
-  public constructor(program?: es.Program) {
+  public constructor(program?: es.Program | StatementSequence) {
     super()
 
     // Load program into control stack
@@ -112,7 +112,7 @@ export class Control extends Stack<ControlItem> {
    * If not, the block is converted to a StatementSequence.
    * @param items The items being pushed on the control.
    * @returns The same set of control items, but with block statements without declarations converted to StatementSequences.
-   * NOTE: this function should ideally never be called, since simplification is done at the transform stage
+   * NOTE: this function handles any case where StatementSequence has to be converted back into BlockStatement due to type issues
    */
   private static simplifyBlocksWithoutDeclarations(...items: ControlItem[]): ControlItem[] {
     const itemsNew: ControlItem[] = []
@@ -308,8 +308,9 @@ export function* generateCSEMachineStateStream(
 
   let command = control.peek()
 
-  // First node will be a Program
-  context.runtime.nodes.unshift(command as es.Program)
+  if (command && isNode(command)) {
+    context.runtime.nodes.unshift(command)
+  }
 
   while (command) {
     // Return to capture a snapshot of the control and stash after the target step count is reached
@@ -366,7 +367,7 @@ export function* generateCSEMachineStateStream(
 
 /**
  * Dictionary of functions which handle the logic for the response of the three registers of
- * the ASE machine to each ControlItem.
+ * the CSE machine to each ControlItem.
  */
 const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   /**
@@ -423,8 +424,21 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control.push(seq)
   },
 
-  StatementSequence: function (command: StatementSequence, context: Context, control: Control) {
-    control.push(...handleSequence(command.body))
+  StatementSequence: function (
+    command: StatementSequence,
+    context: Context,
+    control: Control,
+    stash: Stash,
+    isPrelude: boolean
+  ) {
+    if (command.body.length == 1) {
+      // If sequence only consists of one statement, evaluate it immediately
+      const next = command.body[0]
+      cmdEvaluators[next.type](next, context, control, stash, isPrelude)
+    } else {
+      // unpack and push individual nodes in body
+      control.push(...handleSequence(command.body))
+    }
     return
   },
 
