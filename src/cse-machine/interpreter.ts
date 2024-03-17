@@ -304,7 +304,9 @@ export function* generateCSEMachineStateStream(
 ) {
   context.runtime.break = false
   context.runtime.nodes = []
-  let steps = 1
+
+  // steps: number of steps completed
+  let steps = 0
 
   let command = control.peek()
 
@@ -357,11 +359,11 @@ export function* generateCSEMachineStateStream(
     command = control.peek()
 
     steps += 1
-    yield { stash, control, steps }
-  }
+    if (!isPrelude) {
+      context.runtime.envStepsTotal = steps
+    }
 
-  if (!isPrelude) {
-    context.runtime.envStepsTotal = steps
+    yield { stash, control, steps }
   }
 }
 
