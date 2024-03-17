@@ -305,7 +305,9 @@ export function* generateCSEMachineStateStream(
 ) {
   context.runtime.break = false
   context.runtime.nodes = []
-  let steps = 1
+
+  // steps: number of steps completed
+  let steps = 0
 
   let command = control.peek()
 
