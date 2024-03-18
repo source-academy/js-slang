@@ -98,37 +98,3 @@ Object {
   "visualiseListResult": Array [],
 }
 `;
-
-exports[`cont throws error given >1 argument: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "
-    (+ 1 2 (call/cc
-              (lambda (k) (k 3 'wrongwrongwrong!)))
-            4)
-  ",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 3: Expected 1 arguments, but got 2.",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`cont throws error given no arguments: expectParsedError 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "
-    (+ 1 2 (call/cc
-              (lambda (k) (k)))
-            4)
-  ",
-  "displayResult": Array [],
-  "numErrors": 1,
-  "parsedErrors": "Line 3: Expected 1 arguments, but got 0.",
-  "result": undefined,
-  "resultStatus": "error",
-  "visualiseListResult": Array [],
-}
-`;

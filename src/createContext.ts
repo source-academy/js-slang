@@ -423,7 +423,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         //defineBuiltin(context, 'filter$33$(pred, xs)', scheme_libs.filterB);
 
         // Scheme promises
-        defineBuiltin(context, 'promise$63$()', scheme_libs.promise$63$)
+        defineBuiltin(context, 'make$45$promise(thunk)', scheme_libs.make$45$promise)
+        defineBuiltin(context, 'promise$63$(p)', scheme_libs.promise$63$)
         defineBuiltin(context, 'force(p)', scheme_libs.force)
 
         // Scheme vectors
