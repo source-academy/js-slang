@@ -26,12 +26,12 @@ import assert from '../utils/assert'
 import { isImportDeclaration } from '../utils/ast/typeGuards'
 import * as create from '../utils/astCreator'
 import {
-  NativeIds,
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getNativeIds,
-  getUniqueId
+  getUniqueId,
+  NativeIds
 } from '../utils/uniqueIds'
 import { simple } from '../utils/walkers'
 import {

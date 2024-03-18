@@ -1,19 +1,19 @@
 import * as es from 'estree'
 
 import { ConstAssignment } from '../errors/errors'
+import { UndefinedVariable } from '../errors/errors'
 import { NoAssignmentToForVariable } from '../errors/validityErrors'
+import { parse } from '../parser/parser'
 import { Context, NodeWithInferredType } from '../types'
 import { getVariableDecarationName } from '../utils/astCreator'
-import { ancestor, base, FullWalkerCallback } from '../utils/walkers'
-import { UndefinedVariable } from '../errors/errors'
-import { parse } from '../parser/parser'
 import {
-  NativeIds,
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
-  getNativeIds
+  getNativeIds,
+  NativeIds
 } from '../utils/uniqueIds'
+import { ancestor, base, FullWalkerCallback } from '../utils/walkers'
 
 class Declaration {
   public accessedBeforeDeclaration: boolean = false
