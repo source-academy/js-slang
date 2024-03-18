@@ -2,6 +2,31 @@ import * as es from 'estree'
 
 import { NativeStorage } from '../types'
 import { simple } from '../utils/walkers'
+import * as create from '../utils/astCreator'
+
+const globalIdNames = [
+  'native',
+  'callIfFuncAndRightArgs',
+  'boolOrErr',
+  'wrap',
+  'wrapSourceModule',
+  'unaryOp',
+  'binaryOp',
+  'throwIfTimeout',
+  'setProp',
+  'getProp',
+  'builtins'
+] as const
+
+export type NativeIds = Record<typeof globalIdNames[number], es.Identifier>
+
+export function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): NativeIds {
+  const globalIds = {}
+  for (const identifier of globalIdNames) {
+    globalIds[identifier] = create.identifier(getUniqueId(usedIdentifiers, identifier))
+  }
+  return globalIds as NativeIds
+}
 
 export function getUniqueId(usedIdentifiers: Set<string>, uniqueId = 'unique') {
   while (usedIdentifiers.has(uniqueId)) {
