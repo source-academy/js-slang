@@ -278,9 +278,36 @@ function runCSEMachine(
   stepLimit: number,
   isPrelude: boolean = false
 ) {
+  const eceState = generateCSEMachineStateStream(
+    context,
+    control,
+    stash,
+    envSteps,
+    stepLimit,
+    isPrelude
+  )
+
+  // Done intentionally as the state is not needed
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  for (const _ of eceState) {
+  }
+
+  return stash.peek()
+}
+
+export function* generateCSEMachineStateStream(
+  context: Context,
+  control: Control,
+  stash: Stash,
+  envSteps: number,
+  stepLimit: number,
+  isPrelude: boolean = false
+) {
   context.runtime.break = false
   context.runtime.nodes = []
-  let steps = 1
+
+  // steps: number of steps completed
+  let steps = 0
 
   let command = control.peek()
 
@@ -290,7 +317,8 @@ function runCSEMachine(
   while (command) {
     // Return to capture a snapshot of the control and stash after the target step count is reached
     if (!isPrelude && steps === envSteps) {
-      return stash.peek()
+      yield { stash, control, steps }
+      return
     }
     // Step limit reached, stop further evaluation
     if (!isPrelude && steps === stepLimit) {
@@ -331,12 +359,12 @@ function runCSEMachine(
     command = control.peek()
 
     steps += 1
-  }
+    if (!isPrelude) {
+      context.runtime.envStepsTotal = steps
+    }
 
-  if (!isPrelude) {
-    context.runtime.envStepsTotal = steps
+    yield { stash, control, steps }
   }
-  return stash.peek()
 }
 
 /**
@@ -393,13 +421,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
     // Normal block statement: do environment setup
     // To restore environment after block ends
-    // If there is an env instruction on top of the stack, or if there are no declarations, or there is no next control item
+    // If there is an env instruction on top of the stack, or if there are no declarations
     // we do not need to push another one
     // The no declarations case is handled by Control :: simplifyBlocksWithoutDeclarations, so no blockStatement node
     // without declarations should end up here.
     const next = control.peek()
     // Push ENVIRONMENT instruction if needed
-    if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+    if (!next || !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
       control.push(instr.envInstr(currentEnvironment(context), command))
     }
 
@@ -915,11 +943,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       const next = control.peek()
 
-      // Push ENVIRONMENT instruction if needed
+      // Push ENVIRONMENT instruction if needed - if next instruction
+      // is empty or not an environment instruction
       if (
-        next &&
-        !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
-        !control.isEmpty()
+        !next ||
+        (!(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && !control.isEmpty())
       ) {
         control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
