@@ -624,7 +624,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       // Binary operators
       defineBuiltin(context, '__py_adder(x, y)', pylib.__py_adder)
       defineBuiltin(context, '__py_minuser(x, y)', pylib.__py_minuser)
-      defineBuiltin(context, '__py_multipler(x, y)', pylib.__py_multiplier)
+      defineBuiltin(context, '__py_multiplier(x, y)', pylib.__py_multiplier)
       defineBuiltin(context, '__py_divider(x, y)', pylib.__py_divider)
       defineBuiltin(context, '__py_modder(x, y)', pylib.__py_modder)
       defineBuiltin(context, '__py_powerer(x, y)', pylib.__py_powerer)

@@ -33,6 +33,13 @@ export function __py_modder(x: Value, y: Value) {
 }
 
 export function __py_powerer(x: Value, y: Value) {
+  if (typeof x == 'bigint' && typeof y == 'bigint') {
+    let res = BigInt(1);
+    for (let i = 0; i < y; i++) {
+      res = res * x;
+    }
+    return res;
+  }
   return Math.pow(Number(x), Number(y));
 }
 
