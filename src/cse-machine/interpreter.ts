@@ -310,6 +310,8 @@ export function* generateCSEMachineStateStream(
 
   let command = control.peek()
 
+  // Push first node to be evaluated into context.
+  // The typeguard is there to guarantee that we are pushing a node (which should always be the case)
   if (command && isNode(command)) {
     context.runtime.nodes.unshift(command)
   }

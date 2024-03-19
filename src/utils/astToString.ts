@@ -2,10 +2,10 @@ import * as astring from 'astring'
 
 import { Node } from '../types'
 
+/**
+ * Writes into `state` the `text` string reindented with the provided `indent`.
+ */
 function reindent(state: any, text: any, indent: any, lineEnd: any) {
-  /*
-    Writes into `state` the `text` string reindented with the provided `indent`.
-    */
   const lines = text.split('\n')
   const end = lines.length - 1
   state.write(lines[0].trim())
@@ -18,12 +18,12 @@ function reindent(state: any, text: any, indent: any, lineEnd: any) {
   }
 }
 
+/**
+ * Writes into `state` the provided list of `comments`, with the given `indent` and `lineEnd` strings.
+ * Line comments will end with `"\n"` regardless of the value of `lineEnd`.
+ * Expects to start on a new unindented line.
+ */
 function formatComments(state: any, comments: any, indent: any, lineEnd: any) {
-  /*
-    Writes into `state` the provided list of `comments`, with the given `indent` and `lineEnd` strings.
-    Line comments will end with `"\n"` regardless of the value of `lineEnd`.
-    Expects to start on a new unindented line.
-    */
   const { length } = comments
   for (let i = 0; i < length; i++) {
     const comment = comments[i]
