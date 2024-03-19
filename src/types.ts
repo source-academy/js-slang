@@ -80,6 +80,7 @@ export enum Chapter {
   SCHEME_3 = -11,
   SCHEME_4 = -12,
   FULL_SCHEME = -13,
+  FULL_C = -14,
   LIBRARY_PARSER = 100
 }
 
@@ -320,6 +321,14 @@ export interface BlockExpression extends es.BaseExpression {
 
 export type substituterNodes = es.Node | BlockExpression
 
+/**
+ * For use in the CSE machine: block statements are handled in two steps:
+ * environment creation, then unpacking
+ */
+export interface RawBlockStatement extends es.BlockStatement {
+  isRawBlock: 'true'
+}
+
 export {
   Instruction as SVMInstruction,
   Program as SVMProgram,
@@ -343,7 +352,7 @@ export type TSAllowedTypes = 'any' | 'void'
 
 export const disallowedTypes = ['bigint', 'never', 'object', 'symbol', 'unknown'] as const
 
-export type TSDisallowedTypes = typeof disallowedTypes[number]
+export type TSDisallowedTypes = (typeof disallowedTypes)[number]
 
 // All types recognised by type parser as basic types
 export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes
