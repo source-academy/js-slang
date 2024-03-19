@@ -92,8 +92,10 @@ function decodeString(str: string): string {
 
 // Given any value, decode it if and
 // only if an encoded value may exist in it.
+// this function is used to accurately display
+// values in the REPL.
 export function decodeValue(x: any): any {
-  // helper version of list_tail that ensures non-null return value
+  // helper version of list_tail that assumes non-null return value
   function list_tail(xs: List, i: number): List {
     if (i === 0) {
       return xs
@@ -101,9 +103,9 @@ export function decodeValue(x: any): any {
       return list_tail(list$45$tail(xs), i - 1)
     }
   }
-  // In future: add support for decoding vectors.
+
   if (circular$45$list$63$(x)) {
-    // May contain encoded strings, but we want to avoid a stack overflow.
+    // May contain encoded strings.
     let circular_pair_index = -1
     const all_pairs: Pair<any, any>[] = []
 
@@ -117,7 +119,7 @@ export function decodeValue(x: any): any {
       all_pairs.push(current)
       current = cdr(current)
     }
-
+    x
     // assemble a new list using the elements in all_pairs
     let new_list = null
     for (let i = all_pairs.length - 1; i >= 0; i--) {
@@ -136,9 +138,12 @@ export function decodeValue(x: any): any {
     // May contain encoded strings.
     return x.map(decodeValue)
   } else if (procedure$63$(x)) {
+    // copy x to avoid modifying the original object
+    const newX = { ...x }
     const newString = decodeString(x.toString())
-    x.toString = () => newString
-    return x
+    // change the toString method to return the decoded string
+    newX.toString = () => newString
+    return newX
   } else {
     // string, number, boolean, null, undefined
     // no need to decode.

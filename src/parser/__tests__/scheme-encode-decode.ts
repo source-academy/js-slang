@@ -2,11 +2,12 @@ import { Node } from 'estree'
 
 import { UnassignedVariable } from '../../errors/errors'
 import { decode, encode } from '../../scm-slang/src'
+import { cons, set$45$cdr$33$ } from '../../scm-slang/src/stdlib/base'
 import { dummyExpression } from '../../utils/dummyAstCreator'
 import { decodeError, decodeValue } from '../scheme'
 
 describe('Scheme encoder and decoder', () => {
-  it('encodes and decodes strings correctly', () => {
+  it('encoder and decoder are proper inverses of one another', () => {
     const values = [
       'hello',
       'hello world',
@@ -34,6 +35,27 @@ describe('Scheme encoder and decoder', () => {
     // Dummy function to test
     function $65$() {}
     expect(decodeValue($65$).toString()).toEqual(`function A() { }`)
+  })
+
+  it('decoder works on circular lists', () => {
+    function $65$() {}
+    const pair = cons($65$, 'placeholder')
+    set$45$cdr$33$(pair, pair)
+    expect(decodeValue(pair).toString()).toEqual(`function A() { },`)
+  })
+
+  it('decoder works on pairs', () => {
+    // and in doing so, works on pairs, lists, etc...
+    function $65$() {}
+    const pair = cons($65$, 'placeholder')
+    expect(decodeValue(pair).toString()).toEqual(`function A() { },placeholder`)
+  })
+
+  it('decoder works on vectors', () => {
+    // scheme doesn't support optimisation of circular vectors yet
+    function $65$() {}
+    const vector = [$65$, 2, 3]
+    expect(decodeValue(vector).toString()).toEqual(`function A() { },2,3`)
   })
 
   it('decodes runtime errors properly', () => {
