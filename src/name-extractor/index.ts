@@ -341,10 +341,7 @@ function docsToHtml(obj: ModuleDocsEntry): string {
  * is located within the node, false otherwise
  * @returns List of found names
  */
-async function getNames(
-  node: Node,
-  locTest: (node: Node) => boolean
-): Promise<NameDeclaration[]> {
+async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<NameDeclaration[]> {
   switch (node.type) {
     case 'ImportDeclaration':
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))

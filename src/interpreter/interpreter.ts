@@ -1,5 +1,5 @@
 /* tslint:disable:max-classes-per-file */
-import * as es from 'estree'
+import type es from 'estree'
 import { isEmpty, uniqueId } from 'lodash'
 
 import { UNKNOWN_LOCATION } from '../constants'
@@ -9,7 +9,15 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Environment, Frame, Node, Value, Variant } from '../types'
+import {
+  type Context,
+  type ContiguousArrayElements,
+  type Environment,
+  type Frame,
+  type Node,
+  type Value,
+  Variant
+} from '../types'
 import * as create from '../utils/ast/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
 import { getModuleDeclarationSource } from '../utils/ast/helpers'

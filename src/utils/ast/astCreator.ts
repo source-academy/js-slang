@@ -1,10 +1,10 @@
 import type es from 'estree'
 
-import { 
+import {
   AllowedDeclarations,
-  type BlockExpression, 
-  type FunctionDeclarationExpression, 
-  type Node, 
+  type BlockExpression,
+  type FunctionDeclarationExpression,
+  type Node,
   type StatementSequence
 } from '../../types'
 
