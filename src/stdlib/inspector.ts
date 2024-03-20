@@ -1,7 +1,5 @@
-import { Node } from 'estree'
-
 import { Context, Result } from '..'
-import { Scheduler, Value } from '../types'
+import { Node, Scheduler, Value } from '../types'
 
 export const saveState = (
   context: Context,

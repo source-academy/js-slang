@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { isInLoc } from './finder'
-import { BlockFrame, DefinitionNode } from './types'
+import { BlockFrame, DefinitionNode, Node } from './types'
 import { simple } from './utils/walkers'
 
 /**
@@ -464,7 +464,7 @@ function isPartOf(curr: es.SourceLocation, enclosing: es.SourceLocation): boolea
 
 // Returns all nodes that are not part of any child BlockFrame.
 // ie direct children of the current BlockFrame
-export function getNodeLocsInCurrentBlockFrame<E extends es.Node>(
+export function getNodeLocsInCurrentBlockFrame<E extends Node>(
   nodes: E[],
   currentLoc: es.SourceLocation,
   blocks: BlockFrame[]

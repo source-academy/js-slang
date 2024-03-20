@@ -2,7 +2,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 export class BracesAroundForError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -33,7 +33,7 @@ const bracesAroundFor: Rule<es.ForStatement> = {
   name: 'braces-around-for',
 
   checkers: {
-    ForStatement(node: es.ForStatement, _ancestors: [es.Node]) {
+    ForStatement(node: es.ForStatement, _ancestors: [Node]) {
       if (node.body.type !== 'BlockStatement') {
         return [new BracesAroundForError(node)]
       } else {
