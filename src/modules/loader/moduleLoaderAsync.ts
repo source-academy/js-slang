@@ -1,6 +1,6 @@
 import { memoize } from 'lodash'
 
-import type { Context,Node } from '../../types'
+import type { Context, Node } from '../../types'
 import { PromiseTimeoutError, timeoutPromise } from '../../utils/misc'
 import { wrapSourceModule } from '../../utils/operators'
 import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from '../errors'
