@@ -1,8 +1,8 @@
 import { parse as acornParse, Token, tokenizer } from 'acorn'
-import { Node as ESNode, Program } from 'estree'
+import * as es from 'estree'
 
 import { DEFAULT_ECMA_VERSION } from '../../constants'
-import { Chapter, Context, Rule, SourceError, Variant } from '../../types'
+import { Chapter, Context, Node, Rule, SourceError, Variant } from '../../types'
 import { ancestor, AncestorWalkerFn } from '../../utils/walkers'
 import { DisallowedConstructError, FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
@@ -12,7 +12,7 @@ import syntaxBlacklist from './syntax'
 
 const combineAncestorWalkers =
   <TState>(w1: AncestorWalkerFn<TState>, w2: AncestorWalkerFn<TState>): AncestorWalkerFn<TState> =>
-  (node: ESNode, state: TState, ancestors: ESNode[]) => {
+  (node: Node, state: TState, ancestors: Node[]) => {
     w1(node, state, ancestors)
     w2(node, state, ancestors)
   }
@@ -40,12 +40,12 @@ export class SourceParser implements Parser<AcornOptions> {
     context: Context,
     options?: Partial<AcornOptions>,
     throwOnError?: boolean
-  ): Program | null {
+  ): es.Program | null {
     try {
       return acornParse(
         programStr,
         createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors, options)
-      ) as unknown as Program
+      ) as unknown as es.Program
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(
@@ -61,10 +61,10 @@ export class SourceParser implements Parser<AcornOptions> {
     return null
   }
 
-  validate(ast: Program, context: Context, throwOnError?: boolean): boolean {
+  validate(ast: es.Program, context: Context, throwOnError?: boolean): boolean {
     const validationWalkers: Map<string, AncestorWalkerFn<any>> = new Map()
     this.getDisallowedSyntaxes().forEach((syntaxNodeName: string) => {
-      validationWalkers.set(syntaxNodeName, (node: ESNode, _state: any, _ancestors: [ESNode]) => {
+      validationWalkers.set(syntaxNodeName, (node: Node, _state: any, _ancestors: [Node]) => {
         if (node.type != syntaxNodeName) return
 
         const error: DisallowedConstructError = new DisallowedConstructError(node)
@@ -77,11 +77,7 @@ export class SourceParser implements Parser<AcornOptions> {
       .map(rule => Object.entries(rule.checkers))
       .flat()
       .forEach(([syntaxNodeName, checker]) => {
-        const langWalker: AncestorWalkerFn<any> = (
-          node: ESNode,
-          _state: any,
-          ancestors: ESNode[]
-        ) => {
+        const langWalker: AncestorWalkerFn<any> = (node: Node, _state: any, ancestors: Node[]) => {
           const errors: SourceError[] = checker(node, ancestors)
 
           if (throwOnError && errors.length > 0) throw errors[0]
@@ -97,7 +93,7 @@ export class SourceParser implements Parser<AcornOptions> {
         }
       })
 
-    ancestor(ast as ESNode, mapToObj(validationWalkers), undefined, undefined)
+    ancestor(ast as Node, mapToObj(validationWalkers), undefined, undefined)
     return context.errors.length == 0
   }
 
@@ -113,9 +109,9 @@ export class SourceParser implements Parser<AcornOptions> {
     )
   }
 
-  private getLangRules(): Rule<ESNode>[] {
+  private getLangRules(): Rule<Node>[] {
     return defaultRules.filter(
-      (rule: Rule<ESNode>) =>
+      (rule: Rule<Node>) =>
         !(
           (rule.disableFromChapter && this.chapter >= rule.disableFromChapter) ||
           (rule.disableForVariants && rule.disableForVariants.includes(this.variant))

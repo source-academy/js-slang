@@ -20,7 +20,9 @@ import {
   Chapter,
   type Context,
   NativeStorage,
+  Node,
   type RecursivePartial,
+  StatementSequence,
   Variant
 } from '../types'
 import * as create from '../utils/ast/astCreator'
@@ -191,7 +193,7 @@ export function evallerReplacer(
 }
 
 function generateFunctionsToStringMap(program: es.Program) {
-  const map: Map<es.Node, string> = new Map()
+  const map: Map<Node, string> = new Map()
   simple(program, {
     ArrowFunctionExpression(node: es.ArrowFunctionExpression) {
       map.set(node, generate(node))
@@ -205,7 +207,7 @@ function generateFunctionsToStringMap(program: es.Program) {
 
 function transformFunctionDeclarationsToArrowFunctions(
   program: es.Program,
-  functionsToStringMap: Map<es.Node, string>
+  functionsToStringMap: Map<Node, string>
 ) {
   simple(program, {
     FunctionDeclaration(node) {
@@ -241,7 +243,7 @@ function transformFunctionDeclarationsToArrowFunctions(
 
 function wrapArrowFunctionsToAllowNormalCallsAndNiceToString(
   program: es.Program,
-  functionsToStringMap: Map<es.Node, string>,
+  functionsToStringMap: Map<Node, string>,
   globalIds: NativeIds
 ) {
   simple(program, {
@@ -353,7 +355,7 @@ export function checkForUndefinedVariables(
   skipUndefined: boolean
 ) {
   const builtins = nativeStorage.builtins
-  const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
+  const identifiersIntroducedByNode = new Map<Node, Set<string>>()
   function processBlock(node: es.Program | es.BlockStatement) {
     const identifiers = new Set<string>()
     for (const statement of node.body) {
@@ -376,7 +378,7 @@ export function checkForUndefinedVariables(
   }
   function processFunction(
     node: es.FunctionDeclaration | es.ArrowFunctionExpression,
-    _ancestors: es.Node[]
+    _ancestors: Node[]
   ) {
     identifiersIntroducedByNode.set(
       node,
@@ -389,13 +391,13 @@ export function checkForUndefinedVariables(
       )
     )
   }
-  const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
+  const identifiersToAncestors = new Map<es.Identifier, Node[]>()
   ancestor(program, {
     Program: processBlock,
     BlockStatement: processBlock,
     FunctionDeclaration: processFunction,
     ArrowFunctionExpression: processFunction,
-    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
+    ForStatement(forStatement: es.ForStatement, ancestors: Node[]) {
       const init = forStatement.init!
       if (init.type === 'VariableDeclaration') {
         identifiersIntroducedByNode.set(
@@ -404,10 +406,10 @@ export function checkForUndefinedVariables(
         )
       }
     },
-    Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
+    Identifier(identifier: es.Identifier, ancestors: Node[]) {
       identifiersToAncestors.set(identifier, [...ancestors])
     },
-    Pattern(node: es.Pattern, ancestors: es.Node[]) {
+    Pattern(node: es.Pattern, ancestors: Node[]) {
       if (node.type === 'Identifier') {
         identifiersToAncestors.set(node, [...ancestors])
       } else if (node.type === 'MemberExpression') {
@@ -454,8 +456,8 @@ export function checkProgramForUndefinedVariables(program: es.Program, context: 
   const builtins = context.nativeStorage.builtins
   const env = context.runtime.environments[0].head
 
-  const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
-  function processBlock(node: es.Program | es.BlockStatement) {
+  const identifiersIntroducedByNode = new Map<Node, Set<string>>()
+  function processBlock(node: es.Program | es.BlockStatement | StatementSequence) {
     const identifiers = new Set<string>()
     for (const statement of node.body) {
       if (statement.type === 'VariableDeclaration') {
@@ -477,7 +479,7 @@ export function checkProgramForUndefinedVariables(program: es.Program, context: 
   }
   function processFunction(
     node: es.FunctionDeclaration | es.ArrowFunctionExpression,
-    _ancestors: es.Node[]
+    _ancestors: Node[]
   ) {
     identifiersIntroducedByNode.set(
       node,
@@ -490,13 +492,14 @@ export function checkProgramForUndefinedVariables(program: es.Program, context: 
       )
     )
   }
-  const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
+  const identifiersToAncestors = new Map<es.Identifier, Node[]>()
   ancestor(program, {
     Program: processBlock,
     BlockStatement: processBlock,
+    StatementSequence: processBlock,
     FunctionDeclaration: processFunction,
     ArrowFunctionExpression: processFunction,
-    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
+    ForStatement(forStatement: es.ForStatement, ancestors: Node[]) {
       const init = forStatement.init!
       if (init.type === 'VariableDeclaration') {
         identifiersIntroducedByNode.set(
@@ -505,10 +508,10 @@ export function checkProgramForUndefinedVariables(program: es.Program, context: 
         )
       }
     },
-    Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
+    Identifier(identifier: es.Identifier, ancestors: Node[]) {
       identifiersToAncestors.set(identifier, [...ancestors])
     },
-    Pattern(node: es.Pattern, ancestors: es.Node[]) {
+    Pattern(node: es.Pattern, ancestors: Node[]) {
       if (node.type === 'Identifier') {
         identifiersToAncestors.set(node, [...ancestors])
       } else if (node.type === 'MemberExpression') {

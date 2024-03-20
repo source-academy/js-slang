@@ -9,10 +9,25 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
+<<<<<<< HEAD
 import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
 import { getModuleDeclarationSource } from '../utils/ast/helpers'
+=======
+import {
+  Context,
+  ContiguousArrayElements,
+  Environment,
+  Frame,
+  Node,
+  Value,
+  Variant
+} from '../types'
+import assert from '../utils/assert'
+import * as create from '../utils/astCreator'
+import { conditionalExpression, literal, primitive } from '../utils/astCreator'
+>>>>>>> 89b726c262aabb9e96b9a435a2ab1f86f1d1ac80
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -32,13 +47,13 @@ class TailCallReturnValue {
 class Thunk {
   public value: Value
   public isMemoized: boolean
-  constructor(public exp: es.Node, public env: Environment) {
+  constructor(public exp: Node, public env: Environment) {
     this.isMemoized = false
     this.value = null
   }
 }
 
-const delayIt = (exp: es.Node, env: Environment): Thunk => new Thunk(exp, env)
+const delayIt = (exp: Node, env: Environment): Thunk => new Thunk(exp, env)
 
 function* forceIt(val: any, context: Context): Value {
   if (val instanceof Thunk) {
@@ -53,7 +68,7 @@ function* forceIt(val: any, context: Context): Value {
   } else return val
 }
 
-export function* actualValue(exp: es.Node, context: Context): Value {
+export function* actualValue(exp: Node, context: Context): Value {
   const evalResult = yield* evaluate(exp, context)
   const forced = yield* forceIt(evalResult, context)
   return forced
@@ -109,7 +124,7 @@ const handleRuntimeError = (context: Context, error: RuntimeSourceError): never 
 
 const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement block scope')
 
-function declareIdentifier(context: Context, name: string, node: es.Node) {
+function declareIdentifier(context: Context, name: string, node: Node) {
   const environment = currentEnvironment(context)
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
@@ -166,7 +181,7 @@ function defineVariable(context: Context, name: string, value: Value, constant =
   return environment
 }
 
-function* visit(context: Context, node: es.Node) {
+function* visit(context: Context, node: Node) {
   checkEditorBreakpoints(context, node)
   context.runtime.nodes.unshift(node)
   yield context
@@ -293,7 +308,7 @@ function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalE
 function* reduceIf(
   node: es.IfStatement | es.ConditionalExpression,
   context: Context
-): IterableIterator<null | es.Node> {
+): IterableIterator<null | Node> {
   const test = yield* actualValue(node.test, context)
 
   const error = rttc.checkIfStatement(node, test, context.chapter)
@@ -304,7 +319,7 @@ function* reduceIf(
   return test ? node.consequent : node.alternate
 }
 
-export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
+export type Evaluator<T extends Node> = (node: T, context: Context) => IterableIterator<Value>
 
 function* evaluateBlockStatement(context: Context, node: es.BlockStatement) {
   declareFunctionsAndVariables(context, node)
@@ -335,7 +350,7 @@ function* evaluateBlockStatement(context: Context, node: es.BlockStatement) {
  */
 // tslint:disable:object-literal-shorthand
 // prettier-ignore
-export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
+export const evaluators: { [nodeType: string]: Evaluator<Node> } = {
   /** Simple Values */
   Literal: function*(node: es.Literal, _context: Context) {
     return node.value
@@ -779,7 +794,7 @@ export function* evaluateProgram(program: es.Program, context: Context, loadTabs
   return result
 }
 
-function* evaluate(node: es.Node, context: Context) {
+function* evaluate(node: Node, context: Context) {
   yield* visit(context, node)
   const result = yield* evaluators[node.type](node, context)
   yield* leave(context)

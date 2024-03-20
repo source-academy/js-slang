@@ -20,6 +20,7 @@ export enum DeclarationKind {
   KIND_CONST = 'const',
   KIND_KEYWORD = 'keyword'
 }
+import { Node } from '../types'
 
 export interface NameDeclaration {
   name: string
@@ -28,7 +29,7 @@ export interface NameDeclaration {
 }
 
 type FunctionType = es.FunctionDeclaration | es.ArrowFunctionExpression | es.FunctionExpression
-function isFunction(node: es.Node): node is FunctionType {
+function isFunction(node: Node): node is FunctionType {
   return (
     node.type === 'FunctionDeclaration' ||
     node.type === 'FunctionExpression' ||
@@ -37,7 +38,7 @@ function isFunction(node: es.Node): node is FunctionType {
 }
 
 type LoopNode = es.WhileStatement | es.ForStatement
-function isLoop(node: es.Node): node is LoopNode {
+function isLoop(node: Node): node is LoopNode {
   return node.type === 'WhileStatement' || node.type === 'ForStatement'
 }
 
@@ -86,7 +87,7 @@ const keywordsInFunction: { [key: string]: NameDeclaration[] } = {
  * @returns A list of keywords as suggestions
  */
 export function getKeywords(
-  prog: es.Node,
+  prog: Node,
   cursorLoc: es.Position,
   context: Context
 ): NameDeclaration[] {
@@ -145,7 +146,7 @@ export function getKeywords(
  * suggestions should be displayed, i.e. `[suggestions, shouldPrompt]`
  */
 export async function getProgramNames(
-  prog: es.Node,
+  prog: Node,
   comments: acorn.Comment[],
   cursorLoc: es.Position
 ): Promise<[NameDeclaration[], boolean]> {
@@ -168,8 +169,8 @@ export async function getProgramNames(
   }
 
   // BFS to get names
-  const queue: es.Node[] = [prog]
-  const nameQueue: es.Node[] = []
+  const queue: Node[] = [prog]
+  const nameQueue: Node[] = []
 
   while (queue.length > 0) {
     // Workaround due to minification problem
@@ -229,7 +230,7 @@ function isNotNullOrUndefined<T>(x: T): x is Exclude<T, null | undefined> {
   return x !== undefined && isNotNull(x)
 }
 
-function getNodeChildren(node: es.Node): es.Node[] {
+function getNodeChildren(node: Node): es.Node[] {
   switch (node.type) {
     case 'Program':
       return node.body
@@ -296,7 +297,7 @@ function getNodeChildren(node: es.Node): es.Node[] {
   }
 }
 
-function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean): boolean {
+function cursorInIdentifier(node: Node, locTest: (node: Node) => boolean): boolean {
   switch (node.type) {
     case 'VariableDeclaration':
       for (const decl of node.declarations) {
@@ -336,13 +337,13 @@ function docsToHtml(obj: ModuleDocsEntry): string {
 /**
  * Gets a list of `NameDeclarations` from the given node
  * @param node Node to search for names
- * @param locTest Callback of type `(node: es.Node) => boolean`. Should return true if the cursor
+ * @param locTest Callback of type `(node: Node) => boolean`. Should return true if the cursor
  * is located within the node, false otherwise
  * @returns List of found names
  */
 async function getNames(
-  node: es.Node,
-  locTest: (node: es.Node) => boolean
+  node: Node,
+  locTest: (node: Node) => boolean
 ): Promise<NameDeclaration[]> {
   switch (node.type) {
     case 'ImportDeclaration':

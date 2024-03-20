@@ -86,7 +86,7 @@ export const objectExpression = (properties: es.Property[]): es.ObjectExpression
 })
 
 export const mutateToCallExpression = (
-  node: es.Node,
+  node: Node,
   callee: es.Expression,
   args: es.Expression[]
 ) => {
