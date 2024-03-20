@@ -9,25 +9,10 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-<<<<<<< HEAD
-import { Context, ContiguousArrayElements, Environment, Frame, Value, Variant } from '../types'
+import { Context, ContiguousArrayElements, Environment, Frame, Node, Value, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
 import { getModuleDeclarationSource } from '../utils/ast/helpers'
-=======
-import {
-  Context,
-  ContiguousArrayElements,
-  Environment,
-  Frame,
-  Node,
-  Value,
-  Variant
-} from '../types'
-import assert from '../utils/assert'
-import * as create from '../utils/astCreator'
-import { conditionalExpression, literal, primitive } from '../utils/astCreator'
->>>>>>> 89b726c262aabb9e96b9a435a2ab1f86f1d1ac80
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
