@@ -17,13 +17,8 @@ import Closure from '../interpreter/closure'
 import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
-<<<<<<< HEAD
-import { Context, ContiguousArrayElements, RawBlockStatement, Result, Value } from '../types'
+import { Context, ContiguousArrayElements, Result, type StatementSequence,Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
-=======
-import { Context, ContiguousArrayElements, Result, StatementSequence, Value } from '../types'
-import assert from '../utils/assert'
->>>>>>> 89b726c262aabb9e96b9a435a2ab1f86f1d1ac80
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'

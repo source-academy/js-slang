@@ -5,13 +5,8 @@ import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-<<<<<<< HEAD
-import { Environment, Frame, RawBlockStatement, Value } from '../types'
+import type { Environment, Frame, Node, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
-=======
-import { Environment, Frame, Node, StatementSequence, Value } from '../types'
-import * as ast from '../utils/astCreator'
->>>>>>> 89b726c262aabb9e96b9a435a2ab1f86f1d1ac80
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
 import { AppInstr, AssmtInstr, ControlItem, Instr, InstrType } from './types'

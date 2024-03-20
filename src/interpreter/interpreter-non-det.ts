@@ -5,13 +5,8 @@ import { cloneDeep, uniqueId } from 'lodash'
 import { CUT, UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-<<<<<<< HEAD
-import { Context, Environment, Frame, Value } from '../types'
-import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
-=======
 import { Context, Environment, Frame, Node, Value } from '../types'
-import { conditionalExpression, literal, primitive } from '../utils/astCreator'
->>>>>>> 89b726c262aabb9e96b9a435a2ab1f86f1d1ac80
+import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
