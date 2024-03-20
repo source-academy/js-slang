@@ -35,10 +35,14 @@ import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
-import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
-import { determineVariant, resolvedErrorPromise } from './utils'
+import {
+  determineExecutionMethod,
+  determineVariant,
+  hasVerboseErrors,
+  resolvedErrorPromise
+} from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   scheduler: 'async',

@@ -1,10 +1,11 @@
 import { SourceLocation } from 'estree'
+import * as es from 'estree'
 import { SourceMapConsumer } from 'source-map'
 
 import createContext from './createContext'
 import { InterruptedError } from './errors/errors'
 import { findDeclarationNode, findIdentifierNode } from './finder'
-import { looseParse } from './parser/utils'
+import { looseParse, parseWithComments } from './parser/utils'
 import { getAllOccurrencesInScopeHelper, getScopeHelper } from './scope-refactoring'
 import { setBreakpointAtLine } from './stdlib/inspector'
 import {
@@ -23,7 +24,6 @@ import {
 import { assemble } from './vm/svml-assembler'
 import { compileToIns } from './vm/svml-compiler'
 export { SourceDocumentation } from './editors/ace/docTooltip'
-import * as es from 'estree'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { ModuleNotFoundError } from './modules/errors'
@@ -34,7 +34,6 @@ import { mergeImportOptions } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
 import { decodeError, decodeValue } from './parser/scheme'
-import { parseWithComments } from './parser/utils'
 import {
   fullJSRunner,
   hasVerboseErrors,

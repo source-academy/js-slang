@@ -1,5 +1,5 @@
-import type es from 'estree'
 import { posix as posixPath } from 'path'
+import type es from 'estree'
 
 import type { Context, IOptions } from '../..'
 import type { RecursivePartial } from '../../types'

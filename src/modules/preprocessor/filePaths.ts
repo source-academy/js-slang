@@ -1,6 +1,8 @@
-import { ConsecutiveSlashesInFilePathError } from '../errors'
-import { IllegalCharInFilePathError } from '../errors'
-import { InvalidFilePathError } from '../errors'
+import {
+  ConsecutiveSlashesInFilePathError,
+  IllegalCharInFilePathError,
+  InvalidFilePathError
+} from '../errors'
 
 /**
  * Maps non-alphanumeric characters that are legal in file paths

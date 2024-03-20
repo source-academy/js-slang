@@ -16,10 +16,12 @@
     "sourceType": "module"
   },
   "plugins": [
-    "@typescript-eslint",
-    "simple-import-sort"
+    "import",
+    "@typescript-eslint"
   ],
   "rules": {
+    "import/no-duplicates": ["warn", { "prefer-inline": true }],
+    "import/order": "warn",
     "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/camelcase": "off",
@@ -44,18 +46,17 @@
     "@typescript-eslint/no-unsafe-return": "off",
     "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/no-var-requires": "off",
-    "@typescript-eslint/require-await": "off",
+    "@typescript-eslint/require-await": "error",
     "@typescript-eslint/restrict-plus-operands": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/unbound-method": "off",
-    "prefer-rest-params": "off",
-    "simple-import-sort/imports": "warn"
+    "prefer-rest-params": "off"
   },
   "overrides": [{
     "files": ["src/**/__tests__/**", "src/**/__mocks__/**"],
-    "plugins": ["simple-import-sort"],
+    "plugins": ["import"],
     "rules": {
-      "simple-import-sort/imports": "warn"
+      "import/order": "warn"
     }
   }]
 }
