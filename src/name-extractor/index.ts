@@ -329,7 +329,6 @@ function docsToHtml(obj: ModuleDocsEntry): string {
     return `<div><h4>${header}</h4><div class="description">${obj.description}</div></div>`
   }
 
-
   return `<div><h4>${obj.name}: ${obj.type}</h4><div class="description">${obj.description}</div></div>`
 }
 
