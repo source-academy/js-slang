@@ -10,6 +10,10 @@ export function removeExportDefault(text: string) {
     text = text.substring(exportDefaultStr.length).trim()
   }
 
+  if (text.endsWith(';')) {
+    text = text.slice(0, -1)
+  }
+
   return text
 }
 

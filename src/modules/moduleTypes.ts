@@ -14,7 +14,23 @@ export type ModuleFunctions = {
   [functionName: string]: Function
 }
 
-export type ModuleDocumentation = Record<string, string>
+export interface FunctionDocumentation {
+  kind: 'function'
+  name: string
+  retType: string
+  description: string
+  params: Record<string, string>
+}
+
+export interface VariableDocumentation {
+  kind: 'variable'
+  name: string
+  type: string
+  description: string
+}
+export type ModuleDocsEntry = FunctionDocumentation | VariableDocumentation
+
+export type ModuleDocumentation = Record<string, ModuleDocsEntry>
 
 export type ImportOptions = {
   wrapSourceModules: boolean

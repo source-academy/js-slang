@@ -5,7 +5,7 @@ import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
 import { Context } from '../../types'
 import { wrapSourceModule } from '../../utils/operators'
 import { ModuleConnectionError, ModuleInternalError, ModuleNotFoundError } from '../errors'
-import { ModuleBundle, ModuleDocumentation, ModuleFunctions, ModuleManifest } from '../moduleTypes'
+import type { ModuleBundle, ModuleFunctions, ModuleManifest } from '../moduleTypes'
 import { removeExportDefault } from '../utils'
 import { getRequireProvider } from './requireProvider'
 
@@ -110,21 +110,6 @@ export function loadModuleTabs(path: string, node?: es.Node) {
       throw new ModuleInternalError(path, error, node)
     }
   })
-}
-
-export const memoizedloadModuleDocs = memoize(loadModuleDocs)
-export function loadModuleDocs(path: string, node?: es.Node) {
-  try {
-    const modules = memoizedGetModuleManifest()
-    // Check if the module exists
-    const moduleList = Object.keys(modules)
-    if (!moduleList.includes(path)) throw new ModuleNotFoundError(path, node)
-    const result = getModuleFile({ name: path, type: 'json' })
-    return JSON.parse(result) as ModuleDocumentation
-  } catch (error) {
-    console.warn('Failed to load module documentation')
-    return null
-  }
 }
 
 export function initModuleContext(

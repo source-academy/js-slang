@@ -6,6 +6,7 @@ import { UNKNOWN_LOCATION } from '../constants'
 import { findAncestors, findIdentifierNode } from '../finder'
 import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
 import { memoizedGetModuleDocsAsync } from '../modules/loader/moduleLoaderAsync'
+import type { ModuleDocsEntry } from '../modules/moduleTypes'
 import { isSourceModule } from '../modules/utils'
 import syntaxBlacklist from '../parser/source/syntax'
 import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
@@ -313,6 +314,25 @@ function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean):
   }
 }
 
+function docsToHtml(obj: ModuleDocsEntry): string {
+  if (obj.kind === 'function') {
+    const params = Object.entries(obj.params)
+    let paramStr: string
+
+    if (params.length === 0) {
+      paramStr = '()'
+    } else {
+      paramStr = `(${params.map(([name, type]) => `${name}: ${type}`).join(', ')})`
+    }
+
+    const header = `${obj.name}${paramStr} → {${obj.retType}}`
+    return `<div><h4>${header}</h4><div class="description">${obj.description}</div></div>`
+  }
+
+
+  return `<div><h4>${obj.name}: ${obj.type}</h4><div class="description">${obj.description}</div></div>`
+}
+
 // locTest is a callback that returns whether cursor is in location of node
 /**
  * Gets a list of `NameDeclarations` from the given node
@@ -363,9 +383,9 @@ async function getNames(
             }
           } else {
             return {
-              name: spec.local.name,
+              name: importedName,
               meta: DeclarationKind.KIND_IMPORT,
-              docHTML: docs[importedName]
+              docHTML: docsToHtml(docs[importedName])
             }
           }
         })

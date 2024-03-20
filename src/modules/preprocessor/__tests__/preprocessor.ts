@@ -111,10 +111,10 @@ describe('preprocessFileImports', () => {
       typeof memoizedGetModuleDocsAsync
     >
     docsMocked.mockResolvedValueOnce({
-      default: '',
-      a: '',
-      b: '',
-      c: ''
+      default: {} as any,
+      a: {} as any,
+      b: {} as any,
+      c: {} as any
     })
 
     const files: Record<string, string> = {
@@ -166,13 +166,13 @@ describe('preprocessFileImports', () => {
       typeof memoizedGetModuleDocsAsync
     >
     docsMocked.mockResolvedValue({
-      f: '',
-      g: '',
-      h: '',
-      w: '',
-      x: '',
-      y: '',
-      z: ''
+      f: {} as any,
+      g: {} as any,
+      h: {} as any,
+      w: {} as any,
+      x: {} as any,
+      y: {} as any,
+      z: {} as any
     })
     const files: Record<string, string> = {
       '/a.js': `
