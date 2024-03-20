@@ -3,8 +3,8 @@ import { generate } from 'astring'
 import * as es from 'estree'
 import { uniqueId } from 'lodash'
 
-import { hasReturnStatement, isBlockStatement } from '../cse-machine/utils'
-import { Context, Environment, Value } from '../types'
+import { hasReturnStatement, isBlockStatement, isStatementSequence } from '../cse-machine/utils'
+import { Context, Environment, StatementSequence, Value } from '../types'
 import {
   blockArrowFunction,
   blockStatement,
@@ -59,17 +59,18 @@ export default class Closure extends Callable {
     dummyReturn?: boolean,
     predefined?: boolean
   ) {
-    const functionBody: es.BlockStatement = !isBlockStatement(node.body)
-      ? blockStatement([returnStatement(node.body, node.body.loc)], node.body.loc)
-      : dummyReturn && !hasReturnStatement(node.body)
-      ? blockStatement(
-          [
-            ...node.body.body,
-            returnStatement(identifier('undefined', node.body.loc), node.body.loc)
-          ],
-          node.body.loc
-        )
-      : node.body
+    const functionBody: es.BlockStatement | StatementSequence =
+      !isBlockStatement(node.body) && !isStatementSequence(node.body)
+        ? blockStatement([returnStatement(node.body, node.body.loc)], node.body.loc)
+        : dummyReturn && !hasReturnStatement(node.body)
+        ? blockStatement(
+            [
+              ...node.body.body,
+              returnStatement(identifier('undefined', node.body.loc), node.body.loc)
+            ],
+            node.body.loc
+          )
+        : node.body
 
     const closure = new Closure(
       blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),

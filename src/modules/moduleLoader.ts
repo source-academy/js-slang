@@ -1,4 +1,3 @@
-import es from 'estree'
 import { memoize } from 'lodash'
 import { XMLHttpRequest as NodeXMLHttpRequest } from 'xmlhttprequest-ts'
 
@@ -7,7 +6,7 @@ import {
   ModuleInternalError,
   ModuleNotFoundError
 } from '../errors/moduleErrors'
-import { Context } from '../types'
+import { Context, Node } from '../types'
 import { wrapSourceModule } from '../utils/operators'
 import { ModuleBundle, ModuleDocumentation, ModuleFunctions, ModuleManifest } from './moduleTypes'
 import { getRequireProvider } from './requireProvider'
@@ -71,7 +70,7 @@ function getModuleFile({ name, type }: { name: string; type: 'tab' | 'bundle' | 
  * @param node import declaration node
  * @returns the module's functions object
  */
-export function loadModuleBundle(path: string, context: Context, node?: es.Node): ModuleFunctions {
+export function loadModuleBundle(path: string, context: Context, node?: Node): ModuleFunctions {
   const modules = memoizedGetModuleManifest()
 
   // Check if the module exists
@@ -96,7 +95,7 @@ export function loadModuleBundle(path: string, context: Context, node?: es.Node)
  * @param node import declaration node
  * @returns an array of functions
  */
-export function loadModuleTabs(path: string, node?: es.Node) {
+export function loadModuleTabs(path: string, node?: Node) {
   const modules = memoizedGetModuleManifest()
   // Check if the module exists
   const moduleList = Object.keys(modules)
@@ -117,7 +116,7 @@ export function loadModuleTabs(path: string, node?: es.Node) {
 }
 
 export const memoizedloadModuleDocs = memoize(loadModuleDocs)
-export function loadModuleDocs(path: string, node?: es.Node) {
+export function loadModuleDocs(path: string, node?: Node) {
   try {
     const modules = memoizedGetModuleManifest()
     // Check if the module exists
@@ -135,7 +134,7 @@ export function initModuleContext(
   moduleName: string,
   context: Context,
   loadTabs: boolean,
-  node?: es.Node
+  node?: Node
 ) {
   if (!(moduleName in context.moduleContexts)) {
     context.moduleContexts[moduleName] = {

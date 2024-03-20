@@ -1,5 +1,6 @@
 import * as es from 'estree'
 
+import { Node } from '../types'
 import * as create from '../utils/astCreator'
 import { ancestor, make, simple } from '../utils/walkers'
 import GPUBodyVerifier from './verification/bodyVerifier'
@@ -114,7 +115,7 @@ class GPUTransformer {
     const checker = verifier.getArrayName
     const locals = this.localVar
     ancestor(this.targetBody, {
-      AssignmentExpression(nx: es.AssignmentExpression, ancstor: es.Node[]) {
+      AssignmentExpression(nx: es.AssignmentExpression, ancstor: Node[]) {
         // assigning to local val, it's okay
         if (nx.left.type === 'Identifier') {
           return
