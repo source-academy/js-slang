@@ -669,29 +669,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'math_tan(x)', pylib.math_tan)
       defineBuiltin(context, 'math_tanh(x)', pylib.math_tanh)
       defineBuiltin(context, 'math_trunc(x)', pylib.math_trunc)
-
-
-      /*
-      // Define all Math libraries
-      const mathLibraryNames = Object.getOwnPropertyNames(Math)
-      // Short param names for stringified version of math functions
-      const parameterNames = [...'abcdefghijklmnopqrstuvwxyz']
-      for (const name of mathLibraryNames) {
-        const value = Math[name]
-        if (typeof value === 'function') {
-          let paramString: string
-          let minArgsNeeded = undefined
-          if (name === 'max' || name === 'min') {
-            paramString = '...values'
-            minArgsNeeded = 0
-          } else {
-            paramString = parameterNames.slice(0, value.length).join(', ')
-          }
-          defineBuiltin(context, `math_${name}(${paramString})`, value, minArgsNeeded)
-        } else {
-          defineBuiltin(context, `math_${name}`, value)
-        }
-      } */
     }
   }
 }
