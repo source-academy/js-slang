@@ -318,13 +318,12 @@ function cursorInIdentifier(node: Node, locTest: (node: Node) => boolean): boole
 function docsToHtml(name: string, obj: ModuleDocsEntry): string {
   switch (obj.kind) {
     case 'function': {
-      const params = Object.entries(obj.params)
       let paramStr: string
 
-      if (params.length === 0) {
+      if (obj.params.length === 0) {
         paramStr = '()'
       } else {
-        paramStr = `(${params.map(([name, type]) => `${name}: ${type}`).join(', ')})`
+        paramStr = `(${obj.params.map(([name, type]) => `${name}: ${type}`).join(', ')})`
       }
 
       const header = `${name}${paramStr} → {${obj.retType}}`

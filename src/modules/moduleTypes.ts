@@ -18,7 +18,7 @@ interface FunctionDocumentation {
   kind: 'function'
   retType: string
   description: string
-  params: Record<string, string>
+  params: [string, string][]
 }
 
 interface VariableDocumentation {
