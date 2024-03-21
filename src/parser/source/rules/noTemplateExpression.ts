@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 export class NoTemplateExpressionError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -26,7 +26,7 @@ const noTemplateExpression: Rule<es.TemplateLiteral> = {
   name: 'no-template-expression',
 
   checkers: {
-    TemplateLiteral(node: es.TemplateLiteral, _ancestors: [es.Node]) {
+    TemplateLiteral(node: es.TemplateLiteral, _ancestors: [Node]) {
       if (node.expressions.length > 0) {
         return [new NoTemplateExpressionError(node)]
       } else {

@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { Chapter, ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 export class NoDotAbbreviationError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -29,7 +29,7 @@ const noDotAbbreviation: Rule<es.MemberExpression> = {
   disableFromChapter: Chapter.LIBRARY_PARSER,
 
   checkers: {
-    MemberExpression(node: es.MemberExpression, _ancestors: [es.Node]) {
+    MemberExpression(node: es.MemberExpression, _ancestors: [Node]) {
       if (!node.computed) {
         return [new NoDotAbbreviationError(node)]
       } else {

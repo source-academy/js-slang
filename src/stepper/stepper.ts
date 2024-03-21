@@ -1479,7 +1479,7 @@ function reduceMain(
       Program: (target: es.Program): string => bodify(target.body[0]),
 
       BlockExpression: (target: BlockExpression): string =>
-        target.body.length === 0 ? 'Empty block statement evaluated' : bodify(target.body[0]),
+        target.body.length === 0 ? 'Empty block expression evaluated' : bodify(target.body[0]),
 
       BlockStatement: (target: es.BlockStatement): string =>
         target.body.length === 0 ? 'Empty block statement evaluated' : bodify(target.body[0]),

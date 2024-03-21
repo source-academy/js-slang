@@ -1,6 +1,4 @@
-import * as es from 'estree'
-
-import { Rule } from '../../../types'
+import { Node, Rule } from '../../../types'
 import bracesAroundFor from './bracesAroundFor'
 import bracesAroundIfElse from './bracesAroundIfElse'
 import bracesAroundWhile from './bracesAroundWhile'
@@ -25,7 +23,7 @@ import noUpdateAssignment from './noUpdateAssignment'
 import noVar from './noVar'
 import singleVariableDeclaration from './singleVariableDeclaration'
 
-const rules: Rule<es.Node>[] = [
+const rules: Rule<Node>[] = [
   bracesAroundFor,
   bracesAroundIfElse,
   bracesAroundWhile,

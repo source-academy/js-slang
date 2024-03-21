@@ -7,6 +7,7 @@ import { ModuleConnectionError, ModuleNotFoundError } from '../errors/moduleErro
 import { findAncestors, findIdentifierNode } from '../finder'
 import { memoizedloadModuleDocs } from '../modules/moduleLoader'
 import syntaxBlacklist from '../parser/source/syntax'
+import { Node } from '../types'
 
 export interface NameDeclaration {
   name: string
@@ -20,15 +21,15 @@ const KIND_FUNCTION = 'func'
 const KIND_PARAM = 'param'
 const KIND_CONST = 'const'
 
-function isImportDeclaration(node: es.Node): boolean {
+function isImportDeclaration(node: Node): boolean {
   return node.type === 'ImportDeclaration'
 }
 
-function isDeclaration(node: es.Node): boolean {
+function isDeclaration(node: Node): boolean {
   return node.type === 'VariableDeclaration' || node.type === 'FunctionDeclaration'
 }
 
-function isFunction(node: es.Node): boolean {
+function isFunction(node: Node): boolean {
   return (
     node.type === 'FunctionDeclaration' ||
     node.type === 'FunctionExpression' ||
@@ -36,7 +37,7 @@ function isFunction(node: es.Node): boolean {
   )
 }
 
-function isLoop(node: es.Node): boolean {
+function isLoop(node: Node): boolean {
   return node.type === 'WhileStatement' || node.type === 'ForStatement'
 }
 
@@ -79,7 +80,7 @@ const keywordsInFunction: { [key: string]: NameDeclaration[] } = {
  * @returns A list of keywords as suggestions
  */
 export function getKeywords(
-  prog: es.Node,
+  prog: Node,
   cursorLoc: es.Position,
   context: Context
 ): NameDeclaration[] {
@@ -141,7 +142,7 @@ export function getKeywords(
  * suggestions should be displayed, i.e. `[suggestions, shouldPrompt]`
  */
 export function getProgramNames(
-  prog: es.Node,
+  prog: Node,
   comments: acorn.Comment[],
   cursorLoc: es.Position
 ): [NameDeclaration[], boolean] {
@@ -164,8 +165,8 @@ export function getProgramNames(
   }
 
   // BFS to get names
-  const queue: es.Node[] = [prog]
-  const nameQueue: es.Node[] = []
+  const queue: Node[] = [prog]
+  const nameQueue: Node[] = []
 
   while (queue.length > 0) {
     // Workaround due to minification problem
@@ -214,7 +215,7 @@ function isNotNull<T>(x: T): x is Exclude<T, null> {
   return x !== null
 }
 
-function getNodeChildren(node: es.Node): es.Node[] {
+function getNodeChildren(node: Node): Node[] {
   switch (node.type) {
     case 'Program':
       return node.body
@@ -225,7 +226,7 @@ function getNodeChildren(node: es.Node): es.Node[] {
     case 'ForStatement':
       return [node.init, node.test, node.update, node.body].filter(
         n => n !== undefined && n !== null
-      ) as es.Node[]
+      ) as Node[]
     case 'ExpressionStatement':
       return [node.expression]
     case 'IfStatement':
@@ -241,7 +242,7 @@ function getNodeChildren(node: es.Node): es.Node[] {
     case 'VariableDeclaration':
       return node.declarations
         .map(getNodeChildren)
-        .reduce((prev: es.Node[], cur: es.Node[]) => prev.concat(cur))
+        .reduce((prev: Node[], cur: Node[]) => prev.concat(cur))
     case 'VariableDeclarator':
       return node.init ? [node.init] : []
     case 'ArrowFunctionExpression':
@@ -280,7 +281,7 @@ function getNodeChildren(node: es.Node): es.Node[] {
   }
 }
 
-function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean): boolean {
+function cursorInIdentifier(node: Node, locTest: (node: Node) => boolean): boolean {
   switch (node.type) {
     case 'VariableDeclaration':
       for (const decl of node.declarations) {
@@ -302,11 +303,11 @@ function cursorInIdentifier(node: es.Node, locTest: (node: es.Node) => boolean):
 /**
  * Gets a list of `NameDeclarations` from the given node
  * @param node Node to search for names
- * @param locTest Callback of type `(node: es.Node) => boolean`. Should return true if the cursor
+ * @param locTest Callback of type `(node: Node) => boolean`. Should return true if the cursor
  * is located within the node, false otherwise
  * @returns List of found names
  */
-function getNames(node: es.Node, locTest: (node: es.Node) => boolean): NameDeclaration[] {
+function getNames(node: Node, locTest: (node: Node) => boolean): NameDeclaration[] {
   switch (node.type) {
     case 'ImportDeclaration':
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))

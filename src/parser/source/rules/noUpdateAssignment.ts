@@ -2,7 +2,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 export class NoUpdateAssignment implements SourceError {
   public type = ErrorType.SYNTAX
@@ -37,7 +37,7 @@ const noUpdateAssignment: Rule<es.AssignmentExpression> = {
   name: 'no-update-assignment',
 
   checkers: {
-    AssignmentExpression(node: es.AssignmentExpression, _ancestors: [es.Node]) {
+    AssignmentExpression(node: es.AssignmentExpression, _ancestors: [Node]) {
       if (node.operator !== '=') {
         return [new NoUpdateAssignment(node)]
       } else {
