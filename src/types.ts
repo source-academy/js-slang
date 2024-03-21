@@ -44,12 +44,12 @@ export interface SourceError {
   elaborate(): string
 }
 
-export interface Rule<T extends es.Node> {
+export interface Rule<T extends Node> {
   name: string
   disableFromChapter?: Chapter
   disableForVariants?: Variant[]
   checkers: {
-    [name: string]: (node: T, ancestors: es.Node[]) => SourceError[]
+    [name: string]: (node: T, ancestors: Node[]) => SourceError[]
   }
 }
 
@@ -147,7 +147,7 @@ export interface Context<T = any> {
     isRunning: boolean
     environmentTree: EnvTree
     environments: Environment[]
-    nodes: es.Node[]
+    nodes: Node[]
     control: Control | null
     agenda_wgsl?: Agenda_WGSL
     stash: Stash | null
@@ -295,6 +295,23 @@ export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
 }
 
+/**
+ * StatementSequence : A sequence of statements not surrounded by braces.
+ * It is *not* a block, and thus does not trigger environment creation when evaluated.
+ *
+ * The current ESTree specification does not have this node type, so we define it here.
+ */
+export interface StatementSequence extends es.BaseStatement {
+  type: 'StatementSequence'
+  body: Array<es.Statement>
+  innerComments?: Array<Comment> | undefined
+}
+
+/**
+ * js-slang's custom Node type - this should be used wherever es.Node is used.
+ */
+export type Node = es.Node | StatementSequence
+
 /*
 	Although the ESTree specifications supposedly provide a Directive interface, the index file does not seem to export it.
 	As such this interface was created here to fulfil the same purpose.
@@ -323,15 +340,7 @@ export interface BlockExpression extends es.BaseExpression {
   body: es.Statement[]
 }
 
-export type substituterNodes = es.Node | BlockExpression
-
-/**
- * For use in the CSE machine: block statements are handled in two steps:
- * environment creation, then unpacking
- */
-export interface RawBlockStatement extends es.BlockStatement {
-  isRawBlock: 'true'
-}
+export type substituterNodes = Node | BlockExpression
 
 export {
   Instruction as SVMInstruction,
@@ -362,7 +371,7 @@ export type TSDisallowedTypes = (typeof disallowedTypes)[number]
 export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes
 
 // Types for nodes used in type inference
-export type NodeWithInferredType<T extends es.Node> = InferredType & T
+export type NodeWithInferredType<T extends Node> = InferredType & T
 
 export type FuncDeclWithInferredTypeAnnotation = NodeWithInferredType<es.FunctionDeclaration> &
   TypedFuncDecl

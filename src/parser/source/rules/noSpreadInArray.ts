@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 export class NoSpreadInArray implements SourceError {
   public type = ErrorType.SYNTAX
@@ -26,7 +26,7 @@ const noSpreadInArray: Rule<es.SpreadElement> = {
   name: 'no-assignment-expression',
 
   checkers: {
-    SpreadElement(node: es.SpreadElement, ancestors: [es.Node]) {
+    SpreadElement(node: es.SpreadElement, ancestors: [Node]) {
       const parent = ancestors[ancestors.length - 2]
 
       if (parent.type === 'CallExpression') {

@@ -5,12 +5,11 @@ import {
   FunctionDeclaration,
   Identifier,
   ImportSpecifier,
-  Node,
   SourceLocation,
   VariableDeclarator
 } from 'estree'
 
-import { Context } from './types'
+import { Context, Node } from './types'
 import {
   ancestor,
   base,

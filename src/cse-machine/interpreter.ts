@@ -19,12 +19,13 @@ import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
 import { ImportTransformOptions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
-import { Context, ContiguousArrayElements, RawBlockStatement, Result, Value } from '../types'
+import { Context, ContiguousArrayElements, Result, StatementSequence, Value } from '../types'
 import assert from '../utils/assert'
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import * as seq from '../utils/statementSeqTransform'
 import {
   Continuation,
   getContinuationControl,
@@ -72,7 +73,6 @@ import {
   isBlockStatement,
   isInstr,
   isNode,
-  isRawBlockStatement,
   isSimpleFunction,
   popEnvironment,
   pushEnvironment,
@@ -95,7 +95,7 @@ type CmdEvaluator = (
  * It contains syntax tree nodes or instructions.
  */
 export class Control extends Stack<ControlItem> {
-  public constructor(program?: es.Program) {
+  public constructor(program?: es.Program | StatementSequence) {
     super()
 
     // Load program into control stack
@@ -109,20 +109,18 @@ export class Control extends Stack<ControlItem> {
 
   /**
    * Before pushing block statements on the control stack, we check if the block statement has any declarations.
-   * If not (and its not a raw block statement), instead of pushing the entire block, just the body is pushed since the block is not adding any value.
+   * If not, the block is converted to a StatementSequence.
    * @param items The items being pushed on the control.
-   * @returns The same set of control items, but with block statements without declarations simplified.
+   * @returns The same set of control items, but with block statements without declarations converted to StatementSequences.
+   * NOTE: this function handles any case where StatementSequence has to be converted back into BlockStatement due to type issues
    */
   private static simplifyBlocksWithoutDeclarations(...items: ControlItem[]): ControlItem[] {
     const itemsNew: ControlItem[] = []
     items.forEach(item => {
-      if (
-        isNode(item) &&
-        isBlockStatement(item) &&
-        !hasDeclarations(item) &&
-        !isRawBlockStatement(item)
-      ) {
-        itemsNew.push(...Control.simplifyBlocksWithoutDeclarations(...handleSequence(item.body)))
+      if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
+        // Push block body as statement sequence
+        const seq: StatementSequence = ast.statementSequence(item.body, item.loc)
+        itemsNew.push(seq)
       } else {
         itemsNew.push(item)
       }
@@ -169,6 +167,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     context.errors.push(error)
     return new CseError(error)
   }
+  seq.transform(program)
 
   try {
     context.runtime.isRunning = true
@@ -305,12 +304,17 @@ export function* generateCSEMachineStateStream(
 ) {
   context.runtime.break = false
   context.runtime.nodes = []
-  let steps = 1
+
+  // steps: number of steps completed
+  let steps = 0
 
   let command = control.peek()
 
-  // First node will be a Program
-  context.runtime.nodes.unshift(command as es.Program)
+  // Push first node to be evaluated into context.
+  // The typeguard is there to guarantee that we are pushing a node (which should always be the case)
+  if (command && isNode(command)) {
+    context.runtime.nodes.unshift(command)
+  }
 
   while (command) {
     // Return to capture a snapshot of the control and stash after the target step count is reached
@@ -357,17 +361,17 @@ export function* generateCSEMachineStateStream(
     command = control.peek()
 
     steps += 1
-    yield { stash, control, steps }
-  }
+    if (!isPrelude) {
+      context.runtime.envStepsTotal = steps
+    }
 
-  if (!isPrelude) {
-    context.runtime.envStepsTotal = steps
+    yield { stash, control, steps }
   }
 }
 
 /**
  * Dictionary of functions which handle the logic for the response of the three registers of
- * the ASE machine to each ControlItem.
+ * the CSE machine to each ControlItem.
  */
 const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   /**
@@ -398,31 +402,17 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const next = command.body[0]
       cmdEvaluators[next.type](next, context, control, stash, isPrelude)
     } else {
-      // Push raw block statement
-      const rawCopy: RawBlockStatement = {
-        type: 'BlockStatement',
-        range: command.range,
-        loc: command.loc,
-        body: command.body,
-        isRawBlock: 'true'
-      }
-      control.push(rawCopy)
+      // Push block body as statement sequence
+      const seq: StatementSequence = ast.statementSequence(command.body, command.loc)
+      control.push(seq)
     }
   },
 
   BlockStatement: function (command: es.BlockStatement, context: Context, control: Control) {
-    if (isRawBlockStatement(command)) {
-      // Raw block statement: unpack and push body
-      // Push block body only
-      control.push(...handleSequence(command.body))
-      return
-    }
-    // Normal block statement: do environment setup
     // To restore environment after block ends
     // If there is an env instruction on top of the stack, or if there are no declarations
     // we do not need to push another one
-    // The no declarations case is handled by Control :: simplifyBlocksWithoutDeclarations, so no blockStatement node
-    // without declarations should end up here.
+    // The no declarations case is handled at the transform stage, so no blockStatement node without declarations should end up here.
     const next = control.peek()
     // Push ENVIRONMENT instruction if needed
     if (!next || !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
@@ -433,15 +423,27 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     declareFunctionsAndVariables(context, command, environment)
     pushEnvironment(context, environment)
 
-    // Push raw block statement
-    const rawCopy: RawBlockStatement = {
-      type: 'BlockStatement',
-      range: command.range,
-      loc: command.loc,
-      body: command.body,
-      isRawBlock: 'true'
+    // Push block body as statement sequence
+    const seq: StatementSequence = ast.statementSequence(command.body, command.loc)
+    control.push(seq)
+  },
+
+  StatementSequence: function (
+    command: StatementSequence,
+    context: Context,
+    control: Control,
+    stash: Stash,
+    isPrelude: boolean
+  ) {
+    if (command.body.length == 1) {
+      // If sequence only consists of one statement, evaluate it immediately
+      const next = command.body[0]
+      cmdEvaluators[next.type](next, context, control, stash, isPrelude)
+    } else {
+      // unpack and push individual nodes in body
+      control.push(...handleSequence(command.body))
     }
-    control.push(rawCopy)
+    return
   },
 
   WhileStatement: function (
@@ -979,7 +981,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Value is a function
     // Check for number of arguments mismatch error
     checkNumberOfArguments(context, func, args, command.srcNode)
-    // Directly stash result of applying pre-built functions without the ASE machine.
+    // Directly stash result of applying pre-built functions without the CSE machine.
     try {
       const result = func(...args)
       stash.push(result)

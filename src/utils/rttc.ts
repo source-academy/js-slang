@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { Chapter, ErrorSeverity, ErrorType, Value } from '../types'
+import { Chapter, ErrorSeverity, ErrorType, Node, Value } from '../types'
 
 const LHS = ' on left hand side of operation'
 const RHS = ' on right hand side of operation'
@@ -12,7 +12,7 @@ export class TypeError extends RuntimeSourceError {
   public location: es.SourceLocation
 
   constructor(
-    node: es.Node,
+    node: Node,
     public side: string,
     public expected: string,
     public got: string,
@@ -54,7 +54,7 @@ const isObject = (v: Value) => typeOf(v) === 'object'
 const isArray = (v: Value) => typeOf(v) === 'array'
 
 export const checkUnaryExpression = (
-  node: es.Node,
+  node: Node,
   operator: es.UnaryOperator,
   value: Value,
   chapter: Chapter = Chapter.SOURCE_4
@@ -69,7 +69,7 @@ export const checkUnaryExpression = (
 }
 
 export const checkBinaryExpression = (
-  node: es.Node,
+  node: Node,
   operator: es.BinaryOperator,
   chapter: Chapter,
   left: Value,
@@ -113,17 +113,13 @@ export const checkBinaryExpression = (
   }
 }
 
-export const checkIfStatement = (
-  node: es.Node,
-  test: Value,
-  chapter: Chapter = Chapter.SOURCE_4
-) => {
+export const checkIfStatement = (node: Node, test: Value, chapter: Chapter = Chapter.SOURCE_4) => {
   return isBool(test)
     ? undefined
     : new TypeError(node, ' as condition', 'boolean', typeOf(test), chapter)
 }
 
-export const checkMemberAccess = (node: es.Node, obj: Value, prop: Value) => {
+export const checkMemberAccess = (node: Node, obj: Value, prop: Value) => {
   if (isObject(obj)) {
     return isString(prop) ? undefined : new TypeError(node, ' as prop', 'string', typeOf(prop))
   } else if (isArray(obj)) {

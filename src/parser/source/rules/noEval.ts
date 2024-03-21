@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 export class NoEval implements SourceError {
   public type = ErrorType.SYNTAX
@@ -26,7 +26,7 @@ const noEval: Rule<es.Identifier> = {
   name: 'no-eval',
 
   checkers: {
-    Identifier(node: es.Identifier, _ancestors: [es.Node]) {
+    Identifier(node: es.Identifier, _ancestors: [Node]) {
       if (node.name === 'eval') {
         return [new NoEval(node)]
       } else {

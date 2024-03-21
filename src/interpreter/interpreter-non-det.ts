@@ -5,7 +5,7 @@ import { cloneDeep, uniqueId } from 'lodash'
 import { CUT, UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { Context, Environment, Frame, Value } from '../types'
+import { Context, Environment, Frame, Node, Value } from '../types'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
@@ -67,7 +67,7 @@ const handleRuntimeError = (context: Context, error: RuntimeSourceError): never 
 
 const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement declaration')
 
-function declareIdentifier(context: Context, name: string, node: es.Node) {
+function declareIdentifier(context: Context, name: string, node: Node) {
   const environment = currentEnvironment(context)
   if (environment.head.hasOwnProperty(name)) {
     const descriptors = Object.getOwnPropertyDescriptors(environment.head)
@@ -208,10 +208,10 @@ function randomInt(min: number, max: number): number {
 }
 
 function* getAmbRArgs(context: Context, call: es.CallExpression) {
-  const args: es.Node[] = cloneDeep(call.arguments)
+  const args: Node[] = cloneDeep(call.arguments)
   while (args.length > 0) {
     const r = randomInt(0, args.length - 1)
-    const arg: es.Node = args.splice(r, 1)[0]
+    const arg: Node = args.splice(r, 1)[0]
 
     yield* evaluate(arg, context)
   }
@@ -260,7 +260,7 @@ function transformLogicalExpression(node: es.LogicalExpression): es.ConditionalE
 function* reduceIf(
   node: es.IfStatement | es.ConditionalExpression,
   context: Context
-): IterableIterator<es.Node> {
+): IterableIterator<Node> {
   const testGenerator = evaluate(node.test, context)
   for (const test of testGenerator) {
     const error = rttc.checkIfStatement(node, test, context.chapter)
@@ -271,7 +271,7 @@ function* reduceIf(
   }
 }
 
-export type Evaluator<T extends es.Node> = (node: T, context: Context) => IterableIterator<Value>
+export type Evaluator<T extends Node> = (node: T, context: Context) => IterableIterator<Value>
 
 function* evaluateBlockSatement(context: Context, node: es.BlockStatement) {
   declareFunctionAndVariableIdentifiers(context, node)
@@ -334,7 +334,7 @@ function* evaluateConditional(node: es.IfStatement | es.ConditionalExpression, c
  */
 // tslint:disable:object-literal-shorthand
 // prettier-ignore
-export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
+export const evaluators: { [nodeType: string]: Evaluator<Node> } = {
   /** Simple Values */
   Literal: function*(node: es.Literal, _context: Context) {
     yield node.value
@@ -629,7 +629,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 }
 // tslint:enable:object-literal-shorthand
 
-export function* evaluate(node: es.Node, context: Context) {
+export function* evaluate(node: Node, context: Context) {
   const result = yield* evaluators[node.type](node, context)
   return result
 }

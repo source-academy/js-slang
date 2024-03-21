@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import { Environment } from '../types'
+import { Environment, Node } from '../types'
 
 export enum InstrType {
   RESET = 'Reset',
@@ -28,7 +28,7 @@ export enum InstrType {
 
 interface BaseInstr {
   instrType: InstrType
-  srcNode: es.Node
+  srcNode: Node
 }
 
 export interface WhileInstr extends BaseInstr {
@@ -90,7 +90,7 @@ export type Instr =
   | GenContInstr
   | ResumeContInstr
 
-export type ControlItem = es.Node | Instr
+export type ControlItem = Node | Instr
 
 // Special class that cannot be found on the stash so is safe to be used
 // as an indicator of a breakpoint from running the CSE machine

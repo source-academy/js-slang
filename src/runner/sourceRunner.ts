@@ -2,7 +2,7 @@ import type * as es from 'estree'
 import * as _ from 'lodash'
 import type { RawSourceMap } from 'source-map'
 
-import type { IOptions, Result } from '..'
+import { type IOptions, type Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
 import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpreter'
 import { ExceptionError } from '../errors/errors'
@@ -262,6 +262,7 @@ export async function sourceRunner(
 
   determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
 
+  // native, don't evaluate prelude
   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
     return await fullJSRunner(program, context, theOptions.importOptions)
   }
@@ -278,6 +279,7 @@ export async function sourceRunner(
     return sourceRunner(program, context, isVerboseErrorsEnabled, options)
   }
 
+  // testing AST transform with CSE machine first
   if (context.variant === Variant.EXPLICIT_CONTROL) {
     return runCSEMachine(program, context, theOptions)
   }

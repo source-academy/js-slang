@@ -10,7 +10,7 @@ import {
   PRIMITIVE_FUNCTION_NAMES,
   vmPrelude
 } from '../stdlib/vm.prelude'
-import { Context, ContiguousArrayElements } from '../types'
+import { Context, ContiguousArrayElements, Node } from '../types'
 import * as create from '../utils/astCreator'
 import { recursive, simple } from '../utils/walkers'
 import OpCodes from './opcodes'
@@ -289,7 +289,7 @@ function renameVariables(
   function recurseBlock(
     node: es.BlockStatement,
     inactive: Set<string>,
-    c: (node: es.Node, state: Set<string>) => void
+    c: (node: Node, state: Set<string>) => void
   ) {
     // get names in current scope
     const locals = getLocalsInScope(node)
@@ -409,7 +409,7 @@ function getLocalsInScope(node: es.BlockStatement | es.Program) {
   return locals
 }
 
-function compileArguments(exprs: es.Node[], indexTable: Map<string, EnvEntry>[]) {
+function compileArguments(exprs: Node[], indexTable: Map<string, EnvEntry>[]) {
   let maxStackSize = 0
   for (let i = 0; i < exprs.length; i++) {
     const { maxStackSize: curExpSize } = compile(exprs[i], indexTable, false)
@@ -487,24 +487,24 @@ function compileStatements(
 // each compiler should return a maxStackSize
 const compilers = {
   // wrapper
-  Program(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  Program(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.Program
     return compileStatements(node, indexTable, insertFlag)
   },
 
   // wrapper
-  BlockStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  BlockStatement(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.BlockStatement
     return compileStatements(node, indexTable, insertFlag)
   },
 
   // wrapper
-  ExpressionStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  ExpressionStatement(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.ExpressionStatement
     return compile(node.expression, indexTable, insertFlag)
   },
 
-  IfStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  IfStatement(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     const { test, consequent, alternate } = node as es.IfStatement
     const { maxStackSize: m1 } = compile(test, indexTable, false)
     addUnaryInstruction(OpCodes.BRF, NaN)
@@ -541,7 +541,7 @@ const compilers = {
     )
   },
 
-  VariableDeclaration(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  VariableDeclaration(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     // only supports const / let
     node = node as es.VariableDeclaration
     if (node.kind === 'const' || node.kind === 'let') {
@@ -567,7 +567,7 @@ const compilers = {
   },
 
   // handled by insertFlag in compile function
-  ReturnStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
+  ReturnStatement(node: Node, indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
     node = node as es.ReturnStatement
     if (loopTracker.length > 0) {
       throw Error('return not allowed in loops')
@@ -580,7 +580,7 @@ const compilers = {
   // primitive function calls that are predefined, and internal calls.
   // We differentiate them with callType.
   CallExpression(
-    node: es.Node,
+    node: Node,
     indexTable: Map<string, EnvEntry>[],
     insertFlag: boolean,
     isTailCallPosition: boolean = false
@@ -627,7 +627,7 @@ const compilers = {
     return { maxStackSize: Math.max(maxStackOperator, maxStackOperands, 1), insertFlag }
   },
 
-  UnaryExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  UnaryExpression(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.UnaryExpression
     if (VALID_UNARY_OPERATORS.has(node.operator)) {
       const opCode = VALID_UNARY_OPERATORS.get(node.operator) as number
@@ -638,7 +638,7 @@ const compilers = {
     throw Error('Unsupported operation')
   },
 
-  BinaryExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  BinaryExpression(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.BinaryExpression
     if (VALID_BINARY_OPERATORS.has(node.operator)) {
       const opCode = VALID_BINARY_OPERATORS.get(node.operator) as number
@@ -652,7 +652,7 @@ const compilers = {
 
   // convert logical expressions to conditional expressions
   LogicalExpression(
-    node: es.Node,
+    node: Node,
     indexTable: Map<string, EnvEntry>[],
     insertFlag: boolean,
     isTailCallPosition: boolean = false
@@ -679,7 +679,7 @@ const compilers = {
   },
 
   ConditionalExpression(
-    node: es.Node,
+    node: Node,
     indexTable: Map<string, EnvEntry>[],
     insertFlag: boolean,
     isTailCallPosition: boolean = false
@@ -703,7 +703,7 @@ const compilers = {
     return { maxStackSize, insertFlag: false }
   },
 
-  ArrowFunctionExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  ArrowFunctionExpression(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.ArrowFunctionExpression
     // node.body is either a block statement or a single node to return
     const bodyNode =
@@ -729,7 +729,7 @@ const compilers = {
     return { maxStackSize: 1, insertFlag }
   },
 
-  Identifier(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  Identifier(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.Identifier
 
     let envLevel
@@ -765,7 +765,7 @@ const compilers = {
   },
 
   // string, boolean, number or null
-  Literal(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  Literal(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.Literal
     const value = node.value
     if (value === null) {
@@ -798,7 +798,7 @@ const compilers = {
   },
 
   // array declarations
-  ArrayExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  ArrayExpression(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.ArrayExpression
     addNullaryInstruction(OpCodes.NEWA)
     const elements = node.elements as ContiguousArrayElements
@@ -819,7 +819,7 @@ const compilers = {
     return { maxStackSize, insertFlag }
   },
 
-  AssignmentExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  AssignmentExpression(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.AssignmentExpression
     if (node.left.type === 'Identifier') {
       const { envLevel, index, isVar } = indexOf(indexTable, node.left)
@@ -847,12 +847,12 @@ const compilers = {
     throw Error('Invalid Assignment')
   },
 
-  ForStatement(_node: es.Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
+  ForStatement(_node: Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
   // Loops need to have their own environment due to closures
-  WhileStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  WhileStatement(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as taggedWhileStatement
     const isFor = (node as taggedWhileStatement).isFor
     const condIndex = functionCode.length
@@ -889,7 +889,7 @@ const compilers = {
     return { maxStackSize: Math.max(m1, m2), insertFlag }
   },
 
-  BreakStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  BreakStatement(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     // keep track of break instruction
     addNullaryInstruction(OpCodes.POPENV)
     loopTracker[loopTracker.length - 1][BREAK_INDEX].push(functionCode.length)
@@ -897,7 +897,7 @@ const compilers = {
     return { maxStackSize: 0, insertFlag }
   },
 
-  ContinueStatement(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  ContinueStatement(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     // keep track of continue instruction
     // no need to POPENV as continue will go to the end of the while loop
     loopTracker[loopTracker.length - 1][CONT_INDEX].push(functionCode.length)
@@ -905,11 +905,11 @@ const compilers = {
     return { maxStackSize: 0, insertFlag }
   },
 
-  ObjectExpression(_node: es.Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
+  ObjectExpression(_node: Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  MemberExpression(node: es.Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
+  MemberExpression(node: Node, indexTable: Map<string, EnvEntry>[], insertFlag: boolean) {
     node = node as es.MemberExpression
     if (node.computed) {
       const { maxStackSize: m1 } = compile(node.object, indexTable, false)
@@ -921,17 +921,17 @@ const compilers = {
     throw Error('Unsupported operation')
   },
 
-  Property(_node: es.Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
+  Property(_node: Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
     throw Error('Unsupported operation')
   },
 
-  DebuggerStatement(_node: es.Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
+  DebuggerStatement(_node: Node, _indexTable: Map<string, EnvEntry>[], _insertFlag: boolean) {
     throw Error('Unsupported operation')
   }
 }
 
 function compile(
-  expr: es.Node,
+  expr: Node,
   indexTable: Map<string, EnvEntry>[],
   insertFlag: boolean,
   isTailCallPosition: boolean = false
