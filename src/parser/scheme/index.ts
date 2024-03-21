@@ -1,6 +1,6 @@
 import { Node, Program } from 'estree'
 
-import { decode, encode, schemeParse } from '../../scm-slang/src'
+import { decode, encode, schemeParse } from '../../alt-langs/scheme/scm-slang/src'
 import {
   car,
   cdr,
@@ -12,7 +12,7 @@ import {
   procedure$63$,
   set$45$cdr$33$,
   vector$63$
-} from '../../scm-slang/src/stdlib/base'
+} from '../../alt-langs/scheme/scm-slang/src/stdlib/base'
 import { List, Pair } from '../../stdlib/list'
 import { Chapter, Context, ErrorType, SourceError } from '../../types'
 import { FatalSyntaxError } from '../errors'

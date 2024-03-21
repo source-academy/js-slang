@@ -1,10 +1,10 @@
 // Variable determining chapter of Source is contained in this file.
 
+import * as scheme_libs from './alt-langs/scheme/scm-slang/src/stdlib/source-scheme-library'
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
 import * as gpu_lib from './gpu/lib'
 import { AsyncScheduler } from './schedulers'
-import * as scheme_libs from './scm-slang/src/stdlib/source-scheme-library'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
 import * as list from './stdlib/list'
 import { list_to_vector } from './stdlib/list'

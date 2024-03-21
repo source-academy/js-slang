@@ -1,10 +1,10 @@
 import { Node } from 'estree'
 
-import { UnassignedVariable } from '../../errors/errors'
-import { decode, encode } from '../../scm-slang/src'
-import { cons, set$45$cdr$33$ } from '../../scm-slang/src/stdlib/base'
-import { dummyExpression } from '../../utils/dummyAstCreator'
-import { decodeError, decodeValue } from '../scheme'
+import { UnassignedVariable } from '../../../errors/errors'
+import { decode, encode } from '../scm-slang/src'
+import { cons, set$45$cdr$33$ } from '../scm-slang/src/stdlib/base'
+import { dummyExpression } from '../../../utils/dummyAstCreator'
+import { decodeError, decodeValue } from '../../../parser/scheme'
 
 describe('Scheme encoder and decoder', () => {
   it('encoder and decoder are proper inverses of one another', () => {

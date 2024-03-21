@@ -1,7 +1,7 @@
-import { parseError } from '../..'
-import { mockContext } from '../../mocks/context'
-import { Chapter } from '../../types'
-import { SchemeParser } from '../scheme'
+import { parseError } from '../../..'
+import { mockContext } from '../../../mocks/context'
+import { Chapter } from '../../../types'
+import { SchemeParser } from '../../../parser/scheme'
 
 const parser_1 = new SchemeParser(Chapter.SCHEME_1)
 const parser_2 = new SchemeParser(Chapter.SCHEME_2)
