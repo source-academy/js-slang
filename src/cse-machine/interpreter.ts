@@ -48,8 +48,10 @@ import {
   CseError,
   EnvInstr,
   ForInstr,
+  GenContInstr,
   Instr,
   InstrType,
+  ResumeContInstr,
   UnOpInstr,
   WhileInstr
 } from './types'
@@ -395,6 +397,42 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         loadTabs: true
       })
       declareFunctionsAndVariables(context, command, environment)
+    }
+
+    // A strange bug occurs here when successive REPL commands are run, as they
+    // are each evaluated as separate programs. This causes the environment to be
+    // pushed multiple times.
+
+    // As such, we need to "append" the tail environment to the current environment
+    // if and only if the tail environment is a previous program environment.
+
+    const currEnv = currentEnvironment(context)
+    if (
+      currEnv &&
+      currEnv.name === 'programEnvironment' &&
+      currEnv.tail &&
+      currEnv.tail.name === 'programEnvironment'
+    ) {
+      // we need to take that tail environment and append its items to the current environment
+      const oldEnv = currEnv.tail
+
+      // separate the tail environment from the environments list
+      currEnv.tail = oldEnv.tail
+
+      // we will recycle the old environment's item list
+      // add the items from the current environment to the tail environment
+      // this is fine, especially as the older program will never
+      // need to use the old environment's items again
+      for (const key in currEnv.head) {
+        oldEnv.head[key] = currEnv.head[key]
+      }
+
+      // set the current environment to the old one
+      // this will work across successive programs as well
+
+      // this will also allow continuations to read newer program
+      // values from their "outdated" program environment
+      currEnv.head = oldEnv.head
     }
 
     if (command.body.length == 1) {
@@ -914,17 +952,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
-      // A continuation is always given a single argument
-      const expression: Value = args[0]
-
       const dummyContCallExpression = makeDummyContCallExpression('f', 'cont')
 
       // Restore the state of the stash,
       // but replace the function application instruction with
       // a resume continuation instruction
       stash.push(func)
-      stash.push(expression)
-      control.push(instr.resumeContInstr(dummyContCallExpression))
+      // we need to push the arguments back onto the stash
+      // as well
+      stash.push(...args)
+      control.push(instr.resumeContInstr(command.numOfArgs, dummyContCallExpression))
       return
     }
 
@@ -1107,7 +1144,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   [InstrType.BREAK_MARKER]: function () {},
 
   [InstrType.GENERATE_CONT]: function (
-    _command: Instr,
+    _command: GenContInstr,
     context: Context,
     control: Control,
     stash: Stash
@@ -1128,12 +1165,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   },
 
   [InstrType.RESUME_CONT]: function (
-    _command: Instr,
+    command: ResumeContInstr,
     context: Context,
     control: Control,
     stash: Stash
   ) {
-    const expression = stash.pop()
+    // pop the arguments
+    const args: Value[] = []
+    for (let i = 0; i < command.numOfArgs; i++) {
+      args.unshift(stash.pop())
+    }
     const cn: Continuation = stash.pop() as Continuation
 
     const contControl = getContinuationControl(cn)
@@ -1144,10 +1185,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control.setTo(contControl)
     stash.setTo(contStash)
 
-    // Push the expression given to the continuation onto the stash
-    stash.push(expression)
+    // Push the arguments given to the continuation back onto the stash
+    stash.push(...args)
 
-    // Restore the environment pointer to that of the continuation
+    // Restore the environment pointer to that of the continuation's environment
     context.runtime.environments = contEnv
   }
 }
