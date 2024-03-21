@@ -14,21 +14,24 @@ export type ModuleFunctions = {
   [functionName: string]: Function
 }
 
-export interface FunctionDocumentation {
+interface FunctionDocumentation {
   kind: 'function'
-  name: string
   retType: string
   description: string
   params: Record<string, string>
 }
 
-export interface VariableDocumentation {
+interface VariableDocumentation {
   kind: 'variable'
-  name: string
   type: string
   description: string
 }
-export type ModuleDocsEntry = FunctionDocumentation | VariableDocumentation
+
+interface UnknownDocumentation {
+  kind: 'unknown'
+}
+
+export type ModuleDocsEntry = FunctionDocumentation | VariableDocumentation | UnknownDocumentation
 
 export type ModuleDocumentation = Record<string, ModuleDocsEntry>
 

@@ -315,22 +315,26 @@ function cursorInIdentifier(node: Node, locTest: (node: Node) => boolean): boole
   }
 }
 
-function docsToHtml(obj: ModuleDocsEntry): string {
-  if (obj.kind === 'function') {
-    const params = Object.entries(obj.params)
-    let paramStr: string
+function docsToHtml(name: string, obj: ModuleDocsEntry): string {
+  switch (obj.kind) {
+    case 'function': {
+      const params = Object.entries(obj.params)
+      let paramStr: string
 
-    if (params.length === 0) {
-      paramStr = '()'
-    } else {
-      paramStr = `(${params.map(([name, type]) => `${name}: ${type}`).join(', ')})`
+      if (params.length === 0) {
+        paramStr = '()'
+      } else {
+        paramStr = `(${params.map(([name, type]) => `${name}: ${type}`).join(', ')})`
+      }
+
+      const header = `${name}${paramStr} → {${obj.retType}}`
+      return `<div><h4>${header}</h4><div class="description">${obj.description}</div></div>`
     }
-
-    const header = `${obj.name}${paramStr} → {${obj.retType}}`
-    return `<div><h4>${header}</h4><div class="description">${obj.description}</div></div>`
+    case 'variable':
+      return `<div><h4>${name}: ${obj.type}</h4><div class="description">${obj.description}</div></div>`
+    case 'unknown':
+      return `<div><h4>${name}: unknown</h4><div class="description">No description available</div></div>`
   }
-
-  return `<div><h4>${obj.name}: ${obj.type}</h4><div class="description">${obj.description}</div></div>`
 }
 
 // locTest is a callback that returns whether cursor is in location of node
@@ -382,7 +386,7 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
             return {
               name: importedName,
               meta: DeclarationKind.KIND_IMPORT,
-              docHTML: docsToHtml(docs[importedName])
+              docHTML: docsToHtml(importedName, docs[importedName])
             }
           }
         })
