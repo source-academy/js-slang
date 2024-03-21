@@ -1,6 +1,6 @@
-import { Node, Program } from 'estree'
+import { Program } from 'estree'
 
-import { decode, encode, schemeParse } from '../../alt-langs/scheme/scm-slang/src'
+import { decode, schemeParse } from '../../alt-langs/scheme/scm-slang/src'
 import {
   car,
   cdr,
@@ -18,7 +18,6 @@ import { Chapter, Context, ErrorType, SourceError } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
-const walk = require('acorn-walk')
 
 export class SchemeParser implements Parser<AcornOptions> {
   private chapter: number
@@ -33,10 +32,8 @@ export class SchemeParser implements Parser<AcornOptions> {
   ): Program | null {
     try {
       // parse the scheme code
-      const estree = schemeParse(programStr, this.chapter)
-      // walk the estree and encode all identifiers
-      encodeTree(estree)
-      return estree as unknown as Program
+      const estree = schemeParse(programStr, this.chapter, true)
+      return estree as Program
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())
@@ -73,15 +70,6 @@ function getSchemeChapter(chapter: Chapter): number {
       // Should never happen
       throw new Error(`SchemeParser was not given a valid chapter!`)
   }
-}
-
-export function encodeTree(tree: Program): Program {
-  walk.full(tree, (node: Node) => {
-    if (node.type === 'Identifier') {
-      node.name = encode(node.name)
-    }
-  })
-  return tree
 }
 
 function decodeString(str: string): string {
