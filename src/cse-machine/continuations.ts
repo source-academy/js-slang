@@ -50,7 +50,8 @@ export function getContinuationEnv(cn: Continuation): Environment[] {
 
 export function makeContinuation(control: Control, stash: Stash, env: Environment[]): Function {
   // Cast a function into a continuation
-  const fn: any = (x: any) => x
+  // a continuation may take any amount of arguments
+  const fn: Function = (...x: any[]) => x
   const cn: Continuation = fn as Continuation
 
   // Set the control, stash and environment
