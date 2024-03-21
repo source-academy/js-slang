@@ -312,6 +312,26 @@ export const createBlockEnvironment = (
   }
 }
 
+export const createProgramEnvironment = (
+  context: Context,
+  isPrelude: boolean,
+  head: Frame = {}
+): Environment => {
+  return isPrelude
+    ? {
+        name: 'prelude',
+        tail: currentEnvironment(context),
+        head,
+        id: uniqueId()
+      }
+    : {
+        name: 'programEnvironment',
+        tail: currentEnvironment(context),
+        head,
+        id: uniqueId()
+      }
+}
+
 /**
  * Variables
  */
