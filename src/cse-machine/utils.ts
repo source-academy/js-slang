@@ -317,15 +317,8 @@ export const createProgramEnvironment = (
   isPrelude: boolean,
   head: Frame = {}
 ): Environment => {
-  return isPrelude
-    ? {
-        name: 'prelude',
-        tail: currentEnvironment(context),
-        head,
-        id: uniqueId()
-      }
-    : {
-        name: 'programEnvironment',
+  return {
+        name: isPrelude ? 'prelude' : 'programEnvironment',
         tail: currentEnvironment(context),
         head,
         id: uniqueId()
