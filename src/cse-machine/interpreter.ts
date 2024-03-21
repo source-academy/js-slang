@@ -54,6 +54,7 @@ import {
   WhileInstr
 } from './types'
 import {
+  addObjectToEnvironment,
   checkNumberOfArguments,
   checkStackOverFlow,
   createBlockEnvironment,
@@ -69,7 +70,6 @@ import {
   hasContinueStatement,
   hasDeclarations,
   hasImportDeclarations,
-  isAssmtInstr,
   isBlockStatement,
   isInstr,
   isNode,
@@ -720,14 +720,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       true,
       isPrelude
     )
-    const next = control.peek()
-    if (!(next && isInstr(next) && isAssmtInstr(next))) {
-      Object.defineProperty(currentEnvironment(context).head, uniqueId(), {
-        value: closure,
-        writable: false,
-        enumerable: true
-      })
-    }
+    addObjectToEnvironment(closure, currentEnvironment(context))
     stash.push(closure)
   },
 
@@ -955,7 +948,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Create environment for function parameters if the function isn't nullary.
       // Name the environment if the function call expression is not anonymous
       if (args.length > 0) {
-        const environment = createEnvironment(func, args, command.srcNode)
+        const environment = createEnvironment(context, func, args, command.srcNode)
         pushEnvironment(context, environment)
       } else {
         context.runtime.environments.unshift(func.environment)
@@ -1044,6 +1037,17 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       array.push(stash.pop())
     }
     reverse(array)
+    Object.defineProperty(array, 'id', {
+      value: `${context.runtime.objectCount++}`,
+      writable: false,
+      enumerable: false
+    })
+    Object.defineProperty(array, 'environment', {
+      value: currentEnvironment(context),
+      writable: false,
+      enumerable: false
+    })
+    addObjectToEnvironment(array, currentEnvironment(context))
     stash.push(array)
   },
 

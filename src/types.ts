@@ -148,6 +148,7 @@ export interface Context<T = any> {
     nodes: Node[]
     control: Control | null
     stash: Stash | null
+    objectCount: number
     envStepsTotal: number
     breakpointSteps: number[]
   }

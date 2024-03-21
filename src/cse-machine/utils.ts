@@ -267,6 +267,7 @@ export const isSimpleFunction = (node: any) => {
 export const currentEnvironment = (context: Context) => context.runtime.environments[0]
 
 export const createEnvironment = (
+  context: Context,
   closure: Closure,
   args: Value[],
   callExpression: es.CallExpression
@@ -275,7 +276,7 @@ export const createEnvironment = (
     name: isIdentifier(callExpression.callee) ? callExpression.callee.name : closure.functionName,
     tail: closure.environment,
     head: {},
-    id: uniqueId(),
+    id: `${context.runtime.objectCount++}`,
     callExpression: {
       ...callExpression,
       arguments: args.map(ast.primitive)
@@ -307,8 +308,16 @@ export const createBlockEnvironment = (
     name,
     tail: currentEnvironment(context),
     head,
-    id: uniqueId()
+    id: `${context.runtime.objectCount++}`
   }
+}
+
+export const addObjectToEnvironment = (object: any[] | Closure, environment: Environment): void => {
+  Object.defineProperty(environment.head, uniqueId(), {
+    value: object,
+    writable: false,
+    enumerable: true
+  })
 }
 
 /**

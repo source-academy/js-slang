@@ -111,7 +111,7 @@ export default class Closure extends Callable {
       return funJS.apply(this, args)
     })
     this.originalNode = node
-    this.id = uniqueId()
+    this.id = context.runtime ? `${context.runtime.objectCount++}` : uniqueId()
     if (this.node.type === 'FunctionDeclaration' && this.node.id !== null) {
       this.functionName = this.node.id.name
     } else {
