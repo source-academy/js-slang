@@ -72,10 +72,7 @@ export class EnvTree {
 export class EnvTreeNode {
   private _children: EnvTreeNode[] = []
 
-  constructor(
-    readonly environment: Environment,
-    public parent: EnvTreeNode | null
-  ) {}
+  constructor(readonly environment: Environment, public parent: EnvTreeNode | null) {}
 
   get children(): EnvTreeNode[] {
     return this._children
