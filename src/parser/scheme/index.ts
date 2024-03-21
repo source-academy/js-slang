@@ -1,12 +1,23 @@
-import { Node, Program } from 'estree'
+import { Program } from 'estree'
 
-import { decode, encode, schemeParse } from '../../scm-slang/src'
-import { Pair } from '../../scm-slang/src/stdlib/source-scheme-library'
+import { decode, schemeParse } from '../../alt-langs/scheme/scm-slang/src'
+import {
+  car,
+  cdr,
+  circular$45$list$63$,
+  cons,
+  last$45$pair,
+  list$45$tail,
+  pair$63$,
+  procedure$63$,
+  set$45$cdr$33$,
+  vector$63$
+} from '../../alt-langs/scheme/scm-slang/src/stdlib/base'
+import { List, Pair } from '../../stdlib/list'
 import { Chapter, Context, ErrorType, SourceError } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
-const walk = require('acorn-walk')
 
 export class SchemeParser implements Parser<AcornOptions> {
   private chapter: number
@@ -21,10 +32,8 @@ export class SchemeParser implements Parser<AcornOptions> {
   ): Program | null {
     try {
       // parse the scheme code
-      const estree = schemeParse(programStr, this.chapter)
-      // walk the estree and encode all identifiers
-      encodeTree(estree)
-      return estree as unknown as Program
+      const estree = schemeParse(programStr, this.chapter, true)
+      return estree as Program
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())
@@ -63,15 +72,6 @@ function getSchemeChapter(chapter: Chapter): number {
   }
 }
 
-export function encodeTree(tree: Program): Program {
-  walk.full(tree, (node: Node) => {
-    if (node.type === 'Identifier') {
-      node.name = encode(node.name)
-    }
-  })
-  return tree
-}
-
 function decodeString(str: string): string {
   return str.replace(/\$scheme_[\w$]+|\$\d+\$/g, match => {
     return decode(match)
@@ -80,18 +80,58 @@ function decodeString(str: string): string {
 
 // Given any value, decode it if and
 // only if an encoded value may exist in it.
+// this function is used to accurately display
+// values in the REPL.
 export function decodeValue(x: any): any {
-  // In future: add support for decoding vectors.
-  if (x instanceof Pair) {
+  // helper version of list_tail that assumes non-null return value
+  function list_tail(xs: List, i: number): List {
+    if (i === 0) {
+      return xs
+    } else {
+      return list_tail(list$45$tail(xs), i - 1)
+    }
+  }
+
+  if (circular$45$list$63$(x)) {
     // May contain encoded strings.
-    return new Pair(decodeValue(x.car), decodeValue(x.cdr))
-  } else if (x instanceof Array) {
+    let circular_pair_index = -1
+    const all_pairs: Pair<any, any>[] = []
+
+    // iterate through all pairs in the list until we find the circular pair
+    let current = x
+    while (current !== null) {
+      if (all_pairs.includes(current)) {
+        circular_pair_index = all_pairs.indexOf(current)
+        break
+      }
+      all_pairs.push(current)
+      current = cdr(current)
+    }
+    x
+    // assemble a new list using the elements in all_pairs
+    let new_list = null
+    for (let i = all_pairs.length - 1; i >= 0; i--) {
+      new_list = cons(decodeValue(car(all_pairs[i])), new_list)
+    }
+
+    // finally we can set the last cdr of the new list to the circular-pair itself
+
+    const circular_pair = list_tail(new_list, circular_pair_index)
+    set$45$cdr$33$(last$45$pair(new_list), circular_pair)
+    return new_list
+  } else if (pair$63$(x)) {
+    // May contain encoded strings.
+    return cons(decodeValue(car(x)), decodeValue(cdr(x)))
+  } else if (vector$63$(x)) {
     // May contain encoded strings.
     return x.map(decodeValue)
-  } else if (x instanceof Function) {
+  } else if (procedure$63$(x)) {
+    // copy x to avoid modifying the original object
+    const newX = { ...x }
     const newString = decodeString(x.toString())
-    x.toString = () => newString
-    return x
+    // change the toString method to return the decoded string
+    newX.toString = () => newString
+    return newX
   } else {
     // string, number, boolean, null, undefined
     // no need to decode.

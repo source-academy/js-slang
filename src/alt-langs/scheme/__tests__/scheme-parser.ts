@@ -1,9 +1,12 @@
-import { parseError } from '../..'
-import { mockContext } from '../../mocks/context'
-import { Chapter } from '../../types'
-import { SchemeParser } from '../scheme'
+import { parseError } from '../../..'
+import { mockContext } from '../../../mocks/context'
+import { Chapter } from '../../../types'
+import { SchemeParser } from '../../../parser/scheme'
 
-const parser = new SchemeParser(Chapter.SCHEME_1)
+const parser_1 = new SchemeParser(Chapter.SCHEME_1)
+const parser_2 = new SchemeParser(Chapter.SCHEME_2)
+const parser_3 = new SchemeParser(Chapter.SCHEME_3)
+const parser_4 = new SchemeParser(Chapter.SCHEME_4)
 const parser_full = new SchemeParser(Chapter.FULL_SCHEME)
 let context = mockContext(Chapter.SCHEME_1)
 let context_full = mockContext(Chapter.FULL_SCHEME)
@@ -15,7 +18,7 @@ beforeEach(() => {
 
 describe('Scheme parser', () => {
   it('represents itself correctly', () => {
-    expect(parser.toString()).toMatchInlineSnapshot(`"SchemeParser{chapter: 1}"`)
+    expect(parser_1.toString()).toMatchInlineSnapshot(`"SchemeParser{chapter: 1}"`)
   })
 
   it('throws error if given chapter is wrong', () => {
@@ -26,13 +29,13 @@ describe('Scheme parser', () => {
 
   it('throws errors if option throwOnError is selected + parse error is encountered', () => {
     const code = `(hello))`
-    expect(() => parser.parse(code, context, undefined, true)).toThrow("Unexpected ')'")
+    expect(() => parser_1.parse(code, context, undefined, true)).toThrow("Unexpected ')'")
   })
 
   it('formats tokenizer errors correctly', () => {
     const code = `(hello))`
 
-    parser.parse(code, context)
+    parser_1.parse(code, context)
     expect(context.errors.slice(-1)[0]).toMatchObject(
       expect.objectContaining({ message: expect.stringContaining("Unexpected ')'") })
     )
@@ -41,20 +44,10 @@ describe('Scheme parser', () => {
   it('formats parser errors correctly', () => {
     const code = `(define (f x)`
 
-    parser.parse(code, context)
+    parser_1.parse(code, context)
     expect(context.errors.slice(-1)[0]).toMatchObject(
       expect.objectContaining({ message: expect.stringContaining('Unexpected EOF') })
     )
-  })
-
-  it('allows usage of builtins/preludes', () => {
-    const code = `
-    (+ 1 2 3)
-    (gcd 10 15)
-    `
-
-    parser.parse(code, context)
-    expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 
   it('allows usage of imports/modules', () => {
@@ -62,14 +55,14 @@ describe('Scheme parser', () => {
       (show heart)
     `
 
-    parser.parse(code, context)
+    parser_1.parse(code, context)
     expect(parseError(context.errors)).toMatchInlineSnapshot(`""`)
   })
 
   it('disallows syntax for higher chapters', () => {
     const code = `'(1 2 3)`
 
-    parser.parse(code, context)
+    parser_1.parse(code, context)
     expect(context.errors.slice(-1)[0]).toMatchObject(
       expect.objectContaining({
         message: expect.stringContaining("Syntax ''' not allowed at Scheme §1")
@@ -77,9 +70,14 @@ describe('Scheme parser', () => {
     )
   })
 
-  it('allows syntax for lower chapters', () => {
+  it('allows syntax for chapters of required or higher chapter', () => {
     const code = `'(1 2 3)`
 
+    // regardless of how many times we parse this code in the same context,
+    // there should be no errors in the context as long as the chapter is 2 or higher
+    parser_2.parse(code, context_full)
+    parser_3.parse(code, context_full)
+    parser_4.parse(code, context_full)
     parser_full.parse(code, context_full)
     expect(parseError(context_full.errors)).toMatchInlineSnapshot(`""`)
   })

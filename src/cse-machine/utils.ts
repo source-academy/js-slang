@@ -7,6 +7,7 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { Environment, Frame, Node, StatementSequence, Value } from '../types'
 import * as ast from '../utils/astCreator'
+import { isContinuation } from './continuations'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
 import { AppInstr, AssmtInstr, ControlItem, Instr, InstrType } from './types'
@@ -499,6 +500,12 @@ export const checkNumberOfArguments = (
         )
       )
     }
+  } else if (isContinuation(callee)) {
+    // Continuations have variadic arguments,
+    // and so we can let it pass
+    // in future, if we can somehow check the number of arguments
+    // expected by the continuation, we can add a check here.
+    return undefined
   } else {
     // Pre-built functions
     const hasVarArgs = callee.minArgsNeeded != undefined
