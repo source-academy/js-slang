@@ -60,6 +60,7 @@ import {
   checkStackOverFlow,
   createBlockEnvironment,
   createEnvironment,
+  createProgramEnvironment,
   currentEnvironment,
   declareFunctionsAndVariables,
   declareIdentifier,
@@ -389,7 +390,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ) {
     // Create and push the environment only if it is non empty.
     if (hasDeclarations(command) || hasImportDeclarations(command)) {
-      const environment = createBlockEnvironment(context, 'programEnvironment')
+      const environment = createProgramEnvironment(context, isPrelude)
       pushEnvironment(context, environment)
       evaluateImports(command as unknown as es.Program, context, {
         wrapSourceModules: true,
