@@ -5,6 +5,9 @@ Object {
   "head": Object {
     "y": 1,
   },
+  "heap": Heap {
+    "storage": null,
+  },
   "id": Any<String>,
   "name": "functionBodyEnvironment",
   "tail": Object {
@@ -49,6 +52,9 @@ Object {
     "head": Object {
       "x": 2,
     },
+    "heap": Heap {
+      "storage": null,
+    },
     "id": "3",
     "name": "f",
     "tail": Object {
@@ -56,7 +62,10 @@ Object {
         "2": [Function],
         "f": [Function],
       },
-      "id": "1",
+      "heap": Heap {
+        "storage": null,
+      },
+      "id": "0",
       "name": "programEnvironment",
       "tail": Object {
         "head": Object {
@@ -139,6 +148,9 @@ Object {
           "tokenize": [Function],
           "undefined": undefined,
         },
+        "heap": Heap {
+          "storage": null,
+        },
         "id": "-1",
         "name": "global",
         "tail": null,
@@ -192,6 +204,9 @@ Object {
   "head": Object {
     "x": 2,
   },
+  "heap": Heap {
+    "storage": null,
+  },
   "id": Any<String>,
   "name": "f",
   "tail": Object {
@@ -199,7 +214,10 @@ Object {
       "2": [Function],
       "f": [Function],
     },
-    "id": "1",
+    "heap": Heap {
+      "storage": null,
+    },
+    "id": "0",
     "name": "programEnvironment",
     "tail": Object {
       "head": Object {
@@ -282,6 +300,9 @@ Object {
         "tokenize": [Function],
         "undefined": undefined,
       },
+      "heap": Heap {
+        "storage": null,
+      },
       "id": "-1",
       "name": "global",
       "tail": null,
@@ -295,6 +316,9 @@ Object {
   "head": Object {
     "2": [Function],
     "f": [Function],
+  },
+  "heap": Heap {
+    "storage": null,
   },
   "id": Any<String>,
   "name": "programEnvironment",
@@ -378,6 +402,9 @@ Object {
       "tail": [Function],
       "tokenize": [Function],
       "undefined": undefined,
+    },
+    "heap": Heap {
+      "storage": null,
     },
     "id": "-1",
     "name": "global",
@@ -467,6 +494,9 @@ Object {
     "tail": [Function],
     "tokenize": [Function],
     "undefined": undefined,
+  },
+  "heap": Heap {
+    "storage": null,
   },
   "id": Any<String>,
   "name": "global",

@@ -9,7 +9,8 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
-import { Control, Heap, Stash } from './cse-machine/interpreter'
+import Heap from './cse-machine/heap'
+import { Control, Stash } from './cse-machine/interpreter'
 
 /**
  * Defines functions that act as built-ins, but might rely on

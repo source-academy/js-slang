@@ -3,7 +3,7 @@ import * as es from 'estree'
 import { cloneDeep } from 'lodash'
 
 import { CUT, UNKNOWN_LOCATION } from '../constants'
-import { Heap } from '../cse-machine/interpreter'
+import Heap from '../cse-machine/heap'
 import { uniqueId } from '../cse-machine/utils'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'

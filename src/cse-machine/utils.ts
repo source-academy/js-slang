@@ -8,8 +8,9 @@ import Closure from '../interpreter/closure'
 import { Environment, Node, StatementSequence, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import { isContinuation } from './continuations'
+import Heap from './heap'
 import * as instr from './instrCreator'
-import { Control, Heap } from './interpreter'
+import { Control } from './interpreter'
 import { AppInstr, AssmtInstr, ControlItem, Instr, InstrType } from './types'
 
 /**
