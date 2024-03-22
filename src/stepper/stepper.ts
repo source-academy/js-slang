@@ -3377,6 +3377,16 @@ export async function getEvaluationSteps(
     }
     if (!limitExceeded && steps.length > 0) {
       steps[steps.length - 1][2] = 'Evaluation complete'
+      /**
+       * this is an extra check
+       * if the last step's program part is empty, we just manually add undefined to it
+       * also works when program is epsilon(empty program)
+       */
+      if ((reducedWithPath[0] as es.Program).body.length == 0) {
+        steps[steps.length - 1][0] = ast.program([
+          ast.expressionStatement(ast.identifier('undefined'))
+        ])
+      }
     }
     if (steps.length === 0) {
       steps.push([reducedWithPath[0] as es.Program, [], 'Nothing to evaluate'])
