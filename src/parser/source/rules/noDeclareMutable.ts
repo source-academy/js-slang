@@ -2,7 +2,7 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { Chapter, ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 const mutableDeclarators = ['let', 'var']
 
@@ -35,7 +35,7 @@ const noDeclareMutable: Rule<es.VariableDeclaration> = {
   disableFromChapter: Chapter.SOURCE_3,
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [es.Node]) {
+    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {
       if (mutableDeclarators.includes(node.kind)) {
         return [new NoDeclareMutableError(node)]
       } else {

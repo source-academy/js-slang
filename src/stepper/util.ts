@@ -3,7 +3,7 @@ import * as es from 'estree'
 import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { Environment, Value } from '../types'
+import { Environment, Node, Value } from '../types'
 import { BlockExpression, substituterNodes } from '../types'
 import * as builtin from './lib'
 
@@ -81,7 +81,7 @@ const DECLARED_BUT_NOT_YET_ASSIGNED = Symbol('Used to implement hoisting')
 export function declareIdentifier(
   context: Context,
   name: string,
-  node: es.Node,
+  node: Node,
   environment: Environment
 ) {
   if (environment.head.hasOwnProperty(name)) {

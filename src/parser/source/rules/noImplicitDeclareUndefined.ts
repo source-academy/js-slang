@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 import { stripIndent } from '../../../utils/formatters'
 
 export class NoImplicitDeclareUndefinedError implements SourceError {
@@ -34,7 +34,7 @@ const noImplicitDeclareUndefined: Rule<es.VariableDeclaration> = {
   name: 'no-implicit-declare-undefined',
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [es.Node]) {
+    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {
       const errors: SourceError[] = []
       for (const decl of node.declarations) {
         if (!decl.init) {
