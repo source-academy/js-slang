@@ -631,7 +631,7 @@ function substituteMain(
               )
               const changed = ast.identifier(changedName, param.loc)
               newBody = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
-              ;(substedFunctionDeclaration.params[i] as es.Identifier).name = changedName
+                ; (substedFunctionDeclaration.params[i] as es.Identifier).name = changedName
             } else {
               newNum = 1
               const changedName: string = getFreshName(
@@ -645,7 +645,7 @@ function substituteMain(
               )
               const changed = ast.identifier(changedName, param.loc)
               newBody = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
-              ;(substedFunctionDeclaration.params[i] as es.Identifier).name = changedName
+                ; (substedFunctionDeclaration.params[i] as es.Identifier).name = changedName
             }
           }
         }
@@ -712,7 +712,7 @@ function substituteMain(
               target.body = substituteMain(param, changed, target.body, [
                 []
               ])[0] as es.BlockStatement
-              ;(substedFunctionExpression.params[i] as es.Identifier).name = changedName
+                ; (substedFunctionExpression.params[i] as es.Identifier).name = changedName
             } else {
               newNum = 1
               const changedName: string = getFreshName(
@@ -728,7 +728,7 @@ function substituteMain(
               target.body = substituteMain(param, changed, target.body, [
                 []
               ])[0] as es.BlockStatement
-              ;(substedFunctionExpression.params[i] as es.Identifier).name = changedName
+                ; (substedFunctionExpression.params[i] as es.Identifier).name = changedName
             }
           }
         }
@@ -1062,7 +1062,7 @@ function substituteMain(
               )
               const changed = ast.identifier(changedName, param.loc)
               newBody = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
-              ;(substedArrow.params[i] as es.Identifier).name = changedName // num[0] + '_' + newNum
+                ; (substedArrow.params[i] as es.Identifier).name = changedName // num[0] + '_' + newNum
             } else {
               newNum = 1
               const changedName: string = getFreshName(
@@ -1076,7 +1076,7 @@ function substituteMain(
               )
               const changed = ast.identifier(changedName, param.loc)
               newBody = substituteMain(param, changed, target.body, [[]])[0] as es.BlockStatement
-              ;(substedArrow.params[i] as es.Identifier).name = changedName
+                ; (substedArrow.params[i] as es.Identifier).name = changedName
             }
           }
         }
@@ -1436,13 +1436,13 @@ function reduceMain(
       LogicalExpression: (target: es.LogicalExpression): string => {
         return target.operator === '&&'
           ? 'AND operation evaluated, left of operator is ' +
-              (bodify(target.left) === 'true'
-                ? 'true, continue evaluating right of operator'
-                : 'false, stop evaluation')
+          (bodify(target.left) === 'true'
+            ? 'true, continue evaluating right of operator'
+            : 'false, stop evaluation')
           : 'OR operation evaluated, left of operator is ' +
-              (bodify(target.left) === 'true'
-                ? 'true, stop evaluation'
-                : 'false, continue evaluating right of operator')
+          (bodify(target.left) === 'true'
+            ? 'true, stop evaluation'
+            : 'false, continue evaluating right of operator')
       },
 
       CallExpression: (target: es.CallExpression): string => {
@@ -1654,8 +1654,8 @@ function reduceMain(
                 ? right
                 : ast.literal(false, node.loc)
               : left.value
-              ? ast.literal(true, node.loc)
-              : right
+                ? ast.literal(true, node.loc)
+                : right
           return [result as es.Expression, context, paths, explain(node)]
         }
       } else {
@@ -2000,12 +2000,24 @@ function reduceMain(
           paths[0].push('body[0]')
           const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
           if (reduced.type === 'BlockStatement') {
-            const body = reduced.body as es.Statement[]
-            if (body.length > 1) {
-              path[1] = [...path[0].slice(0, path[0].length - 1)]
-            }
-            const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
-            return [ast.blockStatement(wholeBlock), cont, path, str]
+            /**
+             * Manually adding undefined within the block statement to make it value-producing.
+             * We do not unpack the block statement to prevent possible confusion
+             */
+            const und = ast.expressionStatement(ast.identifier('undefined'))
+            const statementBodyAfterAddingUndefined = ast.blockStatement([
+              und as es.Statement,
+              ...reduced.body
+            ])
+            return [
+              ast.program([
+                statementBodyAfterAddingUndefined,
+                ...(otherStatements as es.Statement[])
+              ]),
+              cont,
+              path,
+              str
+            ]
           } else {
             return [
               ast.blockStatement([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
