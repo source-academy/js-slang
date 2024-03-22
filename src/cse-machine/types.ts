@@ -1,5 +1,6 @@
 import * as es from 'estree'
 
+import Closure from '../interpreter/closure'
 import { Environment, Node } from '../types'
 
 export enum InstrType {
@@ -93,6 +94,8 @@ export type Instr =
   | ResumeContInstr
 
 export type ControlItem = Node | Instr
+
+export type HeapObject = any[] | Closure
 
 // Special class that cannot be found on the stash so is safe to be used
 // as an indicator of a breakpoint from running the CSE machine

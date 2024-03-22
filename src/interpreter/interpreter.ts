@@ -1,24 +1,18 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { isEmpty, uniqueId } from 'lodash'
+import { isEmpty } from 'lodash'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import { LazyBuiltIn } from '../createContext'
+import { Heap } from '../cse-machine/interpreter'
+import { uniqueId } from '../cse-machine/utils'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { UndefinedImportError } from '../modules/errors'
 import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
 import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import {
-  Context,
-  ContiguousArrayElements,
-  Environment,
-  Frame,
-  Node,
-  Value,
-  Variant
-} from '../types'
+import { Context, ContiguousArrayElements, Environment, Node, Value, Variant } from '../types'
 import assert from '../utils/assert'
 import * as create from '../utils/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/astCreator'
@@ -69,6 +63,7 @@ export function* actualValue(exp: Node, context: Context): Value {
 }
 
 const createEnvironment = (
+  context: Context,
   closure: Closure,
   args: Value[],
   callExpression?: es.CallExpression
@@ -77,7 +72,8 @@ const createEnvironment = (
     name: closure.functionName, // TODO: Change this
     tail: closure.environment,
     head: {},
-    id: uniqueId()
+    heap: new Heap(),
+    id: uniqueId(context)
   }
   if (callExpression) {
     environment.callExpression = {
@@ -97,14 +93,14 @@ const createEnvironment = (
 
 export const createBlockEnvironment = (
   context: Context,
-  name = 'blockEnvironment',
-  head: Frame = {}
+  name = 'blockEnvironment'
 ): Environment => {
   return {
     name,
     tail: currentEnvironment(context),
-    head,
-    id: uniqueId()
+    head: {},
+    heap: new Heap(),
+    id: uniqueId(context)
   }
 }
 
@@ -780,7 +776,7 @@ export function* evaluateProgram(
   yield* leave(context) // Done visiting program
 
   if (result instanceof Closure) {
-    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(), {
+    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(context), {
       value: result,
       writable: false,
       enumerable: true
@@ -794,7 +790,7 @@ function* evaluate(node: Node, context: Context) {
   const result = yield* evaluators[node.type](node, context)
   yield* leave(context)
   if (result instanceof Closure) {
-    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(), {
+    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(context), {
       value: result,
       writable: false,
       enumerable: true
@@ -816,7 +812,7 @@ export function* apply(
   while (!(result instanceof ReturnValue)) {
     if (fun instanceof Closure) {
       checkNumberOfArguments(context, fun, args, node!)
-      const environment = createEnvironment(fun, args, node)
+      const environment = createEnvironment(context, fun, args, node)
       if (result instanceof TailCallReturnValue) {
         replaceEnvironment(context, environment)
       } else {

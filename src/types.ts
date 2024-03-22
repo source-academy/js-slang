@@ -9,7 +9,7 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
-import { Control, Stash } from './cse-machine/interpreter'
+import { Control, Heap, Stash } from './cse-machine/interpreter'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -251,6 +251,7 @@ export interface Environment {
   tail: Environment | null
   callExpression?: es.CallExpression
   head: Frame
+  heap: Heap
   thisContext?: Value
 }
 

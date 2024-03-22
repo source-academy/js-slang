@@ -3,7 +3,7 @@ import * as es from 'estree'
 import createContext, { EnvTree } from '../createContext'
 import Closure from '../interpreter/closure'
 import { createBlockEnvironment } from '../interpreter/interpreter'
-import { Chapter, Context, Environment, Frame, Variant } from '../types'
+import { Chapter, Context, Environment, Variant } from '../types'
 
 export function mockContext(
   chapter: Chapter = Chapter.SOURCE_1,
@@ -79,10 +79,6 @@ export function mockClosure(): Closure {
   )
 }
 
-export function mockEnvironment(
-  context: Context,
-  name = 'blockEnvironment',
-  head: Frame = {}
-): Environment {
-  return createBlockEnvironment(context, name, head)
+export function mockEnvironment(context: Context, name = 'blockEnvironment'): Environment {
+  return createBlockEnvironment(context, name)
 }

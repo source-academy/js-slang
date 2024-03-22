@@ -7,7 +7,7 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { reverse, uniqueId } from 'lodash'
+import { reverse } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
@@ -49,6 +49,7 @@ import {
   EnvInstr,
   ForInstr,
   GenContInstr,
+  HeapObject,
   Instr,
   InstrType,
   ResumeContInstr,
@@ -56,7 +57,6 @@ import {
   WhileInstr
 } from './types'
 import {
-  addObjectToEnvironment,
   checkNumberOfArguments,
   checkStackOverFlow,
   createBlockEnvironment,
@@ -81,6 +81,7 @@ import {
   reduceConditional,
   setVariable,
   Stack,
+  uniqueId,
   valueProducing
 } from './utils'
 
@@ -151,6 +152,38 @@ export class Stash extends Stack<Value> {
     const stackCopy = super.getStack()
     newStash.push(...stackCopy)
     return newStash
+  }
+}
+
+/**
+ * The heap stores all objects in each environment.
+ */
+export class Heap {
+  private storage: Set<HeapObject> | null = null;
+
+  public constructor() {}
+
+  add(...items: HeapObject[]): void {
+    if (!this.storage) {
+      this.storage = new Set<HeapObject>(items)
+    } else {
+      for (const item of items) {
+        this.storage.add(item)
+      }
+    }
+  }
+
+  contains(item: HeapObject): boolean {
+    return this.storage?.has(item) ?? false
+  }
+
+  size(): number {
+    return this.storage?.size ?? 0
+  }
+
+  getHeap(): Set<HeapObject> {
+    // return a copy of the heap's contents
+    return new Set(this.storage)
   }
 }
 
@@ -389,7 +422,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ) {
     // Create and push the environment only if it is non empty.
     if (hasDeclarations(command) || hasImportDeclarations(command)) {
-      const environment = createBlockEnvironment(context, 'programEnvironment')
+      const environment = createBlockEnvironment(
+        context,
+        isPrelude ? 'prelude' : 'programEnvironment'
+      )
       pushEnvironment(context, environment)
       evaluateImports(command as unknown as es.Program, context, {
         wrapSourceModules: true,
@@ -758,7 +794,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       true,
       isPrelude
     )
-    addObjectToEnvironment(closure, currentEnvironment(context))
+    currentEnvironment(context).heap.add(closure)
     stash.push(closure)
   },
 
@@ -964,11 +1000,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       // Display the pre-defined functions on the global environment if needed.
       if (func.preDefined) {
-        Object.defineProperty(context.runtime.environments[1].head, uniqueId(), {
-          value: func,
-          writable: false,
-          enumerable: true
-        })
+        context.runtime.environments[1].heap.add(func)
       }
 
       const next = control.peek()
@@ -1074,17 +1106,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       array.push(stash.pop())
     }
     reverse(array)
-    Object.defineProperty(array, 'id', {
-      value: `${context.runtime.objectCount++}`,
-      writable: false,
-      enumerable: false
-    })
-    Object.defineProperty(array, 'environment', {
-      value: currentEnvironment(context),
-      writable: false,
-      enumerable: false
-    })
-    addObjectToEnvironment(array, currentEnvironment(context))
+    // Properties set by `defineProperty` are not writable, enumerable and configurable by default
+    Object.defineProperty(array, 'id', { value: uniqueId(context) })
+    Object.defineProperty(array, 'environment', { value: currentEnvironment(context) })
+    currentEnvironment(context).heap.add(array)
     stash.push(array)
   },
 

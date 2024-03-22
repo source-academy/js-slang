@@ -1,15 +1,15 @@
 import * as es from 'estree'
-import { uniqueId } from 'lodash'
+import { uniqueId as lodashUniqueId } from 'lodash'
 
 import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { Environment, Frame, Node, StatementSequence, Value } from '../types'
+import { Environment, Node, StatementSequence, Value } from '../types'
 import * as ast from '../utils/astCreator'
 import { isContinuation } from './continuations'
 import * as instr from './instrCreator'
-import { Control } from './interpreter'
+import { Control, Heap } from './interpreter'
 import { AppInstr, AssmtInstr, ControlItem, Instr, InstrType } from './types'
 
 /**
@@ -162,6 +162,16 @@ export const isAssmtInstr = (instr: Instr): instr is AssmtInstr => {
 }
 
 /**
+ * Generate a unique id, for use in environments, arrays and closures.
+ *
+ * @param context the context used to provide the new unique id
+ * @returns a unique id
+ */
+export const uniqueId = (context: Context): string => {
+  return context.runtime ? `${context.runtime.objectCount++}` : lodashUniqueId()
+}
+
+/**
  * A helper function for handling sequences of statements.
  * Statements must be pushed in reverse order, and each statement is separated by a pop
  * instruction so that only the result of the last statement remains on stash.
@@ -274,10 +284,11 @@ export const createEnvironment = (
   callExpression: es.CallExpression
 ): Environment => {
   const environment: Environment = {
+    id: uniqueId(context),
     name: isIdentifier(callExpression.callee) ? callExpression.callee.name : closure.functionName,
     tail: closure.environment,
     head: {},
-    id: `${context.runtime.objectCount++}`,
+    heap: new Heap(),
     callExpression: {
       ...callExpression,
       arguments: args.map(ast.primitive)
@@ -302,23 +313,15 @@ export const pushEnvironment = (context: Context, environment: Environment) => {
 
 export const createBlockEnvironment = (
   context: Context,
-  name = 'blockEnvironment',
-  head: Frame = {}
+  name = 'blockEnvironment'
 ): Environment => {
   return {
     name,
     tail: currentEnvironment(context),
-    head,
-    id: `${context.runtime.objectCount++}`
+    head: {},
+    heap: new Heap(),
+    id: uniqueId(context)
   }
-}
-
-export const addObjectToEnvironment = (object: any[] | Closure, environment: Environment): void => {
-  Object.defineProperty(environment.head, uniqueId(), {
-    value: object,
-    writable: false,
-    enumerable: true
-  })
 }
 
 /**
