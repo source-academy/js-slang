@@ -20,6 +20,13 @@
     "simple-import-sort"
   ],
   "rules": {
+    "@typescript-eslint/no-unsafe-argument": "off", // TODO: Remove
+    "@typescript-eslint/no-unsafe-enum-comparison": "off", // TODO: Remove
+    "@typescript-eslint/no-base-to-string": "off", // TODO: Remove
+    "@typescript-eslint/no-redundant-type-constituents": "off", // TODO: Remove
+    "@typescript-eslint/no-duplicate-type-constituents": "off", // TODO: Remove
+    "prefer-const": "off", // TODO: Remove
+    "no-var": "off", // TODO: Remove
     "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/camelcase": "off",

@@ -4,6 +4,7 @@ import * as es from 'estree'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as tsEs from '../typeChecker/tsESTree'
 import { ErrorSeverity, ErrorType, NodeWithInferredType, SArray, SourceError, Type } from '../types'
+import { Node } from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
 
@@ -13,7 +14,7 @@ export class InvalidArrayIndexType implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: NodeWithInferredType<es.Node>, public receivedType: Type) {}
+  constructor(public node: NodeWithInferredType<Node>, public receivedType: Type) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -33,7 +34,7 @@ export class ArrayAssignmentError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: NodeWithInferredType<es.Node>,
+    public node: NodeWithInferredType<Node>,
     public arrayType: SArray,
     public receivedType: SArray
   ) {}
@@ -113,7 +114,7 @@ export class CyclicReferenceError implements SourceError {
   public type = ErrorType.TYPE
   public severity = ErrorSeverity.WARNING
 
-  constructor(public node: NodeWithInferredType<es.Node>) {}
+  constructor(public node: NodeWithInferredType<Node>) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -128,7 +129,7 @@ export class CyclicReferenceError implements SourceError {
   }
 }
 
-function stringifyNode(node: NodeWithInferredType<es.Node>): string {
+function stringifyNode(node: NodeWithInferredType<Node>): string {
   return ['VariableDeclaration', 'FunctionDeclaration'].includes(node.type)
     ? node.type === 'VariableDeclaration'
       ? (node.declarations[0].id as es.Identifier).name
@@ -143,7 +144,7 @@ export class DifferentNumberArgumentsError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: NodeWithInferredType<es.Node>,
+    public node: NodeWithInferredType<Node>,
     public numExpectedArgs: number,
     public numReceived: number
   ) {}
@@ -165,8 +166,8 @@ export class InvalidArgumentTypesError implements SourceError {
   public severity = ErrorSeverity.WARNING
 
   constructor(
-    public node: NodeWithInferredType<es.Node>,
-    public args: NodeWithInferredType<es.Node>[],
+    public node: NodeWithInferredType<Node>,
+    public args: NodeWithInferredType<Node>[],
     public expectedTypes: Type[],
     public receivedTypes: Type[]
   ) {}

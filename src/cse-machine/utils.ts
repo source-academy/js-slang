@@ -5,8 +5,9 @@ import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { Environment, Frame, RawBlockStatement, Value } from '../types'
+import { Environment, Frame, Node, StatementSequence, Value } from '../types'
 import * as ast from '../utils/astCreator'
+import { isContinuation } from './continuations'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
 import { AppInstr, AssmtInstr, ControlItem, Instr, InstrType } from './types'
@@ -81,72 +82,72 @@ export const isInstr = (command: ControlItem): command is Instr => {
 }
 
 /**
- * Typeguard for esNode to distinguish between program statements and instructions.
+ * Typeguard for Node to distinguish between program statements and instructions.
  *
  * @param command A ControlItem
- * @returns true if the ControlItem is an esNode and false if it is an instruction.
+ * @returns true if the ControlItem is a Node or StatementSequence, false if it is an instruction.
  */
-export const isNode = (command: ControlItem): command is es.Node => {
-  return (command as es.Node).type !== undefined
+export const isNode = (command: ControlItem): command is Node => {
+  return (command as Node).type !== undefined
 }
 
 /**
- * Typeguard for esIdentifier. To verify if an esNode is an esIdentifier.
+ * Typeguard for esIdentifier. To verify if a Node is an esIdentifier.
  *
- * @param node an esNode
+ * @param node a Node
  * @returns true if node is an esIdentifier, false otherwise.
  */
-export const isIdentifier = (node: es.Node): node is es.Identifier => {
+export const isIdentifier = (node: Node): node is es.Identifier => {
   return (node as es.Identifier).name !== undefined
 }
 
 /**
- * Typeguard for esReturnStatement. To verify if an esNode is an esReturnStatement.
+ * Typeguard for esReturnStatement. To verify if a Node is an esReturnStatement.
  *
- * @param node an esNode
+ * @param node a Node
  * @returns true if node is an esReturnStatement, false otherwise.
  */
-export const isReturnStatement = (node: es.Node): node is es.ReturnStatement => {
+export const isReturnStatement = (node: Node): node is es.ReturnStatement => {
   return (node as es.ReturnStatement).type == 'ReturnStatement'
 }
 
 /**
- * Typeguard for esIfStatement. To verify if an esNode is an esIfStatement.
+ * Typeguard for esIfStatement. To verify if a Node is an esIfStatement.
  *
- * @param node an esNode
+ * @param node a Node
  * @returns true if node is an esIfStatement, false otherwise.
  */
-export const isIfStatement = (node: es.Node): node is es.IfStatement => {
+export const isIfStatement = (node: Node): node is es.IfStatement => {
   return (node as es.IfStatement).type == 'IfStatement'
 }
 
 /**
- * Typeguard for esBlockStatement. To verify if an esNode is a block statement.
+ * Typeguard for esBlockStatement. To verify if a Node is a block statement.
  *
- * @param node an esNode
+ * @param node a Node
  * @returns true if node is an esBlockStatement, false otherwise.
  */
-export const isBlockStatement = (node: es.Node): node is es.BlockStatement => {
+export const isBlockStatement = (node: Node): node is es.BlockStatement => {
   return (node as es.BlockStatement).type == 'BlockStatement'
 }
 
 /**
- * Typeguard for RawBlockStatement. To verify if an esNode is a raw block statement (i.e. passed environment creation).
+ * Typeguard for StatementSequence. To verify if a ControlItem is a statement sequence.
  *
- * @param node an esNode
- * @returns true if node is a RawBlockStatement, false otherwise.
+ * @param node a ControlItem
+ * @returns true if node is a StatementSequence, false otherwise.
  */
-export const isRawBlockStatement = (node: es.Node): node is RawBlockStatement => {
-  return (node as RawBlockStatement).isRawBlock === 'true'
+export const isStatementSequence = (node: ControlItem): node is StatementSequence => {
+  return (node as StatementSequence).type == 'StatementSequence'
 }
 
 /**
- * Typeguard for esRestElement. To verify if an esNode is a block statement.
+ * Typeguard for esRestElement. To verify if a Node is a block statement.
  *
- * @param node an esNode
+ * @param node a Node
  * @returns true if node is an esRestElement, false otherwise.
  */
-export const isRestElement = (node: es.Node): node is es.RestElement => {
+export const isRestElement = (node: Node): node is es.RestElement => {
   return (node as es.RestElement).type == 'RestElement'
 }
 
@@ -207,7 +208,7 @@ export const reduceConditional = (
  * @param command Control item to determine if it is value producing.
  * @returns true if it is value producing, false otherwise.
  */
-export const valueProducing = (command: es.Node): boolean => {
+export const valueProducing = (command: Node): boolean => {
   const type = command.type
   return (
     type !== 'VariableDeclaration' &&
@@ -233,7 +234,7 @@ export const valueProducing = (command: es.Node): boolean => {
 export const envChanging = (command: ControlItem): boolean => {
   if (isNode(command)) {
     const type = command.type
-    return type === 'Program' || (type === 'BlockStatement' && hasDeclarations(command))
+    return type === 'Program' || type === 'BlockStatement'
   } else {
     const type = command.instrType
     return (
@@ -251,8 +252,8 @@ export const envChanging = (command: ControlItem): boolean => {
  * @param node The function to check against.
  * @returns true if the function is simple, false otherwise.
  */
-export const isSimpleFunction = (node: es.Function) => {
-  if (node.body.type !== 'BlockStatement') {
+export const isSimpleFunction = (node: any) => {
+  if (node.body.type !== 'BlockStatement' && node.body.type !== 'StatementSequence') {
     return true
   } else {
     const block = node.body
@@ -311,6 +312,19 @@ export const createBlockEnvironment = (
   }
 }
 
+export const createProgramEnvironment = (
+  context: Context,
+  isPrelude: boolean,
+  head: Frame = {}
+): Environment => {
+  return {
+    name: isPrelude ? 'prelude' : 'programEnvironment',
+    tail: currentEnvironment(context),
+    head,
+    id: uniqueId()
+  }
+}
+
 /**
  * Variables
  */
@@ -321,7 +335,7 @@ const UNASSIGNED_LET = Symbol('let declaration')
 export function declareIdentifier(
   context: Context,
   name: string,
-  node: es.Node,
+  node: Node,
   environment: Environment,
   constant: boolean = false
 ) {
@@ -391,7 +405,7 @@ export function hasImportDeclarations(node: es.BlockStatement): boolean {
   return false
 }
 
-function isImportDeclaration(node: es.Node): boolean {
+function isImportDeclaration(node: Node): boolean {
   return node.type === 'ImportDeclaration'
 }
 
@@ -490,6 +504,12 @@ export const checkNumberOfArguments = (
         )
       )
     }
+  } else if (isContinuation(callee)) {
+    // Continuations have variadic arguments,
+    // and so we can let it pass
+    // in future, if we can somehow check the number of arguments
+    // expected by the continuation, we can add a check here.
+    return undefined
   } else {
     // Pre-built functions
     const hasVarArgs = callee.minArgsNeeded != undefined
@@ -548,8 +568,8 @@ export const hasReturnStatementIf = (statement: es.IfStatement): boolean => {
   if (statement.alternate) {
     if (isIfStatement(statement.alternate)) {
       hasReturn = hasReturn && hasReturnStatementIf(statement.alternate as es.IfStatement)
-    } else if (isBlockStatement(statement.alternate)) {
-      hasReturn = hasReturn && hasReturnStatement(statement.alternate as es.BlockStatement)
+    } else if (isBlockStatement(statement.alternate) || isStatementSequence(statement.alternate)) {
+      hasReturn = hasReturn && hasReturnStatement(statement.alternate)
     }
   }
   return hasReturn
@@ -560,7 +580,7 @@ export const hasReturnStatementIf = (statement: es.IfStatement): boolean => {
  * @param body The block to be checked
  * @return `true` if every branch has a return statement, else `false`.
  */
-export const hasReturnStatement = (block: es.BlockStatement): boolean => {
+export const hasReturnStatement = (block: es.BlockStatement | StatementSequence): boolean => {
   let hasReturn = false
   for (const statement of block.body) {
     if (isReturnStatement(statement)) {
@@ -568,6 +588,8 @@ export const hasReturnStatement = (block: es.BlockStatement): boolean => {
     } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
       hasReturn = hasReturn || hasReturnStatementIf(statement as es.IfStatement)
+    } else if (isBlockStatement(statement) || isStatementSequence(statement)) {
+      hasReturn = hasReturn && hasReturnStatement(statement)
     }
   }
   return hasReturn
@@ -579,9 +601,9 @@ export const hasBreakStatementIf = (statement: es.IfStatement): boolean => {
   hasBreak = hasBreak || hasBreakStatement(statement.consequent as es.BlockStatement)
   if (statement.alternate) {
     if (isIfStatement(statement.alternate)) {
-      hasBreak = hasBreak || hasBreakStatementIf(statement.alternate as es.IfStatement)
-    } else if (isBlockStatement(statement.alternate)) {
-      hasBreak = hasBreak || hasBreakStatement(statement.alternate as es.BlockStatement)
+      hasBreak = hasBreak || hasBreakStatementIf(statement.alternate)
+    } else if (isBlockStatement(statement.alternate) || isStatementSequence(statement.alternate)) {
+      hasBreak = hasBreak || hasBreakStatement(statement.alternate)
     }
   }
   return hasBreak
@@ -592,7 +614,7 @@ export const hasBreakStatementIf = (statement: es.IfStatement): boolean => {
  * @param body The block to be checked
  * @return `true` if there is a `break` statement, else `false`.
  */
-export const hasBreakStatement = (block: es.BlockStatement): boolean => {
+export const hasBreakStatement = (block: es.BlockStatement | StatementSequence): boolean => {
   let hasBreak = false
   for (const statement of block.body) {
     if (statement.type === 'BreakStatement') {
@@ -600,8 +622,8 @@ export const hasBreakStatement = (block: es.BlockStatement): boolean => {
     } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
       hasBreak = hasBreak || hasBreakStatementIf(statement as es.IfStatement)
-    } else if (isBlockStatement(statement)) {
-      hasBreak = hasBreak || hasBreakStatement(statement as es.BlockStatement)
+    } else if (isBlockStatement(statement) || isStatementSequence(statement)) {
+      hasBreak = hasBreak || hasBreakStatement(statement)
     }
   }
   return hasBreak
@@ -613,9 +635,9 @@ export const hasContinueStatementIf = (statement: es.IfStatement): boolean => {
   hasContinue = hasContinue || hasContinueStatement(statement.consequent as es.BlockStatement)
   if (statement.alternate) {
     if (isIfStatement(statement.alternate)) {
-      hasContinue = hasContinue || hasContinueStatementIf(statement.alternate as es.IfStatement)
-    } else if (isBlockStatement(statement.alternate)) {
-      hasContinue = hasContinue || hasContinueStatement(statement.alternate as es.BlockStatement)
+      hasContinue = hasContinue || hasContinueStatementIf(statement.alternate)
+    } else if (isBlockStatement(statement.alternate) || isStatementSequence(statement.alternate)) {
+      hasContinue = hasContinue || hasContinueStatement(statement.alternate)
     }
   }
   return hasContinue
@@ -626,7 +648,7 @@ export const hasContinueStatementIf = (statement: es.IfStatement): boolean => {
  * @param body The block to be checked
  * @return `true` if there is a `continue` statement, else `false`.
  */
-export const hasContinueStatement = (block: es.BlockStatement): boolean => {
+export const hasContinueStatement = (block: es.BlockStatement | StatementSequence): boolean => {
   let hasContinue = false
   for (const statement of block.body) {
     if (statement.type === 'ContinueStatement') {
@@ -634,8 +656,8 @@ export const hasContinueStatement = (block: es.BlockStatement): boolean => {
     } else if (isIfStatement(statement)) {
       // Parser enforces that if/else have braces (block statement)
       hasContinue = hasContinue || hasContinueStatementIf(statement as es.IfStatement)
-    } else if (isBlockStatement(statement)) {
-      hasContinue = hasContinue || hasContinueStatement(statement as es.BlockStatement)
+    } else if (isBlockStatement(statement) || isStatementSequence(statement)) {
+      hasContinue = hasContinue || hasContinueStatement(statement)
     }
   }
   return hasContinue

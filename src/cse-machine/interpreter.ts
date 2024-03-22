@@ -19,12 +19,13 @@ import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
 import { ImportTransformOptions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
-import { Context, ContiguousArrayElements, RawBlockStatement, Result, Value } from '../types'
+import { Context, ContiguousArrayElements, Result, StatementSequence, Value } from '../types'
 import assert from '../utils/assert'
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import * as seq from '../utils/statementSeqTransform'
 import {
   Continuation,
   getContinuationControl,
@@ -47,8 +48,10 @@ import {
   CseError,
   EnvInstr,
   ForInstr,
+  GenContInstr,
   Instr,
   InstrType,
+  ResumeContInstr,
   UnOpInstr,
   WhileInstr
 } from './types'
@@ -57,6 +60,7 @@ import {
   checkStackOverFlow,
   createBlockEnvironment,
   createEnvironment,
+  createProgramEnvironment,
   currentEnvironment,
   declareFunctionsAndVariables,
   declareIdentifier,
@@ -72,7 +76,6 @@ import {
   isBlockStatement,
   isInstr,
   isNode,
-  isRawBlockStatement,
   isSimpleFunction,
   popEnvironment,
   pushEnvironment,
@@ -95,7 +98,7 @@ type CmdEvaluator = (
  * It contains syntax tree nodes or instructions.
  */
 export class Control extends Stack<ControlItem> {
-  public constructor(program?: es.Program) {
+  public constructor(program?: es.Program | StatementSequence) {
     super()
 
     // Load program into control stack
@@ -109,20 +112,18 @@ export class Control extends Stack<ControlItem> {
 
   /**
    * Before pushing block statements on the control stack, we check if the block statement has any declarations.
-   * If not (and its not a raw block statement), instead of pushing the entire block, just the body is pushed since the block is not adding any value.
+   * If not, the block is converted to a StatementSequence.
    * @param items The items being pushed on the control.
-   * @returns The same set of control items, but with block statements without declarations simplified.
+   * @returns The same set of control items, but with block statements without declarations converted to StatementSequences.
+   * NOTE: this function handles any case where StatementSequence has to be converted back into BlockStatement due to type issues
    */
   private static simplifyBlocksWithoutDeclarations(...items: ControlItem[]): ControlItem[] {
     const itemsNew: ControlItem[] = []
     items.forEach(item => {
-      if (
-        isNode(item) &&
-        isBlockStatement(item) &&
-        !hasDeclarations(item) &&
-        !isRawBlockStatement(item)
-      ) {
-        itemsNew.push(...Control.simplifyBlocksWithoutDeclarations(...handleSequence(item.body)))
+      if (isNode(item) && isBlockStatement(item) && !hasDeclarations(item)) {
+        // Push block body as statement sequence
+        const seq: StatementSequence = ast.statementSequence(item.body, item.loc)
+        itemsNew.push(seq)
       } else {
         itemsNew.push(item)
       }
@@ -169,6 +170,7 @@ export function evaluate(program: es.Program, context: Context, options: IOption
     context.errors.push(error)
     return new CseError(error)
   }
+  seq.transform(program)
 
   try {
     context.runtime.isRunning = true
@@ -311,8 +313,11 @@ export function* generateCSEMachineStateStream(
 
   let command = control.peek()
 
-  // First node will be a Program
-  context.runtime.nodes.unshift(command as es.Program)
+  // Push first node to be evaluated into context.
+  // The typeguard is there to guarantee that we are pushing a node (which should always be the case)
+  if (command && isNode(command)) {
+    context.runtime.nodes.unshift(command)
+  }
 
   while (command) {
     // Return to capture a snapshot of the control and stash after the target step count is reached
@@ -369,7 +374,7 @@ export function* generateCSEMachineStateStream(
 
 /**
  * Dictionary of functions which handle the logic for the response of the three registers of
- * the ASE machine to each ControlItem.
+ * the CSE machine to each ControlItem.
  */
 const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   /**
@@ -385,7 +390,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   ) {
     // Create and push the environment only if it is non empty.
     if (hasDeclarations(command) || hasImportDeclarations(command)) {
-      const environment = createBlockEnvironment(context, 'programEnvironment')
+      const environment = createProgramEnvironment(context, isPrelude)
       pushEnvironment(context, environment)
       evaluateImports(command as unknown as es.Program, context, {
         wrapSourceModules: true,
@@ -395,36 +400,58 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       declareFunctionsAndVariables(context, command, environment)
     }
 
+    // A strange bug occurs here when successive REPL commands are run, as they
+    // are each evaluated as separate programs. This causes the environment to be
+    // pushed multiple times.
+
+    // As such, we need to "append" the tail environment to the current environment
+    // if and only if the tail environment is a previous program environment.
+
+    const currEnv = currentEnvironment(context)
+    if (
+      currEnv &&
+      currEnv.name === 'programEnvironment' &&
+      currEnv.tail &&
+      currEnv.tail.name === 'programEnvironment'
+    ) {
+      // we need to take that tail environment and append its items to the current environment
+      const oldEnv = currEnv.tail
+
+      // separate the tail environment from the environments list
+      currEnv.tail = oldEnv.tail
+
+      // we will recycle the old environment's item list
+      // add the items from the current environment to the tail environment
+      // this is fine, especially as the older program will never
+      // need to use the old environment's items again
+      for (const key in currEnv.head) {
+        oldEnv.head[key] = currEnv.head[key]
+      }
+
+      // set the current environment to the old one
+      // this will work across successive programs as well
+
+      // this will also allow continuations to read newer program
+      // values from their "outdated" program environment
+      currEnv.head = oldEnv.head
+    }
+
     if (command.body.length == 1) {
       // If program only consists of one statement, evaluate it immediately
       const next = command.body[0]
       cmdEvaluators[next.type](next, context, control, stash, isPrelude)
     } else {
-      // Push raw block statement
-      const rawCopy: RawBlockStatement = {
-        type: 'BlockStatement',
-        range: command.range,
-        loc: command.loc,
-        body: command.body,
-        isRawBlock: 'true'
-      }
-      control.push(rawCopy)
+      // Push block body as statement sequence
+      const seq: StatementSequence = ast.statementSequence(command.body, command.loc)
+      control.push(seq)
     }
   },
 
   BlockStatement: function (command: es.BlockStatement, context: Context, control: Control) {
-    if (isRawBlockStatement(command)) {
-      // Raw block statement: unpack and push body
-      // Push block body only
-      control.push(...handleSequence(command.body))
-      return
-    }
-    // Normal block statement: do environment setup
     // To restore environment after block ends
     // If there is an env instruction on top of the stack, or if there are no declarations
     // we do not need to push another one
-    // The no declarations case is handled by Control :: simplifyBlocksWithoutDeclarations, so no blockStatement node
-    // without declarations should end up here.
+    // The no declarations case is handled at the transform stage, so no blockStatement node without declarations should end up here.
     const next = control.peek()
     // Push ENVIRONMENT instruction if needed
     if (!next || !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
@@ -435,15 +462,27 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     declareFunctionsAndVariables(context, command, environment)
     pushEnvironment(context, environment)
 
-    // Push raw block statement
-    const rawCopy: RawBlockStatement = {
-      type: 'BlockStatement',
-      range: command.range,
-      loc: command.loc,
-      body: command.body,
-      isRawBlock: 'true'
+    // Push block body as statement sequence
+    const seq: StatementSequence = ast.statementSequence(command.body, command.loc)
+    control.push(seq)
+  },
+
+  StatementSequence: function (
+    command: StatementSequence,
+    context: Context,
+    control: Control,
+    stash: Stash,
+    isPrelude: boolean
+  ) {
+    if (command.body.length == 1) {
+      // If sequence only consists of one statement, evaluate it immediately
+      const next = command.body[0]
+      cmdEvaluators[next.type](next, context, control, stash, isPrelude)
+    } else {
+      // unpack and push individual nodes in body
+      control.push(...handleSequence(command.body))
     }
-    control.push(rawCopy)
+    return
   },
 
   WhileStatement: function (
@@ -914,17 +953,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
-      // A continuation is always given a single argument
-      const expression: Value = args[0]
-
       const dummyContCallExpression = makeDummyContCallExpression('f', 'cont')
 
       // Restore the state of the stash,
       // but replace the function application instruction with
       // a resume continuation instruction
       stash.push(func)
-      stash.push(expression)
-      control.push(instr.resumeContInstr(dummyContCallExpression))
+      // we need to push the arguments back onto the stash
+      // as well
+      stash.push(...args)
+      control.push(instr.resumeContInstr(command.numOfArgs, dummyContCallExpression))
       return
     }
 
@@ -981,7 +1019,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Value is a function
     // Check for number of arguments mismatch error
     checkNumberOfArguments(context, func, args, command.srcNode)
-    // Directly stash result of applying pre-built functions without the ASE machine.
+    // Directly stash result of applying pre-built functions without the CSE machine.
     try {
       const result = func(...args)
       stash.push(result)
@@ -1107,7 +1145,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   [InstrType.BREAK_MARKER]: function () {},
 
   [InstrType.GENERATE_CONT]: function (
-    _command: Instr,
+    _command: GenContInstr,
     context: Context,
     control: Control,
     stash: Stash
@@ -1128,12 +1166,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
   },
 
   [InstrType.RESUME_CONT]: function (
-    _command: Instr,
+    command: ResumeContInstr,
     context: Context,
     control: Control,
     stash: Stash
   ) {
-    const expression = stash.pop()
+    // pop the arguments
+    const args: Value[] = []
+    for (let i = 0; i < command.numOfArgs; i++) {
+      args.unshift(stash.pop())
+    }
     const cn: Continuation = stash.pop() as Continuation
 
     const contControl = getContinuationControl(cn)
@@ -1144,10 +1186,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control.setTo(contControl)
     stash.setTo(contStash)
 
-    // Push the expression given to the continuation onto the stash
-    stash.push(expression)
+    // Push the arguments given to the continuation back onto the stash
+    stash.push(...args)
 
-    // Restore the environment pointer to that of the continuation
+    // Restore the environment pointer to that of the continuation's environment
     context.runtime.environments = contEnv
   }
 }

@@ -1,5 +1,7 @@
 import type * as es from 'estree'
 
+import { Node } from '../../types'
+
 export const isImportDeclaration = (node: es.Program['body'][0]): node is es.ImportDeclaration =>
   node.type === 'ImportDeclaration'
 
@@ -19,11 +21,11 @@ export const isImportDeclaration = (node: es.Program['body'][0]): node is es.Imp
 //
 // As such, we check whether the 'directive' property exists on the object
 // instead in order to differentiate between the two.
-export const isDirective = (node: es.Node): node is es.Directive => {
+export const isDirective = (node: Node): node is es.Directive => {
   return 'directive' in node
 }
 
-export const isModuleDeclaration = (node: es.Node): node is es.ModuleDeclaration => {
+export const isModuleDeclaration = (node: Node): node is es.ModuleDeclaration => {
   return [
     'ImportDeclaration',
     'ExportNamedDeclaration',
@@ -38,7 +40,7 @@ export const isStatement = (
   return !isDirective(node) && !isModuleDeclaration(node)
 }
 
-export function isDeclaration(node: es.Node): node is es.Declaration {
+export function isDeclaration(node: Node): node is es.Declaration {
   // export type Declaration =
   //       FunctionDeclaration | VariableDeclaration | ClassDeclaration;
   return (

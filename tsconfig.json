@@ -3,7 +3,7 @@
     "outDir": "./dist",
     "module": "commonjs",
     "declaration": true,
-    "target": "es2016",
+    "target": "es2020",
     "lib": [
       "es2021.string",
       "es2018",

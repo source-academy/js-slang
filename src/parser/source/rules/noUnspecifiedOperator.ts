@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 export class NoUnspecifiedOperatorError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -29,7 +29,7 @@ const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression> = {
   name: 'no-unspecified-operator',
 
   checkers: {
-    BinaryExpression(node: es.BinaryExpression, _ancestors: [es.Node]) {
+    BinaryExpression(node: es.BinaryExpression, _ancestors: [Node]) {
       const permittedOperators = [
         '+',
         '-',
