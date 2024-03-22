@@ -42,10 +42,9 @@ function formatComments(state: any, comments: any, indent: any, lineEnd: any) {
 
 const sourceGen = Object.assign({}, astring.GENERATOR, {
   StatementSequence: function (node: any, state: any) {
-    const indent = state.indent.repeat(state.indentLevel++)
+    const indent = state.indent.repeat(state.indentLevel)
     const { lineEnd, writeComments } = state
     const statementIndent = indent + state.indent
-    state.write('[')
     const statements = node.body
     if (statements != null && statements.length > 0) {
       state.write(lineEnd)
@@ -73,8 +72,6 @@ const sourceGen = Object.assign({}, astring.GENERATOR, {
     if (writeComments && node.trailingComments != null) {
       formatComments(state, node.trailingComments, statementIndent, lineEnd)
     }
-    state.write(']')
-    state.indentLevel--
   }
 })
 

@@ -22,6 +22,9 @@
   "rules": {
     "import/no-duplicates": ["warn", { "prefer-inline": true }],
     "import/order": "warn",
+    "@typescript-eslint/no-base-to-string": "off", // TODO: Remove
+    "prefer-const": "off", // TODO: Remove
+    "no-var": "off", // TODO: Remove
     "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/camelcase": "off",
