@@ -2105,6 +2105,7 @@ false ? 1 : 100 * factorial(100 - 1);
 
 exports[`Evaluation of empty code and imports Evaluate empty program 1`] = `
 "
+undefined;
 "
 `;
 
