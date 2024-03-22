@@ -12,6 +12,7 @@ import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
 import { localImportPrelude } from './stdlib/localImport.prelude'
 import * as misc from './stdlib/misc'
+import * as pylib from './stdlib/pylib'
 import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as parser from './stdlib/parser'
 import * as stream from './stdlib/stream'
@@ -701,26 +702,55 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'None', undefined)
       defineBuiltin(context, 'NaN', NaN)
       defineBuiltin(context, 'Infinity', Infinity)
-      // Define all Math libraries
-      const mathLibraryNames = Object.getOwnPropertyNames(Math)
-      // Short param names for stringified version of math functions
-      const parameterNames = [...'abcdefghijklmnopqrstuvwxyz']
-      for (const name of mathLibraryNames) {
-        const value = Math[name]
-        if (typeof value === 'function') {
-          let paramString: string
-          let minArgsNeeded = undefined
-          if (name === 'max' || name === 'min') {
-            paramString = '...values'
-            minArgsNeeded = 0
-          } else {
-            paramString = parameterNames.slice(0, value.length).join(', ')
-          }
-          defineBuiltin(context, `math_${name}(${paramString})`, value, minArgsNeeded)
-        } else {
-          defineBuiltin(context, `math_${name}`, value)
-        }
-      }
+
+      // Binary operators
+      defineBuiltin(context, '__py_adder(x, y)', pylib.__py_adder)
+      defineBuiltin(context, '__py_minuser(x, y)', pylib.__py_minuser)
+      defineBuiltin(context, '__py_multiplier(x, y)', pylib.__py_multiplier)
+      defineBuiltin(context, '__py_divider(x, y)', pylib.__py_divider)
+      defineBuiltin(context, '__py_modder(x, y)', pylib.__py_modder)
+      defineBuiltin(context, '__py_powerer(x, y)', pylib.__py_powerer)
+      defineBuiltin(context, '__py_floorer(x, y)', pylib.__py_floorer)
+
+      // Unary operator +
+      defineBuiltin(context, '__py_unary_plus(x)', pylib.__py_unary_plus)
+
+      // Math Library
+      defineBuiltin(context, 'math_abs(x)', pylib.math_abs)
+      defineBuiltin(context, 'math_acos(x)', pylib.math_acos)
+      defineBuiltin(context, 'math_acosh(x)', pylib.math_acosh)
+      defineBuiltin(context, 'math_asin(x)', pylib.math_asin)
+      defineBuiltin(context, 'math_asinh(x)', pylib.math_asinh)
+      defineBuiltin(context, 'math_atan(x)', pylib.math_atan)
+      defineBuiltin(context, 'math_atan2(x)', pylib.math_atan2)
+      defineBuiltin(context, 'math_atanh(x)', pylib.math_atanh)
+      defineBuiltin(context, 'math_cbrt(x)', pylib.math_cbrt)
+      defineBuiltin(context, 'math_ceil(x)', pylib.math_ceil)
+      defineBuiltin(context, 'math_clz32(x)', pylib.math_clz32)
+      defineBuiltin(context, 'math_cos(x)', pylib.math_cos)
+      defineBuiltin(context, 'math_cosh(x)', pylib.math_cosh)
+      defineBuiltin(context, 'math_exp(x)', pylib.math_exp)
+      defineBuiltin(context, 'math_expm1(x)', pylib.math_expm1)
+      defineBuiltin(context, 'math_floor(x)', pylib.math_floor)
+      defineBuiltin(context, 'math_fround(x)', pylib.math_fround)
+      defineBuiltin(context, 'math_hypot(...values)', pylib.math_hypot)
+      defineBuiltin(context, 'math_imul(x, y)', pylib.math_imul)
+      defineBuiltin(context, 'math_log(x)', pylib.math_log)
+      defineBuiltin(context, 'math_log1p(x)', pylib.math_log1p)
+      defineBuiltin(context, 'math_log2(x)', pylib.math_log2)
+      defineBuiltin(context, 'math_log10(x)', pylib.math_log10)
+      defineBuiltin(context, 'math_max(...values)', pylib.math_max)
+      defineBuiltin(context, 'math_min(...values)', pylib.math_min)
+      defineBuiltin(context, 'math_pow(base, exponent)', pylib.math_pow)
+      defineBuiltin(context, 'math_random()', pylib.math_random)
+      defineBuiltin(context, 'math_round(x)', pylib.math_round)
+      defineBuiltin(context, 'math_sign(x)', pylib.math_sign)
+      defineBuiltin(context, 'math_sin(x)', pylib.math_sin)
+      defineBuiltin(context, 'math_sinh(x)', pylib.math_sinh)
+      defineBuiltin(context, 'math_sqrt(x)', pylib.math_sqrt)
+      defineBuiltin(context, 'math_tan(x)', pylib.math_tan)
+      defineBuiltin(context, 'math_tanh(x)', pylib.math_tanh)
+      defineBuiltin(context, 'math_trunc(x)', pylib.math_trunc)
     }
   }
 }
