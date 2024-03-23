@@ -33,11 +33,14 @@ export const sourceLanguages: Language[] = [
   { chapter: Chapter.SOURCE_1, variant: Variant.WASM },
   { chapter: Chapter.SOURCE_1, variant: Variant.LAZY },
   { chapter: Chapter.SOURCE_2, variant: Variant.DEFAULT },
+  { chapter: Chapter.SOURCE_2, variant: Variant.TYPED },
   { chapter: Chapter.SOURCE_2, variant: Variant.LAZY },
   { chapter: Chapter.SOURCE_3, variant: Variant.DEFAULT },
+  { chapter: Chapter.SOURCE_3, variant: Variant.TYPED },
   { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT },
   { chapter: Chapter.SOURCE_3, variant: Variant.NON_DET },
   { chapter: Chapter.SOURCE_4, variant: Variant.DEFAULT },
+  { chapter: Chapter.SOURCE_4, variant: Variant.TYPED },
   { chapter: Chapter.SOURCE_4, variant: Variant.GPU },
   { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
 ]
