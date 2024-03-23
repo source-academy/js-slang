@@ -14,7 +14,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: master
-          submodules: recursive
+      - name: Update submodules
+        run: |
+          git rm --cached src/scm-slang
+          git submodule add https://github.com/source-academy/scm-slang src/alt-langs/scheme/scm-slang
+          git submodule sync --recursive
+          git submodule update --init --recursive	  
       - name: Verify version has changed
         # We use jq as `npm pkg get version` returns a quoted string
         run: |
@@ -41,6 +46,7 @@ jobs:
         run: |
           git rm --cached src/scm-slang
           git submodule add https://github.com/source-academy/scm-slang src/alt-langs/scheme/scm-slang
+          git submodule sync --recursive	  
           git submodule update --init --recursive
       - name: Install dependencies (apt)
         run: |
