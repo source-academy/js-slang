@@ -1,5 +1,5 @@
 import { generate } from 'astring'
-import type * as es from 'estree'
+import type es from 'estree'
 
 import { type IOptions } from '..'
 import * as errors from '../errors/errors'

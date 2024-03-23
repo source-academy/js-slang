@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 import * as _ from 'lodash'
 import type { RawSourceMap } from 'source-map'
 

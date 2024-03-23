@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 
 import { Node } from '../../types'
 

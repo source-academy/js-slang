@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'

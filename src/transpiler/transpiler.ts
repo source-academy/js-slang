@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
-import type * as es from 'estree'
+import type es from 'estree'
 import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 

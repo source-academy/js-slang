@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 
 import assert from '../assert'
 import { simple } from '../walkers'

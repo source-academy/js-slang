@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
