@@ -1,5 +1,6 @@
 import * as es from 'estree'
 
+import { Node, StatementSequence } from '../types'
 import { AllowedDeclarations, BlockExpression, FunctionDeclarationExpression } from '../types'
 
 export const getVariableDecarationName = (decl: es.VariableDeclaration) =>
@@ -112,6 +113,15 @@ export const blockStatement = (
   loc
 })
 
+export const statementSequence = (
+  body: es.Statement[],
+  loc?: es.SourceLocation | null
+): StatementSequence => ({
+  type: 'StatementSequence',
+  body,
+  loc
+})
+
 export const program = (body: es.Statement[]): es.Program => ({
   type: 'Program',
   sourceType: 'module',
@@ -143,7 +153,7 @@ export const objectExpression = (properties: es.Property[]): es.ObjectExpression
 })
 
 export const mutateToCallExpression = (
-  node: es.Node,
+  node: Node,
   callee: es.Expression,
   args: es.Expression[]
 ) => {
@@ -154,7 +164,7 @@ export const mutateToCallExpression = (
 }
 
 export const mutateToAssignmentExpression = (
-  node: es.Node,
+  node: Node,
   left: es.Pattern,
   right: es.Expression
 ) => {
@@ -165,23 +175,19 @@ export const mutateToAssignmentExpression = (
   node.right = right
 }
 
-export const mutateToExpressionStatement = (node: es.Node, expr: es.Expression) => {
+export const mutateToExpressionStatement = (node: Node, expr: es.Expression) => {
   node.type = 'ExpressionStatement'
   node = node as es.ExpressionStatement
   node.expression = expr
 }
 
-export const mutateToReturnStatement = (node: es.Node, expr: es.Expression) => {
+export const mutateToReturnStatement = (node: Node, expr: es.Expression) => {
   node.type = 'ReturnStatement'
   node = node as es.ReturnStatement
   node.argument = expr
 }
 
-export const mutateToMemberExpression = (
-  node: es.Node,
-  obj: es.Expression,
-  prop: es.Expression
-) => {
+export const mutateToMemberExpression = (node: Node, obj: es.Expression, prop: es.Expression) => {
   node.type = 'MemberExpression'
   node = node as es.MemberExpression
   node.object = obj
@@ -203,7 +209,7 @@ export const logicalExpression = (
 })
 
 export const mutateToConditionalExpression = (
-  node: es.Node,
+  node: Node,
   test: es.Expression,
   consequent: es.Expression,
   alternate: es.Expression

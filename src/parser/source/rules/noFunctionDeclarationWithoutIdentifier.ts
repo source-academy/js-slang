@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 export class NoFunctionDeclarationWithoutIdentifierError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -26,7 +26,7 @@ const noFunctionDeclarationWithoutIdentifier: Rule<es.FunctionDeclaration> = {
   name: 'no-function-declaration-without-identifier',
 
   checkers: {
-    FunctionDeclaration(node: es.FunctionDeclaration, _ancestors: es.Node[]): SourceError[] {
+    FunctionDeclaration(node: es.FunctionDeclaration, _ancestors: Node[]): SourceError[] {
       if (node.id === null) {
         return [new NoFunctionDeclarationWithoutIdentifierError(node)]
       }

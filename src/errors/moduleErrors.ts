@@ -1,12 +1,11 @@
 /* tslint:disable: max-classes-per-file */
-import * as es from 'estree'
-
+import { Node } from '../types'
 import { RuntimeSourceError } from './runtimeSourceError'
 
 export class ModuleConnectionError extends RuntimeSourceError {
   private static message: string = `Unable to get modules.`
   private static elaboration: string = `You should check your Internet connection, and ensure you have used the correct module path.`
-  constructor(node?: es.Node) {
+  constructor(node?: Node) {
     super(node)
   }
 
@@ -20,7 +19,7 @@ export class ModuleConnectionError extends RuntimeSourceError {
 }
 
 export class ModuleNotFoundError extends RuntimeSourceError {
-  constructor(public moduleName: string, node?: es.Node) {
+  constructor(public moduleName: string, node?: Node) {
     super(node)
   }
 
@@ -36,7 +35,7 @@ export class ModuleNotFoundError extends RuntimeSourceError {
 }
 
 export class ModuleInternalError extends RuntimeSourceError {
-  constructor(public moduleName: string, public error?: any, node?: es.Node) {
+  constructor(public moduleName: string, public error?: any, node?: Node) {
     super(node)
   }
 

@@ -4,7 +4,7 @@
 
 import * as es from 'estree'
 
-import { Environment } from '../types'
+import { Environment, Node } from '../types'
 import {
   AppInstr,
   ArrLitInstr,
@@ -21,16 +21,12 @@ import {
   WhileInstr
 } from './types'
 
-export const resetInstr = (srcNode: es.Node): Instr => ({
+export const resetInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.RESET,
   srcNode
 })
 
-export const whileInstr = (
-  test: es.Expression,
-  body: es.Statement,
-  srcNode: es.Node
-): WhileInstr => ({
+export const whileInstr = (test: es.Expression, body: es.Statement, srcNode: Node): WhileInstr => ({
   instrType: InstrType.WHILE,
   test,
   body,
@@ -42,7 +38,7 @@ export const forInstr = (
   test: es.Expression,
   update: es.Expression,
   body: es.Statement,
-  srcNode: es.Node
+  srcNode: Node
 ): ForInstr => ({
   instrType: InstrType.FOR,
   init,
@@ -56,7 +52,7 @@ export const assmtInstr = (
   symbol: string,
   constant: boolean,
   declaration: boolean,
-  srcNode: es.Node
+  srcNode: Node
 ): AssmtInstr => ({
   instrType: InstrType.ASSIGNMENT,
   symbol,
@@ -65,19 +61,19 @@ export const assmtInstr = (
   srcNode
 })
 
-export const unOpInstr = (symbol: es.UnaryOperator, srcNode: es.Node): UnOpInstr => ({
+export const unOpInstr = (symbol: es.UnaryOperator, srcNode: Node): UnOpInstr => ({
   instrType: InstrType.UNARY_OP,
   symbol,
   srcNode
 })
 
-export const binOpInstr = (symbol: es.BinaryOperator, srcNode: es.Node): BinOpInstr => ({
+export const binOpInstr = (symbol: es.BinaryOperator, srcNode: Node): BinOpInstr => ({
   instrType: InstrType.BINARY_OP,
   symbol,
   srcNode
 })
 
-export const popInstr = (srcNode: es.Node): Instr => ({ instrType: InstrType.POP, srcNode })
+export const popInstr = (srcNode: Node): Instr => ({ instrType: InstrType.POP, srcNode })
 
 export const appInstr = (numOfArgs: number, srcNode: es.CallExpression): AppInstr => ({
   instrType: InstrType.APPLICATION,
@@ -88,7 +84,7 @@ export const appInstr = (numOfArgs: number, srcNode: es.CallExpression): AppInst
 export const branchInstr = (
   consequent: es.Expression | es.Statement,
   alternate: es.Expression | es.Statement | null | undefined,
-  srcNode: es.Node
+  srcNode: Node
 ): BranchInstr => ({
   instrType: InstrType.BRANCH,
   consequent,
@@ -96,59 +92,60 @@ export const branchInstr = (
   srcNode
 })
 
-export const envInstr = (env: Environment, srcNode: es.Node): EnvInstr => ({
+export const envInstr = (env: Environment, srcNode: Node): EnvInstr => ({
   instrType: InstrType.ENVIRONMENT,
   env,
   srcNode
 })
 
-export const arrLitInstr = (arity: number, srcNode: es.Node): ArrLitInstr => ({
+export const arrLitInstr = (arity: number, srcNode: Node): ArrLitInstr => ({
   instrType: InstrType.ARRAY_LITERAL,
   arity,
   srcNode
 })
 
-export const arrAccInstr = (srcNode: es.Node): Instr => ({
+export const arrAccInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.ARRAY_ACCESS,
   srcNode
 })
 
-export const arrAssmtInstr = (srcNode: es.Node): Instr => ({
+export const arrAssmtInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.ARRAY_ASSIGNMENT,
   srcNode
 })
 
-export const markerInstr = (srcNode: es.Node): Instr => ({
+export const markerInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.MARKER,
   srcNode
 })
 
-export const contInstr = (srcNode: es.Node): Instr => ({
+export const contInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.CONTINUE,
   srcNode
 })
 
-export const contMarkerInstr = (srcNode: es.Node): Instr => ({
+export const contMarkerInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.CONTINUE_MARKER,
   srcNode
 })
 
-export const breakInstr = (srcNode: es.Node): Instr => ({
+export const breakInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.BREAK,
   srcNode
 })
 
-export const breakMarkerInstr = (srcNode: es.Node): Instr => ({
+export const breakMarkerInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.BREAK_MARKER,
   srcNode
 })
 
-export const genContInstr = (srcNode: es.Node): GenContInstr => ({
+export const genContInstr = (srcNode: Node): GenContInstr => ({
   instrType: InstrType.GENERATE_CONT,
   srcNode
 })
 
-export const resumeContInstr = (srcNode: es.Node): ResumeContInstr => ({
+export const resumeContInstr = (numOfArgs: number, srcNode: es.Node): ResumeContInstr => ({
+  numOfArgs: numOfArgs,
   instrType: InstrType.RESUME_CONT,
   srcNode
 })

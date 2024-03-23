@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
 
 const specifiedLiterals = ['boolean', 'string', 'number']
 
@@ -32,7 +32,7 @@ export class NoUnspecifiedLiteral implements SourceError {
 const noUnspecifiedLiteral: Rule<es.Literal> = {
   name: 'no-unspecified-literal',
   checkers: {
-    Literal(node: es.Literal, _ancestors: [es.Node]) {
+    Literal(node: es.Literal, _ancestors: [Node]) {
       if (node.value !== null && !specifiedLiterals.includes(typeof node.value)) {
         return [new NoUnspecifiedLiteral(node)]
       } else {

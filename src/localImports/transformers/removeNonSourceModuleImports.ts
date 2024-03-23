@@ -1,5 +1,6 @@
 import es from 'estree'
 
+import { Node } from '../../types'
 import assert from '../../utils/assert'
 import { ancestor } from '../../utils/walkers'
 import { isFilePath } from '../filePaths'
@@ -38,13 +39,13 @@ export const isSourceModule = (moduleName: string): boolean => {
 export const removeNonSourceModuleImports = (program: es.Program): void => {
   // First pass: remove all import AST nodes which are unused by Source modules.
   ancestor(program, {
-    ImportSpecifier(_node: es.ImportSpecifier, _state: es.Node[], _ancestors: es.Node[]): void {
+    ImportSpecifier(_node: es.ImportSpecifier, _state: Node[], _ancestors: Node[]): void {
       // Nothing to do here since ImportSpecifier nodes are used by Source modules.
     },
     ImportDefaultSpecifier(
       node: es.ImportDefaultSpecifier,
-      _state: es.Node[],
-      ancestors: es.Node[]
+      _state: Node[],
+      ancestors: Node[]
     ): void {
       // The ancestors array contains the current node, meaning that the
       // parent node is the second last node of the array.
@@ -60,8 +61,8 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
     },
     ImportNamespaceSpecifier(
       node: es.ImportNamespaceSpecifier,
-      _state: es.Node[],
-      ancestors: es.Node[]
+      _state: Node[],
+      ancestors: Node[]
     ): void {
       // The ancestors array contains the current node, meaning that the
       // parent node is the second last node of the array.
@@ -79,7 +80,7 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
 
   // Operate on a copy of the Program node's body to prevent the walk from missing ImportDeclaration nodes.
   const programBody = [...program.body]
-  const removeImportDeclaration = (node: es.ImportDeclaration, ancestors: es.Node[]): void => {
+  const removeImportDeclaration = (node: es.ImportDeclaration, ancestors: Node[]): void => {
     // The ancestors array contains the current node, meaning that the
     // parent node is the second last node of the array.
     const parent = ancestors[ancestors.length - 2]
@@ -94,7 +95,7 @@ export const removeNonSourceModuleImports = (program: es.Program): void => {
   // Second pass: remove all ImportDeclaration nodes for non-Source modules, or that do not
   // have any specifiers (thus being functionally useless).
   ancestor(program, {
-    ImportDeclaration(node: es.ImportDeclaration, _state: es.Node[], ancestors: es.Node[]): void {
+    ImportDeclaration(node: es.ImportDeclaration, _state: Node[], ancestors: Node[]): void {
       assert(typeof node.source.value === 'string', 'Module names must be strings.')
       // ImportDeclaration nodes without any specifiers are functionally useless and are thus removed.
       if (node.specifiers.length === 0) {

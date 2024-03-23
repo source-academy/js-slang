@@ -1479,7 +1479,7 @@ function reduceMain(
       Program: (target: es.Program): string => bodify(target.body[0]),
 
       BlockExpression: (target: BlockExpression): string =>
-        target.body.length === 0 ? 'Empty block statement evaluated' : bodify(target.body[0]),
+        target.body.length === 0 ? 'Empty block expression evaluated' : bodify(target.body[0]),
 
       BlockStatement: (target: es.BlockStatement): string =>
         target.body.length === 0 ? 'Empty block statement evaluated' : bodify(target.body[0]),
@@ -1777,12 +1777,24 @@ function reduceMain(
           paths[0].push('body[0]')
           const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
           if (reduced.type === 'BlockStatement') {
-            const body = reduced.body as es.Statement[]
-            if (body.length > 1) {
-              path[1] = [...path[0].slice(0, path[0].length - 1)]
-            }
-            const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
-            return [ast.program(wholeBlock), cont, path, str]
+            /**
+             * Manually adding undefined within the block statement to make it value-producing.
+             * We do not unpack the block statement to prevent possible confusion
+             */
+            const und = ast.expressionStatement(ast.identifier('undefined'))
+            const statementBodyAfterAddingUndefined = ast.blockStatement([
+              und as es.Statement,
+              ...reduced.body
+            ])
+            return [
+              ast.program([
+                statementBodyAfterAddingUndefined,
+                ...(otherStatements as es.Statement[])
+              ]),
+              cont,
+              path,
+              str
+            ]
           } else {
             return [
               ast.program([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
@@ -1988,12 +2000,24 @@ function reduceMain(
           paths[0].push('body[0]')
           const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
           if (reduced.type === 'BlockStatement') {
-            const body = reduced.body as es.Statement[]
-            if (body.length > 1) {
-              path[1] = [...path[0].slice(0, path[0].length - 1)]
-            }
-            const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
-            return [ast.blockStatement(wholeBlock), cont, path, str]
+            /**
+             * Manually adding undefined within the block statement to make it value-producing.
+             * We do not unpack the block statement to prevent possible confusion
+             */
+            const und = ast.expressionStatement(ast.identifier('undefined'))
+            const statementBodyAfterAddingUndefined = ast.blockStatement([
+              und as es.Statement,
+              ...reduced.body
+            ])
+            return [
+              ast.program([
+                statementBodyAfterAddingUndefined,
+                ...(otherStatements as es.Statement[])
+              ]),
+              cont,
+              path,
+              str
+            ]
           } else {
             return [
               ast.blockStatement([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
@@ -3377,6 +3401,16 @@ export async function getEvaluationSteps(
     }
     if (!limitExceeded && steps.length > 0) {
       steps[steps.length - 1][2] = 'Evaluation complete'
+      /**
+       * this is an extra check
+       * if the last step's program part is empty, we just manually add undefined to it
+       * also works when program is epsilon(empty program)
+       */
+      if ((reducedWithPath[0] as es.Program).body.length == 0) {
+        steps[steps.length - 1][0] = ast.program([
+          ast.expressionStatement(ast.identifier('undefined'))
+        ])
+      }
     }
     if (steps.length === 0) {
       steps.push([reducedWithPath[0] as es.Program, [], 'Nothing to evaluate'])

@@ -3,7 +3,7 @@ import * as es from 'estree'
 import { parse as sourceParse } from '../parser/parser'
 import { SourceParser } from '../parser/source'
 import { libraryParserLanguage } from '../parser/source/syntax'
-import { Context, ContiguousArrayElements, Value } from '../types'
+import { Context, ContiguousArrayElements, Node, StatementSequence, Value } from '../types'
 import { oneLine } from '../utils/formatters'
 import { vector_to_list } from './list'
 
@@ -28,13 +28,13 @@ function unreachable() {
 // can be represented by the element itself,
 // instead of constructing a sequence
 
-function makeSequenceIfNeeded(exs: es.Node[]) {
+function makeSequenceIfNeeded(exs: Node[]) {
   return exs.length === 1
     ? transform(exs[0])
     : vector_to_list(['sequence', vector_to_list(exs.map(transform))])
 }
 
-function makeBlockIfNeeded(exs: es.Node[]) {
+function makeBlockIfNeeded(exs: Node[]) {
   return hasDeclarationAtToplevel(exs)
     ? vector_to_list(['block', makeSequenceIfNeeded(exs)])
     : makeSequenceIfNeeded(exs)
@@ -42,19 +42,19 @@ function makeBlockIfNeeded(exs: es.Node[]) {
 
 // checks if sequence has declaration at toplevel
 // (outside of any block)
-function hasDeclarationAtToplevel(exs: es.Node[]) {
+function hasDeclarationAtToplevel(exs: Node[]) {
   return exs.reduce(
     (b, ex) => b || ex.type === 'VariableDeclaration' || ex.type === 'FunctionDeclaration',
     false
   )
 }
 
-type ASTTransformers = Map<string, (node: es.Node) => Value>
+type ASTTransformers = Map<string, (node: Node) => Value>
 
 const transformers: ASTTransformers = new Map([
   [
     'Program',
-    (node: es.Node) => {
+    (node: Node) => {
       node = node as es.Program
       return makeSequenceIfNeeded(node.body)
     }
@@ -64,6 +64,13 @@ const transformers: ASTTransformers = new Map([
     'BlockStatement',
     (node: es.BlockStatement) => {
       return makeBlockIfNeeded(node.body)
+    }
+  ],
+
+  [
+    'StatementSequence',
+    (node: StatementSequence) => {
+      return makeSequenceIfNeeded(node.body)
     }
   ],
 
@@ -471,9 +478,9 @@ const transformers: ASTTransformers = new Map([
   ]
 ])
 
-function transform(node: es.Node) {
+function transform(node: Node) {
   if (transformers.has(node.type)) {
-    const transformer = transformers.get(node.type) as (n: es.Node) => Value
+    const transformer = transformers.get(node.type) as (n: Node) => Value
     const transformed = transformer(node)
     // Attach location information
     if (
