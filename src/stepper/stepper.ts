@@ -1774,12 +1774,24 @@ function reduceMain(
           paths[0].push('body[0]')
           const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
           if (reduced.type === 'BlockStatement') {
-            const body = reduced.body as es.Statement[]
-            if (body.length > 1) {
-              path[1] = [...path[0].slice(0, path[0].length - 1)]
-            }
-            const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
-            return [ast.program(wholeBlock), cont, path, str]
+            /**
+             * Manually adding undefined within the block statement to make it value-producing.
+             * We do not unpack the block statement to prevent possible confusion
+             */
+            const und = ast.expressionStatement(ast.identifier('undefined'))
+            const statementBodyAfterAddingUndefined = ast.blockStatement([
+              und as es.Statement,
+              ...reduced.body
+            ])
+            return [
+              ast.program([
+                statementBodyAfterAddingUndefined,
+                ...(otherStatements as es.Statement[])
+              ]),
+              cont,
+              path,
+              str
+            ]
           } else {
             return [
               ast.program([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
@@ -1985,12 +1997,24 @@ function reduceMain(
           paths[0].push('body[0]')
           const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
           if (reduced.type === 'BlockStatement') {
-            const body = reduced.body as es.Statement[]
-            if (body.length > 1) {
-              path[1] = [...path[0].slice(0, path[0].length - 1)]
-            }
-            const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
-            return [ast.blockStatement(wholeBlock), cont, path, str]
+            /**
+             * Manually adding undefined within the block statement to make it value-producing.
+             * We do not unpack the block statement to prevent possible confusion
+             */
+            const und = ast.expressionStatement(ast.identifier('undefined'))
+            const statementBodyAfterAddingUndefined = ast.blockStatement([
+              und as es.Statement,
+              ...reduced.body
+            ])
+            return [
+              ast.program([
+                statementBodyAfterAddingUndefined,
+                ...(otherStatements as es.Statement[])
+              ]),
+              cont,
+              path,
+              str
+            ]
           } else {
             return [
               ast.blockStatement([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
