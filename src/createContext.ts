@@ -380,6 +380,19 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         gpu_lib.__createKernelSource
       )
     }
+
+    // Continuations for explicit-control variant
+    if (context.chapter >= 3) {
+      defineBuiltin(
+        context,
+        'call_cc(f)',
+        context.variant === Variant.EXPLICIT_CONTROL
+          ? call_with_current_continuation
+          : (f: any) => {
+              throw new Error('call_cc is only available in Explicit-Control variant')
+            }
+      )
+    }
   }
 
   if (context.chapter === Chapter.LIBRARY_PARSER) {
