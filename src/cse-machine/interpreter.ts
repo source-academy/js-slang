@@ -1068,12 +1068,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const arity = command.arity
     const array = []
     for (let i = 0; i < arity; ++i) {
-      array.push(stash.pop())
+      array.unshift(stash.pop())
     }
-    reverse(array)
-    // Properties set by `defineProperty` are not writable, enumerable and configurable by default
-    Object.defineProperty(array, 'id', { value: uniqueId(context) })
-    Object.defineProperty(array, 'environment', { value: currentEnvironment(context) })
+    // Properties set are not writable, enumerable and configurable by default
+    Object.defineProperties(array, {
+      id: { value: uniqueId(context) },
+      environment: { value: currentEnvironment(context) }
+    })
     currentEnvironment(context).heap.add(array)
     stash.push(array)
   },
