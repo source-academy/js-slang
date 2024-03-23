@@ -132,18 +132,18 @@ export default async function analyzeImportsAndExports(
             declaredNames.setdefault(declaredName, new ArrayMap()).add(dstModule, spec)
           }
 
-          if (!options.allowUndefinedImports) {
-            if (spec.type === 'ImportNamespaceSpecifier') {
-              if (dstModuleDocs.size === 0) throw new UndefinedNamespaceImportError(dstModule, spec)
-              continue
-            }
+          if (options.allowUndefinedImports) continue
 
-            const importedName = getImportedName(spec)
+          if (spec.type === 'ImportNamespaceSpecifier') {
+            if (dstModuleDocs.size === 0) throw new UndefinedNamespaceImportError(dstModule, spec)
+            continue
+          }
 
-            if (!dstModuleDocs.has(importedName)) {
-              if (importedName === 'default') throw new UndefinedDefaultImportError(dstModule, spec)
-              throw new UndefinedImportError(importedName, dstModule, spec)
-            }
+          const importedName = getImportedName(spec)
+
+          if (!dstModuleDocs.has(importedName)) {
+            if (importedName === 'default') throw new UndefinedDefaultImportError(dstModule, spec)
+            throw new UndefinedImportError(importedName, dstModule, spec)
           }
         }
       }
