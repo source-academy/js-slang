@@ -236,11 +236,11 @@ export const valueProducing = (command: Node): boolean => {
 export const envChanging = (command: ControlItem): boolean => {
   if (isNode(command)) {
     const type = command.type
-    return ( 
-      type === 'Program' || 
+    return (
+      type === 'Program' ||
       type === 'BlockStatement' ||
       type === 'ArrowFunctionExpression' ||
-      type === "ExpressionStatement" && command.expression.type === "ArrowFunctionExpression"
+      (type === 'ExpressionStatement' && command.expression.type === 'ArrowFunctionExpression')
     )
   } else {
     const type = command.instrType
