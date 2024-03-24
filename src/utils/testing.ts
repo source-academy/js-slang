@@ -5,7 +5,7 @@ import { transpileToGPU } from '../gpu/gpu'
 import { parseError, Result, runInContext } from '../index'
 import { transpileToLazy } from '../lazy/lazy'
 import { mockContext } from '../mocks/context'
-import { ImportTransformOptions } from '../modules/moduleTypes'
+import { ImportOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
 import { Chapter, Context, CustomBuiltIns, SourceError, Value, Variant } from '../types'
@@ -49,7 +49,7 @@ interface TestOptions {
   native?: boolean
   showTranspiledCode?: boolean
   showErrorJSON?: boolean
-  importOptions?: Partial<ImportTransformOptions>
+  importOptions?: Partial<ImportOptions>
 }
 
 export function createTestContext({

@@ -5,7 +5,7 @@ import { UndefinedVariable } from '../errors/errors'
 import { NoAssignmentToForVariable } from '../errors/validityErrors'
 import { parse } from '../parser/parser'
 import { Context, Node, NodeWithInferredType } from '../types'
-import { getVariableDecarationName } from '../utils/astCreator'
+import { getVariableDeclarationName } from '../utils/ast/astCreator'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -31,7 +31,7 @@ export function validateAndAnnotate(
     for (const statement of node.body) {
       if (statement.type === 'VariableDeclaration') {
         initialisedIdentifiers.set(
-          getVariableDecarationName(statement),
+          getVariableDeclarationName(statement),
           new Declaration(statement.kind === 'const')
         )
       } else if (statement.type === 'FunctionDeclaration') {
@@ -65,7 +65,7 @@ export function validateAndAnnotate(
       if (init.type === 'VariableDeclaration') {
         accessedBeforeDeclarationMap.set(
           forStatement,
-          new Map([[getVariableDecarationName(init), new Declaration(init.kind === 'const')]])
+          new Map([[getVariableDeclarationName(init), new Declaration(init.kind === 'const')]])
         )
         scopeHasCallExpressionMap.set(forStatement, false)
       }
@@ -106,7 +106,7 @@ export function validateAndAnnotate(
     {
       VariableDeclaration(node: NodeWithInferredType<es.VariableDeclaration>, ancestors: Node[]) {
         const lastAncestor = ancestors[ancestors.length - 2]
-        const name = getVariableDecarationName(node)
+        const name = getVariableDeclarationName(node)
         const accessedBeforeDeclaration = accessedBeforeDeclarationMap
           .get(lastAncestor)!
           .get(name)!.accessedBeforeDeclaration
