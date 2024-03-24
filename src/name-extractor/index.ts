@@ -241,7 +241,6 @@ function getNodeChildren(node: Node): es.Node[] {
     case 'ForStatement':
       return [node.init, node.test, node.update, node.body].filter(
         isNotNullOrUndefined
-        // n => n !== undefined && n !== null
       )
     case 'ExpressionStatement':
       return [node.expression]
@@ -257,8 +256,6 @@ function getNodeChildren(node: Node): es.Node[] {
       return [node.body]
     case 'VariableDeclaration':
       return node.declarations.flatMap(getNodeChildren)
-    // .map(getNodeChildren)
-    // .reduce((prev: es.Node[], cur: es.Node[]) => prev.concat(cur))
     case 'VariableDeclarator':
       return node.init ? [node.init] : []
     case 'ArrowFunctionExpression':
