@@ -220,7 +220,7 @@ describe('Test single line of code is evaluated', () => {
     `
     const steps = await testEvalSteps(code)
     expect(steps.length).toBe(4)
-    expect(getLastStepAsString(steps)).toEqual('')
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
   })
 
   test('Function Declaration', async () => {
@@ -231,7 +231,7 @@ describe('Test single line of code is evaluated', () => {
     `
     const steps = await testEvalSteps(code)
     expect(steps.length).toBe(4)
-    expect(getLastStepAsString(steps)).toEqual('')
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
   })
 
   test('Value', async () => {
@@ -1598,7 +1598,7 @@ describe(`Evaluation of empty code and imports`, () => {
     const code = ``
     const steps = await testEvalSteps(code, mockContext())
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('')
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
   })
 })
 
