@@ -2,7 +2,7 @@ import { parse as babelParse } from '@babel/parser'
 import * as es from 'estree'
 import { cloneDeep, isEqual } from 'lodash'
 
-import { ModuleNotFoundError } from '../errors/moduleErrors'
+// import { ModuleNotFoundError } from '../errors/moduleErrors'
 import {
   ConstNotAssignableTypeError,
   DuplicateTypeAliasError,
@@ -21,7 +21,7 @@ import {
   TypeParameterNameNotAllowedError,
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
-import { memoizedGetModuleManifest } from '../modules/moduleLoader'
+// import { memoizedGetModuleManifest } from '../modules/moduleLoader'
 import {
   BindableType,
   Chapter,
@@ -536,6 +536,8 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
       return typeToCastTo
     case 'TSInterfaceDeclaration':
       throw new TypecheckError(node, 'Interface declarations are not allowed')
+    case 'ExportNamedDeclaration':
+      return typeCheckAndReturnType(node.declaration!); 
     default:
       throw new TypecheckError(node, 'Unknown node type')
   }
@@ -552,14 +554,14 @@ function handleImportDeclarations(node: tsEs.Program) {
   if (importStmts.length === 0) {
     return
   }
-  const modules = memoizedGetModuleManifest()
-  const moduleList = Object.keys(modules)
+  // const modules = memoizedGetModuleManifest()
+  // const moduleList = Object.keys(modules)
   importStmts.forEach(stmt => {
     // Source only uses strings for import source value
-    const moduleName = stmt.source.value as string
-    if (!moduleList.includes(moduleName)) {
-      context.errors.push(new ModuleNotFoundError(moduleName, stmt))
-    }
+    // const moduleName = stmt.source.value as string
+    // if (!moduleList.includes(moduleName)) {
+    //   context.errors.push(new ModuleNotFoundError(moduleName, stmt))
+    // }
     stmt.specifiers.map(spec => {
       if (spec.type !== 'ImportSpecifier') {
         throw new TypecheckError(stmt, 'Unknown specifier type')
