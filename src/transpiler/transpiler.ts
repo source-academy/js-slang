@@ -21,7 +21,6 @@ import {
   NativeStorage,
   Node,
   RecursivePartial,
-  StatementSequence,
   Variant
 } from '../types'
 import assert from '../utils/assert'
