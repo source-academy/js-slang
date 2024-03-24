@@ -16,15 +16,13 @@
     "sourceType": "module"
   },
   "plugins": [
-    "@typescript-eslint",
-    "simple-import-sort"
+    "import",
+    "@typescript-eslint"
   ],
   "rules": {
-    "@typescript-eslint/no-unsafe-argument": "off", // TODO: Remove
-    "@typescript-eslint/no-unsafe-enum-comparison": "off", // TODO: Remove
+    "import/no-duplicates": ["warn", { "prefer-inline": true }],
+    "import/order": "warn",
     "@typescript-eslint/no-base-to-string": "off", // TODO: Remove
-    "@typescript-eslint/no-redundant-type-constituents": "off", // TODO: Remove
-    "@typescript-eslint/no-duplicate-type-constituents": "off", // TODO: Remove
     "prefer-const": "off", // TODO: Remove
     "no-var": "off", // TODO: Remove
     "@typescript-eslint/ban-ts-comment": "warn",
@@ -33,6 +31,7 @@
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/interface-name-prefix": "off",
+    "@typescript-eslint/no-duplicate-type-constituents": "off",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-floating-promises": "off",
@@ -40,25 +39,27 @@
     "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-redundant-type-constituents": "off",
     "@typescript-eslint/no-unnecessary-type-assertion": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-enum-comparison": "off",
     "@typescript-eslint/no-unsafe-member-access": "off",
     "@typescript-eslint/no-unsafe-return": "off",
     "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/no-var-requires": "off",
-    "@typescript-eslint/require-await": "off",
+    "@typescript-eslint/require-await": "error",
     "@typescript-eslint/restrict-plus-operands": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/unbound-method": "off",
-    "prefer-rest-params": "off",
-    "simple-import-sort/imports": "warn"
+    "prefer-rest-params": "off"
   },
   "overrides": [{
     "files": ["src/**/__tests__/**", "src/**/__mocks__/**"],
-    "plugins": ["simple-import-sort"],
+    "plugins": ["import"],
     "rules": {
-      "simple-import-sort/imports": "warn"
+      "import/order": "warn"
     }
   }]
 }

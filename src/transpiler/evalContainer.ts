@@ -1,5 +1,5 @@
 import { NATIVE_STORAGE_ID, REQUIRE_PROVIDER_ID } from '../constants'
-import { RequireProvider } from '../modules/requireProvider'
+import { RequireProvider } from '../modules/loader/requireProvider'
 import { NativeStorage } from '../types'
 
 type Evaler = (code: string, req: RequireProvider, nativeStorage: NativeStorage) => any

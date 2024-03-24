@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { Node } from '../types'
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import { ancestor, make, simple } from '../utils/walkers'
 import GPUBodyVerifier from './verification/bodyVerifier'
 import GPULoopVerifier from './verification/loopVerifier'

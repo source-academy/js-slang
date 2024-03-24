@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
 import { NativeStorage } from '../types'
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import { simple } from '../utils/walkers'
 
 const globalIdNames = [

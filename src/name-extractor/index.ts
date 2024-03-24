@@ -1,35 +1,35 @@
 import acorn from 'acorn'
-import * as es from 'estree'
+import type es from 'estree'
 
-import { Context } from '../'
+import type { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
-import { ModuleConnectionError, ModuleNotFoundError } from '../errors/moduleErrors'
 import { findAncestors, findIdentifierNode } from '../finder'
-import { memoizedloadModuleDocs } from '../modules/moduleLoader'
+import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
+import { memoizedGetModuleDocsAsync } from '../modules/loader/moduleLoaderAsync'
+import type { ModuleDocsEntry } from '../modules/moduleTypes'
+import { isSourceModule } from '../modules/utils'
 import syntaxBlacklist from '../parser/source/syntax'
+import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
+import { isDeclaration, isImportDeclaration } from '../utils/ast/typeGuards'
+
+export enum DeclarationKind {
+  KIND_IMPORT = 'import',
+  KIND_FUNCTION = 'func',
+  KIND_LET = 'let',
+  KIND_PARAM = 'param',
+  KIND_CONST = 'const',
+  KIND_KEYWORD = 'keyword'
+}
 import { Node } from '../types'
 
 export interface NameDeclaration {
   name: string
-  meta: string
+  meta: DeclarationKind
   score?: number
 }
 
-const KIND_IMPORT = 'import'
-const KIND_FUNCTION = 'func'
-// const KIND_LET = 'let'
-const KIND_PARAM = 'param'
-const KIND_CONST = 'const'
-
-function isImportDeclaration(node: Node): boolean {
-  return node.type === 'ImportDeclaration'
-}
-
-function isDeclaration(node: Node): boolean {
-  return node.type === 'VariableDeclaration' || node.type === 'FunctionDeclaration'
-}
-
-function isFunction(node: Node): boolean {
+type FunctionType = es.FunctionDeclaration | es.ArrowFunctionExpression | es.FunctionExpression
+function isFunction(node: Node): node is FunctionType {
   return (
     node.type === 'FunctionDeclaration' ||
     node.type === 'FunctionExpression' ||
@@ -37,7 +37,8 @@ function isFunction(node: Node): boolean {
   )
 }
 
-function isLoop(node: Node): boolean {
+type LoopNode = es.WhileStatement | es.ForStatement
+function isLoop(node: Node): node is LoopNode {
   return node.type === 'WhileStatement' || node.type === 'ForStatement'
 }
 
@@ -50,24 +51,30 @@ const KEYWORD_SCORE = 20000
 
 // Ensure that keywords are prioritized over names
 const keywordsInBlock: { [key: string]: NameDeclaration[] } = {
-  FunctionDeclaration: [{ name: 'function', meta: 'keyword', score: KEYWORD_SCORE }],
-  VariableDeclaration: [{ name: 'const', meta: 'keyword', score: KEYWORD_SCORE }],
-  AssignmentExpression: [{ name: 'let', meta: 'keyword', score: KEYWORD_SCORE }],
-  WhileStatement: [{ name: 'while', meta: 'keyword', score: KEYWORD_SCORE }],
-  IfStatement: [
-    { name: 'if', meta: 'keyword', score: KEYWORD_SCORE },
-    { name: 'else', meta: 'keyword', score: KEYWORD_SCORE }
+  FunctionDeclaration: [
+    { name: 'function', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }
   ],
-  ForStatement: [{ name: 'for', meta: 'keyword', score: KEYWORD_SCORE }]
+  VariableDeclaration: [
+    { name: 'const', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }
+  ],
+  AssignmentExpression: [{ name: 'let', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }],
+  WhileStatement: [{ name: 'while', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }],
+  IfStatement: [
+    { name: 'if', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE },
+    { name: 'else', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }
+  ],
+  ForStatement: [{ name: 'for', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }]
 }
 
 const keywordsInLoop: { [key: string]: NameDeclaration[] } = {
-  BreakStatement: [{ name: 'break', meta: 'keyword', score: KEYWORD_SCORE }],
-  ContinueStatement: [{ name: 'continue', meta: 'keyword', score: KEYWORD_SCORE }]
+  BreakStatement: [{ name: 'break', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }],
+  ContinueStatement: [
+    { name: 'continue', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }
+  ]
 }
 
 const keywordsInFunction: { [key: string]: NameDeclaration[] } = {
-  ReturnStatement: [{ name: 'return', meta: 'keyword', score: KEYWORD_SCORE }]
+  ReturnStatement: [{ name: 'return', meta: DeclarationKind.KIND_KEYWORD, score: KEYWORD_SCORE }]
 }
 
 /**
@@ -95,10 +102,7 @@ export function getKeywords(
   }
 
   // In the init part of a for statement, `let` is the only valid keyword
-  if (
-    ancestors[0].type === 'ForStatement' &&
-    identifier === (ancestors[0] as es.ForStatement).init
-  ) {
+  if (ancestors[0].type === 'ForStatement' && identifier === ancestors[0].init) {
     return context.chapter >= syntaxBlacklist.AssignmentExpression
       ? keywordsInBlock.AssignmentExpression
       : []
@@ -141,11 +145,11 @@ export function getKeywords(
  * @returns Tuple consisting of the list of suggestions, and a boolean value indicating if
  * suggestions should be displayed, i.e. `[suggestions, shouldPrompt]`
  */
-export function getProgramNames(
+export async function getProgramNames(
   prog: Node,
   comments: acorn.Comment[],
   cursorLoc: es.Position
-): [NameDeclaration[], boolean] {
+): Promise<[NameDeclaration[], boolean]> {
   function before(first: es.Position, second: es.Position) {
     return first.line < second.line || (first.line === second.line && first.column <= second.column)
   }
@@ -174,12 +178,12 @@ export function getProgramNames(
     const node = queue.shift()!
     if (isFunction(node)) {
       // This is the only time we want raw identifiers
-      nameQueue.push(...(node as any).params)
+      nameQueue.push(...node.params)
     }
 
     const body = getNodeChildren(node)
     for (const child of body) {
-      if (isImportDeclaration(child)) {
+      if (isImportDeclaration(child as any)) {
         nameQueue.push(child)
       }
 
@@ -200,13 +204,19 @@ export function getProgramNames(
     }
   }
 
-  const res: any = {}
-  nameQueue
-    .map(node => getNames(node, n => cursorInLoc(n.loc)))
-    .reduce((prev, cur) => prev.concat(cur), []) // no flatmap feelsbad
-    .forEach((decl, idx) => {
+  // This implementation is order dependent, so we can't
+  // use something like Promise.all
+  const res: Record<string, NameDeclaration> = {}
+  let idx = 0
+  for (const node of nameQueue) {
+    const names = await getNames(node, n => cursorInLoc(n.loc))
+    names.forEach(decl => {
+      // Deduplicate, ensure deeper declarations overwrite
       res[decl.name] = { ...decl, score: idx }
-    }) // Deduplicate, ensure deeper declarations overwrite
+      idx++
+    })
+  }
+
   return [Object.values(res), true]
 }
 
@@ -215,7 +225,12 @@ function isNotNull<T>(x: T): x is Exclude<T, null> {
   return x !== null
 }
 
-function getNodeChildren(node: Node): Node[] {
+function isNotNullOrUndefined<T>(x: T): x is Exclude<T, null | undefined> {
+  // This function also exists to appease the mighty typescript type checker
+  return x !== undefined && isNotNull(x)
+}
+
+function getNodeChildren(node: Node): es.Node[] {
   switch (node.type) {
     case 'Program':
       return node.body
@@ -224,14 +239,12 @@ function getNodeChildren(node: Node): Node[] {
     case 'WhileStatement':
       return [node.test, node.body]
     case 'ForStatement':
-      return [node.init, node.test, node.update, node.body].filter(
-        n => n !== undefined && n !== null
-      ) as Node[]
+      return [node.init, node.test, node.update, node.body].filter(isNotNullOrUndefined)
     case 'ExpressionStatement':
       return [node.expression]
     case 'IfStatement':
       const children = [node.test, node.consequent]
-      if (node.alternate !== undefined && node.alternate !== null) {
+      if (isNotNullOrUndefined(node.alternate)) {
         children.push(node.alternate)
       }
       return children
@@ -240,9 +253,7 @@ function getNodeChildren(node: Node): Node[] {
     case 'FunctionDeclaration':
       return [node.body]
     case 'VariableDeclaration':
-      return node.declarations
-        .map(getNodeChildren)
-        .reduce((prev: Node[], cur: Node[]) => prev.concat(cur))
+      return node.declarations.flatMap(getNodeChildren)
     case 'VariableDeclarator':
       return node.init ? [node.init] : []
     case 'ArrowFunctionExpression':
@@ -299,6 +310,27 @@ function cursorInIdentifier(node: Node, locTest: (node: Node) => boolean): boole
   }
 }
 
+function docsToHtml(name: string, obj: ModuleDocsEntry): string {
+  switch (obj.kind) {
+    case 'function': {
+      let paramStr: string
+
+      if (obj.params.length === 0) {
+        paramStr = '()'
+      } else {
+        paramStr = `(${obj.params.map(([name, type]) => `${name}: ${type}`).join(', ')})`
+      }
+
+      const header = `${name}${paramStr} → {${obj.retType}}`
+      return `<div><h4>${header}</h4><div class="description">${obj.description}</div></div>`
+    }
+    case 'variable':
+      return `<div><h4>${name}: ${obj.type}</h4><div class="description">${obj.description}</div></div>`
+    case 'unknown':
+      return `<div><h4>${name}: unknown</h4><div class="description">No description available</div></div>`
+  }
+}
+
 // locTest is a callback that returns whether cursor is in location of node
 /**
  * Gets a list of `NameDeclarations` from the given node
@@ -307,34 +339,48 @@ function cursorInIdentifier(node: Node, locTest: (node: Node) => boolean): boole
  * is located within the node, false otherwise
  * @returns List of found names
  */
-function getNames(node: Node, locTest: (node: Node) => boolean): NameDeclaration[] {
+async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<NameDeclaration[]> {
   switch (node.type) {
     case 'ImportDeclaration':
       const specs = node.specifiers.filter(x => !isDummyName(x.local.name))
+      const moduleName = getModuleDeclarationSource(node)
+
+      // Don't try to load documentation for local modules
+      if (!isSourceModule(moduleName)) return []
 
       try {
-        const docs = memoizedloadModuleDocs(node.source.value as string, node)
+        const docs = await memoizedGetModuleDocsAsync(moduleName)
 
         if (!docs) {
           return specs.map(spec => ({
             name: spec.local.name,
-            meta: KIND_IMPORT,
-            docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${node.source.value} module`
+            meta: DeclarationKind.KIND_IMPORT,
+            docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${moduleName} module`
           }))
         }
 
         return specs.map(spec => {
-          if (spec.type !== 'ImportSpecifier' || docs[spec.local.name] === undefined) {
+          if (spec.type === 'ImportNamespaceSpecifier') {
             return {
-              name: spec.local.name,
-              meta: KIND_IMPORT,
-              docHTML: `No documentation available for <code>${spec.local.name}</code> from ${node.source.value} module`
+              name: moduleName,
+              meta: DeclarationKind.KIND_IMPORT,
+              docHTML: `Namespace import ${moduleName}`
+            }
+          }
+
+          const importedName = getImportedName(spec)
+
+          if (docs[importedName] === undefined) {
+            return {
+              name: importedName,
+              meta: DeclarationKind.KIND_IMPORT,
+              docHTML: `No documentation available for <code>${spec.local.name}</code> from ${moduleName} module`
             }
           } else {
             return {
-              name: spec.local.name,
-              meta: KIND_IMPORT,
-              docHTML: docs[spec.local.name]
+              name: importedName,
+              meta: DeclarationKind.KIND_IMPORT,
+              docHTML: docsToHtml(importedName, docs[importedName])
             }
           }
         })
@@ -343,8 +389,8 @@ function getNames(node: Node, locTest: (node: Node) => boolean): NameDeclaration
 
         return specs.map(spec => ({
           name: spec.local.name,
-          meta: KIND_IMPORT,
-          docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${node.source.value} module`
+          meta: DeclarationKind.KIND_IMPORT,
+          docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${moduleName} module`
         }))
       }
     case 'VariableDeclaration':
@@ -360,20 +406,20 @@ function getNames(node: Node, locTest: (node: Node) => boolean): NameDeclaration
           continue
         }
 
-        if (node.kind === KIND_CONST && decl.init && isFunction(decl.init)) {
+        if (node.kind === DeclarationKind.KIND_CONST && decl.init && isFunction(decl.init)) {
           // constant initialized with arrow function will always be a function
-          declarations.push({ name, meta: KIND_FUNCTION })
+          declarations.push({ name, meta: DeclarationKind.KIND_FUNCTION })
         } else {
-          declarations.push({ name, meta: node.kind })
+          declarations.push({ name, meta: node.kind as DeclarationKind })
         }
       }
       return declarations
     case 'FunctionDeclaration':
       return node.id && !isDummyName(node.id.name)
-        ? [{ name: node.id.name, meta: KIND_FUNCTION }]
+        ? [{ name: node.id.name, meta: DeclarationKind.KIND_FUNCTION }]
         : []
     case 'Identifier': // Function/Arrow function param
-      return !isDummyName(node.name) ? [{ name: node.name, meta: KIND_PARAM }] : []
+      return !isDummyName(node.name) ? [{ name: node.name, meta: DeclarationKind.KIND_PARAM }] : []
     default:
       return []
   }

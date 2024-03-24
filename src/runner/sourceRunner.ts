@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 import * as _ from 'lodash'
 import type { RawSourceMap } from 'source-map'
 
@@ -6,7 +6,6 @@ import { type IOptions, type Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
 import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpreter'
 import { ExceptionError } from '../errors/errors'
-import { CannotFindModuleError } from '../errors/localImportErrors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
@@ -15,8 +14,11 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
-import preprocessFileImports from '../localImports/preprocessor'
-import { getRequireProvider } from '../modules/requireProvider'
+import { ModuleNotFoundError } from '../modules/errors'
+import { getRequireProvider } from '../modules/loader/requireProvider'
+import preprocessFileImports from '../modules/preprocessor'
+import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
+import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
 import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
@@ -33,10 +35,14 @@ import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
-import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
-import { determineVariant, resolvedErrorPromise } from './utils'
+import {
+  determineExecutionMethod,
+  determineVariant,
+  hasVerboseErrors,
+  resolvedErrorPromise
+} from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   scheduler: 'async',
@@ -50,10 +56,12 @@ const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   throwInfiniteLoops: true,
   envSteps: -1,
   importOptions: {
+    ...defaultAnalysisOptions,
+    ...defaultLinkerOptions,
     wrapSourceModules: true,
-    checkImports: true,
     loadTabs: true
-  }
+  },
+  shouldAddFileName: null
 }
 
 let previousCode: {
@@ -113,7 +121,7 @@ async function runSubstitution(
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context, true, true)
+  let it = evaluate(program, context, options.importOptions.loadTabs)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
     it = nonDetEvaluate(program, context)
@@ -297,7 +305,7 @@ export async function sourceFilesRunner(
 ): Promise<Result> {
   const entrypointCode = files[entrypointFilePath]
   if (entrypointCode === undefined) {
-    context.errors.push(new CannotFindModuleError(entrypointFilePath))
+    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
     return resolvedErrorPromise
   }
 
@@ -318,7 +326,12 @@ export async function sourceFilesRunner(
   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
   previousCode = currentCode
 
-  const preprocessedProgram = preprocessFileImports(files, entrypointFilePath, context)
+  const preprocessedProgram = await preprocessFileImports(
+    files,
+    entrypointFilePath,
+    context,
+    options
+  )
   if (!preprocessedProgram) {
     return resolvedErrorPromise
   }
