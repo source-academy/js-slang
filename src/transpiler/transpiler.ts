@@ -35,9 +35,7 @@ import {
   NativeIds
 } from '../utils/uniqueIds'
 import { simple } from '../utils/walkers'
-import {
-  checkForUndefinedVariables
-} from '../validator/validator'
+import { checkForUndefinedVariables } from '../validator/validator'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
