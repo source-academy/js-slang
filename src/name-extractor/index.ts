@@ -239,9 +239,7 @@ function getNodeChildren(node: Node): es.Node[] {
     case 'WhileStatement':
       return [node.test, node.body]
     case 'ForStatement':
-      return [node.init, node.test, node.update, node.body].filter(
-        isNotNullOrUndefined
-      )
+      return [node.init, node.test, node.update, node.body].filter(isNotNullOrUndefined)
     case 'ExpressionStatement':
       return [node.expression]
     case 'IfStatement':
