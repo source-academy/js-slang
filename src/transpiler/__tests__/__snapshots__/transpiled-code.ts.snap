@@ -80,6 +80,7 @@ exports[`Ensure no name clashes 1`] = `
   const parse = nativeStorage.builtins.get(\\"parse\\");
   const tokenize = nativeStorage.builtins.get(\\"tokenize\\");
   const apply_in_underlying_javascript = nativeStorage.builtins.get(\\"apply_in_underlying_javascript\\");
+  const call_cc = nativeStorage.builtins.get(\\"call_cc\\");
   {
     const native0 = nativeStorage;
     const callIfFuncAndRightArgs0 = native0.operators.get(\\"callIfFuncAndRightArgs\\");
@@ -197,6 +198,7 @@ Object {
   const parse = nativeStorage.builtins.get(\\"parse\\");
   const tokenize = nativeStorage.builtins.get(\\"tokenize\\");
   const apply_in_underlying_javascript = nativeStorage.builtins.get(\\"apply_in_underlying_javascript\\");
+  const call_cc = nativeStorage.builtins.get(\\"call_cc\\");
   {
     const native = nativeStorage;
     const callIfFuncAndRightArgs = native.operators.get(\\"callIfFuncAndRightArgs\\");
