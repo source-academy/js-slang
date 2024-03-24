@@ -340,13 +340,10 @@ export function* generateCSEMachineStateStream(
       }
     }
 
-    console.log("command: ", command)
     if (!isPrelude && envChanging(command)) {
       // command is evaluated on the next step
       // Hence, next step will change the environment
-      console.log("changepoint: ", command)
       context.runtime.changepointSteps.push(steps + 1)
-      console.log("changepoint steps: ", context.runtime.changepointSteps)
     }
 
     control.pop()
