@@ -16,12 +16,12 @@ import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
 import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
 import { Context, ContiguousArrayElements, Result, type StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
 import * as seq from '../utils/statementSeqTransform'
 import {
   Continuation,

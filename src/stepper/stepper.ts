@@ -5,7 +5,6 @@ import { type IOptions } from '..'
 import * as errors from '../errors/errors'
 import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/loader/moduleLoaderAsync'
 import { parse } from '../parser/parser'
-import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
 import {
   BlockExpression,
   Context,
@@ -26,6 +25,7 @@ import {
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
 import { nodeToValue, objectToString, valueToExpression } from './converter'
 import * as builtin from './lib'
 import {
