@@ -65,6 +65,7 @@ import {
   declareFunctionsAndVariables,
   declareIdentifier,
   defineVariable,
+  envChanging,
   getVariable,
   handleRuntimeError,
   handleSequence,
@@ -337,6 +338,15 @@ export function* generateCSEMachineStateStream(
       if (envSteps === -1) {
         context.runtime.breakpointSteps.push(steps)
       }
+    }
+
+    console.log("command: ", command)
+    if (!isPrelude && envChanging(command)) {
+      // command is evaluated on the next step
+      // Hence, next step will change the environment
+      console.log("changepoint: ", command)
+      context.runtime.changepointSteps.push(steps + 1)
+      console.log("changepoint steps: ", context.runtime.changepointSteps)
     }
 
     control.pop()
