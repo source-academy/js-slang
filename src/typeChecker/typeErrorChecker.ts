@@ -537,7 +537,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
     case 'TSInterfaceDeclaration':
       throw new TypecheckError(node, 'Interface declarations are not allowed')
     case 'ExportNamedDeclaration':
-      return typeCheckAndReturnType(node.declaration!); 
+      return typeCheckAndReturnType(node.declaration!)
     default:
       throw new TypecheckError(node, 'Unknown node type')
   }
