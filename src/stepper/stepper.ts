@@ -7,7 +7,6 @@ import { UndefinedImportError } from '../modules/errors'
 import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
 import type { ImportTransformOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
-import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
 import {
   BlockExpression,
   Context,
@@ -29,6 +28,7 @@ import {
 } from '../utils/dummyAstCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
 import { nodeToValue, objectToString, valueToExpression } from './converter'
 import * as builtin from './lib'
 import {
