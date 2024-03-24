@@ -5,7 +5,6 @@ import { partition } from 'lodash'
 import { RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID, REQUIRE_PROVIDER_ID, UNKNOWN_LOCATION } from '../constants'
-import { UndefinedVariable } from '../errors/errors'
 import { ModuleNotFoundError } from '../errors/moduleErrors'
 import { ModuleInternalError, UndefinedImportError } from '../modules/errors'
 import {
@@ -15,7 +14,6 @@ import {
   memoizedGetModuleManifestAsync
 } from '../modules/moduleLoaderAsync'
 import type { ImportTransformOptions } from '../modules/moduleTypes'
-import { parse } from '../parser/parser'
 import {
   AllowedDeclarations,
   Chapter,
@@ -23,7 +21,6 @@ import {
   NativeStorage,
   Node,
   RecursivePartial,
-  StatementSequence,
   Variant
 } from '../types'
 import assert from '../utils/assert'
@@ -33,31 +30,18 @@ import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
-  getUniqueId
+  getNativeIds,
+  getUniqueId,
+  NativeIds
 } from '../utils/uniqueIds'
-import { ancestor, simple } from '../utils/walkers'
+import { simple } from '../utils/walkers'
+import { checkForUndefinedVariables } from '../validator/validator'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
  * Order in which certain functions are called matter as well.
  * There should be an explanation on it coming up soon.
  */
-
-const globalIdNames = [
-  'native',
-  'callIfFuncAndRightArgs',
-  'boolOrErr',
-  'wrap',
-  'wrapSourceModule',
-  'unaryOp',
-  'binaryOp',
-  'throwIfTimeout',
-  'setProp',
-  'getProp',
-  'builtins'
-] as const
-
-export type NativeIds = Record<(typeof globalIdNames)[number], es.Identifier>
 
 export async function transformImportDeclarations(
   program: es.Program,
@@ -361,209 +345,6 @@ function transformCallExpressionsToCheckIfFunction(program: es.Program, globalId
   })
 }
 
-export function checkForUndefinedVariables(
-  program: es.Program,
-  nativeStorage: NativeStorage,
-  globalIds: NativeIds,
-  skipUndefined: boolean
-) {
-  const builtins = nativeStorage.builtins
-  const identifiersIntroducedByNode = new Map<Node, Set<string>>()
-  function processBlock(node: es.Program | es.BlockStatement) {
-    const identifiers = new Set<string>()
-    for (const statement of node.body) {
-      if (statement.type === 'VariableDeclaration') {
-        identifiers.add((statement.declarations[0].id as es.Identifier).name)
-      } else if (statement.type === 'FunctionDeclaration') {
-        if (statement.id === null) {
-          throw new Error(
-            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-          )
-        }
-        identifiers.add(statement.id.name)
-      } else if (statement.type === 'ImportDeclaration') {
-        for (const specifier of statement.specifiers) {
-          identifiers.add(specifier.local.name)
-        }
-      }
-    }
-    identifiersIntroducedByNode.set(node, identifiers)
-  }
-  function processFunction(
-    node: es.FunctionDeclaration | es.ArrowFunctionExpression,
-    _ancestors: Node[]
-  ) {
-    identifiersIntroducedByNode.set(
-      node,
-      new Set(
-        node.params.map(id =>
-          id.type === 'Identifier'
-            ? id.name
-            : ((id as es.RestElement).argument as es.Identifier).name
-        )
-      )
-    )
-  }
-  const identifiersToAncestors = new Map<es.Identifier, Node[]>()
-  ancestor(program, {
-    Program: processBlock,
-    BlockStatement: processBlock,
-    FunctionDeclaration: processFunction,
-    ArrowFunctionExpression: processFunction,
-    ForStatement(forStatement: es.ForStatement, ancestors: Node[]) {
-      const init = forStatement.init!
-      if (init.type === 'VariableDeclaration') {
-        identifiersIntroducedByNode.set(
-          forStatement,
-          new Set([(init.declarations[0].id as es.Identifier).name])
-        )
-      }
-    },
-    Identifier(identifier: es.Identifier, ancestors: Node[]) {
-      identifiersToAncestors.set(identifier, [...ancestors])
-    },
-    Pattern(node: es.Pattern, ancestors: Node[]) {
-      if (node.type === 'Identifier') {
-        identifiersToAncestors.set(node, [...ancestors])
-      } else if (node.type === 'MemberExpression') {
-        if (node.object.type === 'Identifier') {
-          identifiersToAncestors.set(node.object, [...ancestors])
-        }
-      }
-    }
-  })
-  const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
-
-  for (const [identifier, ancestors] of identifiersToAncestors) {
-    const name = identifier.name
-    const isCurrentlyDeclared = ancestors.some(a => identifiersIntroducedByNode.get(a)?.has(name))
-    if (isCurrentlyDeclared) {
-      continue
-    }
-    const isPreviouslyDeclared = nativeStorage.previousProgramsIdentifiers.has(name)
-    if (isPreviouslyDeclared) {
-      continue
-    }
-    const isBuiltin = builtins.has(name)
-    if (isBuiltin) {
-      continue
-    }
-    const isNativeId = nativeInternalNames.has(name)
-    if (!isNativeId && !skipUndefined) {
-      throw new UndefinedVariable(name, identifier)
-    }
-  }
-}
-
-export function checkProgramForUndefinedVariables(program: es.Program, context: Context) {
-  const usedIdentifiers = new Set<string>([
-    ...getIdentifiersInProgram(program),
-    ...getIdentifiersInNativeStorage(context.nativeStorage)
-  ])
-  const globalIds = getNativeIds(program, usedIdentifiers)
-
-  const preludes = context.prelude
-    ? getFunctionDeclarationNamesInProgram(parse(context.prelude, context)!)
-    : new Set<String>()
-
-  const builtins = context.nativeStorage.builtins
-  const env = context.runtime.environments[0].head
-
-  const identifiersIntroducedByNode = new Map<Node, Set<string>>()
-  function processBlock(node: es.Program | es.BlockStatement | StatementSequence) {
-    const identifiers = new Set<string>()
-    for (const statement of node.body) {
-      if (statement.type === 'VariableDeclaration') {
-        identifiers.add((statement.declarations[0].id as es.Identifier).name)
-      } else if (statement.type === 'FunctionDeclaration') {
-        if (statement.id === null) {
-          throw new Error(
-            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-          )
-        }
-        identifiers.add(statement.id.name)
-      } else if (statement.type === 'ImportDeclaration') {
-        for (const specifier of statement.specifiers) {
-          identifiers.add(specifier.local.name)
-        }
-      }
-    }
-    identifiersIntroducedByNode.set(node, identifiers)
-  }
-  function processFunction(
-    node: es.FunctionDeclaration | es.ArrowFunctionExpression,
-    _ancestors: Node[]
-  ) {
-    identifiersIntroducedByNode.set(
-      node,
-      new Set(
-        node.params.map(id =>
-          id.type === 'Identifier'
-            ? id.name
-            : ((id as es.RestElement).argument as es.Identifier).name
-        )
-      )
-    )
-  }
-  const identifiersToAncestors = new Map<es.Identifier, Node[]>()
-  ancestor(program, {
-    Program: processBlock,
-    BlockStatement: processBlock,
-    StatementSequence: processBlock,
-    FunctionDeclaration: processFunction,
-    ArrowFunctionExpression: processFunction,
-    ForStatement(forStatement: es.ForStatement, ancestors: Node[]) {
-      const init = forStatement.init!
-      if (init.type === 'VariableDeclaration') {
-        identifiersIntroducedByNode.set(
-          forStatement,
-          new Set([(init.declarations[0].id as es.Identifier).name])
-        )
-      }
-    },
-    Identifier(identifier: es.Identifier, ancestors: Node[]) {
-      identifiersToAncestors.set(identifier, [...ancestors])
-    },
-    Pattern(node: es.Pattern, ancestors: Node[]) {
-      if (node.type === 'Identifier') {
-        identifiersToAncestors.set(node, [...ancestors])
-      } else if (node.type === 'MemberExpression') {
-        if (node.object.type === 'Identifier') {
-          identifiersToAncestors.set(node.object, [...ancestors])
-        }
-      }
-    }
-  })
-  const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
-
-  for (const [identifier, ancestors] of identifiersToAncestors) {
-    const name = identifier.name
-    const isCurrentlyDeclared = ancestors.some(a => identifiersIntroducedByNode.get(a)?.has(name))
-    if (isCurrentlyDeclared) {
-      continue
-    }
-    const isPreviouslyDeclared = context.nativeStorage.previousProgramsIdentifiers.has(name)
-    if (isPreviouslyDeclared) {
-      continue
-    }
-    const isBuiltin = builtins.has(name)
-    if (isBuiltin) {
-      continue
-    }
-    const isPrelude = preludes.has(name)
-    if (isPrelude) {
-      continue
-    }
-    const isInEnv = name in env
-    if (isInEnv) {
-      continue
-    }
-    const isNativeId = nativeInternalNames.has(name)
-    if (!isNativeId) {
-      throw new UndefinedVariable(name, identifier)
-    }
-  }
-}
 function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds: NativeIds) {
   function transform(
     node:
@@ -591,14 +372,6 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds
     ForStatement: transform,
     WhileStatement: transform
   })
-}
-
-function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): NativeIds {
-  const globalIds = {}
-  for (const identifier of globalIdNames) {
-    globalIds[identifier] = create.identifier(getUniqueId(usedIdentifiers, identifier))
-  }
-  return globalIds as NativeIds
 }
 
 function transformUnaryAndBinaryOperationsToFunctionCalls(
@@ -767,7 +540,8 @@ async function transpileToSource(
   transformSomeExpressionsToCheckIfBoolean(program, globalIds)
   transformPropertyAssignment(program, globalIds)
   transformPropertyAccess(program, globalIds)
-  checkForUndefinedVariables(program, context.nativeStorage, globalIds, skipUndefined)
+  checkForUndefinedVariables(program, context, globalIds, skipUndefined)
+  // checkProgramForUndefinedVariables(program, context, skipUndefined)
   transformFunctionDeclarationsToArrowFunctions(program, functionsToStringMap)
   wrapArrowFunctionsToAllowNormalCallsAndNiceToString(program, functionsToStringMap, globalIds)
   addInfiniteLoopProtection(program, globalIds, usedIdentifiers)
@@ -815,7 +589,7 @@ async function transpileToFullJS(
   ])
 
   const globalIds = getNativeIds(program, usedIdentifiers)
-  checkForUndefinedVariables(program, context.nativeStorage, globalIds, skipUndefined)
+  checkForUndefinedVariables(program, context, globalIds, skipUndefined)
 
   const [modulePrefix, importNodes, otherNodes] = await transformImportDeclarations(
     program,
