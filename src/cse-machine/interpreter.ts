@@ -56,7 +56,6 @@ import {
   WhileInstr
 } from './types'
 import {
-  handleArrayCreation,
   checkNumberOfArguments,
   checkStackOverFlow,
   createBlockEnvironment,
@@ -67,6 +66,7 @@ import {
   declareIdentifier,
   defineVariable,
   getVariable,
+  handleArrayCreation,
   handleRuntimeError,
   handleSequence,
   hasBreakStatement,
