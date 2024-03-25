@@ -24,8 +24,8 @@ import { filterImportDeclarations } from '../utils/ast/helpers'
 import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import { checkProgramForUndefinedVariables } from '../validator/validator'
 import * as seq from '../utils/statementSeqTransform'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
 import {
   Continuation,
   getContinuationControl,
