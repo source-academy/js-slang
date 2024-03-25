@@ -10,6 +10,7 @@ function getLastStepAsString(steps: [substituterNodes, string[][], string][]): s
 }
 
 function getExplanation(steps: [substituterNodes, string[][], string][]): string {
+  // Explanation of the step is kept in index 2 of steps
   return steps.map(x => x[2]).join('\n')
 }
 
