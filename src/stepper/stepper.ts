@@ -3,6 +3,7 @@ import type * as es from 'estree'
 
 import { type IOptions } from '..'
 import * as errors from '../errors/errors'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { UndefinedImportError } from '../modules/errors'
 import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
 import type { ImportTransformOptions } from '../modules/moduleTypes'
@@ -40,9 +41,9 @@ import {
   isAllowedLiterals,
   isBuiltinFunction,
   isImportedFunction,
-  isNegNumber
+  isNegNumber,
+  prettyPrintError
 } from './util'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
 
 const irreducibleTypes = new Set<string>([
   'Literal',
@@ -3419,11 +3420,11 @@ export async function getEvaluationSteps(
     return steps
   } catch (error) {
     if (error instanceof RuntimeSourceError) {
+      // If steps not evaluated at all, add error message to the first step else add error to last step
       if (steps.length === 0) {
-        // If steps not evaluated at all, keep explanation at the first step
-        steps.push([program, [], `Line ${error.location.start.line}: ${error.explain()}`])
+        steps.push([program, [], prettyPrintError(error)])
       } else {
-        steps[steps.length - 1][2] = `Line ${error.location.start.line}: ${error.explain()}`
+        steps[steps.length - 1][2] = prettyPrintError(error)
       }
     } else {
       context.errors.push(error)

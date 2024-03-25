@@ -7,6 +7,10 @@ import { Environment, Node, Value } from '../types'
 import { BlockExpression, substituterNodes } from '../types'
 import * as builtin from './lib'
 
+export function prettyPrintError(error: RuntimeSourceError): string {
+  return `Line ${error.location.start.line}: ${error.explain()}`
+}
+
 export function isBuiltinFunction(node: substituterNodes): boolean {
   return (
     node.type === 'Identifier' &&
