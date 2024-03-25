@@ -1,7 +1,8 @@
-import type * as es from 'estree'
+import type es from 'estree'
 
 import assert from '../assert'
-import { isImportDeclaration } from './typeGuards'
+import { simple } from '../walkers'
+import { isImportDeclaration, isVariableDeclaration } from './typeGuards'
 
 /**
  * Filters out all import declarations from a program, and sorts them by
@@ -35,4 +36,47 @@ export function filterImportDeclarations({
       Exclude<es.Program['body'][0], es.ImportDeclaration>[]
     ]
   )
+}
+
+export function extractIdsFromPattern(pattern: es.Pattern) {
+  const identifiers: es.Identifier[] = []
+
+  simple(pattern, {
+    Identifier: (node: es.Identifier) => {
+      identifiers.push(node)
+    }
+  })
+
+  return identifiers
+}
+
+export function getIdsFromDeclaration(decl: es.Declaration) {
+  return isVariableDeclaration(decl)
+    ? decl.declarations.flatMap(({ id }) => extractIdsFromPattern(id))
+    : [decl.id]
+}
+
+export const getImportedName = (
+  spec:
+    | Exclude<es.ImportDeclaration['specifiers'][number], es.ImportNamespaceSpecifier>
+    | es.ExportSpecifier
+) => {
+  switch (spec.type) {
+    case 'ImportDefaultSpecifier':
+      return 'default'
+    case 'ImportSpecifier':
+      return spec.imported.name
+    case 'ExportSpecifier':
+      return spec.local.name
+  }
+}
+
+export function getModuleDeclarationSource(
+  node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
+): string {
+  assert(
+    typeof node.source?.value === 'string',
+    `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`
+  )
+  return node.source.value
 }

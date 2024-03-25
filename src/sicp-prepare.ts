@@ -1,6 +1,6 @@
+import * as fs from 'fs'
 import { parse } from 'acorn'
 import { FunctionDeclaration, Program } from 'estree'
-import * as fs from 'fs'
 
 import { default as createContext } from './createContext'
 import { Chapter } from './types'

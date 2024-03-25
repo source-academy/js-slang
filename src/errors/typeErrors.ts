@@ -3,8 +3,15 @@ import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import * as tsEs from '../typeChecker/tsESTree'
-import { ErrorSeverity, ErrorType, NodeWithInferredType, SArray, SourceError, Type } from '../types'
-import { Node } from '../types'
+import {
+  ErrorSeverity,
+  ErrorType,
+  Node,
+  NodeWithInferredType,
+  SArray,
+  SourceError,
+  Type
+} from '../types'
 import { simplify, stripIndent } from '../utils/formatters'
 import { typeToString } from '../utils/stringify'
 

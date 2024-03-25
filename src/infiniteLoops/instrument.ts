@@ -1,9 +1,9 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { transformImportDeclarations } from '../transpiler/transpiler'
-import { Node } from '../types'
-import * as create from '../utils/astCreator'
+import type { Node } from '../types'
+import * as create from '../utils/ast/astCreator'
 import { recursive, simple, WalkerCallback } from '../utils/walkers'
 // transforms AST of program
 
@@ -581,11 +581,8 @@ async function handleImports(programs: es.Program[]): Promise<[string, string[]]
       const [prefixToAdd, importsToAdd, otherNodes] = await transformImportDeclarations(
         program,
         new Set<string>(),
-        {
-          wrapSourceModules: false,
-          checkImports: false,
-          loadTabs: false
-        }
+        false,
+        false
       )
       program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
       const importedNames = importsToAdd.flatMap(node =>

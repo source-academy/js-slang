@@ -14,14 +14,11 @@ import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { UndefinedImportError } from '../modules/errors'
-import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
-import { ImportTransformOptions } from '../modules/moduleTypes'
+import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Result, StatementSequence, Value } from '../types'
-import assert from '../utils/assert'
+import { Context, ContiguousArrayElements, Result, type StatementSequence, Value } from '../types'
+import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations } from '../utils/ast/helpers'
-import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
@@ -65,6 +62,7 @@ import {
   declareFunctionsAndVariables,
   declareIdentifier,
   defineVariable,
+  envChanging,
   getVariable,
   handleRuntimeError,
   handleSequence,
@@ -210,31 +208,35 @@ export function resumeEvaluate(context: Context) {
   }
 }
 
-function evaluateImports(
-  program: es.Program,
-  context: Context,
-  { loadTabs, checkImports }: ImportTransformOptions
-) {
+function evaluateImports(program: es.Program, context: Context) {
   try {
     const [importNodeMap] = filterImportDeclarations(program)
 
     const environment = currentEnvironment(context)
     Object.entries(importNodeMap).forEach(([moduleName, nodes]) => {
-      initModuleContext(moduleName, context, loadTabs)
+      initModuleContext(moduleName, context, true)
       const functions = loadModuleBundle(moduleName, context, nodes[0])
       for (const node of nodes) {
         for (const spec of node.specifiers) {
-          assert(
-            spec.type === 'ImportSpecifier',
-            `Only ImportSpecifiers are supported, got: ${spec.type}`
-          )
+          declareIdentifier(context, spec.local.name, node, environment)
+          let obj: any
 
-          if (checkImports && !(spec.imported.name in functions)) {
-            throw new UndefinedImportError(spec.imported.name, moduleName, spec)
+          switch (spec.type) {
+            case 'ImportSpecifier': {
+              obj = functions[spec.imported.name]
+              break
+            }
+            case 'ImportDefaultSpecifier': {
+              obj = functions.default
+              break
+            }
+            case 'ImportNamespaceSpecifier': {
+              obj = functions
+              break
+            }
           }
 
-          declareIdentifier(context, spec.local.name, node, environment)
-          defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
+          defineVariable(context, spec.local.name, obj, true, node)
         }
       }
     })
@@ -339,6 +341,12 @@ export function* generateCSEMachineStateStream(
       }
     }
 
+    if (!isPrelude && envChanging(command)) {
+      // command is evaluated on the next step
+      // Hence, next step will change the environment
+      context.runtime.changepointSteps.push(steps + 1)
+    }
+
     control.pop()
     if (isNode(command)) {
       context.runtime.nodes.shift()
@@ -392,11 +400,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (hasDeclarations(command) || hasImportDeclarations(command)) {
       const environment = createProgramEnvironment(context, isPrelude)
       pushEnvironment(context, environment)
-      evaluateImports(command as unknown as es.Program, context, {
-        wrapSourceModules: true,
-        checkImports: true,
-        loadTabs: true
-      })
+      evaluateImports(command as unknown as es.Program, context)
       declareFunctionsAndVariables(context, command, environment)
     }
 

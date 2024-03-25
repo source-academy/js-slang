@@ -8,8 +8,8 @@ import { Chapter, Value } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { transformImportDeclarations, transpile } from '../transpiler'
 
-jest.mock('../../modules/moduleLoaderAsync')
-jest.mock('../../modules/moduleLoader')
+jest.mock('../../modules/loader/moduleLoaderAsync')
+jest.mock('../../modules/loader/moduleLoader')
 
 test('Transform import declarations into variable declarations', async () => {
   const code = stripIndent`
@@ -19,11 +19,12 @@ test('Transform import declarations into variable declarations', async () => {
   `
   const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
-  const [, importNodes] = await transformImportDeclarations(program, new Set<string>(), {
-    wrapSourceModules: true,
-    loadTabs: false,
-    checkImports: true
-  })
+  const [, importNodes] = await transformImportDeclarations(
+    program,
+    new Set<string>(),
+    false,
+    false
+  )
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
   expect((importNodes[0].declarations[0].id as Identifier).name).toEqual('foo')
@@ -45,11 +46,8 @@ test('Transpiler accounts for user variable names when transforming import state
   const [, importNodes, [varDecl0, varDecl1]] = await transformImportDeclarations(
     program,
     new Set<string>(['__MODULE__', '__MODULE__0']),
-    {
-      loadTabs: false,
-      wrapSourceModules: false,
-      checkImports: false
-    }
+    false,
+    false
   )
 
   expect(importNodes[0].type).toBe('VariableDeclaration')
@@ -88,12 +86,7 @@ test('importing undefined variables should throw errors', async () => {
   const context = mockContext(Chapter.SOURCE_4)
   const program = parse(code, context)!
   try {
-    await transpile(
-      program,
-      context,
-      { checkImports: true, loadTabs: false, wrapSourceModules: false },
-      false
-    )
+    await transpile(program, context, { loadTabs: false, wrapSourceModules: false }, false)
   } catch (error) {
     expect(error).toBeInstanceOf(UndefinedImportError)
     expect((error as UndefinedImportError).symbol).toEqual('hello')

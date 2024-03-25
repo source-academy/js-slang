@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
@@ -71,7 +71,10 @@ const testEvalSteps = (programStr: string, context?: Context) => {
     importOptions: {
       loadTabs: false,
       wrapSourceModules: false,
-      checkImports: false
+      resolverOptions: { extensions: null },
+      shouldAddFileName: false,
+      allowUndefinedImports: false,
+      throwOnDuplicateNames: true
     }
   }
   return getEvaluationSteps(program, context, options)
