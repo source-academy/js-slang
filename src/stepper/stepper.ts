@@ -2007,7 +2007,7 @@ function reduceMain(
               ...reduced.body
             ])
             return [
-              ast.program([
+              ast.blockStatement([
                 statementBodyAfterAddingUndefined,
                 ...(otherStatements as es.Statement[])
               ]),
