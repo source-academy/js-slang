@@ -9,7 +9,7 @@ import {
   VARARGS_NUM_ARGS
 } from '../stdlib/vm.prelude'
 import { Context } from '../types'
-import { locationDummyNode } from '../utils/astCreator'
+import { locationDummyNode } from '../utils/ast/astCreator'
 import { stringify } from '../utils/stringify'
 import OpCodes from './opcodes'
 import { Address, Instruction, Program, SVMFunction } from './svml-compiler'

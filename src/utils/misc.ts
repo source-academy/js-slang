@@ -16,3 +16,15 @@ export const timeoutPromise = <T>(promise: Promise<T>, timeout: number) =>
         reject(e)
       })
   })
+
+/**
+ * Run the mapping function over the items, filtering out any items that
+ * that the mapping function returned `undefined` for
+ */
+export function mapAndFilter<T, U>(items: T[], mapper: (input: T) => U | undefined) {
+  return items.reduce((res, item) => {
+    const newItem = mapper(item)
+    if (newItem !== undefined) return [...res, newItem]
+    return res
+  }, [] as U[])
+}
