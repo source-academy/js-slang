@@ -42,6 +42,7 @@ import {
   isImportedFunction,
   isNegNumber
 } from './util'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 
 const irreducibleTypes = new Set<string>([
   'Literal',
@@ -3417,7 +3418,17 @@ export async function getEvaluationSteps(
     }
     return steps
   } catch (error) {
-    context.errors.push(error)
+    if (error instanceof RuntimeSourceError) {
+      if (steps.length === 0) {
+        // If steps not evaluated at all, keep explanation at the first step
+        steps.push([program, [], `Line ${error.location.start.line}: ${error.explain()}`])
+      } else {
+        steps[steps.length - 1][2] = `Line ${error.location.start.line}: ${error.explain()}`
+      }
+    } else {
+      context.errors.push(error)
+    }
+
     return steps
   }
 }
