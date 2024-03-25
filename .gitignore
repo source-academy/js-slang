@@ -12,7 +12,7 @@ coverage/
 .DS_Store
 
 .vscode/
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 test-report.html
 
 yarn-error.log

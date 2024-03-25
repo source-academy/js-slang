@@ -9,7 +9,7 @@ import { stripIndent } from '../../utils/formatters'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
 import { testForInfiniteLoop } from '../runtime'
 
-jest.mock('../../modules/moduleLoaderAsync', () => ({
+jest.mock('../../modules/loader/moduleLoaderAsync', () => ({
   memoizedGetModuleBundleAsync: jest.fn(() =>
     Promise.resolve(stripIndent`
     require => {

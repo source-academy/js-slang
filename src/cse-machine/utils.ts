@@ -5,8 +5,8 @@ import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { Environment, Frame, Node, StatementSequence, Value } from '../types'
-import * as ast from '../utils/astCreator'
+import type { Environment, Frame, Node, StatementSequence, Value } from '../types'
+import * as ast from '../utils/ast/astCreator'
 import { isContinuation } from './continuations'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
@@ -227,6 +227,8 @@ export const valueProducing = (command: Node): boolean => {
  *     Called in Program, BlockStatement, and Application instructions.
  *  2. there is an assignment.
  *     Called in Assignment and Array Assignment instructions.
+ *  3. a new object is created.
+ *     Called in ExpressionStatement that contains an ArrowFunctionExpression, or an ArrowFunctionExpression
  *
  * @param command Control item to check against.
  * @returns true if it changes the environment, false otherwise.
@@ -234,7 +236,12 @@ export const valueProducing = (command: Node): boolean => {
 export const envChanging = (command: ControlItem): boolean => {
   if (isNode(command)) {
     const type = command.type
-    return type === 'Program' || type === 'BlockStatement'
+    return (
+      type === 'Program' ||
+      type === 'BlockStatement' ||
+      type === 'ArrowFunctionExpression' ||
+      (type === 'ExpressionStatement' && command.expression.type === 'ArrowFunctionExpression')
+    )
   } else {
     const type = command.instrType
     return (

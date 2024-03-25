@@ -1,13 +1,11 @@
 import { generate } from 'astring'
-import type * as es from 'estree'
+import type es from 'estree'
 
 import { type IOptions } from '..'
 import * as errors from '../errors/errors'
-import { UndefinedImportError } from '../modules/errors'
-import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
-import type { ImportTransformOptions } from '../modules/moduleTypes'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/loader/moduleLoaderAsync'
 import { parse } from '../parser/parser'
-import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
 import {
   BlockExpression,
   Context,
@@ -16,9 +14,7 @@ import {
   FunctionDeclarationExpression,
   substituterNodes
 } from '../types'
-import assert from '../utils/assert'
-import { filterImportDeclarations } from '../utils/ast/helpers'
-import * as ast from '../utils/astCreator'
+import * as ast from '../utils/ast/astCreator'
 import {
   dummyBlockExpression,
   dummyBlockStatement,
@@ -26,9 +22,11 @@ import {
   dummyProgram,
   dummyStatement,
   dummyVariableDeclarator
-} from '../utils/dummyAstCreator'
+} from '../utils/ast/dummyAstCreator'
+import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
 import { nodeToValue, objectToString, valueToExpression } from './converter'
 import * as builtin from './lib'
 import {
@@ -40,7 +38,8 @@ import {
   isAllowedLiterals,
   isBuiltinFunction,
   isImportedFunction,
-  isNegNumber
+  isNegNumber,
+  prettyPrintError
 } from './util'
 
 const irreducibleTypes = new Set<string>([
@@ -2010,7 +2009,7 @@ function reduceMain(
               ...reduced.body
             ])
             return [
-              ast.program([
+              ast.blockStatement([
                 statementBodyAfterAddingUndefined,
                 ...(otherStatements as es.Statement[])
               ]),
@@ -3302,11 +3301,7 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
-async function evaluateImports(
-  program: es.Program,
-  context: Context,
-  { loadTabs, checkImports, wrapSourceModules }: ImportTransformOptions
-) {
+async function evaluateImports(program: es.Program, context: Context, loadTabs: boolean) {
   const [importNodeMap, otherNodes] = filterImportDeclarations(program)
 
   try {
@@ -3314,24 +3309,28 @@ async function evaluateImports(
     await Promise.all(
       Object.entries(importNodeMap).map(async ([moduleName, nodes]) => {
         await initModuleContextAsync(moduleName, context, loadTabs)
-        const functions = await loadModuleBundleAsync(
-          moduleName,
-          context,
-          wrapSourceModules,
-          nodes[0]
-        )
+        const functions = await loadModuleBundleAsync(moduleName, context, nodes[0])
         for (const node of nodes) {
           for (const spec of node.specifiers) {
-            assert(
-              spec.type === 'ImportSpecifier',
-              `Only ImportSpecifiers are supported, got: ${spec.type}`
-            )
-
-            if (checkImports && !(spec.imported.name in functions)) {
-              throw new UndefinedImportError(spec.imported.name, moduleName, spec)
-            }
             declareIdentifier(context, spec.local.name, node, environment)
-            defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
+            let obj: any
+
+            switch (spec.type) {
+              case 'ImportSpecifier': {
+                obj = functions[spec.imported.name]
+                break
+              }
+              case 'ImportDefaultSpecifier': {
+                obj = functions.default
+                break
+              }
+              case 'ImportNamespaceSpecifier': {
+                obj = functions
+                break
+              }
+            }
+
+            defineVariable(context, spec.local.name, obj, true, node)
           }
         }
       })
@@ -3353,7 +3352,7 @@ export async function getEvaluationSteps(
   try {
     checkProgramForUndefinedVariables(program, context)
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
-    await evaluateImports(program, context, importOptions)
+    await evaluateImports(program, context, importOptions.loadTabs)
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns
@@ -3417,7 +3416,17 @@ export async function getEvaluationSteps(
     }
     return steps
   } catch (error) {
-    context.errors.push(error)
+    if (error instanceof RuntimeSourceError) {
+      // If steps not evaluated at all, add error message to the first step else add error to last step
+      if (steps.length === 0) {
+        steps.push([program, [], prettyPrintError(error)])
+      } else {
+        steps[steps.length - 1][2] = prettyPrintError(error)
+      }
+    } else {
+      context.errors.push(error)
+    }
+
     return steps
   }
 }

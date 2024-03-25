@@ -25,9 +25,10 @@ export interface CustomBuiltIns {
 }
 
 export enum ErrorType {
+  IMPORT = 'Import',
+  RUNTIME = 'Runtime',
   SYNTAX = 'Syntax',
-  TYPE = 'Type',
-  RUNTIME = 'Runtime'
+  TYPE = 'Type'
 }
 
 export enum ErrorSeverity {
@@ -154,6 +155,7 @@ export interface Context<T = any> {
     stash_wgsl?: Stash_WGSL
     envStepsTotal: number
     breakpointSteps: number[]
+    changepointSteps: number[]
   }
 
   numberOfOuterEnvironments: number

@@ -112,7 +112,8 @@ const createEmptyRuntime = () => ({
   stash: null,
   envSteps: -1,
   envStepsTotal: 0,
-  breakpointSteps: []
+  breakpointSteps: [],
+  changepointSteps: []
 })
 
 const createEmptyDebugger = () => ({

@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
@@ -7,6 +7,11 @@ import { codify, getEvaluationSteps } from '../stepper'
 
 function getLastStepAsString(steps: [substituterNodes, string[][], string][]): string {
   return codify(steps[steps.length - 1][0]).trim()
+}
+
+function getExplanation(steps: [substituterNodes, string[][], string][]): string {
+  // Explanation of the step is kept in index 2 of steps
+  return steps.map(x => x[2]).join('\n')
 }
 
 describe('Test codify works on non-circular abstract syntax graphs', () => {
@@ -71,11 +76,44 @@ const testEvalSteps = (programStr: string, context?: Context) => {
     importOptions: {
       loadTabs: false,
       wrapSourceModules: false,
-      checkImports: false
+      resolverOptions: { extensions: null },
+      shouldAddFileName: false,
+      allowUndefinedImports: false,
+      throwOnDuplicateNames: true
     }
   }
   return getEvaluationSteps(program, context, options)
 }
+
+describe('Test catching of undeclared variable error', () => {
+  test('Variable not declared in program', async () => {
+    const code = `
+    undeclared_variable;
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Variable not declared in block statement', async () => {
+    const code = `
+    {
+      undeclared_variable;
+    } 
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Variable not declared in function declaration', async () => {
+    const code = `
+    function foo() {
+      undeclared_variable;
+    }
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
 
 describe('Test reducing of empty block into epsilon', () => {
   test('Empty block in program', async () => {
