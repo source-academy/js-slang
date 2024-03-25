@@ -4,9 +4,7 @@ import type es from 'estree'
 import { type IOptions } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { UndefinedImportError } from '../modules/errors'
 import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/loader/moduleLoaderAsync'
-import type { ImportTransformOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
 import {
   BlockExpression,
