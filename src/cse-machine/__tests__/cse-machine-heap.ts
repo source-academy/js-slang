@@ -4,15 +4,16 @@ import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { sourceRunner } from '../../runner'
 import Heap from '../heap'
+import { Array } from '../types'
 
 test('Heap works correctly', () => {
   const heap = new Heap()
   expect(heap.size()).toMatchInlineSnapshot(`0`)
   expect(heap.getHeap()).toMatchInlineSnapshot(`Set {}`)
 
-  const arr = [0]
+  const arr = [0] as Array
   heap.add(arr)
-  expect(heap.contains([0])).toMatchInlineSnapshot(`false`)
+  expect(heap.contains([0] as Array)).toMatchInlineSnapshot(`false`)
   expect(heap.contains(arr)).toMatchInlineSnapshot(`true`)
   heap.add(arr)
   expect(heap.size()).toMatchInlineSnapshot(`1`)

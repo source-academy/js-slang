@@ -63,6 +63,7 @@ export function mockRuntimeContext(): Context {
 }
 
 export function mockClosure(): Closure {
+  const context = createContext()
   return new Closure(
     {
       type: 'FunctionExpression',
@@ -74,8 +75,8 @@ export function mockClosure(): Closure {
         body: []
       }
     } as es.FunctionExpression,
-    {} as Environment,
-    {} as Context
+    mockEnvironment(context),
+    context
   )
 }
 

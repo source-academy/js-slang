@@ -8,12 +8,14 @@ export default class Heap {
 
   public constructor() {}
 
-  add(item: HeapObject): void {
+  add(...items: HeapObject[]): void {
     this.storage ??= new Set<HeapObject>()
-    this.storage.add(item)
+    for (const item of items) {
+      this.storage.add(item)
+    }
   }
 
-  contains(item: HeapObject): boolean {
+  contains(item: any): boolean {
     return this.storage?.has(item) ?? false
   }
 

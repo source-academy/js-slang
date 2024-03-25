@@ -7,7 +7,7 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { reverse } from 'lodash'
+import { isArray, reverse } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
@@ -56,6 +56,7 @@ import {
   WhileInstr
 } from './types'
 import {
+  handleArrayCreation,
   checkNumberOfArguments,
   checkStackOverFlow,
   createBlockEnvironment,
@@ -81,7 +82,6 @@ import {
   reduceConditional,
   setVariable,
   Stack,
-  uniqueId,
   valueProducing
 } from './utils'
 
@@ -1011,6 +1011,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Directly stash result of applying pre-built functions without the CSE machine.
     try {
       const result = func(...args)
+      // Attach array properties and add to heap for any arrays created from built-in functions,
+      // examples: pair, list
+      if (isArray(result)) {
+        handleArrayCreation(context, result)
+      }
       stash.push(result)
     } catch (error) {
       if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
@@ -1070,12 +1075,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     for (let i = 0; i < arity; ++i) {
       array.unshift(stash.pop())
     }
-    // Properties set are not writable, enumerable and configurable by default
-    Object.defineProperties(array, {
-      id: { value: uniqueId(context) },
-      environment: { value: currentEnvironment(context) }
-    })
-    currentEnvironment(context).heap.add(array)
+    handleArrayCreation(context, array)
     stash.push(array)
   },
 

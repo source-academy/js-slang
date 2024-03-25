@@ -95,7 +95,14 @@ export type Instr =
 
 export type ControlItem = Node | Instr
 
-export type HeapObject = any[] | Closure
+// Every array also has the properties `id` and `environment` for use in the frontend CSE Machine
+export type Array = any[] & {
+  readonly id: string
+  readonly environment: Environment
+}
+
+// Objects in the heap can only store arrays or closures
+export type HeapObject = Array | Closure
 
 // Special class that cannot be found on the stash so is safe to be used
 // as an indicator of a breakpoint from running the CSE machine
