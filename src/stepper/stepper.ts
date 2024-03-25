@@ -3,6 +3,7 @@ import type es from 'estree'
 
 import { type IOptions } from '..'
 import * as errors from '../errors/errors'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/loader/moduleLoaderAsync'
 import { parse } from '../parser/parser'
 import {
@@ -37,7 +38,8 @@ import {
   isAllowedLiterals,
   isBuiltinFunction,
   isImportedFunction,
-  isNegNumber
+  isNegNumber,
+  prettyPrintError
 } from './util'
 
 const irreducibleTypes = new Set<string>([
@@ -3414,7 +3416,17 @@ export async function getEvaluationSteps(
     }
     return steps
   } catch (error) {
-    context.errors.push(error)
+    if (error instanceof RuntimeSourceError) {
+      // If steps not evaluated at all, add error message to the first step else add error to last step
+      if (steps.length === 0) {
+        steps.push([program, [], prettyPrintError(error)])
+      } else {
+        steps[steps.length - 1][2] = prettyPrintError(error)
+      }
+    } else {
+      context.errors.push(error)
+    }
+
     return steps
   }
 }
