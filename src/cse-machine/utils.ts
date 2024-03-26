@@ -324,9 +324,9 @@ export const createEnvironment = (
   const environment: Environment = {
     name: isIdentifier(callExpression.callee) ? callExpression.callee.name : closure.functionName,
     tail: closure.environment,
-    id: uniqueId(context),
     head: {},
     heap: new Heap(),
+    id: uniqueId(context),
     callExpression: {
       ...callExpression,
       arguments: args.map(ast.primitive)
@@ -356,9 +356,9 @@ export const createBlockEnvironment = (
   return {
     name,
     tail: currentEnvironment(context),
-    id: uniqueId(context),
     head: {},
-    heap: new Heap()
+    heap: new Heap(),
+    id: uniqueId(context)
   }
 }
 
