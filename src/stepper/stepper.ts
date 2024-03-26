@@ -3425,7 +3425,6 @@ export async function getEvaluationSteps(
     }
     return steps
   } catch (error) {
-    console.log(error)
     if (error instanceof RuntimeSourceError) {
       // If steps not evaluated at all, add error message to the first step else add error to last step
       if (steps.length === 0) {
