@@ -7,6 +7,7 @@ import type { RecursivePartial } from '../../types'
 import assert from '../../utils/assert'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
 import { isSourceModule } from '../utils'
+import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { DirectedGraph } from './directedGraph'
 import resolveFile, { defaultResolutionOptions, type ImportResolutionOptions } from './resolver'
 
@@ -142,11 +143,7 @@ export default async function parseProgramsAndConstructImportGraph(
         }
         case 'ImportDeclaration':
         case 'ExportAllDeclaration': {
-          const sourceValue = node.source?.value
-          assert(
-            typeof sourceValue === 'string',
-            `Expected type string for module source for ${node.type}, got ${sourceValue}`
-          )
+          const sourceValue = getModuleDeclarationSource(node)
 
           if (sourceValue in res) return res
           return {

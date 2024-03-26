@@ -18,7 +18,7 @@ interface FunctionDocumentation {
   kind: 'function'
   retType: string
   description: string
-  params: [string, string][]
+  params: [name: string, type: string][]
 }
 
 interface VariableDocumentation {
@@ -36,7 +36,9 @@ export type ModuleDocsEntry = FunctionDocumentation | VariableDocumentation | Un
 export type ModuleDocumentation = Record<string, ModuleDocsEntry>
 
 export type ImportOptions = {
-  wrapSourceModules: boolean
   loadTabs: boolean
 } & ImportAnalysisOptions &
   LinkerOptions
+
+export type AbsolutePath = string
+export type SourceFiles = Record<AbsolutePath, string>
