@@ -11,20 +11,14 @@ test('EnvTree root should be null upon instantiation', () => {
 test('EnvTree::insert should insert the globalEnvironment as the root', () => {
   const envTree = new EnvTree()
   envTree.insert(createGlobalEnvironment())
-  expect(envTree.root).toMatchSnapshot({
-    environment: {
-      id: expect.any(String)
-    }
-  })
+  expect(envTree.root).toMatchSnapshot()
 })
 
 test('EnvTree::getTreeNode should return the tree node that contains a pointer to the given environment', () => {
   const envTree = new EnvTree()
   const globalEnvironment = createGlobalEnvironment()
   envTree.insert(globalEnvironment)
-  expect(envTree.getTreeNode(globalEnvironment)?.environment).toMatchSnapshot({
-    id: expect.any(String)
-  })
+  expect(envTree.getTreeNode(globalEnvironment)?.environment).toMatchSnapshot()
 })
 
 test('EnvTreeNode::resetChildren should reset the children of the node to the given children', () => {
@@ -55,11 +49,7 @@ test('EnvTreeNode::resetChildren should reset the children of the node to the gi
   expect(grandChildNode2).not.toBeNull()
   expect(grandChildNode3).not.toBeNull()
   parentNode?.children.forEach(child => {
-    expect(child).toMatchSnapshot({
-      environment: {
-        id: expect.any(String)
-      }
-    })
+    expect(child).toMatchSnapshot()
   })
   parentNode?.resetChildren([
     grandChildNode1 as EnvTreeNode,
@@ -67,11 +57,7 @@ test('EnvTreeNode::resetChildren should reset the children of the node to the gi
     grandChildNode3 as EnvTreeNode
   ])
   parentNode?.children.forEach(child => {
-    expect(child).toMatchSnapshot({
-      environment: {
-        id: expect.any(String)
-      }
-    })
+    expect(child).toMatchSnapshot()
   })
 })
 
@@ -82,10 +68,6 @@ test('EnvTreeNode::addChild should add the given child node to the tree node', (
   expect(envTreeRoot).not.toBeNull()
   envTreeRoot?.addChild(new EnvTreeNode(programEnv, envTreeRoot))
   envTreeRoot?.children.forEach(child => {
-    expect(child).toMatchSnapshot({
-      environment: {
-        id: expect.any(String)
-      }
-    })
+    expect(child).toMatchSnapshot()
   })
 })

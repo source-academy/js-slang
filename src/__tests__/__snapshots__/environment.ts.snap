@@ -8,7 +8,7 @@ Object {
   "heap": Heap {
     "storage": null,
   },
-  "id": Any<String>,
+  "id": "4",
   "name": "functionBodyEnvironment",
   "tail": Object {
     "callExpression": Object {
@@ -208,7 +208,7 @@ Object {
   "heap": Heap {
     "storage": null,
   },
-  "id": Any<String>,
+  "id": "3",
   "name": "f",
   "tail": Object {
     "head": Object {
@@ -322,7 +322,7 @@ Object {
   "heap": Heap {
     "storage": null,
   },
-  "id": Any<String>,
+  "id": "0",
   "name": "programEnvironment",
   "tail": Object {
     "head": Object {
@@ -502,7 +502,7 @@ Object {
   "heap": Heap {
     "storage": null,
   },
-  "id": Any<String>,
+  "id": "-1",
   "name": "global",
   "tail": null,
 }
