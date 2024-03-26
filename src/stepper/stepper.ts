@@ -25,6 +25,7 @@ import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { nodeToValue, objectToString, valueToExpression } from './converter'
 import * as builtin from './lib'
 import {
@@ -36,7 +37,8 @@ import {
   isAllowedLiterals,
   isBuiltinFunction,
   isImportedFunction,
-  isNegNumber
+  isNegNumber,
+  prettyPrintError
 } from './util'
 
 const irreducibleTypes = new Set<string>([
@@ -2006,7 +2008,7 @@ function reduceMain(
               ...reduced.body
             ])
             return [
-              ast.program([
+              ast.blockStatement([
                 statementBodyAfterAddingUndefined,
                 ...(otherStatements as es.Statement[])
               ]),
@@ -3410,7 +3412,17 @@ export function getEvaluationSteps(
     }
     return steps
   } catch (error) {
-    context.errors.push(error)
+    if (error instanceof RuntimeSourceError) {
+      // If steps not evaluated at all, add error message to the first step else add error to last step
+      if (steps.length === 0) {
+        steps.push([program, [], prettyPrintError(error)])
+      } else {
+        steps[steps.length - 1][2] = prettyPrintError(error)
+      }
+    } else {
+      context.errors.push(error)
+    }
+
     return steps
   }
 }

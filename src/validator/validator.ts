@@ -1,7 +1,6 @@
 import * as es from 'estree'
 
-import { ConstAssignment } from '../errors/errors'
-import { UndefinedVariable } from '../errors/errors'
+import { ConstAssignment, UndefinedVariable } from '../errors/errors'
 import { NoAssignmentToForVariable } from '../errors/validityErrors'
 import { parse } from '../parser/parser'
 import { Context, Node, NodeWithInferredType } from '../types'

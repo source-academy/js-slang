@@ -4117,6 +4117,12 @@ f();
 "
 `;
 
+exports[`Test catching of undeclared variable error Variable not declared in block statement 1`] = `"Line 3: Name undeclared_variable not declared."`;
+
+exports[`Test catching of undeclared variable error Variable not declared in function declaration 1`] = `"Line 3: Name undeclared_variable not declared."`;
+
+exports[`Test catching of undeclared variable error Variable not declared in program 1`] = `"Line 2: Name undeclared_variable not declared."`;
+
 exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in block 1`] = `
 "{
   'value';
