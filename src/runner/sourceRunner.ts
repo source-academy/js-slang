@@ -39,7 +39,6 @@ import {
   ECEResultPromise as ECEResultPromise_WGSL,
   evaluate as ECEvaluate_WGSL
 } from '../wgsl/interpreter'
-import { determineExecutionMethod, hasVerboseErrors } from '.'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import {

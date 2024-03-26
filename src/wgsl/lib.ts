@@ -1,5 +1,5 @@
 import { Context } from '../types'
-import * as create from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
 import * as instr from './instrCreator'
 import { ReservedParam, Sound } from './types'
 
