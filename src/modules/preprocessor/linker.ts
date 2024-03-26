@@ -49,7 +49,7 @@ export default async function parseProgramsAndConstructImportGraph(
   shouldAddFileName: boolean
 ): Promise<LinkerResult | undefined> {
   const importGraph = new DirectedGraph()
-  const programs: Record<string, es.Program> = {}
+  const programs: Record<AbsolutePosixPath, es.Program> = {}
   const sourceModulesToImport = new Set<string>()
 
   // Wrapper around resolve file to make calling it more convenient
@@ -110,6 +110,8 @@ export default async function parseProgramsAndConstructImportGraph(
           }
           case 'ImportDeclaration':
           case 'ExportAllDeclaration':
+            // We still have to visit each node to update
+            // each node's source value
             return resolveDependency(fromModule, node)
           default:
             return undefined
