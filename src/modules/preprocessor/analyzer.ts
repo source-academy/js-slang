@@ -15,8 +15,8 @@ import {
   UndefinedImportError,
   UndefinedNamespaceImportError
 } from '../errors'
-import { memoizedGetModuleDocsAsync } from '../loader/moduleLoaderAsync'
 import { isSourceModule } from '../utils'
+import type { Context } from '../../types'
 
 export const defaultAnalysisOptions: ImportAnalysisOptions = {
   allowUndefinedImports: false,
@@ -45,30 +45,21 @@ export type ImportAnalysisOptions = {
  * - Checks for undefined imports
  * - Checks for different imports being given the same local name
  */
-export default async function analyzeImportsAndExports(
+export default function analyzeImportsAndExports(
   programs: Record<string, es.Program>,
   entrypointAbsPath: string,
   topoOrder: string[],
-  sourceModulesToImport: Set<string>,
+  { nativeStorage: { loadedModules } }: Context,
   options: Partial<ImportAnalysisOptions> = {}
 ) {
-  const moduleDocs: Record<string, Set<string>> = options.allowUndefinedImports
-    ? {}
-    : Object.fromEntries(
-        await Promise.all(
-          [...sourceModulesToImport].map(async moduleName => {
-            const docs = await memoizedGetModuleDocsAsync(moduleName)
-            if (docs === null) {
-              throw new Error(`Failed to load documentation for ${moduleName}`)
-            }
-            return [moduleName, new Set(Object.keys(docs))]
-          })
-        )
-      )
   const declaredNames = new Dict<
     string,
     ArrayMap<string, es.ImportDeclaration['specifiers'][number]>
   >()
+
+  const moduleDocs: Record<string, Set<string>> = Object.fromEntries(
+    Object.entries(loadedModules).map(([name, obj]) => [name, new Set(Object.keys(obj))])
+  )
 
   for (const sourceModule of [...topoOrder, entrypointAbsPath]) {
     const program = programs[sourceModule]
@@ -150,41 +141,41 @@ export default async function analyzeImportsAndExports(
     }
   }
 
-  if (options.throwOnDuplicateNames) {
-    // Because of the way the preprocessor works, different imports with the same declared name
-    // will cause errors
-    // There are two conditions we need to check:
-    // 1. Two different symbols from the same module are declared with the same name:
-    // import { a as x } from 'one_module'; AND import { b as x } from 'one_module';
-    // 2. Two different symbols from different modules are declared with the same name:
-    // import { a } from 'one_module'; AND import { b as a } from 'another_module';
-    for (const [localName, moduleToSpecifierMap] of declaredNames) {
-      if (moduleToSpecifierMap.size > 1) {
-        // This means that two imports from different modules have the same
-        // declared name
-        const nodes = moduleToSpecifierMap.flatMap((_, v) => v)
-        throw new DuplicateImportNameError(localName, nodes)
-      }
+  if (!options.throwOnDuplicateNames) return
 
-      const [[, specifiers]] = moduleToSpecifierMap
-      const [namespaceSpecifiers, regularSpecifiers] = partition<
-        es.ImportDeclaration['specifiers'][number],
-        es.ImportNamespaceSpecifier
-      >(specifiers, isNamespaceSpecifier)
+  // Because of the way the preprocessor works, different imports with the same declared name
+  // will cause errors
+  // There are two conditions we need to check:
+  // 1. Two different symbols from the same module are declared with the same name:
+  // import { a as x } from 'one_module'; AND import { b as x } from 'one_module';
+  // 2. Two different symbols from different modules are declared with the same name:
+  // import { a } from 'one_module'; AND import { b as a } from 'another_module';
+  for (const [localName, moduleToSpecifierMap] of declaredNames) {
+    if (moduleToSpecifierMap.size > 1) {
+      // This means that two imports from different modules have the same
+      // declared name
+      const nodes = moduleToSpecifierMap.flatMap((_, v) => v)
+      throw new DuplicateImportNameError(localName, nodes)
+    }
 
-      // For the given local name, it can only represent one imported name from
-      // the module. Collect specifiers referring to the same export.
-      const importedNames = new Set(regularSpecifiers.map(getImportedName))
+    const [[, specifiers]] = moduleToSpecifierMap
+    const [namespaceSpecifiers, regularSpecifiers] = partition<
+      es.ImportDeclaration['specifiers'][number],
+      es.ImportNamespaceSpecifier
+    >(specifiers, isNamespaceSpecifier)
 
-      if (
-        (namespaceSpecifiers.length > 0 && regularSpecifiers.length > 0) ||
-        importedNames.size > 1
-      ) {
-        // This means that there is more than one unique export being given the same
-        // local name
-        const specs = [...regularSpecifiers, ...namespaceSpecifiers]
-        throw new DuplicateImportNameError(localName, specs)
-      }
+    // For the given local name, it can only represent one imported name from
+    // the module. Collect specifiers referring to the same export.
+    const importedNames = new Set(regularSpecifiers.map(getImportedName))
+
+    if (
+      (namespaceSpecifiers.length > 0 && regularSpecifiers.length > 0) ||
+      importedNames.size > 1
+    ) {
+      // This means that there is more than one unique export being given the same
+      // local name
+      const specs = [...regularSpecifiers, ...namespaceSpecifiers]
+      throw new DuplicateImportNameError(localName, specs)
     }
   }
 }

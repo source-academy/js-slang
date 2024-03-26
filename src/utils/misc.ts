@@ -28,3 +28,7 @@ export function mapAndFilter<T, U>(items: T[], mapper: (input: T) => U | undefin
     return res
   }, [] as U[])
 }
+
+export function objectKeys<T extends string | number | symbol>(obj: Record<T, any>): T[] {
+  return Object.keys(obj) as T[]
+}

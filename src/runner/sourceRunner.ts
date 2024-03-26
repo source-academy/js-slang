@@ -58,7 +58,6 @@ const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   importOptions: {
     ...defaultAnalysisOptions,
     ...defaultLinkerOptions,
-    wrapSourceModules: true,
     loadTabs: true
   },
   shouldAddFileName: null
@@ -93,12 +92,12 @@ function runConcurrent(program: es.Program, context: Context, options: IOptions)
   }
 }
 
-async function runSubstitution(
+function runSubstitution(
   program: es.Program,
   context: Context,
   options: IOptions
 ): Promise<Result> {
-  const steps = await getEvaluationSteps(program, context, options)
+  const steps = getEvaluationSteps(program, context, options)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
@@ -113,15 +112,15 @@ async function runSubstitution(
       function: callee(redex, context)
     })
   }
-  return {
+  return Promise.resolve({
     status: 'finished',
     context,
     value: redexedSteps
-  }
+  })
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context, options.importOptions.loadTabs)
+  let it = evaluate(program, context)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
     it = nonDetEvaluate(program, context)
@@ -164,12 +163,8 @@ async function runNative(
         break
     }
 
-    ;({ transpiled, sourceMapJson } = await transpile(
-      transpiledProgram,
-      context,
-      options.importOptions
-    ))
-    let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
+    ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
+    let value = sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
       value = forceIt(value)
@@ -187,9 +182,10 @@ async function runNative(
   } catch (error) {
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-      const detectedInfiniteLoop = await testForInfiniteLoop(
+      const detectedInfiniteLoop = testForInfiniteLoop(
         program,
-        context.previousPrograms.slice(1)
+        context.previousPrograms.slice(1),
+        context.nativeStorage.loadedModules
       )
       if (detectedInfiniteLoop !== undefined) {
         if (options.throwInfiniteLoops) {
