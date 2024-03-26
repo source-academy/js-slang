@@ -4117,11 +4117,38 @@ f();
 "
 `;
 
+exports[`Test catching errors from built in function Incorrect type of argument for math function 1`] = `
+"Start of evaluation
+Line 2: Math functions must be called with number arguments"
+`;
+
+exports[`Test catching errors from built in function Incorrect type of arguments for module function 1`] = `
+"Start of evaluation
+Line 2: arity expects a function as argument"
+`;
+
 exports[`Test catching of undeclared variable error Variable not declared in block statement 1`] = `"Line 3: Name undeclared_variable not declared."`;
 
 exports[`Test catching of undeclared variable error Variable not declared in function declaration 1`] = `"Line 3: Name undeclared_variable not declared."`;
 
 exports[`Test catching of undeclared variable error Variable not declared in program 1`] = `"Line 2: Name undeclared_variable not declared."`;
+
+exports[`Test catching runtime errors Calling non function value 1`] = `
+"Start of evaluation
+Binary expression 2 + 3 evaluated
+Binary expression 2 + 3 evaluated
+Line 2: Calling non-function value 5."
+`;
+
+exports[`Test catching runtime errors Type error 1`] = `
+"Start of evaluation
+Line 2: Expected number on right hand side of operation, got string."
+`;
+
+exports[`Test catching runtime errors Variable not assigned 1`] = `
+"Start of evaluation
+Line 2: Name unassigned_variable declared later in current scope but not yet assigned"
+`;
 
 exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in block 1`] = `
 "{

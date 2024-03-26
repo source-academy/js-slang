@@ -85,6 +85,69 @@ const testEvalSteps = (programStr: string, context?: Context) => {
   return getEvaluationSteps(program, context, options)
 }
 
+describe('Test catching runtime errors', () => {
+  test('Variable not assigned', async () => {
+    const code = `
+    unassigned_variable;
+    const unassigned_variable = "value";
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Type error', async () => {
+    const code = `
+    1 + "string";
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Calling non function value', async () => {
+    const code = `
+    (2 + 3)(1 - 4);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
+
+describe('Test catching errors from built in function', () => {
+  test('Incorrect type of argument for math function', async () => {
+    const code = `
+    math_sin(true);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect type of arguments for module function', async () => {
+    const code = `
+    arity("not a function");
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  // Failing
+  test('Incorrect number of arguments #1', async () => {
+    const code = `
+    arity(display, display);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  // Failing
+  test('Incorrect number of arguments #2', async () => {
+    const code = `
+    pair(2);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
+
 describe('Test catching of undeclared variable error', () => {
   test('Variable not declared in program', async () => {
     const code = `
