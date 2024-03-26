@@ -192,7 +192,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    * Statements
    */
 
-  Program: async function (
+  Program: function (
     command: es.BlockStatement,
     context: Context,
     Agenda: Agenda,
