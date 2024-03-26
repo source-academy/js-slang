@@ -1,4 +1,5 @@
 import type { RequireProvider } from './loader/requireProvider'
+import type { AbsolutePosixPath, PosixPath } from './paths'
 import type { ImportAnalysisOptions } from './preprocessor/analyzer'
 import type { LinkerOptions } from './preprocessor/linker'
 
@@ -40,5 +41,5 @@ export type ImportOptions = {
 } & ImportAnalysisOptions &
   LinkerOptions
 
-export type AbsolutePath = string
-export type SourceFiles = Record<AbsolutePath, string>
+export type SourceFiles = Record<AbsolutePosixPath, string>
+export type FileGetter = (p: PosixPath) => Promise<string | undefined>

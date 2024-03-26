@@ -17,6 +17,7 @@ import {
 } from '../errors'
 import { isSourceModule } from '../utils'
 import type { Context } from '../../types'
+import type { AbsolutePosixPath } from '../paths'
 
 export const defaultAnalysisOptions: ImportAnalysisOptions = {
   allowUndefinedImports: false,
@@ -46,9 +47,9 @@ export type ImportAnalysisOptions = {
  * - Checks for different imports being given the same local name
  */
 export default function analyzeImportsAndExports(
-  programs: Record<string, es.Program>,
-  entrypointAbsPath: string,
-  topoOrder: string[],
+  programs: Record<AbsolutePosixPath, es.Program>,
+  entrypointAbsPath: AbsolutePosixPath,
+  topoOrder: AbsolutePosixPath[],
   { nativeStorage: { loadedModules } }: Context,
   options: Partial<ImportAnalysisOptions> = {}
 ) {

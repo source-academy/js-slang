@@ -8,6 +8,8 @@ import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { isIdentifier, isImportDeclaration, isModuleDeclaration } from '../../utils/ast/typeGuards'
 import { isSourceModule } from '../utils'
 import loadSourceModules from '../loader'
+import type { FileGetter, SourceFiles } from '../moduleTypes'
+import type { AbsolutePosixPath } from '../paths'
 import analyzeImportsAndExports from './analyzer'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import {
@@ -52,8 +54,8 @@ const getSourceModuleImports = (programs: Record<string, es.Program>): es.Import
  * @param context            The information associated with the program evaluation.
  */
 const preprocessFileImports = async (
-  files: Partial<Record<string, string>> | ((p: string) => Promise<string | undefined>),
-  entrypointFilePath: string,
+  files: SourceFiles | FileGetter,
+  entrypointFilePath: AbsolutePosixPath,
   context: Context,
   options: RecursivePartial<IOptions> = {}
 ): Promise<es.Program | undefined> => {
@@ -70,14 +72,14 @@ const preprocessFileImports = async (
     return undefined
   }
 
-  const { programs, topoOrder, entrypointAbsPath, sourceModulesToImport } = importGraphResult
+  const { programs, topoOrder, sourceModulesToImport } = importGraphResult
 
   try {
     await loadSourceModules(sourceModulesToImport, context, options.importOptions?.loadTabs ?? true)
 
     analyzeImportsAndExports(
       programs,
-      entrypointAbsPath,
+      entrypointFilePath,
       topoOrder,
       context,
       options?.importOptions

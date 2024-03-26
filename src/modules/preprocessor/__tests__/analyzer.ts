@@ -13,8 +13,9 @@ import { parse } from '../../../parser/parser'
 import { mockContext } from '../../../mocks/context'
 import type { Program } from 'estree'
 import loadSourceModules from '../../loader'
-import type { AbsolutePath, SourceFiles as Files } from '../../moduleTypes'
+import type { SourceFiles as Files } from '../../moduleTypes'
 import { objectKeys } from '../../../utils/misc'
+import type { AbsolutePosixPath } from '../../paths'
 
 jest.mock('../../loader')
 
@@ -56,7 +57,7 @@ describe('Test throwing import validation errors', () => {
     const context = createContext(Chapter.FULL_JS)
     const importGraphResult = await parseProgramsAndConstructImportGraph(
       p => Promise.resolve(files[p]),
-      entrypointFilePath as AbsolutePath,
+      entrypointFilePath as AbsolutePosixPath,
       context,
       {},
       true
@@ -70,10 +71,16 @@ describe('Test throwing import validation errors', () => {
     const { programs, topoOrder, sourceModulesToImport } = importGraphResult
     await loadSourceModules(sourceModulesToImport, context, false)
 
-    analyzeImportsAndExports(programs, entrypointFilePath as AbsolutePath, topoOrder, context, {
-      allowUndefinedImports,
-      throwOnDuplicateNames
-    })
+    analyzeImportsAndExports(
+      programs,
+      entrypointFilePath as AbsolutePosixPath,
+      topoOrder,
+      context,
+      {
+        allowUndefinedImports,
+        throwOnDuplicateNames
+      }
+    )
     return true
   }
 
@@ -644,8 +651,8 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     c.length === 2
 
   type FullTestCase =
-    | [string, Record<AbsolutePath, Program>, true, string | undefined]
-    | [string, Record<AbsolutePath, Program>, false, undefined]
+    | [string, Record<AbsolutePosixPath, Program>, true, string | undefined]
+    | [string, Record<AbsolutePosixPath, Program>, false, undefined]
 
   function testCases<T extends Files>(desc: string, cases: TestCase<T>[]) {
     const [allNoCases, allYesCases] = cases.reduce(

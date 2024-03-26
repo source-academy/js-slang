@@ -59,7 +59,7 @@ describe('preprocessFileImports', () => {
     const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
     expect(actualProgram).toBeUndefined()
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
-      `"Line 1: Module '/non-existent-file.js' not found."`
+      `"Line 1: Module './non-existent-file.js' not found."`
     )
   })
 
