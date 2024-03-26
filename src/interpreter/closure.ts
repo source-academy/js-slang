@@ -90,7 +90,7 @@ export default class Closure extends Callable {
   }
 
   /** Unique ID defined for closure */
-  public id: string
+  public readonly id: string
 
   /** String representation of the closure */
   public functionName: string

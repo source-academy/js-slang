@@ -249,7 +249,7 @@ export type Value = any
 export type AllowedDeclarations = 'const' | 'let'
 
 export interface Environment {
-  id: string
+  readonly id: string
   name: string
   tail: Environment | null
   callExpression?: es.CallExpression

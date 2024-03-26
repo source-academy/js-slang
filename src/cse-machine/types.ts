@@ -98,7 +98,7 @@ export type ControlItem = Node | Instr
 // Every array also has the properties `id` and `environment` for use in the frontend CSE Machine
 export type Array = any[] & {
   readonly id: string
-  readonly environment: Environment
+  environment: Environment
 }
 
 // Objects in the heap can only store arrays or closures

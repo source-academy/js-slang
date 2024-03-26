@@ -185,7 +185,10 @@ const arrayCreationHelper = (context: Context, array: any[], visited: Set<any[]>
   // Properties are defined this way to prevent them from being enumerable
   Object.defineProperties(array, {
     id: { value: uniqueId(context) },
-    environment: { value: currentEnvironment(context) }
+    // Make environment writable as there are still cases where the frontend might need to
+    // change the environment of an array, like when the prelude environment is merged
+    // into the global environment in the visualisation of the CSE Machine
+    environment: { value: currentEnvironment(context), writable: true }
   })
   currentEnvironment(context).heap.add(array as Array)
 }
