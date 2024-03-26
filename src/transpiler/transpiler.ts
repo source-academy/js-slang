@@ -528,7 +528,7 @@ export function transpile(
   skipUndefined = false
 ): TranspiledResult {
   if (context.chapter === Chapter.FULL_JS || context.chapter === Chapter.PYTHON_1) {
-    return transpileToFullJS(program, context, skipUndefined)
+    return transpileToFullJS(program, context, true)
   } else if (context.variant == Variant.NATIVE) {
     return transpileToFullJS(program, context, false)
   } else {
