@@ -1,10 +1,11 @@
 import { generate } from 'astring'
 import type es from 'estree'
 
-import type { IOptions } from '..'
+import { type IOptions } from '..'
 import * as errors from '../errors/errors'
+import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/loader/moduleLoaderAsync'
 import { parse } from '../parser/parser'
-import type {
+import {
   BlockExpression,
   Context,
   ContiguousArrayElementExpression,
@@ -3298,37 +3299,40 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
-function evaluateImports(program: es.Program, context: Context) {
+async function evaluateImports(program: es.Program, context: Context, loadTabs: boolean) {
   const [importNodeMap, otherNodes] = filterImportDeclarations(program)
 
   try {
     const environment = currentEnvironment(context)
-    for (const [moduleName, nodes] of Object.entries(importNodeMap)) {
-      const functions = context.nativeStorage.loadedModules[moduleName]
-      for (const node of nodes) {
-        for (const spec of node.specifiers) {
-          declareIdentifier(context, spec.local.name, node, environment)
-          let obj: any
+    await Promise.all(
+      Object.entries(importNodeMap).map(async ([moduleName, nodes]) => {
+        await initModuleContextAsync(moduleName, context, loadTabs)
+        const functions = await loadModuleBundleAsync(moduleName, context, nodes[0])
+        for (const node of nodes) {
+          for (const spec of node.specifiers) {
+            declareIdentifier(context, spec.local.name, node, environment)
+            let obj: any
 
-          switch (spec.type) {
-            case 'ImportSpecifier': {
-              obj = functions[spec.imported.name]
-              break
+            switch (spec.type) {
+              case 'ImportSpecifier': {
+                obj = functions[spec.imported.name]
+                break
+              }
+              case 'ImportDefaultSpecifier': {
+                obj = functions.default
+                break
+              }
+              case 'ImportNamespaceSpecifier': {
+                obj = functions
+                break
+              }
             }
-            case 'ImportDefaultSpecifier': {
-              obj = functions.default
-              break
-            }
-            case 'ImportNamespaceSpecifier': {
-              obj = functions
-              break
-            }
+
+            defineVariable(context, spec.local.name, obj, true, node)
           }
-
-          defineVariable(context, spec.local.name, obj, true, node)
         }
-      }
-    }
+      })
+    )
   } catch (error) {
     // console.log(error)
     handleRuntimeError(context, error)
@@ -3337,16 +3341,16 @@ function evaluateImports(program: es.Program, context: Context) {
 }
 
 // the context here is for builtins
-export function getEvaluationSteps(
+export async function getEvaluationSteps(
   program: es.Program,
   context: Context,
-  { stepLimit }: Pick<IOptions, 'stepLimit'>
-): [es.Program, string[][], string][] {
+  { importOptions, stepLimit }: Pick<IOptions, 'importOptions' | 'stepLimit'>
+): Promise<[es.Program, string[][], string][]> {
   const steps: [es.Program, string[][], string][] = []
   try {
     checkProgramForUndefinedVariables(program, context)
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
-    evaluateImports(program, context)
+    await evaluateImports(program, context, importOptions.loadTabs)
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns

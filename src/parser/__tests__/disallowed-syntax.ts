@@ -2,7 +2,7 @@ import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
 
-jest.mock('../../modules/loader')
+jest.mock('../../modules/loader/moduleLoaderAsync')
 
 test('Cannot leave blank init in for loop', () => {
   return expectParsedError(

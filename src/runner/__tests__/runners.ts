@@ -140,9 +140,6 @@ describe('Native javascript programs are valid in fullJSRunner', () => {
       const fullJSContext: Context = mockContext(Chapter.FULL_JS, Variant.DEFAULT)
       const result = await runInContext(snippet, fullJSContext)
 
-      if (result.status !== 'finished') {
-        console.log(fullJSContext.errors)
-      }
       expect(result.status).toStrictEqual('finished')
       expect((result as any).value).toStrictEqual(value)
       expect(fullJSContext.errors).toStrictEqual(errors)

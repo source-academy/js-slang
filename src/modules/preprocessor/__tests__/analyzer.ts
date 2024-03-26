@@ -12,38 +12,38 @@ import analyzeImportsAndExports from '../analyzer'
 import { parse } from '../../../parser/parser'
 import { mockContext } from '../../../mocks/context'
 import type { Program } from 'estree'
-import loadSourceModules from '../../loader'
-import type { AbsolutePath, SourceFiles as Files } from '../../moduleTypes'
-import { objectKeys } from '../../../utils/misc'
+import { memoizedGetModuleDocsAsync } from '../../loader/moduleLoaderAsync'
 
-jest.mock('../../loader')
+jest.mock('../../loader/moduleLoaderAsync')
 
 beforeEach(() => {
   jest.clearAllMocks()
 })
+
+type Files = Partial<Record<string, string>>
 
 describe('Test throwing import validation errors', () => {
   type ErrorInfo = {
     line: number
     col: number
     moduleName: string
-  } & (
-    | {
-        type?: undefined
-        /**
-         * Set this to a value if you are expecting an undefined import error
-         * to be thrown with the given symbol
-         */
-        symbol: Exclude<string, 'default'>
-      }
-    | {
-        type: 'namespace' | 'default'
-      }
-  )
+
+    /**
+     * Set this to a value if you are expecting an undefined import error
+     * to be thrown with the given symbol
+     */
+    symbol?: string
+
+    /**
+     * Set this to true if you are expecting a undefined namespace import error
+     * to be thrown
+     */
+    namespace?: boolean
+  }
 
   // Providing an ErrorInfo object indicates that the test case should throw
   // the corresponding error
-  type ImportTestCaseWithNoError<T extends Files> = [string, T, keyof T]
+  type ImportTestCaseWithNoError<T extends Files> = [T, keyof T]
   type ImportTestCaseWithError<T extends Files> = [...ImportTestCaseWithNoError<T>, ErrorInfo]
   type ImportTestCase<T extends Files> = ImportTestCaseWithError<T> | ImportTestCaseWithNoError<T>
 
@@ -56,7 +56,7 @@ describe('Test throwing import validation errors', () => {
     const context = createContext(Chapter.FULL_JS)
     const importGraphResult = await parseProgramsAndConstructImportGraph(
       p => Promise.resolve(files[p]),
-      entrypointFilePath as AbsolutePath,
+      entrypointFilePath as string,
       context,
       {},
       true
@@ -67,10 +67,8 @@ describe('Test throwing import validation errors', () => {
       throw context.errors[0]
     }
 
-    const { programs, topoOrder, sourceModulesToImport } = importGraphResult
-    await loadSourceModules(sourceModulesToImport, context, false)
-
-    analyzeImportsAndExports(programs, entrypointFilePath as AbsolutePath, topoOrder, context, {
+    const { programs, topoOrder, entrypointAbsPath, sourceModulesToImport } = importGraphResult
+    await analyzeImportsAndExports(programs, entrypointAbsPath, topoOrder, sourceModulesToImport, {
       allowUndefinedImports,
       throwOnDuplicateNames
     })
@@ -92,20 +90,14 @@ describe('Test throwing import validation errors', () => {
 
     expect(err).not.toEqual(null)
     expect(err.moduleName).toEqual(errInfo.moduleName)
-    switch (errInfo.type) {
-      case 'namespace': {
-        // Check namespace import
-        expect(err).toBeInstanceOf(UndefinedNamespaceImportError)
-        break
-      }
-      case 'default': {
-        expect(err).toBeInstanceOf(UndefinedDefaultImportError)
-        break
-      }
-      default: {
-        expect(err).toBeInstanceOf(UndefinedImportError)
-        expect(err.symbol).toEqual(errInfo.symbol)
-      }
+    if (errInfo.namespace) {
+      // Check namespace import
+      expect(err).toBeInstanceOf(UndefinedNamespaceImportError)
+    } else if (errInfo.symbol !== 'default') {
+      expect(err).toBeInstanceOf(UndefinedImportError)
+      expect(err.symbol).toEqual(errInfo.symbol)
+    } else {
+      expect(err).toBeInstanceOf(UndefinedDefaultImportError)
     }
 
     expect(err.location.start).toMatchObject({
@@ -124,57 +116,34 @@ describe('Test throwing import validation errors', () => {
     ).resolves.toEqual(true)
   }
 
-  type FullTestCase = [string, Files, `/${string}`, ErrorInfo | boolean]
   function testCases<T extends Files>(desc: string, cases: ImportTestCase<T>[]) {
-    const [allNoCases, allYesCases] = cases.reduce(
-      ([noThrow, yesThrow], [desc, files, entry, errorInfo], i) => {
-        return [
-          [
-            ...noThrow,
-            [`${i + 1}: ${desc} should not throw an error`, files, entry, true] as FullTestCase
-          ],
-          [
-            ...yesThrow,
-            [
-              `${i + 1}: ${desc} should${errorInfo ? '' : ' not'} throw an error`,
-              files,
-              entry,
-              errorInfo
-            ] as FullTestCase
+    describe(desc, () => {
+      test.each(
+        cases.flatMap(([files, entry, errorInfo], i) => {
+          return [
+            // Test each case with allowUndefinedImports being both true and false
+            [`${i}: Should not throw an error`, files, entry, true],
+            [`${i}: Should${errorInfo ? '' : ' not'} throw an error`, files, entry, errorInfo]
           ]
-        ]
-      },
-      [[], []] as [FullTestCase[], FullTestCase[]]
-    )
-
-    const caseTester: (...args: FullTestCase) => Promise<void> = async (
-      _,
-      files,
-      entrypointFilePath,
-      errorInfo
-    ) => {
-      if (errorInfo === true) {
-        // If allowUndefinedImports is true, the analyzer should never throw an error
-        await testSuccess(files, entrypointFilePath, true)
-      } else if (!errorInfo) {
-        // Otherwise it should not throw when no errors are expected
-        await testSuccess(files, entrypointFilePath, false)
-      } else {
-        // Or throw the expected error
-        await testFailure(files, entrypointFilePath, false, errorInfo)
-      }
-    }
-
-    describe(`${desc} with allowUndefinedimports true`, () =>
-      test.each(allNoCases)('%s', caseTester))
-    describe(`${desc} with allowUndefinedimports false`, () =>
-      test.each(allYesCases)('%s', caseTester))
+        })
+      )('%s', async (_, files, entrypointFilePath, errorInfo) => {
+        if (errorInfo === true) {
+          // If allowUndefinedImports is true, the analyzer should never throw an error
+          await testSuccess(files, entrypointFilePath, true)
+        } else if (!errorInfo) {
+          // Otherwise it should not throw when no errors are expected
+          await testSuccess(files, entrypointFilePath, false)
+        } else {
+          // Or throw the expected error
+          await testFailure(files, entrypointFilePath, false, errorInfo)
+        }
+      })
+    })
   }
 
   describe('Test regular imports', () => {
     testCases('Local imports', [
       [
-        'Regular local import',
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
@@ -188,7 +157,6 @@ describe('Test throwing import validation errors', () => {
         '/b.js'
       ],
       [
-        'Regular local import with unknown symbol',
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
@@ -203,7 +171,6 @@ describe('Test throwing import validation errors', () => {
         { moduleName: '/a.js', line: 1, col: 12, symbol: 'unknown' }
       ],
       [
-        'Regular local import of exported function declaration',
         {
           '/a.js': `export function a() { return 0; }`,
           '/b.js': `import { a } from './a.js';`
@@ -214,7 +181,6 @@ describe('Test throwing import validation errors', () => {
 
     testCases('Source imports', [
       [
-        'Regular Source import',
         {
           '/a.js': stripIndent`
             import { foo, bar } from "one_module";
@@ -226,23 +192,20 @@ describe('Test throwing import validation errors', () => {
         '/a.js'
       ],
       [
-        'Regular Source import with unknown symbol',
         {
           '/a.js': stripIndent`
-            import { foo, unknown } from "one_module";
+            import { foo, bar } from "one_module";
             export function b() {
               return foo();
             }
           `
         },
-        '/a.js',
-        { line: 1, col: 14, moduleName: 'one_module', symbol: 'unknown' }
+        '/a.js'
       ]
     ])
 
     testCases('Source and Local imports', [
       [
-        'Regular Local and Source imports',
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
@@ -258,7 +221,6 @@ describe('Test throwing import validation errors', () => {
         '/b.js'
       ],
       [
-        'Regular Local and Source imports with unknown symbol',
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
@@ -275,7 +237,6 @@ describe('Test throwing import validation errors', () => {
         { moduleName: 'one_module', line: 2, col: 9, symbol: 'unknown' }
       ],
       [
-        'Regular Local and Source imports with unknown symbol',
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
@@ -297,7 +258,6 @@ describe('Test throwing import validation errors', () => {
   describe('Test default imports', () => {
     testCases('Local imports', [
       [
-        'Default import from local module',
         {
           '/a.js': 'const a = "a"; export default a;',
           '/b.js': stripIndent`
@@ -311,7 +271,6 @@ describe('Test throwing import validation errors', () => {
         '/b.js'
       ],
       [
-        'Default import from local module with no default export',
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
@@ -323,10 +282,9 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/b.js',
-        { moduleName: '/a.js', line: 1, col: 7, type: 'default' }
+        { moduleName: '/a.js', line: 1, col: 7, symbol: 'default' }
       ],
       [
-        'Default import from local module with no default export',
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
@@ -338,10 +296,9 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/b.js',
-        { moduleName: '/a.js', line: 1, col: 7, type: 'default' }
+        { moduleName: '/a.js', line: 1, col: 7, symbol: 'default' }
       ],
       [
-        'Default import using regular specifier from local module with no default export',
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
@@ -353,10 +310,9 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/b.js',
-        { moduleName: '/a.js', line: 1, col: 9, type: 'default' }
+        { moduleName: '/a.js', line: 1, col: 9, symbol: 'default' }
       ],
       [
-        'Default import with function as default export',
         {
           '/a.js': 'export default function a() { return 0; }',
           '/b.js': "import a from './a.js';"
@@ -367,7 +323,6 @@ describe('Test throwing import validation errors', () => {
 
     testCases('Source imports', [
       [
-        'Default import from Source module without default export',
         {
           '/a.js': stripIndent`
             import foo from "another_module";
@@ -377,10 +332,9 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/a.js',
-        { moduleName: 'another_module', line: 1, col: 7, type: 'default' }
+        { moduleName: 'another_module', line: 1, col: 7, symbol: 'default' }
       ],
       [
-        'Default import using regular specifier from Source module without default export',
         {
           '/a.js': stripIndent`
             import { default as foo } from "another_module";
@@ -390,13 +344,12 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/a.js',
-        { moduleName: 'another_module', line: 1, col: 9, type: 'default' }
+        { moduleName: 'another_module', line: 1, col: 9, symbol: 'default' }
       ]
     ])
 
     testCases('Source and Local imports', [
       [
-        'Default imports',
         {
           '/a.js': 'const a = "a"; export default a',
           '/b.js': stripIndent`
@@ -412,7 +365,6 @@ describe('Test throwing import validation errors', () => {
         '/b.js'
       ],
       [
-        'Default imports',
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
@@ -426,10 +378,9 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/b.js',
-        { moduleName: 'another_module', line: 2, col: 7, type: 'default' }
+        { moduleName: 'another_module', line: 2, col: 7, symbol: 'default' }
       ],
       [
-        'Default imports',
         {
           '/a.js': 'export const a = "a";',
           '/b.js': stripIndent`
@@ -443,7 +394,7 @@ describe('Test throwing import validation errors', () => {
           `
         },
         '/b.js',
-        { moduleName: '/a.js', line: 1, col: 7, type: 'default' }
+        { moduleName: '/a.js', line: 1, col: 7, symbol: 'default' }
       ]
     ])
   })
@@ -451,7 +402,6 @@ describe('Test throwing import validation errors', () => {
   describe('Test namespace imports', () => {
     testCases('Local imports', [
       [
-        'Regular namespace import',
         {
           '/a.js': 'export const a = 0;',
           '/b.js': 'import * as a from "./a.js"'
@@ -459,19 +409,17 @@ describe('Test throwing import validation errors', () => {
         '/b.js'
       ],
       [
-        'Regular namespace import from local module that does not export anything',
         {
           '/a.js': 'const a = 0;',
           '/b.js': 'import * as a from "./a.js"'
         },
         '/b.js',
-        { line: 1, col: 7, moduleName: '/a.js', type: 'namespace' }
+        { line: 1, col: 7, moduleName: '/a.js', namespace: true }
       ]
     ])
 
     testCases('Source imports', [
       [
-        'Regular namespace import',
         {
           '/a.js': 'import * as bar from "one_module";'
         },
@@ -483,7 +431,6 @@ describe('Test throwing import validation errors', () => {
   describe('Test named exports', () => {
     testCases('Exporting from another local module', [
       [
-        'Regular named reexport',
         {
           '/a.js': 'export const a = 0;',
           '/b.js': 'export { a } from "./a.js"'
@@ -491,7 +438,6 @@ describe('Test throwing import validation errors', () => {
         '/b.js'
       ],
       [
-        'Regular named reexport of undefined symbol',
         {
           '/a.js': 'export const a = 0;',
           '/b.js': 'export { b } from "./a.js"'
@@ -500,7 +446,6 @@ describe('Test throwing import validation errors', () => {
         { line: 1, col: 9, moduleName: '/a.js', symbol: 'b' }
       ],
       [
-        'Regular named reexport of undefined symbol with alias',
         {
           '/a.js': 'export const a = 0;',
           '/b.js': 'export { b as a } from "./a.js"'
@@ -509,7 +454,6 @@ describe('Test throwing import validation errors', () => {
         { line: 1, col: 9, moduleName: '/a.js', symbol: 'b' }
       ],
       [
-        'Regular named reexport of undefined symbol using ExportAllDeclaration',
         {
           '/a.js': 'export const a = "a"',
           '/b.js': 'export * from "./a.js"',
@@ -518,13 +462,12 @@ describe('Test throwing import validation errors', () => {
         '/c.js'
       ],
       [
-        'Regular named reexport of unknown default export with alias',
         {
           '/a.js': 'export const a = "a";',
           '/b.js': 'export { default as b } from "./a.js"'
         },
         '/b.js',
-        { line: 1, col: 9, moduleName: '/a.js', type: 'default' }
+        { line: 1, col: 9, moduleName: '/a.js', symbol: 'default' }
       ]
     ])
   })
@@ -532,97 +475,39 @@ describe('Test throwing import validation errors', () => {
   describe('Test export all declarations', () => {
     testCases('Exporting from another local module', [
       [
-        'Regular ExportAllDeclaration',
         {
           '/a.js': 'export const a = "a"',
           '/b.js': 'export * from "./a.js"'
         },
-        '/a.js'
+        '/b.js'
       ],
       [
-        'Regular ExportAllDeclaration',
         {
           '/a.js': 'const a = "a"',
           '/b.js': 'export * from "./a.js"'
         },
         '/b.js',
-        { line: 1, col: 0, moduleName: '/a.js', type: 'namespace' }
+        { line: 1, col: 0, moduleName: '/a.js', namespace: true }
+      ],
+      [
+        {
+          '/a.js': 'export const a = "a"',
+          '/b.js': 'export * from "./a.js"',
+          '/c.js': 'export * from "./b.js"'
+        },
+        '/c.js'
+      ],
+      [
+        {
+          '/a.js': 'export default function a() { return 0; }',
+          '/b.js': 'export * from "./a.js";',
+          '/c.js': "import a from './b.js';"
+        },
+        '/c.js',
+        { line: 1, col: 7, moduleName: '/b.js', symbol: 'default' }
       ]
     ])
   })
-
-  testCases('Test transitivity', [
-    // ExportAllDeclarations
-    [
-      'Regular ExportAllDeclaration 1',
-      {
-        '/a.js': 'export const a = 0;',
-        '/b.js': 'export * from "./a.js";',
-        '/c.js': 'import { a } from "./b.js";'
-      },
-      '/c.js'
-    ],
-    [
-      'Regular ExportAllDeclaration 2',
-      {
-        '/a.js': 'const a = 0;',
-        '/b.js': 'export * from "./a.js";',
-        '/c.js': 'import { a } from "./b.js"'
-      },
-      '/c.js',
-      { line: 1, col: 0, moduleName: '/a.js', type: 'namespace' }
-    ],
-    [
-      'ExportAllDeclarations should not reexport default exports 1',
-      {
-        '/a.js': 'export default function a() {}',
-        '/b.js': 'export * from "./a.js";',
-        '/c.js': 'import a from "./b.js";'
-      },
-      '/c.js',
-      { line: 1, col: 7, moduleName: '/b.js', type: 'namespace' }
-    ],
-    [
-      'ExportAllDeclarations should not reexport default exports 2',
-      {
-        '/a.js': `
-          export default function a() {}
-          export const b = 0;
-        `,
-        '/b.js': 'export * from "./a.js";',
-        '/c.js': 'import a from "./b.js";'
-      },
-      '/c.js',
-      { line: 1, col: 7, moduleName: '/b.js', type: 'default' }
-    ],
-    [
-      'Default exports should not be shadowed by ExportAllDeclarations',
-      {
-        '/a.js': `
-          const a = 0;
-          export default a;
-          export const b = 0;
-        `,
-        '/b.js': `
-          export * from './a.js';
-          export default function b() {}
-        `,
-        '/c.js': 'import a from "./b.js";'
-      },
-      '/c.js'
-    ],
-
-    // ExportNamedDeclarations
-    [
-      'ExportNamedDeclarations can reexport default exports',
-      {
-        '/a.js': 'export default function a() {}',
-        '/b.js': 'export { default } from "./a.js";',
-        '/c.js': 'import a from "./b.js";'
-      },
-      '/c.js'
-    ]
-  ])
 })
 
 describe('Test throwing DuplicateImportNameErrors', () => {
@@ -630,117 +515,84 @@ describe('Test throwing DuplicateImportNameErrors', () => {
    * [Description, Files]
    * Use this test case specification to specify that no error is expected
    */
-  type TestCaseWithNoError<T extends Files> = [description: string, files: T]
+  type TestCaseWithNoError = [description: string, files: Files]
 
   /**
    * [Description, Files, Expected location string]
    * Use this test case specification to specify that an error is expected.
    * The given string represents the location string
    */
-  type TestCaseWithError<T extends Files> = [description: string, files: T, expectedError: string]
+  type TestCaseWithError = [description: string, files: Files, expectedError: string]
 
-  type TestCase<T extends Files> = TestCaseWithError<T> | TestCaseWithNoError<T>
-  const isTestCaseWithNoError = <T extends Files>(c: TestCase<T>): c is TestCaseWithNoError<T> =>
-    c.length === 2
+  type TestCase = TestCaseWithError | TestCaseWithNoError
+  const isTestCaseWithNoError = (c: TestCase): c is TestCaseWithNoError => c.length === 2
 
   type FullTestCase =
-    | [string, Record<AbsolutePath, Program>, true, string | undefined]
-    | [string, Record<AbsolutePath, Program>, false, undefined]
+    | [string, Record<string, Program>, true, string | undefined]
+    | [string, Record<string, Program>, false, undefined]
 
-  function testCases<T extends Files>(desc: string, cases: TestCase<T>[]) {
-    const [allNoCases, allYesCases] = cases.reduce(
-      ([noThrow, yesThrow], c, i) => {
-        const context = mockContext(Chapter.LIBRARY_PARSER)
-        const programs = Object.entries(c[1]).reduce((res, [name, file]) => {
-          const parsed = parse(file!, context, { sourceFile: name })
-          if (!parsed) {
-            console.error(context.errors[0])
-            throw new Error('Failed to parse code!')
-          }
-          return {
-            ...res,
-            [name]: parsed
-          }
-        }, {} as Record<string, Program>)
+  function testCases(desc: string, cases: TestCase[]) {
+    const allCases = cases.flatMap((c, i) => {
+      const context = mockContext(Chapter.LIBRARY_PARSER)
+      const programs = Object.entries(c[1]).reduce((res, [name, file]) => {
+        const parsed = parse(file!, context, { sourceFile: name })
+        if (!parsed) {
+          console.error(context.errors[0])
+          throw new Error('Failed to parse code!')
+        }
+        return {
+          ...res,
+          [name]: parsed
+        }
+      }, {} as Record<string, Program>)
 
-        // For each test case, split it into the case where throwOnDuplicateImports is true
-        // and when it is false. No errors should ever be thrown when throwOnDuplicateImports is false
-        if (isTestCaseWithNoError(c)) {
-          // No error message was given, so no error is expected to be thrown,
-          // regardless of the value of throwOnDuplicateImports
-          const [desc] = c
-          const noThrowCase: FullTestCase = [
-            `${i + 1}. ${desc}: no error `,
+      // For each test case, split it into the case where throwOnDuplicateImports is true
+      // and when it is false. No errors should ever be thrown when throwOnDuplicateImports is false
+      if (isTestCaseWithNoError(c)) {
+        // No error message was given, so no error is expected to be thrown,
+        // regardless of the value of throwOnDuplicateImports
+        const [desc] = c
+        return [
+          [
+            `${i}. ${desc} with throwOnDuplicateImports false: no error `,
             programs,
             false,
             undefined
-          ]
-          const yesThrowCase: FullTestCase = [
-            `${i + 1}. ${desc}: no error`,
-            programs,
-            true,
-            undefined
-          ]
-          return [
-            [...noThrow, noThrowCase],
-            [...yesThrow, yesThrowCase]
-          ]
-        }
+          ],
+          [`${i}. ${desc} with throwOnDuplicateImports true: no error`, programs, true, undefined]
+        ] as FullTestCase[]
+      }
 
-        const [desc, , errMsg] = c
-        const noThrowCase: FullTestCase = [
-          `${i + 1}. ${desc}: no error`,
-          programs,
-          false,
-          undefined
-        ]
-        const yesThrowCase: FullTestCase = [`${i + 1}. ${desc}: error`, programs, true, errMsg]
-        return [
-          [...noThrow, noThrowCase],
-          [...yesThrow, yesThrowCase]
-        ]
-      },
-      [[], []] as [FullTestCase[], FullTestCase[]]
-    )
+      const [desc, , errMsg] = c
+      return [
+        [`${i}. ${desc} with throwOnDuplicateImports false: no error`, programs, false, undefined],
+        [`${i}. ${desc} with throwOnDuplicateImports true: error`, programs, true, errMsg]
+      ] as FullTestCase[]
+    })
 
-    const caseTester: (...args: FullTestCase) => Promise<void> = async (
-      _,
-      programs,
-      shouldThrow,
-      errMsg
-    ) => {
-      const context = createContext(Chapter.FULL_JS)
-      const [entrypointFilePath, ...topoOrder] = objectKeys(programs)
+    describe(desc, () =>
+      test.each(allCases)('%s', async (_, programs, shouldThrow, errMsg) => {
+        const [entrypointPath, ...topoOrder] = Object.keys(programs)
 
-      await loadSourceModules(new Set(['one_module', 'another_module']), context, false)
-
-      const runTest = () =>
-        analyzeImportsAndExports(programs, entrypointFilePath, topoOrder, context, {
+        const promise = analyzeImportsAndExports(programs, entrypointPath, topoOrder, new Set(), {
           allowUndefinedImports: true,
           throwOnDuplicateNames: shouldThrow
         })
 
-      if (!shouldThrow || errMsg === undefined) {
-        expect(runTest).not.toThrow()
-      }
-      try {
-        runTest()
-      } catch (err) {
-        expect(err).toBeInstanceOf(DuplicateImportNameError)
+        if (!shouldThrow || errMsg === undefined) {
+          return expect(promise).resolves.not.toThrow()
+        }
 
-        // Make sure the locations are always displayed in order
-        // for consistency across tests (ok since locString should be order agnostic)
-        const segments = (err.locString as string).split(',').map(each => each.trim())
-        segments.sort()
-
-        expect(segments.join(', ')).toEqual(errMsg)
-      }
-    }
-
-    describe(`${desc} with throwOnDuplicateImports false`, () =>
-      test.each(allNoCases)('%s', caseTester))
-    describe(`${desc} with throwOnDuplicateImports true`, () =>
-      test.each(allYesCases)('%s', caseTester))
+        try {
+          await promise
+        } catch (err) {
+          expect(err).toBeInstanceOf(DuplicateImportNameError)
+          const rawErrString = (err.locString as string).split(',').map(each => each.trim())
+          rawErrString.sort()
+          expect(rawErrString.join(', ')).toEqual(errMsg)
+        }
+      })
+    )
   }
 
   testCases('Imports from different modules', [
@@ -897,4 +749,25 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       }
     ]
   ])
+})
+
+test('No module documentation is loaded when allowUndefinedImports is true', async () => {
+  const files = {
+    '/a.js': `import { foo } from 'one_module';`
+  }
+
+  const context = mockContext(Chapter.LIBRARY_PARSER)
+
+  const result = await parseProgramsAndConstructImportGraph(
+    p => Promise.resolve(files[p]),
+    '/a.js',
+    context,
+    {},
+    true
+  )
+  await analyzeImportsAndExports(result!.programs, '/a.js', [], result!.sourceModulesToImport, {
+    allowUndefinedImports: true
+  })
+
+  expect(memoizedGetModuleDocsAsync).toHaveBeenCalledTimes(0)
 })

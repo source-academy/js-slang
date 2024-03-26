@@ -1,6 +1,6 @@
 import { posix as posixPath } from 'path'
 
-import { memoizedGetModuleManifestAsync } from '../loader'
+import { memoizedGetModuleManifestAsync } from '../loader/moduleLoaderAsync'
 import { isSourceModule } from '../utils'
 
 /**

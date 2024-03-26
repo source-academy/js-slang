@@ -4,7 +4,7 @@ import type { MockedFunction } from 'jest-mock'
 import { parseError } from '../../..'
 import { mockContext } from '../../../mocks/context'
 import { Chapter } from '../../../types'
-import { memoizedGetModuleDocsAsync } from '../../loader'
+import { memoizedGetModuleDocsAsync } from '../../loader/moduleLoaderAsync'
 import preprocessFileImports from '..'
 import { parseCodeError, sanitizeAST } from './utils'
 import { parse } from '../../../parser/parser'
@@ -13,7 +13,7 @@ import {
   defaultExportLookupName
 } from '../../../stdlib/localImport.prelude'
 
-jest.mock('../../loader')
+jest.mock('../../loader/moduleLoaderAsync')
 
 describe('preprocessFileImports', () => {
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)

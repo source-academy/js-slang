@@ -4,7 +4,7 @@ import { getNames } from '../../index'
 import { Chapter } from '../../types'
 import { DeclarationKind, type NameDeclaration } from '../index'
 
-jest.mock('../../modules/loader')
+jest.mock('../../modules/loader/moduleLoaderAsync')
 
 function matchExpectedNames(
   extractedNames: NameDeclaration[],

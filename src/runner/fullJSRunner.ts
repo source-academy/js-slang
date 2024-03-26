@@ -88,7 +88,7 @@ export async function fullJSRunner(
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
   try {
-    ;({ transpiled, sourceMapJson } = transpile(program, context))
+    ;({ transpiled, sourceMapJson } = await transpile(program, context, importOptions))
     return {
       status: 'finished',
       context,

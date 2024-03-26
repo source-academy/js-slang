@@ -6,6 +6,8 @@ import { UNKNOWN_LOCATION } from '../constants'
 import { LazyBuiltIn } from '../createContext'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
+import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import {
   type Context,
@@ -715,7 +717,7 @@ function getNonEmptyEnv(environment: Environment): Environment {
   }
 }
 
-export function* evaluateProgram(program: es.Program, context: Context) {
+export function* evaluateProgram(program: es.Program, context: Context, loadTabs: boolean) {
   yield* visit(context, program)
 
   context.numberOfOuterEnvironments += 1
@@ -723,6 +725,7 @@ export function* evaluateProgram(program: es.Program, context: Context) {
   pushEnvironment(context, environment)
 
   const otherNodes: es.Statement[] = []
+  const moduleFunctions: Record<string, ModuleFunctions> = {}
 
   try {
     for (const node of program.body) {
@@ -734,7 +737,13 @@ export function* evaluateProgram(program: es.Program, context: Context) {
       yield* visit(context, node)
 
       const moduleName = getModuleDeclarationSource(node)
-      const functions = context.nativeStorage.loadedModules[moduleName]
+
+      if (!(moduleName in moduleFunctions)) {
+        initModuleContext(moduleName, context, loadTabs)
+        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
+      }
+
+      const functions = moduleFunctions[moduleName]
 
       for (const spec of node.specifiers) {
         declareIdentifier(context, spec.local.name, node)

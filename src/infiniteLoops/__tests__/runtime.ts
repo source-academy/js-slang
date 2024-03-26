@@ -1,12 +1,56 @@
-import type es from 'estree'
+import * as es from 'estree'
 
 import { runInContext } from '../..'
 import createContext from '../../createContext'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { Chapter, Variant } from '../../types'
+import { stripIndent } from '../../utils/formatters'
 import { getInfiniteLoopData, InfiniteLoopError, InfiniteLoopErrorType } from '../errors'
 import { testForInfiniteLoop } from '../runtime'
+
+jest.mock('../../modules/loader/moduleLoaderAsync', () => ({
+  memoizedGetModuleBundleAsync: jest.fn(() =>
+    Promise.resolve(stripIndent`
+    require => {
+      'use strict';
+      var exports = {};
+      function repeat(func, n) {
+        return n === 0 ? function (x) {
+          return x;
+        } : function (x) {
+          return func(repeat(func, n - 1)(x));
+        };
+      }
+      function twice(func) {
+        return repeat(func, 2);
+      }
+      function thrice(func) {
+        return repeat(func, 3);
+      }
+      exports.repeat = repeat;
+      exports.thrice = thrice;
+      exports.twice = twice;
+      Object.defineProperty(exports, '__esModule', {
+        value: true
+      });
+      return exports;
+    }
+  `)
+  ),
+  memoizedGetModuleManifestAsync: jest.fn(() =>
+    Promise.resolve({
+      repeat: { tabs: [] }
+    })
+  ),
+  memoizedGetModuleDocsAsync: jest.fn(() =>
+    Promise.resolve({
+      repeat: '',
+      twice: '',
+      thrice: ''
+    })
+  )
+}))
 
 test('works in runInContext when throwInfiniteLoops is true', async () => {
   const code = `function fib(x) {
@@ -16,7 +60,7 @@ test('works in runInContext when throwInfiniteLoops is true', async () => {
   const context = mockContext(Chapter.SOURCE_4)
   await runInContext(code, context, { throwInfiniteLoops: true })
   const lastError = context.errors[context.errors.length - 1]
-  expect(lastError).toBeInstanceOf(InfiniteLoopError)
+  expect(lastError instanceof InfiniteLoopError).toBe(true)
   const result: InfiniteLoopError = lastError as InfiniteLoopError
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.NoBaseCase)
   expect(result?.streamMode).toBe(false)
@@ -43,26 +87,7 @@ const testForInfiniteLoopWithCode = (code: string, previousPrograms: es.Program[
   if (program === null) {
     throw new Error('Unable to parse code.')
   }
-
-  function repeat<T>(func: (arg: T) => T, n: number): (arg: T) => T {
-    return n === 0
-      ? function (x) {
-          return x
-        }
-      : function (x) {
-          return func(repeat(func, n - 1)(x))
-        }
-  }
-  function twice<T>(func: (arg: T) => T) {
-    return repeat(func, 2)
-  }
-  function thrice<T>(func: (arg: T) => T) {
-    return repeat(func, 3)
-  }
-
-  return testForInfiniteLoop(program, previousPrograms, {
-    repeat: { repeat, twice, thrice }
-  })
+  return testForInfiniteLoop(program, previousPrograms)
 }
 
 test('non-infinite recursion not detected', async () => {
@@ -276,20 +301,20 @@ test('math functions are disabled in smt solver', async () => {
   expect(result).toBeUndefined()
 })
 
-test('cycle detection ignores non deterministic functions', () => {
+test('cycle detection ignores non deterministic functions', async () => {
   const code = `
   function f(x) {
     return x===0?0:f(math_floor(math_random()/2) + 1);
   }
   f(1);`
-  const result = testForInfiniteLoopWithCode(code, [])
+  const result = await testForInfiniteLoopWithCode(code, [])
   expect(result).toBeUndefined()
 })
 
-test('handle imports properly', () => {
+test('handle imports properly', async () => {
   const code = `import {thrice} from "repeat";
   function f(x) { return is_number(x) ? f(x) : 42; }
   display(f(thrice(x=>x+1)(0)));`
-  const result = testForInfiniteLoopWithCode(code, [])
+  const result = await testForInfiniteLoopWithCode(code, [])
   expect(result?.infiniteLoopType).toBe(InfiniteLoopErrorType.Cycle)
 })

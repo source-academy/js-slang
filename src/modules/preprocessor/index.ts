@@ -7,7 +7,6 @@ import assert from '../../utils/assert'
 import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { isIdentifier, isImportDeclaration, isModuleDeclaration } from '../../utils/ast/typeGuards'
 import { isSourceModule } from '../utils'
-import loadSourceModules from '../loader'
 import analyzeImportsAndExports from './analyzer'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import {
@@ -73,13 +72,11 @@ const preprocessFileImports = async (
   const { programs, topoOrder, entrypointAbsPath, sourceModulesToImport } = importGraphResult
 
   try {
-    await loadSourceModules(sourceModulesToImport, context, options.importOptions?.loadTabs ?? true)
-
-    analyzeImportsAndExports(
+    await analyzeImportsAndExports(
       programs,
       entrypointAbsPath,
       topoOrder,
-      context,
+      sourceModulesToImport,
       options?.importOptions
     )
   } catch (error) {
