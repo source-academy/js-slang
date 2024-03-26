@@ -2,6 +2,8 @@ import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { expectParsedError } from '../../utils/testing'
 
+jest.mock('../../modules/loader/moduleLoaderAsync')
+
 test('Cannot leave blank init in for loop', () => {
   return expectParsedError(
     stripIndent`
@@ -1209,9 +1211,9 @@ test('no assigning to reserved keywords - verbose', () => {
 test('no namespace imports', () => {
   return expectParsedError(
     stripIndent`
-    import * as x from "module-name";
+    import * as x from "one_module";
     `,
-    { chapter: Chapter.LIBRARY_PARSER }
+    { chapter: Chapter.SOURCE_4 }
   ).toMatchInlineSnapshot(`"Line 1: Namespace imports are not allowed"`)
 })
 
@@ -1219,9 +1221,9 @@ test('no namespace imports - verbose', () => {
   return expectParsedError(
     stripIndent`
     "enable verbose";
-    import * as x from "module-name";
+    import * as x from "one_module";
     `,
-    { chapter: Chapter.LIBRARY_PARSER }
+    { chapter: Chapter.SOURCE_4 }
   ).toMatchInlineSnapshot(`
             "Line 2, Column 7: Namespace imports are not allowed
             You are trying to use Namespace imports, which is not allowed (yet).

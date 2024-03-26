@@ -19,6 +19,9 @@ const mockXMLHttpRequest = (xhr: Partial<XMLHttpRequest> = {}) => {
   return xhrMock
 }
 
+jest.mock('../../modules/loader/moduleLoader')
+jest.mock('../../modules/loader/moduleLoaderAsync')
+
 const optionEC = { variant: Variant.EXPLICIT_CONTROL }
 const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
 const optionEC4 = { chapter: Chapter.SOURCE_4, variant: Variant.EXPLICIT_CONTROL }
@@ -270,15 +273,15 @@ test('continue in while loops are working as intended', () => {
 test('for loop `let` variables are copied into the block scope', () => {
   return expectResult(
     stripIndent`
-  function test(){
-    let z = [];
-    for (let x = 0; x < 10; x = x + 1) {
-      z[x] = () => x;
+    function test(){
+      let z = [];
+      for (let x = 0; x < 10; x = x + 1) {
+        z[x] = () => x;
+      }
+      return z[1]();
     }
-    return z[1]();
-  }
-  test();
-  `,
+    test();
+    `,
     optionEC4
   ).toMatchInlineSnapshot(`1`)
 })
@@ -286,7 +289,7 @@ test('for loop `let` variables are copied into the block scope', () => {
 test('streams and its pre-defined/pre-built functions are working as intended', () => {
   return expectResult(
     stripIndent`
-       function make_alternating_stream(stream) {
+    function make_alternating_stream(stream) {
       return pair(head(stream), () => make_alternating_stream(
                                         negate_whole_stream(
                                             stream_tail(stream))));

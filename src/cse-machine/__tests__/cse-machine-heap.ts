@@ -39,25 +39,44 @@ test('Heap works correctly', () => {
   `)
 })
 
-test('Environment heap correctly stores all arrays and closures', async () => {
-  const code = stripIndent`
-  function f(x) {
-    return x;
-  }
-  {
-    const a = [1, 2, 3];
-  }
-  const b = [4, 5, 6];
-  `
+const expectEnvTreeFrom = (code: string, hasPrelude = true) => {
   const context = mockContext(Chapter.SOURCE_4)
-  context.prelude = null // hide the unneeded prelude
+  if (!hasPrelude) context.prelude = null
   const parsed = parse(code, context)
-  await sourceRunner(parsed!, context, false, { executionMethod: 'cse-machine' })
-  expect(context.runtime.environmentTree).toMatchSnapshot()
-  // program environment heap should only contain 2 items
-  expect(context.runtime.environments[0].heap.size()).toMatchInlineSnapshot(`2`)
-  // block environment heap should only contain 1 item
-  expect(
-    context.runtime.environmentTree.root!.children[0].children[0].environment.heap.size()
-  ).toMatchInlineSnapshot(`1`)
+  return expect(
+    sourceRunner(parsed!, context, false, { executionMethod: 'cse-machine' }).then(
+      () => context.runtime.environmentTree
+    )
+  ).resolves
+}
+
+test('Pre-defined functions are correctly added to prelude environment heap', () => {
+  expectEnvTreeFrom('0;').toMatchSnapshot()
+})
+
+test('Arrays and closures are correctly added to their respective environment heaps', () => {
+  expectEnvTreeFrom(
+    stripIndent`
+    function f(x) {
+      return [10, 11, 12];
+    }
+    {
+      const a = [1, 2, 3];
+    }
+    const b = [4, 5, 6];
+    f([7, 8, 9]);
+    `,
+    false
+  ).toMatchSnapshot()
+})
+
+test('Arrays created from in-built functions are correctly added to the environment heap', () => {
+  expectEnvTreeFrom(
+    stripIndent`
+    pair(1, 2);
+    {
+      list(1, 2, 3);
+    }
+    `
+  ).toMatchSnapshot()
 })

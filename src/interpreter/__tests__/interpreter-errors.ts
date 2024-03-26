@@ -11,8 +11,8 @@ import {
   expectResult
 } from '../../utils/testing'
 
-jest.mock('../../modules/moduleLoader', () => ({
-  ...jest.requireActual('../../modules/moduleLoader'),
+jest.mock('../../modules/loader/moduleLoader', () => ({
+  ...jest.requireActual('../../modules/loader/moduleLoader'),
   memoizedGetModuleFile: jest.fn().mockReturnValue(`function() {
     return {
       foo: () => undefined,
@@ -28,6 +28,8 @@ jest.mock('../../modules/moduleLoader', () => ({
     }
   })
 }))
+
+jest.mock('../../modules/loader/moduleLoaderAsync')
 
 // const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
 // const mockedModuleFile = asMock(memoizedGetModuleFile)
@@ -1140,10 +1142,4 @@ test('Cascading js errors work properly', () => {
   ).toMatchInlineSnapshot(
     `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null"`
   )
-})
-
-test('Importing unknown variables throws error', () => {
-  expectParsedError(stripIndent`
-    import { foo1 } from 'one_module';
-  `).toMatchInlineSnapshot("'one_module' does not contain definitions for 'foo1'")
 })

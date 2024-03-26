@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 
 import { Node } from '../../types'
 
@@ -49,3 +49,11 @@ export function isDeclaration(node: Node): node is es.Declaration {
     node.type === 'ClassDeclaration'
   )
 }
+
+export const isIdentifier = (node: es.Node): node is es.Identifier => node.type === 'Identifier'
+
+export const isVariableDeclaration = (node: es.Node): node is es.VariableDeclaration =>
+  node.type === 'VariableDeclaration'
+
+export const isNamespaceSpecifier = (node: es.Node): node is es.ImportNamespaceSpecifier =>
+  node.type === 'ImportNamespaceSpecifier'

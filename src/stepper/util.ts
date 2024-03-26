@@ -3,9 +3,12 @@ import * as es from 'estree'
 import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { Environment, Node, Value } from '../types'
-import { BlockExpression, substituterNodes } from '../types'
+import { BlockExpression, Environment, Node, substituterNodes, Value } from '../types'
 import * as builtin from './lib'
+
+export function prettyPrintError(error: RuntimeSourceError): string {
+  return `Line ${error.location.start.line}: ${error.explain()}`
+}
 
 export function isBuiltinFunction(node: substituterNodes): boolean {
   return (

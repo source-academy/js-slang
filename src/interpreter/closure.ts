@@ -15,7 +15,7 @@ import {
   callExpression,
   identifier,
   returnStatement
-} from '../utils/astCreator'
+} from '../utils/ast/astCreator'
 import { apply } from './interpreter'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {

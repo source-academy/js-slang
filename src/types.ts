@@ -25,9 +25,10 @@ export interface CustomBuiltIns {
 }
 
 export enum ErrorType {
+  IMPORT = 'Import',
+  RUNTIME = 'Runtime',
   SYNTAX = 'Syntax',
-  TYPE = 'Type',
-  RUNTIME = 'Runtime'
+  TYPE = 'Type'
 }
 
 export enum ErrorSeverity {
@@ -152,6 +153,7 @@ export interface Context<T = any> {
     objectCount: number
     envStepsTotal: number
     breakpointSteps: number[]
+    changepointSteps: number[]
   }
 
   numberOfOuterEnvironments: number
