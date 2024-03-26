@@ -1693,7 +1693,7 @@ function reduceMain(
           str
         ]
       } else if (callee.type === 'Literal') {
-        throw new errors.CallingNonFunctionValue(callee, node)
+        throw new errors.CallingNonFunctionValue(callee.value, node)
       } else if (
         callee.type === 'Identifier' &&
         !(callee.name in context.runtime.environments[0].head)
@@ -1741,22 +1741,31 @@ function reduceMain(
             explain(node)
           ]
         } else {
-          if ((callee as es.Identifier).name.includes('math')) {
+          try {
+            if ((callee as es.Identifier).name.includes('math')) {
+              return [
+                builtin.evaluateMath((callee as es.Identifier).name, ...args),
+                context,
+                paths,
+                explain(node)
+              ]
+            } else if (typeof builtin[(callee as es.Identifier).name] === 'function') {
+              return [
+                builtin[(callee as es.Identifier).name](...args),
+                context,
+                paths,
+                explain(node)
+              ]
+            }
             return [
-              builtin.evaluateMath((callee as es.Identifier).name, ...args),
+              builtin.evaluateModuleFunction((callee as es.Identifier).name, context, ...args),
               context,
               paths,
               explain(node)
             ]
-          } else if (typeof builtin[(callee as es.Identifier).name] === 'function') {
-            return [builtin[(callee as es.Identifier).name](...args), context, paths, explain(node)]
+          } catch (error) {
+            throw new errors.BuiltInFunctionError(callee, error.message)
           }
-          return [
-            builtin.evaluateModuleFunction((callee as es.Identifier).name, context, ...args),
-            context,
-            paths,
-            explain(node)
-          ]
         }
       }
     },
