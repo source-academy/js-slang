@@ -11,7 +11,7 @@ import { isContinuation } from './continuations'
 import Heap from './heap'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
-import { AppInstr, Array, AssmtInstr, ControlItem, Instr, InstrType } from './types'
+import { AppInstr, Array, ControlItem, Instr, InstrType } from './types'
 
 /**
  * Stack is implemented for control and stash registers.
@@ -150,16 +150,6 @@ export const isStatementSequence = (node: ControlItem): node is StatementSequenc
  */
 export const isRestElement = (node: Node): node is es.RestElement => {
   return (node as es.RestElement).type == 'RestElement'
-}
-
-/**
- * Typeguard for AssmtInstr. To verify if an instruction is an assignment instruction.
- *
- * @param instr an instruction
- * @returns true if instr is an AssmtInstr, false otherwise.
- */
-export const isAssmtInstr = (instr: Instr): instr is AssmtInstr => {
-  return instr.instrType === InstrType.ASSIGNMENT
 }
 
 /**
