@@ -14,12 +14,26 @@ export let MODULES_STATIC_URL = 'https://source-academy.github.io/modules'
 
 export function setModulesStaticURL(url: string) {
   MODULES_STATIC_URL = url
+
+  // Changing the module backend should clear these
+  memoizedGetModuleDocsAsync.cache.clear()
+  memoizedGetModuleManifestAsync.reset()
 }
 
 function wrapImporter<T>(
   browserFunc: (p: string) => Promise<T>,
   nodeFunc: (p: string) => Promise<T>
 ) {
+  /*
+    Browsers natively support esm's import() but Jest and Node do not. So we need
+    to change which import function we use based on the environment.
+
+    For the browser, we use the function constructor to hide the import calls from
+    webpack so that webpack doesn't try to compile them away.
+
+    Browsers automatically cache import() calls, so we add a query parameter with the
+    current time to always invalidate the cache and handle the memoization ourselves
+  */
   const func =
     typeof window !== 'undefined' && process.env.NODE_ENV !== 'test' ? browserFunc : nodeFunc
 
@@ -33,7 +47,7 @@ function wrapImporter<T>(
       // be thrown only if the modules server is unreachable
       if (
         // In the browser, import statements should throw TypeError
-        error instanceof TypeError ||
+        (typeof window !== 'undefined' && error instanceof TypeError) ||
         // In Node a different error is thrown with the given code instead
         error.code === 'MODULE_NOT_FOUND' ||
         // Thrown specifically by jest
@@ -57,11 +71,17 @@ export const docsImporter = wrapImporter<{ default: any }>(
     // Loading JSON using require/import with node is still very inconsistent
     // So we will have to fallback to fetch
     const resp = await fetch(p)
+    if (resp.status !== 200 && resp.status !== 304) {
+      throw new ModuleConnectionError()
+    }
+
     const result = await resp.json()
     return { default: result }
   }
 )
 
+// lodash's memoize function memoizes on errors. This is undesirable,
+// so we have out own custom memoization that won't memoize on errors
 function getManifestImporter() {
   let manifest: ModuleManifest | null = null
 
@@ -171,6 +191,11 @@ async function initModuleContextAsync(moduleName: string, context: Context, load
   }
 }
 
+/**
+ * With the given set of Source Modules to Import, load all of the bundles and
+ * tabs (if `loadTabs` is true) and populate the `context.nativeStorage.loadedModules`
+ * property.
+ */
 export default async function loadSourceModules(
   sourceModulesToImport: Set<string>,
   context: Context,

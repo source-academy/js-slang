@@ -72,7 +72,8 @@ describe('tab loading', () => {
       json: () =>
         Promise.resolve({
           one_module: { tabs: ['tab1', 'tab2'] }
-        })
+        }),
+      status: 200
     } as any)
 
     const tabs = await moduleLoader.loadModuleTabsAsync('one_module')
