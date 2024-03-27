@@ -1,0 +1,359 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bare early returns in for loops work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function f() {
+      for (let i = 0; i < 100; i = i + 1) {
+        return i+1;
+        unreachable();
+      }
+      unreachable();
+      return 0;
+      unreachable();
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Bare early returns in if statements work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function f() {
+      if (true) {
+        return 1;
+        unreachable();
+      } else {}
+      unreachable();
+      return 0;
+      unreachable();
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Bare early returns in while loops work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function f() {
+      while (true) {
+        return 1;
+        unreachable();
+      }
+      unreachable();
+      return 0;
+      unreachable();
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Bare early returns work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function f() {
+      return 1;
+      unreachable();
+      return 0;
+      unreachable();
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Calling unreachable results in error: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function f() {
+      unreachable();
+      return 0;
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 3: Expected number on right hand side of operation, got boolean.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Recursive call early returns in for loops work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function id(x) {
+      return x;
+    }
+    function f() {
+      for (let i = 0; i < 100; i = i + 1) {
+        return id(i+1) + id(i+2);
+      }
+      return 0;
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Recursive call early returns in if statements work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function id(x) {
+      return x;
+    }
+    function f() {
+      if (true) {
+        return id(1) + id(2);
+        unreachable();
+      } else {}
+      unreachable();
+      return 0;
+      unreachable();
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Recursive call early returns in while loops work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function id(x) {
+      return x;
+    }
+    function f() {
+      while (true) {
+        return id(1) + id(2);
+        unreachable();
+      }
+      unreachable();
+      return 0;
+      unreachable();
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Recursive call early returns work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function id(x) {
+      return x;
+    }
+    function f() {
+      return id(1) + id(2);
+      unreachable();
+      return 0;
+      unreachable();
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Tail call early returns in for loops work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function id(x) {
+      return x;
+    }
+    function f() {
+      for (let i = 0; i < 100; i = i + 1) {
+        return id(i+1);
+        unreachable();
+      }
+      unreachable();
+      return 0;
+      unreachable();
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Tail call early returns in if statements work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function id(x) {
+      return x;
+    }
+    function f() {
+      if (true) {
+        return id(1);
+        unreachable();
+      } else {}
+      unreachable();
+      return 0;
+      unreachable();
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Tail call early returns in while loops work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function id(x) {
+      return x;
+    }
+    function f() {
+      while (true) {
+        return id(1);
+        unreachable();
+      }
+      unreachable();
+      return 0;
+      unreachable();
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Tail call early returns work: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "
+    function unreachable() {
+      return 1 < true; // Will cause an error
+    }
+    function id(x) {
+      return x;
+    }
+    function f() {
+      return id(1);
+      unreachable();
+      return 0;
+      unreachable();
+    }
+    f();
+  ",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;

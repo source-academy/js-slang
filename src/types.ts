@@ -11,6 +11,7 @@ import * as es from 'estree'
 import { EnvTree } from './createContext'
 import Heap from './cse-machine/heap'
 import { Control, Stash } from './cse-machine/interpreter'
+import { Agenda as Agenda_WGSL, Stash as Stash_WGSL } from './wgsl/interpreter'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -95,7 +96,8 @@ export enum Variant {
   NON_DET = 'non-det',
   CONCURRENT = 'concurrent',
   GPU = 'gpu',
-  EXPLICIT_CONTROL = 'explicit-control'
+  EXPLICIT_CONTROL = 'explicit-control',
+  WGSL = 'wgsl'
 }
 
 export interface Language {
@@ -149,7 +151,9 @@ export interface Context<T = any> {
     environments: Environment[]
     nodes: Node[]
     control: Control | null
+    agenda_wgsl?: Agenda_WGSL
     stash: Stash | null
+    stash_wgsl?: Stash_WGSL
     objectCount: number
     envStepsTotal: number
     breakpointSteps: number[]

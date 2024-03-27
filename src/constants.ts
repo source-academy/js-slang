@@ -35,6 +35,7 @@ export const sourceLanguages: Language[] = [
   { chapter: Chapter.SOURCE_2, variant: Variant.DEFAULT },
   { chapter: Chapter.SOURCE_2, variant: Variant.TYPED },
   { chapter: Chapter.SOURCE_2, variant: Variant.LAZY },
+  { chapter: Chapter.SOURCE_2, variant: Variant.WGSL },
   { chapter: Chapter.SOURCE_3, variant: Variant.DEFAULT },
   { chapter: Chapter.SOURCE_3, variant: Variant.TYPED },
   { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT },

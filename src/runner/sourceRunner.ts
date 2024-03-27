@@ -35,6 +35,10 @@ import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
+import {
+  ECEResultPromise as ECEResultPromise_WGSL,
+  evaluate as ECEvaluate_WGSL
+} from '../wgsl/interpreter'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import {
@@ -231,6 +235,15 @@ function runCSEMachine(program: es.Program, context: Context, options: IOptions)
   return CSEResultPromise(context, value)
 }
 
+async function runECEvaluator_WGSL(
+  program: es.Program,
+  context: Context,
+  options: IOptions
+): Promise<Result> {
+  const value = await ECEvaluate_WGSL(program, context)
+  return ECEResultPromise_WGSL(context, value)
+}
+
 export async function sourceRunner(
   program: es.Program,
   context: Context,
@@ -283,6 +296,10 @@ export async function sourceRunner(
       return result
     }
     return runCSEMachine(program, context, theOptions)
+  }
+
+  if (context.variant === Variant.WGSL) {
+    return await runECEvaluator_WGSL(program, context, theOptions)
   }
 
   if (context.executionMethod === 'native') {
