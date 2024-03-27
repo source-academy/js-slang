@@ -3,7 +3,7 @@ import * as es from 'estree'
 import createContext, { EnvTree } from '../createContext'
 import Closure from '../interpreter/closure'
 import { createBlockEnvironment } from '../interpreter/interpreter'
-import { Chapter, Context, Environment, Frame, Variant } from '../types'
+import { Chapter, Context, Environment, Variant } from '../types'
 
 export function mockContext(
   chapter: Chapter = Chapter.SOURCE_1,
@@ -55,6 +55,7 @@ export function mockRuntimeContext(): Context {
     ],
     control: null,
     stash: null,
+    objectCount: 0,
     envStepsTotal: 0,
     breakpointSteps: [],
     changepointSteps: []
@@ -63,6 +64,7 @@ export function mockRuntimeContext(): Context {
 }
 
 export function mockClosure(): Closure {
+  const context = createContext()
   return new Closure(
     {
       type: 'FunctionExpression',
@@ -74,15 +76,11 @@ export function mockClosure(): Closure {
         body: []
       }
     } as es.FunctionExpression,
-    {} as Environment,
-    {} as Context
+    mockEnvironment(context),
+    context
   )
 }
 
-export function mockEnvironment(
-  context: Context,
-  name = 'blockEnvironment',
-  head: Frame = {}
-): Environment {
-  return createBlockEnvironment(context, name, head)
+export function mockEnvironment(context: Context, name = 'blockEnvironment'): Environment {
+  return createBlockEnvironment(context, name)
 }

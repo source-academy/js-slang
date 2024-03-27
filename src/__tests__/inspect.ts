@@ -26,9 +26,7 @@ xtest('debugger; statement basic test', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -49,9 +47,7 @@ xtest('debugger; statement in function', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -72,9 +68,7 @@ xtest('debugger; statement execution sequence', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('finished')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -106,9 +100,7 @@ xtest('debugger; statement test function scope', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -132,9 +124,7 @@ xtest('debugger; statement hoisting', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -156,9 +146,7 @@ xtest('debugger; pauses for', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -181,9 +169,7 @@ xtest('debugger; pauses while', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -212,9 +198,7 @@ xtest('setBreakpointAtLine basic', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -237,9 +221,7 @@ xtest('setBreakpointAtLine function 1', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -262,9 +244,7 @@ xtest('setBreakpointAtLine function 2', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -289,9 +269,7 @@ xtest('setBreakpointAtLine function 3', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('finished')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -314,9 +292,7 @@ xtest('setBreakpointAtLine function 4', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -345,9 +321,7 @@ xtest('setBreakpointAtLine granularity 1', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -380,9 +354,7 @@ xtest('setBreakpointAtLine granularity 2', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -414,9 +386,7 @@ xtest('setBreakpointAtLine granularity 3', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -450,9 +420,7 @@ xtest('setBreakpointAtLine for loops', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()
@@ -497,9 +465,7 @@ xtest('setBreakpointAtLine while loops', () => {
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
-      expect(environment).toMatchSnapshot({
-        id: expect.any(String)
-      })
+      expect(environment).toMatchSnapshot()
     })
     expect(obj1.status).toBe('suspended-cse-eval')
     expect(parseError(context.errors)).toMatchSnapshot()

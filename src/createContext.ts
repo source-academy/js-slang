@@ -3,6 +3,7 @@
 import * as scheme_libs from './alt-langs/scheme/scm-slang/src/stdlib/source-scheme-library'
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
+import Heap from './cse-machine/heap'
 import * as gpu_lib from './gpu/lib'
 import { AsyncScheduler } from './schedulers'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
@@ -108,6 +109,7 @@ const createEmptyRuntime = () => ({
   nodes: [],
   control: null,
   stash: null,
+  objectCount: 0,
   envSteps: -1,
   envStepsTotal: 0,
   breakpointSteps: [],
@@ -129,6 +131,7 @@ export const createGlobalEnvironment = (): Environment => ({
   tail: null,
   name: 'global',
   head: {},
+  heap: new Heap(),
   id: '-1'
 })
 

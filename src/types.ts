@@ -9,6 +9,7 @@ import { SourceLocation } from 'acorn'
 import * as es from 'estree'
 
 import { EnvTree } from './createContext'
+import Heap from './cse-machine/heap'
 import { Control, Stash } from './cse-machine/interpreter'
 
 /**
@@ -149,6 +150,7 @@ export interface Context<T = any> {
     nodes: Node[]
     control: Control | null
     stash: Stash | null
+    objectCount: number
     envStepsTotal: number
     breakpointSteps: number[]
     changepointSteps: number[]
@@ -247,11 +249,12 @@ export type Value = any
 export type AllowedDeclarations = 'const' | 'let'
 
 export interface Environment {
-  id: string
+  readonly id: string
   name: string
   tail: Environment | null
   callExpression?: es.CallExpression
   head: Frame
+  heap: Heap
   thisContext?: Value
 }
 
