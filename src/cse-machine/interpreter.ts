@@ -7,7 +7,7 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { reverse, uniqueId } from 'lodash'
+import { isArray, reverse } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
@@ -64,13 +64,13 @@ import {
   defineVariable,
   envChanging,
   getVariable,
+  handleArrayCreation,
   handleRuntimeError,
   handleSequence,
   hasBreakStatement,
   hasContinueStatement,
   hasDeclarations,
   hasImportDeclarations,
-  isAssmtInstr,
   isBlockStatement,
   isInstr,
   isNode,
@@ -763,14 +763,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       true,
       isPrelude
     )
-    const next = control.peek()
-    if (!(next && isInstr(next) && isAssmtInstr(next))) {
-      Object.defineProperty(currentEnvironment(context).head, uniqueId(), {
-        value: closure,
-        writable: false,
-        enumerable: true
-      })
-    }
+    currentEnvironment(context).heap.add(closure)
     stash.push(closure)
   },
 
@@ -976,11 +969,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       // Display the pre-defined functions on the global environment if needed.
       if (func.preDefined) {
-        Object.defineProperty(context.runtime.environments[1].head, uniqueId(), {
-          value: func,
-          writable: false,
-          enumerable: true
-        })
+        context.runtime.environments[1].heap.add(func)
       }
 
       const next = control.peek()
@@ -997,7 +986,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Create environment for function parameters if the function isn't nullary.
       // Name the environment if the function call expression is not anonymous
       if (args.length > 0) {
-        const environment = createEnvironment(func, args, command.srcNode)
+        const environment = createEnvironment(context, func, args, command.srcNode)
         pushEnvironment(context, environment)
       } else {
         context.runtime.environments.unshift(func.environment)
@@ -1026,6 +1015,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Directly stash result of applying pre-built functions without the CSE machine.
     try {
       const result = func(...args)
+      // Attach array properties and add to heap for any arrays created from built-in functions,
+      // examples: pair, list
+      if (isArray(result)) {
+        handleArrayCreation(context, result)
+      }
       stash.push(result)
     } catch (error) {
       if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
@@ -1083,9 +1077,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const arity = command.arity
     const array = []
     for (let i = 0; i < arity; ++i) {
-      array.push(stash.pop())
+      array.unshift(stash.pop())
     }
-    reverse(array)
+    handleArrayCreation(context, array)
     stash.push(array)
   },
 
