@@ -35,10 +35,6 @@ export type ResolverResult =
 
 /**
  * Resolve a relative module path to an absolute path.
- *
- * @returns A tuple of `[string, boolean]`. The string value
- * represents the absolute path the relative path resolved to. The boolean
- * value indicates if the file at the absolute path exists.
  */
 export default async function resolveFile(
   fromPath: PosixPath,
