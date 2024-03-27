@@ -5,7 +5,10 @@ Object {
   "head": Object {
     "y": 1,
   },
-  "id": Any<String>,
+  "heap": Heap {
+    "storage": null,
+  },
+  "id": "4",
   "name": "functionBodyEnvironment",
   "tail": Object {
     "callExpression": Object {
@@ -49,14 +52,20 @@ Object {
     "head": Object {
       "x": 2,
     },
-    "id": "4",
+    "heap": Heap {
+      "storage": null,
+    },
+    "id": "3",
     "name": "f",
     "tail": Object {
       "head": Object {
-        "3": [Function],
+        "2": [Function],
         "f": [Function],
       },
-      "id": "1",
+      "heap": Heap {
+        "storage": null,
+      },
+      "id": "0",
       "name": "programEnvironment",
       "tail": Object {
         "head": Object {
@@ -140,6 +149,9 @@ Object {
           "tokenize": [Function],
           "undefined": undefined,
         },
+        "heap": Heap {
+          "storage": null,
+        },
         "id": "-1",
         "name": "global",
         "tail": null,
@@ -193,14 +205,20 @@ Object {
   "head": Object {
     "x": 2,
   },
-  "id": Any<String>,
+  "heap": Heap {
+    "storage": null,
+  },
+  "id": "3",
   "name": "f",
   "tail": Object {
     "head": Object {
-      "3": [Function],
+      "2": [Function],
       "f": [Function],
     },
-    "id": "1",
+    "heap": Heap {
+      "storage": null,
+    },
+    "id": "0",
     "name": "programEnvironment",
     "tail": Object {
       "head": Object {
@@ -284,6 +302,9 @@ Object {
         "tokenize": [Function],
         "undefined": undefined,
       },
+      "heap": Heap {
+        "storage": null,
+      },
       "id": "-1",
       "name": "global",
       "tail": null,
@@ -295,10 +316,13 @@ Object {
 exports[`Function params and body identifiers are in different environment 3`] = `
 Object {
   "head": Object {
-    "3": [Function],
+    "2": [Function],
     "f": [Function],
   },
-  "id": Any<String>,
+  "heap": Heap {
+    "storage": null,
+  },
+  "id": "0",
   "name": "programEnvironment",
   "tail": Object {
     "head": Object {
@@ -381,6 +405,9 @@ Object {
       "tail": [Function],
       "tokenize": [Function],
       "undefined": undefined,
+    },
+    "heap": Heap {
+      "storage": null,
     },
     "id": "-1",
     "name": "global",
@@ -472,7 +499,10 @@ Object {
     "tokenize": [Function],
     "undefined": undefined,
   },
-  "id": Any<String>,
+  "heap": Heap {
+    "storage": null,
+  },
+  "id": "-1",
   "name": "global",
   "tail": null,
 }
