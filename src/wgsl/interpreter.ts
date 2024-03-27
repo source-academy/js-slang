@@ -14,11 +14,11 @@ import * as constants from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
+import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, Value } from '../types'
-import * as ast from '../utils/ast/astCreator'
-import * as create from '../utils/ast/astCreator'
+import * as ast from '../utils/astCreator'
+import * as create from '../utils/astCreator'
 import * as rttc from '../utils/rttc'
 import * as instr from './instrCreator'
 import { applySpecial, evaluateBinaryExpression, evaluateUnaryExpression } from './operations'
@@ -192,7 +192,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    * Statements
    */
 
-  Program: function (command: es.BlockStatement, context: Context, Agenda: Agenda, Stash: Stash) {
+  Program: async function (
+    command: es.BlockStatement,
+    context: Context,
+    Agenda: Agenda,
+    Stash: Stash
+  ) {
     const environment = createBlockEnvironment(context, 'programEnvironment')
     // Push the environment only if it is non empty.
     if (declareFunctionsAndVariables(context, command, environment)) {
@@ -202,7 +207,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Agenda.push(...handleSequence(command.body))
   },
 
-  BlockStatement: function (command: es.BlockStatement, context: Context, Agenda: Agenda) {
+  BlockStatement: async function (command: es.BlockStatement, context: Context, Agenda: Agenda) {
     // To restore environment after block ends
     Agenda.push(instr.envInstr(currentEnvironment(context)))
 
@@ -216,14 +221,14 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Agenda.push(...handleSequence(command.body))
   },
 
-  WhileStatement: function (command: es.WhileStatement, context: Context, Agenda: Agenda) {
+  WhileStatement: async function (command: es.WhileStatement, context: Context, Agenda: Agenda) {
     Agenda.push(instr.breakMarkerInstr())
     Agenda.push(instr.whileInstr(command.test, command.body, command))
     Agenda.push(command.test)
     Agenda.push(ast.identifier('undefined')) // Return undefined if there is no loop execution
   },
 
-  ForStatement: function (command: es.ForStatement, context: Context, Agenda: Agenda) {
+  ForStatement: async function (command: es.ForStatement, context: Context, Agenda: Agenda) {
     // All 3 parts will be defined due to parser rules
     const init = command.init!
     const test = command.test!
@@ -272,11 +277,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  IfStatement: function (command: es.IfStatement, context: Context, Agenda: Agenda, Stash: Stash) {
+  IfStatement: async function (
+    command: es.IfStatement,
+    context: Context,
+    Agenda: Agenda,
+    Stash: Stash
+  ) {
     Agenda.push(...reduceConditional(command))
   },
 
-  ExpressionStatement: function (
+  ExpressionStatement: async function (
     command: es.ExpressionStatement,
     context: Context,
     Agenda: Agenda
@@ -284,11 +294,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Agenda.push(command.expression)
   },
 
-  DebuggerStatement: function (command: es.DebuggerStatement, context: Context) {
+  DebuggerStatement: async function (command: es.DebuggerStatement, context: Context) {
     context.runtime.break = true
   },
 
-  VariableDeclaration: function (
+  VariableDeclaration: async function (
     command: es.VariableDeclaration,
     context: Context,
     Agenda: Agenda
@@ -304,7 +314,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Agenda.push(init)
   },
 
-  FunctionDeclaration: function (
+  FunctionDeclaration: async function (
     command: es.FunctionDeclaration,
     context: Context,
     Agenda: Agenda
@@ -323,7 +333,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Agenda.push(lambdaDeclaration)
   },
 
-  ReturnStatement: function (command: es.ReturnStatement, context: Context, Agenda: Agenda) {
+  ReturnStatement: async function (command: es.ReturnStatement, context: Context, Agenda: Agenda) {
     // Push return argument onto Agenda as well as Reset Instruction to clear to ignore all statements after the return.
     Agenda.push(instr.resetInstr())
     if (command.argument) {
@@ -331,7 +341,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  ContinueStatement: function (
+  ContinueStatement: async function (
     command: es.ContinueStatement,
     context: Context,
     Agenda: Agenda,
@@ -340,7 +350,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Agenda.push(instr.contInstr())
   },
 
-  BreakStatement: function (
+  BreakStatement: async function (
     command: es.BreakStatement,
     context: Context,
     Agenda: Agenda,
@@ -353,11 +363,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    * Expressions
    */
 
-  Literal: function (command: es.Literal, context: Context, Agenda: Agenda, Stash: Stash) {
+  Literal: async function (command: es.Literal, context: Context, Agenda: Agenda, Stash: Stash) {
     Stash.push(command.value)
   },
 
-  AssignmentExpression: function (
+  AssignmentExpression: async function (
     command: es.AssignmentExpression,
     context: Context,
     Agenda: Agenda
@@ -374,7 +384,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  ArrayExpression: function (command: es.ArrayExpression, context: Context, Agenda: Agenda) {
+  ArrayExpression: async function (command: es.ArrayExpression, context: Context, Agenda: Agenda) {
     const elems = command.elements as ContiguousArrayElements
     const len = elems.length
 
@@ -384,7 +394,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  MemberExpression: function (
+  MemberExpression: async function (
     command: es.MemberExpression,
     context: Context,
     Agenda: Agenda,
@@ -395,7 +405,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Agenda.push(command.object)
   },
 
-  ConditionalExpression: function (
+  ConditionalExpression: async function (
     command: es.ConditionalExpression,
     context: Context,
     Agenda: Agenda,
@@ -404,22 +414,35 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Agenda.push(...reduceConditional(command))
   },
 
-  Identifier: function (command: es.Identifier, context: Context, Agenda: Agenda, Stash: Stash) {
+  Identifier: async function (
+    command: es.Identifier,
+    context: Context,
+    Agenda: Agenda,
+    Stash: Stash
+  ) {
     Stash.push(getVariable(context, command.name, command))
   },
 
-  UnaryExpression: function (command: es.UnaryExpression, context: Context, Agenda: Agenda) {
+  UnaryExpression: async function (command: es.UnaryExpression, context: Context, Agenda: Agenda) {
     Agenda.push(instr.unOpInstr(command.operator, command))
     Agenda.push(command.argument)
   },
 
-  BinaryExpression: function (command: es.BinaryExpression, context: Context, Agenda: Agenda) {
+  BinaryExpression: async function (
+    command: es.BinaryExpression,
+    context: Context,
+    Agenda: Agenda
+  ) {
     Agenda.push(instr.binOpInstr(command.operator, command))
     Agenda.push(command.right)
     Agenda.push(command.left)
   },
 
-  LogicalExpression: function (command: es.LogicalExpression, context: Context, Agenda: Agenda) {
+  LogicalExpression: async function (
+    command: es.LogicalExpression,
+    context: Context,
+    Agenda: Agenda
+  ) {
     if (command.operator === '&&') {
       Agenda.push(
         ast.conditionalExpression(command.left, command.right, ast.literal(false), command.loc)
@@ -431,7 +454,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  ArrowFunctionExpression: function (
+  ArrowFunctionExpression: async function (
     command: es.ArrowFunctionExpression,
     context: Context,
     Agenda: Agenda,
@@ -457,7 +480,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Stash.push(closure)
   },
 
-  CallExpression: function (command: es.CallExpression, context: Context, Agenda: Agenda) {
+  CallExpression: async function (command: es.CallExpression, context: Context, Agenda: Agenda) {
     // Push application instruction, function arguments and function onto Agenda.
     Agenda.push(instr.appInstr(command.arguments.length, command))
     for (let index = command.arguments.length - 1; index >= 0; index--) {
@@ -470,7 +493,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
    * Instructions
    */
 
-  [InstrType.RESET]: function (command: Instr, context: Context, Agenda: Agenda, Stash: Stash) {
+  [InstrType.RESET]: async function (
+    command: Instr,
+    context: Context,
+    Agenda: Agenda,
+    Stash: Stash
+  ) {
     // Keep pushing reset instructions until marker is found.
     const cmdNext: AgendaItem | undefined = Agenda.pop()
     if (cmdNext && (isNode(cmdNext) || cmdNext.instrType !== InstrType.MARKER)) {
@@ -478,7 +506,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.WHILE]: function (
+  [InstrType.WHILE]: async function (
     command: WhileInstr,
     context: Context,
     Agenda: Agenda,
@@ -502,7 +530,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.FOR]: function (command: ForInstr, context: Context, Agenda: Agenda, Stash: Stash) {
+  [InstrType.FOR]: async function (
+    command: ForInstr,
+    context: Context,
+    Agenda: Agenda,
+    Stash: Stash
+  ) {
     const test = Stash.pop()
 
     // Check if test condition is a boolean
@@ -523,7 +556,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.ASSIGNMENT]: function (
+  [InstrType.ASSIGNMENT]: async function (
     command: AssmtInstr,
     context: Context,
     Agenda: Agenda,
@@ -545,7 +578,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
         )
   },
 
-  [InstrType.UNARY_OP]: function (
+  [InstrType.UNARY_OP]: async function (
     command: UnOpInstr,
     context: Context,
     Agenda: Agenda,
@@ -566,7 +599,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Stash.push(evaluateUnaryExpression(command.symbol as es.UnaryOperator, argument))
   },
 
-  [InstrType.BINARY_OP]: function (
+  [InstrType.BINARY_OP]: async function (
     command: BinOpInstr,
     context: Context,
     Agenda: Agenda,
@@ -589,11 +622,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Stash.push(evaluateBinaryExpression(command.symbol as es.BinaryOperator, left, right))
   },
 
-  [InstrType.POP]: function (command: Instr, context: Context, Agenda: Agenda, Stash: Stash) {
+  [InstrType.POP]: async function (command: Instr, context: Context, Agenda: Agenda, Stash: Stash) {
     Stash.pop()
   },
 
-  [InstrType.APPLICATION]: function (
+  [InstrType.APPLICATION]: async function (
     command: AppInstr,
     context: Context,
     Agenda: Agenda,
@@ -671,7 +704,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.BRANCH]: function (
+  [InstrType.BRANCH]: async function (
     command: BranchInstr,
     context: Context,
     Agenda: Agenda,
@@ -711,14 +744,14 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.ENVIRONMENT]: function (command: EnvInstr, context: Context) {
+  [InstrType.ENVIRONMENT]: async function (command: EnvInstr, context: Context) {
     // Restore environment
     while (currentEnvironment(context).id !== command.env.id) {
       popEnvironment(context)
     }
   },
 
-  [InstrType.PUSH_UNDEFINED_IF_NEEDED]: function (
+  [InstrType.PUSH_UNDEFINED_IF_NEEDED]: async function (
     command: Instr,
     context: Context,
     Agenda: Agenda,
@@ -729,7 +762,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.ARRAY_LITERAL]: function (
+  [InstrType.ARRAY_LITERAL]: async function (
     command: ArrLitInstr,
     context: Context,
     Agenda: Agenda,
@@ -743,7 +776,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Stash.push(array)
   },
 
-  [InstrType.ARRAY_ACCESS]: function (
+  [InstrType.ARRAY_ACCESS]: async function (
     command: Instr,
     context: Context,
     Agenda: Agenda,
@@ -754,7 +787,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Stash.push(array[index])
   },
 
-  [InstrType.ARRAY_ASSIGNMENT]: function (
+  [InstrType.ARRAY_ASSIGNMENT]: async function (
     command: Instr,
     context: Context,
     Agenda: Agenda,
@@ -767,7 +800,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     Stash.push(value)
   },
 
-  [InstrType.CONTINUE]: function (command: Instr, context: Context, Agenda: Agenda, Stash: Stash) {
+  [InstrType.CONTINUE]: async function (
+    command: Instr,
+    context: Context,
+    Agenda: Agenda,
+    Stash: Stash
+  ) {
     const next = Agenda.pop() as AgendaItem
     if (isInstr(next) && next.instrType == InstrType.CONTINUE_MARKER) {
       // Encountered continue mark, stop popping
@@ -780,9 +818,14 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.CONTINUE_MARKER]: function () {},
+  [InstrType.CONTINUE_MARKER]: async function () {},
 
-  [InstrType.BREAK]: function (command: Instr, context: Context, Agenda: Agenda, Stash: Stash) {
+  [InstrType.BREAK]: async function (
+    command: Instr,
+    context: Context,
+    Agenda: Agenda,
+    Stash: Stash
+  ) {
     const next = Agenda.pop() as AgendaItem
     if (isInstr(next) && next.instrType == InstrType.BREAK_MARKER) {
       // Encountered break mark, stop popping
@@ -795,9 +838,14 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.BREAK_MARKER]: function () {},
+  [InstrType.BREAK_MARKER]: async function () {},
 
-  [InstrType.PLAY]: function (command: PlayInstr, context: Context, Agenda: Agenda, Stash: Stash) {
+  [InstrType.PLAY]: async function (
+    command: PlayInstr,
+    context: Context,
+    Agenda: Agenda,
+    Stash: Stash
+  ) {
     const code = Stash.pop()
     let codeStr = ''
     if (code instanceof ReservedParam) {
@@ -850,7 +898,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.COMBINE]: function (
+  [InstrType.COMBINE]: async function (
     command: CombineInstr,
     context: Context,
     Agenda: Agenda,
