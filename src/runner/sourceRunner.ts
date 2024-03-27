@@ -287,18 +287,13 @@ export async function sourceRunner(
     return sourceRunner(program, context, isVerboseErrorsEnabled, options)
   }
 
-  // testing AST transform with CSE machine first
-  if (context.variant === Variant.EXPLICIT_CONTROL) {
-    return runCSEMachine(program, context, theOptions)
-  }
-
-  if (context.executionMethod === 'cse-machine') {
+  if (context.variant === Variant.EXPLICIT_CONTROL || context.executionMethod === 'cse-machine') {
     if (options.isPrelude) {
-      return runCSEMachine(
-        program,
-        { ...context, runtime: { ...context.runtime, debuggerOn: false } },
-        theOptions
-      )
+      const preludeContext = { ...context, runtime: { ...context.runtime, debuggerOn: false } }
+      const result = await runCSEMachine(program, preludeContext, theOptions)
+      // Update object count in main program context after prelude is run
+      context.runtime.objectCount = preludeContext.runtime.objectCount
+      return result
     }
     return runCSEMachine(program, context, theOptions)
   }
@@ -311,7 +306,7 @@ export async function sourceRunner(
     return runNative(program, context, theOptions)
   }
 
-  return runInterpreter(program!, context, theOptions)
+  return runInterpreter(program, context, theOptions)
 }
 
 export async function sourceFilesRunner(

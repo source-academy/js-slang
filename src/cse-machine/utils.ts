@@ -1,16 +1,17 @@
 import * as es from 'estree'
-import { uniqueId } from 'lodash'
+import { isArray } from 'lodash'
 
 import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import type { Environment, Frame, Node, StatementSequence, Value } from '../types'
+import type { Environment, Node, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { isContinuation } from './continuations'
+import Heap from './heap'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
-import { AppInstr, AssmtInstr, ControlItem, Instr, InstrType } from './types'
+import { AppInstr, Array, ControlItem, Instr, InstrType } from './types'
 
 /**
  * Stack is implemented for control and stash registers.
@@ -152,13 +153,56 @@ export const isRestElement = (node: Node): node is es.RestElement => {
 }
 
 /**
- * Typeguard for AssmtInstr. To verify if an instruction is an assignment instruction.
+ * Generate a unique id, for use in environments, arrays and closures.
  *
- * @param instr an instruction
- * @returns true if instr is an AssmtInstr, false otherwise.
+ * @param context the context used to provide the new unique id
+ * @returns a unique id
  */
-export const isAssmtInstr = (instr: Instr): instr is AssmtInstr => {
-  return instr.instrType === InstrType.ASSIGNMENT
+export const uniqueId = (context: Context): string => {
+  return `${context.runtime.objectCount++}`
+}
+
+/**
+ * Helper function for `handleArrayCreation`, with an extra argument: `visited`.
+ *
+ * @param context the context used to provide the current environment and new unique id
+ * @param array the array to add the properties to, and to add to the current environment heap to
+ * @param visited a set of arrays which are already handled before,
+ *                used to keep track of circular references
+ */
+const arrayCreationHelper = (context: Context, array: any[], visited: Set<any[]>): void => {
+  if (visited.has(array) || array.hasOwnProperty('id')) {
+    return
+  }
+  visited.add(array)
+  // Nested arrays are always created first, so outer arrays are handled after nested ones
+  // to preserve creation order in the environment heap
+  for (const item of array) {
+    if (isArray(item)) {
+      arrayCreationHelper(context, item, visited)
+    }
+  }
+  // Properties are defined this way to prevent them from being enumerable
+  Object.defineProperties(array, {
+    id: { value: uniqueId(context) },
+    // Make environment writable as there are still cases where the frontend might need to
+    // change the environment of an array, like when the prelude environment is merged
+    // into the global environment in the visualisation of the CSE Machine
+    environment: { value: currentEnvironment(context), writable: true }
+  })
+  currentEnvironment(context).heap.add(array as Array)
+}
+
+/**
+ * Adds the properties `id` and `environment` to the given array, and adds the array to the
+ * current environment's heap. Recursively does this for any nested arrays first, before
+ * handling the current one.
+ *
+ * @param context the context used to provide the current environment and new unique id
+ * @param array the array to add the properties to, and to add to the current environment heap to
+ */
+export const handleArrayCreation = (context: Context, array: any[]): void => {
+  arrayCreationHelper(context, array, new Set<any[]>())
 }
 
 /**
@@ -275,6 +319,7 @@ export const isSimpleFunction = (node: any) => {
 export const currentEnvironment = (context: Context) => context.runtime.environments[0]
 
 export const createEnvironment = (
+  context: Context,
   closure: Closure,
   args: Value[],
   callExpression: es.CallExpression
@@ -283,7 +328,8 @@ export const createEnvironment = (
     name: isIdentifier(callExpression.callee) ? callExpression.callee.name : closure.functionName,
     tail: closure.environment,
     head: {},
-    id: uniqueId(),
+    heap: new Heap(),
+    id: uniqueId(context),
     callExpression: {
       ...callExpression,
       arguments: args.map(ast.primitive)
@@ -308,28 +354,19 @@ export const pushEnvironment = (context: Context, environment: Environment) => {
 
 export const createBlockEnvironment = (
   context: Context,
-  name = 'blockEnvironment',
-  head: Frame = {}
+  name = 'blockEnvironment'
 ): Environment => {
   return {
     name,
     tail: currentEnvironment(context),
-    head,
-    id: uniqueId()
+    head: {},
+    heap: new Heap(),
+    id: uniqueId(context)
   }
 }
 
-export const createProgramEnvironment = (
-  context: Context,
-  isPrelude: boolean,
-  head: Frame = {}
-): Environment => {
-  return {
-    name: isPrelude ? 'prelude' : 'programEnvironment',
-    tail: currentEnvironment(context),
-    head,
-    id: uniqueId()
-  }
+export const createProgramEnvironment = (context: Context, isPrelude: boolean): Environment => {
+  return createBlockEnvironment(context, isPrelude ? 'prelude' : 'programEnvironment')
 }
 
 /**
