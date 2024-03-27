@@ -24,9 +24,7 @@ test('Function params and body identifiers are in different environment', () => 
     it.next()
   }
   context.runtime.environments.forEach(environment => {
-    expect(environment).toMatchSnapshot({
-      id: expect.any(String)
-    })
+    expect(environment).toMatchSnapshot()
   })
   expect(context.runtime.environments[0].head).toMatchObject({ y: 1 })
 })

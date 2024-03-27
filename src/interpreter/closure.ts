@@ -1,9 +1,13 @@
 /* tslint:disable:max-classes-per-file */
 import { generate } from 'astring'
 import * as es from 'estree'
-import { uniqueId } from 'lodash'
 
-import { hasReturnStatement, isBlockStatement, isStatementSequence } from '../cse-machine/utils'
+import {
+  hasReturnStatement,
+  isBlockStatement,
+  isStatementSequence,
+  uniqueId
+} from '../cse-machine/utils'
 import { Context, Environment, StatementSequence, Value } from '../types'
 import {
   blockArrowFunction,
@@ -86,7 +90,7 @@ export default class Closure extends Callable {
   }
 
   /** Unique ID defined for closure */
-  public id: string
+  public readonly id: string
 
   /** String representation of the closure */
   public functionName: string
@@ -111,7 +115,7 @@ export default class Closure extends Callable {
       return funJS.apply(this, args)
     })
     this.originalNode = node
-    this.id = uniqueId()
+    this.id = uniqueId(context)
     if (this.node.type === 'FunctionDeclaration' && this.node.id !== null) {
       this.functionName = this.node.id.name
     } else {
