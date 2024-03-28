@@ -386,7 +386,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     }
 
     // Continuations for explicit-control variant
-    if (context.chapter >= 3) {
+    if (context.chapter >= 4) {
       defineBuiltin(
         context,
         'call_cc(f)',

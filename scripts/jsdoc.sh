@@ -173,6 +173,22 @@ run() {
 	     ${LIB}/array.js \
 	     ${LIB}/pairmutator.js \
 	     ${LIB}/mce.js
+    
+    # Source §4 Explicit-Control
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_4_EXPLICIT-CONTROL.md \
+	     -d ${DST}/"source_4_explicit-control"/ \
+	     ${LIB}/auxiliary.js \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+	     ${LIB}/list.js \
+	     ${LIB}/stream.js \
+	     ${LIB}/array.js \
+	     ${LIB}/pairmutator.js \
+	     ${LIB}/mce.js \
+	     ${LIB}/continuation.js
 
     # Source §4 GPU
     
@@ -282,6 +298,14 @@ run() {
 	     -R ${MD}/README_MCE.md \
 	     -d ${DST}/MCE/ \
 	     ${LIB}/mce.js
+
+    # CONTINUATION
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_CONTINUATION.md \
+	     -d ${DST}/CONTINUATION/ \
+	     ${LIB}/continuation.js
     
     # RUNES
     
