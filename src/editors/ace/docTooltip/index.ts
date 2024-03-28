@@ -1,4 +1,3 @@
-import * as ext_lib from './External libraries.json'
 import * as source_1 from './source_1.json'
 import * as source_1_typed from './source_1_typed.json'
 import * as source_2 from './source_2.json'
@@ -54,6 +53,5 @@ export const SourceDocumentation = {
     '4': resolveImportInconsistency(source_4),
     '4_typed': resolveImportInconsistency(source_4_typed),
     '4_explicit-control': resolveImportInconsistency(source_4_explicit_control)
-  },
-  ext_lib
+  }
 }

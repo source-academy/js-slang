@@ -3,16 +3,16 @@
 The following stream processing functions are supported:
 
 \begin{itemize}
-\item \lstinline{stream_tail(x)}: \textit{primitive}, assumes that the tail (second component) of the
+\item \lstinline{stream(x1, x2,..., xn)}: \textit{primitive}, returns a stream with $n$ elements. The
+first element is \lstinline{x1}, the second \lstinline{x2}, etc.\\
+\emph{Laziness:}  No: In this implementation, we generate first a
+           complete list, and then a stream using \lstinline{list_to_stream}.
+\item \lstinline{stream_tail(x)}: Assumes that the tail (second component) of the
   pair \lstinline{x} is a nullary function, and returns the result of
   applying that function.\\
 \emph{Laziness:}  Yes: \lstinline{stream_tail} only forces the direct tail of a given
 stream,
 but not the rest of the stream, i.e. not the tail of the tail, etc.
-\item \lstinline{stream(x1, x2,..., xn)}: \textit{primitive}, returns a stream with $n$ elements. The
-first element is \lstinline{x1}, the second \lstinline{x2}, etc.\\
-\emph{Laziness:}  No: In this implementation, we generate first a
-           complete list, and then a stream using \lstinline{list_to_stream}.
 \item \lstinline{is_stream(x)}: Returns \lstinline{true} if
   \lstinline{x} is a stream as defined in the lectures, and
   \lstinline{false} otherwise.\\
