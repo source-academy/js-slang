@@ -283,7 +283,7 @@ run() {
 	     -d ${DST}/CONCURRENCY/ \
 	     ${LIB}/concurrency.js
 
-	# NON-DET
+    # NON-DET
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
@@ -307,56 +307,7 @@ run() {
 	     -d ${DST}/CONTINUATION/ \
 	     ${LIB}/continuation.js
     
-    # RUNES
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c docs/jsdoc/conf.json \
-	     -d ${DST}/RUNES/ \
-	     -R ${MD}/RUNES_README.md \
-	     ${LIB}/webGLrune.js
-
-    # CURVES
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c docs/jsdoc/conf.json \
-	     -d ${DST}/CURVES/ \
-	     -R ${MD}/CURVES_README.md \
-	     ${LIB}/webGLcurve.js \
-	     ${LIB}/webGLhi_graph.js
-
-     # SOUNDS
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c docs/jsdoc/conf.json \
-	     -d ${DST}/SOUNDS/ \
-	     -R ${MD}/SOUNDS_README.md \
-	     ${LIB}/sound
-
-    # BINARYTREES
-    
-    ${JSDOC} -r -t ${TMPL}/ \
-	     -c docs/jsdoc/conf.json \
-	     -R ${MD}/README_BINARYTREES.md \
-	     -d ${DST}/BINARYTREES \
-	     ${LIB}/tree.js
-
-   # PIXNFLIX
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c docs/jsdoc/conf.json \
-	     -d "${DST}/PIXNFLIX/" \
-	     -R ${MD}/PIXNFLIX_README.md \
-	     ${LIB}/video_lib.js
-
-   # GAME
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c docs/jsdoc/conf.json \
-	     -d "${DST}/GAME/" \
-	     -R ${MD}/GAME_README.md \
-	     ${LIB}/game.js 
-    
-   # EV3
+    # EV3
 
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
@@ -364,20 +315,6 @@ run() {
 	     -R ${MD}/EV3_README.md \
 	     ${LIB}/ev3.js
 
-    # External
-    
-    ${JSDOC} -r -t ${TMPL}/ \
-	     -c docs/jsdoc/conf.json \
-	     -R ${MD}/README_EXTERNAL.md \
-	     -d ${DST}/"External libraries"/ \
-	     ${LIB}/webGLrune.js \
-	     ${LIB}/webGLcurve.js \
-	     ${LIB}/webGLhi_graph.js \
-	     ${LIB}/video_lib.js \
-	     ${LIB}/game.js \
-	     ${LIB}/sound \
-	     ${LIB}/ev3.js
-    
 }
 
 prepare() {
