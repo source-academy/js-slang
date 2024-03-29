@@ -315,6 +315,13 @@ run() {
 	     -R ${MD}/EV3_README.md \
 	     ${LIB}/ev3.js
 
+    # External
+
+    ${JSDOC} -r -t ${TMPL}/ \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_EXTERNAL.md \
+	     -d ${DST}/"External libraries"/ \
+	     ${LIB}/ev3.js
 }
 
 prepare() {

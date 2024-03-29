@@ -22,7 +22,8 @@ const TARGETS = [
   "source_3_typed",
   "source_4",
   "source_4_typed",
-  "source_4_explicit-control"
+  "source_4_explicit-control",
+  "External libraries"
 ]
 
 function newTitleNode(title, document) {
