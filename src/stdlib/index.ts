@@ -42,7 +42,6 @@ export const chapter_3 = {
   is_array: misc.is_array,
 
   // Stream library
-  stream_tail: stream.stream_tail,
   stream: stream.stream
 }
 

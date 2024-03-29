@@ -22,6 +22,7 @@ const TARGETS = [
   "source_3_typed",
   "source_4",
   "source_4_typed",
+  "source_4_explicit-control",
   "External libraries"
 ]
 

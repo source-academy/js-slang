@@ -9,6 +9,7 @@ import * as source_3_non_det from './source_3_non-det.json'
 import * as source_3_typed from './source_3_typed.json'
 import * as source_4 from './source_4.json'
 import * as source_4_typed from './source_4_typed.json'
+import * as source_4_explicit_control from './source_4_explicit-control.json'
 
 // (18 March 2022)
 // Problem to be fixed in the future:
@@ -51,7 +52,8 @@ export const SourceDocumentation = {
     '3_non-det': resolveImportInconsistency(source_3_non_det),
     '3_typed': resolveImportInconsistency(source_3_typed),
     '4': resolveImportInconsistency(source_4),
-    '4_typed': resolveImportInconsistency(source_4_typed)
+    '4_typed': resolveImportInconsistency(source_4_typed),
+    '4_explicit-control': resolveImportInconsistency(source_4_explicit_control)
   },
   ext_lib
 }
