@@ -73,7 +73,7 @@ EnvTree {
                   "heap": Heap {
                     "storage": null,
                   },
-                  "id": "54",
+                  "id": "55",
                   "name": "c",
                   "tail": Object {
                     "head": Object {
@@ -122,7 +122,7 @@ EnvTree {
                         ],
                       },
                     },
-                    "id": "46",
+                    "id": "47",
                     "name": "programEnvironment",
                     "tail": Object {
                       "head": Object {
@@ -170,10 +170,12 @@ EnvTree {
                         "stream_remove": [Function],
                         "stream_remove_all": [Function],
                         "stream_reverse": [Function],
+                        "stream_tail": [Function],
                         "stream_to_list": [Function],
                       },
                       "heap": Heap {
                         "storage": Set {
+                          [Function],
                           [Function],
                           [Function],
                           [Function],
@@ -299,7 +301,6 @@ EnvTree {
                           "set_head": [Function],
                           "set_tail": [Function],
                           "stream": [Function],
-                          "stream_tail": [Function],
                           "stringify": [Function],
                           "tail": [Function],
                           "tokenize": [Function],
@@ -336,7 +337,7 @@ EnvTree {
                       [Function],
                     },
                   },
-                  "id": "55",
+                  "id": "56",
                   "name": "blockEnvironment",
                   "tail": Object {
                     "head": Object {
@@ -385,7 +386,7 @@ EnvTree {
                         ],
                       },
                     },
-                    "id": "46",
+                    "id": "47",
                     "name": "programEnvironment",
                     "tail": Object {
                       "head": Object {
@@ -433,10 +434,12 @@ EnvTree {
                         "stream_remove": [Function],
                         "stream_remove_all": [Function],
                         "stream_reverse": [Function],
+                        "stream_tail": [Function],
                         "stream_to_list": [Function],
                       },
                       "heap": Heap {
                         "storage": Set {
+                          [Function],
                           [Function],
                           [Function],
                           [Function],
@@ -562,7 +565,6 @@ EnvTree {
                           "set_head": [Function],
                           "set_tail": [Function],
                           "stream": [Function],
-                          "stream_tail": [Function],
                           "stringify": [Function],
                           "tail": [Function],
                           "tokenize": [Function],
@@ -628,7 +630,7 @@ EnvTree {
                   ],
                 },
               },
-              "id": "46",
+              "id": "47",
               "name": "programEnvironment",
               "tail": Object {
                 "head": Object {
@@ -676,10 +678,12 @@ EnvTree {
                   "stream_remove": [Function],
                   "stream_remove_all": [Function],
                   "stream_reverse": [Function],
+                  "stream_tail": [Function],
                   "stream_to_list": [Function],
                 },
                 "heap": Heap {
                   "storage": Set {
+                    [Function],
                     [Function],
                     [Function],
                     [Function],
@@ -805,7 +809,6 @@ EnvTree {
                     "set_head": [Function],
                     "set_tail": [Function],
                     "stream": [Function],
-                    "stream_tail": [Function],
                     "stringify": [Function],
                     "tail": [Function],
                     "tokenize": [Function],
@@ -869,10 +872,12 @@ EnvTree {
             "stream_remove": [Function],
             "stream_remove_all": [Function],
             "stream_reverse": [Function],
+            "stream_tail": [Function],
             "stream_to_list": [Function],
           },
           "heap": Heap {
             "storage": Set {
+              [Function],
               [Function],
               [Function],
               [Function],
@@ -998,7 +1003,6 @@ EnvTree {
               "set_head": [Function],
               "set_tail": [Function],
               "stream": [Function],
-              "stream_tail": [Function],
               "stringify": [Function],
               "tail": [Function],
               "tokenize": [Function],
@@ -1091,7 +1095,6 @@ EnvTree {
         "set_head": [Function],
         "set_tail": [Function],
         "stream": [Function],
-        "stream_tail": [Function],
         "stringify": [Function],
         "tail": [Function],
         "tokenize": [Function],
@@ -1183,7 +1186,6 @@ EnvTree {
         "set_head": [Function],
         "set_tail": [Function],
         "stream": [Function],
-        "stream_tail": [Function],
         "stringify": [Function],
         "tail": [Function],
         "tokenize": [Function],
@@ -1266,7 +1268,7 @@ EnvTree {
                     "heap": Heap {
                       "storage": null,
                     },
-                    "id": "54",
+                    "id": "55",
                     "name": "c",
                     "tail": Object {
                       "head": Object {
@@ -1315,7 +1317,7 @@ EnvTree {
                           ],
                         },
                       },
-                      "id": "46",
+                      "id": "47",
                       "name": "programEnvironment",
                       "tail": Object {
                         "head": Object {
@@ -1363,10 +1365,12 @@ EnvTree {
                           "stream_remove": [Function],
                           "stream_remove_all": [Function],
                           "stream_reverse": [Function],
+                          "stream_tail": [Function],
                           "stream_to_list": [Function],
                         },
                         "heap": Heap {
                           "storage": Set {
+                            [Function],
                             [Function],
                             [Function],
                             [Function],
@@ -1492,7 +1496,6 @@ EnvTree {
                             "set_head": [Function],
                             "set_tail": [Function],
                             "stream": [Function],
-                            "stream_tail": [Function],
                             "stringify": [Function],
                             "tail": [Function],
                             "tokenize": [Function],
@@ -1529,7 +1532,7 @@ EnvTree {
                         [Function],
                       },
                     },
-                    "id": "55",
+                    "id": "56",
                     "name": "blockEnvironment",
                     "tail": Object {
                       "head": Object {
@@ -1578,7 +1581,7 @@ EnvTree {
                           ],
                         },
                       },
-                      "id": "46",
+                      "id": "47",
                       "name": "programEnvironment",
                       "tail": Object {
                         "head": Object {
@@ -1626,10 +1629,12 @@ EnvTree {
                           "stream_remove": [Function],
                           "stream_remove_all": [Function],
                           "stream_reverse": [Function],
+                          "stream_tail": [Function],
                           "stream_to_list": [Function],
                         },
                         "heap": Heap {
                           "storage": Set {
+                            [Function],
                             [Function],
                             [Function],
                             [Function],
@@ -1755,7 +1760,6 @@ EnvTree {
                             "set_head": [Function],
                             "set_tail": [Function],
                             "stream": [Function],
-                            "stream_tail": [Function],
                             "stringify": [Function],
                             "tail": [Function],
                             "tokenize": [Function],
@@ -1821,7 +1825,7 @@ EnvTree {
                     ],
                   },
                 },
-                "id": "46",
+                "id": "47",
                 "name": "programEnvironment",
                 "tail": Object {
                   "head": Object {
@@ -1869,10 +1873,12 @@ EnvTree {
                     "stream_remove": [Function],
                     "stream_remove_all": [Function],
                     "stream_reverse": [Function],
+                    "stream_tail": [Function],
                     "stream_to_list": [Function],
                   },
                   "heap": Heap {
                     "storage": Set {
+                      [Function],
                       [Function],
                       [Function],
                       [Function],
@@ -1998,7 +2004,6 @@ EnvTree {
                       "set_head": [Function],
                       "set_tail": [Function],
                       "stream": [Function],
-                      "stream_tail": [Function],
                       "stringify": [Function],
                       "tail": [Function],
                       "tokenize": [Function],
@@ -2062,10 +2067,12 @@ EnvTree {
               "stream_remove": [Function],
               "stream_remove_all": [Function],
               "stream_reverse": [Function],
+              "stream_tail": [Function],
               "stream_to_list": [Function],
             },
             "heap": Heap {
               "storage": Set {
+                [Function],
                 [Function],
                 [Function],
                 [Function],
@@ -2191,7 +2198,6 @@ EnvTree {
                 "set_head": [Function],
                 "set_tail": [Function],
                 "stream": [Function],
-                "stream_tail": [Function],
                 "stringify": [Function],
                 "tail": [Function],
                 "tokenize": [Function],
@@ -2284,7 +2290,6 @@ EnvTree {
           "set_head": [Function],
           "set_tail": [Function],
           "stream": [Function],
-          "stream_tail": [Function],
           "stringify": [Function],
           "tail": [Function],
           "tokenize": [Function],
@@ -2345,10 +2350,12 @@ EnvTree {
         "stream_remove": [Function],
         "stream_remove_all": [Function],
         "stream_reverse": [Function],
+        "stream_tail": [Function],
         "stream_to_list": [Function],
       },
       "heap": Heap {
         "storage": Set {
+          [Function],
           [Function],
           [Function],
           [Function],
@@ -2474,7 +2481,6 @@ EnvTree {
           "set_head": [Function],
           "set_tail": [Function],
           "stream": [Function],
-          "stream_tail": [Function],
           "stringify": [Function],
           "tail": [Function],
           "tokenize": [Function],
@@ -2556,7 +2562,7 @@ EnvTree {
                 "heap": Heap {
                   "storage": null,
                 },
-                "id": "54",
+                "id": "55",
                 "name": "c",
                 "tail": Object {
                   "head": Object {
@@ -2605,7 +2611,7 @@ EnvTree {
                       ],
                     },
                   },
-                  "id": "46",
+                  "id": "47",
                   "name": "programEnvironment",
                   "tail": Object {
                     "head": Object {
@@ -2653,10 +2659,12 @@ EnvTree {
                       "stream_remove": [Function],
                       "stream_remove_all": [Function],
                       "stream_reverse": [Function],
+                      "stream_tail": [Function],
                       "stream_to_list": [Function],
                     },
                     "heap": Heap {
                       "storage": Set {
+                        [Function],
                         [Function],
                         [Function],
                         [Function],
@@ -2782,7 +2790,6 @@ EnvTree {
                         "set_head": [Function],
                         "set_tail": [Function],
                         "stream": [Function],
-                        "stream_tail": [Function],
                         "stringify": [Function],
                         "tail": [Function],
                         "tokenize": [Function],
@@ -2819,7 +2826,7 @@ EnvTree {
                     [Function],
                   },
                 },
-                "id": "55",
+                "id": "56",
                 "name": "blockEnvironment",
                 "tail": Object {
                   "head": Object {
@@ -2868,7 +2875,7 @@ EnvTree {
                       ],
                     },
                   },
-                  "id": "46",
+                  "id": "47",
                   "name": "programEnvironment",
                   "tail": Object {
                     "head": Object {
@@ -2916,10 +2923,12 @@ EnvTree {
                       "stream_remove": [Function],
                       "stream_remove_all": [Function],
                       "stream_reverse": [Function],
+                      "stream_tail": [Function],
                       "stream_to_list": [Function],
                     },
                     "heap": Heap {
                       "storage": Set {
+                        [Function],
                         [Function],
                         [Function],
                         [Function],
@@ -3045,7 +3054,6 @@ EnvTree {
                         "set_head": [Function],
                         "set_tail": [Function],
                         "stream": [Function],
-                        "stream_tail": [Function],
                         "stringify": [Function],
                         "tail": [Function],
                         "tokenize": [Function],
@@ -3111,7 +3119,7 @@ EnvTree {
                 ],
               },
             },
-            "id": "46",
+            "id": "47",
             "name": "programEnvironment",
             "tail": Object {
               "head": Object {
@@ -3159,10 +3167,12 @@ EnvTree {
                 "stream_remove": [Function],
                 "stream_remove_all": [Function],
                 "stream_reverse": [Function],
+                "stream_tail": [Function],
                 "stream_to_list": [Function],
               },
               "heap": Heap {
                 "storage": Set {
+                  [Function],
                   [Function],
                   [Function],
                   [Function],
@@ -3288,7 +3298,6 @@ EnvTree {
                   "set_head": [Function],
                   "set_tail": [Function],
                   "stream": [Function],
-                  "stream_tail": [Function],
                   "stringify": [Function],
                   "tail": [Function],
                   "tokenize": [Function],
@@ -3352,10 +3361,12 @@ EnvTree {
           "stream_remove": [Function],
           "stream_remove_all": [Function],
           "stream_reverse": [Function],
+          "stream_tail": [Function],
           "stream_to_list": [Function],
         },
         "heap": Heap {
           "storage": Set {
+            [Function],
             [Function],
             [Function],
             [Function],
@@ -3481,7 +3492,6 @@ EnvTree {
             "set_head": [Function],
             "set_tail": [Function],
             "stream": [Function],
-            "stream_tail": [Function],
             "stringify": [Function],
             "tail": [Function],
             "tokenize": [Function],
@@ -3575,7 +3585,6 @@ EnvTree {
             "set_head": [Function],
             "set_tail": [Function],
             "stream": [Function],
-            "stream_tail": [Function],
             "stringify": [Function],
             "tail": [Function],
             "tokenize": [Function],
@@ -3638,7 +3647,7 @@ EnvTree {
           ],
         },
       },
-      "id": "46",
+      "id": "47",
       "name": "programEnvironment",
       "tail": Object {
         "head": Object {
@@ -3686,10 +3695,12 @@ EnvTree {
           "stream_remove": [Function],
           "stream_remove_all": [Function],
           "stream_reverse": [Function],
+          "stream_tail": [Function],
           "stream_to_list": [Function],
         },
         "heap": Heap {
           "storage": Set {
+            [Function],
             [Function],
             [Function],
             [Function],
@@ -3815,7 +3826,6 @@ EnvTree {
             "set_head": [Function],
             "set_tail": [Function],
             "stream": [Function],
-            "stream_tail": [Function],
             "stringify": [Function],
             "tail": [Function],
             "tokenize": [Function],
@@ -3896,7 +3906,7 @@ EnvTree {
             "heap": Heap {
               "storage": null,
             },
-            "id": "54",
+            "id": "55",
             "name": "c",
             "tail": Object {
               "head": Object {
@@ -3945,7 +3955,7 @@ EnvTree {
                   ],
                 },
               },
-              "id": "46",
+              "id": "47",
               "name": "programEnvironment",
               "tail": Object {
                 "head": Object {
@@ -3993,10 +4003,12 @@ EnvTree {
                   "stream_remove": [Function],
                   "stream_remove_all": [Function],
                   "stream_reverse": [Function],
+                  "stream_tail": [Function],
                   "stream_to_list": [Function],
                 },
                 "heap": Heap {
                   "storage": Set {
+                    [Function],
                     [Function],
                     [Function],
                     [Function],
@@ -4122,7 +4134,6 @@ EnvTree {
                     "set_head": [Function],
                     "set_tail": [Function],
                     "stream": [Function],
-                    "stream_tail": [Function],
                     "stringify": [Function],
                     "tail": [Function],
                     "tokenize": [Function],
@@ -4159,7 +4170,7 @@ EnvTree {
                 [Function],
               },
             },
-            "id": "55",
+            "id": "56",
             "name": "blockEnvironment",
             "tail": Object {
               "head": Object {
@@ -4208,7 +4219,7 @@ EnvTree {
                   ],
                 },
               },
-              "id": "46",
+              "id": "47",
               "name": "programEnvironment",
               "tail": Object {
                 "head": Object {
@@ -4256,10 +4267,12 @@ EnvTree {
                   "stream_remove": [Function],
                   "stream_remove_all": [Function],
                   "stream_reverse": [Function],
+                  "stream_tail": [Function],
                   "stream_to_list": [Function],
                 },
                 "heap": Heap {
                   "storage": Set {
+                    [Function],
                     [Function],
                     [Function],
                     [Function],
@@ -4385,7 +4398,6 @@ EnvTree {
                     "set_head": [Function],
                     "set_tail": [Function],
                     "stream": [Function],
-                    "stream_tail": [Function],
                     "stringify": [Function],
                     "tail": [Function],
                     "tokenize": [Function],
@@ -4451,7 +4463,7 @@ EnvTree {
             ],
           },
         },
-        "id": "46",
+        "id": "47",
         "name": "programEnvironment",
         "tail": Object {
           "head": Object {
@@ -4499,10 +4511,12 @@ EnvTree {
             "stream_remove": [Function],
             "stream_remove_all": [Function],
             "stream_reverse": [Function],
+            "stream_tail": [Function],
             "stream_to_list": [Function],
           },
           "heap": Heap {
             "storage": Set {
+              [Function],
               [Function],
               [Function],
               [Function],
@@ -4628,7 +4642,6 @@ EnvTree {
               "set_head": [Function],
               "set_tail": [Function],
               "stream": [Function],
-              "stream_tail": [Function],
               "stringify": [Function],
               "tail": [Function],
               "tokenize": [Function],
@@ -4693,10 +4706,12 @@ EnvTree {
             "stream_remove": [Function],
             "stream_remove_all": [Function],
             "stream_reverse": [Function],
+            "stream_tail": [Function],
             "stream_to_list": [Function],
           },
           "heap": Heap {
             "storage": Set {
+              [Function],
               [Function],
               [Function],
               [Function],
@@ -4822,7 +4837,6 @@ EnvTree {
               "set_head": [Function],
               "set_tail": [Function],
               "stream": [Function],
-              "stream_tail": [Function],
               "stringify": [Function],
               "tail": [Function],
               "tokenize": [Function],
@@ -4916,7 +4930,6 @@ EnvTree {
               "set_head": [Function],
               "set_tail": [Function],
               "stream": [Function],
-              "stream_tail": [Function],
               "stringify": [Function],
               "tail": [Function],
               "tokenize": [Function],
@@ -4996,7 +5009,7 @@ EnvTree {
       "heap": Heap {
         "storage": null,
       },
-      "id": "54",
+      "id": "55",
       "name": "c",
       "tail": Object {
         "head": Object {
@@ -5045,7 +5058,7 @@ EnvTree {
             ],
           },
         },
-        "id": "46",
+        "id": "47",
         "name": "programEnvironment",
         "tail": Object {
           "head": Object {
@@ -5093,10 +5106,12 @@ EnvTree {
             "stream_remove": [Function],
             "stream_remove_all": [Function],
             "stream_reverse": [Function],
+            "stream_tail": [Function],
             "stream_to_list": [Function],
           },
           "heap": Heap {
             "storage": Set {
+              [Function],
               [Function],
               [Function],
               [Function],
@@ -5222,7 +5237,6 @@ EnvTree {
               "set_head": [Function],
               "set_tail": [Function],
               "stream": [Function],
-              "stream_tail": [Function],
               "stringify": [Function],
               "tail": [Function],
               "tokenize": [Function],
@@ -5302,7 +5316,7 @@ EnvTree {
         "heap": Heap {
           "storage": null,
         },
-        "id": "54",
+        "id": "55",
         "name": "c",
         "tail": Object {
           "head": Object {
@@ -5351,7 +5365,7 @@ EnvTree {
               ],
             },
           },
-          "id": "46",
+          "id": "47",
           "name": "programEnvironment",
           "tail": Object {
             "head": Object {
@@ -5399,10 +5413,12 @@ EnvTree {
               "stream_remove": [Function],
               "stream_remove_all": [Function],
               "stream_reverse": [Function],
+              "stream_tail": [Function],
               "stream_to_list": [Function],
             },
             "heap": Heap {
               "storage": Set {
+                [Function],
                 [Function],
                 [Function],
                 [Function],
@@ -5528,7 +5544,6 @@ EnvTree {
                 "set_head": [Function],
                 "set_tail": [Function],
                 "stream": [Function],
-                "stream_tail": [Function],
                 "stringify": [Function],
                 "tail": [Function],
                 "tokenize": [Function],
@@ -5566,7 +5581,7 @@ EnvTree {
                   [Function],
                 },
               },
-              "id": "55",
+              "id": "56",
               "name": "blockEnvironment",
               "tail": Object {
                 "head": Object {
@@ -5615,7 +5630,7 @@ EnvTree {
                     ],
                   },
                 },
-                "id": "46",
+                "id": "47",
                 "name": "programEnvironment",
                 "tail": Object {
                   "head": Object {
@@ -5663,10 +5678,12 @@ EnvTree {
                     "stream_remove": [Function],
                     "stream_remove_all": [Function],
                     "stream_reverse": [Function],
+                    "stream_tail": [Function],
                     "stream_to_list": [Function],
                   },
                   "heap": Heap {
                     "storage": Set {
+                      [Function],
                       [Function],
                       [Function],
                       [Function],
@@ -5792,7 +5809,6 @@ EnvTree {
                       "set_head": [Function],
                       "set_tail": [Function],
                       "stream": [Function],
-                      "stream_tail": [Function],
                       "stringify": [Function],
                       "tail": [Function],
                       "tokenize": [Function],
@@ -5858,7 +5874,7 @@ EnvTree {
               ],
             },
           },
-          "id": "46",
+          "id": "47",
           "name": "programEnvironment",
           "tail": Object {
             "head": Object {
@@ -5906,10 +5922,12 @@ EnvTree {
               "stream_remove": [Function],
               "stream_remove_all": [Function],
               "stream_reverse": [Function],
+              "stream_tail": [Function],
               "stream_to_list": [Function],
             },
             "heap": Heap {
               "storage": Set {
+                [Function],
                 [Function],
                 [Function],
                 [Function],
@@ -6035,7 +6053,6 @@ EnvTree {
                 "set_head": [Function],
                 "set_tail": [Function],
                 "stream": [Function],
-                "stream_tail": [Function],
                 "stringify": [Function],
                 "tail": [Function],
                 "tokenize": [Function],
@@ -6100,10 +6117,12 @@ EnvTree {
               "stream_remove": [Function],
               "stream_remove_all": [Function],
               "stream_reverse": [Function],
+              "stream_tail": [Function],
               "stream_to_list": [Function],
             },
             "heap": Heap {
               "storage": Set {
+                [Function],
                 [Function],
                 [Function],
                 [Function],
@@ -6229,7 +6248,6 @@ EnvTree {
                 "set_head": [Function],
                 "set_tail": [Function],
                 "stream": [Function],
-                "stream_tail": [Function],
                 "stringify": [Function],
                 "tail": [Function],
                 "tokenize": [Function],
@@ -6323,7 +6341,6 @@ EnvTree {
                 "set_head": [Function],
                 "set_tail": [Function],
                 "stream": [Function],
-                "stream_tail": [Function],
                 "stringify": [Function],
                 "tail": [Function],
                 "tokenize": [Function],
@@ -6358,7 +6375,7 @@ EnvTree {
           [Function],
         },
       },
-      "id": "55",
+      "id": "56",
       "name": "blockEnvironment",
       "tail": Object {
         "head": Object {
@@ -6407,7 +6424,7 @@ EnvTree {
             ],
           },
         },
-        "id": "46",
+        "id": "47",
         "name": "programEnvironment",
         "tail": Object {
           "head": Object {
@@ -6455,10 +6472,12 @@ EnvTree {
             "stream_remove": [Function],
             "stream_remove_all": [Function],
             "stream_reverse": [Function],
+            "stream_tail": [Function],
             "stream_to_list": [Function],
           },
           "heap": Heap {
             "storage": Set {
+              [Function],
               [Function],
               [Function],
               [Function],
@@ -6584,7 +6603,6 @@ EnvTree {
               "set_head": [Function],
               "set_tail": [Function],
               "stream": [Function],
-              "stream_tail": [Function],
               "stringify": [Function],
               "tail": [Function],
               "tokenize": [Function],
@@ -6618,7 +6636,7 @@ EnvTree {
             [Function],
           },
         },
-        "id": "55",
+        "id": "56",
         "name": "blockEnvironment",
         "tail": Object {
           "head": Object {
@@ -6667,7 +6685,7 @@ EnvTree {
               ],
             },
           },
-          "id": "46",
+          "id": "47",
           "name": "programEnvironment",
           "tail": Object {
             "head": Object {
@@ -6715,10 +6733,12 @@ EnvTree {
               "stream_remove": [Function],
               "stream_remove_all": [Function],
               "stream_reverse": [Function],
+              "stream_tail": [Function],
               "stream_to_list": [Function],
             },
             "heap": Heap {
               "storage": Set {
+                [Function],
                 [Function],
                 [Function],
                 [Function],
@@ -6844,7 +6864,6 @@ EnvTree {
                 "set_head": [Function],
                 "set_tail": [Function],
                 "stream": [Function],
-                "stream_tail": [Function],
                 "stringify": [Function],
                 "tail": [Function],
                 "tokenize": [Function],
@@ -6927,7 +6946,7 @@ EnvTree {
               "heap": Heap {
                 "storage": null,
               },
-              "id": "54",
+              "id": "55",
               "name": "c",
               "tail": Object {
                 "head": Object {
@@ -6976,7 +6995,7 @@ EnvTree {
                     ],
                   },
                 },
-                "id": "46",
+                "id": "47",
                 "name": "programEnvironment",
                 "tail": Object {
                   "head": Object {
@@ -7024,10 +7043,12 @@ EnvTree {
                     "stream_remove": [Function],
                     "stream_remove_all": [Function],
                     "stream_reverse": [Function],
+                    "stream_tail": [Function],
                     "stream_to_list": [Function],
                   },
                   "heap": Heap {
                     "storage": Set {
+                      [Function],
                       [Function],
                       [Function],
                       [Function],
@@ -7153,7 +7174,6 @@ EnvTree {
                       "set_head": [Function],
                       "set_tail": [Function],
                       "stream": [Function],
-                      "stream_tail": [Function],
                       "stringify": [Function],
                       "tail": [Function],
                       "tokenize": [Function],
@@ -7220,7 +7240,7 @@ EnvTree {
               ],
             },
           },
-          "id": "46",
+          "id": "47",
           "name": "programEnvironment",
           "tail": Object {
             "head": Object {
@@ -7268,10 +7288,12 @@ EnvTree {
               "stream_remove": [Function],
               "stream_remove_all": [Function],
               "stream_reverse": [Function],
+              "stream_tail": [Function],
               "stream_to_list": [Function],
             },
             "heap": Heap {
               "storage": Set {
+                [Function],
                 [Function],
                 [Function],
                 [Function],
@@ -7397,7 +7419,6 @@ EnvTree {
                 "set_head": [Function],
                 "set_tail": [Function],
                 "stream": [Function],
-                "stream_tail": [Function],
                 "stringify": [Function],
                 "tail": [Function],
                 "tokenize": [Function],
@@ -7462,10 +7483,12 @@ EnvTree {
               "stream_remove": [Function],
               "stream_remove_all": [Function],
               "stream_reverse": [Function],
+              "stream_tail": [Function],
               "stream_to_list": [Function],
             },
             "heap": Heap {
               "storage": Set {
+                [Function],
                 [Function],
                 [Function],
                 [Function],
@@ -7591,7 +7614,6 @@ EnvTree {
                 "set_head": [Function],
                 "set_tail": [Function],
                 "stream": [Function],
-                "stream_tail": [Function],
                 "stringify": [Function],
                 "tail": [Function],
                 "tokenize": [Function],
@@ -7685,7 +7707,6 @@ EnvTree {
                 "set_head": [Function],
                 "set_tail": [Function],
                 "stream": [Function],
-                "stream_tail": [Function],
                 "stringify": [Function],
                 "tail": [Function],
                 "tokenize": [Function],

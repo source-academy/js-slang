@@ -1,0 +1,7 @@
+\subsection*{Continuation Support}
+\label{conc_supp}
+The following functions are supported for generating and consuming continuations:
+
+\begin{itemize}
+\item \texttt{call\_cc(f)}: \(\textit{primitive}\), generates a coninuation \texttt{cont} and calls \texttt{f(cont)}. This is an atomic operation.
+\end{itemize}

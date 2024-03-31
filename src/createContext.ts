@@ -359,7 +359,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'is_array(val)', misc.is_array)
 
     // Stream library
-    defineBuiltin(context, 'stream_tail(stream)', stream.stream_tail)
     defineBuiltin(context, 'stream(...values)', stream.stream, 0)
   }
 
@@ -387,7 +386,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     }
 
     // Continuations for explicit-control variant
-    if (context.chapter >= 3) {
+    if (context.chapter >= 4) {
       defineBuiltin(
         context,
         'call_cc(f)',

@@ -173,6 +173,22 @@ run() {
 	     ${LIB}/array.js \
 	     ${LIB}/pairmutator.js \
 	     ${LIB}/mce.js
+    
+    # Source §4 Explicit-Control
+    
+    ${JSDOC} -r -t ${TMPL} \
+	     -c docs/jsdoc/conf.json \
+	     -R ${MD}/README_4_EXPLICIT-CONTROL.md \
+	     -d ${DST}/"source_4_explicit-control"/ \
+	     ${LIB}/auxiliary.js \
+	     ${LIB}/misc.js \
+	     ${LIB}/math.js \
+	     ${LIB}/list.js \
+	     ${LIB}/stream.js \
+	     ${LIB}/array.js \
+	     ${LIB}/pairmutator.js \
+	     ${LIB}/mce.js \
+	     ${LIB}/continuation.js
 
     # Source §4 GPU
     
@@ -267,7 +283,7 @@ run() {
 	     -d ${DST}/CONCURRENCY/ \
 	     ${LIB}/concurrency.js
 
-	# NON-DET
+    # NON-DET
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
@@ -282,57 +298,16 @@ run() {
 	     -R ${MD}/README_MCE.md \
 	     -d ${DST}/MCE/ \
 	     ${LIB}/mce.js
-    
-    # RUNES
+
+    # CONTINUATION
     
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
-	     -d ${DST}/RUNES/ \
-	     -R ${MD}/RUNES_README.md \
-	     ${LIB}/webGLrune.js
-
-    # CURVES
+	     -R ${MD}/README_CONTINUATION.md \
+	     -d ${DST}/CONTINUATION/ \
+	     ${LIB}/continuation.js
     
-    ${JSDOC} -r -t ${TMPL} \
-	     -c docs/jsdoc/conf.json \
-	     -d ${DST}/CURVES/ \
-	     -R ${MD}/CURVES_README.md \
-	     ${LIB}/webGLcurve.js \
-	     ${LIB}/webGLhi_graph.js
-
-     # SOUNDS
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c docs/jsdoc/conf.json \
-	     -d ${DST}/SOUNDS/ \
-	     -R ${MD}/SOUNDS_README.md \
-	     ${LIB}/sound
-
-    # BINARYTREES
-    
-    ${JSDOC} -r -t ${TMPL}/ \
-	     -c docs/jsdoc/conf.json \
-	     -R ${MD}/README_BINARYTREES.md \
-	     -d ${DST}/BINARYTREES \
-	     ${LIB}/tree.js
-
-   # PIXNFLIX
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c docs/jsdoc/conf.json \
-	     -d "${DST}/PIXNFLIX/" \
-	     -R ${MD}/PIXNFLIX_README.md \
-	     ${LIB}/video_lib.js
-
-   # GAME
-    
-    ${JSDOC} -r -t ${TMPL} \
-	     -c docs/jsdoc/conf.json \
-	     -d "${DST}/GAME/" \
-	     -R ${MD}/GAME_README.md \
-	     ${LIB}/game.js 
-    
-   # EV3
+    # EV3
 
     ${JSDOC} -r -t ${TMPL} \
 	     -c docs/jsdoc/conf.json \
@@ -341,19 +316,12 @@ run() {
 	     ${LIB}/ev3.js
 
     # External
-    
+
     ${JSDOC} -r -t ${TMPL}/ \
 	     -c docs/jsdoc/conf.json \
 	     -R ${MD}/README_EXTERNAL.md \
 	     -d ${DST}/"External libraries"/ \
-	     ${LIB}/webGLrune.js \
-	     ${LIB}/webGLcurve.js \
-	     ${LIB}/webGLhi_graph.js \
-	     ${LIB}/video_lib.js \
-	     ${LIB}/game.js \
-	     ${LIB}/sound \
 	     ${LIB}/ev3.js
-    
 }
 
 prepare() {
