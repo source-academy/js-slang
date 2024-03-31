@@ -15,14 +15,10 @@ export function __py_adder(x: Value, y: Value) {
 
 export function __py_minuser(x: Value, y: Value) {
   if (!(typeof x == 'bigint') && !(typeof x == 'number')) {
-    throw new Error(
-      'Expected number on left hand side of operation, got ' + typeof x + '.'
-    )
+    throw new Error('Expected number on left hand side of operation, got ' + typeof x + '.')
   }
   if (!(typeof y == 'bigint') && !(typeof y == 'number')) {
-    throw new Error(
-      'Expected number on right hand side of operation, got ' + typeof y + '.'
-    )
+    throw new Error('Expected number on right hand side of operation, got ' + typeof y + '.')
   }
   if (typeof x == 'bigint' && typeof y == 'bigint') {
     return x - y
@@ -41,14 +37,10 @@ export function __py_minuser(x: Value, y: Value) {
 
 export function __py_multiplier(x: Value, y: Value) {
   if (!(typeof x == 'bigint') && !(typeof x == 'number')) {
-    throw new Error(
-      'Expected number on left hand side of operation, got ' + typeof x + '.'
-    )
+    throw new Error('Expected number on left hand side of operation, got ' + typeof x + '.')
   }
   if (!(typeof y == 'bigint') && !(typeof y == 'number')) {
-    throw new Error(
-      'Expected number on right hand side of operation, got ' + typeof y + '.'
-    )
+    throw new Error('Expected number on right hand side of operation, got ' + typeof y + '.')
   }
   if (typeof x == 'bigint' && typeof y == 'bigint') {
     return x * y
@@ -67,14 +59,10 @@ export function __py_multiplier(x: Value, y: Value) {
 
 export function __py_divider(x: Value, y: Value) {
   if (!(typeof x == 'bigint') && !(typeof x == 'number')) {
-    throw new Error(
-      'Expected number on left hand side of operation, got ' + typeof x + '.'
-    )
+    throw new Error('Expected number on left hand side of operation, got ' + typeof x + '.')
   }
   if (!(typeof y == 'bigint') && !(typeof y == 'number')) {
-    throw new Error(
-      'Expected number on right hand side of operation, got ' + typeof y + '.'
-    )
+    throw new Error('Expected number on right hand side of operation, got ' + typeof y + '.')
   }
   if (typeof x == 'bigint' && typeof y == 'bigint') {
     return Number(x) / Number(y)
@@ -93,14 +81,10 @@ export function __py_divider(x: Value, y: Value) {
 
 export function __py_modder(x: Value, y: Value) {
   if (!(typeof x == 'bigint') && !(typeof x == 'number')) {
-    throw new Error(
-      'Expected number on left hand side of operation, got ' + typeof x + '.'
-    )
+    throw new Error('Expected number on left hand side of operation, got ' + typeof x + '.')
   }
   if (!(typeof y == 'bigint') && !(typeof y == 'number')) {
-    throw new Error(
-      'Expected number on right hand side of operation, got ' + typeof y + '.'
-    )
+    throw new Error('Expected number on right hand side of operation, got ' + typeof y + '.')
   }
   if (typeof x == 'bigint' && typeof y == 'bigint') {
     return x % y
@@ -119,14 +103,10 @@ export function __py_modder(x: Value, y: Value) {
 
 export function __py_powerer(x: Value, y: Value) {
   if (!(typeof x == 'bigint') && !(typeof x == 'number')) {
-    throw new Error(
-      'Expected number on left hand side of operation, got ' + typeof x + '.'
-    )
+    throw new Error('Expected number on left hand side of operation, got ' + typeof x + '.')
   }
   if (!(typeof y == 'bigint') && !(typeof y == 'number')) {
-    throw new Error(
-      'Expected number on right hand side of operation, got ' + typeof y + '.'
-    )
+    throw new Error('Expected number on right hand side of operation, got ' + typeof y + '.')
   }
   if (typeof x == 'bigint' && typeof y == 'bigint') {
     let res = BigInt(1)
