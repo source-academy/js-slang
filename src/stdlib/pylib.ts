@@ -1,124 +1,124 @@
 import { Value } from '../types'
 
 export function __py_adder(x: Value, y: Value) {
-  if (typeof x == typeof y) {
+  if (typeof x === typeof y) {
     return x + y
   }
-  if (typeof x == 'bigint') {
+  if (typeof x === 'bigint') {
     return Number(x) + y
   }
-  if (typeof y == 'bigint') {
+  if (typeof y === 'bigint') {
     return x + Number(y)
   }
   return x + y
 }
 
 export function __py_minuser(x: Value, y: Value) {
-  if (!(typeof x == 'bigint') && !(typeof x == 'number')) {
+  if (!(typeof x === 'bigint') && !(typeof x === 'number')) {
     throw new Error('Expected number on left hand side of operation, got ' + typeof x + '.')
   }
-  if (!(typeof y == 'bigint') && !(typeof y == 'number')) {
+  if (!(typeof y === 'bigint') && !(typeof y === 'number')) {
     throw new Error('Expected number on right hand side of operation, got ' + typeof y + '.')
   }
-  if (typeof x == 'bigint' && typeof y == 'bigint') {
+  if (typeof x === 'bigint' && typeof y === 'bigint') {
     return x - y
   }
-  if (typeof x == 'number' && typeof y == 'number') {
+  if (typeof x === 'number' && typeof y === 'number') {
     return x - y
   }
-  if (typeof x == 'bigint' && typeof y == 'number') {
+  if (typeof x === 'bigint' && typeof y === 'number') {
     return Number(x) - y
   }
-  if (typeof x == 'number' && typeof y == 'bigint') {
+  if (typeof x === 'number' && typeof y === 'bigint') {
     return x - Number(y)
   }
   return NaN
 }
 
 export function __py_multiplier(x: Value, y: Value) {
-  if (!(typeof x == 'bigint') && !(typeof x == 'number')) {
+  if (!(typeof x === 'bigint') && !(typeof x === 'number')) {
     throw new Error('Expected number on left hand side of operation, got ' + typeof x + '.')
   }
-  if (!(typeof y == 'bigint') && !(typeof y == 'number')) {
+  if (!(typeof y === 'bigint') && !(typeof y === 'number')) {
     throw new Error('Expected number on right hand side of operation, got ' + typeof y + '.')
   }
-  if (typeof x == 'bigint' && typeof y == 'bigint') {
+  if (typeof x === 'bigint' && typeof y === 'bigint') {
     return x * y
   }
-  if (typeof x == 'number' && typeof y == 'number') {
+  if (typeof x === 'number' && typeof y === 'number') {
     return x * y
   }
-  if (typeof x == 'bigint' && typeof y == 'number') {
+  if (typeof x === 'bigint' && typeof y === 'number') {
     return Number(x) * y
   }
-  if (typeof x == 'number' && typeof y == 'bigint') {
+  if (typeof x === 'number' && typeof y === 'bigint') {
     return x * Number(y)
   }
   return NaN
 }
 
 export function __py_divider(x: Value, y: Value) {
-  if (!(typeof x == 'bigint') && !(typeof x == 'number')) {
+  if (!(typeof x === 'bigint') && !(typeof x === 'number')) {
     throw new Error('Expected number on left hand side of operation, got ' + typeof x + '.')
   }
-  if (!(typeof y == 'bigint') && !(typeof y == 'number')) {
+  if (!(typeof y === 'bigint') && !(typeof y === 'number')) {
     throw new Error('Expected number on right hand side of operation, got ' + typeof y + '.')
   }
-  if (typeof x == 'bigint' && typeof y == 'bigint') {
+  if (typeof x === 'bigint' && typeof y === 'bigint') {
     return Number(x) / Number(y)
   }
-  if (typeof x == 'number' && typeof y == 'number') {
+  if (typeof x === 'number' && typeof y === 'number') {
     return x / y
   }
-  if (typeof x == 'bigint' && typeof y == 'number') {
+  if (typeof x === 'bigint' && typeof y === 'number') {
     return Number(x) / y
   }
-  if (typeof x == 'number' && typeof y == 'bigint') {
+  if (typeof x === 'number' && typeof y === 'bigint') {
     return x / Number(y)
   }
   return NaN
 }
 
 export function __py_modder(x: Value, y: Value) {
-  if (!(typeof x == 'bigint') && !(typeof x == 'number')) {
+  if (!(typeof x === 'bigint') && !(typeof x === 'number')) {
     throw new Error('Expected number on left hand side of operation, got ' + typeof x + '.')
   }
-  if (!(typeof y == 'bigint') && !(typeof y == 'number')) {
+  if (!(typeof y === 'bigint') && !(typeof y === 'number')) {
     throw new Error('Expected number on right hand side of operation, got ' + typeof y + '.')
   }
-  if (typeof x == 'bigint' && typeof y == 'bigint') {
+  if (typeof x === 'bigint' && typeof y === 'bigint') {
     return x % y
   }
-  if (typeof x == 'number' && typeof y == 'number') {
+  if (typeof x === 'number' && typeof y === 'number') {
     return x % y
   }
-  if (typeof x == 'bigint' && typeof y == 'number') {
+  if (typeof x === 'bigint' && typeof y === 'number') {
     return Number(x) % y
   }
-  if (typeof x == 'number' && typeof y == 'bigint') {
+  if (typeof x === 'number' && typeof y === 'bigint') {
     return x % Number(y)
   }
   return NaN
 }
 
 export function __py_powerer(x: Value, y: Value) {
-  if (!(typeof x == 'bigint') && !(typeof x == 'number')) {
+  if (!(typeof x === 'bigint') && !(typeof x === 'number')) {
     throw new Error('Expected number on left hand side of operation, got ' + typeof x + '.')
   }
-  if (!(typeof y == 'bigint') && !(typeof y == 'number')) {
+  if (!(typeof y === 'bigint') && !(typeof y === 'number')) {
     throw new Error('Expected number on right hand side of operation, got ' + typeof y + '.')
   }
-  if (typeof x == 'bigint' && typeof y == 'bigint') {
+  if (typeof x === 'bigint' && typeof y === 'bigint') {
     let res = BigInt(1)
     for (let i = 0; i < y; i++) {
       res = res * x
     }
     return res
   }
-  if (typeof x == 'bigint' && typeof y == 'number') {
+  if (typeof x === 'bigint' && typeof y === 'number') {
     return Math.pow(Number(x), y)
   }
-  if (typeof x == 'number' && typeof y == 'bigint') {
+  if (typeof x === 'number' && typeof y === 'bigint') {
     return Math.pow(x, Number(y))
   }
   return Math.pow(Number(x), Number(y))
@@ -129,7 +129,7 @@ export function __py_floorer(x: Value, y: Value) {
 }
 
 export function __py_unary_plus(x: Value) {
-  if (typeof x == 'bigint') {
+  if (typeof x === 'bigint') {
     return +Number(x)
   }
   return +x
