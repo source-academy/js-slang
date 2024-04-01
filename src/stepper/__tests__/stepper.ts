@@ -67,8 +67,8 @@ describe('Test codify works on circular abstract syntax graphs', () => {
   })
 })
 
-// source 0
 const testEvalSteps = (programStr: string, context?: Context) => {
+  // Enable Source 2 to test builtin functions
   context = context ?? mockContext(Chapter.SOURCE_2)
   const program = parse(programStr, context)!
   const options = {
