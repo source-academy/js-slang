@@ -18,15 +18,13 @@ test('Function params and body identifiers are in different environment', () => 
   const context = mockContext(Chapter.SOURCE_4)
   context.prelude = null // hide the unneeded prelude
   const parsed = parse(code, context)
-  const it = evaluate(parsed as any as Program, context, false, false)
+  const it = evaluate(parsed as any as Program, context, false)
   const stepsToComment = 13 // manually counted magic number
   for (let i = 0; i < stepsToComment; i += 1) {
     it.next()
   }
   context.runtime.environments.forEach(environment => {
-    expect(environment).toMatchSnapshot({
-      id: expect.any(String)
-    })
+    expect(environment).toMatchSnapshot()
   })
   expect(context.runtime.environments[0].head).toMatchObject({ y: 1 })
 })

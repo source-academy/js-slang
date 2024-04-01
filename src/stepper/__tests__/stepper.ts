@@ -1,4 +1,4 @@
-import type * as es from 'estree'
+import type es from 'estree'
 
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
@@ -7,6 +7,11 @@ import { codify, getEvaluationSteps } from '../stepper'
 
 function getLastStepAsString(steps: [substituterNodes, string[][], string][]): string {
   return codify(steps[steps.length - 1][0]).trim()
+}
+
+function getExplanation(steps: [substituterNodes, string[][], string][]): string {
+  // Explanation of the step is kept in index 2 of steps
+  return steps.map(x => x[2]).join('\n')
 }
 
 describe('Test codify works on non-circular abstract syntax graphs', () => {
@@ -62,20 +67,181 @@ describe('Test codify works on circular abstract syntax graphs', () => {
   })
 })
 
-// source 0
 const testEvalSteps = (programStr: string, context?: Context) => {
-  context = context ?? mockContext()
+  // Enable Source 2 to test builtin functions
+  context = context ?? mockContext(Chapter.SOURCE_2)
   const program = parse(programStr, context)!
   const options = {
     stepLimit: 1000,
     importOptions: {
       loadTabs: false,
       wrapSourceModules: false,
-      checkImports: false
+      resolverOptions: { extensions: null },
+      shouldAddFileName: false,
+      allowUndefinedImports: false,
+      throwOnDuplicateNames: true
     }
   }
   return getEvaluationSteps(program, context, options)
 }
+
+describe('Test calling functions', () => {
+  test('Function that exists', async () => {
+    const code = `
+    function foo(x) { return x;}
+    foo(1 + 2);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Math function', async () => {
+    const code = `
+    math_abs(-1);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Imported module function', async () => {
+    const code = `
+    pair(1, 1);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Built-in function', async () => {
+    const code = `
+    is_boolean(false);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Argument reduction steps', async () => {
+    const code = `
+    (1 * 3)(2 * 3 + 10);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Literal function should error', async () => {
+    const code = `
+    1(2);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect number of argument (less)', async () => {
+    const code = `
+    function foo(a) {
+      return a;
+    }
+    foo();
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect number of argument (more)', async () => {
+    const code = `
+    function foo(a) {
+      return a;
+    }
+    foo(1, 2, 3);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
+
+describe('Test runtime errors', () => {
+  test('Variable used before assigning in program', async () => {
+    const code = `
+    unassigned_variable;
+    const unassigned_variable = "assigned";
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Variable used before assigning in functions', async () => {
+    const code = `
+    function foo() {
+      unassigned_variable;
+      const unassigned_variable = "assigned";
+    }
+    foo();
+      `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incompatible types operation', async () => {
+    const code = `
+    "1" + 2 * 3;
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
+
+describe('Test catching errors from built in function', () => {
+  test('Incorrect type of argument for math function', async () => {
+    const code = `
+    math_sin(true);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect type of arguments for module function', async () => {
+    const code = `
+    arity("not a function");
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect number of arguments', async () => {
+    const code = `pair(2);`
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
+
+describe('Test catching of undeclared variable error', () => {
+  test('Variable not declared in program', async () => {
+    const code = `
+    undeclared_variable;
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Variable not declared in block statement', async () => {
+    const code = `
+    {
+      undeclared_variable;
+    } 
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Variable not declared in function declaration', async () => {
+    const code = `
+    function foo() {
+      undeclared_variable;
+    }
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
 
 describe('Test reducing of empty block into epsilon', () => {
   test('Empty block in program', async () => {
@@ -220,7 +386,7 @@ describe('Test single line of code is evaluated', () => {
     `
     const steps = await testEvalSteps(code)
     expect(steps.length).toBe(4)
-    expect(getLastStepAsString(steps)).toEqual('')
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
   })
 
   test('Function Declaration', async () => {
@@ -231,7 +397,7 @@ describe('Test single line of code is evaluated', () => {
     `
     const steps = await testEvalSteps(code)
     expect(steps.length).toBe(4)
-    expect(getLastStepAsString(steps)).toEqual('')
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
   })
 
   test('Value', async () => {
@@ -1598,7 +1764,7 @@ describe(`Evaluation of empty code and imports`, () => {
     const code = ``
     const steps = await testEvalSteps(code, mockContext())
     expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
-    expect(getLastStepAsString(steps)).toEqual('')
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
   })
 })
 

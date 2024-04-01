@@ -1,12 +1,14 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { cloneDeep, uniqueId } from 'lodash'
+import { cloneDeep } from 'lodash'
 
 import { CUT, UNKNOWN_LOCATION } from '../constants'
+import Heap from '../cse-machine/heap'
+import { uniqueId } from '../cse-machine/utils'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { Context, Environment, Frame, Node, Value } from '../types'
-import { conditionalExpression, literal, primitive } from '../utils/astCreator'
+import { Context, Environment, Node, Value } from '../types'
+import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -20,6 +22,7 @@ class ReturnValue {
 }
 
 const createEnvironment = (
+  context: Context,
   closure: Closure,
   args: Value[],
   callExpression?: es.CallExpression
@@ -28,7 +31,8 @@ const createEnvironment = (
     name: closure.functionName, // TODO: Change this
     tail: closure.environment,
     head: {},
-    id: uniqueId()
+    heap: new Heap(),
+    id: uniqueId(context)
   }
   if (callExpression) {
     environment.callExpression = {
@@ -43,17 +47,14 @@ const createEnvironment = (
   return environment
 }
 
-const createBlockEnvironment = (
-  context: Context,
-  name = 'blockEnvironment',
-  head: Frame = {}
-): Environment => {
+const createBlockEnvironment = (context: Context, name = 'blockEnvironment'): Environment => {
   return {
     name,
     tail: currentEnvironment(context),
-    head,
+    head: {},
+    heap: new Heap(),
     thisContext: context,
-    id: uniqueId()
+    id: uniqueId(context)
   }
 }
 
@@ -643,7 +644,7 @@ export function* apply(
 ) {
   if (fun instanceof Closure) {
     checkNumberOfArguments(context, fun, args, node!)
-    const environment = createEnvironment(fun, args, node)
+    const environment = createEnvironment(context, fun, args, node)
     environment.thisContext = thisContext
     pushEnvironment(context, environment)
     const applicationValueGenerator = evaluateBlockSatement(

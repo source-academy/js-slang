@@ -1,27 +1,27 @@
 /* tslint:disable:max-classes-per-file */
-import * as es from 'estree'
-import { isEmpty, uniqueId } from 'lodash'
+import type es from 'estree'
+import { isEmpty } from 'lodash'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import { LazyBuiltIn } from '../createContext'
+import Heap from '../cse-machine/heap'
+import { uniqueId } from '../cse-machine/utils'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { UndefinedImportError } from '../modules/errors'
-import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
+import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import {
-  Context,
-  ContiguousArrayElements,
-  Environment,
-  Frame,
-  Node,
-  Value,
+  type Context,
+  type ContiguousArrayElements,
+  type Environment,
+  type Node,
+  type Value,
   Variant
 } from '../types'
-import assert from '../utils/assert'
-import * as create from '../utils/astCreator'
-import { conditionalExpression, literal, primitive } from '../utils/astCreator'
+import * as create from '../utils/ast/astCreator'
+import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
+import { getModuleDeclarationSource } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import Closure from './closure'
@@ -69,6 +69,7 @@ export function* actualValue(exp: Node, context: Context): Value {
 }
 
 const createEnvironment = (
+  context: Context,
   closure: Closure,
   args: Value[],
   callExpression?: es.CallExpression
@@ -77,7 +78,8 @@ const createEnvironment = (
     name: closure.functionName, // TODO: Change this
     tail: closure.environment,
     head: {},
-    id: uniqueId()
+    heap: new Heap(),
+    id: uniqueId(context)
   }
   if (callExpression) {
     environment.callExpression = {
@@ -97,14 +99,14 @@ const createEnvironment = (
 
 export const createBlockEnvironment = (
   context: Context,
-  name = 'blockEnvironment',
-  head: Frame = {}
+  name = 'blockEnvironment'
 ): Environment => {
   return {
     name,
     tail: currentEnvironment(context),
-    head,
-    id: uniqueId()
+    head: {},
+    heap: new Heap(),
+    id: uniqueId(context)
   }
 }
 
@@ -718,12 +720,7 @@ function getNonEmptyEnv(environment: Environment): Environment {
   }
 }
 
-export function* evaluateProgram(
-  program: es.Program,
-  context: Context,
-  checkImports: boolean,
-  loadTabs: boolean
-) {
+export function* evaluateProgram(program: es.Program, context: Context, loadTabs: boolean) {
   yield* visit(context, program)
 
   context.numberOfOuterEnvironments += 1
@@ -742,11 +739,7 @@ export function* evaluateProgram(
 
       yield* visit(context, node)
 
-      const moduleName = node.source.value
-      assert(
-        typeof moduleName === 'string',
-        `ImportDeclarations should have string sources, got ${moduleName}`
-      )
+      const moduleName = getModuleDeclarationSource(node)
 
       if (!(moduleName in moduleFunctions)) {
         initModuleContext(moduleName, context, loadTabs)
@@ -756,17 +749,25 @@ export function* evaluateProgram(
       const functions = moduleFunctions[moduleName]
 
       for (const spec of node.specifiers) {
-        assert(
-          spec.type === 'ImportSpecifier',
-          `Only Import Specifiers are supported, got ${spec.type}`
-        )
+        declareIdentifier(context, spec.local.name, node)
+        let obj: any
 
-        if (checkImports && !(spec.imported.name in functions)) {
-          throw new UndefinedImportError(spec.imported.name, moduleName, spec)
+        switch (spec.type) {
+          case 'ImportSpecifier': {
+            obj = functions[spec.imported.name]
+            break
+          }
+          case 'ImportDefaultSpecifier': {
+            obj = functions.default
+            break
+          }
+          case 'ImportNamespaceSpecifier': {
+            obj = functions
+            break
+          }
         }
 
-        declareIdentifier(context, spec.local.name, node)
-        defineVariable(context, spec.local.name, functions[spec.imported.name], true)
+        defineVariable(context, spec.local.name, obj, true)
       }
       yield* leave(context)
     }
@@ -780,7 +781,7 @@ export function* evaluateProgram(
   yield* leave(context) // Done visiting program
 
   if (result instanceof Closure) {
-    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(), {
+    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(context), {
       value: result,
       writable: false,
       enumerable: true
@@ -794,7 +795,7 @@ function* evaluate(node: Node, context: Context) {
   const result = yield* evaluators[node.type](node, context)
   yield* leave(context)
   if (result instanceof Closure) {
-    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(), {
+    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(context), {
       value: result,
       writable: false,
       enumerable: true
@@ -816,7 +817,7 @@ export function* apply(
   while (!(result instanceof ReturnValue)) {
     if (fun instanceof Closure) {
       checkNumberOfArguments(context, fun, args, node!)
-      const environment = createEnvironment(fun, args, node)
+      const environment = createEnvironment(context, fun, args, node)
       if (result instanceof TailCallReturnValue) {
         replaceEnvironment(context, environment)
       } else {

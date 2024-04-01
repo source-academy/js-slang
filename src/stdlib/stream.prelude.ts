@@ -3,6 +3,26 @@ export const streamPrelude = `
 // Supporting streams in the Scheme style, following
 // "stream discipline"
 
+// stream_tail returns the second component of the given pair
+// throws an error if the argument is not a pair
+
+function stream_tail(xs) {
+  if (is_pair(xs)) {
+    const the_tail = tail(xs);
+    if (is_function(the_tail)) {
+      return the_tail();
+    } else {
+      error(the_tail,
+        'stream_tail(xs) expects a function as ' +
+        'the tail of the argument pair xs, ' +
+        'but encountered ');
+    }
+  } else {
+    error(xs, 'stream_tail(xs) expects a pair as ' +
+      'argument xs, but encountered ');
+  }
+}
+
 // is_stream recurses down the stream and checks that it ends with the
 // empty list null
 

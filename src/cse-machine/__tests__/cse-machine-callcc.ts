@@ -1,8 +1,7 @@
 import { Chapter, Variant } from '../../types'
 import { expectParsedError, expectResult } from '../../utils/testing'
 
-// as continuations mostly target the scheme implementation, we will test continuations
-// using a scheme context.
+// Continuation tests for Scheme
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }
 
 test('basic call/cc works', () => {
