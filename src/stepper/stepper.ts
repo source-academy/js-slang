@@ -1684,6 +1684,18 @@ function reduceMain(
       // source 0: discipline: any expression can be transformed into either literal, ident(builtin) or funexp
       // if functor can reduce, reduce functor
 
+      //Reduce callee until it is irreducible
+      if (!isIrreducible(callee, context)) {
+        paths[0].push('callee')
+        const [reducedCallee, cont, path, str] = reduce(callee, context, paths)
+        return [
+          ast.callExpression(reducedCallee as es.Expression, args as es.Expression[], node.loc),
+          cont,
+          path,
+          str
+        ]
+      }
+
       // Reduce all arguments until it is irreducible
       for (let i = 0; i < args.length; i++) {
         const currentArg = args[i]
@@ -1701,20 +1713,8 @@ function reduceMain(
           currentArg.type === 'Identifier' &&
           !(currentArg.name in context.runtime.environments[0].head)
         ) {
-          throw new errors.UndefinedVariable(currentArg.name, currentArg)
+          throw new errors.UnassignedVariable(currentArg.name, currentArg)
         }
-      }
-
-      //Reduce callee until it is irreducible
-      if (!isIrreducible(callee, context)) {
-        paths[0].push('callee')
-        const [reducedCallee, cont, path, str] = reduce(callee, context, paths)
-        return [
-          ast.callExpression(reducedCallee as es.Expression, args as es.Expression[], node.loc),
-          cont,
-          path,
-          str
-        ]
       }
 
       // Error checking for illegal function calls
@@ -1724,7 +1724,7 @@ function reduceMain(
         callee.type === 'Identifier' &&
         !(callee.name in context.runtime.environments[0].head)
       ) {
-        throw new errors.UndefinedVariable(callee.name, callee)
+        throw new errors.UnassignedVariable(callee.name, callee)
       } else if (
         (callee.type === 'FunctionExpression' || callee.type === 'ArrowFunctionExpression') &&
         args.length !== callee.params.length
