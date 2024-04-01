@@ -4720,6 +4720,27 @@ exports[`Test reducing of empty block into epsilon Empty blocks in block 1`] = `
 "
 `;
 
+exports[`Test runtime errors Incompatible types operation 1`] = `
+"Start of evaluation
+Binary expression 2 * 3 evaluated
+Binary expression 2 * 3 evaluated
+Line 2: Expected string on right hand side of operation, got number."
+`;
+
+exports[`Test runtime errors Variable used before assigning in functions 1`] = `
+"Start of evaluation
+Function foo declared
+Function foo declared
+Function foo runs
+Function foo runs
+Line 3: Name unassigned_variable declared later in current scope but not yet assigned"
+`;
+
+exports[`Test runtime errors Variable used before assigning in program 1`] = `
+"Start of evaluation
+Line 2: Name unassigned_variable declared later in current scope but not yet assigned"
+`;
+
 exports[`const declarations in blocks subst into call expressions 1`] = `
 "const z = 1;
 function f(g) {

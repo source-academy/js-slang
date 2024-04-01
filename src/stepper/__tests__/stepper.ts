@@ -158,6 +158,37 @@ describe('Test calling functions', () => {
   })
 })
 
+describe('Test runtime errors', () => {
+  test('Variable used before assigning in program', async () => {
+    const code = `
+    unassigned_variable;
+    const unassigned_variable = "assigned";
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Variable used before assigning in functions', async () => {
+    const code = `
+    function foo() {
+      unassigned_variable;
+      const unassigned_variable = "assigned";
+    }
+    foo();
+      `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incompatible types operation', async () => {
+    const code = `
+    "1" + 2 * 3;
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
+
 describe('Test catching errors from built in function', () => {
   test('Incorrect type of argument for math function', async () => {
     const code = `
