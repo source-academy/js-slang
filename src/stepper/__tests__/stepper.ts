@@ -85,33 +85,57 @@ const testEvalSteps = (programStr: string, context?: Context) => {
   return getEvaluationSteps(program, context, options)
 }
 
-describe('Test catching runtime errors', () => {
-  test('Variable not assigned', async () => {
+describe('Test calling functions', () => {
+  test('Function that exists', async () => {
     const code = `
-    unassigned_variable;
-    const unassigned_variable = "value";
+    function foo(x) { return x;}
+    foo(1 + 2);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Math function', async () => {
+    const code = `
+    math_abs(-1);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Imported module function', async () => {
+    const code = `
+    pair(1, 1);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Built-in function', async () => {
+    const code = `
+    is_boolean(false);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Argument reduction steps', async () => {
+    const code = `
+    (1 * 3)(2 * 3 + 10);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Literal function should error', async () => {
+    const code = `
+    1(2);
     `
     const steps = await testEvalSteps(code)
     expect(getExplanation(steps)).toMatchSnapshot()
   })
 
-  test('Type error', async () => {
-    const code = `
-    1 + "string";
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-
-  test('Calling non function value', async () => {
-    const code = `
-    (2 + 3)(1 - 4);
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-
-  test('Incorrect number of argument', async () => {
+  test('Incorrect number of argument (less)', async () => {
     const code = `
     function foo(a) {
       return a;
@@ -122,12 +146,43 @@ describe('Test catching runtime errors', () => {
     expect(getExplanation(steps)).toMatchSnapshot()
   })
 
-  test('Incorrect number of argument', async () => {
+  test('Incorrect number of argument (more)', async () => {
     const code = `
     function foo(a) {
       return a;
     }
     foo(1, 2, 3);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
+
+describe('Test runtime errors', () => {
+  test('Variable used before assigning in program', async () => {
+    const code = `
+    unassigned_variable;
+    const unassigned_variable = "assigned";
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Variable used before assigning in functions', async () => {
+    const code = `
+    function foo() {
+      unassigned_variable;
+      const unassigned_variable = "assigned";
+    }
+    foo();
+      `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incompatible types operation', async () => {
+    const code = `
+    "1" + 2 * 3;
     `
     const steps = await testEvalSteps(code)
     expect(getExplanation(steps)).toMatchSnapshot()
