@@ -1709,22 +1709,12 @@ function reduceMain(
             path,
             str
           ]
-        } else if (
-          currentArg.type === 'Identifier' &&
-          !(currentArg.name in context.runtime.environments[0].head)
-        ) {
-          throw new errors.UnassignedVariable(currentArg.name, currentArg)
         }
       }
 
       // Error checking for illegal function calls
       if (callee.type === 'Literal') {
         throw new errors.CallingNonFunctionValue(callee.value, node)
-      } else if (
-        callee.type === 'Identifier' &&
-        !(callee.name in context.runtime.environments[0].head)
-      ) {
-        throw new errors.UnassignedVariable(callee.name, callee)
       } else if (
         (callee.type === 'FunctionExpression' || callee.type === 'ArrowFunctionExpression') &&
         args.length !== callee.params.length
