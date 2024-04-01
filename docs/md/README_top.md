@@ -45,6 +45,8 @@ the members of our learning community.
 
 #### <a href="source_4_typed/">Source §4 Typed</a>
 
+#### <a href="source_4_explicit-control/">Source §4 Explicit-Control</a>
+
 ### Specifications
 
 The following technical documents specify the languages and components of
@@ -77,6 +79,8 @@ the Source Academy.
 #### <a href="source_4_gpu.pdf">Specification of Source §4 GPU</a>
 
 #### <a href="source_4_typed.pdf">Specification of Source §4 Typed</a>
+
+#### <a href="source_4_explicitcontrol.pdf">Specification of Source §4 Explicit-Control</a>
 
 #### <a href="source_1_infinite_loop_detection.pdf">Specification of Source §1 Infinite Loop Detection</a>
 

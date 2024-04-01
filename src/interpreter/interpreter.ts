@@ -1,9 +1,11 @@
 /* tslint:disable:max-classes-per-file */
 import type es from 'estree'
-import { isEmpty, uniqueId } from 'lodash'
+import { isEmpty } from 'lodash'
 
 import { UNKNOWN_LOCATION } from '../constants'
 import { LazyBuiltIn } from '../createContext'
+import Heap from '../cse-machine/heap'
+import { uniqueId } from '../cse-machine/utils'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
@@ -13,7 +15,6 @@ import {
   type Context,
   type ContiguousArrayElements,
   type Environment,
-  type Frame,
   type Node,
   type Value,
   Variant
@@ -68,6 +69,7 @@ export function* actualValue(exp: Node, context: Context): Value {
 }
 
 const createEnvironment = (
+  context: Context,
   closure: Closure,
   args: Value[],
   callExpression?: es.CallExpression
@@ -76,7 +78,8 @@ const createEnvironment = (
     name: closure.functionName, // TODO: Change this
     tail: closure.environment,
     head: {},
-    id: uniqueId()
+    heap: new Heap(),
+    id: uniqueId(context)
   }
   if (callExpression) {
     environment.callExpression = {
@@ -96,14 +99,14 @@ const createEnvironment = (
 
 export const createBlockEnvironment = (
   context: Context,
-  name = 'blockEnvironment',
-  head: Frame = {}
+  name = 'blockEnvironment'
 ): Environment => {
   return {
     name,
     tail: currentEnvironment(context),
-    head,
-    id: uniqueId()
+    head: {},
+    heap: new Heap(),
+    id: uniqueId(context)
   }
 }
 
@@ -778,7 +781,7 @@ export function* evaluateProgram(program: es.Program, context: Context, loadTabs
   yield* leave(context) // Done visiting program
 
   if (result instanceof Closure) {
-    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(), {
+    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(context), {
       value: result,
       writable: false,
       enumerable: true
@@ -792,7 +795,7 @@ function* evaluate(node: Node, context: Context) {
   const result = yield* evaluators[node.type](node, context)
   yield* leave(context)
   if (result instanceof Closure) {
-    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(), {
+    Object.defineProperty(getNonEmptyEnv(currentEnvironment(context)).head, uniqueId(context), {
       value: result,
       writable: false,
       enumerable: true
@@ -814,7 +817,7 @@ export function* apply(
   while (!(result instanceof ReturnValue)) {
     if (fun instanceof Closure) {
       checkNumberOfArguments(context, fun, args, node!)
-      const environment = createEnvironment(fun, args, node)
+      const environment = createEnvironment(context, fun, args, node)
       if (result instanceof TailCallReturnValue) {
         replaceEnvironment(context, environment)
       } else {
