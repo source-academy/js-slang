@@ -1508,7 +1508,7 @@ function reduceMain(
       if (
         !(isAllowedLiterals(node) || isBuiltinFunction(node) || isImportedFunction(node, context))
       ) {
-        throw new errors.UndefinedVariable(node.name, node)
+        throw new errors.UnassignedVariable(node.name, node)
       } else {
         return [node, context, paths, 'identifier']
       }
@@ -1719,7 +1719,7 @@ function reduceMain(
 
       // Error checking for illegal function calls
       if (callee.type === 'Literal') {
-        throw new errors.CallingNonFunctionValue(callee, node)
+        throw new errors.CallingNonFunctionValue(callee.value, node)
       } else if (
         callee.type === 'Identifier' &&
         !(callee.name in context.runtime.environments[0].head)

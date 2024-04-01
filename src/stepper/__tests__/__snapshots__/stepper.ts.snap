@@ -4174,26 +4174,32 @@ foo(3);
 
 exports[`Test calling functions Imported module function 1`] = `
 "pair(1, 1);
+
+pair(1, 1);
+
+[1, 1];
+
+[1, 1];
 "
 `;
 
-exports[`Test calling functions Incorrect number of arguments (less) 1`] = `
+exports[`Test calling functions Incorrect number of argument (less) 1`] = `
 "Start of evaluation
 Function foo declared, parameter(s) a required
 Function foo declared, parameter(s) a required
-Line 3: Expected 0 arguments, but got 1."
+Line 5: Expected 0 arguments, but got 1."
 `;
 
-exports[`Test calling functions Incorrect number of arguments (more) 1`] = `
+exports[`Test calling functions Incorrect number of argument (more) 1`] = `
 "Start of evaluation
 Function foo declared, parameter(s) a required
 Function foo declared, parameter(s) a required
-Line 3: Expected 3 arguments, but got 1."
+Line 5: Expected 3 arguments, but got 1."
 `;
 
 exports[`Test calling functions Literal function should error 1`] = `
 "Start of evaluation
-Line 2: Calling non-function value [object Object]."
+Line 2: Calling non-function value 1."
 `;
 
 exports[`Test calling functions Math function 1`] = `
@@ -4204,6 +4210,21 @@ math_abs(-1);
 1;
 
 1;
+"
+`;
+
+exports[`Test catching errors from built in function Incorrect number of arguments 1`] = `
+"Start of evaluation
+"
+`;
+
+exports[`Test catching errors from built in function Incorrect type of argument for math function 1`] = `
+"Start of evaluation
+"
+`;
+
+exports[`Test catching errors from built in function Incorrect type of arguments for module function 1`] = `
+"Start of evaluation
 "
 `;
 
