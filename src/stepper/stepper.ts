@@ -1705,7 +1705,7 @@ function reduceMain(
           (callee.type === 'FunctionExpression' || callee.type === 'ArrowFunctionExpression') &&
           args.length !== callee.params.length
         ) {
-          throw new errors.InvalidNumberOfArguments(node, args.length, callee.params.length)
+          throw new errors.InvalidNumberOfArguments(node, callee.params.length, args.length)
         } else {
           for (let i = 0; i < args.length; i++) {
             const currentArg = args[i]
