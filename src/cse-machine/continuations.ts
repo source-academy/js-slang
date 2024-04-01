@@ -21,7 +21,7 @@ export function isCallWithCurrentContinuation(f: Function): boolean {
 }
 
 /**
- * An object representing a continuation of the ECE machine.
+ * An object representing a continuation of the CSE machine.
  * When instantiated, it copies the control stack, and
  * current environment at the point of capture.
  *

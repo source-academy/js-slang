@@ -7,24 +7,21 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { reverse, uniqueId } from 'lodash'
+import { isArray, reverse } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { UndefinedImportError } from '../modules/errors'
-import { initModuleContext, loadModuleBundle } from '../modules/moduleLoader'
-import { ImportTransformOptions } from '../modules/moduleTypes'
+import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
-import { Context, ContiguousArrayElements, Result, StatementSequence, Value } from '../types'
-import assert from '../utils/assert'
+import { Context, ContiguousArrayElements, Result, type StatementSequence, Value } from '../types'
+import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations } from '../utils/ast/helpers'
-import * as ast from '../utils/astCreator'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
 import * as seq from '../utils/statementSeqTransform'
 import {
   Continuation,
@@ -65,14 +62,15 @@ import {
   declareFunctionsAndVariables,
   declareIdentifier,
   defineVariable,
+  envChanging,
   getVariable,
+  handleArrayCreation,
   handleRuntimeError,
   handleSequence,
   hasBreakStatement,
   hasContinueStatement,
   hasDeclarations,
   hasImportDeclarations,
-  isAssmtInstr,
   isBlockStatement,
   isInstr,
   isNode,
@@ -210,31 +208,35 @@ export function resumeEvaluate(context: Context) {
   }
 }
 
-function evaluateImports(
-  program: es.Program,
-  context: Context,
-  { loadTabs, checkImports }: ImportTransformOptions
-) {
+function evaluateImports(program: es.Program, context: Context) {
   try {
     const [importNodeMap] = filterImportDeclarations(program)
 
     const environment = currentEnvironment(context)
     Object.entries(importNodeMap).forEach(([moduleName, nodes]) => {
-      initModuleContext(moduleName, context, loadTabs)
+      initModuleContext(moduleName, context, true)
       const functions = loadModuleBundle(moduleName, context, nodes[0])
       for (const node of nodes) {
         for (const spec of node.specifiers) {
-          assert(
-            spec.type === 'ImportSpecifier',
-            `Only ImportSpecifiers are supported, got: ${spec.type}`
-          )
+          declareIdentifier(context, spec.local.name, node, environment)
+          let obj: any
 
-          if (checkImports && !(spec.imported.name in functions)) {
-            throw new UndefinedImportError(spec.imported.name, moduleName, spec)
+          switch (spec.type) {
+            case 'ImportSpecifier': {
+              obj = functions[spec.imported.name]
+              break
+            }
+            case 'ImportDefaultSpecifier': {
+              obj = functions.default
+              break
+            }
+            case 'ImportNamespaceSpecifier': {
+              obj = functions
+              break
+            }
           }
 
-          declareIdentifier(context, spec.local.name, node, environment)
-          defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
+          defineVariable(context, spec.local.name, obj, true, node)
         }
       }
     })
@@ -339,6 +341,12 @@ export function* generateCSEMachineStateStream(
       }
     }
 
+    if (!isPrelude && envChanging(command)) {
+      // command is evaluated on the next step
+      // Hence, next step will change the environment
+      context.runtime.changepointSteps.push(steps + 1)
+    }
+
     control.pop()
     if (isNode(command)) {
       context.runtime.nodes.shift()
@@ -392,11 +400,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (hasDeclarations(command) || hasImportDeclarations(command)) {
       const environment = createProgramEnvironment(context, isPrelude)
       pushEnvironment(context, environment)
-      evaluateImports(command as unknown as es.Program, context, {
-        wrapSourceModules: true,
-        checkImports: true,
-        loadTabs: true
-      })
+      evaluateImports(command as unknown as es.Program, context)
       declareFunctionsAndVariables(context, command, environment)
     }
 
@@ -759,14 +763,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       true,
       isPrelude
     )
-    const next = control.peek()
-    if (!(next && isInstr(next) && isAssmtInstr(next))) {
-      Object.defineProperty(currentEnvironment(context).head, uniqueId(), {
-        value: closure,
-        writable: false,
-        enumerable: true
-      })
-    }
+    currentEnvironment(context).heap.add(closure)
     stash.push(closure)
   },
 
@@ -972,11 +969,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       // Display the pre-defined functions on the global environment if needed.
       if (func.preDefined) {
-        Object.defineProperty(context.runtime.environments[1].head, uniqueId(), {
-          value: func,
-          writable: false,
-          enumerable: true
-        })
+        context.runtime.environments[1].heap.add(func)
       }
 
       const next = control.peek()
@@ -993,7 +986,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Create environment for function parameters if the function isn't nullary.
       // Name the environment if the function call expression is not anonymous
       if (args.length > 0) {
-        const environment = createEnvironment(func, args, command.srcNode)
+        const environment = createEnvironment(context, func, args, command.srcNode)
         pushEnvironment(context, environment)
       } else {
         context.runtime.environments.unshift(func.environment)
@@ -1022,6 +1015,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Directly stash result of applying pre-built functions without the CSE machine.
     try {
       const result = func(...args)
+      // Attach array properties and add to heap for any arrays created from built-in functions,
+      // examples: pair, list
+      if (isArray(result)) {
+        handleArrayCreation(context, result)
+      }
       stash.push(result)
     } catch (error) {
       if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {
@@ -1079,9 +1077,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const arity = command.arity
     const array = []
     for (let i = 0; i < arity; ++i) {
-      array.push(stash.pop())
+      array.unshift(stash.pop())
     }
-    reverse(array)
+    handleArrayCreation(context, array)
     stash.push(array)
   },
 

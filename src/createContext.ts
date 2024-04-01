@@ -3,6 +3,7 @@
 import * as scheme_libs from './alt-langs/scheme/scm-slang/src/stdlib/source-scheme-library'
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
+import Heap from './cse-machine/heap'
 import * as gpu_lib from './gpu/lib'
 import { AsyncScheduler } from './schedulers'
 import { lazyListPrelude } from './stdlib/lazyList.prelude'
@@ -11,9 +12,9 @@ import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
 import { localImportPrelude } from './stdlib/localImport.prelude'
 import * as misc from './stdlib/misc'
-import * as pylib from './stdlib/pylib'
 import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as parser from './stdlib/parser'
+import * as pylib from './stdlib/pylib'
 import * as stream from './stdlib/stream'
 import { streamPrelude } from './stdlib/stream.prelude'
 import { createTypeEnvironment, tForAll, tVar } from './typeChecker/utils'
@@ -108,9 +109,11 @@ const createEmptyRuntime = () => ({
   nodes: [],
   control: null,
   stash: null,
+  objectCount: 0,
   envSteps: -1,
   envStepsTotal: 0,
-  breakpointSteps: []
+  breakpointSteps: [],
+  changepointSteps: []
 })
 
 const createEmptyDebugger = () => ({
@@ -128,6 +131,7 @@ export const createGlobalEnvironment = (): Environment => ({
   tail: null,
   name: 'global',
   head: {},
+  heap: new Heap(),
   id: '-1'
 })
 
@@ -354,7 +358,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     defineBuiltin(context, 'is_array(val)', misc.is_array)
 
     // Stream library
-    defineBuiltin(context, 'stream_tail(stream)', stream.stream_tail)
     defineBuiltin(context, 'stream(...values)', stream.stream, 0)
   }
 
@@ -378,6 +381,19 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         context,
         '__createKernelSource(shape, extern, localNames, output, fun, kernelId)',
         gpu_lib.__createKernelSource
+      )
+    }
+
+    // Continuations for explicit-control variant
+    if (context.chapter >= 4) {
+      defineBuiltin(
+        context,
+        'call_cc(f)',
+        context.variant === Variant.EXPLICIT_CONTROL
+          ? call_with_current_continuation
+          : (f: any) => {
+              throw new Error('call_cc is only available in Explicit-Control variant')
+            }
       )
     }
   }

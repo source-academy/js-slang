@@ -1,13 +1,11 @@
 import { generate } from 'astring'
-import type * as es from 'estree'
+import type es from 'estree'
 
 import { type IOptions } from '..'
 import * as errors from '../errors/errors'
-import { UndefinedImportError } from '../modules/errors'
-import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/moduleLoaderAsync'
-import type { ImportTransformOptions } from '../modules/moduleTypes'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/loader/moduleLoaderAsync'
 import { parse } from '../parser/parser'
-import { checkProgramForUndefinedVariables } from '../transpiler/transpiler'
 import {
   BlockExpression,
   Context,
@@ -16,9 +14,7 @@ import {
   FunctionDeclarationExpression,
   substituterNodes
 } from '../types'
-import assert from '../utils/assert'
-import { filterImportDeclarations } from '../utils/ast/helpers'
-import * as ast from '../utils/astCreator'
+import * as ast from '../utils/ast/astCreator'
 import {
   dummyBlockExpression,
   dummyBlockStatement,
@@ -26,9 +22,11 @@ import {
   dummyProgram,
   dummyStatement,
   dummyVariableDeclarator
-} from '../utils/dummyAstCreator'
+} from '../utils/ast/dummyAstCreator'
+import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
 import { nodeToValue, objectToString, valueToExpression } from './converter'
 import * as builtin from './lib'
 import {
@@ -40,7 +38,8 @@ import {
   isAllowedLiterals,
   isBuiltinFunction,
   isImportedFunction,
-  isNegNumber
+  isNegNumber,
+  prettyPrintError
 } from './util'
 
 const irreducibleTypes = new Set<string>([
@@ -1509,7 +1508,7 @@ function reduceMain(
       if (
         !(isAllowedLiterals(node) || isBuiltinFunction(node) || isImportedFunction(node, context))
       ) {
-        throw new errors.UndefinedVariable(node.name, node)
+        throw new errors.UnassignedVariable(node.name, node)
       } else {
         return [node, context, paths, 'identifier']
       }
@@ -1684,6 +1683,8 @@ function reduceMain(
       const [callee, args] = [node.callee, node.arguments]
       // source 0: discipline: any expression can be transformed into either literal, ident(builtin) or funexp
       // if functor can reduce, reduce functor
+
+      //Reduce callee until it is irreducible
       if (!isIrreducible(callee, context)) {
         paths[0].push('callee')
         const [reducedCallee, cont, path, str] = reduce(callee, context, paths)
@@ -1693,72 +1694,62 @@ function reduceMain(
           path,
           str
         ]
-      } else if (callee.type === 'Literal') {
-        throw new errors.CallingNonFunctionValue(callee, node)
+      }
+
+      // Reduce all arguments until it is irreducible
+      for (let i = 0; i < args.length; i++) {
+        const currentArg = args[i]
+        if (!isIrreducible(currentArg, context)) {
+          paths[0].push('arguments[' + i + ']')
+          const [reducedCurrentArg, cont, path, str] = reduce(currentArg, context, paths)
+          const reducedArgs = [...args.slice(0, i), reducedCurrentArg, ...args.slice(i + 1)]
+          return [
+            ast.callExpression(callee as es.Expression, reducedArgs as es.Expression[], node.loc),
+            cont,
+            path,
+            str
+          ]
+        }
+      }
+
+      // Error checking for illegal function calls
+      if (callee.type === 'Literal') {
+        throw new errors.CallingNonFunctionValue(callee.value, node)
       } else if (
-        callee.type === 'Identifier' &&
-        !(callee.name in context.runtime.environments[0].head)
+        (callee.type === 'FunctionExpression' || callee.type === 'ArrowFunctionExpression') &&
+        args.length !== callee.params.length
       ) {
-        throw new errors.UndefinedVariable(callee.name, callee)
+        throw new errors.InvalidNumberOfArguments(node, args.length, callee.params.length)
+      }
+
+      // if it reaches here, means all the arguments are legal.
+      if (['FunctionExpression', 'ArrowFunctionExpression'].includes(callee.type)) {
+        // User declared function
+        return [
+          apply(callee as FunctionDeclarationExpression, args as es.Literal[]),
+          context,
+          paths,
+          explain(node)
+        ]
+      } else if ((callee as es.Identifier).name.includes('math')) {
+        // Math function
+        return [
+          builtin.evaluateMath((callee as es.Identifier).name, ...args),
+          context,
+          paths,
+          explain(node)
+        ]
+      } else if (typeof builtin[(callee as es.Identifier).name] === 'function') {
+        // Source specific built-in function
+        return [builtin[(callee as es.Identifier).name](...args), context, paths, explain(node)]
       } else {
-        // callee is builtin or funexp
-        if (
-          (callee.type === 'FunctionExpression' || callee.type === 'ArrowFunctionExpression') &&
-          args.length !== callee.params.length
-        ) {
-          throw new errors.InvalidNumberOfArguments(node, args.length, callee.params.length)
-        } else {
-          for (let i = 0; i < args.length; i++) {
-            const currentArg = args[i]
-            if (!isIrreducible(currentArg, context)) {
-              paths[0].push('arguments[' + i + ']')
-              const [reducedCurrentArg, cont, path, str] = reduce(currentArg, context, paths)
-              const reducedArgs = [...args.slice(0, i), reducedCurrentArg, ...args.slice(i + 1)]
-              return [
-                ast.callExpression(
-                  callee as es.Expression,
-                  reducedArgs as es.Expression[],
-                  node.loc
-                ),
-                cont,
-                path,
-                str
-              ]
-            }
-            if (
-              currentArg.type === 'Identifier' &&
-              !(currentArg.name in context.runtime.environments[0].head)
-            ) {
-              throw new errors.UndefinedVariable(currentArg.name, currentArg)
-            }
-          }
-        }
-        // if it reaches here, means all the arguments are legal.
-        if (['FunctionExpression', 'ArrowFunctionExpression'].includes(callee.type)) {
-          return [
-            apply(callee as FunctionDeclarationExpression, args as es.Literal[]),
-            context,
-            paths,
-            explain(node)
-          ]
-        } else {
-          if ((callee as es.Identifier).name.includes('math')) {
-            return [
-              builtin.evaluateMath((callee as es.Identifier).name, ...args),
-              context,
-              paths,
-              explain(node)
-            ]
-          } else if (typeof builtin[(callee as es.Identifier).name] === 'function') {
-            return [builtin[(callee as es.Identifier).name](...args), context, paths, explain(node)]
-          }
-          return [
-            builtin.evaluateModuleFunction((callee as es.Identifier).name, context, ...args),
-            context,
-            paths,
-            explain(node)
-          ]
-        }
+        // Common built-in function
+        return [
+          builtin.evaluateModuleFunction((callee as es.Identifier).name, context, ...args),
+          context,
+          paths,
+          explain(node)
+        ]
       }
     },
 
@@ -1777,12 +1768,24 @@ function reduceMain(
           paths[0].push('body[0]')
           const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
           if (reduced.type === 'BlockStatement') {
-            const body = reduced.body as es.Statement[]
-            if (body.length > 1) {
-              path[1] = [...path[0].slice(0, path[0].length - 1)]
-            }
-            const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
-            return [ast.program(wholeBlock), cont, path, str]
+            /**
+             * Manually adding undefined within the block statement to make it value-producing.
+             * We do not unpack the block statement to prevent possible confusion
+             */
+            const und = ast.expressionStatement(ast.identifier('undefined'))
+            const statementBodyAfterAddingUndefined = ast.blockStatement([
+              und as es.Statement,
+              ...reduced.body
+            ])
+            return [
+              ast.program([
+                statementBodyAfterAddingUndefined,
+                ...(otherStatements as es.Statement[])
+              ]),
+              cont,
+              path,
+              str
+            ]
           } else {
             return [
               ast.program([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
@@ -1988,12 +1991,24 @@ function reduceMain(
           paths[0].push('body[0]')
           const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
           if (reduced.type === 'BlockStatement') {
-            const body = reduced.body as es.Statement[]
-            if (body.length > 1) {
-              path[1] = [...path[0].slice(0, path[0].length - 1)]
-            }
-            const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
-            return [ast.blockStatement(wholeBlock), cont, path, str]
+            /**
+             * Manually adding undefined within the block statement to make it value-producing.
+             * We do not unpack the block statement to prevent possible confusion
+             */
+            const und = ast.expressionStatement(ast.identifier('undefined'))
+            const statementBodyAfterAddingUndefined = ast.blockStatement([
+              und as es.Statement,
+              ...reduced.body
+            ])
+            return [
+              ast.blockStatement([
+                statementBodyAfterAddingUndefined,
+                ...(otherStatements as es.Statement[])
+              ]),
+              cont,
+              path,
+              str
+            ]
           } else {
             return [
               ast.blockStatement([reduced as es.Statement, ...(otherStatements as es.Statement[])]),
@@ -3278,11 +3293,7 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
-async function evaluateImports(
-  program: es.Program,
-  context: Context,
-  { loadTabs, checkImports, wrapSourceModules }: ImportTransformOptions
-) {
+async function evaluateImports(program: es.Program, context: Context, loadTabs: boolean) {
   const [importNodeMap, otherNodes] = filterImportDeclarations(program)
 
   try {
@@ -3290,24 +3301,28 @@ async function evaluateImports(
     await Promise.all(
       Object.entries(importNodeMap).map(async ([moduleName, nodes]) => {
         await initModuleContextAsync(moduleName, context, loadTabs)
-        const functions = await loadModuleBundleAsync(
-          moduleName,
-          context,
-          wrapSourceModules,
-          nodes[0]
-        )
+        const functions = await loadModuleBundleAsync(moduleName, context, nodes[0])
         for (const node of nodes) {
           for (const spec of node.specifiers) {
-            assert(
-              spec.type === 'ImportSpecifier',
-              `Only ImportSpecifiers are supported, got: ${spec.type}`
-            )
-
-            if (checkImports && !(spec.imported.name in functions)) {
-              throw new UndefinedImportError(spec.imported.name, moduleName, spec)
-            }
             declareIdentifier(context, spec.local.name, node, environment)
-            defineVariable(context, spec.local.name, functions[spec.imported.name], true, node)
+            let obj: any
+
+            switch (spec.type) {
+              case 'ImportSpecifier': {
+                obj = functions[spec.imported.name]
+                break
+              }
+              case 'ImportDefaultSpecifier': {
+                obj = functions.default
+                break
+              }
+              case 'ImportNamespaceSpecifier': {
+                obj = functions
+                break
+              }
+            }
+
+            defineVariable(context, spec.local.name, obj, true, node)
           }
         }
       })
@@ -3329,7 +3344,7 @@ export async function getEvaluationSteps(
   try {
     checkProgramForUndefinedVariables(program, context)
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
-    await evaluateImports(program, context, importOptions)
+    await evaluateImports(program, context, importOptions.loadTabs)
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns
@@ -3393,7 +3408,17 @@ export async function getEvaluationSteps(
     }
     return steps
   } catch (error) {
-    context.errors.push(error)
+    if (error instanceof RuntimeSourceError) {
+      // If steps not evaluated at all, add error message to the first step else add error to last step
+      if (steps.length === 0) {
+        steps.push([program, [], prettyPrintError(error)])
+      } else {
+        steps[steps.length - 1][2] = prettyPrintError(error)
+      }
+    } else {
+      context.errors.push(error)
+    }
+
     return steps
   }
 }
