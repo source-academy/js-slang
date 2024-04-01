@@ -67,9 +67,9 @@ describe('Test codify works on circular abstract syntax graphs', () => {
   })
 })
 
-// source 0
 const testEvalSteps = (programStr: string, context?: Context) => {
-  context = context ?? mockContext()
+  // Enable Source 2 to test builtin functions
+  context = context ?? mockContext(Chapter.SOURCE_2)
   const program = parse(programStr, context)!
   const options = {
     stepLimit: 1000,
@@ -84,6 +84,79 @@ const testEvalSteps = (programStr: string, context?: Context) => {
   }
   return getEvaluationSteps(program, context, options)
 }
+
+describe('Test catching runtime errors', () => {
+  test('Variable not assigned', async () => {
+    const code = `
+    unassigned_variable;
+    const unassigned_variable = "value";
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Type error', async () => {
+    const code = `
+    1 + "string";
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Calling non function value', async () => {
+    const code = `
+    (2 + 3)(1 - 4);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect number of argument', async () => {
+    const code = `
+    function foo(a) {
+      return a;
+    }
+    foo();
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect number of argument', async () => {
+    const code = `
+    function foo(a) {
+      return a;
+    }
+    foo(1, 2, 3);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
+
+describe('Test catching errors from built in function', () => {
+  test('Incorrect type of argument for math function', async () => {
+    const code = `
+    math_sin(true);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect type of arguments for module function', async () => {
+    const code = `
+    arity("not a function");
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect number of arguments', async () => {
+    const code = `pair(2);`
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
 
 describe('Test catching of undeclared variable error', () => {
   test('Variable not declared in program', async () => {
