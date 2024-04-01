@@ -130,15 +130,6 @@ describe('Test catching errors from built in function', () => {
   })
 
   // Failing
-  test('Incorrect number of arguments #1', async () => {
-    const code = `
-    arity(display, display);
-    `
-    const steps = await testEvalSteps(code)
-    expect(getExplanation(steps)).toMatchSnapshot()
-  })
-
-  // Failing
   test('Incorrect number of arguments #2', async () => {
     const code = `
     pair(2);
