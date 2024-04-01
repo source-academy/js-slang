@@ -4117,6 +4117,11 @@ f();
 "
 `;
 
+exports[`Test catching errors from built in function Incorrect number of arguments 1`] = `
+"Start of evaluation
+Line 1: Expected 2 arguments, but got 1"
+`;
+
 exports[`Test catching errors from built in function Incorrect type of argument for math function 1`] = `
 "Start of evaluation
 Line 2: Math functions must be called with number arguments"
@@ -4138,6 +4143,20 @@ exports[`Test catching runtime errors Calling non function value 1`] = `
 Binary expression 2 + 3 evaluated
 Binary expression 2 + 3 evaluated
 Line 2: Calling non-function value 5."
+`;
+
+exports[`Test catching runtime errors Incorrect number of argument 1`] = `
+"Start of evaluation
+Function foo declared, parameter(s) a required
+Function foo declared, parameter(s) a required
+Line 5: Expected 1 arguments, but got 0."
+`;
+
+exports[`Test catching runtime errors Incorrect number of argument 2`] = `
+"Start of evaluation
+Function foo declared, parameter(s) a required
+Function foo declared, parameter(s) a required
+Line 5: Expected 1 arguments, but got 3."
 `;
 
 exports[`Test catching runtime errors Type error 1`] = `

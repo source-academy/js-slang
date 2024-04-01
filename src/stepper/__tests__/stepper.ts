@@ -69,7 +69,7 @@ describe('Test codify works on circular abstract syntax graphs', () => {
 
 // source 0
 const testEvalSteps = (programStr: string, context?: Context) => {
-  context = context ?? mockContext()
+  context = context ?? mockContext(Chapter.SOURCE_2)
   const program = parse(programStr, context)!
   const options = {
     stepLimit: 1000,
@@ -110,6 +110,28 @@ describe('Test catching runtime errors', () => {
     const steps = await testEvalSteps(code)
     expect(getExplanation(steps)).toMatchSnapshot()
   })
+
+  test('Incorrect number of argument', async () => {
+    const code = `
+    function foo(a) {
+      return a;
+    }
+    foo();
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect number of argument', async () => {
+    const code = `
+    function foo(a) {
+      return a;
+    }
+    foo(1, 2, 3);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
 })
 
 describe('Test catching errors from built in function', () => {
@@ -129,11 +151,8 @@ describe('Test catching errors from built in function', () => {
     expect(getExplanation(steps)).toMatchSnapshot()
   })
 
-  // Failing
-  test('Incorrect number of arguments #2', async () => {
-    const code = `
-    pair(2);
-    `
+  test('Incorrect number of arguments', async () => {
+    const code = `pair(2);`
     const steps = await testEvalSteps(code)
     expect(getExplanation(steps)).toMatchSnapshot()
   })
