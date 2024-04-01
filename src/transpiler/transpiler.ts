@@ -588,6 +588,7 @@ async function transpileToFullJS(
     globalIds.native
   )
 
+  program.body = (importNodes as es.Program['body']).concat(otherNodes)
   getFunctionDeclarationNamesInProgram(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)
   )
