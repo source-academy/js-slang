@@ -125,6 +125,12 @@ export function evaluateModuleFunction(
 //   // List library
 //   defineBuiltin(context, 'pair(left, right)', list.pair)
 export function pair(left: substituterNodes, right: substituterNodes): es.ArrayExpression {
+  if (left == null || right == null) {
+    throw new Error(
+      //Count the number of arguments that are not undefined
+      `Expected 2 arguments, but got ${[left, right].filter(x => x != undefined).length}`
+    )
+  }
   return ast.arrayExpression([left as es.Expression, right as es.Expression])
 }
 
