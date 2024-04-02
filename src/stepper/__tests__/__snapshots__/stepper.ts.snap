@@ -4187,14 +4187,14 @@ exports[`Test calling functions Incorrect number of argument (less) 1`] = `
 "Start of evaluation
 Function foo declared, parameter(s) a required
 Function foo declared, parameter(s) a required
-Line 5: Expected 0 arguments, but got 1."
+Line 5: Expected 1 arguments, but got 0."
 `;
 
 exports[`Test calling functions Incorrect number of argument (more) 1`] = `
 "Start of evaluation
 Function foo declared, parameter(s) a required
 Function foo declared, parameter(s) a required
-Line 5: Expected 3 arguments, but got 1."
+Line 5: Expected 1 arguments, but got 3."
 `;
 
 exports[`Test calling functions Literal function should error 1`] = `
