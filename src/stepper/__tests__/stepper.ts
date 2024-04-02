@@ -67,9 +67,9 @@ describe('Test codify works on circular abstract syntax graphs', () => {
   })
 })
 
-// source 0
 const testEvalSteps = (programStr: string, context?: Context) => {
-  context = context ?? mockContext()
+  // Enable Source 2 to test builtin functions
+  context = context ?? mockContext(Chapter.SOURCE_2)
   const program = parse(programStr, context)!
   const options = {
     stepLimit: 1000,
@@ -84,6 +84,134 @@ const testEvalSteps = (programStr: string, context?: Context) => {
   }
   return getEvaluationSteps(program, context, options)
 }
+
+describe('Test calling functions', () => {
+  test('Function that exists', async () => {
+    const code = `
+    function foo(x) { return x;}
+    foo(1 + 2);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Math function', async () => {
+    const code = `
+    math_abs(-1);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Imported module function', async () => {
+    const code = `
+    pair(1, 1);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Built-in function', async () => {
+    const code = `
+    is_boolean(false);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Argument reduction steps', async () => {
+    const code = `
+    (1 * 3)(2 * 3 + 10);
+    `
+    const steps = await testEvalSteps(code)
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  })
+
+  test('Literal function should error', async () => {
+    const code = `
+    1(2);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect number of argument (less)', async () => {
+    const code = `
+    function foo(a) {
+      return a;
+    }
+    foo();
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect number of argument (more)', async () => {
+    const code = `
+    function foo(a) {
+      return a;
+    }
+    foo(1, 2, 3);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
+
+describe('Test runtime errors', () => {
+  test('Variable used before assigning in program', async () => {
+    const code = `
+    unassigned_variable;
+    const unassigned_variable = "assigned";
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Variable used before assigning in functions', async () => {
+    const code = `
+    function foo() {
+      unassigned_variable;
+      const unassigned_variable = "assigned";
+    }
+    foo();
+      `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incompatible types operation', async () => {
+    const code = `
+    "1" + 2 * 3;
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
+
+describe('Test catching errors from built in function', () => {
+  test('Incorrect type of argument for math function', async () => {
+    const code = `
+    math_sin(true);
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect type of arguments for module function', async () => {
+    const code = `
+    arity("not a function");
+    `
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+
+  test('Incorrect number of arguments', async () => {
+    const code = `pair(2);`
+    const steps = await testEvalSteps(code)
+    expect(getExplanation(steps)).toMatchSnapshot()
+  })
+})
 
 describe('Test catching of undeclared variable error', () => {
   test('Variable not declared in program', async () => {

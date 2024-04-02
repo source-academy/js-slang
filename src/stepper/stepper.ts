@@ -1508,7 +1508,7 @@ function reduceMain(
       if (
         !(isAllowedLiterals(node) || isBuiltinFunction(node) || isImportedFunction(node, context))
       ) {
-        throw new errors.UndefinedVariable(node.name, node)
+        throw new errors.UnassignedVariable(node.name, node)
       } else {
         return [node, context, paths, 'identifier']
       }
@@ -1683,6 +1683,8 @@ function reduceMain(
       const [callee, args] = [node.callee, node.arguments]
       // source 0: discipline: any expression can be transformed into either literal, ident(builtin) or funexp
       // if functor can reduce, reduce functor
+
+      //Reduce callee until it is irreducible
       if (!isIrreducible(callee, context)) {
         paths[0].push('callee')
         const [reducedCallee, cont, path, str] = reduce(callee, context, paths)
@@ -1692,72 +1694,62 @@ function reduceMain(
           path,
           str
         ]
-      } else if (callee.type === 'Literal') {
-        throw new errors.CallingNonFunctionValue(callee, node)
+      }
+
+      // Reduce all arguments until it is irreducible
+      for (let i = 0; i < args.length; i++) {
+        const currentArg = args[i]
+        if (!isIrreducible(currentArg, context)) {
+          paths[0].push('arguments[' + i + ']')
+          const [reducedCurrentArg, cont, path, str] = reduce(currentArg, context, paths)
+          const reducedArgs = [...args.slice(0, i), reducedCurrentArg, ...args.slice(i + 1)]
+          return [
+            ast.callExpression(callee as es.Expression, reducedArgs as es.Expression[], node.loc),
+            cont,
+            path,
+            str
+          ]
+        }
+      }
+
+      // Error checking for illegal function calls
+      if (callee.type === 'Literal') {
+        throw new errors.CallingNonFunctionValue(callee.value, node)
       } else if (
-        callee.type === 'Identifier' &&
-        !(callee.name in context.runtime.environments[0].head)
+        (callee.type === 'FunctionExpression' || callee.type === 'ArrowFunctionExpression') &&
+        args.length !== callee.params.length
       ) {
-        throw new errors.UndefinedVariable(callee.name, callee)
+        throw new errors.InvalidNumberOfArguments(node, args.length, callee.params.length)
+      }
+
+      // if it reaches here, means all the arguments are legal.
+      if (['FunctionExpression', 'ArrowFunctionExpression'].includes(callee.type)) {
+        // User declared function
+        return [
+          apply(callee as FunctionDeclarationExpression, args as es.Literal[]),
+          context,
+          paths,
+          explain(node)
+        ]
+      } else if ((callee as es.Identifier).name.includes('math')) {
+        // Math function
+        return [
+          builtin.evaluateMath((callee as es.Identifier).name, ...args),
+          context,
+          paths,
+          explain(node)
+        ]
+      } else if (typeof builtin[(callee as es.Identifier).name] === 'function') {
+        // Source specific built-in function
+        return [builtin[(callee as es.Identifier).name](...args), context, paths, explain(node)]
       } else {
-        // callee is builtin or funexp
-        if (
-          (callee.type === 'FunctionExpression' || callee.type === 'ArrowFunctionExpression') &&
-          args.length !== callee.params.length
-        ) {
-          throw new errors.InvalidNumberOfArguments(node, args.length, callee.params.length)
-        } else {
-          for (let i = 0; i < args.length; i++) {
-            const currentArg = args[i]
-            if (!isIrreducible(currentArg, context)) {
-              paths[0].push('arguments[' + i + ']')
-              const [reducedCurrentArg, cont, path, str] = reduce(currentArg, context, paths)
-              const reducedArgs = [...args.slice(0, i), reducedCurrentArg, ...args.slice(i + 1)]
-              return [
-                ast.callExpression(
-                  callee as es.Expression,
-                  reducedArgs as es.Expression[],
-                  node.loc
-                ),
-                cont,
-                path,
-                str
-              ]
-            }
-            if (
-              currentArg.type === 'Identifier' &&
-              !(currentArg.name in context.runtime.environments[0].head)
-            ) {
-              throw new errors.UndefinedVariable(currentArg.name, currentArg)
-            }
-          }
-        }
-        // if it reaches here, means all the arguments are legal.
-        if (['FunctionExpression', 'ArrowFunctionExpression'].includes(callee.type)) {
-          return [
-            apply(callee as FunctionDeclarationExpression, args as es.Literal[]),
-            context,
-            paths,
-            explain(node)
-          ]
-        } else {
-          if ((callee as es.Identifier).name.includes('math')) {
-            return [
-              builtin.evaluateMath((callee as es.Identifier).name, ...args),
-              context,
-              paths,
-              explain(node)
-            ]
-          } else if (typeof builtin[(callee as es.Identifier).name] === 'function') {
-            return [builtin[(callee as es.Identifier).name](...args), context, paths, explain(node)]
-          }
-          return [
-            builtin.evaluateModuleFunction((callee as es.Identifier).name, context, ...args),
-            context,
-            paths,
-            explain(node)
-          ]
-        }
+        // Common built-in function
+        return [
+          builtin.evaluateModuleFunction((callee as es.Identifier).name, context, ...args),
+          context,
+          paths,
+          explain(node)
+        ]
       }
     },
 
