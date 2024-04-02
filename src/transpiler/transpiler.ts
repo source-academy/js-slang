@@ -502,6 +502,7 @@ function transpileToFullJS(
     create.memberExpression(globalIds.native, 'loadedModules')
   )
 
+  program.body = (importNodes as es.Program['body']).concat(otherNodes)
   getFunctionDeclarationNamesInProgram(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)
   )

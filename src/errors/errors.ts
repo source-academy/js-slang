@@ -8,6 +8,22 @@ import { ErrorSeverity, ErrorType, Node, SourceError, Value } from '../types'
 import { stringify } from '../utils/stringify'
 import { RuntimeSourceError } from './runtimeSourceError'
 
+//Wrap build-in function error in SourceError
+export class BuiltInFunctionError extends RuntimeSourceError {
+  constructor(node: Node, private explanation: String) {
+    super(node)
+    this.explanation = explanation
+  }
+
+  public explain() {
+    return `${this.explanation}`
+  }
+
+  public elaborate() {
+    return this.explain()
+  }
+}
+
 export class InterruptedError extends RuntimeSourceError {
   constructor(node: Node) {
     super(node)
