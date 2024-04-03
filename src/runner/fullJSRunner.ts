@@ -21,10 +21,7 @@ import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
 
-function fullJSEval(
-  code: string,
-  nativeStorage: NativeStorage
-): any {
+function fullJSEval(code: string, nativeStorage: NativeStorage): any {
   if (nativeStorage.evaller) {
     return nativeStorage.evaller(code)
   } else {
