@@ -6,7 +6,7 @@ import { mockContext } from '../../../mocks/context'
 import { Chapter } from '../../../types'
 import { memoizedGetModuleDocsAsync } from '../../loader'
 import preprocessFileImports from '..'
-import { parseCodeError, sanitizeAST } from './utils'
+import { sanitizeAST } from '../../../utils/ast/sanitizer'
 import { parse } from '../../../parser/parser'
 import {
   accessExportFunctionName,
@@ -35,7 +35,7 @@ describe('preprocessFileImports', () => {
 
     const expectedProgram = parse(expectedCode, expectedContext)
     if (!expectedProgram) {
-      throw parseCodeError
+      throw new Error('Failed to parse expected code')
     }
 
     expect(sanitizeAST(actualProgram)).toMatchObject(sanitizeAST(expectedProgram))

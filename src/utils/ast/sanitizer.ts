@@ -1,17 +1,18 @@
 import type es from 'estree'
 
-import { simple } from '../../../utils/walkers'
-
-export const parseCodeError = new Error('Unable to parse code')
+import { simple } from '../walkers'
 
 const locationKeys = ['loc', 'start', 'end']
 
 // Certain properties on each type of node are only present sometimes
 // For our purposes, those properties aren't important, so we can
 // remove them from the corresponding node
-const propertiesToDelete: Partial<Record<es.Node['type'], string[]>> = {
+const propertiesToDelete: {
+  [K in es.Node['type']]?: (keyof Extract<es.Node, { type: K }>)[]
+} = {
   CallExpression: ['optional'],
-  FunctionDeclaration: ['expression', 'generator'],
+  // Honestly not sure where the 'expression' property comes from
+  FunctionDeclaration: ['expression' as any, 'generator'],
   Literal: ['raw']
 }
 

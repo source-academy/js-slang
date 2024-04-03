@@ -1,20 +1,38 @@
 import type { Context } from '../../..'
-import type { ModuleFunctions } from '../../moduleTypes'
+import {
+  unknownDocs,
+  type FunctionDocumentation,
+  type ModuleFunctions,
+  type VariableDocumentation
+} from '../../moduleTypes'
 
-export const memoizedGetModuleDocsAsync = jest.fn((module: string) =>
-  Promise.resolve(
+export const memoizedGetModuleDocsAsync = jest.fn((module: string) => {
+  const barDocs: FunctionDocumentation = {
+    kind: 'function',
+    retType: 'void',
+    params: [['a', 'number']],
+    description: 'bar'
+  }
+
+  const fooDocs: VariableDocumentation = {
+    kind: 'variable',
+    type: 'string',
+    description: 'foo'
+  }
+
+  return Promise.resolve(
     module === 'another_module'
       ? {
-          bar: 'bar',
-          foo: 'foo'
+          bar: barDocs,
+          foo: fooDocs
         }
       : {
-          bar: 'bar',
-          foo: 'foo',
-          default: 'default'
+          bar: barDocs,
+          foo: fooDocs,
+          default: unknownDocs
         }
   )
-)
+})
 
 export const memoizedGetModuleManifestAsync = jest.fn().mockResolvedValue({
   one_module: { tabs: [] },
