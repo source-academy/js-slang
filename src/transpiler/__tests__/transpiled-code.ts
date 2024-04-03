@@ -69,7 +69,10 @@ describe('test transformImportDeclarations', () => {
       throw new Error('Expected program should not have parse errors')
     }
 
-    const [declNodes, otherNodes] = transformImportDeclarations(actualProgram, ast.identifier('modules'))
+    const [declNodes, otherNodes] = transformImportDeclarations(
+      actualProgram,
+      ast.identifier('modules')
+    )
     expect(otherNodes.length).toEqual(0)
 
     const finalProgram = ast.program(declNodes)
