@@ -974,12 +974,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       const next = control.peek()
 
-      // Push ENVIRONMENT instruction if needed - if next instruction
-      // is empty or not an environment instruction
-      if (
-        !next ||
-        (!(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && !control.isEmpty())
-      ) {
+      // Push ENVIRONMENT instruction if needed - if next control stack item
+      // exists and is not an environment instruction
+      if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
         control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
 
