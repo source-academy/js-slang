@@ -70,16 +70,10 @@ describe('Test throwing import validation errors', () => {
     const { programs, topoOrder, sourceModulesToImport } = importGraphResult
     await loadSourceModules(sourceModulesToImport, context, false)
 
-    analyzeImportsAndExports(
-      programs,
-      entrypointFilePath as string,
-      topoOrder,
-      context,
-      {
-        allowUndefinedImports,
-        throwOnDuplicateNames
-      }
-    )
+    analyzeImportsAndExports(programs, entrypointFilePath as string, topoOrder, context, {
+      allowUndefinedImports,
+      throwOnDuplicateNames
+    })
     return true
   }
 

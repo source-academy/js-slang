@@ -81,10 +81,7 @@ export default async function parseProgramsAndConstructImportGraph(
     await parseAndEnumerateModuleDeclarations(absPath, contents)
   }
 
-  async function parseAndEnumerateModuleDeclarations(
-    fromModule: string,
-    fileText: string
-  ) {
+  async function parseAndEnumerateModuleDeclarations(fromModule: string, fileText: string) {
     const parseOptions = shouldAddFileName
       ? {
           sourceFile: fromModule

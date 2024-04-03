@@ -1,4 +1,4 @@
-import { posix as posixPath } from 'path';
+import { posix as posixPath } from 'path'
 import { memoizedGetModuleManifestAsync } from '../loader'
 import { isSourceModule } from '../utils'
 import type { FileGetter } from '../moduleTypes'
