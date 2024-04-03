@@ -1,7 +1,7 @@
 import { mockContext } from '../../../mocks/context'
 import { Chapter, Variant } from '../../../types'
 import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
-import * as moduleLoader from '..'
+import * as moduleLoader from '../loaders'
 import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
 import { asMockedFunc } from '../../../utils/testing'
 

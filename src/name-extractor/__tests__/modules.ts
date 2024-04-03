@@ -1,20 +1,21 @@
-import { DeclarationKind, type NameDeclaration } from '..'
+import { DeclarationKind } from '..'
 import { getNames } from '../..'
 import { mockContext } from '../../mocks/context'
 import { Chapter } from '../../types'
 
-import { memoizedGetModuleDocsAsync, memoizedGetModuleManifestAsync } from '../../modules/loader'
+import {
+  memoizedGetModuleDocsAsync,
+  memoizedGetModuleManifestAsync
+} from '../../modules/loader/loaders'
 import { asMockedFunc } from '../../utils/testing'
 import { ModuleConnectionError } from '../../modules/errors'
 
-jest.mock('../../modules/loader')
-
-type NameDeclarationWithHTML = NameDeclaration & { docHTML: string }
+jest.mock('../../modules/loader/loaders')
 
 type TestCase = [
   description: string,
   actualCode: string,
-  expectedNames: NameDeclarationWithHTML[],
+  expectedName: [name: string, html: string][],
   manifestCount: number,
   docsCount: number
 ]
@@ -23,10 +24,17 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-async function runGetNames(code: string, expectedNames: NameDeclarationWithHTML[]) {
+async function testGetNames(code: string, expectedNames: [string, string][]) {
   const context = mockContext(Chapter.LIBRARY_PARSER)
   const [extractedNames] = await getNames(code, 2, 0, context)
-  for (const name of expectedNames) {
+  const expectedDocs = expectedNames.map(([name, html], i) => ({
+    name,
+    meta: DeclarationKind.KIND_IMPORT,
+    score: i,
+    docHTML: html
+  }))
+
+  for (const name of expectedDocs) {
     expect(extractedNames).toContainEqual(name)
   }
 }
@@ -36,14 +44,7 @@ describe('test name extractor functionality on imports', () => {
     [
       'Single import from known local module',
       "import { a } from './a.js';",
-      [
-        {
-          name: 'a',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: "Import 'a' from './a.js'"
-        }
-      ],
+      [['a', "Import 'a' from './a.js'"]],
       0,
       0
     ],
@@ -51,18 +52,8 @@ describe('test name extractor functionality on imports', () => {
       'Multiple imports from known local module',
       "import { a, b } from './a.js';",
       [
-        {
-          name: 'a',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: "Import 'a' from './a.js'"
-        },
-        {
-          name: 'b',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 1,
-          docHTML: "Import 'b' from './a.js'"
-        }
+        ['a', "Import 'a' from './a.js'"],
+        ['b', "Import 'b' from './a.js'"]
       ],
       0,
       0
@@ -70,28 +61,14 @@ describe('test name extractor functionality on imports', () => {
     [
       'Single known function import from known Source module',
       "import { bar } from 'one_module';",
-      [
-        {
-          name: 'bar',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: '<div><h4>bar(a: number) → {void}</h4><div class="description">bar</div></div>'
-        }
-      ],
+      [['bar', '<div><h4>bar(a: number) → {void}</h4><div class="description">bar</div></div>']],
       1,
       1
     ],
     [
       'Single known variable import from known Source module',
       "import { foo } from 'one_module'; foo",
-      [
-        {
-          name: 'foo',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: '<div><h4>foo: string</h4><div class="description">foo</div></div>'
-        }
-      ],
+      [['foo', '<div><h4>foo: string</h4><div class="description">foo</div></div>']],
       1,
       1
     ],
@@ -99,18 +76,8 @@ describe('test name extractor functionality on imports', () => {
       'Different imports from different known Source modules',
       "import { bar } from 'one_module';\nimport{ foo } from 'another_module'",
       [
-        {
-          name: 'bar',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: '<div><h4>bar(a: number) → {void}</h4><div class="description">bar</div></div>'
-        },
-        {
-          name: 'foo',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 1,
-          docHTML: '<div><h4>foo: string</h4><div class="description">foo</div></div>'
-        }
+        ['bar', '<div><h4>bar(a: number) → {void}</h4><div class="description">bar</div></div>'],
+        ['foo', '<div><h4>foo: string</h4><div class="description">foo</div></div>']
       ],
       2,
       2
@@ -119,20 +86,11 @@ describe('test name extractor functionality on imports', () => {
       'Aliased known imports from known Source modules',
       "import { bar as b } from 'one_module';\nimport{ foo as f } from 'another_module'",
       [
-        {
-          name: 'b',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML:
-            '<div><h4>bar(a: number) → {void}</h4><div class="description">Imported as b\nbar</div></div>'
-        },
-        {
-          name: 'f',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 1,
-          docHTML:
-            '<div><h4>foo: string</h4><div class="description">Imported as f\nfoo</div></div>'
-        }
+        [
+          'b',
+          '<div><h4>bar(a: number) → {void}</h4><div class="description">Imported as b\nbar</div></div>'
+        ],
+        ['f', '<div><h4>foo: string</h4><div class="description">Imported as f\nfoo</div></div>']
       ],
       2,
       2
@@ -140,14 +98,7 @@ describe('test name extractor functionality on imports', () => {
     [
       'Namespace import of known Source module',
       "import * as all from 'one_module';",
-      [
-        {
-          name: 'all',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: "Namespace import of 'one_module'"
-        }
-      ],
+      [['all', "Namespace import of 'one_module'"]],
       1,
       0
     ],
@@ -158,25 +109,12 @@ describe('test name extractor functionality on imports', () => {
         import foo, { bar } from 'one_module';
       `,
       [
-        {
-          name: 'all',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: "Namespace import of 'one_module'"
-        },
-        {
-          name: 'foo',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 1,
-          docHTML:
-            '<div><h4>default: unknown</h4><div class="description">Imported as foo\nNo description available</div></div>'
-        },
-        {
-          name: 'bar',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 2,
-          docHTML: '<div><h4>bar(a: number) → {void}</h4><div class="description">bar</div></div>'
-        }
+        ['all', "Namespace import of 'one_module'"],
+        [
+          'foo',
+          '<div><h4>default: unknown</h4><div class="description">Imported as foo\nNo description available</div></div>'
+        ],
+        ['bar', '<div><h4>bar(a: number) → {void}</h4><div class="description">bar</div></div>']
       ],
       2,
       1
@@ -186,42 +124,21 @@ describe('test name extractor functionality on imports', () => {
     [
       'Unknown import from known Source module',
       "import { unknown } from 'one_module'; unknown;",
-      [
-        {
-          name: 'unknown',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: "No documentation available for <code>unknown</code> from 'one_module'"
-        }
-      ],
+      [['unknown', "No documentation available for <code>unknown</code> from 'one_module'"]],
       1,
       1
     ],
     [
       'Import from unknown Source module',
       "import { something } from 'unknown_module'; ",
-      [
-        {
-          name: 'something',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: "Import from unknown module 'unknown_module'"
-        }
-      ],
+      [['something', "Import from unknown module 'unknown_module'"]],
       1,
       0
     ],
     [
       'Default import from Source module without default export',
       "import a from 'another_module';",
-      [
-        {
-          name: 'a',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: "No documentation available for <code>default</code> from 'another_module'"
-        }
-      ],
+      [['a', "No documentation available for <code>default</code> from 'another_module'"]],
       1,
       1
     ],
@@ -229,18 +146,8 @@ describe('test name extractor functionality on imports', () => {
       'Known import and unknown import from known Source Module',
       "import { foo, unknown } from 'one_module';",
       [
-        {
-          name: 'unknown',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 1,
-          docHTML: "No documentation available for <code>unknown</code> from 'one_module'"
-        },
-        {
-          name: 'foo',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: '<div><h4>foo: string</h4><div class="description">foo</div></div>'
-        }
+        ['foo', '<div><h4>foo: string</h4><div class="description">foo</div></div>'],
+        ['unknown', "No documentation available for <code>unknown</code> from 'one_module'"]
       ],
       1,
       1
@@ -248,21 +155,14 @@ describe('test name extractor functionality on imports', () => {
     [
       'Namespace import of unknown Source Module',
       "import * as all from 'unknown_module';",
-      [
-        {
-          name: 'all',
-          meta: DeclarationKind.KIND_IMPORT,
-          score: 0,
-          docHTML: "Namespace import of unknown module 'unknown_module'"
-        }
-      ],
+      [['all', "Namespace import of unknown module 'unknown_module'"]],
       1,
       0
     ]
   ]
 
   test.each(testCases)('%s', async (_, code, expectedNames, manifestCount, docsCount) => {
-    await runGetNames(code, expectedNames)
+    await testGetNames(code, expectedNames)
     expect(memoizedGetModuleDocsAsync).toHaveBeenCalledTimes(docsCount)
     expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(manifestCount)
   })
@@ -270,13 +170,8 @@ describe('test name extractor functionality on imports', () => {
   test('Handles errors from memoizedGetModuleManifest gracefully', async () => {
     const mockedManifest = asMockedFunc(memoizedGetModuleManifestAsync)
     mockedManifest.mockRejectedValueOnce(new ModuleConnectionError())
-    await runGetNames("import { foo } from 'one_module';", [
-      {
-        name: 'foo',
-        meta: DeclarationKind.KIND_IMPORT,
-        docHTML: "Unable to retrieve documentation for 'one_module'",
-        score: 0
-      }
+    await testGetNames("import { foo } from 'one_module';", [
+      ['foo', "Unable to retrieve documentation for 'one_module'"]
     ])
 
     expect(memoizedGetModuleDocsAsync).toHaveBeenCalledTimes(0)
@@ -286,19 +181,9 @@ describe('test name extractor functionality on imports', () => {
     const mockedDocs = asMockedFunc(memoizedGetModuleDocsAsync)
     mockedDocs.mockRejectedValueOnce(new ModuleConnectionError())
 
-    await runGetNames(`import { foo } from 'one_module'; import { bar } from 'another_module';`, [
-      {
-        name: 'foo',
-        meta: DeclarationKind.KIND_IMPORT,
-        docHTML: "Unable to retrieve documentation for 'one_module'",
-        score: 0
-      },
-      {
-        name: 'bar',
-        meta: DeclarationKind.KIND_IMPORT,
-        docHTML: '<div><h4>bar(a: number) → {void}</h4><div class="description">bar</div></div>',
-        score: 1
-      }
+    await testGetNames(`import { foo } from 'one_module'; import { bar } from 'another_module';`, [
+      ['foo', "Unable to retrieve documentation for 'one_module'"],
+      ['bar', '<div><h4>bar(a: number) → {void}</h4><div class="description">bar</div></div>']
     ])
 
     expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(2)

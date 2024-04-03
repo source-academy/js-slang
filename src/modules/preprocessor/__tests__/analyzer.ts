@@ -16,7 +16,7 @@ import loadSourceModules from '../../loader'
 import type { SourceFiles as Files } from '../../moduleTypes'
 import { objectKeys } from '../../../utils/misc'
 
-jest.mock('../../loader')
+jest.mock('../../loader/loaders')
 
 beforeEach(() => {
   jest.clearAllMocks()

@@ -11,7 +11,7 @@ import {
   expectResult
 } from '../../utils/testing'
 
-jest.mock('../../modules/loader')
+jest.mock('../../modules/loader/loaders')
 
 // const asMock = <T extends FunctionLike>(func: T) => func as MockedFunction<T>
 // const mockedModuleFile = asMock(memoizedGetModuleFile)

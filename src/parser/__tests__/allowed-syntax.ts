@@ -2,7 +2,7 @@ import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import { snapshotFailure, snapshotSuccess } from '../../utils/testing'
 
-jest.mock('../../modules/loader')
+jest.mock('../../modules/loader/loaders')
 
 test.each([
   [Chapter.SOURCE_1, ''],
