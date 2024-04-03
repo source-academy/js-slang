@@ -179,7 +179,11 @@ export async function loadModuleTabsAsync(moduleName: string) {
 /**
  * Initialize module contexts and add UI tabs needed for modules to program context
  */
-export async function initModuleContextAsync(moduleName: string, context: Context, loadTabs: boolean) {
+export async function initModuleContextAsync(
+  moduleName: string,
+  context: Context,
+  loadTabs: boolean
+) {
   // Load the module's tabs
   if (!(moduleName in context.moduleContexts)) {
     context.moduleContexts[moduleName] = {
