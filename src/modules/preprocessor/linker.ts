@@ -6,7 +6,6 @@ import type { RecursivePartial } from '../../types'
 import { CircularImportError, ModuleNotFoundError } from '../errors'
 import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import type { FileGetter } from '../moduleTypes'
-import type { AbsolutePosixPath, PosixPath } from '../paths'
 import { mapAndFilter } from '../../utils/misc'
 import { DirectedGraph } from './directedGraph'
 import resolveFile, { defaultResolutionOptions, type ImportResolutionOptions } from './resolver'
@@ -21,9 +20,9 @@ type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaul
 class LinkerError extends Error {}
 
 export type LinkerResult = {
-  programs: Record<AbsolutePosixPath, es.Program>
+  programs: Record<string, es.Program>
   sourceModulesToImport: Set<string>
-  topoOrder: AbsolutePosixPath[]
+  topoOrder: string[]
 }
 
 export type LinkerOptions = {
@@ -43,17 +42,17 @@ export const defaultLinkerOptions: LinkerOptions = {
  */
 export default async function parseProgramsAndConstructImportGraph(
   fileGetter: FileGetter,
-  entrypointFilePath: AbsolutePosixPath,
+  entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<LinkerOptions> = defaultLinkerOptions,
   shouldAddFileName: boolean
 ): Promise<LinkerResult | undefined> {
   const importGraph = new DirectedGraph()
-  const programs: Record<AbsolutePosixPath, es.Program> = {}
+  const programs: Record<string, es.Program> = {}
   const sourceModulesToImport = new Set<string>()
 
   // Wrapper around resolve file to make calling it more convenient
-  async function resolveDependency(fromPath: PosixPath, node: ModuleDeclarationWithSource) {
+  async function resolveDependency(fromPath: string, node: ModuleDeclarationWithSource) {
     const toPath = getModuleDeclarationSource(node)
 
     const resolveResult = await resolveFile(fromPath, toPath, fileGetter, options.resolverOptions)
@@ -83,7 +82,7 @@ export default async function parseProgramsAndConstructImportGraph(
   }
 
   async function parseAndEnumerateModuleDeclarations(
-    fromModule: AbsolutePosixPath,
+    fromModule: string,
     fileText: string
   ) {
     const parseOptions = shouldAddFileName
@@ -136,7 +135,7 @@ export default async function parseProgramsAndConstructImportGraph(
     }
 
     return {
-      topoOrder: topologicalOrderResult.topologicalOrder as AbsolutePosixPath[],
+      topoOrder: topologicalOrderResult.topologicalOrder,
       programs,
       sourceModulesToImport
     }

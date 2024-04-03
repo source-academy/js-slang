@@ -1,6 +1,6 @@
+import { posix as posixPath } from 'path';
 import { memoizedGetModuleManifestAsync } from '../loader'
 import { isSourceModule } from '../utils'
-import { resolve, type AbsolutePosixPath, type PosixPath } from '../paths'
 import type { FileGetter } from '../moduleTypes'
 
 /**
@@ -29,7 +29,7 @@ export type ResolverResult =
     }
   | {
       type: 'local'
-      absPath: AbsolutePosixPath
+      absPath: string
       contents: string
     }
 
@@ -37,8 +37,8 @@ export type ResolverResult =
  * Resolve a relative module path to an absolute path.
  */
 export default async function resolveFile(
-  fromPath: PosixPath,
-  toPath: PosixPath,
+  fromPath: string,
+  toPath: string,
   fileGetter: FileGetter,
   options: Partial<ImportResolutionOptions> = defaultResolutionOptions
 ): Promise<ResolverResult | undefined> {
@@ -47,7 +47,7 @@ export default async function resolveFile(
     return toPath in manifest ? { type: 'source' } : undefined
   }
 
-  const absPath = resolve(fromPath, '..', toPath)
+  const absPath = posixPath.resolve(fromPath, '..', toPath)
   let contents: string | undefined = await fileGetter(absPath)
 
   if (contents !== undefined) {
@@ -60,7 +60,7 @@ export default async function resolveFile(
 
   if (options.extensions) {
     for (const ext of options.extensions) {
-      const extPath = `${absPath}.${ext}` as AbsolutePosixPath
+      const extPath = `${absPath}.${ext}`
       contents = await fileGetter(extPath)
 
       if (contents !== undefined) {

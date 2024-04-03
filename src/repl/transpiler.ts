@@ -11,7 +11,7 @@ import { transpile } from '../transpiler/transpiler'
 import { Chapter, Variant } from '../types'
 import { validateAndAnnotate } from '../validator/validator'
 
-async function transpileCode(
+function transpileCode(
   chapter: Chapter = Chapter.SOURCE_1,
   variant: Variant = Variant.DEFAULT,
   code = '',
@@ -35,7 +35,7 @@ async function transpileCode(
   if (pretranspile) {
     return generate(program)
   } else {
-    const { transpiled } = await transpile(program as Program, context)
+    const { transpiled } = transpile(program as Program, context)
     return transpiled
   }
 }
@@ -91,9 +91,7 @@ function main() {
   })
   process.stdin.on('end', () => {
     const code = Buffer.concat(chunks).toString('utf-8')
-    transpileCode(chapter, variant, code, pretranspile).then(transpiled =>
-      process.stdout.write(transpiled)
-    )
+    process.stdout.write(transpileCode(chapter, variant, code, pretranspile).transpiled)
   })
 }
 

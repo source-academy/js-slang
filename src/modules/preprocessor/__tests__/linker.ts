@@ -3,7 +3,6 @@ import { MissingSemicolonError } from '../../../parser/errors'
 import { Chapter, type Context } from '../../../types'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
 import type { SourceFiles } from '../../moduleTypes'
-import type { AbsolutePosixPath } from '../../paths'
 import parseProgramsAndConstructImportGraph from '../linker'
 
 import * as resolver from '../resolver'
@@ -17,7 +16,7 @@ async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: key
   const context = mockContext(Chapter.SOURCE_4)
   const result = await parseProgramsAndConstructImportGraph(
     p => Promise.resolve(files[p]),
-    entrypointFilePath as AbsolutePosixPath,
+    entrypointFilePath as string,
     context,
     {},
     true

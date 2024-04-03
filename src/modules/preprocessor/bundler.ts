@@ -5,18 +5,30 @@ import assert from '../../utils/assert'
 import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { isSourceModule } from '../utils'
 import type { Context } from '../..'
-import { createAccessImportStatements, getInvokedFunctionResultVariableNameToImportSpecifiersMap, transformProgramToFunctionDeclaration } from './transformers/transformProgramToFunctionDeclaration'
-import { transformFilePathToValidFunctionName, transformFunctionNameToInvokedFunctionResultVariableName } from './filePaths'
+import {
+  createAccessImportStatements,
+  getInvokedFunctionResultVariableNameToImportSpecifiersMap,
+  transformProgramToFunctionDeclaration
+} from './transformers/transformProgramToFunctionDeclaration'
+import {
+  transformFilePathToValidFunctionName,
+  transformFunctionNameToInvokedFunctionResultVariableName
+} from './filePaths'
 import { createInvokedFunctionResultVariableDeclaration } from './constructors/contextSpecificConstructors'
 import hoistAndMergeImports from './transformers/hoistAndMergeImports'
 import removeExports from './transformers/removeExports'
 
+/**
+ * A function that converts multiple programs into a single program
+ * using the topological ordering
+ */
 export type Bundler = (
   programs: Record<string, es.Program>,
   entrypointFilePath: string,
   topoOrder: string[],
   context: Context
 ) => es.Program
+
 const getSourceModuleImports = (programs: Record<string, es.Program>): es.ImportDeclaration[] => {
   return Object.values(programs).flatMap(program => {
     return program.body.filter((stmt): stmt is es.ImportDeclaration => {

@@ -36,7 +36,6 @@ import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
 import type { SourceFiles } from '../modules/moduleTypes'
-import type { AbsolutePosixPath } from '../modules/paths'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import {
@@ -321,7 +320,7 @@ export async function sourceFilesRunner(
 
   const preprocessedProgram = await preprocessFileImports(
     files as SourceFiles,
-    entrypointFilePath as AbsolutePosixPath,
+    entrypointFilePath,
     context,
     options
   )

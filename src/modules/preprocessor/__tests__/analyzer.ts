@@ -15,7 +15,6 @@ import type { Program } from 'estree'
 import loadSourceModules from '../../loader'
 import type { SourceFiles as Files } from '../../moduleTypes'
 import { objectKeys } from '../../../utils/misc'
-import type { AbsolutePosixPath } from '../../paths'
 
 jest.mock('../../loader')
 
@@ -57,7 +56,7 @@ describe('Test throwing import validation errors', () => {
     const context = createContext(Chapter.FULL_JS)
     const importGraphResult = await parseProgramsAndConstructImportGraph(
       p => Promise.resolve(files[p]),
-      entrypointFilePath as AbsolutePosixPath,
+      entrypointFilePath as string,
       context,
       {},
       true
@@ -73,7 +72,7 @@ describe('Test throwing import validation errors', () => {
 
     analyzeImportsAndExports(
       programs,
-      entrypointFilePath as AbsolutePosixPath,
+      entrypointFilePath as string,
       topoOrder,
       context,
       {
@@ -651,8 +650,8 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     c.length === 2
 
   type FullTestCase =
-    | [string, Record<AbsolutePosixPath, Program>, true, string | undefined]
-    | [string, Record<AbsolutePosixPath, Program>, false, undefined]
+    | [string, Record<string, Program>, true, string | undefined]
+    | [string, Record<string, Program>, false, undefined]
 
   function testCases<T extends Files>(desc: string, cases: TestCase<T>[]) {
     const [allNoCases, allYesCases] = cases.reduce(

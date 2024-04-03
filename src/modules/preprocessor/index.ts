@@ -4,11 +4,9 @@ import type { Context, IOptions } from '../..'
 import type { RecursivePartial } from '../../types'
 import loadSourceModules from '../loader'
 import type { FileGetter, SourceFiles } from '../moduleTypes'
-import type { AbsolutePosixPath } from '../paths'
 import analyzeImportsAndExports from './analyzer'
 import parseProgramsAndConstructImportGraph from './linker'
 import defaultBundler, { type Bundler } from './bundler'
-
 
 /**
  * Preprocesses file imports and returns a transformed Abstract Syntax Tree (AST).
@@ -29,10 +27,10 @@ import defaultBundler, { type Bundler } from './bundler'
  */
 const preprocessFileImports = async (
   files: SourceFiles | FileGetter,
-  entrypointFilePath: AbsolutePosixPath,
+  entrypointFilePath: string,
   context: Context,
-  bundler: Bundler = defaultBundler,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {},
+  bundler: Bundler = defaultBundler
 ): Promise<es.Program | undefined> => {
   // Parse all files into ASTs and build the import graph.
   const importGraphResult = await parseProgramsAndConstructImportGraph(

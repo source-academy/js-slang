@@ -41,7 +41,6 @@ import {
   resolvedErrorPromise,
   sourceFilesRunner
 } from './runner'
-import type { AbsolutePosixPath } from './modules/paths'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -336,7 +335,7 @@ export async function compileFiles(
 
   const preprocessedProgram = await preprocessFileImports(
     files as SourceFiles,
-    entrypointFilePath as AbsolutePosixPath,
+    entrypointFilePath,
     context
   )
   if (!preprocessedProgram) {
