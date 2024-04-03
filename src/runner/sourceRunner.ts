@@ -15,7 +15,6 @@ import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import { ModuleNotFoundError } from '../modules/errors'
-import { getRequireProvider } from '../modules/loader/requireProvider'
 import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
@@ -165,7 +164,7 @@ async function runNative(
     }
 
     ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
-    let value = sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
+    let value = sandboxedEval(transpiled, context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
       value = forceIt(value)

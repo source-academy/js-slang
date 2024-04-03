@@ -1,8 +1,7 @@
-import { NATIVE_STORAGE_ID, REQUIRE_PROVIDER_ID } from '../constants'
-import { RequireProvider } from '../modules/loader/requireProvider'
+import { NATIVE_STORAGE_ID } from '../constants'
 import { NativeStorage } from '../types'
 
-type Evaler = (code: string, req: RequireProvider, nativeStorage: NativeStorage) => any
+type Evaler = (code: string, nativeStorage: NativeStorage) => any
 
 /*
   We need to use new Function here to ensure that the parameter names do not get
@@ -11,7 +10,6 @@ type Evaler = (code: string, req: RequireProvider, nativeStorage: NativeStorage)
 
 export const sandboxedEval: Evaler = new Function(
   'code',
-  REQUIRE_PROVIDER_ID,
   NATIVE_STORAGE_ID,
   `
   if (${NATIVE_STORAGE_ID}.evaller === null) {

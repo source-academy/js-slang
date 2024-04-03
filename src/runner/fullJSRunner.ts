@@ -6,8 +6,7 @@ import { RawSourceMap } from 'source-map'
 import type { Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { getRequireProvider, RequireProvider } from '../modules/loader/requireProvider'
-import { ImportOptions } from '../modules/moduleTypes'
+import type { ImportOptions } from '../modules/moduleTypes'
 import hoistAndMergeImports from '../modules/preprocessor/transformers/hoistAndMergeImports'
 import { parse } from '../parser/parser'
 import {
@@ -24,7 +23,6 @@ import { resolvedErrorPromise } from './utils'
 
 function fullJSEval(
   code: string,
-  requireProvider: RequireProvider,
   nativeStorage: NativeStorage
 ): any {
   if (nativeStorage.evaller) {
@@ -82,8 +80,7 @@ export async function fullJSRunner(
     context.nativeStorage.previousProgramsIdentifiers.add(id)
   )
   const preEvalCode: string = generate(preEvalProgram)
-  const requireProvider = getRequireProvider(context)
-  await fullJSEval(preEvalCode, requireProvider, context.nativeStorage)
+  await fullJSEval(preEvalCode, context.nativeStorage)
 
   let transpiled
   let sourceMapJson: RawSourceMap | undefined
@@ -92,7 +89,7 @@ export async function fullJSRunner(
     return {
       status: 'finished',
       context,
-      value: await fullJSEval(transpiled, requireProvider, context.nativeStorage)
+      value: await fullJSEval(transpiled, context.nativeStorage)
     }
   } catch (error) {
     context.errors.push(
