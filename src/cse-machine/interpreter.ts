@@ -411,10 +411,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // - Create the program environment (if none exists yet), and
     // - Declare the functions and variables in the program environment.
     if (hasDeclarations(command) || hasImportDeclarations(command)) {
-      if (
-        currentEnvironment(context).name == 'global' ||
-        currentEnvironment(context).name == 'prelude'
-      ) {
+      if (currentEnvironment(context).name != 'programEnvironment') {
         const programEnv = createProgramEnvironment(context, isPrelude)
         pushEnvironment(context, programEnv)
       }
