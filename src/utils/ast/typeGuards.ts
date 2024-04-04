@@ -2,8 +2,9 @@ import type es from 'estree'
 
 import type { Node } from '../../types'
 
-export const isImportDeclaration = (node: es.Program['body'][number]): node is es.ImportDeclaration =>
-  node.type === 'ImportDeclaration'
+export const isImportDeclaration = (
+  node: es.Program['body'][number]
+): node is es.ImportDeclaration => node.type === 'ImportDeclaration'
 
 // It is necessary to write this type guard like this as the 'type' of both
 // 'Directive' & 'ExpressionStatement' is 'ExpressionStatement'.
