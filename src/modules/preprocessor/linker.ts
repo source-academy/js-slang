@@ -62,6 +62,10 @@ export default async function parseProgramsAndConstructImportGraph(
     }
 
     if (resolveResult.type === 'source') {
+      // We can assume two things:
+      // 1. Source modules do not depend on one another
+      // 2. They will always be loaded first before any local modules
+      // Thus it is not necessary to track them in the import graph
       sourceModulesToImport.add(toPath)
       return
     }

@@ -16,6 +16,18 @@ const propertiesToDelete: {
   Literal: ['raw']
 }
 
+const sanitizers = Object.entries(propertiesToDelete).reduce(
+  (res, [nodeType, props]) => ({
+    ...res,
+    [nodeType](node: es.Node) {
+      for (const prop of props) {
+        delete node[prop]
+      }
+    }
+  }),
+  {}
+)
+
 /**
  * Strips out extra properties from an AST and converts Nodes to regular
  * javascript objects
@@ -56,19 +68,8 @@ export function sanitizeAST(node: es.Node) {
       }
     }, {} as es.Node)
   }
-  const walkers = Object.entries(propertiesToDelete).reduce(
-    (res, [nodeType, props]) => ({
-      ...res,
-      [nodeType](node: any) {
-        for (const prop of props) {
-          delete node[prop]
-        }
-      }
-    }),
-    {}
-  )
 
-  simple(node, walkers)
+  simple(node, sanitizers)
 
   return convertNode(node)
 }

@@ -1,8 +1,8 @@
 import type es from 'estree'
 
-import { Node } from '../../types'
+import type { Node } from '../../types'
 
-export const isImportDeclaration = (node: es.Program['body'][0]): node is es.ImportDeclaration =>
+export const isImportDeclaration = (node: es.Program['body'][number]): node is es.ImportDeclaration =>
   node.type === 'ImportDeclaration'
 
 // It is necessary to write this type guard like this as the 'type' of both

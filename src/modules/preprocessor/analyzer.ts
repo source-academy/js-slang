@@ -47,7 +47,7 @@ export type ImportAnalysisOptions = {
  */
 export default function analyzeImportsAndExports(
   programs: Record<string, es.Program>,
-  entrypointAbsPath: string,
+  entrypointFilePath: string,
   topoOrder: string[],
   { nativeStorage: { loadedModules } }: Context,
   options: Partial<ImportAnalysisOptions> = {}
@@ -61,7 +61,7 @@ export default function analyzeImportsAndExports(
     Object.entries(loadedModules).map(([name, obj]) => [name, new Set(Object.keys(obj))])
   )
 
-  for (const sourceModule of [...topoOrder, entrypointAbsPath]) {
+  for (const sourceModule of [...topoOrder, entrypointFilePath]) {
     const program = programs[sourceModule]
     moduleDocs[sourceModule] = new Set()
 
@@ -75,7 +75,9 @@ export default function analyzeImportsAndExports(
           moduleDocs[sourceModule].add('default')
         }
         continue
-      } else if (node.type === 'ExportNamedDeclaration') {
+      }
+
+      if (node.type === 'ExportNamedDeclaration') {
         if (node.declaration) {
           if (!options.allowUndefinedImports) {
             const ids = getIdsFromDeclaration(node.declaration)
@@ -116,26 +118,31 @@ export default function analyzeImportsAndExports(
             }
           }
         }
-      } else {
-        for (const spec of node.specifiers) {
-          if (spec.type !== 'ExportSpecifier' && isSourceModule(dstModule)) {
-            const declaredName = spec.local.name
-            declaredNames.setdefault(declaredName, new ArrayMap()).add(dstModule, spec)
-          }
+        continue
+      }
 
-          if (options.allowUndefinedImports) continue
+      for (const spec of node.specifiers) {
+        if (
+          options.throwOnDuplicateNames &&
+          spec.type !== 'ExportSpecifier' &&
+          isSourceModule(dstModule)
+        ) {
+          const declaredName = spec.local.name
+          declaredNames.setdefault(declaredName, new ArrayMap()).add(dstModule, spec)
+        }
 
-          if (spec.type === 'ImportNamespaceSpecifier') {
-            if (dstModuleDocs.size === 0) throw new UndefinedNamespaceImportError(dstModule, spec)
-            continue
-          }
+        if (options.allowUndefinedImports) continue
 
-          const importedName = getImportedName(spec)
+        if (spec.type === 'ImportNamespaceSpecifier') {
+          if (dstModuleDocs.size === 0) throw new UndefinedNamespaceImportError(dstModule, spec)
+          continue
+        }
 
-          if (!dstModuleDocs.has(importedName)) {
-            if (importedName === 'default') throw new UndefinedDefaultImportError(dstModule, spec)
-            throw new UndefinedImportError(importedName, dstModule, spec)
-          }
+        const importedName = getImportedName(spec)
+
+        if (!dstModuleDocs.has(importedName)) {
+          if (importedName === 'default') throw new UndefinedDefaultImportError(dstModule, spec)
+          throw new UndefinedImportError(importedName, dstModule, spec)
         }
       }
     }
