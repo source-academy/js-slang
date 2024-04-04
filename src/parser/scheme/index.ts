@@ -145,11 +145,8 @@ export function decodeError(error: SourceError): SourceError {
     // Syntax errors are not encoded.
     return error
   }
-  const newExplain = decodeString(error.explain())
-  const newElaborate = decodeString(error.elaborate())
-  return {
-    ...error,
-    explain: () => newExplain,
-    elaborate: () => newElaborate
-  }
+  // mutate the error to reflect the new messages
+  error.explain = () => decodeString(error.explain())
+  error.elaborate = () => decodeString(error.elaborate())
+  return error
 }
