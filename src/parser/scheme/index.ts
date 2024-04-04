@@ -1,6 +1,5 @@
-import { Program } from 'estree'
-
-import { decode, schemeParse } from '../../alt-langs/scheme/scm-slang/src'
+import { ArrowFunctionExpression, Program } from 'estree'
+import { decode, estreeDecode, schemeParse } from '../../alt-langs/scheme/scm-slang/src'
 import {
   car,
   cdr,
@@ -9,7 +8,6 @@ import {
   last$45$pair,
   list$45$tail,
   pair$63$,
-  procedure$63$,
   set$45$cdr$33$,
   vector$63$
 } from '../../alt-langs/scheme/scm-slang/src/stdlib/base'
@@ -18,6 +16,7 @@ import { Chapter, Context, ErrorType, SourceError } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
+import Closure from '../../interpreter/closure'
 
 export class SchemeParser implements Parser<AcornOptions> {
   private chapter: number
@@ -107,7 +106,7 @@ export function decodeValue(x: any): any {
       all_pairs.push(current)
       current = cdr(current)
     }
-    x
+
     // assemble a new list using the elements in all_pairs
     let new_list = null
     for (let i = all_pairs.length - 1; i >= 0; i--) {
@@ -125,13 +124,13 @@ export function decodeValue(x: any): any {
   } else if (vector$63$(x)) {
     // May contain encoded strings.
     return x.map(decodeValue)
-  } else if (procedure$63$(x)) {
-    // copy x to avoid modifying the original object
-    const newX = { ...x }
-    const newString = decodeString(x.toString())
-    // change the toString method to return the decoded string
-    newX.toString = () => newString
-    return newX
+  } else if (x instanceof Closure) {
+    const newNode = estreeDecode(x.originalNode) as ArrowFunctionExpression
+
+    // not a big fan of mutation, but we assert we will never need the original node again anyway
+    x.node = newNode
+    x.originalNode = newNode
+    return x
   } else {
     // string, number, boolean, null, undefined
     // no need to decode.
