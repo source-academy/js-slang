@@ -1,7 +1,7 @@
-import { memoizedGetModuleManifestAsync } from '../../loader/moduleLoaderAsync'
+import { memoizedGetModuleManifestAsync } from '../../loader/loaders'
 import resolveFile, { ImportResolutionOptions, defaultResolutionOptions } from '../resolver'
 
-jest.mock('../../loader/moduleLoaderAsync')
+jest.mock('../../loader/loaders')
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -12,7 +12,7 @@ const resolveModule = (
   toPath: string,
   pred: (p: string) => boolean,
   options: ImportResolutionOptions
-) => resolveFile(fromPath, toPath, p => Promise.resolve(pred(p)), options)
+) => resolveFile(fromPath, toPath, p => Promise.resolve(pred(p) ? '' : undefined), options)
 
 test('If only local imports are used, the module manifest is not loaded', async () => {
   await resolveModule('/a.js', '/b.js', () => true, defaultResolutionOptions)
@@ -25,7 +25,7 @@ test('Returns false and resolved path of source file when resolution fails', () 
     resolveModule('/', './a', () => false, {
       extensions: ['js']
     })
-  ).resolves.toEqual(['/a', false])
+  ).resolves.toBeUndefined()
 })
 
 test('Will resolve extensions', () => {
@@ -35,7 +35,11 @@ test('Will resolve extensions', () => {
     resolveModule('/', '/a', mockResolver, {
       extensions: ['js', 'ts']
     })
-  ).resolves.toEqual(['/a.ts', true])
+  ).resolves.toMatchObject({
+    type: 'local',
+    absPath: '/a.ts',
+    contents: ''
+  })
 })
 
 test('Will not resolve if the corresponding options are given as false', () => {
@@ -44,7 +48,7 @@ test('Will not resolve if the corresponding options are given as false', () => {
     resolveModule('/', './a', mockResolver, {
       extensions: null
     })
-  ).resolves.toEqual(['/a', false])
+  ).resolves.toBeUndefined()
 })
 
 test('Checks the module manifest when importing source modules', async () => {
@@ -53,7 +57,7 @@ test('Checks the module manifest when importing source modules', async () => {
   })
 
   expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(1)
-  expect(result).toEqual(['one_module', true])
+  expect(result).toMatchObject({ type: 'source' })
 })
 
 test('Returns false on failing to resolve a source module', async () => {
@@ -62,5 +66,5 @@ test('Returns false on failing to resolve a source module', async () => {
   })
 
   expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(1)
-  expect(result).toEqual(['unknown_module', false])
+  expect(result).toBeUndefined()
 })
