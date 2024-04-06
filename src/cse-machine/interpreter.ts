@@ -7,13 +7,12 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { isArray, reverse } from 'lodash'
+import { isArray, isFunction, reverse } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import Closure from '../interpreter/closure'
 import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, type StatementSequence, Value } from '../types'
@@ -34,6 +33,7 @@ import {
   makeDummyContCallExpression
 } from './continuations'
 import * as instr from './instrCreator'
+import { Stack } from './stack'
 import {
   AppInstr,
   ArrLitInstr,
@@ -72,6 +72,7 @@ import {
   hasDeclarations,
   hasImportDeclarations,
   isBlockStatement,
+  isEnvArray,
   isInstr,
   isNode,
   isSimpleFunction,
@@ -79,9 +80,9 @@ import {
   pushEnvironment,
   reduceConditional,
   setVariable,
-  Stack,
   valueProducing
 } from './utils'
+import Closure from './closure'
 
 type CmdEvaluator = (
   command: ControlItem,
@@ -151,6 +152,41 @@ export class Stash extends Stack<Value> {
     newStash.push(...stackCopy)
     return newStash
   }
+}
+
+/**
+ * Evaluates the given call expression and returns the result. If the callee is a closure,
+ * the given context may be mutated and more environments will be created.
+ *
+ * @param context The context to evaluate the program in.
+ * @param node The call expression to evaluate.
+ * @returns The result of running the CSE machine.
+ */
+export function apply(
+  context: Context,
+  node: es.CallExpression
+) {
+  // Create a new CSE Machine with the same context as the current one, but with
+  // the control reset to only contain the call expression, and the stash emptied.
+  const newContext = { ...context, runtime: { ...context.runtime, debuggerOn: false } }
+  newContext.runtime.control = new Control()
+  // Also need the env instruction to return back to the current environment at the end.
+  // The call expression won't create one as there is only one item in the control.
+  newContext.runtime.control.push(instr.envInstr(currentEnvironment(context), node), node)
+  newContext.runtime.stash = new Stash()
+  const gen = generateCSEMachineStateStream(
+    newContext,
+    newContext.runtime.control,
+    newContext.runtime.stash,
+    -1,
+    -1
+  )
+  // Run the new CSE Machine fully to obtain the result in the stash
+  for (const _ of gen) {
+  }
+  // Also don't forget to update object count in original context
+  context.runtime.objectCount = newContext.runtime.objectCount
+  return newContext.runtime.stash.peek()
 }
 
 /**
@@ -745,7 +781,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       true,
       isPrelude
     )
-    currentEnvironment(context).heap.add(closure)
     stash.push(closure)
   },
 
@@ -949,11 +984,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
-      // Display the pre-defined functions on the global environment if needed.
-      if (func.preDefined) {
-        context.runtime.environments[1].heap.add(func)
-      }
-
       const next = control.peek()
 
       // Push ENVIRONMENT instruction if needed - if next control stack item
@@ -988,17 +1018,37 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       return
     }
 
-    // Value is a function
+    // Value is a built-in function
     // Check for number of arguments mismatch error
     checkNumberOfArguments(context, func, args, command.srcNode)
     // Directly stash result of applying pre-built functions without the CSE machine.
     try {
       const result = func(...args)
-      // Attach array properties and add to heap for any arrays created from built-in functions,
-      // examples: pair, list
-      if (isArray(result)) {
-        handleArrayCreation(context, result)
+
+      // Recursively adds `environment` and `id` properties to any arrays created,
+      // and also adds them to the heap starting from the arrays that are more deeply nested.
+      const attachEnvToResult = (value: any) => {
+        // Built-in functions don't instantly create arrays with circular references, so
+        // there is no need to keep track of visited arrays.
+        if (isArray(value) && !isEnvArray(value)) {
+          for (const item of value) {
+            attachEnvToResult(item)
+          }
+          handleArrayCreation(context, value)
+        } else if (isFunction(value) && !{}.hasOwnProperty.call(value, 'environment')) {
+          // This is a special case for the `stream` built-in function, since it returns pairs
+          // whose last element is a function. The CSE machine on the frontend will still draw
+          // these functions like closures, and the tail of the "closures" will need to point
+          // to where `stream` was called.
+          //
+          // TODO: remove this condition if `stream` becomes a pre-defined function
+          Object.defineProperties(value, {
+            environment: { value: currentEnvironment(context), writable: true }
+          })
+        }
       }
+      attachEnvToResult(result)
+
       stash.push(result)
     } catch (error) {
       if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {

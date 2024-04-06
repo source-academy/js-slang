@@ -1,6 +1,6 @@
 import * as es from 'estree'
 
-import Closure from '../interpreter/closure'
+import Closure from './closure'
 import { Environment, Node } from '../types'
 
 export enum InstrType {
@@ -96,13 +96,13 @@ export type Instr =
 export type ControlItem = Node | Instr
 
 // Every array also has the properties `id` and `environment` for use in the frontend CSE Machine
-export type Array = any[] & {
+export type EnvArray = any[] & {
   readonly id: string
   environment: Environment
 }
 
 // Objects in the heap can only store arrays or closures
-export type HeapObject = Array | Closure
+export type HeapObject = EnvArray | Closure
 
 // Special class that cannot be found on the stash so is safe to be used
 // as an indicator of a breakpoint from running the CSE machine
