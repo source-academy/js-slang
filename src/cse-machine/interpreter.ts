@@ -162,10 +162,7 @@ export class Stash extends Stack<Value> {
  * @param node The call expression to evaluate.
  * @returns The result of running the CSE machine.
  */
-export function apply(
-  context: Context,
-  node: es.CallExpression
-) {
+export function apply(context: Context, node: es.CallExpression) {
   // Create a new CSE Machine with the same context as the current one, but with
   // the control reset to only contain the call expression, and the stash emptied.
   const newContext = { ...context, runtime: { ...context.runtime, debuggerOn: false } }

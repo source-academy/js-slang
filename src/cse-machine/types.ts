@@ -1,7 +1,7 @@
 import * as es from 'estree'
 
-import Closure from './closure'
 import { Environment, Node } from '../types'
+import Closure from './closure'
 
 export enum InstrType {
   RESET = 'Reset',
