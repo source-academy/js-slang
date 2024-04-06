@@ -13,7 +13,6 @@ import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, type StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
@@ -246,9 +245,8 @@ function evaluateImports(program: es.Program, context: Context) {
     const [importNodeMap] = filterImportDeclarations(program)
 
     const environment = currentEnvironment(context)
-    Object.entries(importNodeMap).forEach(([moduleName, nodes]) => {
-      initModuleContext(moduleName, context, true)
-      const functions = loadModuleBundle(moduleName, context, nodes[0])
+    for (const [moduleName, nodes] of Object.entries(importNodeMap)) {
+      const functions = context.nativeStorage.loadedModules[moduleName]
       for (const node of nodes) {
         for (const spec of node.specifiers) {
           declareIdentifier(context, spec.local.name, node, environment)
@@ -272,7 +270,7 @@ function evaluateImports(program: es.Program, context: Context) {
           defineVariable(context, spec.local.name, obj, true, node)
         }
       }
-    })
+    }
   } catch (error) {
     handleRuntimeError(context, error)
   }

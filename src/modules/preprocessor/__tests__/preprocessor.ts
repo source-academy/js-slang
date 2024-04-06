@@ -4,16 +4,16 @@ import type { MockedFunction } from 'jest-mock'
 import { parseError } from '../../..'
 import { mockContext } from '../../../mocks/context'
 import { Chapter } from '../../../types'
-import { memoizedGetModuleDocsAsync } from '../../loader/moduleLoaderAsync'
+import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
 import preprocessFileImports from '..'
-import { parseCodeError, sanitizeAST } from './utils'
+import { sanitizeAST } from '../../../utils/ast/sanitizer'
 import { parse } from '../../../parser/parser'
 import {
   accessExportFunctionName,
   defaultExportLookupName
 } from '../../../stdlib/localImport.prelude'
 
-jest.mock('../../loader/moduleLoaderAsync')
+jest.mock('../../loader/loaders')
 
 describe('preprocessFileImports', () => {
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
@@ -35,7 +35,7 @@ describe('preprocessFileImports', () => {
 
     const expectedProgram = parse(expectedCode, expectedContext)
     if (!expectedProgram) {
-      throw parseCodeError
+      throw new Error('Failed to parse expected code')
     }
 
     expect(sanitizeAST(actualProgram)).toMatchObject(sanitizeAST(expectedProgram))
@@ -59,7 +59,7 @@ describe('preprocessFileImports', () => {
     const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
     expect(actualProgram).toBeUndefined()
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
-      `"Line 1: Module '/non-existent-file.js' not found."`
+      `"Line 1: Module './non-existent-file.js' not found."`
     )
   })
 
