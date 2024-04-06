@@ -9,7 +9,7 @@ import type {
 } from '../moduleTypes'
 import { getRequireProvider } from './requireProvider'
 
-// Default modules static url. Exported for testing.
+/** Default modules static url. Exported for testing. */
 export let MODULES_STATIC_URL = 'https://source-academy.github.io/modules'
 
 export function setModulesStaticURL(url: string) {
