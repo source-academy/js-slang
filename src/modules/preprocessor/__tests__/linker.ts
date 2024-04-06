@@ -2,6 +2,7 @@ import { mockContext } from '../../../mocks/context'
 import { MissingSemicolonError } from '../../../parser/errors'
 import { Chapter, type Context } from '../../../types'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
+import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
 
 import * as resolver from '../resolver'
@@ -11,7 +12,7 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-async function testCode<T extends Record<string, string>>(files: T, entrypointFilePath: keyof T) {
+async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
   const context = mockContext(Chapter.SOURCE_4)
   const result = await parseProgramsAndConstructImportGraph(
     p => Promise.resolve(files[p]),
@@ -26,10 +27,7 @@ async function testCode<T extends Record<string, string>>(files: T, entrypointFi
   ]
 }
 
-async function expectError<T extends Record<string, string>>(
-  files: T,
-  entrypointFilePath: keyof T
-) {
+async function expectError<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
   const [context, result] = await testCode(files, entrypointFilePath)
   expect(result).toBeUndefined()
   expect(context.errors.length).toBeGreaterThanOrEqual(1)
