@@ -108,6 +108,6 @@ test('apply_in_underlying_javascript works correctly and adds objects to heaps',
       return x => x;
     }
     apply_in_underlying_javascript(f, list(0));
-    `,
+    `
   ).toMatchSnapshot()
 })
