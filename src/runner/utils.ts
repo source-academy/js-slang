@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { DebuggerStatement, Literal, Program } from 'estree'
+import type { DebuggerStatement, Program } from 'estree'
 
-import { IOptions, Result } from '..'
-import { parseAt } from '../parser/utils'
+import type { IOptions, Result } from '..'
 import { areBreakpointsSet } from '../stdlib/inspector'
-import { Context, RecursivePartial, Variant } from '../types'
+import type { Context, RecursivePartial, Variant } from '../types'
 import { simple } from '../utils/walkers'
 
 // Context Utils
@@ -82,15 +81,5 @@ export function determineExecutionMethod(
 }
 
 // AST Utils
-
-export function hasVerboseErrors(theCode: string): boolean {
-  const theProgramFirstExpression = parseAt(theCode, 0)
-
-  if (theProgramFirstExpression && theProgramFirstExpression.type === 'Literal') {
-    return (theProgramFirstExpression as unknown as Literal).value === 'enable verbose'
-  }
-
-  return false
-}
 
 export const resolvedErrorPromise = Promise.resolve({ status: 'error' } as Result)

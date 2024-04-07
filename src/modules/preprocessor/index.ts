@@ -8,6 +8,18 @@ import analyzeImportsAndExports from './analyzer'
 import parseProgramsAndConstructImportGraph from './linker'
 import defaultBundler, { type Bundler } from './bundler'
 
+export type PreprocessResult =
+  | {
+      ok: true
+      program: es.Program
+      files: Record<string, string>
+      verboseErrors: boolean
+    }
+  | {
+      ok: false
+      verboseErrors: boolean
+    }
+
 /**
  * Preprocesses file imports and returns a transformed Abstract Syntax Tree (AST).
  * If an error is encountered at any point, returns `undefined` to signify that an
@@ -31,9 +43,9 @@ const preprocessFileImports = async (
   context: Context,
   options: RecursivePartial<IOptions> = {},
   bundler: Bundler = defaultBundler
-): Promise<es.Program | undefined> => {
+): Promise<PreprocessResult> => {
   // Parse all files into ASTs and build the import graph.
-  const importGraphResult = await parseProgramsAndConstructImportGraph(
+  const linkerResult = await parseProgramsAndConstructImportGraph(
     typeof files === 'function' ? files : p => Promise.resolve(files[p]),
     entrypointFilePath,
     context,
@@ -41,11 +53,11 @@ const preprocessFileImports = async (
     options?.shouldAddFileName ?? (typeof files === 'function' || Object.keys(files).length > 1)
   )
   // Return 'undefined' if there are errors while parsing.
-  if (!importGraphResult || context.errors.length !== 0) {
-    return undefined
+  if (!linkerResult.ok) {
+    return linkerResult
   }
 
-  const { programs, topoOrder, sourceModulesToImport } = importGraphResult
+  const { programs, topoOrder, sourceModulesToImport } = linkerResult
 
   try {
     await loadSourceModules(sourceModulesToImport, context, options.importOptions?.loadTabs ?? true)
@@ -59,10 +71,19 @@ const preprocessFileImports = async (
     )
   } catch (error) {
     context.errors.push(error)
-    return undefined
+    return {
+      ok: false,
+      verboseErrors: linkerResult.verboseErrors
+    }
   }
 
-  return bundler(programs, entrypointFilePath, topoOrder, context)
+  const program = bundler(programs, entrypointFilePath, topoOrder, context)
+  return {
+    ok: true,
+    program,
+    files: linkerResult.files,
+    verboseErrors: linkerResult.verboseErrors
+  }
 }
 
 export default preprocessFileImports

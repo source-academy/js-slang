@@ -1,9 +1,9 @@
 import type { Program } from 'estree'
 import type { MockedFunction } from 'jest-mock'
 
-import { parseError } from '../../..'
+import { parseError, type IOptions } from '../../..'
 import { mockContext } from '../../../mocks/context'
-import { Chapter } from '../../../types'
+import { Chapter, type RecursivePartial } from '../../../types'
 import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
 import preprocessFileImports from '..'
 import { sanitizeAST } from '../../../utils/ast/sanitizer'
@@ -12,6 +12,7 @@ import {
   accessExportFunctionName,
   defaultExportLookupName
 } from '../../../stdlib/localImport.prelude'
+import type { SourceFiles } from '../../moduleTypes'
 
 jest.mock('../../loader/loaders')
 
@@ -23,6 +24,24 @@ describe('preprocessFileImports', () => {
     actualContext = mockContext(Chapter.LIBRARY_PARSER)
     expectedContext = mockContext(Chapter.LIBRARY_PARSER)
   })
+
+  async function expectSuccess(
+    files: SourceFiles,
+    entrypointFilePath: string,
+    options?: RecursivePartial<IOptions>
+  ) {
+    const preprocResult = await preprocessFileImports(
+      files,
+      entrypointFilePath,
+      actualContext,
+      options
+    )
+    if (!preprocResult.ok) {
+      throw actualContext.errors[0]
+    }
+
+    return preprocResult.program
+  }
 
   const assertASTsAreEquivalent = (
     actualProgram: Program | undefined,
@@ -46,7 +65,11 @@ describe('preprocessFileImports', () => {
       '/a.js': '1 + 2;'
     }
     const actualProgram = await preprocessFileImports(files, '/non-existent-file.js', actualContext)
-    expect(actualProgram).toBeUndefined()
+    expect(actualProgram).toMatchObject({
+      ok: false,
+      verboseErrors: false
+    })
+
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
       `"Module '/non-existent-file.js' not found."`
     )
@@ -57,7 +80,10 @@ describe('preprocessFileImports', () => {
       '/a.js': `import { x } from './non-existent-file.js';`
     }
     const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
-    expect(actualProgram).toBeUndefined()
+    expect(actualProgram).toMatchObject({
+      ok: false,
+      verboseErrors: false
+    })
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
       `"Line 1: Module './non-existent-file.js' not found."`
     )
@@ -73,7 +99,7 @@ describe('preprocessFileImports', () => {
       `
     }
     const expectedCode = files['/a.js']
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
+    const actualProgram = await expectSuccess(files, '/a.js')
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
@@ -102,7 +128,7 @@ describe('preprocessFileImports', () => {
        return x * x * x;
       }
     `
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
+    const actualProgram = await expectSuccess(files, '/a.js')
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
@@ -152,7 +178,7 @@ describe('preprocessFileImports', () => {
       const y = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "y");
       const z = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "z");
     `
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
+    const actualProgram = await expectSuccess(files, '/a.js', {
       importOptions: {
         allowUndefinedImports: true
       },
@@ -221,7 +247,7 @@ describe('preprocessFileImports', () => {
 
       b;
     `
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
+    const actualProgram = await expectSuccess(files, '/a.js', {
       importOptions: {
         allowUndefinedImports: true
       },
@@ -378,7 +404,7 @@ describe('preprocessFileImports', () => {
 
       x + y;
     `
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
+    const actualProgram = await expectSuccess(files, '/a.js', {
       importOptions: {
         allowUndefinedImports: true
       },
