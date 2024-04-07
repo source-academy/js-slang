@@ -3,93 +3,94 @@
 The following list processing functions are supported:
 
 \begin{itemize}
-\item \lstinline{pair(x, y)}: \textit{primitive}, makes a pair from \lstinline{x} and \lstinline{y}.
+\item \lstinline{pair(x, y)}: \textit{primitive}, makes a pair from \lstinline{x} and \lstinline{y}; time: $\Theta(1)$, space: $\Theta((1)$.
 \item \lstinline{is_pair(x)}: \textit{primitive}, returns \lstinline{true} if \lstinline{x} is a
-  pair and \lstinline{false} otherwise.
-\item \lstinline{head(x)}: \textit{primitive}, returns the head (first component) of the pair \lstinline{x}.
+  pair and \lstinline{false} otherwise; time: $\Theta(1)$, space: $\Theta((1)$.
+\item \lstinline{head(x)}: \textit{primitive}, returns the head (first component) of the pair \lstinline{x}; time: $\Theta(1)$, space: $\Theta((1)$.
 \item \lstinline{tail(x)}: \textit{primitive}, returns the tail (second component) of the
-  pair \lstinline{x}.
+  pair \lstinline{x}; time: $\Theta(1)$, space: $\Theta((1)$.
 \item \lstinline{is_null(xs)}: \textit{primitive}, returns \lstinline{true} if \lstinline{xs} is the
-  empty list \lstinline{null}, and \lstinline{false} otherwise.
+  empty list \lstinline{null}, and \lstinline{false} otherwise; time: $\Theta(1)$, space: $\Theta((1)$.
 \item \lstinline{is_list(x)}: \textit{primitive}, returns \lstinline{true} if
   \lstinline{x} is a list as defined in the lectures, and
   \lstinline{false} otherwise. Iterative process; 
-time: $O(n)$, space: $O(1)$, where $n$ is the length of the 
+time: $Θ(n)$, space: $Θ(1)$, where $n$ is the length of the 
 chain of \lstinline{tail} operations that can be applied to \lstinline{x}.
 \item \lstinline{list(x1, x2,..., xn)}: \textit{primitive}, returns a list with $n$ elements. The
 first element is \lstinline{x1}, the second \lstinline{x2}, etc. Iterative
-process; time: $O(n)$, space: $O(n)$, since the constructed list data structure
+process; time: $Θ(n)$, space: $Θ(n)$, since the constructed list data structure
 consists of $n$ pairs, each of which takes up a constant amount of space.
 \item \lstinline{draw_data(x1, x2,..., xn)}: \textit{primitive}, visualizes each \lstinline{x1, x2,..., xn} in a separate drawing
   area in the Source Academy using a box-and-pointer diagram; time, space:
-  $O(n)$, where $n$ is the combined number of data structures such as
+  $Θ(n)$, where $n$ is the combined number of data structures such as
   pairs in \lstinline{x1, x2,..., xn}.
 \item \lstinline{equal(x1, x2)}: Returns \lstinline{true} if both
   have the same structure with respect to \lstinline{pair},
   and the same numbers, boolean values, functions or empty list
   at corresponding leave positions (places that are not themselves pairs),
   and \lstinline{false} otherwise; time, space:
-  $O(n)$, where $n$ is the number of pairs in \lstinline{x}.
+  $Θ(n)$, where $n$ is the number of data structures such as pairs
+  in \lstinline{x1} and \lstinline{x2}.
 \item \lstinline{length(xs)}: Returns the length of the list
   \lstinline{xs}. 
-Iterative process; time: $O(n)$, space: $O(1)$, where $n$ is the length of \lstinline{xs}.
+Iterative process; time: $Θ(n)$, space: $Θ(1)$, where $n$ is the length of \lstinline{xs}.
 \item \lstinline{map(f, xs)}: Returns a list that results from list
   \lstinline{xs} by element-wise application of \lstinline{f}. 
-Iterative process; time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+Iterative process; time: $Θ(n)$ (apart from \lstinline{f}), space: $Θ(n)$ (apart from \lstinline{f}), where $n$ is the length of \lstinline{xs}.
 \item \lstinline{build_list(f, n)}: Makes a list with \lstinline{n}
 elements by applying the unary function \lstinline{f} to the numbers 0 to \lstinline{n - 1}.
-Iterative process; time: $O(n)$, space: $O(n)$.
+Iterative process; time: $Θ(n)$ (apart from \lstinline{f}), space: $Θ(n)$ (apart from \lstinline{f}).
 \item \lstinline{for_each(f, xs)}: Applies \lstinline{f} to every
   element of the list \lstinline{xs}, and then returns
   \lstinline{true}. 
-Iterative process; time: $O(n)$, space: $O(1)$, where $n$ is the length of \lstinline{xs}.
+Iterative process; time: $Θ(n)$ (apart from \lstinline{f}), space: $Θ(1)$ (apart from \lstinline{f}), where $n$ is the length of \lstinline{xs}.
 \item \lstinline{list_to_string(xs)}: Returns a string that represents
 list \lstinline{xs} using the text-based box-and-pointer notation \lstinline{[...]}.
 \item \lstinline{reverse(xs)}: Returns list \lstinline{xs} in reverse
-  order. Iterative process; time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
-The process is iterative, but consumes space $O(n)$ because of the result list.
+  order. Iterative process; time: $Θ(n)$, space: $Θ(n)$, where $n$ is the length of \lstinline{xs}.
+The process is iterative, but consumes space $Θ(n)$ because of the result list.
 \item \lstinline{append(xs, ys)}: Returns a list that results from 
 appending the list \lstinline{ys} to the list \lstinline{xs}.
-Iterative process; time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+Iterative process; time: $Θ(n)$, space: $Θ(n)$, where $n$ is the length of \lstinline{xs}.
 \item \lstinline{member(x, xs)}: Returns first postfix sublist
 whose head is identical to
 \lstinline{x} (\lstinline{===}); returns \lstinline{[]} if the
 element does not occur in the list.
-Iterative process; time: $O(n)$, space: $O(1)$, where $n$ is the length of \lstinline{xs}.
+Iterative process; time: $Θ(n)$, space: $Θ(1)$, where $n$ is the length of \lstinline{xs}.
 \item \lstinline{remove(x, xs)}: Returns a list that results from
 \lstinline{xs} by removing the first item from \lstinline{xs} that
 is identical (\lstinline{===}) to \lstinline{x}. Iterative process;
-time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+time: $Θ(n)$, space: $Θ(n)$, where $n$ is the length of \lstinline{xs}.
 \item \lstinline{remove_all(x, xs)}: Returns a list that results from
 \lstinline{xs} by removing all items from \lstinline{xs} that
 are identical (\lstinline{===}) to \lstinline{x}.
 Iterative process;
-time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+time: $Θ(n)$, space: $Θ(n)$, where $n$ is the length of \lstinline{xs}.
 \item \lstinline{filter(pred, xs)}: Returns a list that contains
 only those elements for which the one-argument function
 \lstinline{pred}
 returns \lstinline{true}.
 Iterative process;
-time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+time: $Θ(n)$ (apart from \lstinline{pred}), space: $Θ(n)$ (apart from \lstinline{pred}), where $n$ is the length of \lstinline{xs}.
 \item \lstinline{enum_list(start, end)}: Returns a list that enumerates
 numbers starting from \lstinline{start} using a step size of 1, until
 the number exceeds (\lstinline{>}) \lstinline{end}.
 Iterative process;
-time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs}.
+time: $Θ(n)$, space: $Θ(n)$, where $n$ is \lstinline{end} $-$  \lstinline{start}.
 \item \lstinline{list_ref(xs, n)}: Returns the element
 of list \lstinline{xs} at position \lstinline{n}, 
 where the first element has index 0.
 Iterative process;
-time: $O(n)$, space: $O(1)$, where $n$ is the length of \lstinline{xs}.
-\item \lstinline{accumulate(op, initial, xs)}: Applies binary
-function \lstinline{op} to the elements of \lstinline{xs} from
-right-to-left order, first applying \lstinline{op} to the last element
+time: $Θ(n)$ (apart from \lstinline{f}), space: $Θ(1)$ (apart from \lstinline{f}), where $n$ is the length of \lstinline{xs}.
+\item \lstinline{accumulate(f, initial, xs)}: Applies binary
+function \lstinline{f} to the elements of \lstinline{xs} from
+right-to-left order, first applying \lstinline{f} to the last element
 and the value \lstinline{initial}, resulting in $r_1$, then to the 
 second-last element and $r_1$, resulting in $r_2$, etc, and finally
 to the first element and $r_{n-1}$, where $n$ is the length of the
-list. Thus, \lstinline{accumulate(op,zero,list(1,2,3))} results in
-\lstinline{op(1, op(2, op(3, zero)))}.
+list. Thus, \lstinline{accumulate(f,zero,list(1,2,3))} results in
+\lstinline{f(1, f(2, f(3, zero)))}.
 Iterative process;
-time: $O(n)$, space: $O(n)$, where $n$ is the length of \lstinline{xs},
-assuming \lstinline{op} takes constant time.
+time: $Θ(n)$, space: $Θ(n)$, where $n$ is the length of \lstinline{xs},
+assuming \lstinline{f} takes constant time.
 \end{itemize}
