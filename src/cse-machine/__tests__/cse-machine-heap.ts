@@ -98,3 +98,16 @@ test('Variadic closures correctly add argument array to the function environment
     false
   ).toMatchSnapshot()
 })
+
+test('apply_in_underlying_javascript works correctly and adds objects to heaps', () => {
+  expectEnvTreeFrom(
+    stripIndent`
+    let a = 0;
+    function f(x) {
+      a = [1];
+      return x => x;
+    }
+    apply_in_underlying_javascript(f, list(0));
+    `,
+  ).toMatchSnapshot()
+})

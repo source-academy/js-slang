@@ -26,8 +26,11 @@ const closureToJS = (value: Closure, context: Context, hasDeclaredName: boolean)
     const node = callExpression(
       // Use function name if there is one so environments that get created will have this name.
       // Else, treat the closure as a literal so it can get directly pushed into the stash next.
-      hasDeclaredName ? identifier(value.functionName) : literal(value as any),
-      args
+      hasDeclaredName
+        ? identifier(value.functionName, value.node.loc)
+        : literal(value as any, value.node.loc),
+      // Wrap arguments in a literal as well
+      args.map(arg => literal(arg))
     )
     return apply(context, node)
   }

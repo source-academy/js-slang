@@ -213,8 +213,11 @@ export const envChanging = (command: ControlItem): boolean => {
     return (
       type === 'Program' ||
       type === 'BlockStatement' ||
+      type === 'FunctionExpression' ||
       type === 'ArrowFunctionExpression' ||
-      (type === 'ExpressionStatement' && command.expression.type === 'ArrowFunctionExpression')
+      (type === 'ExpressionStatement' &&
+        (command.expression.type === 'FunctionExpression' ||
+          command.expression.type === 'ArrowFunctionExpression'))
     )
   } else {
     const type = command.instrType

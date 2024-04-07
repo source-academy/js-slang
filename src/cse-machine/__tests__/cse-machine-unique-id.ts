@@ -25,6 +25,20 @@ test("Context runtime's objectCount continues after prelude", async () => {
   expect(context.runtime.objectCount).toMatchInlineSnapshot(`51`)
 })
 
+test("Context runtime's objectCount continues after apply_in_underlying_javascript call", async () => {
+  const context = await getContextFrom(
+    stripIndent`
+      function f(...x) {
+        return [x];
+      }
+      apply_in_underlying_javascript(f, list(1, 2, 3));
+    `
+  )
+  // 1 program environment + 1 closure + 1 function environment
+  // 3 arrays from list + 1 array from variadic argument + 1 array from from function result
+  expect(context.runtime.objectCount).toMatchInlineSnapshot(`55`)
+})
+
 test('Every environment/array/closure has a unique id', async () => {
   const context = await getContextFrom(
     stripIndent`
