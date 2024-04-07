@@ -27,7 +27,7 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { ModuleNotFoundError } from './modules/errors'
-import type { ImportOptions, SourceFiles } from './modules/moduleTypes'
+import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
@@ -238,7 +238,10 @@ export async function runFilesInContext(
     p => Promise.resolve(files[p]),
     entrypointFilePath,
     context,
-    options
+    {
+      ...options,
+      shouldAddFileName: options.shouldAddFileName ?? Object.keys(files).length > 1
+    }
   ))
   return result
 }
@@ -287,10 +290,12 @@ export async function compileFiles(
   }
 
   const preprocessResult = await preprocessFileImports(
-    files as SourceFiles,
+    p => Promise.resolve(files[p]),
     entrypointFilePath,
-    context
+    context,
+    { shouldAddFileName: Object.keys(files).length > 1 }
   )
+
   if (!preprocessResult.ok) {
     return undefined
   }

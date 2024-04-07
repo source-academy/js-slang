@@ -1,14 +1,15 @@
 import { mockContext } from '../../mocks/context'
-import { parse } from '../../parser/parser'
-import { Chapter, Context, Environment } from '../../types'
+import { Chapter, type Context, type Environment } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { sourceRunner } from '../../runner'
+import { runCodeInSource } from '../../runner'
 import { createProgramEnvironment } from '../utils'
 
-const getContextFrom = async (code: string) => {
+const getContextFrom = async (code: string, envSteps?: number) => {
   const context = mockContext(Chapter.SOURCE_4)
-  const parsed = parse(code, context)
-  await sourceRunner(parsed!, context, false, { executionMethod: 'cse-machine' })
+  await runCodeInSource(code, context, {
+    envSteps,
+    executionMethod: 'cse-machine'
+  })
   return context
 }
 
@@ -49,20 +50,16 @@ test('Every environment/array/closure has a unique id', async () => {
 })
 
 test('CSE Machine stops at the given step number', async () => {
-  const parsed = parse(
-    stripIndent`
+  const code = stripIndent`
       let x = 0;
       for (let i = 0; i < 10; i = i + 1) {
         x = [x];
       }
-    `,
-    mockContext(Chapter.SOURCE_4)
-  )
+    `
   // The above program has a total of 335 steps
   // Start from steps = 1 so that the program environment always exists
   for (let steps = 1; steps < 336; steps++) {
-    const context = mockContext(Chapter.SOURCE_4)
-    await sourceRunner(parsed!, context, false, { envSteps: steps, executionMethod: 'cse-machine' })
+    const context = await getContextFrom(code, steps)
     // A simple check to ensure that the the CSE Machine does indeed stop at the given step number
     if (steps === 100) {
       // 7 additional environments + 2 arrays created, so object count is 47 + 7 + 2 = 56
@@ -71,32 +68,28 @@ test('CSE Machine stops at the given step number', async () => {
   }
 })
 
-const mockProgramEnv = createProgramEnvironment(mockContext(), false)
-
-const getProgramEnv = (context: Context) => {
-  let env: Environment | null = context.runtime.environments[0]
-  while (env && env.name !== mockProgramEnv.name) {
-    env = env.tail
-  }
-  return env
-}
-
-const parsed = parse(
-  stripIndent`
-      let x = 0;
-      for (let i = 0; i < 10; i = i + 1) {
-        x = [x];
-      }
-    `,
-  mockContext(Chapter.SOURCE_4)
-)
 // The above program has a total of 335 steps
 // Start from steps = 1 so that the program environment always exists
 test('Program environment id stays the same regardless of amount of steps', async () => {
+  const mockProgramEnv = createProgramEnvironment(mockContext(), false)
+
+  const getProgramEnv = (context: Context) => {
+    let env: Environment | null = context.runtime.environments[0]
+    while (env && env.name !== mockProgramEnv.name) {
+      env = env.tail
+    }
+    return env
+  }
+
+  const code = stripIndent`
+    let x = 0;
+    for (let i = 0; i < 10; i = i + 1) {
+      x = [x];
+    }
+  `
   let same = true
   for (let steps = 1; steps < 336; steps++) {
-    const context = mockContext(Chapter.SOURCE_4)
-    await sourceRunner(parsed!, context, false, { envSteps: steps, executionMethod: 'cse-machine' })
+    const context = await getContextFrom(code, steps)
     const programEnv = getProgramEnv(context)
     same &&= programEnv!.id === `"46"`
   }

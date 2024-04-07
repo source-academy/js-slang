@@ -23,12 +23,12 @@ import {
   callee,
   getEvaluationSteps,
   getRedex,
-  IStepperPropContents,
+  type IStepperPropContents,
   redexify
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, Context, RecursivePartial, Scheduler, Variant } from '../types'
+import { Chapter, type Context, type RecursivePartial, type Scheduler, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
@@ -222,7 +222,7 @@ function runCSEMachine(program: es.Program, context: Context, options: IOptions)
   return CSEResultPromise(context, value)
 }
 
-export async function sourceRunner(
+async function sourceRunner(
   program: es.Program,
   context: Context,
   isVerboseErrorsEnabled: boolean,
@@ -333,31 +333,33 @@ export async function sourceFilesRunner(
 
   context.previousPrograms.unshift(preprocessedProgram)
 
+  const result = await sourceRunner(preprocessedProgram, context, verboseErrors, options)
+
   if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
     // If the language is scheme, we need to format all errors and returned values first
-    // Use the standard runner to get the result
-    const evaluated = await sourceRunner(preprocessedProgram, context, false, options)
-
-    if (evaluated.status === 'finished') {
+    if (result.status === 'finished') {
       return {
         result: {
-          ...evaluated,
-          value: decodeValue(evaluated.value)
+          ...result,
+          value: decodeValue(result.value)
         },
-        verboseErrors: false
+        verboseErrors
       }
     }
     // Format all errors in the context
-    context.errors = context.errors.map(error => decodeError(error))
-    return {
-      result: evaluated,
-      verboseErrors: false
-    }
+    context.errors = context.errors.map(decodeError)
   }
 
-  const result = await sourceRunner(preprocessedProgram, context, verboseErrors, options)
   return {
     result,
     verboseErrors
   }
+}
+
+export async function runCodeInSource(
+  code: string,
+  context: Context,
+  options: RecursivePartial<IOptions> = {}
+) {
+  return sourceFilesRunner(() => Promise.resolve(code), '/default.js', context, options)
 }

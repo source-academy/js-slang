@@ -17,6 +17,8 @@ import type { SourceFiles } from '../../moduleTypes'
 jest.mock('../../loader/loaders')
 
 describe('preprocessFileImports', () => {
+  const wrapFiles = (files: SourceFiles) => (p: string) => Promise.resolve(files[p])
+
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
   let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
 
@@ -31,7 +33,7 @@ describe('preprocessFileImports', () => {
     options?: RecursivePartial<IOptions>
   ) {
     const preprocResult = await preprocessFileImports(
-      files,
+      p => Promise.resolve(files[p]),
       entrypointFilePath,
       actualContext,
       options
@@ -64,7 +66,11 @@ describe('preprocessFileImports', () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;'
     }
-    const actualProgram = await preprocessFileImports(files, '/non-existent-file.js', actualContext)
+    const actualProgram = await preprocessFileImports(
+      wrapFiles(files),
+      '/non-existent-file.js',
+      actualContext
+    )
     expect(actualProgram).toMatchObject({
       ok: false,
       verboseErrors: false
@@ -79,7 +85,7 @@ describe('preprocessFileImports', () => {
     const files: Record<string, string> = {
       '/a.js': `import { x } from './non-existent-file.js';`
     }
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
+    const actualProgram = await preprocessFileImports(wrapFiles(files), '/a.js', actualContext)
     expect(actualProgram).toMatchObject({
       ok: false,
       verboseErrors: false
@@ -274,7 +280,7 @@ describe('preprocessFileImports', () => {
         export const c = 3;
       `
     }
-    await preprocessFileImports(files, '/a.js', actualContext, {
+    await preprocessFileImports(wrapFiles(files), '/a.js', actualContext, {
       shouldAddFileName: true
     })
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
@@ -300,7 +306,7 @@ describe('preprocessFileImports', () => {
         export const c = 3;
       `
     }
-    await preprocessFileImports(files, '/a.js', actualContext)
+    await preprocessFileImports(wrapFiles(files), '/a.js', actualContext)
     expect(parseError(actualContext.errors, true)).toMatchInlineSnapshot(`
       "Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'.
       Break the circular import cycle by removing imports from any of the offending files.
@@ -316,7 +322,7 @@ describe('preprocessFileImports', () => {
         export { x as y };
       `
     }
-    await preprocessFileImports(files, '/a.js', actualContext)
+    await preprocessFileImports(wrapFiles(files), '/a.js', actualContext)
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
       `"Circular import detected: '/a.js' -> '/a.js'."`
     )
@@ -330,7 +336,7 @@ describe('preprocessFileImports', () => {
         export { x as y };
       `
     }
-    await preprocessFileImports(files, '/a.js', actualContext)
+    await preprocessFileImports(wrapFiles(files), '/a.js', actualContext)
     expect(parseError(actualContext.errors, true)).toMatchInlineSnapshot(`
       "Circular import detected: '/a.js' -> '/a.js'.
       Break the circular import cycle by removing imports from any of the offending files.

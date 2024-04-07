@@ -3,7 +3,7 @@ import type es from 'estree'
 import type { Context, IOptions } from '../..'
 import type { RecursivePartial } from '../../types'
 import loadSourceModules from '../loader'
-import type { FileGetter, SourceFiles } from '../moduleTypes'
+import type { FileGetter } from '../moduleTypes'
 import analyzeImportsAndExports from './analyzer'
 import parseProgramsAndConstructImportGraph from './linker'
 import defaultBundler, { type Bundler } from './bundler'
@@ -38,7 +38,7 @@ export type PreprocessResult =
  * @param context            The information associated with the program evaluation.
  */
 const preprocessFileImports = async (
-  files: SourceFiles | FileGetter,
+  files: FileGetter,
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {},
@@ -46,11 +46,11 @@ const preprocessFileImports = async (
 ): Promise<PreprocessResult> => {
   // Parse all files into ASTs and build the import graph.
   const linkerResult = await parseProgramsAndConstructImportGraph(
-    typeof files === 'function' ? files : p => Promise.resolve(files[p]),
+    files,
     entrypointFilePath,
     context,
     options?.importOptions,
-    options?.shouldAddFileName ?? (typeof files === 'function' || Object.keys(files).length > 1)
+    !!options?.shouldAddFileName
   )
   // Return 'undefined' if there are errors while parsing.
   if (!linkerResult.ok) {

@@ -55,7 +55,10 @@ export const replCommand = new Command('run')
         },
         entrypointFilePath,
         context,
-        options
+        {
+          ...options,
+          shouldAddFileName: true
+        }
       )
 
       if (result.status === 'finished') {

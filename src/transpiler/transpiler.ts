@@ -491,7 +491,7 @@ function transpileToFullJS(
 
   const [importNodes, otherNodes] = transformImportDeclarations(
     program,
-    create.memberExpression(globalIds.native, 'loadedModules')
+    create.memberExpression(create.identifier(NATIVE_STORAGE_ID), 'loadedModules')
   )
 
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
