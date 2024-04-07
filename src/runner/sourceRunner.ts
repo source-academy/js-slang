@@ -33,7 +33,7 @@ import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
-import type { FileGetter, SourceFiles } from '../modules/moduleTypes'
+import type { FileGetter } from '../modules/moduleTypes'
 import { decodeError, decodeValue } from '../parser/scheme'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
@@ -292,7 +292,7 @@ export async function sourceRunner(
 }
 
 export async function sourceFilesRunner(
-  filesInput: SourceFiles | FileGetter,
+  filesInput: FileGetter,
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {}

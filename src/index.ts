@@ -31,11 +31,7 @@ import type { ImportOptions, SourceFiles } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
-import {
-  htmlRunner,
-  resolvedErrorPromise,
-  sourceFilesRunner
-} from './runner'
+import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -238,7 +234,12 @@ export async function runFilesInContext(
   //        This is not a huge priority, but it would be good not to make use of
   //        global state.
   let result: Result
-  ;({result, verboseErrors } = await sourceFilesRunner(files, entrypointFilePath, context, options))
+  ;({ result, verboseErrors } = await sourceFilesRunner(
+    p => Promise.resolve(files[p]),
+    entrypointFilePath,
+    context,
+    options
+  ))
   return result
 }
 
