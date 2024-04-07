@@ -1,10 +1,6 @@
 import { Option } from '@commander-js/extra-typings'
 
-import {
-  pyLanguages,
-  scmLanguages,
-  sourceLanguages,
-} from '../constants'
+import { pyLanguages, scmLanguages, sourceLanguages } from '../constants'
 import { Chapter, type Language, Variant } from '../types'
 
 export function chapterParser(str: string): Chapter {

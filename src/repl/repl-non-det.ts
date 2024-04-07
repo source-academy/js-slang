@@ -3,14 +3,7 @@ import * as repl from 'repl' // 'repl' here refers to the module named 'repl' in
 import { inspect } from 'util'
 import { Command } from '@commander-js/extra-typings'
 
-import {
-  createContext,
-  type IOptions,
-  parseError,
-  type Result,
-  resume,
-  runInContext
-} from '..'
+import { createContext, type IOptions, parseError, type Result, resume, runInContext } from '..'
 import { CUT, TRY_AGAIN } from '../constants'
 import Closure from '../interpreter/closure'
 import { Chapter, Context, SuspendedNonDet, Variant } from '../types'
