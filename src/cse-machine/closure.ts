@@ -13,6 +13,7 @@ import {
   blockArrowFunction,
   blockStatement,
   callExpression,
+  functionExpression,
   identifier,
   literal,
   returnStatement
@@ -58,8 +59,8 @@ class Callable extends Function {
  * Models function value in the CSE machine.
  */
 export default class Closure extends Callable {
-  public static makeFromArrowFunction(
-    node: es.ArrowFunctionExpression,
+  public static makeFromFunctionExpression(
+    node: es.ArrowFunctionExpression | es.FunctionExpression,
     environment: Environment,
     context: Context,
     dummyReturn?: boolean,
@@ -79,7 +80,9 @@ export default class Closure extends Callable {
         : node.body
 
     const closure = new Closure(
-      blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),
+      node.type === 'FunctionExpression'
+        ? functionExpression(node.params as es.Identifier[], functionBody, node.loc, node.id!)
+        : blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),
       environment,
       context,
       predefined
@@ -107,7 +110,7 @@ export default class Closure extends Callable {
   public originalNode: es.Function
 
   constructor(
-    public node: es.Function,
+    public node: es.ArrowFunctionExpression | es.FunctionExpression,
     public environment: Environment,
     context: Context,
     isPredefined?: boolean
@@ -119,7 +122,7 @@ export default class Closure extends Callable {
     this.id = uniqueId(context)
     currentEnvironment(context).heap.add(this)
     let hasDeclaredName = false
-    if (this.node.type === 'FunctionDeclaration' && this.node.id !== null) {
+    if (this.node.type === 'FunctionExpression' && this.node.id != null) {
       this.functionName = this.node.id.name
       hasDeclaredName = true
     } else {

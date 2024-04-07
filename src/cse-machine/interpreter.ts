@@ -632,10 +632,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control: Control
   ) {
     // Function declaration desugared into constant declaration.
-    const lambdaExpression: es.ArrowFunctionExpression = ast.blockArrowFunction(
+    const lambdaExpression: es.FunctionExpression = ast.functionExpression(
       command.params as es.Identifier[],
       command.body,
-      command.loc
+      command.loc,
+      command.id!
     )
     const lambdaDeclaration: es.VariableDeclaration = ast.constantDeclaration(
       command.id!.name,
@@ -761,6 +762,24 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
+  // Same as ArrowFunctionExpression, but has an `id` property to store the name of the function
+  FunctionExpression: function (
+    command: es.FunctionExpression,
+    context: Context,
+    control: Control,
+    stash: Stash,
+    isPrelude: boolean
+  ) {
+    const closure: Closure = Closure.makeFromFunctionExpression(
+      command,
+      currentEnvironment(context),
+      context,
+      true,
+      isPrelude
+    )
+    stash.push(closure)
+  },
+
   ArrowFunctionExpression: function (
     command: es.ArrowFunctionExpression,
     context: Context,
@@ -768,8 +787,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash: Stash,
     isPrelude: boolean
   ) {
-    // Reuses the Closure data structure from legacy interpreter
-    const closure: Closure = Closure.makeFromArrowFunction(
+    const closure: Closure = Closure.makeFromFunctionExpression(
       command,
       currentEnvironment(context),
       context,
