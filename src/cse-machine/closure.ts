@@ -133,11 +133,14 @@ export default class Closure extends Callable {
     this.originalNode = node
     this.id = uniqueId(context)
     currentEnvironment(context).heap.add(this)
-    this.functionName =
-      (this.node.params.length === 1 ? '' : '(') +
-      this.node.params.map((o: es.Identifier) => o.name).join(', ') +
-      (this.node.params.length === 1 ? '' : ')') +
-      ' => ...'
+    const params = this.node.params.map((o: es.Identifier | es.RestElement) =>
+      o.type === 'RestElement' ? '...' + (o.argument as es.Identifier).name : o.name
+    )
+    this.functionName = params.join(', ')
+    if (params.length !== 1 || params[0].startsWith('...')) {
+      this.functionName = '(' + this.functionName + ')'
+    }
+    this.functionName += ' => ...'
     const funJS = closureToJS(this, context)
     this.fun = funJS
     this.predefined = isPredefined ?? false
