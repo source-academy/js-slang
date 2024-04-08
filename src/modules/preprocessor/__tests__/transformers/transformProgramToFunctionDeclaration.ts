@@ -3,7 +3,7 @@ import { parse } from '../../../../parser/parser'
 import { defaultExportLookupName } from '../../../../stdlib/localImport.prelude'
 import { Chapter } from '../../../../types'
 import { transformProgramToFunctionDeclaration } from '../../transformers/transformProgramToFunctionDeclaration'
-import { parseCodeError, sanitizeAST } from '../utils'
+import { sanitizeAST } from '../../../../utils/ast/sanitizer'
 
 describe('transformImportedFile', () => {
   const currentFileName = '/dir/a.js'
@@ -20,7 +20,7 @@ describe('transformImportedFile', () => {
     const actualProgram = parse(actualCode, actualContext)
     const expectedProgram = parse(expectedCode, expectedContext)
     if (actualProgram === null || expectedProgram === null) {
-      throw parseCodeError
+      throw new Error('Failed to parse either expected code or actual code')
     }
 
     const actualFunctionDeclaration = transformProgramToFunctionDeclaration(

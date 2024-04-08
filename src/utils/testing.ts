@@ -1,6 +1,7 @@
 import { generate } from 'astring'
+import type { MockedFunction } from 'jest-mock'
 
-import { default as createContext, defineBuiltin } from '../createContext'
+import createContext, { defineBuiltin } from '../createContext'
 import { transpileToGPU } from '../gpu/gpu'
 import { parseError, Result, runInContext } from '../index'
 import { transpileToLazy } from '../lazy/lazy'
@@ -143,7 +144,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
           break
       }
       try {
-        ;({ transpiled } = await transpile(parsed, nativeTestContext, options.importOptions))
+        ;({ transpiled } = transpile(parsed, nativeTestContext))
         // replace declaration of builtins since they're repetitive
         transpiled = transpiled.replace(/\n  const \w+ = nativeStorage\..*;/g, '')
         transpiled = transpiled.replace(/\n\s*const \w+ = .*\.operators\..*;/g, '')
@@ -365,4 +366,8 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   expect(timeTaken).toBeLessThan(timeout * 5)
   expect(timeTaken).toBeGreaterThanOrEqual(timeout)
   return parseError(context.errors)
+}
+
+export function asMockedFunc<T extends (...args: any[]) => any>(func: T) {
+  return func as MockedFunction<T>
 }

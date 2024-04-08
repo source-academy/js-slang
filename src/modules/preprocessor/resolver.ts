@@ -1,7 +1,7 @@
 import { posix as posixPath } from 'path'
-
-import { memoizedGetModuleManifestAsync } from '../loader/moduleLoaderAsync'
+import { memoizedGetModuleManifestAsync } from '../loader'
 import { isSourceModule } from '../utils'
+import type { FileGetter } from '../moduleTypes'
 
 /**
  * Options for resolving modules given a path
@@ -23,38 +23,55 @@ export const defaultResolutionOptions: ImportResolutionOptions = {
   extensions: ['js']
 }
 
+export type ResolverResult =
+  | {
+      type: 'source'
+    }
+  | {
+      type: 'local'
+      absPath: string
+      contents: string
+    }
+
 /**
  * Resolve a relative module path to an absolute path.
- *
- * @returns A tuple of `[string, boolean]`. The string value
- * represents the absolute path the relative path resolved to. The boolean
- * value indicates if the file at the absolute path exists.
  */
 export default async function resolveFile(
   fromPath: string,
   toPath: string,
-  filePredicate: (str: string) => Promise<boolean>,
+  fileGetter: FileGetter,
   options: Partial<ImportResolutionOptions> = defaultResolutionOptions
-): Promise<[string, boolean]> {
+): Promise<ResolverResult | undefined> {
   if (isSourceModule(toPath)) {
     const manifest = await memoizedGetModuleManifestAsync()
-    if (toPath in manifest) return [toPath, true]
-    return [toPath, false]
+    return toPath in manifest ? { type: 'source' } : undefined
   }
 
   const absPath = posixPath.resolve(fromPath, '..', toPath)
+  let contents: string | undefined = await fileGetter(absPath)
 
-  if (await filePredicate(absPath)) {
-    return [absPath, true]
+  if (contents !== undefined) {
+    return {
+      type: 'local',
+      absPath: absPath,
+      contents
+    }
   }
 
   if (options.extensions) {
     for (const ext of options.extensions) {
-      if (await filePredicate(`${absPath}.${ext}`)) {
-        return [`${absPath}.${ext}`, true]
+      const extPath = `${absPath}.${ext}`
+      contents = await fileGetter(extPath)
+
+      if (contents !== undefined) {
+        return {
+          type: 'local',
+          absPath: extPath,
+          contents
+        }
       }
     }
   }
 
-  return [absPath, false]
+  return undefined
 }

@@ -14,7 +14,6 @@ import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import Closure from '../interpreter/closure'
-import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, type StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
@@ -213,9 +212,8 @@ function evaluateImports(program: es.Program, context: Context) {
     const [importNodeMap] = filterImportDeclarations(program)
 
     const environment = currentEnvironment(context)
-    Object.entries(importNodeMap).forEach(([moduleName, nodes]) => {
-      initModuleContext(moduleName, context, true)
-      const functions = loadModuleBundle(moduleName, context, nodes[0])
+    for (const [moduleName, nodes] of Object.entries(importNodeMap)) {
+      const functions = context.nativeStorage.loadedModules[moduleName]
       for (const node of nodes) {
         for (const spec of node.specifiers) {
           declareIdentifier(context, spec.local.name, node, environment)
@@ -239,7 +237,7 @@ function evaluateImports(program: es.Program, context: Context) {
           defineVariable(context, spec.local.name, obj, true, node)
         }
       }
-    })
+    }
   } catch (error) {
     handleRuntimeError(context, error)
   }
@@ -396,48 +394,28 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash: Stash,
     isPrelude: boolean
   ) {
-    // Create and push the environment only if it is non empty.
-    if (hasDeclarations(command) || hasImportDeclarations(command)) {
-      const environment = createProgramEnvironment(context, isPrelude)
-      pushEnvironment(context, environment)
-      evaluateImports(command as unknown as es.Program, context)
-      declareFunctionsAndVariables(context, command, environment)
+    // After execution of a program, the current environment might be a local one.
+    // This can cause issues (for example, during execution of consecutive REPL programs)
+    // This piece of code will reset the current environment to either a global one, a program one or a prelude one.
+    while (
+      currentEnvironment(context).name != 'global' &&
+      currentEnvironment(context).name != 'programEnvironment' &&
+      currentEnvironment(context).name != 'prelude'
+    ) {
+      popEnvironment(context)
     }
 
-    // A strange bug occurs here when successive REPL commands are run, as they
-    // are each evaluated as separate programs. This causes the environment to be
-    // pushed multiple times.
-
-    // As such, we need to "append" the tail environment to the current environment
-    // if and only if the tail environment is a previous program environment.
-
-    const currEnv = currentEnvironment(context)
-    if (
-      currEnv &&
-      currEnv.name === 'programEnvironment' &&
-      currEnv.tail &&
-      currEnv.tail.name === 'programEnvironment'
-    ) {
-      // we need to take that tail environment and append its items to the current environment
-      const oldEnv = currEnv.tail
-
-      // separate the tail environment from the environments list
-      currEnv.tail = oldEnv.tail
-
-      // we will recycle the old environment's item list
-      // add the items from the current environment to the tail environment
-      // this is fine, especially as the older program will never
-      // need to use the old environment's items again
-      for (const key in currEnv.head) {
-        oldEnv.head[key] = currEnv.head[key]
+    // If the program has outer declarations:
+    // - Create the program environment (if none exists yet), and
+    // - Declare the functions and variables in the program environment.
+    if (hasDeclarations(command) || hasImportDeclarations(command)) {
+      if (currentEnvironment(context).name != 'programEnvironment') {
+        const programEnv = createProgramEnvironment(context, isPrelude)
+        pushEnvironment(context, programEnv)
       }
-
-      // set the current environment to the old one
-      // this will work across successive programs as well
-
-      // this will also allow continuations to read newer program
-      // values from their "outdated" program environment
-      currEnv.head = oldEnv.head
+      const environment = currentEnvironment(context)
+      evaluateImports(command as unknown as es.Program, context)
+      declareFunctionsAndVariables(context, command, environment)
     }
 
     if (command.body.length == 1) {
@@ -457,8 +435,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // we do not need to push another one
     // The no declarations case is handled at the transform stage, so no blockStatement node without declarations should end up here.
     const next = control.peek()
-    // Push ENVIRONMENT instruction if needed
-    if (!next || !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+
+    // Push ENVIRONMENT instruction if needed - if next control stack item
+    // exists and is not an environment instruction
+    if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
       control.push(instr.envInstr(currentEnvironment(context), command))
     }
 
@@ -974,12 +954,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       const next = control.peek()
 
-      // Push ENVIRONMENT instruction if needed - if next instruction
-      // is empty or not an environment instruction
-      if (
-        !next ||
-        (!(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) && !control.isEmpty())
-      ) {
+      // Push ENVIRONMENT instruction if needed - if next control stack item
+      // exists and is not an environment instruction
+      if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
         control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
 
