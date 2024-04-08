@@ -98,7 +98,7 @@ function schemeVisualise(x: any): Representation {
 // only if an encoded value may exist in it.
 // this function is used to accurately display
 // values in the REPL.
-function decodeValue(x: any): any {
+export function decodeValue(x: any): any {
   // helper version of list_tail that assumes non-null return value
   function list_tail(xs: List, i: number): List {
     if (i === 0) {
@@ -148,6 +148,13 @@ function decodeValue(x: any): any {
     x.node = newNode
     x.originalNode = newNode
     return x
+  } else if (typeof x === 'function') {
+    // copy x to avoid modifying the original object
+    const newX = { ...x }
+    const newString = decodeString(x.toString())
+    // change the toString method to return the decoded string
+    newX.toString = () => newString
+    return newX
   } else {
     // string, number, boolean, null, undefined
     // no need to decode.

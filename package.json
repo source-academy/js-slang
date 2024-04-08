@@ -106,7 +106,7 @@
     "testRegex": "/__tests__/.*\\.ts$",
     "testPathIgnorePatterns": [
       "/dist/",
-      "/src/alt-langs/(?!__tests__).*/",
+      "/src/alt-langs/scheme/scm-slang",
       ".*benchmark.*",
       "/__tests__/(.*/)?utils\\.ts"
     ],
@@ -115,7 +115,7 @@
       "/node_modules/",
       "/src/typings/",
       "/src/utils/testing.ts",
-      "/src/alt-langs/(?!__tests__).*/",
+      "/src/alt-langs/scheme/scm-slang",
       "/src/py-slang/"
     ],
     "reporters": [
