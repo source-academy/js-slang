@@ -6,7 +6,7 @@
 
 import { Context, Result } from ".."
 import { Chapter } from "../types"
-import { mapErrorToScheme, mapResultToScheme } from "./scheme/scheme_mapper"
+import { mapErrorToScheme, mapResultToScheme } from "./scheme/scheme-mapper"
 
 /**
  * A representation of a value in a language.

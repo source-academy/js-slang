@@ -4,7 +4,7 @@ import { UnassignedVariable } from '../../../errors/errors'
 import { decode, encode } from '../scm-slang/src'
 import { cons, set$45$cdr$33$ } from '../scm-slang/src/stdlib/base'
 import { dummyExpression } from '../../../utils/ast/dummyAstCreator'
-import { mapErrorToScheme, decodeValue } from '../scheme_mapper'
+import { mapErrorToScheme, decodeValue } from '../scheme-mapper'
 
 describe('Scheme encoder and decoder', () => {
   it('encoder and decoder are proper inverses of one another', () => {

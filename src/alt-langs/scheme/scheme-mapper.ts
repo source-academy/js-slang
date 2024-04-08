@@ -33,7 +33,7 @@ export function mapErrorToScheme(error: SourceError): SourceError {
   }
 }
 
-function showSchemeData(data: any): Representation {
+export function showSchemeData(data: any): Representation {
   return schemeVisualise(decodeValue(data))
 }
 
@@ -45,7 +45,7 @@ function decodeString(str: string): string {
 
 // Given any value, change the representation of it to
 // the required scheme representation.
-function schemeVisualise(x: any): Representation {
+export function schemeVisualise(x: any): Representation {
   function stringify(x: any): string {
     if (null$63$(x)) {
       return '()'
@@ -59,11 +59,16 @@ function schemeVisualise(x: any): Representation {
       return x ? '#t' : '#f'
     } else if (x instanceof Closure) {
       const node = x.originalNode
-      const parameters = node.params.map((param: Identifier | RestElement) => param.type === "Identifier" ? param.name : ". " + (param.argument as Identifier).name).join(' ').trim()
+      const parameters = node.params.map(
+        (param: Identifier | RestElement) => param.type === "Identifier" 
+        ? param.name 
+        : ". " + (param.argument as Identifier).name)
+        .join(' ')
+        .trim()
       return `#<procedure (${parameters})>`
     } else if (circular$45$list$63$(x)) {
       return '(circular list)'
-    } else if (pair$63$(x) && dotted$45$list$63$(x)) {
+    } else if (dotted$45$list$63$(x) && pair$63$(x)) {
       let string = '('
       let current = x
       while (pair$63$(current)) {
