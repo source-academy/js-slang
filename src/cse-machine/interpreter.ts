@@ -154,38 +154,6 @@ export class Stash extends Stack<Value> {
 }
 
 /**
- * Evaluates the given call expression and returns the result. If the callee is a closure,
- * the given context may be mutated and more environments will be created.
- *
- * @param context The context to evaluate the program in.
- * @param node The call expression to evaluate.
- * @returns The result of running the CSE machine.
- */
-export function apply(context: Context, node: es.CallExpression) {
-  // Create a new CSE Machine with the same context as the current one, but with
-  // the control reset to only contain the call expression, and the stash emptied.
-  const newContext = { ...context, runtime: { ...context.runtime, debuggerOn: false } }
-  newContext.runtime.control = new Control()
-  // Also need the env instruction to return back to the current environment at the end.
-  // The call expression won't create one as there is only one item in the control.
-  newContext.runtime.control.push(instr.envInstr(currentEnvironment(context), node), node)
-  newContext.runtime.stash = new Stash()
-  const gen = generateCSEMachineStateStream(
-    newContext,
-    newContext.runtime.control,
-    newContext.runtime.stash,
-    -1,
-    -1
-  )
-  // Run the new CSE Machine fully to obtain the result in the stash
-  for (const _ of gen) {
-  }
-  // Also don't forget to update object count in original context
-  context.runtime.objectCount = newContext.runtime.objectCount
-  return newContext.runtime.stash.peek()
-}
-
-/**
  * Function to be called when a program is to be interpreted using
  * the explicit control evaluator.
  *
@@ -632,11 +600,10 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control: Control
   ) {
     // Function declaration desugared into constant declaration.
-    const lambdaExpression: es.FunctionExpression = ast.functionExpression(
+    const lambdaExpression: es.ArrowFunctionExpression = ast.blockArrowFunction(
       command.params as es.Identifier[],
       command.body,
-      command.loc,
-      command.id!
+      command.loc
     )
     const lambdaDeclaration: es.VariableDeclaration = ast.constantDeclaration(
       command.id!.name,
@@ -762,24 +729,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  // Same as ArrowFunctionExpression, but has an `id` property to store the name of the function
-  FunctionExpression: function (
-    command: es.FunctionExpression,
-    context: Context,
-    control: Control,
-    stash: Stash,
-    isPrelude: boolean
-  ) {
-    const closure: Closure = Closure.makeFromFunctionExpression(
-      command,
-      currentEnvironment(context),
-      context,
-      true,
-      isPrelude
-    )
-    stash.push(closure)
-  },
-
   ArrowFunctionExpression: function (
     command: es.ArrowFunctionExpression,
     context: Context,
@@ -787,7 +736,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash: Stash,
     isPrelude: boolean
   ) {
-    const closure: Closure = Closure.makeFromFunctionExpression(
+    const closure: Closure = Closure.makeFromArrowFunction(
       command,
       currentEnvironment(context),
       context,

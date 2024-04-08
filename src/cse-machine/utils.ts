@@ -213,11 +213,8 @@ export const envChanging = (command: ControlItem): boolean => {
     return (
       type === 'Program' ||
       type === 'BlockStatement' ||
-      type === 'FunctionExpression' ||
       type === 'ArrowFunctionExpression' ||
-      (type === 'ExpressionStatement' &&
-        (command.expression.type === 'FunctionExpression' ||
-          command.expression.type === 'ArrowFunctionExpression'))
+      (type === 'ExpressionStatement' && command.expression.type === 'ArrowFunctionExpression')
     )
   } else {
     const type = command.instrType
@@ -258,7 +255,9 @@ export const createEnvironment = (
   callExpression: es.CallExpression
 ): Environment => {
   const environment: Environment = {
-    name: isIdentifier(callExpression.callee) ? callExpression.callee.name : closure.functionName,
+    name: isIdentifier(callExpression.callee)
+      ? callExpression.callee.name
+      : closure.declaredName ?? closure.functionName,
     tail: closure.environment,
     head: {},
     heap: new Heap(),
@@ -399,6 +398,10 @@ export function defineVariable(
 
   if (environment.head[name] !== UNASSIGNED_CONST && environment.head[name] !== UNASSIGNED_LET) {
     return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
+  }
+
+  if (constant && value instanceof Closure) {
+    value.declaredName = name
   }
 
   Object.defineProperty(environment.head, name, {

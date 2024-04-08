@@ -70,15 +70,15 @@ export function mockClosure(cseMachineClosure?: boolean): Closure | OldClosure {
   const context = createContext()
   return new (cseMachineClosure ? Closure : OldClosure)(
     {
-      type: 'FunctionExpression',
+      type: 'ArrowFunctionExpression',
+      expression: true,
       loc: null,
-      id: null,
       params: [],
       body: {
         type: 'BlockStatement',
         body: []
       }
-    } as es.FunctionExpression,
+    } as es.ArrowFunctionExpression,
     mockEnvironment(context),
     context
   )
