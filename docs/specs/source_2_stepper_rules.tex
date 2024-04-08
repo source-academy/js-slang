@@ -369,7 +369,6 @@ reducible if its body is reducible.
 \sEntry{Block-expression-return-reduce-1}{In a block expression starting with
     a value statement and then a return statement, the value statement can be
     removed.}
-
 \gentzen{}{
     \sCode{
         \{\sVar{value};
@@ -382,28 +381,13 @@ reducible if its body is reducible.
     }
 }
 
-\sEntry{Block-expression-return-reduce-2}{A return statement as the first
-    statement in a block expression can be reduced by reducing the return
-    expression.}
-\gentzen{
-  \sVar{return-expression}
-\ \Rightarrow \ 
-  \sVar{return-expression}'
-}{
-  \sKw{\{} \sKw{return } \sVar{return-expression} \sKw{; }
-  \sVar{statement\ldots} \sKw{\}}
-  \Rightarrow
-  \sKw{\{} \sKw{return } \sVar{return-expression}' \sKw{; }
-  \sVar{statement\ldots} \sKw{\}}
-}
-
-\sEntry{Block-expression-return-reduce-3}{A block expression starting with a
-    return statement reduces to the value of the return statement.}
+\sEntry{Block-expression-return-reduce-2}{A block expression starting with a
+    return statement reduces to the expression of the return statement.}
 \gentzen{}{
-    \sKw{\{} \sKw{return } \sVar{value} \sKw{; }
+    \sKw{\{} \sKw{return } \sVar{return-expression} \sKw{; }
     \sVar{statement\ldots} \sKw{\}}
     \Rightarrow
-    \sVar{value}
+    \sVar{return-expression}
 }
 
 Block expressions are currently used only as expanded forms of functions.
