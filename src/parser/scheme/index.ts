@@ -1,22 +1,9 @@
-import { ArrowFunctionExpression, Program } from 'estree'
-import { decode, estreeDecode, schemeParse } from '../../alt-langs/scheme/scm-slang/src'
-import {
-  car,
-  cdr,
-  circular$45$list$63$,
-  cons,
-  last$45$pair,
-  list$45$tail,
-  pair$63$,
-  set$45$cdr$33$,
-  vector$63$
-} from '../../alt-langs/scheme/scm-slang/src/stdlib/base'
-import { List, Pair } from '../../stdlib/list'
-import { Chapter, Context, ErrorType, SourceError } from '../../types'
+import { Program } from 'estree'
+import { schemeParse } from '../../alt-langs/scheme/scm-slang/src'
+import { Chapter, Context } from '../../types'
 import { FatalSyntaxError } from '../errors'
 import { AcornOptions, Parser } from '../types'
 import { positionToSourceLocation } from '../utils'
-import Closure from '../../interpreter/closure'
 
 export class SchemeParser implements Parser<AcornOptions> {
   private chapter: number
@@ -69,84 +56,4 @@ function getSchemeChapter(chapter: Chapter): number {
       // Should never happen
       throw new Error(`SchemeParser was not given a valid chapter!`)
   }
-}
-
-function decodeString(str: string): string {
-  return str.replace(/\$scheme_[\w$]+|\$\d+\$/g, match => {
-    return decode(match)
-  })
-}
-
-// Given any value, decode it if and
-// only if an encoded value may exist in it.
-// this function is used to accurately display
-// values in the REPL.
-export function decodeValue(x: any): any {
-  // helper version of list_tail that assumes non-null return value
-  function list_tail(xs: List, i: number): List {
-    if (i === 0) {
-      return xs
-    } else {
-      return list_tail(list$45$tail(xs), i - 1)
-    }
-  }
-
-  if (circular$45$list$63$(x)) {
-    // May contain encoded strings.
-    let circular_pair_index = -1
-    const all_pairs: Pair<any, any>[] = []
-
-    // iterate through all pairs in the list until we find the circular pair
-    let current = x
-    while (current !== null) {
-      if (all_pairs.includes(current)) {
-        circular_pair_index = all_pairs.indexOf(current)
-        break
-      }
-      all_pairs.push(current)
-      current = cdr(current)
-    }
-
-    // assemble a new list using the elements in all_pairs
-    let new_list = null
-    for (let i = all_pairs.length - 1; i >= 0; i--) {
-      new_list = cons(decodeValue(car(all_pairs[i])), new_list)
-    }
-
-    // finally we can set the last cdr of the new list to the circular-pair itself
-
-    const circular_pair = list_tail(new_list, circular_pair_index)
-    set$45$cdr$33$(last$45$pair(new_list), circular_pair)
-    return new_list
-  } else if (pair$63$(x)) {
-    // May contain encoded strings.
-    return cons(decodeValue(car(x)), decodeValue(cdr(x)))
-  } else if (vector$63$(x)) {
-    // May contain encoded strings.
-    return x.map(decodeValue)
-  } else if (x instanceof Closure) {
-    const newNode = estreeDecode(x.originalNode) as ArrowFunctionExpression
-
-    // not a big fan of mutation, but we assert we will never need the original node again anyway
-    x.node = newNode
-    x.originalNode = newNode
-    return x
-  } else {
-    // string, number, boolean, null, undefined
-    // no need to decode.
-    return x
-  }
-}
-
-// Given an error, decode its message if and
-// only if an encoded value may exist in it.
-export function decodeError(error: SourceError): SourceError {
-  if (error.type === ErrorType.SYNTAX) {
-    // Syntax errors are not encoded.
-    return error
-  }
-  // mutate the error to reflect the new messages
-  error.explain = () => decodeString(error.explain())
-  error.elaborate = () => decodeString(error.elaborate())
-  return error
 }

@@ -33,7 +33,6 @@ import { validateFilePath } from './modules/preprocessor/filePaths'
 import { mergeImportOptions } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
-import { decodeError, decodeValue } from './parser/scheme'
 import {
   fullJSRunner,
   hasVerboseErrors,
@@ -41,6 +40,7 @@ import {
   resolvedErrorPromise,
   sourceFilesRunner
 } from './runner'
+import { mapResult } from './alt-langs/mapper'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -216,28 +216,6 @@ export async function runInContext(
   return runFilesInContext(files, defaultFilePath, context, options)
 }
 
-function pickMapper(context: Context): (x: Result) => Result {
-  switch (context.chapter) {
-    case Chapter.SCHEME_1:
-    case Chapter.SCHEME_2:
-    case Chapter.SCHEME_3:
-    case Chapter.SCHEME_4:
-    case Chapter.FULL_SCHEME:
-      context.errors = context.errors.map(error => decodeError(error))
-      return x => {
-        if (x.status === 'finished') {
-          return {
-            ...x,
-            value: decodeValue(x.value)
-          } as Finished
-        }
-        return x
-      }
-    default:
-      return x => x
-  }
-}
-
 // this is the first entrypoint for all source files.
 // as such, all mapping functions required by alternate languages
 // should be defined here.
@@ -295,7 +273,7 @@ export async function runFilesInContext(
   }
 
   return runFilesInContextHelper(files, entrypointFilePath, context, options).then(
-    pickMapper(context)
+    mapResult(context)
   )
 }
 
