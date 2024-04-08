@@ -63,7 +63,7 @@ function schemeVisualise(x: any): Representation {
       return `#<procedure (${parameters})>`
     } else if (circular$45$list$63$(x)) {
       return '(circular list)'
-    } else if (dotted$45$list$63$(x)) {
+    } else if (pair$63$(x) && dotted$45$list$63$(x)) {
       let string = '('
       let current = x
       while (pair$63$(current)) {
