@@ -6,6 +6,7 @@ import { pyLanguages, scmLanguages, sourceLanguages } from '../constants'
 import { createContext, IOptions, parseError, runInContext } from '../index'
 import Closure from '../interpreter/closure'
 import { ExecutionMethod, Variant } from '../types'
+import { Representation } from '../alt-langs/mapper'
 
 function startRepl(
   chapter = 1,
@@ -35,7 +36,9 @@ function startRepl(
           eval: (cmd, unusedContext, unusedFilename, callback) => {
             runInContext(cmd, context, options).then(obj => {
               if (obj.status === 'finished' || obj.status === 'suspended-non-det') {
-                callback(null, obj.value)
+                // if the result is a representation, display the representation.
+                // else, default to standard value representation.
+                callback(null, obj.representation ? obj.representation : obj.value)
               } else {
                 callback(new Error(parseError(context.errors)), undefined)
               }
@@ -44,7 +47,9 @@ function startRepl(
           // set depth to a large number so that `parse()` output will not be folded,
           // setting to null also solves the problem, however a reference loop might crash
           writer: output => {
-            return output instanceof Closure || typeof output === 'function'
+            return output instanceof Closure ||
+              typeof output === 'function' ||
+              output instanceof Representation
               ? output.toString()
               : inspect(output, {
                   depth: 1000,
@@ -97,7 +102,7 @@ function main() {
         'default'
       ],
       ['h', 'help', 'display this help'],
-      ['e', 'eval', "don't show REPL, only display output of evaluation"]
+      ['e', 'eval', "don't show REPL, only dispResultlay output of evaluation"]
     ])
     .bindHelp()
     .setHelp('Usage: js-slang [PROGRAM_STRING] [OPTION]\n\n[[OPTIONS]]')
