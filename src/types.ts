@@ -11,6 +11,7 @@ import * as es from 'estree'
 import { EnvTree } from './createContext'
 import Heap from './cse-machine/heap'
 import { Control, Stash } from './cse-machine/interpreter'
+import type { ModuleFunctions } from './modules/moduleTypes'
 import { Representation } from './alt-langs/mapper'
 
 /**
@@ -130,6 +131,7 @@ export interface NativeStorage {
   surrounding scope, so we cannot set evaller to `eval` directly. subsequent assignments to evaller will
   close in the surrounding values, so no problem
    */
+  loadedModules: Record<string, ModuleFunctions>
 }
 
 export interface Context<T = any> {

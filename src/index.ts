@@ -27,7 +27,7 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { ModuleNotFoundError } from './modules/errors'
-import type { ImportOptions } from './modules/moduleTypes'
+import type { ImportOptions, SourceFiles } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
 import { mergeImportOptions } from './modules/utils'
@@ -326,7 +326,11 @@ export async function compileFiles(
     return undefined
   }
 
-  const preprocessedProgram = await preprocessFileImports(files, entrypointFilePath, context)
+  const preprocessedProgram = await preprocessFileImports(
+    files as SourceFiles,
+    entrypointFilePath,
+    context
+  )
   if (!preprocessedProgram) {
     return undefined
   }
