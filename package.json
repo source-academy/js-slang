@@ -107,6 +107,7 @@
     "testRegex": "/__tests__/.*\\.ts$",
     "testPathIgnorePatterns": [
       "/dist/",
+      "/src/alt-langs",
       ".*benchmark.*",
       "/__tests__/(.*/)?utils\\.ts"
     ],
