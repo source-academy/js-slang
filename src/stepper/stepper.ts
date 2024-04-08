@@ -3337,15 +3337,15 @@ export function getEvaluationSteps(
   { stepLimit }: Pick<IOptions, 'stepLimit'>
 ): [es.Program, string[][], string][] {
   const steps: [es.Program, string[][], string][] = []
+  const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
+
   try {
     checkProgramForUndefinedVariables(program, context)
-    const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
     evaluateImports(program, context)
-    // starts with substituting predefined constants
+
+    //Setup program with builtin functions and constants
     let start = substPredefinedConstants(program)
-    // and predefined fns
     start = substPredefinedFns(start, context)[0]
-    // and remove debugger statements.
     start = removeDebuggerStatements(start)
 
     // then add in path and explanation string and push it into steps
@@ -3355,24 +3355,19 @@ export function getEvaluationSteps(
       [],
       'Start of evaluation'
     ]
-    steps.push([
-      reducedWithPath[0] as es.Program,
-      reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2],
-      reducedWithPath[3]
-    ])
-    steps.push([reducedWithPath[0] as es.Program, [], ''])
-    // reduces program until evaluation completes
+    steps.push([start, [], 'Start of evaluation'])
+    steps.push([start, [], ''])
+
+    // previous even index is 1 due to the addition of 'Start of evaluation' at index 0
+    let previousEvenStepIndex = 1
+
+    // reduces program until it is no longer reducile or limit exceeded
     // even steps: program before reduction
     // odd steps: program after reduction
-    let i = 1
-    let limitExceeded = false
-    while (isStatementsReducible(reducedWithPath[0] as es.Program, context)) {
-      //Should work on isReducibleStatement instead of checking body.length
-      if (steps.length === limit) {
-        steps[steps.length - 1] = [ast.program([]), [], 'Maximum number of steps exceeded']
-        limitExceeded = true
-        break
-      }
+    while (
+      isStatementsReducible(reducedWithPath[0] as es.Program, context) &&
+      steps.length < limit
+    ) {
       reducedWithPath = reduceMain(reducedWithPath[0], context)
       steps.push([
         reducedWithPath[0] as es.Program,
@@ -3380,28 +3375,28 @@ export function getEvaluationSteps(
         reducedWithPath[3]
       ])
       steps.push([reducedWithPath[0] as es.Program, [], ''])
-      if (i > 0) {
-        steps[i][1] = reducedWithPath[2].length > 1 ? [reducedWithPath[2][0]] : reducedWithPath[2]
-        steps[i][2] = reducedWithPath[3]
-      }
-      i += 2
+
+      // Copy the program to the even step of the previous step
+      steps[previousEvenStepIndex][1] =
+        reducedWithPath[2].length > 1 ? [reducedWithPath[2][0]] : reducedWithPath[2]
+      steps[previousEvenStepIndex][2] = reducedWithPath[3]
+
+      previousEvenStepIndex += 2
     }
-    if (!limitExceeded && steps.length > 0) {
+
+    // if the last step of the program is empty (epsilon), we add undefined to the program
+    if ((reducedWithPath[0] as es.Program).body.length == 0) {
+      steps[steps.length - 1][0] = ast.program([
+        ast.expressionStatement(ast.identifier('undefined'))
+      ])
+    }
+
+    if (steps.length < limit) {
       steps[steps.length - 1][2] = 'Evaluation complete'
-      /**
-       * this is an extra check
-       * if the last step's program part is empty, we just manually add undefined to it
-       * also works when program is epsilon(empty program)
-       */
-      if ((reducedWithPath[0] as es.Program).body.length == 0) {
-        steps[steps.length - 1][0] = ast.program([
-          ast.expressionStatement(ast.identifier('undefined'))
-        ])
-      }
+    } else {
+      steps[steps.length - 1][2] = 'Maximum number of steps exceeded'
     }
-    if (steps.length === 0) {
-      steps.push([reducedWithPath[0] as es.Program, [], 'Nothing to evaluate'])
-    }
+
     return steps
   } catch (error) {
     if (error instanceof RuntimeSourceError) {
