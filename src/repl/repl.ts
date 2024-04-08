@@ -38,7 +38,7 @@ function startRepl(
               if (obj.status === 'finished' || obj.status === 'suspended-non-det') {
                 // if the result is a representation, display the representation.
                 // else, default to standard value representation.
-                callback(null, obj.representation ? obj.representation : obj.value)
+                callback(null, obj.representation !== undefined ? obj.representation : obj.value)
               } else {
                 callback(new Error(parseError(context.errors)), undefined)
               }
@@ -102,7 +102,7 @@ function main() {
         'default'
       ],
       ['h', 'help', 'display this help'],
-      ['e', 'eval', "don't show REPL, only dispResultlay output of evaluation"]
+      ['e', 'eval', "don't show REPL, only display output of evaluation"]
     ])
     .bindHelp()
     .setHelp('Usage: js-slang [PROGRAM_STRING] [OPTION]\n\n[[OPTIONS]]')
