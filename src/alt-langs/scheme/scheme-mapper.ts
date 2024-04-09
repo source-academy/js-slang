@@ -1,5 +1,5 @@
 import { ArrowFunctionExpression, Identifier, RestElement } from "estree"
-import Closure from "../../interpreter/closure"
+import Closure from "../../cse-machine/closure"
 import { decode, estreeDecode } from "./scm-slang/src"
 import { boolean$63$, car, cdr, circular$45$list$63$, cons, dotted$45$list$63$, last$45$pair, list$45$tail, null$63$, number$63$, pair$63$, proper$45$list$63$, set$45$cdr$33$, vector$63$ } from "./scm-slang/src/stdlib/source-scheme-library"
 import { ErrorType, Result, SourceError } from "../../types"
@@ -46,6 +46,12 @@ function decodeString(str: string): string {
 // Given any value, change the representation of it to
 // the required scheme representation.
 export function schemeVisualise(x: any): Representation {
+  // hack: builtins are represented using an object with a toString method
+  // and minArgsNeeded.
+  // so to detect these, we use a function that checks for these
+  function isBuiltinFunction(x: any): boolean {
+    return x.minArgsNeeded !== undefined && x.toString !== undefined
+  }
   function stringify(x: any): string {
     if (null$63$(x)) {
       return '()'
@@ -66,6 +72,23 @@ export function schemeVisualise(x: any): Representation {
         .join(' ')
         .trim()
       return `#<procedure (${parameters})>`
+    } else if (isBuiltinFunction(x)) {
+      function decodeParams(params: string[]): string {
+        // if parameter starts with ... then it is a rest parameter
+        const convertedparams = params
+          .map(param => {
+            if (param.startsWith('...')) {
+              return `. ${param.slice(3)}`
+            }
+            return param
+          })
+          .map(decodeString)
+        return convertedparams.join(' ')
+      }
+      // take the name and parameter out of the defined function name
+      const name = decodeString(x.funName)
+      const parameters = decodeParams(x.funParameters)
+      return `#<builtin-procedure ${name} (${parameters})>`
     } else if (circular$45$list$63$(x)) {
       return '(circular list)'
     } else if (dotted$45$list$63$(x) && pair$63$(x)) {

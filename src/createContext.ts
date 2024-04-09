@@ -230,6 +230,10 @@ export function defineBuiltin(
   }
 
   function extractParameters(name: string): string[] {
+    // if the function has no () in its name, it has no parameters
+    if (!name.includes('(')) {
+      return []
+    }
     return name
       .split('(')[1]
       .split(')')[0]
