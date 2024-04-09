@@ -40,7 +40,7 @@ function tail(p) {}
 function is_null(x) {}
  
 /**
- *  **primitive**; returns <CODE>true</CODE> if
+ * **primitive**; returns <CODE>true</CODE> if
  * <CODE>xs</CODE> is a list as defined in the textbook, and
  * <CODE>false</CODE> otherwise. Iterative process; 
  * time: <CODE>Θ(n)</CODE>, space: <CODE>Θ(1)</CODE>, where <CODE>n</CODE>
