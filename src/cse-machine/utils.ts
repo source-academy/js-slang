@@ -219,6 +219,8 @@ export const envChanging = (command: ControlItem): boolean => {
   } else {
     const type = command.instrType
     return (
+      type === InstrType.ENVIRONMENT ||
+      type === InstrType.ARRAY_LITERAL ||
       type === InstrType.ASSIGNMENT ||
       type === InstrType.ARRAY_ASSIGNMENT ||
       (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs > 0)
