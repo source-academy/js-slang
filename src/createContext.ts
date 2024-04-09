@@ -225,18 +225,36 @@ export function defineBuiltin(
   value: Value,
   minArgsNeeded: undefined | number = undefined
 ) {
+  function extractName(name: string): string {
+    return name.split('(')[0].trim()
+  }
+
+  function extractParameters(name: string): string[] {
+    return name
+      .split('(')[1]
+      .split(')')[0]
+      .split(',')
+      .map(s => s.trim())
+  }
+
   if (typeof value === 'function') {
-    const funName = name.split('(')[0].trim()
+    const funName = extractName(name)
+    const funParameters = extractParameters(name)
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
     value.toString = () => repr
     value.minArgsNeeded = minArgsNeeded
+    value.funName = funName
+    value.funParameters = funParameters
 
     defineSymbol(context, funName, value)
   } else if (value instanceof LazyBuiltIn) {
     const wrapped = (...args: any) => value.func(...args)
-    const funName = name.split('(')[0].trim()
+    const funName = extractName(name)
+    const funParameters = extractParameters(name)
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
     wrapped.toString = () => repr
+    wrapped.funName = funName
+    wrapped.funParameters = funParameters
     makeWrapper(value.func, wrapped)
     defineSymbol(context, funName, new LazyBuiltIn(wrapped, value.evaluateArgs))
   } else {
