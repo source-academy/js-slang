@@ -120,7 +120,7 @@ export const isEnvArray = (item: any): item is EnvArray => {
  * pass it in here as a 2nd argument for stronger checking
  */
 export const isStreamFn = (item: any, result?: any): result is [any, () => any] => {
-  if (result && (!isArray(result) || result.length !== 2)) return false
+  if (result == null || !isArray(result) || result.length !== 2) return false
   return (
     isFunction(item) &&
     !(item instanceof Closure) &&
