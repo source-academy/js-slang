@@ -22,7 +22,18 @@ const closureToJS = (value: Closure, context: Context) => {
     )
     // Create a new CSE Machine with the same context as the current one, but with
     // the control reset to only contain the call expression, and the stash emptied.
-    const newContext = { ...context, runtime: { ...context.runtime, debuggerOn: false } }
+    const newContext: Context = {
+      ...context,
+      runtime: {
+        ...context.runtime,
+        // Only environments are intended to be mutated by the new CSE Machine, the
+        // rest of the runtime properties should stay the same
+        nodes: [...context.runtime.nodes],
+        breakpointSteps: [...context.runtime.breakpointSteps],
+        changepointSteps: [...context.runtime.changepointSteps],
+        debuggerOn: false
+      }
+    }
     newContext.runtime.control = new Control()
     // Also need the env instruction to return back to the current environment at the end.
     // The call expression won't create one as there is only one item in the control.
@@ -119,7 +130,7 @@ export default class Closure extends Callable {
   public predefined: boolean
 
   /** The original node that created this Closure */
-  public originalNode: es.Function
+  public originalNode: es.ArrowFunctionExpression
 
   constructor(
     public node: es.ArrowFunctionExpression,
