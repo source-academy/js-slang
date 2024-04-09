@@ -11,7 +11,7 @@ export type ModuleManifest = {
 export type ModuleBundle = (require: RequireProvider) => ModuleFunctions
 
 export type ModuleFunctions = {
-  [functionName: string]: Function
+  [name: string]: any
 }
 
 export interface FunctionDocumentation {
@@ -35,7 +35,9 @@ export const unknownDocs: UnknownDocumentation = { kind: 'unknown' }
 
 export type ModuleDocsEntry = FunctionDocumentation | VariableDocumentation | UnknownDocumentation
 
-export type ModuleDocumentation = Record<string, ModuleDocsEntry>
+export type ModuleDocumentation = {
+  [name: string]: ModuleDocsEntry
+}
 
 export type ImportOptions = {
   loadTabs: boolean
