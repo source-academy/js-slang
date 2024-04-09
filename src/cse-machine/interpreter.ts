@@ -7,7 +7,7 @@
 
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
-import { isArray, isFunction, reverse } from 'lodash'
+import { isArray, reverse } from 'lodash'
 
 import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
@@ -75,6 +75,7 @@ import {
   isInstr,
   isNode,
   isSimpleFunction,
+  isStreamFn,
   popEnvironment,
   pushEnvironment,
   reduceConditional,
@@ -987,6 +988,18 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     try {
       const result = func(...args)
 
+      if (isStreamFn(func, result)) {
+        // This is a special case for the `stream` built-in function, since it returns pairs
+        // whose last element is a function. The CSE machine on the frontend will still draw
+        // these functions like closures, and the tail of the "closures" will need to point
+        // to where `stream` was called.
+        //
+        // TODO: remove this condition if `stream` becomes a pre-defined function
+        Object.defineProperties(result[1], {
+          environment: { value: currentEnvironment(context), writable: true }
+        })
+      }
+
       // Recursively adds `environment` and `id` properties to any arrays created,
       // and also adds them to the heap starting from the arrays that are more deeply nested.
       const attachEnvToResult = (value: any) => {
@@ -997,16 +1010,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
             attachEnvToResult(item)
           }
           handleArrayCreation(context, value)
-        } else if (isFunction(value) && !{}.hasOwnProperty.call(value, 'environment')) {
-          // This is a special case for the `stream` built-in function, since it returns pairs
-          // whose last element is a function. The CSE machine on the frontend will still draw
-          // these functions like closures, and the tail of the "closures" will need to point
-          // to where `stream` was called.
-          //
-          // TODO: remove this condition if `stream` becomes a pre-defined function
-          Object.defineProperties(value, {
-            environment: { value: currentEnvironment(context), writable: true }
-          })
         }
       }
       attachEnvToResult(result)

@@ -1,5 +1,5 @@
 import * as es from 'estree'
-import { isArray } from 'lodash'
+import { isArray, isFunction } from 'lodash'
 
 import { Context } from '..'
 import * as errors from '../errors/errors'
@@ -103,11 +103,28 @@ export const uniqueId = (context: Context): string => {
   return `${context.runtime.objectCount++}`
 }
 
+/**
+ * Returns whether `item` is an array with `id` and `environment` properties already attached.
+ */
 export const isEnvArray = (item: any): item is EnvArray => {
   return (
     isArray(item) &&
     {}.hasOwnProperty.call(item, 'id') &&
     {}.hasOwnProperty.call(item, 'environment')
+  )
+}
+
+/**
+ * Returns whether `item` is a non-closure function that returns a stream.
+ * If the function has been called already and we have the result, we can
+ * pass it in here as a 2nd argument for stronger checking
+ */
+export const isStreamFn = (item: any, result?: any): result is [any, () => any] => {
+  if (result && (!isArray(result) || result.length !== 2)) return false
+  return (
+    isFunction(item) &&
+    !(item instanceof Closure) &&
+    (item.name === 'stream' || {}.hasOwnProperty.call(item, 'environment'))
   )
 }
 
