@@ -15,16 +15,30 @@ export default class Heap {
     }
   }
 
+  /** Checks the existence of `item` in the heap. */
   contains(item: any): boolean {
     return this.storage?.has(item) ?? false
   }
 
+  /** Gets the number of items in the heap. */
   size(): number {
     return this.storage?.size ?? 0
   }
 
+  /**
+   * Removes `item` from current heap and adds it to `otherHeap`.
+   * If the current heap does not contain `item`, nothing happens.
+   * @returns whether the item transfer is successful
+   */
+  move(item: HeapObject, otherHeap: Heap): boolean {
+    if (!this.contains(item)) return false
+    this.storage!.delete(item)
+    otherHeap.add(item)
+    return true
+  }
+
+  /** Returns a copy of the heap's contents. */
   getHeap(): Set<HeapObject> {
-    // return a copy of the heap's contents
     return new Set(this.storage)
   }
 }
