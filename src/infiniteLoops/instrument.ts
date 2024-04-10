@@ -7,6 +7,7 @@ import * as create from '../utils/ast/astCreator'
 import { recursive, simple, WalkerCallback } from '../utils/walkers'
 import { getIdsFromDeclaration } from '../utils/ast/helpers'
 import assert from '../utils/assert'
+import { objectValues } from '../utils/misc'
 // transforms AST of program
 
 const globalIds = {
@@ -41,8 +42,8 @@ enum FunctionNames {
  * E.g. "function f(f)..." -> "function f_0(f_1)..."
  * @param predefined A table of [key: string, value:string], where variables named 'key' will be renamed to 'value'
  */
-function unshadowVariables(program: Node, predefined = {}) {
-  for (const name of Object.values(globalIds)) {
+function unshadowVariables(program: Node, predefined: Record<string, string> = {}) {
+  for (const name of objectValues(globalIds)) {
     predefined[name] = name
   }
   const seenIds = new Set()
@@ -611,7 +612,7 @@ function instrument(
   builtins: Iterable<string>
 ): string {
   const { builtinsId, functionsId, stateId } = globalIds
-  const predefined = {}
+  const predefined: Record<string, string> = {}
   predefined[builtinsId] = builtinsId
   predefined[functionsId] = functionsId
   predefined[stateId] = stateId
