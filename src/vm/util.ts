@@ -151,7 +151,7 @@ const OPCODES_STR = {
 
 // get name of opcode for debugging
 export function getName(op: number) {
-  return OPCODES_STR[op] // need to add guard in case op does not exist
+  return OPCODES_STR[op as keyof typeof OPCODES_STR] // need to add guard in case op does not exist
 }
 
 // pretty-print the program
