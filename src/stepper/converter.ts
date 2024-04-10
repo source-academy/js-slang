@@ -53,7 +53,7 @@ export function nodeToValue(node: substituterNodes): any {
   return node.type === 'Literal'
     ? node.value
     : util.isBuiltinFunction(node)
-    ? builtin[(node as es.Identifier).name]
+    ? builtin[(node as es.Identifier).name as keyof typeof builtin]
     : // tslint:disable-next-line
       eval(javascriptify(node))
 }
@@ -62,7 +62,7 @@ export function nodeToValueWithContext(node: substituterNodes, context: Context)
   return node.type === 'Literal'
     ? node.value
     : util.isBuiltinFunction(node)
-    ? builtin[(node as es.Identifier).name]
+    ? builtin[(node as es.Identifier).name as keyof typeof builtin]
     : node.type === 'Identifier' && util.isImportedFunction(node, context)
     ? context.runtime.environments[0].head[node.name]
     : // tslint:disable-next-line
@@ -77,11 +77,13 @@ function evaluateFunctionObject(node: substituterNodes, context: Context) {
     }
     visited.add(node)
     if (node.type === 'Identifier' && builtinFunctions[node.name]) {
+      // @ts-expect-error implicitAnyIndexError
       global[node.name] = builtinFunctions[node.name]
     }
-    for (const key in node) {
+    for (const k in node) {
+      const key = k as keyof typeof node
       if (node[key] && typeof node[key] === 'object') {
-        lookUpIdentifiers(node[key], visited)
+        lookUpIdentifiers(node[key] as any, visited)
       }
     }
   }
