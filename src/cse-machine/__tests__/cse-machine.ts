@@ -7,20 +7,7 @@ import { expectResult } from '../../utils/testing'
 //   memoize: jest.fn(func => func)
 // }))
 
-const mockXMLHttpRequest = (xhr: Partial<XMLHttpRequest> = {}) => {
-  const xhrMock: Partial<XMLHttpRequest> = {
-    open: jest.fn(() => {}),
-    send: jest.fn(() => {}),
-    status: 200,
-    responseText: 'Hello World!',
-    ...xhr
-  }
-  jest.spyOn(window, 'XMLHttpRequest').mockImplementationOnce(() => xhrMock as XMLHttpRequest)
-  return xhrMock
-}
-
-jest.mock('../../modules/loader/moduleLoader')
-jest.mock('../../modules/loader/moduleLoaderAsync')
+jest.mock('../../modules/loader/loaders')
 
 const optionEC = { variant: Variant.EXPLICIT_CONTROL }
 const optionEC3 = { chapter: Chapter.SOURCE_3, variant: Variant.EXPLICIT_CONTROL }
@@ -316,39 +303,6 @@ test('streams can be created and functions with no return statements are still e
     `,
     optionEC4
   ).toMatchInlineSnapshot(`false`)
-})
-
-test('Imports are properly handled', () => {
-  // for getModuleFile
-  mockXMLHttpRequest({
-    responseText: `{
-    "one_module": {
-      "tabs": []
-    },
-    "another_module": {
-      "tabs": []
-    }
-  }`
-  })
-
-  // for bundle body
-  mockXMLHttpRequest({
-    responseText: `
-      require => {
-        return {
-          foo: () => 'foo',
-        }
-      }
-    `
-  })
-
-  return expectResult(
-    stripIndent`
-    import { foo } from 'one_module';
-    foo();
-  `,
-    optionEC
-  ).toEqual('foo')
 })
 
 test('Conditional statements are value producing always', () => {

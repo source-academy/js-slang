@@ -141,7 +141,8 @@ const createNativeStorage = (): NativeStorage => ({
   operators: new Map(Object.entries(operators)),
   gpu: new Map(Object.entries(gpu_lib)),
   maxExecTime: JSSLANG_PROPERTIES.maxExecTime,
-  evaller: null
+  evaller: null,
+  loadedModules: {}
 })
 
 export const createEmptyContext = <T>(
@@ -708,11 +709,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'is_string(val)', misc.is_string)
       defineBuiltin(context, 'is_function(val)', misc.is_function)
       defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
-      defineBuiltin(context, 'is_None(val)', misc.is_undefined)
+      defineBuiltin(context, 'is_None(val)', list.is_null)
       defineBuiltin(context, 'parse_int(str, radix)', misc.parse_int)
       defineBuiltin(context, 'char_at(str, index)', misc.char_at)
       defineBuiltin(context, 'arity(f)', misc.arity)
-      defineBuiltin(context, 'None', undefined)
+      defineBuiltin(context, 'None', null)
       defineBuiltin(context, 'NaN', NaN)
       defineBuiltin(context, 'Infinity', Infinity)
 

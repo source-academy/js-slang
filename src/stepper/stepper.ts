@@ -1,12 +1,10 @@
 import { generate } from 'astring'
 import type es from 'estree'
 
-import { type IOptions } from '..'
+import type { IOptions } from '..'
 import * as errors from '../errors/errors'
-import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { initModuleContextAsync, loadModuleBundleAsync } from '../modules/loader/moduleLoaderAsync'
 import { parse } from '../parser/parser'
-import {
+import type {
   BlockExpression,
   Context,
   ContiguousArrayElementExpression,
@@ -27,6 +25,7 @@ import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
+import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { nodeToValue, objectToString, valueToExpression } from './converter'
 import * as builtin from './lib'
 import {
@@ -2212,12 +2211,18 @@ function reduceMain(
           paths[0].push('body[0]')
           const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
           if (reduced.type === 'BlockStatement') {
-            const body = reduced.body as es.Statement[]
-            if (body.length > 1) {
-              path[1] = [...path[0].slice(0, path[0].length - 1)]
-            }
-            const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
-            return [ast.blockExpression(wholeBlock), cont, path, str]
+            /**
+             * The new body for the if statement should not be unpacked.
+             * But reduce function returns the upacked ones.
+             * We need to manually repack the statements into a block.
+             */
+            const newStatementBody = ast.blockStatement([...reduced.body])
+            return [
+              ast.blockExpression([newStatementBody, ...(otherStatements as es.Statement[])]),
+              cont,
+              path,
+              str
+            ]
           } else {
             return [
               ast.blockExpression([
@@ -3293,40 +3298,37 @@ function removeDebuggerStatements(program: es.Program): es.Program {
   return program
 }
 
-async function evaluateImports(program: es.Program, context: Context, loadTabs: boolean) {
+function evaluateImports(program: es.Program, context: Context) {
   const [importNodeMap, otherNodes] = filterImportDeclarations(program)
 
   try {
     const environment = currentEnvironment(context)
-    await Promise.all(
-      Object.entries(importNodeMap).map(async ([moduleName, nodes]) => {
-        await initModuleContextAsync(moduleName, context, loadTabs)
-        const functions = await loadModuleBundleAsync(moduleName, context, nodes[0])
-        for (const node of nodes) {
-          for (const spec of node.specifiers) {
-            declareIdentifier(context, spec.local.name, node, environment)
-            let obj: any
+    for (const [moduleName, nodes] of Object.entries(importNodeMap)) {
+      const functions = context.nativeStorage.loadedModules[moduleName]
+      for (const node of nodes) {
+        for (const spec of node.specifiers) {
+          declareIdentifier(context, spec.local.name, node, environment)
+          let obj: any
 
-            switch (spec.type) {
-              case 'ImportSpecifier': {
-                obj = functions[spec.imported.name]
-                break
-              }
-              case 'ImportDefaultSpecifier': {
-                obj = functions.default
-                break
-              }
-              case 'ImportNamespaceSpecifier': {
-                obj = functions
-                break
-              }
+          switch (spec.type) {
+            case 'ImportSpecifier': {
+              obj = functions[spec.imported.name]
+              break
             }
-
-            defineVariable(context, spec.local.name, obj, true, node)
+            case 'ImportDefaultSpecifier': {
+              obj = functions.default
+              break
+            }
+            case 'ImportNamespaceSpecifier': {
+              obj = functions
+              break
+            }
           }
+
+          defineVariable(context, spec.local.name, obj, true, node)
         }
-      })
-    )
+      }
+    }
   } catch (error) {
     // console.log(error)
     handleRuntimeError(context, error)
@@ -3335,16 +3337,16 @@ async function evaluateImports(program: es.Program, context: Context, loadTabs: 
 }
 
 // the context here is for builtins
-export async function getEvaluationSteps(
+export function getEvaluationSteps(
   program: es.Program,
   context: Context,
-  { importOptions, stepLimit }: Pick<IOptions, 'importOptions' | 'stepLimit'>
-): Promise<[es.Program, string[][], string][]> {
+  { stepLimit }: Pick<IOptions, 'stepLimit'>
+): [es.Program, string[][], string][] {
   const steps: [es.Program, string[][], string][] = []
   try {
     checkProgramForUndefinedVariables(program, context)
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
-    await evaluateImports(program, context, importOptions.loadTabs)
+    evaluateImports(program, context)
     // starts with substituting predefined constants
     let start = substPredefinedConstants(program)
     // and predefined fns

@@ -11,32 +11,38 @@ export type ModuleManifest = {
 export type ModuleBundle = (require: RequireProvider) => ModuleFunctions
 
 export type ModuleFunctions = {
-  [functionName: string]: Function
+  [name: string]: any
 }
 
-interface FunctionDocumentation {
+export interface FunctionDocumentation {
   kind: 'function'
   retType: string
   description: string
-  params: [string, string][]
+  params: [name: string, type: string][]
 }
 
-interface VariableDocumentation {
+export interface VariableDocumentation {
   kind: 'variable'
   type: string
   description: string
 }
 
-interface UnknownDocumentation {
+export interface UnknownDocumentation {
   kind: 'unknown'
 }
 
+export const unknownDocs: UnknownDocumentation = { kind: 'unknown' }
+
 export type ModuleDocsEntry = FunctionDocumentation | VariableDocumentation | UnknownDocumentation
 
-export type ModuleDocumentation = Record<string, ModuleDocsEntry>
+export type ModuleDocumentation = {
+  [name: string]: ModuleDocsEntry
+}
 
 export type ImportOptions = {
-  wrapSourceModules: boolean
   loadTabs: boolean
 } & ImportAnalysisOptions &
   LinkerOptions
+
+export type SourceFiles = Record<string, string>
+export type FileGetter = (p: string) => Promise<string | undefined>
