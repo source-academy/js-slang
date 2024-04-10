@@ -1,10 +1,12 @@
 import { ChanDir } from "../ssa/types";
+import { nodeType } from "./nodeTypes";
 
 // Node types
 
 export interface GoNode {
     Pos() : Pos.Pos; // position of first character of node
     End() : Pos.Pos; // position of first character immediately after node
+    getType() : nodeType;
 }
 
 export interface ExprNode extends GoNode {
@@ -39,6 +41,10 @@ export class Field implements ExprNode {
             return this.Tag.Pos();
         }
         return Pos.NoPos;
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(names : Ident[], tag : BasicLit | undefined, type : ExprNode) {
@@ -83,6 +89,10 @@ export class FieldList implements ExprNode {
         return count;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(opening : Pos.Pos, list: Field[] | undefined, closing : Pos.Pos) {
         this.Opening = opening;
         this.List = list;
@@ -103,6 +113,10 @@ export class BadExpr implements ExprNode {
         return this.To;
     }
 
+    getType() : nodeType {
+        return nodeType.ILLEGAL;
+    }
+
     constructor(start : Pos.Pos, end : Pos.Pos) {
         this.From = start;
         this.To = end;
@@ -120,6 +134,10 @@ export class Ident implements ExprNode {
 
     End() : Pos.Pos {
         return this.NamePos + this.Name.length;
+    }
+
+    getType() : nodeType {
+        return nodeType.IDENT;
     }
 
     constructor(pos : Pos.Pos, name : string) {
@@ -144,6 +162,10 @@ export class Ellipsis implements ExprNode {
         return this.Ellipsis + 3;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(ellipPos : Pos.Pos, eltType : ExprNode | undefined) {
         this.Ellipsis = ellipPos;
         this.ElementType = eltType;
@@ -164,6 +186,14 @@ export class BasicLit implements ExprNode {
         return this.ValuePos + this.Value.length;
     }
 
+    getType() : nodeType {
+        return nodeType.BASIC_LIT;
+    }
+
+    getDataType() : Token.token {
+        return this.Kind;
+    }
+
     constructor(pos : Pos.Pos, kind : string, val : string) {
         this.ValuePos = pos;
         this.Kind = Token.getToken(kind);
@@ -182,6 +212,10 @@ export class FuncLit implements ExprNode {
 
     End() : Pos.Pos {
         return this.Body.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(ftype : FuncType, body : BlockStmt) {
@@ -209,6 +243,10 @@ export class CompositeLit implements ExprNode {
         return this.RightBrace + 1;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(type : ExprNode | undefined, lbrace : Pos.Pos, elmts : ExprNode[], rbrace: Pos.Pos, incomplete : boolean) {
         this.Type = type;
         this.LeftBrace = lbrace;
@@ -232,6 +270,10 @@ export class ParenExpr implements ExprNode {
         return this.RightParen + 1;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(lparen : Pos.Pos, expr : ExprNode, rparen : Pos.Pos) {
         this.LeftParen = lparen;
         this.Expr = expr;
@@ -250,6 +292,10 @@ export class SelectorExpr implements ExprNode {
 
     End() : Pos.Pos {
         return this.Selector.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(expr : ExprNode, selector : Ident) {
@@ -271,6 +317,10 @@ export class IndexExpr implements ExprNode {
 
     End() : Pos.Pos {
         return this.RightBrack + 1;
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(expr : ExprNode, lbrack : Pos.Pos, idx : ExprNode, rbrack : Pos.Pos) {
@@ -299,6 +349,10 @@ export class SliceExpr implements ExprNode {
         return this.RightBrack + 1;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(expr : ExprNode, lbrack : Pos.Pos, low : ExprNode | undefined, high : ExprNode | undefined, max : ExprNode | undefined, isThree : boolean, rbrack : Pos.Pos) {
         this.Expr = expr;
         this.LeftBrack = lbrack;
@@ -325,6 +379,10 @@ export class TypeAssertExpr implements ExprNode {
         return this.RightParen + 1;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(expr : ExprNode, lparen : Pos.Pos, type : ExprNode | undefined, rparen : Pos.Pos) {
         this.Expr = expr;
         this.LeftParen = lparen;
@@ -347,6 +405,10 @@ export class CallExpr implements ExprNode {
 
     End() : Pos.Pos {
         return this.RightParen + 1;
+    }
+
+    getType() : nodeType {
+        return nodeType.CALL;
     }
 
     constructor(func : ExprNode, lparen : Pos.Pos, args : ExprNode[] | undefined, ellipsis : Pos.Pos, rparen: Pos.Pos) {
@@ -372,6 +434,10 @@ export class StarExpr implements ExprNode {
         return this.Expr.End();
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(star : Pos.Pos, expr : ExprNode) {
         this.Star = star;
         this.Expr = expr;
@@ -391,6 +457,10 @@ export class UnaryExpr implements ExprNode {
 
     End() : Pos.Pos {
         return this.X.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.UNARY;
     }
 
     constructor(pos : Pos.Pos, op : string, expr : ExprNode) {
@@ -415,6 +485,10 @@ export class BinaryExpr implements ExprNode {
         return this.Y.End();
     }
 
+    getType() : nodeType {
+        return nodeType.BINARY;
+    }
+
     constructor(x : ExprNode, pos : Pos.Pos, op : string, y : ExprNode) {
         this.X = x;
         this.OpPos = pos;
@@ -435,6 +509,10 @@ export class KeyValueExpr implements ExprNode {
 
     End() : Pos.Pos {
         return this.Value.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(key : ExprNode, colon : Pos.Pos, val : ExprNode) {
@@ -460,6 +538,10 @@ export class ArrayType implements ExprNode {
         return this.ElementType.End();
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(lbrack : Pos.Pos, len : ExprNode | undefined, elmType : ExprNode) {
         this.LeftBrack = lbrack;
         this.Length = len;
@@ -479,6 +561,10 @@ export class StructType implements ExprNode {
 
     End() : Pos.Pos {
         return this.Fields.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(pos : Pos.Pos, fields : FieldList, incomplete : boolean) {
@@ -508,6 +594,10 @@ export class FuncType implements ExprNode {
         return this.Params.End();
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(funcPos : Pos.Pos, params : FieldList, results : FieldList | undefined) {
         this.Func = funcPos;
         this.Params = params;
@@ -527,6 +617,10 @@ export class InterfaceType implements ExprNode {
 
     End() : Pos.Pos {
         return this.Methods.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(pos : Pos.Pos, methods : FieldList, incomplete : boolean) {
@@ -550,6 +644,10 @@ export class MapType implements ExprNode {
         return this.Value.End();
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(pos : Pos.Pos, key: ExprNode, val : ExprNode) {
         this.Map = pos;
         this.Key = key;
@@ -570,6 +668,10 @@ export class ChanType implements ExprNode {
 
     End() : Pos.Pos {
         return this.Value.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(begin : Pos.Pos, arrowPos : Pos.Pos, dir : ChanDir, val : ExprNode) {
@@ -595,6 +697,10 @@ export class BadStmt implements StatementNode {
         return this.To;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(start : Pos.Pos, end : Pos.Pos) {
         this.From = start;
         this.To = end;
@@ -611,6 +717,10 @@ export class DeclStmt implements StatementNode {
 
     End() : Pos.Pos {
         return this.Decl.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(decl : DeclarationNode) {
@@ -635,6 +745,10 @@ export class EmptyStmt implements StatementNode {
         return this.Semicolon + 1;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(pos : Pos.Pos, implicit : boolean) {
         this.Semicolon = pos;
         this.Implicit = implicit;
@@ -653,6 +767,10 @@ export class LabeledStmt implements StatementNode {
 
     End() : Pos.Pos {
         return this.Stmt.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(label : Ident, colon : Pos.Pos, stmt : StatementNode) {
@@ -674,6 +792,10 @@ export class ExprStmt implements StatementNode {
         return this.Expr.End();
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(expr : ExprNode) {
         this.Expr = expr;
     }
@@ -691,6 +813,10 @@ export class SendStmt implements StatementNode {
 
     End() : Pos.Pos {
         return this.Value.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(ch : ExprNode, arrow : Pos.Pos, val : ExprNode) {
@@ -712,6 +838,10 @@ export class IncDecStmt implements StatementNode {
 
     End() : Pos.Pos {
         return this.TokPos + 2; // "++" or "--"
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(expr : ExprNode, pos : Pos.Pos, token : string) {
@@ -738,6 +868,10 @@ export class AssignStmt implements StatementNode {
         return this.RightHandSide[this.RightHandSide.length - 1].End();
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(lhs : ExprNode[], pos : Pos.Pos, token : string, rhs : ExprNode[]) {
         this.LeftHandSide = lhs;
         this.TokPos = pos;
@@ -759,6 +893,10 @@ export class GoStmt implements StatementNode {
         return this.Call.End();
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(pos : Pos.Pos, callExp : CallExpr) {
         this.Go = pos;
         this.Call = callExp;
@@ -776,6 +914,10 @@ export class DeferStmt implements StatementNode {
 
     End() : Pos.Pos {
         return this.Call.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(pos : Pos.Pos, callExp : CallExpr) {
@@ -798,6 +940,10 @@ export class ReturnStmt implements StatementNode {
             return this.Results[this.Results.length - 1].End();
         }
         return this.Return + 6; // "return"
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(pos : Pos.Pos, results : ExprNode[]) {
@@ -823,6 +969,10 @@ export class BranchStmt implements StatementNode {
         return this.TokPos + Token.token[this.Tok].length;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(pos : Pos.Pos, token : string, label : Ident | undefined) {
         this.TokPos = pos;
         this.Tok = Token.getToken(token);
@@ -844,6 +994,10 @@ export class BlockStmt implements StatementNode {
         return this.RightBrace + 1;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(lbrace : Pos.Pos, lst : StatementNode[], rbrace: Pos.Pos) {
         this.LeftBrace = lbrace;
         this.List = lst;
@@ -854,7 +1008,7 @@ export class BlockStmt implements StatementNode {
 // IfStmt node represents if statement
 export class IfStmt implements StatementNode {
     If: Pos.Pos; // position of "if" keyword
-    Init: StatementNode | undefined; // initialisation statement or null
+    Init: StatementNode | undefined; // initialisation statement or undefined
     Cond: ExprNode; // condition
     Body: BlockStmt; // consequent
     Else: StatementNode | undefined; // alternative
@@ -868,6 +1022,10 @@ export class IfStmt implements StatementNode {
             return this.Else.End();
         }
         return this.Body.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.IF;
     }
 
     constructor(pos : Pos.Pos, init : StatementNode | undefined, cond : ExprNode, body : BlockStmt, elseStm : StatementNode | undefined) {
@@ -897,6 +1055,10 @@ export class CaseClause implements StatementNode {
         return this.Colon + 1;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(cse : Pos.Pos, lst : ExprNode[], colon : Pos.Pos, body : StatementNode[]) {
         this.Case = cse;
         this.List = lst;
@@ -920,6 +1082,10 @@ export class SwitchStmt implements StatementNode {
         return this.Body.End();
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(pos : Pos.Pos, init : StatementNode | undefined, tag : ExprNode | undefined, body : BlockStmt) {
         this.Switch = pos;
         this.Init = init;
@@ -941,6 +1107,10 @@ export class TypeSwitchStmt implements StatementNode {
 
     End() : Pos.Pos {
         return this.Body.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(pos : Pos.Pos, init : StatementNode | undefined, assign : StatementNode, body : BlockStmt) {
@@ -969,6 +1139,10 @@ export class CommClause implements StatementNode {
         return this.Colon + 1;
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(cse : Pos.Pos, comm : StatementNode | undefined, colon : Pos.Pos, body : StatementNode[]) {
         this.Case = cse;
         this.Comm = comm;
@@ -988,6 +1162,10 @@ export class SelectStmt implements StatementNode {
 
     End() : Pos.Pos {
         return this.Body.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(pos : Pos.Pos, body : BlockStmt) {
@@ -1010,6 +1188,10 @@ export class ForStmt implements StatementNode {
 
     End() : Pos.Pos {
         return this.Body.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.FOR;
     }
 
     constructor(pos : Pos.Pos, init : StatementNode | undefined, cond : ExprNode | undefined, post : StatementNode | undefined, body : BlockStmt) {
@@ -1037,6 +1219,10 @@ export class RangeStmt implements StatementNode {
 
     End() : Pos.Pos {
         return this.Body.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(forPos : Pos.Pos, key : ExprNode | undefined, val : ExprNode | undefined, tokPos : Pos.Pos, token : string, expr : ExprNode, body : BlockStmt) {
@@ -1074,6 +1260,10 @@ export class ValueSpec implements SpecNode {
         return this.Names[this.Names.length - 1].End();
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(names : Ident[], type : ExprNode | undefined, values : ExprNode[]) {
         this.Names = names;
         this.Type = type;
@@ -1093,6 +1283,10 @@ export class TypeSpec implements SpecNode {
 
     End() : Pos.Pos {
         return this.Type.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(name : Ident, assign : Pos.Pos, type : ExprNode) {
@@ -1115,6 +1309,10 @@ export class BadDecl implements DeclarationNode {
 
     End() : Pos.Pos {
         return this.To;
+    }
+
+    getType() : nodeType {
+        return nodeType.ILLEGAL;
     }
 
     constructor(start : number, end : number) {
@@ -1144,6 +1342,10 @@ export class GenDecl implements DeclarationNode {
         return this.Specs[0].End();
     }
 
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
+    }
+
     constructor(start : Pos.Pos, token : string, leftPos : Pos.Pos, specs : SpecNode[], rightPos : Pos.Pos) {
         this.TokPos = start;
         this.Tok = Token.getToken(token);
@@ -1166,6 +1368,10 @@ export class FuncDecl implements DeclarationNode {
 
     End() : Pos.Pos {
         return this.Body.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(recv : FieldList | undefined, name : Ident, funcType : FuncType, body : BlockStmt) {
@@ -1193,6 +1399,10 @@ export class File implements GoNode {
             return this.Decls[this.Decls.length - 1].End();
         }
         return this.Name.End();
+    }
+
+    getType() : nodeType {
+        return nodeType.NOT_IMPLEMENTED;
     }
 
     constructor(decls : DeclarationNode[], pkgPos : Pos.Pos, name : Ident) {
