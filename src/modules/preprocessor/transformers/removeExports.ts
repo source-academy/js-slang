@@ -21,7 +21,7 @@ export default function removeExports(program: es.Program): void {
         // it with the declaration node in its parent node's body.
         return node.declaration.type === 'FunctionDeclaration' ||
           node.declaration.type === 'ClassDeclaration'
-          ? node.declaration
+          ? node.declaration as es.FunctionDeclaration
           : undefined
       case 'ExportNamedDeclaration':
         // If the ExportNamedDeclaration node contains a declaration, replace

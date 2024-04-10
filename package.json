@@ -34,7 +34,7 @@
     "@babel/parser": "^7.19.4",
     "@joeychenofficial/alt-ergo-modified": "^2.4.0",
     "@ts-morph/bootstrap": "^0.18.0",
-    "@types/estree": "0.0.52",
+    "@types/estree": "^1.0.5",
     "acorn": "^8.8.2",
     "acorn-class-fields": "^1.0.0",
     "acorn-loose": "^8.0.0",
