@@ -1,0 +1,79 @@
+\begin{alignat*}{9}
+&& \textit{program}    &&\quad ::= &\quad && \textit{import-directive} ... \ \textit{statement} ...
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/3.1.1\#p6}{program}} \\[1mm]
+&& \textit{import-directive}    &&\quad ::= &\quad && \textbf{\texttt{from}}\  \textit{string} \ \textbf{\texttt{import}}\ \textbf{\texttt{(}}\ \textit{import-names} \ \textbf{\texttt{)}}\ \textbf{\texttt{;}} \quad
+                                                           && \textrm{import directive} \\[1mm]
+&& \textit{import-names}   && ::= &\quad &&  \epsilon\ | \  \textit{import-name} \ 
+                                                   (\ \textbf{\texttt{,}} \ \textit{import-name}\ ) ...
+                                                            && \textrm{import name list}   \\[1mm]
+&& \textit{import-name}   && ::= &\quad &&  \textit{name}\ | \  \textit{name} \ \textbf{\texttt{as}}\ \textit{name} 
+                                                            && \textrm{import name}   \\[1mm]
+&& \textit{statement}    &&\quad ::= &\quad &&   \textit{name} \ 
+                                           \textbf{\texttt{=}}\  \textit{expression} \ 
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.2\#p2}{constant declaration}} \\
+&&                       && |   &\quad && \textbf{\texttt{def}}\  \textit{name} \ 
+                                   \textbf{\texttt{(}}\  \textit{names} \ \textbf{\texttt{):}}\ \textit{suite} \quad
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{function declaration}}\\
+&&                       && |   &\quad && \textbf{\texttt{return}}\  \textit{expression} \
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{return statement}}\\
+&&                       && |   &\quad && \textit{if-statement} \quad
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.3.2\#p13}{conditional statement}}\\
+&&                       && |   &\quad &&  \textit{expression}
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p3}{expression statement}} \\
+&&                       && |   &\quad &&  \textbf{\texttt{debugger}}
+                                                           && \textrm{breakpoint} \\[1mm]
+&& \textit{names}   && ::= &\quad &&  \epsilon\ | \  \textit{name} \ 
+                                                   (\ \textbf{\texttt{,}} \ \textit{name}\ ) ...
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p4}{name list}}   \\[1mm]
+&& \textit{if-statement} && ::= &\quad &&  \textbf{\texttt{if}}\
+                                   \textbf{\texttt{(}}\ \textit{expression} \ \textbf{\texttt{):}}\ 
+                                   \textit{suite} \\
+&&                       &&     &      && \textbf{\texttt{$[$elif:}}\
+                                          \ \textit{suite$]$} \\
+&&                       &&     &      && \textbf{\texttt{else:}}\
+                                          \ \textit{suite}
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.3.2\#p12}{conditional statement}}   \\[1mm]
+&& \textit{block}        && ::= &     && \textbf{\texttt{NEWLINE INDENT}}\  \textit{statement} ... \ \textbf{\texttt{DEDENT}} \quad
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.8\#p14}{block statement}}\\[1mm]         
+&& \textit{expression}   && ::= &\quad &&  \textit{number}   && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p3}{primitive number expression}}\\
+&&                       && |   &\quad && \textbf{\texttt{True}}\ |\ \textbf{\texttt{False}}
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p1}{primitive boolean expression}}\\
+&&                       && |   &\quad &&  \textit{string}   && \textrm{\href{https://sourceacademy.org/sicpjs/2.3.1}{primitive string expression}}\\
+&&                       && |   &\quad &&  \textit{name}   && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.2}{name expression}}\\
+&&                       && |   &\quad &&  \textit{expression} \  \textit{binary-operator} \ 
+                                            \textit{expression} \qquad
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p5}{binary operator combination}}\\
+&&                       && |   &\quad &&   \textit{unary-operator} \ 
+                                            \textit{expression}
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p4}{unary operator combination}}\\
+&&                       && |   &\quad &&  \textit{expression} \  \textit{binary-logical} \ 
+                                            \textit{expression} \qquad
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p5}{logical composition}}\\
+&&                       && |   &\quad &&   \textit{expression}\ \textbf{\texttt{(}}\ \textit{expressions}\ \textbf{\texttt{)}}
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{function application}}\\
+&&                       && |   &\quad &&    \textbf {\texttt{lambda}} \ \textit{name}\ | \
+                                               \textbf{\texttt{(}}\ \textit{names}\ \textbf{\texttt{)}}\
+                                            \texttt{\textbf{:}}\ \textit{expression}
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.3.2}{lambda expression}}\\
+&&                       && |   &\quad &&   \textit{expression} \ \textbf{\texttt{if}}\ 
+                                            \textit{expression}
+                                            \ \textbf{\texttt{else}}\
+                                            \textit{expression}\
+                                                           && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p1}{conditional expression}}\\
+&&                       && |   &\quad &&  \textbf{\texttt{(}}\  \textit{expression} \ 
+                                            \textbf{\texttt{)}} && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p6}{parenthesised expression}}\\[1mm]
+&& \textit{binary-operator}   
+                        && ::= &\quad && \textbf{\texttt{+}}\ |\ \textbf{\texttt{-}}\ |\ \textbf{\texttt{*}}\ |\ \textbf{\texttt{/}}\ |\ \textbf{\texttt{\%}}\ |\ 
+                                            \textbf{\texttt{==}}\ |\ \textbf{\texttt{!=}} \\
+&&                      && |  &\quad &&  \texttt{\textbf{>}}\ |\ \texttt{\textbf{<}}\ |\ \texttt{\textbf{>=}}\ |\ \texttt{\textbf{<=}}     && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.1\#p4}{binary operator}}\\[1mm]
+&& \textit{unary-operator}    
+                        && ::= &\quad && \textbf{\texttt{not}}\ |\ \textbf{\texttt{-}}
+                        && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p4}{unary operator}}\\[1mm]
+&& \textit{binary-logical}   && ::=  &\quad &&  \textbf{\texttt{and}}\ |\ \texttt{\textbf{or}}
+                                          && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.6\#p5}{logical composition symbol}}\\[1mm]
+&& \textit{expressions}  && ::= &\quad && \epsilon\ | \ \textit{expression}\ (
+                                                               \ \textbf{\texttt{,}} \
+                                                                 \textit{expression} \ 
+                                                                      ) ...
+                                                            && \textrm{\href{https://sourceacademy.org/sicpjs/1.1.4\#p5}{argument expressions}} 
+\end{alignat*}
