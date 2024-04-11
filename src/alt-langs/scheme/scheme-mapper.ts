@@ -72,7 +72,7 @@ export function schemeVisualise(x: any): Representation {
         .join(' ')
         .trim()
       return `#<procedure (${parameters})>`
-    } else if (isBuiltinFunction(x)) {
+    } else if (isBuiltinFunction(x) || typeof x === 'function') {
       function decodeParams(params: string[]): string {
         // if parameter starts with ... then it is a rest parameter
         const convertedparams = params
