@@ -1,0 +1,36 @@
+\subsection*{\href{https://sourceacademy.org/sicpjs/2.3.1}{Strings}}
+
+In Python, strings can be enclosed within single quotes (\texttt{'...'}), double quotes (\texttt{"..."}), or triple quotes (\texttt{\textquotesingle{}\textquotesingle{}\textquotesingle{}...\textquotesingle{}\textquotesingle{}\textquotesingle{}}
+ or \texttt{"""..."""}). The choice between single and double quotes is generally based on convenience, such as opting for a quote type not present within the string to avoid escaping. Triple quotes allow strings to span multiple lines and include both single and double quotes without needing escape sequences. Triple quotes are used for multi-line strings or docstrings.
+
+
+\begin{itemize}
+    \item Single and Double Quotes:
+    \begin{itemize}
+        \item \texttt{'single-quote-characters'}: Can contain any character except the single quote (\texttt{'}) itself unless escaped.
+        \item \texttt{"double-quote-characters"}: Can contain any character except the double quote (\texttt{"}) itself unless escaped.
+    \end{itemize}
+    \item Triple Quotes:
+    \begin{itemize}
+        \item \texttt{\texttt{\textquotesingle{}\textquotesingle{}\textquotesingle{}backquote-characters\textquotesingle{}\textquotesingle{}\textquotesingle{}}
+} or \texttt{"""backquote-characters"""}: Can include any character, including newlines, without escaping.
+    \end{itemize}
+    \item Special Characters:
+    \begin{itemize}
+        \item Horizontal tab: \texttt{\textbackslash t}
+        \item Vertical tab: \texttt{\textbackslash v}
+        \item Null character: \texttt{\textbackslash 0}
+        \item Backspace: \texttt{\textbackslash b}
+        \item Form feed: \texttt{\textbackslash f}
+        \item Newline: \texttt{\textbackslash n}
+        \item Carriage return: \texttt{\textbackslash r}
+        \item Single quote: \texttt{\textbackslash '} (necessary in single-quoted strings)
+        \item Double quote: \texttt{\textbackslash "} (necessary in double-quoted strings)
+        \item Backslash: \texttt{\textbackslash\textbackslash}
+    \end{itemize}
+    \item Unicode Characters:
+    \begin{itemize}
+        \item Represented using \texttt{\textbackslash u} followed by four hexadecimal digits (e.g., \texttt{\textbackslash u03A9} for the Greek capital letter omega).
+        \item For characters outside the Basic Multilingual Plane (BMP), use \texttt{\textbackslash U} followed by eight hexadecimal digits (e.g., \texttt{\textbackslash U0001F604} for a smiling face with open mouth and smiling eyes).
+    \end{itemize}
+\end{itemize}
