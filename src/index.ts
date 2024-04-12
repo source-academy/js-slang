@@ -33,7 +33,6 @@ import { validateFilePath } from './modules/preprocessor/filePaths'
 import { mergeImportOptions } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
 import { parse } from './parser/parser'
-import { decodeError, decodeValue } from './parser/scheme'
 import {
   fullJSRunner,
   hasVerboseErrors,
@@ -41,6 +40,7 @@ import {
   resolvedErrorPromise,
   sourceFilesRunner
 } from './runner'
+import { mapResult } from './alt-langs/mapper'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -216,72 +216,65 @@ export async function runInContext(
   return runFilesInContext(files, defaultFilePath, context, options)
 }
 
+// this is the first entrypoint for all source files.
+// as such, all mapping functions required by alternate languages
+// should be defined here.
 export async function runFilesInContext(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
-  for (const filePath in files) {
-    const filePathError = validateFilePath(filePath)
-    if (filePathError !== null) {
-      context.errors.push(filePathError)
-      return resolvedErrorPromise
-    }
-  }
-
-  const code = files[entrypointFilePath]
-  if (code === undefined) {
-    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
-    return resolvedErrorPromise
-  }
-
-  if (
-    context.chapter === Chapter.FULL_JS ||
-    context.chapter === Chapter.FULL_TS ||
-    context.chapter === Chapter.PYTHON_1
-  ) {
-    const program = parse(code, context)
-    if (program === null) {
-      return resolvedErrorPromise
-    }
-
-    const fullImportOptions = mergeImportOptions(options.importOptions)
-    return fullJSRunner(program, context, fullImportOptions)
-  }
-
-  if (context.chapter === Chapter.HTML) {
-    return htmlRunner(code, context, options)
-  }
-
-  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
-    // If the language is scheme, we need to format all errors and returned values first
-    // Use the standard runner to get the result
-    const evaluated: Promise<Result> = sourceFilesRunner(
-      files,
-      entrypointFilePath,
-      context,
-      options
-    ).then(result => {
-      // Format the returned value
-      if (result.status === 'finished') {
-        return {
-          ...result,
-          value: decodeValue(result.value)
-        } as Finished
+  async function runFilesInContextHelper(
+    files: Partial<Record<string, string>>,
+    entrypointFilePath: string,
+    context: Context,
+    options: RecursivePartial<IOptions> = {}
+  ): Promise<Result> {
+    for (const filePath in files) {
+      const filePathError = validateFilePath(filePath)
+      if (filePathError !== null) {
+        context.errors.push(filePathError)
+        return resolvedErrorPromise
       }
-      return result
-    })
-    // Format all errors in the context
-    context.errors = context.errors.map(error => decodeError(error))
-    return evaluated
+    }
+
+    const code = files[entrypointFilePath]
+    if (code === undefined) {
+      context.errors.push(new ModuleNotFoundError(entrypointFilePath))
+      return resolvedErrorPromise
+    }
+
+    if (
+      context.chapter === Chapter.FULL_JS ||
+      context.chapter === Chapter.FULL_TS ||
+      context.chapter === Chapter.PYTHON_1
+    ) {
+      const program = parse(code, context)
+      if (program === null) {
+        return resolvedErrorPromise
+      }
+
+      const fullImportOptions = mergeImportOptions(options.importOptions)
+      return fullJSRunner(program, context, fullImportOptions)
+    }
+
+    if (context.chapter === Chapter.HTML) {
+      return htmlRunner(code, context, options)
+    }
+
+    // FIXME: Clean up state management so that the `parseError` function is pure.
+    //        This is not a huge priority, but it would be good not to make use of
+    //        global state.
+    verboseErrors = hasVerboseErrors(code)
+
+    // the sourceFilesRunner
+    return sourceFilesRunner(files, entrypointFilePath, context, options)
   }
 
-  // FIXME: Clean up state management so that the `parseError` function is pure.
-  //        This is not a huge priority, but it would be good not to make use of
-  //        global state.
-  verboseErrors = hasVerboseErrors(code)
-  return sourceFilesRunner(files, entrypointFilePath, context, options)
+  return runFilesInContextHelper(files, entrypointFilePath, context, options).then(
+    mapResult(context)
+  )
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
