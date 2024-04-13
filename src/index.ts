@@ -207,6 +207,9 @@ export async function runInContext(
   return runFilesInContext(files, defaultFilePath, context, options)
 }
 
+// this is the first entrypoint for all source files.
+// as such, all mapping functions required by alternate languages
+// should be defined here.
 export async function runFilesInContext(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
@@ -221,28 +224,30 @@ export async function runFilesInContext(
     }
   }
 
+  let result: Result
   if (context.chapter === Chapter.HTML) {
     const code = files[entrypointFilePath]
     if (code === undefined) {
       context.errors.push(new ModuleNotFoundError(entrypointFilePath))
       return resolvedErrorPromise
     }
-    return htmlRunner(code, context, options)
+    result = await htmlRunner(code, context, options)
+  } else {
+    // FIXME: Clean up state management so that the `parseError` function is pure.
+    //        This is not a huge priority, but it would be good not to make use of
+    //        global state.
+    ;({ result, verboseErrors } = await sourceFilesRunner(
+      p => Promise.resolve(files[p]),
+      entrypointFilePath,
+      context,
+      {
+        ...options,
+        shouldAddFileName: options.shouldAddFileName ?? Object.keys(files).length > 1
+      }
+    ))
   }
 
-  // FIXME: Clean up state management so that the `parseError` function is pure.
-  //        This is not a huge priority, but it would be good not to make use of
-  //        global state.
-  let result: Result
-  ;({ result, verboseErrors } = await sourceFilesRunner(
-    p => Promise.resolve(files[p]),
-    entrypointFilePath,
-    context,
-    {
-      ...options,
-      shouldAddFileName: options.shouldAddFileName ?? Object.keys(files).length > 1
-    }
-  ))
+
   return result
 }
 

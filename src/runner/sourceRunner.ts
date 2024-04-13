@@ -34,7 +34,7 @@ import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
 import type { FileGetter } from '../modules/moduleTypes'
-import { decodeError, decodeValue } from '../parser/scheme'
+import { mapResult } from '../alt-langs/mapper'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
 import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
@@ -333,25 +333,11 @@ export async function sourceFilesRunner(
 
   context.previousPrograms.unshift(preprocessedProgram)
 
+  const resultMapper = mapResult(context)
   const result = await sourceRunner(preprocessedProgram, context, verboseErrors, options)
 
-  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
-    // If the language is scheme, we need to format all errors and returned values first
-    if (result.status === 'finished') {
-      return {
-        result: {
-          ...result,
-          value: decodeValue(result.value)
-        },
-        verboseErrors
-      }
-    }
-    // Format all errors in the context
-    context.errors = context.errors.map(decodeError)
-  }
-
   return {
-    result,
+    result: resultMapper(result),
     verboseErrors
   }
 }

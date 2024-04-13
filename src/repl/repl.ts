@@ -11,6 +11,7 @@ import { Chapter, type RecursivePartial, Variant } from '../types'
 import { objectValues } from '../utils/misc'
 import { stringify } from '../utils/stringify'
 import { sourceFilesRunner } from '../runner'
+import { Representation } from '../alt-langs/mapper'
 import { chapterParser, getChapterOption, getVariantOption, validChapterVariant } from './utils'
 
 export const replCommand = new Command('run')
@@ -77,7 +78,7 @@ export const replCommand = new Command('run')
           context.errors = []
           runInContext(cmd, context, options).then(obj => {
             if (obj.status === 'finished' || obj.status === 'suspended-non-det') {
-              callback(null, obj.value)
+              callback(null, obj.representation !== undefined ? obj.representation : obj.value)
             } else {
               callback(new Error(parseError(context.errors)), undefined)
             }
@@ -86,12 +87,14 @@ export const replCommand = new Command('run')
         // set depth to a large number so that `parse()` output will not be folded,
         // setting to null also solves the problem, however a reference loop might crash
         writer: output => {
-          return output instanceof Closure || typeof output === 'function'
-            ? output.toString()
-            : inspect(output, {
-                depth: 1000,
-                colors: true
-              })
+          return output instanceof Closure ||
+              typeof output === 'function' ||
+              output instanceof Representation
+              ? output.toString()
+              : inspect(output, {
+                  depth: 1000,
+                  colors: true
+                })
         }
       }
     )

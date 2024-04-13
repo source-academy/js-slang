@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "1.0.65",
+  "version": "1.0.66",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
@@ -107,6 +107,7 @@
     "testRegex": "/__tests__/.*\\.ts$",
     "testPathIgnorePatterns": [
       "/dist/",
+      "/src/alt-langs/scheme/scm-slang",
       ".*benchmark.*",
       "/__tests__/(.*/)?utils\\.ts"
     ],
@@ -115,7 +116,7 @@
       "/node_modules/",
       "/src/typings/",
       "/src/utils/testing.ts",
-      "/src/alt-langs",
+      "/src/alt-langs/scheme/scm-slang",
       "/src/py-slang/"
     ],
     "reporters": [

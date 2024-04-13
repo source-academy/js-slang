@@ -1,0 +1,58 @@
+
+\section{Dynamic Type Checking}
+
+Expressions evaluate to numbers, boolean values, strings or function values. Implementations
+of Python \S 1 generate error messages when unexpected values are used as follows.
+
+Only function values can be applied using the syntax:
+
+\begin{eqnarray*}
+ \textit{expression}    
+                                   & ::=   &  \textit{name}
+                                               \texttt{\textbf{(}}\  \textit{expressions} \
+                                               \texttt{\textbf{)}}\\ 
+\end{eqnarray*}
+
+For compound functions, implementations need to check that the number of \textit{expressions}
+matches the number of parameters.
+
+The following table specifies what arguments  Python \S 1's operators
+take and what results they return. Implementations need to check the types of arguments and
+generate an error message when the types do not match.
+
+\begin{center}
+\begin{tabular}{c|c|c|c}
+\textbf{operator} & \textbf{argument 1} & \textbf{argument 2} & \textbf{result} \\ \hline 
+\texttt{+} & int & int & int \\
+\texttt{+} & float & int | float & float \\
+\texttt{+} & string & string & string \\
+\texttt{-} & int & int & int \\
+\texttt{-} & float & int | float & float \\
+\texttt{*} & int & int & int \\
+\texttt{*} & float & int | float & float \\
+\texttt{*} & string & int & string \\
+\texttt{/} & int | float & int | float & float \\
+\texttt{\%} & int & int & int \\
+\texttt{\%} & float & int | float & float \\
+\texttt{**} & int & int & int \\
+\texttt{**} & float & int | float & float \\
+\texttt{//} & int | float & int | float & int \\
+\texttt{==} & any & any & bool \\
+\texttt{!=} & any & any & bool \\
+\texttt{>} & int | float & int | float & bool \\
+\texttt{>} & string & string & bool \\
+\texttt{<} & int | float & int | float & bool \\
+\texttt{<} & string & string & bool \\
+\texttt{>=} & int | float & int | float & bool \\
+\texttt{>=} & string & string & bool \\
+\texttt{<=} & int | float & int | float & bool \\
+\texttt{<=} & string & string & bool \\
+\texttt{and} & bool & bool & bool \\
+\texttt{or} & bool & bool & bool \\
+\texttt{not} & bool & N/A & bool \\
+\texttt{-} (unary) & int & N/A & int \\
+\texttt{-} (unary) & float & N/A & float \\
+\end{tabular}
+\end{center}
+
+Note: Python supports more complex behaviors through operator overloading and special methods (e.g., \_\_add\_\_, \_\_lt\_\_, etc.), allowing custom objects to interact with these operators in user-defined ways. This table covers only the most basic and common use cases.

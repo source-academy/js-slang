@@ -103,10 +103,10 @@ export default class Closure extends Callable {
   public preDefined?: boolean
 
   /** The original node that created this Closure */
-  public originalNode: es.Function
+  public originalNode: es.Function | es.ArrowFunctionExpression
 
   constructor(
-    public node: es.Function,
+    public node: es.Function | es.ArrowFunctionExpression,
     public environment: Environment,
     context: Context,
     isPredefined?: boolean
