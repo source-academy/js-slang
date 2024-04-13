@@ -247,7 +247,6 @@ export async function runFilesInContext(
     ))
   }
 
-
   return result
 }
 

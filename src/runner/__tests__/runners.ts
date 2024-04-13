@@ -217,8 +217,6 @@ test('Error handling script is injected in HTML code', async () => {
   const htmlContext: Context = mockContext(Chapter.HTML, Variant.DEFAULT)
   const result = await runInContext(htmlDocument, htmlContext)
 
-  console.log(htmlContext.errors[0])
-
   expect(result.status).toStrictEqual('finished')
   expect((result as Finished).value).toStrictEqual(htmlErrorHandlingScript + htmlDocument)
 })

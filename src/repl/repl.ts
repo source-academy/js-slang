@@ -88,13 +88,13 @@ export const replCommand = new Command('run')
         // setting to null also solves the problem, however a reference loop might crash
         writer: output => {
           return output instanceof Closure ||
-              typeof output === 'function' ||
-              output instanceof Representation
-              ? output.toString()
-              : inspect(output, {
-                  depth: 1000,
-                  colors: true
-                })
+            typeof output === 'function' ||
+            output instanceof Representation
+            ? output.toString()
+            : inspect(output, {
+                depth: 1000,
+                colors: true
+              })
         }
       }
     )
