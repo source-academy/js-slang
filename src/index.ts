@@ -40,6 +40,7 @@ import {
   resolvedErrorPromise,
   sourceFilesRunner
 } from './runner'
+import { getTypeInformation } from './typeChecker/typeErrorChecker'
 import { mapResult } from './alt-langs/mapper'
 
 export interface IOptions {
@@ -343,4 +344,4 @@ export async function compileFiles(
   }
 }
 
-export { createContext, Context, ModuleContext, Result, setBreakpointAtLine, assemble }
+export { createContext, Context, ModuleContext, Result, setBreakpointAtLine, assemble, getTypeInformation }

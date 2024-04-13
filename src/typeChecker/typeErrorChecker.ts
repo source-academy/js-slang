@@ -28,6 +28,7 @@ import {
   type Pair,
   PrimitiveType,
   SArray,
+  SourceError,
   TSAllowedTypes,
   TSBasicType,
   TSDisallowedTypes,
@@ -68,6 +69,12 @@ import {
   tVoid,
   typeAnnotationKeywordToBasicTypeMap
 } from './utils'
+import { findNodeAt } from '../utils/walkers'
+import { defaultBabelOptions, positionToSourceLocation } from '../parser/utils'
+import { FatalSyntaxError } from '../parser/errors'
+import { parseError } from '..'
+
+import { transformBabelASTToESTreeCompliantAST } from '../parser/source/typed/utils'
 
 // Context and type environment are saved as global variables so that they are not passed between functions excessively
 let context: Context = {} as Context
@@ -174,7 +181,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
         // Import statements should only exist in program body
         handleImportDeclarations(node)
       }
-
+      
       // Add all declarations in the current scope to the environment first
       addTypeDeclarationsToEnvironment(node)
 
@@ -1612,4 +1619,725 @@ export function removeTSNodes(node: tsEs.Node | undefined | null): any {
       // Remove all other TS nodes
       return type.startsWith('TS') ? undefined : node
   }
+}
+// idk where to put this so i put it here for now
+type NodeWithAnnotation<T extends tsEs.Node> = {annotatedType?: Type, expectedType?: Type} & T
+
+/**
+ * Recurses through the given node to check for any type errors,
+ * and to annotate the node with its inferred/declared type,
+ * then returns the node's inferred/declared type.
+ * Any errors found are added to the context.
+ */
+function annotateNodes(node: NodeWithAnnotation<tsEs.Node>): Type {
+  switch (node.type) {
+    case 'Literal': {
+      // Infers type
+      if (node.value === undefined) {
+        return tUndef
+      }
+      if (node.value === null) {
+        // For Source 1, skip typecheck as null literals will be handled by the noNull rule,
+        // which is run after typechecking
+        return context.chapter === Chapter.SOURCE_1 ? tAny : tNull
+      }
+      if (
+        typeof node.value !== 'string' &&
+        typeof node.value !== 'number' &&
+        typeof node.value !== 'boolean'
+      ) {
+        // Skip typecheck as unspecified literals will be handled by the noUnspecifiedLiteral rule,
+        // which is run after typechecking
+        return tAny
+      }
+      // Casting is safe here as above check already narrows type to string, number or boolean
+      node.annotatedType = tPrimitive(typeof node.value as PrimitiveType, node.value)
+      return node.annotatedType
+    }
+    case 'TemplateLiteral': {
+      // Quasis array should only have one element as
+      // string interpolation is not allowed in Source
+      node.annotatedType = tPrimitive('string', node.quasis[0].value.raw)
+      return node.annotatedType
+    }
+    case 'Identifier': {
+      const varName = node.name
+      const varType = lookupTypeAndRemoveForAllAndPredicateTypes(varName)
+      if (varType) {
+        node.annotatedType = varType
+        return varType
+      } else {
+        context.errors.push(new UndefinedVariableTypeError(node, varName))
+        return tAny
+      }
+    }
+    case 'RestElement':
+    case 'SpreadElement':
+      // TODO: Add support for rest and spread element
+      return tAny
+    case 'Program':
+    case 'BlockStatement': {
+      let returnType: Type = tVoid
+      pushEnv(env)
+
+      if (node.type === 'Program') {
+        // Import statements should only exist in program body
+        handleImportDeclarations(node)
+      }
+
+      // Add all declarations in the current scope to the environment first
+      addTypeDeclarationsToEnvironment(node)
+
+      // Check all statements in program/block body
+      for (const stmt of node.body) {
+        if (stmt.type === 'IfStatement' || stmt.type === 'ReturnStatement') {
+          returnType = annotateNodes(stmt)
+          if (stmt.type === 'ReturnStatement') {
+            // If multiple return statements are present, only take the first type
+            break
+          }
+        } else {
+          annotateNodes(stmt)
+        }
+      }
+      if (node.type === 'BlockStatement') {
+        // Types are saved for programs, but not for blocks
+        env.pop()
+      }
+
+      return returnType
+    }
+    case 'ExpressionStatement': {
+      // Check expression
+      return annotateNodes(node.expression)
+    }
+    case 'ConditionalExpression':
+    case 'IfStatement': {
+      // Typecheck predicate against boolean
+      const predicateType = annotateNodes(node.test)
+      checkForTypeMismatch(node, predicateType, tBool)
+
+      // Return type is union of consequent and alternate type
+      const consType = annotateNodes(node.consequent)
+      const altType = node.alternate ? annotateNodes(node.alternate) : tUndef
+      node.annotatedType = mergeTypes(node, consType, altType)
+      return node.annotatedType
+    }
+    case 'UnaryExpression': {
+      const argType = annotateNodes(node.argument)
+      const operator = node.operator
+      switch (operator) {
+        case '-':
+          // Typecheck against number
+          checkForTypeMismatch(node, argType, tNumber)
+          return tNumber
+        case '!':
+          // Typecheck against boolean
+          checkForTypeMismatch(node, argType, tBool)
+          return tBool
+        case 'typeof':
+          // No checking needed, typeof operation can be used on any type
+          return tString
+        default:
+          throw new TypecheckError(node, 'Unknown operator')
+      }
+    }
+    case 'BinaryExpression': {
+      //TODO: Add support for binary expressions
+      return annotateBinaryExpression(node)
+    }
+    case 'LogicalExpression': {
+      // Typecheck left type against boolean
+      const leftType = annotateNodes(node.left)
+      checkForTypeMismatch(node, leftType, tBool)
+
+      // Return type is union of boolean and right type
+      const rightType = annotateNodes(node.right)
+      node.annotatedType = mergeTypes(node, tBool, rightType)
+      return node.annotatedType
+    }
+    case 'ArrowFunctionExpression': {
+      // TODO Add support for arrow functions
+      return annotateArrowFunctionType(node)
+    }
+    case 'FunctionDeclaration':
+      if (node.id === null) {
+        // Block should not be reached since node.id is only null when function declaration
+        // is part of `export default function`, which is not used in Source
+        throw new TypecheckError(node, 'Function declaration should always have an identifier')
+      }
+
+      // Only identifiers/rest elements are used as function params in Source
+      const params = node.params.filter(
+        (param): param is tsEs.Identifier | tsEs.RestElement =>
+          param.type === 'Identifier' || param.type === 'RestElement'
+      )
+      if (params.length !== node.params.length) {
+        throw new TypecheckError(node, 'Unknown function parameter type')
+      }
+      const id : NodeWithAnnotation<tsEs.Node> = node.id
+      const fnName = id.name
+      const expectedReturnType = getTypeAnnotationType(node.returnType)
+
+      // If the function has variable number of arguments, set function type as any
+      // TODO: Add support for variable number of function arguments
+      const hasVarArgs = params.reduce((prev, curr) => prev || curr.type === 'RestElement', false)
+      if (hasVarArgs) {
+        setType(fnName, tAny, env)
+        return tUndef
+      }
+
+      const types = getParamTypes(params)
+      // Return type will always be last item in types array
+      types.push(expectedReturnType)
+      const fnType = tFunc(...types)
+
+      // Typecheck function body, creating new environment to store arg types, return type and function type
+      pushEnv(env)
+      params.forEach((param: NodeWithAnnotation<tsEs.Identifier>) => {
+        param.annotatedType = getTypeAnnotationType(param.typeAnnotation)
+        setType(param.name, param.annotatedType, env)
+      })
+      // Set unique identifier so that typechecking can be carried out for return statements
+      setType(RETURN_TYPE_IDENTIFIER, expectedReturnType, env)
+      setType(fnName, fnType, env)
+      const actualReturnType = annotateNodes(node.body)
+      env.pop()
+
+      if (
+        isEqual(actualReturnType, tVoid) &&
+        !isEqual(expectedReturnType, tAny) &&
+        !isEqual(expectedReturnType, tVoid)
+      ) {
+        // Type error where function does not return anything when it should
+        context.errors.push(new FunctionShouldHaveReturnValueError(node))
+      } else {
+        checkForTypeMismatch(node, actualReturnType, expectedReturnType)
+      }
+
+      // Save function type in type env
+      setType(fnName, fnType, env)
+      id.annotatedType = fnType;
+      return tUndef
+    case 'VariableDeclaration': {
+      if (node.kind === 'var') {
+        throw new TypecheckError(node, 'Variable declaration using "var" is not allowed')
+      }
+      if (node.declarations.length !== 1) {
+        throw new TypecheckError(
+          node,
+          'Variable declaration should have one and only one declaration'
+        )
+      }
+      if (node.declarations[0].id.type !== 'Identifier') {
+        throw new TypecheckError(node, 'Variable declaration ID should be an identifier')
+      }
+      const id : NodeWithAnnotation<tsEs.Node> = node.declarations[0].id
+      if (!node.declarations[0].init) {
+        throw new TypecheckError(node, 'Variable declaration must have value')
+      }
+      const init: NodeWithAnnotation<tsEs.Node> = node.declarations[0].init
+      // Look up declared type if current environment contains name
+      const expectedType = env[env.length - 1].typeMap.has(id.name)
+        ? lookupTypeAndRemoveForAllAndPredicateTypes(id.name) ??
+          getTypeAnnotationType(id.typeAnnotation)
+        : getTypeAnnotationType(id.typeAnnotation)
+      const initType = annotateNodes(init)
+      init.expectedType = expectedType
+      init.annotatedType = initType
+      checkForTypeMismatch(node, initType, expectedType)
+      // Save variable type and decl kind in type env
+      setType(id.name, expectedType, env)
+      id.annotatedType = expectedType
+      setDeclKind(id.name, node.kind, env)
+      return tUndef
+    }
+    case 'CallExpression': {
+      const callee = node.callee
+      const args = node.arguments
+      if (context.chapter >= 2 && callee.type === 'Identifier') {
+        // Special functions for Source 2+: list, head, tail, stream
+        // The typical way of getting the return type of call expressions is insufficient to type lists,
+        // as we need to save the pair representation of the list as well (lists are pairs).
+        // head and tail should preserve the pair representation of lists whenever possible.
+        // Hence, these 3 functions are handled separately.
+        // Streams are treated similarly to lists, except only for Source 3+ and we do not need to store the pair representation.
+        const fnName = callee.name
+        if (fnName === 'list') {
+          if (args.length === 0) {
+            return tNull
+          }
+          // Element type is union of all types of arguments in list
+          let elementType = annotateNodes(args[0])
+          for (let i = 1; i < args.length; i++) {
+            elementType = mergeTypes(node, elementType, annotateNodes(args[i]))
+          }
+          
+          // Type the list as a pair, for use when checking for type mismatches against pairs
+          let pairType = tPair(annotateNodes(args[args.length - 1]), tNull)
+          for (let i = args.length - 2; i >= 0; i--) {
+            pairType = tPair(annotateNodes(args[i]), pairType)
+          }
+
+          node.annotatedType = tList(elementType, pairType)
+          return node.annotatedType
+        }
+        if (fnName === 'head' || fnName === 'tail') {
+          if (args.length !== 1) {
+            context.errors.push(new InvalidNumberOfArgumentsTypeError(node, 1, args.length))
+            return tAny
+          }
+          const actualType = annotateNodes(args[0])
+          // Argument should be either a pair or a list
+          const expectedType = tUnion(tPair(tAny, tAny), tList(tAny))
+          const numErrors = context.errors.length
+          checkForTypeMismatch(node, actualType, expectedType)
+          if (context.errors.length > numErrors) {
+            // If errors were found, return "any" type
+            return tAny
+          }
+          node.expectedType = expectedType
+          node.annotatedType = fnName === 'head' ? getHeadType(node, actualType) : getTailType(node, actualType)
+          return node.annotatedType
+        }
+        if (fnName === 'stream' && context.chapter >= 3) {
+          if (args.length === 0) {
+            return tNull
+          }
+          // Element type is union of all types of arguments in stream
+          let elementType = annotateNodes(args[0])
+          for (let i = 1; i < args.length; i++) {
+            elementType = mergeTypes(node, elementType, annotateNodes(args[i]))
+          }
+          node.annotatedType = tStream(elementType)
+          return node.annotatedType
+        }
+      }
+      const calleeType = annotateNodes(callee)
+      if (calleeType.kind !== 'function') {
+        if (calleeType.kind !== 'primitive' || calleeType.name !== 'any') {
+          context.errors.push(new TypeNotCallableError(node, formatTypeString(calleeType)))
+        }
+        return tAny
+      }
+
+      const expectedTypes = calleeType.parameterTypes
+      let returnType = calleeType.returnType
+
+      // If any of the arguments is a spread element, skip type checking of arguments
+      // TODO: Add support for type checking of call expressions with spread elements
+      const hasVarArgs = args.reduce((prev, curr) => prev || curr.type === 'SpreadElement', false)
+      if (hasVarArgs) {
+        node.annotatedType = returnType
+        return returnType
+      }
+
+      // Check argument types before returning declared return type
+      if (args.length !== expectedTypes.length) {
+        context.errors.push(
+          new InvalidNumberOfArgumentsTypeError(node, expectedTypes.length, args.length)
+        )
+        node.annotatedType = returnType
+        return returnType
+      }
+
+      for (let i = 0; i < expectedTypes.length; i++) {
+        const node: NodeWithAnnotation<tsEs.Node> = args[i]
+        const actualType = annotateNodes(node)
+        // Get all valid type variable mappings for current argument
+        const mappings = getTypeVariableMappings(node, actualType, expectedTypes[i])
+        // Apply type variable mappings to subsequent argument types and return type
+        for (const mapping of mappings) {
+          const typeVar = tVar(mapping[0])
+          const typeToSub = mapping[1]
+          for (let j = i; j < expectedTypes.length; j++) {
+            expectedTypes[j] = substituteVariableTypes(expectedTypes[j], typeVar, typeToSub)
+          }
+          returnType = substituteVariableTypes(returnType, typeVar, typeToSub)
+        }
+        // Typecheck current argument
+        node.annotatedType = actualType
+        node.expectedType = expectedTypes[i]
+        checkForTypeMismatch(node, actualType, expectedTypes[i])
+      }
+      
+      return returnType
+    }
+    case 'AssignmentExpression':
+      const expectedType = annotateNodes(node.left)
+      const actualType = annotateNodes(node.right)
+
+      if (node.left.type === 'Identifier' && lookupDeclKind(node.left.name, env) === 'const') {
+        context.errors.push(new ConstNotAssignableTypeError(node, node.left.name))
+      }
+      const nodeRight : NodeWithAnnotation<tsEs.Node> = node.right
+      nodeRight.annotatedType = actualType
+      nodeRight.expectedType = expectedType
+      checkForTypeMismatch(node, actualType, expectedType)
+      return actualType
+    case 'ArrayExpression':
+      // Casting is safe here as Source disallows use of spread elements and holes in arrays
+      const elements = node.elements.filter(
+        (elem): elem is Exclude<tsEs.ArrayExpression['elements'][0], tsEs.SpreadElement | null> =>
+          elem !== null && elem.type !== 'SpreadElement'
+      )
+      if (elements.length !== node.elements.length) {
+        throw new TypecheckError(node, 'Disallowed array element type')
+      }
+      if (elements.length === 0) {
+        node.annotatedType = tArray(tAny)
+        return node.annotatedType
+      }
+      const elementTypes = elements.map(elem => annotateNodes(elem))
+      node.annotatedType = tArray(mergeTypes(node, ...elementTypes))
+      return node.annotatedType
+    case 'MemberExpression':
+      const indexType = annotateNodes(node.property)
+      const objectType = annotateNodes(node.object)
+      // Typecheck index against number
+      if (hasTypeMismatchErrors(node, indexType, tNumber)) {
+        context.errors.push(new InvalidIndexTypeError(node, formatTypeString(indexType, true)))
+      }
+      // Expression being accessed must be array
+      if (objectType.kind !== 'array') {
+        context.errors.push(new InvalidArrayAccessTypeError(node, formatTypeString(objectType)))
+        return tAny
+      }
+      node.annotatedType = objectType.elementType
+      return node.annotatedType
+    case 'ReturnStatement': {
+      if (!node.argument) {
+        // Skip typecheck as unspecified literals will be handled by the noImplicitReturnUndefined rule,
+        // which is run after typechecking
+        return tUndef
+      } else {
+        // Check type only if return type is specified
+        const expectedType = lookupTypeAndRemoveForAllAndPredicateTypes(RETURN_TYPE_IDENTIFIER)
+        if (expectedType) {
+          const argumentType = annotateNodes(node.argument)
+          checkForTypeMismatch(node, argumentType, expectedType)
+          node.expectedType = expectedType
+          node.annotatedType = argumentType
+          return node.annotatedType
+        } else {
+          node.annotatedType = annotateNodes(node.argument)
+          return node.annotatedType
+        }
+      }
+    }
+    case 'WhileStatement': {
+      // Typecheck predicate against boolean
+      const testType = annotateNodes(node.test)
+      checkForTypeMismatch(node, testType, tBool)
+      node.annotatedType = annotateNodes(node.body)
+      return node.annotatedType
+    }
+    case 'ForStatement': {
+      // Add new environment so that new variable declared in init node can be isolated to within for statement only
+      pushEnv(env)
+      if (node.init) {
+        annotateNodes(node.init)
+      }
+      if (node.test) {
+        // Typecheck predicate against boolean
+        const testType = annotateNodes(node.test)
+        checkForTypeMismatch(node, testType, tBool)
+      }
+      if (node.update) {
+        annotateNodes(node.update)
+      }
+      const bodyType = annotateNodes(node.body)
+      env.pop()
+      node.annotatedType = bodyType
+      return node.annotatedType
+    }
+    case 'ImportDeclaration':
+      // No typechecking needed, import declarations have already been handled separately
+      return tUndef
+    case 'TSTypeAliasDeclaration':
+      // No typechecking needed, type has already been added to environment
+      return tUndef
+    case 'TSAsExpression':
+      const originalType = annotateNodes(node.expression)
+      const typeToCastTo = getTypeAnnotationType(node)
+      const formatAsLiteral =
+        typeContainsLiteralType(originalType) || typeContainsLiteralType(typeToCastTo)
+      // Type to cast to must have some overlap with original type
+      if (hasTypeMismatchErrors(node, typeToCastTo, originalType)) {
+        context.errors.push(
+          new TypecastError(
+            node,
+            formatTypeString(originalType, formatAsLiteral),
+            formatTypeString(typeToCastTo, formatAsLiteral)
+          )
+        )
+      }
+      return typeToCastTo
+    case 'TSInterfaceDeclaration':
+      throw new TypecheckError(node, 'Interface declarations are not allowed')
+    case 'ExportNamedDeclaration':
+      return annotateNodes(node.declaration!)
+    default:
+      throw new TypecheckError(node, 'Unknown node type')
+  }
+}
+
+/**
+ * Annotates and typechecks the body of a binary expression, adding any type errors to context if necessary.
+ * Then, returns the type of the binary expression, inferred based on the operator.
+ */
+function annotateBinaryExpression(node: NodeWithAnnotation<tsEs.BinaryExpression>): Type {
+  const nodeLeft: NodeWithAnnotation<tsEs.Node> = node.left
+  const nodeRight: NodeWithAnnotation<tsEs.Node> = node.right
+  const leftType = annotateNodes(nodeLeft)
+  const rightType = annotateNodes(nodeRight)
+  nodeLeft.annotatedType = leftType
+  nodeRight.annotatedType = rightType
+  const leftTypeString = formatTypeString(leftType)
+  const rightTypeString = formatTypeString(rightType)
+  const operator = node.operator
+  switch (operator) {
+    case '-':
+    case '*':
+    case '/':
+    case '%':
+      // Typecheck both sides against number
+      nodeLeft.expectedType = tNumber
+      nodeRight.expectedType = tNumber
+      checkForTypeMismatch(node, leftType, tNumber)
+      checkForTypeMismatch(node, rightType, tNumber)
+      // Return type number
+      return tNumber
+    case '+':
+      // Typecheck both sides against number or string
+      // However, the case where one side is string and other side is number is not allowed
+      if (leftTypeString === 'number' || leftTypeString === 'string') {
+        nodeLeft.expectedType = leftType
+        nodeRight.expectedType = leftType
+        checkForTypeMismatch(node, rightType, leftType)
+        // If left type is number or string, return left type
+        return leftType
+      }
+      if (rightTypeString === 'number' || rightTypeString === 'string') {
+        nodeLeft.expectedType = rightType
+        nodeRight.expectedType = rightType
+        checkForTypeMismatch(node, leftType, rightType)
+        // If left type is not number or string but right type is number or string, return right type
+        return rightType
+      }
+      nodeLeft.expectedType = tUnion(tNumber, tString)
+      nodeRight.expectedType = tUnion(tNumber, tString)
+      checkForTypeMismatch(node, leftType, tUnion(tNumber, tString))
+      checkForTypeMismatch(node, rightType, tUnion(tNumber, tString))
+      // Return type is number | string if both left and right are neither number nor string
+      return tUnion(tNumber, tString)
+    case '<':
+    case '<=':
+    case '>':
+    case '>=':
+    case '!==':
+    case '===':
+      // In Source 3 and above, skip type checking as equality can be applied between two items of any type
+      if (context.chapter > 2 && (operator === '===' || operator === '!==')) {
+        return tBool
+      }
+      // Typecheck both sides against number or string
+      // However, case where one side is string and other side is number is not allowed
+      if (leftTypeString === 'number' || leftTypeString === 'string') {
+        nodeLeft.expectedType = leftType
+        nodeRight.expectedType = leftType
+        checkForTypeMismatch(node, rightType, leftType)
+        return tBool
+      }
+      if (rightTypeString === 'number' || rightTypeString === 'string') {
+        nodeLeft.expectedType = rightType
+        nodeRight.expectedType = rightType
+        checkForTypeMismatch(node, leftType, rightType)
+        return tBool
+      }
+      nodeLeft.expectedType = tUnion(tNumber, tString)
+      nodeRight.expectedType = tUnion(tNumber, tString)
+      checkForTypeMismatch(node, leftType, tUnion(tNumber, tString))
+      checkForTypeMismatch(node, rightType, tUnion(tNumber, tString))
+      // Return type boolean
+      return tBool
+    default:
+      throw new TypecheckError(node, 'Unknown operator')
+  }
+}
+
+/**
+ * Annotates the body of an arrow function, adding any type errors to context if necessary.
+ * Then, returns the inferred/declared type of the function.
+ */
+function annotateArrowFunctionType(node: NodeWithAnnotation<tsEs.ArrowFunctionExpression>): Type {
+  // Only identifiers/rest elements are used as function params in Source
+  const params = node.params.filter(
+    (param): param is tsEs.Identifier | tsEs.RestElement =>
+      param.type === 'Identifier' || param.type === 'RestElement'
+  )
+  if (params.length !== node.params.length) {
+    throw new TypecheckError(node, 'Unknown function parameter type')
+  }
+  const expectedReturnType = getTypeAnnotationType(node.returnType)
+
+  // If the function has variable number of arguments, set function type as any
+  // TODO: Add support for variable number of function arguments
+  const hasVarArgs = params.reduce((prev, curr) => prev || curr.type === 'RestElement', false)
+  if (hasVarArgs) {
+    return tAny
+  }
+
+  // Typecheck function body, creating new environment to store arg types and return type
+  pushEnv(env)
+  params.forEach((param: NodeWithAnnotation<tsEs.Identifier>) => {
+    param.annotatedType = getTypeAnnotationType(param.typeAnnotation)
+    setType(param.name, param.annotatedType, env)
+  })
+  // Set unique identifier so that typechecking can be carried out for return statements
+  setType(RETURN_TYPE_IDENTIFIER, expectedReturnType, env)
+  const actualReturnType = annotateNodes(node.body)
+  env.pop()
+
+  if (
+    isEqual(actualReturnType, tVoid) &&
+    !isEqual(expectedReturnType, tAny) &&
+    !isEqual(expectedReturnType, tVoid)
+  ) {
+    // Type error where function does not return anything when it should
+    context.errors.push(new FunctionShouldHaveReturnValueError(node))
+  } else {
+    checkForTypeMismatch(node, actualReturnType, expectedReturnType)
+  }
+
+  const types = getParamTypes(params)
+  // Return type will always be last item in types array
+  types.push(node.returnType ? expectedReturnType : actualReturnType)
+  return tFunc(...types)
+}
+
+export function getTypeInformation(
+  programStr: string,
+  inputContext: Context,
+  loc: { line: number; column: number },
+  name: string
+): string {
+  /* try {
+    TypeParser.parse(
+      programStr,
+      createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors)
+    )
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      error = new FatalSyntaxError(
+        positionToSourceLocation((error as any).loc),
+        error.toString()
+      )
+    }
+
+    return parseError([error])
+  } */
+
+  const ast = babelParse(programStr, {
+    ...defaultBabelOptions,
+    errorRecovery: true
+  })
+
+  if (ast.errors.length) {
+    const syntaxError: SourceError[] = []
+    ast.errors
+      .filter(error => error instanceof SyntaxError)
+      .forEach(error => {
+        syntaxError.push(
+          new FatalSyntaxError(
+            positionToSourceLocation((error as any).loc),
+            error.toString()
+          )
+        )
+      })
+    
+    return parseError(syntaxError)
+  }
+
+  const program = ast.program as tsEs.Program
+
+  // Set context as global variable
+  context = inputContext
+  // Deep copy type environment to avoid modifying type environment in the context,
+  // which might affect the type inference checker
+  env = cloneDeep(context.typeEnvironment)
+  
+  /**
+   * Get name of the node, to be checked with the given name.
+   */
+  const getName = (typedNode: NodeWithAnnotation<tsEs.Node>) => {
+    let nodeId = ''
+    if (typedNode.type) {
+      if (typedNode.type === 'FunctionDeclaration') {
+        if (typedNode.id === null) {
+          throw new Error(
+            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
+          )
+        }
+        nodeId = typedNode.id.name
+      } else if (typedNode.type === 'VariableDeclaration') {
+        nodeId = (typedNode.declarations[0].id as es.Identifier).name
+      } else if (typedNode.type === 'Identifier') {
+        nodeId = typedNode.name
+      } /* else if (typedNode.type == 'Literal') {
+        nodeId = typedNode.value === null 
+                 ? 'null' 
+                 : typedNode.value === undefined
+                 ? 'undefined'
+                 : typedNode.value === 'string'
+                 ? `"${typedNode.value.toString()}"`
+                 : typedNode.value.toString()
+      } */
+    }
+    return nodeId
+  }
+  
+  function findByLocationPredicate(t: string, node: es.Node) {
+    const isInLoc = (nodeLoc: es.SourceLocation): boolean => {
+      return !(
+        nodeLoc.start.line > loc.line ||
+        nodeLoc.end.line < loc.line ||
+        (nodeLoc.start.line === loc.line && nodeLoc.start.column > loc.column) ||
+        (nodeLoc.end.line === loc.line && nodeLoc.end.column < loc.column)
+      )
+    }
+    
+    const location = node.loc
+    if (node.type && location) {
+      return getName(node) === name && isInLoc(location)
+    }
+    return false
+  }
+
+
+  annotateNodes(program as NodeWithAnnotation<tsEs.Node>)
+  // do I want to return type errors immediately, probably not right
+  if (context.errors.length) {
+    return parseError(context.errors)
+  }
+  const programWithNoTSNodes = removeTSNodes(program)
+  transformBabelASTToESTreeCompliantAST(programWithNoTSNodes)
+
+  const res = findNodeAt(programWithNoTSNodes, undefined, undefined, findByLocationPredicate)
+  if (res === undefined || res.node === undefined) {
+    return ''
+  }
+
+  const node = res.node as NodeWithAnnotation<tsEs.Node>
+  const annotatedType = node.annotatedType
+
+  if (annotatedType == undefined) {
+    return ''
+  }
+
+  const typeString = node.expectedType
+    ? `${formatTypeString(annotatedType)}, Expected: ${formatTypeString(node.expectedType)}`
+    : formatTypeString(annotatedType)
+  
+  return `At Line ${loc.line} --> ${getName(node)}: ${typeString}`
 }
