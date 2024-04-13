@@ -181,7 +181,7 @@ function typeCheckAndReturnType(node: tsEs.Node): Type {
         // Import statements should only exist in program body
         handleImportDeclarations(node)
       }
-      
+
       // Add all declarations in the current scope to the environment first
       addTypeDeclarationsToEnvironment(node)
 
@@ -1621,7 +1621,7 @@ export function removeTSNodes(node: tsEs.Node | undefined | null): any {
   }
 }
 // idk where to put this so i put it here for now
-type NodeWithAnnotation<T extends tsEs.Node> = {annotatedType?: Type, expectedType?: Type} & T
+type NodeWithAnnotation<T extends tsEs.Node> = { annotatedType?: Type; expectedType?: Type } & T
 
 /**
  * Recurses through the given node to check for any type errors,
@@ -1775,7 +1775,7 @@ function annotateNodes(node: NodeWithAnnotation<tsEs.Node>): Type {
       if (params.length !== node.params.length) {
         throw new TypecheckError(node, 'Unknown function parameter type')
       }
-      const id : NodeWithAnnotation<tsEs.Node> = node.id
+      const id: NodeWithAnnotation<tsEs.Node> = node.id
       const fnName = id.name
       const expectedReturnType = getTypeAnnotationType(node.returnType)
 
@@ -1817,7 +1817,7 @@ function annotateNodes(node: NodeWithAnnotation<tsEs.Node>): Type {
 
       // Save function type in type env
       setType(fnName, fnType, env)
-      id.annotatedType = fnType;
+      id.annotatedType = fnType
       return tUndef
     case 'VariableDeclaration': {
       if (node.kind === 'var') {
@@ -1832,7 +1832,7 @@ function annotateNodes(node: NodeWithAnnotation<tsEs.Node>): Type {
       if (node.declarations[0].id.type !== 'Identifier') {
         throw new TypecheckError(node, 'Variable declaration ID should be an identifier')
       }
-      const id : NodeWithAnnotation<tsEs.Node> = node.declarations[0].id
+      const id: NodeWithAnnotation<tsEs.Node> = node.declarations[0].id
       if (!node.declarations[0].init) {
         throw new TypecheckError(node, 'Variable declaration must have value')
       }
@@ -1872,7 +1872,7 @@ function annotateNodes(node: NodeWithAnnotation<tsEs.Node>): Type {
           for (let i = 1; i < args.length; i++) {
             elementType = mergeTypes(node, elementType, annotateNodes(args[i]))
           }
-          
+
           // Type the list as a pair, for use when checking for type mismatches against pairs
           let pairType = tPair(annotateNodes(args[args.length - 1]), tNull)
           for (let i = args.length - 2; i >= 0; i--) {
@@ -1897,7 +1897,8 @@ function annotateNodes(node: NodeWithAnnotation<tsEs.Node>): Type {
             return tAny
           }
           node.expectedType = expectedType
-          node.annotatedType = fnName === 'head' ? getHeadType(node, actualType) : getTailType(node, actualType)
+          node.annotatedType =
+            fnName === 'head' ? getHeadType(node, actualType) : getTailType(node, actualType)
           return node.annotatedType
         }
         if (fnName === 'stream' && context.chapter >= 3) {
@@ -1960,7 +1961,7 @@ function annotateNodes(node: NodeWithAnnotation<tsEs.Node>): Type {
         node.expectedType = expectedTypes[i]
         checkForTypeMismatch(node, actualType, expectedTypes[i])
       }
-      
+
       return returnType
     }
     case 'AssignmentExpression':
@@ -1970,7 +1971,7 @@ function annotateNodes(node: NodeWithAnnotation<tsEs.Node>): Type {
       if (node.left.type === 'Identifier' && lookupDeclKind(node.left.name, env) === 'const') {
         context.errors.push(new ConstNotAssignableTypeError(node, node.left.name))
       }
-      const nodeRight : NodeWithAnnotation<tsEs.Node> = node.right
+      const nodeRight: NodeWithAnnotation<tsEs.Node> = node.right
       nodeRight.annotatedType = actualType
       nodeRight.expectedType = expectedType
       checkForTypeMismatch(node, actualType, expectedType)
@@ -2249,13 +2250,10 @@ export function getTypeInformation(
       .filter(error => error instanceof SyntaxError)
       .forEach(error => {
         syntaxError.push(
-          new FatalSyntaxError(
-            positionToSourceLocation((error as any).loc),
-            error.toString()
-          )
+          new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())
         )
       })
-    
+
     return parseError(syntaxError)
   }
 
@@ -2266,7 +2264,7 @@ export function getTypeInformation(
   // Deep copy type environment to avoid modifying type environment in the context,
   // which might affect the type inference checker
   env = cloneDeep(context.typeEnvironment)
-  
+
   /**
    * Get name of the node, to be checked with the given name.
    */
@@ -2296,7 +2294,7 @@ export function getTypeInformation(
     }
     return nodeId
   }
-  
+
   function findByLocationPredicate(t: string, node: es.Node) {
     const isInLoc = (nodeLoc: es.SourceLocation): boolean => {
       return !(
@@ -2306,14 +2304,13 @@ export function getTypeInformation(
         (nodeLoc.end.line === loc.line && nodeLoc.end.column < loc.column)
       )
     }
-    
+
     const location = node.loc
     if (node.type && location) {
       return getName(node) === name && isInLoc(location)
     }
     return false
   }
-
 
   annotateNodes(program as NodeWithAnnotation<tsEs.Node>)
   // do I want to return type errors immediately, probably not right
@@ -2338,6 +2335,6 @@ export function getTypeInformation(
   const typeString = node.expectedType
     ? `${formatTypeString(annotatedType)}, Expected: ${formatTypeString(node.expectedType)}`
     : formatTypeString(annotatedType)
-  
+
   return `At Line ${loc.line} --> ${getName(node)}: ${typeString}`
 }
