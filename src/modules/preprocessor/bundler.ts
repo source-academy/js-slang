@@ -1,6 +1,10 @@
 import { posix as posixPath } from 'path'
 import type es from 'estree'
-import { isIdentifier, isImportDeclaration, isModuleDeclaration } from '../../utils/ast/typeGuards'
+import {
+  isIdentifier,
+  isImportDeclaration,
+  isModuleDeclaration
+} from '../../utils/ast/typeGuards'
 import assert from '../../utils/assert'
 import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import { isSourceModule } from '../utils'

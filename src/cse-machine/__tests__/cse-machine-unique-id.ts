@@ -94,7 +94,7 @@ test('Program environment id stays the same regardless of amount of steps', asyn
           x = [x];
         }
       `
-  
+
   let programEnvId = '47'
   // The above program has a total of 335 steps
   // Start from steps = 1 so that the program environment always exists
