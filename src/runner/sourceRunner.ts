@@ -291,6 +291,10 @@ async function sourceRunner(
   return runInterpreter(program, context, theOptions)
 }
 
+/**
+ * Returns both the Result of the evaluated program, as well as
+ * `verboseErrors`.
+ */
 export async function sourceFilesRunner(
   filesInput: FileGetter,
   entrypointFilePath: string,
@@ -333,8 +337,8 @@ export async function sourceFilesRunner(
 
   context.previousPrograms.unshift(preprocessedProgram)
 
-  const resultMapper = mapResult(context)
   const result = await sourceRunner(preprocessedProgram, context, verboseErrors, options)
+  const resultMapper = mapResult(context)
 
   return {
     result: resultMapper(result),
@@ -342,10 +346,27 @@ export async function sourceFilesRunner(
   }
 }
 
-export async function runCodeInSource(
+/**
+ * Useful for just running a single line of code with the given context
+ * However, if this single line of code is an import statement,
+ * then the FileGetter is necessary, otherwise all local imports will
+ * fail with ModuleNotFoundError
+ */
+export function runCodeInSource(
   code: string,
   context: Context,
-  options: RecursivePartial<IOptions> = {}
+  options: RecursivePartial<IOptions> = {},
+  defaultFilePath: string = '/default.js',
+  fileGetter?: FileGetter
 ) {
-  return sourceFilesRunner(() => Promise.resolve(code), '/default.js', context, options)
+  return sourceFilesRunner(
+    path => {
+      if (path === defaultFilePath) return Promise.resolve(code)
+      if (!fileGetter) return Promise.resolve(undefined)
+      return fileGetter(path)
+    },
+    defaultFilePath,
+    context,
+    options
+  )
 }
