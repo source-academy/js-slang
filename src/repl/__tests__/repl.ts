@@ -101,7 +101,7 @@ describe('Test repl command', () => {
         {
           '/a.js': 'import { b } from "./b.js";'
         },
-        "[/a.js] Line 1: Module './b.js' not found."
+        "Error: [/a.js] Line 1: Module './b.js' not found."
       ],
       [
         'Unknown local import - verbose',
@@ -110,7 +110,7 @@ describe('Test repl command', () => {
           '/a.js': 'import { b } from "./b.js";'
         },
 
-        "[/a.js] Line 1, Column 0: Module './b.js' not found.\nYou should check your import declarations, and ensure that all are valid modules.\n"
+        "Error: [/a.js] Line 1, Column 0: Module './b.js' not found.\nYou should check your import declarations, and ensure that all are valid modules.\n"
       ],
       [
         'Source imports are ok',
@@ -126,7 +126,7 @@ describe('Test repl command', () => {
         {
           '/a.js': "import { foo } from 'unknown_module'; foo();"
         },
-        "[/a.js] Line 1: Module 'unknown_module' not found."
+        "Error: [/a.js] Line 1: Module 'unknown_module' not found."
       ]
     ]
     test.each(testCases)('%s', async (_, args, files, expected) => {

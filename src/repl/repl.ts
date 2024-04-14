@@ -3,15 +3,19 @@ import { resolve } from 'path'
 import { start } from 'repl'
 import { Command } from '@commander-js/extra-typings'
 
-import { createContext, type IOptions, parseError } from '..'
-import Closure from '../interpreter/closure'
+import { createContext, type IOptions } from '..'
 import { setModulesStaticURL } from '../modules/loader'
 import { Chapter, type RecursivePartial, Variant } from '../types'
 import { objectValues } from '../utils/misc'
-import { stringify } from '../utils/stringify'
 import { runCodeInSource, sourceFilesRunner } from '../runner'
 import type { FileGetter } from '../modules/moduleTypes'
-import { chapterParser, getChapterOption, getVariantOption, validChapterVariant } from './utils'
+import {
+  chapterParser,
+  getChapterOption,
+  getVariantOption,
+  handleResult,
+  validChapterVariant
+} from './utils'
 
 export const getReplCommand = () =>
   new Command('run')
@@ -21,7 +25,6 @@ export const getReplCommand = () =>
     .option('--modulesBackend <backend>')
     .option('-r, --repl', 'Start a REPL after evaluating files')
     .option('--optionsFile <file>', 'Specify a JSON file to read options from')
-    // .option('--no-colors', 'Disable colors in REPL output')
     .argument('[filename]')
     .action(async (filename, { modulesBackend, optionsFile, repl, verbose, ...lang }) => {
       if (!validChapterVariant(lang)) {
@@ -65,11 +68,8 @@ export const getReplCommand = () =>
           }
         )
 
-        if (result.status === 'finished') {
-          console.log(stringify(result.value))
-        } else if (result.status === 'error') {
-          console.log(parseError(context.errors, verbose || verboseErrors))
-        }
+        const toLog = handleResult(result, context, verbose ?? verboseErrors)
+        console.log(toLog)
 
         if (!repl) return
       }
@@ -85,24 +85,12 @@ export const getReplCommand = () =>
               })
               .catch(err => callback(err, undefined))
           },
-          // set depth to a large number so that `parse()` output will not be folded,
-          // setting to null also solves the problem, however a reference loop might crash
-          writer: ({
-            result: output,
-            verboseErrors
-          }: Awaited<ReturnType<typeof runCodeInSource>>) => {
-            if (output.status === 'finished' || output.status === 'suspended-non-det') {
-              if (
-                output instanceof Closure ||
-                typeof output === 'function' ||
-                output.representation !== undefined
-              ) {
-                return output.toString()
-              }
-              return stringify(output.value)
+          writer: (output: Awaited<ReturnType<typeof runCodeInSource>> | Error) => {
+            if (output instanceof Error) {
+              return output.message
             }
 
-            return `Error: ${parseError(context.errors, verbose ?? verboseErrors)}`
+            return handleResult(output.result, context, verbose ?? output.verboseErrors)
           }
         }
       )

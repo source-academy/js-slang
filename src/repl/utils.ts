@@ -1,7 +1,10 @@
 import { Option } from '@commander-js/extra-typings'
 
 import { pyLanguages, scmLanguages, sourceLanguages } from '../constants'
-import { Chapter, type Language, Variant } from '../types'
+import { Chapter, type Language, Variant, type Result } from '../types'
+import { stringify } from '../utils/stringify'
+import Closure from '../cse-machine/closure'
+import { parseError, type Context } from '..'
 
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined
@@ -59,4 +62,19 @@ export function validChapterVariant(language: Language) {
   }
 
   return false
+}
+
+export function handleResult(result: Result, context: Context, verboseErrors: boolean) {
+  if (result.status === 'finished' || result.status === 'suspended-non-det') {
+    if (
+      result instanceof Closure ||
+      typeof result === 'function' ||
+      result.representation !== undefined
+    ) {
+      return result.toString()
+    }
+    return stringify(result.value)
+  }
+
+  return `Error: ${parseError(context.errors, verboseErrors)}`
 }
