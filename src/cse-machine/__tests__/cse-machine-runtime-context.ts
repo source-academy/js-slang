@@ -1,13 +1,11 @@
 import { mockContext } from '../../mocks/context'
-import { parse } from '../../parser/parser'
+import { runCodeInSource } from '../../runner'
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { sourceRunner } from '../../runner'
 
 const getContextFrom = async (code: string) => {
   const context = mockContext(Chapter.SOURCE_4)
-  const parsed = parse(code, context)
-  await sourceRunner(parsed!, context, false, { executionMethod: 'cse-machine' })
+  await runCodeInSource(code, context, { executionMethod: 'cse-machine' })
   return context
 }
 

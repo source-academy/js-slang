@@ -7,6 +7,8 @@ import { CircularImportError, ModuleNotFoundError } from '../errors'
 import { getModuleDeclarationSource } from '../../utils/ast/helpers'
 import type { FileGetter } from '../moduleTypes'
 import { mapAndFilter } from '../../utils/misc'
+import { parseAt } from '../../parser/utils'
+import { isDirective } from '../../utils/ast/typeGuards'
 import { DirectedGraph } from './directedGraph'
 import resolveFile, { defaultResolutionOptions, type ImportResolutionOptions } from './resolver'
 
@@ -19,11 +21,19 @@ type ModuleDeclarationWithSource = Exclude<es.ModuleDeclaration, es.ExportDefaul
  */
 class LinkerError extends Error {}
 
-export type LinkerResult = {
-  programs: Record<string, es.Program>
-  sourceModulesToImport: Set<string>
-  topoOrder: string[]
-}
+export type LinkerResult =
+  | {
+      ok: false
+      verboseErrors: boolean
+    }
+  | {
+      ok: true
+      programs: Record<string, es.Program>
+      files: Record<string, string>
+      sourceModulesToImport: Set<string>
+      topoOrder: string[]
+      verboseErrors: boolean
+    }
 
 export type LinkerOptions = {
   resolverOptions: ImportResolutionOptions
@@ -46,9 +56,10 @@ export default async function parseProgramsAndConstructImportGraph(
   context: Context,
   options: RecursivePartial<LinkerOptions> = defaultLinkerOptions,
   shouldAddFileName: boolean
-): Promise<LinkerResult | undefined> {
+): Promise<LinkerResult> {
   const importGraph = new DirectedGraph()
   const programs: Record<string, es.Program> = {}
+  const files: Record<string, string> = {}
   const sourceModulesToImport = new Set<string>()
 
   // Wrapper around resolve file to make calling it more convenient
@@ -100,6 +111,7 @@ export default async function parseProgramsAndConstructImportGraph(
     }
 
     programs[fromModule] = program
+    files[fromModule] = fileText
 
     await Promise.all(
       mapAndFilter(program.body, node => {
@@ -120,32 +132,74 @@ export default async function parseProgramsAndConstructImportGraph(
     )
   }
 
+  let entrypointFileText: string | undefined = undefined
+
+  function hasVerboseErrors() {
+    // Always try to infer if verbose errors should be enabled
+    let statement: es.Node | null = null
+
+    if (!programs[entrypointFilePath]) {
+      if (entrypointFileText == undefined) {
+        // non-existent entrypoint
+        return false
+      }
+      // There are syntax errors in the entrypoint file
+      // we use parseAt to try parse the first line
+      statement = parseAt(entrypointFileText, 0) as es.Node | null
+    } else {
+      // Otherwise we can use the entrypoint program as it has been passed
+      const entrypointProgram = programs[entrypointFilePath]
+
+      // Check if the program had any code at all
+      if (entrypointProgram.body.length === 0) return false
+      ;[statement] = entrypointProgram.body
+    }
+
+    if (statement === null) return false
+
+    // The two different parsers end up with two different ASTs
+    // These are the two cases where 'enable verbose' appears
+    // as a directive
+    if (isDirective(statement)) {
+      return statement.directive === 'enable verbose'
+    }
+
+    return statement.type === 'Literal' && statement.value === 'enable verbose'
+  }
+
   try {
-    const entrypointFileText = await fileGetter(entrypointFilePath)
+    entrypointFileText = await fileGetter(entrypointFilePath)
     // Not using boolean test here, empty strings are valid programs
     // but are falsy
     if (entrypointFileText === undefined) {
       throw new ModuleNotFoundError(entrypointFilePath)
     }
+
     await parseAndEnumerateModuleDeclarations(entrypointFilePath, entrypointFileText)
 
     const topologicalOrderResult = importGraph.getTopologicalOrder()
-    if (!topologicalOrderResult.isValidTopologicalOrderFound) {
-      context.errors.push(new CircularImportError(topologicalOrderResult.firstCycleFound))
-      return undefined
+    if (topologicalOrderResult.isValidTopologicalOrderFound) {
+      return {
+        ok: true,
+        topoOrder: topologicalOrderResult.topologicalOrder,
+        programs,
+        sourceModulesToImport,
+        files,
+        verboseErrors: hasVerboseErrors()
+      }
     }
 
-    return {
-      topoOrder: topologicalOrderResult.topologicalOrder,
-      programs,
-      sourceModulesToImport
-    }
+    context.errors.push(new CircularImportError(topologicalOrderResult.firstCycleFound))
   } catch (error) {
     if (!(error instanceof LinkerError)) {
       // Any other error that occurs is just appended to the context
       // and we return undefined
       context.errors.push(error)
     }
-    return undefined
+  }
+
+  return {
+    ok: false,
+    verboseErrors: hasVerboseErrors()
   }
 }

@@ -27,20 +27,11 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { ModuleNotFoundError } from './modules/errors'
-import type { ImportOptions, SourceFiles } from './modules/moduleTypes'
+import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
-import { mergeImportOptions } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
-import { parse } from './parser/parser'
-import {
-  fullJSRunner,
-  hasVerboseErrors,
-  htmlRunner,
-  resolvedErrorPromise,
-  sourceFilesRunner
-} from './runner'
-import { mapResult } from './alt-langs/mapper'
+import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -225,56 +216,38 @@ export async function runFilesInContext(
   context: Context,
   options: RecursivePartial<IOptions> = {}
 ): Promise<Result> {
-  async function runFilesInContextHelper(
-    files: Partial<Record<string, string>>,
-    entrypointFilePath: string,
-    context: Context,
-    options: RecursivePartial<IOptions> = {}
-  ): Promise<Result> {
-    for (const filePath in files) {
-      const filePathError = validateFilePath(filePath)
-      if (filePathError !== null) {
-        context.errors.push(filePathError)
-        return resolvedErrorPromise
-      }
+  for (const filePath in files) {
+    const filePathError = validateFilePath(filePath)
+    if (filePathError !== null) {
+      context.errors.push(filePathError)
+      return resolvedErrorPromise
     }
+  }
 
+  let result: Result
+  if (context.chapter === Chapter.HTML) {
     const code = files[entrypointFilePath]
     if (code === undefined) {
       context.errors.push(new ModuleNotFoundError(entrypointFilePath))
       return resolvedErrorPromise
     }
-
-    if (
-      context.chapter === Chapter.FULL_JS ||
-      context.chapter === Chapter.FULL_TS ||
-      context.chapter === Chapter.PYTHON_1
-    ) {
-      const program = parse(code, context)
-      if (program === null) {
-        return resolvedErrorPromise
-      }
-
-      const fullImportOptions = mergeImportOptions(options.importOptions)
-      return fullJSRunner(program, context, fullImportOptions)
-    }
-
-    if (context.chapter === Chapter.HTML) {
-      return htmlRunner(code, context, options)
-    }
-
+    result = await htmlRunner(code, context, options)
+  } else {
     // FIXME: Clean up state management so that the `parseError` function is pure.
     //        This is not a huge priority, but it would be good not to make use of
     //        global state.
-    verboseErrors = hasVerboseErrors(code)
-
-    // the sourceFilesRunner
-    return sourceFilesRunner(files, entrypointFilePath, context, options)
+    ;({ result, verboseErrors } = await sourceFilesRunner(
+      p => Promise.resolve(files[p]),
+      entrypointFilePath,
+      context,
+      {
+        ...options,
+        shouldAddFileName: options.shouldAddFileName ?? Object.keys(files).length > 1
+      }
+    ))
   }
 
-  return runFilesInContextHelper(files, entrypointFilePath, context, options).then(
-    mapResult(context)
-  )
+  return result
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
@@ -320,23 +293,19 @@ export async function compileFiles(
     }
   }
 
-  const entrypointCode = files[entrypointFilePath]
-  if (entrypointCode === undefined) {
-    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
-    return undefined
-  }
-
-  const preprocessedProgram = await preprocessFileImports(
-    files as SourceFiles,
+  const preprocessResult = await preprocessFileImports(
+    p => Promise.resolve(files[p]),
     entrypointFilePath,
-    context
+    context,
+    { shouldAddFileName: Object.keys(files).length > 1 }
   )
-  if (!preprocessedProgram) {
+
+  if (!preprocessResult.ok) {
     return undefined
   }
 
   try {
-    return compileToIns(preprocessedProgram, undefined, vmInternalFunctions)
+    return compileToIns(preprocessResult.program, undefined, vmInternalFunctions)
   } catch (error) {
     context.errors.push(error)
     return undefined
