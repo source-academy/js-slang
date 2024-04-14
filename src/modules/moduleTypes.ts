@@ -44,5 +44,5 @@ export type ImportOptions = {
 } & ImportAnalysisOptions &
   LinkerOptions
 
-export type SourceFiles = Record<string, string>
+export type SourceFiles = Partial<Record<string, string>>
 export type FileGetter = (p: string) => Promise<string | undefined>

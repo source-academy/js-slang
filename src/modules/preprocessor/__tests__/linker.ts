@@ -29,7 +29,7 @@ async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: key
 
 async function expectError<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
   const [context, result] = await testCode(files, entrypointFilePath)
-  expect(result).toBeUndefined()
+  expect(result.ok).toEqual(false)
   expect(context.errors.length).toBeGreaterThanOrEqual(1)
   return context.errors
 }
@@ -130,8 +130,13 @@ test('Linker does tree-shaking', async () => {
     '/a.js'
   )
 
+  // Wrap to appease typescript
+  function expectWrapper(cond: boolean): asserts cond {
+    expect(cond).toEqual(true)
+  }
+
   expect(errors.length).toEqual(0)
-  expect(result).toBeDefined()
+  expectWrapper(result.ok)
   expect(resolver.default).not.toHaveBeenCalledWith('./b.js')
-  expect(Object.keys(result!.programs)).not.toContain('/b.js')
+  expect(Object.keys(result.programs)).not.toContain('/b.js')
 })

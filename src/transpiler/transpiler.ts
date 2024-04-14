@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { generate } from 'astring'
 import type es from 'estree'
-import { RawSourceMap, SourceMapGenerator } from 'source-map'
+import { type RawSourceMap, SourceMapGenerator } from 'source-map'
 
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
 import { Chapter, type Context, type NativeStorage, type Node, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
-import { filterImportDeclarations } from '../utils/ast/helpers'
+import { filterImportDeclarations, getImportedName } from '../utils/ast/helpers'
 import {
   getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
@@ -17,6 +17,7 @@ import {
 } from '../utils/uniqueIds'
 import { simple } from '../utils/walkers'
 import { checkForUndefinedVariables } from '../validator/validator'
+import { isNamespaceSpecifier } from '../utils/ast/typeGuards'
 
 /**
  * This whole transpiler includes many many many many hacks to get stuff working.
@@ -27,28 +28,18 @@ import { checkForUndefinedVariables } from '../validator/validator'
 export function transformImportDeclarations(
   program: es.Program,
   moduleExpr: es.Expression
-): [es.VariableDeclaration[], es.Program['body']] {
+): [es.VariableDeclaration[], Exclude<es.Program['body'][0], es.ImportDeclaration>[]] {
   const [importNodes, otherNodes] = filterImportDeclarations(program)
-  const declNodes = Object.entries(importNodes).flatMap(([moduleName, nodes]) => {
+  const declNodes = importNodes.flatMap((moduleName, nodes) => {
     const expr = create.memberExpression(moduleExpr, moduleName)
 
     return nodes.flatMap(({ specifiers }) =>
-      specifiers.flatMap(spec => {
-        switch (spec.type) {
-          case 'ImportNamespaceSpecifier':
-            return create.constantDeclaration(spec.local.name, expr)
-          case 'ImportDefaultSpecifier':
-            return create.constantDeclaration(
-              spec.local.name,
-              create.memberExpression(expr, 'default')
-            )
-          case 'ImportSpecifier':
-            return create.constantDeclaration(
-              spec.local.name,
-              create.memberExpression(expr, spec.imported.name)
-            )
-        }
-      })
+      specifiers.map(spec =>
+        create.constantDeclaration(
+          spec.local.name,
+          isNamespaceSpecifier(spec) ? expr : create.memberExpression(expr, getImportedName(spec))
+        )
+      )
     )
   })
 
@@ -433,14 +424,15 @@ function transpileToSource(
   context: Context,
   skipUndefined: boolean
 ): TranspiledResult {
+  if (program.body.length === 0) {
+    return { transpiled: '' }
+  }
+
   const usedIdentifiers = new Set<string>([
     ...getIdentifiersInProgram(program),
     ...getIdentifiersInNativeStorage(context.nativeStorage)
   ])
   const globalIds = getNativeIds(program, usedIdentifiers)
-  if (program.body.length === 0) {
-    return { transpiled: '' }
-  }
 
   const functionsToStringMap = generateFunctionsToStringMap(program)
 
@@ -460,17 +452,17 @@ function transpileToSource(
     program,
     create.memberExpression(globalIds.native, 'loadedModules')
   )
+
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
 
   getGloballyDeclaredIdentifiers(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)
   )
-  const statements = program.body as es.Statement[]
   const newStatements = [
     ...getDeclarationsToAccessTranspilerInternals(globalIds),
     evallerReplacer(globalIds.native, usedIdentifiers),
     create.expressionStatement(create.identifier('undefined')),
-    ...statements
+    ...(program.body as es.Statement[])
   ]
 
   program.body =
@@ -499,7 +491,7 @@ function transpileToFullJS(
 
   const [importNodes, otherNodes] = transformImportDeclarations(
     program,
-    create.memberExpression(globalIds.native, 'loadedModules')
+    create.memberExpression(create.identifier(NATIVE_STORAGE_ID), 'loadedModules')
   )
 
   program.body = (importNodes as es.Program['body']).concat(otherNodes)

@@ -1,9 +1,9 @@
 import type { Program } from 'estree'
 import type { MockedFunction } from 'jest-mock'
 
-import { parseError } from '../../..'
+import { parseError, type IOptions } from '../../..'
 import { mockContext } from '../../../mocks/context'
-import { Chapter } from '../../../types'
+import { Chapter, type RecursivePartial } from '../../../types'
 import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
 import preprocessFileImports from '..'
 import { sanitizeAST } from '../../../utils/ast/sanitizer'
@@ -12,10 +12,13 @@ import {
   accessExportFunctionName,
   defaultExportLookupName
 } from '../../../stdlib/localImport.prelude'
+import type { SourceFiles } from '../../moduleTypes'
 
 jest.mock('../../loader/loaders')
 
 describe('preprocessFileImports', () => {
+  const wrapFiles = (files: SourceFiles) => (p: string) => Promise.resolve(files[p])
+
   let actualContext = mockContext(Chapter.LIBRARY_PARSER)
   let expectedContext = mockContext(Chapter.LIBRARY_PARSER)
 
@@ -23,6 +26,24 @@ describe('preprocessFileImports', () => {
     actualContext = mockContext(Chapter.LIBRARY_PARSER)
     expectedContext = mockContext(Chapter.LIBRARY_PARSER)
   })
+
+  async function expectSuccess(
+    files: SourceFiles,
+    entrypointFilePath: string,
+    options?: RecursivePartial<IOptions>
+  ) {
+    const preprocResult = await preprocessFileImports(
+      p => Promise.resolve(files[p]),
+      entrypointFilePath,
+      actualContext,
+      options
+    )
+    if (!preprocResult.ok) {
+      throw actualContext.errors[0]
+    }
+
+    return preprocResult.program
+  }
 
   const assertASTsAreEquivalent = (
     actualProgram: Program | undefined,
@@ -45,8 +66,16 @@ describe('preprocessFileImports', () => {
     const files: Record<string, string> = {
       '/a.js': '1 + 2;'
     }
-    const actualProgram = await preprocessFileImports(files, '/non-existent-file.js', actualContext)
-    expect(actualProgram).toBeUndefined()
+    const actualProgram = await preprocessFileImports(
+      wrapFiles(files),
+      '/non-existent-file.js',
+      actualContext
+    )
+    expect(actualProgram).toMatchObject({
+      ok: false,
+      verboseErrors: false
+    })
+
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
       `"Module '/non-existent-file.js' not found."`
     )
@@ -56,8 +85,11 @@ describe('preprocessFileImports', () => {
     const files: Record<string, string> = {
       '/a.js': `import { x } from './non-existent-file.js';`
     }
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
-    expect(actualProgram).toBeUndefined()
+    const actualProgram = await preprocessFileImports(wrapFiles(files), '/a.js', actualContext)
+    expect(actualProgram).toMatchObject({
+      ok: false,
+      verboseErrors: false
+    })
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
       `"Line 1: Module './non-existent-file.js' not found."`
     )
@@ -73,7 +105,7 @@ describe('preprocessFileImports', () => {
       `
     }
     const expectedCode = files['/a.js']
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
+    const actualProgram = await expectSuccess(files, '/a.js')
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
@@ -102,7 +134,7 @@ describe('preprocessFileImports', () => {
        return x * x * x;
       }
     `
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext)
+    const actualProgram = await expectSuccess(files, '/a.js')
     assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
@@ -152,7 +184,7 @@ describe('preprocessFileImports', () => {
       const y = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "y");
       const z = ${accessExportFunctionName}(___$not$$dash$$source$$dash$$module$$dot$$js___, "z");
     `
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
+    const actualProgram = await expectSuccess(files, '/a.js', {
       importOptions: {
         allowUndefinedImports: true
       },
@@ -221,7 +253,7 @@ describe('preprocessFileImports', () => {
 
       b;
     `
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
+    const actualProgram = await expectSuccess(files, '/a.js', {
       importOptions: {
         allowUndefinedImports: true
       },
@@ -248,7 +280,7 @@ describe('preprocessFileImports', () => {
         export const c = 3;
       `
     }
-    await preprocessFileImports(files, '/a.js', actualContext, {
+    await preprocessFileImports(wrapFiles(files), '/a.js', actualContext, {
       shouldAddFileName: true
     })
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
@@ -274,7 +306,7 @@ describe('preprocessFileImports', () => {
         export const c = 3;
       `
     }
-    await preprocessFileImports(files, '/a.js', actualContext)
+    await preprocessFileImports(wrapFiles(files), '/a.js', actualContext)
     expect(parseError(actualContext.errors, true)).toMatchInlineSnapshot(`
       "Circular import detected: '/a.js' -> '/b.js' -> '/c.js' -> '/a.js'.
       Break the circular import cycle by removing imports from any of the offending files.
@@ -290,7 +322,7 @@ describe('preprocessFileImports', () => {
         export { x as y };
       `
     }
-    await preprocessFileImports(files, '/a.js', actualContext)
+    await preprocessFileImports(wrapFiles(files), '/a.js', actualContext)
     expect(parseError(actualContext.errors)).toMatchInlineSnapshot(
       `"Circular import detected: '/a.js' -> '/a.js'."`
     )
@@ -304,7 +336,7 @@ describe('preprocessFileImports', () => {
         export { x as y };
       `
     }
-    await preprocessFileImports(files, '/a.js', actualContext)
+    await preprocessFileImports(wrapFiles(files), '/a.js', actualContext)
     expect(parseError(actualContext.errors, true)).toMatchInlineSnapshot(`
       "Circular import detected: '/a.js' -> '/a.js'.
       Break the circular import cycle by removing imports from any of the offending files.
@@ -378,7 +410,7 @@ describe('preprocessFileImports', () => {
 
       x + y;
     `
-    const actualProgram = await preprocessFileImports(files, '/a.js', actualContext, {
+    const actualProgram = await expectSuccess(files, '/a.js', {
       importOptions: {
         allowUndefinedImports: true
       },

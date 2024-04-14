@@ -1,5 +1,5 @@
 import { memoizedGetModuleManifestAsync } from '../../loader/loaders'
-import resolveFile, { ImportResolutionOptions, defaultResolutionOptions } from '../resolver'
+import resolveFile, { type ImportResolutionOptions, defaultResolutionOptions } from '../resolver'
 
 jest.mock('../../loader/loaders')
 
@@ -20,7 +20,7 @@ test('If only local imports are used, the module manifest is not loaded', async 
   expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(0)
 })
 
-test('Returns false and resolved path of source file when resolution fails', () => {
+it('Returns false and resolved path of source file when resolution fails', () => {
   return expect(
     resolveModule('/', './a', () => false, {
       extensions: ['js']
@@ -28,7 +28,7 @@ test('Returns false and resolved path of source file when resolution fails', () 
   ).resolves.toBeUndefined()
 })
 
-test('Will resolve extensions', () => {
+it('Will resolve extensions', () => {
   const mockResolver = (p: string) => p === '/a.ts'
 
   return expect(
@@ -42,7 +42,7 @@ test('Will resolve extensions', () => {
   })
 })
 
-test('Will not resolve if the corresponding options are given as false', () => {
+it('Will not resolve if the corresponding options are given as false', () => {
   const mockResolver = (p: string) => p === '/a.js'
   return expect(
     resolveModule('/', './a', mockResolver, {
@@ -51,7 +51,7 @@ test('Will not resolve if the corresponding options are given as false', () => {
   ).resolves.toBeUndefined()
 })
 
-test('Checks the module manifest when importing source modules', async () => {
+it('Checks the module manifest when importing source modules', async () => {
   const result = await resolveModule('/', 'one_module', () => false, {
     extensions: ['js']
   })
@@ -60,11 +60,33 @@ test('Checks the module manifest when importing source modules', async () => {
   expect(result).toMatchObject({ type: 'source' })
 })
 
-test('Returns false on failing to resolve a source module', async () => {
+it('Returns false on failing to resolve a source module', async () => {
   const result = await resolveModule('/', 'unknown_module', () => true, {
     extensions: ['js']
   })
 
   expect(memoizedGetModuleManifestAsync).toHaveBeenCalledTimes(1)
   expect(result).toBeUndefined()
+})
+
+test('Resolving an absolute path from a local module', () => {
+  return expect(
+    resolveFile(
+      './dir0/dir1/a.js',
+      '/b.js',
+      p =>
+        Promise.resolve(
+          {
+            '/b.js': 'contents'
+          }[p]
+        ),
+      {
+        extensions: null
+      }
+    )
+  ).resolves.toMatchObject({
+    type: 'local',
+    contents: 'contents',
+    absPath: '/b.js'
+  })
 })
