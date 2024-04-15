@@ -3303,7 +3303,7 @@ function evaluateImports(program: es.Program, context: Context) {
 
   try {
     const environment = currentEnvironment(context)
-    for (const [moduleName, nodes] of Object.entries(importNodeMap)) {
+    for (const [moduleName, nodes] of importNodeMap) {
       const functions = context.nativeStorage.loadedModules[moduleName]
       for (const node of nodes) {
         for (const spec of node.specifiers) {
