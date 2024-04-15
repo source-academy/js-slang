@@ -13,6 +13,7 @@ import Heap from './cse-machine/heap'
 import { Control, Stash } from './cse-machine/interpreter'
 import type { ModuleFunctions } from './modules/moduleTypes'
 import { Representation } from './alt-langs/mapper'
+import * as tsEs from './typeChecker/tsESTree'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -379,6 +380,12 @@ export type TSDisallowedTypes = (typeof disallowedTypes)[number]
 
 // All types recognised by type parser as basic types
 export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes
+
+// Type for
+export type NodeWithAnnotation<T extends tsEs.Node> = {
+  annotatedType?: Type
+  expectedType?: Type
+} & T
 
 // Types for nodes used in type inference
 export type NodeWithInferredType<T extends Node> = InferredType & T
