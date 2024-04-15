@@ -830,6 +830,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'math_tan(x)', pylib.math_tan)
       defineBuiltin(context, 'math_tanh(x)', pylib.math_tanh)
       defineBuiltin(context, 'math_trunc(x)', pylib.math_trunc)
+
+      // Math constants
+      defineBuiltin(context, 'math_e', Math.E)
+      defineBuiltin(context, 'math_ln10', Math.LN10)
+      defineBuiltin(context, 'math_ln2', Math.LN2)
+      defineBuiltin(context, 'math_log10e', Math.LOG10E)
+      defineBuiltin(context, 'math_pi', Math.PI)
+      defineBuiltin(context, 'math_sqrt1_2', Math.SQRT1_2)
+      defineBuiltin(context, 'math_sqrt2', Math.SQRT2)
     }
   }
 }
