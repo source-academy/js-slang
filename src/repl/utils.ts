@@ -9,7 +9,7 @@ import { parseError, type Context } from '..'
 export function chapterParser(str: string): Chapter {
   let foundChapter: string | undefined
 
-  if (/^[0-9]$/.test(str)) {
+  if (/^-?[0-9]+$/.test(str)) {
     // Chapter is fully numeric
     const value = parseInt(str)
     foundChapter = Object.keys(Chapter).find(chapterName => Chapter[chapterName] === value)

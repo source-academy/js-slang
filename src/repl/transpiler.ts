@@ -18,7 +18,7 @@ import {
   validateChapterAndVariantCombo
 } from './utils'
 
-export const transpilerCommand = new Command()
+export const transpilerCommand = new Command('transpiler')
   .addOption(
     getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.GPU, Variant.LAZY, Variant.NATIVE])
   )
