@@ -454,10 +454,11 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'call$47$cc(f)', call_with_current_continuation)
 
       case Chapter.SCHEME_4:
-        // Introduction to eval
+      // Introduction to eval
 
-        // Scheme apply
-        defineBuiltin(context, 'apply(f, ...args)', scheme_libs.apply, 2)
+      // Scheme apply
+      // ^ is needed in Schemes 2 and 3 to apply to call functions with rest parameters,
+      // so we move it there.
 
       case Chapter.SCHEME_3:
         // Introduction to mutable values, streams
@@ -619,6 +620,9 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         // Scheme strings
         defineBuiltin(context, 'string$45$$62$list(str)', scheme_libs.string$45$$62$list)
         defineBuiltin(context, 'list$45$$62$string(xs)', scheme_libs.list$45$$62$string)
+
+        // Scheme apply is needed here to help in the definition of the Scheme Prelude.
+        defineBuiltin(context, 'apply(f, ...args)', scheme_libs.apply, 2)
 
       case Chapter.SCHEME_1:
         // Display
