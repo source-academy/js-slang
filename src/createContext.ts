@@ -450,10 +450,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
     switch (context.chapter) {
       case Chapter.FULL_SCHEME:
+      case Chapter.SCHEME_4:
         // Introduction to call/cc
         defineBuiltin(context, 'call$47$cc(f)', call_with_current_continuation)
 
-      case Chapter.SCHEME_4:
       // Introduction to eval
 
       // Scheme apply
