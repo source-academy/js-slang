@@ -34,7 +34,7 @@ export class PythonParser implements Parser<AcornOptions> {
             throw new Error('Unreachable path')
         }
       })()
-      return parsePythonToEstreeAst(programStr, chapterNum, false)
+      return parsePythonToEstreeAst(programStr, chapterNum, true)
     } catch (error) {
       if (error instanceof SyntaxError) {
         error = new FatalSyntaxError(positionToSourceLocation((error as any).loc), error.toString())

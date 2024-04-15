@@ -4,7 +4,7 @@ import { UnassignedVariable } from '../../../errors/errors'
 import { decode, encode } from '../scm-slang/src'
 import { cons, set$45$cdr$33$ } from '../scm-slang/src/stdlib/base'
 import { dummyExpression } from '../../../utils/ast/dummyAstCreator'
-import { decodeError, decodeValue } from '../../../parser/scheme'
+import { mapErrorToScheme, decodeValue } from '../scheme-mapper'
 
 describe('Scheme encoder and decoder', () => {
   it('encoder and decoder are proper inverses of one another', () => {
@@ -62,6 +62,6 @@ describe('Scheme encoder and decoder', () => {
     const token = `😀`
     const dummyNode: Node = dummyExpression()
     const error = new UnassignedVariable(encode(token), dummyNode)
-    expect(decodeError(error).elaborate()).toContain(`😀`)
+    expect(mapErrorToScheme(error).elaborate()).toContain(`😀`)
   })
 })

@@ -1,7 +1,8 @@
 import * as es from 'estree'
 
 import createContext, { EnvTree } from '../createContext'
-import Closure from '../interpreter/closure'
+import OldClosure from '../interpreter/closure'
+import Closure from '../cse-machine/closure'
 import { createBlockEnvironment } from '../interpreter/interpreter'
 import { Chapter, Context, Environment, Variant } from '../types'
 
@@ -63,19 +64,21 @@ export function mockRuntimeContext(): Context {
   return context
 }
 
-export function mockClosure(): Closure {
+export function mockClosure(cseMachineClosure: true): Closure
+export function mockClosure(cseMachineClosure?: false): OldClosure
+export function mockClosure(cseMachineClosure?: boolean): Closure | OldClosure {
   const context = createContext()
-  return new Closure(
+  return new (cseMachineClosure ? Closure : OldClosure)(
     {
-      type: 'FunctionExpression',
+      type: 'ArrowFunctionExpression',
+      expression: true,
       loc: null,
-      id: null,
       params: [],
       body: {
         type: 'BlockStatement',
         body: []
       }
-    } as es.FunctionExpression,
+    } as es.ArrowFunctionExpression,
     mockEnvironment(context),
     context
   )

@@ -20,10 +20,7 @@ export function setModulesStaticURL(url: string) {
   memoizedGetModuleManifestAsync.reset()
 }
 
-function wrapImporter<T>(
-  browserFunc: (p: string) => Promise<T>,
-  nodeFunc: (p: string) => Promise<T>
-) {
+function wrapImporter<T>(func: (p: string) => Promise<T>) {
   /*
     Browsers natively support esm's import() but Jest and Node do not. So we need
     to change which import function we use based on the environment.
@@ -34,9 +31,6 @@ function wrapImporter<T>(
     Browsers automatically cache import() calls, so we add a query parameter with the
     current time to always invalidate the cache and handle the memoization ourselves
   */
-  const func =
-    typeof window !== 'undefined' && process.env.NODE_ENV !== 'test' ? browserFunc : nodeFunc
-
   return async (p: string): Promise<T> => {
     try {
       const result = await timeoutPromise(func(p), 10000)
@@ -61,27 +55,21 @@ function wrapImporter<T>(
 }
 
 // Exported for testing
-export const docsImporter = wrapImporter<{ default: any }>(
-  new Function(
-    'path',
-    // TODO Change to import attributes when supported
-    'return import(`${path}?q=${Date.now()}`, { assert: { type: "json" } })'
-  ) as any,
-  async p => {
-    // Loading JSON using require/import with node is still very inconsistent
-    // So we will have to fallback to fetch
-    const resp = await fetch(p)
-    if (resp.status !== 200 && resp.status !== 304) {
-      throw new ModuleConnectionError()
-    }
-
-    const result = await resp.json()
-    return { default: result }
+export const docsImporter = wrapImporter<{ default: any }>(async p => {
+  // TODO: USe import attributes when they become supported
+  // Import Assertions and Attributes are not widely supported by all
+  // browsers yet, so we use fetch in the meantime
+  const resp = await fetch(p)
+  if (resp.status !== 200 && resp.status !== 304) {
+    throw new ModuleConnectionError()
   }
-)
+
+  const result = await resp.json()
+  return { default: result }
+})
 
 // lodash's memoize function memoizes on errors. This is undesirable,
-// so we have out own custom memoization that won't memoize on errors
+// so we have our own custom memoization that won't memoize on errors
 function getManifestImporter() {
   let manifest: ModuleManifest | null = null
 
@@ -133,8 +121,9 @@ export const memoizedGetModuleManifestAsync = getManifestImporter()
 export const memoizedGetModuleDocsAsync = getMemoizedDocsImporter()
 
 const bundleAndTabImporter = wrapImporter<{ default: ModuleBundle }>(
-  new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any,
-  p => Promise.resolve(require(p))
+  typeof window !== 'undefined' && process.env.NODE_ENV !== 'test'
+    ? (new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any)
+    : p => Promise.resolve(require(p))
 )
 
 export async function loadModuleBundleAsync(
@@ -146,7 +135,8 @@ export async function loadModuleBundleAsync(
     `${MODULES_STATIC_URL}/bundles/${moduleName}.js`
   )
   try {
-    return Object.entries(result(getRequireProvider(context))).reduce((res, [name, value]) => {
+    const loadedModule = result(getRequireProvider(context))
+    return Object.entries(loadedModule).reduce((res, [name, value]) => {
       if (typeof value === 'function') {
         const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`
         value[Symbol.toStringTag] = () => repr

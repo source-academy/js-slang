@@ -6,7 +6,6 @@ import type { Node } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { recursive, simple, WalkerCallback } from '../utils/walkers'
 import { getIdsFromDeclaration } from '../utils/ast/helpers'
-import assert from '../utils/assert'
 // transforms AST of program
 
 const globalIds = {
@@ -587,10 +586,7 @@ function handleImports(programs: es.Program[]): string[] {
     program.body = [...importsToAdd, ...otherNodes]
     return importsToAdd.flatMap(decl => {
       const ids = getIdsFromDeclaration(decl)
-      return ids.map(id => {
-        assert(id !== null, 'Encountered a null identifier')
-        return id.name
-      })
+      return ids.map(id => id.name)
     })
   })
 

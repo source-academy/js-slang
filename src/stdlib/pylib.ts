@@ -1,5 +1,13 @@
 import { Value } from '../types'
 
+export function is_float(v: Value) {
+  return typeof v === 'number'
+}
+
+export function is_int(v: Value) {
+  return typeof v === 'bigint'
+}
+
 export function __py_adder(x: Value, y: Value) {
   if (typeof x === typeof y) {
     return x + y
