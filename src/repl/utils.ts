@@ -66,13 +66,14 @@ export function validChapterVariant(language: Language) {
 
 export function handleResult(result: Result, context: Context, verboseErrors: boolean) {
   if (result.status === 'finished' || result.status === 'suspended-non-det') {
-    if (
-      result instanceof Closure ||
-      typeof result === 'function' ||
-      result.representation !== undefined
-    ) {
-      return result.toString()
+    if (result.representation !== undefined) {
+      return result.representation
     }
+
+    if (result.value instanceof Closure || typeof result.value === 'function') {
+      return result.value.toString()
+    }
+
     return stringify(result.value)
   }
 
