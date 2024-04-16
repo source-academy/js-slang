@@ -9,7 +9,7 @@ names are provided by the MISC library:
 interprets the \emph{string} \texttt{s} as an integer, using the positive integer \texttt{i} as radix, and returns the respective value,
 see \href{https://www.ecma-international.org/ecma-262/9.0/index.html\#sec-parseint-string-radix}{\color{DarkBlue}ECMAScript Specification, Section 18.2.5}.
 \item \href{https://sourceacademy.org/sicpjs/4.1.2\#p2}{\lstinline{is_boolean(x)}}, \href{https://sourceacademy.org/sicpjs/2.3.2\#p5}{\lstinline{is_float(x), is_int(x)}}
-  \href{https://sourceacademy.org/sicpjs/2.3.2\#p7}{\lstinline{is_string(x)}}, \href{https://sourceacademy.org/sicpjs/4.1.2\#p2}{\lstinline{is_undefined(x)}}, \verb#is_function#\texttt{(x)}: \textit{primitive}, returns \texttt{true} if the type of \texttt{x} matches the function name and \texttt{false} if it does not. We specify that \verb#is_float# returns \texttt{true} for \texttt{NaN} and \texttt{Infinity}.
+  \href{https://sourceacademy.org/sicpjs/2.3.2\#p7}{\lstinline{is_string(x)}}, \verb#is_function#\texttt{(x)}: \textit{primitive}, returns \texttt{true} if the type of \texttt{x} matches the function name and \texttt{false} if it does not. We specify that \verb#is_float# returns \texttt{true} for \texttt{NaN} and \texttt{Infinity}.
 \item \texttt{prompt(s)}: \textit{primitive}, pops up a window that displays the \emph{string} \texttt{s}, provides
 an input line for the user to enter a text, a ``Cancel'' button and an ``OK'' button. The call of \texttt{prompt}
 suspends execution of the program until one of the two buttons is pressed. If 
