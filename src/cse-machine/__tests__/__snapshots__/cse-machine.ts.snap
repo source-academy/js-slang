@@ -110,20 +110,6 @@ Object {
 }
 `;
 
-exports[`Imports are properly handled: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "import { foo } from 'one_module';
-foo();",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "foo",
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Nullary functions properly restore environment 1: expectResult 1`] = `
 Object {
   "alertResult": Array [],

@@ -2,7 +2,7 @@ import { mockContext } from '../../../../mocks/context'
 import { parse } from '../../../../parser/parser'
 import { Chapter, type Context } from '../../../../types'
 import removeExports from '../../transformers/removeExports'
-import { parseCodeError, sanitizeAST } from '../utils'
+import { sanitizeAST } from '../../../../utils/ast/sanitizer'
 
 type TestCase = [description: string, inputCode: string, expectedCode: string]
 
@@ -21,7 +21,7 @@ function testCases(suiteDesc: string, testCases: TestCase[]) {
       const expectedProgram = parse(expectedCode, expectedContext)
       if (actualProgram === null || expectedProgram === null) {
         // If there are any errors in the given code throw an error
-        throw parseCodeError
+        throw new Error('Failed to parse expected code or actual code')
       }
       removeExports(actualProgram)
 

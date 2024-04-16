@@ -1,76 +1,17 @@
 import * as es from 'estree'
-import { isArray } from 'lodash'
+import { isArray, isFunction } from 'lodash'
 
 import { Context } from '..'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import Closure from '../interpreter/closure'
 import type { Environment, Node, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { isContinuation } from './continuations'
 import Heap from './heap'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
-import { AppInstr, Array, ControlItem, Instr, InstrType } from './types'
-
-/**
- * Stack is implemented for control and stash registers.
- */
-interface IStack<T> {
-  push(...items: T[]): void
-  pop(): T | undefined
-  peek(): T | undefined
-  size(): number
-  isEmpty(): boolean
-  getStack(): T[]
-}
-
-export class Stack<T> implements IStack<T> {
-  // Bottom of the array is at index 0
-  private storage: T[] = []
-
-  public constructor() {}
-
-  public push(...items: T[]): void {
-    for (const item of items) {
-      this.storage.push(item)
-    }
-  }
-
-  public pop(): T | undefined {
-    return this.storage.pop()
-  }
-
-  public peek(): T | undefined {
-    if (this.isEmpty()) {
-      return undefined
-    }
-    return this.storage[this.size() - 1]
-  }
-
-  public size(): number {
-    return this.storage.length
-  }
-
-  public isEmpty(): boolean {
-    return this.size() == 0
-  }
-
-  public getStack(): T[] {
-    // return a copy of the stack's contents
-    return [...this.storage]
-  }
-
-  public some(predicate: (value: T) => boolean): boolean {
-    return this.storage.some(predicate)
-  }
-
-  // required for first-class continuations,
-  // which directly mutate this stack globally.
-  public setTo(otherStack: Stack<T>): void {
-    this.storage = otherStack.storage
-  }
-}
+import { AppInstr, EnvArray, ControlItem, Instr, InstrType } from './types'
+import Closure from './closure'
 
 /**
  * Typeguard for Instr to distinguish between program statements and instructions.
@@ -163,46 +104,52 @@ export const uniqueId = (context: Context): string => {
 }
 
 /**
- * Helper function for `handleArrayCreation`, with an extra argument: `visited`.
- *
- * @param context the context used to provide the current environment and new unique id
- * @param array the array to add the properties to, and to add to the current environment heap to
- * @param visited a set of arrays which are already handled before,
- *                used to keep track of circular references
+ * Returns whether `item` is an array with `id` and `environment` properties already attached.
  */
-const arrayCreationHelper = (context: Context, array: any[], visited: Set<any[]>): void => {
-  if (visited.has(array) || array.hasOwnProperty('id')) {
-    return
-  }
-  visited.add(array)
-  // Nested arrays are always created first, so outer arrays are handled after nested ones
-  // to preserve creation order in the environment heap
-  for (const item of array) {
-    if (isArray(item)) {
-      arrayCreationHelper(context, item, visited)
-    }
-  }
-  // Properties are defined this way to prevent them from being enumerable
-  Object.defineProperties(array, {
-    id: { value: uniqueId(context) },
-    // Make environment writable as there are still cases where the frontend might need to
-    // change the environment of an array, like when the prelude environment is merged
-    // into the global environment in the visualisation of the CSE Machine
-    environment: { value: currentEnvironment(context), writable: true }
-  })
-  currentEnvironment(context).heap.add(array as Array)
+export const isEnvArray = (item: any): item is EnvArray => {
+  return (
+    isArray(item) &&
+    {}.hasOwnProperty.call(item, 'id') &&
+    {}.hasOwnProperty.call(item, 'environment')
+  )
+}
+
+/**
+ * Returns whether `item` is a non-closure function that returns a stream.
+ * If the function has been called already and we have the result, we can
+ * pass it in here as a 2nd argument for stronger checking
+ */
+export const isStreamFn = (item: any, result?: any): result is [any, () => any] => {
+  if (result == null || !isArray(result) || result.length !== 2) return false
+  return (
+    isFunction(item) &&
+    !(item instanceof Closure) &&
+    (item.name === 'stream' || {}.hasOwnProperty.call(item, 'environment'))
+  )
 }
 
 /**
  * Adds the properties `id` and `environment` to the given array, and adds the array to the
- * current environment's heap. Recursively does this for any nested arrays first, before
- * handling the current one.
+ * current environment's heap. Adds the array to the heap of `envOverride` instead if it's defined.
  *
  * @param context the context used to provide the current environment and new unique id
- * @param array the array to add the properties to, and to add to the current environment heap to
+ * @param array the array to attach properties to, and for addition to the heap
  */
-export const handleArrayCreation = (context: Context, array: any[]): void => {
-  arrayCreationHelper(context, array, new Set<any[]>())
+export const handleArrayCreation = (
+  context: Context,
+  array: any[],
+  envOverride?: Environment
+): void => {
+  const environment = envOverride ?? currentEnvironment(context)
+  // Both id and environment are non-enumerable so iterating
+  // through the array will not return these values
+  Object.defineProperties(array, {
+    id: { value: uniqueId(context) },
+    // Make environment writable as there are cases on the frontend where
+    // environments of objects need to be modified
+    environment: { value: environment, writable: true }
+  })
+  environment.heap.add(array as EnvArray)
 }
 
 /**
@@ -289,6 +236,8 @@ export const envChanging = (command: ControlItem): boolean => {
   } else {
     const type = command.instrType
     return (
+      type === InstrType.ENVIRONMENT ||
+      type === InstrType.ARRAY_LITERAL ||
       type === InstrType.ASSIGNMENT ||
       type === InstrType.ARRAY_ASSIGNMENT ||
       (type === InstrType.APPLICATION && (command as AppInstr).numOfArgs > 0)
@@ -325,7 +274,9 @@ export const createEnvironment = (
   callExpression: es.CallExpression
 ): Environment => {
   const environment: Environment = {
-    name: isIdentifier(callExpression.callee) ? callExpression.callee.name : closure.functionName,
+    name: isIdentifier(callExpression.callee)
+      ? callExpression.callee.name
+      : closure.declaredName ?? closure.functionName,
     tail: closure.environment,
     head: {},
     heap: new Heap(),
@@ -337,7 +288,9 @@ export const createEnvironment = (
   }
   closure.node.params.forEach((param, index) => {
     if (isRestElement(param)) {
-      environment.head[(param.argument as es.Identifier).name] = args.slice(index)
+      const array = args.slice(index)
+      handleArrayCreation(context, array, environment)
+      environment.head[(param.argument as es.Identifier).name] = array
     } else {
       environment.head[(param as es.Identifier).name] = args[index]
     }
@@ -464,6 +417,10 @@ export function defineVariable(
 
   if (environment.head[name] !== UNASSIGNED_CONST && environment.head[name] !== UNASSIGNED_LET) {
     return handleRuntimeError(context, new errors.VariableRedeclaration(node, name, !constant))
+  }
+
+  if (constant && value instanceof Closure) {
+    value.declaredName = name
   }
 
   Object.defineProperty(environment.head, name, {

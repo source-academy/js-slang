@@ -2,6 +2,7 @@ import { mockContext } from '../../../mocks/context'
 import { MissingSemicolonError } from '../../../parser/errors'
 import { Chapter, type Context } from '../../../types'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
+import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
 
 import * as resolver from '../resolver'
@@ -11,7 +12,7 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-async function testCode<T extends Record<string, string>>(files: T, entrypointFilePath: keyof T) {
+async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
   const context = mockContext(Chapter.SOURCE_4)
   const result = await parseProgramsAndConstructImportGraph(
     p => Promise.resolve(files[p]),
@@ -26,12 +27,9 @@ async function testCode<T extends Record<string, string>>(files: T, entrypointFi
   ]
 }
 
-async function expectError<T extends Record<string, string>>(
-  files: T,
-  entrypointFilePath: keyof T
-) {
+async function expectError<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
   const [context, result] = await testCode(files, entrypointFilePath)
-  expect(result).toBeUndefined()
+  expect(result.ok).toEqual(false)
   expect(context.errors.length).toBeGreaterThanOrEqual(1)
   return context.errors
 }
@@ -132,8 +130,13 @@ test('Linker does tree-shaking', async () => {
     '/a.js'
   )
 
+  // Wrap to appease typescript
+  function expectWrapper(cond: boolean): asserts cond {
+    expect(cond).toEqual(true)
+  }
+
   expect(errors.length).toEqual(0)
-  expect(result).toBeDefined()
+  expectWrapper(result.ok)
   expect(resolver.default).not.toHaveBeenCalledWith('./b.js')
-  expect(Object.keys(result!.programs)).not.toContain('/b.js')
+  expect(Object.keys(result.programs)).not.toContain('/b.js')
 })

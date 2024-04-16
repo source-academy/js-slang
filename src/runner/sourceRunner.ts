@@ -14,8 +14,6 @@ import { testForInfiniteLoop } from '../infiniteLoops/runtime'
 import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
-import { ModuleNotFoundError } from '../modules/errors'
-import { getRequireProvider } from '../modules/loader/requireProvider'
 import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
@@ -25,24 +23,21 @@ import {
   callee,
   getEvaluationSteps,
   getRedex,
-  IStepperPropContents,
+  type IStepperPropContents,
   redexify
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { Context, RecursivePartial, Scheduler, Variant } from '../types'
+import { Chapter, type Context, type RecursivePartial, type Scheduler, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
 import { runWithProgram } from '../vm/svml-machine'
+import type { FileGetter } from '../modules/moduleTypes'
+import { mapResult } from '../alt-langs/mapper'
 import { toSourceError } from './errors'
 import { fullJSRunner } from './fullJSRunner'
-import {
-  determineExecutionMethod,
-  determineVariant,
-  hasVerboseErrors,
-  resolvedErrorPromise
-} from './utils'
+import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   scheduler: 'async',
@@ -58,7 +53,6 @@ const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
   importOptions: {
     ...defaultAnalysisOptions,
     ...defaultLinkerOptions,
-    wrapSourceModules: true,
     loadTabs: true
   },
   shouldAddFileName: null
@@ -93,12 +87,12 @@ function runConcurrent(program: es.Program, context: Context, options: IOptions)
   }
 }
 
-async function runSubstitution(
+function runSubstitution(
   program: es.Program,
   context: Context,
   options: IOptions
 ): Promise<Result> {
-  const steps = await getEvaluationSteps(program, context, options)
+  const steps = getEvaluationSteps(program, context, options)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
   }
@@ -113,15 +107,15 @@ async function runSubstitution(
       function: callee(redex, context)
     })
   }
-  return {
+  return Promise.resolve({
     status: 'finished',
     context,
     value: redexedSteps
-  }
+  })
 }
 
 function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context, options.importOptions.loadTabs)
+  let it = evaluate(program, context)
   let scheduler: Scheduler
   if (context.variant === Variant.NON_DET) {
     it = nonDetEvaluate(program, context)
@@ -164,12 +158,8 @@ async function runNative(
         break
     }
 
-    ;({ transpiled, sourceMapJson } = await transpile(
-      transpiledProgram,
-      context,
-      options.importOptions
-    ))
-    let value = await sandboxedEval(transpiled, getRequireProvider(context), context.nativeStorage)
+    ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
+    let value = sandboxedEval(transpiled, context.nativeStorage)
 
     if (context.variant === Variant.LAZY) {
       value = forceIt(value)
@@ -187,9 +177,10 @@ async function runNative(
   } catch (error) {
     const isDefaultVariant = options.variant === undefined || options.variant === Variant.DEFAULT
     if (isDefaultVariant && isPotentialInfiniteLoop(error)) {
-      const detectedInfiniteLoop = await testForInfiniteLoop(
+      const detectedInfiniteLoop = testForInfiniteLoop(
         program,
-        context.previousPrograms.slice(1)
+        context.previousPrograms.slice(1),
+        context.nativeStorage.loadedModules
       )
       if (detectedInfiniteLoop !== undefined) {
         if (options.throwInfiniteLoops) {
@@ -231,7 +222,7 @@ function runCSEMachine(program: es.Program, context: Context, options: IOptions)
   return CSEResultPromise(context, value)
 }
 
-export async function sourceRunner(
+async function sourceRunner(
   program: es.Program,
   context: Context,
   isVerboseErrorsEnabled: boolean,
@@ -241,6 +232,14 @@ export async function sourceRunner(
   // will modify it rather than create a new object
   const theOptions = _.merge({ ...DEFAULT_SOURCE_OPTIONS }, options)
   context.variant = determineVariant(context, options)
+
+  if (
+    context.chapter === Chapter.FULL_JS ||
+    context.chapter === Chapter.FULL_TS ||
+    context.chapter === Chapter.PYTHON_1
+  ) {
+    return fullJSRunner(program, context, theOptions.importOptions)
+  }
 
   validateAndAnnotate(program, context)
   if (context.errors.length > 0) {
@@ -292,19 +291,34 @@ export async function sourceRunner(
   return runInterpreter(program, context, theOptions)
 }
 
+/**
+ * Returns both the Result of the evaluated program, as well as
+ * `verboseErrors`.
+ */
 export async function sourceFilesRunner(
-  files: Partial<Record<string, string>>,
+  filesInput: FileGetter,
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {}
-): Promise<Result> {
-  const entrypointCode = files[entrypointFilePath]
-  if (entrypointCode === undefined) {
-    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
-    return resolvedErrorPromise
+): Promise<{
+  result: Result
+  verboseErrors: boolean
+}> {
+  const preprocessResult = await preprocessFileImports(
+    filesInput,
+    entrypointFilePath,
+    context,
+    options
+  )
+
+  if (!preprocessResult.ok) {
+    return {
+      result: { status: 'error' },
+      verboseErrors: preprocessResult.verboseErrors
+    }
   }
 
-  const isVerboseErrorsEnabled = hasVerboseErrors(entrypointCode)
+  const { files, verboseErrors, program: preprocessedProgram } = preprocessResult
 
   context.variant = determineVariant(context, options)
   // FIXME: The type checker does not support the typing of multiple files, so
@@ -312,7 +326,7 @@ export async function sourceFilesRunner(
   //        involved in the program evaluation should be type-checked. Either way,
   //        the type checker is currently not used at all so this is not very
   //        urgent.
-  context.unTypecheckedCode.push(entrypointCode)
+  context.unTypecheckedCode.push(files[entrypointFilePath])
 
   const currentCode = {
     files,
@@ -321,16 +335,38 @@ export async function sourceFilesRunner(
   context.shouldIncreaseEvaluationTimeout = _.isEqual(previousCode, currentCode)
   previousCode = currentCode
 
-  const preprocessedProgram = await preprocessFileImports(
-    files,
-    entrypointFilePath,
+  context.previousPrograms.unshift(preprocessedProgram)
+
+  const result = await sourceRunner(preprocessedProgram, context, verboseErrors, options)
+  const resultMapper = mapResult(context)
+
+  return {
+    result: resultMapper(result),
+    verboseErrors
+  }
+}
+
+/**
+ * Useful for just running a single line of code with the given context
+ * However, if this single line of code is an import statement,
+ * then the FileGetter is necessary, otherwise all local imports will
+ * fail with ModuleNotFoundError
+ */
+export function runCodeInSource(
+  code: string,
+  context: Context,
+  options: RecursivePartial<IOptions> = {},
+  defaultFilePath: string = '/default.js',
+  fileGetter?: FileGetter
+) {
+  return sourceFilesRunner(
+    path => {
+      if (path === defaultFilePath) return Promise.resolve(code)
+      if (!fileGetter) return Promise.resolve(undefined)
+      return fileGetter(path)
+    },
+    defaultFilePath,
     context,
     options
   )
-  if (!preprocessedProgram) {
-    return resolvedErrorPromise
-  }
-  context.previousPrograms.unshift(preprocessedProgram)
-
-  return sourceRunner(preprocessedProgram, context, isVerboseErrorsEnabled, options)
 }

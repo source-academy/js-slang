@@ -1,0 +1,17 @@
+\subsection*{Names}
+
+Names start with \verb@_@ or a
+letter\footnote{
+By \emph{letter}
+we mean \href{http://unicode.org/reports/tr44/}{\color{DarkBlue}Unicode} letters (L) or letter numbers (NI).
+} and contain only \verb@_@
+or alphanumeric characters\footnote{
+By alphanumeric characters we mean A-z, 0-9
+}. Restricted words\footnote{ By \emph{restricted word} we mean any of:$
+\textbf{\texttt{False}}$, $\textbf{\texttt{None}}$, $\textbf{\texttt{True}}$, $\textbf{\texttt{and}}$, $\textbf{\texttt{as}}$, $\textbf{\texttt{assert}}$, $\textbf{\texttt{async}}$, $\textbf{\texttt{await}}$, $\textbf{\texttt{break}}$, $\textbf{\texttt{class}}$, $\textbf{\texttt{continue}}$, $\textbf{\texttt{def}}$, $\textbf{\texttt{del}}$, $\textbf{\texttt{elif}}$, $\textbf{\texttt{else}}$, $\textbf{\texttt{except}}$, $\textbf{\texttt{finally}}$, $\textbf{\texttt{for}}$, $\textbf{\texttt{from}}$, $\textbf{\texttt{global}}$, $\textbf{\texttt{if}}$, $\textbf{\texttt{import}}$, $\textbf{\texttt{in}}$, $\textbf{\texttt{is}}$, $\textbf{\texttt{lambda}}$, $\textbf{\texttt{nonlocal}}$, $\textbf{\texttt{not}}$, $\textbf{\texttt{or}}$, $\textbf{\texttt{pass}}$, $\textbf{\texttt{raise}}$, $\textbf{\texttt{return}}$, $\textbf{\texttt{try}}$, $\textbf{\texttt{while}}$, $\textbf{\texttt{with}}$, $\textbf{\texttt{yield}}$.
+These are all words that cannot be used without restrictions as names in the strict mode of ECMAScript 2020.
+} are not allowed as names.
+
+Valid names are \verb@x@, \verb@_x@, \verb@X@ and \verb@X_@,
+but always keep in mind that programming is communicating and that the familiarity of the
+audience with the characters used in names is an important aspect of program readability.

@@ -1,16 +1,16 @@
 import acorn from 'acorn'
 import type es from 'estree'
 
+import { partition } from 'lodash'
 import type { Context } from '../'
 import { UNKNOWN_LOCATION } from '../constants'
 import { findAncestors, findIdentifierNode } from '../finder'
-import { ModuleConnectionError, ModuleNotFoundError } from '../modules/errors'
-import { memoizedGetModuleDocsAsync } from '../modules/loader/moduleLoaderAsync'
+import { memoizedGetModuleDocsAsync, memoizedGetModuleManifestAsync } from '../modules/loader'
 import type { ModuleDocsEntry } from '../modules/moduleTypes'
 import { isSourceModule } from '../modules/utils'
 import syntaxBlacklist from '../parser/source/syntax'
 import { getImportedName, getModuleDeclarationSource } from '../utils/ast/helpers'
-import { isDeclaration, isImportDeclaration } from '../utils/ast/typeGuards'
+import { isDeclaration, isImportDeclaration, isNamespaceSpecifier } from '../utils/ast/typeGuards'
 
 export enum DeclarationKind {
   KIND_IMPORT = 'import',
@@ -310,7 +310,13 @@ function cursorInIdentifier(node: Node, locTest: (node: Node) => boolean): boole
   }
 }
 
-function docsToHtml(name: string, obj: ModuleDocsEntry): string {
+function docsToHtml(
+  spec: es.ImportSpecifier | es.ImportDefaultSpecifier,
+  obj: ModuleDocsEntry
+): string {
+  const importedName = getImportedName(spec)
+  const nameStr = importedName === spec.local.name ? '' : `Imported as ${spec.local.name}\n`
+
   switch (obj.kind) {
     case 'function': {
       let paramStr: string
@@ -321,13 +327,13 @@ function docsToHtml(name: string, obj: ModuleDocsEntry): string {
         paramStr = `(${obj.params.map(([name, type]) => `${name}: ${type}`).join(', ')})`
       }
 
-      const header = `${name}${paramStr} → {${obj.retType}}`
-      return `<div><h4>${header}</h4><div class="description">${obj.description}</div></div>`
+      const header = `${importedName}${paramStr} → {${obj.retType}}`
+      return `<div><h4>${header}</h4><div class="description">${nameStr}${obj.description}</div></div>`
     }
     case 'variable':
-      return `<div><h4>${name}: ${obj.type}</h4><div class="description">${obj.description}</div></div>`
+      return `<div><h4>${importedName}: ${obj.type}</h4><div class="description">${nameStr}${obj.description}</div></div>`
     case 'unknown':
-      return `<div><h4>${name}: unknown</h4><div class="description">No description available</div></div>`
+      return `<div><h4>${importedName}: unknown</h4><div class="description">${nameStr}No description available</div></div>`
   }
 }
 
@@ -346,51 +352,82 @@ async function getNames(node: Node, locTest: (node: Node) => boolean): Promise<N
       const moduleName = getModuleDeclarationSource(node)
 
       // Don't try to load documentation for local modules
-      if (!isSourceModule(moduleName)) return []
-
-      try {
-        const docs = await memoizedGetModuleDocsAsync(moduleName)
-
-        if (!docs) {
-          return specs.map(spec => ({
-            name: spec.local.name,
-            meta: DeclarationKind.KIND_IMPORT,
-            docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${moduleName} module`
-          }))
-        }
-
+      if (!isSourceModule(moduleName)) {
         return specs.map(spec => {
           if (spec.type === 'ImportNamespaceSpecifier') {
             return {
-              name: moduleName,
+              name: spec.local.name,
               meta: DeclarationKind.KIND_IMPORT,
-              docHTML: `Namespace import ${moduleName}`
+              docHTML: `Namespace import of '${moduleName}'`
             }
           }
 
-          const importedName = getImportedName(spec)
-
-          if (docs[importedName] === undefined) {
-            return {
-              name: importedName,
-              meta: DeclarationKind.KIND_IMPORT,
-              docHTML: `No documentation available for <code>${spec.local.name}</code> from ${moduleName} module`
-            }
-          } else {
-            return {
-              name: importedName,
-              meta: DeclarationKind.KIND_IMPORT,
-              docHTML: docsToHtml(importedName, docs[importedName])
-            }
+          return {
+            name: spec.local.name,
+            meta: DeclarationKind.KIND_IMPORT,
+            docHTML: `Import '${getImportedName(spec)}' from '${moduleName}'`
           }
         })
-      } catch (err) {
-        if (!(err instanceof ModuleNotFoundError || err instanceof ModuleConnectionError)) throw err
+      }
 
+      try {
+        const [namespaceSpecs, otherSpecs] = partition(specs, isNamespaceSpecifier)
+        const manifest = await memoizedGetModuleManifestAsync()
+
+        if (!(moduleName in manifest)) {
+          // Unknown module
+          const namespaceDecls = namespaceSpecs.map(spec => ({
+            name: spec.local.name,
+            meta: DeclarationKind.KIND_IMPORT,
+            docHTML: `Namespace import of unknown module '${moduleName}'`
+          }))
+
+          const otherDecls = (otherSpecs as (es.ImportSpecifier | es.ImportDefaultSpecifier)[]).map(
+            spec => ({
+              name: spec.local.name,
+              meta: DeclarationKind.KIND_IMPORT,
+              docHTML: `Import from unknown module '${moduleName}'`
+            })
+          )
+          return namespaceDecls.concat(otherDecls)
+        }
+
+        const namespaceDecls = namespaceSpecs.map(spec => ({
+          name: spec.local.name,
+          meta: DeclarationKind.KIND_IMPORT,
+          docHTML: `Namespace import of '${moduleName}'`
+        }))
+
+        // If there are only namespace specifiers, then don't bother
+        // loading the documentation
+        if (otherSpecs.length === 0) return namespaceDecls
+
+        const docs = await memoizedGetModuleDocsAsync(moduleName, true)
+        return namespaceDecls.concat(
+          (otherSpecs as (es.ImportSpecifier | es.ImportDefaultSpecifier)[]).map(spec => {
+            const importedName = getImportedName(spec)
+
+            if (docs[importedName] === undefined) {
+              return {
+                name: spec.local.name,
+                meta: DeclarationKind.KIND_IMPORT,
+                docHTML: `No documentation available for <code>${importedName}</code> from '${moduleName}'`
+              }
+            } else {
+              return {
+                name: spec.local.name,
+                meta: DeclarationKind.KIND_IMPORT,
+                docHTML: docsToHtml(spec, docs[importedName])
+              }
+            }
+          })
+        )
+      } catch (err) {
+        // Failed to load docs for whatever reason
         return specs.map(spec => ({
           name: spec.local.name,
           meta: DeclarationKind.KIND_IMPORT,
-          docHTML: `Unable to retrieve documentation for <code>${spec.local.name}</code> from ${moduleName} module`
+          docHTML: `Unable to retrieve documentation for '${moduleName}'`
         }))
       }
     case 'VariableDeclaration':

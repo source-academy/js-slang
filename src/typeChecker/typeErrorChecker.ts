@@ -20,20 +20,18 @@ import {
   TypeParameterNameNotAllowedError,
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
-import { ModuleNotFoundError } from '../modules/errors'
-import { memoizedGetModuleManifest } from '../modules/loader/moduleLoader'
 import {
   BindableType,
   Chapter,
-  Context,
+  type Context,
   disallowedTypes,
-  Pair,
+  type Pair,
   PrimitiveType,
   SArray,
   TSAllowedTypes,
   TSBasicType,
   TSDisallowedTypes,
-  Type,
+  type Type,
   TypeEnvironment,
   Variable
 } from '../types'
@@ -552,19 +550,9 @@ function handleImportDeclarations(node: tsEs.Program) {
   if (importStmts.length === 0) {
     return
   }
-  const modules = memoizedGetModuleManifest()
-  const moduleList = Object.keys(modules)
   importStmts.forEach(stmt => {
     // Source only uses strings for import source value
-    const moduleName = stmt.source.value as string
-    if (!moduleList.includes(moduleName)) {
-      context.errors.push(new ModuleNotFoundError(moduleName, stmt))
-    }
     stmt.specifiers.map(spec => {
-      if (spec.type !== 'ImportSpecifier') {
-        throw new TypecheckError(stmt, 'Unknown specifier type')
-      }
-
       setType(spec.local.name, tAny, env)
     })
   })
