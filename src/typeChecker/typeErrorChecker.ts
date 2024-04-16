@@ -35,8 +35,7 @@ import {
   type Type,
   TypeEnvironment,
   Variable,
-  NodeWithAnnotation,
-  Variant
+  NodeWithAnnotation
 } from '../types'
 import { findNodeAt } from '../utils/walkers'
 import { defaultBabelOptions, positionToSourceLocation } from '../parser/utils'
@@ -1687,9 +1686,11 @@ export function getTypeInformation(
   // which might affect the type inference checker
   env = cloneDeep(context.typeEnvironment)
 
-  if (context.variant !== Variant.TYPED) {
+  // doesnt work for now bcuz (i'm not sure why), but there is no information about the context
+  // from the frontend
+  /* if (context.variant !== Variant.TYPED) {
     return 'Type information is only available in the typed variant.'
-  }
+  } */
   /* try {
     TypeParser.parse(
       programStr,
