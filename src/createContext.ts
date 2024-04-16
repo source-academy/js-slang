@@ -779,8 +779,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'char_at(str, index)', misc.char_at)
       defineBuiltin(context, 'arity(f)', misc.arity)
       defineBuiltin(context, 'None', null)
-      defineBuiltin(context, 'NaN', NaN)
-      defineBuiltin(context, 'Infinity', Infinity)
 
       // Binary operators
       defineBuiltin(context, '__py_adder(x, y)', pylib.__py_adder)
@@ -833,12 +831,10 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
       // Math constants
       defineBuiltin(context, 'math_e', Math.E)
-      defineBuiltin(context, 'math_ln10', Math.LN10)
-      defineBuiltin(context, 'math_ln2', Math.LN2)
-      defineBuiltin(context, 'math_log10e', Math.LOG10E)
+      defineBuiltin(context, 'math_inf', Infinity)
+      defineBuiltin(context, 'math_nan', NaN)
       defineBuiltin(context, 'math_pi', Math.PI)
-      defineBuiltin(context, 'math_sqrt1_2', Math.SQRT1_2)
-      defineBuiltin(context, 'math_sqrt2', Math.SQRT2)
+      defineBuiltin(context, 'math_tau', Math.PI * 2)
     }
   }
 }
