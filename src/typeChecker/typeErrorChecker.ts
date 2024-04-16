@@ -387,13 +387,13 @@ function typeCheckAndReturnType(node: NodeWithAnnotation<tsEs.Node>): Type {
           const actualType = typeCheckAndReturnType(arg)
           // Argument should be either a pair or a list
           const expectedType = tUnion(tPair(tAny, tAny), tList(tAny))
+          arg.expectedType = expectedType
           const numErrors = context.errors.length
           checkForTypeMismatch(node, actualType, expectedType)
           if (context.errors.length > numErrors) {
             // If errors were found, return "any" type
             return tAny
           }
-          arg.expectedType = expectedType
           node.annotatedType =
             fnName === 'head' ? getHeadType(node, actualType) : getTailType(node, actualType)
           return node.annotatedType
@@ -1680,11 +1680,6 @@ export function getTypeInformation(
   loc: { line: number; column: number },
   name: string
 ): string {
-  // Set context as global variable
-  context = inputContext
-  // Deep copy type environment to avoid modifying type environment in the context,
-  // which might affect the type inference checker
-  env = cloneDeep(context.typeEnvironment)
 
   // doesnt work for now bcuz (i'm not sure why), but there is no information about the context
   // from the frontend
@@ -1774,14 +1769,17 @@ export function getTypeInformation(
     return false
   }
 
-  typeCheckAndReturnType(program as NodeWithAnnotation<tsEs.Node>)
-  // do I want to return type errors immediately, probably not right
-  if (context.errors.length) {
-    return parseError(context.errors)
-  }
-  const programWithNoTSNodes = removeTSNodes(program)
-  transformBabelASTToESTreeCompliantAST(programWithNoTSNodes)
+  // check types and annonates nodes
+  const programWithNoTSNodes = checkForTypeErrors(program, inputContext)
 
+  if (
+    inputContext.errors &&
+    inputContext.errors.filter(e => e instanceof TypecheckError).length !== 0
+  ) {
+    return parseError(inputContext.errors)
+  }
+  transformBabelASTToESTreeCompliantAST(programWithNoTSNodes)
+  
   const res = findNodeAt(programWithNoTSNodes, undefined, undefined, findByLocationPredicate)
   if (res === undefined || res.node === undefined) {
     return ''
