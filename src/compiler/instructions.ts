@@ -1,3 +1,5 @@
+import * as Token from "./tokens/tokens";
+
 enum InstType {
     DONE,
     LDC,
@@ -9,9 +11,20 @@ enum InstType {
     ITER_END,
     FOR_END,
     CALL,
+    ASSIGN,
+    POP,
+    LDF,
+    ENTER_SCOPE,
+    EXIT_SCOPE,
+    RESET,
+    GO,
+    GO_DEST,
+    SEND,
+    CONT,
+    BREAK,
 }
 
-class Instruction {
+export class Instruction {
     tag : InstType;
 
     constructor(tag : InstType) {
@@ -19,24 +32,24 @@ class Instruction {
     }
 }
 
-class DoneInstruction extends Instruction {
+export class DoneInstruction extends Instruction {
     constructor() {
         super(InstType.DONE);
     }
 }
 
-class BasicLitInstruction extends Instruction {
-    value: number | string;
+export class BasicLitInstruction extends Instruction {
+    value?: number | string;
     type: Token.token;
 
-    constructor(type : Token.token, value : number | string) {
+    constructor(type : Token.token, value : number | string | undefined) {
         super(InstType.LDC);
         this.type = type;
         this.value = value;
     }
 }
 
-class IdentInstruction extends Instruction {
+export class IdentInstruction extends Instruction {
     sym: string;
     pos: EnvironmentPos;
 
@@ -47,7 +60,7 @@ class IdentInstruction extends Instruction {
     }
 }
 
-class UnOpInstruction extends Instruction {
+export class UnOpInstruction extends Instruction {
     op: Token.token;
 
     constructor(op : Token.token) {
@@ -56,7 +69,7 @@ class UnOpInstruction extends Instruction {
     }
 }
 
-class BinOpInstruction extends Instruction {
+export class BinOpInstruction extends Instruction {
     op: Token.token;
 
     constructor(op : Token.token) {
@@ -65,7 +78,7 @@ class BinOpInstruction extends Instruction {
     }
 }
 
-class JumpOnFalseInstruction extends Instruction {
+export class JumpOnFalseInstruction extends Instruction {
     dest: number;
 
     constructor() {
@@ -77,7 +90,7 @@ class JumpOnFalseInstruction extends Instruction {
     }
 }
 
-class GotoInstruction extends Instruction {
+export class GotoInstruction extends Instruction {
     dest : number;
 
     constructor() {
@@ -89,23 +102,102 @@ class GotoInstruction extends Instruction {
     }
 }
 
-class IterEndInstruction extends Instruction {
+export class IterEndInstruction extends Instruction {
     constructor() {
         super(InstType.ITER_END);
     }
 }
 
-class ForEndInstruction extends Instruction {
+export class ForEndInstruction extends Instruction {
     constructor() {
         super(InstType.FOR_END);
     }
 }
 
-class CallInstruction extends Instruction {
+export class CallInstruction extends Instruction {
     arity : number;
 
     constructor(arity : number) {
         super(InstType.CALL);
         this.arity = arity;
+    }
+}
+
+export class AssignInstruction extends Instruction {
+    pos: EnvironmentPos;
+
+    constructor(pos: EnvironmentPos) {
+        super(InstType.ASSIGN);
+        this.pos = pos;
+    }
+}
+
+export class PopInstruction extends Instruction {
+    constructor() {
+        super(InstType.POP);
+    }
+}
+
+export class LoadFunctionInstruction extends Instruction {
+    arity: number;
+    addr: number;
+
+    constructor(arity : number, addr : number) {
+        super(InstType.LDF);
+        this.arity = arity;
+        this.addr = addr;
+    }
+}
+
+export class EnterScopeInstruction extends Instruction {
+    varCount: number;
+
+    constructor(varCnt : number) {
+        super(InstType.ENTER_SCOPE);
+        this.varCount = varCnt;
+    }
+}
+
+export class ExitScopeInstruction extends Instruction {
+    constructor() {
+        super(InstType.EXIT_SCOPE);
+    }
+}
+
+export class ResetInstruction extends Instruction {
+    constructor() {
+        super(InstType.RESET);
+    }
+}
+
+export class GoInstruction extends Instruction {
+    arity : number;
+    constructor(arity : number) {
+        super(InstType.GO);
+        this.arity = arity;
+    }
+}
+
+export class DestroyGoroutineInstruction extends Instruction {
+    constructor() {
+        super(InstType.GO_DEST);
+    }
+}
+
+export class SendInstruction extends Instruction {
+    constructor() {
+        super(InstType.SEND);
+    }
+}
+
+export class ContinueInstruction extends Instruction {
+    constructor() {
+        super(InstType.CONT);
+    }
+}
+
+export class BreakInstruction extends Instruction {
+    constructor() {
+        super(InstType.BREAK);
     }
 }

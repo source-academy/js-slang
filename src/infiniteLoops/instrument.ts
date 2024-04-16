@@ -42,7 +42,7 @@ enum FunctionNames {
  */
 function unshadowVariables(program: Node, predefined = {}) {
   for (const name of Object.values(globalIds)) {
-    predefined[name] = name
+    (predefined as any)[name] = name
   }
   const seenIds = new Set()
   const env = [predefined]
@@ -50,8 +50,8 @@ function unshadowVariables(program: Node, predefined = {}) {
     let count = 0
     while (seenIds.has(`${name}_${count}`)) count++
     const newName = `${name}_${count}`
-    seenIds.add(newName)
-    env[0][name] = newName
+    seenIds.add(newName);
+    (env[0] as any)[name] = newName
     return newName
   }
   const unshadowFunctionInner = (
@@ -128,8 +128,8 @@ function unshadowVariables(program: Node, predefined = {}) {
     ArrowFunctionExpression: unshadowFunctionInner,
     FunctionExpression: unshadowFunctionInner,
     Identifier(node: es.Identifier, _s: undefined, _callback: WalkerCallback<undefined>) {
-      if (env[0][node.name]) {
-        node.name = env[0][node.name]
+      if ((env[0] as any)[node.name]) {
+        node.name = (env[0] as any)[node.name]
       } else {
         create.mutateToMemberExpression(
           node,
@@ -607,7 +607,7 @@ function instrument(
   builtins: Iterable<string>
 ): string {
   const { builtinsId, functionsId, stateId } = globalIds
-  const predefined = {}
+  const predefined = {} as any
   predefined[builtinsId] = builtinsId
   predefined[functionsId] = functionsId
   predefined[stateId] = stateId

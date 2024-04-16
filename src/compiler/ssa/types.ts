@@ -52,7 +52,7 @@ export type ChanDir = number;
 
 const ChRecv : ChanDir = 1 << 0;
 const ChSend : ChanDir = 1 << 1;
-const ChBoth : ChanDir = ChRecv | ChSend;
+// const ChBoth : ChanDir = ChRecv | ChSend;
 
 export function ChCanReceive(chStatus : ChanDir) : boolean {
     return (chStatus & ChRecv) != 0;
@@ -67,8 +67,9 @@ export class Type {
 
 }
 
+/*
 class Field {
     flags: number;
     // embedded: number;
 
-}
+} */

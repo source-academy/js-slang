@@ -278,7 +278,7 @@ export const importExternalSymbols = (context: Context, externalSymbols: string[
   ensureGlobalEnvironmentExist(context)
 
   externalSymbols.forEach(symbol => {
-    defineSymbol(context, symbol, GLOBAL[symbol])
+    defineSymbol(context, symbol, (GLOBAL as any)[symbol])
   })
 }
 
@@ -340,7 +340,7 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
     // Short param names for stringified version of math functions
     const parameterNames = [...'abcdefghijklmnopqrstuvwxyz']
     for (const name of mathLibraryNames) {
-      const value = Math[name]
+      const value = (Math as any)[name]
       if (typeof value === 'function') {
         let paramString: string
         let minArgsNeeded = undefined

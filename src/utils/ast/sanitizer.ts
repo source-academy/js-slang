@@ -21,7 +21,7 @@ const sanitizers = Object.entries(propertiesToDelete).reduce(
     ...res,
     [nodeType](node: es.Node) {
       for (const prop of props) {
-        delete node[prop]
+        delete (node as any)[prop]
       }
     }
   }),

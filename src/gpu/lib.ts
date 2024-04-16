@@ -188,7 +188,7 @@ export function __createKernel(end: any, extern: any, f: any, arr: any, f2: any)
 
 function entriesToObject(entries: [string, any][]): any {
   const res = {}
-  entries.forEach(([key, value]) => (res[key] = value))
+  entries.forEach(([key, value]) => ((res as any)[key] = value))
   return res
 }
 

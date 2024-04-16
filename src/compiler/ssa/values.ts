@@ -1,4 +1,4 @@
-import { Type } from "./types";
+/* import { Type } from "./types";
 
 class Value {
     ID: number; // unique identfier for number
@@ -6,3 +6,4 @@ class Value {
     Type: Type; // Value type
 }
 
+*/

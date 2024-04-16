@@ -86,6 +86,7 @@ class GoObject {
 
 type ObjKind = number;
 
+/* 
 enum ObjKinds {
     Bad, // bad datatype
     Con, // constant
@@ -94,7 +95,9 @@ enum ObjKinds {
     Fun, // function/method
     Lbl, // label
 }
+*/
 
+/*
 const objKindStrings = [
     "bad",
     "const",
@@ -107,3 +110,4 @@ const objKindStrings = [
 function getObjKindString(kind : ObjKind) : string {
     return objKindStrings[kind];
 }
+*/

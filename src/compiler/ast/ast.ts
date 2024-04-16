@@ -1,9 +1,9 @@
-import * as nodes from "./nodes";
 import { ChanDir } from "../ssa/types";
+import * as nodes from "./nodes";
 
 // Takes string representation of JSON AST and parses
 // it into an AST using the node types defined in node.ts
-function stringToAst(input : string) :  nodes.File {
+export function stringToAst(input : string) :  nodes.File {
     const jsonAst = JSON.parse(input);
     return parseFile(jsonAst);
 }
@@ -625,6 +625,6 @@ function getStart(nodeObj : any) : number {
     return nodeObj["Loc"]["Start"]["Offset"];
 }
 
-function getEnd(nodeObj : any) : number {
+/* function getEnd(nodeObj : any) : number {
     return nodeObj["Loc"]["End"]["Offset"];
-}
+} */

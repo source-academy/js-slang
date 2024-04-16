@@ -136,7 +136,7 @@ export class State {
     } else {
       id = nonDetTransitionId
     }
-    const transitions = this.mixedStack[this.stackPointer].transitions
+    const transitions : any = this.mixedStack[this.stackPointer].transitions
     for (let i = 0; i < transitions.length; i++) {
       const transition = transitions[i]
       if (transition[0] === name) {
@@ -234,6 +234,6 @@ export class State {
    * @returns the name of the last function in the stack.
    */
   public getLastFunctionName() {
-    return this.functionStack[this.functionStack.length - 1][0]
+    return (this.functionStack[this.functionStack.length - 1] as any)[0]
   }
 }

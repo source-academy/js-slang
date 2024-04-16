@@ -14,10 +14,10 @@ export function isBuiltinFunction(node: substituterNodes): boolean {
   return (
     node.type === 'Identifier' &&
     // predeclared, except for evaluateMath
-    ((typeof builtin[node.name] === 'function' && node.name !== 'evaluateMath') ||
+    ((typeof (builtin as any)[node.name] === 'function' && node.name !== 'evaluateMath') ||
       // one of the math functions
       Object.getOwnPropertyNames(Math)
-        .filter(name => typeof Math[name] === 'function')
+        .filter(name => typeof (Math as any)[name] === 'function')
         .map(name => 'math_' + name)
         .includes(node.name))
   )

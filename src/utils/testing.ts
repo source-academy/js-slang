@@ -118,7 +118,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       result: result.status === 'finished' ? result.value : undefined
     }
     if (options.showErrorJSON) {
-      testResult['errors'] = context.errors
+      (testResult as any)['errors'] = context.errors
     }
     return testResult
   }
@@ -177,10 +177,10 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     ]
     const diff = {}
     for (const property of propertiesThatShouldBeEqual) {
-      const nativeValue = stringify(nativeResult[property])
-      const interpretedValue = stringify(interpretedResult[property])
+      const nativeValue = stringify((nativeResult as any)[property])
+      const interpretedValue = stringify((interpretedResult as any)[property])
       if (nativeValue !== interpretedValue) {
-        diff[property] = `native:${nativeValue}\ninterpreted:${interpretedValue}`
+        (diff as any)[property] = `native:${nativeValue}\ninterpreted:${interpretedValue}`
       }
     }
     if (options.showTranspiledCode) {

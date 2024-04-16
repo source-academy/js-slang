@@ -12,7 +12,7 @@ export function chapterParser(str: string): Chapter {
   if (/^-?[0-9]+$/.test(str)) {
     // Chapter is fully numeric
     const value = parseInt(str)
-    foundChapter = Object.keys(Chapter).find(chapterName => Chapter[chapterName] === value)
+    foundChapter = Object.keys(Chapter).find(chapterName => (Chapter as any)[chapterName] === value)
 
     if (foundChapter === undefined) {
       throw new Error(`Invalid chapter value: ${str}`)
@@ -22,7 +22,7 @@ export function chapterParser(str: string): Chapter {
   }
 
   if (foundChapter in Chapter) {
-    return Chapter[foundChapter]
+    return (Chapter as any)[foundChapter]
   }
   throw new Error(`Invalid chapter value: ${str}`)
 }

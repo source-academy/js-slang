@@ -235,7 +235,7 @@ const builtinSpecialCases = {
   // mimic behaviour without printing
   display: (...x: any[]) => x[0],
   display_list: (...x: any[]) => x[0]
-}
+} as any
 
 function returnInvalidIfNumeric(val: any, validity = sym.Validity.NoSmt) {
   if (typeof val === 'number') {

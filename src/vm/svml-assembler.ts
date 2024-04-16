@@ -93,7 +93,7 @@ function serialiseFunction(f: SVMFunction): ImFunction {
       case OpCodes.NEWC:
         holes.push({
           offset: b.cursor,
-          referent: ['function', instr[1]![0]]
+          referent: ['function', (instr as any)[1]![0]]
         })
         b.putU(32, 0)
         break

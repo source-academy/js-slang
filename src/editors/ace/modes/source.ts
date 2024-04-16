@@ -49,7 +49,7 @@ export function HighlightRulesSelector(
     const identifierRegex = '[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*'
 
     const chapter = variant === Variant.DEFAULT ? id.toString() : id.toString() + '_' + variant
-    const builtin_lib = SourceDocumentation.builtins[chapter]
+    const builtin_lib = (SourceDocumentation.builtins as any)[chapter]
 
     function addFromBuiltinLibrary(meta: string) {
       if (builtin_lib === null) {

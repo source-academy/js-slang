@@ -327,7 +327,7 @@ export const wrap = (
   const wrapped = (...args: any[]) => callIteratively(f, nativeStorage, ...args)
   makeWrapper(f, wrapped)
   wrapped.transformedFunction = f
-  wrapped[Symbol.toStringTag] = () => stringified
+  (wrapped as any)[Symbol.toStringTag] = () => stringified
   wrapped.toString = () => stringified
   return wrapped
 }

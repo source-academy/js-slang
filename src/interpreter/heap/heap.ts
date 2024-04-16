@@ -4,29 +4,30 @@ const mega = 20;
 const gc_offset = 7;
 const size_offset = 5;
 
-const FALSE_TAG = 0;
-const TRUE_TAG = 1;
-const NULL_TAG = 2;
-const UNASSIGNED_TAG = 3;
-const UNDEFINED_TAG = 4;
-const BLOCKFRAME_TAG = 5;
-const CALLFRAME_TAG = 6;
-const CLOSURE_TAG = 7;
+// const FALSE_TAG = 0;
+// const TRUE_TAG = 1;
+// const NULL_TAG = 2;
+// const UNASSIGNED_TAG = 3;
+// const UNDEFINED_TAG = 4;
+// const BLOCKFRAME_TAG = 5;
+// const CALLFRAME_TAG = 6;
+// const CLOSURE_TAG = 7;
 const FRAME_TAG = 8;
 const ENVIRONMENT_TAG = 9;
-const PAIR_TAG = 10;
-const BUILTIN_TAG = 11;
-const STRING_TAG = 12;
+// const PAIR_TAG = 10;
+// const BUILTIN_TAG = 11;
+// const STRING_TAG = 12;
 const INT8_TAG = 13; // for future use
 const UINT8_TAG = 14;
 const INT16_TAG = 15; // for future use
 const UINT16_TAG = 16; // for future use
 const INT32_TAG = 17;
 const UINT32_TAG = 18; // for future use
-const INT64_TAG = 19; // for future use
-const UINT64_TAG = 20; // for future use
+// const INT64_TAG = 19; // for future use
+// const UINT64_TAG = 20; // for future use
 const FLOAT32_TAG = 21;
-const FLOAT64_TAG = 22; // for future use
+// const FLOAT64_TAG = 22; // for future use
+// const GOSTACK_TAG = 23; // use for goroutine stacks (operand stack, runtime stack)
 
 const min_gc_size = 256; // do not trigger gc so long as size used <= 2 * min_gc_size
 
@@ -170,7 +171,7 @@ export class HeapBuffer {
         let node_addr = address;
         let return_val = -1;
         switch (tag) {
-            case FRAME_TAG || ENVIRONMENT_TAG || STRING_TAG:
+            case FRAME_TAG || ENVIRONMENT_TAG:
                 if (currSize + 1 == allocated_size) {
                     // base node + children, since currSize == number of children
                     node_addr = this.doubleAllocatedSize(address);

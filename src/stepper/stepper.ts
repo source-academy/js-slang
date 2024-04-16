@@ -210,7 +210,7 @@ function findMain(
 
   const freeNames: any[] = []
 
-  const finders = {
+  const finders : any = {
     Identifier(target: es.Identifier): void {
       seenBefore.set(target, target)
       let bound = false
@@ -418,7 +418,7 @@ function substituteMain(
    *    and push the appropriate access string into the path
    * 3. Return the dummyReplacement
    */
-  const substituters = {
+  const substituters : any = {
     // if name to be replaced is found,
     // push endMarker into path
     Identifier(
@@ -1325,7 +1325,7 @@ function reduceMain(
 
   // converts body of code to string
   function bodify(target: substituterNodes): string {
-    const bodifiers = {
+    const bodifiers : any = {
       Literal: (target: es.Literal): string =>
         target.raw !== undefined ? target.raw : String(target.value),
 
@@ -1409,7 +1409,7 @@ function reduceMain(
 
   // generates string to explain current step
   function explain(target: substituterNodes): string {
-    const explainers = {
+    const explainers : any = {
       BinaryExpression: (target: es.BinaryExpression): string =>
         'Binary expression ' + bodify(target) + ' evaluated',
 
@@ -1496,7 +1496,7 @@ function reduceMain(
     return explainer === undefined ? '...' : explainer(target)
   }
 
-  const reducers = {
+  const reducers : any = {
     // source 0
     Identifier(
       node: es.Identifier,
@@ -1738,9 +1738,9 @@ function reduceMain(
           paths,
           explain(node)
         ]
-      } else if (typeof builtin[(callee as es.Identifier).name] === 'function') {
+      } else if (typeof (builtin as any)[(callee as es.Identifier).name] === 'function') {
         // Source specific built-in function
-        return [builtin[(callee as es.Identifier).name](...args), context, paths, explain(node)]
+        return [(builtin as any)[(callee as es.Identifier).name](...args), context, paths, explain(node)]
       } else {
         // Common built-in function
         return [
@@ -1825,7 +1825,8 @@ function reduceMain(
             )
 
             // Fix path highlighting after preserving first statement
-            path.forEach(pathStep => {
+            const pathStr : string[][] = path;
+            pathStr.forEach(pathStep=> {
               pathStep.forEach((_, i) => {
                 if (i == 0) {
                   pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
@@ -2049,8 +2050,9 @@ function reduceMain(
               newPath
             )
 
+            const pathStr : string[][] = path
             // Fix path highlighting after preserving first statement
-            path.forEach(pathStep => {
+            pathStr.forEach(pathStep => {
               pathStep.forEach((_, i) => {
                 if (i == 0) {
                   pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
@@ -2269,7 +2271,8 @@ function reduceMain(
             )
 
             // Fix path highlighting after preserving first statement
-            path.forEach(pathStep => {
+            const pathStr : string[][] = path
+            pathStr.forEach(pathStep => {
               pathStep.forEach((_, i) => {
                 if (i == 0) {
                   pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
@@ -2614,7 +2617,7 @@ function treeifyMain(target: substituterNodes): substituterNodes {
   }
 
   function treeify(target: substituterNodes): substituterNodes {
-    const treeifier = treeifiers[target.type]
+    const treeifier = (treeifiers as any)[target.type]
     if (treeifier === undefined) {
       return target
     } else {
@@ -2635,7 +2638,7 @@ function jsTreeifyMain(
   //   visited before recursing to this target: replace with the name
   //   else: replace with a FunctionExpression
   let verboseCount = 0
-  const treeifiers = {
+  const treeifiers : any = {
     Identifier: (target: es.Identifier): es.Identifier => {
       if (readOnly && target.name.startsWith('anonymous_')) {
         return ast.identifier('[Function]')
@@ -3204,7 +3207,7 @@ function pathifyMain(
   }
 
   function pathify(target: substituterNodes): substituterNodes {
-    const pathifier = pathifiers[target.type]
+    const pathifier = (pathifiers as any)[target.type]
     if (pathifier === undefined) {
       return jsTreeifyMain(target, visited, true)
     } else {
@@ -3263,8 +3266,8 @@ function substPredefinedFns(program: es.Program, context: Context): [es.Program,
 function substPredefinedConstants(program: es.Program): es.Program {
   const constants = [['undefined', undefined]]
   const mathConstants = Object.getOwnPropertyNames(Math)
-    .filter(name => typeof Math[name] !== 'function')
-    .map(name => ['math_' + name, Math[name]])
+    .filter(name => typeof (Math as any)[name] !== 'function')
+    .map(name => ['math_' + name, (Math as any)[name]])
   let substed = program
   for (const nameValuePair of constants.concat(mathConstants)) {
     substed = substituteMain(

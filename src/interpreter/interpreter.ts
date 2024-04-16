@@ -637,7 +637,7 @@ export const evaluators: { [nodeType: string]: Evaluator<Node> } = {
   },
 
   ObjectExpression: function*(node: es.ObjectExpression, context: Context) {
-    const obj = {}
+    const obj : any = {}
     for (const propUntyped of node.properties) {
       // node.properties: es.Property | es.SpreadExpression, but
       // our Acorn is set to ES6 which cannot have a es.SpreadExpression

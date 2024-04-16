@@ -22,7 +22,7 @@ export type NativeIds = Record<(typeof globalIdNames)[number], es.Identifier>
 export function getNativeIds(program: es.Program, usedIdentifiers: Set<string>): NativeIds {
   const globalIds = {}
   for (const identifier of globalIdNames) {
-    globalIds[identifier] = create.identifier(getUniqueId(usedIdentifiers, identifier))
+    (globalIds as any)[identifier] = create.identifier(getUniqueId(usedIdentifiers, identifier))
   }
   return globalIds as NativeIds
 }

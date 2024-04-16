@@ -1,5 +1,7 @@
 import { ChanDir } from "../ssa/types";
+import * as Token from "../tokens/tokens";
 import { nodeType } from "./nodeTypes";
+import * as Pos from "./pos";
 
 // Node types
 
@@ -10,6 +12,7 @@ export interface GoNode {
 }
 
 export interface ExprNode extends GoNode {
+    valuesProduced() : number; // used to determine number of pop operations required for ExprStmt
 }
 
 export interface StatementNode extends GoNode {
@@ -47,6 +50,11 @@ export class Field implements ExprNode {
         return nodeType.NOT_IMPLEMENTED;
     }
 
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
+    }
+
     constructor(names : Ident[], tag : BasicLit | undefined, type : ExprNode) {
         this.Names = names;
         this.Tag = tag;
@@ -72,6 +80,11 @@ export class FieldList implements ExprNode {
             return this.Closing;
         }
         return Pos.NoPos;
+    }
+
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
     }
 
     // Returns number of parameters/struct fields represented by FieldList
@@ -117,6 +130,10 @@ export class BadExpr implements ExprNode {
         return nodeType.ILLEGAL;
     }
 
+    valuesProduced(): number {
+        return 0;
+    }
+
     constructor(start : Pos.Pos, end : Pos.Pos) {
         this.From = start;
         this.To = end;
@@ -138,6 +155,10 @@ export class Ident implements ExprNode {
 
     getType() : nodeType {
         return nodeType.IDENT;
+    }
+
+    valuesProduced(): number {
+        return 1;
     }
 
     constructor(pos : Pos.Pos, name : string) {
@@ -164,6 +185,11 @@ export class Ellipsis implements ExprNode {
 
     getType() : nodeType {
         return nodeType.NOT_IMPLEMENTED;
+    }
+
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
     }
 
     constructor(ellipPos : Pos.Pos, eltType : ExprNode | undefined) {
@@ -194,6 +220,10 @@ export class BasicLit implements ExprNode {
         return this.Kind;
     }
 
+    valuesProduced(): number {
+        return 1;
+    }
+
     constructor(pos : Pos.Pos, kind : string, val : string) {
         this.ValuePos = pos;
         this.Kind = Token.getToken(kind);
@@ -215,7 +245,11 @@ export class FuncLit implements ExprNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.FUNCLIT;
+    }
+
+    valuesProduced(): number {
+        return this.Type.numResults();
     }
 
     constructor(ftype : FuncType, body : BlockStmt) {
@@ -247,6 +281,11 @@ export class CompositeLit implements ExprNode {
         return nodeType.NOT_IMPLEMENTED;
     }
 
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
+    }
+
     constructor(type : ExprNode | undefined, lbrace : Pos.Pos, elmts : ExprNode[], rbrace: Pos.Pos, incomplete : boolean) {
         this.Type = type;
         this.LeftBrace = lbrace;
@@ -271,7 +310,11 @@ export class ParenExpr implements ExprNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.PAREN;
+    }
+
+    valuesProduced(): number {
+        return this.Expr.valuesProduced();
     }
 
     constructor(lparen : Pos.Pos, expr : ExprNode, rparen : Pos.Pos) {
@@ -297,6 +340,11 @@ export class SelectorExpr implements ExprNode {
     getType() : nodeType {
         return nodeType.NOT_IMPLEMENTED;
     }
+    
+    valuesProduced(): number {
+        // TO VERIFY
+        return 1;
+    }
 
     constructor(expr : ExprNode, selector : Ident) {
         this.Expr = expr;
@@ -321,6 +369,10 @@ export class IndexExpr implements ExprNode {
 
     getType() : nodeType {
         return nodeType.NOT_IMPLEMENTED;
+    }
+
+    valuesProduced(): number {
+        return 1;
     }
 
     constructor(expr : ExprNode, lbrack : Pos.Pos, idx : ExprNode, rbrack : Pos.Pos) {
@@ -353,6 +405,11 @@ export class SliceExpr implements ExprNode {
         return nodeType.NOT_IMPLEMENTED;
     }
 
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
+    }
+
     constructor(expr : ExprNode, lbrack : Pos.Pos, low : ExprNode | undefined, high : ExprNode | undefined, max : ExprNode | undefined, isThree : boolean, rbrack : Pos.Pos) {
         this.Expr = expr;
         this.LeftBrack = lbrack;
@@ -383,6 +440,11 @@ export class TypeAssertExpr implements ExprNode {
         return nodeType.NOT_IMPLEMENTED;
     }
 
+    valuesProduced(): number {
+        // TRUE / FALSE
+        return 1;
+    }
+
     constructor(expr : ExprNode, lparen : Pos.Pos, type : ExprNode | undefined, rparen : Pos.Pos) {
         this.Expr = expr;
         this.LeftParen = lparen;
@@ -399,6 +461,7 @@ export class CallExpr implements ExprNode {
     Ellipsis: Pos.Pos; // position of "..." (Pos.NoPos if none given)
     RightParen: Pos.Pos; // position of ")"
 
+    // arguments must produce only one value each
     Pos() : Pos.Pos {
         return this.Func.Pos();
     }
@@ -409,6 +472,10 @@ export class CallExpr implements ExprNode {
 
     getType() : nodeType {
         return nodeType.CALL;
+    }
+
+    valuesProduced(): number {
+        return this.Func.valuesProduced();
     }
 
     constructor(func : ExprNode, lparen : Pos.Pos, args : ExprNode[] | undefined, ellipsis : Pos.Pos, rparen: Pos.Pos) {
@@ -438,6 +505,11 @@ export class StarExpr implements ExprNode {
         return nodeType.NOT_IMPLEMENTED;
     }
 
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
+    }
+
     constructor(star : Pos.Pos, expr : ExprNode) {
         this.Star = star;
         this.Expr = expr;
@@ -461,6 +533,10 @@ export class UnaryExpr implements ExprNode {
 
     getType() : nodeType {
         return nodeType.UNARY;
+    }
+
+    valuesProduced(): number {
+        return 1;
     }
 
     constructor(pos : Pos.Pos, op : string, expr : ExprNode) {
@@ -489,6 +565,10 @@ export class BinaryExpr implements ExprNode {
         return nodeType.BINARY;
     }
 
+    valuesProduced(): number {
+        return 1;
+    }
+
     constructor(x : ExprNode, pos : Pos.Pos, op : string, y : ExprNode) {
         this.X = x;
         this.OpPos = pos;
@@ -513,6 +593,11 @@ export class KeyValueExpr implements ExprNode {
 
     getType() : nodeType {
         return nodeType.NOT_IMPLEMENTED;
+    }
+
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
     }
 
     constructor(key : ExprNode, colon : Pos.Pos, val : ExprNode) {
@@ -542,6 +627,11 @@ export class ArrayType implements ExprNode {
         return nodeType.NOT_IMPLEMENTED;
     }
 
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
+    }
+
     constructor(lbrack : Pos.Pos, len : ExprNode | undefined, elmType : ExprNode) {
         this.LeftBrack = lbrack;
         this.Length = len;
@@ -565,6 +655,11 @@ export class StructType implements ExprNode {
 
     getType() : nodeType {
         return nodeType.NOT_IMPLEMENTED;
+    }
+
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
     }
 
     constructor(pos : Pos.Pos, fields : FieldList, incomplete : boolean) {
@@ -592,6 +687,22 @@ export class FuncType implements ExprNode {
             return this.Results.End();
         }
         return this.Params.End();
+    }
+
+    numParams() : number {
+        return this.Params.NumFields();
+    }
+
+    numResults() : number {
+        if (this.Params === undefined) {
+            return 0;
+        }
+        return this.Params.NumFields();
+    }
+
+    valuesProduced(): number {
+        // Types don't produce values
+        return 0;
     }
 
     getType() : nodeType {
@@ -623,6 +734,11 @@ export class InterfaceType implements ExprNode {
         return nodeType.NOT_IMPLEMENTED;
     }
 
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
+    }
+
     constructor(pos : Pos.Pos, methods : FieldList, incomplete : boolean) {
         this.Interface = pos;
         this.Methods = methods;
@@ -646,6 +762,11 @@ export class MapType implements ExprNode {
 
     getType() : nodeType {
         return nodeType.NOT_IMPLEMENTED;
+    }
+
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
     }
 
     constructor(pos : Pos.Pos, key: ExprNode, val : ExprNode) {
@@ -674,6 +795,11 @@ export class ChanType implements ExprNode {
         return nodeType.NOT_IMPLEMENTED;
     }
 
+    valuesProduced(): number {
+        // TO FIX
+        return 0;
+    }
+
     constructor(begin : Pos.Pos, arrowPos : Pos.Pos, dir : ChanDir, val : ExprNode) {
         this.Begin = begin;
         this.Arrow = arrowPos;
@@ -698,7 +824,7 @@ export class BadStmt implements StatementNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.ILLEGAL;
     }
 
     constructor(start : Pos.Pos, end : Pos.Pos) {
@@ -720,7 +846,7 @@ export class DeclStmt implements StatementNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.DECL;
     }
 
     constructor(decl : DeclarationNode) {
@@ -746,7 +872,7 @@ export class EmptyStmt implements StatementNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.EMPTY;
     }
 
     constructor(pos : Pos.Pos, implicit : boolean) {
@@ -793,7 +919,7 @@ export class ExprStmt implements StatementNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.EXPRSTMT;
     }
 
     constructor(expr : ExprNode) {
@@ -857,6 +983,8 @@ export class AssignStmt implements StatementNode {
     TokPos: Pos.Pos; // position of token
     Tok: Token.token; // assignment token / DEFINE
     RightHandSide: ExprNode[]; // expressions on right hand side
+    LhsExprCount!: number; // number of arguments on left hand side
+    RhsValCount!: number; // number of values produced on right hand side
 
     Pos() : Pos.Pos {
         // TO TEST: at least one element guaranteed to exist in LeftHandSide
@@ -869,7 +997,7 @@ export class AssignStmt implements StatementNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.ASSIGN;
     }
 
     constructor(lhs : ExprNode[], pos : Pos.Pos, token : string, rhs : ExprNode[]) {
@@ -894,7 +1022,7 @@ export class GoStmt implements StatementNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.GOSTMT;
     }
 
     constructor(pos : Pos.Pos, callExp : CallExpr) {
@@ -943,7 +1071,7 @@ export class ReturnStmt implements StatementNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.RETURN;
     }
 
     constructor(pos : Pos.Pos, results : ExprNode[]) {
@@ -970,6 +1098,13 @@ export class BranchStmt implements StatementNode {
     }
 
     getType() : nodeType {
+        switch(this.Tok) {
+            case Token.token.BREAK:
+                return nodeType.BREAK;
+            case Token.token.CONTINUE:
+                return nodeType.CONT;
+        }
+        // GOTO and FALLTHROUGH not implemented
         return nodeType.NOT_IMPLEMENTED;
     }
 
@@ -995,7 +1130,7 @@ export class BlockStmt implements StatementNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.BLOCK;
     }
 
     constructor(lbrace : Pos.Pos, lst : StatementNode[], rbrace: Pos.Pos) {
@@ -1261,7 +1396,7 @@ export class ValueSpec implements SpecNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.VALUESPEC;
     }
 
     constructor(names : Ident[], type : ExprNode | undefined, values : ExprNode[]) {
@@ -1343,7 +1478,15 @@ export class GenDecl implements DeclarationNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        switch (this.Tok) {
+            case Token.token.VAR:
+                return nodeType.VAR;
+            case Token.token.CONST:
+                return nodeType.CONST;
+            case Token.token.TYPE:
+                return nodeType.TYPE;
+        }
+        return nodeType.ILLEGAL;
     }
 
     constructor(start : Pos.Pos, token : string, leftPos : Pos.Pos, specs : SpecNode[], rightPos : Pos.Pos) {
@@ -1371,7 +1514,7 @@ export class FuncDecl implements DeclarationNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.FUNCD;
     }
 
     constructor(recv : FieldList | undefined, name : Ident, funcType : FuncType, body : BlockStmt) {
@@ -1402,7 +1545,7 @@ export class File implements GoNode {
     }
 
     getType() : nodeType {
-        return nodeType.NOT_IMPLEMENTED;
+        return nodeType.FILE;
     }
 
     constructor(decls : DeclarationNode[], pkgPos : Pos.Pos, name : Ident) {
