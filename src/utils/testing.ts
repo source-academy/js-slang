@@ -1,6 +1,7 @@
 import { generate } from 'astring'
+import type { MockedFunction } from 'jest-mock'
 
-import { default as createContext, defineBuiltin } from '../createContext'
+import createContext, { defineBuiltin } from '../createContext'
 import { transpileToGPU } from '../gpu/gpu'
 import { parseError, Result, runInContext } from '../index'
 import { transpileToLazy } from '../lazy/lazy'
@@ -8,7 +9,15 @@ import { mockContext } from '../mocks/context'
 import { ImportOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, Context, CustomBuiltIns, SourceError, Value, Variant } from '../types'
+import {
+  Chapter,
+  Context,
+  CustomBuiltIns,
+  SourceError,
+  Value,
+  Variant,
+  type Finished
+} from '../types'
 import { stringify } from './stringify'
 
 export interface CodeSnippetTestCase {
@@ -109,7 +118,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
       result: result.status === 'finished' ? result.value : undefined
     }
     if (options.showErrorJSON) {
-      testResult['errors'] = context.errors
+      (testResult as any)['errors'] = context.errors
     }
     return testResult
   }
@@ -143,7 +152,7 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
           break
       }
       try {
-        ;({ transpiled } = await transpile(parsed, nativeTestContext, options.importOptions))
+        ;({ transpiled } = transpile(parsed, nativeTestContext))
         // replace declaration of builtins since they're repetitive
         transpiled = transpiled.replace(/\n  const \w+ = nativeStorage\..*;/g, '')
         transpiled = transpiled.replace(/\n\s*const \w+ = .*\.operators\..*;/g, '')
@@ -168,10 +177,10 @@ async function testInContext(code: string, options: TestOptions): Promise<TestRe
     ]
     const diff = {}
     for (const property of propertiesThatShouldBeEqual) {
-      const nativeValue = stringify(nativeResult[property])
-      const interpretedValue = stringify(interpretedResult[property])
+      const nativeValue = stringify((nativeResult as any)[property])
+      const interpretedValue = stringify((interpretedResult as any)[property])
       if (nativeValue !== interpretedValue) {
-        diff[property] = `native:${nativeValue}\ninterpreted:${interpretedValue}`
+        (diff as any)[property] = `native:${nativeValue}\ninterpreted:${interpretedValue}`
       }
     }
     if (options.showTranspiledCode) {
@@ -365,4 +374,12 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
   expect(timeTaken).toBeLessThan(timeout * 5)
   expect(timeTaken).toBeGreaterThanOrEqual(timeout)
   return parseError(context.errors)
+}
+
+export function asMockedFunc<T extends (...args: any[]) => any>(func: T) {
+  return func as MockedFunction<T>
+}
+
+export function expectFinishedResult(result: Result): asserts result is Finished {
+  expect(result.status).toEqual('finished')
 }

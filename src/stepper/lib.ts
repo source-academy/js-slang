@@ -97,7 +97,7 @@ export function parse_int(str: substituterNodes, radix: substituterNodes): es.Ex
 // }
 // evaluateMath(mathFn: string, ...args: substituterNodes): substituterNodes
 export function evaluateMath(mathFn: string, ...args: substituterNodes[]): es.Expression {
-  const fn = Math[mathFn.split('_')[1]]
+  const fn = (Math as any)[mathFn.split('_')[1]]
   if (!fn) {
     throw new Error(`Math function ${mathFn} not found.`)
   } else if (args.some(arg => !isNumber(arg))) {
@@ -125,6 +125,12 @@ export function evaluateModuleFunction(
 //   // List library
 //   defineBuiltin(context, 'pair(left, right)', list.pair)
 export function pair(left: substituterNodes, right: substituterNodes): es.ArrayExpression {
+  if (left == null || right == null) {
+    throw new Error(
+      //Count the number of arguments that are not undefined
+      `Expected 2 arguments, but got ${[left, right].filter(x => x != undefined).length}`
+    )
+  }
   return ast.arrayExpression([left as es.Expression, right as es.Expression])
 }
 

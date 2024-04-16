@@ -2,7 +2,7 @@ import { mockContext } from '../../../../mocks/context'
 import { parse } from '../../../../parser/parser'
 import { Chapter } from '../../../../types'
 import hoistAndMergeImports from '../../transformers/hoistAndMergeImports'
-import { parseCodeError, sanitizeAST } from '../utils'
+import { sanitizeAST } from '../../../../utils/ast/sanitizer'
 
 describe('hoistAndMergeImports', () => {
   const assertASTsAreEqual = (actualCode: string, expectedCode: string) => {
@@ -14,7 +14,7 @@ describe('hoistAndMergeImports', () => {
 
     if (!actualProgram || !expectedProgram) {
       // console.log(actualContext.errors)
-      throw parseCodeError
+      throw new Error('Failed to parse expected code or actual code')
     }
 
     hoistAndMergeImports(actualProgram)

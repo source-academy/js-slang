@@ -32,7 +32,7 @@ const forStatementMustHaveAllParts: Rule<es.ForStatement> = {
 
   checkers: {
     ForStatement(node: es.ForStatement) {
-      const missingParts = ['init', 'test', 'update'].filter(part => node[part] === null)
+      const missingParts = ['init', 'test', 'update'].filter(part => (node as any)[part] === null)
       if (missingParts.length > 0) {
         return [new ForStatmentMustHaveAllParts(node, missingParts)]
       } else {

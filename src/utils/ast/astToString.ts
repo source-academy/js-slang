@@ -58,7 +58,7 @@ const sourceGen = Object.assign({}, astring.GENERATOR, {
           formatComments(state, statement.comments, statementIndent, lineEnd)
         }
         state.write(statementIndent)
-        this[statement.type](statement, state)
+        (this as any)[statement.type](statement, state)
         state.write(lineEnd)
       }
       state.write(indent)

@@ -11,6 +11,8 @@ import * as es from 'estree'
 import { EnvTree } from './createContext'
 import Heap from './cse-machine/heap'
 import { Control, Stash } from './cse-machine/interpreter'
+import type { ModuleFunctions } from './modules/moduleTypes'
+import { Representation } from './alt-langs/mapper'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -83,6 +85,7 @@ export enum Chapter {
   SCHEME_4 = -12,
   FULL_SCHEME = -13,
   FULL_C = -14,
+  FULL_JAVA = -15,
   LIBRARY_PARSER = 100
 }
 
@@ -128,6 +131,7 @@ export interface NativeStorage {
   surrounding scope, so we cannot set evaller to `eval` directly. subsequent assignments to evaller will
   close in the surrounding values, so no problem
    */
+  loadedModules: Record<string, ModuleFunctions>
 }
 
 export interface Context<T = any> {
@@ -272,6 +276,10 @@ export interface Finished {
   status: 'finished'
   context: Context
   value: Value
+  representation?: Representation // if the returned value needs a unique representation,
+  // (for example if the language used is not JS),
+  // the display of the result will use the representation
+  // field instead
 }
 
 export interface Suspended {
@@ -283,6 +291,7 @@ export interface Suspended {
 
 export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-non-det' } & {
   value: Value
+  representation?: Representation // never used, only kept for consistency with Finished
 }
 
 export interface SuspendedCseEval {

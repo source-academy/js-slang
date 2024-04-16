@@ -22,8 +22,9 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
-    "noUnusedLocals": true,
-    "incremental": true
+    "noUnusedLocals": false,
+    "incremental": true,
+    "skipLibCheck": true,
   },
   "exclude": [
     "src/stdlib/metacircular-interpreter",
@@ -31,6 +32,7 @@
     "node_modules",
     "dist",
     "sicp_publish",
+    "docs"
   ],
   "types": [
     "typePatches",

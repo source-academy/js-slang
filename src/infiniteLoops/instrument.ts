@@ -5,12 +5,14 @@ import { transformImportDeclarations } from '../transpiler/transpiler'
 import type { Node } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { recursive, simple, WalkerCallback } from '../utils/walkers'
+import { getIdsFromDeclaration } from '../utils/ast/helpers'
 // transforms AST of program
 
 const globalIds = {
   builtinsId: 'builtins',
   functionsId: '__InfLoopFns',
-  stateId: '__InfLoopState'
+  stateId: '__InfLoopState',
+  modulesId: '__modules'
 }
 
 enum FunctionNames {
@@ -40,7 +42,7 @@ enum FunctionNames {
  */
 function unshadowVariables(program: Node, predefined = {}) {
   for (const name of Object.values(globalIds)) {
-    predefined[name] = name
+    (predefined as any)[name] = name
   }
   const seenIds = new Set()
   const env = [predefined]
@@ -48,8 +50,8 @@ function unshadowVariables(program: Node, predefined = {}) {
     let count = 0
     while (seenIds.has(`${name}_${count}`)) count++
     const newName = `${name}_${count}`
-    seenIds.add(newName)
-    env[0][name] = newName
+    seenIds.add(newName);
+    (env[0] as any)[name] = newName
     return newName
   }
   const unshadowFunctionInner = (
@@ -126,8 +128,8 @@ function unshadowVariables(program: Node, predefined = {}) {
     ArrowFunctionExpression: unshadowFunctionInner,
     FunctionExpression: unshadowFunctionInner,
     Identifier(node: es.Identifier, _s: undefined, _callback: WalkerCallback<undefined>) {
-      if (env[0][node.name]) {
-        node.name = env[0][node.name]
+      if ((env[0] as any)[node.name]) {
+        node.name = (env[0] as any)[node.name]
       } else {
         create.mutateToMemberExpression(
           node,
@@ -575,34 +577,20 @@ function trackLocations(program: es.Program) {
   })
 }
 
-async function handleImports(programs: es.Program[]): Promise<[string, string[]]> {
-  const transformed = await Promise.all(
-    programs.map(async program => {
-      const [prefixToAdd, importsToAdd, otherNodes] = await transformImportDeclarations(
-        program,
-        new Set<string>(),
-        false,
-        false
-      )
-      program.body = (importsToAdd as es.Program['body']).concat(otherNodes)
-      const importedNames = importsToAdd.flatMap(node =>
-        node.declarations.map(
-          decl => ((decl.init as es.MemberExpression).object as es.Identifier).name
-        )
-      )
-      return [prefixToAdd, importedNames] as [string, string[]]
+function handleImports(programs: es.Program[]): string[] {
+  const imports = programs.flatMap(program => {
+    const [importsToAdd, otherNodes] = transformImportDeclarations(
+      program,
+      create.identifier(globalIds.modulesId)
+    )
+    program.body = [...importsToAdd, ...otherNodes]
+    return importsToAdd.flatMap(decl => {
+      const ids = getIdsFromDeclaration(decl)
+      return ids.map(id => id.name)
     })
-  )
+  })
 
-  const [prefixes, imports] = transformed.reduce(
-    ([prefixes, moduleNames], [prefix, importedNames]) => [
-      [...prefixes, prefix],
-      [...moduleNames, ...importedNames]
-    ],
-    [[], []] as [string[], string[]]
-  )
-
-  return [prefixes.join('\n'), [...new Set<string>(imports)]]
+  return [...new Set<string>(imports)]
 }
 
 /**
@@ -613,19 +601,20 @@ async function handleImports(programs: es.Program[]): Promise<[string, string[]]
  * @param builtins Names of builtin functions.
  * @returns code with instrumentations.
  */
-async function instrument(
+function instrument(
   previous: es.Program[],
   program: es.Program,
   builtins: Iterable<string>
-): Promise<string> {
+): string {
   const { builtinsId, functionsId, stateId } = globalIds
-  const predefined = {}
+  const predefined = {} as any
   predefined[builtinsId] = builtinsId
   predefined[functionsId] = functionsId
   predefined[stateId] = stateId
   const innerProgram = { ...program }
 
-  const [prefix, moduleNames] = await handleImports([program].concat(previous))
+  const moduleNames = handleImports([program].concat(previous))
+
   for (const name of moduleNames) {
     predefined[name] = name
   }
@@ -646,8 +635,8 @@ async function instrument(
   trackLocations(innerProgram)
   addStateToIsNull(program)
   wrapCallArguments(program)
-  const code = generate(program)
-  return prefix + code
+
+  return generate(program)
 }
 
 export {

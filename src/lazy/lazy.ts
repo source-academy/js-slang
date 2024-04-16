@@ -46,10 +46,10 @@ function insertDelayAndForce(program: es.Program) {
       | es.WhileStatement
   ) {
     const test = node.type === 'LogicalExpression' ? 'left' : 'test'
-    if (forcingNodes.has(node[test].type)) {
+    if (forcingNodes.has((node as any)[test].type)) {
       return
     }
-    node[test] = create.callExpression(create.identifier('forceIt'), [node[test]], node.loc)
+    (node as any)[test] = create.callExpression(create.identifier('forceIt'), [(node as any)[test]], node.loc)
   }
 
   simple(program, {

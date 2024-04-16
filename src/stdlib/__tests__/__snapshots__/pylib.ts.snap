@@ -1,0 +1,352 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`adding a string and an integer is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"a\\" + 1",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "a1",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`adding an integer and a float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1.0 + 2",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`adding two floats is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1.0 + 2.0",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 3,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`adding two integers is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1 + 2",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 3n,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`cannot divide non-number values: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"a\\" / 2",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Error: Expected number on left hand side of operation, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`cannot floor non-number values: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"a\\" // 2",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Error: Expected number on left hand side of operation, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`cannot mod non-number values: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"a\\" % 2",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Error: Expected number on left hand side of operation, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`cannot multiply non-number values: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "True * 2",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Error: Expected number on left hand side of operation, got boolean.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`cannot power non-number values: expectParsedError 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"a\\" ** 2",
+  "displayResult": Array [],
+  "numErrors": 1,
+  "parsedErrors": "Line 1: Error: Expected number on left hand side of operation, got string.",
+  "result": undefined,
+  "resultStatus": "error",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`dividing float and float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1.0 / 2.0",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0.5,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`dividing integer and float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "2 / 1.0",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`dividing integer and integer is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1 / 2",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0.5,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`flooring float and float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1.0 // 2.0",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0n,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`flooring integer and float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "2 // 1.0",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2n,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`flooring integer and integer is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "2 // 1",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2n,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`minusing an integer from a float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1.0 - 2",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": -1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`minusing two floats is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1.0 - 2.0",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": -1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`minusing two integers is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1 - 2",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": -1n,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`modding float and float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1.0 % 2.0",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`modding integer and float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "2 % 1.0",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`modding integer and integer is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "2 % 1",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 0n,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`multiplying float and float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1.0 * 2.0",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`multiplying integer and float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1.0 * 2",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`multiplying integer and integer is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1 * 2",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2n,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`powering float and float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "1.0 ** 2.0",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 1,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`powering integer and float is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "2 ** 1.0",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`powering integer and integer is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "2 ** 1",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 2n,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;

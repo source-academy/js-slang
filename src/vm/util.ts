@@ -87,11 +87,6 @@ const OPCODES_STR = {
   [OpCodes.POPENV]: 'POPENV',
   [OpCodes.NEWCP]: 'NEWCP ',
   [OpCodes.NEWCV]: 'NEWCV ',
-  [OpCodes.NEGG]: 'NEGG  ',
-  [OpCodes.NEGF]: 'NEGF  ',
-  [OpCodes.NEQG]: 'NEQG  ',
-  [OpCodes.NEQF]: 'NEQF  ',
-  [OpCodes.NEQB]: 'NEQB  ',
 
   // custom opcodes
   [OpCodes.ARRAY_LEN]: 'ARR_LEN',
@@ -156,7 +151,7 @@ const OPCODES_STR = {
 
 // get name of opcode for debugging
 export function getName(op: number) {
-  return OPCODES_STR[op] // need to add guard in case op does not exist
+  return (OPCODES_STR as any)[op] // need to add guard in case op does not exist
 }
 
 // pretty-print the program

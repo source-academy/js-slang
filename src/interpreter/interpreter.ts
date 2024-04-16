@@ -8,8 +8,6 @@ import Heap from '../cse-machine/heap'
 import { uniqueId } from '../cse-machine/utils'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import { initModuleContext, loadModuleBundle } from '../modules/loader/moduleLoader'
-import { ModuleFunctions } from '../modules/moduleTypes'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import {
   type Context,
@@ -639,7 +637,7 @@ export const evaluators: { [nodeType: string]: Evaluator<Node> } = {
   },
 
   ObjectExpression: function*(node: es.ObjectExpression, context: Context) {
-    const obj = {}
+    const obj : any = {}
     for (const propUntyped of node.properties) {
       // node.properties: es.Property | es.SpreadExpression, but
       // our Acorn is set to ES6 which cannot have a es.SpreadExpression
@@ -720,7 +718,7 @@ function getNonEmptyEnv(environment: Environment): Environment {
   }
 }
 
-export function* evaluateProgram(program: es.Program, context: Context, loadTabs: boolean) {
+export function* evaluateProgram(program: es.Program, context: Context) {
   yield* visit(context, program)
 
   context.numberOfOuterEnvironments += 1
@@ -728,7 +726,6 @@ export function* evaluateProgram(program: es.Program, context: Context, loadTabs
   pushEnvironment(context, environment)
 
   const otherNodes: es.Statement[] = []
-  const moduleFunctions: Record<string, ModuleFunctions> = {}
 
   try {
     for (const node of program.body) {
@@ -740,13 +737,7 @@ export function* evaluateProgram(program: es.Program, context: Context, loadTabs
       yield* visit(context, node)
 
       const moduleName = getModuleDeclarationSource(node)
-
-      if (!(moduleName in moduleFunctions)) {
-        initModuleContext(moduleName, context, loadTabs)
-        moduleFunctions[moduleName] = loadModuleBundle(moduleName, context, node)
-      }
-
-      const functions = moduleFunctions[moduleName]
+      const functions = context.nativeStorage.loadedModules[moduleName]
 
       for (const spec of node.specifiers) {
         declareIdentifier(context, spec.local.name, node)

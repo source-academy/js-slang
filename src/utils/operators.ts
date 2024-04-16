@@ -1,4 +1,4 @@
-import { BinaryOperator, UnaryOperator } from 'estree'
+import type { BinaryOperator, UnaryOperator } from 'estree'
 
 import { LazyBuiltIn } from '../createContext'
 import {
@@ -12,9 +12,7 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
-import { RequireProvider } from '../modules/loader/requireProvider'
-import { ModuleBundle, ModuleFunctions } from '../modules/moduleTypes'
-import { Chapter, NativeStorage, Thunk } from '../types'
+import { Chapter, type NativeStorage, Thunk } from '../types'
 import { callExpression, locationDummyNode } from './ast/astCreator'
 import * as create from './ast/astCreator'
 import { makeWrapper } from './makeWrapper'
@@ -329,27 +327,10 @@ export const wrap = (
   const wrapped = (...args: any[]) => callIteratively(f, nativeStorage, ...args)
   makeWrapper(f, wrapped)
   wrapped.transformedFunction = f
-  wrapped[Symbol.toStringTag] = () => stringified
+  (wrapped as any)[Symbol.toStringTag] = () => stringified
   wrapped.toString = () => stringified
   return wrapped
 }
-
-export const wrapSourceModule = (
-  moduleName: string,
-  moduleFunc: ModuleBundle,
-  requireProvider: RequireProvider
-) =>
-  Object.entries(moduleFunc(requireProvider)).reduce((res, [name, value]) => {
-    if (typeof value === 'function') {
-      const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`
-      value[Symbol.toStringTag] = () => repr
-      value.toString = () => repr
-    }
-    return {
-      ...res,
-      [name]: value
-    }
-  }, {} as ModuleFunctions)
 
 export const setProp = (
   obj: any,

@@ -237,7 +237,7 @@ class GPUTransformer {
           return
         }
 
-        varDefinitions[node.name] = node
+        (varDefinitions as any)[node.name] = node
       }
     })
     this.outerVariables = varDefinitions

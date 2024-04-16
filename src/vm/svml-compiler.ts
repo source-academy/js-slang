@@ -936,7 +936,7 @@ function compile(
   insertFlag: boolean,
   isTailCallPosition: boolean = false
 ) {
-  const compiler = compilers[expr.type]
+  const compiler = (compilers as any)[expr.type]
   if (!compiler) {
     throw Error('Unsupported operation')
   }
