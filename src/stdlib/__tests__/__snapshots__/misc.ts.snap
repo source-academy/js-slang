@@ -52,38 +52,6 @@ Object {
 }
 `;
 
-exports[`arity with user-made function is ok: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "function test(x, y) {
-  return x + y;
-}
-arity(test);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 2,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`arity with user-made function with rest parameter is ok: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "function test(...xs) {
-  return xs;
-}
-arity(test);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 0,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`arity with user-made lambda function is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],

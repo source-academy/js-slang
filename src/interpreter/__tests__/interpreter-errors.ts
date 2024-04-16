@@ -420,7 +420,10 @@ test('Error when calling non function value array', () => {
   return expectParsedError(callingNonFunctionValueArray, {
     chapter: Chapter.SOURCE_3,
     native: true
-  }).toMatchInlineSnapshot(`"Line 1: Calling non-function value [1]."`)
+  }).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 1: Calling non-function value [1].\\""
+          `)
 })
 
 test('Error when calling non function value array - verbose', () => {
@@ -494,7 +497,10 @@ test('Error when calling function with too few arguments', () => {
     f();
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 0."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Expected 1 arguments, but got 0.\\"
+            interpreted:\\"Line 4: Expected 1 arguments, but got 0.\\""
+          `)
 })
 
 test('Error when calling function with too few arguments - verbose', () => {
@@ -520,7 +526,10 @@ test('Error when calling function with too many arguments', () => {
     f(1, 2);
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"Line 4: Expected 1 arguments, but got 2."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 4: Expected 0 arguments, but got 2.\\"
+            interpreted:\\"Line 4: Expected 1 arguments, but got 2.\\""
+          `)
 })
 
 test('Error when calling function with too many arguments - verbose', () => {
@@ -544,7 +553,10 @@ test('Error when calling arrow function with too few arguments', () => {
     f();
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 0."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Expected 1 arguments, but got 0.\\"
+            interpreted:\\"Line 2: Expected 1 arguments, but got 0.\\""
+          `)
 })
 
 test('Error when calling arrow function with too few arguments - verbose', () => {
@@ -566,7 +578,10 @@ test('Error when calling arrow function with too many arguments', () => {
     f(1, 2);
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 2: Expected 0 arguments, but got 2.\\"
+            interpreted:\\"Line 2: Expected 1 arguments, but got 2.\\""
+          `)
 })
 
 test('Error when calling arrow function with too many arguments - verbose', () => {
@@ -588,7 +603,10 @@ test('Error when calling function from member expression with too many arguments
     f[0](1, 2);
   `,
     { chapter: Chapter.SOURCE_3, native: true }
-  ).toMatchInlineSnapshot(`"Line 2: Expected 1 arguments, but got 2."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 2: Expected 1 arguments, but got 2.\\""
+          `)
 })
 
 test('Error when calling function from member expression with too many arguments - verbose', () => {
@@ -629,7 +647,10 @@ test('Error when calling arrow function in tail call with too many arguments', (
     f(1);
   `,
     { native: true }
-  ).toMatchInlineSnapshot(`"Line 2: Expected 0 arguments, but got 1."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 3: Expected 0 arguments, but got 1.\\"
+            interpreted:\\"Line 2: Expected 0 arguments, but got 1.\\""
+          `)
 })
 
 test('Error when calling builtin function in with too many arguments', () => {
@@ -733,7 +754,10 @@ test('Error with too many arguments passed to math_sin', () => {
     math_sin(7,8);
   `,
     { chapter: Chapter.SOURCE_3, native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Expected 1 arguments, but got 2."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 1: Expected 1 arguments, but got 2.\\""
+          `)
 })
 
 test('Error with too few arguments passed to rest parameters', () => {
@@ -743,7 +767,10 @@ test('Error with too few arguments passed to rest parameters', () => {
     rest(1);
   `,
     { chapter: Chapter.SOURCE_3, native: true }
-  ).toMatchInlineSnapshot(`"Line 2: Expected 2 or more arguments, but got 1."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 2: Expected 2 or more arguments, but got 1.\\""
+          `)
 })
 
 test('Error when redeclaring constant', () => {
@@ -982,7 +1009,10 @@ test('Error when accessing inherited property of object', () => {
     ({}).valueOf;
   `,
     { chapter: Chapter.LIBRARY_PARSER, native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Cannot read inherited property valueOf of {}."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 1: Cannot read inherited property valueOf of {}.\\""
+          `)
 })
 
 // NOTE: Obsoleted due to strict types on member access
@@ -1020,7 +1050,10 @@ test('Type error when accessing property of null', () => {
     null.prop;
     `,
     { chapter: Chapter.LIBRARY_PARSER, native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got null."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 1: Expected object or array, got null.\\""
+          `)
 })
 
 test('Type error when accessing property of string', () => {
@@ -1029,7 +1062,10 @@ test('Type error when accessing property of string', () => {
     'hi'.length;
     `,
     { chapter: Chapter.LIBRARY_PARSER, native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 1: Expected object or array, got string.\\""
+          `)
 })
 
 test('Type error when accessing property of function', () => {
@@ -1041,7 +1077,10 @@ test('Type error when accessing property of function', () => {
     f.prototype;
     `,
     { chapter: Chapter.LIBRARY_PARSER, native: true }
-  ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 4: Expected object or array, got function.\\""
+          `)
 })
 
 test('Type error when assigning property of string', () => {
@@ -1050,7 +1089,10 @@ test('Type error when assigning property of string', () => {
     'hi'.prop = 5;
     `,
     { chapter: Chapter.LIBRARY_PARSER, native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Expected object or array, got string."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 1: Expected object or array, got string.\\""
+          `)
 })
 
 test('Type error when assigning property of function', () => {
@@ -1062,7 +1104,10 @@ test('Type error when assigning property of function', () => {
     f.prop = 5;
     `,
     { chapter: Chapter.LIBRARY_PARSER, native: true }
-  ).toMatchInlineSnapshot(`"Line 4: Expected object or array, got function."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 4: Expected object or array, got function.\\""
+          `)
 })
 
 test('Type error with non boolean in if statement, error line at if statement, not at 1', () => {
@@ -1106,9 +1151,10 @@ test('Cascading js errors work properly 1', () => {
     eval_stream(make_alternating_stream(enum_stream(1, 9)), 10);
     `,
     { chapter: Chapter.SOURCE_3, native: true }
-  ).toMatchInlineSnapshot(
-    `"Line 8: Error: head(xs) expects a pair as argument xs, but encountered null"`
-  )
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 8: Error: head(xs) expects a pair as argument xs, but encountered null\\""
+          `)
 })
 
 test('Cascading js errors work properly', () => {
@@ -1121,7 +1167,8 @@ test('Cascading js errors work properly', () => {
     h(null);
     `,
     { chapter: Chapter.SOURCE_2, native: true }
-  ).toMatchInlineSnapshot(
-    `"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null"`
-  )
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null\\""
+          `)
 })

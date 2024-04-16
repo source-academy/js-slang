@@ -259,8 +259,8 @@ function transformSomeExpressionsToCheckIfBoolean(program: es.Program, globalIds
   ) {
     const { line, column } = (node.loc ?? UNKNOWN_LOCATION).start
     const source = node.loc?.source ?? null
-    const nnode : any = node
-    const test : string = node.type === 'LogicalExpression' ? 'left' : 'test'
+    const nnode: any = node
+    const test: string = node.type === 'LogicalExpression' ? 'left' : 'test'
     nnode[test] = create.callExpression(globalIds.boolOrErr, [
       nnode[test],
       create.literal(line),

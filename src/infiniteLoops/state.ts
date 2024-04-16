@@ -136,7 +136,7 @@ export class State {
     } else {
       id = nonDetTransitionId
     }
-    const transitions : any = this.mixedStack[this.stackPointer].transitions
+    const transitions: any = this.mixedStack[this.stackPointer].transitions
     for (let i = 0; i < transitions.length; i++) {
       const transition = transitions[i]
       if (transition[0] === name) {

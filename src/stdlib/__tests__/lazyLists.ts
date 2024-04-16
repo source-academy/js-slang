@@ -202,7 +202,10 @@ test('bad number error build_list', () => {
     build_list(x => x, '1');
     `,
     { chapter: Chapter.SOURCE_2, native: true, variant: Variant.LAZY }
-  ).toMatchInlineSnapshot(`"Line 45: Expected number on left hand side of operation, got string."`)
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 17: Expected string or number on left hand side of operation, got function.\\"
+            interpreted:\\"Line 45: Expected number on left hand side of operation, got string.\\""
+          `)
 })
 
 test('bad number error enum_list', () => {
@@ -211,9 +214,10 @@ test('bad number error enum_list', () => {
     enum_list('1', '5');
     `,
     { chapter: Chapter.SOURCE_2, native: true, variant: Variant.LAZY }
-  ).toMatchInlineSnapshot(
-    `"Line 139: Expected string on right hand side of operation, got number."`
-  )
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 17: Expected string or number on left hand side of operation, got function.\\"
+            interpreted:\\"Line 139: Expected string on right hand side of operation, got number.\\""
+          `)
 })
 
 test('bad number error enum_list', () => {
@@ -222,9 +226,10 @@ test('bad number error enum_list', () => {
     enum_list('1', 5);
     `,
     { chapter: Chapter.SOURCE_2, native: true, variant: Variant.LAZY }
-  ).toMatchInlineSnapshot(
-    `"Line 139: Expected string on right hand side of operation, got number."`
-  )
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 17: Expected string or number on left hand side of operation, got function.\\"
+            interpreted:\\"Line 139: Expected string on right hand side of operation, got number.\\""
+          `)
 })
 
 test('bad number error enum_list', () => {
@@ -233,9 +238,10 @@ test('bad number error enum_list', () => {
     enum_list(1, '5');
     `,
     { chapter: Chapter.SOURCE_2, native: true, variant: Variant.LAZY }
-  ).toMatchInlineSnapshot(
-    `"Line 140: Expected number on right hand side of operation, got string."`
-  )
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 17: Expected string or number on left hand side of operation, got function.\\"
+            interpreted:\\"Line 140: Expected number on right hand side of operation, got string.\\""
+          `)
 })
 
 test('bad index error list_ref', () => {
@@ -244,9 +250,10 @@ test('bad index error list_ref', () => {
     list_ref(list(1, 2, 3), 3);
     `,
     { chapter: Chapter.SOURCE_2, native: true, variant: Variant.LAZY }
-  ).toMatchInlineSnapshot(
-    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
-  )
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 17: Expected string or number on left hand side of operation, got function.\\"
+            interpreted:\\"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null\\""
+          `)
 })
 
 test('bad index error list_ref', () => {
@@ -255,9 +262,10 @@ test('bad index error list_ref', () => {
     list_ref(list(1, 2, 3), -1);
     `,
     { chapter: Chapter.SOURCE_2, native: true, variant: Variant.LAZY }
-  ).toMatchInlineSnapshot(
-    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
-  )
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 17: Expected string or number on left hand side of operation, got function.\\"
+            interpreted:\\"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null\\""
+          `)
 })
 
 test('bad index error list_ref', () => {
@@ -266,9 +274,10 @@ test('bad index error list_ref', () => {
     list_ref(list(1, 2, 3), 1.5);
     `,
     { chapter: Chapter.SOURCE_2, native: true, variant: Variant.LAZY }
-  ).toMatchInlineSnapshot(
-    `"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null"`
-  )
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 17: Expected string or number on left hand side of operation, got function.\\"
+            interpreted:\\"Line 148: Error: tail(xs) expects a pair as argument xs, but encountered null\\""
+          `)
 })
 
 test('bad index error list_ref', () => {
@@ -277,9 +286,10 @@ test('bad index error list_ref', () => {
     list_ref(list(1, 2, 3), '1');
     `,
     { chapter: Chapter.SOURCE_2, native: true, variant: Variant.LAZY }
-  ).toMatchInlineSnapshot(
-    `"Line 149: Expected string on right hand side of operation, got number."`
-  )
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 17: Expected string or number on left hand side of operation, got function.\\"
+            interpreted:\\"Line 149: Expected string on right hand side of operation, got number.\\""
+          `)
 })
 
 test('arguments are not evaluated for pair', () => {

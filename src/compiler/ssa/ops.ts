@@ -1,7 +1,7 @@
 // Operations in SSA
 
-type Op = number;
+type Op = number
 
 class OpInfo {
-    name: string;
+  name: string
 }

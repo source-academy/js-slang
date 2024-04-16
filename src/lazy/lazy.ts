@@ -49,7 +49,11 @@ function insertDelayAndForce(program: es.Program) {
     if (forcingNodes.has((node as any)[test].type)) {
       return
     }
-    (node as any)[test] = create.callExpression(create.identifier('forceIt'), [(node as any)[test]], node.loc)
+    ;(node as any)[test] = create.callExpression(
+      create.identifier('forceIt'),
+      [(node as any)[test]],
+      node.loc
+    )
   }
 
   simple(program, {

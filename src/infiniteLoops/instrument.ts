@@ -42,7 +42,7 @@ enum FunctionNames {
  */
 function unshadowVariables(program: Node, predefined = {}) {
   for (const name of Object.values(globalIds)) {
-    (predefined as any)[name] = name
+    ;(predefined as any)[name] = name
   }
   const seenIds = new Set()
   const env = [predefined]
@@ -50,8 +50,8 @@ function unshadowVariables(program: Node, predefined = {}) {
     let count = 0
     while (seenIds.has(`${name}_${count}`)) count++
     const newName = `${name}_${count}`
-    seenIds.add(newName);
-    (env[0] as any)[name] = newName
+    seenIds.add(newName)
+    ;(env[0] as any)[name] = newName
     return newName
   }
   const unshadowFunctionInner = (

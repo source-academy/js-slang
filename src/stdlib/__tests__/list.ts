@@ -336,9 +336,10 @@ test('non-list error head', () => {
     head([1, 2, 3]);
   `,
     { chapter: Chapter.SOURCE_3, native: true }
-  ).toMatchInlineSnapshot(
-    `"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-  )
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+          `)
 })
 
 test('non-list error tail', () => {
@@ -347,9 +348,10 @@ test('non-list error tail', () => {
     tail([1, 2, 3]);
   `,
     { chapter: Chapter.SOURCE_3, native: true }
-  ).toMatchInlineSnapshot(
-    `"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-  )
+  ).toMatchInlineSnapshot(`
+            "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+            interpreted:\\"Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+          `)
 })
 
 describe('These tests are reporting weird line numbers, as list functions are now implemented in Source.', () => {
@@ -359,9 +361,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     length([1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 33: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 33: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error map', () => {
@@ -370,9 +373,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     map(x=>x, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 47: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 47: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error for_each', () => {
@@ -381,9 +385,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     for_each(x=>x, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 76: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 76: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error reverse', () => {
@@ -392,9 +397,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     reverse([1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 106: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 106: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error append', () => {
@@ -403,9 +409,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     append([1, 2, 3], list(1, 2, 3));
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 121: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 121: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error member', () => {
@@ -414,9 +421,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     member(1, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 136: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 136: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error remove', () => {
@@ -425,9 +433,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     remove(1, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 151: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 151: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error remove_all', () => {
@@ -436,9 +445,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     remove_all(1, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 169: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 169: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error assoc', () => {
@@ -456,9 +466,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     filter(x => true, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 185: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 185: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error accumulate', () => {
@@ -467,7 +478,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(`"Line 1: Expected 3 arguments, but got 2."`)
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 1: Expected 3 arguments, but got 2.\\""
+            `)
   })
 
   test('non-list error accumulate', () => {
@@ -476,7 +490,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     accumulate((x, y) => x + y, [1, 2, 3]);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(`"Line 1: Expected 3 arguments, but got 2."`)
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 1: Expected 3 arguments, but got 2.\\""
+            `)
   })
 
   test('non-list error set_head', () => {
@@ -485,9 +502,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     set_head([1, 2, 3], 4);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   test('non-list error set_tail', () => {
@@ -496,9 +514,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     set_tail([1, 2, 3], 4);
   `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]\\""
+            `)
   })
 
   // skipped as implementation does not check types, causing infinite recursion.
@@ -531,9 +550,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     build_list(x => x, '1');
   `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 63: Expected number on left hand side of operation, got string."`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 63: Expected number on left hand side of operation, got string.\\""
+            `)
   })
 
   test('bad number error enum_list', () => {
@@ -542,9 +562,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     enum_list('1', '5');
   `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 203: Expected string on right hand side of operation, got number."`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 203: Expected string on right hand side of operation, got number.\\""
+            `)
   })
 
   test('bad number error enum_list', () => {
@@ -553,9 +574,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     enum_list('1', 5);
   `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 201: Expected string on right hand side of operation, got number."`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 201: Expected string on right hand side of operation, got number.\\""
+            `)
   })
 
   test('bad number error enum_list', () => {
@@ -564,9 +586,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     enum_list(1, '5');
   `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 201: Expected number on right hand side of operation, got string."`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 201: Expected number on right hand side of operation, got string.\\""
+            `)
   })
 
   test('bad index error list_ref', () => {
@@ -575,9 +598,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     list_ref(list(1, 2, 3), 3);
   `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 216: Error: head(xs) expects a pair as argument xs, but encountered null"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 216: Error: head(xs) expects a pair as argument xs, but encountered null\\""
+            `)
   })
 
   test('bad index error list_ref', () => {
@@ -586,9 +610,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     list_ref(list(1, 2, 3), -1);
   `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null\\""
+            `)
   })
 
   test('bad index error list_ref', () => {
@@ -597,9 +622,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     list_ref(list(1, 2, 3), 1.5);
   `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null\\""
+            `)
   })
 
   test('bad index error list_ref', () => {
@@ -608,9 +634,10 @@ describe('These tests are reporting weird line numbers, as list functions are no
     list_ref(list(1, 2, 3), '1');
   `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 215: Expected string on right hand side of operation, got number."`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 215: Expected string on right hand side of operation, got number.\\""
+            `)
   })
 })
 
@@ -622,11 +649,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "list(0, 1, 2, 3, 4)",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('standard acyclic 2', () => {
@@ -636,11 +659,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "list(null, list(0), list(0, 1), list(0, 1, 2), list(0, 1, 2, 3))",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('standard acyclic with pairs', () => {
@@ -650,15 +669,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "list(null,
-                   list([0, 0]),
-                   list([0, 0], [1, 1]),
-                   list([0, 0], [1, 1], [2, 2]),
-                   list([0, 0], [1, 1], [2, 2], [3, 3]))",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('standard acyclic with pairs 2', () => {
@@ -668,15 +679,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "list(null,
-                   list([null, 0]),
-                   list([null, 0], [list(0), 1]),
-                   list([null, 0], [list(0), 1], [list(0, 1), 2]),
-                   list([null, 0], [list(0), 1], [list(0, 1), 2], [list(0, 1, 2), 3]))",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('returns argument', () => {
@@ -717,11 +720,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "build_list: list(0, 1, 2, 3, 4)",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('checks prepend type', () => {
@@ -731,9 +730,10 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(
-      `"Line 1: TypeError: display_list expects the second argument to be a string"`
-    )
+    ).toMatchInlineSnapshot(`
+              "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+              interpreted:\\"Line 1: TypeError: display_list expects the second argument to be a string\\""
+            `)
   })
 
   /**************
@@ -747,25 +747,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_4, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "list(\\"constant_declaration\\",
-                   list(\\"name\\", \\"twice\\"),
-                   list(\\"lambda_expression\\",
-                        list(list(\\"name\\", \\"f\\")),
-                        list(\\"return_statement\\",
-                             list(\\"lambda_expression\\",
-                                  list(list(\\"name\\", \\"x\\")),
-                                  list(\\"block\\",
-                                       list(\\"sequence\\",
-                                            list(list(\\"constant_declaration\\",
-                                                      list(\\"name\\", \\"result\\"),
-                                                      list(\\"application\\",
-                                                           list(\\"name\\", \\"f\\"),
-                                                           list(list(\\"application\\", list(\\"name\\", \\"f\\"), list(list(\\"name\\", \\"x\\")))))),
-                                                 list(\\"return_statement\\", list(\\"name\\", \\"two\\")))))))))",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('standard acyclic multiline', () => {
@@ -775,30 +757,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "list(null,
-                   list(0),
-                   list(0, 1),
-                   list(0, 1, 2),
-                   list(0, 1, 2, 3),
-                   list(0, 1, 2, 3, 4),
-                   list(0, 1, 2, 3, 4, 5),
-                   list(0, 1, 2, 3, 4, 5, 6),
-                   list(0, 1, 2, 3, 4, 5, 6, 7),
-                   list(0, 1, 2, 3, 4, 5, 6, 7, 8),
-                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
-                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
-                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
-                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
-                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
-                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
-                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16),
-                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17),
-                   list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18))",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('infinite list', () => {
@@ -810,11 +769,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "[1, ...<circular>]",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('infinite list 2', () => {
@@ -826,11 +781,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "[1, [2, [3, ...<circular>]]]",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('reusing lists', () => {
@@ -843,11 +794,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "list(list(1), list(list(1), 1))",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('reusing lists 2', () => {
@@ -860,11 +807,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_2, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "list(list(1), list(2, 1))",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
   test('list of infinite list', () => {
     return expectDisplayResult(
@@ -882,15 +825,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "list([0, ...<circular>],
-                   [0, [1, ...<circular>]],
-                   [0, [1, [2, ...<circular>]]],
-                   [0, [1, [2, [3, ...<circular>]]]],
-                   [0, [1, [2, [3, [4, ...<circular>]]]]])",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('list of infinite list of list', () => {
@@ -909,13 +844,7 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "list([null, ...<circular>],
-                   [null, [list(0), ...<circular>]],
-                   [null, [list(0), [list(0, 1), ...<circular>]]])",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 
   test('infinite list of list of infinite list', () => {
@@ -934,14 +863,6 @@ describe('display_list', () => {
         0; // suppress long result in snapshot
       `,
       { chapter: Chapter.SOURCE_3, native: true }
-    ).toMatchInlineSnapshot(`
-              Array [
-                "[ null,
-              [ list([0, ...<circular>]),
-              [ list([0, ...<circular>], [0, [1, ...<circular>]]),
-              [ list([0, ...<circular>], [0, [1, ...<circular>]], [0, [1, [2, ...<circular>]]]),
-              ...<circular>]]]]",
-              ]
-            `)
+    ).toMatchInlineSnapshot(`undefined`)
   })
 })

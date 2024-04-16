@@ -1,1 +1,0 @@
-const radius = 10;

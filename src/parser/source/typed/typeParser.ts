@@ -1006,7 +1006,10 @@ const tsPlugin = (BaseParser: any) => {
     }
 
     _parseMaybeTSExpression(node: any) {
-      if (this.type === tokTypes.prefix && (tsExprMarkup as any)[this.value] === tsExprMarkup['!']) {
+      if (
+        this.type === tokTypes.prefix &&
+        (tsExprMarkup as any)[this.value] === tsExprMarkup['!']
+      ) {
         node = this.parseTSNonNullExpression(node)
       }
       if (this.type === tokTypes.name && (tsExprMarkup as any)[this.value] === tsExprMarkup.as) {
@@ -1029,7 +1032,10 @@ const tsPlugin = (BaseParser: any) => {
 
     parseTSNonNullExpression(expression: any) {
       let node = expression
-      while (this.type === tokTypes.prefix && (tsExprMarkup as any)[this.value] === tsExprMarkup['!']) {
+      while (
+        this.type === tokTypes.prefix &&
+        (tsExprMarkup as any)[this.value] === tsExprMarkup['!']
+      ) {
         const _node = this.startNodeAtNode(node)
         _node.expression = node
         this.next()

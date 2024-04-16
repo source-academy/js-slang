@@ -72,13 +72,13 @@ function evaluateFunctionObject(node: substituterNodes, context: Context) {
   const builtinFunctions = context.runtime.environments[0].head
   // add identifiers used in the node to the global environment
   function lookUpIdentifiers(node: substituterNodes, visited: Set<substituterNodes>) {
-    const nnode : any = node;
+    const nnode: any = node
     if (visited.has(node)) {
       return
     }
     visited.add(node)
     if (node.type === 'Identifier' && builtinFunctions[node.name]) {
-      (global as any)[node.name] = builtinFunctions[node.name]
+      ;(global as any)[node.name] = builtinFunctions[node.name]
     }
     for (const key in nnode) {
       if (nnode[key] && typeof nnode[key] === 'object') {

@@ -210,7 +210,7 @@ function findMain(
 
   const freeNames: any[] = []
 
-  const finders : any = {
+  const finders: any = {
     Identifier(target: es.Identifier): void {
       seenBefore.set(target, target)
       let bound = false
@@ -418,7 +418,7 @@ function substituteMain(
    *    and push the appropriate access string into the path
    * 3. Return the dummyReplacement
    */
-  const substituters : any = {
+  const substituters: any = {
     // if name to be replaced is found,
     // push endMarker into path
     Identifier(
@@ -1325,7 +1325,7 @@ function reduceMain(
 
   // converts body of code to string
   function bodify(target: substituterNodes): string {
-    const bodifiers : any = {
+    const bodifiers: any = {
       Literal: (target: es.Literal): string =>
         target.raw !== undefined ? target.raw : String(target.value),
 
@@ -1409,7 +1409,7 @@ function reduceMain(
 
   // generates string to explain current step
   function explain(target: substituterNodes): string {
-    const explainers : any = {
+    const explainers: any = {
       BinaryExpression: (target: es.BinaryExpression): string =>
         'Binary expression ' + bodify(target) + ' evaluated',
 
@@ -1496,7 +1496,7 @@ function reduceMain(
     return explainer === undefined ? '...' : explainer(target)
   }
 
-  const reducers : any = {
+  const reducers: any = {
     // source 0
     Identifier(
       node: es.Identifier,
@@ -1740,7 +1740,12 @@ function reduceMain(
         ]
       } else if (typeof (builtin as any)[(callee as es.Identifier).name] === 'function') {
         // Source specific built-in function
-        return [(builtin as any)[(callee as es.Identifier).name](...args), context, paths, explain(node)]
+        return [
+          (builtin as any)[(callee as es.Identifier).name](...args),
+          context,
+          paths,
+          explain(node)
+        ]
       } else {
         // Common built-in function
         return [
@@ -1825,8 +1830,8 @@ function reduceMain(
             )
 
             // Fix path highlighting after preserving first statement
-            const pathStr : string[][] = path;
-            pathStr.forEach(pathStep=> {
+            const pathStr: string[][] = path
+            pathStr.forEach(pathStep => {
               pathStep.forEach((_, i) => {
                 if (i == 0) {
                   pathStep[i] = pathStep[i].replace(/\d+/g, match => String(Number(match) + 1))
@@ -2050,7 +2055,7 @@ function reduceMain(
               newPath
             )
 
-            const pathStr : string[][] = path
+            const pathStr: string[][] = path
             // Fix path highlighting after preserving first statement
             pathStr.forEach(pathStep => {
               pathStep.forEach((_, i) => {
@@ -2271,7 +2276,7 @@ function reduceMain(
             )
 
             // Fix path highlighting after preserving first statement
-            const pathStr : string[][] = path
+            const pathStr: string[][] = path
             pathStr.forEach(pathStep => {
               pathStep.forEach((_, i) => {
                 if (i == 0) {
@@ -2638,7 +2643,7 @@ function jsTreeifyMain(
   //   visited before recursing to this target: replace with the name
   //   else: replace with a FunctionExpression
   let verboseCount = 0
-  const treeifiers : any = {
+  const treeifiers: any = {
     Identifier: (target: es.Identifier): es.Identifier => {
       if (readOnly && target.name.startsWith('anonymous_')) {
         return ast.identifier('[Function]')

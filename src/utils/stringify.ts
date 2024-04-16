@@ -51,7 +51,7 @@ function niceTypeToString(type: Type, nameMap = { _next: 0 }): string {
       }
       if (!(type.name in nameMap)) {
         // type name is not in map, so add it
-        (nameMap as any)[type.name] = 'T' + nameMap._next++
+        ;(nameMap as any)[type.name] = 'T' + nameMap._next++
       }
       return (nameMap as any)[type.name]
     case 'list':

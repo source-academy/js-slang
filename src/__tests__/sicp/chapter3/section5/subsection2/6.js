@@ -1,1 +1,0 @@
-const ones = pair(1, () => ones);

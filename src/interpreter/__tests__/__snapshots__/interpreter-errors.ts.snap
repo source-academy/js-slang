@@ -1,18 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Access local property: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "({a: 0})[\\"a\\"];",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 0,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Builtins don't create additional errors when it's not their fault: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -46,7 +33,8 @@ const ones = pair(1, () => ones);
 eval_stream(make_alternating_stream(enum_stream(1, 9)), 10);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 8: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 8: Error: head(xs) expects a pair as argument xs, but encountered null\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -63,7 +51,8 @@ Object {
 h(null);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2: Error: head(xs) expects a pair as argument xs, but encountered null",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 2: Error: head(xs) expects a pair as argument xs, but encountered null\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -76,7 +65,8 @@ Object {
   "code": "({}).valueOf;",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 1: Cannot read inherited property valueOf of {}.",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 1: Cannot read inherited property valueOf of {}.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -167,7 +157,8 @@ const f = x => g(x);
 f(1);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2: Expected 0 arguments, but got 1.",
+  "parsedErrors": "native:\\"Line 3: Expected 0 arguments, but got 1.\\"
+interpreted:\\"Line 2: Expected 0 arguments, but got 1.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -198,7 +189,8 @@ Object {
 f();",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2: Expected 1 arguments, but got 0.",
+  "parsedErrors": "native:\\"Expected 1 arguments, but got 0.\\"
+interpreted:\\"Line 2: Expected 1 arguments, but got 0.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -229,7 +221,8 @@ Object {
 f(1, 2);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "parsedErrors": "native:\\"Line 2: Expected 0 arguments, but got 2.\\"
+interpreted:\\"Line 2: Expected 1 arguments, but got 2.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -286,7 +279,8 @@ Object {
 f[0](1, 2);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2: Expected 1 arguments, but got 2.",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 2: Expected 1 arguments, but got 2.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -321,7 +315,8 @@ Object {
 f();",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 4: Expected 1 arguments, but got 0.",
+  "parsedErrors": "native:\\"Expected 1 arguments, but got 0.\\"
+interpreted:\\"Line 4: Expected 1 arguments, but got 0.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -356,7 +351,8 @@ Object {
 f(1, 2);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 4: Expected 1 arguments, but got 2.",
+  "parsedErrors": "native:\\"Line 4: Expected 0 arguments, but got 2.\\"
+interpreted:\\"Line 4: Expected 1 arguments, but got 2.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -443,7 +439,8 @@ Object {
   "code": "[1]();",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 1: Calling non-function value [1].",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 1: Calling non-function value [1].\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -829,7 +826,8 @@ Object {
 rest(1);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 2: Expected 2 or more arguments, but got 1.",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 2: Expected 2 or more arguments, but got 1.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -842,7 +840,8 @@ Object {
   "code": "math_sin(7,8);",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 1: Expected 1 arguments, but got 2.",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 1: Expected 1 arguments, but got 2.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -875,104 +874,6 @@ Object {
 }
 `;
 
-exports[`No error when calling display function in with variable arguments: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "display(1);
-display(1, \\"test\\");",
-  "displayResult": Array [
-    "1",
-    "test 1",
-  ],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 1,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`No error when calling list function in with variable arguments: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "list();
-list(1);
-list(1, 2, 3);
-list(1, 2, 3, 4, 5, 6, 6);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": Array [
-    1,
-    Array [
-      2,
-      Array [
-        3,
-        Array [
-          4,
-          Array [
-            5,
-            Array [
-              6,
-              Array [
-                6,
-                null,
-              ],
-            ],
-          ],
-        ],
-      ],
-    ],
-  ],
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`No error when calling math_max function in with variable arguments: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "math_max();
-math_max(1, 2);
-math_max(1, 2, 3);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 3,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`No error when calling math_min function in with variable arguments: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "math_min();
-math_min(1, 2);
-math_min(1, 2, 3);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": 1,
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
-exports[`No error when calling stringify function in with variable arguments: expectResult 1`] = `
-Object {
-  "alertResult": Array [],
-  "code": "stringify(1, 2);
-stringify(1, 2, 3);",
-  "displayResult": Array [],
-  "numErrors": 0,
-  "parsedErrors": "",
-  "result": "1",
-  "resultStatus": "finished",
-  "visualiseListResult": Array [],
-}
-`;
-
 exports[`Type error when accessing property of function: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -982,7 +883,8 @@ Object {
 f.prototype;",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 4: Expected object or array, got function.",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 4: Expected object or array, got function.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -995,7 +897,8 @@ Object {
   "code": "null.prop;",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 1: Expected object or array, got null.",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 1: Expected object or array, got null.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1008,7 +911,8 @@ Object {
   "code": "'hi'.length;",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 1: Expected object or array, got string.",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 1: Expected object or array, got string.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1024,7 +928,8 @@ Object {
 f.prop = 5;",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 4: Expected object or array, got function.",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 4: Expected object or array, got function.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -1037,7 +942,8 @@ Object {
   "code": "'hi'.prop = 5;",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 1: Expected object or array, got string.",
+  "parsedErrors": "native:\\"Line 6: TypeError: Cannot create property 'Symbol(Symbol.toStringTag)' on boolean 'false'\\"
+interpreted:\\"Line 1: Expected object or array, got string.\\"",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

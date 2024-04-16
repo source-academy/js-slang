@@ -1,1 +1,0 @@
-set_breakpoint(gcd_machine, "test-b", 4);
