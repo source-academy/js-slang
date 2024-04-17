@@ -25,17 +25,17 @@ enum InstType {
 }
 
 export interface Instruction {
-  getType() : InstType;
-  stringRep() : string;
+  getType(): InstType
+  stringRep(): string
 }
 
 export class DoneInstruction implements Instruction {
-  getType() : InstType{
-    return InstType.DONE;
+  getType(): InstType {
+    return InstType.DONE
   }
-  
+
   stringRep(): string {
-    return "DONE";
+    return 'DONE'
   }
 }
 
@@ -49,11 +49,11 @@ export class BasicLitInstruction implements Instruction {
   }
 
   getType(): InstType {
-    return InstType.LDC;
+    return InstType.LDC
   }
 
   stringRep(): string {
-    return `LDC ${this.value === undefined ? "undefined" : this.value}`
+    return `LDC ${this.value === undefined ? 'undefined' : this.value}`
   }
 }
 
@@ -67,11 +67,11 @@ export class IdentInstruction implements Instruction {
   }
 
   getType(): InstType {
-    return InstType.LD;
+    return InstType.LD
   }
 
   stringRep(): string {
-    return `LD ${this.sym}`;
+    return `LD ${this.sym}`
   }
 }
 
@@ -83,7 +83,7 @@ export class UnOpInstruction implements Instruction {
   }
 
   getType(): InstType {
-    return InstType.UNOP;
+    return InstType.UNOP
   }
 
   stringRep(): string {
@@ -99,7 +99,7 @@ export class BinOpInstruction implements Instruction {
   }
 
   getType(): InstType {
-    return InstType.BINOP;
+    return InstType.BINOP
   }
 
   stringRep(): string {
@@ -115,11 +115,11 @@ export class JumpOnFalseInstruction implements Instruction {
   }
 
   getType(): InstType {
-    return InstType.JOF;
+    return InstType.JOF
   }
 
   stringRep(): string {
-    return `JOF ${this.dest}`;
+    return `JOF ${this.dest}`
   }
 }
 
@@ -131,31 +131,31 @@ export class GotoInstruction implements Instruction {
   }
 
   getType(): InstType {
-    return InstType.GOTO;
+    return InstType.GOTO
   }
 
   stringRep(): string {
-    return `GOTO ${this.dest}`;
+    return `GOTO ${this.dest}`
   }
 }
 
 export class IterEndInstruction implements Instruction {
   getType(): InstType {
-    return InstType.ITER_END;
+    return InstType.ITER_END
   }
 
   stringRep(): string {
-    return "ITER_END";
+    return 'ITER_END'
   }
 }
 
 export class ForEndInstruction implements Instruction {
   getType(): InstType {
-    return InstType.FOR_END;
+    return InstType.FOR_END
   }
 
   stringRep(): string {
-    return "FOR_END";
+    return 'FOR_END'
   }
 }
 
@@ -167,11 +167,11 @@ export class CallInstruction implements Instruction {
   }
 
   getType(): InstType {
-    return InstType.CALL;
+    return InstType.CALL
   }
 
   stringRep(): string {
-    return `CALL ${this.arity}`;
+    return `CALL ${this.arity}`
   }
 }
 
@@ -183,21 +183,21 @@ export class AssignInstruction implements Instruction {
   }
 
   getType(): InstType {
-    return InstType.ASSIGN;
+    return InstType.ASSIGN
   }
 
   stringRep(): string {
-    return `ASSIGN (${this.pos.env_offset}, ${this.pos.frame_offset})`;
+    return `ASSIGN (${this.pos.env_offset}, ${this.pos.frame_offset})`
   }
 }
 
 export class PopInstruction implements Instruction {
   getType(): InstType {
-    return InstType.POP;
+    return InstType.POP
   }
 
   stringRep(): string {
-    return "POP";
+    return 'POP'
   }
 }
 
@@ -211,11 +211,11 @@ export class LoadFunctionInstruction implements Instruction {
   }
 
   getType(): InstType {
-    return InstType.LDF;
+    return InstType.LDF
   }
 
   stringRep(): string {
-    return `LF ${this.arity} @ ${this.addr}`;
+    return `LF ${this.arity} @ ${this.addr}`
   }
 }
 
@@ -227,31 +227,31 @@ export class EnterScopeInstruction implements Instruction {
   }
 
   getType(): InstType {
-    return InstType.ENTER_SCOPE;
+    return InstType.ENTER_SCOPE
   }
 
   stringRep(): string {
-    return "ENTER_SCOPE";
+    return 'ENTER_SCOPE'
   }
 }
 
 export class ExitScopeInstruction implements Instruction {
   getType(): InstType {
-    return InstType.EXIT_SCOPE;
+    return InstType.EXIT_SCOPE
   }
 
   stringRep(): string {
-    return "EXIT_SCOPE";
+    return 'EXIT_SCOPE'
   }
 }
 
 export class ResetInstruction implements Instruction {
   getType(): InstType {
-    return InstType.RESET;
+    return InstType.RESET
   }
 
   stringRep(): string {
-    return "RESET";
+    return 'RESET'
   }
 }
 
@@ -262,7 +262,7 @@ export class GoInstruction implements Instruction {
   }
 
   getType(): InstType {
-    return InstType.GO;
+    return InstType.GO
   }
 
   stringRep(): string {
@@ -272,40 +272,40 @@ export class GoInstruction implements Instruction {
 
 export class DestroyGoroutineInstruction implements Instruction {
   getType(): InstType {
-    return InstType.GO_DEST;
+    return InstType.GO_DEST
   }
 
   stringRep(): string {
-    return "DESTROY_GOROUTINE"
+    return 'DESTROY_GOROUTINE'
   }
 }
 
 export class SendInstruction implements Instruction {
   getType(): InstType {
-    return InstType.SEND;
+    return InstType.SEND
   }
 
   stringRep(): string {
-    return "SEND";
+    return 'SEND'
   }
 }
 
 export class ContinueInstruction implements Instruction {
   getType(): InstType {
-    return InstType.CONT;
+    return InstType.CONT
   }
 
   stringRep(): string {
-    return "CONTINUE";
+    return 'CONTINUE'
   }
 }
 
 export class BreakInstruction implements Instruction {
   getType(): InstType {
-    return InstType.BREAK;
+    return InstType.BREAK
   }
 
   stringRep(): string {
-    return "BREAK";
+    return 'BREAK'
   }
 }

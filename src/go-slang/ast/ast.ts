@@ -1,5 +1,6 @@
-import { ChanDir } from '../ssa/types'
+import { BadDeclError, BadExprError, BadSpecError, BadStmtError } from './errors'
 import * as nodes from './nodes'
+import { ChanDir } from '../types/types'
 
 // Takes string representation of JSON AST and parses
 // it into an AST using the node types defined in node.ts
@@ -16,8 +17,7 @@ function parseFile(file: any): nodes.File {
   }
 
   const name = parseIdentNode(file['Name'])
-  const packagePos: Pos.Pos = file['Package']
-  return new nodes.File(declNodes, packagePos, name)
+  return new nodes.File(declNodes, name)
 }
 
 function parseExprNode(node: any): nodes.ExprNode {
@@ -70,7 +70,7 @@ function parseExprNode(node: any): nodes.ExprNode {
     case 'ChanType':
       return parseChanType(node)
     default:
-      throw new BadExprError(getStart(node))
+      throw new BadExprError()
   }
 }
 
@@ -91,8 +91,6 @@ function parseField(fi: any): nodes.Field {
 }
 
 function parseFieldList(fl: any): nodes.FieldList {
-  const opening: Pos.Pos = fl['Opening']
-  const closing: Pos.Pos = fl['Closing']
   let lst: nodes.Field[] | undefined = []
   if ('List' in fl) {
     for (var field of fl['List']) {
@@ -101,26 +99,21 @@ function parseFieldList(fl: any): nodes.FieldList {
   } else {
     lst = undefined
   }
-  return new nodes.FieldList(opening, lst, closing)
+  return new nodes.FieldList(lst)
 }
 
 function parseIdentNode(node: any): nodes.Ident {
-  const namePos: Pos.Pos = node['NamePos']
   const name: string = node['Name']
-  return new nodes.Ident(namePos, name)
+  return new nodes.Ident(name)
 }
 
 function parseBasicLit(node: any): nodes.BasicLit {
-  const pos: Pos.Pos = node['ValuePos']
   const kind: string = node['Kind']
   const val: string = node['Value']
-  return new nodes.BasicLit(pos, kind, val)
+  return new nodes.BasicLit(kind, val)
 }
 
 function parseCompositeLit(node: any): nodes.CompositeLit {
-  const lbrace: Pos.Pos = node['Lbrace']
-  const rbrace: Pos.Pos = node['Rbrace']
-
   let type: nodes.ExprNode | undefined = undefined
   if ('Type' in node) {
     type = parseExprNode(node['Type'])
@@ -131,16 +124,15 @@ function parseCompositeLit(node: any): nodes.CompositeLit {
     elements.push(parseExprNode(elmt))
   }
   const incomplete: boolean = node['Incomplete']
-  return new nodes.CompositeLit(type, lbrace, elements, rbrace, incomplete)
+  return new nodes.CompositeLit(type, elements, incomplete)
 }
 
 function parseEllipsis(node: any): nodes.Ellipsis {
-  const ellipPos: Pos.Pos = node['Ellipsis']
   let elementType: nodes.ExprNode | undefined = undefined
   if ('Elt' in node) {
     elementType = parseExprNode(node['Elt'])
   }
-  return new nodes.Ellipsis(ellipPos, elementType)
+  return new nodes.Ellipsis(elementType)
 }
 
 function parseFuncLit(node: any): nodes.FuncLit {
@@ -150,10 +142,8 @@ function parseFuncLit(node: any): nodes.FuncLit {
 }
 
 function parseParenExpr(node: any): nodes.ParenExpr {
-  const lparen: Pos.Pos = node['Lparen']
-  const rparen: Pos.Pos = node['Rparen']
   const expr = parseExprNode(node['X'])
-  return new nodes.ParenExpr(lparen, expr, rparen)
+  return new nodes.ParenExpr(expr)
 }
 
 function parseSelectorExpr(node: any): nodes.SelectorExpr {
@@ -163,16 +153,12 @@ function parseSelectorExpr(node: any): nodes.SelectorExpr {
 }
 
 function parseIndexExpr(node: any): nodes.IndexExpr {
-  const lbrack: Pos.Pos = node['Lbrack']
-  const rbrack: Pos.Pos = node['Rbrack']
   const expr = parseExprNode(node['X'])
   const idx = parseExprNode(node['Index'])
-  return new nodes.IndexExpr(expr, lbrack, idx, rbrack)
+  return new nodes.IndexExpr(expr, idx)
 }
 
 function parseSliceExpr(node: any): nodes.SliceExpr {
-  const lbrack: Pos.Pos = node['Lbrack']
-  const rbrack: Pos.Pos = node['Rbrack']
   const expr = parseExprNode(node['X'])
   let low: nodes.ExprNode | undefined = undefined
   let high: nodes.ExprNode | undefined = undefined
@@ -187,25 +173,20 @@ function parseSliceExpr(node: any): nodes.SliceExpr {
     max = parseExprNode(node['Max'])
   }
   const threeSlice: boolean = node['Slice3']
-  return new nodes.SliceExpr(expr, lbrack, low, high, max, threeSlice, rbrack)
+  return new nodes.SliceExpr(expr, low, high, max, threeSlice)
 }
 
 function parseTypeAssert(node: any): nodes.TypeAssertExpr {
   const expr = parseExprNode(node['X'])
-  const lparen: Pos.Pos = node['Lparen']
-  const rparen: Pos.Pos = node['Rparen']
   let type: nodes.ExprNode | undefined = undefined
   if ('Type' in node) {
     type = parseExprNode(node['Type'])
   }
-  return new nodes.TypeAssertExpr(expr, lparen, type, rparen)
+  return new nodes.TypeAssertExpr(expr, type)
 }
 
 function parseCallExpr(node: any): nodes.CallExpr {
   const fun = parseExprNode(node['Fun'])
-  const lparen: Pos.Pos = node['Lparen']
-  const ellipsis: Pos.Pos = node['Ellipsis']
-  const rparen: Pos.Pos = node['Rparen']
 
   let args: nodes.ExprNode[] | undefined = []
   if ('Args' in node) {
@@ -215,86 +196,75 @@ function parseCallExpr(node: any): nodes.CallExpr {
   } else {
     args = undefined
   }
-  return new nodes.CallExpr(fun, lparen, args, ellipsis, rparen)
+  return new nodes.CallExpr(fun, args)
 }
 
 function parseStarExpr(node: any): nodes.StarExpr {
-  const star: Pos.Pos = node['Star']
   const expr = parseExprNode(node['X'])
-  return new nodes.StarExpr(star, expr)
+  return new nodes.StarExpr(expr)
 }
 
 function parseUnaryExpr(node: any): nodes.UnaryExpr {
-  const pos: Pos.Pos = node['OpPos']
   const op: string = node['Op']
   const expr = parseExprNode(node['X'])
-  return new nodes.UnaryExpr(pos, op, expr)
+  return new nodes.UnaryExpr(op, expr)
 }
 
 function parseBinaryExpr(node: any): nodes.BinaryExpr {
   const x = parseExprNode(node['X'])
-  const pos: Pos.Pos = node['OpPos']
   const op: string = node['Op']
   const y = parseExprNode(node['Y'])
-  return new nodes.BinaryExpr(x, pos, op, y)
+  return new nodes.BinaryExpr(x, op, y)
 }
 
 function parseKeyValExpr(node: any): nodes.KeyValueExpr {
   const key = parseExprNode(node['Key'])
-  const colonPos: Pos.Pos = node['Colon']
   const val = parseExprNode(node['Value'])
-  return new nodes.KeyValueExpr(key, colonPos, val)
+  return new nodes.KeyValueExpr(key, val)
 }
 
 // Type
 
 function parseArrayType(node: any): nodes.ArrayType {
-  const lbrack: Pos.Pos = node['Lbrack']
   let len: nodes.ExprNode | undefined = undefined
   if ('Len' in node) {
     len = parseExprNode(node['Len'])
   }
   const elementType = parseExprNode(node['Elt'])
-  return new nodes.ArrayType(lbrack, len, elementType)
+  return new nodes.ArrayType(len, elementType)
 }
 
 function parseStructType(node: any): nodes.StructType {
-  const pos: Pos.Pos = node['Struct']
   const fields = parseExprNode(node['Fields']) as nodes.FieldList
   const incomplete: boolean = node['Incomplete']
-  return new nodes.StructType(pos, fields, incomplete)
+  return new nodes.StructType(fields, incomplete)
 }
 
 function parseFuncType(node: any): nodes.FuncType {
-  const funcPos: Pos.Pos = node['Func']
   const params = parseExprNode(node['Params']) as nodes.FieldList
   let results: nodes.FieldList | undefined = undefined
   if ('Results' in node) {
     results = parseExprNode(node['Results']) as nodes.FieldList
   }
-  return new nodes.FuncType(funcPos, params, results)
+  return new nodes.FuncType(params, results)
 }
 
 function parseInterfaceType(node: any): nodes.InterfaceType {
-  const pos: Pos.Pos = node['Interface']
   const methods = parseExprNode(node['Methods']) as nodes.FieldList
   const incomplete: boolean = node['Incomplete']
-  return new nodes.InterfaceType(pos, methods, incomplete)
+  return new nodes.InterfaceType(methods, incomplete)
 }
 
 function parseMapType(node: any): nodes.MapType {
-  const pos: Pos.Pos = node['Map']
   const key = parseExprNode(node['Key'])
   const val = parseExprNode(node['Value'])
-  return new nodes.MapType(pos, key, val)
+  return new nodes.MapType(key, val)
 }
 
 function parseChanType(node: any): nodes.ChanType {
-  const begin: Pos.Pos = node['Begin']
-  const arrow: Pos.Pos = node['Arrow']
   const dir: ChanDir = node['Dir']
   const val = parseExprNode(node['Value'])
-  return new nodes.ChanType(begin, arrow, dir, val)
+  return new nodes.ChanType(dir, val)
 }
 
 // Statements
@@ -343,7 +313,7 @@ function parseStatement(node: any): nodes.StatementNode {
     case 'RangeStmt':
       return parseRangeStmt(node)
     default:
-      throw new BadStmtError(getStart(node))
+      throw new BadStmtError()
   }
 }
 
@@ -353,16 +323,14 @@ function parseDeclStmt(node: any): nodes.DeclStmt {
 }
 
 function parseEmptyStmt(node: any): nodes.EmptyStmt {
-  const pos: Pos.Pos = node['Semicolon']
   const implicit: boolean = node['Implicit']
-  return new nodes.EmptyStmt(pos, implicit)
+  return new nodes.EmptyStmt(implicit)
 }
 
 function parseLabeledStmt(node: any): nodes.LabeledStmt {
   const label = parseExprNode(node['Label']) as nodes.Ident
-  const pos: Pos.Pos = node['Colon']
   const stmt = parseStatement(node['Stmt'])
-  return new nodes.LabeledStmt(label, pos, stmt)
+  return new nodes.LabeledStmt(label, stmt)
 }
 
 function parseExprStmt(node: any): nodes.ExprStmt {
@@ -372,16 +340,14 @@ function parseExprStmt(node: any): nodes.ExprStmt {
 
 function parseSendStmt(node: any): nodes.SendStmt {
   const ch = parseExprNode(node['Chan'])
-  const arrow: Pos.Pos = node['Arrow']
   const val = parseExprNode(node['Value'])
-  return new nodes.SendStmt(ch, arrow, val)
+  return new nodes.SendStmt(ch, val)
 }
 
 function parseIncDecStmt(node: any): nodes.IncDecStmt {
   const expr = parseExprNode(node['X'])
-  const pos: Pos.Pos = node['TokPos']
   const token: string = node['Tok']
-  return new nodes.IncDecStmt(expr, pos, token)
+  return new nodes.IncDecStmt(expr, token)
 }
 
 function parseAssignStmt(node: any): nodes.AssignStmt {
@@ -393,54 +359,46 @@ function parseAssignStmt(node: any): nodes.AssignStmt {
   for (var rexp of node['Rhs']) {
     rhs.push(parseExprNode(rexp))
   }
-  const pos: Pos.Pos = node['TokPos']
   const token: string = node['Tok']
-  return new nodes.AssignStmt(lhs, pos, token, rhs)
+  return new nodes.AssignStmt(lhs, token, rhs)
 }
 
 function parseGoStmt(node: any): nodes.GoStmt {
-  const goPos: Pos.Pos = node['Go']
   const callExp = parseExprNode(node['Call']) as nodes.CallExpr
-  return new nodes.GoStmt(goPos, callExp)
+  return new nodes.GoStmt(callExp)
 }
 
 function parseDeferStmt(node: any): nodes.DeferStmt {
-  const pos: Pos.Pos = node['Defer']
   const callExp = parseExprNode(node['Call']) as nodes.CallExpr
-  return new nodes.DeferStmt(pos, callExp)
+  return new nodes.DeferStmt(callExp)
 }
 
 function parseReturnStmt(node: any): nodes.ReturnStmt {
-  const pos: Pos.Pos = node['Return']
   let results: nodes.ExprNode[] = []
   for (var res of node['Results']) {
     results.push(parseExprNode(res))
   }
-  return new nodes.ReturnStmt(pos, results)
+  return new nodes.ReturnStmt(results)
 }
 
 function parseBranchStmt(node: any): nodes.BranchStmt {
-  const pos: Pos.Pos = node['TokPos']
   const token: string = node['Tok']
   let label: nodes.Ident | undefined = undefined
   if ('Label' in node) {
     label = parseExprNode(node['Label']) as nodes.Ident
   }
-  return new nodes.BranchStmt(pos, token, label)
+  return new nodes.BranchStmt(token, label)
 }
 
 function parseBlockStmt(node: any): nodes.BlockStmt {
-  const lbrace: Pos.Pos = node['Lbrace']
-  const rbrace: Pos.Pos = node['Rbrace']
   let lst: nodes.StatementNode[] = []
   for (var stmt of node['List']) {
     lst.push(parseStatement(stmt))
   }
-  return new nodes.BlockStmt(lbrace, lst, rbrace)
+  return new nodes.BlockStmt(lst)
 }
 
 function parseIfStmt(node: any): nodes.IfStmt {
-  const pos: Pos.Pos = node['If']
   let init: nodes.StatementNode | undefined = undefined
   if ('Init' in node) {
     init = parseStatement(node['Init'])
@@ -451,12 +409,10 @@ function parseIfStmt(node: any): nodes.IfStmt {
   if ('Else' in node) {
     elseStm = parseStatement(node['Else'])
   }
-  return new nodes.IfStmt(pos, init, cond, body, elseStm)
+  return new nodes.IfStmt(init, cond, body, elseStm)
 }
 
 function parseCaseClause(node: any): nodes.CaseClause {
-  const cse: Pos.Pos = node['Case']
-  const colon: Pos.Pos = node['Colon']
   let lst: nodes.ExprNode[] = []
   for (var exp of node['List']) {
     lst.push(parseExprNode(exp))
@@ -465,11 +421,10 @@ function parseCaseClause(node: any): nodes.CaseClause {
   for (var stmt of node['Body']) {
     body.push(parseStatement(stmt))
   }
-  return new nodes.CaseClause(cse, lst, colon, body)
+  return new nodes.CaseClause(lst, body)
 }
 
 function parseSwitchStmt(node: any): nodes.SwitchStmt {
-  const pos: Pos.Pos = node['Switch']
   const body = parseStatement(node['Body']) as nodes.BlockStmt
   let init: nodes.StatementNode | undefined = undefined
   if ('Init' in node) {
@@ -479,42 +434,37 @@ function parseSwitchStmt(node: any): nodes.SwitchStmt {
   if ('Tag' in node) {
     tag = parseExprNode(node['Tag'])
   }
-  return new nodes.SwitchStmt(pos, init, tag, body)
+  return new nodes.SwitchStmt(init, tag, body)
 }
 
 function parseTypeSwitchStmt(node: any): nodes.TypeSwitchStmt {
-  const pos: Pos.Pos = node['Switch']
   let init: nodes.StatementNode | undefined = undefined
   if ('Init' in node) {
     init = parseStatement(node['Init'])
   }
   const assign = parseStatement(node['Assign'])
   const body = parseStatement(node['Body']) as nodes.BlockStmt
-  return new nodes.TypeSwitchStmt(pos, init, assign, body)
+  return new nodes.TypeSwitchStmt(init, assign, body)
 }
 
 function parseCommClause(node: any): nodes.CommClause {
-  const cse: Pos.Pos = node['Case']
   let comm: nodes.StatementNode | undefined = undefined
   if ('Comm' in node) {
     comm = parseStatement(node['Comm'])
   }
-  const colon: Pos.Pos = node['Colon']
   let body: nodes.StatementNode[] = []
   for (var stmt of node['Body']) {
     body.push(parseStatement(stmt))
   }
-  return new nodes.CommClause(cse, comm, colon, body)
+  return new nodes.CommClause(comm, body)
 }
 
 function parseSelectStmt(node: any): nodes.SelectStmt {
-  const sel: Pos.Pos = node['Select']
   const body = parseStatement(node['Body']) as nodes.BlockStmt
-  return new nodes.SelectStmt(sel, body)
+  return new nodes.SelectStmt(body)
 }
 
 function parseForStmt(node: any): nodes.ForStmt {
-  const pos: Pos.Pos = node['For']
   let init: nodes.StatementNode | undefined = undefined
   if ('Init' in node) {
     init = parseStatement(node['Init'])
@@ -528,11 +478,10 @@ function parseForStmt(node: any): nodes.ForStmt {
     post = parseStatement(node['Post'])
   }
   const body = parseStatement(node['Body']) as nodes.BlockStmt
-  return new nodes.ForStmt(pos, init, cond, post, body)
+  return new nodes.ForStmt(init, cond, post, body)
 }
 
 function parseRangeStmt(node: any): nodes.RangeStmt {
-  const forPos: Pos.Pos = node['For']
   let key: nodes.ExprNode | undefined = undefined
   if ('Key' in node) {
     key = parseExprNode(node['Key'])
@@ -541,11 +490,10 @@ function parseRangeStmt(node: any): nodes.RangeStmt {
   if ('Value' in node) {
     val = parseExprNode(node['Value'])
   }
-  const tokPos: Pos.Pos = node['TokPos']
   const token: string = node['Tok']
   const expr = parseExprNode(node['X'])
   const body = parseStatement(node['Body']) as nodes.BlockStmt
-  return new nodes.RangeStmt(forPos, key, val, tokPos, token, expr, body)
+  return new nodes.RangeStmt(key, val, token, expr, body)
 }
 
 // Declarations
@@ -558,20 +506,17 @@ function parseDecl(decl: any): nodes.DeclarationNode {
     case 'FuncDecl':
       return parseFuncDecl(decl)
     default:
-      throw new BadDeclError(getStart(decl))
+      throw new BadDeclError()
   }
 }
 
 function parseGenDecl(decl: any): nodes.GenDecl {
-  const leftParen: Pos.Pos = decl['Lparen']
-  const rightParen: Pos.Pos = decl['Rparen']
   let specList: nodes.SpecNode[] = []
   for (var spec of decl['Specs']) {
     specList.push(parseSpecNode(spec))
   }
   const token: string = decl['Tok']
-  const tokPos: Pos.Pos = getStart(decl)
-  return new nodes.GenDecl(tokPos, token, leftParen, specList, rightParen)
+  return new nodes.GenDecl(token, specList)
 }
 
 function parseFuncDecl(decl: any): nodes.FuncDecl {
@@ -593,7 +538,7 @@ function parseSpecNode(node: any): nodes.SpecNode {
   if (type === 'TypeSpec') {
     return parseTypeSpec(node)
   }
-  throw new BadSpecError(getStart(node))
+  throw new BadSpecError()
 }
 
 function parseValueSpec(node: any): nodes.ValueSpec {
@@ -615,16 +560,7 @@ function parseValueSpec(node: any): nodes.ValueSpec {
 }
 
 function parseTypeSpec(node: any): nodes.TypeSpec {
-  const assignPos: Pos.Pos = node['Assign']
   const name = parseExprNode(node['Name']) as nodes.Ident
   const type = parseExprNode(node['Type'])
-  return new node.TypeSpec(name, assignPos, type)
+  return new node.TypeSpec(name, type)
 }
-
-function getStart(nodeObj: any): number {
-  return nodeObj['Loc']['Start']['Offset']
-}
-
-/* function getEnd(nodeObj : any) : number {
-    return nodeObj["Loc"]["End"]["Offset"];
-} */

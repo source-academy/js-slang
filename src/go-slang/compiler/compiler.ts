@@ -1,6 +1,7 @@
 import { nodeType } from '../ast/nodeTypes'
 import * as nodes from '../ast/nodes'
 import * as Token from '../tokens/tokens'
+import { IllegalInstructionError, UnsupportedInstructionError } from './errors'
 import * as Instruction from './instructions'
 
 let instrs: Instruction.Instruction[]
@@ -298,7 +299,7 @@ function compileFunc(node: nodes.FuncDecl | nodes.FuncLit, env: CompileEnvironme
   const gotoInst = new Instruction.GotoInstruction()
   instrs[lidx++] = gotoInst
   // function body is a block, use the current scope (containing function parameters + scanned out declarations)
-  compileNode(node.Body, env.compile_time_extend_environment(idents), true);
+  compileNode(node.Body, env.compile_time_extend_environment(idents), true)
   instrs[lidx++] = new Instruction.ResetInstruction()
   gotoInst.setGotoDest(lidx)
 }
