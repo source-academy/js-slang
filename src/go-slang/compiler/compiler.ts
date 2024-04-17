@@ -1,6 +1,6 @@
-import { nodeType } from './ast/nodeTypes'
-import * as nodes from './ast/nodes'
-import * as Token from './tokens/tokens'
+import { nodeType } from '../ast/nodeTypes'
+import * as nodes from '../ast/nodes'
+import * as Token from '../tokens/tokens'
 import * as Instruction from './instructions'
 
 let instrs: Instruction.Instruction[]
@@ -281,11 +281,7 @@ function compileAssign(node: nodes.AssignStmt, env: CompileEnvironment) {
 
 function compileFunc(node: nodes.FuncDecl | nodes.FuncLit, env: CompileEnvironment) {
   // TODO: Implement Receiver methods
-  instrs[lidx++] = new Instruction.LoadFunctionInstruction(node.Type.numParams(), lidx + 1)
-  // jump over function body
-  const gotoInst = new Instruction.GotoInstruction()
-  instrs[lidx++] = gotoInst
-  // function parameters cannot be constant in Go
+  // Scan out parameters and declarations in function body
   let params: EnvironmentSymbol[] = []
   if (node.Type.Params.List !== undefined) {
     for (var param of node.Type.Params.List) {
@@ -296,8 +292,13 @@ function compileFunc(node: nodes.FuncDecl | nodes.FuncLit, env: CompileEnvironme
   }
   const bodyDecl = scanOutDecls(node.Body)
   const idents = env.combineFrames(params !== undefined ? params : [], bodyDecl)
+
+  instrs[lidx++] = new Instruction.LoadFunctionInstruction(idents.length, lidx + 1)
+  // jump over function body
+  const gotoInst = new Instruction.GotoInstruction()
+  instrs[lidx++] = gotoInst
   // function body is a block, use the current scope (containing function parameters + scanned out declarations)
-  compileNode(node.Body, env.compile_time_extend_environment(idents), true)
+  compileNode(node.Body, env.compile_time_extend_environment(idents), true);
   instrs[lidx++] = new Instruction.ResetInstruction()
   gotoInst.setGotoDest(lidx)
 }

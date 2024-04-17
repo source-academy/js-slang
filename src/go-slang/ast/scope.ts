@@ -1,4 +1,5 @@
 import { Field, SpecNode, FuncDecl, LabeledStmt, AssignStmt, Ident } from './nodes'
+import * as Pos from "./pos";
 
 export class Scope {
   Outer: Scope | null // outer scope
