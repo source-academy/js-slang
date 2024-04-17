@@ -38,7 +38,7 @@ import {
   NodeWithAnnotation
 } from '../types'
 import { findNodeAt } from '../utils/walkers'
-import { defaultBabelOptions, positionToSourceLocation } from '../parser/utils'
+import { createAcornParserOptions, defaultBabelOptions, positionToSourceLocation } from '../parser/utils'
 import { FatalSyntaxError } from '../parser/errors'
 import { parseError } from '..'
 
@@ -76,6 +76,8 @@ import {
 import * as tsEs from './tsESTree'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
 import { TypecheckError } from './internalTypeErrors'
+import { DEFAULT_ECMA_VERSION } from '../constants'
+import TypeParser from '../parser/source/typed/typeParser'
 
 // Context and type environment are saved as global variables so that they are not passed between functions excessively
 let context: Context = {} as Context
@@ -1680,13 +1682,12 @@ export function getTypeInformation(
   loc: { line: number; column: number },
   name: string
 ): string {
-
   // doesnt work for now bcuz (i'm not sure why), but there is no information about the context
   // from the frontend
   /* if (context.variant !== Variant.TYPED) {
     return 'Type information is only available in the typed variant.'
   } */
-  /* try {
+  try {
     TypeParser.parse(
       programStr,
       createAcornParserOptions(DEFAULT_ECMA_VERSION, context.errors)
@@ -1700,7 +1701,7 @@ export function getTypeInformation(
     }
 
     return parseError([error])
-  } */
+  }
 
   const ast = babelParse(programStr, {
     ...defaultBabelOptions,
@@ -1779,7 +1780,7 @@ export function getTypeInformation(
     return parseError(inputContext.errors)
   }
   transformBabelASTToESTreeCompliantAST(programWithNoTSNodes)
-  
+
   const res = findNodeAt(programWithNoTSNodes, undefined, undefined, findByLocationPredicate)
   if (res === undefined || res.node === undefined) {
     return ''
