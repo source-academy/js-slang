@@ -1,11 +1,17 @@
-class VariableRedeclaredError extends Error {
+export class VariableRedeclaredError extends Error {
   constructor(sym: string) {
     super(`${sym} has already been declared`)
   }
 }
 
-class InvalidEnvironmentPos extends Error {
-  constructor(pos: EnvironmentPos) {
-    super(`EnvironmentPos (${pos.env_offset}, ${pos.frame_offset}) is invalid`)
+export class InvalidEnvironmentPos extends Error {
+  constructor(env : number, frame : number) {
+    super(`EnvironmentPos (${env}, ${frame}) is invalid`)
+  }
+}
+
+export class SymbolNotFoundError extends Error {
+  constructor(sym : string) {
+    super(`${sym} not found in Environment`)
   }
 }

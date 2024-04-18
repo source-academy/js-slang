@@ -632,6 +632,10 @@ export class AssignStmt implements StatementNode {
     return nodeType.ASSIGN
   }
 
+  getTokenType() : Token.token {
+    return this.Tok
+  }
+
   constructor(lhs: ExprNode[], token: string, rhs: ExprNode[]) {
     this.LeftHandSide = lhs
     this.Tok = Token.getToken(token)
@@ -901,6 +905,17 @@ export class TypeSpec implements SpecNode {
   }
 }
 
+// placeholder
+export class ImportSpec implements SpecNode {
+  getType(): nodeType {
+    return nodeType.NOT_IMPLEMENTED
+  }
+
+  constructor() {
+
+  }
+}
+
 // Declarations are represented by one of the following declaration nodes
 
 // BadDecl node is a placeholder for declarations containing syntax errors
@@ -917,15 +932,11 @@ export class GenDecl implements DeclarationNode {
   Specs: SpecNode[] // constant/variable declarations
 
   getType(): nodeType {
-    switch (this.Tok) {
-      case Token.token.VAR:
-        return nodeType.VAR
-      case Token.token.CONST:
-        return nodeType.CONST
-      case Token.token.TYPE:
-        return nodeType.TYPE
-    }
-    return nodeType.ILLEGAL
+    return nodeType.GENDECL
+  }
+
+  getTokenType() : Token.token {
+    return this.Tok
   }
 
   constructor(token: string, specs: SpecNode[]) {

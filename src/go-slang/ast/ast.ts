@@ -5,7 +5,7 @@ import * as nodes from './nodes'
 // Takes string representation of JSON AST and parses
 // it into an AST using the node types defined in node.ts
 export function stringToAst(input: string): nodes.File {
-  const jsonAst = JSON.parse(input)
+  const jsonAst = JSON.parse(input.replace(/\\/g,'\\'))
   return parseFile(jsonAst)
 }
 
@@ -532,13 +532,16 @@ function parseFuncDecl(decl: any): nodes.FuncDecl {
 
 function parseSpecNode(node: any): nodes.SpecNode {
   const type: string = node['_type']
-  if (type === 'ValueSpec') {
-    return parseValueSpec(node)
+  switch (type) {
+    case 'ValueSpec':
+      return parseValueSpec(node)
+    case 'TypeSpec':
+      return parseValueSpec(node)
+    case 'ImportSpec':
+      // placeholder, package import not implemented
+      return new nodes.ImportSpec()
   }
-  if (type === 'TypeSpec') {
-    return parseTypeSpec(node)
-  }
-  throw new BadSpecError()
+  throw new BadSpecError(type)
 }
 
 function parseValueSpec(node: any): nodes.ValueSpec {
