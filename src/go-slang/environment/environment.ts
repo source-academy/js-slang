@@ -1,4 +1,5 @@
-class CompileEnvironment {
+import { VariableRedeclaredError } from "./errors"
+export class CompileEnvironment {
   env: EnvironmentSymbol[][]
 
   public compile_time_environment_position(sym: string): EnvironmentPos {
@@ -49,9 +50,12 @@ class CompileEnvironment {
     }
     return vars
   }
+  constructor() {
+    this.env = []
+  }
 }
 
-class EnvironmentPos {
+export class EnvironmentPos {
   env_offset: number
   frame_offset: number
 
@@ -61,7 +65,7 @@ class EnvironmentPos {
   }
 }
 
-class EnvironmentSymbol {
+export class EnvironmentSymbol {
   sym: string
 
   constructor(sym: string) {
@@ -69,5 +73,5 @@ class EnvironmentSymbol {
   }
 }
 
-const IgnoreEnvironmentPos = new EnvironmentPos(-1, -1)
-const constant_keywords: string[] = ['true', 'false', 'nil']
+export const IgnoreEnvironmentPos = new EnvironmentPos(-1, -1)
+export const constant_keywords: string[] = ['true', 'false', 'nil']

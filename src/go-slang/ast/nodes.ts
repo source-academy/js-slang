@@ -1,6 +1,8 @@
 import * as Token from '../tokens/tokens'
 import { nodeType } from './nodeTypes'
 import { ChanDir } from '../types/types'
+import type * as TokType from '../tokens/tokens'
+import { UnableToDefineAssignmentError } from './errors'
 
 // Node types
 
@@ -638,7 +640,18 @@ export class AssignStmt implements StatementNode {
   getType(): nodeType {
     return nodeType.ASSIGN
   }
-
+  getTokType(): TokType.Token{
+    return this.Tok
+  }
+  getAssignedToName(): string | undefined {
+    for (var x of this.LeftHandSide){
+      if ("Name" in (x as Ident)){
+        return (x as Ident).Name
+      }
+    }
+    throw new UnableToDefineAssignmentError()
+  }
+    
   constructor(lhs: ExprNode[], token: string, rhs: ExprNode[]) {
     this.LeftHandSide = lhs
     this.Tok = Token.getToken(token)
@@ -935,15 +948,10 @@ export class GenDecl implements DeclarationNode {
   Specs: SpecNode[] // constant/variable declarations
 
   getType(): nodeType {
-    switch (this.Tok) {
-      case Token.token.VAR:
-        return nodeType.VAR
-      case Token.token.CONST:
-        return nodeType.CONST
-      case Token.token.TYPE:
-        return nodeType.TYPE
-    }
-    return nodeType.ILLEGAL
+    return nodeType.GENDECL
+  }
+  getTokType(): TokType.Token {
+   return this.Tok
   }
 
   constructor(

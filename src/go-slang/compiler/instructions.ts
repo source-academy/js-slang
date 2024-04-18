@@ -1,4 +1,5 @@
 import * as Token from '../tokens/tokens'
+import { EnvironmentPos } from '../environment/environment'
 
 enum InstType {
   DONE,

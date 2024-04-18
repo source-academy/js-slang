@@ -3,6 +3,7 @@ import * as nodes from '../ast/nodes'
 import * as Token from '../tokens/tokens'
 import { IllegalInstructionError, UnsupportedInstructionError } from './errors'
 import * as Instruction from './instructions'
+import { CompileEnvironment, EnvironmentPos, EnvironmentSymbol, IgnoreEnvironmentPos, constant_keywords } from '../environment/environment'
 
 let instrs: Instruction.Instruction[]
 let lidx: number
@@ -13,6 +14,11 @@ export function compile(file: nodes.File): Instruction.Instruction[] {
   instrs = []
   lidx = 0
   compileEnv = new CompileEnvironment()
+  var initial_env_frame: EnvironmentSymbol[] = []
+  constant_keywords.forEach(keyword =>{
+    initial_env_frame.push(new EnvironmentSymbol(keyword))
+  })
+  compileEnv = compileEnv.compile_time_extend_environment(initial_env_frame)
   constantInst = new Map()
   constant_keywords.forEach(keyword =>
     constantInst.set(
@@ -103,6 +109,8 @@ function compileNode(node: nodes.GoNode, env: CompileEnvironment, doNotExtendEnv
     case nodeType.ILLEGAL:
       throw new IllegalInstructionError()
     default:
+      console.log(node)
+      console.log(node.getType())
       throw new UnsupportedInstructionError()
   }
 }
@@ -340,8 +348,8 @@ function compileFile(node: nodes.File, env: CompileEnvironment) {
 }
 
 function compileGenDecl(node: nodes.GenDecl, env: CompileEnvironment) {
-  const type = node.getType()
-  if (type === nodeType.VAR || type === nodeType.CONST) {
+  const tokType = node.getTokType()
+  if (tokType === Token.token.VAR || tokType === Token.token.CONST) {
     const specs = node.Specs as nodes.ValueSpec[]
     specs.forEach(spec => compileNode(spec, env))
   }
@@ -414,6 +422,8 @@ function scanOutDecls(node: nodes.StatementNode): EnvironmentSymbol[] {
   return []
 }
 
+
+// may need to check for variables re-declaration, not between params and body but between body-body vars
 function scanStatementList(stmts: nodes.StatementNode[]): EnvironmentSymbol[] {
   let decls: EnvironmentSymbol[] = []
   for (var stmt of stmts) {
@@ -425,11 +435,25 @@ function scanStatementList(stmts: nodes.StatementNode[]): EnvironmentSymbol[] {
         const genDeclSpecs = ((stmt as nodes.DeclStmt).Decl as nodes.GenDecl).Specs
         for (var spec of genDeclSpecs) {
           if (spec.getType() === nodeType.VALUESPEC) {
-            ;(spec as nodes.ValueSpec).Names.forEach(ident =>
+            (spec as nodes.ValueSpec).Names.forEach(ident =>
               decls.push(new EnvironmentSymbol(ident.Name))
             )
           } else {
             decls.push(new EnvironmentSymbol((spec as nodes.TypeSpec).Name.Name))
+          }
+        }
+        break
+      case nodeType.ASSIGN:
+        const nodeAssignStmt = (stmt as nodes.AssignStmt)
+        //console.log(nodeAssignStmt)
+        //console.log(nodeAssignStmt.getTokType())
+        //console.log(Token.token.DEFINE)
+        if (nodeAssignStmt.getTokType() === Token.token.DEFINE)
+        {
+          //console.log(nodeAssignStmt.getAssignedToName())
+          //console.log(nodeAssignStmt.LeftHandSide)
+          if (nodeAssignStmt.getAssignedToName() !== undefined){
+            decls.push(new EnvironmentSymbol(nodeAssignStmt.getAssignedToName() as string))
           }
         }
         break
