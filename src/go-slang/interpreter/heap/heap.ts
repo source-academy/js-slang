@@ -1,3 +1,5 @@
+import { GoRoutineQueue } from "../goroutine"
+
 const word_pow = 3
 const word_size = 1 << word_pow
 const mega = 20
@@ -16,7 +18,7 @@ const FRAME_TAG = 8
 const ENVIRONMENT_TAG = 9
 // const PAIR_TAG = 10;
 // const BUILTIN_TAG = 11;
-// const STRING_TAG = 12;
+const STRING_TAG = 12;
 const INT8_TAG = 13 // for future use
 const UINT8_TAG = 14
 const INT16_TAG = 15 // for future use
@@ -27,9 +29,15 @@ const UINT32_TAG = 18 // for future use
 // const UINT64_TAG = 20; // for future use
 const FLOAT32_TAG = 21
 // const FLOAT64_TAG = 22; // for future use
-// const GOSTACK_TAG = 23; // use for goroutine stacks (operand stack, runtime stack)
+const CHANNEL_TAG = 23
+const POINTER_TAG = 24
 
 const min_gc_size = 256 // do not trigger gc so long as size used <= 2 * min_gc_size
+
+
+const WHITE = 0; // node not visited (yet)
+const GRAY = 1; // node visited but children not fully mapped yet
+const BLACK = 2; // node + children visited
 
 // 1 byte tag, 4 bytes payload, 2 bytes children, 1 byte (allocated size + gc colour)
 
@@ -40,6 +48,7 @@ export class HeapBuffer {
   heap_pow: number
   size_last_gc: number
   curr_used: number
+  grQueue: GoRoutineQueue
 
   constructor(byte_pow?: number) {
     // 1024 bytes should be enough at the very least
@@ -54,8 +63,11 @@ export class HeapBuffer {
       this.available[i] = []
     }
     this.available[this.heap_pow].push(0)
+    // Invariant: All allocated and freed blocks must be marked with the correct block size at all times
+    this.heap_set_2_bytes_at_offset(0, gc_offset, this.heap_pow << 3)
     this.size_last_gc = min_gc_size // will not trigger gc if curr_used < 2 * size_last_gc
     this.curr_used = 0
+    this.grQueue = new GoRoutineQueue();
   }
 
   public allocate(tag: number, size: number): number {
@@ -94,21 +106,142 @@ export class HeapBuffer {
 
     let currIdx = startPos
     const address = this.available[currIdx].pop() as number
-    while (currIdx > 0 && size * 2 <= 1 << currIdx) {
+    while (currIdx > 0 && size * 2 <= (1 << currIdx)) {
       // we try to use the smallest unit required, cut out right half for future use
       currIdx--
       this.available[currIdx].push(address + (word_size << currIdx))
+      this.heap_set_byte_at_offset(address + (word_size << currIdx), gc_offset, currIdx << 3)
     }
     // for the 8th byte of the first word, first 5 bits encode the power of the memory block
     // size returned (e.g. 256 words -> 8), and the last 2 bits encode the node colour
     // (00 -> white, 01 -> gray, 10 -> black)
     // All newly allocated blocks will be coloured gray
-    this.view.setUint8(address * word_size + gc_offset, (currIdx << 3) + 1)
+    this.heap_set_byte_at_offset(address, gc_offset, (currIdx << 3) + GRAY)
     this.curr_used += 1 << currIdx
     return address
   }
 
-  private run_gc() {}
+  private run_gc() {
+    for (var thread of this.grQueue.goroutines) {
+      if (thread !== null) {
+        thread.env.OS.forEach(address => this.mark(address, true));
+        this.mark(thread.env.ENV, true);
+        this.mark(thread.env.RTS, true);
+      }
+    }
+    let addr = 0;
+    const heapsize = 1 << this.heap_pow;
+    // find all gray non-child nodes and mark them as black
+    for (addr; addr < heapsize;) {
+      const colour = this.heap_get_colour(addr);
+      if (colour === GRAY) {
+        this.mark(addr, true, true);
+      }
+      const allocSize = 1 << this.heap_get_allocated_size(addr);
+      addr += allocSize;
+    }
+    this.sweep();
+  }
+
+  // needColour is used to indicate whether the current address needs to be coloured
+  // the sweep algorithm will jump over the block if it sees black, hence children
+  // nodes will not be uncoloured
+  private mark(address : number, needColour: boolean, process_gray?: boolean) {
+    const colour = this.heap_get_colour(address);
+    if (colour === WHITE || (process_gray === true && colour === GRAY)) {
+      const nodeTag = this.heap_get_tag(address);
+      switch (nodeTag) {
+        case STRING_TAG:
+          if (needColour) {
+            // do not iterate through children (which contain letters packed together)
+            this.setColour(address, BLACK)
+          }
+          return;
+        case CHANNEL_TAG:
+          // first 8 bytes of channel: 1 byte tag, 1 byte lock (test and set), 1 byte startIdx, 
+          // 1 byte channelSize, 1 byte empty, 2 bytes numChildren/channel capacity, 1 byte gc + colour
+          const channelCap = this.heap_get_number_of_children(address);
+          const startPos = this.heap_get_byte_at_offset(address, 2);
+          const numItems = this.heap_get_byte_at_offset(address, 3);
+
+          if (needColour) {
+            this.setColour(address, GRAY);
+          }
+          // iterate through values in channel and mark them (especially if they are pointers; need to mark
+          // the nodes they point to)
+          for (let i = 0; i < numItems; ++i) {
+            this.mark(address + 1 + ((startPos + i) % channelCap), false)
+          }
+
+          if (needColour) {
+            this.setColour(address, BLACK)
+          }
+          break
+        case POINTER_TAG:
+          if (needColour) {
+            this.setColour(address, GRAY)
+          }
+          const pointerAddress = this.heap_get_2_bytes_at_offset(address, 1) << 16 + this.heap_get_2_bytes_at_offset(address, 3)
+          this.mark(pointerAddress, true)
+          if (needColour) {
+            this.setColour(address, BLACK)
+          }
+          break
+        default:
+          if (needColour) {
+            this.setColour(address, GRAY)
+          }
+          const numChildren = this.heap_get_number_of_children(address)
+          for (let i = 0; i < numChildren; ++i) {
+            this.mark(address + (1 + i) * word_size, false);
+          }
+          if (needColour) {
+            this.setColour(address, BLACK)
+          }
+      }
+    }
+  }
+
+  private sweep() {
+    // reset the freenode list
+    for (var i = 0; i <= this.heap_pow; ++i) {
+      this.available[i] = []
+    }
+    this.curr_used = 0;
+    let addr = 0;
+    const heapsize = 1 << this.heap_pow;
+    for (addr; addr < heapsize;) {
+      const colour = this.heap_get_colour(addr);
+      const allocSize = this.heap_get_allocated_size(addr);
+      if (colour === WHITE) {
+        let currPow = allocSize
+        let currAddr = addr
+        // since we sweep from left to right, left buddy is the last entry for the current row if it is free
+        while (currPow < this.heap_pow) {
+          const buddy = currAddr ^ (1 << currPow);
+          if (this.available[currPow].length > 0 && this.available[currPow][this.available[currPow].length - 1] === buddy) {
+            currAddr = buddy
+            this.available[currPow].pop()
+            currPow++
+          } else {
+            break
+          }
+        }
+        this.available[currPow].push(currAddr)
+        // maintain invariant that the block size is correctly marked
+        this.heap_set_byte_at_offset(currAddr, gc_offset, currPow << 3)
+      } else {
+        this.curr_used += 1 << allocSize;
+        this.setColour(addr, WHITE);
+        addr += 1 << allocSize;
+      }
+    }
+  }
+
+  private setColour(address : number, colour : number) {
+    const gcByte = this.heap_get_byte_at_offset(address, gc_offset);
+    this.heap_set_byte_at_offset(address, gc_offset, (gcByte & 248) | colour);
+  }
 
   private addressCheck(address: number) {
     if (address < 0 || address >= word_size << this.heap_pow) {
@@ -137,7 +270,8 @@ export class HeapBuffer {
         UINT16_TAG ||
         INT32_TAG ||
         UINT32_TAG ||
-        FLOAT32_TAG:
+        FLOAT32_TAG ||
+        CHANNEL_TAG:
         return numChildren - 1
       default:
         return numChildren
@@ -151,6 +285,10 @@ export class HeapBuffer {
   private heap_get_allocated_size(address: number): number {
     // get first 5 bits
     return (this.heap_get_byte_at_offset(address * word_size, gc_offset) & 248) >> 3
+  }
+
+  private heap_get_colour(address: number): number {
+    return (this.heap_get_byte_at_offset(address * word_size, gc_offset) & 3);
   }
 
   // child index starts at 0
@@ -168,41 +306,6 @@ export class HeapBuffer {
       throw new InvalidChildIndexError(child_index, numChildren)
     }
     this.heap_set(address + 1 + child_index, value)
-  }
-
-  // returns new address if reallocation required, otherwise returns -1
-  public heap_add_child(address: number, value: number): number {
-    const currSize = this.heap_get_size(address)
-    const allocated_size = 1 << this.heap_get_allocated_size(address)
-    const tag = this.heap_get_tag(address)
-    let node_addr = address
-    let return_val = -1
-    switch (tag) {
-      case FRAME_TAG || ENVIRONMENT_TAG:
-        if (currSize + 1 == allocated_size) {
-          // base node + children, since currSize == number of children
-          node_addr = this.doubleAllocatedSize(address)
-          return_val = node_addr
-        }
-        this.heap_set_2_bytes_at_offset(node_addr * word_size, size_offset, currSize + 1)
-        this.heap_set_child(node_addr * word_size, currSize, value)
-        return return_val
-    }
-    throw new CannotAddChildError()
-  }
-
-  // reallocates current node to memory block with double size and copies
-  // data over; returns new address
-  private doubleAllocatedSize(address: number): number {
-    const size = this.heap_get_size(address)
-    const allocated_size_pow = this.heap_get_allocated_size(address)
-    const tag = this.heap_get_tag(address)
-    const new_address = this.allocate(tag, 1 << (allocated_size_pow + 1))
-    this.heap_set_2_bytes_at_offset(new_address * word_size, size_offset, size)
-    for (var i = 0; i < size - 1; ++i) {
-      this.heap_set_child(new_address, i, this.heap_get_child(address, i))
-    }
-    return new_address
   }
 
   public heap_get_tag(address: number): number {

@@ -1,6 +1,6 @@
+import { ChanDir } from '../types/types'
 import { BadDeclError, BadExprError, BadSpecError, BadStmtError } from './errors'
 import * as nodes from './nodes'
-import { ChanDir } from '../types/types'
 
 // Takes string representation of JSON AST and parses
 // it into an AST using the node types defined in node.ts
