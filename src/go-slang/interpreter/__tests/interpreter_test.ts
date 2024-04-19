@@ -1,5 +1,4 @@
 import { stringToAst } from '../../ast/ast'
-import { prog_2_str } from '../../compiler/__tests/compiler_test'
 import { compile, debugCompile } from '../../compiler/compiler'
 import { GoVirtualMachine } from '../go-vm'
 
