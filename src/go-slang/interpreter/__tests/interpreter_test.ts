@@ -822,8 +822,7 @@ const prog3_json = `
     "_type": "File"
   }`
 
-const prog4_json = 
-`
+const prog4_json = `
 {
     "Comments": [],
     "Decls": [

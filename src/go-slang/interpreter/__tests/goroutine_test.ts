@@ -1,9 +1,8 @@
-import { compile, debugCompile } from "../../compiler/compiler"
-import { stringToAst } from "../../ast/ast"
-import { GoVirtualMachine } from "../go-vm"
+import { compile, debugCompile } from '../../compiler/compiler'
+import { stringToAst } from '../../ast/ast'
+import { GoVirtualMachine } from '../go-vm'
 
-const goroutine_str =
-`
+const goroutine_str = `
 {
     "Comments": [],
     "Decls": [
