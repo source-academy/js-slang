@@ -113,8 +113,6 @@ function compileNode(node: nodes.GoNode, env: CompileEnvironment, doNotExtendEnv
     case nodeType.ILLEGAL:
       throw new IllegalInstructionError()
     default:
-      console.log(node)
-      console.log(node.getType())
       throw new UnsupportedInstructionError()
   }
 }
@@ -125,7 +123,7 @@ function compileLiteral(node: nodes.BasicLit, _: CompileEnvironment) {
     case Token.token.INT:
       instrs[lidx++] = new Instruction.BasicLitInstruction(tag, Number(node.Value))
       return
-    case Token.token.CHAR || Token.token.STRING:
+    case Token.token.CHAR, Token.token.STRING:
       instrs[lidx++] = new Instruction.BasicLitInstruction(tag, node.Value)
       return
     case Token.token.FLOAT:
@@ -149,11 +147,9 @@ function compileUnaryOp(node: nodes.UnaryExpr, env: CompileEnvironment) {
 }
 
 function compileBinaryOp(node: nodes.BinaryExpr, env: CompileEnvironment) {
-  console.log('Compiling binary expr')
   const op = node.Op
   const jofInst = new Instruction.JumpOnFalseInstruction()
   const gotoInst = new Instruction.GotoInstruction()
-  console.log('Compiling binary operation %d', op)
   switch (op) {
     case Token.token.AND:
       compileNode(node.X, env)
@@ -173,21 +169,20 @@ function compileBinaryOp(node: nodes.BinaryExpr, env: CompileEnvironment) {
       compileNode(node.Y, env)
       gotoInst.setGotoDest(lidx)
       break
-    case Token.token.ADD_ASSIGN ||
-      Token.token.SUB_ASSIGN ||
-      Token.token.MUL_ASSIGN ||
-      Token.token.QUO_ASSIGN ||
-      Token.token.REM_ASSIGN ||
-      Token.token.AND_ASSIGN ||
-      Token.token.OR_ASSIGN ||
-      Token.token.XOR_ASSIGN ||
-      Token.token.SHL_ASSIGN ||
-      Token.token.SHR_ASSIGN ||
+    case Token.token.ADD_ASSIGN ,
+      Token.token.SUB_ASSIGN ,
+      Token.token.MUL_ASSIGN ,
+      Token.token.QUO_ASSIGN ,
+      Token.token.REM_ASSIGN ,
+      Token.token.AND_ASSIGN ,
+      Token.token.OR_ASSIGN ,
+      Token.token.XOR_ASSIGN ,
+      Token.token.SHL_ASSIGN ,
+      Token.token.SHR_ASSIGN ,
       Token.token.AND_NOT_ASSIGN:
       compileNode(node.X, env)
       compileNode(node.Y, env)
       const newOp = Token.BinOpAssignMatch.get(op)
-      console.log('BinOp %d mapped to %d', op, newOp)
       if (newOp !== undefined) {
         // to satisfy TypeScript type guards
         instrs[lidx++] = new Instruction.BinOpInstruction(newOp)
@@ -240,7 +235,6 @@ function compileFor(node: nodes.ForStmt, env: CompileEnvironment) {
   if (node.Init !== undefined) {
     decls = scanOutDecls(node.Init)
   }
-  decls = env.combineFrames(decls, scanOutDecls(node.Body))
   forEnv = env.compile_time_extend_environment(decls)
   instrs[lidx++] = new Instruction.EnterScopeInstruction(decls.length)
   if (node.Init !== undefined) {
@@ -253,15 +247,20 @@ function compileFor(node: nodes.ForStmt, env: CompileEnvironment) {
     jofInst = new Instruction.JumpOnFalseInstruction()
     instrs[lidx++] = jofInst
   }
+  const internal_decls = scanOutDecls(node.Body)
+  forEnv = forEnv.compile_time_extend_environment(internal_decls)
+  instrs[lidx++] = new Instruction.EnterScopeInstruction(internal_decls.length)
   compileNode(node.Body, forEnv, true)
   instrs[lidx++] = new Instruction.IterEndInstruction()
   if (node.Post !== undefined) {
     compileNode(node.Post, forEnv)
   }
+  instrs[lidx++] = new Instruction.ExitScopeInstruction()
   const nextIterInst = new Instruction.GotoInstruction()
   nextIterInst.setGotoDest(loop_start)
   instrs[lidx++] = nextIterInst
   instrs[lidx++] = new Instruction.ForEndInstruction()
+  instrs[lidx++] = new Instruction.ExitScopeInstruction()
   if (jofInst !== undefined) {
     jofInst.setJumpDest(lidx)
   }
@@ -361,11 +360,6 @@ function compileBlock(node: nodes.BlockStmt, env: CompileEnvironment, doNotExten
     newEnv = env.compile_time_extend_environment(locals)
   }
   for (var stmt of node.List) {
-    const stmtType = stmt.getType()
-    if (stmtType === nodeType.CONST || stmtType === nodeType.VAR || stmtType === nodeType.TYPE) {
-      // declarations have already been scanned out
-      continue
-    }
     compileNode(stmt, newEnv)
   }
   if (scopeRequired) {

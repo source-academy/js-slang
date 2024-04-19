@@ -26,7 +26,7 @@ export class GoVirtualMachine {
     let routineId = 1
     let globalEnv = mem.heap_allocate_Environment(0)
     // load literal frame
-    globalEnv = mem.heap_Environment_extend(mem.allocateLiteralValues(), globalEnv)
+    globalEnv = mem.heap_Environment_extend(mem.allocate_literals_frame(), globalEnv)
     // load builtin frame
     globalEnv = mem.heap_Environment_extend(mem.allocate_builtin_frame(), globalEnv)
     const rootRoutine = new GoRoutine(globalEnv, routineId++)
@@ -151,9 +151,9 @@ export class GoVirtualMachine {
             }
             if (mem.isBuiltin(funcAddr)) {
               const builtinId = mem.heap_get_builtin_id(funcAddr)
-              const builtinCallArgs: any[] = Array(
-                callArgs.forEach(argAddr => mem.addrToVal(argAddr))
-              ).reverse()
+              let builtinCallArgs: HeapVal[] = []
+              callArgs.forEach(argAddr => builtinCallArgs.push(mem.addrToVal(argAddr)))
+              builtinCallArgs = builtinCallArgs.reverse()
               const builtinRes = builtin_func[builtinId].func(...builtinCallArgs)
               if (builtinRes.type !== ValType.Undefined) {
                 // if ValType undefined, builtin function does not produce any values
@@ -164,7 +164,7 @@ export class GoVirtualMachine {
               const frameAddr = mem.heap_allocate_Frame(frameSize)
               for (let i = callInst.arity - 1; i >= 0; --i) {
                 // need to reverse order since callArgs was filled by popping the operand stack
-                mem.heap_set_child(frameAddr, callInst.arity - 1 - i, callArgs[i])
+                mem.heap_set_frame_child(frameAddr, callInst.arity - 1 - i, callArgs[i])
               }
               const newCallEnv = mem.heap_Environment_extend(
                 frameAddr,

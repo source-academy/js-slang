@@ -16,7 +16,8 @@ export enum ValType {
   Pointer,
   Undefined,
   Unassigned,
-  Null
+  Null,
+  Builtin
 }
 
 export const ValTypeToString = Object.keys(ValType)
