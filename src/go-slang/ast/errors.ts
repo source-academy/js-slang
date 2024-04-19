@@ -21,3 +21,9 @@ export class BadStmtError extends Error {
     super('BadStmt')
   }
 }
+
+export class UnableToDefineAssignmentError extends Error {
+  constructor() {
+    super("UnableToDefineAssignment")
+  }
+}

@@ -1,3 +1,4 @@
+import { VariableRedeclaredError } from "./errors"
 import { SymbolNotFoundError, VariableRedeclaredError } from "./errors"
 
 export class CompileEnvironment {
@@ -66,6 +67,8 @@ export class CompileEnvironment {
     }
     return vars
   }
+  constructor() {
+    this.env = []
 
   public debugEnv() {
     const size = this.env.length

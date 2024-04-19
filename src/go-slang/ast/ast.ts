@@ -9,7 +9,7 @@ export function stringToAst(input: string): nodes.File {
   return parseFile(jsonAst)
 }
 
-function parseFile(file: any): nodes.File {
+export function parseFile(file: any): nodes.File {
   let declNodes: nodes.DeclarationNode[] = []
 
   for (var decl of file['Decls']) {
@@ -21,7 +21,13 @@ function parseFile(file: any): nodes.File {
 }
 
 function parseExprNode(node: any): nodes.ExprNode {
-  const nodeType = node['_type']
+  //console.log(node)
+  /*
+  if (node === null){
+    return undefined;
+  }
+  */
+  const nodeType = node['NodeType']
   switch (nodeType) {
     case 'Ident':
       return parseIdentNode(node)
@@ -78,8 +84,10 @@ function parseExprNode(node: any): nodes.ExprNode {
 
 function parseField(fi: any): nodes.Field {
   let nameLst: nodes.Ident[] = []
-  for (var name of fi['Names']) {
-    nameLst.push(parseExprNode(name) as nodes.Ident)
+  if (fi['Names'] !== null){
+    for (var name of fi['Names']) {
+      nameLst.push(parseExprNode(name) as nodes.Ident)
+    }
   }
 
   let tag: nodes.BasicLit | undefined = undefined
@@ -92,8 +100,9 @@ function parseField(fi: any): nodes.Field {
 
 function parseFieldList(fl: any): nodes.FieldList {
   let lst: nodes.Field[] | undefined = []
-  if ('List' in fl) {
+  if ('List' in fl && fl['List'] !== null) {
     for (var field of fl['List']) {
+      //var field = fl["List"]; // only 1 List field!! not iterable!
       lst.push(parseExprNode(field) as nodes.Field)
     }
   } else {
@@ -189,7 +198,7 @@ function parseCallExpr(node: any): nodes.CallExpr {
   const fun = parseExprNode(node['Fun'])
 
   let args: nodes.ExprNode[] | undefined = []
-  if ('Args' in node) {
+  if ('Args' in node && node['Args'] !== null) {
     for (var arg of node['Args']) {
       args.push(parseExprNode(arg))
     }
@@ -243,7 +252,7 @@ function parseStructType(node: any): nodes.StructType {
 function parseFuncType(node: any): nodes.FuncType {
   const params = parseExprNode(node['Params']) as nodes.FieldList
   let results: nodes.FieldList | undefined = undefined
-  if ('Results' in node) {
+  if ('Results' in node && node['Results'] !== null) {
     results = parseExprNode(node['Results']) as nodes.FieldList
   }
   return new nodes.FuncType(params, results)
@@ -270,7 +279,7 @@ function parseChanType(node: any): nodes.ChanType {
 // Statements
 
 function parseStatement(node: any): nodes.StatementNode {
-  const type = node['_type']
+  const type = node['NodeType']
   switch (type) {
     case 'DeclStmt':
       return parseDeclStmt(node)
@@ -499,7 +508,7 @@ function parseRangeStmt(node: any): nodes.RangeStmt {
 // Declarations
 
 function parseDecl(decl: any): nodes.DeclarationNode {
-  const type: string = decl['_type']
+  const type: string = decl['NodeType']
   switch (type) {
     case 'GenDecl':
       return parseGenDecl(decl)
@@ -520,10 +529,15 @@ function parseGenDecl(decl: any): nodes.GenDecl {
 }
 
 function parseFuncDecl(decl: any): nodes.FuncDecl {
+  //console.log(decl);
   let recv: nodes.FieldList | undefined = undefined
+  /*
+  // recv is probsbly for web http type stuff which we dont deal with
+  // all Recv in funcDecls are nulls
   if ('Recv' in decl) {
     recv = parseExprNode(decl['Recv']) as nodes.FieldList
   }
+  */
   const name = parseExprNode(decl['Name']) as nodes.Ident
   const type = parseExprNode(decl['Type']) as nodes.FuncType
   const body = parseStatement(decl['Body']) as nodes.BlockStmt
@@ -531,17 +545,15 @@ function parseFuncDecl(decl: any): nodes.FuncDecl {
 }
 
 function parseSpecNode(node: any): nodes.SpecNode {
-  const type: string = node['_type']
-  switch (type) {
-    case 'ValueSpec':
-      return parseValueSpec(node)
-    case 'TypeSpec':
-      return parseValueSpec(node)
-    case 'ImportSpec':
-      // placeholder, package import not implemented
-      return new nodes.ImportSpec()
+  const type: string = node['NodeType']
+  if (type === 'ValueSpec') {
+    return parseValueSpec(node)
   }
-  throw new BadSpecError(type)
+  if (type === 'TypeSpec') {
+    return parseTypeSpec(node)
+  }
+  //console.log(node);
+  throw new BadSpecError()
 }
 
 function parseValueSpec(node: any): nodes.ValueSpec {
@@ -551,7 +563,7 @@ function parseValueSpec(node: any): nodes.ValueSpec {
   }
 
   let type: nodes.ExprNode | undefined = undefined
-  if ('Type' in node) {
+  if ('Type' in node && node['Type'] !== null) {
     type = parseExprNode(node['Type'])
   }
 
