@@ -1,21 +1,17 @@
-export const GoslangToAstJson =  (
-    goslang_code: string
-    ):Promise<JSON> => {
-    const ast_json_from_goslang = (async (
-        goslang_code: string
-        ):Promise<JSON> => {
-    const res = await fetch("http://localhost:8080/goslang-ast_json", {
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        method: "POST",
-        body: JSON.stringify({"goslang_code": goslang_code})
+export const GoslangToAstJson = (goslang_code: string): Promise<JSON> => {
+  const ast_json_from_goslang = (async (goslang_code: string): Promise<JSON> => {
+    const res = await fetch('http://localhost:8080/goslang-ast_json', {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify({ goslang_code: goslang_code })
     })
-    const res_json = await res.json();
-    return res_json;
-    })(goslang_code);
-    return ast_json_from_goslang;
+    const res_json = await res.json()
+    return res_json
+  })(goslang_code)
+  return ast_json_from_goslang
 }
 
 /*

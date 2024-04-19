@@ -630,10 +630,10 @@ export class AssignStmt implements StatementNode {
   getType(): nodeType {
     return nodeType.ASSIGN
   }
-  getTokType(): TokType.Token{
+  getTokType(): TokType.Token {
     return this.Tok
   }
-    
+
   constructor(lhs: ExprNode[], token: string, rhs: ExprNode[]) {
     this.LeftHandSide = lhs
     this.Tok = TokType.getToken(token)
@@ -931,7 +931,7 @@ export class GenDecl implements DeclarationNode {
     return nodeType.GENDECL
   }
   getTokType(): TokType.Token {
-   return this.Tok
+    return this.Tok
   }
 
   constructor(token: string, specs: SpecNode[]) {

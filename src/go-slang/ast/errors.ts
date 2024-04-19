@@ -24,6 +24,6 @@ export class BadStmtError extends Error {
 
 export class UnableToDefineAssignmentError extends Error {
   constructor() {
-    super("UnableToDefineAssignment")
+    super('UnableToDefineAssignment')
   }
 }

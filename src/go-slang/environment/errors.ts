@@ -1,4 +1,4 @@
-import { EnvironmentPos } from "./environment"
+import { EnvironmentPos } from './environment'
 
 export class VariableRedeclaredError extends Error {
   constructor(sym: string) {

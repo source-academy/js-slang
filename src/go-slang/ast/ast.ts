@@ -84,7 +84,7 @@ function parseExprNode(node: any): nodes.ExprNode {
 
 function parseField(fi: any): nodes.Field {
   let nameLst: nodes.Ident[] = []
-  if (fi['Names'] !== null){
+  if (fi['Names'] !== null) {
     for (var name of fi['Names']) {
       nameLst.push(parseExprNode(name) as nodes.Ident)
     }

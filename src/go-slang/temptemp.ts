@@ -1,8 +1,7 @@
-import { GoslangToAstJson } from "./parser";
-import { parseFile } from "./ast/ast";
+import { GoslangToAstJson } from './parser'
+import { parseFile } from './ast/ast'
 import * as nodes from './ast/nodes'
-import { compile } from "./compiler/compiler";
-
+import { compile } from './compiler/compiler'
 
 //import { writeFile } from "fs";
 
@@ -22,14 +21,14 @@ func GetFoo() {
 
 func foo() int {
     return 0
-}`;
+}`
 
 // make needs to be defined and implemented like the mutexes and etc, else will crash since undefined!
 
-GoslangToAstJson(gslang_code).then((result) => {
-    //console.log(result);
-    const parsed_ast:nodes.File = parseFile(result)
-    console.log(parsed_ast);
-    const compiled_parsed_ast = compile(parsed_ast)
-    console.log(compiled_parsed_ast)
-});
+GoslangToAstJson(gslang_code).then(result => {
+  //console.log(result);
+  const parsed_ast: nodes.File = parseFile(result)
+  console.log(parsed_ast)
+  const compiled_parsed_ast = compile(parsed_ast)
+  console.log(compiled_parsed_ast)
+})

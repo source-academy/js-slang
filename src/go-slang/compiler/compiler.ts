@@ -478,7 +478,7 @@ function scanOutDecls(node: nodes.StatementNode): EnvironmentSymbol[] {
       return scanStatementList((node as nodes.File).Decls)
     case nodeType.ASSIGN:
       const assignStmt = node as nodes.AssignStmt
-      if (assignStmt.getTokenType() === Token.token.DEFINE) {
+      if (assignStmt.getTokType() === Token.token.DEFINE) {
         let decls = []
         for (var lhs of assignStmt.LeftHandSide) {
           if (lhs.getType() === nodeType.IDENT) {
@@ -490,7 +490,6 @@ function scanOutDecls(node: nodes.StatementNode): EnvironmentSymbol[] {
   }
   return []
 }
-
 
 // may need to check for variables re-declaration, not between params and body but between body-body vars
 function scanStatementList(stmts: nodes.StatementNode[]): EnvironmentSymbol[] {
@@ -504,7 +503,7 @@ function scanStatementList(stmts: nodes.StatementNode[]): EnvironmentSymbol[] {
         const genDeclSpecs = ((stmt as nodes.DeclStmt).Decl as nodes.GenDecl).Specs
         for (var spec of genDeclSpecs) {
           if (spec.getType() === nodeType.VALUESPEC) {
-            (spec as nodes.ValueSpec).Names.forEach(ident =>
+            ;(spec as nodes.ValueSpec).Names.forEach(ident =>
               decls.push(new EnvironmentSymbol(ident.Name))
             )
           } else {
@@ -514,7 +513,7 @@ function scanStatementList(stmts: nodes.StatementNode[]): EnvironmentSymbol[] {
         break
       case nodeType.ASSIGN:
         const assignStmt = stmt as nodes.AssignStmt
-        if (assignStmt.getTokenType() === Token.token.DEFINE) {
+        if (assignStmt.getTokType() === Token.token.DEFINE) {
           for (var lhs of assignStmt.LeftHandSide) {
             if (lhs.getType() === nodeType.IDENT) {
               decls.push(new EnvironmentSymbol((lhs as nodes.Ident).Name))
