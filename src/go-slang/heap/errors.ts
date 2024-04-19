@@ -29,25 +29,37 @@ export class CannotAddChildError extends Error {
 }
 
 export class BadTagError extends Error {
-  constructor(expected : number , actual : number) {
+  constructor(expected: number, actual: number) {
     super(`Bad tag: Expected ${expected}, Actual ${actual}`)
   }
 }
 
 export class WaitGroupCounterOverflowError extends Error {
   constructor() {
-    super("Wait group counter cannot exceed 16777215")
+    super('Wait group counter cannot exceed 16777215')
   }
 }
 
 export class NegativeWaitGroupCounterError extends Error {
   constructor() {
-    super("Wait group counter negative")
+    super('Wait group counter negative')
   }
 }
 
 export class InvalidSemaphoreValueError extends Error {
-  constructor(val : number) {
-    super(`Semaphore initialised with size ${val}, must be between [1, 255] inclusive`)
+  constructor(val: number) {
+    super(`Semaphore initialised with size ${val}, must be between [1, 2^32 - 1] inclusive`)
+  }
+}
+
+export class InvalidValTypeError extends Error {
+  constructor() {
+    super('Value type could not be determined')
+  }
+}
+
+export class UnassignedVarError extends Error {
+  constructor() {
+    super('Variable is unassigned')
   }
 }

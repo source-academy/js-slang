@@ -1,14 +1,25 @@
 type address = number
 
 export class GoRoutine {
-  env: GoRoutineEnv
-  PC: number
-}
-
-class GoRoutineEnv {
   OS: address[]
   ENV: address
-  RTS: address
+  RTS: address[]
+  PC: number
+  blocked: boolean
+  terminate: boolean
+  spawnNewRoutine: boolean
+  newRoutinePC: number
+  id: number
+
+  constructor(env: number, id: number, pc?: number) {
+    this.OS = []
+    this.RTS = []
+    this.ENV = env
+    this.PC = pc === undefined ? 0 : pc
+    this.blocked = false
+    this.terminate = false
+    this.id = id
+  }
 }
 
 export class GoRoutineQueue {
@@ -21,7 +32,7 @@ export class GoRoutineQueue {
     this.capacity = 64
     this.startPos = 0
     this.size = 0
-    this.goroutines = new Array(64).fill(null)
+    this.goroutines = new Array(64).fill(undefined)
   }
 
   push(routine: GoRoutine) {
@@ -33,7 +44,7 @@ export class GoRoutineQueue {
   }
 
   pop(): GoRoutine | undefined {
-    if (this.goroutines[this.startPos] == null) {
+    if (this.goroutines[this.startPos] === undefined) {
       return undefined
     }
     const retRoutine = this.goroutines[this.startPos]
@@ -42,8 +53,19 @@ export class GoRoutineQueue {
     return retRoutine
   }
 
+  isEmpty(): boolean {
+    return this.size === 0
+  }
+
+  peek(): GoRoutine | undefined {
+    if (!this.isEmpty()) {
+      return this.goroutines[this.startPos]
+    }
+    return undefined
+  }
+
   private resizeQueue() {
-    const newQueue = new Array(this.capacity * 2).fill(null)
+    const newQueue = new Array(this.capacity * 2).fill(undefined)
     for (let i = 0; i < this.capacity; ++i) {
       newQueue[i] = this.goroutines[(this.startPos + i) % this.capacity]
     }

@@ -1,5 +1,5 @@
-import { stringToAst } from "../../ast/ast"
-import { compile, debugCompile } from "../compiler"
+import { stringToAst } from '../../ast/ast'
+import { compile, debugCompile } from '../compiler'
 
 let json_prog_1 = `
 {
@@ -330,8 +330,8 @@ let json_prog_1 = `
     "_type": "File"
   }`
 
- const prog_2_str = `
- {
+export const prog_2_str = `
+{
     "Comments": [],
     "Decls": [
       {
@@ -628,13 +628,49 @@ let json_prog_1 = `
               ],
               "Tok": "=",
               "_type": "AssignStmt"
+            },
+            {
+              "Loc": {
+                "End": {
+                  "Filename": "main.go",
+                  "Offset": 97,
+                  "Line": 10,
+                  "Column": 7
+                },
+                "Start": {
+                  "Filename": "main.go",
+                  "Offset": 94,
+                  "Line": 10,
+                  "Column": 4
+                }
+              },
+              "Tok": "++",
+              "X": {
+                "Loc": {
+                  "End": {
+                    "Filename": "main.go",
+                    "Offset": 95,
+                    "Line": 10,
+                    "Column": 5
+                  },
+                  "Start": {
+                    "Filename": "main.go",
+                    "Offset": 94,
+                    "Line": 10,
+                    "Column": 4
+                  }
+                },
+                "Name": "x",
+                "_type": "Ident"
+              },
+              "_type": "IncDecStmt"
             }
           ],
           "Loc": {
             "End": {
               "Filename": "main.go",
-              "Offset": 92,
-              "Line": 10,
+              "Offset": 99,
+              "Line": 11,
               "Column": 2
             },
             "Start": {
@@ -644,14 +680,14 @@ let json_prog_1 = `
               "Column": 15
             }
           },
-          "Rbrace": 92,
+          "Rbrace": 99,
           "_type": "BlockStmt"
         },
         "Loc": {
           "End": {
             "Filename": "main.go",
-            "Offset": 92,
-            "Line": 10,
+            "Offset": 99,
+            "Line": 11,
             "Column": 2
           },
           "Start": {
@@ -721,20 +757,20 @@ let json_prog_1 = `
       },
       {
         "Body": {
-          "Lbrace": 109,
+          "Lbrace": 116,
           "List": [
             {
               "Loc": {
                 "End": {
                   "Filename": "main.go",
-                  "Offset": 122,
-                  "Line": 12,
+                  "Offset": 129,
+                  "Line": 13,
                   "Column": 13
                 },
                 "Start": {
                   "Filename": "main.go",
-                  "Offset": 114,
-                  "Line": 12,
+                  "Offset": 121,
+                  "Line": 13,
                   "Column": 5
                 }
               },
@@ -744,14 +780,14 @@ let json_prog_1 = `
                   "Loc": {
                     "End": {
                       "Filename": "main.go",
-                      "Offset": 122,
-                      "Line": 12,
+                      "Offset": 129,
+                      "Line": 13,
                       "Column": 13
                     },
                     "Start": {
                       "Filename": "main.go",
-                      "Offset": 121,
-                      "Line": 12,
+                      "Offset": 128,
+                      "Line": 13,
                       "Column": 12
                     }
                   },
@@ -759,38 +795,38 @@ let json_prog_1 = `
                   "_type": "BasicLit"
                 }
               ],
-              "Return": 115,
+              "Return": 122,
               "_type": "ReturnStmt"
             }
           ],
           "Loc": {
             "End": {
               "Filename": "main.go",
-              "Offset": 124,
-              "Line": 13,
+              "Offset": 131,
+              "Line": 14,
               "Column": 2
             },
             "Start": {
               "Filename": "main.go",
-              "Offset": 108,
-              "Line": 11,
+              "Offset": 115,
+              "Line": 12,
               "Column": 16
             }
           },
-          "Rbrace": 124,
+          "Rbrace": 131,
           "_type": "BlockStmt"
         },
         "Loc": {
           "End": {
             "Filename": "main.go",
-            "Offset": 124,
-            "Line": 13,
+            "Offset": 131,
+            "Line": 14,
             "Column": 2
           },
           "Start": {
             "Filename": "main.go",
-            "Offset": 93,
-            "Line": 11,
+            "Offset": 100,
+            "Line": 12,
             "Column": 1
           }
         },
@@ -798,14 +834,14 @@ let json_prog_1 = `
           "Loc": {
             "End": {
               "Filename": "main.go",
-              "Offset": 101,
-              "Line": 11,
+              "Offset": 108,
+              "Line": 12,
               "Column": 9
             },
             "Start": {
               "Filename": "main.go",
-              "Offset": 98,
-              "Line": 11,
+              "Offset": 105,
+              "Line": 12,
               "Column": 6
             }
           },
@@ -813,39 +849,39 @@ let json_prog_1 = `
           "_type": "Ident"
         },
         "Type": {
-          "Func": 94,
+          "Func": 101,
           "Loc": {
             "End": {
               "Filename": "main.go",
-              "Offset": 107,
-              "Line": 11,
+              "Offset": 114,
+              "Line": 12,
               "Column": 15
             },
             "Start": {
               "Filename": "main.go",
-              "Offset": 93,
-              "Line": 11,
+              "Offset": 100,
+              "Line": 12,
               "Column": 1
             }
           },
           "Params": {
-            "Closing": 103,
+            "Closing": 110,
             "List": [],
             "Loc": {
               "End": {
                 "Filename": "main.go",
-                "Offset": 103,
-                "Line": 11,
+                "Offset": 110,
+                "Line": 12,
                 "Column": 11
               },
               "Start": {
                 "Filename": "main.go",
-                "Offset": 101,
-                "Line": 11,
+                "Offset": 108,
+                "Line": 12,
                 "Column": 9
               }
             },
-            "Opening": 102,
+            "Opening": 109,
             "_type": "FieldList"
           },
           "Results": {
@@ -855,14 +891,14 @@ let json_prog_1 = `
                 "Loc": {
                   "End": {
                     "Filename": "main.go",
-                    "Offset": 107,
-                    "Line": 11,
+                    "Offset": 114,
+                    "Line": 12,
                     "Column": 15
                   },
                   "Start": {
                     "Filename": "main.go",
-                    "Offset": 104,
-                    "Line": 11,
+                    "Offset": 111,
+                    "Line": 12,
                     "Column": 12
                   }
                 },
@@ -871,14 +907,14 @@ let json_prog_1 = `
                   "Loc": {
                     "End": {
                       "Filename": "main.go",
-                      "Offset": 107,
-                      "Line": 11,
+                      "Offset": 114,
+                      "Line": 12,
                       "Column": 15
                     },
                     "Start": {
                       "Filename": "main.go",
-                      "Offset": 104,
-                      "Line": 11,
+                      "Offset": 111,
+                      "Line": 12,
                       "Column": 12
                     }
                   },
@@ -891,14 +927,14 @@ let json_prog_1 = `
             "Loc": {
               "End": {
                 "Filename": "main.go",
-                "Offset": 107,
-                "Line": 11,
+                "Offset": 114,
+                "Line": 12,
                 "Column": 15
               },
               "Start": {
                 "Filename": "main.go",
-                "Offset": 104,
-                "Line": 11,
+                "Offset": 111,
+                "Line": 12,
                 "Column": 12
               }
             },
@@ -911,20 +947,20 @@ let json_prog_1 = `
       },
       {
         "Body": {
-          "Lbrace": 139,
+          "Lbrace": 146,
           "List": [
             {
               "Loc": {
                 "End": {
                   "Filename": "main.go",
-                  "Offset": 150,
-                  "Line": 16,
+                  "Offset": 157,
+                  "Line": 17,
                   "Column": 11
                 },
                 "Start": {
                   "Filename": "main.go",
-                  "Offset": 142,
-                  "Line": 16,
+                  "Offset": 149,
+                  "Line": 17,
                   "Column": 3
                 }
               },
@@ -935,14 +971,14 @@ let json_prog_1 = `
                   "Loc": {
                     "End": {
                       "Filename": "main.go",
-                      "Offset": 148,
-                      "Line": 16,
+                      "Offset": 155,
+                      "Line": 17,
                       "Column": 9
                     },
                     "Start": {
                       "Filename": "main.go",
-                      "Offset": 142,
-                      "Line": 16,
+                      "Offset": 149,
+                      "Line": 17,
                       "Column": 3
                     }
                   },
@@ -952,19 +988,19 @@ let json_prog_1 = `
                 "Loc": {
                   "End": {
                     "Filename": "main.go",
-                    "Offset": 150,
-                    "Line": 16,
+                    "Offset": 157,
+                    "Line": 17,
                     "Column": 11
                   },
                   "Start": {
                     "Filename": "main.go",
-                    "Offset": 142,
-                    "Line": 16,
+                    "Offset": 149,
+                    "Line": 17,
                     "Column": 3
                   }
                 },
-                "Lparen": 149,
-                "Rparen": 150,
+                "Lparen": 156,
+                "Rparen": 157,
                 "_type": "CallExpr"
               },
               "_type": "ExprStmt"
@@ -973,31 +1009,31 @@ let json_prog_1 = `
           "Loc": {
             "End": {
               "Filename": "main.go",
-              "Offset": 152,
-              "Line": 17,
+              "Offset": 159,
+              "Line": 18,
               "Column": 2
             },
             "Start": {
               "Filename": "main.go",
-              "Offset": 138,
-              "Line": 15,
+              "Offset": 145,
+              "Line": 16,
               "Column": 13
             }
           },
-          "Rbrace": 152,
+          "Rbrace": 159,
           "_type": "BlockStmt"
         },
         "Loc": {
           "End": {
             "Filename": "main.go",
-            "Offset": 152,
-            "Line": 17,
+            "Offset": 159,
+            "Line": 18,
             "Column": 2
           },
           "Start": {
             "Filename": "main.go",
-            "Offset": 126,
-            "Line": 15,
+            "Offset": 133,
+            "Line": 16,
             "Column": 1
           }
         },
@@ -1005,14 +1041,14 @@ let json_prog_1 = `
           "Loc": {
             "End": {
               "Filename": "main.go",
-              "Offset": 135,
-              "Line": 15,
+              "Offset": 142,
+              "Line": 16,
               "Column": 10
             },
             "Start": {
               "Filename": "main.go",
-              "Offset": 131,
-              "Line": 15,
+              "Offset": 138,
+              "Line": 16,
               "Column": 6
             }
           },
@@ -1020,39 +1056,39 @@ let json_prog_1 = `
           "_type": "Ident"
         },
         "Type": {
-          "Func": 127,
+          "Func": 134,
           "Loc": {
             "End": {
               "Filename": "main.go",
-              "Offset": 137,
-              "Line": 15,
+              "Offset": 144,
+              "Line": 16,
               "Column": 12
             },
             "Start": {
               "Filename": "main.go",
-              "Offset": 126,
-              "Line": 15,
+              "Offset": 133,
+              "Line": 16,
               "Column": 1
             }
           },
           "Params": {
-            "Closing": 137,
+            "Closing": 144,
             "List": [],
             "Loc": {
               "End": {
                 "Filename": "main.go",
-                "Offset": 137,
-                "Line": 15,
+                "Offset": 144,
+                "Line": 16,
                 "Column": 12
               },
               "Start": {
                 "Filename": "main.go",
-                "Offset": 135,
-                "Line": 15,
+                "Offset": 142,
+                "Line": 16,
                 "Column": 10
               }
             },
-            "Opening": 136,
+            "Opening": 143,
             "_type": "FieldList"
           },
           "_type": "FuncType"
@@ -1101,8 +1137,8 @@ let json_prog_1 = `
     "Loc": {
       "End": {
         "Filename": "main.go",
-        "Offset": 152,
-        "Line": 17,
+        "Offset": 159,
+        "Line": 18,
         "Column": 2
       },
       "Start": {
@@ -1154,14 +1190,14 @@ let json_prog_1 = `
         "Loc": {
           "End": {
             "Filename": "main.go",
-            "Offset": 107,
-            "Line": 11,
+            "Offset": 114,
+            "Line": 12,
             "Column": 15
           },
           "Start": {
             "Filename": "main.go",
-            "Offset": 104,
-            "Line": 11,
+            "Offset": 111,
+            "Line": 12,
             "Column": 12
           }
         },
@@ -1172,5 +1208,5 @@ let json_prog_1 = `
     "_type": "File"
   }`
 
-  let prog_2_inst = compile(stringToAst(prog_2_str))
-  debugCompile(prog_2_inst)
+// const prog_2_instr = compile(stringToAst(prog_2_str))
+// debugCompile(prog_2_instr)

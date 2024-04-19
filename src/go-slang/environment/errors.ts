@@ -5,13 +5,13 @@ export class VariableRedeclaredError extends Error {
 }
 
 export class InvalidEnvironmentPos extends Error {
-  constructor(env : number, frame : number) {
+  constructor(env: number, frame: number) {
     super(`EnvironmentPos (${env}, ${frame}) is invalid`)
   }
 }
 
 export class SymbolNotFoundError extends Error {
-  constructor(sym : string) {
+  constructor(sym: string) {
     super(`${sym} not found in Environment`)
   }
 }

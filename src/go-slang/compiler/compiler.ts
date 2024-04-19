@@ -1,6 +1,12 @@
 import { nodeType } from '../ast/nodeTypes'
 import * as nodes from '../ast/nodes'
-import { CompileEnvironment, EnvironmentPos, EnvironmentSymbol, IgnoreEnvironmentPos, constant_keywords } from '../environment/environment'
+import {
+  CompileEnvironment,
+  EnvironmentPos,
+  EnvironmentSymbol,
+  IgnoreEnvironmentPos,
+  literal_keywords
+} from '../environment/environment'
 import * as Token from '../tokens/tokens'
 import { IllegalInstructionError, UnsupportedInstructionError } from './errors'
 import * as Instruction from './instructions'
@@ -8,15 +14,15 @@ import * as Instruction from './instructions'
 let instrs: Instruction.Instruction[]
 let lidx: number
 let compileEnv: CompileEnvironment
-let constantInst: Map<string, Instruction.Instruction>
+let literalInst: Map<string, Instruction.Instruction>
 
 export function compile(file: nodes.File): Instruction.Instruction[] {
   instrs = []
   lidx = 0
   compileEnv = new CompileEnvironment()
-  constantInst = new Map()
-  constant_keywords.forEach(keyword =>
-    constantInst.set(
+  literalInst = new Map()
+  literal_keywords.forEach(keyword =>
+    literalInst.set(
       keyword,
       new Instruction.IdentInstruction(
         keyword,
@@ -101,6 +107,9 @@ function compileNode(node: nodes.GoNode, env: CompileEnvironment, doNotExtendEnv
     case nodeType.CONT:
       compileContinueStmt()
       break
+    case nodeType.INCDEC:
+      compileIncDecStmt(node as nodes.IncDecStmt, env)
+      break
     case nodeType.ILLEGAL:
       throw new IllegalInstructionError()
     default:
@@ -109,15 +118,16 @@ function compileNode(node: nodes.GoNode, env: CompileEnvironment, doNotExtendEnv
 }
 
 function compileLiteral(node: nodes.BasicLit, _: CompileEnvironment) {
-  console.log(`Literal ${node.Value}`)
   const tag = node.getDataType()
   switch (tag) {
-    case Token.token.INT || Token.token.FLOAT:
+    case Token.token.INT:
       instrs[lidx++] = new Instruction.BasicLitInstruction(tag, Number(node.Value))
       return
     case Token.token.CHAR || Token.token.STRING:
       instrs[lidx++] = new Instruction.BasicLitInstruction(tag, node.Value)
       return
+    case Token.token.FLOAT:
+      throw new Error('float unsupported')
     case Token.token.IMAG:
       throw new Error('complex numbers unsupported')
   }
@@ -137,9 +147,11 @@ function compileUnaryOp(node: nodes.UnaryExpr, env: CompileEnvironment) {
 }
 
 function compileBinaryOp(node: nodes.BinaryExpr, env: CompileEnvironment) {
+  console.log('Compiling binary expr')
   const op = node.Op
   const jofInst = new Instruction.JumpOnFalseInstruction()
   const gotoInst = new Instruction.GotoInstruction()
+  console.log('Compiling binary operation %d', op)
   switch (op) {
     case Token.token.AND:
       compileNode(node.X, env)
@@ -147,18 +159,43 @@ function compileBinaryOp(node: nodes.BinaryExpr, env: CompileEnvironment) {
       compileNode(node.Y, env)
       instrs[lidx++] = gotoInst
       jofInst.setJumpDest(lidx)
-      instrs[lidx++] = constantInst.get('false') as Instruction.Instruction
+      instrs[lidx++] = literalInst.get('false') as Instruction.Instruction
       gotoInst.setGotoDest(lidx)
       break
     case Token.token.OR:
       compileNode(node.X, env)
       instrs[lidx++] = jofInst
-      instrs[lidx++] = constantInst.get('true') as Instruction.Instruction
+      instrs[lidx++] = literalInst.get('true') as Instruction.Instruction
       instrs[lidx++] = gotoInst
       jofInst.setJumpDest(lidx)
       compileNode(node.Y, env)
       gotoInst.setGotoDest(lidx)
       break
+    case Token.token.ADD_ASSIGN ||
+      Token.token.SUB_ASSIGN ||
+      Token.token.MUL_ASSIGN ||
+      Token.token.QUO_ASSIGN ||
+      Token.token.REM_ASSIGN ||
+      Token.token.AND_ASSIGN ||
+      Token.token.OR_ASSIGN ||
+      Token.token.XOR_ASSIGN ||
+      Token.token.SHL_ASSIGN ||
+      Token.token.SHR_ASSIGN ||
+      Token.token.AND_NOT_ASSIGN:
+      compileNode(node.X, env)
+      compileNode(node.Y, env)
+      const newOp = Token.BinOpAssignMatch.get(op)
+      console.log('BinOp %d mapped to %d', op, newOp)
+      if (newOp !== undefined) {
+        // to satisfy TypeScript type guards
+        instrs[lidx++] = new Instruction.BinOpInstruction(newOp)
+      }
+      // assumption: node.X is an Ident (change when IndexExpr introduced)
+      instrs[lidx++] = new Instruction.AssignInstruction(
+        env.compile_time_environment_position((node.X as nodes.Ident).Name)
+      )
+      break
+
     default:
       compileNode(node.X, env)
       compileNode(node.Y, env)
@@ -196,25 +233,28 @@ function compileIf(node: nodes.IfStmt, env: CompileEnvironment) {
 }
 
 function compileFor(node: nodes.ForStmt, env: CompileEnvironment) {
-  let initDecls: EnvironmentSymbol[] = []
+  let decls: EnvironmentSymbol[] = []
+  let forEnv = env
   if (node.Init !== undefined) {
-    initDecls = scanOutDecls(node.Init)
-    compileNode(node.Init, env)
-    if (initDecls.length !== 0) {
-      // create new scope if initialisation statement has declarations
-      instrs[lidx++] = new Instruction.EnterScopeInstruction(initDecls.length)
-    }
+    decls = scanOutDecls(node.Init)
+  }
+  decls = env.combineFrames(decls, scanOutDecls(node.Body))
+  forEnv = env.compile_time_extend_environment(decls)
+  instrs[lidx++] = new Instruction.EnterScopeInstruction(decls.length)
+  if (node.Init !== undefined) {
+    compileNode(node.Init, forEnv)
   }
   const loop_start = lidx
   let jofInst: Instruction.JumpOnFalseInstruction | undefined = undefined
   if (node.Cond !== undefined) {
-    compileNode(node.Cond, env)
+    compileNode(node.Cond, forEnv)
     jofInst = new Instruction.JumpOnFalseInstruction()
+    instrs[lidx++] = jofInst
   }
-  compileNode(node.Body, env)
+  compileNode(node.Body, forEnv, true)
   instrs[lidx++] = new Instruction.IterEndInstruction()
   if (node.Post !== undefined) {
-    compileNode(node.Post, env)
+    compileNode(node.Post, forEnv)
   }
   const nextIterInst = new Instruction.GotoInstruction()
   nextIterInst.setGotoDest(loop_start)
@@ -223,10 +263,8 @@ function compileFor(node: nodes.ForStmt, env: CompileEnvironment) {
   if (jofInst !== undefined) {
     jofInst.setJumpDest(lidx)
   }
-  if (initDecls.length !== 0) {
-    // exit scope created by init at the end of the for loop
-    instrs[lidx++] = new Instruction.ExitScopeInstruction()
-  }
+  // exit scope created by init at the end of the for loop
+  instrs[lidx++] = new Instruction.ExitScopeInstruction()
 }
 
 // Future TODO: Function calls support the spread operator - consider integration
@@ -305,6 +343,11 @@ function compileFunc(node: nodes.FuncDecl | nodes.FuncLit, env: CompileEnvironme
   compileNode(node.Body, env.compile_time_extend_environment(idents), true)
   instrs[lidx++] = new Instruction.ResetInstruction()
   gotoInst.setGotoDest(lidx)
+  if (node.getType() === nodeType.FUNCD) {
+    instrs[lidx++] = new Instruction.AssignInstruction(
+      env.compile_time_environment_position((node as nodes.FuncDecl).Name.Name)
+    )
+  }
 }
 
 function compileBlock(node: nodes.BlockStmt, env: CompileEnvironment, doNotExtendEnv?: boolean) {
@@ -339,7 +382,10 @@ function compileFile(node: nodes.File, env: CompileEnvironment) {
   for (let decl of node.Decls) {
     compileNode(decl, newEnv)
   }
-  instrs[lidx++] = new Instruction.IdentInstruction("main", newEnv.compile_time_environment_position("main"))
+  instrs[lidx++] = new Instruction.IdentInstruction(
+    'main',
+    newEnv.compile_time_environment_position('main')
+  )
   instrs[lidx++] = new Instruction.CallInstruction(0)
   instrs[lidx++] = new Instruction.ExitScopeInstruction()
 }
@@ -408,6 +454,19 @@ function compileBreakStmt() {
   instrs[lidx++] = new Instruction.BreakInstruction()
 }
 
+function compileIncDecStmt(node: nodes.IncDecStmt, env: CompileEnvironment) {
+  compileNode(node.Expr, env)
+  instrs[lidx++] = new Instruction.BasicLitInstruction(Token.token.INT, 1)
+  if (node.Tok === Token.token.INC) {
+    instrs[lidx++] = new Instruction.BinOpInstruction(Token.token.ADD)
+  } else {
+    instrs[lidx++] = new Instruction.BinOpInstruction(Token.token.SUB)
+  }
+  instrs[lidx++] = new Instruction.AssignInstruction(
+    env.compile_time_environment_position((node.Expr as nodes.Ident).Name)
+  )
+}
+
 function scanOutDecls(node: nodes.StatementNode): EnvironmentSymbol[] {
   const type = node.getType()
   switch (type) {
@@ -415,6 +474,17 @@ function scanOutDecls(node: nodes.StatementNode): EnvironmentSymbol[] {
       return scanStatementList((node as nodes.BlockStmt).List)
     case nodeType.FILE:
       return scanStatementList((node as nodes.File).Decls)
+    case nodeType.ASSIGN:
+      const assignStmt = node as nodes.AssignStmt
+      if (assignStmt.getTokenType() === Token.token.DEFINE) {
+        let decls = []
+        for (var lhs of assignStmt.LeftHandSide) {
+          if (lhs.getType() === nodeType.IDENT) {
+            decls.push(new EnvironmentSymbol((lhs as nodes.Ident).Name))
+          }
+        }
+        return decls
+      }
   }
   return []
 }
@@ -439,7 +509,7 @@ function scanStatementList(stmts: nodes.StatementNode[]): EnvironmentSymbol[] {
         }
         break
       case nodeType.ASSIGN:
-        const assignStmt = (stmt as nodes.AssignStmt)
+        const assignStmt = stmt as nodes.AssignStmt
         if (assignStmt.getTokenType() === Token.token.DEFINE) {
           for (var lhs of assignStmt.LeftHandSide) {
             if (lhs.getType() === nodeType.IDENT) {
@@ -452,9 +522,9 @@ function scanStatementList(stmts: nodes.StatementNode[]): EnvironmentSymbol[] {
   return decls
 }
 
-export function debugCompile(instrs : Instruction.Instruction[]) {
-  console.log("INSTRUCTION DEBUG:")
+export function debugCompile(instrs: Instruction.Instruction[]) {
+  console.log('INSTRUCTION DEBUG:')
   for (let i = 0; i < instrs.length; ++i) {
-    console.log("%d: %s", i, instrs[i].stringRep())
+    console.log('%d: %s', i, instrs[i].stringRep())
   }
 }

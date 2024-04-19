@@ -1,7 +1,7 @@
 import { EnvironmentPos } from '../environment/environment'
 import * as Token from '../tokens/tokens'
 
-enum InstType {
+export enum InstType {
   DONE,
   LDC,
   LD,
@@ -41,11 +41,11 @@ export class DoneInstruction implements Instruction {
 }
 
 export class BasicLitInstruction implements Instruction {
-  value?: number | string
-  type: Token.token
+  value: number | string
+  tokenType: Token.token
 
-  constructor(type: Token.token, value: number | string | undefined) {
-    this.type = type
+  constructor(type: Token.token, value: number | string) {
+    this.tokenType = type
     this.value = value
   }
 

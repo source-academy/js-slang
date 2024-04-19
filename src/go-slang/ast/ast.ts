@@ -5,7 +5,7 @@ import * as nodes from './nodes'
 // Takes string representation of JSON AST and parses
 // it into an AST using the node types defined in node.ts
 export function stringToAst(input: string): nodes.File {
-  const jsonAst = JSON.parse(input.replace(/\\/g,'\\'))
+  const jsonAst = JSON.parse(input.replace(/\\/g, '\\'))
   return parseFile(jsonAst)
 }
 

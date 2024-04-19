@@ -226,3 +226,17 @@ export function getToken(str: string): token {
   }
   return token.ILLEGAL
 }
+
+export const BinOpAssignMatch: Map<token, token> = new Map([
+  [token.ADD_ASSIGN, token.ADD],
+  [token.SUB_ASSIGN, token.SUB],
+  [token.MUL_ASSIGN, token.MUL],
+  [token.QUO_ASSIGN, token.QUO],
+  [token.REM_ASSIGN, token.REM],
+  [token.AND_ASSIGN, token.AND],
+  [token.OR_ASSIGN, token.OR],
+  [token.XOR_ASSIGN, token.XOR],
+  [token.SHL_ASSIGN, token.SHL],
+  [token.SHR_ASSIGN, token.SHR],
+  [token.AND_NOT_ASSIGN, token.AND_NOT]
+])

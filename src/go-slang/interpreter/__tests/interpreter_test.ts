@@ -1,7 +1,7 @@
-import { stringToAst } from "../../ast/ast";
-import { prog_2_str } from "../../compiler/__tests/compiler_test";
-import { compile, debugCompile } from "../../compiler/compiler";
-import { GoVirtualMachine } from "../go-vm";
+import { stringToAst } from '../../ast/ast'
+import { prog_2_str } from '../../compiler/__tests/compiler_test'
+import { compile, debugCompile } from '../../compiler/compiler'
+import { GoVirtualMachine } from '../go-vm'
 
 const prog3_json = `
 {
@@ -827,4 +827,3 @@ const prog3_inst = compile(stringToAst(prog3_json))
 debugCompile(prog3_inst)
 const vm = new GoVirtualMachine(prog3_inst, true)
 vm.run()
-

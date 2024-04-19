@@ -363,7 +363,22 @@ export class BinaryExpr implements ExprNode {
   }
 
   valuesProduced(): number {
-    return 1
+    switch (this.Op) {
+      case Token.token.ADD_ASSIGN ||
+        Token.token.SUB_ASSIGN ||
+        Token.token.MUL_ASSIGN ||
+        Token.token.QUO_ASSIGN ||
+        Token.token.REM_ASSIGN ||
+        Token.token.AND_ASSIGN ||
+        Token.token.OR_ASSIGN ||
+        Token.token.XOR_ASSIGN ||
+        Token.token.SHL_ASSIGN ||
+        Token.token.SHR_ASSIGN ||
+        Token.token.AND_NOT_ASSIGN:
+        return 0
+      default:
+        return 1
+    }
   }
 
   constructor(x: ExprNode, op: string, y: ExprNode) {
@@ -596,7 +611,7 @@ export class SendStmt implements StatementNode {
   Value: ExprNode // expression to send
 
   getType(): nodeType {
-    return nodeType.NOT_IMPLEMENTED
+    return nodeType.SEND
   }
 
   constructor(ch: ExprNode, val: ExprNode) {
@@ -611,7 +626,7 @@ export class IncDecStmt implements StatementNode {
   Tok: Token.token // INC or DEC
 
   getType(): nodeType {
-    return nodeType.NOT_IMPLEMENTED
+    return nodeType.INCDEC
   }
 
   constructor(expr: ExprNode, token: string) {
@@ -632,7 +647,7 @@ export class AssignStmt implements StatementNode {
     return nodeType.ASSIGN
   }
 
-  getTokenType() : Token.token {
+  getTokenType(): Token.token {
     return this.Tok
   }
 
@@ -911,9 +926,7 @@ export class ImportSpec implements SpecNode {
     return nodeType.NOT_IMPLEMENTED
   }
 
-  constructor() {
-
-  }
+  constructor() {}
 }
 
 // Declarations are represented by one of the following declaration nodes
@@ -935,7 +948,7 @@ export class GenDecl implements DeclarationNode {
     return nodeType.GENDECL
   }
 
-  getTokenType() : Token.token {
+  getTokenType(): Token.token {
     return this.Tok
   }
 

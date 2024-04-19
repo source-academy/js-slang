@@ -27,5 +27,6 @@ export enum nodeType {
   GOSTMT,
   SEND,
   CONT,
-  BREAK
+  BREAK,
+  INCDEC
 }

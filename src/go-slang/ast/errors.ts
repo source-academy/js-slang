@@ -11,7 +11,7 @@ export class BadDeclError extends Error {
 }
 
 export class BadSpecError extends Error {
-  constructor(type : string) {
+  constructor(type: string) {
     super(`BadSpec ${type}`)
   }
 }

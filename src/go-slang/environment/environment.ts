@@ -1,14 +1,15 @@
-import { SymbolNotFoundError, VariableRedeclaredError } from "./errors"
+import { builtin_keywords } from '../interpreter/builtins'
+import { SymbolNotFoundError, VariableRedeclaredError } from './errors'
 
 export class CompileEnvironment {
   env: EnvironmentSymbol[][]
 
   constructor() {
     this.env = []
-    const globalFrame : EnvironmentSymbol[] = []
-    constant_keywords.forEach(keyword => globalFrame.push(new EnvironmentSymbol(keyword)))
+    const globalFrame: EnvironmentSymbol[] = []
+    literal_keywords.forEach(keyword => globalFrame.push(new EnvironmentSymbol(keyword)))
     this.env.push(globalFrame)
-    const builtinFrame : EnvironmentSymbol[] = []
+    const builtinFrame: EnvironmentSymbol[] = []
     builtin_keywords.forEach(keyword => builtinFrame.push(new EnvironmentSymbol(keyword)))
     this.env.push(builtinFrame)
   }
@@ -38,7 +39,6 @@ export class CompileEnvironment {
     let newEnv = new CompileEnvironment()
     newEnv.env = [...this.env]
     newEnv.env.push(frame)
-    newEnv.debugEnv()
     return newEnv
   }
 
@@ -69,12 +69,12 @@ export class CompileEnvironment {
 
   public debugEnv() {
     const size = this.env.length
-    console.log("ENV DEBUG")
+    console.log('ENV DEBUG')
     for (let i = 0; i < size; ++i) {
       console.log(`Frame ${i + 1} / ${size}:`)
       this.env[i].forEach(sym => console.log(`\t${sym.sym}`))
     }
-    console.log("END ENV DEBUG")
+    console.log('END ENV DEBUG')
   }
 }
 
@@ -97,5 +97,4 @@ export class EnvironmentSymbol {
 }
 
 export const IgnoreEnvironmentPos = new EnvironmentPos(-1, -1)
-export const constant_keywords: string[] = ['true', 'false', 'nil', '*undefined*', '*unassigned*']
-export const builtin_keywords: string[] = ['make']
+export const literal_keywords: string[] = ['true', 'false', 'nil', '*undefined*', '*unassigned*']

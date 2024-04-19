@@ -1,6 +1,18 @@
-import { EnvironmentPos } from '../../environment/environment'
-import { GoRoutineQueue } from '../goroutine'
-import { InvalidMemRequestedError, MemExhaustedError, MemOutOfBoundsError, InvalidChildIndexError, BadTagError, WaitGroupCounterOverflowError, NegativeWaitGroupCounterError, InvalidSemaphoreValueError } from './errors'
+import { EnvironmentPos, literal_keywords } from '../environment/environment'
+import { builtin_keywords } from '../interpreter/builtins'
+import { GoRoutineQueue } from '../interpreter/goroutine'
+import {
+  InvalidMemRequestedError,
+  MemExhaustedError,
+  MemOutOfBoundsError,
+  InvalidChildIndexError,
+  BadTagError,
+  WaitGroupCounterOverflowError,
+  NegativeWaitGroupCounterError,
+  InvalidSemaphoreValueError,
+  InvalidValTypeError
+} from './errors'
+import { HeapVal, ValType } from './heapVals'
 
 const word_pow = 3
 const word_size = 1 << word_pow
@@ -8,28 +20,28 @@ const mega = 20
 const gc_offset = 7
 const size_offset = 5
 
-const FALSE_TAG = 0;
-const TRUE_TAG = 1;
-const NULL_TAG = 2;
-const UNASSIGNED_TAG = 3;
-const UNDEFINED_TAG = 4;
-const BLOCKFRAME_TAG = 5;
-const CALLFRAME_TAG = 6;
-const CLOSURE_TAG = 7;
+const FALSE_TAG = 0
+const TRUE_TAG = 1
+const NULL_TAG = 2
+const UNASSIGNED_TAG = 3
+const UNDEFINED_TAG = 4
+const BLOCKFRAME_TAG = 5
+const CALLFRAME_TAG = 6
+const CLOSURE_TAG = 7
 const FRAME_TAG = 8
 const ENVIRONMENT_TAG = 9
-const PAIR_TAG = 10;
-const BUILTIN_TAG = 11;
+const PAIR_TAG = 10
+const BUILTIN_TAG = 11
 const STRING_TAG = 12
 // const INT8_TAG = 13
-const UINT8_TAG = 14
-// const INT16_TAG = 15 
-// const UINT16_TAG = 16
+// const UINT8_TAG = 14
+// const INT16_TAG = 15
+const UINT16_TAG = 16
 const INT32_TAG = 17
 // const UINT32_TAG = 18 // for future use
 // const INT64_TAG = 19; // for future use
 // const UINT64_TAG = 20; // for future use
-const FLOAT32_TAG = 21
+// const FLOAT32_TAG = 21 // for future use
 // const FLOAT64_TAG = 22; // for future use
 const CHANNEL_TAG = 23
 const POINTER_TAG = 24
@@ -52,6 +64,11 @@ export class HeapBuffer {
   size_last_gc: number
   curr_used: number
   grQueue: GoRoutineQueue
+  true_pos: number
+  false_pos: number
+  nil_pos: number
+  undefined_pos: number
+  unassigned_pos: number
 
   constructor(byte_pow?: number) {
     // 1024 bytes should be enough at the very least
@@ -67,7 +84,7 @@ export class HeapBuffer {
     }
     this.available[this.heap_pow].push(0)
     // Invariant: All allocated and freed blocks must be marked with the correct block size at all times
-    this.heap_set_2_bytes_at_offset(0, gc_offset, this.heap_pow << 3)
+    this.heap_set_byte_at_offset(0, gc_offset, this.heap_pow << 3)
     this.size_last_gc = min_gc_size // will not trigger gc if curr_used < 2 * size_last_gc
     this.curr_used = 0
     this.grQueue = new GoRoutineQueue()
@@ -77,6 +94,9 @@ export class HeapBuffer {
     if (size <= 0) {
       // ensures that size is a positive number
       throw new InvalidMemRequestedError()
+    }
+    if (this.curr_used >= 2 * Math.max(this.size_last_gc, min_gc_size)) {
+      this.run_gc()
     }
     let address = this.findMemBlock(size)
     if (address === -1) {
@@ -112,13 +132,16 @@ export class HeapBuffer {
     while (currIdx > 0 && size * 2 <= 1 << currIdx) {
       // we try to use the smallest unit required, cut out right half for future use
       currIdx--
-      this.available[currIdx].push(address + (word_size << currIdx))
-      this.heap_set_byte_at_offset(address + (word_size << currIdx), gc_offset, currIdx << 3)
+      this.available[currIdx].push(address + (1 << currIdx))
+      // all memory blocks, allocated or not, must be labelled with their size. this step
+      // maintains the invariant, which is required for the mark-sweep algorithm to work
+      this.heap_set_byte_at_offset(address + (1 << currIdx), gc_offset, currIdx << 3)
     }
     // for the 8th byte of the first word, first 5 bits encode the power of the memory block
     // size returned (e.g. 256 words -> 8), and the last 2 bits encode the node colour
     // (00 -> white, 01 -> gray, 10 -> black)
-    // All newly allocated blocks will be coloured gray
+    // All newly allocated blocks will be coloured gray - this ensures that they will survive
+    // the first gc cycle at least
     this.heap_set_byte_at_offset(address, gc_offset, (currIdx << 3) + GRAY)
     // set size
     this.heap_set_2_bytes_at_offset(address, size_offset, size)
@@ -127,11 +150,20 @@ export class HeapBuffer {
   }
 
   private run_gc() {
+    // mark literals
+    this.mark(this.true_pos, true)
+    this.mark(this.false_pos, true)
+    this.mark(this.nil_pos, true)
+    this.mark(this.unassigned_pos, true)
+    this.mark(this.undefined_pos, true)
+    // mark roots of each goroutine
+    console.log('GC Executed - No. of goroutines: %d', this.grQueue.size)
+    console.log('Curr used: %d', this.curr_used)
     for (var thread of this.grQueue.goroutines) {
-      if (thread !== null) {
-        thread.env.OS.forEach(address => this.mark(address, true))
-        this.mark(thread.env.ENV, true)
-        this.mark(thread.env.RTS, true)
+      if (thread !== undefined) {
+        thread.OS.forEach(address => this.mark(address, true))
+        this.mark(thread.ENV as number, true)
+        thread.RTS.forEach(address => this.mark(address as number, true))
       }
     }
     let addr = 0
@@ -146,6 +178,7 @@ export class HeapBuffer {
       addr += allocSize
     }
     this.sweep()
+    console.log('New curr used: %d', this.curr_used)
   }
 
   // needColour is used to indicate whether the current address needs to be coloured
@@ -186,9 +219,7 @@ export class HeapBuffer {
           if (needColour) {
             this.setColour(address, GRAY)
           }
-          const pointerAddress =
-            this.heap_get_2_bytes_at_offset(address, 1) <<
-            (16 + this.heap_get_2_bytes_at_offset(address, 3))
+          const pointerAddress = this.heap_get_4_bytes_at_offset(address, 1)
           this.mark(pointerAddress, true)
           if (needColour) {
             this.setColour(address, BLACK)
@@ -200,7 +231,7 @@ export class HeapBuffer {
           }
           const numChildren = this.heap_get_number_of_children(address)
           for (let i = 0; i < numChildren; ++i) {
-            this.mark(address + (1 + i) * word_size, false)
+            this.mark(address + 1 + i, false)
           }
           if (needColour) {
             this.setColour(address, BLACK)
@@ -240,12 +271,14 @@ export class HeapBuffer {
         this.available[currPow].push(currAddr)
         // maintain invariant that the block size is correctly marked
         this.heap_set_byte_at_offset(currAddr, gc_offset, currPow << 3)
+        addr = currAddr + (1 << currPow)
       } else {
         this.curr_used += 1 << allocSize
         this.setColour(addr, WHITE)
         addr += 1 << allocSize
       }
     }
+    this.size_last_gc = this.curr_used
   }
 
   private setColour(address: number, colour: number) {
@@ -260,36 +293,36 @@ export class HeapBuffer {
   }
 
   // address is word-based (i.e. increment of 1 -> increment of word_size in ArrayBuffer)
-  public heap_get(address: number): number {
+  private heap_get(address: number): number {
     this.addressCheck(address)
     return this.view.getFloat64(address * word_size)
   }
 
-  public heap_set(address: number, value: number) {
+  private heap_set(address: number, value: number) {
     this.addressCheck(address)
     this.view.setFloat64(address * word_size, value)
   }
 
-  public heap_get_number_of_children(address: number) {
+  private heap_get_number_of_children(address: number) {
     const numChildren = this.heap_get_size(address)
     return numChildren - 1
   }
 
-  public heap_get_size(address: number): number {
-    return this.heap_get_2_bytes_at_offset(address * word_size, size_offset)
+  private heap_get_size(address: number): number {
+    return this.heap_get_2_bytes_at_offset(address, size_offset)
   }
 
   private heap_get_allocated_size(address: number): number {
     // get first 5 bits
-    return (this.heap_get_byte_at_offset(address * word_size, gc_offset) & 248) >> 3
+    return (this.heap_get_byte_at_offset(address, gc_offset) & 248) >> 3
   }
 
   private heap_get_colour(address: number): number {
-    return this.heap_get_byte_at_offset(address * word_size, gc_offset) & 3
+    return this.heap_get_byte_at_offset(address, gc_offset) & 3
   }
 
   // child index starts at 0
-  public heap_get_child(address: number, child_index: number): number {
+  private heap_get_child(address: number, child_index: number): number {
     const numChildren = this.heap_get_number_of_children(address)
     if (child_index >= numChildren) {
       throw new InvalidChildIndexError(child_index, numChildren)
@@ -305,12 +338,12 @@ export class HeapBuffer {
     this.heap_set(address + 1 + child_index, value)
   }
 
-  public heap_get_tag(address: number): number {
+  private heap_get_tag(address: number): number {
     this.addressCheck(address)
     return this.view.getUint8(address * word_size)
   }
 
-  public heap_set_byte_at_offset(address: number, offset: number, value: number) {
+  private heap_set_byte_at_offset(address: number, offset: number, value: number) {
     this.addressCheck(address)
     if (offset < 0 || offset >= word_size) {
       throw new MemOutOfBoundsError()
@@ -318,15 +351,15 @@ export class HeapBuffer {
     this.view.setUint8(address * word_size + offset, value)
   }
 
-  public heap_get_byte_at_offset(address: number, offset: number): number {
+  private heap_get_byte_at_offset(address: number, offset: number): number {
     this.addressCheck(address)
     if (offset < 0 || offset >= word_size) {
       throw new MemOutOfBoundsError()
     }
-    return this.view.getUint16(address * word_size + offset)
+    return this.view.getUint8(address * word_size + offset)
   }
 
-  public heap_set_2_bytes_at_offset(address: number, offset: number, value: number) {
+  private heap_set_2_bytes_at_offset(address: number, offset: number, value: number) {
     this.addressCheck(address)
     if (offset < 0 || offset >= word_size - 1) {
       throw new MemOutOfBoundsError()
@@ -334,7 +367,7 @@ export class HeapBuffer {
     this.view.setUint16(address * word_size + offset, value)
   }
 
-  public heap_get_2_bytes_at_offset(address: number, offset: number): number {
+  private heap_get_2_bytes_at_offset(address: number, offset: number): number {
     this.addressCheck(address)
     if (offset < 0 || offset >= word_size - 1) {
       throw new MemOutOfBoundsError()
@@ -342,55 +375,71 @@ export class HeapBuffer {
     return this.view.getUint16(address * word_size + offset)
   }
 
-  private isFalse(address : number) : boolean {
+  private heap_set_4_bytes_at_offset(address: number, offset: number, value: number) {
+    this.addressCheck(address)
+    if (offset < 0 || offset >= word_size - 3) {
+      throw new MemOutOfBoundsError()
+    }
+    this.view.setUint32(address * word_size + offset, value)
+  }
+
+  private heap_get_4_bytes_at_offset(address: number, offset: number): number {
+    this.addressCheck(address)
+    if (offset < 0 || offset >= word_size - 3) {
+      throw new MemOutOfBoundsError()
+    }
+    return this.view.getUint32(address * word_size + offset)
+  }
+
+  private isFalse(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === FALSE_TAG
   }
 
-  private isTrue(address : number) : boolean {
+  private isTrue(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === TRUE_TAG
   }
 
-  private isBoolean(address : number) : boolean {
+  private isBoolean(address: number): boolean {
     return this.isTrue(address) || this.isFalse(address)
   }
 
-  private isUnassigned(address : number) : boolean {
+  public isUnassigned(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === UNASSIGNED_TAG
   }
 
-  private isUndefined(address : number) : boolean {
+  private isUndefined(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === UNDEFINED_TAG
   }
 
-  public allocateLiteralValues() : any {
-    const output : any = {}
-    output["false"] = this.allocate(FALSE_TAG, 1)
-    output["true"] = this.allocate(TRUE_TAG, 1)
-    output["nil"] = this.allocate(NULL_TAG, 1)
-    output["*unassigned*"] = this.allocate(UNASSIGNED_TAG, 1)
-    output["*undefined*"] = this.allocate(UNDEFINED_TAG, 1)
+  public allocateLiteralValues(): any {
+    const output: any = {}
+    this.true_pos = this.allocate(TRUE_TAG, 1)
+    output['true'] = this.true_pos
+    this.false_pos = this.allocate(FALSE_TAG, 1)
+    output['false'] = this.false_pos
+    this.nil_pos = this.allocate(NULL_TAG, 1)
+    output['nil'] = this.nil_pos
+    this.unassigned_pos = this.allocate(UNASSIGNED_TAG, 1)
+    output['*unassigned*'] = this.unassigned_pos
+    this.undefined_pos = this.allocate(UNDEFINED_TAG, 1)
+    output['*undefined*'] = this.undefined_pos
     return output
   }
 
-  private isBuiltin(address : number) : boolean {
-    this.addressCheck(address)
-    return this.heap_get_tag(address) === BUILTIN_TAG
-  }
-
   // builtin id encoded in second byte [1 byte tag, 1 byte id, 3 bytes unused,
-  // 2 bytes #children, 1 byte gc + colour]
-  // #children = 0
-  public heap_allocate_builtin(id : number) : number {
+  // 2 bytes #size, 1 byte gc + colour]
+  // #size = 1
+  public heap_allocate_builtin(id: number): number {
     const address = this.allocate(BUILTIN_TAG, 1)
     this.heap_set_byte_at_offset(address, 1, id)
     return address
   }
 
-  public heap_get_builtin_id(address : number) : number {
+  public heap_get_builtin_id(address: number): number {
     if (!this.isBuiltin(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(BUILTIN_TAG, tag)
@@ -398,96 +447,102 @@ export class HeapBuffer {
     return this.heap_get_byte_at_offset(address, 1)
   }
 
+  public isBuiltin(address: number): boolean {
+    this.addressCheck(address)
+    return this.heap_get_tag(address) === BUILTIN_TAG
+  }
+
   // closure
-  // [1 byte tag, 1 byte arity, 3 bytes pc, 2 bytes #children, 1 byte gc + colour]
-  // #children = 1 (pointer to env)
-  public heap_allocate_Closure(arity : number, pc : number, envAddr : number) : number {
-    const address = this.allocate(CLOSURE_TAG, 2)
-    this.heap_set_byte_at_offset(address, 1, arity)
-    const otherBits = this.heap_get(address) & ((1 << 64) - 1 - (((1 << 24) - 1)) << 24)
-    this.heap_set(address, otherBits + (pc << 24))
+  // [1 byte tag, 4 bytes arity, 2 bytes #size, 1 byte gc + colour]
+  // #size = 3
+  // followed by pc and pointer to env
+  public heap_allocate_Closure(arity: number, pc: number, envAddr: number): number {
+    const address = this.allocate(CLOSURE_TAG, 3)
+    this.heap_set_4_bytes_at_offset(address, 1, arity)
+    this.heap_set_byte_at_offset(address + 1, 0, INT32_TAG)
+    this.heap_set_4_bytes_at_offset(address + 1, 1, pc)
+    this.heap_set_2_bytes_at_offset(address + 1, size_offset, 1)
     // we initialise value pointer ourselves to avoid additional allocation
-    const envPointer = (POINTER_TAG << 56) + (envAddr << 24)
-    this.heap_set_child(address, 0, envPointer)
+    this.heap_set_byte_at_offset(address + 2, 0, POINTER_TAG)
+    this.heap_set_4_bytes_at_offset(address + 2, 1, envAddr)
+    this.heap_set_2_bytes_at_offset(address + 2, size_offset, 1)
     return address
   }
 
-  public heap_get_Closure_arity(address : number) : number {
+  public heap_get_Closure_arity(address: number): number {
     if (!this.isClosure(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(CLOSURE_TAG, tag)
     }
-    return this.heap_get_byte_at_offset(address, 1)
+    return this.heap_get_4_bytes_at_offset(address, 1)
   }
 
-  public heap_get_Closure_pc(address : number) : number {
+  public heap_get_Closure_pc(address: number): number {
     if (!this.isClosure(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(CLOSURE_TAG, tag)
     }
-    return (this.heap_get(address) & (((1 << 24) - 1) << 24)) >> 24
+    return this.getInt32(address + 1)
   }
 
-  public heap_get_Closure_env(address : number) : number {
+  public heap_get_Closure_env(address: number): number {
     if (!this.isClosure(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(CLOSURE_TAG, tag)
     }
-    return this.getPointerAddress(address + 1)
+    return this.getPointerAddress(address + 2)
   }
 
-  public isClosure(address : number) : boolean {
+  public isClosure(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === CLOSURE_TAG
   }
 
   // block frame
-  // [1 byte tag, 4 bytes unused, 2 bytes #children, 1 byte gc + colour]
-  // #children = 0
-  public heap_allocate_Blockframe(envAddr : number) : number {
+  // [1 byte tag, 4 bytes env address, 2 bytes #size, 1 byte gc + colour]
+  // #size = 1
+  public heap_allocate_Blockframe(envAddr: number): number {
     const addr = this.allocate(BLOCKFRAME_TAG, 1)
-    const otherBits = this.heap_get(addr) & ((1 << 64) - 1 - (((1 << 32) - 1) << 16))
-    this.heap_set(addr, otherBits + (envAddr << 16))
+    this.heap_set_4_bytes_at_offset(addr, 1, envAddr)
     return addr
   }
 
-  public heap_get_Blockframe_environment(address : number) : number {
+  public heap_get_Blockframe_environment(address: number): number {
     if (!this.isBlockframe(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(BLOCKFRAME_TAG, tag)
     }
-    const addr = (this.heap_get(address) & (((1 << 32) - 1) << 16)) >> 16
-    return addr
+    return this.heap_get_4_bytes_at_offset(address, 1)
   }
 
-  public isBlockframe(address : number) : boolean {
+  public isBlockframe(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === BLOCKFRAME_TAG
   }
 
   // callframe
-  // [1 byte tag, 1 byte unused, 3 bytes pc, 2 bytes #children, 1 byte gc + colour]
-  // #children = 1
+  // [1 byte tag, 4 bytes pc, 2 bytes #size, 1 byte gc + colour]
+  // #size = 2
   // followed by pointer to env
-  public heap_allocate_Callframe(pc : number, envAddr : number) : number {
+  public heap_allocate_Callframe(pc: number, envAddr: number): number {
     const address = this.allocate(CALLFRAME_TAG, 2)
-    const otherBits = this.heap_get(address) & ((1 << 64) - 1 - (((1 << 24) - 1)) << 24)
-    this.heap_set(address, otherBits + (pc << 24))
+    this.heap_set_4_bytes_at_offset(address, 1, pc)
     // we initialise value pointer ourselves to avoid additional allocation
-    const envPointer = (POINTER_TAG << 56) + (envAddr << 24)
-    this.heap_set_child(address, 0, envPointer)
+    this.heap_set_byte_at_offset(address + 1, 0, POINTER_TAG)
+    this.heap_set_4_bytes_at_offset(address + 1, 1, envAddr)
+    this.heap_set_2_bytes_at_offset(address + 1, size_offset, 1)
     return address
   }
 
-  public heap_get_Callframe_pc(address : number) : number {
+  public heap_get_Callframe_pc(address: number): number {
     if (!this.isCallframe(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(CALLFRAME_TAG, tag)
     }
-    return (this.heap_get(address) & (((1 << 24) - 1) << 24)) >> 24
+    return this.heap_get_4_bytes_at_offset(address, 1)
   }
 
-  public heap_get_Callframe_env(address : number) : number {
+  public heap_get_Callframe_env(address: number): number {
     if (!this.isCallframe(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(CALLFRAME_TAG, tag)
@@ -495,55 +550,60 @@ export class HeapBuffer {
     return this.getPointerAddress(address + 1)
   }
 
-  public isCallframe(address : number) : boolean {
+  public isCallframe(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === CALLFRAME_TAG
   }
 
   // environment frame
-  // [1 byte tag, 4 bytes unused, 2 bytes #children, 1 byte gc + colour]
+  // [1 byte tag, 4 bytes unused, 2 bytes #size, 1 byte gc + colour]
   // followed by addresses of values
-  public heap_allocate_Frame(numValues : number) : number {
-    return this.allocate(FRAME_TAG, numValues + 1)
+  public heap_allocate_Frame(numValues: number): number {
+    const addr = this.allocate(FRAME_TAG, numValues + 1)
+    for (let i = 0; i < numValues; ++i) {
+      this.heap_set_child(addr, i, this.unassigned_pos)
+    }
+    return addr
   }
 
-  public heap_Frame_display(address : number) {
+  public heap_Frame_display(address: number) {
     if (!this.isFrame(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(FRAME_TAG, tag)
     }
-    console.log("Frame:")
+    console.log('Frame:')
     const size = this.heap_get_number_of_children(address)
-    console.log("Frame size: %d", size)
+    console.log('Frame size: %d', size)
     for (let i = 0; i < size; ++i) {
       const value = this.heap_get_child(address, i)
-      console.log("%d: Value address: %d, Value: %d", i, value, this.word_to_string(value))
+      console.log('%d: Value address: %d, Value: %d', i, value, this.word_to_string(value))
     }
   }
 
-  public isFrame(address : number) : boolean {
+  public isFrame(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === FRAME_TAG
   }
 
   // environment
-  // [1 byte tag, 4 bytes unused, 2 bytes #children, 1 byte gc + colour]
-  // #children = number of frames
+  // [1 byte tag, 4 bytes unused, 2 bytes #size, 1 byte gc + colour]
+  // #size = number of frames + 1
   // followed by addresses of frames
-  public heap_allocate_Environment(numFrames : number) : number {
-    return this.allocate(ENVIRONMENT_TAG, numFrames + 1)
+  public heap_allocate_Environment(numFrames: number): number {
+    const addr = this.allocate(ENVIRONMENT_TAG, numFrames + 1)
+    return addr
   }
 
-  public heap_get_Environment_value(envAddr : number, pos : EnvironmentPos) : number {
+  public heap_get_Environment_value(envAddr: number, pos: EnvironmentPos): number {
     if (!this.isEnvironment(envAddr)) {
       const tag = this.heap_get_tag(envAddr)
       throw new BadTagError(ENVIRONMENT_TAG, tag)
     }
     const frame_addr = this.heap_get_child(envAddr, pos.env_offset)
-    return this.heap_get_child(frame_addr, pos.frame_offset);
+    return this.heap_get_child(frame_addr, pos.frame_offset)
   }
 
-  public heap_set_Environment_value(envAddr : number, pos : EnvironmentPos, val : number) {
+  public heap_set_Environment_value(envAddr: number, pos: EnvironmentPos, val: number) {
     if (!this.isEnvironment(envAddr)) {
       const tag = this.heap_get_tag(envAddr)
       throw new BadTagError(ENVIRONMENT_TAG, tag)
@@ -556,7 +616,7 @@ export class HeapBuffer {
   // creates a new environment bigger by 1 frame slot than the given environment
   // copy the frame addresses of given environment into the new environment
   // new frame appended at the end of the environment
-  public heap_Environment_extend(frame_addr : number, env_addr : number) : number {
+  public heap_Environment_extend(frame_addr: number, env_addr: number): number {
     const old_size = this.heap_get_size(env_addr)
     const new_env = this.heap_allocate_Environment(old_size)
     let i = 0
@@ -568,145 +628,183 @@ export class HeapBuffer {
   }
 
   // for debugging
-  public heap_Environment_display(address : number) {
+  public heap_Environment_display(address: number) {
     if (!this.isEnvironment(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(ENVIRONMENT_TAG, tag)
     }
     const size = this.heap_get_number_of_children(address)
-    console.log("Environment")
-    console.log("Environment size: %d", size)
+    console.log('Environment')
+    console.log('Environment size: %d', size)
     for (let i = 0; i < size; ++i) {
-      console.log("Frame %d:", i)
+      console.log('Frame %d:', i)
       const frame = this.heap_get_child(address, i)
       this.heap_Frame_display(frame)
     }
   }
 
-  private isEnvironment(address : number) : boolean {
+  private isEnvironment(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === ENVIRONMENT_TAG
   }
 
   // pair
-  // [1 byte tag, 4 bytes unused, 2 bytes #children, 1 byte gc + colour]
-  // #children = 2
+  // [1 byte tag, 4 bytes unused, 2 bytes #size, 1 byte gc + colour]
+  // #size = 3
   // followed by head and tail addresses
   // pass in address of head and tail objects
-  public heap_allocate_Pair(head_addr: number, tail_addr: number) : number {
+  public heap_allocate_Pair(head_addr: number, tail_addr: number): number {
     const addr = this.allocate(PAIR_TAG, 3)
-    const headPtr = (POINTER_TAG << 56) + (head_addr << 24)
-    const tailPtr = (POINTER_TAG << 56) + (tail_addr << 24)
-    this.heap_set_child(addr, 0, headPtr)
-    this.heap_set_child(addr, 1, tailPtr)
+    // create pointers only if they aren't already pointers
+    if (this.isPointer(head_addr)) {
+      this.heap_set_child(addr, 0, head_addr)
+    } else {
+      this.heap_set_byte_at_offset(addr + 1, 0, POINTER_TAG)
+      this.heap_set_4_bytes_at_offset(addr + 1, 1, head_addr)
+      this.heap_set_2_bytes_at_offset(addr + 1, size_offset, 1)
+    }
+    if (this.isPointer(tail_addr)) {
+      this.heap_set_child(addr, 1, tail_addr)
+    } else {
+      this.heap_set_byte_at_offset(addr + 2, 0, POINTER_TAG)
+      this.heap_set_4_bytes_at_offset(addr + 2, 1, tail_addr)
+      this.heap_set_2_bytes_at_offset(addr + 2, size_offset, 1)
+    }
     return addr
   }
 
-  private isPair(address : number) : boolean {
+  private isPair(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === PAIR_TAG
   }
 
-  // Uint8 can be used to represent char variables
-  // [1 byte tag, 3 bytes unused, 1 byte uint8 value, 2 bytes #children, 1 byte gc + colour]
-  // #children = 0
-  public heap_allocate_Uint8(val : number) {
-    const addr = this.allocate(UINT8_TAG, 1)
-    this.heap_set_byte_at_offset(addr, 4, val)
+  // Uint16 can be used to represent char variables (utf-8)
+  // [1 byte tag, 2 bytes unused, 2 byte uint16 value, 2 bytes #size, 1 byte gc + colour]
+  // #size = 1
+  public heap_allocate_Uint16(val: number): number {
+    const addr = this.allocate(UINT16_TAG, 1)
+    this.heap_set_2_bytes_at_offset(addr, 3, val)
+    return addr
   }
 
-  public getUint8(address : number) : number {
-    if (!this.isUint8) {
+  public getUint16(address: number): number {
+    if (!this.isUint16) {
       const tag = this.heap_get_tag(address)
-      throw new BadTagError(INT32_TAG, tag)
+      throw new BadTagError(UINT16_TAG, tag)
     }
-    const val = (this.heap_get(address) & (((1 << 8) - 1) << 24)) >> 24
-    return val
+    return this.heap_get_2_bytes_at_offset(address, 3)
   }
 
-  private isUint8(address : number) : boolean {
+  private isUint16(address: number): boolean {
     this.addressCheck(address)
-    return this.heap_get_tag(address) === UINT8_TAG
+    return this.heap_get_tag(address) === UINT16_TAG
   }
 
   // Int32 represents the standard int
   // [1 byte tag, 4 bytes int32 val, 2 bytes #children, 1 byte gc + colour]
   // #children = 0
-  public heap_allocate_Int32(val : number) : number {
+  public heap_allocate_Int32(val: number): number {
     const addr = this.allocate(INT32_TAG, 1)
-    const otherBits = ((1 << 64) - 1) - (((1 << 32) - 1) << 24)
-    this.heap_set(addr, otherBits + val << 24)
+    this.heap_set_4_bytes_at_offset(addr, 1, val)
     return addr
   }
 
-  public getInt32(addr : number) : number {
+  public getInt32(addr: number): number {
     if (!this.isInt32) {
       const tag = this.heap_get_tag(addr)
       throw new BadTagError(INT32_TAG, tag)
     }
-    const val = (this.heap_get(addr) & (((1 << 32) - 1) << 24)) >> 24
-    return val
+    return this.heap_get_4_bytes_at_offset(addr, 1)
   }
 
-  private isInt32(address : number) : boolean {
+  private isInt32(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === INT32_TAG
   }
-
-  // Flaot32 represents the standard float
-  // [1 byte tag, 4 bytes float32 val, 2 bytes #children, 1 byte gc + colour]
-  // #children = 0
-  public heap_allocate_Float32(val : number) : number {
+  /*
+  // Float32 represents the standard float
+  // [1 byte tag, 4 bytes float32 val, 2 bytes #size, 1 byte gc + colour]
+  // #size = 0
+  public heap_allocate_Float32(val: number): number {
     const addr = this.allocate(FLOAT32_TAG, 1)
     // write directly to DataView to guarantee that 32 bits are written
     this.view.setFloat32(addr * word_size + 1, val)
     return addr
   }
 
-  public getFloat32(addr : number) : number {
+  public getFloat32(addr: number): number {
     if (!this.isFloat32) {
       const tag = this.heap_get_tag(addr)
       throw new BadTagError(FLOAT32_TAG, tag)
     }
-    const val = (this.heap_get(addr) & (((1 << 32) - 1) << 24)) >> 24
-    return val
+    return this.view.getFloat32(addr * word_size + 1)
   }
 
-  private isFloat32(address : number) : boolean {
+  private isFloat32(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === FLOAT32_TAG
   }
+*/
 
+  // string
+  // [1 byte tag, 4 bytes string length (include terminating character '\0'),
+  // 2 bytes #size, 1 byte gc + colour]
+  // characters are packed in every 2 bytes (utf-8) of the children nodes
+  // #children = number of children nodes containing characters (include '\0')
+  public heap_allocate_string(str: string): number {
+    const addr = this.allocate(STRING_TAG, (str.length + 4) / 4 + 1)
+    this.heap_set_4_bytes_at_offset(addr, 1, str.length + 1)
+    for (let i = 0; i < str.length; ++i) {
+      this.heap_set_byte_at_offset(addr + 1 + i / 4, (i % 4) * 2, str.charCodeAt(i))
+    }
+    this.heap_set_byte_at_offset(addr + 1 + str.length / 4, (str.length % 4) * 2, 0)
+    return addr
+  }
 
+  public getString(address: number): string {
+    if (!this.isString) {
+      const tag = this.heap_get_tag(address)
+      throw new BadTagError(STRING_TAG, tag)
+    }
+    const strlen = this.heap_get_4_bytes_at_offset(address, 1)
+    const ascii_chars: number[] = []
+    for (let i = 0; i < strlen - 1; ++i) {
+      ascii_chars.push(this.heap_get_byte_at_offset(address + 1 + i / 4, (i % 4) * 2))
+    }
+    return String.fromCharCode(...ascii_chars)
+  }
+
+  public isString(address: number): boolean {
+    this.addressCheck(address)
+    return this.heap_get_tag(address) === STRING_TAG
+  }
 
   // pointer
-  // [1 byte tag, 4 bytes address, 2 bytes #children, 1 byte gc + colour]
-  // # children = 0
-  public heap_allocate_pointer(address : number) : number {
+  // [1 byte tag, 4 bytes address, 2 bytes #size, 1 byte gc + colour]
+  // #size = 1
+  public heap_allocate_pointer(address: number): number {
     const pAddr = this.allocate(POINTER_TAG, 1)
-    const otherBits = this.heap_get(pAddr) & ((1 << 64) - 1 - (((1 << 32) - 1) << 16))
-    this.heap_set(pAddr, otherBits + (address << 16))
+    this.heap_set_4_bytes_at_offset(pAddr, 1, address)
     return pAddr
   }
 
-  public isPointer(address : number) : boolean {
+  public isPointer(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === POINTER_TAG
   }
 
-  public getPointerAddress(address : number) : number {
+  public getPointerAddress(address: number): number {
     if (!this.isPointer(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(POINTER_TAG, tag)
     }
-    const addr = (this.heap_get(address) & (((1 << 32) - 1) << 16)) >> 16
-    return addr
+    return this.heap_get_4_bytes_at_offset(address, 1)
   }
 
-  // wait group implemented as 
-  // [1 byte tag, 1 byte mutex lock, 3 bytes counter, 2 bytes #children, 1 byte gc + colour]
-  // #children = 0
-  public heap_allocate_WaitGroup() : number {
+  // wait group implemented as
+  // [1 byte tag, 1 byte mutex lock, 3 bytes counter, 2 bytes #size, 1 byte gc + colour]
+  // #size = 1
+  public heap_allocate_WaitGroup(): number {
     const addr = this.allocate(WAITGROUP_TAG, 1)
     // lock available (set to 1 to acquire)
     this.heap_set_byte_at_offset(addr, 1, 0)
@@ -716,7 +814,7 @@ export class HeapBuffer {
     return addr
   }
 
-  private getWaitgroupCounter(address : number) : number {
+  private getWaitgroupCounter(address: number): number {
     if (!this.isWaitGroup(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(WAITGROUP_TAG, tag)
@@ -726,25 +824,25 @@ export class HeapBuffer {
   }
 
   // returns true if successfully incremented, false otherwise (i.e. TestAndSet)
-  public incrementWaitGroup(address : number, val : number) : boolean {
+  public incrementWaitGroup(address: number, val: number): boolean {
     this.addressCheck(address)
     const acquireLock = this.TestAndSet(address, 1, 1)
     if (!acquireLock) {
       return false // failed to acquire lock, blocked
     }
     const currVal = this.getWaitgroupCounter(address)
-    if (val < 0 || currVal + val >= (1 >> 24)) {
+    if (val < 0 || currVal + val >= 1 >> 24) {
       throw new WaitGroupCounterOverflowError() // need to ensure that new counter can be written in 3 bytes
     }
     const newVal = currVal + val
     const otherBits = this.heap_get(address) & ((1 << 64) - 1 - (((1 << 24) - 1) << 24))
-    this.heap_set(address, otherBits + newVal << 24)
+    this.heap_set(address, (otherBits + newVal) << 24)
     this.heap_set_byte_at_offset(address, 1, 0) // release lock
     return true
   }
 
   // returns true if successfully decremented, false otherwise (i.e. TestAndSet)
-  public decrementWaitGroup(address : number) : boolean {
+  public decrementWaitGroup(address: number): boolean {
     this.addressCheck(address)
     const acquireLock = this.TestAndSet(address, 1, 1)
     if (!acquireLock) {
@@ -755,45 +853,45 @@ export class HeapBuffer {
       throw new NegativeWaitGroupCounterError() // counter can never be negative
     }
     const otherBits = this.heap_get(address) & ((1 << 64) - 1 - (((1 << 24) - 1) << 24))
-    this.heap_set(address, otherBits + (currVal - 1) << 24)
+    this.heap_set(address, (otherBits + (currVal - 1)) << 24)
     this.heap_set_byte_at_offset(address, 1, 0) // release lock
     return true
   }
 
-  // used to determine if goroutines blocked at 
-  public isWaitGroupCounterZero(address : number) : boolean {
+  // used to determine if goroutines blocked at
+  public isWaitGroupCounterZero(address: number): boolean {
     return this.getWaitgroupCounter(address) === 0
   }
 
-  private isWaitGroup(address : number) : boolean {
+  private isWaitGroup(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === WAITGROUP_TAG
   }
 
   // semaphore
   // [1 byte tag, 4 bytes semaphore counter, 2 bytes #children, 1 byte gc + colour]
-  // #children = 0
-  public heap_allocate_Semaphore(val? : number) : number {
+  // #size = 1
+  public heap_allocate_Semaphore(val?: number): number {
     let initVal = 1 // default counter is 1 (binary semaphore) if unspecified
     if (val !== undefined) {
       // set semaphore's initial value to this value
-      if (val >= 255 || val <= 0) {
+      if (val >= 1 << 32 || val <= 0) {
         throw new InvalidSemaphoreValueError(val) // ensure that semaphore value is between 1 and 255 inclusive
       }
       initVal = val
     }
     const addr = this.allocate(SEMAPHORE_TAG, 1)
-    this.view.setInt32(addr * word_size + 1, initVal)
+    this.heap_set_4_bytes_at_offset(addr, 1, initVal)
     return addr
   }
 
   // returns true if semaphore acquired, false otherwise
-  public semaphoreWait(address : number) : boolean {
+  public semaphoreWait(address: number): boolean {
     if (!this.isSemaphore(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(SEMAPHORE_TAG, tag)
     }
-    const currCnt = (this.heap_get(address) & (((1 << 32) - 1) << 24)) >> 24
+    const currCnt = this.heap_get_4_bytes_at_offset(address, 1)
     if (currCnt == 0) {
       return false
     }
@@ -802,21 +900,21 @@ export class HeapBuffer {
   }
 
   // releases semaphore
-  public semaphoreSignal(address : number) {
+  public semaphoreSignal(address: number) {
     if (!this.isSemaphore(address)) {
       const tag = this.heap_get_tag(address)
       throw new BadTagError(SEMAPHORE_TAG, tag)
     }
-    const currCnt = (this.heap_get(address) & (((1 << 32) - 1) << 24)) >> 24
+    const currCnt = this.heap_get_4_bytes_at_offset(address, 1)
     this.TestAndSetInt32(address, 1, currCnt + 1)
   }
 
-  private isSemaphore(address : number) : boolean {
+  private isSemaphore(address: number): boolean {
     this.addressCheck(address)
     return this.heap_get_tag(address) === SEMAPHORE_TAG
   }
 
-  private TestAndSet(address : number, offset: number, val : number) : boolean {
+  private TestAndSet(address: number, offset: number, val: number): boolean {
     this.addressCheck(address)
     const currVal = this.heap_get_byte_at_offset(address, offset)
     if (currVal === val) {
@@ -826,9 +924,9 @@ export class HeapBuffer {
     return true // successfully set byte
   }
 
-  private TestAndSetInt32(address : number, offset: number, val : number) : boolean {
+  private TestAndSetInt32(address: number, offset: number, val: number): boolean {
     this.addressCheck(address)
-    const currVal = this.view.getInt32(address * word_size + offset)
+    const currVal = this.heap_get_4_bytes_at_offset(address, offset)
     if (currVal === val) {
       return false // nothing to change
     }
@@ -836,16 +934,101 @@ export class HeapBuffer {
     return true // successfully set byte
   }
 
-  private word_to_string(word : number) : string {
+  private word_to_string(word: number): string {
     const buf = new ArrayBuffer(8)
     const view = new DataView(buf)
     view.setFloat64(0, word)
     let binStr = ''
     for (let i = 0; i < 8; i++) {
-      binStr += ('00000000' + 
-                 view.getUint8(i).toString(2)).slice(-8) + 
-                 ' ';
+      binStr += ('00000000' + view.getUint8(i).toString(2)).slice(-8) + ' '
     }
     return binStr
+  }
+
+  public allocate_literals_frame(): number {
+    const frame = this.heap_allocate_Frame(literal_keywords.length)
+    this.heap_set_child(frame, 0, (TRUE_TAG << 56) + (1 << 8)) // true
+    this.heap_set_child(frame, 1, (FALSE_TAG << 56) + (1 << 8)) // false
+    this.heap_set_child(frame, 2, (NULL_TAG << 56) + (1 << 8)) // nil
+    this.heap_set_child(frame, 3, (UNDEFINED_TAG << 56) + (1 << 8)) // undefined
+    this.heap_set_child(frame, 4, (UNASSIGNED_TAG << 56) + (1 << 8)) // unassigned
+    return frame
+  }
+
+  public allocate_builtin_frame(): number {
+    const frame = this.heap_allocate_Frame(builtin_keywords.length)
+    for (let i = 0; i < builtin_keywords.length; ++i) {
+      this.heap_set_child(frame, i, (BUILTIN_TAG << 56) + (i << 24) + (1 << 8))
+    }
+    return frame
+  }
+
+  private addressToValType(address: number): ValType {
+    switch (this.heap_get_tag(address)) {
+      case INT32_TAG:
+        return ValType.Int32
+      case STRING_TAG:
+        return ValType.String
+      case TRUE_TAG:
+        return ValType.Boolean
+      case FALSE_TAG:
+        return ValType.Boolean
+      case UINT16_TAG:
+        return ValType.Char
+      case POINTER_TAG:
+        return ValType.Pointer
+      case UNASSIGNED_TAG:
+        return ValType.Unassigned
+      case UNDEFINED_TAG:
+        return ValType.Undefined
+    }
+    return ValType.Undefined
+  }
+
+  public addrToVal(address: number): HeapVal {
+    switch (this.heap_get_tag(address)) {
+      case INT32_TAG:
+        return new HeapVal(this.getInt32(address), ValType.Int32)
+      case STRING_TAG:
+        return new HeapVal(this.getString(address), ValType.String)
+      case TRUE_TAG:
+        return new HeapVal(true, ValType.Boolean)
+      case FALSE_TAG:
+        return new HeapVal(false, ValType.Boolean)
+      case UINT16_TAG:
+        return new HeapVal(this.getUint16(address), ValType.Char)
+      case POINTER_TAG:
+        const pointerAddr = this.getPointerAddress(address)
+        return new HeapVal(pointerAddr, this.addressToValType(pointerAddr))
+      case UNASSIGNED_TAG:
+        return new HeapVal(0, ValType.Unassigned)
+      case UNDEFINED_TAG:
+        return new HeapVal(0, ValType.Undefined)
+    }
+    return new HeapVal(0, ValType.Undefined)
+  }
+
+  public valToAddr(val: HeapVal): number {
+    switch (val.type) {
+      case ValType.Int32:
+        return this.heap_allocate_Int32(val.val as number)
+      case ValType.String:
+        return this.heap_allocate_string(val.val as string)
+      case ValType.Boolean:
+        if (val.val as boolean) {
+          return this.true_pos
+        }
+        return this.false_pos
+      case ValType.Pointer:
+        return this.heap_allocate_pointer(val.val as number)
+      case ValType.Char:
+        return this.heap_allocate_Uint16(val.val as number)
+      case ValType.Unassigned:
+        return this.unassigned_pos
+      case ValType.Undefined:
+        return this.undefined_pos
+    }
+
+    throw new InvalidValTypeError()
   }
 }
