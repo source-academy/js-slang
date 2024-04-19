@@ -151,7 +151,7 @@ const tokenMap: Map<string, token> = new Map([
   ['|=', token.OR_ASSIGN],
   ['^=', token.XOR_ASSIGN],
   ['<<=', token.SHL_ASSIGN],
-  ['>>-', token.SHR_ASSIGN],
+  ['>>=', token.SHR_ASSIGN],
   ['&^=', token.AND_NOT_ASSIGN],
 
   ['&&', token.LAND],

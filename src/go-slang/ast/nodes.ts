@@ -1,9 +1,8 @@
 import * as Token from '../tokens/tokens'
-import { nodeType } from './nodeTypes'
 import { ChanDir } from '../types/types'
 import type * as TokType from '../tokens/tokens'
 import { UnableToDefineAssignmentError } from './errors'
-
+import { nodeType } from './nodeTypes'
 // Node types
 
 export interface GoNode {
@@ -181,11 +180,7 @@ export class CompositeLit implements ExprNode {
     return 0
   }
 
-  constructor(
-    type: ExprNode | undefined,
-    elmts: ExprNode[],
-    incomplete: boolean
-  ) {
+  constructor(type: ExprNode | undefined, elmts: ExprNode[], incomplete: boolean) {
     this.Type = type
     this.Elements = elmts
     this.Incomplete = incomplete
@@ -270,7 +265,7 @@ export class SliceExpr implements ExprNode {
     low: ExprNode | undefined,
     high: ExprNode | undefined,
     max: ExprNode | undefined,
-    isThree: boolean,
+    isThree: boolean
   ) {
     this.Expr = expr
     this.Low = low
@@ -304,7 +299,7 @@ export class TypeAssertExpr implements ExprNode {
 export class CallExpr implements ExprNode {
   Func: ExprNode // function expression
   Args: ExprNode[] | undefined // function arguments
-  
+
   getType(): nodeType {
     return nodeType.CALL
   }
@@ -313,10 +308,7 @@ export class CallExpr implements ExprNode {
     return this.Func.valuesProduced()
   }
 
-  constructor(
-    func: ExprNode,
-    args: ExprNode[] | undefined
-  ) {
+  constructor(func: ExprNode, args: ExprNode[] | undefined) {
     this.Func = func
     this.Args = args
   }
@@ -723,7 +715,7 @@ export class BranchStmt implements StatementNode {
 // BlockStmt node represents braced statement list
 export class BlockStmt implements StatementNode {
   List: StatementNode[] // list of statements
-  
+
   getType(): nodeType {
     return nodeType.BLOCK
   }
@@ -782,11 +774,7 @@ export class SwitchStmt implements StatementNode {
     return nodeType.NOT_IMPLEMENTED
   }
 
-  constructor(
-    init: StatementNode | undefined,
-    tag: ExprNode | undefined,
-    body: BlockStmt
-  ) {
+  constructor(init: StatementNode | undefined, tag: ExprNode | undefined, body: BlockStmt) {
     this.Init = init
     this.Tag = tag
     this.Body = body
@@ -803,11 +791,7 @@ export class TypeSwitchStmt implements StatementNode {
     return nodeType.NOT_IMPLEMENTED
   }
 
-  constructor(
-    init: StatementNode | undefined,
-    assign: StatementNode,
-    body: BlockStmt
-  ) {
+  constructor(init: StatementNode | undefined, assign: StatementNode, body: BlockStmt) {
     this.Init = init
     this.Assign = assign
     this.Body = body
@@ -823,10 +807,7 @@ export class CommClause implements StatementNode {
     return nodeType.NOT_IMPLEMENTED
   }
 
-  constructor(
-    comm: StatementNode | undefined,
-    body: StatementNode[]
-  ) {
+  constructor(comm: StatementNode | undefined, body: StatementNode[]) {
     this.Comm = comm
     this.Body = body
   }
@@ -932,6 +913,17 @@ export class TypeSpec implements SpecNode {
   }
 }
 
+// placeholder
+export class ImportSpec implements SpecNode {
+  getType(): nodeType {
+    return nodeType.NOT_IMPLEMENTED
+  }
+
+  constructor() {
+
+  }
+}
+
 // Declarations are represented by one of the following declaration nodes
 
 // BadDecl node is a placeholder for declarations containing syntax errors
@@ -954,10 +946,11 @@ export class GenDecl implements DeclarationNode {
    return this.Tok
   }
 
-  constructor(
-    token: string,
-    specs: SpecNode[],
-  ) {
+  getTokenType() : Token.token {
+    return this.Tok
+  }
+
+  constructor(token: string, specs: SpecNode[]) {
     this.Tok = Token.getToken(token)
     this.Specs = specs
   }

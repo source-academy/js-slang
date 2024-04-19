@@ -1,5 +1,6 @@
 import { nodeType } from '../ast/nodeTypes'
 import * as nodes from '../ast/nodes'
+import { CompileEnvironment, EnvironmentPos, EnvironmentSymbol, IgnoreEnvironmentPos, constant_keywords } from '../environment/environment'
 import * as Token from '../tokens/tokens'
 import { IllegalInstructionError, UnsupportedInstructionError } from './errors'
 import * as Instruction from './instructions'
@@ -116,17 +117,19 @@ function compileNode(node: nodes.GoNode, env: CompileEnvironment, doNotExtendEnv
 }
 
 function compileLiteral(node: nodes.BasicLit, _: CompileEnvironment) {
+  console.log(`Literal ${node.Value}`)
   const tag = node.getDataType()
   switch (tag) {
-    case Token.token.INT | Token.token.FLOAT:
+    case Token.token.INT || Token.token.FLOAT:
       instrs[lidx++] = new Instruction.BasicLitInstruction(tag, Number(node.Value))
-      break
-    case Token.token.CHAR | Token.token.STRING:
+      return
+    case Token.token.CHAR || Token.token.STRING:
       instrs[lidx++] = new Instruction.BasicLitInstruction(tag, node.Value)
-      break
+      return
     case Token.token.IMAG:
       throw new Error('complex numbers unsupported')
   }
+  throw new Error(`Unknown type ${tag}`)
 }
 
 function compileIdent(node: nodes.Ident, env: CompileEnvironment) {
@@ -344,6 +347,8 @@ function compileFile(node: nodes.File, env: CompileEnvironment) {
   for (let decl of node.Decls) {
     compileNode(decl, newEnv)
   }
+  instrs[lidx++] = new Instruction.IdentInstruction("main", newEnv.compile_time_environment_position("main"))
+  instrs[lidx++] = new Instruction.CallInstruction(0)
   instrs[lidx++] = new Instruction.ExitScopeInstruction()
 }
 
@@ -460,4 +465,11 @@ function scanStatementList(stmts: nodes.StatementNode[]): EnvironmentSymbol[] {
     }
   }
   return decls
+}
+
+export function debugCompile(instrs : Instruction.Instruction[]) {
+  console.log("INSTRUCTION DEBUG:")
+  for (let i = 0; i < instrs.length; ++i) {
+    console.log("%d: %s", i, instrs[i].stringRep())
+  }
 }

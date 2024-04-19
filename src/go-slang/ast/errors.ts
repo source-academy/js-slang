@@ -1,24 +1,24 @@
 export class BadExprError extends Error {
   constructor() {
-    super("BadExpr")
+    super('BadExpr')
   }
 }
 
 export class BadDeclError extends Error {
   constructor() {
-    super("BadDecl")
+    super('BadDecl')
   }
 }
 
 export class BadSpecError extends Error {
-  constructor() {
-    super("BadSpec")
+  constructor(type : string) {
+    super(`BadSpec ${type}`)
   }
 }
 
 export class BadStmtError extends Error {
   constructor() {
-    super("BadStmt")
+    super('BadStmt')
   }
 }
 
