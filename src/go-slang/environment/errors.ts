@@ -1,3 +1,5 @@
+import { EnvironmentPos } from "./environment"
+
 export class VariableRedeclaredError extends Error {
   constructor(sym: string) {
     super(`${sym} has already been declared`)

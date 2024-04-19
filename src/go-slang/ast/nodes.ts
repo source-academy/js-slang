@@ -1,7 +1,6 @@
-import * as Token from '../tokens/tokens'
 import { ChanDir } from '../types/types'
+import * as TokType from '../tokens/tokens'
 import { nodeType } from './nodeTypes'
-
 // Node types
 
 export interface GoNode {
@@ -124,14 +123,14 @@ export class Ellipsis implements ExprNode {
 
 // BasicLit node represents literal of basic type
 export class BasicLit implements ExprNode {
-  Kind: Token.token // token.INT, token.FLOAT, token.IMAG, token.CHAR, or token.STRING
+  Kind: TokType.token // token.INT, token.FLOAT, token.IMAG, token.CHAR, or token.STRING
   Value: string // literal string
 
   getType(): nodeType {
     return nodeType.BASIC_LIT
   }
 
-  getDataType(): Token.token {
+  getDataType(): TokType.token {
     return this.Kind
   }
 
@@ -140,7 +139,7 @@ export class BasicLit implements ExprNode {
   }
 
   constructor(kind: string, val: string) {
-    this.Kind = Token.getToken(kind)
+    this.Kind = TokType.getToken(kind)
     this.Value = val
   }
 }
@@ -335,7 +334,7 @@ export class StarExpr implements ExprNode {
 // UnaryExpr node represents unary expression
 // Unary "*" expressions represented via StarExpr
 export class UnaryExpr implements ExprNode {
-  Op: Token.token // operator
+  Op: TokType.token // operator
   X: ExprNode //operand
 
   getType(): nodeType {
@@ -347,7 +346,7 @@ export class UnaryExpr implements ExprNode {
   }
 
   constructor(op: string, expr: ExprNode) {
-    this.Op = Token.getToken(op)
+    this.Op = TokType.getToken(op)
     this.X = expr
   }
 }
@@ -355,7 +354,7 @@ export class UnaryExpr implements ExprNode {
 // BinaryExpr node represents binary expression
 export class BinaryExpr implements ExprNode {
   X: ExprNode // left operand
-  Op: Token.token // operator
+  Op: TokType.token // operator
   Y: ExprNode // right operand
 
   getType(): nodeType {
@@ -363,27 +362,12 @@ export class BinaryExpr implements ExprNode {
   }
 
   valuesProduced(): number {
-    switch (this.Op) {
-      case Token.token.ADD_ASSIGN ||
-        Token.token.SUB_ASSIGN ||
-        Token.token.MUL_ASSIGN ||
-        Token.token.QUO_ASSIGN ||
-        Token.token.REM_ASSIGN ||
-        Token.token.AND_ASSIGN ||
-        Token.token.OR_ASSIGN ||
-        Token.token.XOR_ASSIGN ||
-        Token.token.SHL_ASSIGN ||
-        Token.token.SHR_ASSIGN ||
-        Token.token.AND_NOT_ASSIGN:
-        return 0
-      default:
-        return 1
-    }
+    return 1
   }
 
   constructor(x: ExprNode, op: string, y: ExprNode) {
     this.X = x
-    this.Op = Token.getToken(op)
+    this.Op = TokType.getToken(op)
     this.Y = y
   }
 }
@@ -623,7 +607,7 @@ export class SendStmt implements StatementNode {
 // IncDecStmt node represents increment or decrement statement
 export class IncDecStmt implements StatementNode {
   Expr: ExprNode // value
-  Tok: Token.token // INC or DEC
+  Tok: TokType.token // INC or DEC
 
   getType(): nodeType {
     return nodeType.INCDEC
@@ -631,14 +615,14 @@ export class IncDecStmt implements StatementNode {
 
   constructor(expr: ExprNode, token: string) {
     this.Expr = expr
-    this.Tok = Token.getToken(token)
+    this.Tok = TokType.getToken(token)
   }
 }
 
 // AssignStmt node represents assignment/short variable declaration
 export class AssignStmt implements StatementNode {
   LeftHandSide: ExprNode[] // left hand expressions (multiple assignments)
-  Tok: Token.token // assignment token / DEFINE
+  Tok: TokType.token // assignment token / DEFINE
   RightHandSide: ExprNode[] // expressions on right hand side
   LhsExprCount!: number // number of arguments on left hand side
   RhsValCount!: number // number of values produced on right hand side
@@ -646,14 +630,13 @@ export class AssignStmt implements StatementNode {
   getType(): nodeType {
     return nodeType.ASSIGN
   }
-
-  getTokenType(): Token.token {
+  getTokType(): TokType.Token{
     return this.Tok
   }
-
+    
   constructor(lhs: ExprNode[], token: string, rhs: ExprNode[]) {
     this.LeftHandSide = lhs
-    this.Tok = Token.getToken(token)
+    this.Tok = TokType.getToken(token)
     this.RightHandSide = rhs
   }
 }
@@ -699,14 +682,14 @@ export class ReturnStmt implements StatementNode {
 
 // BranchStmt node represents break/continue/goto/fallthrough
 export class BranchStmt implements StatementNode {
-  Tok: Token.token // keyword token (BREAK, CONTINUE, GOTO, FALLTHROUGH)
+  Tok: TokType.token // keyword token (BREAK, CONTINUE, GOTO, FALLTHROUGH)
   Label: Ident | undefined // label name or undefined
 
   getType(): nodeType {
     switch (this.Tok) {
-      case Token.token.BREAK:
+      case TokType.token.BREAK:
         return nodeType.BREAK
-      case Token.token.CONTINUE:
+      case TokType.token.CONTINUE:
         return nodeType.CONT
     }
     // GOTO and FALLTHROUGH not implemented
@@ -714,7 +697,7 @@ export class BranchStmt implements StatementNode {
   }
 
   constructor(token: string, label: Ident | undefined) {
-    this.Tok = Token.getToken(token)
+    this.Tok = TokType.getToken(token)
     this.Label = label
   }
 }
@@ -861,7 +844,7 @@ export class ForStmt implements StatementNode {
 export class RangeStmt implements StatementNode {
   Key: ExprNode | undefined // key expression/undefined
   Value: ExprNode | undefined // value expression/undefined
-  Tok: Token.token // ILLEGAL if Key is null, ASSIGN, DEFINE
+  Tok: TokType.token // ILLEGAL if Key is null, ASSIGN, DEFINE
   Expr: ExprNode // value to range over
   Body: BlockStmt // body
 
@@ -878,7 +861,7 @@ export class RangeStmt implements StatementNode {
   ) {
     this.Key = key
     this.Value = val
-    this.Tok = Token.getToken(token)
+    this.Tok = TokType.getToken(token)
     this.Expr = expr
     this.Body = body
   }
@@ -941,19 +924,18 @@ export class BadDecl implements DeclarationNode {
 // GenDecl node (general declaration) represents a constant, type, or variable declaration
 // If LeftParen position is valid, the declaration is parenthesised
 export class GenDecl implements DeclarationNode {
-  Tok: Token.token // CONST/TYPE/VAR
+  Tok: TokType.token // CONST/TYPE/VAR
   Specs: SpecNode[] // constant/variable declarations
 
   getType(): nodeType {
     return nodeType.GENDECL
   }
-
-  getTokenType(): Token.token {
-    return this.Tok
+  getTokType(): TokType.Token {
+   return this.Tok
   }
 
   constructor(token: string, specs: SpecNode[]) {
-    this.Tok = Token.getToken(token)
+    this.Tok = TokType.getToken(token)
     this.Specs = specs
   }
 }

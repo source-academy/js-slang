@@ -113,6 +113,8 @@ function compileNode(node: nodes.GoNode, env: CompileEnvironment, doNotExtendEnv
     case nodeType.ILLEGAL:
       throw new IllegalInstructionError()
     default:
+      console.log(node)
+      console.log(node.getType())
       throw new UnsupportedInstructionError()
   }
 }
@@ -391,8 +393,8 @@ function compileFile(node: nodes.File, env: CompileEnvironment) {
 }
 
 function compileGenDecl(node: nodes.GenDecl, env: CompileEnvironment) {
-  const tokenType = node.getTokenType()
-  if (tokenType === Token.token.VAR || tokenType === Token.token.CONST) {
+  const tokType = node.getTokType()
+  if (tokType === Token.token.VAR || tokType === Token.token.CONST) {
     const specs = node.Specs as nodes.ValueSpec[]
     specs.forEach(spec => compileNode(spec, env))
   }
@@ -489,6 +491,8 @@ function scanOutDecls(node: nodes.StatementNode): EnvironmentSymbol[] {
   return []
 }
 
+
+// may need to check for variables re-declaration, not between params and body but between body-body vars
 function scanStatementList(stmts: nodes.StatementNode[]): EnvironmentSymbol[] {
   let decls: EnvironmentSymbol[] = []
   for (var stmt of stmts) {
@@ -500,7 +504,7 @@ function scanStatementList(stmts: nodes.StatementNode[]): EnvironmentSymbol[] {
         const genDeclSpecs = ((stmt as nodes.DeclStmt).Decl as nodes.GenDecl).Specs
         for (var spec of genDeclSpecs) {
           if (spec.getType() === nodeType.VALUESPEC) {
-            ;(spec as nodes.ValueSpec).Names.forEach(ident =>
+            (spec as nodes.ValueSpec).Names.forEach(ident =>
               decls.push(new EnvironmentSymbol(ident.Name))
             )
           } else {
