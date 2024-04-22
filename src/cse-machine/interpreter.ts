@@ -442,9 +442,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     // Push ENVIRONMENT instruction if needed - if next control stack item
     // exists and is not an environment instruction, OR the control only contains
     // environment indepedent item
-    if (next 
-      && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)
-    && !canAvoidEnvInstr(control)) {
+    if (
+      next &&
+      !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
+      !canAvoidEnvInstr(control)
+    ) {
       control.push(instr.envInstr(currentEnvironment(context), command))
     }
 
@@ -955,10 +957,12 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       // Push ENVIRONMENT instruction if needed - if next control stack item
       // exists and is not an environment instruction, OR the control only contains
-    // environment indepedent item
-      if (next 
-        && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)
-      && !canAvoidEnvInstr(control)) {
+      // environment indepedent item
+      if (
+        next &&
+        !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
+        !canAvoidEnvInstr(control)
+      ) {
         control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
 
