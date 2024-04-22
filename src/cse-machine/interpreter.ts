@@ -75,6 +75,7 @@ import {
   isInstr,
   isNode,
   isSimpleFunction,
+  canAvoidEnvInstr,
   isStreamFn,
   popEnvironment,
   pushEnvironment,
@@ -439,8 +440,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const next = control.peek()
 
     // Push ENVIRONMENT instruction if needed - if next control stack item
-    // exists and is not an environment instruction
-    if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+    // exists and is not an environment instruction, OR the control only contains
+    // environment indepedent item
+    if (next 
+      && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)
+    && !canAvoidEnvInstr(control)) {
       control.push(instr.envInstr(currentEnvironment(context), command))
     }
 
@@ -950,8 +954,11 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const next = control.peek()
 
       // Push ENVIRONMENT instruction if needed - if next control stack item
-      // exists and is not an environment instruction
-      if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+      // exists and is not an environment instruction, OR the control only contains
+    // environment indepedent item
+      if (next 
+        && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)
+      && !canAvoidEnvInstr(control)) {
         control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
 
