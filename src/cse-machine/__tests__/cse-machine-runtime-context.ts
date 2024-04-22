@@ -6,9 +6,9 @@ import { stripIndent } from '../../utils/formatters'
 
 const getContextFrom = async (code: string, steps?: number) => {
   const context = mockContext(Chapter.SOURCE_4)
-  const options: RecursivePartial<IOptions> = { executionMethod: 'cse-machine' };
+  const options: RecursivePartial<IOptions> = { executionMethod: 'cse-machine' }
   if (steps !== undefined) {
-    options.steps = steps;
+    options.envSteps = steps
   }
   await runCodeInSource(code, context, options)
   return context
@@ -73,8 +73,9 @@ for (const context of contexts) {
   })
 }
 test('Avoid unnescessary environment instruction 1', async () => {
-  const context = getContextFrom(stripIndent(
-    `
+  const context = getContextFrom(
+    stripIndent(
+      `
       function f(n) {
         return n === 0
         ? 1
@@ -82,13 +83,16 @@ test('Avoid unnescessary environment instruction 1', async () => {
       }
       f(3);
     `
-  ), 61)
+    ),
+    61
+  )
   expect((await context).runtime.control).toMatchSnapshot()
 })
 
 test('Avoid unnescessary environment instruction 2', async () => {
-  const context = getContextFrom(stripIndent(
-    `
+  const context = getContextFrom(
+    stripIndent(
+      `
       function f(n) {
         return n === 0
         ? 1
@@ -96,13 +100,16 @@ test('Avoid unnescessary environment instruction 2', async () => {
       }
       f(3);
     `
-  ), 63)
+    ),
+    63
+  )
   expect((await context).runtime.control).toMatchSnapshot()
 })
 
 test('Avoid unnescessary environment instruction 3', async () => {
-  const context = getContextFrom(stripIndent(
-    `
+  const context = getContextFrom(
+    stripIndent(
+      `
       let a = 1;
       function f(n) {
           return n === 0
@@ -112,13 +119,16 @@ test('Avoid unnescessary environment instruction 3', async () => {
       f(3);
       a = 2;
     `
-  ), 66)
+    ),
+    66
+  )
   expect((await context).runtime.control).toMatchSnapshot()
 })
 
 test('Avoid unnescessary environment instruction 4', async () => {
-  const context = getContextFrom(stripIndent(
-    `
+  const context = getContextFrom(
+    stripIndent(
+      `
       {
         let a = 1;
         let b = 2;
@@ -129,6 +139,8 @@ test('Avoid unnescessary environment instruction 4', async () => {
           3;
       }
     `
-  ), 3)
+    ),
+    3
+  )
   expect((await context).runtime.control).toMatchSnapshot()
 })
