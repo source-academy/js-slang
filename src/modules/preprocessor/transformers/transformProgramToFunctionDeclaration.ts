@@ -142,7 +142,11 @@ const getDefaultExportExpression = (
   nodes: es.ModuleDeclaration[],
   exportedNameToIdentifierMap: Partial<Record<string, es.Identifier>>
 ): es.Expression | null => {
-  let defaultExport: es.MaybeNamedFunctionDeclaration | es.MaybeNamedClassDeclaration | es.Expression | null = null
+  let defaultExport:
+    | es.MaybeNamedFunctionDeclaration
+    | es.MaybeNamedClassDeclaration
+    | es.Expression
+    | null = null
 
   // Handle default exports which are parsed as ExportNamedDeclaration AST nodes.
   // 'export { name as default };' is equivalent to 'export default name;' but
