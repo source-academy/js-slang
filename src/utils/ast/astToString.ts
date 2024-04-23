@@ -44,20 +44,19 @@ const sourceGen = Object.assign({}, astring.GENERATOR, {
   StatementSequence: function (node: any, state: any) {
     const indent = state.indent.repeat(state.indentLevel)
     const { lineEnd, writeComments } = state
-    const statementIndent = indent + state.indent
     const statements = node.body
     if (statements != null && statements.length > 0) {
       state.write(lineEnd)
       if (writeComments && node.comments != null) {
-        formatComments(state, node.comments, statementIndent, lineEnd)
+        formatComments(state, node.comments, indent, lineEnd)
       }
       const { length } = statements
       for (let i = 0; i < length; i++) {
         const statement = statements[i]
         if (writeComments && statement.comments != null) {
-          formatComments(state, statement.comments, statementIndent, lineEnd)
+          formatComments(state, statement.comments, indent, lineEnd)
         }
-        state.write(statementIndent)
+        state.write(indent)
         this[statement.type](statement, state)
         state.write(lineEnd)
       }
@@ -65,12 +64,12 @@ const sourceGen = Object.assign({}, astring.GENERATOR, {
     } else {
       if (writeComments && node.comments != null) {
         state.write(lineEnd)
-        formatComments(state, node.comments, statementIndent, lineEnd)
+        formatComments(state, node.comments, indent, lineEnd)
         state.write(indent)
       }
     }
     if (writeComments && node.trailingComments != null) {
-      formatComments(state, node.trailingComments, statementIndent, lineEnd)
+      formatComments(state, node.trailingComments, indent, lineEnd)
     }
   }
 })
