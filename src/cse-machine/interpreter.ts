@@ -13,7 +13,6 @@ import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
-import Closure from '../interpreter/closure'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import { Context, ContiguousArrayElements, Result, type StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
@@ -33,6 +32,7 @@ import {
   makeDummyContCallExpression
 } from './continuations'
 import * as instr from './instrCreator'
+import { Stack } from './stack'
 import {
   AppInstr,
   ArrLitInstr,
@@ -71,16 +71,19 @@ import {
   hasDeclarations,
   hasImportDeclarations,
   isBlockStatement,
+  isEnvArray,
   isInstr,
   isNode,
   isSimpleFunction,
+  canAvoidEnvInstr,
+  isStreamFn,
   popEnvironment,
   pushEnvironment,
   reduceConditional,
   setVariable,
-  Stack,
   valueProducing
 } from './utils'
+import Closure from './closure'
 
 type CmdEvaluator = (
   command: ControlItem,
@@ -212,7 +215,7 @@ function evaluateImports(program: es.Program, context: Context) {
     const [importNodeMap] = filterImportDeclarations(program)
 
     const environment = currentEnvironment(context)
-    for (const [moduleName, nodes] of Object.entries(importNodeMap)) {
+    for (const [moduleName, nodes] of importNodeMap) {
       const functions = context.nativeStorage.loadedModules[moduleName]
       for (const node of nodes) {
         for (const spec of node.specifiers) {
@@ -437,8 +440,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const next = control.peek()
 
     // Push ENVIRONMENT instruction if needed - if next control stack item
-    // exists and is not an environment instruction
-    if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+    // exists and is not an environment instruction, OR the control only contains
+    // environment indepedent item
+    if (
+      next &&
+      !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
+      !canAvoidEnvInstr(control)
+    ) {
       control.push(instr.envInstr(currentEnvironment(context), command))
     }
 
@@ -735,7 +743,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     stash: Stash,
     isPrelude: boolean
   ) {
-    // Reuses the Closure data structure from legacy interpreter
     const closure: Closure = Closure.makeFromArrowFunction(
       command,
       currentEnvironment(context),
@@ -743,7 +750,6 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       true,
       isPrelude
     )
-    currentEnvironment(context).heap.add(closure)
     stash.push(closure)
   },
 
@@ -947,16 +953,16 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
-      // Display the pre-defined functions on the global environment if needed.
-      if (func.preDefined) {
-        context.runtime.environments[1].heap.add(func)
-      }
-
       const next = control.peek()
 
       // Push ENVIRONMENT instruction if needed - if next control stack item
-      // exists and is not an environment instruction
-      if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+      // exists and is not an environment instruction, OR the control only contains
+      // environment indepedent item
+      if (
+        next &&
+        !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
+        !canAvoidEnvInstr(control)
+      ) {
         control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
 
@@ -986,17 +992,39 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       return
     }
 
-    // Value is a function
+    // Value is a built-in function
     // Check for number of arguments mismatch error
     checkNumberOfArguments(context, func, args, command.srcNode)
     // Directly stash result of applying pre-built functions without the CSE machine.
     try {
       const result = func(...args)
-      // Attach array properties and add to heap for any arrays created from built-in functions,
-      // examples: pair, list
-      if (isArray(result)) {
-        handleArrayCreation(context, result)
+
+      if (isStreamFn(func, result)) {
+        // This is a special case for the `stream` built-in function, since it returns pairs
+        // whose last element is a function. The CSE machine on the frontend will still draw
+        // these functions like closures, and the tail of the "closures" will need to point
+        // to where `stream` was called.
+        //
+        // TODO: remove this condition if `stream` becomes a pre-defined function
+        Object.defineProperties(result[1], {
+          environment: { value: currentEnvironment(context), writable: true }
+        })
       }
+
+      // Recursively adds `environment` and `id` properties to any arrays created,
+      // and also adds them to the heap starting from the arrays that are more deeply nested.
+      const attachEnvToResult = (value: any) => {
+        // Built-in functions don't instantly create arrays with circular references, so
+        // there is no need to keep track of visited arrays.
+        if (isArray(value) && !isEnvArray(value)) {
+          for (const item of value) {
+            attachEnvToResult(item)
+          }
+          handleArrayCreation(context, value)
+        }
+      }
+      attachEnvToResult(result)
+
       stash.push(result)
     } catch (error) {
       if (!(error instanceof RuntimeSourceError || error instanceof errors.ExceptionError)) {

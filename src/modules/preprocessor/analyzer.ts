@@ -82,8 +82,7 @@ export default function analyzeImportsAndExports(
           if (!options.allowUndefinedImports) {
             const ids = getIdsFromDeclaration(node.declaration)
             ids.forEach(id => {
-              assert(id !== null, 'Encountered a null identifier!')
-              return moduleDocs[sourceModule].add(id.name)
+              moduleDocs[sourceModule].add(id.name)
             })
           }
           continue

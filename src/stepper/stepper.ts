@@ -2211,12 +2211,18 @@ function reduceMain(
           paths[0].push('body[0]')
           const [reduced, cont, path, str] = reduce(firstStatement, context, paths)
           if (reduced.type === 'BlockStatement') {
-            const body = reduced.body as es.Statement[]
-            if (body.length > 1) {
-              path[1] = [...path[0].slice(0, path[0].length - 1)]
-            }
-            const wholeBlock = body.concat(...(otherStatements as es.Statement[]))
-            return [ast.blockExpression(wholeBlock), cont, path, str]
+            /**
+             * The new body for the if statement should not be unpacked.
+             * But reduce function returns the upacked ones.
+             * We need to manually repack the statements into a block.
+             */
+            const newStatementBody = ast.blockStatement([...reduced.body])
+            return [
+              ast.blockExpression([newStatementBody, ...(otherStatements as es.Statement[])]),
+              cont,
+              path,
+              str
+            ]
           } else {
             return [
               ast.blockExpression([
@@ -3297,7 +3303,7 @@ function evaluateImports(program: es.Program, context: Context) {
 
   try {
     const environment = currentEnvironment(context)
-    for (const [moduleName, nodes] of Object.entries(importNodeMap)) {
+    for (const [moduleName, nodes] of importNodeMap) {
       const functions = context.nativeStorage.loadedModules[moduleName]
       for (const node of nodes) {
         for (const spec of node.specifiers) {

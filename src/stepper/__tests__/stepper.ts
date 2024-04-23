@@ -1768,6 +1768,464 @@ describe(`Evaluation of empty code and imports`, () => {
   })
 })
 
+/**
+ * start of stepper specification tests
+ */
+describe(`Programs`, () => {
+  //Program-intro:
+  test('Program-intro test case 1', async () => {
+    const code = `1 + 1;`
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('2;')
+  })
+
+  test('Program-intro test case 2', async () => {
+    const code = `
+      1;
+      1 + 1;
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('2;')
+  })
+  //Program-reduce:
+  test('Program-reduce test case', async () => {
+    const code = `
+      1;
+      2;
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('2;')
+  })
+  //Eliminate-function-declaration:
+  test('Eliminate-function-declaration test case 1', async () => {
+    const code = `
+      function foo(x) {
+        return 0;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+
+  test('Eliminate-function-declaration test case 2', async () => {
+    const code = `
+      1;
+      function foo(x) {
+        return 0;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('1;')
+  })
+  //Eliminate-constant-declaration:
+  test('Eliminate-constant-declaration test case 1', async () => {
+    const code = `
+      const x = 0;
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+
+  test('Eliminate-constant-declaration test case 2', async () => {
+    const code = `
+      1;
+      const x = 0;
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('1;')
+  })
+})
+
+describe(`Statements: Expression statements`, () => {
+  //Expression-statement-reduce:
+  test('Expression-statement-reduce test case', async () => {
+    const code = `
+      1 + 2 + 3;
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('6;')
+  })
+})
+
+describe(`Statements: Constant declarations`, () => {
+  //Evaluate-constant-declaration:
+  test('Evaluate-constant-declaration test case', async () => {
+    const code = `
+      const x = 1 + 2 + 3;
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+})
+
+describe(`Statements: Conditionals`, () => {
+  //Conditional-statement-predicate:
+  test('Conditional-statement-predicate test case', async () => {
+    const code = `
+      if (1 + 2 + 3 === 1) {
+
+      } else {
+
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+  //Conditional-statement-consequent:
+  test('Conditional-statement-consequent test case', async () => {
+    const code = `
+      if (true) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('1;')
+  })
+  //Conditional-statement-alternative:
+  test('Conditional-statement-alternative test case', async () => {
+    const code = `
+      if (false) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('2;')
+  })
+  //Conditional-statement-blockexpr-consequent:
+  test('Conditional-statement-blockexpr-consequent test case 1', async () => {
+    const code = `
+      function foo(x) {
+        if (true) {
+          1;
+        } else {
+          2;
+        }
+      }
+      foo(0);
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+
+  test('Conditional-statement-blockexpr-consequent test case 2', async () => {
+    const code = `
+      function foo(x) {
+        3;
+        if (true) {
+          1;
+        } else {
+          2;
+        }
+      }
+      foo(0);
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+  //Conditional-statement-blockexpr-alternative:
+  test('Conditional-statement-blockexpr-alternative test case 1', async () => {
+    const code = `
+    function foo(x) {
+      if (false) {
+        1;
+      } else {
+        2;
+      }
+    }
+    foo(0);
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+
+  test('Conditional-statement-blockexpr-alternative test case 2', async () => {
+    const code = `
+    function foo(x) {
+      3;
+      if (false) {
+        1;
+      } else {
+        2;
+      }
+    }
+    foo(0);
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+})
+
+describe(`Statements: Blocks`, () => {
+  //Block-statement-intro:
+  test('Block-statement-intro test case', async () => {
+    const code = `
+      {
+        1 + 1;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('2;')
+  })
+  //Block-statement-single-reduce:
+  test('Block-statement-single-reduce test case', async () => {
+    const code = `
+      {
+        1;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('1;')
+  })
+  //Block-statement-empty-reduce:
+  test('Block-statement-empty-reduce test case 1', async () => {
+    const code = `
+      {
+
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+
+  test('Block-statement-empty-reduce test case 2', async () => {
+    const code = `
+      {
+        {
+          {
+
+          }
+          {
+
+          }
+        }
+
+        {
+          {
+
+          }
+          {
+
+          }
+        }
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+})
+
+describe(`Expresssions: Blocks`, () => {
+  //Block-expression-intro:
+  test('Block-expression-intro test case', async () => {
+    const code = `
+      function foo(x) {
+        1 + 1;
+      }
+      foo(0);
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+  //Block-expression-single-reduce:
+  test('Block-expression-single-reduce test case', async () => {
+    const code = `
+      function foo(x) {
+        1;
+      }
+      foo(0);
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+  //Block-expression-empty-reduce:
+  test('Block-expression-empty-reduce test case', async () => {
+    const code = `
+      function foo(x) {
+      }
+      foo(0);
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('undefined;')
+  })
+  /**
+   * Block-expression-return-reduce is not included as test cases
+   * This section needs further discussion
+   */
+})
+
+describe(`Expressions: Binary operators`, () => {
+  //Left-binary-reduce:
+  test('Left-binary-reduce test case', async () => {
+    const code = `
+      if (1 + 2 + 3 === 1 + 2 + 3) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('1;')
+  })
+  //And-shortcut-false:
+  test('And-shortcut-false test case', async () => {
+    const code = `
+      if (false && 1 + 2 === 1 + 2) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('2;')
+  })
+  //And-shortcut-true:
+  test('And-shortcut-true test case', async () => {
+    const code = `
+      if (true && 1 + 2 === 2 + 3) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('2;')
+  })
+  //Or-shortcut-true:
+  test('Or-shortcut-true test case', async () => {
+    const code = `
+      if (true || 1 + 2 === 2 + 3) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('1;')
+  })
+  //Or-shortcut-false:
+  test('Or-shortcut-false test case', async () => {
+    const code = `
+      if (false || 1 + 2 === 1 + 2) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('1;')
+  })
+  //Right-binary-reduce:
+  test('Right-binary-reduce test case', async () => {
+    const code = `
+      if (1 >= 1 + 1) {
+        1;
+      } else {
+        2;
+      }
+    `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('2;')
+  })
+  //Prim-binary-reduce:
+  test('Prim-binary-reduce test case', async () => {
+    const code = `
+      if (1 >= 2) {
+        1;
+      } else {
+        2;
+      }
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('2;')
+  })
+})
+
+describe(`Expressions: conditionals`, () => {
+  //Conditional-predicate-reduce:
+  test('Conditional-predicate-reduce test case', async () => {
+    const code = `
+      1 + 1 === 2 ? 1 + 2 : 2 + 3;
+      `
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('3;')
+  })
+  //Conditional-true-reduce:
+  test('Conditional-true-reduce test case', async () => {
+    const code = `true ? 1 + 2 : 2 + 3;`
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('3;')
+  })
+  //Conditional-false-reduce:
+  test('Conditional-false-reduce test case', async () => {
+    const code = `false ? 1 + 2 : 2 + 3;`
+    const steps = await testEvalSteps(code, mockContext())
+    expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+    expect(getLastStepAsString(steps)).toEqual('5;')
+  })
+})
+/*
+test cases to be discussed
+describe(`Expressions: function application`, () => {
+
+})
+*/
+
+//template
+/*
+For a section of test cases
+describe(``, () => {
+
+})
+
+For specific test cases
+test('', async () => {
+  const code = ``
+  const steps = await testEvalSteps(code, mockContext())
+  expect(steps.map(x => codify(x[0])).join('\n')).toMatchSnapshot()
+  expect(getLastStepAsString(steps)).toEqual('')
+})
+*/
+
+/**
+ * end of stepper specification tests
+ */
+
 // describe(`#1223: Stepper: Import statements cause errors`, () => {
 //   test('import a module and invoke its functions', async () => {
 //     const code = `

@@ -9,7 +9,15 @@ import { mockContext } from '../mocks/context'
 import { ImportOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, Context, CustomBuiltIns, SourceError, Value, Variant } from '../types'
+import {
+  Chapter,
+  Context,
+  CustomBuiltIns,
+  SourceError,
+  Value,
+  Variant,
+  type Finished
+} from '../types'
 import { stringify } from './stringify'
 
 export interface CodeSnippetTestCase {
@@ -370,4 +378,8 @@ export async function expectNativeToTimeoutAndError(code: string, timeout: numbe
 
 export function asMockedFunc<T extends (...args: any[]) => any>(func: T) {
   return func as MockedFunction<T>
+}
+
+export function expectFinishedResult(result: Result): asserts result is Finished {
+  expect(result.status).toEqual('finished')
 }

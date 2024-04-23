@@ -1,6 +1,6 @@
 {
   "name": "js-slang",
-  "version": "1.0.62",
+  "version": "1.0.73",
   "license": "Apache-2.0",
   "description": "Javascript-based implementations of Source, written in Typescript",
   "keywords": [
@@ -28,10 +28,11 @@
     "dist"
   ],
   "bin": {
-    "js-slang": "dist/repl/repl.js"
+    "js-slang": "dist/repl/index.js"
   },
   "dependencies": {
     "@babel/parser": "^7.19.4",
+    "@commander-js/extra-typings": "^12.0.1",
     "@joeychenofficial/alt-ergo-modified": "^2.4.0",
     "@ts-morph/bootstrap": "^0.18.0",
     "@types/estree": "^1.0.5",
@@ -40,10 +41,10 @@
     "acorn-loose": "^8.0.0",
     "acorn-walk": "^8.0.0",
     "astring": "^1.4.3",
+    "commander": "^12.0.0",
     "gpu.js": "^2.16.0",
     "js-base64": "^3.7.5",
     "lodash": "^4.17.21",
-    "node-getopt": "^0.3.2",
     "source-map": "0.7.3"
   },
   "resolutions": {
@@ -106,6 +107,7 @@
     "testRegex": "/__tests__/.*\\.ts$",
     "testPathIgnorePatterns": [
       "/dist/",
+      "/src/alt-langs/scheme/scm-slang",
       ".*benchmark.*",
       "/__tests__/(.*/)?utils\\.ts"
     ],
@@ -114,7 +116,7 @@
       "/node_modules/",
       "/src/typings/",
       "/src/utils/testing.ts",
-      "/src/alt-langs",
+      "/src/alt-langs/scheme/scm-slang",
       "/src/py-slang/"
     ],
     "reporters": [
