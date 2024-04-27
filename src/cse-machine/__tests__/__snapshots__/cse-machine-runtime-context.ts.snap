@@ -2,18 +2,22 @@
 
 exports[`Avoid unnescessary environment instruction 1 1`] = `
 Control {
+  "numEnvDependentItems": 0,
   "storage": Array [
     Object {
       "instrType": "BinaryOperation",
       "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
+        "isEnvDependent": true,
         "left": Node {
           "arguments": Array [
             Node {
               "end": 48,
+              "isEnvDependent": true,
               "left": Node {
                 "end": 46,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 7,
@@ -41,6 +45,7 @@ Control {
               "operator": "-",
               "right": Node {
                 "end": 48,
+                "isEnvDependent": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 9,
@@ -62,6 +67,7 @@ Control {
           ],
           "callee": Node {
             "end": 44,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 5,
@@ -77,6 +83,7 @@ Control {
             "type": "Identifier",
           },
           "end": 49,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -147,12 +154,15 @@ Control {
       "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
+        "isEnvDependent": true,
         "left": Node {
           "arguments": Array [
             Node {
               "end": 48,
+              "isEnvDependent": true,
               "left": Node {
                 "end": 46,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 7,
@@ -180,6 +190,7 @@ Control {
               "operator": "-",
               "right": Node {
                 "end": 48,
+                "isEnvDependent": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 9,
@@ -201,6 +212,7 @@ Control {
           ],
           "callee": Node {
             "end": 44,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 5,
@@ -216,6 +228,7 @@ Control {
             "type": "Identifier",
           },
           "end": 49,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -286,12 +299,15 @@ Control {
       "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
+        "isEnvDependent": true,
         "left": Node {
           "arguments": Array [
             Node {
               "end": 48,
+              "isEnvDependent": true,
               "left": Node {
                 "end": 46,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 7,
@@ -319,6 +335,7 @@ Control {
               "operator": "-",
               "right": Node {
                 "end": 48,
+                "isEnvDependent": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 9,
@@ -340,6 +357,7 @@ Control {
           ],
           "callee": Node {
             "end": 44,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 5,
@@ -355,6 +373,7 @@ Control {
             "type": "Identifier",
           },
           "end": 49,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -408,14 +427,17 @@ Control {
 
 exports[`Avoid unnescessary environment instruction 2 1`] = `
 Control {
+  "numEnvDependentItems": 0,
   "storage": Array [
     Object {
       "instrType": "BinaryOperation",
       "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
+        "isEnvDependent": true,
         "left": Node {
           "end": 44,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 5,
@@ -445,8 +467,10 @@ Control {
           "arguments": Array [
             Node {
               "end": 52,
+              "isEnvDependent": true,
               "left": Node {
                 "end": 50,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 11,
@@ -474,6 +498,7 @@ Control {
               "operator": "-",
               "right": Node {
                 "end": 52,
+                "isEnvDependent": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 13,
@@ -495,6 +520,7 @@ Control {
           ],
           "callee": Node {
             "end": 48,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 9,
@@ -510,6 +536,7 @@ Control {
             "type": "Identifier",
           },
           "end": 53,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 14,
@@ -533,8 +560,10 @@ Control {
       "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
+        "isEnvDependent": true,
         "left": Node {
           "end": 44,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 5,
@@ -564,8 +593,10 @@ Control {
           "arguments": Array [
             Node {
               "end": 52,
+              "isEnvDependent": true,
               "left": Node {
                 "end": 50,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 11,
@@ -593,6 +624,7 @@ Control {
               "operator": "-",
               "right": Node {
                 "end": 52,
+                "isEnvDependent": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 13,
@@ -614,6 +646,7 @@ Control {
           ],
           "callee": Node {
             "end": 48,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 9,
@@ -629,6 +662,7 @@ Control {
             "type": "Identifier",
           },
           "end": 53,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 14,
@@ -652,8 +686,10 @@ Control {
       "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
+        "isEnvDependent": true,
         "left": Node {
           "end": 44,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 5,
@@ -683,8 +719,10 @@ Control {
           "arguments": Array [
             Node {
               "end": 52,
+              "isEnvDependent": true,
               "left": Node {
                 "end": 50,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 11,
@@ -712,6 +750,7 @@ Control {
               "operator": "-",
               "right": Node {
                 "end": 52,
+                "isEnvDependent": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 13,
@@ -733,6 +772,7 @@ Control {
           ],
           "callee": Node {
             "end": 48,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 9,
@@ -748,6 +788,7 @@ Control {
             "type": "Identifier",
           },
           "end": 53,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 14,
@@ -772,6 +813,7 @@ Control {
 
 exports[`Avoid unnescessary environment instruction 3 1`] = `
 Control {
+  "numEnvDependentItems": 5,
   "storage": Array [
     Node {
       "end": 86,
@@ -841,6 +883,7 @@ Control {
     },
     Object {
       "instrType": "Pop",
+      "isEnvDependent": false,
       "srcNode": Node {
         "end": 86,
         "expression": Node {
@@ -1113,10 +1156,12 @@ Control {
         },
       },
       "instrType": "Environment",
+      "isEnvDependent": true,
       "srcNode": Node {
         "arguments": Array [
           Node {
             "end": 77,
+            "isEnvDependent": false,
             "loc": SourceLocation {
               "end": Position {
                 "column": 3,
@@ -1135,6 +1180,7 @@ Control {
         ],
         "callee": Node {
           "end": 75,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -1150,6 +1196,7 @@ Control {
           "type": "Identifier",
         },
         "end": 78,
+        "isEnvDependent": true,
         "loc": SourceLocation {
           "end": Position {
             "column": 4,
@@ -1166,10 +1213,13 @@ Control {
     },
     Object {
       "instrType": "BinaryOperation",
+      "isEnvDependent": false,
       "srcNode": Node {
         "end": 70,
+        "isEnvDependent": true,
         "left": Node {
           "end": 61,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 7,
@@ -1199,8 +1249,10 @@ Control {
           "arguments": Array [
             Node {
               "end": 69,
+              "isEnvDependent": true,
               "left": Node {
                 "end": 67,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 13,
@@ -1228,6 +1280,7 @@ Control {
               "operator": "-",
               "right": Node {
                 "end": 69,
+                "isEnvDependent": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 15,
@@ -1249,6 +1302,7 @@ Control {
           ],
           "callee": Node {
             "end": 65,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 11,
@@ -1264,6 +1318,7 @@ Control {
             "type": "Identifier",
           },
           "end": 70,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 16,
@@ -1294,6 +1349,7 @@ Control {
           ],
           "callee": Node {
             "end": 75,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 1,
@@ -1309,6 +1365,7 @@ Control {
             "type": "Identifier",
           },
           "end": 78,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 4,
@@ -1535,12 +1592,15 @@ Control {
         },
       },
       "instrType": "Environment",
+      "isEnvDependent": true,
       "srcNode": Node {
         "arguments": Array [
           Node {
             "end": 69,
+            "isEnvDependent": true,
             "left": Node {
               "end": 67,
+              "isEnvDependent": true,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 13,
@@ -1568,6 +1628,7 @@ Control {
             "operator": "-",
             "right": Node {
               "end": 69,
+              "isEnvDependent": false,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 15,
@@ -1589,6 +1650,7 @@ Control {
         ],
         "callee": Node {
           "end": 65,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 11,
@@ -1604,6 +1666,7 @@ Control {
           "type": "Identifier",
         },
         "end": 70,
+        "isEnvDependent": true,
         "loc": SourceLocation {
           "end": Position {
             "column": 16,
@@ -1620,10 +1683,13 @@ Control {
     },
     Object {
       "instrType": "BinaryOperation",
+      "isEnvDependent": false,
       "srcNode": Node {
         "end": 70,
+        "isEnvDependent": true,
         "left": Node {
           "end": 61,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 7,
@@ -1653,8 +1719,10 @@ Control {
           "arguments": Array [
             Node {
               "end": 69,
+              "isEnvDependent": true,
               "left": Node {
                 "end": 67,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 13,
@@ -1682,6 +1750,7 @@ Control {
               "operator": "-",
               "right": Node {
                 "end": 69,
+                "isEnvDependent": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 15,
@@ -1703,6 +1772,7 @@ Control {
           ],
           "callee": Node {
             "end": 65,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 11,
@@ -1718,6 +1788,7 @@ Control {
             "type": "Identifier",
           },
           "end": 70,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 16,
@@ -1748,6 +1819,7 @@ Control {
           ],
           "callee": Node {
             "end": 65,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 11,
@@ -1763,6 +1835,7 @@ Control {
             "type": "Identifier",
           },
           "end": 70,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 16,
@@ -1989,12 +2062,15 @@ Control {
         },
       },
       "instrType": "Environment",
+      "isEnvDependent": true,
       "srcNode": Node {
         "arguments": Array [
           Node {
             "end": 69,
+            "isEnvDependent": true,
             "left": Node {
               "end": 67,
+              "isEnvDependent": true,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 13,
@@ -2022,6 +2098,7 @@ Control {
             "operator": "-",
             "right": Node {
               "end": 69,
+              "isEnvDependent": false,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 15,
@@ -2043,6 +2120,7 @@ Control {
         ],
         "callee": Node {
           "end": 65,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 11,
@@ -2058,6 +2136,7 @@ Control {
           "type": "Identifier",
         },
         "end": 70,
+        "isEnvDependent": true,
         "loc": SourceLocation {
           "end": Position {
             "column": 16,
@@ -2074,10 +2153,13 @@ Control {
     },
     Object {
       "instrType": "BinaryOperation",
+      "isEnvDependent": false,
       "srcNode": Node {
         "end": 70,
+        "isEnvDependent": true,
         "left": Node {
           "end": 61,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 7,
@@ -2107,8 +2189,10 @@ Control {
           "arguments": Array [
             Node {
               "end": 69,
+              "isEnvDependent": true,
               "left": Node {
                 "end": 67,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 13,
@@ -2136,6 +2220,7 @@ Control {
               "operator": "-",
               "right": Node {
                 "end": 69,
+                "isEnvDependent": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 15,
@@ -2157,6 +2242,7 @@ Control {
           ],
           "callee": Node {
             "end": 65,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 11,
@@ -2172,6 +2258,7 @@ Control {
             "type": "Identifier",
           },
           "end": 70,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 16,
@@ -2202,6 +2289,7 @@ Control {
           ],
           "callee": Node {
             "end": 65,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 11,
@@ -2217,6 +2305,7 @@ Control {
             "type": "Identifier",
           },
           "end": 70,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 16,
@@ -2443,12 +2532,15 @@ Control {
         },
       },
       "instrType": "Environment",
+      "isEnvDependent": true,
       "srcNode": Node {
         "arguments": Array [
           Node {
             "end": 69,
+            "isEnvDependent": true,
             "left": Node {
               "end": 67,
+              "isEnvDependent": true,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 13,
@@ -2476,6 +2568,7 @@ Control {
             "operator": "-",
             "right": Node {
               "end": 69,
+              "isEnvDependent": false,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 15,
@@ -2497,6 +2590,7 @@ Control {
         ],
         "callee": Node {
           "end": 65,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 11,
@@ -2512,6 +2606,7 @@ Control {
           "type": "Identifier",
         },
         "end": 70,
+        "isEnvDependent": true,
         "loc": SourceLocation {
           "end": Position {
             "column": 16,
@@ -2528,6 +2623,7 @@ Control {
     },
     Node {
       "end": 53,
+      "isEnvDependent": false,
       "loc": SourceLocation {
         "end": Position {
           "column": 7,
@@ -2549,6 +2645,7 @@ Control {
 
 exports[`Avoid unnescessary environment instruction 4 1`] = `
 Control {
+  "numEnvDependentItems": 0,
   "storage": Array [
     Object {
       "body": Array [
@@ -2723,6 +2820,7 @@ Control {
             },
           ],
           "end": 14,
+          "isEnvDependent": true,
           "kind": "let",
           "loc": SourceLocation {
             "end": Position {
@@ -2806,6 +2904,7 @@ Control {
           "type": "VariableDeclaration",
         },
       ],
+      "isEnvDependent": false,
       "loc": SourceLocation {
         "end": Position {
           "column": 1,

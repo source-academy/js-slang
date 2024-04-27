@@ -162,6 +162,7 @@ EnvTree {
                 ],
                 "callee": Node {
                   "end": 90,
+                  "isEnvDependent": true,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 1,
@@ -784,6 +785,7 @@ EnvTree {
                   ],
                   "callee": Node {
                     "end": 90,
+                    "isEnvDependent": true,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 1,
@@ -1430,6 +1432,7 @@ EnvTree {
               ],
               "callee": Node {
                 "end": 90,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 1,
@@ -2097,6 +2100,7 @@ EnvTree {
                 ],
                 "callee": Node {
                   "end": 90,
+                  "isEnvDependent": true,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 1,
@@ -2489,6 +2493,7 @@ EnvTree {
         ],
         "callee": Node {
           "end": 90,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -2668,6 +2673,7 @@ EnvTree {
           ],
           "callee": Node {
             "end": 90,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 1,
@@ -5606,6 +5612,7 @@ EnvTree {
                 ],
                 "callee": Node {
                   "end": 24,
+                  "isEnvDependent": true,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 1,
@@ -5621,6 +5628,7 @@ EnvTree {
                   "type": "Identifier",
                 },
                 "end": 33,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 10,
@@ -6064,6 +6072,7 @@ EnvTree {
                   ],
                   "callee": Node {
                     "end": 24,
+                    "isEnvDependent": true,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 1,
@@ -6079,6 +6088,7 @@ EnvTree {
                     "type": "Identifier",
                   },
                   "end": 33,
+                  "isEnvDependent": true,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 10,
@@ -6531,6 +6541,7 @@ EnvTree {
               ],
               "callee": Node {
                 "end": 24,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 1,
@@ -6546,6 +6557,7 @@ EnvTree {
                 "type": "Identifier",
               },
               "end": 33,
+              "isEnvDependent": true,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 10,
@@ -6897,6 +6909,7 @@ EnvTree {
         ],
         "callee": Node {
           "end": 24,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -6912,6 +6925,7 @@ EnvTree {
           "type": "Identifier",
         },
         "end": 33,
+        "isEnvDependent": true,
         "loc": SourceLocation {
           "end": Position {
             "column": 10,
@@ -7066,6 +7080,7 @@ EnvTree {
           ],
           "callee": Node {
             "end": 24,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 1,
@@ -7081,6 +7096,7 @@ EnvTree {
             "type": "Identifier",
           },
           "end": 33,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -7437,6 +7453,7 @@ EnvTree {
                       },
                     ],
                     "callee": Object {
+                      "isEnvDependent": false,
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 1,
@@ -7450,6 +7467,7 @@ EnvTree {
                       "type": "Literal",
                       "value": [Function],
                     },
+                    "isEnvDependent": true,
                     "loc": undefined,
                     "optional": false,
                     "type": "CallExpression",
@@ -8281,6 +8299,7 @@ EnvTree {
                         },
                       ],
                       "callee": Object {
+                        "isEnvDependent": false,
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 1,
@@ -8294,6 +8313,7 @@ EnvTree {
                         "type": "Literal",
                         "value": [Function],
                       },
+                      "isEnvDependent": true,
                       "loc": undefined,
                       "optional": false,
                       "type": "CallExpression",
@@ -9224,6 +9244,7 @@ EnvTree {
                     },
                   ],
                   "callee": Object {
+                    "isEnvDependent": false,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 1,
@@ -9237,6 +9258,7 @@ EnvTree {
                     "type": "Literal",
                     "value": [Function],
                   },
+                  "isEnvDependent": true,
                   "loc": undefined,
                   "optional": false,
                   "type": "CallExpression",
@@ -10186,6 +10208,7 @@ EnvTree {
                 },
               ],
               "callee": Object {
+                "isEnvDependent": false,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 1,
@@ -10199,6 +10222,7 @@ EnvTree {
                 "type": "Literal",
                 "value": [Function],
               },
+              "isEnvDependent": true,
               "loc": undefined,
               "optional": false,
               "type": "CallExpression",
@@ -10938,6 +10962,7 @@ EnvTree {
           },
         ],
         "callee": Object {
+          "isEnvDependent": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -10951,6 +10976,7 @@ EnvTree {
           "type": "Literal",
           "value": [Function],
         },
+        "isEnvDependent": true,
         "loc": undefined,
         "optional": false,
         "type": "CallExpression",
@@ -11189,6 +11215,7 @@ EnvTree {
             },
           ],
           "callee": Object {
+            "isEnvDependent": false,
             "loc": SourceLocation {
               "end": Position {
                 "column": 1,
@@ -11202,6 +11229,7 @@ EnvTree {
             "type": "Literal",
             "value": [Function],
           },
+          "isEnvDependent": true,
           "loc": undefined,
           "optional": false,
           "type": "CallExpression",

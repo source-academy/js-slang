@@ -75,13 +75,13 @@ import {
   isInstr,
   isNode,
   isSimpleFunction,
-  canAvoidEnvInstr,
   isStreamFn,
   popEnvironment,
   pushEnvironment,
   reduceConditional,
   setVariable,
-  valueProducing
+  valueProducing,
+  isEnvDependent
 } from './utils'
 import Closure from './closure'
 
@@ -98,15 +98,34 @@ type CmdEvaluator = (
  * It contains syntax tree nodes or instructions.
  */
 export class Control extends Stack<ControlItem> {
+  private numEnvDependentItems: number
   public constructor(program?: es.Program | StatementSequence) {
     super()
-
+    this.numEnvDependentItems = 0
     // Load program into control stack
     program ? this.push(program) : null
   }
 
+  public canAvoidEnvInstr(): boolean {
+    return this.numEnvDependentItems == 0
+  }
+
+  public pop(): ControlItem | undefined {
+    const item = super.pop()
+    if (item != undefined && isEnvDependent(item)) {
+      this.numEnvDependentItems --;
+    }
+    return item
+  }
+
   public push(...items: ControlItem[]): void {
     const itemsNew: ControlItem[] = Control.simplifyBlocksWithoutDeclarations(...items)
+    // testing
+    itemsNew.forEach((item: ControlItem) => {
+      if (isEnvDependent(item)) {
+        this.numEnvDependentItems++;
+      }
+    })
     super.push(...itemsNew)
   }
 
@@ -445,7 +464,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     if (
       next &&
       !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
-      !canAvoidEnvInstr(control)
+      !control.canAvoidEnvInstr()
     ) {
       control.push(instr.envInstr(currentEnvironment(context), command))
     }
@@ -961,7 +980,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       if (
         next &&
         !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
-        !canAvoidEnvInstr(control)
+        !control.canAvoidEnvInstr()
       ) {
         control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
