@@ -1,11 +1,16 @@
+import { IOptions } from '../..'
 import { mockContext } from '../../mocks/context'
 import { runCodeInSource } from '../../runner'
-import { Chapter } from '../../types'
+import { Chapter, RecursivePartial } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 
-const getContextFrom = async (code: string) => {
+const getContextFrom = async (code: string, steps?: number) => {
   const context = mockContext(Chapter.SOURCE_4)
-  await runCodeInSource(code, context, { executionMethod: 'cse-machine' })
+  const options: RecursivePartial<IOptions> = { executionMethod: 'cse-machine' }
+  if (steps !== undefined) {
+    options.envSteps = steps
+  }
+  await runCodeInSource(code, context, options)
   return context
 }
 
@@ -67,3 +72,75 @@ for (const context of contexts) {
     expect((await context).runtime.changepointSteps).toMatchSnapshot()
   })
 }
+test('Avoid unnescessary environment instruction 1', async () => {
+  const context = getContextFrom(
+    stripIndent(
+      `
+      function f(n) {
+        return n === 0
+        ? 1
+        : f(n-1) * 2;
+      }
+      f(3);
+    `
+    ),
+    61
+  )
+  expect((await context).runtime.control).toMatchSnapshot()
+})
+
+test('Avoid unnescessary environment instruction 2', async () => {
+  const context = getContextFrom(
+    stripIndent(
+      `
+      function f(n) {
+        return n === 0
+        ? 1
+        : n * f(n-1);
+      }
+      f(3);
+    `
+    ),
+    63
+  )
+  expect((await context).runtime.control).toMatchSnapshot()
+})
+
+test('Avoid unnescessary environment instruction 3', async () => {
+  const context = getContextFrom(
+    stripIndent(
+      `
+      let a = 1;
+      function f(n) {
+          return n === 0
+          ? 1
+          : n * f(n-1);
+      }
+      f(3);
+      a = 2;
+    `
+    ),
+    66
+  )
+  expect((await context).runtime.control).toMatchSnapshot()
+})
+
+test('Avoid unnescessary environment instruction 4', async () => {
+  const context = getContextFrom(
+    stripIndent(
+      `
+      {
+        let a = 1;
+        let b = 2;
+      }
+      
+      {
+          1 + 2;
+          3;
+      }
+    `
+    ),
+    3
+  )
+  expect((await context).runtime.control).toMatchSnapshot()
+})

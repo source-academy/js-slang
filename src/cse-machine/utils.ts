@@ -663,3 +663,63 @@ export const hasContinueStatement = (block: es.BlockStatement | StatementSequenc
   }
   return hasContinue
 }
+
+/**
+ * Checks whether the evaluation of the given command depends on the current environment.
+ * @param command The command to be checked
+ * @return `true` if the command is environment depedent, else `false`.
+ * NOTE: this check is meant to detect and avoid pushing environment instruction onto the
+ * control in SIMPLE CASES, so it might not be exhaustive
+ */
+export const isEnvDependent = (command: ControlItem): boolean => {
+  if (isInstr(command)) {
+    const type = command.instrType
+    return !(
+      type === InstrType.UNARY_OP ||
+      type === InstrType.BINARY_OP ||
+      type === InstrType.POP ||
+      type === InstrType.ARRAY_ACCESS ||
+      type === InstrType.ARRAY_ASSIGNMENT ||
+      type === InstrType.RESET ||
+      type === InstrType.CONTINUE_MARKER ||
+      type === InstrType.BREAK_MARKER
+    )
+  } else {
+    const type = command.type
+    switch (type) {
+      case 'StatementSequence':
+        let isDependent = false
+        command.body.forEach(function (statement: es.Statement) {
+          isDependent = isEnvDependent(statement) || isDependent
+        })
+        return isDependent
+      case 'Literal':
+        return false
+      case 'BinaryExpression':
+        return isEnvDependent(command.left) || isEnvDependent(command.right)
+      case 'LogicalExpression':
+        return isEnvDependent(command.left) || isEnvDependent(command.right)
+      case 'UnaryExpression':
+        return isEnvDependent(command.argument)
+      case 'ExpressionStatement':
+        return isEnvDependent(command.expression)
+      default:
+        return true
+    }
+  }
+}
+
+/**
+ * Checks whether an environment instruction needs to be pushed onto the control.
+ * @param control The current control to be checked
+ * @return `true` if the environment instruction can be avoided, else `false`.
+ * NOTE: this check is meant to detect and avoid pushing environment instruction onto the
+ * control in SIMPLE CASES, so it might not be exhaustive
+ */
+export const canAvoidEnvInstr = (control: Control): boolean => {
+  let canAvoid = true
+  control.getStack().forEach(function (command: ControlItem) {
+    canAvoid = canAvoid && !isEnvDependent(command)
+  })
+  return canAvoid
+}
