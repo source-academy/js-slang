@@ -113,7 +113,7 @@ export class Control extends Stack<ControlItem> {
   public pop(): ControlItem | undefined {
     const item = super.pop()
     if (item != undefined && isEnvDependent(item)) {
-      this.numEnvDependentItems --;
+      this.numEnvDependentItems--
     }
     return item
   }
@@ -123,7 +123,7 @@ export class Control extends Stack<ControlItem> {
     // testing
     itemsNew.forEach((item: ControlItem) => {
       if (isEnvDependent(item)) {
-        this.numEnvDependentItems++;
+        this.numEnvDependentItems++
       }
     })
     super.push(...itemsNew)
