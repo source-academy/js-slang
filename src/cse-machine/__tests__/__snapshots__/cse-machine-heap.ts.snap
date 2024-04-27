@@ -177,6 +177,7 @@ EnvTree {
                   "type": "Identifier",
                 },
                 "end": 101,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 12,
@@ -798,6 +799,7 @@ EnvTree {
                     "type": "Identifier",
                   },
                   "end": 101,
+                  "isEnvDependent": true,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 12,
@@ -1443,6 +1445,7 @@ EnvTree {
                 "type": "Identifier",
               },
               "end": 101,
+              "isEnvDependent": true,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 12,
@@ -2109,6 +2112,7 @@ EnvTree {
                   "type": "Identifier",
                 },
                 "end": 101,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 12,
@@ -2500,6 +2504,7 @@ EnvTree {
           "type": "Identifier",
         },
         "end": 101,
+        "isEnvDependent": true,
         "loc": SourceLocation {
           "end": Position {
             "column": 12,
@@ -2678,6 +2683,7 @@ EnvTree {
             "type": "Identifier",
           },
           "end": 101,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 12,

@@ -5,6 +5,7 @@ Control {
   "storage": Array [
     Object {
       "instrType": "BinaryOperation",
+      "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
         "left": Node {
@@ -102,6 +103,7 @@ Control {
         "operator": "*",
         "right": Node {
           "end": 53,
+          "isEnvDependent": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 14,
@@ -124,6 +126,7 @@ Control {
     },
     Node {
       "end": 53,
+      "isEnvDependent": false,
       "loc": SourceLocation {
         "end": Position {
           "column": 14,
@@ -141,6 +144,7 @@ Control {
     },
     Object {
       "instrType": "BinaryOperation",
+      "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
         "left": Node {
@@ -238,6 +242,7 @@ Control {
         "operator": "*",
         "right": Node {
           "end": 53,
+          "isEnvDependent": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 14,
@@ -260,6 +265,7 @@ Control {
     },
     Node {
       "end": 53,
+      "isEnvDependent": false,
       "loc": SourceLocation {
         "end": Position {
           "column": 14,
@@ -277,6 +283,7 @@ Control {
     },
     Object {
       "instrType": "BinaryOperation",
+      "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
         "left": Node {
@@ -374,6 +381,7 @@ Control {
         "operator": "*",
         "right": Node {
           "end": 53,
+          "isEnvDependent": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 14,
@@ -403,6 +411,7 @@ Control {
   "storage": Array [
     Object {
       "instrType": "BinaryOperation",
+      "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
         "left": Node {
@@ -521,6 +530,7 @@ Control {
     },
     Object {
       "instrType": "BinaryOperation",
+      "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
         "left": Node {
@@ -639,6 +649,7 @@ Control {
     },
     Object {
       "instrType": "BinaryOperation",
+      "isEnvDependent": false,
       "srcNode": Node {
         "end": 53,
         "left": Node {
@@ -766,6 +777,7 @@ Control {
       "end": 86,
       "expression": Node {
         "end": 85,
+        "isEnvDependent": true,
         "left": Node {
           "end": 81,
           "loc": SourceLocation {
@@ -813,6 +825,7 @@ Control {
         "start": 80,
         "type": "AssignmentExpression",
       },
+      "isEnvDependent": true,
       "loc": SourceLocation {
         "end": Position {
           "column": 6,
@@ -832,6 +845,7 @@ Control {
         "end": 86,
         "expression": Node {
           "end": 85,
+          "isEnvDependent": true,
           "left": Node {
             "end": 81,
             "loc": SourceLocation {
@@ -879,6 +893,7 @@ Control {
           "start": 80,
           "type": "AssignmentExpression",
         },
+        "isEnvDependent": true,
         "loc": SourceLocation {
           "end": Position {
             "column": 6,
@@ -2541,8 +2556,10 @@ Control {
           "end": 43,
           "expression": Node {
             "end": 42,
+            "isEnvDependent": false,
             "left": Node {
               "end": 38,
+              "isEnvDependent": false,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 5,
@@ -2571,6 +2588,7 @@ Control {
             "operator": "+",
             "right": Node {
               "end": 42,
+              "isEnvDependent": false,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 9,
@@ -2589,6 +2607,7 @@ Control {
             "start": 37,
             "type": "BinaryExpression",
           },
+          "isEnvDependent": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 10,
@@ -2606,6 +2625,7 @@ Control {
           "end": 50,
           "expression": Node {
             "end": 49,
+            "isEnvDependent": false,
             "loc": SourceLocation {
               "end": Position {
                 "column": 5,
@@ -2621,6 +2641,7 @@ Control {
             "type": "Literal",
             "value": 3,
           },
+          "isEnvDependent": false,
           "loc": SourceLocation {
             "end": Position {
               "column": 6,
@@ -2635,6 +2656,7 @@ Control {
           "type": "ExpressionStatement",
         },
       ],
+      "isEnvDependent": false,
       "loc": SourceLocation {
         "end": Position {
           "column": 1,
