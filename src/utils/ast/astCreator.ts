@@ -340,7 +340,7 @@ export const functionDeclarationExpression = (
 })
 
 export const functionDeclaration = (
-  id: es.Identifier | null,
+  id: es.Identifier,
   params: es.Pattern[],
   body: es.BlockStatement,
   loc?: es.SourceLocation | null
