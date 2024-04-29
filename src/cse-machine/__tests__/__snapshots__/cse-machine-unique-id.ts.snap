@@ -30,6 +30,7 @@ EnvTree {
                     ],
                     "callee": Node {
                       "end": 63,
+                      "isEnvDependent": true,
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 1,
@@ -45,6 +46,7 @@ EnvTree {
                       "type": "Identifier",
                     },
                     "end": 78,
+                    "isEnvDependent": true,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 16,
@@ -1225,6 +1227,7 @@ EnvTree {
                       ],
                       "callee": Node {
                         "end": 63,
+                        "isEnvDependent": true,
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 1,
@@ -1240,6 +1243,7 @@ EnvTree {
                         "type": "Identifier",
                       },
                       "end": 78,
+                      "isEnvDependent": true,
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 16,
@@ -2519,6 +2523,7 @@ EnvTree {
                   ],
                   "callee": Node {
                     "end": 63,
+                    "isEnvDependent": true,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 1,
@@ -2534,6 +2539,7 @@ EnvTree {
                     "type": "Identifier",
                   },
                   "end": 78,
+                  "isEnvDependent": true,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 16,
@@ -3863,6 +3869,7 @@ EnvTree {
               ],
               "callee": Node {
                 "end": 63,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 1,
@@ -3878,6 +3885,7 @@ EnvTree {
                 "type": "Identifier",
               },
               "end": 78,
+              "isEnvDependent": true,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 16,
@@ -4966,6 +4974,7 @@ EnvTree {
         ],
         "callee": Node {
           "end": 63,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -4981,6 +4990,7 @@ EnvTree {
           "type": "Identifier",
         },
         "end": 78,
+        "isEnvDependent": true,
         "loc": SourceLocation {
           "end": Position {
             "column": 16,
@@ -5273,6 +5283,7 @@ EnvTree {
           ],
           "callee": Node {
             "end": 63,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 1,
@@ -5288,6 +5299,7 @@ EnvTree {
             "type": "Identifier",
           },
           "end": 78,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 16,
@@ -6903,6 +6915,7 @@ EnvTree {
                 ],
                 "callee": Node {
                   "end": 63,
+                  "isEnvDependent": true,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 1,
@@ -6918,6 +6931,7 @@ EnvTree {
                   "type": "Identifier",
                 },
                 "end": 78,
+                "isEnvDependent": true,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 16,
