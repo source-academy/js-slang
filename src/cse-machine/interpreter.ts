@@ -14,13 +14,14 @@ import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Result, type StatementSequence, Value } from '../types'
+import { Context, ContiguousArrayElements, Result, Value, type StatementSequence } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import { checkProgramForUndefinedVariables } from '../validator/validator'
 import * as seq from '../utils/statementSeqTransform'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
+import Closure from './closure'
 import {
   Continuation,
   getContinuationControl,
@@ -39,8 +40,8 @@ import {
   AssmtInstr,
   BinOpInstr,
   BranchInstr,
-  ControlItem,
   CSEBreak,
+  ControlItem,
   CseError,
   EnvInstr,
   ForInstr,
@@ -72,6 +73,7 @@ import {
   hasImportDeclarations,
   isBlockStatement,
   isEnvArray,
+  isEnvDependent,
   isInstr,
   isNode,
   isSimpleFunction,
@@ -80,10 +82,8 @@ import {
   pushEnvironment,
   reduceConditional,
   setVariable,
-  valueProducing,
-  isEnvDependent
+  valueProducing
 } from './utils'
-import Closure from './closure'
 
 type CmdEvaluator = (
   command: ControlItem,
@@ -107,12 +107,12 @@ export class Control extends Stack<ControlItem> {
   }
 
   public canAvoidEnvInstr(): boolean {
-    return this.numEnvDependentItems == 0
+    return this.numEnvDependentItems === 0
   }
 
   public pop(): ControlItem | undefined {
     const item = super.pop()
-    if (item != undefined && isEnvDependent(item)) {
+    if (item !== undefined && isEnvDependent(item)) {
       this.numEnvDependentItems--
     }
     return item
@@ -120,7 +120,6 @@ export class Control extends Stack<ControlItem> {
 
   public push(...items: ControlItem[]): void {
     const itemsNew: ControlItem[] = Control.simplifyBlocksWithoutDeclarations(...items)
-    // testing
     itemsNew.forEach((item: ControlItem) => {
       if (isEnvDependent(item)) {
         this.numEnvDependentItems++
