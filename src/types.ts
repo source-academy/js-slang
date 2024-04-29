@@ -325,7 +325,6 @@ export type Node =
   | StatementSequence
   | es.MaybeNamedClassDeclaration
   | es.MaybeNamedFunctionDeclaration
-
 /*
 	Although the ESTree specifications supposedly provide a Directive interface, the index file does not seem to export it.
 	As such this interface was created here to fulfil the same purpose.

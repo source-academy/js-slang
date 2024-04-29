@@ -672,9 +672,16 @@ export const hasContinueStatement = (block: es.BlockStatement | StatementSequenc
  * control in SIMPLE CASES, so it might not be exhaustive
  */
 export const isEnvDependent = (command: ControlItem): boolean => {
+  // If the result is already calculated, return it
+  if (command.isEnvDependent != undefined) {
+    return command.isEnvDependent
+  }
+
+  // Otherwise, calculate and store the result
+  let isDependent = true
   if (isInstr(command)) {
     const type = command.instrType
-    return !(
+    isDependent = !(
       type === InstrType.UNARY_OP ||
       type === InstrType.BINARY_OP ||
       type === InstrType.POP ||
@@ -688,25 +695,28 @@ export const isEnvDependent = (command: ControlItem): boolean => {
     const type = command.type
     switch (type) {
       case 'StatementSequence':
-        let isDependent = false
-        command.body.forEach(function (statement: es.Statement) {
-          isDependent = isEnvDependent(statement) || isDependent
-        })
-        return isDependent
+        isDependent = command.body.some((statement: es.Statement) => isEnvDependent(statement))
       case 'Literal':
-        return false
+        isDependent = false
+        break
       case 'BinaryExpression':
-        return isEnvDependent(command.left) || isEnvDependent(command.right)
+        isDependent = isEnvDependent(command.left) || isEnvDependent(command.right)
+        break
       case 'LogicalExpression':
-        return isEnvDependent(command.left) || isEnvDependent(command.right)
+        isDependent = isEnvDependent(command.left) || isEnvDependent(command.right)
+        break
       case 'UnaryExpression':
-        return isEnvDependent(command.argument)
+        isDependent = isEnvDependent(command.argument)
+        break
       case 'ExpressionStatement':
-        return isEnvDependent(command.expression)
+        isDependent = isEnvDependent(command.expression)
+        break
       default:
-        return true
+        break
     }
   }
+  command.isEnvDependent = isDependent
+  return isDependent
 }
 
 /**
@@ -717,9 +727,5 @@ export const isEnvDependent = (command: ControlItem): boolean => {
  * control in SIMPLE CASES, so it might not be exhaustive
  */
 export const canAvoidEnvInstr = (control: Control): boolean => {
-  let canAvoid = true
-  control.getStack().forEach(function (command: ControlItem) {
-    canAvoid = canAvoid && !isEnvDependent(command)
-  })
-  return canAvoid
+  return !control.getStack().some((command: ControlItem) => isEnvDependent(command))
 }
