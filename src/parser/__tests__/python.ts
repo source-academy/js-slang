@@ -24,7 +24,7 @@ describe('Python parser', () => {
   })
   describe('Python 1 tests', () => {
     it('allows usage of builtins/preludes', () => {
-      const code = `display("hello from python")`
+      const code = `print("hello from python")`
 
       const prgm = parserPython1.parse(code, context)
       if (prgm !== null) {

@@ -1,12 +1,25 @@
 import type es from 'estree'
+// import * as TypedES from '../../typeChecker/tsESTree'
 
 import type { Context, IOptions } from '../..'
 import type { RecursivePartial } from '../../types'
 import loadSourceModules from '../loader'
-import type { FileGetter, SourceFiles } from '../moduleTypes'
+import type { FileGetter } from '../moduleTypes'
 import analyzeImportsAndExports from './analyzer'
 import parseProgramsAndConstructImportGraph from './linker'
 import defaultBundler, { type Bundler } from './bundler'
+
+export type PreprocessResult =
+  | {
+      ok: true
+      program: es.Program
+      files: Record<string, string>
+      verboseErrors: boolean
+    }
+  | {
+      ok: false
+      verboseErrors: boolean
+    }
 
 /**
  * Preprocesses file imports and returns a transformed Abstract Syntax Tree (AST).
@@ -26,26 +39,26 @@ import defaultBundler, { type Bundler } from './bundler'
  * @param context            The information associated with the program evaluation.
  */
 const preprocessFileImports = async (
-  files: SourceFiles | FileGetter,
+  files: FileGetter,
   entrypointFilePath: string,
   context: Context,
   options: RecursivePartial<IOptions> = {},
   bundler: Bundler = defaultBundler
-): Promise<es.Program | undefined> => {
+): Promise<PreprocessResult> => {
   // Parse all files into ASTs and build the import graph.
-  const importGraphResult = await parseProgramsAndConstructImportGraph(
-    typeof files === 'function' ? files : p => Promise.resolve(files[p]),
+  const linkerResult = await parseProgramsAndConstructImportGraph(
+    files,
     entrypointFilePath,
     context,
     options?.importOptions,
-    options?.shouldAddFileName ?? (typeof files === 'function' || Object.keys(files).length > 1)
+    !!options?.shouldAddFileName
   )
   // Return 'undefined' if there are errors while parsing.
-  if (!importGraphResult || context.errors.length !== 0) {
-    return undefined
+  if (!linkerResult.ok) {
+    return linkerResult
   }
 
-  const { programs, topoOrder, sourceModulesToImport } = importGraphResult
+  const { programs, topoOrder, sourceModulesToImport } = linkerResult
 
   try {
     await loadSourceModules(sourceModulesToImport, context, options.importOptions?.loadTabs ?? true)
@@ -59,10 +72,19 @@ const preprocessFileImports = async (
     )
   } catch (error) {
     context.errors.push(error)
-    return undefined
+    return {
+      ok: false,
+      verboseErrors: linkerResult.verboseErrors
+    }
   }
 
-  return bundler(programs, entrypointFilePath, topoOrder, context)
+  const program = bundler(programs, entrypointFilePath, topoOrder, context)
+  return {
+    ok: true,
+    program,
+    files: linkerResult.files,
+    verboseErrors: linkerResult.verboseErrors
+  }
 }
 
 export default preprocessFileImports

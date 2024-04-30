@@ -663,3 +663,69 @@ export const hasContinueStatement = (block: es.BlockStatement | StatementSequenc
   }
   return hasContinue
 }
+
+/**
+ * Checks whether the evaluation of the given command depends on the current environment.
+ * @param command The command to be checked
+ * @return `true` if the command is environment depedent, else `false`.
+ * NOTE: this check is meant to detect and avoid pushing environment instruction onto the
+ * control in SIMPLE CASES, so it might not be exhaustive
+ */
+export const isEnvDependent = (command: ControlItem): boolean => {
+  // If the result is already calculated, return it
+  if (command.isEnvDependent != undefined) {
+    return command.isEnvDependent
+  }
+
+  // Otherwise, calculate and store the result
+  let isDependent = true
+  if (isInstr(command)) {
+    const type = command.instrType
+    isDependent = !(
+      type === InstrType.UNARY_OP ||
+      type === InstrType.BINARY_OP ||
+      type === InstrType.POP ||
+      type === InstrType.ARRAY_ACCESS ||
+      type === InstrType.ARRAY_ASSIGNMENT ||
+      type === InstrType.RESET ||
+      type === InstrType.CONTINUE_MARKER ||
+      type === InstrType.BREAK_MARKER
+    )
+  } else {
+    const type = command.type
+    switch (type) {
+      case 'StatementSequence':
+        isDependent = command.body.some((statement: es.Statement) => isEnvDependent(statement))
+      case 'Literal':
+        isDependent = false
+        break
+      case 'BinaryExpression':
+        isDependent = isEnvDependent(command.left) || isEnvDependent(command.right)
+        break
+      case 'LogicalExpression':
+        isDependent = isEnvDependent(command.left) || isEnvDependent(command.right)
+        break
+      case 'UnaryExpression':
+        isDependent = isEnvDependent(command.argument)
+        break
+      case 'ExpressionStatement':
+        isDependent = isEnvDependent(command.expression)
+        break
+      default:
+        break
+    }
+  }
+  command.isEnvDependent = isDependent
+  return isDependent
+}
+
+/**
+ * Checks whether an environment instruction needs to be pushed onto the control.
+ * @param control The current control to be checked
+ * @return `true` if the environment instruction can be avoided, else `false`.
+ * NOTE: this check is meant to detect and avoid pushing environment instruction onto the
+ * control in SIMPLE CASES, so it might not be exhaustive
+ */
+export const canAvoidEnvInstr = (control: Control): boolean => {
+  return !control.getStack().some((command: ControlItem) => isEnvDependent(command))
+}

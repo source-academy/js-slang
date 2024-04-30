@@ -1,10 +1,9 @@
 import { mockClosure, mockContext } from '../../mocks/context'
-import { parse } from '../../parser/parser'
+import { runCodeInSource } from '../../runner'
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { sourceRunner } from '../../runner'
 import Heap from '../heap'
-import { EnvArray } from '../types'
+import type { EnvArray } from '../types'
 
 test('Heap works correctly', () => {
   const heap1 = new Heap()
@@ -50,11 +49,11 @@ test('Heap works correctly', () => {
 const expectEnvTreeFrom = (code: string, hasPrelude = true) => {
   const context = mockContext(Chapter.SOURCE_4)
   if (!hasPrelude) context.prelude = null
-  const parsed = parse(code, context)
+
   return expect(
-    sourceRunner(parsed!, context, false, { executionMethod: 'cse-machine' }).then(
-      () => context.runtime.environmentTree
-    )
+    runCodeInSource(code, context, {
+      executionMethod: 'cse-machine'
+    }).then(() => context.runtime.environmentTree)
   ).resolves
 }
 

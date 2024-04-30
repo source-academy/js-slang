@@ -12,6 +12,7 @@ import { EnvTree } from './createContext'
 import Heap from './cse-machine/heap'
 import { Control, Stash } from './cse-machine/interpreter'
 import type { ModuleFunctions } from './modules/moduleTypes'
+import { Representation } from './alt-langs/mapper'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -275,6 +276,10 @@ export interface Finished {
   status: 'finished'
   context: Context
   value: Value
+  representation?: Representation // if the returned value needs a unique representation,
+  // (for example if the language used is not JS),
+  // the display of the result will use the representation
+  // field instead
 }
 
 export interface Suspended {
@@ -286,6 +291,7 @@ export interface Suspended {
 
 export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-non-det' } & {
   value: Value
+  representation?: Representation // never used, only kept for consistency with Finished
 }
 
 export interface SuspendedCseEval {
@@ -314,8 +320,11 @@ export interface StatementSequence extends es.BaseStatement {
 /**
  * js-slang's custom Node type - this should be used wherever es.Node is used.
  */
-export type Node = es.Node | StatementSequence
-
+export type Node =
+  | es.Node
+  | StatementSequence
+  | es.MaybeNamedClassDeclaration
+  | es.MaybeNamedFunctionDeclaration
 /*
 	Although the ESTree specifications supposedly provide a Directive interface, the index file does not seem to export it.
 	As such this interface was created here to fulfil the same purpose.

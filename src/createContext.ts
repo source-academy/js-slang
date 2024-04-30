@@ -1,6 +1,13 @@
 // Variable determining chapter of Source is contained in this file.
 
 import * as scheme_libs from './alt-langs/scheme/scm-slang/src/stdlib/source-scheme-library'
+import {
+  scheme1Prelude,
+  scheme2Prelude,
+  scheme3Prelude,
+  scheme4Prelude,
+  schemeFullPrelude
+} from './stdlib/scheme.prelude'
 import { GLOBAL, JSSLANG_PROPERTIES } from './constants'
 import { call_with_current_continuation } from './cse-machine/continuations'
 import Heap from './cse-machine/heap'
@@ -30,6 +37,7 @@ import {
 import { makeWrapper } from './utils/makeWrapper'
 import * as operators from './utils/operators'
 import { stringify } from './utils/stringify'
+import { schemeVisualise } from './alt-langs/scheme/scheme-mapper'
 
 export class LazyBuiltIn {
   func: (...arg0: any) => any
@@ -225,18 +233,40 @@ export function defineBuiltin(
   value: Value,
   minArgsNeeded: undefined | number = undefined
 ) {
+  function extractName(name: string): string {
+    return name.split('(')[0].trim()
+  }
+
+  function extractParameters(name: string): string[] {
+    // if the function has no () in its name, it has no parameters
+    if (!name.includes('(')) {
+      return []
+    }
+    return name
+      .split('(')[1]
+      .split(')')[0]
+      .split(',')
+      .map(s => s.trim())
+  }
+
   if (typeof value === 'function') {
-    const funName = name.split('(')[0].trim()
+    const funName = extractName(name)
+    const funParameters = extractParameters(name)
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
     value.toString = () => repr
     value.minArgsNeeded = minArgsNeeded
+    value.funName = funName
+    value.funParameters = funParameters
 
     defineSymbol(context, funName, value)
   } else if (value instanceof LazyBuiltIn) {
     const wrapped = (...args: any) => value.func(...args)
-    const funName = name.split('(')[0].trim()
+    const funName = extractName(name)
+    const funParameters = extractParameters(name)
     const repr = `function ${name} {\n\t[implementation hidden]\n}`
     wrapped.toString = () => repr
+    wrapped.funName = funName
+    wrapped.funParameters = funParameters
     makeWrapper(value.func, wrapped)
     defineSymbol(context, funName, new LazyBuiltIn(wrapped, value.evaluateArgs))
   } else {
@@ -420,14 +450,15 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
   if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
     switch (context.chapter) {
       case Chapter.FULL_SCHEME:
+      case Chapter.SCHEME_4:
         // Introduction to call/cc
         defineBuiltin(context, 'call$47$cc(f)', call_with_current_continuation)
 
-      case Chapter.SCHEME_4:
-        // Introduction to eval
+      // Introduction to eval
 
-        // Scheme apply
-        defineBuiltin(context, 'apply(f, ...args)', scheme_libs.apply, 2)
+      // Scheme apply
+      // ^ is needed in Schemes 2 and 3 to apply to call functions with rest parameters,
+      // so we move it there.
 
       case Chapter.SCHEME_3:
         // Introduction to mutable values, streams
@@ -509,20 +540,27 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'ninth(xs)', scheme_libs.ninth)
         defineBuiltin(context, 'tenth(xs)', scheme_libs.tenth)
 
-        defineBuiltin(context, 'filter(pred, xs)', scheme_libs.filter)
-        defineBuiltin(context, 'map(f, ...xss)', scheme_libs.map, 2)
-        defineBuiltin(context, 'fold(f, init, ...xss)', scheme_libs.fold, 3)
-        defineBuiltin(context, 'fold$45$right(f, init, ...xss)', scheme_libs.fold$45$right, 3)
-        defineBuiltin(context, 'fold$45$left(f, init, ...xss)', scheme_libs.fold$45$left, 3)
-        defineBuiltin(context, 'reduce(f, ridentity, xs)', scheme_libs.reduce)
-        defineBuiltin(context, 'reduce$45$right(f, ridentity, xs)', scheme_libs.reduce$45$right)
-        defineBuiltin(context, 'reduce$45$left(f, ridentity, xs)', scheme_libs.reduce$45$left)
+        // some of these functions will be represented
+        // using the preludes
+        // defineBuiltin(context, 'filter(pred, xs)', scheme_libs.filter)
+        defineBuiltin(context, 'r7rs$45$map(f, ...xss)', scheme_libs.map, 2)
+        defineBuiltin(context, 'r7rs$45$fold(f, init, ...xss)', scheme_libs.fold, 3)
+        defineBuiltin(
+          context,
+          'r7rs$45$fold$45$right(f, init, ...xss)',
+          scheme_libs.fold$45$right,
+          3
+        )
+        defineBuiltin(context, 'r7rs$45$fold$45$left(f, init, ...xss)', scheme_libs.fold$45$left, 3)
+        //defineBuiltin(context, 'reduce(f, ridentity, xs)', scheme_libs.reduce)
+        //defineBuiltin(context, 'reduce$45$right(f, ridentity, xs)', scheme_libs.reduce$45$right)
+        //defineBuiltin(context, 'reduce$45$left(f, ridentity, xs)', scheme_libs.reduce$45$left)
 
         defineBuiltin(context, 'any(xs)', scheme_libs.any)
         defineBuiltin(context, 'list$45$copy(xs)', scheme_libs.list$45$copy)
         defineBuiltin(context, 'length(xs)', scheme_libs.length)
         defineBuiltin(context, 'length$43$(xs)', scheme_libs.length$43$)
-        defineBuiltin(context, 'append(...xss)', scheme_libs.append, 0)
+        defineBuiltin(context, 'r7rs$45$append(...xss)', scheme_libs.append, 0)
         defineBuiltin(context, 'concatenate(xss)', scheme_libs.concatenate)
         defineBuiltin(context, 'reverse(xs)', scheme_libs.reverse)
         defineBuiltin(context, 'take(xs, n)', scheme_libs.take)
@@ -576,17 +614,19 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
 
         defineBuiltin(context, 'symbol$63$(val)', scheme_libs.symbol$63$)
         defineBuiltin(context, 'symbol$61$$63$(sym1, sym2)', scheme_libs.symbol$61$$63$)
-        //defineBuiltin(context, 'symbol$45$$62$string(str)', scheme_libs.symbol_Gstring)
+        //defineBuiltin(context, 'symbol$45$$62$string(str)', scheme_libs.symbol$45$$62$string)
         defineBuiltin(context, 'string$45$$62$symbol(sym)', scheme_libs.string$45$$62$symbol)
 
-      /*
         // Scheme strings
-        defineBuiltin(context, 'string$45$$62$list(str)', scheme_libs.string_Glist)
-        defineBuiltin(context, 'list$45$$62$string(xs)', scheme_libs.list_Gstring)
-        */
+        defineBuiltin(context, 'string$45$$62$list(str)', scheme_libs.string$45$$62$list)
+        defineBuiltin(context, 'list$45$$62$string(xs)', scheme_libs.list$45$$62$string)
+
+        // Scheme apply is needed here to help in the definition of the Scheme Prelude.
+        defineBuiltin(context, 'apply(f, ...args)', scheme_libs.apply, 2)
+
       case Chapter.SCHEME_1:
         // Display
-        defineBuiltin(context, 'display(val)', display)
+        defineBuiltin(context, 'display(val)', (val: any) => display(schemeVisualise(val)))
         defineBuiltin(context, 'newline()', () => display(''))
 
         // I/O
@@ -634,28 +674,53 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'inexact$63$(val)', scheme_libs.inexact$63$)
         //defineBuiltin(context, 'exact$45$integer$63$(val)', scheme_libs.exact_integerQ)
         defineBuiltin(context, 'zero$63$(val)', scheme_libs.zero$63$)
-        defineBuiltin(context, 'positive$63$(val)', scheme_libs.positive$63$)
+        defineBuiltin(context, 'infinity$63$(val)', scheme_libs.infinity$63$)
+        defineBuiltin(context, 'nan$63$(val)', scheme_libs.nan$63$)
         defineBuiltin(context, 'negative$63$(val)', scheme_libs.negative$63$)
-        //defineBuiltin(context, 'odd$63$(val)', scheme_libs.oddQ)
-        //defineBuiltin(context, 'even$63$(val)', scheme_libs.evenQ)
+        defineBuiltin(context, 'odd$63$(val)', scheme_libs.odd$63$)
+        defineBuiltin(context, 'even$63$(val)', scheme_libs.even$63$)
         defineBuiltin(context, 'max(...vals)', scheme_libs.max, 0)
         defineBuiltin(context, 'min(...vals)', scheme_libs.min, 0)
         defineBuiltin(context, 'abs(val)', scheme_libs.abs)
-        /*
+
+        defineBuiltin(context, 'numerator(val)', scheme_libs.numerator)
+        defineBuiltin(context, 'denominator(val)', scheme_libs.denominator)
+
         defineBuiltin(context, 'quotient(n, d)', scheme_libs.quotient)
         defineBuiltin(context, 'modulo(n, d)', scheme_libs.modulo)
         defineBuiltin(context, 'remainder(n, d)', scheme_libs.remainder)
         defineBuiltin(context, 'gcd(...vals)', scheme_libs.gcd, 0)
         defineBuiltin(context, 'lcm(...vals)', scheme_libs.lcm, 0)
+        defineBuiltin(context, 'square(val)', scheme_libs.square)
         defineBuiltin(context, 'floor(val)', scheme_libs.floor)
         defineBuiltin(context, 'ceiling(val)', scheme_libs.ceiling)
         defineBuiltin(context, 'truncate(val)', scheme_libs.truncate)
         defineBuiltin(context, 'round(val)', scheme_libs.round)
-        defineBuiltin(context, 'square(val)', scheme_libs.square)
-        defineBuiltin(context, 'exact$45$integer$45$sqrt(val)', scheme_libs.exact_integer_sqrt)
+        defineBuiltin(context, 'sqrt(val)', scheme_libs.sqrt)
         defineBuiltin(context, 'expt(base, exp)', scheme_libs.expt)
-        defineBuiltin(context, 'number$45$$62$string(val)', scheme_libs.number_Gstring)
-        */
+        defineBuiltin(context, 'exp(val)', scheme_libs.exp)
+        defineBuiltin(context, 'log(val)', scheme_libs.log)
+        defineBuiltin(context, 'sqrt(val)', scheme_libs.sqrt)
+        defineBuiltin(context, 'sin(val)', scheme_libs.sin)
+        defineBuiltin(context, 'cos(val)', scheme_libs.cos)
+        defineBuiltin(context, 'tan(val)', scheme_libs.tan)
+        defineBuiltin(context, 'asin(val)', scheme_libs.asin)
+        defineBuiltin(context, 'acos(val)', scheme_libs.acos)
+        defineBuiltin(context, 'atan(n, m)', scheme_libs.atan, 1)
+
+        defineBuiltin(context, 'make$45$rectangular(real, imag)', scheme_libs.make$45$rectangular)
+        defineBuiltin(context, 'make$45$polar(mag, ang)', scheme_libs.make$45$polar)
+        defineBuiltin(context, 'real$45$part(val)', scheme_libs.real$45$part)
+        defineBuiltin(context, 'imag$45$part(val)', scheme_libs.imag$45$part)
+        defineBuiltin(context, 'magnitude(val)', scheme_libs.magnitude)
+        defineBuiltin(context, 'angle(val)', scheme_libs.angle)
+
+        defineBuiltin(context, 'math$45$pi', scheme_libs.PI)
+        defineBuiltin(context, 'math$45$e', scheme_libs.E)
+
+        defineBuiltin(context, 'number$45$$62$string(val)', scheme_libs.number$45$$62$string)
+
+        // special values for scm-slang
 
         // Scheme booleans
         defineBuiltin(context, 'boolean$63$(val)', scheme_libs.boolean$63$)
@@ -665,24 +730,23 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
         defineBuiltin(context, 'not(val)', scheme_libs.not)
 
         // Scheme strings
-        /*
-        defineBuiltin(context, 'string$63$(val)', scheme_libs.stringQ)
-        defineBuiltin(context, 'make$45$string(n, char)', scheme_libs.make_string, 1)
+
+        defineBuiltin(context, 'string$63$(val)', scheme_libs.string$63$)
+        defineBuiltin(context, 'make$45$string(n, char)', scheme_libs.make$45$string, 1)
         defineBuiltin(context, 'string(...vals)', scheme_libs.string, 0)
-        defineBuiltin(context, 'string$45$length(str)', scheme_libs.string_length)
-        defineBuiltin(context, 'string$45$ref(str, k)', scheme_libs.string_ref)
-        defineBuiltin(context, 'string$61$$63$(str1, str2)', scheme_libs.stringEQ)
-        defineBuiltin(context, 'string$60$$63$(str1, str2)', scheme_libs.stringLQ)
-        defineBuiltin(context, 'string$62$$63$(str1, str2)', scheme_libs.stringGQ)
-        defineBuiltin(context, 'string$60$$61$$63$(str1, str2)', scheme_libs.stringLEQ)
-        defineBuiltin(context, 'string$62$$61$$63$(str1, str2)', scheme_libs.stringGEQ)
+        defineBuiltin(context, 'string$45$length(str)', scheme_libs.string$45$length)
+        defineBuiltin(context, 'string$45$ref(str, k)', scheme_libs.string$45$ref)
+        defineBuiltin(context, 'string$61$$63$(str1, str2)', scheme_libs.string$61$$63$)
+        defineBuiltin(context, 'string$60$$63$(str1, str2)', scheme_libs.string$60$$63$)
+        defineBuiltin(context, 'string$62$$63$(str1, str2)', scheme_libs.string$62$$63$)
+        defineBuiltin(context, 'string$60$$61$$63$(str1, str2)', scheme_libs.string$60$$61$$63$)
+        defineBuiltin(context, 'string$62$$61$$63$(str1, str2)', scheme_libs.string$62$$61$$63$)
         defineBuiltin(context, 'substring(str, start, end)', scheme_libs.substring, 2)
-        defineBuiltin(context, 'string$45$append(...vals)', scheme_libs.string_append, 0)
-        defineBuiltin(context, 'string$45$copy(str)', scheme_libs.string_copy)
-        defineBuiltin(context, 'string$45$map(f, str)', scheme_libs.string_map)
-        defineBuiltin(context, 'string$45$for$45$each(f, str)', scheme_libs.string_for_each)
-        defineBuiltin(context, 'string$45$$62$number(str)', scheme_libs.string_Gnumber)
-        */
+        defineBuiltin(context, 'string$45$append(...vals)', scheme_libs.string$45$append, 0)
+        defineBuiltin(context, 'string$45$copy(str)', scheme_libs.string$45$copy)
+        defineBuiltin(context, 'string$45$map(f, str)', scheme_libs.string$45$map)
+        defineBuiltin(context, 'string$45$for$45$each(f, str)', scheme_libs.string$45$for$45$each)
+        defineBuiltin(context, 'string$45$$62$number(str)', scheme_libs.string$45$$62$number)
 
         // Scheme procedures
         defineBuiltin(context, 'procedure$63$(val)', scheme_libs.procedure$63$)
@@ -705,7 +769,8 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'str(val)', (val: any) => stringify(val, 2, 80), 1)
       defineBuiltin(context, 'error(str)', misc.error_message, 1)
       defineBuiltin(context, 'prompt(str)', prompt)
-      defineBuiltin(context, 'is_number(val)', misc.is_number)
+      defineBuiltin(context, 'is_float(val)', pylib.is_float)
+      defineBuiltin(context, 'is_int(val)', pylib.is_int)
       defineBuiltin(context, 'is_string(val)', misc.is_string)
       defineBuiltin(context, 'is_function(val)', misc.is_function)
       defineBuiltin(context, 'is_boolean(val)', misc.is_boolean)
@@ -714,8 +779,6 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'char_at(str, index)', misc.char_at)
       defineBuiltin(context, 'arity(f)', misc.arity)
       defineBuiltin(context, 'None', null)
-      defineBuiltin(context, 'NaN', NaN)
-      defineBuiltin(context, 'Infinity', Infinity)
 
       // Binary operators
       defineBuiltin(context, '__py_adder(x, y)', pylib.__py_adder)
@@ -765,6 +828,13 @@ export const importBuiltins = (context: Context, externalBuiltIns: CustomBuiltIn
       defineBuiltin(context, 'math_tan(x)', pylib.math_tan)
       defineBuiltin(context, 'math_tanh(x)', pylib.math_tanh)
       defineBuiltin(context, 'math_trunc(x)', pylib.math_trunc)
+
+      // Math constants
+      defineBuiltin(context, 'math_e', Math.E)
+      defineBuiltin(context, 'math_inf', Infinity)
+      defineBuiltin(context, 'math_nan', NaN)
+      defineBuiltin(context, 'math_pi', Math.PI)
+      defineBuiltin(context, 'math_tau', Math.PI * 2)
     }
   }
 }
@@ -783,6 +853,25 @@ function importPrelude(context: Context) {
     prelude += nonDetPrelude
   }
 
+  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
+    // Scheme preludes
+    // scheme 1 is the "highest" scheme chapter, so we can just check if it's less than or equal to scheme 1
+    if (context.chapter <= +Chapter.SCHEME_1) {
+      prelude += scheme1Prelude
+    }
+    if (context.chapter <= +Chapter.SCHEME_2) {
+      prelude += scheme2Prelude
+    }
+    if (context.chapter <= +Chapter.SCHEME_3) {
+      prelude += scheme3Prelude
+    }
+    if (context.chapter <= +Chapter.SCHEME_4) {
+      prelude += scheme4Prelude
+    }
+    if (context.chapter <= +Chapter.FULL_SCHEME) {
+      prelude += schemeFullPrelude
+    }
+  }
   if (prelude !== '') {
     context.prelude = prelude
   }
