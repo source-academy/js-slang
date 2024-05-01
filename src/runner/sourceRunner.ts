@@ -4,14 +4,13 @@ import type { RawSourceMap } from 'source-map'
 
 import { type IOptions, type Result } from '..'
 import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
-import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpreter'
+import { CSEResultPromise, evaluate } from '../cse-machine/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import preprocessFileImports from '../modules/preprocessor'
@@ -218,7 +217,7 @@ async function runNative(
 }
 
 function runCSEMachine(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  const value = CSEvaluate(program, context, options)
+  const value = evaluate(program, context, options)
   return CSEResultPromise(context, value)
 }
 

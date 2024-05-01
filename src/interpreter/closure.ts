@@ -1,14 +1,10 @@
 /* tslint:disable:max-classes-per-file */
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
+import { uniqueId } from 'lodash'
 
-import {
-  hasReturnStatement,
-  isBlockStatement,
-  isStatementSequence,
-  uniqueId
-} from '../cse-machine/utils'
-import { Context, Environment, StatementSequence, Value } from '../types'
+import { hasReturnStatement, isBlockStatement } from '../cse-machine/utils'
+import type { Context, Environment, Value } from '../types'
 import {
   blockArrowFunction,
   blockStatement,
@@ -16,7 +12,7 @@ import {
   identifier,
   returnStatement
 } from '../utils/ast/astCreator'
-import { apply } from './interpreter'
+import { apply } from './interpreter-non-det'
 
 const closureToJS = (value: Closure, context: Context, klass: string) => {
   function DummyClass(this: Closure) {
@@ -63,18 +59,17 @@ export default class Closure extends Callable {
     dummyReturn?: boolean,
     predefined?: boolean
   ) {
-    const functionBody: es.BlockStatement | StatementSequence =
-      !isBlockStatement(node.body) && !isStatementSequence(node.body)
-        ? blockStatement([returnStatement(node.body, node.body.loc)], node.body.loc)
-        : dummyReturn && !hasReturnStatement(node.body)
-        ? blockStatement(
-            [
-              ...node.body.body,
-              returnStatement(identifier('undefined', node.body.loc), node.body.loc)
-            ],
-            node.body.loc
-          )
-        : node.body
+    const functionBody: es.BlockStatement = !isBlockStatement(node.body)
+      ? blockStatement([returnStatement(node.body, node.body.loc)], node.body.loc)
+      : dummyReturn && !hasReturnStatement(node.body)
+      ? blockStatement(
+          [
+            ...node.body.body,
+            returnStatement(identifier('undefined', node.body.loc), node.body.loc)
+          ],
+          node.body.loc
+        )
+      : node.body
 
     const closure = new Closure(
       blockArrowFunction(node.params as es.Identifier[], functionBody, node.loc),
@@ -90,7 +85,7 @@ export default class Closure extends Callable {
   }
 
   /** Unique ID defined for closure */
-  public readonly id: string
+  public id: string
 
   /** String representation of the closure */
   public functionName: string
@@ -103,10 +98,10 @@ export default class Closure extends Callable {
   public preDefined?: boolean
 
   /** The original node that created this Closure */
-  public originalNode: es.Function | es.ArrowFunctionExpression
+  public originalNode: es.Function
 
   constructor(
-    public node: es.Function | es.ArrowFunctionExpression,
+    public node: es.Function,
     public environment: Environment,
     context: Context,
     isPredefined?: boolean
@@ -115,7 +110,7 @@ export default class Closure extends Callable {
       return funJS.apply(this, args)
     })
     this.originalNode = node
-    this.id = uniqueId(context)
+    this.id = uniqueId()
     if (this.node.type === 'FunctionDeclaration' && this.node.id !== null) {
       this.functionName = this.node.id.name
     } else {
