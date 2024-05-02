@@ -325,6 +325,32 @@ Object {
 }
 `;
 
+exports[`append: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`build_list: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`display_list MCE fuzz test: expectDisplayResult 1`] = `
 Object {
   "alertResult": Array [],
@@ -707,10 +733,49 @@ Object {
 }
 `;
 
+exports[`enum_list with floats: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`enum_list: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(enum_list(1, 5), list(1, 2, 3, 4, 5));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`equal: expectResult 1`] = `
 Object {
   "alertResult": Array [],
   "code": "!equal(1, x => x) && !equal(x => x, 1);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`filter: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(filter(x => x <= 4, list(2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000)), list(2, 1, 3, 4, 2));",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -831,6 +896,34 @@ Object {
 }
 `;
 
+exports[`map: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`member: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(
+  member(4, list(1, 2, 3, 4, 123, 456, 789)),
+  list(4, 123, 456, 789));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`non-list error head: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
@@ -897,6 +990,77 @@ Object {
   "numErrors": 0,
   "parsedErrors": "",
   "result": null,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`remove_all not found: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`remove_all: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(remove_all(1, list(1, 2, 3, 4, 1, 1, 1, 5, 1, 1, 6)), list(2, 3, 4, 5, 6));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`reverse: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(reverse(list(\\"string\\", \\"null\\", \\"undefined\\", \\"null\\", 123)), list(123, \\"null\\", \\"undefined\\", \\"null\\", \\"string\\"));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`set_head: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let p = pair(1, 2);
+const q = p;
+set_head(p, 3);
+p === q && equal(p, pair(3, 2));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`set_tail: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let p = pair(1, 2);
+const q = p;
+set_tail(p, 3);
+p === q && equal(p, pair(1, 3));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

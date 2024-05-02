@@ -11,13 +11,11 @@ import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
 import { transpileToLazy } from '../lazy/lazy'
 import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
-import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
   callee,
   getEvaluationSteps,
@@ -27,7 +25,7 @@ import {
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, type Context, type RecursivePartial, type Scheduler, Variant } from '../types'
+import { Chapter, type Context, type RecursivePartial, Variant } from '../types'
 import { forceIt } from '../utils/operators'
 import { validateAndAnnotate } from '../validator/validator'
 import { compileForConcurrent } from '../vm/svml-compiler'
@@ -111,20 +109,6 @@ function runSubstitution(
     context,
     value: redexedSteps
   })
-}
-
-function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context)
-  let scheduler: Scheduler
-  if (context.variant === Variant.NON_DET) {
-    it = nonDetEvaluate(program, context)
-    scheduler = new NonDetScheduler()
-  } else if (options.scheduler === 'async') {
-    scheduler = new AsyncScheduler()
-  } else {
-    scheduler = new PreemptiveScheduler(options.steps)
-  }
-  return scheduler.run(it, context)
 }
 
 async function runNative(
@@ -287,7 +271,7 @@ async function sourceRunner(
     return runNative(program, context, theOptions)
   }
 
-  return runInterpreter(program, context, theOptions)
+  throw new Error(`Unknown execution method: ${context.executionMethod}`)
 }
 
 /**

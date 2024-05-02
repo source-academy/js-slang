@@ -2190,6 +2190,30 @@ Object {
 }
 `;
 
+exports[`Syntaxes are allowed in the chapter they are introduced 17: passes 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "let i = 1;
+for (let j = 0; j < 5; j = j + 1) {
+  if (j < 1) {
+    continue;
+  } else {
+    i = i + 1;
+    if (j > 2) {
+      break;
+    }
+  }
+}
+i;",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": 4,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Syntaxes are allowed in the chapter they are introduced 18: fails a chapter below 1`] = `
 Object {
   "alertResult": Array [],

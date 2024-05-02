@@ -692,6 +692,32 @@ Object {
 }
 `;
 
+exports[`Test equal for different lists: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "!equal(list(1, 2), pair(1, 2)) && !equal(list(1, 2, 3), list(1, list(2, 3)));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`Test equal for lists: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "equal(list(1, 2), pair(1, pair(2, null))) && equal(list(1, 2, 3, 4), list(1, 2, 3, 4));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": true,
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`Test equal for primitives: expectResult 1`] = `
 Object {
   "alertResult": Array [],

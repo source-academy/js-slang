@@ -2,7 +2,7 @@ import type es from 'estree'
 
 import createContext, { EnvTree } from '../createContext'
 import { createBlockEnvironment } from '../cse-machine/utils'
-import Closure from '../interpreter/closure'
+import Closure from '../cse-machine/closure'
 import { Chapter, type Context, type Environment, Variant } from '../types'
 
 export function mockContext(
@@ -66,15 +66,15 @@ export function mockRuntimeContext(): Context {
 export function mockClosure(): Closure {
   return new Closure(
     {
-      type: 'FunctionExpression',
+      type: 'ArrowFunctionExpression',
       loc: null,
-      id: null,
       params: [],
+      expression: false,
       body: {
         type: 'BlockStatement',
         body: []
-      }
-    } as es.FunctionExpression,
+      },
+    },
     {} as Environment,
     {} as Context
   )

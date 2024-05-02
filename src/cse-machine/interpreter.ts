@@ -6,15 +6,14 @@
  */
 
 /* tslint:disable:max-classes-per-file */
-import * as es from 'estree'
+import type es from 'estree'
 import { isArray, reverse } from 'lodash'
 
-import { IOptions } from '..'
 import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Result, Value, type StatementSequence } from '../types'
+import type { Context, ContiguousArrayElements, Result, Value, StatementSequence } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
@@ -23,7 +22,7 @@ import * as seq from '../utils/statementSeqTransform'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
 import Closure from './closure'
 import {
-  Continuation,
+  type Continuation,
   getContinuationControl,
   getContinuationEnv,
   getContinuationStash,
@@ -172,6 +171,12 @@ export class Stash extends Stack<Value> {
     return newStash
   }
 }
+export interface CSEMachineOptions {
+  envSteps: number,
+  stepLimit: number,
+  isPrelude: boolean
+}
+
 
 /**
  * Function to be called when a program is to be interpreted using
@@ -181,7 +186,7 @@ export class Stash extends Stack<Value> {
  * @param context The context to evaluate the program in.
  * @returns The result of running the CSE machine.
  */
-export function evaluate(program: es.Program, context: Context, options: IOptions): Value {
+export function evaluate(program: es.Program, context: Context, options: CSEMachineOptions): Value {
   try {
     checkProgramForUndefinedVariables(program, context)
   } catch (error) {

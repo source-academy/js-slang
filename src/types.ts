@@ -6,7 +6,7 @@
 /* tslint:disable:max-classes-per-file */
 
 import { SourceLocation } from 'acorn'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { EnvTree } from './createContext'
 import Heap from './cse-machine/heap'

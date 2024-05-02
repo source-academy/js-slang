@@ -11,7 +11,7 @@ test('Heap works correctly', () => {
   expect(heap1.getHeap()).toMatchInlineSnapshot(`Set {}`)
 
   const arr = [0] as EnvArray
-  const closure = mockClosure(true)
+  const closure = mockClosure()
   heap1.add(arr, closure)
   heap1.add(arr)
   expect(heap1.contains([0] as EnvArray)).toMatchInlineSnapshot(`false`)
@@ -28,7 +28,7 @@ test('Heap works correctly', () => {
   `)
 
   const heap2 = new Heap()
-  expect(heap1.move(mockClosure(true), heap2)).toMatchInlineSnapshot(`false`)
+  expect(heap1.move(mockClosure(), heap2)).toMatchInlineSnapshot(`false`)
   expect(heap1.move(arr, heap2)).toMatchInlineSnapshot(`true`)
   expect(heap1.contains(arr)).toMatchInlineSnapshot(`false`)
   expect(heap1.getHeap()).toMatchInlineSnapshot(`
