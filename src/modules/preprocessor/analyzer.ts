@@ -61,6 +61,8 @@ export default function analyzeImportsAndExports(
     Object.entries(loadedModules).map(([name, obj]) => [name, new Set(Object.keys(obj))])
   )
 
+  topoOrder = topoOrder.filter(p => p !== entrypointFilePath)
+
   for (const sourceModule of [...topoOrder, entrypointFilePath]) {
     const program = programs[sourceModule]
     moduleDocs[sourceModule] = new Set()
