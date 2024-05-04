@@ -1,8 +1,22 @@
-import { runInContext } from '../../index'
+import { parseError, runInContext } from '../../index'
 import { mockContext } from '../../mocks/context'
-import { Chapter, Finished } from '../../types'
+import { Chapter, type Finished } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectNativeToTimeoutAndError } from '../../utils/testing'
+
+async function expectNativeToTimeoutAndError(code: string, timeout: number) {
+  const start = Date.now()
+  const context = mockContext(Chapter.SOURCE_4)
+  const promise = runInContext(code, context, {
+    scheduler: 'preemptive',
+    executionMethod: 'native',
+    throwInfiniteLoops: false
+  })
+  await promise
+  const timeTaken = Date.now() - start
+  expect(timeTaken).toBeLessThan(timeout * 5)
+  expect(timeTaken).toBeGreaterThanOrEqual(timeout)
+  return parseError(context.errors)
+}
 
 test('Proper stringify-ing of arguments during potentially infinite iterative function calls', async () => {
   const code = stripIndent`
@@ -115,3 +129,4 @@ test('assigning a = b where b was from a previous program call works', async () 
   expect(result.status).toBe('finished')
   expect((result as Finished).value).toBe(1)
 })
+

@@ -3,20 +3,20 @@ import type { MockedFunction } from 'jest-mock'
 
 import createContext, { defineBuiltin } from '../createContext'
 import { transpileToGPU } from '../gpu/gpu'
-import { parseError, Result, runInContext } from '../index'
+import { parseError, runInContext } from '..'
 import { transpileToLazy } from '../lazy/lazy'
-import { mockContext } from '../mocks/context'
-import { ImportOptions } from '../modules/moduleTypes'
+import type { ImportOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
 import { transpile } from '../transpiler/transpiler'
 import {
   Chapter,
-  Context,
-  CustomBuiltIns,
-  SourceError,
-  Value,
+  type Context,
+  type CustomBuiltIns,
+  type SourceError,
+  type Value,
   Variant,
-  type Finished
+  type Finished,
+  type Result
 } from '../types'
 import { stringify } from './stringify'
 
@@ -34,7 +34,7 @@ export interface TestContext extends Context {
   visualiseListResult: Value[]
 }
 
-interface TestBuiltins {
+export interface TestBuiltins {
   [builtinName: string]: any
 }
 
@@ -50,7 +50,7 @@ interface TestResult {
   result: Value
 }
 
-interface TestOptions {
+export interface TestOptions {
   context?: TestContext
   chapter?: Chapter
   variant?: Variant
@@ -200,16 +200,6 @@ export async function testSuccess(code: string, options: TestOptions = { native:
   return testResult
 }
 
-export async function testSuccessWithErrors(
-  code: string,
-  options: TestOptions = { native: false }
-) {
-  const testResult = await testInContext(code, options)
-  expect(testResult.numErrors).not.toEqual(0)
-  expect(testResult.resultStatus).toBe('finished')
-  return testResult
-}
-
 export async function testFailure(code: string, options: TestOptions = { native: false }) {
   const testResult = await testInContext(code, options)
   expect(testResult.numErrors).not.toEqual(0)
@@ -245,10 +235,6 @@ export function snapshot(arg1?: any, arg2?: any): (testResult: TestResult) => Te
 
 export function snapshotSuccess(code: string, options: TestOptions, snapshotName?: string) {
   return testSuccess(code, options).then(snapshot(snapshotName))
-}
-
-export function snapshotWarning(code: string, options: TestOptions, snapshotName: string) {
-  return testSuccessWithErrors(code, options).then(snapshot(snapshotName))
 }
 
 export function snapshotFailure(code: string, options: TestOptions, snapshotName: string) {
@@ -319,61 +305,8 @@ export function expectDifferentParsedErrors(
   ).resolves
 }
 
-export function expectWarning(code: string, options: TestOptions = {}) {
-  return expect(
-    testSuccessWithErrors(code, options)
-      .then(snapshot('expectWarning'))
-      .then(testResult => testResult.parsedErrors)
-  ).resolves
-}
-
 export function expectParsedErrorNoSnapshot(code: string, options: TestOptions = {}) {
   return expect(testFailure(code, options).then(testResult => testResult.parsedErrors)).resolves
-}
-
-function evalWithBuiltins(code: string, testBuiltins: TestBuiltins = {}) {
-  // Ugly, but if you know how to `eval` code with some builtins attached, please change this.
-  let evalstring = ''
-  for (const key in testBuiltins) {
-    if (testBuiltins.hasOwnProperty(key)) {
-      evalstring = evalstring + 'const ' + key + ' = testBuiltins.' + key + '; '
-    }
-  }
-  // tslint:disable-next-line:no-eval
-  return eval(evalstring + code)
-}
-
-export function expectToMatchJS(code: string, options: TestOptions = {}) {
-  return testSuccess(code, options)
-    .then(snapshot('expect to match JS'))
-    .then(testResult =>
-      expect(testResult.result).toEqual(evalWithBuiltins(code, options.testBuiltins))
-    )
-}
-
-export function expectToLooselyMatchJS(code: string, options: TestOptions = {}) {
-  return testSuccess(code, options)
-    .then(snapshot('expect to loosely match JS'))
-    .then(testResult =>
-      expect(testResult.result.replace(/ /g, '')).toEqual(
-        evalWithBuiltins(code, options.testBuiltins).replace(/ /g, '')
-      )
-    )
-}
-
-export async function expectNativeToTimeoutAndError(code: string, timeout: number) {
-  const start = Date.now()
-  const context = mockContext(Chapter.SOURCE_4)
-  const promise = runInContext(code, context, {
-    scheduler: 'preemptive',
-    executionMethod: 'native',
-    throwInfiniteLoops: false
-  })
-  await promise
-  const timeTaken = Date.now() - start
-  expect(timeTaken).toBeLessThan(timeout * 5)
-  expect(timeTaken).toBeGreaterThanOrEqual(timeout)
-  return parseError(context.errors)
 }
 
 export function asMockedFunc<T extends (...args: any[]) => any>(func: T) {

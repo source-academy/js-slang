@@ -1,20 +1,48 @@
-import { Position } from 'acorn/dist/acorn'
-import { SourceLocation } from 'estree'
+import type { Position } from 'acorn/dist/acorn'
+import type { SourceLocation } from 'estree'
 
 import { findDeclaration, getScope } from '../index'
-import { Chapter, Value } from '../types'
+import { Chapter, type Value } from '../types'
 import { stripIndent } from '../utils/formatters'
 import {
   createTestContext,
   expectParsedError,
   expectParsedErrorNoErrorSnapshot,
   expectParsedErrorNoSnapshot,
-  expectResult,
-  expectToLooselyMatchJS,
-  expectToMatchJS
+  expectResult
 } from '../utils/testing'
+import { type TestOptions, testSuccess, snapshot } from '../utils/testing'
+import type { TestBuiltins } from '../utils/testing'
 
 const toString = (x: Value) => '' + x
+
+function expectToMatchJS(code: string, options: TestOptions = {}) {
+  return testSuccess(code, options)
+    .then(snapshot('expect to match JS'))
+    .then(testResult => expect(testResult.result).toEqual(evalWithBuiltins(code, options.testBuiltins))
+    )
+}
+
+function expectToLooselyMatchJS(code: string, options: TestOptions = {}) {
+  return testSuccess(code, options)
+    .then(snapshot('expect to loosely match JS'))
+    .then(testResult => expect(testResult.result.replace(/ /g, '')).toEqual(
+      evalWithBuiltins(code, options.testBuiltins).replace(/ /g, '')
+    )
+    )
+}
+
+function evalWithBuiltins(code: string, testBuiltins: TestBuiltins = {}) {
+  // Ugly, but if you know how to `eval` code with some builtins attached, please change this.
+  let evalstring = ''
+  for (const key in testBuiltins) {
+    if (testBuiltins.hasOwnProperty(key)) {
+      evalstring = evalstring + 'const ' + key + ' = testBuiltins.' + key + '; '
+    }
+  }
+  // tslint:disable-next-line:no-eval
+  return eval(evalstring + code)
+}
 
 test('Empty code returns undefined', () => {
   return expectResult('').toBe(undefined)
@@ -923,3 +951,4 @@ test('Find scope of a variable declaration with multiple blocks', () => {
   })
   expect(actual).toMatchSnapshot()
 })
+

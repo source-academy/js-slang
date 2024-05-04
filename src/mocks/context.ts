@@ -64,6 +64,8 @@ export function mockRuntimeContext(): Context {
 }
 
 export function mockClosure(): Closure {
+  const context = mockContext()
+
   return new Closure(
     {
       type: 'ArrowFunctionExpression',
@@ -75,8 +77,8 @@ export function mockClosure(): Closure {
         body: []
       },
     },
-    {} as Environment,
-    {} as Context
+    mockEnvironment(context),
+    context
   )
 }
 
