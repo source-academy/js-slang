@@ -6,13 +6,18 @@ import { parse } from '../parser/parser'
 import { Context, Node, NodeWithInferredType } from '../types'
 import { getVariableDeclarationName } from '../utils/ast/astCreator'
 import {
-  getFunctionDeclarationNamesInProgram,
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getNativeIds,
   NativeIds
 } from '../utils/uniqueIds'
 import { ancestor, base, FullWalkerCallback } from '../utils/walkers'
+import {
+  getDeclaredIdentifiers,
+  getIdentifiersFromVariableDeclaration,
+  mapIdentifiersToNames
+} from '../utils/ast/helpers'
+import { isVariableDeclaration } from '../utils/ast/typeGuards'
 
 class Declaration {
   public accessedBeforeDeclaration: boolean = false
@@ -168,32 +173,18 @@ export function checkForUndefinedVariables(
   globalIds: NativeIds,
   skipUndefined: boolean
 ) {
-  const preludes = context.prelude
-    ? getFunctionDeclarationNamesInProgram(parse(context.prelude, context)!)
-    : new Set<String>()
+  const preludes = new Set<string>(
+    context.prelude
+      ? mapIdentifiersToNames(getDeclaredIdentifiers(parse(context.prelude, context)!))
+      : []
+  )
 
   const env = context.runtime.environments[0].head || {}
 
   const builtins = context.nativeStorage.builtins
   const identifiersIntroducedByNode = new Map<es.Node, Set<string>>()
   function processBlock(node: es.Program | es.BlockStatement) {
-    const identifiers = new Set<string>()
-    for (const statement of node.body) {
-      if (statement.type === 'VariableDeclaration') {
-        identifiers.add((statement.declarations[0].id as es.Identifier).name)
-      } else if (statement.type === 'FunctionDeclaration') {
-        if (statement.id === null) {
-          throw new Error(
-            'Encountered a FunctionDeclaration node without an identifier. This should have been caught when parsing.'
-          )
-        }
-        identifiers.add(statement.id.name)
-      } else if (statement.type === 'ImportDeclaration') {
-        for (const specifier of statement.specifiers) {
-          identifiers.add(specifier.local.name)
-        }
-      }
-    }
+    const identifiers = new Set(mapIdentifiersToNames(getDeclaredIdentifiers(node)))
     identifiersIntroducedByNode.set(node, identifiers)
   }
   function processFunction(
@@ -219,10 +210,10 @@ export function checkForUndefinedVariables(
     ArrowFunctionExpression: processFunction,
     ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
       const init = forStatement.init!
-      if (init.type === 'VariableDeclaration') {
+      if (isVariableDeclaration(init)) {
         identifiersIntroducedByNode.set(
           forStatement,
-          new Set([(init.declarations[0].id as es.Identifier).name])
+          new Set(mapIdentifiersToNames(getIdentifiersFromVariableDeclaration(init)))
         )
       }
     },
