@@ -56,7 +56,7 @@ function wrapImporter<T>(func: (p: string) => Promise<T>) {
 
 // Exported for testing
 export const docsImporter = wrapImporter<{ default: any }>(async p => {
-  // TODO: USe import attributes when they become supported
+  // TODO: Use import attributes when they become supported
   // Import Assertions and Attributes are not widely supported by all
   // browsers yet, so we use fetch in the meantime
   const resp = await fetch(p)

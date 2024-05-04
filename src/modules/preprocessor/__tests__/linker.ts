@@ -1,16 +1,26 @@
+import type { ImportDeclaration } from 'estree'
 import { mockContext } from '../../../mocks/context'
 import { MissingSemicolonError } from '../../../parser/errors'
 import { Chapter, type Context } from '../../../types'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
 import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
+import { asMockedFunc } from '../../../utils/testing'
 
 import * as resolver from '../resolver'
 jest.spyOn(resolver, 'default')
 
+import * as parser from '../../../parser/parser'
+jest.spyOn(parser, 'parse')
+
 beforeEach(() => {
   jest.clearAllMocks()
 })
+
+// Wrap to appease typescript
+function expectTruthy(cond: boolean): asserts cond {
+  expect(cond).toEqual(true)
+}
 
 async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
   const context = mockContext(Chapter.SOURCE_4)
@@ -46,6 +56,7 @@ test('Adds CircularImportError and returns undefined when imports are circular',
   expect(error).toBeInstanceOf(CircularImportError)
 })
 
+// TODO: https://github.com/source-academy/js-slang/issues/1535
 test.skip('Longer cycle causes also causes CircularImportError', async () => {
   const [error] = await expectError(
     {
@@ -130,13 +141,52 @@ test('Linker does tree-shaking', async () => {
     '/a.js'
   )
 
-  // Wrap to appease typescript
-  function expectWrapper(cond: boolean): asserts cond {
-    expect(cond).toEqual(true)
-  }
-
   expect(errors.length).toEqual(0)
-  expectWrapper(result.ok)
+  expectTruthy(result.ok)
   expect(resolver.default).not.toHaveBeenCalledWith('./b.js')
   expect(Object.keys(result.programs)).not.toContain('/b.js')
+})
+
+test('Linker parses each file once and only once', async () => {
+  const files: SourceFiles = {
+    '/a.js': `
+    import { b } from './b.js';
+    import { c } from './c.js';
+    `,
+    '/b.js': `
+    import { d } from './d.js';
+    export function b() { return d; }
+    `,
+    '/c.js': `
+    import { e } from './d.js';
+    export function c() { return e; }
+    `,
+    '/d.js': `
+    export const d = "d";
+    export const e = "e";
+    `
+  }
+
+  const [, result] = await testCode(files, '/a.js')
+  expectTruthy(result.ok)
+  const mockedParse = asMockedFunc(parser.parse)
+
+  for (const fileName of Object.keys(files)) {
+    // Assert that parse was only called once and only once for each file
+    const calls = mockedParse.mock.calls.filter(([,, options]) => options?.sourceFile === fileName)
+    expect(calls.length).toEqual(1)
+  }
+})
+
+test('Linker updates AST\'s import source values', async () => {
+  const [, result] = await testCode({
+    '/dir/a.js': `import { b } from '../b.js';`,
+    '/b.js': 'export function b() {}'
+  }, '/dir/a.js')
+
+  expectTruthy(result.ok)
+
+  const aNode = result.programs['/dir/a.js'].body[0]
+  expect(aNode.type).toEqual('ImportDeclaration')
+  expect((aNode as ImportDeclaration).source.value).toEqual('/b.js')
 })
