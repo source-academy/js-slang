@@ -1,13 +1,14 @@
 import { generate } from 'astring'
 import type { MockedFunction } from 'jest-mock'
 
-import createContext, { defineBuiltin } from '../createContext'
-import { transpileToGPU } from '../gpu/gpu'
-import { parseError, runInContext } from '..'
-import { transpileToLazy } from '../lazy/lazy'
-import type { ImportOptions } from '../modules/moduleTypes'
-import { parse } from '../parser/parser'
-import { transpile } from '../transpiler/transpiler'
+import type { Program } from 'estree'
+import createContext, { defineBuiltin } from '../../createContext'
+import { transpileToGPU } from '../../gpu/gpu'
+import { parseError, runInContext } from '../..'
+import { transpileToLazy } from '../../lazy/lazy'
+import type { ImportOptions } from '../../modules/moduleTypes'
+import { parse } from '../../parser/parser'
+import { transpile } from '../../transpiler/transpiler'
 import {
   Chapter,
   type Context,
@@ -17,8 +18,9 @@ import {
   Variant,
   type Finished,
   type Result
-} from '../types'
-import { stringify } from './stringify'
+} from '../../types'
+import { mockContext } from '../../mocks/context'
+import { stringify } from '../stringify'
 
 export interface CodeSnippetTestCase {
   name: string
@@ -315,4 +317,33 @@ export function asMockedFunc<T extends (...args: any[]) => any>(func: T) {
 
 export function expectFinishedResult(result: Result): asserts result is Finished {
   expect(result.status).toEqual('finished')
+}
+
+export function expectTrue(cond: boolean): asserts cond {
+  expect(cond).toEqual(true)
+}
+
+/**
+ * Convenience function for testing the expected output of parsing
+ * a single line of code
+ */
+export function astTester<ExpectedError>(
+  func: (prog: Program, context: Context, expectedError: ExpectedError | undefined) => void,
+  testCases: (
+    | [desc: string, code: string]
+    | [desc: string, code: string, expectedError: ExpectedError]
+  )[],
+  chapter: Chapter = Chapter.SOURCE_4
+) {
+  const fullCases = testCases.map(([desc, code, err]) => {
+    const context = mockContext(chapter)
+    const program = parse(code, context)
+    if (!program) {
+      throw context.errors[0]
+    }
+
+    return [desc, program, context, err] as [string, Program, Context, ExpectedError | undefined]
+  })
+
+  test.each(fullCases)('%s', (_, ...args) => func(...args))
 }

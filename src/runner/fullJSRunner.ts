@@ -16,7 +16,7 @@ import {
 } from '../transpiler/transpiler'
 import type { Context, NativeStorage } from '../types'
 import * as create from '../utils/ast/astCreator'
-import { getFunctionDeclarationNamesInProgram } from '../utils/uniqueIds'
+import { getDeclaredIdentifiers } from '../utils/ast/helpers'
 import { toSourceError } from './errors'
 import { resolvedErrorPromise } from './utils'
 
@@ -66,8 +66,8 @@ export async function fullJSRunner(
     ...preludeAndBuiltins,
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set())
   ])
-  getFunctionDeclarationNamesInProgram(preEvalProgram).forEach(id =>
-    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  getDeclaredIdentifiers(preEvalProgram).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id.name)
   )
   getGloballyDeclaredIdentifiers(preEvalProgram).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)

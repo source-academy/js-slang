@@ -3,7 +3,7 @@ import { partition } from 'lodash'
 
 import assert from '../../utils/assert'
 import {
-  getIdsFromDeclaration,
+  getDeclaredIdentifiers,
   getImportedName,
   getModuleDeclarationSource
 } from '../../utils/ast/helpers'
@@ -82,7 +82,7 @@ export default function analyzeImportsAndExports(
       if (node.type === 'ExportNamedDeclaration') {
         if (node.declaration) {
           if (!options.allowUndefinedImports) {
-            const ids = getIdsFromDeclaration(node.declaration)
+            const ids = getDeclaredIdentifiers(node.declaration)
             ids.forEach(id => {
               moduleDocs[sourceModule].add(id.name)
             })

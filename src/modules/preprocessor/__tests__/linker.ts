@@ -5,7 +5,7 @@ import { Chapter, type Context } from '../../../types'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
 import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
-import { asMockedFunc } from '../../../utils/testing'
+import { asMockedFunc, expectTrue } from '../../../utils/testing'
 
 import * as resolver from '../resolver'
 jest.spyOn(resolver, 'default')
@@ -16,11 +16,6 @@ jest.spyOn(parser, 'parse')
 beforeEach(() => {
   jest.clearAllMocks()
 })
-
-// Wrap to appease typescript
-function expectTruthy(cond: boolean): asserts cond {
-  expect(cond).toEqual(true)
-}
 
 async function testCode<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
   const context = mockContext(Chapter.SOURCE_4)
@@ -42,6 +37,12 @@ async function expectError<T extends SourceFiles>(files: T, entrypointFilePath: 
   expect(result.ok).toEqual(false)
   expect(context.errors.length).toBeGreaterThanOrEqual(1)
   return context.errors
+}
+
+async function expectSuccess<T extends SourceFiles>(files: T, entrypointFilePath: keyof T) {
+  const [, result] = await testCode(files, entrypointFilePath)
+  expectTrue(result.ok)
+  return result
 }
 
 test('Adds CircularImportError and returns undefined when imports are circular', async () => {
@@ -142,7 +143,7 @@ test('Linker does tree-shaking', async () => {
   )
 
   expect(errors.length).toEqual(0)
-  expectTruthy(result.ok)
+  expectTrue(result.ok)
   expect(resolver.default).not.toHaveBeenCalledWith('./b.js')
   expect(Object.keys(result.programs)).not.toContain('/b.js')
 })
@@ -167,24 +168,24 @@ test('Linker parses each file once and only once', async () => {
     `
   }
 
-  const [, result] = await testCode(files, '/a.js')
-  expectTruthy(result.ok)
+  await expectSuccess(files, '/a.js')
   const mockedParse = asMockedFunc(parser.parse)
 
   for (const fileName of Object.keys(files)) {
     // Assert that parse was only called once and only once for each file
-    const calls = mockedParse.mock.calls.filter(([,, options]) => options?.sourceFile === fileName)
+    const calls = mockedParse.mock.calls.filter(([, , options]) => options?.sourceFile === fileName)
     expect(calls.length).toEqual(1)
   }
 })
 
-test('Linker updates AST\'s import source values', async () => {
-  const [, result] = await testCode({
-    '/dir/a.js': `import { b } from '../b.js';`,
-    '/b.js': 'export function b() {}'
-  }, '/dir/a.js')
-
-  expectTruthy(result.ok)
+test("Linker updates AST's import source values", async () => {
+  const result = await expectSuccess(
+    {
+      '/dir/a.js': `import { b } from '../b.js';`,
+      '/b.js': 'export function b() {}'
+    },
+    '/dir/a.js'
+  )
 
   const aNode = result.programs['/dir/a.js'].body[0]
   expect(aNode.type).toEqual('ImportDeclaration')

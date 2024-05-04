@@ -172,11 +172,10 @@ export class Stash extends Stack<Value> {
   }
 }
 export interface CSEMachineOptions {
-  envSteps: number,
-  stepLimit: number,
+  envSteps: number
+  stepLimit: number
   isPrelude: boolean
 }
-
 
 /**
  * Function to be called when a program is to be interpreted using

@@ -5,7 +5,7 @@ import { transformImportDeclarations } from '../transpiler/transpiler'
 import type { Node } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { recursive, simple, WalkerCallback } from '../utils/walkers'
-import { getIdsFromDeclaration } from '../utils/ast/helpers'
+import { getDeclaredIdentifiers } from '../utils/ast/helpers'
 // transforms AST of program
 
 const globalIds = {
@@ -585,7 +585,7 @@ function handleImports(programs: es.Program[]): string[] {
     )
     program.body = [...importsToAdd, ...otherNodes]
     return importsToAdd.flatMap(decl => {
-      const ids = getIdsFromDeclaration(decl)
+      const ids = getDeclaredIdentifiers(decl)
       return ids.map(id => id.name)
     })
   })

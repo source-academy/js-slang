@@ -1,3 +1,3 @@
-import { getMainCommand } from "./main";
+import { getMainCommand } from './main'
 
 getMainCommand().parseAsync()

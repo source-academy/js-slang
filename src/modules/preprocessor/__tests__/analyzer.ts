@@ -19,43 +19,46 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
- async function testCode<T extends Files>(
-    files: T,
-    entrypointFilePath: keyof T,
-    allowUndefinedImports: boolean,
-    throwOnDuplicateNames: boolean
-  ) {
-    const context = createContext(Chapter.FULL_JS)
-    const importGraphResult = await parseProgramsAndConstructImportGraph(
-      p => Promise.resolve(files[p]),
-      entrypointFilePath as string,
-      context,
-      {},
-      true
-    )
+async function testCode<T extends Files>(
+  files: T,
+  entrypointFilePath: keyof T,
+  allowUndefinedImports: boolean,
+  throwOnDuplicateNames: boolean
+) {
+  const context = createContext(Chapter.FULL_JS)
+  const importGraphResult = await parseProgramsAndConstructImportGraph(
+    p => Promise.resolve(files[p]),
+    entrypointFilePath as string,
+    context,
+    {},
+    true
+  )
 
-    // Return 'undefined' if there are errors while parsing.
-    if (context.errors.length !== 0 || !importGraphResult.ok) {
-      throw context.errors[0]
-    }
-
-    const { programs, topoOrder, sourceModulesToImport } = importGraphResult
-    await loadSourceModules(sourceModulesToImport, context, false)
-
-    try {
-      analyzeImportsAndExports(programs, entrypointFilePath as string, topoOrder, context, {
-        allowUndefinedImports,
-        throwOnDuplicateNames
-      })
-    } catch (error) {
-      if (!(error instanceof DuplicateImportNameError) && !(error instanceof UndefinedNamespaceImportError)) {
-        throw error
-      }
-
-      return error
-    }
-    return true
+  // Return 'undefined' if there are errors while parsing.
+  if (context.errors.length !== 0 || !importGraphResult.ok) {
+    throw context.errors[0]
   }
+
+  const { programs, topoOrder, sourceModulesToImport } = importGraphResult
+  await loadSourceModules(sourceModulesToImport, context, false)
+
+  try {
+    analyzeImportsAndExports(programs, entrypointFilePath as string, topoOrder, context, {
+      allowUndefinedImports,
+      throwOnDuplicateNames
+    })
+  } catch (error) {
+    if (
+      !(error instanceof DuplicateImportNameError) &&
+      !(error instanceof UndefinedNamespaceImportError)
+    ) {
+      throw error
+    }
+
+    return error
+  }
+  return true
+}
 
 describe('Test throwing import validation errors', () => {
   type ErrorInfo = {
@@ -648,9 +651,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
   const isTestCaseWithNoError = <T extends Files>(c: TestCase<T>): c is TestCaseWithNoError<T> =>
     c.length === 2
 
-  type FullTestCase =
-    | [string, Files, true, string | undefined]
-    | [string, Files, false, undefined]
+  type FullTestCase = [string, Files, true, string | undefined] | [string, Files, false, undefined]
 
   function expectDuplicateError(obj: any): asserts obj is DuplicateImportNameError {
     expect(obj).toBeInstanceOf(DuplicateImportNameError)
@@ -665,18 +666,8 @@ describe('Test throwing DuplicateImportNameErrors', () => {
           // No error message was given, so no error is expected to be thrown,
           // regardless of the value of throwOnDuplicateImports
           const [desc] = c
-          const noThrowCase: FullTestCase = [
-            `${i + 1}. ${desc}: no error `,
-            c[1],
-            false,
-            undefined
-          ]
-          const yesThrowCase: FullTestCase = [
-            `${i + 1}. ${desc}: no error`,
-            c[1],
-            true,
-            undefined
-          ]
+          const noThrowCase: FullTestCase = [`${i + 1}. ${desc}: no error `, c[1], false, undefined]
+          const yesThrowCase: FullTestCase = [`${i + 1}. ${desc}: no error`, c[1], true, undefined]
           return [
             [...noThrow, noThrowCase],
             [...yesThrow, yesThrowCase]
@@ -684,12 +675,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
         }
 
         const [desc, , errMsg] = c
-        const noThrowCase: FullTestCase = [
-          `${i + 1}. ${desc}: no error`,
-          c[1],
-          false,
-          undefined
-        ]
+        const noThrowCase: FullTestCase = [`${i + 1}. ${desc}: no error`, c[1], false, undefined]
         const yesThrowCase: FullTestCase = [`${i + 1}. ${desc}: error`, c[1], true, errMsg]
         return [
           [...noThrow, noThrowCase],

@@ -75,16 +75,13 @@ export function mockClosure(): Closure {
       body: {
         type: 'BlockStatement',
         body: []
-      },
+      }
     },
     mockEnvironment(context),
     context
   )
 }
 
-export function mockEnvironment(
-  context: Context,
-  name = 'blockEnvironment',
-): Environment {
+export function mockEnvironment(context: Context, name = 'blockEnvironment'): Environment {
   return createBlockEnvironment(context, name)
 }

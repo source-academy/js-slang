@@ -6,9 +6,12 @@ import { type RawSourceMap, SourceMapGenerator } from 'source-map'
 import { NATIVE_STORAGE_ID, UNKNOWN_LOCATION } from '../constants'
 import { Chapter, type Context, type NativeStorage, type Node, Variant } from '../types'
 import * as create from '../utils/ast/astCreator'
-import { filterImportDeclarations, getImportedName } from '../utils/ast/helpers'
 import {
-  getFunctionDeclarationNamesInProgram,
+  filterImportDeclarations,
+  getDeclaredIdentifiers,
+  getImportedName
+} from '../utils/ast/helpers'
+import {
   getIdentifiersInNativeStorage,
   getIdentifiersInProgram,
   getNativeIds,
@@ -495,8 +498,8 @@ function transpileToFullJS(
   )
 
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
-  getFunctionDeclarationNamesInProgram(program).forEach(id =>
-    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  getDeclaredIdentifiers(program).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id.name)
   )
   getGloballyDeclaredIdentifiers(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id)

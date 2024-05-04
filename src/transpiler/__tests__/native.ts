@@ -129,4 +129,3 @@ test('assigning a = b where b was from a previous program call works', async () 
   expect(result.status).toBe('finished')
   expect((result as Finished).value).toBe(1)
 })
-

@@ -19,16 +19,18 @@ const toString = (x: Value) => '' + x
 function expectToMatchJS(code: string, options: TestOptions = {}) {
   return testSuccess(code, options)
     .then(snapshot('expect to match JS'))
-    .then(testResult => expect(testResult.result).toEqual(evalWithBuiltins(code, options.testBuiltins))
+    .then(testResult =>
+      expect(testResult.result).toEqual(evalWithBuiltins(code, options.testBuiltins))
     )
 }
 
 function expectToLooselyMatchJS(code: string, options: TestOptions = {}) {
   return testSuccess(code, options)
     .then(snapshot('expect to loosely match JS'))
-    .then(testResult => expect(testResult.result.replace(/ /g, '')).toEqual(
-      evalWithBuiltins(code, options.testBuiltins).replace(/ /g, '')
-    )
+    .then(testResult =>
+      expect(testResult.result.replace(/ /g, '')).toEqual(
+        evalWithBuiltins(code, options.testBuiltins).replace(/ /g, '')
+      )
     )
 }
 
@@ -951,4 +953,3 @@ test('Find scope of a variable declaration with multiple blocks', () => {
   })
   expect(actual).toMatchSnapshot()
 })
-

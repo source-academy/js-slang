@@ -1,6 +1,6 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../cse-machine/closure'
-import { Type, Value } from '../types'
+import type { Type, Value } from '../types'
 import { forceIt } from './operators'
 
 export interface ArrayLike {
