@@ -39,6 +39,7 @@ jobs:
     - run: yarn build
     - run: yarn format:ci
     - run: yarn eslint
+    - run: yarn run jsdoc prepare
     - run: yarn test-coverage
       env:
         CI: true
