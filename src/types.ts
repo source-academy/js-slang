@@ -64,7 +64,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
+export type ExecutionMethod = 'native' | 'auto' | 'cse-machine' | 'stepper'
 
 export enum Chapter {
   SOURCE_1 = 1,

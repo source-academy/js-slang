@@ -233,11 +233,11 @@ async function sourceRunner(
     return runConcurrent(program, context, theOptions)
   }
 
-  if (theOptions.useSubst) {
+  determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
+
+  if (context.executionMethod === 'stepper' || theOptions.useSubst) {
     return runSubstitution(program, context, theOptions)
   }
-
-  determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
 
   // native, don't evaluate prelude
   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
