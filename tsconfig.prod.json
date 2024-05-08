@@ -7,12 +7,13 @@
   // Excludes are overwritten when using extends, so we
   // list all the excludes again
   "exclude": [
-    "src/stdlib/metacircular-interpreter",
-    "src/stdlib/**/*.js",
-    "node_modules",
     "dist",
+    "node_modules",
     "sicp_publish",
-    "src/**/__tests__/**",
     "src/**/__mocks__/**",
+    "src/**/__tests__/**",
+    "src/stdlib/**/*.js",
+    "src/stdlib/metacircular-interpreter",
+    "src/testing"
   ]
 }
