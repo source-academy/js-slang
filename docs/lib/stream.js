@@ -184,7 +184,7 @@ function stream_for_each(fun, xs) {
 /**
  * Returns stream <CODE>xs</CODE> in reverse
  * order. Iterative process.
- * The process is iterative, but consumes space <CODE>Ω(n)</CODE>
+ * The process is iterative, but consumes space <CODE>Omega(n)</CODE>
  * because of the result stream.
  * Lazy? No: <CODE>stream_reverse</CODE> 
  * forces the exploration of the entire stream

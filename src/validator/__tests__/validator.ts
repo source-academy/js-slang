@@ -206,7 +206,6 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
     const newProgram = parse('x+1;', context)
     expectTrue(!!newProgram)
 
-    expect(() => checkForUndefinedVariables(newProgram, context, {} as any, false))
-      .not.toThrow()
+    expect(() => checkForUndefinedVariables(newProgram, context, {} as any, false)).not.toThrow()
   })
 })
