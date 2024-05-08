@@ -5,11 +5,11 @@ import { parse } from '../../parser/parser'
 import { Chapter, type NodeWithInferredType } from '../../types'
 import { getVariableDeclarationName } from '../../utils/ast/astCreator'
 import { stripIndent } from '../../utils/formatters'
-import { astTester } from '../../utils/testing'
+import { astTester, expectTrue } from '../../utils/testing'
 import { simple } from '../../utils/walkers'
 import { checkForUndefinedVariables, validateAndAnnotate } from '../validator'
 import { UndefinedVariable } from '../../errors/errors'
-import { parseError } from '../..'
+import { parseError, runInContext } from '../..'
 
 describe(`Test ${validateAndAnnotate.name}`, () => {
   astTester(
@@ -164,7 +164,7 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
 
       // BlockStatements and Programs
       [
-        'Names in upper scopes are valid declarations',
+        'names in upper scopes are valid declarations',
         `
         const a = "a";
         {
@@ -175,7 +175,7 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
         `
       ],
       [
-        'Names in lower scopes are not accessible by upper scopes',
+        'names in lower scopes are not accessible by upper scopes',
         `a;
         {
           const a = "a";
@@ -184,7 +184,7 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
         'Line 1: Name a not declared.'
       ],
       [
-        'Names in sibling scopes are inaccessible',
+        'names in sibling scopes are inaccessible',
         `{
           { const a = "a"; }
           { a; }
@@ -198,4 +198,15 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
       ['identifiers in preludes are valid', 'stream();']
     ]
   )
+
+  test('previous program identifiers are also valid', async () => {
+    const context = mockContext(Chapter.SOURCE_4)
+    await runInContext('const x = 0;', context)
+
+    const newProgram = parse('x+1;', context)
+    expectTrue(!!newProgram)
+
+    expect(() => checkForUndefinedVariables(newProgram, context, {} as any, false))
+      .not.toThrow()
+  })
 })
