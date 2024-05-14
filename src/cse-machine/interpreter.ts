@@ -72,6 +72,7 @@ import {
   hasImportDeclarations,
   isBlockStatement,
   isEnvArray,
+  isEnvDependent,
   isInstr,
   isNode,
   isSimpleFunction,
@@ -81,7 +82,6 @@ import {
   reduceConditional,
   setVariable,
   valueProducing,
-  isEnvDependent
 } from './utils'
 import Closure from './closure'
 
@@ -120,7 +120,6 @@ export class Control extends Stack<ControlItem> {
 
   public push(...items: ControlItem[]): void {
     const itemsNew: ControlItem[] = Control.simplifyBlocksWithoutDeclarations(...items)
-    // testing
     itemsNew.forEach((item: ControlItem) => {
       if (isEnvDependent(item)) {
         this.numEnvDependentItems++
@@ -460,7 +459,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
     // Push ENVIRONMENT instruction if needed - if next control stack item
     // exists and is not an environment instruction, OR the control only contains
-    // environment indepedent item
+    // environment indepedent items
     if (
       next &&
       !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
@@ -976,7 +975,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       // Push ENVIRONMENT instruction if needed - if next control stack item
       // exists and is not an environment instruction, OR the control only contains
-      // environment indepedent item
+      // environment indepedent items
       if (
         next &&
         !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&

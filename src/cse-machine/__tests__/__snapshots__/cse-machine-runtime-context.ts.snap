@@ -813,7 +813,7 @@ Control {
 
 exports[`Avoid unnescessary environment instruction 3 1`] = `
 Control {
-  "numEnvDependentItems": 5,
+  "numEnvDependentItems": 1,
   "storage": Array [
     Node {
       "end": 86,
@@ -822,6 +822,7 @@ Control {
         "isEnvDependent": true,
         "left": Node {
           "end": 81,
+          "isEnvDependent": true,
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -891,6 +892,7 @@ Control {
           "isEnvDependent": true,
           "left": Node {
             "end": 81,
+            "isEnvDependent": true,
             "loc": SourceLocation {
               "end": Position {
                 "column": 1,
@@ -1156,7 +1158,7 @@ Control {
         },
       },
       "instrType": "Environment",
-      "isEnvDependent": true,
+      "isEnvDependent": false,
       "srcNode": Node {
         "arguments": Array [
           Node {
@@ -1592,7 +1594,7 @@ Control {
         },
       },
       "instrType": "Environment",
-      "isEnvDependent": true,
+      "isEnvDependent": false,
       "srcNode": Node {
         "arguments": Array [
           Node {
@@ -2062,7 +2064,7 @@ Control {
         },
       },
       "instrType": "Environment",
-      "isEnvDependent": true,
+      "isEnvDependent": false,
       "srcNode": Node {
         "arguments": Array [
           Node {
@@ -2532,7 +2534,7 @@ Control {
         },
       },
       "instrType": "Environment",
-      "isEnvDependent": true,
+      "isEnvDependent": false,
       "srcNode": Node {
         "arguments": Array [
           Node {
@@ -2645,7 +2647,7 @@ Control {
 
 exports[`Avoid unnescessary environment instruction 4 1`] = `
 Control {
-  "numEnvDependentItems": 0,
+  "numEnvDependentItems": 1,
   "storage": Array [
     Object {
       "body": Array [
@@ -2904,7 +2906,7 @@ Control {
           "type": "VariableDeclaration",
         },
       ],
-      "isEnvDependent": false,
+      "isEnvDependent": true,
       "loc": SourceLocation {
         "end": Position {
           "column": 1,

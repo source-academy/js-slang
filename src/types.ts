@@ -320,11 +320,12 @@ export interface StatementSequence extends es.BaseStatement {
 /**
  * js-slang's custom Node type - this should be used wherever es.Node is used.
  */
-export type Node =
+export type Node = {isEnvDependent?: boolean} & (
   | es.Node
   | StatementSequence
   | es.MaybeNamedClassDeclaration
   | es.MaybeNamedFunctionDeclaration
+)
 /*
 	Although the ESTree specifications supposedly provide a Directive interface, the index file does not seem to export it.
 	As such this interface was created here to fulfil the same purpose.

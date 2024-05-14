@@ -30,6 +30,7 @@ export enum InstrType {
 interface BaseInstr {
   instrType: InstrType
   srcNode: Node
+  isEnvDependent?: boolean
 }
 
 export interface WhileInstr extends BaseInstr {
@@ -93,9 +94,7 @@ export type Instr =
   | GenContInstr
   | ResumeContInstr
 
-export type ControlItem = (Node | Instr) & {
-  isEnvDependent?: boolean
-}
+export type ControlItem = (Node | Instr)
 
 // Every array also has the properties `id` and `environment` for use in the frontend CSE Machine
 export type EnvArray = any[] & {
