@@ -1088,7 +1088,7 @@ const propertySetter: PropertySetter = new Map<string, Transformer>([
 
 /**
  * Checks whether the evaluation of the given control item depends on the current environment.
- * The item is also considered environment dependent if its evaluation introduces 
+ * The item is also considered environment dependent if its evaluation introduces
  * environment dependent items
  * @param item The control item to be checked
  * @return `true` if the item is environment depedent, else `false`.
