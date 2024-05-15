@@ -94,7 +94,9 @@ export type Instr =
   | GenContInstr
   | ResumeContInstr
 
-export type ControlItem = Node | Instr
+export type ControlItem = (Node | Instr) & {
+  isEnvDependent?: boolean
+}
 
 // Every array also has the properties `id` and `environment` for use in the frontend CSE Machine
 export type EnvArray = any[] & {

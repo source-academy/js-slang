@@ -14,13 +14,14 @@ import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Result, type StatementSequence, Value } from '../types'
+import { Context, ContiguousArrayElements, Result, Value, type StatementSequence } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import { checkProgramForUndefinedVariables } from '../validator/validator'
 import * as seq from '../utils/statementSeqTransform'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
+import Closure from './closure'
 import {
   Continuation,
   getContinuationControl,
@@ -39,8 +40,8 @@ import {
   AssmtInstr,
   BinOpInstr,
   BranchInstr,
-  ControlItem,
   CSEBreak,
+  ControlItem,
   CseError,
   EnvInstr,
   ForInstr,
@@ -83,7 +84,6 @@ import {
   setVariable,
   valueProducing
 } from './utils'
-import Closure from './closure'
 
 type CmdEvaluator = (
   command: ControlItem,
