@@ -320,7 +320,7 @@ export interface StatementSequence extends es.BaseStatement {
 /**
  * js-slang's custom Node type - this should be used wherever es.Node is used.
  */
-export type Node = {isEnvDependent?: boolean} & (
+export type Node = { isEnvDependent?: boolean } & (
   | es.Node
   | StatementSequence
   | es.MaybeNamedClassDeclaration

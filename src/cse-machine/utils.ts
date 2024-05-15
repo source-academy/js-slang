@@ -10,7 +10,16 @@ import { isContinuation } from './continuations'
 import Heap from './heap'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
-import { AppInstr, EnvArray, ControlItem, Instr, InstrType, BranchInstr, WhileInstr, ForInstr } from './types'
+import {
+  AppInstr,
+  EnvArray,
+  ControlItem,
+  Instr,
+  InstrType,
+  BranchInstr,
+  WhileInstr,
+  ForInstr
+} from './types'
 import Closure from './closure'
 
 /**
@@ -726,27 +735,24 @@ export const hasContinueStatement = (block: es.BlockStatement | StatementSequenc
  * NOTE: this check is meant to detect and avoid pushing environment instruction onto the
  * control in SIMPLE CASES, so it might not be exhaustive
  */
-export const canAvoidEnvInstr = (control: Control): boolean => {
-  return !control.getStack().some((command: ControlItem) => isEnvDependent(command))
-}
+// export const canAvoidEnvInstr = (control: Control): boolean => {
+//   return !control.getStack().some((command: ControlItem) => isEnvDependent(command))
+// }
 
-type ASTPropertySetter = Map<string, Transformer>
-// type NodeTransformer = (node: Node) => Node
-// type InstrTransformer = (instr: Instr) => Instr
+type PropertySetter = Map<string, Transformer>
 type Transformer = (item: ControlItem) => ControlItem
 
-
-export const setToTrue = (item: ControlItem): ControlItem => {
+const setToTrue = (item: ControlItem): ControlItem => {
   item.isEnvDependent = true
   return item
 }
 
-export const setToFalse = (item: ControlItem): ControlItem => {
+const setToFalse = (item: ControlItem): ControlItem => {
   item.isEnvDependent = false
   return item
 }
 
-const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
+const propertySetter: PropertySetter = new Map<string, Transformer>([
   [
     'Program',
     (node: Node) => {
@@ -755,42 +761,15 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
       return node
     }
   ],
-  [
-    'Literal',
-    setToFalse
-  ],
-  [
-    'ImportDeclaration',
-    setToFalse
-  ],
-  [
-    'BreakStatement',
-    setToFalse
-  ],
-  [
-    'ContinueStatement',
-    setToFalse
-  ],
-  [
-    'DebuggerStatement',
-    setToFalse
-  ],
-  [
-    'VariableDeclaration',
-    setToTrue
-  ],
-  [
-    'FunctionDeclaration',
-    setToTrue
-  ],
-  [
-    'ArrowFunctionExpression',
-    setToTrue
-  ],
-  [
-    'Identifier',
-    setToTrue
-  ],
+  ['Literal', setToFalse],
+  ['ImportDeclaration', setToFalse],
+  ['BreakStatement', setToFalse],
+  ['ContinueStatement', setToFalse],
+  ['DebuggerStatement', setToFalse],
+  ['VariableDeclaration', setToTrue],
+  ['FunctionDeclaration', setToTrue],
+  ['ArrowFunctionExpression', setToTrue],
+  ['Identifier', setToTrue],
   [
     'LogicalExpression',
     (node: Node) => {
@@ -819,9 +798,10 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
     'ConditionalExpression',
     (node: Node) => {
       node = node as es.ConditionalExpression
-      node.isEnvDependent = isEnvDependent(node.consequent)
-      || isEnvDependent(node.alternate)
-      || isEnvDependent(node.test)
+      node.isEnvDependent =
+        isEnvDependent(node.consequent) ||
+        isEnvDependent(node.alternate) ||
+        isEnvDependent(node.test)
       return node
     }
   ],
@@ -861,7 +841,8 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
     'CallExpression',
     (node: Node) => {
       node = node as es.CallExpression
-      node.isEnvDependent = isEnvDependent(node.callee) || node.arguments.some(arg => isEnvDependent(arg))
+      node.isEnvDependent =
+        isEnvDependent(node.callee) || node.arguments.some(arg => isEnvDependent(arg))
       return node
     }
   ],
@@ -877,9 +858,10 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
     'IfStatement',
     (node: Node) => {
       node = node as es.IfStatement
-      node.isEnvDependent = isEnvDependent(node.test)
-      || isEnvDependent(node.consequent)
-      || isEnvDependent(node.alternate)
+      node.isEnvDependent =
+        isEnvDependent(node.test) ||
+        isEnvDependent(node.consequent) ||
+        isEnvDependent(node.alternate)
       return node
     }
   ],
@@ -887,10 +869,11 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
     'ForStatement',
     (node: Node) => {
       node = node as es.ForStatement
-      node.isEnvDependent = isEnvDependent(node.body)
-      || isEnvDependent(node.init)
-      || isEnvDependent(node.test)
-      || isEnvDependent(node.update)
+      node.isEnvDependent =
+        isEnvDependent(node.body) ||
+        isEnvDependent(node.init) ||
+        isEnvDependent(node.test) ||
+        isEnvDependent(node.update)
       return node
     }
   ],
@@ -936,21 +919,16 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
     }
   ],
 
-  [
-    'ImportSpecifier',
-    setToTrue
-  ],
+  ['ImportSpecifier', setToTrue],
 
-  [
-    'ImportDefaultSpecifier',
-    setToTrue
-  ],
+  ['ImportDefaultSpecifier', setToTrue],
 
   [
     'ExportNamedDeclaration',
     (node: Node) => {
       node = node as es.ExportNamedDeclaration
-      node.isEnvDependent = isEnvDependent(node.declaration) || node.specifiers.some(x => isEnvDependent(x))
+      node.isEnvDependent =
+        isEnvDependent(node.declaration) || node.specifiers.some(x => isEnvDependent(x))
       return node
     }
   ],
@@ -964,18 +942,16 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
     }
   ],
 
-  [
-    'ExportSpecifier',
-    setToTrue
-  ],
+  ['ExportSpecifier', setToTrue],
 
   [
     'ClassDeclaration',
     (node: Node) => {
       node = node as es.ClassDeclaration
-      node.isEnvDependent = isEnvDependent(node.body)
-      || (node.id !== null && isEnvDependent(node.id)) 
-      || isEnvDependent(node.superClass) 
+      node.isEnvDependent =
+        isEnvDependent(node.body) ||
+        (node.id !== null && isEnvDependent(node.id)) ||
+        isEnvDependent(node.superClass)
       return node
     }
   ],
@@ -1002,9 +978,10 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
     'FunctionExpression',
     (node: Node) => {
       node = node as es.FunctionExpression
-      node.isEnvDependent = isEnvDependent(node.id)
-      || node.params.some(x => isEnvDependent(x))
-      || isEnvDependent(node.body)
+      node.isEnvDependent =
+        isEnvDependent(node.id) ||
+        node.params.some(x => isEnvDependent(x)) ||
+        isEnvDependent(node.body)
       return node
     }
   ],
@@ -1027,9 +1004,8 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
     'TryStatement',
     (node: Node) => {
       node = node as es.TryStatement
-      node.isEnvDependent = isEnvDependent(node.block)
-      || isEnvDependent(node.handler)
-      || isEnvDependent(node.finalizer)
+      node.isEnvDependent =
+        isEnvDependent(node.block) || isEnvDependent(node.handler) || isEnvDependent(node.finalizer)
       return node
     }
   ],
@@ -1059,50 +1035,17 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
   ],
 
   //Instruction
-  [
-    InstrType.RESET,
-    setToFalse
-  ],
-  [
-    InstrType.UNARY_OP,
-    setToFalse
-  ],
-  [
-    InstrType.BINARY_OP,
-    setToFalse
-  ],
-  [
-    InstrType.POP,
-    setToFalse
-  ],
-  [
-    InstrType.ARRAY_ACCESS,
-    setToFalse
-  ],
-  [
-    InstrType.ARRAY_ASSIGNMENT,
-    setToFalse
-  ],
-  [
-    InstrType.CONTINUE,
-    setToFalse
-  ],
-  [
-    InstrType.CONTINUE_MARKER,
-    setToFalse
-  ],
-  [
-    InstrType.BREAK_MARKER,
-    setToFalse
-  ],
-  [
-    InstrType.MARKER,
-    setToFalse
-  ],
-  [
-    InstrType.RESUME_CONT,
-    setToFalse
-  ],
+  [InstrType.RESET, setToFalse],
+  [InstrType.UNARY_OP, setToFalse],
+  [InstrType.BINARY_OP, setToFalse],
+  [InstrType.POP, setToFalse],
+  [InstrType.ARRAY_ACCESS, setToFalse],
+  [InstrType.ARRAY_ASSIGNMENT, setToFalse],
+  [InstrType.CONTINUE, setToFalse],
+  [InstrType.CONTINUE_MARKER, setToFalse],
+  [InstrType.BREAK_MARKER, setToFalse],
+  [InstrType.MARKER, setToFalse],
+  [InstrType.RESUME_CONT, setToFalse],
   [
     InstrType.ENVIRONMENT,
     // Need further testing
@@ -1113,18 +1056,9 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
     // Need further testing: need to differentiate between application to call_cc and normal function
     setToTrue
   ],
-  [
-    InstrType.ASSIGNMENT,
-    setToTrue
-  ],
-  [
-    InstrType.ARRAY_LITERAL,
-    setToTrue
-  ],
-  [
-    InstrType.GENERATE_CONT,
-    setToTrue
-  ],
+  [InstrType.ASSIGNMENT, setToTrue],
+  [InstrType.ARRAY_LITERAL, setToTrue],
+  [InstrType.GENERATE_CONT, setToTrue],
   [
     InstrType.WHILE,
     (instr: WhileInstr) => {
@@ -1135,10 +1069,11 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
   [
     InstrType.FOR,
     (instr: ForInstr) => {
-      instr.isEnvDependent = isEnvDependent(instr.init)
-      || isEnvDependent(instr.test)
-      || isEnvDependent(instr.update)
-      || isEnvDependent(instr.body)
+      instr.isEnvDependent =
+        isEnvDependent(instr.init) ||
+        isEnvDependent(instr.test) ||
+        isEnvDependent(instr.update) ||
+        isEnvDependent(instr.body)
       return instr
     }
   ],
@@ -1151,6 +1086,13 @@ const propertySetter: ASTPropertySetter = new Map<string, Transformer>([
   ]
 ])
 
+/**
+ * Checks whether the evaluation of the given control item depends on the current environment.
+ * The item is also considered environment dependent if its evaluation introduces 
+ * environment dependent items
+ * @param item The control item to be checked
+ * @return `true` if the item is environment depedent, else `false`.
+ */
 
 export function isEnvDependent(item: ControlItem | null | undefined): boolean {
   if (item === null || item === undefined) {

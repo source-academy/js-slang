@@ -1,2927 +1,462 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Avoid unnescessary environment instruction 1 1`] = `
-Control {
-  "numEnvDependentItems": 0,
-  "storage": Array [
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "arguments": Array [
-            Node {
-              "end": 48,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 46,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 7,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 6,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 45,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 6,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 48,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 9,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 8,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 47,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 45,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 44,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 43,
-            "type": "Identifier",
-          },
-          "end": 49,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "start": 43,
-          "type": "CallExpression",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "end": 53,
-          "isEnvDependent": false,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 13,
-              "line": 4,
-            },
-          },
-          "raw": "2",
-          "start": 52,
-          "type": "Literal",
-          "value": 2,
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Node {
-      "end": 53,
-      "isEnvDependent": false,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 14,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 13,
-          "line": 4,
-        },
-      },
-      "raw": "2",
-      "start": 52,
-      "type": "Literal",
-      "value": 2,
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "arguments": Array [
-            Node {
-              "end": 48,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 46,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 7,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 6,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 45,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 6,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 48,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 9,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 8,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 47,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 45,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 44,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 43,
-            "type": "Identifier",
-          },
-          "end": 49,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "start": 43,
-          "type": "CallExpression",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "end": 53,
-          "isEnvDependent": false,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 13,
-              "line": 4,
-            },
-          },
-          "raw": "2",
-          "start": 52,
-          "type": "Literal",
-          "value": 2,
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Node {
-      "end": 53,
-      "isEnvDependent": false,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 14,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 13,
-          "line": 4,
-        },
-      },
-      "raw": "2",
-      "start": 52,
-      "type": "Literal",
-      "value": 2,
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "arguments": Array [
-            Node {
-              "end": 48,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 46,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 7,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 6,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 45,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 6,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 48,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 9,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 8,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 47,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 45,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 44,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 43,
-            "type": "Identifier",
-          },
-          "end": 49,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "start": 43,
-          "type": "CallExpression",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "end": 53,
-          "isEnvDependent": false,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 13,
-              "line": 4,
-            },
-          },
-          "raw": "2",
-          "start": 52,
-          "type": "Literal",
-          "value": 2,
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-  ],
-}
-`;
+exports[`Avoid unnescessary environment instruction 1 1`] = `1`;
 
-exports[`Avoid unnescessary environment instruction 2 1`] = `
-Control {
-  "numEnvDependentItems": 0,
-  "storage": Array [
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 44,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "name": "n",
-          "start": 43,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 52,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 50,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 10,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 49,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 10,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 52,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 51,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 49,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 48,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 47,
-            "type": "Identifier",
-          },
-          "end": 53,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 8,
-              "line": 4,
-            },
-          },
-          "start": 47,
-          "type": "CallExpression",
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 44,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "name": "n",
-          "start": 43,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 52,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 50,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 10,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 49,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 10,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 52,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 51,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 49,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 48,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 47,
-            "type": "Identifier",
-          },
-          "end": 53,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 8,
-              "line": 4,
-            },
-          },
-          "start": 47,
-          "type": "CallExpression",
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 53,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 44,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 4,
-            },
-          },
-          "name": "n",
-          "start": 43,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 14,
-            "line": 4,
-          },
-          "start": Position {
-            "column": 4,
-            "line": 4,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 52,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 50,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 10,
-                    "line": 4,
-                  },
-                },
-                "name": "n",
-                "start": 49,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 4,
-                },
-                "start": Position {
-                  "column": 10,
-                  "line": 4,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 52,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 4,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 4,
-                  },
-                },
-                "raw": "1",
-                "start": 51,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 49,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 48,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 4,
-              },
-              "start": Position {
-                "column": 8,
-                "line": 4,
-              },
-            },
-            "name": "f",
-            "start": 47,
-            "type": "Identifier",
-          },
-          "end": 53,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 14,
-              "line": 4,
-            },
-            "start": Position {
-              "column": 8,
-              "line": 4,
-            },
-          },
-          "start": 47,
-          "type": "CallExpression",
-        },
-        "start": 43,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-  ],
-}
-`;
+exports[`Avoid unnescessary environment instruction 1 2`] = `2`;
 
-exports[`Avoid unnescessary environment instruction 3 1`] = `
-Control {
-  "numEnvDependentItems": 1,
-  "storage": Array [
-    Node {
-      "end": 86,
-      "expression": Node {
-        "end": 85,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 81,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 8,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 8,
-            },
-          },
-          "name": "a",
-          "start": 80,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 5,
-            "line": 8,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 8,
-          },
-        },
-        "operator": "=",
-        "right": Node {
-          "end": 85,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 8,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 8,
-            },
-          },
-          "raw": "2",
-          "start": 84,
-          "type": "Literal",
-          "value": 2,
-        },
-        "start": 80,
-        "type": "AssignmentExpression",
-      },
-      "isEnvDependent": true,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 6,
-          "line": 8,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 8,
-        },
-      },
-      "start": 80,
-      "type": "ExpressionStatement",
-    },
-    Object {
-      "instrType": "Pop",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 86,
-        "expression": Node {
-          "end": 85,
-          "isEnvDependent": true,
-          "left": Node {
-            "end": 81,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 1,
-                "line": 8,
-              },
-              "start": Position {
-                "column": 0,
-                "line": 8,
-              },
-            },
-            "name": "a",
-            "start": 80,
-            "type": "Identifier",
-          },
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 5,
-              "line": 8,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 8,
-            },
-          },
-          "operator": "=",
-          "right": Node {
-            "end": 85,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 8,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 8,
-              },
-            },
-            "raw": "2",
-            "start": 84,
-            "type": "Literal",
-            "value": 2,
-          },
-          "start": 80,
-          "type": "AssignmentExpression",
-        },
-        "isEnvDependent": true,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 6,
-            "line": 8,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 8,
-          },
-        },
-        "start": 80,
-        "type": "ExpressionStatement",
-      },
-    },
-    Object {
-      "env": Object {
-        "head": Object {
-          "a": 1,
-          "f": [Function],
-        },
-        "heap": Heap {
-          "storage": Set {
-            [Function],
-          },
-        },
-        "id": "47",
-        "name": "programEnvironment",
-        "tail": Object {
-          "head": Object {
-            "$accumulate": [Function],
-            "$append": [Function],
-            "$build_list": [Function],
-            "$enum_list": [Function],
-            "$filter": [Function],
-            "$length": [Function],
-            "$list_to_string": [Function],
-            "$map": [Function],
-            "$remove": [Function],
-            "$remove_all": [Function],
-            "$reverse": [Function],
-            "__access_export__": [Function],
-            "__access_named_export__": [Function],
-            "accumulate": [Function],
-            "append": [Function],
-            "build_list": [Function],
-            "build_stream": [Function],
-            "enum_list": [Function],
-            "enum_stream": [Function],
-            "equal": [Function],
-            "eval_stream": [Function],
-            "filter": [Function],
-            "for_each": [Function],
-            "integers_from": [Function],
-            "is_stream": [Function],
-            "length": [Function],
-            "list_ref": [Function],
-            "list_to_stream": [Function],
-            "list_to_string": [Function],
-            "map": [Function],
-            "member": [Function],
-            "remove": [Function],
-            "remove_all": [Function],
-            "reverse": [Function],
-            "stream_append": [Function],
-            "stream_filter": [Function],
-            "stream_for_each": [Function],
-            "stream_length": [Function],
-            "stream_map": [Function],
-            "stream_member": [Function],
-            "stream_ref": [Function],
-            "stream_remove": [Function],
-            "stream_remove_all": [Function],
-            "stream_reverse": [Function],
-            "stream_tail": [Function],
-            "stream_to_list": [Function],
-          },
-          "heap": Heap {
-            "storage": Set {
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-              [Function],
-            },
-          },
-          "id": "0",
-          "name": "prelude",
-          "tail": Object {
-            "head": Object {
-              "Infinity": Infinity,
-              "NaN": NaN,
-              "apply_in_underlying_javascript": [Function],
-              "arity": [Function],
-              "array_length": [Function],
-              "call_cc": [Function],
-              "char_at": [Function],
-              "display": [Function],
-              "display_list": [Function],
-              "draw_data": [Function],
-              "error": [Function],
-              "get_time": [Function],
-              "head": [Function],
-              "is_array": [Function],
-              "is_boolean": [Function],
-              "is_function": [Function],
-              "is_list": [Function],
-              "is_null": [Function],
-              "is_number": [Function],
-              "is_pair": [Function],
-              "is_string": [Function],
-              "is_undefined": [Function],
-              "list": [Function],
-              "math_E": 2.718281828459045,
-              "math_LN10": 2.302585092994046,
-              "math_LN2": 0.6931471805599453,
-              "math_LOG10E": 0.4342944819032518,
-              "math_LOG2E": 1.4426950408889634,
-              "math_PI": 3.141592653589793,
-              "math_SQRT1_2": 0.7071067811865476,
-              "math_SQRT2": 1.4142135623730951,
-              "math_abs": [Function],
-              "math_acos": [Function],
-              "math_acosh": [Function],
-              "math_asin": [Function],
-              "math_asinh": [Function],
-              "math_atan": [Function],
-              "math_atan2": [Function],
-              "math_atanh": [Function],
-              "math_cbrt": [Function],
-              "math_ceil": [Function],
-              "math_clz32": [Function],
-              "math_cos": [Function],
-              "math_cosh": [Function],
-              "math_exp": [Function],
-              "math_expm1": [Function],
-              "math_floor": [Function],
-              "math_fround": [Function],
-              "math_hypot": [Function],
-              "math_imul": [Function],
-              "math_log": [Function],
-              "math_log10": [Function],
-              "math_log1p": [Function],
-              "math_log2": [Function],
-              "math_max": [Function],
-              "math_min": [Function],
-              "math_pow": [Function],
-              "math_random": [Function],
-              "math_round": [Function],
-              "math_sign": [Function],
-              "math_sin": [Function],
-              "math_sinh": [Function],
-              "math_sqrt": [Function],
-              "math_tan": [Function],
-              "math_tanh": [Function],
-              "math_trunc": [Function],
-              "pair": [Function],
-              "parse": [Function],
-              "parse_int": [Function],
-              "prompt": [Function],
-              "raw_display": [Function],
-              "set_head": [Function],
-              "set_tail": [Function],
-              "stream": [Function],
-              "stringify": [Function],
-              "tail": [Function],
-              "tokenize": [Function],
-              "undefined": undefined,
-            },
-            "heap": Heap {
-              "storage": null,
-            },
-            "id": "-1",
-            "name": "global",
-            "tail": null,
-          },
-        },
-      },
-      "instrType": "Environment",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "arguments": Array [
-          Node {
-            "end": 77,
-            "isEnvDependent": false,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 3,
-                "line": 7,
-              },
-              "start": Position {
-                "column": 2,
-                "line": 7,
-              },
-            },
-            "raw": "3",
-            "start": 76,
-            "type": "Literal",
-            "value": 3,
-          },
-        ],
-        "callee": Node {
-          "end": 75,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 1,
-              "line": 7,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 7,
-            },
-          },
-          "name": "f",
-          "start": 74,
-          "type": "Identifier",
-        },
-        "end": 78,
-        "isEnvDependent": true,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 4,
-            "line": 7,
-          },
-          "start": Position {
-            "column": 0,
-            "line": 7,
-          },
-        },
-        "start": 74,
-        "type": "CallExpression",
-      },
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 70,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 61,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 7,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 6,
-              "line": 5,
-            },
-          },
-          "name": "n",
-          "start": 60,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 6,
-            "line": 5,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 69,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 67,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 5,
-                  },
-                },
-                "name": "n",
-                "start": 66,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 69,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 15,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 14,
-                    "line": 5,
-                  },
-                },
-                "raw": "1",
-                "start": 68,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 66,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 65,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 5,
-              },
-            },
-            "name": "f",
-            "start": 64,
-            "type": "Identifier",
-          },
-          "end": 70,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "start": 64,
-          "type": "CallExpression",
-        },
-        "start": 60,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Object {
-      "env": Object {
-        "callExpression": Object {
-          "arguments": Array [
-            Object {
-              "loc": undefined,
-              "type": "Literal",
-              "value": 3,
-            },
-          ],
-          "callee": Node {
-            "end": 75,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 1,
-                "line": 7,
-              },
-              "start": Position {
-                "column": 0,
-                "line": 7,
-              },
-            },
-            "name": "f",
-            "start": 74,
-            "type": "Identifier",
-          },
-          "end": 78,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 4,
-              "line": 7,
-            },
-            "start": Position {
-              "column": 0,
-              "line": 7,
-            },
-          },
-          "start": 74,
-          "type": "CallExpression",
-        },
-        "head": Object {
-          "n": 3,
-        },
-        "heap": Heap {
-          "storage": null,
-        },
-        "id": "49",
-        "name": "f",
-        "tail": Object {
-          "head": Object {
-            "a": 1,
-            "f": [Function],
-          },
-          "heap": Heap {
-            "storage": Set {
-              [Function],
-            },
-          },
-          "id": "47",
-          "name": "programEnvironment",
-          "tail": Object {
-            "head": Object {
-              "$accumulate": [Function],
-              "$append": [Function],
-              "$build_list": [Function],
-              "$enum_list": [Function],
-              "$filter": [Function],
-              "$length": [Function],
-              "$list_to_string": [Function],
-              "$map": [Function],
-              "$remove": [Function],
-              "$remove_all": [Function],
-              "$reverse": [Function],
-              "__access_export__": [Function],
-              "__access_named_export__": [Function],
-              "accumulate": [Function],
-              "append": [Function],
-              "build_list": [Function],
-              "build_stream": [Function],
-              "enum_list": [Function],
-              "enum_stream": [Function],
-              "equal": [Function],
-              "eval_stream": [Function],
-              "filter": [Function],
-              "for_each": [Function],
-              "integers_from": [Function],
-              "is_stream": [Function],
-              "length": [Function],
-              "list_ref": [Function],
-              "list_to_stream": [Function],
-              "list_to_string": [Function],
-              "map": [Function],
-              "member": [Function],
-              "remove": [Function],
-              "remove_all": [Function],
-              "reverse": [Function],
-              "stream_append": [Function],
-              "stream_filter": [Function],
-              "stream_for_each": [Function],
-              "stream_length": [Function],
-              "stream_map": [Function],
-              "stream_member": [Function],
-              "stream_ref": [Function],
-              "stream_remove": [Function],
-              "stream_remove_all": [Function],
-              "stream_reverse": [Function],
-              "stream_tail": [Function],
-              "stream_to_list": [Function],
-            },
-            "heap": Heap {
-              "storage": Set {
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-              },
-            },
-            "id": "0",
-            "name": "prelude",
-            "tail": Object {
-              "head": Object {
-                "Infinity": Infinity,
-                "NaN": NaN,
-                "apply_in_underlying_javascript": [Function],
-                "arity": [Function],
-                "array_length": [Function],
-                "call_cc": [Function],
-                "char_at": [Function],
-                "display": [Function],
-                "display_list": [Function],
-                "draw_data": [Function],
-                "error": [Function],
-                "get_time": [Function],
-                "head": [Function],
-                "is_array": [Function],
-                "is_boolean": [Function],
-                "is_function": [Function],
-                "is_list": [Function],
-                "is_null": [Function],
-                "is_number": [Function],
-                "is_pair": [Function],
-                "is_string": [Function],
-                "is_undefined": [Function],
-                "list": [Function],
-                "math_E": 2.718281828459045,
-                "math_LN10": 2.302585092994046,
-                "math_LN2": 0.6931471805599453,
-                "math_LOG10E": 0.4342944819032518,
-                "math_LOG2E": 1.4426950408889634,
-                "math_PI": 3.141592653589793,
-                "math_SQRT1_2": 0.7071067811865476,
-                "math_SQRT2": 1.4142135623730951,
-                "math_abs": [Function],
-                "math_acos": [Function],
-                "math_acosh": [Function],
-                "math_asin": [Function],
-                "math_asinh": [Function],
-                "math_atan": [Function],
-                "math_atan2": [Function],
-                "math_atanh": [Function],
-                "math_cbrt": [Function],
-                "math_ceil": [Function],
-                "math_clz32": [Function],
-                "math_cos": [Function],
-                "math_cosh": [Function],
-                "math_exp": [Function],
-                "math_expm1": [Function],
-                "math_floor": [Function],
-                "math_fround": [Function],
-                "math_hypot": [Function],
-                "math_imul": [Function],
-                "math_log": [Function],
-                "math_log10": [Function],
-                "math_log1p": [Function],
-                "math_log2": [Function],
-                "math_max": [Function],
-                "math_min": [Function],
-                "math_pow": [Function],
-                "math_random": [Function],
-                "math_round": [Function],
-                "math_sign": [Function],
-                "math_sin": [Function],
-                "math_sinh": [Function],
-                "math_sqrt": [Function],
-                "math_tan": [Function],
-                "math_tanh": [Function],
-                "math_trunc": [Function],
-                "pair": [Function],
-                "parse": [Function],
-                "parse_int": [Function],
-                "prompt": [Function],
-                "raw_display": [Function],
-                "set_head": [Function],
-                "set_tail": [Function],
-                "stream": [Function],
-                "stringify": [Function],
-                "tail": [Function],
-                "tokenize": [Function],
-                "undefined": undefined,
-              },
-              "heap": Heap {
-                "storage": null,
-              },
-              "id": "-1",
-              "name": "global",
-              "tail": null,
-            },
-          },
-        },
-      },
-      "instrType": "Environment",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "arguments": Array [
-          Node {
-            "end": 69,
-            "isEnvDependent": true,
-            "left": Node {
-              "end": 67,
-              "isEnvDependent": true,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "name": "n",
-              "start": 66,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 15,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 5,
-              },
-            },
-            "operator": "-",
-            "right": Node {
-              "end": 69,
-              "isEnvDependent": false,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 14,
-                  "line": 5,
-                },
-              },
-              "raw": "1",
-              "start": 68,
-              "type": "Literal",
-              "value": 1,
-            },
-            "start": 66,
-            "type": "BinaryExpression",
-          },
-        ],
-        "callee": Node {
-          "end": 65,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "name": "f",
-          "start": 64,
-          "type": "Identifier",
-        },
-        "end": 70,
-        "isEnvDependent": true,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 10,
-            "line": 5,
-          },
-        },
-        "start": 64,
-        "type": "CallExpression",
-      },
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 70,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 61,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 7,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 6,
-              "line": 5,
-            },
-          },
-          "name": "n",
-          "start": 60,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 6,
-            "line": 5,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 69,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 67,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 5,
-                  },
-                },
-                "name": "n",
-                "start": 66,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 69,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 15,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 14,
-                    "line": 5,
-                  },
-                },
-                "raw": "1",
-                "start": 68,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 66,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 65,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 5,
-              },
-            },
-            "name": "f",
-            "start": 64,
-            "type": "Identifier",
-          },
-          "end": 70,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "start": 64,
-          "type": "CallExpression",
-        },
-        "start": 60,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Object {
-      "env": Object {
-        "callExpression": Object {
-          "arguments": Array [
-            Object {
-              "loc": undefined,
-              "type": "Literal",
-              "value": 2,
-            },
-          ],
-          "callee": Node {
-            "end": 65,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 5,
-              },
-            },
-            "name": "f",
-            "start": 64,
-            "type": "Identifier",
-          },
-          "end": 70,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "start": 64,
-          "type": "CallExpression",
-        },
-        "head": Object {
-          "n": 2,
-        },
-        "heap": Heap {
-          "storage": null,
-        },
-        "id": "50",
-        "name": "f",
-        "tail": Object {
-          "head": Object {
-            "a": 1,
-            "f": [Function],
-          },
-          "heap": Heap {
-            "storage": Set {
-              [Function],
-            },
-          },
-          "id": "47",
-          "name": "programEnvironment",
-          "tail": Object {
-            "head": Object {
-              "$accumulate": [Function],
-              "$append": [Function],
-              "$build_list": [Function],
-              "$enum_list": [Function],
-              "$filter": [Function],
-              "$length": [Function],
-              "$list_to_string": [Function],
-              "$map": [Function],
-              "$remove": [Function],
-              "$remove_all": [Function],
-              "$reverse": [Function],
-              "__access_export__": [Function],
-              "__access_named_export__": [Function],
-              "accumulate": [Function],
-              "append": [Function],
-              "build_list": [Function],
-              "build_stream": [Function],
-              "enum_list": [Function],
-              "enum_stream": [Function],
-              "equal": [Function],
-              "eval_stream": [Function],
-              "filter": [Function],
-              "for_each": [Function],
-              "integers_from": [Function],
-              "is_stream": [Function],
-              "length": [Function],
-              "list_ref": [Function],
-              "list_to_stream": [Function],
-              "list_to_string": [Function],
-              "map": [Function],
-              "member": [Function],
-              "remove": [Function],
-              "remove_all": [Function],
-              "reverse": [Function],
-              "stream_append": [Function],
-              "stream_filter": [Function],
-              "stream_for_each": [Function],
-              "stream_length": [Function],
-              "stream_map": [Function],
-              "stream_member": [Function],
-              "stream_ref": [Function],
-              "stream_remove": [Function],
-              "stream_remove_all": [Function],
-              "stream_reverse": [Function],
-              "stream_tail": [Function],
-              "stream_to_list": [Function],
-            },
-            "heap": Heap {
-              "storage": Set {
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-              },
-            },
-            "id": "0",
-            "name": "prelude",
-            "tail": Object {
-              "head": Object {
-                "Infinity": Infinity,
-                "NaN": NaN,
-                "apply_in_underlying_javascript": [Function],
-                "arity": [Function],
-                "array_length": [Function],
-                "call_cc": [Function],
-                "char_at": [Function],
-                "display": [Function],
-                "display_list": [Function],
-                "draw_data": [Function],
-                "error": [Function],
-                "get_time": [Function],
-                "head": [Function],
-                "is_array": [Function],
-                "is_boolean": [Function],
-                "is_function": [Function],
-                "is_list": [Function],
-                "is_null": [Function],
-                "is_number": [Function],
-                "is_pair": [Function],
-                "is_string": [Function],
-                "is_undefined": [Function],
-                "list": [Function],
-                "math_E": 2.718281828459045,
-                "math_LN10": 2.302585092994046,
-                "math_LN2": 0.6931471805599453,
-                "math_LOG10E": 0.4342944819032518,
-                "math_LOG2E": 1.4426950408889634,
-                "math_PI": 3.141592653589793,
-                "math_SQRT1_2": 0.7071067811865476,
-                "math_SQRT2": 1.4142135623730951,
-                "math_abs": [Function],
-                "math_acos": [Function],
-                "math_acosh": [Function],
-                "math_asin": [Function],
-                "math_asinh": [Function],
-                "math_atan": [Function],
-                "math_atan2": [Function],
-                "math_atanh": [Function],
-                "math_cbrt": [Function],
-                "math_ceil": [Function],
-                "math_clz32": [Function],
-                "math_cos": [Function],
-                "math_cosh": [Function],
-                "math_exp": [Function],
-                "math_expm1": [Function],
-                "math_floor": [Function],
-                "math_fround": [Function],
-                "math_hypot": [Function],
-                "math_imul": [Function],
-                "math_log": [Function],
-                "math_log10": [Function],
-                "math_log1p": [Function],
-                "math_log2": [Function],
-                "math_max": [Function],
-                "math_min": [Function],
-                "math_pow": [Function],
-                "math_random": [Function],
-                "math_round": [Function],
-                "math_sign": [Function],
-                "math_sin": [Function],
-                "math_sinh": [Function],
-                "math_sqrt": [Function],
-                "math_tan": [Function],
-                "math_tanh": [Function],
-                "math_trunc": [Function],
-                "pair": [Function],
-                "parse": [Function],
-                "parse_int": [Function],
-                "prompt": [Function],
-                "raw_display": [Function],
-                "set_head": [Function],
-                "set_tail": [Function],
-                "stream": [Function],
-                "stringify": [Function],
-                "tail": [Function],
-                "tokenize": [Function],
-                "undefined": undefined,
-              },
-              "heap": Heap {
-                "storage": null,
-              },
-              "id": "-1",
-              "name": "global",
-              "tail": null,
-            },
-          },
-        },
-      },
-      "instrType": "Environment",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "arguments": Array [
-          Node {
-            "end": 69,
-            "isEnvDependent": true,
-            "left": Node {
-              "end": 67,
-              "isEnvDependent": true,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "name": "n",
-              "start": 66,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 15,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 5,
-              },
-            },
-            "operator": "-",
-            "right": Node {
-              "end": 69,
-              "isEnvDependent": false,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 14,
-                  "line": 5,
-                },
-              },
-              "raw": "1",
-              "start": 68,
-              "type": "Literal",
-              "value": 1,
-            },
-            "start": 66,
-            "type": "BinaryExpression",
-          },
-        ],
-        "callee": Node {
-          "end": 65,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "name": "f",
-          "start": 64,
-          "type": "Identifier",
-        },
-        "end": 70,
-        "isEnvDependent": true,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 10,
-            "line": 5,
-          },
-        },
-        "start": 64,
-        "type": "CallExpression",
-      },
-    },
-    Object {
-      "instrType": "BinaryOperation",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "end": 70,
-        "isEnvDependent": true,
-        "left": Node {
-          "end": 61,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 7,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 6,
-              "line": 5,
-            },
-          },
-          "name": "n",
-          "start": 60,
-          "type": "Identifier",
-        },
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 6,
-            "line": 5,
-          },
-        },
-        "operator": "*",
-        "right": Node {
-          "arguments": Array [
-            Node {
-              "end": 69,
-              "isEnvDependent": true,
-              "left": Node {
-                "end": 67,
-                "isEnvDependent": true,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 13,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 12,
-                    "line": 5,
-                  },
-                },
-                "name": "n",
-                "start": 66,
-                "type": "Identifier",
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "operator": "-",
-              "right": Node {
-                "end": 69,
-                "isEnvDependent": false,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 15,
-                    "line": 5,
-                  },
-                  "start": Position {
-                    "column": 14,
-                    "line": 5,
-                  },
-                },
-                "raw": "1",
-                "start": 68,
-                "type": "Literal",
-                "value": 1,
-              },
-              "start": 66,
-              "type": "BinaryExpression",
-            },
-          ],
-          "callee": Node {
-            "end": 65,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 5,
-              },
-            },
-            "name": "f",
-            "start": 64,
-            "type": "Identifier",
-          },
-          "end": 70,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "start": 64,
-          "type": "CallExpression",
-        },
-        "start": 60,
-        "type": "BinaryExpression",
-      },
-      "symbol": "*",
-    },
-    Object {
-      "env": Object {
-        "callExpression": Object {
-          "arguments": Array [
-            Object {
-              "loc": undefined,
-              "type": "Literal",
-              "value": 1,
-            },
-          ],
-          "callee": Node {
-            "end": 65,
-            "isEnvDependent": true,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 11,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 10,
-                "line": 5,
-              },
-            },
-            "name": "f",
-            "start": 64,
-            "type": "Identifier",
-          },
-          "end": 70,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 16,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "start": 64,
-          "type": "CallExpression",
-        },
-        "head": Object {
-          "n": 1,
-        },
-        "heap": Heap {
-          "storage": null,
-        },
-        "id": "51",
-        "name": "f",
-        "tail": Object {
-          "head": Object {
-            "a": 1,
-            "f": [Function],
-          },
-          "heap": Heap {
-            "storage": Set {
-              [Function],
-            },
-          },
-          "id": "47",
-          "name": "programEnvironment",
-          "tail": Object {
-            "head": Object {
-              "$accumulate": [Function],
-              "$append": [Function],
-              "$build_list": [Function],
-              "$enum_list": [Function],
-              "$filter": [Function],
-              "$length": [Function],
-              "$list_to_string": [Function],
-              "$map": [Function],
-              "$remove": [Function],
-              "$remove_all": [Function],
-              "$reverse": [Function],
-              "__access_export__": [Function],
-              "__access_named_export__": [Function],
-              "accumulate": [Function],
-              "append": [Function],
-              "build_list": [Function],
-              "build_stream": [Function],
-              "enum_list": [Function],
-              "enum_stream": [Function],
-              "equal": [Function],
-              "eval_stream": [Function],
-              "filter": [Function],
-              "for_each": [Function],
-              "integers_from": [Function],
-              "is_stream": [Function],
-              "length": [Function],
-              "list_ref": [Function],
-              "list_to_stream": [Function],
-              "list_to_string": [Function],
-              "map": [Function],
-              "member": [Function],
-              "remove": [Function],
-              "remove_all": [Function],
-              "reverse": [Function],
-              "stream_append": [Function],
-              "stream_filter": [Function],
-              "stream_for_each": [Function],
-              "stream_length": [Function],
-              "stream_map": [Function],
-              "stream_member": [Function],
-              "stream_ref": [Function],
-              "stream_remove": [Function],
-              "stream_remove_all": [Function],
-              "stream_reverse": [Function],
-              "stream_tail": [Function],
-              "stream_to_list": [Function],
-            },
-            "heap": Heap {
-              "storage": Set {
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-                [Function],
-              },
-            },
-            "id": "0",
-            "name": "prelude",
-            "tail": Object {
-              "head": Object {
-                "Infinity": Infinity,
-                "NaN": NaN,
-                "apply_in_underlying_javascript": [Function],
-                "arity": [Function],
-                "array_length": [Function],
-                "call_cc": [Function],
-                "char_at": [Function],
-                "display": [Function],
-                "display_list": [Function],
-                "draw_data": [Function],
-                "error": [Function],
-                "get_time": [Function],
-                "head": [Function],
-                "is_array": [Function],
-                "is_boolean": [Function],
-                "is_function": [Function],
-                "is_list": [Function],
-                "is_null": [Function],
-                "is_number": [Function],
-                "is_pair": [Function],
-                "is_string": [Function],
-                "is_undefined": [Function],
-                "list": [Function],
-                "math_E": 2.718281828459045,
-                "math_LN10": 2.302585092994046,
-                "math_LN2": 0.6931471805599453,
-                "math_LOG10E": 0.4342944819032518,
-                "math_LOG2E": 1.4426950408889634,
-                "math_PI": 3.141592653589793,
-                "math_SQRT1_2": 0.7071067811865476,
-                "math_SQRT2": 1.4142135623730951,
-                "math_abs": [Function],
-                "math_acos": [Function],
-                "math_acosh": [Function],
-                "math_asin": [Function],
-                "math_asinh": [Function],
-                "math_atan": [Function],
-                "math_atan2": [Function],
-                "math_atanh": [Function],
-                "math_cbrt": [Function],
-                "math_ceil": [Function],
-                "math_clz32": [Function],
-                "math_cos": [Function],
-                "math_cosh": [Function],
-                "math_exp": [Function],
-                "math_expm1": [Function],
-                "math_floor": [Function],
-                "math_fround": [Function],
-                "math_hypot": [Function],
-                "math_imul": [Function],
-                "math_log": [Function],
-                "math_log10": [Function],
-                "math_log1p": [Function],
-                "math_log2": [Function],
-                "math_max": [Function],
-                "math_min": [Function],
-                "math_pow": [Function],
-                "math_random": [Function],
-                "math_round": [Function],
-                "math_sign": [Function],
-                "math_sin": [Function],
-                "math_sinh": [Function],
-                "math_sqrt": [Function],
-                "math_tan": [Function],
-                "math_tanh": [Function],
-                "math_trunc": [Function],
-                "pair": [Function],
-                "parse": [Function],
-                "parse_int": [Function],
-                "prompt": [Function],
-                "raw_display": [Function],
-                "set_head": [Function],
-                "set_tail": [Function],
-                "stream": [Function],
-                "stringify": [Function],
-                "tail": [Function],
-                "tokenize": [Function],
-                "undefined": undefined,
-              },
-              "heap": Heap {
-                "storage": null,
-              },
-              "id": "-1",
-              "name": "global",
-              "tail": null,
-            },
-          },
-        },
-      },
-      "instrType": "Environment",
-      "isEnvDependent": false,
-      "srcNode": Node {
-        "arguments": Array [
-          Node {
-            "end": 69,
-            "isEnvDependent": true,
-            "left": Node {
-              "end": 67,
-              "isEnvDependent": true,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 13,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 12,
-                  "line": 5,
-                },
-              },
-              "name": "n",
-              "start": 66,
-              "type": "Identifier",
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 15,
-                "line": 5,
-              },
-              "start": Position {
-                "column": 12,
-                "line": 5,
-              },
-            },
-            "operator": "-",
-            "right": Node {
-              "end": 69,
-              "isEnvDependent": false,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 15,
-                  "line": 5,
-                },
-                "start": Position {
-                  "column": 14,
-                  "line": 5,
-                },
-              },
-              "raw": "1",
-              "start": 68,
-              "type": "Literal",
-              "value": 1,
-            },
-            "start": 66,
-            "type": "BinaryExpression",
-          },
-        ],
-        "callee": Node {
-          "end": 65,
-          "isEnvDependent": true,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 11,
-              "line": 5,
-            },
-            "start": Position {
-              "column": 10,
-              "line": 5,
-            },
-          },
-          "name": "f",
-          "start": 64,
-          "type": "Identifier",
-        },
-        "end": 70,
-        "isEnvDependent": true,
-        "loc": SourceLocation {
-          "end": Position {
-            "column": 16,
-            "line": 5,
-          },
-          "start": Position {
-            "column": 10,
-            "line": 5,
-          },
-        },
-        "start": 64,
-        "type": "CallExpression",
-      },
-    },
-    Node {
-      "end": 53,
-      "isEnvDependent": false,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 7,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 6,
-          "line": 4,
-        },
-      },
-      "raw": "1",
-      "start": 52,
-      "type": "Literal",
-      "value": 1,
-    },
-  ],
-}
-`;
+exports[`Avoid unnescessary environment instruction 1 3`] = `2`;
 
-exports[`Avoid unnescessary environment instruction 4 1`] = `
-Control {
-  "numEnvDependentItems": 1,
-  "storage": Array [
-    Object {
-      "body": Array [
-        Node {
-          "end": 43,
-          "expression": Node {
-            "end": 42,
-            "isEnvDependent": false,
-            "left": Node {
-              "end": 38,
-              "isEnvDependent": false,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 5,
-                  "line": 7,
-                },
-                "start": Position {
-                  "column": 4,
-                  "line": 7,
-                },
-              },
-              "raw": "1",
-              "start": 37,
-              "type": "Literal",
-              "value": 1,
-            },
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 9,
-                "line": 7,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 7,
-              },
-            },
-            "operator": "+",
-            "right": Node {
-              "end": 42,
-              "isEnvDependent": false,
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 9,
-                  "line": 7,
-                },
-                "start": Position {
-                  "column": 8,
-                  "line": 7,
-                },
-              },
-              "raw": "2",
-              "start": 41,
-              "type": "Literal",
-              "value": 2,
-            },
-            "start": 37,
-            "type": "BinaryExpression",
-          },
-          "isEnvDependent": false,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 10,
-              "line": 7,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 7,
-            },
-          },
-          "start": 37,
-          "type": "ExpressionStatement",
-        },
-        Node {
-          "end": 50,
-          "expression": Node {
-            "end": 49,
-            "isEnvDependent": false,
-            "loc": SourceLocation {
-              "end": Position {
-                "column": 5,
-                "line": 8,
-              },
-              "start": Position {
-                "column": 4,
-                "line": 8,
-              },
-            },
-            "raw": "3",
-            "start": 48,
-            "type": "Literal",
-            "value": 3,
-          },
-          "isEnvDependent": false,
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 6,
-              "line": 8,
-            },
-            "start": Position {
-              "column": 4,
-              "line": 8,
-            },
-          },
-          "start": 48,
-          "type": "ExpressionStatement",
-        },
-      ],
-      "isEnvDependent": false,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 1,
-          "line": 9,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 6,
-        },
-      },
-      "type": "StatementSequence",
-    },
-    Object {
-      "body": Array [
-        Node {
-          "declarations": Array [
-            Node {
-              "end": 13,
-              "id": Node {
-                "end": 9,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 7,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 6,
-                    "line": 2,
-                  },
-                },
-                "name": "a",
-                "start": 8,
-                "type": "Identifier",
-              },
-              "init": Node {
-                "end": 13,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 2,
-                  },
-                  "start": Position {
-                    "column": 10,
-                    "line": 2,
-                  },
-                },
-                "raw": "1",
-                "start": 12,
-                "type": "Literal",
-                "value": 1,
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 11,
-                  "line": 2,
-                },
-                "start": Position {
-                  "column": 6,
-                  "line": 2,
-                },
-              },
-              "start": 8,
-              "type": "VariableDeclarator",
-            },
-          ],
-          "end": 14,
-          "isEnvDependent": true,
-          "kind": "let",
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 12,
-              "line": 2,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 2,
-            },
-          },
-          "start": 4,
-          "typability": "NotYetTyped",
-          "type": "VariableDeclaration",
-        },
-        Node {
-          "declarations": Array [
-            Node {
-              "end": 26,
-              "id": Node {
-                "end": 22,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 7,
-                    "line": 3,
-                  },
-                  "start": Position {
-                    "column": 6,
-                    "line": 3,
-                  },
-                },
-                "name": "b",
-                "start": 21,
-                "type": "Identifier",
-              },
-              "init": Node {
-                "end": 26,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 11,
-                    "line": 3,
-                  },
-                  "start": Position {
-                    "column": 10,
-                    "line": 3,
-                  },
-                },
-                "raw": "2",
-                "start": 25,
-                "type": "Literal",
-                "value": 2,
-              },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 11,
-                  "line": 3,
-                },
-                "start": Position {
-                  "column": 6,
-                  "line": 3,
-                },
-              },
-              "start": 21,
-              "type": "VariableDeclarator",
-            },
-          ],
-          "end": 27,
-          "kind": "let",
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 12,
-              "line": 3,
-            },
-            "start": Position {
-              "column": 2,
-              "line": 3,
-            },
-          },
-          "start": 17,
-          "typability": "NotYetTyped",
-          "type": "VariableDeclaration",
-        },
-      ],
-      "isEnvDependent": true,
-      "loc": SourceLocation {
-        "end": Position {
-          "column": 1,
-          "line": 4,
-        },
-        "start": Position {
-          "column": 0,
-          "line": 1,
-        },
-      },
-      "type": "StatementSequence",
-    },
-  ],
-}
-`;
+exports[`Avoid unnescessary environment instruction 1 4`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 1 5`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 6`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 7`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 8`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 9`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 10`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 11`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 12`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 13`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 14`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 15`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 16`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 17`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 18`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 19`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 1 20`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 21`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 22`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 23`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 24`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 25`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 26`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 27`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 28`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 29`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 30`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 31`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 32`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 33`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 1 34`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 35`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 36`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 37`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 38`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 39`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 40`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 41`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 42`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 43`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 44`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 45`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 46`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 47`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 1 48`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 49`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 50`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 51`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 52`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 53`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 54`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 55`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 1 56`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 57`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 58`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 1 59`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 1 60`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 1 61`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 1 62`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 1 63`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 1 64`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 1 65`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 1 66`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 2 1`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 2`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 3`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 4`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 2 5`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 6`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 7`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 8`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 9`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 10`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 11`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 12`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 13`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 14`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 15`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 16`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 17`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 18`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 19`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 20`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 2 21`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 22`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 23`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 24`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 25`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 26`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 27`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 28`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 29`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 30`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 31`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 32`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 33`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 34`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 35`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 2 36`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 37`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 38`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 39`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 40`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 41`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 42`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 43`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 44`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 45`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 46`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 47`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 48`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 49`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 50`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 2 51`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 52`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 53`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 54`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 55`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 56`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 57`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 58`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 2 59`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 60`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 61`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 2 62`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 2 63`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 2 64`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 2 65`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 2 66`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 3 1`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 2`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 3 3`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 3 4`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 3 5`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 6`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 7`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 8`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 3 9`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 10`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 11`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 12`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 13`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 14`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 15`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 16`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 17`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 18`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 19`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 20`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 21`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 22`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 23`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 24`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 3 25`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 26`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 27`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 28`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 29`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 30`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 31`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 32`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 33`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 34`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 35`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 36`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 37`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 38`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 39`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 3 40`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 41`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 42`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 43`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 44`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 45`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 46`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 47`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 48`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 49`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 50`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 51`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 52`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 53`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 54`] = `4`;
+
+exports[`Avoid unnescessary environment instruction 3 55`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 56`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 57`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 58`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 59`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 60`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 61`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 62`] = `3`;
+
+exports[`Avoid unnescessary environment instruction 3 63`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 64`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 65`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 3 66`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 67`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 68`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 69`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 70`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 71`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 72`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 73`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 74`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 75`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 76`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 77`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 3 78`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 4 1`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 4 2`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 4 3`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 4 4`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 4 5`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 4 6`] = `2`;
+
+exports[`Avoid unnescessary environment instruction 4 7`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 4 8`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 4 9`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 4 10`] = `1`;
+
+exports[`Avoid unnescessary environment instruction 4 11`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 4 12`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 4 13`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 4 14`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 4 15`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 4 16`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 4 17`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 4 18`] = `0`;
+
+exports[`Avoid unnescessary environment instruction 4 19`] = `0`;
 
 exports[`Breakpoint steps match 1`] = `
 Array [

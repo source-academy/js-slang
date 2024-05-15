@@ -81,7 +81,7 @@ import {
   pushEnvironment,
   reduceConditional,
   setVariable,
-  valueProducing,
+  valueProducing
 } from './utils'
 import Closure from './closure'
 
@@ -108,6 +108,11 @@ export class Control extends Stack<ControlItem> {
 
   public canAvoidEnvInstr(): boolean {
     return this.numEnvDependentItems == 0
+  }
+
+  // For testing purposes
+  public getNumEnvDependentItems(): number {
+    return this.numEnvDependentItems
   }
 
   public pop(): ControlItem | undefined {
