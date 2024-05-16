@@ -107,7 +107,7 @@ export class Control extends Stack<ControlItem> {
   }
 
   public canAvoidEnvInstr(): boolean {
-    return this.numEnvDependentItems == 0
+    return this.numEnvDependentItems === 0
   }
 
   // For testing purposes
@@ -117,7 +117,7 @@ export class Control extends Stack<ControlItem> {
 
   public pop(): ControlItem | undefined {
     const item = super.pop()
-    if (item != undefined && isEnvDependent(item)) {
+    if (item !== undefined && isEnvDependent(item)) {
       this.numEnvDependentItems--
     }
     return item
