@@ -1,0 +1,324 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Find arrow function declaration 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 9,
+    "line": 2,
+  },
+  "start": Position {
+    "column": 6,
+    "line": 2,
+  },
+}
+`;
+
+exports[`Find arrow function param declaration 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 21,
+    "line": 1,
+  },
+  "start": Position {
+    "column": 18,
+    "line": 1,
+  },
+}
+`;
+
+exports[`Find declaration in init of for loop 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 10,
+    "line": 2,
+  },
+  "start": Position {
+    "column": 9,
+    "line": 2,
+  },
+}
+`;
+
+exports[`Find declaration of of variable in update statement of a for loop 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 10,
+    "line": 1,
+  },
+  "start": Position {
+    "column": 9,
+    "line": 1,
+  },
+}
+`;
+
+exports[`Find function declaration 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 12,
+    "line": 2,
+  },
+  "start": Position {
+    "column": 9,
+    "line": 2,
+  },
+}
+`;
+
+exports[`Find function param declaration 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 21,
+    "line": 1,
+  },
+  "start": Position {
+    "column": 18,
+    "line": 1,
+  },
+}
+`;
+
+exports[`Find no declaration from occurrence when there is no declaration (syntax error) 1`] = `null`;
+
+exports[`Find no declaration from selection that does not refer to a declaration 1`] = `null`;
+
+exports[`Find scope of a function declaration 1`] = `
+Array [
+  SourceLocation {
+    "end": Position {
+      "column": 5,
+      "line": 8,
+    },
+    "start": Position {
+      "column": 4,
+      "line": 3,
+    },
+  },
+]
+`;
+
+exports[`Find scope of a function parameter 1`] = `
+Array [
+  SourceLocation {
+    "end": Position {
+      "column": 9,
+      "line": 7,
+    },
+    "start": Position {
+      "column": 22,
+      "line": 5,
+    },
+  },
+]
+`;
+
+exports[`Find scope of a nested variable declaration 1`] = `
+Array [
+  SourceLocation {
+    "end": Position {
+      "column": 5,
+      "line": 8,
+    },
+    "start": Position {
+      "column": 4,
+      "line": 3,
+    },
+  },
+]
+`;
+
+exports[`Find scope of a variable declaration 1`] = `
+Array [
+  Object {
+    "end": Position {
+      "column": 4,
+      "line": 3,
+    },
+    "start": Position {
+      "column": 0,
+      "line": 1,
+    },
+  },
+  Object {
+    "end": Position {
+      "column": 3,
+      "line": 10,
+    },
+    "start": Position {
+      "column": 5,
+      "line": 8,
+    },
+  },
+]
+`;
+
+exports[`Find scope of a variable declaration with more nesting 1`] = `
+Array [
+  Object {
+    "end": Position {
+      "column": 12,
+      "line": 6,
+    },
+    "start": Position {
+      "column": 4,
+      "line": 3,
+    },
+  },
+  Object {
+    "end": Position {
+      "column": 8,
+      "line": 11,
+    },
+    "start": Position {
+      "column": 13,
+      "line": 8,
+    },
+  },
+  Object {
+    "end": Position {
+      "column": 5,
+      "line": 14,
+    },
+    "start": Position {
+      "column": 9,
+      "line": 13,
+    },
+  },
+]
+`;
+
+exports[`Find scope of a variable declaration with multiple blocks 1`] = `
+Array [
+  Object {
+    "end": Position {
+      "column": 8,
+      "line": 4,
+    },
+    "start": Position {
+      "column": 4,
+      "line": 2,
+    },
+  },
+  Object {
+    "end": Position {
+      "column": 8,
+      "line": 8,
+    },
+    "start": Position {
+      "column": 9,
+      "line": 6,
+    },
+  },
+  Object {
+    "end": Position {
+      "column": 8,
+      "line": 12,
+    },
+    "start": Position {
+      "column": 9,
+      "line": 10,
+    },
+  },
+  Object {
+    "end": Position {
+      "column": 5,
+      "line": 15,
+    },
+    "start": Position {
+      "column": 9,
+      "line": 14,
+    },
+  },
+]
+`;
+
+exports[`Find variable declaration in block statement 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 7,
+    "line": 2,
+  },
+  "start": Position {
+    "column": 6,
+    "line": 2,
+  },
+}
+`;
+
+exports[`Find variable declaration in function scope from occurrence in function scope 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 7,
+    "line": 3,
+  },
+  "start": Position {
+    "column": 6,
+    "line": 3,
+  },
+}
+`;
+
+exports[`Find variable declaration in global scope 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 5,
+    "line": 1,
+  },
+  "start": Position {
+    "column": 4,
+    "line": 1,
+  },
+}
+`;
+
+exports[`Find variable declaration in global scope from occurrence in function scope 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 5,
+    "line": 1,
+  },
+  "start": Position {
+    "column": 4,
+    "line": 1,
+  },
+}
+`;
+
+exports[`Find variable declaration of same name as variable declaration in block statement 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 5,
+    "line": 5,
+  },
+  "start": Position {
+    "column": 4,
+    "line": 5,
+  },
+}
+`;
+
+exports[`Find variable declaration with same name as arrow function param declaration 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 9,
+    "line": 4,
+  },
+  "start": Position {
+    "column": 6,
+    "line": 4,
+  },
+}
+`;
+
+exports[`Find variable declaration with same name as init of for loop 1`] = `
+SourceLocation {
+  "end": Position {
+    "column": 7,
+    "line": 5,
+  },
+  "start": Position {
+    "column": 6,
+    "line": 5,
+  },
+}
+`;

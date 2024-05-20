@@ -1,10 +1,11 @@
-import { Context, Result, runInContext } from '../..'
+import { Context, Result, parseError, runInContext } from '../..'
 import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../mocks/context'
 import { FatalSyntaxError } from '../../parser/errors'
-import { Chapter, Finished, Variant } from '../../types'
+import { Chapter, Finished, Variant, type ExecutionMethod } from '../../types'
 import { locationDummyNode } from '../../utils/ast/astCreator'
-import { CodeSnippetTestCase } from '../../utils/testing'
+import { CodeSnippetTestCase, expectFinishedResult } from '../../utils/testing'
+import { testMultipleCases } from '../../utils/testing/testers'
 import { htmlErrorHandlingScript } from '../htmlRunner'
 
 const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
@@ -210,6 +211,194 @@ describe('Functions in Source libraries (e.g. list, streams) are available in So
   })
 })
 
+test('Test context reuse', async () => {
+  const context = mockContext(Chapter.SOURCE_4)
+  const init = `
+    let i = 0;
+    function f() {
+      i = i + 1;
+      return i;
+    }
+    i;
+  `
+
+  const snippet: [string, number][] = [
+    ['i = 100; f();', 101],
+    ['f(); i;', 102],
+    ['i;', 102]
+  ]
+
+  await runInContext(init, context)
+  for (const [code, expected] of snippet) {
+    const result = await runInContext(code, context)
+    expectFinishedResult(result)
+    expect(result.value).toEqual(expected)
+  }
+})
+
+describe('Test tail call return for native runner', () => {
+  // TODO: Check if this test is still relevant
+  // test.skip('Check that stack is at most 10k in size', () => {
+  //   return expectParsedErrorNoSnapshot(stripIndent`
+  //     function f(x) {
+  //       if (x <= 0) {
+  //         return 0;
+  //       } else {
+  //         return 1 + f(x-1);
+  //       }
+  //     }
+  //     f(10000);
+  //   `).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))
+  // }, 10000) 
+
+  testMultipleCases([
+    [
+      'Simple taill call returns work',
+      `
+      function f(x, y) {
+        if (x <= 0) {
+          return y;
+        } else {
+          return f(x-1, y+1);
+        }
+      }
+      f(5000, 5000);
+      `,
+      10000
+    ],
+    [
+      'Tail call in conditional expressions work',
+      `
+        function f(x, y) {
+          return x <= 0 ? y : f(x-1, y+1);
+        }
+        f(5000, 5000);
+      `,
+      10000
+    ],
+    [
+      'Tail call in boolean operators work',
+      `
+        function f(x, y) {
+          if (x <= 0) {
+            return y;
+          } else {
+            return false || f(x-1, y+1);
+          }
+        }
+        f(5000, 5000);
+      `,
+      10000
+    ],
+    [
+      'Tail call in nested mix of conditional expressions and boolean operators work',
+      `
+        function f(x, y) {
+          return x <= 0 ? y : false || x > 0 ? f(x-1, y+1) : 'unreachable';
+        }
+        f(5000, 5000);
+      `,
+      10000
+    ],
+    [
+      'Tail calls in arrow block functions work',
+      `
+      const f = (x, y) => {
+        if (x <= 0) {
+          return y;
+        } else {
+          return f(x-1, y+1);
+        }
+      };
+      f(5000, 5000);
+      `,
+      10000
+    ],
+    [
+      'Tail calls in expression arrow functions work',
+      `
+      const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
+      f(5000, 5000);
+      `,
+      10000
+    ],
+    [
+      'Tail calls in mutual recursion work',
+      `
+        function f(x, y) {
+          if (x <= 0) {
+            return y;
+          } else {
+            return g(x-1, y+1);
+          }
+        }
+        function g(x, y) {
+          if (x <= 0) {
+            return y;
+          } else {
+            return f(x-1, y+1);
+          }
+        }
+        f(5000, 5000);
+      `,
+      10000
+    ],
+    [
+      'Tail calls in mutual recursion with arrow functions work',
+      `
+        const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
+        const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
+        f(5000, 5000);
+      `,
+      10000
+    ],
+    [
+      'Tail calls in mixed tail-call/non-tail-call recursion work',
+      `
+        function f(x, y, z) {
+          if (x <= 0) {
+            return y;
+          } else {
+            return f(x-1, y+f(0, z, 0), z);
+          }
+        }
+        f(5000, 5000, 2);
+      `,
+      15000
+    ]
+  ], async ([code, expected]) => {
+    const context = mockContext(Chapter.SOURCE_1)
+    const result = await runInContext(code, context)
+    expectFinishedResult(result)
+    expect(result.value).toEqual(expected)
+  }, false, 10000)
+})
+
+describe('Tests for all runners', () => {
+  const methodsToTest: ExecutionMethod[] = ['cse-machine', 'stepper', 'native']
+
+  test("Runners won't allow assignments to consts even when assignment is allowed", () => {
+    const snippet = `
+      function test(){
+        const constant = 3;
+        constant = 4;
+        return constant;
+      }
+      test();
+    `
+
+    return Promise.all(
+      methodsToTest.map(async method => {
+        const context = mockContext(Chapter.SOURCE_3)
+        const result = await runInContext(snippet, context, { executionMethod: method })
+        expect(result.status).toEqual('error')
+        expect(parseError(context.errors)).toEqual(
+          'Line 4: Cannot assign new value to constant constant.'
+        )
+      })
+    )
+  })
+})
 // HTML Unit Tests
 
 test('Error handling script is injected in HTML code', async () => {

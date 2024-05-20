@@ -1,6 +1,6 @@
-import { Program } from 'estree'
+import type { Program } from 'estree'
 
-import { default as createContext } from '../createContext'
+import createContext from '../createContext'
 import { getAllOccurrencesInScope } from '../index'
 import { looseParse } from '../parser/utils'
 import {

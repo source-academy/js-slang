@@ -8,12 +8,7 @@ import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import type { ImportOptions } from '../modules/moduleTypes'
 import { parse } from '../parser/parser'
-import {
-  evallerReplacer,
-  getBuiltins,
-  getGloballyDeclaredIdentifiers,
-  transpile
-} from '../transpiler/transpiler'
+import { evallerReplacer, getBuiltins, transpile } from '../transpiler/transpiler'
 import type { Context, NativeStorage } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { getDeclaredIdentifiers } from '../utils/ast/helpers'
@@ -69,9 +64,7 @@ export async function fullJSRunner(
   getDeclaredIdentifiers(preEvalProgram).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id.name)
   )
-  getGloballyDeclaredIdentifiers(preEvalProgram).forEach(id =>
-    context.nativeStorage.previousProgramsIdentifiers.add(id)
-  )
+
   const preEvalCode: string = generate(preEvalProgram)
   await fullJSEval(preEvalCode, context.nativeStorage)
 
