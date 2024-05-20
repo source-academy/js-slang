@@ -1,6 +1,5 @@
 import type { BinaryOperator, UnaryOperator } from 'estree'
 
-import { LazyBuiltIn } from '../createContext'
 import {
   CallingNonFunctionValue,
   ExceptionError,
@@ -59,33 +58,6 @@ export function delayIt(f: () => any): Thunk {
   }
 }
 
-export function wrapLazyCallee(candidate: any) {
-  candidate = forceIt(candidate)
-  if (typeof candidate === 'function') {
-    const wrapped: any = (...args: any[]) => candidate(...args.map(forceIt))
-    makeWrapper(candidate, wrapped)
-    wrapped[Symbol.toStringTag] = () => candidate.toString()
-    wrapped.toString = () => candidate.toString()
-    return wrapped
-  } else if (candidate instanceof LazyBuiltIn) {
-    if (candidate.evaluateArgs) {
-      const wrapped: any = (...args: any[]) => candidate.func(...args.map(forceIt))
-      makeWrapper(candidate.func, wrapped)
-      wrapped[Symbol.toStringTag] = () => candidate.toString()
-      wrapped.toString = () => candidate.toString()
-      return wrapped
-    } else {
-      return candidate
-    }
-  }
-  // doesn't look like a function, not our business to error now
-  return candidate
-}
-
-export function makeLazyFunction(candidate: any) {
-  return new LazyBuiltIn(candidate, false)
-}
-
 export function callIfFuncAndRightArgs(
   candidate: any,
   line: number,
@@ -117,20 +89,6 @@ export function callIfFuncAndRightArgs(
     try {
       const forcedArgs = args.map(forceIt)
       return originalCandidate(...forcedArgs)
-    } catch (error) {
-      // if we already handled the error, simply pass it on
-      if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
-        throw new ExceptionError(error, dummy.loc)
-      } else {
-        throw error
-      }
-    }
-  } else if (candidate instanceof LazyBuiltIn) {
-    try {
-      if (candidate.evaluateArgs) {
-        args = args.map(forceIt)
-      }
-      return candidate.func(...args)
     } catch (error) {
       // if we already handled the error, simply pass it on
       if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
@@ -275,11 +233,6 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
           hasVarArgs
         )
       }
-    } else if (f instanceof LazyBuiltIn) {
-      if (f.evaluateArgs) {
-        args = args.map(forceIt)
-      }
-      f = f.func
     } else {
       throw new CallingNonFunctionValue(f, dummy)
     }
