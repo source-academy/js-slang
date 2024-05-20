@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`String representation of builtins are nice: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "stringify(pair);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "function pair(left, right) {
+	[implementation hidden]
+}",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`String representation with 1 space indent: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "stringify(parse('x=>x;'), 1);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "[\\"lambda_expression\\",
+[[[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`String representation with default (2 space) indent: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "stringify(parse(\\"x=>x;\\"));",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "[ \\"lambda_expression\\",
+[ [[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
+exports[`String representation with more than 10 space indent should trim to 10 space indent: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "stringify(parse(\\"x=>x;\\"), 100);",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "[         \\"lambda_expression\\",
+[         [[\\"name\\", [\\"x\\", null]], null],
+[[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
