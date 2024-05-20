@@ -12,6 +12,7 @@ import analyzeImportsAndExports from '../analyzer'
 import loadSourceModules from '../../loader'
 import type { SourceFiles as Files } from '../../moduleTypes'
 import { objectKeys } from '../../../utils/misc'
+import { testTrueAndFalseCases } from '../../../utils/testing/testers'
 
 jest.mock('../../loader/loaders')
 
@@ -81,9 +82,9 @@ describe('Test throwing import validation errors', () => {
 
   // Providing an ErrorInfo object indicates that the test case should throw
   // the corresponding error
-  type ImportTestCaseWithNoError<T extends Files> = [string, T, keyof T]
-  type ImportTestCaseWithError<T extends Files> = [...ImportTestCaseWithNoError<T>, ErrorInfo]
-  type ImportTestCase<T extends Files> = ImportTestCaseWithError<T> | ImportTestCaseWithNoError<T>
+  type ImportTestCaseWithNoError = [string, Files, string]
+  type ImportTestCaseWithError = [...ImportTestCaseWithNoError, ErrorInfo]
+  type ImportTestCase = ImportTestCaseWithError | ImportTestCaseWithNoError
 
   function expectValidationError(obj: any): asserts obj is UndefinedNamespaceImportError {
     expect(obj).toBeInstanceOf(UndefinedNamespaceImportError)
@@ -133,50 +134,35 @@ describe('Test throwing import validation errors', () => {
   }
 
   type FullTestCase = [string, Files, `/${string}`, ErrorInfo | boolean]
-  function testCases<T extends Files>(desc: string, cases: ImportTestCase<T>[]) {
-    const [allNoCases, allYesCases] = cases.reduce(
-      ([noThrow, yesThrow], [desc, files, entry, errorInfo], i) => {
+  function testCases(desc: string, cases: ImportTestCase[]) {
+    testTrueAndFalseCases(
+      desc,
+      'allowUndefinedImports',
+      cases,
+      ([desc, files, entry, errorInfo], i) => {
         return [
+          [`${i + 1}: ${desc} should not throw an error`, files, entry, true] as FullTestCase,
           [
-            ...noThrow,
-            [`${i + 1}: ${desc} should not throw an error`, files, entry, true] as FullTestCase
-          ],
-          [
-            ...yesThrow,
-            [
-              `${i + 1}: ${desc} should${errorInfo ? '' : ' not'} throw an error`,
-              files,
-              entry,
-              errorInfo
-            ] as FullTestCase
-          ]
+            `${i + 1}: ${desc} should${errorInfo ? '' : ' not'} throw an error`,
+            files,
+            entry,
+            errorInfo
+          ] as FullTestCase
         ]
       },
-      [[], []] as [FullTestCase[], FullTestCase[]]
-    )
-
-    const caseTester: (...args: FullTestCase) => Promise<void> = async (
-      _,
-      files,
-      entrypointFilePath,
-      errorInfo
-    ) => {
-      if (errorInfo === true) {
-        // If allowUndefinedImports is true, the analyzer should never throw an error
-        await testSuccess(files, entrypointFilePath, true)
-      } else if (!errorInfo) {
-        // Otherwise it should not throw when no errors are expected
-        await testSuccess(files, entrypointFilePath, false)
-      } else {
-        // Or throw the expected error
-        await testFailure(files, entrypointFilePath, false, errorInfo)
+      async ([files, entrypointFilePath, errorInfo]) => {
+        if (errorInfo === true) {
+          // If allowUndefinedImports is true, the analyzer should never throw an error
+          await testSuccess(files, entrypointFilePath, true)
+        } else if (!errorInfo) {
+          // Otherwise it should not throw when no errors are expected
+          await testSuccess(files, entrypointFilePath, false)
+        } else {
+          // Or throw the expected error
+          await testFailure(files, entrypointFilePath, false, errorInfo)
+        }
       }
-    }
-
-    describe(`${desc} with allowUndefinedimports true`, () =>
-      test.each(allNoCases)('%s', caseTester))
-    describe(`${desc} with allowUndefinedimports false`, () =>
-      test.each(allYesCases)('%s', caseTester))
+    )
   }
 
   describe('Test regular imports', () => {
@@ -651,68 +637,73 @@ describe('Test throwing DuplicateImportNameErrors', () => {
   const isTestCaseWithNoError = <T extends Files>(c: TestCase<T>): c is TestCaseWithNoError<T> =>
     c.length === 2
 
-  type FullTestCase = [string, Files, true, string | undefined] | [string, Files, false, undefined]
+  type FullTestCase = [Files, true, string | undefined] | [Files, false, undefined]
 
   function expectDuplicateError(obj: any): asserts obj is DuplicateImportNameError {
     expect(obj).toBeInstanceOf(DuplicateImportNameError)
   }
 
   function testCases<T extends Files>(desc: string, cases: TestCase<T>[]) {
-    const [allNoCases, allYesCases] = cases.reduce(
-      ([noThrow, yesThrow], c, i) => {
+    testTrueAndFalseCases<TestCase<any>, FullTestCase>(
+      desc,
+      'throwOnDuplicateImports',
+      cases,
+      (c, i) => {
         // For each test case, split it into the case where throwOnDuplicateImports is true
         // and when it is false. No errors should ever be thrown when throwOnDuplicateImports is false
         if (isTestCaseWithNoError(c)) {
           // No error message was given, so no error is expected to be thrown,
           // regardless of the value of throwOnDuplicateImports
           const [desc] = c
-          const noThrowCase: FullTestCase = [`${i + 1}. ${desc}: no error `, c[1], false, undefined]
-          const yesThrowCase: FullTestCase = [`${i + 1}. ${desc}: no error`, c[1], true, undefined]
-          return [
-            [...noThrow, noThrowCase],
-            [...yesThrow, yesThrowCase]
+          const noThrowCase: [string, ...FullTestCase] = [
+            `${i + 1}. ${desc}: no error `,
+            c[1],
+            false,
+            undefined
           ]
+          const yesThrowCase: [string, ...FullTestCase] = [
+            `${i + 1}. ${desc}: no error`,
+            c[1],
+            true,
+            undefined
+          ]
+          return [noThrowCase, yesThrowCase]
         }
 
         const [desc, , errMsg] = c
-        const noThrowCase: FullTestCase = [`${i + 1}. ${desc}: no error`, c[1], false, undefined]
-        const yesThrowCase: FullTestCase = [`${i + 1}. ${desc}: error`, c[1], true, errMsg]
-        return [
-          [...noThrow, noThrowCase],
-          [...yesThrow, yesThrowCase]
+        const noThrowCase: [string, ...FullTestCase] = [
+          `${i + 1}. ${desc}: no error`,
+          c[1],
+          false,
+          undefined
         ]
+        const yesThrowCase: [string, ...FullTestCase] = [
+          `${i + 1}. ${desc}: error`,
+          c[1],
+          true,
+          errMsg
+        ]
+        return [noThrowCase, yesThrowCase]
       },
-      [[], []] as [FullTestCase[], FullTestCase[]]
-    )
+      async ([files, shouldThrow, errMsg]) => {
+        const [entrypointFilePath] = objectKeys(files)
 
-    const caseTester: (...args: FullTestCase) => Promise<void> = async (
-      _,
-      files,
-      shouldThrow,
-      errMsg
-    ) => {
-      const [entrypointFilePath] = objectKeys(files)
+        const promise = testCode(files, entrypointFilePath, true, shouldThrow)
+        if (!shouldThrow || errMsg === undefined) {
+          return expect(promise).resolves.toEqual(true)
+        }
 
-      const promise = testCode(files, entrypointFilePath, true, shouldThrow)
-      if (!shouldThrow || errMsg === undefined) {
-        return expect(promise).resolves.toEqual(true)
+        const err = await promise
+        expectDuplicateError(err)
+
+        // Make sure the locations are always displayed in order
+        // for consistency across tests (ok since locString should be order agnostic)
+        const segments = err.locString.split(',').map(each => each.trim())
+        segments.sort()
+
+        expect(segments.join(', ')).toEqual(errMsg)
       }
-
-      const err = await promise
-      expectDuplicateError(err)
-
-      // Make sure the locations are always displayed in order
-      // for consistency across tests (ok since locString should be order agnostic)
-      const segments = err.locString.split(',').map(each => each.trim())
-      segments.sort()
-
-      expect(segments.join(', ')).toEqual(errMsg)
-    }
-
-    describe(`${desc} with throwOnDuplicateImports false`, () =>
-      test.each(allNoCases)('%s', caseTester))
-    describe(`${desc} with throwOnDuplicateImports true`, () =>
-      test.each(allYesCases)('%s', caseTester))
+    )
   }
 
   testCases('Imports from different modules', [

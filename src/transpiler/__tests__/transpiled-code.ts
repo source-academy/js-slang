@@ -4,7 +4,6 @@ import { Chapter } from '../../types'
 import * as ast from '../../utils/ast/astCreator'
 import { sanitizeAST } from '../../utils/testing/sanitizer'
 import { stripIndent } from '../../utils/formatters'
-import { astTester } from '../../utils/testing'
 import { transformImportDeclarations, transpile } from '../transpiler'
 
 /*  DO NOT HAVE 'native[<digit>]' AS A SUBSTRING IN CODE STRINGS ANYWHERE IN THIS FILE!

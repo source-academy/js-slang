@@ -9,13 +9,22 @@ test('list creates list', () => {
     list(1, 'a string ""', () => f, f, true, 3.14);
   `,
     { chapter: Chapter.SOURCE_2, native: true }
-  ).toMatchInlineSnapshot(`[ 1,
-[ "a string \"\"",
-[ () => f,
-[ function f() {
-    return 1;
-  },
-[true, [3.14, null]]]]]]`)
+  ).toMatchInlineSnapshot(`
+            "native:[ 1,
+            [ \\"a string \\\\\\"\\\\\\"\\",
+            [ () => f,
+            [ function f() {
+                return 1;
+              },
+            [true, [3.14, null]]]]]]
+            interpreted:[ 1,
+            [ \\"a string \\\\\\"\\\\\\"\\",
+            [ () => f,
+            [ () => {
+                return 1;
+              },
+            [true, [3.14, null]]]]]]"
+          `)
 })
 
 test('pair creates pair', () => {

@@ -164,8 +164,10 @@ Object {
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
-  "result": "native:[1, () => integers_from(n + 1)]
-interpreted:undefined",
+  "result": Array [
+    1,
+    [Function],
+  ],
   "resultStatus": "finished",
   "visualiseListResult": Array [],
 }

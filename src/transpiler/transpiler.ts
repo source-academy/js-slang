@@ -49,19 +49,6 @@ export function transformImportDeclarations(
   return [declNodes, otherNodes]
 }
 
-export function getGloballyDeclaredIdentifiers(program: es.Program): string[] {
-  return program.body
-    .filter(statement => statement.type === 'VariableDeclaration')
-    .map(
-      ({
-        declarations: {
-          0: { id }
-        },
-        kind
-      }: es.VariableDeclaration) => (id as es.Identifier).name
-    )
-}
-
 export function getBuiltins(nativeStorage: NativeStorage): es.Statement[] {
   const builtinsStatements: es.Statement[] = []
   nativeStorage.builtins.forEach((_unused, name: string) => {
@@ -458,8 +445,8 @@ function transpileToSource(
 
   program.body = (importNodes as es.Program['body']).concat(otherNodes)
 
-  getGloballyDeclaredIdentifiers(program).forEach(id =>
-    context.nativeStorage.previousProgramsIdentifiers.add(id)
+  getDeclaredIdentifiers(program).forEach(id =>
+    context.nativeStorage.previousProgramsIdentifiers.add(id.name)
   )
   const newStatements = [
     ...getDeclarationsToAccessTranspilerInternals(globalIds),
@@ -501,9 +488,7 @@ function transpileToFullJS(
   getDeclaredIdentifiers(program).forEach(id =>
     context.nativeStorage.previousProgramsIdentifiers.add(id.name)
   )
-  getGloballyDeclaredIdentifiers(program).forEach(id =>
-    context.nativeStorage.previousProgramsIdentifiers.add(id)
-  )
+
   const transpiledProgram: es.Program = create.program([
     evallerReplacer(create.identifier(NATIVE_STORAGE_ID), new Set()),
     create.expressionStatement(create.identifier('undefined')),
