@@ -2,7 +2,8 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { Chapter, ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
+import { Rule } from '../../types'
 
 const mutableDeclarators = ['let', 'var']
 
@@ -33,6 +34,13 @@ export class NoDeclareMutableError implements SourceError {
 const noDeclareMutable: Rule<es.VariableDeclaration> = {
   name: 'no-declare-mutable',
   disableFromChapter: Chapter.SOURCE_3,
+
+  testSnippets: [
+    [
+      'let i = 0;',
+      'Line 1: Mutable variable declaration using keyword \'let\' is not allowed.',
+    ],
+  ],
 
   checkers: {
     VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {

@@ -2,7 +2,8 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
+import { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
 export class BracesAroundIfElseError implements SourceError {
@@ -71,6 +72,18 @@ export class BracesAroundIfElseError implements SourceError {
 
 const bracesAroundIfElse: Rule<es.IfStatement> = {
   name: 'braces-around-if-else',
+
+  testSnippets: [
+    [
+      `
+        function f() {
+          if (true) return false;
+          else return true;
+        }
+      `,
+      'Line 3: Missing curly braces around "if" block.'
+    ]
+  ],
 
   checkers: {
     IfStatement(node: es.IfStatement, _ancestors: [Node]) {

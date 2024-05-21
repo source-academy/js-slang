@@ -1,7 +1,10 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { Chapter, ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
+import { Rule } from '../../types'
+
+const errorMessage = 'Dot abbreviations are not allowed.'
 
 export class NoDotAbbreviationError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -14,7 +17,7 @@ export class NoDotAbbreviationError implements SourceError {
   }
 
   public explain() {
-    return 'Dot abbreviations are not allowed.'
+    return errorMessage
   }
 
   public elaborate() {
@@ -27,6 +30,15 @@ const noDotAbbreviation: Rule<es.MemberExpression> = {
   name: 'no-dot-abbreviation',
 
   disableFromChapter: Chapter.LIBRARY_PARSER,
+  testSnippets: [
+    [
+      `
+        const obj = {};
+        obj.o;
+      `,
+      `Line 3: ${errorMessage}`
+    ]
+  ],
 
   checkers: {
     MemberExpression(node: es.MemberExpression, _ancestors: [Node]) {

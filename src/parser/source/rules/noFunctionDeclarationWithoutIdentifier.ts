@@ -1,7 +1,8 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
+import { Rule } from '../../types'
 
 export class NoFunctionDeclarationWithoutIdentifierError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -24,7 +25,12 @@ export class NoFunctionDeclarationWithoutIdentifierError implements SourceError 
 
 const noFunctionDeclarationWithoutIdentifier: Rule<es.FunctionDeclaration> = {
   name: 'no-function-declaration-without-identifier',
-
+  // testSnippets: [
+  //   [
+  //     'const x = function() {};',
+  //     'Line 1: The \'function\' keyword needs to be followed by a name.'
+  //   ]
+  // ],
   checkers: {
     FunctionDeclaration(node: es.FunctionDeclaration, _ancestors: Node[]): SourceError[] {
       if (node.id === null) {

@@ -1,7 +1,8 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
+import { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
 export class NoImplicitReturnUndefinedError implements SourceError {
@@ -30,6 +31,12 @@ export class NoImplicitReturnUndefinedError implements SourceError {
 
 const noImplicitReturnUndefined: Rule<es.ReturnStatement> = {
   name: 'no-implicit-return-undefined',
+  testSnippets: [
+    [
+      'function f() { return; }',
+      'Line 1: Missing value in return statement.'
+    ]
+  ],
 
   checkers: {
     ReturnStatement(node: es.ReturnStatement, _ancestors: [Node]) {

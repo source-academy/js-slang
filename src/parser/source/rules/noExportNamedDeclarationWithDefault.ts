@@ -2,7 +2,8 @@ import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
+import { Rule } from '../../types'
 import syntaxBlacklist from '../syntax'
 
 export class NoExportNamedDeclarationWithDefaultError implements SourceError {
@@ -27,6 +28,15 @@ export class NoExportNamedDeclarationWithDefaultError implements SourceError {
 const noExportNamedDeclarationWithDefault: Rule<es.ExportNamedDeclaration> = {
   name: 'no-declare-mutable',
   disableFromChapter: syntaxBlacklist['ExportDefaultDeclaration'],
+  testSnippets: [
+    [
+      `
+        const a = 0;
+        export { a as default };
+      `,
+      'Line 3: Export default declarations are not allowed'
+    ]
+  ],
 
   checkers: {
     ExportNamedDeclaration(node: es.ExportNamedDeclaration, _ancestors: [Node]) {

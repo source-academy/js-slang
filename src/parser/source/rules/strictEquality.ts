@@ -1,7 +1,8 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
+import { Rule } from '../../types'
 
 export class StrictEqualityError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -15,19 +16,24 @@ export class StrictEqualityError implements SourceError {
 
   public explain() {
     if (this.node.operator === '==') {
-      return 'Use === instead of =='
+      return 'Use === instead of ==.'
     } else {
-      return 'Use !== instead of !='
+      return 'Use !== instead of !=.'
     }
   }
 
   public elaborate() {
-    return '== and != is not a valid operator'
+    return '== and != are not valid operators.'
   }
 }
 
 const strictEquality: Rule<es.BinaryExpression> = {
   name: 'strict-equality',
+
+  testSnippets: [
+    ['const x = 1 == 2;', 'Line 1: Use === instead of ==.'],
+    ['const x = 1 != 2;', 'Line 1: Use !== instead of !=.'],
+  ],
 
   checkers: {
     BinaryExpression(node: es.BinaryExpression, _ancestors: [Node]) {

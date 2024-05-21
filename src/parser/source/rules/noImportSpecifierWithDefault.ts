@@ -2,7 +2,8 @@ import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
+import { Rule } from '../../types'
 import syntaxBlacklist from '../syntax'
 
 export class NoImportSpecifierWithDefaultError implements SourceError {
@@ -16,7 +17,7 @@ export class NoImportSpecifierWithDefaultError implements SourceError {
   }
 
   public explain() {
-    return 'Import default specifiers are not allowed'
+    return 'Import default specifiers are not allowed.'
   }
 
   public elaborate() {
@@ -25,8 +26,14 @@ export class NoImportSpecifierWithDefaultError implements SourceError {
 }
 
 const noImportSpecifierWithDefault: Rule<es.ImportSpecifier> = {
-  name: 'no-declare-mutable',
+  name: 'no-import-default-specifier',
   disableFromChapter: syntaxBlacklist['ImportDefaultSpecifier'],
+  testSnippets: [
+    [
+      'import { default as a } from "./a.js";',
+      'Line 1: Import default specifiers are not allowed.'
+    ],
+  ],
 
   checkers: {
     ImportSpecifier(node: es.ImportSpecifier, _ancestors: [Node]) {

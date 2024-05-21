@@ -2,7 +2,8 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { Chapter, ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
+import { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
 export class NoIfWithoutElseError implements SourceError {
@@ -33,6 +34,19 @@ export class NoIfWithoutElseError implements SourceError {
 const noIfWithoutElse: Rule<es.IfStatement> = {
   name: 'no-if-without-else',
   disableFromChapter: Chapter.SOURCE_3,
+  testSnippets: [
+    [
+      `
+      function f() {
+        if (true) {
+          return true;
+        }
+        return false;
+      }
+      `,
+      'Line 3: Missing "else" in "if-else" statement.'
+  ]
+  ],
   checkers: {
     IfStatement(node: es.IfStatement, _ancestors: [Node]) {
       if (!node.alternate) {

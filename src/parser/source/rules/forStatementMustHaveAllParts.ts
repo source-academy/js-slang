@@ -1,7 +1,8 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, SourceError } from '../../../types'
+import { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
 export class ForStatmentMustHaveAllParts implements SourceError {
@@ -30,8 +31,15 @@ export class ForStatmentMustHaveAllParts implements SourceError {
 const forStatementMustHaveAllParts: Rule<es.ForStatement> = {
   name: 'for-statement-must-have-all-parts',
 
+  testSnippets: [
+    ['let i = 0; for (; i < 0; i = i + 1) {}', 'Line 1: Missing init expression in for statement.'],
+    ['for (let i = 0; ; i = i + 1) {}', 'Line 1: Missing test expression in for statement.'],
+    ['for (let i = 0; i < 0;) {}', 'Line 1: Missing update expression in for statement'],
+  ],
+
+
   checkers: {
-    ForStatement(node: es.ForStatement) {
+    ForStatement(node) {
       const missingParts = ['init', 'test', 'update'].filter(part => node[part] === null)
       if (missingParts.length > 0) {
         return [new ForStatmentMustHaveAllParts(node, missingParts)]

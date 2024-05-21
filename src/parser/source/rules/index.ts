@@ -1,4 +1,5 @@
-import { Node, Rule } from '../../../types'
+import { Node } from '../../../types'
+import { Rule } from '../../types'
 import bracesAroundFor from './bracesAroundFor'
 import bracesAroundIfElse from './bracesAroundIfElse'
 import bracesAroundWhile from './bracesAroundWhile'

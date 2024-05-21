@@ -1,7 +1,8 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { Chapter, ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
+import { Rule } from '../../types'
 
 export class NoNullError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -25,6 +26,9 @@ export class NoNullError implements SourceError {
 const noNull: Rule<es.Literal> = {
   name: 'no-null',
   disableFromChapter: Chapter.SOURCE_2,
+  testSnippets: [
+   [ 'null;', 'Line 1: null literals are not allowed.']
+  ],
   checkers: {
     Literal(node: es.Literal, _ancestors: [Node]) {
       if (node.value === null) {

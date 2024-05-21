@@ -2,7 +2,8 @@ import { generate } from 'astring'
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
+import { Rule } from '../../types'
 
 export class MultipleDeclarationsError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -23,7 +24,7 @@ export class MultipleDeclarationsError implements SourceError {
   }
 
   public explain() {
-    return 'Multiple declaration in a single statement.'
+    return 'Multiple declarations in a single statement.'
   }
 
   public elaborate() {
@@ -34,6 +35,9 @@ export class MultipleDeclarationsError implements SourceError {
 
 const singleVariableDeclaration: Rule<es.VariableDeclaration> = {
   name: 'single-variable-declaration',
+  testSnippets: [
+    ['let i = 0, j = 0;', 'Line 1: Multiple declarations in a single statement.']
+  ],
 
   checkers: {
     VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {

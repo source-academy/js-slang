@@ -1,7 +1,8 @@
 import * as es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, SourceError } from '../../../types'
+import { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
 export class NoHolesInArrays implements SourceError {
@@ -28,6 +29,9 @@ export class NoHolesInArrays implements SourceError {
 
 const noHolesInArrays: Rule<es.ArrayExpression> = {
   name: 'no-holes-in-arrays',
+  testSnippets: [
+    ['[0,,0];', 'Line 1: No holes are allowed in array literals.']
+  ],
 
   checkers: {
     ArrayExpression(node: es.ArrayExpression) {
