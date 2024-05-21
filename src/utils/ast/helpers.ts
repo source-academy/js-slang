@@ -4,7 +4,7 @@ import assert from '../assert'
 import { simple } from '../walkers'
 import { ArrayMap } from '../dict'
 import type { Node } from '../../types'
-import { isImportDeclaration } from './typeGuards'
+import { isImportDeclaration, isVariableDeclaration } from './typeGuards'
 
 export function getModuleDeclarationSource(
   node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
@@ -45,15 +45,15 @@ export function mapIdentifiersToNames(ids: es.Identifier[]): string[] {
   return ids.map(({ name }) => name)
 }
 
-export function getIdentifiersFromVariableDeclaration(decl: es.VariableDeclaration) {
-  function internal(node: es.Pattern): es.Identifier | es.Identifier[] {
+export function getIdentifiersFromVariableDeclaration(decl: es.VariableDeclaration | es.Pattern) {
+  function internal(node: es.Pattern): es.Identifier[] {
     switch (node.type) {
       case 'ArrayPattern':
         return node.elements.flatMap(internal)
       case 'AssignmentPattern':
         return internal(node.left)
       case 'Identifier':
-        return node
+        return [node]
       case 'MemberExpression':
         throw new Error(
           'Should not get MemberExpressions as part of the id for a VariableDeclarator'
@@ -67,7 +67,10 @@ export function getIdentifiersFromVariableDeclaration(decl: es.VariableDeclarati
     }
   }
 
-  return decl.declarations.flatMap(({ id }) => internal(id))
+  if (isVariableDeclaration(decl)) {
+    return decl.declarations.flatMap(({ id }) => internal(id))
+  }
+  return internal(decl)
 }
 
 export function getDeclaredIdentifiers(
