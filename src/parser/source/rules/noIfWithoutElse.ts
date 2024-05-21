@@ -1,9 +1,9 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import { Chapter, ErrorSeverity, ErrorType, type Node, type SourceError } from '../../../types'
+import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
 export class NoIfWithoutElseError implements SourceError {
@@ -45,7 +45,7 @@ const noIfWithoutElse: Rule<es.IfStatement> = {
       }
       `,
       'Line 3: Missing "else" in "if-else" statement.'
-  ]
+    ]
   ],
   checkers: {
     IfStatement(node: es.IfStatement, _ancestors: [Node]) {

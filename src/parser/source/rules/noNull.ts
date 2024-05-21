@@ -26,9 +26,7 @@ export class NoNullError implements SourceError {
 const noNull: Rule<es.Literal> = {
   name: 'no-null',
   disableFromChapter: Chapter.SOURCE_2,
-  testSnippets: [
-   [ 'null;', 'Line 1: null literals are not allowed.']
-  ],
+  testSnippets: [['null;', 'Line 1: null literals are not allowed.']],
   checkers: {
     Literal(node: es.Literal, _ancestors: [Node]) {
       if (node.value === null) {

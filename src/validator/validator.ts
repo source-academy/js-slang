@@ -193,15 +193,11 @@ export function checkForUndefinedVariables(
   ) {
     identifiersIntroducedByNode.set(
       node,
-      new Set(
-        mapIdentifiersToNames(node.params.flatMap(getIdentifiersFromVariableDeclaration))
-      )
+      new Set(mapIdentifiersToNames(node.params.flatMap(getIdentifiersFromVariableDeclaration)))
     )
   }
 
-  function processFor(
-    node: es.ForOfStatement | es.ForInStatement
-  ) {
+  function processFor(node: es.ForOfStatement | es.ForInStatement) {
     if (isVariableDeclaration(node.left)) {
       identifiersIntroducedByNode.set(
         node,
@@ -247,7 +243,7 @@ export function checkForUndefinedVariables(
         }
       }
     },
-    Program: processBlock,
+    Program: processBlock
   })
   const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
 

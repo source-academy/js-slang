@@ -33,9 +33,7 @@ export class NoImplicitDeclareUndefinedError implements SourceError {
 
 const noImplicitDeclareUndefined: Rule<es.VariableDeclaration> = {
   name: 'no-implicit-declare-undefined',
-  testSnippets: [
-    ['let i;', 'Line 1: Missing value in variable declaration.']
-  ],
+  testSnippets: [['let i;', 'Line 1: Missing value in variable declaration.']],
 
   checkers: {
     VariableDeclaration(node: es.VariableDeclaration, ancestors: es.Node[]) {

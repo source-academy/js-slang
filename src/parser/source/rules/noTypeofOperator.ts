@@ -8,9 +8,7 @@ const noTypeofOperator: Rule<es.UnaryExpression> = {
   name: 'no-typeof-operator',
   disableForVariants: [Variant.TYPED],
 
-  testSnippets: [
-    ['typeof "string";', "Line 1: Operator 'typeof' is not allowed."]
-  ],
+  testSnippets: [['typeof "string";', "Line 1: Operator 'typeof' is not allowed."]],
 
   checkers: {
     UnaryExpression(node: es.UnaryExpression) {

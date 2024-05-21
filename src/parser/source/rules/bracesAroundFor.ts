@@ -1,9 +1,9 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import { ErrorSeverity, ErrorType, type Node, type SourceError } from '../../../types'
+import type { Rule } from '../../types'
 
 const errorMsg = 'Missing curly braces around "for" block.'
 
@@ -40,8 +40,8 @@ const bracesAroundFor: Rule<es.ForStatement> = {
         let j = 0;
         for (let i = 0; i < 1; i = i + 1) j = j + 1;
       `,
-      errorMsg,
-    ],
+      errorMsg
+    ]
   ],
   checkers: {
     ForStatement(node: es.ForStatement, _ancestors: [Node]) {

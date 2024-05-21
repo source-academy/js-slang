@@ -146,7 +146,10 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
         'const a = function() { return b; }',
         'Line 1: Name b not declared.'
       ],
-      ['FunctionExpression parameters are valid declarations', 'const a = function(b) { return b; }'],
+      [
+        'FunctionExpression parameters are valid declarations',
+        'const a = function(b) { return b; }'
+      ],
       ['FunctionExpressions can call themselves recursively', 'const a = function() { a(); }'],
 
       // For loops
@@ -171,19 +174,9 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
         'for (let i = 0; i < 0; i = i + 1) { a; }',
         'Line 1: Name a not declared.'
       ],
-      [
-        'for in statement declaration is valid',
-        'for (const [x, y] in []) { x; y; }',
-      ],
-      [
-        'for in statement is checked',
-        'for (const x in a) { x; }',
-        'Line 1: Name a not declared.'
-      ],
-      [
-        'for of statement declaration is valid',
-        'for (const {x, y} of []) { x; y; }',
-      ],
+      ['for in statement declaration is valid', 'for (const [x, y] in []) { x; y; }'],
+      ['for in statement is checked', 'for (const x in a) { x; }', 'Line 1: Name a not declared.'],
+      ['for of statement declaration is valid', 'for (const {x, y} of []) { x; y; }'],
       [
         'destructuring expression in for of is checked 1',
         `
@@ -196,32 +189,13 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
         'for ({x, y} of []) {}',
         'Line 1: Name x not declared.'
       ],
-      [
-        'for of statement is checked',
-        'for (const x in a) { x; }',
-        'Line 1: Name a not declared.'
-      ],
+      ['for of statement is checked', 'for (const x in a) { x; }', 'Line 1: Name a not declared.'],
 
       // Try statement
-      [
-        'try statement body is checked',
-        'try { a; } catch(e) {}',
-        'Line 1: Name a not declared.'
-      ],
-      [
-        'catch clauses are checked',
-        'try {} catch(e) { a; }',
-        'Line 1: Name a not declared.'
-      ],
-      [
-        'catch clause parameter is a valid identifier',
-        'try {} catch(e) { e; }',
-      ],
-      [
-        'finally blocks are checked',
-        'try {} finally { a; }',
-        'Line 1: Name a not declared.'
-      ],
+      ['try statement body is checked', 'try { a; } catch(e) {}', 'Line 1: Name a not declared.'],
+      ['catch clauses are checked', 'try {} catch(e) { a; }', 'Line 1: Name a not declared.'],
+      ['catch clause parameter is a valid identifier', 'try {} catch(e) { e; }'],
+      ['finally blocks are checked', 'try {} finally { a; }', 'Line 1: Name a not declared.'],
 
       // BlockStatements and Programs
       [

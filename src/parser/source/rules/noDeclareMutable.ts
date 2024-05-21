@@ -36,10 +36,7 @@ const noDeclareMutable: Rule<es.VariableDeclaration> = {
   disableFromChapter: Chapter.SOURCE_3,
 
   testSnippets: [
-    [
-      'let i = 0;',
-      'Line 1: Mutable variable declaration using keyword \'let\' is not allowed.',
-    ],
+    ['let i = 0;', "Line 1: Mutable variable declaration using keyword 'let' is not allowed."]
   ],
 
   checkers: {

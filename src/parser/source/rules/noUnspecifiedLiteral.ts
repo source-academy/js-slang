@@ -32,9 +32,7 @@ export class NoUnspecifiedLiteral implements SourceError {
 
 const noUnspecifiedLiteral: Rule<es.Literal> = {
   name: 'no-unspecified-literal',
-  testSnippets: [
-    ['const x = /hi/;', "Line 1: 'RegExp' literals are not allowed."]
-  ],
+  testSnippets: [['const x = /hi/;', "Line 1: 'RegExp' literals are not allowed."]],
   checkers: {
     Literal(node: es.Literal, _ancestors: [Node]) {
       if (node.value !== null && !specifiedLiterals.includes(typeof node.value)) {

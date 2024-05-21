@@ -35,9 +35,7 @@ export class MultipleDeclarationsError implements SourceError {
 
 const singleVariableDeclaration: Rule<es.VariableDeclaration> = {
   name: 'single-variable-declaration',
-  testSnippets: [
-    ['let i = 0, j = 0;', 'Line 1: Multiple declarations in a single statement.']
-  ],
+  testSnippets: [['let i = 0, j = 0;', 'Line 1: Multiple declarations in a single statement.']],
 
   checkers: {
     VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {

@@ -29,9 +29,7 @@ export class NoHolesInArrays implements SourceError {
 
 const noHolesInArrays: Rule<es.ArrayExpression> = {
   name: 'no-holes-in-arrays',
-  testSnippets: [
-    ['[0,,0];', 'Line 1: No holes are allowed in array literals.']
-  ],
+  testSnippets: [['[0,,0];', 'Line 1: No holes are allowed in array literals.']],
 
   checkers: {
     ArrayExpression(node: es.ArrayExpression) {

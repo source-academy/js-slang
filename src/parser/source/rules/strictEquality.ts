@@ -32,7 +32,7 @@ const strictEquality: Rule<es.BinaryExpression> = {
 
   testSnippets: [
     ['const x = 1 == 2;', 'Line 1: Use === instead of ==.'],
-    ['const x = 1 != 2;', 'Line 1: Use !== instead of !=.'],
+    ['const x = 1 != 2;', 'Line 1: Use !== instead of !=.']
   ],
 
   checkers: {

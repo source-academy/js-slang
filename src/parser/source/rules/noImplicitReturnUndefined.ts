@@ -31,12 +31,7 @@ export class NoImplicitReturnUndefinedError implements SourceError {
 
 const noImplicitReturnUndefined: Rule<es.ReturnStatement> = {
   name: 'no-implicit-return-undefined',
-  testSnippets: [
-    [
-      'function f() { return; }',
-      'Line 1: Missing value in return statement.'
-    ]
-  ],
+  testSnippets: [['function f() { return; }', 'Line 1: Missing value in return statement.']],
 
   checkers: {
     ReturnStatement(node: es.ReturnStatement, _ancestors: [Node]) {

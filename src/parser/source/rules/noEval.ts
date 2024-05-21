@@ -25,9 +25,7 @@ export class NoEval implements SourceError {
 
 const noEval: Rule<es.Identifier> = {
   name: 'no-eval',
-  testSnippets: [
-    ['eval("0;");', 'Line 1: eval is not allowed.']
-  ],
+  testSnippets: [['eval("0;");', 'Line 1: eval is not allowed.']],
 
   checkers: {
     Identifier(node: es.Identifier, _ancestors: [Node]) {

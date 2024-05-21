@@ -29,10 +29,7 @@ const noImportSpecifierWithDefault: Rule<es.ImportSpecifier> = {
   name: 'no-import-default-specifier',
   disableFromChapter: syntaxBlacklist['ImportDefaultSpecifier'],
   testSnippets: [
-    [
-      'import { default as a } from "./a.js";',
-      'Line 1: Import default specifiers are not allowed.'
-    ],
+    ['import { default as a } from "./a.js";', 'Line 1: Import default specifiers are not allowed.']
   ],
 
   checkers: {
