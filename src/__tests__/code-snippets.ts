@@ -4,7 +4,8 @@ import { defineBuiltin } from '../createContext'
 import { mockContext } from '../mocks/context'
 import { Chapter, type Value } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { expectFinishedResult, type TestBuiltins } from '../utils/testing'
+import { type TestBuiltins } from '../utils/testing'
+import { expectFinishedResult, expectResult } from '../utils/testing/testers'
 import { expectResultsToEqual, testMultipleCases } from '../utils/testing/testers'
 
 async function testCodeSnippet(
@@ -181,6 +182,11 @@ describe('Test basic code snippets', () => {
       Chapter.SOURCE_3
     ]
   ])
+
+  test('Arrow function definition returns itself', () => {
+    return expectResult('() => 42;', Chapter.SOURCE_1)
+      .toMatchInlineSnapshot(`[Function]`)
+  })
 })
 
 describe('Test equal', () => {

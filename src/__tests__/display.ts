@@ -1,8 +1,6 @@
-import { runInContext } from '..'
 import { Chapter } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { createTestContext, expectFinishedResult, expectParsedError } from '../utils/testing'
-import { testMultipleCases } from '../utils/testing/testers'
+import { testMultipleCases, expectParsedError, expectDisplayResult } from '../utils/testing/testers'
 
 testMultipleCases<[string, ...string[]]>(
   [
@@ -36,18 +34,6 @@ testMultipleCases<[string, ...string[]]>(
       '(x, y) => x + y'
     ],
     [
-      'display can be used to display functions',
-      `
-      function f() { return 0; }
-      display(f);
-    `,
-      stripIndent`
-      function f() {
-        return 0; 
-      }
-    `
-    ],
-    [
       'displaying builtins hides their implementation',
       'display(pair);',
       stripIndent`
@@ -64,23 +50,39 @@ testMultipleCases<[string, ...string[]]>(
       '{"a": 1, "b": 2, "c": {"d": 3}}'
     ]
   ],
-  async ([code, ...expected]) => {
-    const context = createTestContext({ chapter: Chapter.LIBRARY_PARSER })
-    const result = await runInContext(code, context)
-
-    expectFinishedResult(result)
-    expect(context.displayResult).toEqual(expected)
+  ([code, ...expected]) => {
+    return expectDisplayResult(code, Chapter.LIBRARY_PARSER).toEqual(expected)
   }
 )
 
+test('display can be used to display functions', () => {
+  return expectDisplayResult(`display(x => x); display((x, y) => x + y);`, Chapter.LIBRARY_PARSER)
+    .toMatchInlineSnapshot(`
+Array [
+  "x => x",
+  "(x, y) => x + y",
+]
+`)
+})
+
+test('String representation of builtins are nice', () => {
+  return expectDisplayResult('display(pair);', Chapter.SOURCE_2).toMatchInlineSnapshot(`
+  Array [
+  "function pair(left, right) {
+    [implementation hidden]
+  }"
+  ]
+  `)
+})
+
 test('display throw error if second argument is non-string when used', () => {
-  return expectParsedError(`display(31072020, 0xDEADC0DE);`).toMatchInlineSnapshot(
-    `"Line 1: TypeError: display expects the second argument to be a string"`
+  return expectParsedError(`display(31072020, 0xDEADC0DE);`, Chapter.LIBRARY_PARSER).toEqual(
+    'Line 1: TypeError: display expects the second argument to be a string'
   )
 })
 
 test('display with no arguments throws an error', () => {
-  return expectParsedError(`display();`, { chapter: Chapter.LIBRARY_PARSER }).toMatchInlineSnapshot(
-    `"Line 1: Expected 1 or more arguments, but got 0."`
+  return expectParsedError(`display();`, Chapter.LIBRARY_PARSER).toEqual(
+    'Line 1: Expected 1 or more arguments, but got 0.'
   )
 })
