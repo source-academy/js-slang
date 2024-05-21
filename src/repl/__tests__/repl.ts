@@ -4,6 +4,7 @@ import { Chapter } from '../../types'
 import { asMockedFunc } from '../../utils/testing'
 import { getReplCommand } from '../repl'
 import { chapterParser } from '../utils'
+import { testMultipleCases } from '../../utils/testing/testers'
 
 const readFileMocker = jest.fn()
 
@@ -129,7 +130,7 @@ describe('Test repl command', () => {
         "Error: [/a.js] Line 1: Module 'unknown_module' not found."
       ]
     ]
-    test.each(testCases)('%s', async (_, args, files, expected) => {
+    testMultipleCases(testCases, async ([args, files, expected]) => {
       mockReadFiles(files)
       await runCommand(...args)
       expect(mockedConsoleLog.mock.calls[0][0]).toEqual(expected)

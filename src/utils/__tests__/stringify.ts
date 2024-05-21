@@ -11,18 +11,6 @@ const cases: TestCase[] = [
   ['String representation of string are nice', 'a string', '"a string"'],
   ['String representation of booleans are nice', true, 'true'],
   [
-    'String representation of functions are nice',
-    // @ts-ignore
-    function f(x, y) {
-      return x
-    },
-    stripIndent`
-      function f(x, y) {
-        return x;
-      }
-      `
-  ],
-  [
     'String representation of arrow functions are nice',
     // @ts-ignore
     (x, y) => x,
@@ -312,6 +300,19 @@ test('Correctly handles circular lists with multiple entry points', () => {
   )
 })
 
+test('String representation of functions are nice', () => {
+  // @ts-ignore
+  function f(x, y) {
+    return x
+  }
+
+  return expect(stringify(f)).toMatchInlineSnapshot(`
+      "function f(x, y) {
+        return x;
+      }"
+    `)
+})
+
 test('String representation of non literal objects is nice', () => {
   const errorMsg: string = 'This is an error'
   const errorObj: Error = new Error(errorMsg)
@@ -343,35 +344,55 @@ test('String representation of objects with toReplString member calls toReplStri
 })
 
 test('String representation of builtins are nice', () => {
-  return expectResult(`stringify(pair);`, Chapter.SOURCE_2).toEqual(
+  return expectResult(
     stripIndent`
-      function pair(left, right) {
-        [implementation hidden]
-      }`
-  )
+  stringify(pair);
+  `,
+    Chapter.SOURCE_2
+  ).toMatchInlineSnapshot(`
+            "function pair(left, right) {
+            	[implementation hidden]
+            }"
+          `)
 })
 
 test('String representation with 1 space indent', () => {
-  return expectResult("stringify(parse('x=>x;'), 1);", Chapter.SOURCE_4).toEqual(`
-    ["lambda_expression",
-    [[["name", ["x", null]], null],
-    [["return_statement", [["name", ["x", null]], null]], null]]]
-  `)
+  return expectResult(
+    stripIndent`
+  stringify(parse('x=>x;'), 1);
+  `,
+    Chapter.SOURCE_4
+  ).toMatchInlineSnapshot(`
+            "[\\"lambda_expression\\",
+            [[[\\"name\\", [\\"x\\", null]], null],
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
+          `)
 })
 
 test('String representation with default (2 space) indent', () => {
-  return expectResult('stringify(parse("x=>x;"));', Chapter.SOURCE_4).toEqual(`
-      [ "lambda_expression",
-      [ [["name", ["x", null]], null],
-      [["return_statement", [["name", ["x", null]], null]], null]]]`)
+  return expectResult(
+    stripIndent`
+  stringify(parse('x=>x;'));
+  `,
+    Chapter.SOURCE_4
+  ).toMatchInlineSnapshot(`
+            "[ \\"lambda_expression\\",
+            [ [[\\"name\\", [\\"x\\", null]], null],
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
+          `)
 })
 
 test('String representation with more than 10 space indent should trim to 10 space indent', () => {
-  return expectResult('stringify(parse("x=>x;"), 100);', Chapter.SOURCE_4).toEqual(`
-[         "lambda_expression",
-          [         [["name", ["x", null]], null],
-          [["return_statement", [["name", ["x", null]], null]], null]]]
-  `)
+  return expectResult(
+    stripIndent`
+  stringify(parse('x=>x;'), 100);
+  `,
+    Chapter.SOURCE_4
+  ).toMatchInlineSnapshot(`
+            "[         \\"lambda_expression\\",
+            [         [[\\"name\\", [\\"x\\", null]], null],
+            [[\\"return_statement\\", [[\\"name\\", [\\"x\\", null]], null]], null]]]"
+          `)
 })
 
 test('lineTreeToString', () => {

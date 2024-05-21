@@ -85,11 +85,7 @@ expectParsedErrorsToEqual(
       'function any(x, x) {}',
       'Line 1: SyntaxError: Argument name clash (1:16)'
     ],
-    [
-      'No empty statements',
-      ';',
-      'Line 1: Empty statements are not allowed.'
-    ]
+    ['No empty statements', ';', 'Line 1: Empty statements are not allowed.']
   ],
   Chapter.SOURCE_4
 )

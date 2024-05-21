@@ -320,12 +320,9 @@ describe.each([
     `
   ],
 
-  [
-    Chapter.LIBRARY_PARSER,
-    `import { default as x } from './a.js';`,
-  ],
+  [Chapter.LIBRARY_PARSER, `import { default as x } from './a.js';`],
   [Chapter.LIBRARY_PARSER, `import * as a from 'one_module';`]
-])("%#", (chapter, code) => {
+])('%#', (chapter, code) => {
   test(`Should pass for Chapter ${chapter}`, () => {
     expect(testParse(chapter, code)).toEqual(true)
   })

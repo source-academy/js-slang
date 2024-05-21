@@ -1,9 +1,9 @@
 import type { Program } from 'estree'
-import { Chapter, type Context } from '../../types'
+import { Chapter, type Context, type Finished } from '../../types'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
-import { parseError, runInContext } from '../..'
-import { expectFinishedResult } from '.'
+import { parseError, runInContext, type Result } from '../..'
+import { createTestContext } from '.'
 
 export type TestCase<T extends Array<any>> = [string, ...T]
 
@@ -82,9 +82,12 @@ export function astTester<ExpectedError>(
 }
 
 export function expectResult(code: string, chapter: Chapter) {
-  const context = mockContext(chapter)
+  const context = createTestContext({ chapter })
   return expect(
     runInContext(code, context).then(result => {
+      if (result.status === 'error') {
+        console.log(context.errors)
+      }
       expectFinishedResult(result)
       return result.value
     })
@@ -149,4 +152,18 @@ export function expectParsedErrorsToEqual(
     includeIndex,
     timeout
   )
+}
+
+export function expectFinishedResult(result: Result): asserts result is Finished {
+  expect(result.status).toEqual('finished')
+}
+
+export function expectDisplayResult(code: string, chapter: Chapter) {
+  const context = createTestContext({ chapter })
+  return expect(
+    runInContext(code, context).then(result => {
+      expectFinishedResult(result)
+      return context.displayResult
+    })
+  ).resolves
 }

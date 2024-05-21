@@ -1,7 +1,7 @@
 import { mockContext } from '../../mocks/context'
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult } from '../../utils/testing'
+import { expectFinishedResult } from '../../utils/testing/testers'
 import { runCodeInSource } from '../sourceRunner'
 
 jest.mock('../../modules/loader/loaders')

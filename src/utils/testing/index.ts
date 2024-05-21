@@ -14,7 +14,6 @@ import {
   type SourceError,
   type Value,
   Variant,
-  type Finished,
   type Result
 } from '../../types'
 import { stringify } from '../stringify'
@@ -306,10 +305,6 @@ export function expectParsedErrorNoSnapshot(code: string, options: TestOptions =
 
 export function asMockedFunc<T extends (...args: any[]) => any>(func: T) {
   return func as MockedFunction<T>
-}
-
-export function expectFinishedResult(result: Result): asserts result is Finished {
-  expect(result.status).toEqual('finished')
 }
 
 export function expectTrue(cond: boolean): asserts cond {
