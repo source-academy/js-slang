@@ -1,186 +1,135 @@
 import { Chapter } from '../../types'
-import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectResult } from '../../utils/testing'
+import { expectParsedErrorsToEqual, expectResultsToEqual } from '../../utils/testing/testers'
 
-test('parse_int with valid args is ok, radix 2', () => {
-  return expectResult(
-    stripIndent`
-    parse_int('1100101010101', 2);
-  `,
-    { chapter: Chapter.SOURCE_1, native: true }
-  ).toBe(parseInt('1100101010101', 2))
+describe('Test regular function', () => {
+  expectResultsToEqual([
+    // arity
+    [
+      'arity with nullary function is ok',
+      'arity(math_random);',
+      0
+    ],
+    [
+      'arity with function with parameters is ok',
+      'arity(arity);',
+      1
+    ],
+    [
+      'arity ignores the rest parameter',
+      'arity(display);',
+      1
+    ],
+    [
+      'arity with user-made function is ok',
+      `
+        function test(x, y) { return x; }
+        arity(test);
+      `,
+      2
+    ],
+    [
+      'arity with user-made lambda function is ok',
+      `
+        const test = (x, y) => x;
+        arity(test);
+      `,
+      2
+    ],
+    [
+      'arity with user-made nullary function is ok',
+      'arity(() => undefined);',
+      0
+    ],
+    [
+      'arity with user-made function with rest parameter is ok',
+      `
+        function test(...args) { return 0; }
+        arity(test);
+      `,
+      0
+    ],
+
+    // char_at
+    [
+      'char_at with valid args is ok',
+      'char_at("123", 0);',
+      '1'
+    ],
+    [
+      'char_at with valid args (but index out of bounds) returns undefined',
+      'char_at("123", 3);',
+      undefined
+    ],
+
+    // parse_int
+    [
+      'parse_int with valid args is ok',
+      "parse_int('1100101010101', 2);",
+      parseInt('1100101010101', 2)
+    ],
+    [
+      'parse_int with valid args is ok, radix 36',
+      "parse_int('uu1', 36);",
+      parseInt('uu1', 36)
+    ],
+    [
+      'parse_int with valid args is ok, but invalid str for radix',
+      "parse_int('uu1', 2);",
+      parseInt('uu1', 2)
+    ]
+  ], Chapter.SOURCE_3)
 })
 
-test('parse_int with valid args is ok, radix 36', () => {
-  return expectResult(
-    stripIndent`
-    parse_int('uu1', 36);
-  `,
-    { chapter: Chapter.SOURCE_1, native: true }
-  ).toBe(parseInt('uu1', 36))
-})
+describe('Test errors', () => {
+  expectParsedErrorsToEqual([
+    [
+      'arity with non-function arg f throws error',
+      'arity("function");',
+      "Line 1: Error: arity expects a function as argument"
+    ],
 
-test('parse_int with valid args is ok, but invalid str for radix', () => {
-  return expectResult(
-    stripIndent`
-    parse_int('uu1', 2);
-  `,
-    { chapter: Chapter.SOURCE_1, native: true }
-  ).toBe(parseInt('uu1', 2))
-})
+    // char_at    
+    [
+      'char_at with non string first argument errors',
+      'char_at(42, 123);',
+      "Line 1: Error: char_at expects the first argument to be a string."
+    ],
+    [
+      'char_at with non nonnegative integer second argument errors 1',
+      "char_at('', -1);",
+      "Line 1: Error: char_at expects the second argument to be a nonnegative integer."
+    ],
+    [
+      'char_at with non nonnegative integer second argument errors',
+      `char_at('', "");`,
+      "Line 1: Error: char_at expects the second argument to be a nonnegative integer."
+    ],
 
-test('parse_int with non-string arg str throws error', () => {
-  return expectParsedError(stripIndent`
-    parse_int(42, 2);
-  `).toMatchInlineSnapshot(
-    `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
-  )
-})
-
-test('parse_int with non-integer arg radix throws error', () => {
-  return expectParsedError(stripIndent`
-    parse_int(42, 2.1);
-  `).toMatchInlineSnapshot(
-    `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
-  )
-})
-
-test('parse_int with radix outside [2, 36] throws error, radix=1', () => {
-  return expectParsedError(stripIndent`
-    parse_int('10', 1);
-  `).toMatchInlineSnapshot(
-    `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
-  )
-})
-
-test('parse_int with radix outside [2, 36] throws error, radix=37', () => {
-  return expectParsedError(stripIndent`
-    parse_int('10', 37);
-  `).toMatchInlineSnapshot(
-    `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
-  )
-})
-
-test('parse_int with string arg radix throws error', () => {
-  return expectParsedError(stripIndent`
-    parse_int(42, '2');
-  `).toMatchInlineSnapshot(
-    `"Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."`
-  )
-})
-
-test('char_at with non string first argument errors', () => {
-  return expectParsedError(stripIndent`
-    char_at(42, 123);
-  `).toMatchInlineSnapshot(`"Line 1: Error: char_at expects the first argument to be a string."`)
-})
-
-test('char_at with non nonnegative integer second argument errors', () => {
-  return expectParsedError(stripIndent`
-    char_at('', -1);
-  `).toMatchInlineSnapshot(
-    `"Line 1: Error: char_at expects the second argument to be a nonnegative integer."`
-  )
-})
-
-test('char_at with non nonnegative integer second argument errors', () => {
-  return expectParsedError(stripIndent`
-    char_at('', "");
-  `).toMatchInlineSnapshot(
-    `"Line 1: Error: char_at expects the second argument to be a nonnegative integer."`
-  )
-})
-
-test('char_at with valid args is ok', () => {
-  return expectResult(
-    stripIndent`
-    char_at("123", 0);
-  `
-  ).toBe('1')
-})
-
-test('char_at with valid args (but index out of bounds) returns undefined', () => {
-  return expectResult(
-    stripIndent`
-    char_at("123", 3);
-  `
-  ).toBe(undefined)
-})
-
-test('arity with nullary function is ok', () => {
-  return expectResult(
-    stripIndent`
-    arity(math_random);
-  `,
-    { chapter: Chapter.SOURCE_1, native: true }
-  ).toBe(0)
-})
-
-test('arity with function with parameters is ok', () => {
-  return expectResult(
-    stripIndent`
-    arity(arity);
-  `,
-    { chapter: Chapter.SOURCE_1, native: true }
-  ).toBe(1)
-})
-
-test('arity ignores the rest parameter', () => {
-  return expectResult(
-    stripIndent`
-    arity(display);
-  `,
-    { chapter: Chapter.SOURCE_1, native: true }
-  ).toBe(1)
-})
-
-test('arity with user-made function is ok', () => {
-  return expectResult(
-    stripIndent`
-    function test(x, y) {
-      return x + y;
-    }
-    arity(test);
-  `,
-    { chapter: Chapter.SOURCE_1, native: true }
-  ).toBe(2)
-})
-
-test('arity with user-made lambda function is ok', () => {
-  return expectResult(
-    stripIndent`
-    arity(x => x);
-  `,
-    { chapter: Chapter.SOURCE_1, native: true }
-  ).toBe(1)
-})
-
-test('arity with user-made nullary function is ok', () => {
-  return expectResult(
-    stripIndent`
-    arity(() => undefined);
-  `,
-    { chapter: Chapter.SOURCE_1, native: true }
-  ).toBe(0)
-})
-
-test('arity with user-made function with rest parameter is ok', () => {
-  return expectResult(
-    stripIndent`
-    function test(...xs) {
-      return xs;
-    }
-    arity(test);
-  `,
-    { chapter: Chapter.SOURCE_3, native: true }
-  ).toBe(0)
-})
-
-test('arity with non-function arg f throws error', () => {
-  return expectParsedError(
-    stripIndent`
-    arity('function');
-  `,
-    { chapter: Chapter.SOURCE_1, native: true }
-  ).toMatchInlineSnapshot(`"Line 1: Error: arity expects a function as argument"`)
+    // parse_int
+    [
+      'parse_int with non-string arg str throws error',
+      'parse_int(42, 2);',
+      "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."
+    ],
+    [
+      'parse_int with non-integer arg radix throws error',
+      'parse_int(42, 2.1);',
+      "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."
+    ],
+    [
+      'parse_int with radix outside [2, 36] throws error, radix=1', 
+      "parse_int('10', 1);",
+      "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."
+    ],
+    [
+      'parse_int with radix outside [2, 36] throws error, radix=37',
+      "parse_int('10', 37);",
+      "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."
+    ],
+    [
+      'parse_int with string arg radix throws error',
+      "parse_int(42, '2');",
+      "Line 1: Error: parse_int expects two arguments a string s, and a positive integer i between 2 and 36, inclusive."
+    ]
+  ], Chapter.SOURCE_3)
 })

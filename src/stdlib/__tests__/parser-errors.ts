@@ -8,7 +8,7 @@ test('Blatant syntax error', () => {
     stringify(parse("'"), undefined, 2);
     `,
     Chapter.SOURCE_4
-  ).toEqual("Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)")
+  ).toEqual('Line 1: ParseError: SyntaxError: Unterminated string constant (1:0)')
 })
 
 test('Blacklisted syntax', () => {
@@ -17,5 +17,5 @@ test('Blacklisted syntax', () => {
     stringify(parse("function* f() { yield 1; } f();"), undefined, 2);
     `,
     Chapter.SOURCE_4
-  ).toEqual("Line 1: ParseError: Yield expressions are not allowed.")
+  ).toEqual('Line 1: ParseError: Yield expressions are not allowed.')
 })
