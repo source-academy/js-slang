@@ -2,8 +2,7 @@ import { list, set_tail, tail } from '../../stdlib/list'
 import { Chapter, type Value } from '../../types'
 import { stripIndent } from '../formatters'
 import { lineTreeToString, stringDagToLineTree, stringify, valueToStringDag } from '../stringify'
-import { expectResult } from '../testing'
-import { testMultipleCases } from '../testing/testers'
+import { expectResult, testMultipleCases } from '../testing/testers'
 
 type TestCase = [desc: string, valueToStringify: Value, expected: string]
 const cases: TestCase[] = [
@@ -344,7 +343,7 @@ test('String representation of objects with toReplString member calls toReplStri
 })
 
 test('String representation of builtins are nice', () => {
-  return expectResult(`stringify(pair);`, { chapter: Chapter.SOURCE_2 }).toEqual(
+  return expectResult(`stringify(pair);`, Chapter.SOURCE_2).toEqual(
     stripIndent`
       function pair(left, right) {
         [implementation hidden]
@@ -353,7 +352,7 @@ test('String representation of builtins are nice', () => {
 })
 
 test('String representation with 1 space indent', () => {
-  return expectResult("stringify(parse('x=>x;'), 1);", { chapter: Chapter.SOURCE_4 }).toEqual(`
+  return expectResult("stringify(parse('x=>x;'), 1);", Chapter.SOURCE_4).toEqual(`
     ["lambda_expression",
     [[["name", ["x", null]], null],
     [["return_statement", [["name", ["x", null]], null]], null]]]
@@ -361,14 +360,14 @@ test('String representation with 1 space indent', () => {
 })
 
 test('String representation with default (2 space) indent', () => {
-  return expectResult('stringify(parse("x=>x;"));', { chapter: Chapter.SOURCE_4 }).toEqual(`
+  return expectResult('stringify(parse("x=>x;"));', Chapter.SOURCE_4).toEqual(`
       [ "lambda_expression",
       [ [["name", ["x", null]], null],
       [["return_statement", [["name", ["x", null]], null]], null]]]`)
 })
 
 test('String representation with more than 10 space indent should trim to 10 space indent', () => {
-  return expectResult('stringify(parse("x=>x;"), 100);', { chapter: Chapter.SOURCE_4 }).toEqual(`
+  return expectResult('stringify(parse("x=>x;"), 100);', Chapter.SOURCE_4).toEqual(`
 [         "lambda_expression",
           [         [["name", ["x", null]], null],
           [["return_statement", [["name", ["x", null]], null]], null]]]

@@ -1,10 +1,15 @@
+import { mockContext } from '../../mocks/context'
 import { Chapter } from '../../types'
-import { stripIndent } from '../../utils/formatters'
-import { snapshotFailure, snapshotSuccess } from '../../utils/testing'
+import { parse } from '../parser'
 
-jest.mock('../../modules/loader/loaders')
+function testParse(chapter: Chapter, code: string) {
+  const context = mockContext(chapter)
+  parse(code, context)
 
-test.each([
+  return context.errors.length === 0
+}
+
+describe.each([
   [Chapter.SOURCE_1, ''],
 
   [
@@ -88,20 +93,6 @@ test.each([
     Chapter.SOURCE_2,
     `
     null;
-    `
-  ],
-
-  [
-    Chapter.SOURCE_2,
-    `
-    pair(1, null);
-    `
-  ],
-
-  [
-    Chapter.SOURCE_2,
-    `
-    list(1);
     `
   ],
 
@@ -331,34 +322,19 @@ test.each([
 
   [
     Chapter.LIBRARY_PARSER,
-    `
-    import { default as x } from './a.js';
-    `,
-    // Skip the success tests because the imported file does not exist.
-    true
+    `import { default as x } from './a.js';`,
   ],
-  [Chapter.LIBRARY_PARSER, `import * as a from 'one_module';`, true]
-] as [Chapter, string, boolean | undefined][])(
-  'Syntaxes are allowed in the chapter they are introduced %#',
-  (chapter: Chapter, snippet: string, skipSuccessTests: boolean = false) => {
-    snippet = stripIndent(snippet)
-    const parseSnippet = `parse(${JSON.stringify(snippet)});`
-    const tests: ReturnType<typeof snapshotSuccess>[] = []
-    if (!skipSuccessTests) {
-      tests.push(
-        snapshotSuccess(snippet, { chapter, native: chapter !== Chapter.LIBRARY_PARSER }, 'passes')
-      )
-      tests.push(
-        snapshotSuccess(
-          parseSnippet,
-          { chapter: Math.max(4, chapter), native: true },
-          'parse passes'
-        )
-      )
-    }
-    if (chapter > 1) {
-      tests.push(snapshotFailure(snippet, { chapter: chapter - 1 }, 'fails a chapter below'))
-    }
-    return Promise.all(tests)
+  [Chapter.LIBRARY_PARSER, `import * as a from 'one_module';`]
+])("%#", (chapter, code) => {
+  test(`Should pass for Chapter ${chapter}`, () => {
+    expect(testParse(chapter, code)).toEqual(true)
+  })
+
+  if (chapter > 1) {
+    // Parsing should fail for the chapter below the one they
+    // are introduced in
+    test(`Should fail for Chapter ${chapter - 1}`, () => {
+      expect(testParse(chapter - 1, code)).toEqual(false)
+    })
   }
-)
+})

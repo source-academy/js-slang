@@ -5,7 +5,7 @@ import { mockContext } from '../mocks/context'
 import { Chapter, type Value } from '../types'
 import { stripIndent } from '../utils/formatters'
 import { expectFinishedResult, type TestBuiltins } from '../utils/testing'
-import { testMultipleCases } from '../utils/testing/testers'
+import { expectResultsToEqual, testMultipleCases } from '../utils/testing/testers'
 
 async function testCodeSnippet(
   code: string,
@@ -26,138 +26,134 @@ async function testCodeSnippet(
 }
 
 describe('Test basic code snippets', () => {
-  type TestCase =
-    | [code: string, expected: Value]
-    | [code: string, expected: Value, chapter: Chapter]
-  testMultipleCases<TestCase>(
-    [
-      ['Empty code returns undefined', '', undefined],
-      ['Single string evaluates to itself', '"42";', '42'],
-      ['Multiline string evaluates to itself', '"1\\n1";', '1\n1'],
-      ['Single number evaluates to itself', '42;', 42],
-      ['Single boolean evaluates to itself', 'true;', true],
+  expectResultsToEqual([
+    ['Empty code returns undefined', '', undefined],
+    ['Single string evaluates to itself', '"42";', '42'],
+    ['Multiline string evaluates to itself', '"1\\n1";', '1\n1'],
+    ['Single number evaluates to itself', '42;', 42],
+    ['Single boolean evaluates to itself', 'true;', true],
 
-      [
-        'Assignment has value',
-        `
+    [
+      'Assignment has value',
+      `
           let a = 1;
           let b = a = 4;
           b === 4 && a === 4;
         `,
-        true,
-        Chapter.SOURCE_3
-      ],
+      true,
+      Chapter.SOURCE_3
+    ],
 
-      // Arrays
-      [
-        'Array assignment has value',
-        `
+    // Arrays
+    [
+      'Array assignment has value',
+      `
           let arr = [];
           const a = arr[0] = 1;
           const b = arr[1] = arr[2] = 4;
           arr[0] === 1 && arr[1] === 4 && arr[2] === 4;
         `,
-        true,
-        Chapter.SOURCE_3
-      ],
-      [
-        'Accessing array at non-existent index returns undefined',
-        `
+      true,
+      Chapter.SOURCE_3
+    ],
+    [
+      'Accessing array at non-existent index returns undefined',
+      `
           const a = [1,2];
           a[3];
         `,
-        undefined,
-        Chapter.SOURCE_4
-      ],
+      undefined,
+      Chapter.SOURCE_4
+    ],
 
-      // Objects
-      [
-        'Simple object assignment and retrieval',
-        `
+    // Objects
+    [
+      'Simple object assignment and retrieval',
+      `
           const o = {};
           o.a = 1;
           o.a;
         `,
-        1,
-        Chapter.LIBRARY_PARSER
-      ],
-      [
-        'Deep object assignment and retrieval',
-        `
+      1,
+      Chapter.LIBRARY_PARSER
+    ],
+    [
+      'Deep object assignment and retrieval',
+      `
           const o = {};
           o.a = {};
           o.a.b = {};
           o.a.b.c = "string";
           o.a.b.c;
         `,
-        'string',
-        Chapter.LIBRARY_PARSER
-      ],
-      [
-        'Accessing non-existent property on object returns undefined',
-        `
+      'string',
+      Chapter.LIBRARY_PARSER
+    ],
+    [
+      'Accessing non-existent property on object returns undefined',
+      `
           const o = {};
           o.nonexistent;
         `,
-        undefined,
-        Chapter.LIBRARY_PARSER
-      ],
+      undefined,
+      Chapter.LIBRARY_PARSER
+    ],
 
-      // Control structures
-      [
-        'true if with empty block works',
-        `
+    // Control structures
+    [
+      'true if with empty block works',
+      `
           if (true) {
           } else {}
         `,
-        undefined
-      ],
-      [
-        'true if with non-empty block works',
-        `
+      undefined
+    ],
+    [
+      'true if with non-empty block works',
+      `
           if (true) { 1; }
           else {}
         `,
-        1
-      ],
-      [
-        'false if with empty else works',
-        `
+      1
+    ],
+    [
+      'false if with empty else works',
+      `
           if (false) {}
           else {}
         `,
-        undefined
-      ],
-      [
-        'false if with non empty else works',
-        `
+      undefined
+    ],
+    [
+      'false if with non empty else works',
+      `
           if (false) {}
           else { 2; }
         `,
-        2
-      ],
+      2
+    ],
 
-      // Builtins,
-      ['Display returns the value it is displaying', '25*display(1+1);', 50],
-      [
-        'apply_in_underlying_javascript',
-        'apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));',
-        60,
-        Chapter.SOURCE_4
-      ],
+    // Builtins,
+    ['Display returns the value it is displaying', '25*display(1+1);', 50],
+    [
+      'apply_in_underlying_javascript',
+      'apply_in_underlying_javascript((a, b, c) => a * b * c, list(2, 5, 6));',
+      60,
+      Chapter.SOURCE_4
+    ],
 
-      // General snippets
-      [
-        'Factorial arrow function',
-        `
+    // General snippets
+    [
+      'Factorial arrow function',
+      `
           const fac = (i) => i === 1 ? 1 : i * fac(i-1);
           fac(5);
         `,
-        120
-      ],
-      [
-        'Rest parameters work',
-        `
+      120
+    ],
+    [
+      'Rest parameters work',
+      `
           function rest(a, b, ...c) {
             let sum = a + b;
             for (let i = 0; i < array_length(c); i = i + 1) {
@@ -168,12 +164,12 @@ describe('Test basic code snippets', () => {
           rest(1, 2); // no error
           rest(1, 2, ...[3, 4, 5],  ...[6, 7], ...[]);
         `,
-        28,
-        Chapter.SOURCE_3
-      ],
-      [
-        'Can overwrite lets when assignment is allowed',
-        `
+      28,
+      Chapter.SOURCE_3
+    ],
+    [
+      'Can overwrite lets when assignment is allowed',
+      `
           function test() {
             let variable = false;
             variable = true;
@@ -181,17 +177,10 @@ describe('Test basic code snippets', () => {
           }
           test();
         `,
-        true,
-        Chapter.SOURCE_3
-      ]
-    ],
-    async c => {
-      const chapter = c.length === 3 ? c[2] : Chapter.SOURCE_1
-      const [code, expected] = c
-
-      return testCodeSnippet(code, expected, chapter)
-    }
-  )
+      true,
+      Chapter.SOURCE_3
+    ]
+  ])
 })
 
 describe('Test equal', () => {

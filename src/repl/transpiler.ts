@@ -18,9 +18,7 @@ import {
 } from './utils'
 
 export const transpilerCommand = new Command('transpiler')
-  .addOption(
-    getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.GPU, Variant.NATIVE])
-  )
+  .addOption(getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.GPU, Variant.NATIVE]))
   .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
   .option(
     '-p, --pretranspile',

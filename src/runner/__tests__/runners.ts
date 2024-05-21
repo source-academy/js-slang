@@ -5,7 +5,7 @@ import { FatalSyntaxError } from '../../parser/errors'
 import { Chapter, Finished, Variant, type ExecutionMethod } from '../../types'
 import { locationDummyNode } from '../../utils/ast/astCreator'
 import { CodeSnippetTestCase, expectFinishedResult } from '../../utils/testing'
-import { testMultipleCases } from '../../utils/testing/testers'
+import { expectResultsToEqual } from '../../utils/testing/testers'
 import { htmlErrorHandlingScript } from '../htmlRunner'
 
 const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
@@ -249,12 +249,13 @@ describe('Test tail call return for native runner', () => {
   //     }
   //     f(10000);
   //   `).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))
-  // }, 10000) 
+  // }, 10000)
 
-  testMultipleCases([
+  expectResultsToEqual(
     [
-      'Simple taill call returns work',
-      `
+      [
+        'Simple tail call returns work',
+        `
       function f(x, y) {
         if (x <= 0) {
           return y;
@@ -264,21 +265,21 @@ describe('Test tail call return for native runner', () => {
       }
       f(5000, 5000);
       `,
-      10000
-    ],
-    [
-      'Tail call in conditional expressions work',
-      `
+        10000
+      ],
+      [
+        'Tail call in conditional expressions work',
+        `
         function f(x, y) {
           return x <= 0 ? y : f(x-1, y+1);
         }
         f(5000, 5000);
       `,
-      10000
-    ],
-    [
-      'Tail call in boolean operators work',
-      `
+        10000
+      ],
+      [
+        'Tail call in boolean operators work',
+        `
         function f(x, y) {
           if (x <= 0) {
             return y;
@@ -288,21 +289,21 @@ describe('Test tail call return for native runner', () => {
         }
         f(5000, 5000);
       `,
-      10000
-    ],
-    [
-      'Tail call in nested mix of conditional expressions and boolean operators work',
-      `
+        10000
+      ],
+      [
+        'Tail call in nested mix of conditional expressions and boolean operators work',
+        `
         function f(x, y) {
           return x <= 0 ? y : false || x > 0 ? f(x-1, y+1) : 'unreachable';
         }
         f(5000, 5000);
       `,
-      10000
-    ],
-    [
-      'Tail calls in arrow block functions work',
-      `
+        10000
+      ],
+      [
+        'Tail calls in arrow block functions work',
+        `
       const f = (x, y) => {
         if (x <= 0) {
           return y;
@@ -312,19 +313,19 @@ describe('Test tail call return for native runner', () => {
       };
       f(5000, 5000);
       `,
-      10000
-    ],
-    [
-      'Tail calls in expression arrow functions work',
-      `
+        10000
+      ],
+      [
+        'Tail calls in expression arrow functions work',
+        `
       const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
       f(5000, 5000);
       `,
-      10000
-    ],
-    [
-      'Tail calls in mutual recursion work',
-      `
+        10000
+      ],
+      [
+        'Tail calls in mutual recursion work',
+        `
         function f(x, y) {
           if (x <= 0) {
             return y;
@@ -341,20 +342,20 @@ describe('Test tail call return for native runner', () => {
         }
         f(5000, 5000);
       `,
-      10000
-    ],
-    [
-      'Tail calls in mutual recursion with arrow functions work',
-      `
+        10000
+      ],
+      [
+        'Tail calls in mutual recursion with arrow functions work',
+        `
         const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
         const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
         f(5000, 5000);
       `,
-      10000
-    ],
-    [
-      'Tail calls in mixed tail-call/non-tail-call recursion work',
-      `
+        10000
+      ],
+      [
+        'Tail calls in mixed tail-call/non-tail-call recursion work',
+        `
         function f(x, y, z) {
           if (x <= 0) {
             return y;
@@ -364,14 +365,13 @@ describe('Test tail call return for native runner', () => {
         }
         f(5000, 5000, 2);
       `,
-      15000
-    ]
-  ], async ([code, expected]) => {
-    const context = mockContext(Chapter.SOURCE_1)
-    const result = await runInContext(code, context)
-    expectFinishedResult(result)
-    expect(result.value).toEqual(expected)
-  }, false, 10000)
+        15000
+      ]
+    ],
+    Chapter.SOURCE_1,
+    false,
+    10000
+  )
 })
 
 describe('Tests for all runners', () => {

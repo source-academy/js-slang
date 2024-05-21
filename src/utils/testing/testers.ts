@@ -2,6 +2,8 @@ import type { Program } from 'estree'
 import { Chapter, type Context } from '../../types'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
+import { parseError, runInContext } from '../..'
+import { expectFinishedResult } from '.'
 
 export type TestCase<T extends Array<any>> = [string, ...T]
 
@@ -77,4 +79,74 @@ export function astTester<ExpectedError>(
   })
 
   testMultipleCases(fullCases, args => func(...args), includeIndex, timeout)
+}
+
+export function expectResult(code: string, chapter: Chapter) {
+  const context = mockContext(chapter)
+  return expect(
+    runInContext(code, context).then(result => {
+      expectFinishedResult(result)
+      return result.value
+    })
+  ).resolves
+}
+
+type ExpectResultsTestCase = [string, string, any] | [string, string, any, Chapter]
+export function expectResultsToEqual(
+  snippets: ExpectResultsTestCase[],
+  defaultChapter: Chapter = Chapter.SOURCE_1,
+  includeIndex?: boolean,
+  timeout?: number
+) {
+  const fullSnippets = snippets.map(snippet => {
+    const chapter = snippet.length === 4 ? snippet[3] : defaultChapter
+    return [snippet[0], snippet[1], snippet[2], chapter] as [string, string, any, Chapter]
+  })
+
+  testMultipleCases(
+    fullSnippets,
+    ([code, expected, chapter]) => {
+      return expectResult(code, chapter).toEqual(expected)
+    },
+    includeIndex,
+    timeout
+  )
+}
+
+export function expectParsedError(code: string, chapter: Chapter, verbose?: boolean) {
+  const context = mockContext(chapter)
+  return expect(
+    runInContext(code, context).then(result => {
+      expect(result.status).toEqual('error')
+      return parseError(context.errors, verbose)
+    })
+  ).resolves
+}
+
+export function expectParsedErrorsToEqual(
+  snippets: (ExpectResultsTestCase | [...ExpectResultsTestCase, boolean])[],
+  defaultChapter: Chapter = Chapter.SOURCE_1,
+  includeIndex?: boolean,
+  timeout?: number
+) {
+  const fullSnippets = snippets.map(snippet => {
+    const chapter = snippet.length >= 4 ? snippet[3] : defaultChapter
+    const verbose = snippet.length === 5 ? snippet[4] : false
+    return [snippet[0], snippet[1], snippet[2], chapter, verbose] as [
+      string,
+      string,
+      any,
+      Chapter,
+      boolean
+    ]
+  })
+
+  testMultipleCases(
+    fullSnippets,
+    ([code, expected, chapter, verbose]) => {
+      return expectParsedError(code, chapter, verbose).toEqual(expected)
+    },
+    includeIndex,
+    timeout
+  )
 }
