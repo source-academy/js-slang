@@ -11,7 +11,7 @@ import {
   PotentialInfiniteLoopError,
   PotentialInfiniteRecursionError
 } from '../errors/timeoutErrors'
-import { Chapter, type NativeStorage, Thunk } from '../types'
+import { Chapter, type NativeStorage } from '../types'
 import { callExpression, locationDummyNode } from './ast/astCreator'
 import * as create from './ast/astCreator'
 import { makeWrapper } from './makeWrapper'
@@ -30,31 +30,6 @@ export function throwIfTimeout(
       create.locationDummyNode(line, column, source),
       nativeStorage.maxExecTime
     )
-  }
-}
-
-export function forceIt(val: Thunk | any): any {
-  if (val !== undefined && val !== null && val.isMemoized !== undefined) {
-    if (val.isMemoized) {
-      return val.memoizedValue
-    }
-
-    const evaluatedValue = forceIt(val.f())
-
-    val.isMemoized = true
-    val.memoizedValue = evaluatedValue
-
-    return evaluatedValue
-  } else {
-    return val
-  }
-}
-
-export function delayIt(f: () => any): Thunk {
-  return {
-    isMemoized: false,
-    value: undefined,
-    f
   }
 }
 
@@ -87,8 +62,7 @@ export function callIfFuncAndRightArgs(
       )
     }
     try {
-      const forcedArgs = args.map(forceIt)
-      return originalCandidate(...forcedArgs)
+      return originalCandidate(...args)
     } catch (error) {
       // if we already handled the error, simply pass it on
       if (!(error instanceof RuntimeSourceError || error instanceof ExceptionError)) {
@@ -103,7 +77,6 @@ export function callIfFuncAndRightArgs(
 }
 
 export function boolOrErr(candidate: any, line: number, column: number, source: string | null) {
-  candidate = forceIt(candidate)
   const error = rttc.checkIfStatement(create.locationDummyNode(line, column, source), candidate)
   if (error === undefined) {
     return candidate
@@ -119,7 +92,6 @@ export function unaryOp(
   column: number,
   source: string | null
 ) {
-  argument = forceIt(argument)
   const error = rttc.checkUnaryExpression(
     create.locationDummyNode(line, column, source),
     operator,
@@ -153,8 +125,6 @@ export function binaryOp(
   column: number,
   source: string | null
 ) {
-  left = forceIt(left)
-  right = forceIt(right)
   const error = rttc.checkBinaryExpression(
     create.locationDummyNode(line, column, source),
     operator,
@@ -213,7 +183,6 @@ export const callIteratively = (f: any, nativeStorage: NativeStorage, ...args: a
   const pastCalls: [string, any[]][] = []
   while (true) {
     const dummy = locationDummyNode(line, column, source)
-    f = forceIt(f)
     if (typeof f === 'function') {
       if (f.transformedFunction !== undefined) {
         f = f.transformedFunction
