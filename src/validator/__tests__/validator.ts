@@ -140,6 +140,15 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
       ['function names can be called recursively', 'function a() { a; }'],
       ['function parameters are considered valid declarations', 'function a(b) { b; return a(); }'],
 
+      // Function expressions
+      [
+        'FunctionExpression bodies are checked',
+        'const a = function() { return b; }',
+        'Line 1: Name b not declared.'
+      ],
+      ['FunctionExpression parameters are valid declarations', 'const a = function(b) { return b; }'],
+      ['FunctionExpressions can call themselves recursively', 'const a = function() { a(); }'],
+
       // For loops
       ['for loop init variable counts', 'for (let i = 0; i < 0; i = i + 1) { i; }'],
       [
@@ -160,6 +169,57 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
       [
         'for loops bodies are checked',
         'for (let i = 0; i < 0; i = i + 1) { a; }',
+        'Line 1: Name a not declared.'
+      ],
+      [
+        'for in statement declaration is valid',
+        'for (const [x, y] in []) { x; y; }',
+      ],
+      [
+        'for in statement is checked',
+        'for (const x in a) { x; }',
+        'Line 1: Name a not declared.'
+      ],
+      [
+        'for of statement declaration is valid',
+        'for (const {x, y} of []) { x; y; }',
+      ],
+      [
+        'destructuring expression in for of is checked 1',
+        `
+          let x = 0, y = 0;
+          for ({x, y} of []) {}
+        `
+      ],
+      [
+        'destructuring expression in for of is checked 2',
+        'for ({x, y} of []) {}',
+        'Line 1: Name x not declared.'
+      ],
+      [
+        'for of statement is checked',
+        'for (const x in a) { x; }',
+        'Line 1: Name a not declared.'
+      ],
+
+      // Try statement
+      [
+        'try statement body is checked',
+        'try { a; } catch(e) {}',
+        'Line 1: Name a not declared.'
+      ],
+      [
+        'catch clauses are checked',
+        'try {} catch(e) { a; }',
+        'Line 1: Name a not declared.'
+      ],
+      [
+        'catch clause parameter is a valid identifier',
+        'try {} catch(e) { e; }',
+      ],
+      [
+        'finally blocks are checked',
+        'try {} finally { a; }',
         'Line 1: Name a not declared.'
       ],
 
@@ -197,7 +257,8 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
       // Builtins and Preludes
       ['identifiers in builtins are valid', 'pair();'],
       ['identifiers in preludes are valid', 'stream();']
-    ]
+    ],
+    Chapter.FULL_JS
   )
 
   test('previous program identifiers are also valid', async () => {

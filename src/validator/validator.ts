@@ -188,35 +188,53 @@ export function checkForUndefinedVariables(
     identifiersIntroducedByNode.set(node, identifiers)
   }
   function processFunction(
-    node: es.FunctionDeclaration | es.ArrowFunctionExpression,
+    node: es.FunctionDeclaration | es.ArrowFunctionExpression | es.FunctionExpression,
     _ancestors: es.Node[]
   ) {
     identifiersIntroducedByNode.set(
       node,
       new Set(
-        node.params.map(id =>
-          id.type === 'Identifier'
-            ? id.name
-            : ((id as es.RestElement).argument as es.Identifier).name
-        )
+        mapIdentifiersToNames(node.params.flatMap(getIdentifiersFromVariableDeclaration))
       )
     )
   }
+
+  function processFor(
+    node: es.ForOfStatement | es.ForInStatement
+  ) {
+    if (isVariableDeclaration(node.left)) {
+      identifiersIntroducedByNode.set(
+        node,
+        new Set(mapIdentifiersToNames(getIdentifiersFromVariableDeclaration(node.left)))
+      )
+    }
+  }
+
   const identifiersToAncestors = new Map<es.Identifier, es.Node[]>()
   ancestor(program, {
-    Program: processBlock,
-    BlockStatement: processBlock,
-    FunctionDeclaration: processFunction,
     ArrowFunctionExpression: processFunction,
-    ForStatement(forStatement: es.ForStatement, ancestors: es.Node[]) {
-      const init = forStatement.init!
-      if (isVariableDeclaration(init)) {
+    BlockStatement: processBlock,
+    CatchClause(node: es.CatchClause) {
+      if (node.param) {
+        identifiersIntroducedByNode.set(
+          node,
+          new Set(mapIdentifiersToNames(getIdentifiersFromVariableDeclaration(node.param)))
+        )
+      }
+    },
+    ForStatement(forStatement: es.ForStatement) {
+      const init = forStatement.init
+      if (init && isVariableDeclaration(init)) {
         identifiersIntroducedByNode.set(
           forStatement,
           new Set(mapIdentifiersToNames(getIdentifiersFromVariableDeclaration(init)))
         )
       }
     },
+    ForInStatement: processFor,
+    ForOfStatement: processFor,
+    FunctionDeclaration: processFunction,
+    FunctionExpression: processFunction,
     Identifier(identifier: es.Identifier, ancestors: es.Node[]) {
       identifiersToAncestors.set(identifier, [...ancestors])
     },
@@ -228,7 +246,8 @@ export function checkForUndefinedVariables(
           identifiersToAncestors.set(node.object, [...ancestors])
         }
       }
-    }
+    },
+    Program: processBlock,
   })
   const nativeInternalNames = new Set(Object.values(globalIds).map(({ name }) => name))
 
