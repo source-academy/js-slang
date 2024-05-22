@@ -46,7 +46,7 @@ async function expectSuccess<T extends SourceFiles>(files: T, entrypointFilePath
   return result
 }
 
-test('Adds CircularImportError and returns undefined when imports are circular', async () => {
+test('Causes CircularImportError when imports are circular', async () => {
   const [error] = await expectError(
     {
       '/a.js': `import { b } from "./b.js";`,
@@ -122,9 +122,9 @@ test('ModuleNotFoundErrors short circuit the linker', async () => {
     {
       '/a.js': 'export const a = "a";',
       '/b.js': `
-      import { c } from './c.js';
-      import { a } from './a.js';
-    `,
+        import { c } from './c.js';
+        import { a } from './a.js';
+      `,
       '/d.js': 'import { b } from "./b.js";'
     },
     '/d.js'
@@ -191,4 +191,67 @@ test("Linker updates AST's import source values", async () => {
   const aNode = result.programs['/dir/a.js'].body[0]
   expect(aNode.type).toEqual('ImportDeclaration')
   expect((aNode as ImportDeclaration).source.value).toEqual('/b.js')
+})
+
+describe('Test checking if verbose errors should be enabled', () => {
+  test('When the entrypoint file has the directive', async () => {
+    const result = await expectSuccess(
+      {
+        '/a.js': `
+        'enable verbose';
+        0;
+      `
+      },
+      '/a.js'
+    )
+
+    expect(result.verboseErrors).toEqual(true)
+  })
+
+  test('When the entrypoint file has the directive but has parser errors', async () => {
+    const [, result] = await testCode(
+      {
+        '/a.js': `
+        'enable verbose';
+        0
+      `
+      },
+      '/a.js'
+    )
+
+    expect(result.ok).toEqual(false)
+    expect(result.verboseErrors).toEqual(true)
+  })
+
+  test('Does not enable verbose errors if directive is not in entrypoint file', async () => {
+    const result = await expectSuccess(
+      {
+        '/a.js': `
+        import { b } from './b.js';
+        b();
+      `,
+        '/b.js': `
+        'enable verbose';
+        export function b() {}
+      `
+      },
+      '/a.js'
+    )
+
+    expect(result.verboseErrors).toEqual(false)
+  })
+
+  test('Does not enable verbose errors if directive is not the first statement', async () => {
+    const result = await expectSuccess(
+      {
+        '/a.js': `
+        const x = 0;
+        'enable verbose';
+      `
+      },
+      '/a.js'
+    )
+
+    expect(result.verboseErrors).toEqual(false)
+  })
 })
