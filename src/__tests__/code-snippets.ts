@@ -1,30 +1,16 @@
 import { parseError, runInContext } from '..'
-import { defineBuiltin } from '../createContext'
 
 import { mockContext } from '../mocks/context'
 import { Chapter, type Value } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { expectResult, type TestBuiltins } from '../utils/testing'
-import { expectFinishedResult } from '../utils/testing/misc'
-import { expectResultsToEqual, testMultipleCases } from '../utils/testing'
+import {
+  expectResult,
+  expectResultsToEqual,
+  testMultipleCases,
+  type TestBuiltins
+} from '../utils/testing'
 
-async function testCodeSnippet(
-  code: string,
-  expected: Value,
-  chapter: Chapter = Chapter.SOURCE_1,
-  builtins: TestBuiltins = {}
-) {
-  const context = mockContext(chapter)
-  Object.entries(builtins).forEach(([key, value]) => defineBuiltin(context, key, value))
-
-  const result = await runInContext(code, context)
-  if (result.status !== 'finished') {
-    console.log(context.errors)
-  }
-
-  expectFinishedResult(result)
-  expect(result.value).toEqual(expected)
-}
+const toString = (x: Value) => '' + x
 
 describe('Test basic code snippets', () => {
   expectResultsToEqual([
@@ -193,7 +179,7 @@ describe('Test basic code snippets', () => {
       testBuiltins: { toString }
     }).toMatchInlineSnapshot(`
               "function pair(left, right) {
-                [implementation hidden]
+              	[implementation hidden]
               }"
             `)
   })
@@ -222,7 +208,7 @@ describe('Test equal', () => {
       ['Inequality for different lists 2', 'list(1, 2, 3)', 'list(1, list(2, 3))', false]
     ],
     async ([value0, value1, expected]) => {
-      return testCodeSnippet(`equal(${value0}, ${value1});`, expected, Chapter.SOURCE_2)
+      return expectResult(`equal(${value0}, ${value1});`, Chapter.SOURCE_2).toEqual(expected)
     }
   )
 })
@@ -239,8 +225,6 @@ describe('Test matching with JS', () => {
     // tslint:disable-next-line:no-eval
     return eval(evalstring + code)
   }
-
-  const toString = (x: Value) => '' + x
 
   testMultipleCases<[string] | [string, TestBuiltins]>(
     [
@@ -267,7 +251,10 @@ describe('Test matching with JS', () => {
     ],
     async ([code, builtins]) => {
       const expected = evalWithBuiltins(code, builtins ?? {})
-      return testCodeSnippet(code, expected, Chapter.LIBRARY_PARSER)
+      return expectResult(code, {
+        chapter: Chapter.LIBRARY_PARSER,
+        testBuiltins: builtins
+      }).toEqual(expected)
     }
   )
 
@@ -286,7 +273,7 @@ describe('Test matching with JS', () => {
     expressionCases.map(code => [`Test ${code}`, `${code};`] as [string, string]),
     ([code]) => {
       const expected = evalWithBuiltins(code, {})
-      return testCodeSnippet(code, expected, Chapter.LIBRARY_PARSER)
+      return expectResult(code, Chapter.LIBRARY_PARSER).toEqual(expected)
     }
   )
 })

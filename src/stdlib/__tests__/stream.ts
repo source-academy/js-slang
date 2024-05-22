@@ -1,5 +1,4 @@
-import { Chapter } from '../../types'
-import { stripIndent } from '../../utils/formatters'
+import { Chapter, Variant } from '../../types'
 import { expectParsedError, expectResult, expectResultsToEqual } from '../../utils/testing'
 
 expectResultsToEqual(
@@ -111,14 +110,23 @@ Array [
 `)
 })
 
-test('infinite stream is infinite', () => {
-  return expectParsedError(
-    stripIndent`
-  stream_length(integers_from(0));
-  `,
-    Chapter.SOURCE_3
-  ).toMatch(/(Maximum call stack size exceeded){1,2}/)
-}, 15000)
+describe('infinite stream is infinite', () => {
+  // TODO: Make this more modular
+  const code = 'stream_length(integers_from(0));'
+
+  test('cse-machine', () => {
+    return expectParsedError(code, {
+      chapter: Chapter.SOURCE_3,
+      variant: Variant.EXPLICIT_CONTROL
+    }).toMatch(/(Maximum call stack size exceeded){1,2}/)
+  }, 15000)
+
+  test('native', () => {
+    return expectParsedError(code, Chapter.SOURCE_3).toEqual(
+      'Line 1: The error may have arisen from forcing the infinite stream: function integers_from.'
+    )
+  }, 15000)
+})
 
 test('stream_to_list works', () => {
   return expectResult(`stream_to_list(stream(1, true, 3, 4.4, [1, 2]));`, Chapter.SOURCE_3)

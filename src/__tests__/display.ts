@@ -1,5 +1,4 @@
 import { Chapter } from '../types'
-import { stripIndent } from '../utils/formatters'
 import { testMultipleCases, expectParsedError, expectDisplayResult } from '../utils/testing'
 
 testMultipleCases<[string, ...string[]]>(
@@ -32,15 +31,6 @@ testMultipleCases<[string, ...string[]]>(
       `display(x => x); display((x, y) => x + y);`,
       'x => x',
       '(x, y) => x + y'
-    ],
-    [
-      'displaying builtins hides their implementation',
-      'display(pair);',
-      stripIndent`
-      function pair(left, right) {
-        [implementation hidden]
-      }
-    `
     ],
     ['display can be used with lists', 'display(list(1, 2));', '[1, [2, null]]'],
     ['display can be used with arrays', 'display([1, 2, [4, 5]]);', '[1, 2, [4, 5]]'],

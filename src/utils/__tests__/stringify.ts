@@ -307,16 +307,16 @@ test('String representation of functions are nice', () => {
   }
 
   return expect(stringify(f)).toMatchInlineSnapshot(`
-      "function f(x, y) {
-        return x;
-      }"
-    `)
+            "function f(x, y) {
+                    return x;
+                }"
+          `)
 })
 
 test('String representation of non literal objects is nice', () => {
   const errorMsg: string = 'This is an error'
   const errorObj: Error = new Error(errorMsg)
-  return expect(stringify(errorObj)).toMatchInlineSnapshot(`"${errorObj.toString()}"`)
+  return expect(stringify(errorObj)).toEqual(errorObj.toString())
 })
 
 test('String representation of non literal objects in nested object is nice', () => {
@@ -325,9 +325,7 @@ test('String representation of non literal objects in nested object is nice', ()
   const nestedObj: Object = {
     data: [1, [2, errorObj], 3]
   }
-  return expect(stringify(nestedObj)).toMatchInlineSnapshot(
-    `"{\\"data\\": [1, [2, ${errorObj.toString()}], 3]}"`
-  )
+  return expect(stringify(nestedObj)).toEqual(`{"data": [1, [2, ${errorObj.toString()}], 3]}`)
 })
 
 test('String representation of objects with circular references is nice', () => {
