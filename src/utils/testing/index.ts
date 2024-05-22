@@ -77,7 +77,7 @@ export function testMultipleCases<T extends Array<any>>(
 }
 
 /**
- * Used when something has to be tested with two different values
+ * Used when each test case has to be tested twice with a different boolean value each time.
  */
 export function testTrueAndFalseCases<T extends [string, ...any[]], U extends any[]>(
   desc: string,
@@ -158,18 +158,37 @@ async function testInContext(code: string, rawOptions: TestOptions) {
   }
 }
 
+/**
+ * Run the given code and expect it to finish without errors
+ * @returns Context and result of test
+ */
 export async function testSuccess(code: string, options: TestOptions = {}) {
-  const res = await testInContext(code, options)
-  expectFinishedResult(res.result)
-  return res
+  const { context, result } = await testInContext(code, options)
+  if (result.status !== 'finished') {
+    console.log(context.errors)
+  }
+
+  expectFinishedResult(result)
+  return {
+    context,
+    result
+  }
 }
 
+/**
+ * Run the given code and expect it to finish with errors
+ * @returns String value of parsed errors
+ */
 export async function testFailure(code: string, options: TestOptions = {}) {
   const res = await testInContext(code, options)
   expect(res.result.status).toEqual('error')
   return parseError(res.context.errors)
 }
 
+/**
+ * Run the given code and expect it to finish without errors. Use
+ * as if using `expect()`
+ */
 export function expectResult(code: string, options: TestOptions) {
   return expect(
     testInContext(code, options).then(({ result, context }) => {
@@ -182,29 +201,55 @@ export function expectResult(code: string, options: TestOptions) {
   ).resolves
 }
 
-type ExpectResultsTestCase = [string, string, any] | [string, string, any, Chapter]
+type ExpectResultsTestCaseWithoutChapter = [desc: string, code: string, expected: any]
+type ExpectResultsTestCaseWithChapter = [
+  desc: string,
+  code: string,
+  expected: any,
+  options: TestOptions
+]
+
+/**
+ * A single test case consists of 3-4 parts:
+ * 1. Description of the test. This will not be passed to the testing function.
+ * 2. Code to test
+ * 3. Value that the code is expected to return after evaluation. This value is matched using `toEqual`
+ * 4. (Optional) Specify test options to run the test with. By default, this is `Chapter.SOURCE_1`
+ */
+type ExpectResultsTestCase = ExpectResultsTestCaseWithChapter | ExpectResultsTestCaseWithoutChapter
+
+/**
+ * Run `expectResult` on multiple test cases
+ * @param defaultOptions Provide test options which will be used by default if none are given for the test case
+ * @param includeIndex Include the index value of each case in its description
+ * @param timeout Timeout value to pass to Jest
+ */
 export function expectResultsToEqual(
   snippets: ExpectResultsTestCase[],
-  options: TestOptions = Chapter.SOURCE_1,
+  defaultOptions: TestOptions = Chapter.SOURCE_1,
   includeIndex?: boolean,
   timeout?: number
 ) {
   const fullSnippets = snippets.map(snippet => {
-    const chapter = snippet.length === 4 ? snippet[3] : options
-    return [snippet[0], snippet[1], snippet[2], chapter] as [string, string, any, Chapter]
+    const options = snippet.length === 4 ? snippet[3] : defaultOptions
+    return [snippet[0], snippet[1], snippet[2], options] as [string, string, any, TestOptions]
   })
 
   testMultipleCases(
     fullSnippets,
-    ([code, expected, chapter]) => {
-      return expectResult(code, chapter).toEqual(expected)
+    ([code, expected, options]) => {
+      return expectResult(code, options).toEqual(expected)
     },
     includeIndex,
     timeout
   )
 }
 
-export function expectParsedError(code: string, options: TestOptions, verbose?: boolean) {
+/**
+ * Expect the code to error, then test the parsed error value. Use as if using
+ * `expect`
+ */
+export function expectParsedError(code: string, options: TestOptions = {}, verbose?: boolean) {
   return expect(
     testInContext(code, options).then(({ result, context }) => {
       expect(result.status).toEqual('error')
@@ -213,35 +258,41 @@ export function expectParsedError(code: string, options: TestOptions, verbose?: 
   ).resolves
 }
 
+/**
+ * Run `expectParsedError` on multiple test cases
+ * @param defaultOptions Provide test options which will be used by default if none are given for the test case
+ * @param includeIndex Include the index value of each case in its description
+ * @param timeout Timeout value to pass to Jest
+ */
 export function expectParsedErrorsToEqual(
   snippets: (ExpectResultsTestCase | [...ExpectResultsTestCase, boolean])[],
-  options: TestOptions = Chapter.SOURCE_1,
+  defaultOptions: TestOptions = Chapter.SOURCE_1,
   includeIndex?: boolean,
   timeout?: number
 ) {
   const fullSnippets = snippets.map(snippet => {
-    const chapter = snippet.length >= 4 ? snippet[3] : options
+    const options = snippet.length >= 4 ? snippet[3] : defaultOptions
     const verbose = snippet.length === 5 ? snippet[4] : false
-    return [snippet[0], snippet[1], snippet[2], chapter, verbose] as [
+    return [snippet[0], snippet[1], snippet[2], options, verbose] as [
       string,
       string,
       any,
-      Chapter,
+      TestOptions,
       boolean
     ]
   })
 
   testMultipleCases(
     fullSnippets,
-    ([code, expected, chapter, verbose]) => {
-      return expectParsedError(code, chapter, verbose).toEqual(expected)
+    ([code, expected, options, verbose]) => {
+      return expectParsedError(code, options, verbose).toEqual(expected)
     },
     includeIndex,
     timeout
   )
 }
 
-export function expectDisplayResult(code: string, options: TestOptions) {
+export function expectDisplayResult(code: string, options: TestOptions = {}) {
   return expect(
     testInContext(code, options).then(({ context, result }) => {
       expectFinishedResult(result)
