@@ -76,7 +76,7 @@ test('tokenize works even with parse errors', () => {
       ;;;;;;;
       `) +
       '));',
-      Chapter.SOURCE_4
+    Chapter.SOURCE_4
   ).toMatchInlineSnapshot(`
             Array [
               "list(\\"function\\", \\"f\\", \\"(\\", \\"x\\", \\")\\", \\"{\\", \\";\\", \\";\\", \\";\\", \\";\\", \\";\\", \\";\\", \\";\\")",
@@ -85,5 +85,7 @@ test('tokenize works even with parse errors', () => {
 })
 
 test('tokenize prints suitable error when tokenization fails', () => {
-  return expectParsedError('display_list(tokenize("\\""));',Chapter.SOURCE_4).toEqual("Line 1: SyntaxError: Unterminated string constant (1:0)")
+  return expectParsedError('display_list(tokenize("\\""));', Chapter.SOURCE_4).toEqual(
+    'Line 1: SyntaxError: Unterminated string constant (1:0)'
+  )
 })

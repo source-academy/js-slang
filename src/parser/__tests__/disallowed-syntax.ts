@@ -1,9 +1,5 @@
 import { Chapter } from '../../types'
-import {
-  expectParsedError,
-  expectParsedErrorsToEqual,
-  expectResult
-} from '../../utils/testing'
+import { expectParsedError, expectParsedErrorsToEqual, expectResult } from '../../utils/testing'
 
 expectParsedErrorsToEqual(
   [

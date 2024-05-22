@@ -58,21 +58,21 @@ testMultipleCases<[string, ...string[]]>(
 test('display can be used to display functions', () => {
   return expectDisplayResult(`display(x => x); display((x, y) => x + y);`, Chapter.LIBRARY_PARSER)
     .toMatchInlineSnapshot(`
-Array [
-  "x => x",
-  "(x, y) => x + y",
-]
-`)
+            Array [
+              "x => x",
+              "(x, y) => x + y",
+            ]
+          `)
 })
 
 test('String representation of builtins are nice', () => {
   return expectDisplayResult('display(pair);', Chapter.SOURCE_2).toMatchInlineSnapshot(`
-  Array [
-  "function pair(left, right) {
-    [implementation hidden]
-  }"
-  ]
-  `)
+            Array [
+              "function pair(left, right) {
+            	[implementation hidden]
+            }",
+            ]
+          `)
 })
 
 test('display throw error if second argument is non-string when used', () => {

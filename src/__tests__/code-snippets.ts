@@ -4,7 +4,8 @@ import { defineBuiltin } from '../createContext'
 import { mockContext } from '../mocks/context'
 import { Chapter, type Value } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { expectFinishedResult, expectResult, type TestBuiltins } from '../utils/testing'
+import { expectResult, type TestBuiltins } from '../utils/testing'
+import { expectFinishedResult } from '../utils/testing/misc'
 import { expectResultsToEqual, testMultipleCases } from '../utils/testing'
 
 async function testCodeSnippet(

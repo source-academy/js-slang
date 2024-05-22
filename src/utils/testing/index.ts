@@ -1,9 +1,10 @@
 import type { Program } from 'estree'
-import { Chapter, type Context, type CustomBuiltIns, type Finished, type Value, Variant } from '../../types'
+import { Chapter, type Context, type CustomBuiltIns, type Value, Variant } from '../../types'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
-import { parseError, runInContext, type Result } from '../..'
-import createContext, { defineBuiltin } from "../../createContext"
+import { parseError, runInContext } from '../..'
+import createContext, { defineBuiltin } from '../../createContext'
+import { expectFinishedResult } from './misc'
 
 export interface TestBuiltins {
   [builtinName: string]: any
@@ -17,7 +18,10 @@ export interface TestContext extends Context {
 }
 
 export function createTestContext({
-  context, chapter = Chapter.SOURCE_1, variant = Variant.DEFAULT, testBuiltins = {}
+  context,
+  chapter = Chapter.SOURCE_1,
+  variant = Variant.DEFAULT,
+  testBuiltins = {}
 }: {
   context?: TestContext
   chapter?: Chapter
@@ -102,28 +106,29 @@ export function testTrueAndFalseCases<T extends [string, ...any[]], U extends an
 }
 
 /**
- * Convenience function for testing the expected output of running
+ * Convenience function for testing the expected output of parsing
  * a single line of code
  */
 
-export function astTester<ExpectedError>(
-  func: (prog: Program, context: Context, expectedError: ExpectedError | undefined) => void,
+export function astTester<ExpectedValue>(
+  func: (prog: Program, context: Context, expectedError: ExpectedValue | undefined) => void,
   testCases: (
     | [desc: string, code: string]
-    | [desc: string, code: string, expectedError: ExpectedError]
+    | [desc: string, code: string, expectedError: ExpectedValue]
   )[],
   chapter: Chapter = Chapter.SOURCE_4,
+  variant: Variant = Variant.DEFAULT,
   includeIndex?: boolean,
   timeout?: number
 ) {
   const fullCases = testCases.map(([desc, code, err]) => {
-    const context = mockContext(chapter)
+    const context = mockContext(chapter, variant)
     const program = parse(code, context)
     if (!program) {
       throw context.errors[0]
     }
 
-    return [desc, program, context, err] as [string, Program, Context, ExpectedError | undefined]
+    return [desc, program, context, err] as [string, Program, Context, ExpectedValue | undefined]
   })
 
   testMultipleCases(fullCases, args => func(...args), includeIndex, timeout)
@@ -236,10 +241,6 @@ export function expectParsedErrorsToEqual(
   )
 }
 
-export function expectFinishedResult(result: Result): asserts result is Finished {
-  expect(result.status).toEqual('finished')
-}
-
 export function expectDisplayResult(code: string, options: TestOptions) {
   return expect(
     testInContext(code, options).then(({ context, result }) => {
@@ -250,15 +251,11 @@ export function expectDisplayResult(code: string, options: TestOptions) {
 }
 
 export async function expectDifferentParsedErrors(
-  code0: string, code1: string, options: TestOptions = {}
+  code0: string,
+  code1: string,
+  options: TestOptions = {}
 ) {
-  const [err0, err1] = await Promise.all([
-    testFailure(code0, options),
-    testFailure(code1, options),
-  ])
+  const [err0, err1] = await Promise.all([testFailure(code0, options), testFailure(code1, options)])
 
   expect(err0).not.toEqual(err1)
 }
-
-
-

@@ -4,7 +4,7 @@ import { mockContext } from '../../mocks/context'
 import { FatalSyntaxError } from '../../parser/errors'
 import { Chapter, Finished, Variant, type ExecutionMethod, type SourceError } from '../../types'
 import { locationDummyNode } from '../../utils/ast/astCreator'
-import { expectFinishedResult } from '../../utils/testing'
+import { expectFinishedResult } from '../../utils/testing/misc'
 import { expectResultsToEqual } from '../../utils/testing'
 import { htmlErrorHandlingScript } from '../htmlRunner'
 
