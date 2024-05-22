@@ -36,7 +36,7 @@ export const getSVMCCommand = () =>
       '-o, --out <outFile>',
       stripIndent`
       Sets the output filename.
-      Defaults to the input filename, minus any '.js' extension, plus '.svm'.
+      Defaults to the input filename, minus any file extension, plus '.svm'.
     `
     )
     .addOption(
@@ -82,24 +82,33 @@ strings containing the names of the VM-internal functions.`
         process.exit(1)
       }
 
-      // the current compiler does not differentiate between chapters 1, 2 or 3
-      const compiled = compileToIns(program, undefined, vmInternalFunctions)
-      switch (opts.compileTo) {
-        case 'ast': {
-          console.log(JSON.stringify(program, undefined, 2))
-          return
-        }
-        case 'debug': {
-          console.log(stringifyProgram(compiled).trimEnd())
-          return
-        }
-        case 'json': {
-          console.log(JSON.stringify(compiled))
-          return
+      let output: string | Uint8Array
+      let ext: string
+
+      if (opts.compileTo === 'ast') {
+        output = JSON.stringify(program, undefined, 2)
+        ext = '.json'
+      } else {
+        const compiled = compileToIns(program, undefined, vmInternalFunctions)
+        switch (opts.compileTo) {
+          case 'debug': {
+            output = stringifyProgram(compiled).trimEnd()
+            ext = '.svm'
+            break
+          }
+          case 'json': {
+            output = JSON.stringify(compiled)
+            ext = '.json'
+            break
+          }
+          case 'binary': {
+            output = assemble(compiled)
+            ext = '.svm'
+            break
+          }
         }
       }
 
-      const binary = assemble(compiled)
-      const outputFilename = opts.out ?? `${pathlib.basename(inputFile)}.svm`
-      return fs.writeFile(outputFilename, binary)
+      const outputFilename = opts.out ?? `${pathlib.basename(inputFile)}${ext}`
+      await fs.writeFile(outputFilename, output)
     })
