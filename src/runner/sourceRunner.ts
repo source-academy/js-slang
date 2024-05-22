@@ -195,6 +195,10 @@ async function sourceRunner(
     return resolvedErrorPromise
   }
 
+  if (context.variant === Variant.CONCURRENT) {
+    throw new Error('Cannot execute with concurrent variant!')
+  }
+
   determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
 
   if (context.executionMethod === 'stepper' || theOptions.useSubst) {
