@@ -1,4 +1,4 @@
-import pathlib from 'path'
+import type pathlib from 'path'
 import type fslib from 'fs/promises'
 
 import { Command, InvalidArgumentError, Option } from '@commander-js/extra-typings'
@@ -13,7 +13,7 @@ import { compileToIns } from '../vm/svml-compiler'
 import { stringifyProgram } from '../vm/util'
 import { chapterParser, getChapterOption, getVariantOption } from './utils'
 
-const compileToChoices = ['ast', 'binary', 'debug', 'json'] as const
+export const compileToChoices = ['ast', 'binary', 'debug', 'json'] as const
 
 export const getSVMCCommand = () =>
   new Command('svmc')
@@ -78,7 +78,7 @@ strings containing the names of the VM-internal functions.`
       const context = createEmptyContext(opts.chapter, opts.variant, [], null)
       const program = parse(source, context)
       if (program === null) {
-        console.error(parseError(context.errors))
+        process.stderr.write(parseError(context.errors))
         process.exit(1)
       }
 
@@ -109,6 +109,10 @@ strings containing the names of the VM-internal functions.`
         }
       }
 
-      const outputFilename = opts.out ?? `${pathlib.basename(inputFile)}${ext}`
-      await fs.writeFile(outputFilename, output)
+      const { extname, basename }: typeof pathlib = require('path')
+      const extToRemove = extname(inputFile)
+
+      const outputFileName = opts.out ?? `${basename(inputFile, extToRemove)}${ext}`
+      await fs.writeFile(outputFileName, output)
+      console.log(`Output written to ${outputFileName}`)
     })

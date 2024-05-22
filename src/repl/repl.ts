@@ -28,8 +28,8 @@ export const getReplCommand = () =>
     .argument('[filename]')
     .action(async (filename, { modulesBackend, optionsFile, repl, verbose, ...lang }) => {
       if (!validChapterVariant(lang)) {
-        console.log('Invalid language combination!')
-        return
+        console.error('Invalid language combination!')
+        process.exit(1)
       }
 
       const fs: typeof fslib = require('fs/promises')
@@ -69,7 +69,12 @@ export const getReplCommand = () =>
         )
 
         const toLog = handleResult(result, context, verbose ?? verboseErrors)
-        console.log(toLog)
+        if (result.status !== 'error') {
+          process.stdout.write(toLog)
+        } else {
+          process.stderr.write(toLog)
+          process.exit(1)
+        }
 
         if (!repl) return
       }

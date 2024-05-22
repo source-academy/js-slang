@@ -17,69 +17,69 @@ import {
   validateChapterAndVariantCombo
 } from './utils'
 
-export const transpilerCommand = new Command('transpiler')
-  .addOption(getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.GPU, Variant.NATIVE]))
-  .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
-  .option(
-    '-p, --pretranspile',
-    "only pretranspile (e.g. GPU -> Source) and don't perform Source -> JS transpilation"
-  )
-  .option('-o, --out <outFile>', 'Specify a file to write to')
-  .argument('<filename>')
-  .action(async (fileName, opts) => {
-    if (!validateChapterAndVariantCombo(opts)) {
-      console.log('Invalid language combination!')
-      return
-    }
-
-    const fs: typeof fslib = require('fs/promises')
-    const context = createContext(opts.chapter, opts.variant)
-    const entrypointFilePath = resolve(fileName)
-
-    const linkerResult = await parseProgramsAndConstructImportGraph(
-      async p => {
-        try {
-          const text = await fs.readFile(p, 'utf-8')
-          return text
-        } catch (error) {
-          if (error.code === 'ENOENT') return undefined
-          throw error
-        }
-      },
-      entrypointFilePath,
-      context,
-      {},
-      true
+export const getTranspilerCommand = () =>
+  new Command('transpiler')
+    .addOption(getVariantOption(Variant.DEFAULT, [Variant.DEFAULT, Variant.GPU, Variant.NATIVE]))
+    .addOption(getChapterOption(Chapter.SOURCE_4, chapterParser))
+    .option(
+      '-p, --pretranspile',
+      "only pretranspile (e.g. GPU -> Source) and don't perform Source -> JS transpilation"
     )
+    .option('-o, --out <outFile>', 'Specify a file to write to')
+    .argument('<filename>')
+    .action(async (fileName, opts) => {
+      if (!validateChapterAndVariantCombo(opts)) {
+        console.log('Invalid language combination!')
+        return
+      }
 
-    if (!linkerResult.ok) {
-      console.log(parseError(context.errors, linkerResult.verboseErrors))
-      return
-    }
+      const fs: typeof fslib = require('fs/promises')
+      const context = createContext(opts.chapter, opts.variant)
+      const entrypointFilePath = resolve(fileName)
 
-    const { programs, topoOrder } = linkerResult
-    const bundledProgram = defaultBundler(programs, entrypointFilePath, topoOrder, context)
+      const linkerResult = await parseProgramsAndConstructImportGraph(
+        async p => {
+          try {
+            const text = await fs.readFile(p, 'utf-8')
+            return text
+          } catch (error) {
+            if (error.code === 'ENOENT') return undefined
+            throw error
+          }
+        },
+        entrypointFilePath,
+        context,
+        {},
+        true
+      )
 
-    switch (opts.variant) {
-      case Variant.GPU:
-        transpileToGPU(bundledProgram)
-        break
-    }
+      if (!linkerResult.ok) {
+        process.stderr.write(parseError(context.errors, linkerResult.verboseErrors))
+        process.exit(1)
+      }
 
-    const transpiled = opts.pretranspile
-      ? generate(bundledProgram)
-      : transpile(bundledProgram, context).transpiled
+      const { programs, topoOrder } = linkerResult
+      const bundledProgram = defaultBundler(programs, entrypointFilePath, topoOrder, context)
 
-    if (context.errors.length > 0) {
-      console.log(parseError(context.errors, linkerResult.verboseErrors))
-      return
-    }
+      try {
+        switch (opts.variant) {
+          case Variant.GPU:
+            transpileToGPU(bundledProgram)
+            break
+        }
 
-    if (opts.out) {
-      const resolvedOut = resolve(opts.out)
-      await fs.writeFile(resolvedOut, transpiled)
-      console.log(`Code written to ${resolvedOut}`)
-    } else {
-      console.log(transpiled)
-    }
-  })
+        const transpiled = opts.pretranspile
+          ? generate(bundledProgram)
+          : transpile(bundledProgram, context).transpiled
+
+        if (opts.out) {
+          await fs.writeFile(opts.out, transpiled)
+          console.log(`Code written to ${opts.out}`)
+        } else {
+          process.stdout.write(transpiled)
+        }
+      } catch (error) {
+        process.stderr.write(parseError([error], linkerResult.verboseErrors))
+        process.exit(1)
+      }
+    })

@@ -5,6 +5,8 @@ jest.spyOn(process, 'exit').mockImplementation(code => {
   throw new Error(`process.exit called with ${code}`)
 })
 
+jest.spyOn(process.stdout, 'write').mockImplementation(() => true)
+
 describe('Make sure each subcommand can be run', () => {
   const mainCommand = getMainCommand()
   test.each(mainCommand.commands.map(cmd => [cmd.name(), cmd] as [string, Command]))(

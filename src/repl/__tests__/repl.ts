@@ -5,6 +5,7 @@ import { asMockedFunc } from '../../utils/testing/misc'
 import { getReplCommand } from '../repl'
 import { chapterParser } from '../utils'
 import { testMultipleCases } from '../../utils/testing'
+import { expectWritten, getCommandRunner } from './testUtils'
 
 const readFileMocker = jest.fn()
 
@@ -29,9 +30,6 @@ jest.mock('path', () => {
 })
 
 jest.mock('../../modules/loader/loaders')
-
-jest.spyOn(console, 'log')
-const mockedConsoleLog = asMockedFunc(console.log)
 
 jest.spyOn(repl, 'start')
 
@@ -61,13 +59,16 @@ describe('Test repl command', () => {
     jest.clearAllMocks()
   })
 
-  const runCommand = (...args: string[]) => {
-    const promise = getReplCommand().parseAsync(args, { from: 'user' })
-    return expect(promise).resolves.not.toThrow()
-  }
+  const { expectSuccess, expectError } = getCommandRunner(getReplCommand)
 
   describe('Test running files', () => {
-    type TestCase = [desc: string, args: string[], files: SourceFiles, expected: string]
+    type TestCase = [
+      desc: string,
+      args: string[],
+      files: SourceFiles,
+      expected: string,
+      isError: boolean
+    ]
 
     const testCases: TestCase[] = [
       [
@@ -75,26 +76,25 @@ describe('Test repl command', () => {
         ['d.js'],
         {
           '/a/a.js': `
-        import { b } from './b.js';
-        export function a() {
-          return b();
-        }
-      `,
+            import { b } from './b.js';
+            export function a() {
+              return b();
+            }
+          `,
           '/a/b.js': `
-        import { c } from '../c/c.js';
-        export function b() {
-          return c + " and b";
-        }
-      `,
-          '/c/c.js': `
-        export const c = "c";
-      `,
+            import { c } from '../c/c.js';
+            export function b() {
+              return c + " and b";
+            }
+          `,
+          '/c/c.js': 'export const c = "c";',
           '/d.js': `
-        import { a } from './a/a.js';
-        a();
-      `
+            import { a } from './a/a.js';
+            a();
+          `
         },
-        '"c and b"'
+        '"c and b"',
+        false
       ],
       [
         'Unknown local import',
@@ -102,7 +102,8 @@ describe('Test repl command', () => {
         {
           '/a.js': 'import { b } from "./b.js";'
         },
-        "Error: [/a.js] Line 1: Module './b.js' not found."
+        "Error: [/a.js] Line 1: Module './b.js' not found.",
+        true
       ],
       [
         'Unknown local import - verbose',
@@ -111,7 +112,8 @@ describe('Test repl command', () => {
           '/a.js': 'import { b } from "./b.js";'
         },
 
-        "Error: [/a.js] Line 1, Column 0: Module './b.js' not found.\nYou should check your import declarations, and ensure that all are valid modules.\n"
+        "Error: [/a.js] Line 1, Column 0: Module './b.js' not found.\nYou should check your import declarations, and ensure that all are valid modules.\n",
+        true
       ],
       [
         'Source imports are ok',
@@ -119,7 +121,8 @@ describe('Test repl command', () => {
         {
           '/a.js': "import { foo } from 'one_module'; foo();"
         },
-        '"foo"'
+        '"foo"',
+        false
       ],
       [
         'Unknown Source imports are handled properly',
@@ -127,13 +130,19 @@ describe('Test repl command', () => {
         {
           '/a.js': "import { foo } from 'unknown_module'; foo();"
         },
-        "Error: [/a.js] Line 1: Module 'unknown_module' not found."
+        "Error: [/a.js] Line 1: Module 'unknown_module' not found.",
+        true
       ]
     ]
-    testMultipleCases(testCases, async ([args, files, expected]) => {
+    testMultipleCases(testCases, async ([args, files, expected, isError]) => {
       mockReadFiles(files)
-      await runCommand(...args)
-      expect(mockedConsoleLog.mock.calls[0][0]).toEqual(expected)
+      if (isError) {
+        await expectError(...args)
+        expectWritten(process.stderr.write).toEqual(expected)
+      } else {
+        await expectSuccess(...args)
+        expectWritten(process.stdout.write).toEqual(expected)
+      }
     })
   })
 
@@ -163,7 +172,7 @@ describe('Test repl command', () => {
 
     const runRepl = async (args: string[], expected: [string, string][]) => {
       const replPromise = mockReplStart()
-      await runCommand(...args)
+      await expectSuccess(...args)
       const func = await replPromise
       expect(repl.start).toHaveBeenCalledTimes(1)
 
