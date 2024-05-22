@@ -3,7 +3,7 @@ import {
   expectParsedError,
   expectParsedErrorsToEqual,
   expectResult
-} from '../../utils/testing/testers'
+} from '../../utils/testing'
 
 expectParsedErrorsToEqual(
   [

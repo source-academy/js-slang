@@ -6,7 +6,7 @@ import {
   expectParsedErrorsToEqual,
   expectResult,
   expectResultsToEqual
-} from '../../utils/testing/testers'
+} from '../../utils/testing'
 
 test('list creates list', () => {
   return expectResult(
@@ -42,31 +42,11 @@ describe('Test regular functions', () => {
   expectResultsToEqual(
     [
       ['pair creates pair', 'pair(1, \'a string ""\');', [1, 'a string ""']],
-      [
-        'head()',
-        `head(pair(1, 'a string ""'));`,
-        1
-      ],
-      [
-        'tail() works',
-        `tail(pair(1, 'a string ""'));`,
-        'a string ""'
-      ],
-      [
-        'tail of a 1 element list is null',
-        'tail(list(1));',
-        null
-      ],
-      [
-        'empty list is null',
-        'list();',
-        null
-      ],
-      [
-        'accumulate',
-        'accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));',
-        10,
-      ],
+      ['head()', `head(pair(1, 'a string ""'));`, 1],
+      ['tail() works', `tail(pair(1, 'a string ""'));`, 'a string ""'],
+      ['tail of a 1 element list is null', 'tail(list(1));', null],
+      ['empty list is null', 'list();', null],
+      ['accumulate', 'accumulate((curr, acc) => curr + acc, 0, list(2, 3, 4, 1));', 10],
       [
         'accumulate works right to left',
         `accumulate((curr, acc) => curr + acc, '1', list('4','3','2'));`,
@@ -77,21 +57,9 @@ describe('Test regular functions', () => {
         'equal(append(list(123, 123), list(456, 456, 456)), list(123, 123, 456, 456, 456));',
         true
       ],
-      [
-        'build_list',
-        'equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));',
-        true
-      ],
-      [
-        'enum_list',
-        'equal(enum_list(1, 5), list(1, 2, 3, 4, 5));',
-        true
-      ],
-      [
-        'enum_list with floats',
-        'equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));',
-        true
-      ],
+      ['build_list', 'equal(build_list(x => x * x, 5), list(0, 1, 4, 9, 16));', true],
+      ['enum_list', 'equal(enum_list(1, 5), list(1, 2, 3, 4, 5));', true],
+      ['enum_list with floats', 'equal(enum_list(1.5, 5), list(1.5, 2.5, 3.5, 4.5));', true],
       [
         'filter',
         'equal(filter(x => x <= 4, list(2, 10, 1000, 1, 3, 100, 4, 5, 2, 1000)), list(2, 1, 3, 4, 2));',
@@ -108,31 +76,11 @@ describe('Test regular functions', () => {
         `,
         6
       ],
-      [
-        'length works with populated lists',
-        'length(list(1,2,3,4));',
-        4
-      ],
-      [
-        'length works with empty lists',
-        'length(list());',
-        0
-      ],
-      [
-        'list_ref',
-        'list_ref(list(1, 2, 3, "4", 4), 4);',
-        4
-      ],
-      [
-        'list_to_string',
-        'list_to_string(list(1, 2, 3));',
-        "[1,[2,[3,null]]]"
-      ],
-      [
-        'map',
-        'equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));',
-        true
-      ],
+      ['length works with populated lists', 'length(list(1,2,3,4));', 4],
+      ['length works with empty lists', 'length(list());', 0],
+      ['list_ref', 'list_ref(list(1, 2, 3, "4", 4), 4);', 4],
+      ['list_to_string', 'list_to_string(list(1, 2, 3));', '[1,[2,[3,null]]]'],
+      ['map', 'equal(map(x => 2 * x, list(12, 11, 3)), list(24, 22, 6));', true],
       [
         'member',
         `
@@ -142,26 +90,10 @@ describe('Test regular functions', () => {
         `,
         true
       ],
-      [
-        'remove',
-        'remove(1, list(1));',
-        null
-      ],
-      [
-        'remove not found',
-        'remove(2, list(1));',
-        [1, null]
-      ],
-      [
-        'remove_all',
-        'equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));',
-        true
-      ],
-      [
-        'remove_all not found',
-        'equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));',
-        true
-      ],
+      ['remove', 'remove(1, list(1));', null],
+      ['remove not found', 'remove(2, list(1));', [1, null]],
+      ['remove_all', 'equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));', true],
+      ['remove_all not found', 'equal(remove_all(1, list(2, 3, 4)), list(2, 3, 4));', true],
       [
         'reverse',
         'equal(reverse(list("string", "null", "undefined", "null", 123)), list(123, "null", "undefined", "null", "string"));',
@@ -193,134 +125,140 @@ describe('Test regular functions', () => {
 })
 
 describe('Test errors', () => {
-  expectParsedErrorsToEqual([
+  expectParsedErrorsToEqual(
     [
-      'non-list error head',
-      'head([1, 2, 3]);',
-      "Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
+      [
+        'non-list error head',
+        'head([1, 2, 3]);',
+        'Line 1: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+      ],
+      [
+        'non-list error tail',
+        'tail([1, 2, 3]);',
+        'Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+      ]
     ],
-    [
-      'non-list error tail',
-      'tail([1, 2, 3]);',
-      "Line 1: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-    ]
-  ], Chapter.SOURCE_3)
+    Chapter.SOURCE_3
+  )
 
   describe('These tests are reporting weird line numbers, as list functions are now implemented in Source.', () => {
-    expectParsedErrorsToEqual([
+    expectParsedErrorsToEqual(
       [
-        'non-list error accumulate',
-        'accumulate((x, y) => x + y, [1, 2, 3]);',
-        "Line 1: Expected 3 arguments, but got 2."
-      ],
-      [
-        'non-list error append',
-        'append([1, 2, 3], list(1, 2, 3));',
-        "Line 121: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-      ],
-      [
-        'non-list error filter',
-        'filter(x => true, [1, 2, 3]);',
-        "Line 185: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-      ],
-      [
-        'non-list error for_each',
-        'for_each(x=>x, [1, 2, 3]);',
-        "Line 76: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-      ],
-      [
-        'non-list error length',
-        'length([1, 2, 3]);',
-        "Line 33: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-      ],
-      [
-        'non-list error map',
-        'map(x=>x, [1, 2, 3]);',
-        "Line 47: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-      ],
-      [
-        'non-list error member',
-        'member(1, [1, 2, 3]);',
-        "Line 136: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-      ],
-      [
-        'non-list error remove',
-        'remove(1, [1, 2, 3]);',
-        "Line 151: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-      ],
-      [
-        'non-list error remove_all',
-        'remove_all(1, [1, 2, 3]);',
-        "Line 169: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-      ],
-      [
-        'non-list error reverse',
-        'reverse([1, 2, 3]);',
-        "Line 106: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]"
-      ],
-      [
-        'non-list error set_head',
-        'set_head([1, 2, 3], 4);',
-        "Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"
-      ],
-      [
-        'non-list error set_tail',
-        'set_tail([1, 2, 3], 4);',
-        "Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]"
-      ],
+        [
+          'non-list error accumulate',
+          'accumulate((x, y) => x + y, [1, 2, 3]);',
+          'Line 1: Expected 3 arguments, but got 2.'
+        ],
+        [
+          'non-list error append',
+          'append([1, 2, 3], list(1, 2, 3));',
+          'Line 121: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+        ],
+        [
+          'non-list error filter',
+          'filter(x => true, [1, 2, 3]);',
+          'Line 185: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+        ],
+        [
+          'non-list error for_each',
+          'for_each(x=>x, [1, 2, 3]);',
+          'Line 76: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+        ],
+        [
+          'non-list error length',
+          'length([1, 2, 3]);',
+          'Line 33: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+        ],
+        [
+          'non-list error map',
+          'map(x=>x, [1, 2, 3]);',
+          'Line 47: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+        ],
+        [
+          'non-list error member',
+          'member(1, [1, 2, 3]);',
+          'Line 136: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+        ],
+        [
+          'non-list error remove',
+          'remove(1, [1, 2, 3]);',
+          'Line 151: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+        ],
+        [
+          'non-list error remove_all',
+          'remove_all(1, [1, 2, 3]);',
+          'Line 169: Error: head(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+        ],
+        [
+          'non-list error reverse',
+          'reverse([1, 2, 3]);',
+          'Line 106: Error: tail(xs) expects a pair as argument xs, but encountered [1, 2, 3]'
+        ],
+        [
+          'non-list error set_head',
+          'set_head([1, 2, 3], 4);',
+          'Line 1: Error: set_head(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]'
+        ],
+        [
+          'non-list error set_tail',
+          'set_tail([1, 2, 3], 4);',
+          'Line 1: Error: set_tail(xs,x) expects a pair as argument xs, but encountered [1, 2, 3]'
+        ],
 
-      // skipped as implementation does not check types, causing infinite recursion.
-      // [
-      //   'bad number error build_list',
-      //   'build_list(x => x, -1);',
-      //   "Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered -1"
-      // ],
-      // [
-      //   'bad number error build_list',
-      //   'build_list(x => x, 1.5);',
-      //   "Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered -1"
-      // ]
-      [
-        'bad number error build_list',
-        "build_list(x => x, '1');",
-        "Line 63: Expected number on left hand side of operation, got string."
+        // skipped as implementation does not check types, causing infinite recursion.
+        // [
+        //   'bad number error build_list',
+        //   'build_list(x => x, -1);',
+        //   "Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered -1"
+        // ],
+        // [
+        //   'bad number error build_list',
+        //   'build_list(x => x, 1.5);',
+        //   "Line 1: Error: build_list(fun, n) expects a positive integer as argument n, but encountered -1"
+        // ]
+        [
+          'bad number error build_list',
+          "build_list(x => x, '1');",
+          'Line 63: Expected number on left hand side of operation, got string.'
+        ],
+        [
+          'bad number error enum_list 1',
+          "enum_list('1', '5');",
+          'Line 203: Expected string on right hand side of operation, got number.'
+        ],
+        [
+          'bad number error enum_list 2',
+          "enum_list('1', 5);",
+          'Line 201: Expected string on right hand side of operation, got number.'
+        ],
+        [
+          'bad number error enum_list 3',
+          "enum_list(1, '5');",
+          'Line 201: Expected number on right hand side of operation, got string.'
+        ],
+        [
+          'bad index error list_ref 1',
+          'list_ref(list(1, 2, 3), 3);',
+          'Line 216: Error: head(xs) expects a pair as argument xs, but encountered null'
+        ],
+        [
+          'bad index error list_ref 2',
+          'list_ref(list(1, 2, 3), -1);',
+          'Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null'
+        ],
+        [
+          'bad index error list_ref 3',
+          'list_ref(list(1, 2, 3), -1);',
+          'Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null'
+        ],
+        [
+          'bad index error list_ref 4',
+          'list_ref(list(1, 2, 3), "1");',
+          'Line 215: Expected string on right hand side of operation, got number.'
+        ]
       ],
-      [
-        'bad number error enum_list 1',
-        "enum_list('1', '5');",
-        "Line 203: Expected string on right hand side of operation, got number."
-      ],
-      [
-        'bad number error enum_list 2',
-        "enum_list('1', 5);",
-        "Line 201: Expected string on right hand side of operation, got number."
-      ],
-      [
-        'bad number error enum_list 3',
-        "enum_list(1, '5');",
-        "Line 201: Expected number on right hand side of operation, got string."
-      ],
-      [
-        'bad index error list_ref 1',
-        'list_ref(list(1, 2, 3), 3);',
-        "Line 216: Error: head(xs) expects a pair as argument xs, but encountered null"
-      ],
-      [
-        'bad index error list_ref 2',
-        'list_ref(list(1, 2, 3), -1);',
-        "Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null"
-      ],
-      [
-        'bad index error list_ref 3',
-        'list_ref(list(1, 2, 3), -1);',
-        "Line 217: Error: tail(xs) expects a pair as argument xs, but encountered null"
-      ],
-      [
-        'bad index error list_ref 4',
-        'list_ref(list(1, 2, 3), "1");',
-        "Line 215: Expected string on right hand side of operation, got number."
-      ]
-    ], Chapter.SOURCE_3)
+      Chapter.SOURCE_3
+    )
   })
 })
 

@@ -1,5 +1,5 @@
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectResult } from '../../utils/testing/testers'
+import { expectParsedError, expectResult } from '../../utils/testing'
 
 // Continuation tests for Scheme
 const optionECScm = { chapter: Chapter.FULL_SCHEME, variant: Variant.EXPLICIT_CONTROL }

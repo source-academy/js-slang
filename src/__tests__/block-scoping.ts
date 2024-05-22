@@ -1,10 +1,11 @@
 import { Chapter } from '../types'
-import { expectParsedError, expectResultsToEqual } from '../utils/testing/testers'
+import { expectParsedError, expectResultsToEqual } from '../utils/testing'
 
-expectResultsToEqual([
+expectResultsToEqual(
   [
-    'standalone block statements',
-    `
+    [
+      'standalone block statements',
+      `
       function test(){
         const x = true;
         {
@@ -14,11 +15,11 @@ expectResultsToEqual([
       }
       test();
     `,
-    true
-  ],
-  [
-    'const uses block scoping instead of function scoping',
-    `
+      true
+    ],
+    [
+      'const uses block scoping instead of function scoping',
+      `
       function test(){
         const x = true;
         if(true) {
@@ -30,11 +31,11 @@ expectResultsToEqual([
       }
       test();
     `,
-    true
-  ],
-  [
-    'let uses block scoping instead of function scoping',
-    `
+      true
+    ],
+    [
+      'let uses block scoping instead of function scoping',
+      `
       function test(){
         let x = true;
         if(true) {
@@ -46,11 +47,11 @@ expectResultsToEqual([
       }
       test();
     `,
-    true
-  ],
-  [
-    'for loops use block scoping instead of function scoping',
-    `
+      true
+    ],
+    [
+      'for loops use block scoping instead of function scoping',
+      `
       function test(){
         let x = true;
         for (let x = 1; x > 0; x = x - 1) {
@@ -59,11 +60,11 @@ expectResultsToEqual([
       }
       test();
     `,
-    true
-  ],
-  [
-    'while loops use block scoping instead of function scoping',
-    `
+      true
+    ],
+    [
+      'while loops use block scoping instead of function scoping',
+      `
       function test(){
         let x = true;
         while (true) {
@@ -74,13 +75,13 @@ expectResultsToEqual([
       }
       test();
     `,
-    true
-  ],
-  // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
-  // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
-  [
-    'for loop `let` variables are copied into the block scope',
-    `
+      true
+    ],
+    // see https://www.ecma-international.org/ecma-262/6.0/#sec-for-statement-runtime-semantics-labelledevaluation
+    // and https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/
+    [
+      'for loop `let` variables are copied into the block scope',
+      `
       function test(){
         let z = [];
         for (let x = 0; x < 10; x = x + 1) {
@@ -90,9 +91,11 @@ expectResultsToEqual([
       }
       test();
     `,
-    1
-  ]
-], Chapter.SOURCE_4)
+      1
+    ]
+  ],
+  Chapter.SOURCE_4
+)
 
 test('Cannot overwrite loop variables within a block', () => {
   return expectParsedError(
@@ -107,7 +110,7 @@ test('Cannot overwrite loop variables within a block', () => {
       test();
     `,
     Chapter.SOURCE_3
-  ).toEqual("Line 5: Assignment to a for loop variable in the for loop is not allowed.")
+  ).toEqual('Line 5: Assignment to a for loop variable in the for loop is not allowed.')
 })
 
 // expectParsedErrorsToEqual([
@@ -176,5 +179,5 @@ test('Shadowed variables may not be assigned to until declared in the current sc
       test();
     `,
     Chapter.SOURCE_3
-  ).toEqual("Line 4: Name variable not declared.")
+  ).toEqual('Line 4: Name variable not declared.')
 })

@@ -1,6 +1,6 @@
 import { Chapter } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { testMultipleCases, expectParsedError, expectDisplayResult } from '../utils/testing/testers'
+import { testMultipleCases, expectParsedError, expectDisplayResult } from '../utils/testing'
 
 testMultipleCases<[string, ...string[]]>(
   [

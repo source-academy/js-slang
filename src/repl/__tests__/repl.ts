@@ -1,10 +1,10 @@
 import type { SourceFiles } from '../../modules/moduleTypes'
 import * as repl from 'repl'
 import { Chapter } from '../../types'
-import { asMockedFunc } from '../../utils/testing'
+import { asMockedFunc } from '../../utils/testing/misc'
 import { getReplCommand } from '../repl'
 import { chapterParser } from '../utils'
-import { testMultipleCases } from '../../utils/testing/testers'
+import { testMultipleCases } from '../../utils/testing'
 
 const readFileMocker = jest.fn()
 

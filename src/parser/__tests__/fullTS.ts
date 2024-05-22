@@ -1,7 +1,7 @@
 import { parseError } from '../..'
 import { mockContext } from '../../mocks/context'
 import { Chapter } from '../../types'
-import { testMultipleCases } from '../../utils/testing/testers'
+import { testMultipleCases } from '../../utils/testing'
 import { FullTSParser } from '../fullTS'
 
 const parser = new FullTSParser()

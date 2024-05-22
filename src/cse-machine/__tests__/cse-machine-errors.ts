@@ -3,10 +3,7 @@ import * as _ from 'lodash'
 
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import {
-  expectParsedError,
-  expectResult
-} from '../../utils/testing/testers'
+import { expectDifferentParsedErrors, expectParsedError, expectResult } from '../../utils/testing'
 
 jest.spyOn(_, 'memoize').mockImplementation(func => func as any)
 
@@ -53,9 +50,7 @@ test('Undefined variables are caught even when unreached', () => {
 })
 
 test('Undefined variable error message differs from verbose version', () => {
-  return expectDifferentParsedErrors(undefinedVariable, undefinedVariableVerbose, optionEC).toBe(
-    undefined
-  )
+  return expectDifferentParsedErrors(undefinedVariable, undefinedVariableVerbose, optionEC)
 })
 
 const assignToBuiltin = stripIndent`
@@ -84,7 +79,7 @@ test('Error when assigning to builtin - verbose', () => {
 test('Assigning to builtin error message differs from verbose version', () => {
   return expectDifferentParsedErrors(assignToBuiltin, assignToBuiltinVerbose, {
     variant: Variant.EXPLICIT_CONTROL
-  }).toBe(undefined)
+  })
 })
 
 const assignToBuiltin1 = stripIndent`
@@ -113,7 +108,7 @@ test('Error when assigning to builtin - verbose', () => {
 test('Assigning to builtin error message differs from verbose version', () => {
   return expectDifferentParsedErrors(assignToBuiltin1, assignToBuiltinVerbose1, {
     variant: Variant.EXPLICIT_CONTROL
-  }).toBe(undefined)
+  })
 })
 
 test('Nice errors when errors occur inside builtins', () => {
@@ -223,7 +218,7 @@ test('Calling non function value undefined error message differs from verbose ve
     callingNonFunctionValueUndefined,
     callingNonFunctionValueUndefinedVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueUndefinedArgs = stripIndent`
@@ -255,7 +250,7 @@ test('Calling non function value undefined with arguments error message differs 
     callingNonFunctionValueUndefinedArgs,
     callingNonFunctionValueUndefinedArgsVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueNull = stripIndent`
@@ -286,7 +281,7 @@ test('Calling non function value null error message differs from verbose version
     callingNonFunctionValueNull,
     callingNonFunctionValueNullVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueTrue = stripIndent`
@@ -316,7 +311,7 @@ test('Calling non function value true error message differs from verbose version
     callingNonFunctionValueTrue,
     callingNonFunctionValueTrueVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValue0 = stripIndent`
@@ -347,7 +342,7 @@ test('Calling non function value 0 error message differs from verbose version', 
     callingNonFunctionValue0,
     callingNonFunctionValue0Verbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueString = stripIndent`
@@ -378,7 +373,7 @@ test('Calling non function value string error message differs from verbose versi
     callingNonFunctionValueString,
     callingNonFunctionValueStringVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueArray = stripIndent`
@@ -409,7 +404,7 @@ test('Calling non function value array error message differs from verbose versio
     callingNonFunctionValueArray,
     callingNonFunctionValueArrayVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueObject = stripIndent`
@@ -425,7 +420,7 @@ test('Calling non function value object error message differs from verbose versi
     callingNonFunctionValueObject,
     callingNonFunctionValueObjectVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 test('Error when calling function with too few arguments', () => {

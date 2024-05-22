@@ -2,7 +2,7 @@ import { list, set_tail, tail } from '../../stdlib/list'
 import { Chapter, type Value } from '../../types'
 import { stripIndent } from '../formatters'
 import { lineTreeToString, stringDagToLineTree, stringify, valueToStringDag } from '../stringify'
-import { expectResult, testMultipleCases } from '../testing/testers'
+import { expectResult, testMultipleCases } from '../testing'
 
 type TestCase = [desc: string, valueToStringify: Value, expected: string]
 const cases: TestCase[] = [

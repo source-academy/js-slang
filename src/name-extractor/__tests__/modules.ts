@@ -7,7 +7,7 @@ import {
   memoizedGetModuleDocsAsync,
   memoizedGetModuleManifestAsync
 } from '../../modules/loader/loaders'
-import { asMockedFunc } from '../../utils/testing'
+import { asMockedFunc } from '../../utils/testing/misc'
 import { ModuleConnectionError } from '../../modules/errors'
 
 jest.mock('../../modules/loader/loaders')

@@ -12,7 +12,7 @@ import analyzeImportsAndExports from '../analyzer'
 import loadSourceModules from '../../loader'
 import type { SourceFiles as Files } from '../../moduleTypes'
 import { objectKeys } from '../../../utils/misc'
-import { testTrueAndFalseCases } from '../../../utils/testing/testers'
+import { testTrueAndFalseCases } from '../../../utils/testing'
 
 jest.mock('../../loader/loaders')
 

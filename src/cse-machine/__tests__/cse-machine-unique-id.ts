@@ -17,7 +17,7 @@ test("Program environment's id continues after prelude", async () => {
   const context = await getContextFrom('const a = list(1, 2, 3);')
   // 1 prelude environment + 46 prelude closures in Source 4,
   // so program environment has id of '47'
-  expect(context.runtime.environments[0].id).toEqual("47")
+  expect(context.runtime.environments[0].id).toEqual('47')
 })
 
 test("Context runtime's objectCount continues after prelude", async () => {
@@ -106,5 +106,5 @@ test('Program environment id stays the same regardless of amount of steps', asyn
       break
     }
   }
-  expect(programEnvId).toEqual("47")
+  expect(programEnvId).toEqual('47')
 })

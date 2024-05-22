@@ -1,6 +1,6 @@
 import { Chapter, Value } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { expectParsedError, expectResult } from '../utils/testing/testers'
+import { expectParsedError, expectResult } from '../utils/testing'
 
 test.each([
   [

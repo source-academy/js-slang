@@ -4,9 +4,8 @@ import { defineBuiltin } from '../createContext'
 import { mockContext } from '../mocks/context'
 import { Chapter, type Value } from '../types'
 import { stripIndent } from '../utils/formatters'
-import { type TestBuiltins } from '../utils/testing'
-import { expectFinishedResult, expectResult } from '../utils/testing/testers'
-import { expectResultsToEqual, testMultipleCases } from '../utils/testing/testers'
+import { expectFinishedResult, expectResult, type TestBuiltins } from '../utils/testing'
+import { expectResultsToEqual, testMultipleCases } from '../utils/testing'
 
 async function testCodeSnippet(
   code: string,
@@ -184,8 +183,7 @@ describe('Test basic code snippets', () => {
   ])
 
   test('Arrow function definition returns itself', () => {
-    return expectResult('() => 42;', Chapter.SOURCE_1)
-      .toMatchInlineSnapshot(`[Function]`)
+    return expectResult('() => 42;', Chapter.SOURCE_1).toMatchInlineSnapshot(`[Function]`)
   })
 
   test('Builtins hide their implementation when toString', () => {

@@ -1,5 +1,5 @@
 import type { VariableDeclaration } from 'estree'
-import { astTester } from '../../testing/testers'
+import { astTester } from '../../testing'
 import {
   getDeclaredIdentifiers,
   getIdentifiersFromVariableDeclaration,

@@ -1,6 +1,6 @@
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError } from '../../utils/testing/testers'
+import { expectParsedError } from '../../utils/testing'
 
 test('Blatant syntax error', () => {
   return expectParsedError(

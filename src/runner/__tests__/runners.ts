@@ -2,12 +2,18 @@ import { Context, Result, parseError, runInContext } from '../..'
 import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../mocks/context'
 import { FatalSyntaxError } from '../../parser/errors'
-import { Chapter, Finished, Variant, type ExecutionMethod } from '../../types'
+import { Chapter, Finished, Variant, type ExecutionMethod, type SourceError } from '../../types'
 import { locationDummyNode } from '../../utils/ast/astCreator'
-import { CodeSnippetTestCase } from '../../utils/testing'
-import { expectFinishedResult } from '../../utils/testing/testers'
-import { expectResultsToEqual } from '../../utils/testing/testers'
+import { expectFinishedResult } from '../../utils/testing'
+import { expectResultsToEqual } from '../../utils/testing'
 import { htmlErrorHandlingScript } from '../htmlRunner'
+
+interface CodeSnippetTestCase {
+  name: string
+  snippet: string
+  value: any
+  errors: SourceError[]
+}
 
 const JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS: CodeSnippetTestCase[] = [
   {

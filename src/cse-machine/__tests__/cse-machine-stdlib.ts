@@ -1,6 +1,6 @@
 import { Chapter, Value, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectParsedError, expectResult } from '../../utils/testing/testers'
+import { expectParsedError, expectResult } from '../../utils/testing'
 
 test.each([
   [
@@ -431,11 +431,15 @@ test.each([
   'Builtins work as expected %#',
   (chapter: Chapter, snippet: string, passing: boolean, returnValue: Value) => {
     if (passing) {
-      return expectResult(stripIndent(snippet), { chapter, variant: Variant.EXPLICIT_CONTROL })      
-        .toEqual(returnValue)
+      return expectResult(stripIndent(snippet), {
+        chapter,
+        variant: Variant.EXPLICIT_CONTROL
+      }).toEqual(returnValue)
     } else {
-      return expectParsedError(stripIndent(snippet), { chapter, variant: Variant.EXPLICIT_CONTROL })
-        .not.toEqual('')
+      return expectParsedError(stripIndent(snippet), {
+        chapter,
+        variant: Variant.EXPLICIT_CONTROL
+      }).not.toEqual('')
     }
   }
 )

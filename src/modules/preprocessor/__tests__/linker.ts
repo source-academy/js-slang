@@ -5,7 +5,8 @@ import { Chapter, type Context } from '../../../types'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
 import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
-import { asMockedFunc, expectTrue } from '../../../utils/testing'
+import { expectTrue } from '../../../utils/testing/misc'
+import { asMockedFunc } from '../../../utils/testing/misc'
 
 import * as resolver from '../resolver'
 jest.spyOn(resolver, 'default')

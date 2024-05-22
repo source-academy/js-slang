@@ -4,7 +4,7 @@
  */
 
 import { Chapter, Variant } from '../../types'
-import { expectParsedError, expectResult, testMultipleCases } from '../../utils/testing/testers'
+import { expectParsedError, expectResult, testMultipleCases } from '../../utils/testing'
 
 // This is bad practice. Don't do this!
 test('Calling unreachable results in error', () => {
@@ -19,14 +19,15 @@ test('Calling unreachable results in error', () => {
     }
     f();
   `,
-   { variant: Variant.EXPLICIT_CONTROL }
+    { variant: Variant.EXPLICIT_CONTROL }
   ).toMatchInlineSnapshot(`"Line 3: Expected number on right hand side of operation, got boolean."`)
 })
 
-testMultipleCases<[string, any] |  [string, any, Chapter]>([
+testMultipleCases<[string, any] | [string, any, Chapter]>(
   [
-    'Bare early returns work',
-    `
+    [
+      'Bare early returns work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -38,11 +39,11 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    1
-  ],
-  [
-    'Recursive call early returns work',
-    `
+      1
+    ],
+    [
+      'Recursive call early returns work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -57,11 +58,11 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    3
-  ],
-  [
-    'Tail call early returns work',
-    `
+      3
+    ],
+    [
+      'Tail call early returns work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -76,13 +77,13 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    1
-  ],
+      1
+    ],
 
-  // if statements
-  [
-    'Bare early returns in if statements work',
-    `
+    // if statements
+    [
+      'Bare early returns in if statements work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -97,11 +98,11 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    1
-  ],
-  [
-    'Recursive call early returns in if statements work',
-    `
+      1
+    ],
+    [
+      'Recursive call early returns in if statements work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -119,11 +120,11 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    3
-  ],
-  [
-    'Taill call early returns in if statements work',
-    `
+      3
+    ],
+    [
+      'Taill call early returns in if statements work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -141,13 +142,13 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    1
-  ],
+      1
+    ],
 
-  // while loops
-  [
-    'Bare early returns in while loops work',
-    `
+    // while loops
+    [
+      'Bare early returns in while loops work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -162,12 +163,12 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    1,
-    Chapter.SOURCE_3
-  ],
-  [
-    'Recursive call early returns in while loops work',
-    `
+      1,
+      Chapter.SOURCE_3
+    ],
+    [
+      'Recursive call early returns in while loops work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -185,12 +186,12 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    3,
-    Chapter.SOURCE_3
-  ],
-  [
-    'Tail call returns in while loops work',
-    `
+      3,
+      Chapter.SOURCE_3
+    ],
+    [
+      'Tail call returns in while loops work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -208,14 +209,14 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    1,
-    Chapter.SOURCE_3
-  ],
-  
-  // for loops
-  [
-    'Bare early returns in for loops work',
-    `
+      1,
+      Chapter.SOURCE_3
+    ],
+
+    // for loops
+    [
+      'Bare early returns in for loops work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -230,12 +231,12 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    1,
-    Chapter.SOURCE_3
-  ],
-  [
-    'Recursive call early returns in for loops work',
-    `
+      1,
+      Chapter.SOURCE_3
+    ],
+    [
+      'Recursive call early returns in for loops work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -250,12 +251,12 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    3,
-    Chapter.SOURCE_3
-  ],
-  [
-    'Tail call early returns in for loops work',
-    `
+      3,
+      Chapter.SOURCE_3
+    ],
+    [
+      'Tail call early returns in for loops work',
+      `
       function unreachable() {
         return 1 < true; // Will cause an error
       }
@@ -273,9 +274,11 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
       }
       f();
     `,
-    1,
-    Chapter.SOURCE_3
-  ]
-], ([code, expected, chapter]) => {
-  return expectResult(code, { chapter, variant: Variant.EXPLICIT_CONTROL }).toEqual(expected)
-})
+      1,
+      Chapter.SOURCE_3
+    ]
+  ],
+  ([code, expected, chapter]) => {
+    return expectResult(code, { chapter, variant: Variant.EXPLICIT_CONTROL }).toEqual(expected)
+  }
+)
