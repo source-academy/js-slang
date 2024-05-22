@@ -1,8 +1,8 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import { ErrorSeverity, ErrorType, type Node, type SourceError } from '../../../types'
+import type { Rule } from '../../types'
 
 export class NoSpreadInArray implements SourceError {
   public type = ErrorType.SYNTAX
@@ -24,7 +24,8 @@ export class NoSpreadInArray implements SourceError {
 }
 
 const noSpreadInArray: Rule<es.SpreadElement> = {
-  name: 'no-assignment-expression',
+  name: 'no-spread-in-array',
+  testSnippets: [['const a = [...b];', 'Line 1: Spread syntax is not allowed in arrays.']],
 
   checkers: {
     SpreadElement(node: es.SpreadElement, ancestors: [Node]) {

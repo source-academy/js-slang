@@ -1,8 +1,8 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import { ErrorSeverity, ErrorType, type SourceError } from '../../../types'
+import type { Rule } from '../../types'
 
 export class NoTemplateExpressionError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -25,9 +25,15 @@ export class NoTemplateExpressionError implements SourceError {
 
 const noTemplateExpression: Rule<es.TemplateLiteral> = {
   name: 'no-template-expression',
-
+  testSnippets: [
+    ['`\n`;', undefined],
+    [
+      'const x = 0; `${x}`;',
+      'Line 1: Expressions are not allowed in template literals (`multiline strings`)'
+    ]
+  ],
   checkers: {
-    TemplateLiteral(node: es.TemplateLiteral, _ancestors: [Node]) {
+    TemplateLiteral(node: es.TemplateLiteral) {
       if (node.expressions.length > 0) {
         return [new NoTemplateExpressionError(node)]
       } else {

@@ -1,9 +1,9 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import { ErrorSeverity, ErrorType, type SourceError } from '../../../types'
+import type { Rule } from '../../types'
 
 export class NoUpdateAssignment implements SourceError {
   public type = ErrorType.SYNTAX
@@ -34,11 +34,39 @@ export class NoUpdateAssignment implements SourceError {
   }
 }
 
+const disallowedAssignmentOperators: es.AssignmentOperator[] = [
+  // Some operators aren't recognized as valid operators
+  '+=',
+  '-=',
+  '*=',
+  '/=',
+  '%=',
+  // "**=",
+  '<<=',
+  '>>=',
+  '>>>=',
+  '|=',
+  '^=',
+  '&='
+  // "||=",
+  // "&&=",
+  // "??="
+]
+
+const testSnippets = disallowedAssignmentOperators.map(
+  op =>
+    [`a ${op} b;`, `Line 1: The assignment operator ${op} is not allowed. Use = instead.`] as [
+      string,
+      string
+    ]
+)
+
 const noUpdateAssignment: Rule<es.AssignmentExpression> = {
   name: 'no-update-assignment',
+  testSnippets,
 
   checkers: {
-    AssignmentExpression(node: es.AssignmentExpression, _ancestors: [Node]) {
+    AssignmentExpression(node: es.AssignmentExpression) {
       if (node.operator !== '=') {
         return [new NoUpdateAssignment(node)]
       } else {

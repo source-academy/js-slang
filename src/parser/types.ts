@@ -22,9 +22,12 @@ export interface Rule<T extends Node> {
 
   /**
    * Test snippets to test the behaviour of the rule. Providing no test snippets
-   * means that this rule will not be tested when running unit tests.
+   * means that this rule will not be tested when running unit tests.\
+   * First element of the tuple is the code to test. Set the second element to `undefined`
+   * if the snippet should not throw an error. Otherwise set it to the `explain()` value
+   * of the error.
    */
-  testSnippets?: [code: string, expected: string][]
+  testSnippets?: [code: string, expected: string | undefined][]
 
   /**
    * Disable this rule for this chapter (inclusive) and above

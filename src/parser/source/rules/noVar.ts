@@ -1,9 +1,9 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import { ErrorSeverity, ErrorType, type SourceError } from '../../../types'
+import type { Rule } from '../../types'
 
 export class NoVarError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -29,9 +29,9 @@ export class NoVarError implements SourceError {
 
 const noVar: Rule<es.VariableDeclaration> = {
   name: 'no-var',
-
+  testSnippets: [['var x = 0;', 'Line 1: Variable declaration using "var" is not allowed.']],
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {
+    VariableDeclaration(node: es.VariableDeclaration) {
       if (node.kind === 'var') {
         return [new NoVarError(node)]
       } else {

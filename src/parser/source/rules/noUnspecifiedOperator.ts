@@ -1,15 +1,63 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import { ErrorSeverity, ErrorType, type SourceError } from '../../../types'
+import type { Rule } from '../../types'
+
+const nonPermittedBinaryOperators: (es.BinaryOperator | es.LogicalOperator)[] = [
+  '==',
+  '!=',
+  // "**",
+  '|',
+  '^',
+  '&',
+  'in',
+  'instanceof'
+  // '??'
+]
+
+const permittedBinaryOperators: (es.BinaryOperator | es.LogicalOperator)[] = [
+  '+',
+  '-',
+  '*',
+  '/',
+  '%',
+  '===',
+  '!==',
+  '<',
+  '>',
+  '<=',
+  '>=',
+  '&&',
+  '||'
+]
+
+const permittedBinarySnippets = permittedBinaryOperators.map(op => {
+  return [`a ${op} b;`, undefined] as [string, undefined]
+})
+
+const nonPermittedBinarySnippets = nonPermittedBinaryOperators.map(op => {
+  return [`a ${op} b;`, `Operator '${op}' is not allowed.`] as [string, string]
+})
+
+// No tests for permitted unary test snippets because typeof operator is a bit more
+// complex as to when its permitted
+const permittedUnaryOperators: es.UnaryOperator[] = ['-', '!', 'typeof']
+
+// TODO: potentially handle the delete operator separately?
+// it gives 'deleting local variable in strict mode' as the error instead of
+// non-permitted operator
+const nonPermittedUnaryOperators: es.UnaryOperator[] = ['~', '+', 'void']
+const nonPermittedUnarySnippets = nonPermittedUnaryOperators.map(
+  op => [`${op} a;`, `Operator '${op}' is not allowed.`] as [string, string]
+)
 
 export class NoUnspecifiedOperatorError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
   public unspecifiedOperator: string
 
-  constructor(public node: es.BinaryExpression | es.UnaryExpression) {
+  constructor(public node: es.BinaryExpression | es.UnaryExpression | es.LogicalExpression) {
     this.unspecifiedOperator = node.operator
   }
 
@@ -26,41 +74,38 @@ export class NoUnspecifiedOperatorError implements SourceError {
   }
 }
 
-const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression> = {
-  name: 'no-unspecified-operator',
+const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression | es.LogicalExpression> =
+  {
+    name: 'no-unspecified-operator',
+    testSnippets: [
+      ...permittedBinarySnippets,
+      ...nonPermittedBinarySnippets,
+      ...nonPermittedUnarySnippets
+    ],
 
-  checkers: {
-    BinaryExpression(node: es.BinaryExpression, _ancestors: [Node]) {
-      const permittedOperators = [
-        '+',
-        '-',
-        '*',
-        '/',
-        '%',
-        '===',
-        '!==',
-        '<',
-        '>',
-        '<=',
-        '>=',
-        '&&',
-        '||'
-      ]
-      if (!permittedOperators.includes(node.operator)) {
-        return [new NoUnspecifiedOperatorError(node)]
-      } else {
-        return []
-      }
-    },
-    UnaryExpression(node: es.UnaryExpression) {
-      const permittedOperators = ['-', '!', 'typeof']
-      if (!permittedOperators.includes(node.operator)) {
-        return [new NoUnspecifiedOperatorError(node)]
-      } else {
-        return []
+    checkers: {
+      BinaryExpression(node: es.BinaryExpression) {
+        if (!permittedBinaryOperators.includes(node.operator)) {
+          return [new NoUnspecifiedOperatorError(node)]
+        } else {
+          return []
+        }
+      },
+      LogicalExpression(node: es.LogicalExpression) {
+        if (!permittedBinaryOperators.includes(node.operator)) {
+          return [new NoUnspecifiedOperatorError(node)]
+        } else {
+          return []
+        }
+      },
+      UnaryExpression(node: es.UnaryExpression) {
+        if (!permittedUnaryOperators.includes(node.operator)) {
+          return [new NoUnspecifiedOperatorError(node)]
+        } else {
+          return []
+        }
       }
     }
   }
-}
 
 export default noUnspecifiedOperator
