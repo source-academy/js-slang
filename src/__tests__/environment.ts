@@ -23,10 +23,7 @@ test('Function params and body identifiers are in different environment', () => 
     stepLimit: 1000,
     isPrelude: false
   })
-  // const stepsToComment = 13 // manually counted magic number
-  // for (let i = 0; i < stepsToComment; i += 1) {
-  //   it.next()
-  // }
+
   context.runtime.environments.forEach(environment => {
     expect(environment).toMatchSnapshot()
   })
