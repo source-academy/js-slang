@@ -3,7 +3,7 @@ import * as _ from 'lodash'
 import type { RawSourceMap } from 'source-map'
 
 import { type IOptions, type Result } from '..'
-import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
+import { JSSLANG_PROPERTIES } from '../constants'
 import { CSEResultPromise, evaluate } from '../cse-machine/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -26,8 +26,6 @@ import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
 import { Chapter, type Context, type RecursivePartial, Variant } from '../types'
 import { validateAndAnnotate } from '../validator/validator'
-import { compileForConcurrent } from '../vm/svml-compiler'
-import { runWithProgram } from '../vm/svml-machine'
 import type { FileGetter } from '../modules/moduleTypes'
 import { mapResult } from '../alt-langs/mapper'
 import { toSourceError } from './errors'
@@ -58,29 +56,6 @@ let previousCode: {
   entrypointFilePath: string
 } | null = null
 let isPreviousCodeTimeoutError = false
-
-function runConcurrent(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  if (context.shouldIncreaseEvaluationTimeout) {
-    context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-  } else {
-    context.nativeStorage.maxExecTime = options.originalMaxExecTime
-  }
-
-  try {
-    return Promise.resolve({
-      status: 'finished',
-      context,
-      value: runWithProgram(compileForConcurrent(program, context), context)
-    })
-  } catch (error) {
-    if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
-      context.errors.push(error) // use ExceptionErrors for non Source Errors
-      return resolvedErrorPromise
-    }
-    context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
-    return resolvedErrorPromise
-  }
-}
 
 function runSubstitution(
   program: es.Program,
@@ -218,10 +193,6 @@ async function sourceRunner(
   validateAndAnnotate(program, context)
   if (context.errors.length > 0) {
     return resolvedErrorPromise
-  }
-
-  if (context.variant === Variant.CONCURRENT) {
-    return runConcurrent(program, context, theOptions)
   }
 
   determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)

@@ -1,9 +1,9 @@
 import type { Program } from 'estree'
-import { Chapter, type Context, type Finished } from '../../types'
+import { Chapter, type Context, type Finished, type Variant } from '../../types'
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
 import { parseError, runInContext, type Result } from '../..'
-import { createTestContext } from '.'
+import { createTestContext, type TestBuiltins } from '.'
 
 export type TestCase<T extends Array<any>> = [string, ...T]
 
@@ -81,10 +81,28 @@ export function astTester<ExpectedError>(
   testMultipleCases(fullCases, args => func(...args), includeIndex, timeout)
 }
 
-export function expectResult(code: string, chapter: Chapter) {
-  const context = createTestContext({ chapter })
+export type TestOptions = {
+  chapter?: Chapter
+  variant?: Variant
+  testBuiltins?: TestBuiltins
+} | Chapter
+
+async function testInContext(code: string, rawOptions: TestOptions) {
+  const options: TestOptions = typeof rawOptions === 'number' ? {
+    chapter: rawOptions
+  } : rawOptions
+
+  const context = createTestContext(options)
+  const result = await runInContext(code, context)
+  return {
+    context,
+    result
+  }
+}
+
+export function expectResult(code: string, options: TestOptions) {
   return expect(
-    runInContext(code, context).then(result => {
+    testInContext(code, options).then(({ result, context }) => {
       if (result.status === 'error') {
         console.log(context.errors)
       }
@@ -97,12 +115,12 @@ export function expectResult(code: string, chapter: Chapter) {
 type ExpectResultsTestCase = [string, string, any] | [string, string, any, Chapter]
 export function expectResultsToEqual(
   snippets: ExpectResultsTestCase[],
-  defaultChapter: Chapter = Chapter.SOURCE_1,
+  options: TestOptions = Chapter.SOURCE_1,
   includeIndex?: boolean,
   timeout?: number
 ) {
   const fullSnippets = snippets.map(snippet => {
-    const chapter = snippet.length === 4 ? snippet[3] : defaultChapter
+    const chapter = snippet.length === 4 ? snippet[3] : options
     return [snippet[0], snippet[1], snippet[2], chapter] as [string, string, any, Chapter]
   })
 
@@ -116,10 +134,9 @@ export function expectResultsToEqual(
   )
 }
 
-export function expectParsedError(code: string, chapter: Chapter, verbose?: boolean) {
-  const context = mockContext(chapter)
+export function expectParsedError(code: string, options: TestOptions, verbose?: boolean) {
   return expect(
-    runInContext(code, context).then(result => {
+    testInContext(code, options).then(({ result, context }) => {
       expect(result.status).toEqual('error')
       return parseError(context.errors, verbose)
     })
@@ -128,12 +145,12 @@ export function expectParsedError(code: string, chapter: Chapter, verbose?: bool
 
 export function expectParsedErrorsToEqual(
   snippets: (ExpectResultsTestCase | [...ExpectResultsTestCase, boolean])[],
-  defaultChapter: Chapter = Chapter.SOURCE_1,
+  options: TestOptions = Chapter.SOURCE_1,
   includeIndex?: boolean,
   timeout?: number
 ) {
   const fullSnippets = snippets.map(snippet => {
-    const chapter = snippet.length >= 4 ? snippet[3] : defaultChapter
+    const chapter = snippet.length >= 4 ? snippet[3] : options
     const verbose = snippet.length === 5 ? snippet[4] : false
     return [snippet[0], snippet[1], snippet[2], chapter, verbose] as [
       string,
@@ -158,10 +175,9 @@ export function expectFinishedResult(result: Result): asserts result is Finished
   expect(result.status).toEqual('finished')
 }
 
-export function expectDisplayResult(code: string, chapter: Chapter) {
-  const context = createTestContext({ chapter })
+export function expectDisplayResult(code: string, options: TestOptions) {
   return expect(
-    runInContext(code, context).then(result => {
+    testInContext(code, options).then(({ context, result }) => {
       expectFinishedResult(result)
       return context.displayResult
     })

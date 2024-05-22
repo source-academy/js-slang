@@ -17,13 +17,13 @@ test("Program environment's id continues after prelude", async () => {
   const context = await getContextFrom('const a = list(1, 2, 3);')
   // 1 prelude environment + 46 prelude closures in Source 4,
   // so program environment has id of '47'
-  expect(context.runtime.environments[0].id).toMatchInlineSnapshot(`"47"`)
+  expect(context.runtime.environments[0].id).toEqual("47")
 })
 
 test("Context runtime's objectCount continues after prelude", async () => {
   const context = await getContextFrom('const a = list(1, 2, 3);')
   // 1 program environment + 3 arrays from the list function, so final objectCount is 51
-  expect(context.runtime.objectCount).toMatchInlineSnapshot(`51`)
+  expect(context.runtime.objectCount).toEqual(51)
 })
 
 test("Context runtime's objectCount continues after apply_in_underlying_javascript call", async () => {
@@ -37,7 +37,7 @@ test("Context runtime's objectCount continues after apply_in_underlying_javascri
   )
   // 1 program environment + 1 closure + 1 function environment
   // 3 arrays from list + 1 array from variadic argument + 1 array from from function result
-  expect(context.runtime.objectCount).toMatchInlineSnapshot(`55`)
+  expect(context.runtime.objectCount).toEqual(55)
 })
 
 test('Every environment/array/closure has a unique id', async () => {
@@ -60,7 +60,7 @@ test('Every environment/array/closure has a unique id', async () => {
   // Arrays: 4 arrays created manually + 4 arrays from in-built functions (pair, list), total: 8
   // Closures: 46 prelude closures + 1 closure in program (c) + 1 closure in block, total 48
   // Total count: 4 + 8 + 48 = 60
-  expect(context.runtime.objectCount).toMatchInlineSnapshot(`60`)
+  expect(context.runtime.objectCount).toEqual(60)
 })
 
 test('CSE Machine stops at the given step number', async () => {
@@ -74,7 +74,7 @@ test('CSE Machine stops at the given step number', async () => {
     100
   )
   // 7 additional environments + 2 arrays created at step 100, so object count is 48 + 7 + 2 = 57
-  expect(context.runtime.objectCount).toMatchInlineSnapshot(`57`)
+  expect(context.runtime.objectCount).toEqual(57)
 })
 
 const programEnvName = createProgramEnvironment(mockContext(), false).name
@@ -106,5 +106,5 @@ test('Program environment id stays the same regardless of amount of steps', asyn
       break
     }
   }
-  expect(programEnvId).toMatchInlineSnapshot(`"47"`)
+  expect(programEnvId).toEqual("47")
 })

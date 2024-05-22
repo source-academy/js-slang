@@ -3,8 +3,10 @@
  * Please reference Issue #124 (https://github.com/source-academy/js-slang/issues/124)
  */
 
-import { Chapter, Variant } from '../../types'
+import { Chapter } from '../../types'
 import { expectParsedError, expectResult, testMultipleCases } from '../../utils/testing/testers'
+
+// TODO Combine with cse-machine return regressions
 
 // This is bad practice. Don't do this!
 test('Calling unreachable results in error', () => {
@@ -19,7 +21,7 @@ test('Calling unreachable results in error', () => {
     }
     f();
   `,
-   { variant: Variant.EXPLICIT_CONTROL }
+  Chapter.SOURCE_1
   ).toMatchInlineSnapshot(`"Line 3: Expected number on right hand side of operation, got boolean."`)
 })
 
@@ -277,5 +279,5 @@ testMultipleCases<[string, any] |  [string, any, Chapter]>([
     Chapter.SOURCE_3
   ]
 ], ([code, expected, chapter]) => {
-  return expectResult(code, { chapter, variant: Variant.EXPLICIT_CONTROL }).toEqual(expected)
+  return expectResult(code, chapter ?? Chapter.SOURCE_1).toEqual(expected)
 })

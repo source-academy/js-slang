@@ -187,6 +187,17 @@ describe('Test basic code snippets', () => {
     return expectResult('() => 42;', Chapter.SOURCE_1)
       .toMatchInlineSnapshot(`[Function]`)
   })
+
+  test('Builtins hide their implementation when toString', () => {
+    return expectResult('toString(pair);', {
+      chapter: Chapter.SOURCE_2,
+      testBuiltins: { toString }
+    }).toMatchInlineSnapshot(`
+              "function pair(left, right) {
+                [implementation hidden]
+              }"
+            `)
+  })
 })
 
 describe('Test equal', () => {

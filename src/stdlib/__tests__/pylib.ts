@@ -1,256 +1,69 @@
 import { Chapter } from '../../types'
-import { stripIndent } from '../../utils/formatters'
-import { expectResult, expectParsedError } from '../../utils/testing'
+import { expectParsedErrorsToEqual, expectResultsToEqual } from '../../utils/testing/testers'
 
-test('adding two integers is ok', () => {
-  return expectResult(
-    stripIndent`
-    1 + 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(3n)
-})
+expectResultsToEqual([
+  // Addition
+  ['adding two integers is integer', '1 + 2', 3n],
+  ['adding two floats is ok', '1.0 + 2.0', 3],
+  ['adding integer to float is ok', '1.0 + 2', 3],
+  ['adding integer to string is string', '"a" + 1', 'a1'],
+  ['adding string to integer is string', '1 + "a"', '1a'],
+  ['adding string to string is string', '"a" + "b"', 'ab'],
 
-test('adding two floats is ok', () => {
-  return expectResult(
-    stripIndent`
-    1.0 + 2.0
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(3)
-})
+  // Subtraction
+  ['subtracting two integers is integer', '1 - 2', -1n],
+  ['subtracting two floats is ok', '1.0 - 2.0', -1],
 
-test('adding an integer and a float is ok', () => {
-  return expectResult(
-    stripIndent`
-    1.0 + 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(3)
-})
+  // Multiplication
+  ['multiplying two integers is ok', '1 * 2', 2n],
+  ['multiplying two floats is ok', '1.0 * 2.0', 2],
+  ['multiplying integer and float is ok', '1.0 * 2', 2],
 
-test('adding a string and an integer is ok', () => {
-  return expectResult(
-    stripIndent`
-    "a" + 1
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual('a1')
-})
+  // Division
+  ['dividing integer by float is ok', '2 / 1.0', 2],
+  ['dividing float by float is ok', '2.0 / 1.0', 2],
+  ['dividing integer by integer yields float', '1 / 2', 0.5],
 
-test('minusing two integers is ok', () => {
-  return expectResult(
-    stripIndent`
-    1 - 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(-1n)
-})
+  // Modulo
+  ['modulo integer by float is ok', '2 % 1.0', 0],
+  ['modulo float by float is ok', '2.0 % 1.0', 0],
+  ['modulo integer by integer is integer', '2 % 1', 0n],
 
-test('minusing two floats is ok', () => {
-  return expectResult(
-    stripIndent`
-    1.0 - 2.0
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(-1)
-})
+  // Exponentiation
+  ['exponentiating integer by float is ok', '2 ** 1.0', 2],
+  ['exponentiating float by float is ok', '2.0 ** 1.0', 2],
+  ['exponentiating integer by integer is integer', '2 ** 1', 2n],
 
-test('minusing an integer from a float is ok', () => {
-  return expectResult(
-    stripIndent`
-    1.0 - 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(-1)
-})
+  // Floor Division
+  ['integer floor division by float is integer', '2 // 1.0', 2n],
+  ['integer floor division by integer is integer', '2 // 1', 2n],
+  ['float floor division by float is integer', '2.0 // 1.0', 2n]
+], Chapter.PYTHON_1)
 
-test('multiplying integer and float is ok', () => {
-  return expectResult(
-    stripIndent`
-    1.0 * 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(2)
-})
-
-test('multiplying integer and integer is ok', () => {
-  return expectResult(
-    stripIndent`
-    1 * 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(2n)
-})
-
-test('multiplying float and float is ok', () => {
-  return expectResult(
-    stripIndent`
-    1.0 * 2.0
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(2)
-})
-
-test('cannot multiply non-number values', () => {
-  return expectParsedError(
-    stripIndent`
-    True * 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toMatchInlineSnapshot(
-    `"Line 1: Error: Expected number on left hand side of operation, got boolean."`
-  )
-})
-
-test('dividing integer and float is ok', () => {
-  return expectResult(
-    stripIndent`
-    2 / 1.0
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(2)
-})
-
-test('dividing integer and integer is ok', () => {
-  return expectResult(
-    stripIndent`
-    1 / 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(0.5)
-})
-
-test('dividing float and float is ok', () => {
-  return expectResult(
-    stripIndent`
-    1.0 / 2.0
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(0.5)
-})
-
-test('cannot divide non-number values', () => {
-  return expectParsedError(
-    stripIndent`
-    "a" / 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toMatchInlineSnapshot(
-    `"Line 1: Error: Expected number on left hand side of operation, got string."`
-  )
-})
-
-test('modding integer and float is ok', () => {
-  return expectResult(
-    stripIndent`
-    2 % 1.0
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(0)
-})
-
-test('modding integer and integer is ok', () => {
-  return expectResult(
-    stripIndent`
-    2 % 1
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(0n)
-})
-
-test('modding float and float is ok', () => {
-  return expectResult(
-    stripIndent`
-    1.0 % 2.0
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(1.0)
-})
-
-test('cannot mod non-number values', () => {
-  return expectParsedError(
-    stripIndent`
-    "a" % 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toMatchInlineSnapshot(
-    `"Line 1: Error: Expected number on left hand side of operation, got string."`
-  )
-})
-
-test('powering integer and float is ok', () => {
-  return expectResult(
-    stripIndent`
-    2 ** 1.0
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(2.0)
-})
-
-test('powering integer and integer is ok', () => {
-  return expectResult(
-    stripIndent`
-    2 ** 1
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(2n)
-})
-
-test('powering float and float is ok', () => {
-  return expectResult(
-    stripIndent`
-    1.0 ** 2.0
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(1.0)
-})
-
-test('cannot power non-number values', () => {
-  return expectParsedError(
-    stripIndent`
-    "a" ** 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toMatchInlineSnapshot(
-    `"Line 1: Error: Expected number on left hand side of operation, got string."`
-  )
-})
-
-test('flooring integer and float is ok', () => {
-  return expectResult(
-    stripIndent`
-    2 // 1.0
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(2n)
-})
-
-test('flooring integer and integer is ok', () => {
-  return expectResult(
-    stripIndent`
-    2 // 1
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(2n)
-})
-
-test('flooring float and float is ok', () => {
-  return expectResult(
-    stripIndent`
-    1.0 // 2.0
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toEqual(0n)
-})
-
-test('cannot floor non-number values', () => {
-  return expectParsedError(
-    stripIndent`
-    "a" // 2
-  `,
-    { chapter: Chapter.PYTHON_1, native: true }
-  ).toMatchInlineSnapshot(
-    `"Line 1: Error: Expected number on left hand side of operation, got string."`
-  )
-})
+expectParsedErrorsToEqual([
+  [
+    'Cannot multiply non-number values',
+    'True * 2',
+    "Line 1: Error: Expected number on left hand side of operation, got boolean."
+  ],
+  [
+    'Cannot divide non-number values',
+    '"a" / 2',
+    "Line 1: Error: Expected number on left hand side of operation, got string."
+  ],
+  [
+    'Cannot modulo non-number values',
+    '"a" % 2',
+    "Line 1: Error: Expected number on left hand side of operation, got string."
+  ],
+  [
+    'Cannot exponentiate non-number values',
+    '"a" ** 2',
+    "Line 1: Error: Expected number on left hand side of operation, got string."
+  ],
+  [
+    'Cannot floor divide non-number values',
+    '"a" // 2',
+    "Line 1: Error: Expected number on left hand side of operation, got string."
+  ]
+], Chapter.PYTHON_1)

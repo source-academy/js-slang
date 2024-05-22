@@ -4,11 +4,9 @@ import * as _ from 'lodash'
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 import {
-  expectDifferentParsedErrors,
   expectParsedError,
-  expectParsedErrorNoSnapshot,
   expectResult
-} from '../../utils/testing'
+} from '../../utils/testing/testers'
 
 jest.spyOn(_, 'memoize').mockImplementation(func => func as any)
 
@@ -32,7 +30,7 @@ test('Undefined variable error is thrown', () => {
 })
 
 test('Undefined variable error is thrown - verbose', () => {
-  return expectParsedError(undefinedVariableVerbose).toMatchInlineSnapshot(`
+  return expectParsedError(undefinedVariableVerbose, optionEC).toMatchInlineSnapshot(`
             "Line 2, Column 0: Name im_undefined not declared.
             Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
             "
@@ -149,7 +147,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
 })
 
 test('Infinite recursion with a block bodied function', () => {
-  return expectParsedErrorNoSnapshot(
+  return expectParsedError(
     stripIndent`
     function i(n) {
       return n === 0 ? 0 : 1 + i(n-1);
@@ -161,7 +159,7 @@ test('Infinite recursion with a block bodied function', () => {
 }, 15000)
 
 test('Infinite recursion with function calls in argument', () => {
-  return expectParsedErrorNoSnapshot(
+  return expectParsedError(
     stripIndent`
     function i(n, redundant) {
       return n === 0 ? 0 : 1 + i(n-1, r());
@@ -178,7 +176,7 @@ test('Infinite recursion with function calls in argument', () => {
 }, 20000)
 
 test('Infinite recursion of mutually recursive functions', () => {
-  return expectParsedErrorNoSnapshot(
+  return expectParsedError(
     stripIndent`
     function f(n) {
       return n === 0 ? 0 : 1 + g(n - 1);
@@ -931,7 +929,7 @@ test('Cascading js errors work properly', () => {
 })
 
 test('Check that stack is at most 10k in size', () => {
-  return expectParsedErrorNoSnapshot(
+  return expectParsedError(
     stripIndent`
     function f(x) {
       if (x <= 0) {
