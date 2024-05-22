@@ -254,7 +254,7 @@ describe('Test errors', () => {
         [
           'bad index error list_ref 4',
           'list_ref(list(1, 2, 3), "1");',
-          'Line 215: Expected string on right hand side of operation, got number.'
+          'Line 217: Expected number on left hand side of operation, got string.'
         ]
       ],
       Chapter.SOURCE_3

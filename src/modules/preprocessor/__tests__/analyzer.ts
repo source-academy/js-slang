@@ -139,11 +139,11 @@ describe('Test throwing import validation errors', () => {
       desc,
       'allowUndefinedImports',
       cases,
-      ([desc, files, entry, errorInfo], i) => {
+      ([desc, files, entry, errorInfo]) => {
         return [
-          [`${i + 1}: ${desc} should not throw an error`, files, entry, true] as FullTestCase,
+          [`${desc} should not throw an error`, files, entry, true] as FullTestCase,
           [
-            `${i + 1}: ${desc} should${errorInfo ? '' : ' not'} throw an error`,
+            `${desc} should${errorInfo ? '' : ' not'} throw an error`,
             files,
             entry,
             errorInfo
@@ -161,7 +161,8 @@ describe('Test throwing import validation errors', () => {
           // Or throw the expected error
           await testFailure(files, entrypointFilePath, false, errorInfo)
         }
-      }
+      },
+      true
     )
   }
 
@@ -648,7 +649,7 @@ describe('Test throwing DuplicateImportNameErrors', () => {
       desc,
       'throwOnDuplicateImports',
       cases,
-      (c, i) => {
+      c => {
         // For each test case, split it into the case where throwOnDuplicateImports is true
         // and when it is false. No errors should ever be thrown when throwOnDuplicateImports is false
         if (isTestCaseWithNoError(c)) {
@@ -656,13 +657,13 @@ describe('Test throwing DuplicateImportNameErrors', () => {
           // regardless of the value of throwOnDuplicateImports
           const [desc] = c
           const noThrowCase: [string, ...FullTestCase] = [
-            `${i + 1}. ${desc}: no error `,
+            `${desc}: no error `,
             c[1],
             false,
             undefined
           ]
           const yesThrowCase: [string, ...FullTestCase] = [
-            `${i + 1}. ${desc}: no error`,
+            `${desc}: no error`,
             c[1],
             true,
             undefined
@@ -671,18 +672,8 @@ describe('Test throwing DuplicateImportNameErrors', () => {
         }
 
         const [desc, , errMsg] = c
-        const noThrowCase: [string, ...FullTestCase] = [
-          `${i + 1}. ${desc}: no error`,
-          c[1],
-          false,
-          undefined
-        ]
-        const yesThrowCase: [string, ...FullTestCase] = [
-          `${i + 1}. ${desc}: error`,
-          c[1],
-          true,
-          errMsg
-        ]
+        const noThrowCase: [string, ...FullTestCase] = [`${desc}: no error`, c[1], false, undefined]
+        const yesThrowCase: [string, ...FullTestCase] = [`${desc}: error`, c[1], true, errMsg]
         return [noThrowCase, yesThrowCase]
       },
       async ([files, shouldThrow, errMsg]) => {
@@ -702,7 +693,8 @@ describe('Test throwing DuplicateImportNameErrors', () => {
         segments.sort()
 
         expect(segments.join(', ')).toEqual(errMsg)
-      }
+      },
+      true
     )
   }
 
