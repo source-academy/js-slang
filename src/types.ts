@@ -85,7 +85,6 @@ export enum Variant {
   TYPED = 'typed',
   NATIVE = 'native',
   WASM = 'wasm',
-  NON_DET = 'non-det',
   CONCURRENT = 'concurrent',
   GPU = 'gpu',
   EXPLICIT_CONTROL = 'explicit-control'

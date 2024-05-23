@@ -36,7 +36,6 @@ export const sourceLanguages: Language[] = [
   { chapter: Chapter.SOURCE_3, variant: Variant.DEFAULT },
   { chapter: Chapter.SOURCE_3, variant: Variant.TYPED },
   { chapter: Chapter.SOURCE_3, variant: Variant.CONCURRENT },
-  { chapter: Chapter.SOURCE_3, variant: Variant.NON_DET },
   { chapter: Chapter.SOURCE_4, variant: Variant.DEFAULT },
   { chapter: Chapter.SOURCE_4, variant: Variant.TYPED },
   { chapter: Chapter.SOURCE_4, variant: Variant.GPU },

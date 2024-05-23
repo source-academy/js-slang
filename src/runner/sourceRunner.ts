@@ -2,7 +2,7 @@ import type es from 'estree'
 import * as _ from 'lodash'
 import type { RawSourceMap } from 'source-map'
 
-import { type IOptions, type Result } from '..'
+import type { IOptions, Result } from '..'
 import { JSSLANG_PROPERTIES } from '../constants'
 import { CSEResultPromise, evaluate } from '../cse-machine/interpreter'
 import { ExceptionError } from '../errors/errors'
@@ -33,7 +33,6 @@ import { fullJSRunner } from './fullJSRunner'
 import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
-  scheduler: 'async',
   steps: 1000,
   stepLimit: -1,
   executionMethod: 'auto',

@@ -18,7 +18,6 @@ import { list_to_vector } from './stdlib/list'
 import { listPrelude } from './stdlib/list.prelude'
 import { localImportPrelude } from './stdlib/localImport.prelude'
 import * as misc from './stdlib/misc'
-import { nonDetPrelude } from './stdlib/non-det.prelude'
 import * as parser from './stdlib/parser'
 import * as pylib from './stdlib/pylib'
 import * as stream from './stdlib/stream'
@@ -807,10 +806,6 @@ function importPrelude(context: Context) {
   }
   if (context.chapter >= 3) {
     prelude += streamPrelude
-  }
-
-  if (context.variant === Variant.NON_DET) {
-    prelude += nonDetPrelude
   }
 
   if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {

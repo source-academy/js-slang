@@ -22,7 +22,6 @@ xtest('debugger; statement basic test', () => {
   `
   const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -43,7 +42,6 @@ xtest('debugger; statement in function', () => {
   `
   const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -64,7 +62,6 @@ xtest('debugger; statement execution sequence', () => {
   `
   const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -96,7 +93,6 @@ xtest('debugger; statement test function scope', () => {
   `
   const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -120,7 +116,6 @@ xtest('debugger; statement hoisting', () => {
   `
   const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -142,7 +137,6 @@ xtest('debugger; pauses for', () => {
   `
   const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -165,7 +159,6 @@ xtest('debugger; pauses while', () => {
   `
   const context = mockContext(Chapter.SOURCE_3)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -194,7 +187,6 @@ xtest('setBreakpointAtLine basic', () => {
   const context = mockContext(Chapter.SOURCE_3)
   setBreakpointAtLine(['helloworld'])
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -217,7 +209,6 @@ xtest('setBreakpointAtLine function 1', () => {
   breakline[1] = 'asd'
   setBreakpointAtLine(breakline)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -240,7 +231,6 @@ xtest('setBreakpointAtLine function 2', () => {
   breakline[2] = 'asd'
   setBreakpointAtLine(breakline)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -265,7 +255,6 @@ xtest('setBreakpointAtLine function 3', () => {
   breakline[3] = 'asd'
   setBreakpointAtLine(breakline)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -288,7 +277,6 @@ xtest('setBreakpointAtLine function 4', () => {
   breakline[4] = 'asd'
   setBreakpointAtLine(breakline)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -317,7 +305,6 @@ xtest('setBreakpointAtLine granularity 1', () => {
   // this should not happen
   // if you do fix this issue, this is good to modify.
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -350,7 +337,6 @@ xtest('setBreakpointAtLine granularity 2', () => {
   breakline[3] = 'a'
   setBreakpointAtLine(breakline)
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -382,7 +368,6 @@ xtest('setBreakpointAtLine granularity 3', () => {
   setBreakpointAtLine(breakline)
   // for some reason this is safe from the breaking twice problem
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -416,7 +401,6 @@ xtest('setBreakpointAtLine for loops', () => {
   setBreakpointAtLine(breakline)
   // for some reason this is safe from the breaking twice problem
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
@@ -461,7 +445,6 @@ xtest('setBreakpointAtLine while loops', () => {
   setBreakpointAtLine(breakline)
   // for some reason this is safe from the breaking twice problem
   return runInContext(code1, context, {
-    scheduler: 'preemptive',
     executionMethod: 'auto'
   }).then(obj1 => {
     flattenEnvironments(obj1).forEach(environment => {
