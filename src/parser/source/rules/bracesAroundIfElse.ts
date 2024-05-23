@@ -2,7 +2,7 @@ import { generate } from 'astring'
 import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, type Node, type SourceError } from '../../../types'
+import { ErrorSeverity, ErrorType, type SourceError } from '../../../types'
 import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
@@ -86,7 +86,7 @@ const bracesAroundIfElse: Rule<es.IfStatement> = {
   ],
 
   checkers: {
-    IfStatement(node: es.IfStatement, _ancestors: [Node]) {
+    IfStatement(node: es.IfStatement) {
       const errors: SourceError[] = []
       if (node.consequent && node.consequent.type !== 'BlockStatement') {
         errors.push(new BracesAroundIfElseError(node, 'consequent'))

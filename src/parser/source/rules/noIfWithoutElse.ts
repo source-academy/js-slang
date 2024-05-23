@@ -2,7 +2,7 @@ import { generate } from 'astring'
 import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, type Node, type SourceError } from '../../../types'
+import { Chapter, ErrorSeverity, ErrorType, type SourceError } from '../../../types'
 import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
@@ -48,7 +48,7 @@ const noIfWithoutElse: Rule<es.IfStatement> = {
     ]
   ],
   checkers: {
-    IfStatement(node: es.IfStatement, _ancestors: [Node]) {
+    IfStatement(node: es.IfStatement) {
       if (!node.alternate) {
         return [new NoIfWithoutElseError(node)]
       } else {

@@ -1,8 +1,8 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import { ErrorSeverity, ErrorType, type SourceError } from '../../../types'
+import type { Rule } from '../../types'
 
 const specifiedLiterals = ['boolean', 'string', 'number']
 
@@ -34,7 +34,7 @@ const noUnspecifiedLiteral: Rule<es.Literal> = {
   name: 'no-unspecified-literal',
   testSnippets: [['const x = /hi/;', "Line 1: 'RegExp' literals are not allowed."]],
   checkers: {
-    Literal(node: es.Literal, _ancestors: [Node]) {
+    Literal(node: es.Literal) {
       if (node.value !== null && !specifiedLiterals.includes(typeof node.value)) {
         return [new NoUnspecifiedLiteral(node)]
       } else {

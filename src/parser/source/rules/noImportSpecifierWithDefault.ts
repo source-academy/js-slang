@@ -1,9 +1,9 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
-import { ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import { ErrorSeverity, ErrorType, type SourceError } from '../../../types'
+import type { Rule } from '../../types'
 import syntaxBlacklist from '../syntax'
 
 export class NoImportSpecifierWithDefaultError implements SourceError {
@@ -33,7 +33,7 @@ const noImportSpecifierWithDefault: Rule<es.ImportSpecifier> = {
   ],
 
   checkers: {
-    ImportSpecifier(node: es.ImportSpecifier, _ancestors: [Node]) {
+    ImportSpecifier(node: es.ImportSpecifier) {
       if (node.imported.name === defaultExportLookupName) {
         return [new NoImportSpecifierWithDefaultError(node)]
       }

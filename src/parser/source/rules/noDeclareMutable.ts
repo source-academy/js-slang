@@ -1,9 +1,9 @@
 import { generate } from 'astring'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import { Chapter, ErrorSeverity, ErrorType, type SourceError } from '../../../types'
+import type { Rule } from '../../types'
 
 const mutableDeclarators = ['let', 'var']
 
@@ -19,7 +19,7 @@ export class NoDeclareMutableError implements SourceError {
 
   public explain() {
     return (
-      'Mutable variable declaration using keyword ' + `'${this.node.kind}'` + ' is not allowed.'
+      `Mutable variable declaration using keyword '${this.node.kind}' is not allowed.`
     )
   }
 
@@ -40,7 +40,7 @@ const noDeclareMutable: Rule<es.VariableDeclaration> = {
   ],
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, _ancestors: [Node]) {
+    VariableDeclaration(node: es.VariableDeclaration) {
       if (mutableDeclarators.includes(node.kind)) {
         return [new NoDeclareMutableError(node)]
       } else {

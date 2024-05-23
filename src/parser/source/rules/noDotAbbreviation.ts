@@ -1,8 +1,8 @@
-import * as es from 'estree'
+import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { Chapter, ErrorSeverity, ErrorType, Node, SourceError } from '../../../types'
-import { Rule } from '../../types'
+import { Chapter, ErrorSeverity, ErrorType, type SourceError } from '../../../types'
+import type { Rule } from '../../types'
 
 const errorMessage = 'Dot abbreviations are not allowed.'
 
@@ -41,7 +41,7 @@ const noDotAbbreviation: Rule<es.MemberExpression> = {
   ],
 
   checkers: {
-    MemberExpression(node: es.MemberExpression, _ancestors: [Node]) {
+    MemberExpression(node: es.MemberExpression) {
       if (!node.computed) {
         return [new NoDotAbbreviationError(node)]
       } else {
