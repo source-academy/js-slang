@@ -11,7 +11,6 @@ import noExportNamedDeclarationWithDefault from './noExportNamedDeclarationWithD
 import noFunctionDeclarationWithoutIdentifier from './noFunctionDeclarationWithoutIdentifier'
 import noHolesInArrays from './noHolesInArrays'
 import noIfWithoutElse from './noIfWithoutElse'
-import noImplicitDeclareUndefined from './noImplicitDeclareUndefined'
 import noImplicitReturnUndefined from './noImplicitReturnUndefined'
 import noImportSpecifierWithDefault from './noImportSpecifierWithDefault'
 import noNull from './noNull'
@@ -35,7 +34,6 @@ const rules: Rule<Node>[] = [
   noFunctionDeclarationWithoutIdentifier,
   noIfWithoutElse,
   noImportSpecifierWithDefault,
-  noImplicitDeclareUndefined,
   noImplicitReturnUndefined,
   noNull,
   noUnspecifiedLiteral,
