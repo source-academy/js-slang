@@ -194,6 +194,7 @@ async function sourceRunner(
     return resolvedErrorPromise
   }
 
+  // TODO: What should we do when concurrent variant is used for execution?
   if (context.variant === Variant.CONCURRENT) {
     throw new Error('Cannot execute with concurrent variant!')
   }
@@ -206,7 +207,7 @@ async function sourceRunner(
 
   // native, don't evaluate prelude
   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-    return await fullJSRunner(program, context)
+    return fullJSRunner(program, context)
   }
 
   // All runners after this point evaluate the prelude.
@@ -305,12 +306,11 @@ export function runCodeInSource(
   context: Context,
   options: RecursivePartial<IOptions> = {},
   defaultFilePath: string = '/default.js',
-  fileGetter?: FileGetter
+  fileGetter: FileGetter = () => Promise.resolve(undefined)
 ) {
   return sourceFilesRunner(
     path => {
       if (path === defaultFilePath) return Promise.resolve(code)
-      if (!fileGetter) return Promise.resolve(undefined)
       return fileGetter(path)
     },
     defaultFilePath,
