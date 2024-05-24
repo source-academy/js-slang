@@ -1,6 +1,7 @@
 import { MAX_LIST_DISPLAY_LENGTH } from '../constants'
 import Closure from '../cse-machine/closure'
-import type { Type, Value } from '../types'
+import type { Value } from '../types'
+import type { Type } from '../typeChecker/types'
 
 export interface ArrayLike {
   replPrefix: string

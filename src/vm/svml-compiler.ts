@@ -10,7 +10,8 @@ import {
   PRIMITIVE_FUNCTION_NAMES,
   vmPrelude
 } from '../stdlib/vm.prelude'
-import type { Context, ContiguousArrayElements, Node } from '../types'
+import type { Context, Node } from '../types'
+import type { ContiguousArrayElements } from '../stepper/util'
 import * as create from '../utils/ast/astCreator'
 import { recursive, simple } from '../utils/walkers'
 import OpCodes from './opcodes'
