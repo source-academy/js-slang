@@ -1,4 +1,4 @@
-import { parseError, runInContext } from '../..'
+import { parseError, runInContext, type Context, type Result } from '../..'
 import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../mocks/context'
 import { FatalSyntaxError } from '../../parser/errors'
@@ -357,29 +357,57 @@ test('Test context reuse', async () => {
 })
 
 describe('Tests for all runners', () => {
-  const methodsToTest: ExecutionMethod[] = ['cse-machine', 'stepper', 'native']
-
-  test("Runners won't allow assignments to consts even when assignment is allowed", () => {
-    const snippet = `
-      function test(){
-        const constant = 3;
-        constant = 4;
-        return constant;
-      }
-      test();
-    `
-
-    return Promise.all(
-      methodsToTest.map(async method => {
-        const context = mockContext(Chapter.SOURCE_3)
-        const result = await runInContext(snippet, context, { executionMethod: method })
-        expect(result.status).toEqual('error')
-        expect(parseError(context.errors)).toEqual(
-          'Line 4: Cannot assign new value to constant constant.'
-        )
+  function testAllRunners(
+    desc: string,
+    code: string,
+    resultFunc: (r: Result, context: Context) => void,
+    chapter: Chapter = Chapter.SOURCE_1,
+    methodsToTest: ExecutionMethod[] = ['cse-machine', 'stepper', 'native']
+  ) {
+    describe(desc, () => {
+      test.each(methodsToTest)('%s', async method => {
+        const context = mockContext(chapter)
+        const result = await runInContext(code, context, { executionMethod: method })
+        return resultFunc(result, context)
       })
+    })
+  }
+
+  describe('Expect runners to all have the same error for each of the following snippets', () => {
+    testAllRunners(
+      "Runners won't allow assignments to consts even when assignment is allowed",
+      `
+        function test(){
+          const constant = 3;
+          constant = 4;
+          return constant;
+        }
+        test();
+      `,
+      (result, context) => {
+        expect(result.status).toEqual('error')
+        expect(parseError(context.errors)).toEqual('Line 4: Cannot assign new value to constant constant.')
+      },
+      Chapter.SOURCE_3,
+      // Stepper doesn't do non const variables
+      ['cse-machine', 'native']
     )
+    
+    testAllRunners('Runners won\'t allow number divided by string', '0 / "a";', (result, context) => {
+      expect(result.status).toEqual('error')
+      expect(parseError(context.errors)).toEqual('Line 1: Expected number on right hand side of operation, got string.')
+    })
+
+
+    testAllRunners('Runners won\'t allow non boolean in if', `
+      if (1) {}
+      else {}
+    `, (result, context) => {
+      expect(result.status).toEqual('error')
+      expect(parseError(context.errors)).toEqual('Line 2: Expected boolean as condition, got number.')
+    })
   })
+
 })
 
 // HTML Unit Tests

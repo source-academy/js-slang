@@ -305,6 +305,7 @@ describe('Test recursion snippets', () => {
     )
   })
 
+  // TODO: Move these to cse-machine tests
   testMultipleCases(
     [
       [

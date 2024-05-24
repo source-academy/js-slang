@@ -1,13 +1,8 @@
-import type es from 'estree'
-
 import { mockContext } from '../../mocks/context'
 import { parse } from '../../parser/parser'
-import { Chapter, type NodeWithInferredType } from '../../types'
-import { getVariableDeclarationName } from '../../utils/ast/astCreator'
-import { stripIndent } from '../../utils/formatters'
+import { Chapter } from '../../types'
 import { expectTrue } from '../../utils/testing/misc'
 import { astTester } from '../../utils/testing'
-import { simple } from '../../utils/walkers'
 import { checkForUndefinedVariables, validateAndAnnotate } from '../validator'
 import { UndefinedVariable } from '../../errors/errors'
 import { parseError, runInContext } from '../..'
@@ -52,54 +47,6 @@ describe(`Test ${validateAndAnnotate.name}`, () => {
       ]
     ]
   )
-
-  test('testing typability', () => {
-    function toValidatedAst(code: string) {
-      const context = mockContext(Chapter.SOURCE_1)
-      const ast = parse(code, context)
-      expect(ast).not.toBeUndefined()
-      return validateAndAnnotate(ast as es.Program, context)
-    }
-
-    const code = stripIndent`
-      const a = 1; // typable
-      function f() { // typable
-        c;
-        return f();
-      }
-      const b = f(); // typable
-      function g() { // not typable
-      }
-      const c = 1; // not typable
-    `
-    const ast = toValidatedAst(code)
-    expect(ast).toMatchSnapshot()
-    simple(ast, {
-      VariableDeclaration(node: NodeWithInferredType<es.VariableDeclaration>) {
-        let expectedTypability = ''
-        switch (getVariableDeclarationName(node)) {
-          case 'a':
-          case 'b':
-            expectedTypability = 'NotYetTyped'
-            break
-          case 'c':
-            expectedTypability = 'Untypable'
-        }
-        expect(node.typability).toBe(expectedTypability)
-      },
-      FunctionDeclaration(node: NodeWithInferredType<es.FunctionDeclaration>) {
-        let expectedTypability = ''
-        switch (node.id!.name) {
-          case 'f':
-            expectedTypability = 'NotYetTyped'
-            break
-          case 'g':
-            expectedTypability = 'Untypable'
-        }
-        expect(node.typability).toBe(expectedTypability)
-      }
-    })
-  })
 })
 
 describe(`Test ${checkForUndefinedVariables.name}`, () => {
@@ -189,7 +136,7 @@ describe(`Test ${checkForUndefinedVariables.name}`, () => {
         'for ({x, y} of []) {}',
         'Line 1: Name x not declared.'
       ],
-      ['for of statement is checked', 'for (const x in a) { x; }', 'Line 1: Name a not declared.'],
+      ['for of statement is checked', 'for (const x of a) { x; }', 'Line 1: Name a not declared.'],
 
       // Try statement
       ['try statement body is checked', 'try { a; } catch(e) {}', 'Line 1: Name a not declared.'],

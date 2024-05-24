@@ -1,16 +1,8 @@
+import { AllowedDeclarations } from '../types'
+
 // =======================================
 // Types used in type checker for type inference/type error checker for Source Typed variant
 // =======================================
-
-import type { CallExpression, FunctionDeclaration, Node } from 'estree'
-import { AllowedDeclarations } from '../types'
-
-// Types for nodes used in type inference
-export type NodeWithInferredType<T extends Node> = InferredType & T
-
-export type FuncDeclWithInferredTypeAnnotation = NodeWithInferredType<FunctionDeclaration> &
-  TypedFuncDecl
-
 export type InferredType = Untypable | Typed | NotYetTyped
 
 export interface TypedFuncDecl {
@@ -118,12 +110,6 @@ export interface ForAll {
 export interface PredicateType {
   kind: 'predicate'
   ifTrueType: Type | ForAll
-}
-
-export type PredicateTest = {
-  node: NodeWithInferredType<CallExpression>
-  ifTrueType: Type | ForAll
-  argVarName: string
 }
 
 export type BindableType = Type | ForAll | PredicateType
