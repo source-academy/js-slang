@@ -14,6 +14,6 @@
     "src/**/__tests__/**",
     "src/stdlib/**/*.js",
     "src/stdlib/metacircular-interpreter",
-    "src/testing"
+    "src/utils/testing"
   ]
 }
