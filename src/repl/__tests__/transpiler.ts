@@ -1,7 +1,7 @@
 import { asMockedFunc } from '../../utils/testing/misc'
 import { getTranspilerCommand } from '../transpiler'
 import * as fs from 'fs/promises'
-import { expectWritten, getCommandRunner } from './test-utils'
+import { expectWritten, getCommandRunner } from './utils'
 
 jest.mock('fs/promises', () => ({
   readFile: jest.fn(),

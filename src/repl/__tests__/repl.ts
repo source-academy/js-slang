@@ -5,7 +5,7 @@ import { asMockedFunc } from '../../utils/testing/misc'
 import { getReplCommand } from '../repl'
 import { chapterParser } from '../utils'
 import { testMultipleCases } from '../../utils/testing'
-import { expectWritten, getCommandRunner } from './test-utils'
+import { expectWritten, getCommandRunner } from './utils'
 
 const readFileMocker = jest.fn()
 
