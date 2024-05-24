@@ -2,12 +2,11 @@ import * as list from '../../stdlib/list'
 import { Chapter } from '../../types'
 import { stripIndent } from '../formatters'
 import { stringify } from '../stringify'
-import { testSuccess } from '../testing'
+import { expectResult, testSuccess } from '../testing'
 
 test('stringify is fast', () => {
-  return expect(
-    testSuccess(
-      stripIndent`
+  return expectResult(
+    stripIndent`
         function make_k_list(k, d) {
             const degree = k;
             const depth = d;
@@ -31,9 +30,8 @@ test('stringify is fast', () => {
         const end = get_time();
         end - start;
         `,
-      Chapter.SOURCE_3
-    ).then(testResult => testResult.result)
-  ).resolves.toBeLessThan(2000)
+    Chapter.SOURCE_3
+  ).toBeLessThan(2000)
   // This benchmark takes 100ms on my machine,
   // but less than 2 seconds should be good enough on the test servers.
 })

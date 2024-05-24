@@ -111,10 +111,10 @@ export function testTrueAndFalseCases<T extends [string, ...any[]], U extends an
  */
 
 export function astTester<ExpectedValue>(
-  func: (prog: Program, context: Context, expectedError: ExpectedValue | undefined) => void,
+  func: (prog: Program, context: Context, expectedValue: ExpectedValue | undefined) => void,
   testCases: (
     | [desc: string, code: string]
-    | [desc: string, code: string, expectedError: ExpectedValue]
+    | [desc: string, code: string, expectedValue: ExpectedValue]
   )[],
   chapter: Chapter = Chapter.SOURCE_4,
   variant: Variant = Variant.DEFAULT,
@@ -272,7 +272,7 @@ export function expectParsedErrorsToEqual(
 ) {
   const fullSnippets = snippets.map(snippet => {
     const options = snippet.length >= 4 ? snippet[3] : defaultOptions
-    const verbose = snippet.length === 5 ? snippet[4] : false
+    const verbose = snippet.length === 5 && snippet[4]
     return [snippet[0], snippet[1], snippet[2], options, verbose] as [
       string,
       string,

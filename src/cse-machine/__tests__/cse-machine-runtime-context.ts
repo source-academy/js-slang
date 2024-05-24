@@ -1,7 +1,7 @@
-import { IOptions } from '../..'
+import type { IOptions } from '../..'
 import { mockContext } from '../../mocks/context'
 import { runCodeInSource } from '../../runner'
-import { Chapter, RecursivePartial } from '../../types'
+import { Chapter, type RecursivePartial } from '../../types'
 import { stripIndent } from '../../utils/formatters'
 
 const getContextFrom = async (code: string, steps?: number) => {

@@ -1,6 +1,13 @@
 import { Chapter, Variant } from '../../types'
 import { expectResult, testMultipleCases } from '../../utils/testing'
 
+import * as interpreter from '../interpreter'
+jest.spyOn(interpreter, 'evaluate')
+
+beforeEach(() => {
+  jest.clearAllMocks()
+})
+
 testMultipleCases<[string, any] | [string, any, Chapter]>(
   [
     [
@@ -413,7 +420,8 @@ testMultipleCases<[string, any] | [string, any, Chapter]>(
       Chapter.SOURCE_3
     ]
   ],
-  ([code, expected, chapter]) => {
-    return expectResult(code, { chapter, variant: Variant.EXPLICIT_CONTROL }).toEqual(expected)
+  async ([code, expected, chapter]) => {
+    await expectResult(code, { chapter, variant: Variant.EXPLICIT_CONTROL }).toEqual(expected)
+    expect(interpreter.evaluate).toHaveBeenCalled()
   }
 )

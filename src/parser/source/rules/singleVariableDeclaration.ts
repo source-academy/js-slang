@@ -7,10 +7,10 @@ import type { Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
 export class NoImplicitDeclareUndefinedError implements SourceError {
-  public type = ErrorType.SYNTAX;
-  public severity = ErrorSeverity.ERROR;
+  public type = ErrorType.SYNTAX
+  public severity = ErrorSeverity.ERROR
 
-  constructor(public node: es.Identifier) { }
+  constructor(public node: es.Identifier) {}
 
   get location() {
     return this.node.loc ?? UNKNOWN_LOCATION
@@ -64,7 +64,7 @@ const singleVariableDeclaration: Rule<es.VariableDeclaration> = {
   name: 'single-variable-declaration',
   testSnippets: [
     ['let i = 0, j = 0;', 'Line 1: Multiple declarations in a single statement.'],
-    ['let i;', 'Line 1: Missing value in variable declaration.'],
+    ['let i;', 'Line 1: Missing value in variable declaration.']
   ],
 
   checkers: {
@@ -90,4 +90,3 @@ const singleVariableDeclaration: Rule<es.VariableDeclaration> = {
 }
 
 export default singleVariableDeclaration
-

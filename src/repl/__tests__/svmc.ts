@@ -3,7 +3,7 @@ import { compileToChoices, getSVMCCommand } from '../svmc'
 import * as vm from '../../vm/svml-compiler'
 import * as fs from 'fs/promises'
 import { INTERNAL_FUNCTIONS } from '../../stdlib/vm.prelude'
-import { expectWritten, getCommandRunner } from './testUtils'
+import { expectWritten, getCommandRunner } from './test-utils'
 
 jest.mock('fs/promises', () => ({
   writeFile: jest.fn(),

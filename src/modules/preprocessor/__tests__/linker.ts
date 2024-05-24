@@ -115,6 +115,7 @@ test('Parse errors cause a short circuiting of the linker', async () => {
   )
   expect(error).toBeInstanceOf(MissingSemicolonError)
   expect(resolver.default).not.toHaveBeenCalledWith('./a.js')
+  expect(resolver.default).not.toHaveBeenCalledWith('./c.js')
 })
 
 test('ModuleNotFoundErrors short circuit the linker', async () => {

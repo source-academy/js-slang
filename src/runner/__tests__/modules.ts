@@ -1,7 +1,7 @@
 import { mockContext } from '../../mocks/context'
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectFinishedResult } from '../../utils/testing/misc'
+import { expectFinishedResultValue } from '../../utils/testing/misc'
 import { runCodeInSource } from '../sourceRunner'
 
 jest.mock('../../modules/loader/loaders')
@@ -48,8 +48,7 @@ describe.each(describeCases)(
       const context = mockContext(chapter)
       const { result } = await runCodeInSource(code, context)
 
-      expectFinishedResult(result)
-      expect(result.value).toEqual('foo')
+      expectFinishedResultValue(result, 'foo')
     })
   }
 )

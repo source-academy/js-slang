@@ -1,6 +1,6 @@
 import { Chapter } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { testSuccess } from '../../utils/testing'
+import { expectResult } from '../../utils/testing'
 import * as list from '../list'
 
 test('display_list is linear runtime', () => {
@@ -12,9 +12,8 @@ test('display_list is linear runtime', () => {
     return list.rawDisplayList((x: any) => x, v, s === placeholder ? undefined : s)
   }
 
-  return expect(
-    testSuccess(
-      stripIndent`
+  return expectResult(
+    stripIndent`
       const build_inf = (i, f) => {
         const t = list(f(i));
         let p = t;
@@ -103,14 +102,13 @@ test('display_list is linear runtime', () => {
       const slope = head(line);
       slope;
     `,
-      {
-        chapter: Chapter.SOURCE_3,
-        testBuiltins: {
-          no_display_list: noDisplayList
-        }
+    {
+      chapter: Chapter.SOURCE_3,
+      testBuiltins: {
+        no_display_list: noDisplayList
       }
-    ).then(testResult => testResult.result)
-  ).resolves.toBeLessThan(1.2)
+    }
+  ).toBeLessThan(1.2)
   // estimated power is less than 1.2
   // means it's probably near 1
   // => probably linear?

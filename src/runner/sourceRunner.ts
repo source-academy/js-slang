@@ -186,7 +186,7 @@ async function sourceRunner(
     context.chapter === Chapter.FULL_TS ||
     context.chapter === Chapter.PYTHON_1
   ) {
-    return fullJSRunner(program, context, theOptions.importOptions)
+    return fullJSRunner(program, context)
   }
 
   validateAndAnnotate(program, context)
@@ -206,7 +206,7 @@ async function sourceRunner(
 
   // native, don't evaluate prelude
   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-    return await fullJSRunner(program, context, theOptions.importOptions)
+    return await fullJSRunner(program, context)
   }
 
   // All runners after this point evaluate the prelude.

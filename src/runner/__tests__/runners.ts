@@ -1,11 +1,11 @@
-import { Context, Result, parseError, runInContext } from '../..'
+import { parseError, runInContext } from '../..'
 import { UndefinedVariable } from '../../errors/errors'
 import { mockContext } from '../../mocks/context'
 import { FatalSyntaxError } from '../../parser/errors'
-import { Chapter, Finished, Variant, type ExecutionMethod, type SourceError } from '../../types'
+import { Chapter, Variant, type ExecutionMethod, type SourceError } from '../../types'
 import { locationDummyNode } from '../../utils/ast/astCreator'
-import { expectFinishedResult } from '../../utils/testing/misc'
-import { expectResultsToEqual } from '../../utils/testing'
+import { expectFinishedResultValue } from '../../utils/testing/misc'
+import { expectParsedErrorsToEqual, expectResult, expectResultsToEqual } from '../../utils/testing'
 import { htmlErrorHandlingScript } from '../htmlRunner'
 
 interface CodeSnippetTestCase {
@@ -111,110 +111,224 @@ const JAVASCRIPT_CODE_SNIPPETS_ERRORS: CodeSnippetTestCase[] = [
   }
 ]
 
-// FullJS Unit Tests
+describe('FullJS Unit Tests', () => {
+  describe('Regular snippets', () => {
+    const noErrorSnippets = JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS.map(
+      ({ name, snippet, value }) => [name, snippet, value] as [string, string, any]
+    )
+    expectResultsToEqual(noErrorSnippets, Chapter.FULL_JS)
+  })
 
-test('Source builtins are accessible in fullJS program', async () => {
-  const fullJSProgram: string = `
-    parse('head(list(1,2,3));');
-    `
-  const fullJSContext: Context = mockContext(Chapter.FULL_JS, Variant.DEFAULT)
-  await runInContext(fullJSProgram, fullJSContext)
+  test('Source builtins are accessible in fullJS program', async () => {
+    expectResult("parse('head(list(1,2,3));');", Chapter.FULL_JS).toEqual(expect.anything())
+  })
 
-  expect(fullJSContext.errors.length).toBeLessThanOrEqual(0)
-})
+  test('Simulate fullJS REPL', async () => {
+    const fullJSContext = mockContext(Chapter.FULL_JS, Variant.DEFAULT)
+    const replStatements: [string, any][] = [
+      ['const x = 1;', undefined],
+      ['x;', 1],
+      ['const y = x + 1;', undefined],
+      ['y;', 2]
+    ]
 
-test('Simulate fullJS REPL', async () => {
-  const fullJSContext: Context = mockContext(Chapter.FULL_JS, Variant.DEFAULT)
-  const replStatements: [string, any][] = [
-    ['const x = 1;', undefined],
-    ['x;', 1],
-    ['const y = x + 1;', undefined],
-    ['y;', 2]
-  ]
-
-  for (const replStatement of replStatements) {
-    const [statement, expectedResult] = replStatement
-    const result: Result = await runInContext(statement, fullJSContext)
-    expect(result.status).toStrictEqual('finished')
-    expect((result as any).value).toStrictEqual(expectedResult)
-    expect(fullJSContext.errors).toStrictEqual([])
-  }
-})
-
-describe('Native javascript programs are valid in fullJSRunner', () => {
-  it.each([...JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS])(
-    `%p`,
-    async ({ snippet, value, errors }: CodeSnippetTestCase) => {
-      const fullJSContext: Context = mockContext(Chapter.FULL_JS, Variant.DEFAULT)
-      const result = await runInContext(snippet, fullJSContext)
-
-      expect(result.status).toStrictEqual('finished')
-      expect((result as any).value).toStrictEqual(value)
-      expect(fullJSContext.errors).toStrictEqual(errors)
-    }
-  )
-})
-
-describe('Error locations are handled well in fullJS', () => {
-  it.each([...JAVASCRIPT_CODE_SNIPPETS_ERRORS])(
-    `%p`,
-    async ({ snippet, value, errors }: CodeSnippetTestCase) => {
-      const fullJSContext: Context = mockContext(Chapter.FULL_JS, Variant.DEFAULT)
-      const result = await runInContext(snippet, fullJSContext)
-
-      expect(result.status).toStrictEqual('error')
-      expect((result as any).value).toStrictEqual(value)
-      expect(fullJSContext.errors).toStrictEqual(errors)
-    }
-  )
-})
-
-// Source Native Unit Tests
-
-describe('Additional JavaScript features are not available in Source Native', () => {
-  it.each([...JAVASCRIPT_CODE_SNIPPETS_NO_ERRORS])(
-    `%p`,
-    async ({ snippet }: CodeSnippetTestCase) => {
-      // Test all chapters from Source 1 - 4
-      for (let chapterNum = 0; chapterNum <= 4; chapterNum++) {
-        const sourceNativeContext: Context = mockContext(chapterNum, Variant.NATIVE)
-        const result = await runInContext(snippet, sourceNativeContext)
-
-        expect(result.status).toStrictEqual('error')
-        expect(sourceNativeContext.errors.length).toBeGreaterThan(0)
-      }
-    }
-  )
-})
-
-describe('Functions in Source libraries (e.g. list, streams) are available in Source Native', () => {
-  test('List functions are present in Source Native', async () => {
-    // Test chapters from Source 2 - 4
-    for (let chapterNum = 2; chapterNum <= 4; chapterNum++) {
-      const sourceNativeContext: Context = mockContext(chapterNum, Variant.NATIVE)
-      // The following snippet is equivalent to sum(list(1..10))
-      const sourceNativeSnippet: string =
-        'accumulate((x, y) => x + y , 0, append(build_list(x => x + 1, 5), enum_list(6, 10)));'
-      const result = await runInContext(sourceNativeSnippet, sourceNativeContext)
-
-      expect(result.status).toStrictEqual('finished')
-      expect((result as any).value).toStrictEqual(55)
-      expect(sourceNativeContext.errors.length).toBe(0)
+    for (const replStatement of replStatements) {
+      const [statement, expectedResult] = replStatement
+      const result = await runInContext(statement, fullJSContext)
+      expectFinishedResultValue(result, expectedResult)
+      expect(fullJSContext.errors).toStrictEqual([])
     }
   })
-  test('Stream functions are present in Source Native', async () => {
-    // Test chapters from Source 3 - 4
-    for (let chapterNum = 3; chapterNum <= 4; chapterNum++) {
-      const sourceNativeContext: Context = mockContext(chapterNum, Variant.NATIVE)
-      // The following snippet is equivalent to sum(list(stream(1..10)))
-      const sourceNativeSnippet: string =
-        'accumulate((x, y) => x + y, 0, stream_to_list(stream_append(build_stream(x => x + 1, 5), enum_stream(6, 10))));'
-      const result = await runInContext(sourceNativeSnippet, sourceNativeContext)
 
-      expect(result.status).toStrictEqual('finished')
-      expect((result as any).value).toStrictEqual(55)
-      expect(sourceNativeContext.errors.length).toBe(0)
+  describe('Error locations are handled well in FullJS', () => {
+    const errorSnippets = JAVASCRIPT_CODE_SNIPPETS_ERRORS.map(
+      ({ name, snippet, errors }) => [name, snippet, parseError(errors)] as [string, string, string]
+    )
+    expectParsedErrorsToEqual(errorSnippets, Chapter.FULL_JS)
+  })
+})
+
+describe('Source Native Unit Tests', () => {
+  function testAcrossChapters(
+    f: (c: Chapter) => void,
+    start: Chapter = Chapter.SOURCE_1,
+    end: Chapter = Chapter.SOURCE_4
+  ) {
+    for (let chapterNum = start; chapterNum < end; chapterNum++) {
+      f(chapterNum)
     }
+  }
+
+  describe('Additonal JS features are not available in Source Native', () => {
+    const errorSnippets = JAVASCRIPT_CODE_SNIPPETS_ERRORS.map(
+      ({ name, snippet }) => [name, snippet, expect.anything()] as [string, string, string]
+    )
+    testAcrossChapters(chapter => {
+      describe(`Chapter ${chapter}`, () => expectParsedErrorsToEqual(errorSnippets, chapter))
+    })
+  })
+
+  describe('Functions in Source libraries (e.g. list, streams) are available in Source Native', () => {
+    test('List functions are present in Source Native', () => {
+      // Test chapters from Source 2 - 4
+      testAcrossChapters(chapter => {
+        // The following snippet is equivalent to sum(list(1..10))
+        const sourceNativeSnippet =
+          'accumulate((x, y) => x + y , 0, append(build_list(x => x + 1, 5), enum_list(6, 10)));'
+        return expectResult(sourceNativeSnippet, { chapter, variant: Variant.NATIVE }).toEqual(55)
+      }, Chapter.SOURCE_2)
+    })
+
+    test('Stream functions are present in Source Native', () => {
+      // Test chapters from Source 3 - 4
+      testAcrossChapters(chapter => {
+        // The following snippet is equivalent to sum(list(stream(1..10)))
+        const sourceNativeSnippet =
+          'accumulate((x, y) => x + y, 0, stream_to_list(stream_append(build_stream(x => x + 1, 5), enum_stream(6, 10))));'
+        return expectResult(sourceNativeSnippet, {
+          chapter,
+          variant: Variant.NATIVE
+        }).toEqual(55)
+      }, Chapter.SOURCE_3)
+    })
+  })
+
+  describe('Test tail call return for native runner', () => {
+    // TODO: Check if this test is still relevant
+    // test.skip('Check that stack is at most 10k in size', () => {
+    //   return expectParsedErrorNoSnapshot(stripIndent`
+    //     function f(x) {
+    //       if (x <= 0) {
+    //         return 0;
+    //       } else {
+    //         return 1 + f(x-1);
+    //       }
+    //     }
+    //     f(10000);
+    //   `).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))
+    // }, 10000)
+
+    expectResultsToEqual(
+      [
+        [
+          'Simple tail call returns work',
+          `
+        function f(x, y) {
+          if (x <= 0) {
+            return y;
+          } else {
+            return f(x-1, y+1);
+          }
+        }
+        f(5000, 5000);
+        `,
+          10000
+        ],
+        [
+          'Tail call in conditional expressions work',
+          `
+          function f(x, y) {
+            return x <= 0 ? y : f(x-1, y+1);
+          }
+          f(5000, 5000);
+        `,
+          10000
+        ],
+        [
+          'Tail call in boolean operators work',
+          `
+          function f(x, y) {
+            if (x <= 0) {
+              return y;
+            } else {
+              return false || f(x-1, y+1);
+            }
+          }
+          f(5000, 5000);
+        `,
+          10000
+        ],
+        [
+          'Tail call in nested mix of conditional expressions and boolean operators work',
+          `
+          function f(x, y) {
+            return x <= 0 ? y : false || x > 0 ? f(x-1, y+1) : 'unreachable';
+          }
+          f(5000, 5000);
+        `,
+          10000
+        ],
+        [
+          'Tail calls in arrow block functions work',
+          `
+        const f = (x, y) => {
+          if (x <= 0) {
+            return y;
+          } else {
+            return f(x-1, y+1);
+          }
+        };
+        f(5000, 5000);
+        `,
+          10000
+        ],
+        [
+          'Tail calls in expression arrow functions work',
+          `
+        const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
+        f(5000, 5000);
+        `,
+          10000
+        ],
+        [
+          'Tail calls in mutual recursion work',
+          `
+          function f(x, y) {
+            if (x <= 0) {
+              return y;
+            } else {
+              return g(x-1, y+1);
+            }
+          }
+          function g(x, y) {
+            if (x <= 0) {
+              return y;
+            } else {
+              return f(x-1, y+1);
+            }
+          }
+          f(5000, 5000);
+        `,
+          10000
+        ],
+        [
+          'Tail calls in mutual recursion with arrow functions work',
+          `
+          const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
+          const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
+          f(5000, 5000);
+        `,
+          10000
+        ],
+        [
+          'Tail calls in mixed tail-call/non-tail-call recursion work',
+          `
+          function f(x, y, z) {
+            if (x <= 0) {
+              return y;
+            } else {
+              return f(x-1, y+f(0, z, 0), z);
+            }
+          }
+          f(5000, 5000, 2);
+        `,
+          15000
+        ]
+      ],
+      Chapter.SOURCE_1,
+      false,
+      10000
+    )
   })
 })
 
@@ -238,147 +352,8 @@ test('Test context reuse', async () => {
   await runInContext(init, context)
   for (const [code, expected] of snippet) {
     const result = await runInContext(code, context)
-    expectFinishedResult(result)
-    expect(result.value).toEqual(expected)
+    expectFinishedResultValue(result, expected)
   }
-})
-
-describe('Test tail call return for native runner', () => {
-  // TODO: Check if this test is still relevant
-  // test.skip('Check that stack is at most 10k in size', () => {
-  //   return expectParsedErrorNoSnapshot(stripIndent`
-  //     function f(x) {
-  //       if (x <= 0) {
-  //         return 0;
-  //       } else {
-  //         return 1 + f(x-1);
-  //       }
-  //     }
-  //     f(10000);
-  //   `).toEqual(expect.stringMatching(/Maximum call stack size exceeded\n([^f]*f){3}/))
-  // }, 10000)
-
-  expectResultsToEqual(
-    [
-      [
-        'Simple tail call returns work',
-        `
-      function f(x, y) {
-        if (x <= 0) {
-          return y;
-        } else {
-          return f(x-1, y+1);
-        }
-      }
-      f(5000, 5000);
-      `,
-        10000
-      ],
-      [
-        'Tail call in conditional expressions work',
-        `
-        function f(x, y) {
-          return x <= 0 ? y : f(x-1, y+1);
-        }
-        f(5000, 5000);
-      `,
-        10000
-      ],
-      [
-        'Tail call in boolean operators work',
-        `
-        function f(x, y) {
-          if (x <= 0) {
-            return y;
-          } else {
-            return false || f(x-1, y+1);
-          }
-        }
-        f(5000, 5000);
-      `,
-        10000
-      ],
-      [
-        'Tail call in nested mix of conditional expressions and boolean operators work',
-        `
-        function f(x, y) {
-          return x <= 0 ? y : false || x > 0 ? f(x-1, y+1) : 'unreachable';
-        }
-        f(5000, 5000);
-      `,
-        10000
-      ],
-      [
-        'Tail calls in arrow block functions work',
-        `
-      const f = (x, y) => {
-        if (x <= 0) {
-          return y;
-        } else {
-          return f(x-1, y+1);
-        }
-      };
-      f(5000, 5000);
-      `,
-        10000
-      ],
-      [
-        'Tail calls in expression arrow functions work',
-        `
-      const f = (x, y) => x <= 0 ? y : f(x-1, y+1);
-      f(5000, 5000);
-      `,
-        10000
-      ],
-      [
-        'Tail calls in mutual recursion work',
-        `
-        function f(x, y) {
-          if (x <= 0) {
-            return y;
-          } else {
-            return g(x-1, y+1);
-          }
-        }
-        function g(x, y) {
-          if (x <= 0) {
-            return y;
-          } else {
-            return f(x-1, y+1);
-          }
-        }
-        f(5000, 5000);
-      `,
-        10000
-      ],
-      [
-        'Tail calls in mutual recursion with arrow functions work',
-        `
-        const f = (x, y) => x <= 0 ? y : g(x-1, y+1);
-        const g = (x, y) => x <= 0 ? y : f(x-1, y+1);
-        f(5000, 5000);
-      `,
-        10000
-      ],
-      [
-        'Tail calls in mixed tail-call/non-tail-call recursion work',
-        `
-        function f(x, y, z) {
-          if (x <= 0) {
-            return y;
-          } else {
-            return f(x-1, y+f(0, z, 0), z);
-          }
-        }
-        f(5000, 5000, 2);
-      `,
-        15000
-      ]
-    ],
-    Chapter.SOURCE_1,
-    false,
-    10000
-  )
 })
 
 describe('Tests for all runners', () => {
@@ -406,13 +381,9 @@ describe('Tests for all runners', () => {
     )
   })
 })
+
 // HTML Unit Tests
-
 test('Error handling script is injected in HTML code', async () => {
-  const htmlDocument: string = '<p>Hello World!</p>'
-  const htmlContext: Context = mockContext(Chapter.HTML, Variant.DEFAULT)
-  const result = await runInContext(htmlDocument, htmlContext)
-
-  expect(result.status).toStrictEqual('finished')
-  expect((result as Finished).value).toStrictEqual(htmlErrorHandlingScript + htmlDocument)
+  const htmlDocument = '<p>Hello World!</p>'
+  return expectResult(htmlDocument, Chapter.HTML).toEqual(htmlErrorHandlingScript + htmlDocument)
 })
