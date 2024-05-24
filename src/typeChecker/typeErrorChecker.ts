@@ -20,21 +20,20 @@ import {
   TypeParameterNameNotAllowedError,
   UndefinedVariableTypeError
 } from '../errors/typeErrors'
+import { Chapter, type Context } from '../types'
 import {
   BindableType,
-  Chapter,
-  type Context,
-  disallowedTypes,
-  type Pair,
-  PrimitiveType,
+  Pair,
   SArray,
-  TSAllowedTypes,
+  Variable,
+  TypeEnvironment,
+  Type,
   TSBasicType,
   TSDisallowedTypes,
-  type Type,
-  TypeEnvironment,
-  Variable
-} from '../types'
+  disallowedTypes,
+  TSAllowedTypes,
+  PrimitiveType
+} from './types'
 import { TypecheckError } from './internalTypeErrors'
 import { parseTreeTypesPrelude } from './parseTreeTypes.prelude'
 import * as tsEs from './tsESTree'

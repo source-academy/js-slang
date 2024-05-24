@@ -2,10 +2,9 @@
 // Helper functions/constants for type checker and type error checker
 // =======================================
 
-import {
-  AllowedDeclarations,
+import type { AllowedDeclarations, Chapter } from '../types'
+import type {
   BindableType,
-  Chapter,
   ForAll,
   FunctionType,
   List,
@@ -19,7 +18,7 @@ import {
   TypeEnvironment,
   UnionType,
   Variable
-} from '../types'
+} from './types'
 import * as tsEs from './tsESTree'
 
 // Name of Unary negative builtin operator
