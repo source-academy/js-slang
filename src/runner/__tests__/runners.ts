@@ -386,28 +386,40 @@ describe('Tests for all runners', () => {
       `,
       (result, context) => {
         expect(result.status).toEqual('error')
-        expect(parseError(context.errors)).toEqual('Line 4: Cannot assign new value to constant constant.')
+        expect(parseError(context.errors)).toEqual(
+          'Line 4: Cannot assign new value to constant constant.'
+        )
       },
       Chapter.SOURCE_3,
       // Stepper doesn't do non const variables
       ['cse-machine', 'native']
     )
-    
-    testAllRunners('Runners won\'t allow number divided by string', '0 / "a";', (result, context) => {
-      expect(result.status).toEqual('error')
-      expect(parseError(context.errors)).toEqual('Line 1: Expected number on right hand side of operation, got string.')
-    })
 
+    testAllRunners(
+      "Runners won't allow number divided by string",
+      '0 / "a";',
+      (result, context) => {
+        expect(result.status).toEqual('error')
+        expect(parseError(context.errors)).toEqual(
+          'Line 1: Expected number on right hand side of operation, got string.'
+        )
+      }
+    )
 
-    testAllRunners('Runners won\'t allow non boolean in if', `
+    testAllRunners(
+      "Runners won't allow non boolean in if",
+      `
       if (1) {}
       else {}
-    `, (result, context) => {
-      expect(result.status).toEqual('error')
-      expect(parseError(context.errors)).toEqual('Line 2: Expected boolean as condition, got number.')
-    })
+    `,
+      (result, context) => {
+        expect(result.status).toEqual('error')
+        expect(parseError(context.errors)).toEqual(
+          'Line 2: Expected boolean as condition, got number.'
+        )
+      }
+    )
   })
-
 })
 
 // HTML Unit Tests

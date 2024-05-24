@@ -24,10 +24,7 @@ class Declaration {
   constructor(public isConstant: boolean) {}
 }
 
-export function validateAndAnnotate(
-  program: es.Program,
-  context: Context
-): es.Program {
+export function validateAndAnnotate(program: es.Program, context: Context): es.Program {
   const accessedBeforeDeclarationMap = new Map<Node, Map<string, Declaration>>()
 
   function processBlock(node: es.Program | es.BlockStatement) {
@@ -114,7 +111,7 @@ export function validateAndAnnotate(
             validateIdentifier(node.object, ancestors)
           }
         }
-      },
+      }
     },
     customWalker
   )
