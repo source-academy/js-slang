@@ -14,7 +14,7 @@ function __is_numeric(v: Value) {
 
 function __is_string(v: Value) {
   // Retrieved from https://stackoverflow.com/questions/4059147/check-if-a-variable-is-a-string-in-javascript
-  return (typeof v === 'string' || v instanceof String)
+  return typeof v === 'string' || v instanceof String
 }
 
 export function __py_adder(x: Value, y: Value) {
@@ -75,10 +75,10 @@ export function __py_multiplier(x: Value, y: Value) {
     return x * Number(y)
   }
   if (typeof x == 'number' && __is_string(y)) {
-    return y.repeat(x);
+    return y.repeat(x)
   }
   if (typeof y == 'number' && __is_string(x)) {
-    return x.repeat(y);
+    return x.repeat(y)
   }
   throw new Error(`Invalid types for multiply operation: ${typeof x}, ${typeof y}`)
 }
