@@ -4,13 +4,14 @@ import { ModuleConnectionError, ModuleNotFoundError } from '../../errors'
 import * as moduleLoader from '../loaders'
 import type { ModuleDocumentation, ModuleManifest } from '../../moduleTypes'
 import { asMockedFunc } from '../../../utils/testing/misc'
+import { stringify } from '../../../utils/stringify'
 
 const moduleMocker = jest.fn()
 global.fetch = jest.fn()
 
 // Using virtual modules, we can pretend the modules with the given
 // import path actually exist
-// When testing the import loader we can generally rely on the mocked versions
+// When testing imports we can rely on the mocked versions
 // under __mocks__ instead.
 jest.mock(
   `${jest.requireActual('..').MODULES_STATIC_URL}/bundles/one_module.js`,
@@ -37,6 +38,7 @@ jest.mock(
 )
 
 jest.spyOn(moduleLoader, 'docsImporter')
+const mockedDocsImporter = asMockedFunc(moduleLoader.docsImporter)
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -57,6 +59,14 @@ describe('bundle loading', () => {
     })
     const mod = await moduleLoader.loadModuleBundleAsync('one_module', context)
     expect(mod.foo()).toEqual('foo')
+
+    // Check that module functions have their toString overwritten
+    expect(stringify(mod.foo)).toMatchInlineSnapshot(`
+      "function foo {
+      	[Function from one_module
+      	Implementation hidden]
+      }"
+    `)
   })
 
   test('Should throw ModuleConnectionError when unable to reach modules server', () => {
@@ -68,13 +78,11 @@ describe('bundle loading', () => {
 
 describe('tab loading', () => {
   test("Load a module's tabs", async () => {
-    asMockedFunc(fetch).mockResolvedValueOnce({
-      json: () =>
-        Promise.resolve({
-          one_module: { tabs: ['tab1', 'tab2'] }
-        }),
-      status: 200
-    } as any)
+    mockedDocsImporter.mockResolvedValueOnce({
+      default: {
+        one_module: { tabs: ['tab1', 'tab2'] }
+      }
+    })
 
     const tabs = await moduleLoader.loadModuleTabsAsync('one_module')
 
@@ -84,8 +92,6 @@ describe('tab loading', () => {
 })
 
 describe('docs loading', () => {
-  const mockedDocsImporter = asMockedFunc(moduleLoader.docsImporter)
-
   beforeEach(() => {
     mockedDocsImporter.mockClear()
   })
@@ -103,14 +109,10 @@ describe('docs loading', () => {
       }
       mockedDocsImporter.mockResolvedValueOnce({ default: mockManifest })
 
-      const result = await moduleLoader.memoizedGetModuleManifestAsync()
-      expect(result).toMatchObject(mockManifest)
-
-      const result2 = await moduleLoader.memoizedGetModuleManifestAsync()
-      expect(result2).toMatchObject(mockManifest)
-
-      const result3 = await moduleLoader.memoizedGetModuleManifestAsync()
-      expect(result3).toMatchObject(mockManifest)
+      for (let i = 0; i < 5; i++) {
+        const result = await moduleLoader.memoizedGetModuleManifestAsync()
+        expect(result).toMatchObject(mockManifest)
+      }
 
       expect(moduleLoader.docsImporter).toHaveBeenCalledTimes(1)
     })
@@ -120,7 +122,7 @@ describe('docs loading', () => {
 
       mockedDocsImporter.mockRejectedValueOnce(mockError)
       const result = moduleLoader.memoizedGetModuleManifestAsync()
-      expect(result).rejects.toBe(mockError)
+      await expect(result).rejects.toBe(mockError)
 
       const mockManifest: ModuleManifest = {
         one_module: {
@@ -147,20 +149,16 @@ describe('docs loading', () => {
       }
 
       mockedDocsImporter.mockResolvedValue({ default: mockDocs })
-      const docs = await moduleLoader.memoizedGetModuleDocsAsync('one_module')
-      expect(docs).toMatchObject(mockDocs)
-
-      const docs2 = await moduleLoader.memoizedGetModuleDocsAsync('one_module')
-      expect(docs2).toMatchObject(mockDocs)
-
+      for (let i = 0; i < 5; i++) {
+        const docs = await moduleLoader.memoizedGetModuleDocsAsync('one_module')
+        expect(docs).toMatchObject(mockDocs)
+      }
       expect(moduleLoader.docsImporter).toHaveBeenCalledTimes(1)
 
-      const docs3 = await moduleLoader.memoizedGetModuleDocsAsync('another_module')
-      expect(docs3).toMatchObject(mockDocs)
-
-      const docs4 = await moduleLoader.memoizedGetModuleDocsAsync('another_module')
-      expect(docs4).toMatchObject(mockDocs)
-
+      for (let i = 0; i < 5; i++) {
+        const docs = await moduleLoader.memoizedGetModuleDocsAsync('another_module')
+        expect(docs).toMatchObject(mockDocs)
+      }
       expect(moduleLoader.docsImporter).toHaveBeenCalledTimes(2)
     })
 
@@ -181,7 +179,7 @@ describe('docs loading', () => {
       const mockError = new ModuleNotFoundError('another_module')
       mockedDocsImporter.mockRejectedValueOnce(mockError)
       const docs3 = moduleLoader.memoizedGetModuleDocsAsync('another_module', true)
-      expect(docs3).rejects.toBe(mockError)
+      await expect(docs3).rejects.toBe(mockError)
 
       mockedDocsImporter.mockResolvedValueOnce({ default: mockDocs })
       const docs4 = await moduleLoader.memoizedGetModuleDocsAsync('another_module')
