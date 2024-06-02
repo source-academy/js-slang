@@ -56,12 +56,16 @@ export function __py_minuser(x: Value, y: Value) {
 }
 
 export function __py_multiplier(x: Value, y: Value) {
-  if (!__is_numeric(x)) {
-    throw new Error('Expected number on left hand side of operation, got ' + typeof x + '.')
+  if (
+    !(
+      (__is_numeric(x) && __is_numeric(y)) ||
+      (__is_string(x) && __is_numeric(y)) ||
+      (__is_string(y) && __is_numeric(x))
+    )
+  ) {
+    throw new Error(`Invalid types for multiply operation: ${typeof x}, ${typeof y}`)
   }
-  if (!__is_numeric(y)) {
-    throw new Error('Expected number on right hand side of operation, got ' + typeof y + '.')
-  }
+
   if (typeof x === 'bigint' && typeof y === 'bigint') {
     return x * y
   }
