@@ -99,7 +99,7 @@ test('cannot multiply non-number values', () => {
   `,
     { chapter: Chapter.PYTHON_1, native: true }
   ).toMatchInlineSnapshot(
-    `"Line 1: Error: Expected number on left hand side of operation, got boolean."`
+    `"Line 1: Error: Invalid types for multiply operation: boolean, bigint"`
   )
 })
 
