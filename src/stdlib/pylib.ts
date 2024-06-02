@@ -143,7 +143,7 @@ export function __py_powerer(x: Value, y: Value) {
   }
   if (typeof x === 'number' && typeof y === 'number') {
     return Math.pow(x, y)
-  }  
+  }
   if (typeof x === 'bigint' && typeof y === 'number') {
     return Math.pow(Number(x), y)
   }
