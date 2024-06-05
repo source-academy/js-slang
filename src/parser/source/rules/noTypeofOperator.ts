@@ -11,7 +11,7 @@ const noTypeofOperator: Rule<es.UnaryExpression> = {
   testSnippets: [['typeof "string";', "Line 1: Operator 'typeof' is not allowed."]],
 
   checkers: {
-    UnaryExpression(node: es.UnaryExpression) {
+    UnaryExpression(node) {
       if (node.operator === 'typeof') {
         return [new NoUnspecifiedOperatorError(node)]
       } else {

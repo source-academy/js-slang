@@ -1,19 +1,7 @@
-import type es from 'estree'
+import type { Identifier } from 'estree'
+import { RuleError, type Rule } from '../../types'
 
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, type SourceError } from '../../../types'
-import type { Rule } from '../../types'
-
-export class NoEval implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.Identifier) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoEval extends RuleError<Identifier> {
   public explain() {
     return `eval is not allowed.`
   }
@@ -23,12 +11,12 @@ export class NoEval implements SourceError {
   }
 }
 
-const noEval: Rule<es.Identifier> = {
+const noEval: Rule<Identifier> = {
   name: 'no-eval',
   testSnippets: [['eval("0;");', 'Line 1: eval is not allowed.']],
 
   checkers: {
-    Identifier(node: es.Identifier) {
+    Identifier(node) {
       if (node.name === 'eval') {
         return [new NoEval(node)]
       } else {

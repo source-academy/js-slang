@@ -1,19 +1,17 @@
 import { generate } from 'astring'
-import type es from 'estree'
+import type { Identifier, VariableDeclaration, VariableDeclarator } from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, type Node, type SourceError } from '../../../types'
-import type { Rule } from '../../types'
+import { RuleError, type Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
+import { mapAndFilter } from '../../../utils/misc'
 
-export class NoImplicitDeclareUndefinedError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
+export class NoImplicitDeclareUndefinedError extends RuleError<VariableDeclarator> {
+  private readonly name: string
 
-  constructor(public node: es.Identifier) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
+  constructor(node: VariableDeclarator) {
+    super(node)
+    this.name = (node.id as Identifier).name
   }
 
   public explain() {
@@ -23,21 +21,21 @@ export class NoImplicitDeclareUndefinedError implements SourceError {
   public elaborate() {
     return stripIndent`
       A variable declaration assigns a value to a name.
-      For instance, to assign 20 to ${this.node.name}, you can write:
+      For instance, to assign 20 to ${this.name}, you can write:
 
-        let ${this.node.name} = 20;
+        let ${this.name} = 20;
 
-        ${this.node.name} + ${this.node.name}; // 40
+        ${this.name} + ${this.name}; // 40
     `
   }
 }
 
-export class MultipleDeclarationsError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-  private fixs: es.VariableDeclaration[]
+export class MultipleDeclarationsError extends RuleError<VariableDeclaration> {
+  private fixs: VariableDeclaration[]
 
-  constructor(public node: es.VariableDeclaration) {
+  constructor(node: VariableDeclaration) {
+    super(node)
+
     this.fixs = node.declarations.map(declaration => ({
       type: 'VariableDeclaration' as const,
       kind: 'let' as const,
@@ -60,7 +58,7 @@ export class MultipleDeclarationsError implements SourceError {
   }
 }
 
-const singleVariableDeclaration: Rule<es.VariableDeclaration> = {
+const singleVariableDeclaration: Rule<VariableDeclaration> = {
   name: 'single-variable-declaration',
   testSnippets: [
     ['let i = 0, j = 0;', 'Line 1: Multiple declarations in a single statement.'],
@@ -68,7 +66,7 @@ const singleVariableDeclaration: Rule<es.VariableDeclaration> = {
   ],
 
   checkers: {
-    VariableDeclaration(node: es.VariableDeclaration, ancestors: Node[]) {
+    VariableDeclaration(node, ancestors) {
       if (node.declarations.length > 1) {
         return [new MultipleDeclarationsError(node)]
       }
@@ -78,13 +76,9 @@ const singleVariableDeclaration: Rule<es.VariableDeclaration> = {
         return []
       }
 
-      const errors: SourceError[] = []
-      for (const decl of node.declarations) {
-        if (!decl.init) {
-          errors.push(new NoImplicitDeclareUndefinedError(decl.id as es.Identifier))
-        }
-      }
-      return errors
+      return mapAndFilter(node.declarations, decl =>
+        decl.init ? undefined : new NoImplicitDeclareUndefinedError(decl)
+      )
     }
   }
 }

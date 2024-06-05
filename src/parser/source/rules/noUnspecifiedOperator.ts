@@ -1,10 +1,9 @@
 import type es from 'estree'
 
 import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, type SourceError } from '../../../types'
-import type { Rule } from '../../types'
+import { RuleError, type Rule } from '../../types'
 
-const nonPermittedBinaryOperators: (es.BinaryOperator | es.LogicalOperator)[] = [
+export const nonPermittedBinaryOperators: (es.BinaryOperator | es.LogicalOperator)[] = [
   // '==',
   // '!=',
   // "**",
@@ -12,8 +11,11 @@ const nonPermittedBinaryOperators: (es.BinaryOperator | es.LogicalOperator)[] = 
   '^',
   '&',
   'in',
-  'instanceof'
-  // '??'
+  'instanceof',
+  // '??',
+  '>>',
+  '<<',
+  '>>>'
 ]
 
 const permittedBinaryOperators: (es.BinaryOperator | es.LogicalOperator)[] = [
@@ -52,12 +54,14 @@ const nonPermittedUnarySnippets = nonPermittedUnaryOperators.map(
   op => [`${op} a;`, `Operator '${op}' is not allowed.`] as [string, string]
 )
 
-export class NoUnspecifiedOperatorError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-  public unspecifiedOperator: string
+type OperatorNodeTypes = es.BinaryExpression | es.UnaryExpression | es.LogicalExpression | es.AssignmentExpression
+type OperatorTypes = es.BinaryOperator | es.UnaryOperator | es.LogicalOperator | es.AssignmentOperator
 
-  constructor(public node: es.BinaryExpression | es.UnaryExpression | es.LogicalExpression) {
+export class NoUnspecifiedOperatorError extends RuleError<OperatorNodeTypes> {
+  public unspecifiedOperator: OperatorTypes
+
+  constructor(node: OperatorNodeTypes) {
+    super(node)
     this.unspecifiedOperator = node.operator
   }
 
@@ -74,16 +78,7 @@ export class NoUnspecifiedOperatorError implements SourceError {
   }
 }
 
-export class StrictEqualityError implements SourceError {
-  public type = ErrorType.SYNTAX;
-  public severity = ErrorSeverity.ERROR;
-
-  constructor(public node: es.BinaryExpression) { }
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class StrictEqualityError extends RuleError<es.BinaryExpression> {
   public explain() {
     if (this.node.operator === '==') {
       return 'Use === instead of ==.'
@@ -109,8 +104,8 @@ const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression | es.
     ],
 
     checkers: {
-      BinaryExpression(node: es.BinaryExpression) {
-        if (node.operator === '==' || node.operator === '!=') { 
+      BinaryExpression(node) {
+        if (node.operator === '==' || node.operator === '!=') {
           return [new StrictEqualityError(node)]
         } else if (!permittedBinaryOperators.includes(node.operator)) {
           return [new NoUnspecifiedOperatorError(node)]
@@ -118,14 +113,14 @@ const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression | es.
           return []
         }
       },
-      LogicalExpression(node: es.LogicalExpression) {
+      LogicalExpression(node) {
         if (!permittedBinaryOperators.includes(node.operator)) {
           return [new NoUnspecifiedOperatorError(node)]
         } else {
           return []
         }
       },
-      UnaryExpression(node: es.UnaryExpression) {
+      UnaryExpression(node) {
         if (!permittedUnaryOperators.includes(node.operator)) {
           return [new NoUnspecifiedOperatorError(node)]
         } else {
@@ -136,4 +131,3 @@ const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression | es.
   }
 
 export default noUnspecifiedOperator
-

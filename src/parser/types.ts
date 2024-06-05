@@ -1,6 +1,15 @@
 import type { Program } from 'estree'
 
-import type { Context, Node, Chapter, Variant, SourceError } from '../types'
+import {
+  type Context,
+  type Node,
+  type Chapter,
+  type Variant,
+  type SourceError,
+  ErrorType,
+  ErrorSeverity
+} from '../types'
+import { UNKNOWN_LOCATION } from '../constants'
 
 export type { ParserOptions as BabelOptions } from '@babel/parser'
 export type { Options as AcornOptions } from 'acorn'
@@ -14,6 +23,7 @@ export interface Parser<TOptions> {
   ): Program | null
   validate(ast: Program, context: Context, throwOnError?: boolean): boolean
 }
+
 export interface Rule<T extends Node> {
   /**
    * Name of the rule
@@ -35,6 +45,20 @@ export interface Rule<T extends Node> {
   disableFromChapter?: Chapter
   disableForVariants?: Variant[]
   checkers: {
-    [name: string]: (node: T, ancestors: Node[]) => SourceError[]
+    [K in T['type']]: (node: Extract<T, { type: K }>, ancestors: Node[]) => SourceError[]
   }
+}
+
+export abstract class RuleError<T extends Node> implements SourceError {
+  public readonly type = ErrorType.SYNTAX
+  public readonly severity = ErrorSeverity.ERROR
+
+  constructor(public readonly node: T) {}
+
+  public get location() {
+    return this.node.loc ?? UNKNOWN_LOCATION
+  }
+
+  public abstract explain(): string
+  public abstract elaborate(): string
 }

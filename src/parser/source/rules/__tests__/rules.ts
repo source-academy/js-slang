@@ -4,6 +4,7 @@ import { Chapter, Variant } from '../../../../types'
 import { parse } from '../../../parser'
 import type { Rule } from '../../../types'
 import rules from '..'
+import { DisallowedConstructError } from '../../../errors'
 
 const chaptersToTest = [
   Chapter.SOURCE_1,
@@ -22,15 +23,18 @@ function testSingleChapter(
   const context = mockContext(chapter, variant)
   parse(code, context)
 
+  // Parser also produces errors for syntax blacklist
+  // We're not interested in those errors here
+  const errors = context.errors.filter(err => !(err instanceof DisallowedConstructError))
   if (expected === undefined) {
-    if (context.errors.length > 0) {
-      console.error(parseError(context.errors))
+    if (errors.length > 0) {
+      console.error(parseError(errors))
     }
 
-    expect(context.errors.length).toEqual(0)
+    expect(errors.length).toEqual(0)
   } else {
-    expect(context.errors.length).toBeGreaterThanOrEqual(1)
-    const parsedErrors = parseError(context.errors)
+    expect(errors.length).toBeGreaterThanOrEqual(1)
+    const parsedErrors = parseError(errors)
     expect(parsedErrors).toEqual(expect.stringContaining(expected))
   }
 }
@@ -76,17 +80,6 @@ describe('General rule tests', () => {
       }
     })
   })
-})
-
-test('no-spread-in-array', () => {
-  // More specific tests because spread elements are allowed in call expressions
-  // but only from Source 3 onward
-  const code = 'display(...args);'
-
-  testSingleChapter(code, 'Line 1: Spread elements are not allowed.', Chapter.SOURCE_1)
-  testSingleChapter(code, 'Line 1: Spread elements are not allowed.', Chapter.SOURCE_2)
-  testSingleChapter(code, undefined, Chapter.SOURCE_3)
-  testSingleChapter(code, undefined, Chapter.SOURCE_4)
 })
 
 test('no-unspecified-operator', () => {

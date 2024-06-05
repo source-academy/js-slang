@@ -1,20 +1,10 @@
+import type { AssignmentExpression, AssignmentOperator, BinaryOperator, LogicalOperator } from 'estree'
 import { generate } from 'astring'
-import type es from 'estree'
 
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, type SourceError } from '../../../types'
-import type { Rule } from '../../types'
+import { RuleError, type Rule } from '../../types'
+import { NoUnspecifiedOperatorError, nonPermittedBinaryOperators } from './noUnspecifiedOperator'
 
-export class NoUpdateAssignment implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.AssignmentExpression) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoUpdateAssignment extends RuleError<AssignmentExpression> {
   public explain() {
     return 'The assignment operator ' + this.node.operator + ' is not allowed. Use = instead.'
   }
@@ -22,19 +12,13 @@ export class NoUpdateAssignment implements SourceError {
   public elaborate() {
     const leftStr = generate(this.node.left)
     const rightStr = generate(this.node.right)
-    const newOpStr = this.node.operator.slice(0, -1)
+    const opStr = this.node.operator.slice(0, -1)
 
-    if (newOpStr === '+' || newOpStr === '-' || newOpStr === '/' || newOpStr === '*') {
-      const elabStr = `\n\t${leftStr} = ${leftStr} ${newOpStr} ${rightStr};`
-
-      return elabStr
-    } else {
-      return ''
-    }
+    return `\n\t${leftStr} = ${leftStr} ${opStr} ${rightStr};`
   }
 }
 
-const disallowedAssignmentOperators: es.AssignmentOperator[] = [
+const disallowedAssignmentOperators: AssignmentOperator[] = [
   // Some operators aren't recognized as valid operators
   '+=',
   '-=',
@@ -61,17 +45,20 @@ const testSnippets = disallowedAssignmentOperators.map(
     ]
 )
 
-const noUpdateAssignment: Rule<es.AssignmentExpression> = {
+const noUpdateAssignment: Rule<AssignmentExpression> = {
   name: 'no-update-assignment',
   testSnippets,
 
   checkers: {
-    AssignmentExpression(node: es.AssignmentExpression) {
-      if (node.operator !== '=') {
-        return [new NoUpdateAssignment(node)]
-      } else {
-        return []
+    AssignmentExpression(node) {
+      if (node.operator !== '=') return [new NoUpdateAssignment(node)]
+
+      const op = node.operator.slice(0, -1) as BinaryOperator | LogicalOperator
+      if (nonPermittedBinaryOperators.includes(op)) {
+        return [new NoUnspecifiedOperatorError(node)]
       }
+
+      return []
     }
   }
 }

@@ -1,20 +1,8 @@
-import type es from 'estree'
-
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, type SourceError } from '../../../types'
-import type { Rule } from '../../types'
+import type { ArrayExpression } from 'estree'
+import { RuleError, type Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
-export class NoHolesInArrays implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.ArrayExpression) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoHolesInArrays extends RuleError<ArrayExpression> {
   public explain() {
     return `No holes are allowed in array literals.`
   }
@@ -27,12 +15,12 @@ export class NoHolesInArrays implements SourceError {
   }
 }
 
-const noHolesInArrays: Rule<es.ArrayExpression> = {
+const noHolesInArrays: Rule<ArrayExpression> = {
   name: 'no-holes-in-arrays',
   testSnippets: [['[0,,0];', 'Line 1: No holes are allowed in array literals.']],
 
   checkers: {
-    ArrayExpression(node: es.ArrayExpression) {
+    ArrayExpression(node) {
       return node.elements.some(x => x === null) ? [new NoHolesInArrays(node)] : []
     }
   }
