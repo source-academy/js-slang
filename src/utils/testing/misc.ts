@@ -1,6 +1,6 @@
 import type { MockedFunction } from 'jest-mock'
 import type { Result } from '../..'
-import type { Finished, Value } from '../../types'
+import type { Finished, Value, Node } from '../../types'
 
 export function asMockedFunc<T extends (...args: any[]) => any>(func: T) {
   return func as MockedFunction<T>
@@ -17,4 +17,11 @@ export function expectFinishedResult(result: Result): asserts result is Finished
 export function expectFinishedResultValue(result: Result, value: Value) {
   expectFinishedResult(result)
   expect(result.value).toEqual(value)
+}
+
+export function expectNodeType<T extends Node['type']>(
+  typeStr: T,
+  node: Node
+): asserts node is Extract<Node, { type: T }> {
+  expect(node.type).toEqual(typeStr)
 }

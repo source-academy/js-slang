@@ -48,7 +48,6 @@ describe('preprocessFileImports', () => {
   const assertASTsAreEquivalent = (
     actualProgram: Program | undefined,
     expectedCode: string,
-    log: boolean = false
   ): void => {
     if (!actualProgram) {
       throw new Error('Actual program should not be undefined!')
@@ -190,7 +189,7 @@ describe('preprocessFileImports', () => {
       },
       shouldAddFileName: true
     })
-    assertASTsAreEquivalent(actualProgram, expectedCode, true)
+    assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
   it('collates Source module imports at the start of the top-level environment of the preprocessed program', async () => {

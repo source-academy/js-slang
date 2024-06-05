@@ -1,11 +1,10 @@
-import type { ImportDeclaration } from 'estree'
 import { mockContext } from '../../../mocks/context'
 import { MissingSemicolonError } from '../../../parser/errors'
 import { Chapter, type Context } from '../../../types'
 import { CircularImportError, ModuleNotFoundError } from '../../errors'
 import type { SourceFiles } from '../../moduleTypes'
 import parseProgramsAndConstructImportGraph from '../linker'
-import { expectTrue } from '../../../utils/testing/misc'
+import { expectNodeType, expectTrue } from '../../../utils/testing/misc'
 import { asMockedFunc } from '../../../utils/testing/misc'
 
 import * as resolver from '../resolver'
@@ -190,8 +189,8 @@ test("Linker updates AST's import source values", async () => {
   )
 
   const aNode = result.programs['/dir/a.js'].body[0]
-  expect(aNode.type).toEqual('ImportDeclaration')
-  expect((aNode as ImportDeclaration).source.value).toEqual('/b.js')
+  expectNodeType('ImportDeclaration', aNode)
+  expect(aNode.source.value).toEqual('/b.js')
 })
 
 describe('Test checking if verbose errors should be enabled', () => {
@@ -253,6 +252,19 @@ describe('Test checking if verbose errors should be enabled', () => {
       '/a.js'
     )
 
+    expect(result.verboseErrors).toEqual(false)
+  })
+
+  test('Does not enable verbose errors for unknown entrypoint', async () => {
+    const [{ errors }, result] = await testCode(
+      { '/a.js': '"enable verbose";\nconst x = 0;' },
+      '/b.js' as any
+    )
+
+    expect(errors.length).toEqual(1)
+    expect(errors[0]).toBeInstanceOf(ModuleNotFoundError)
+
+    expect(result.ok).toEqual(false)
     expect(result.verboseErrors).toEqual(false)
   })
 })

@@ -114,13 +114,10 @@ export const memoizedGetModuleDocsAsync = getMemoizedDocsImporter()
 
   For the browser, we use the function constructor to hide the import calls from
   webpack so that webpack doesn't try to compile them away.
-
-  Browsers automatically cache import() calls, so we add a query parameter with the
-  current time to always invalidate the cache and handle the memoization ourselves
 */
-const bundleAndTabImporter = wrapImporter<{ default: ModuleBundle }>(
+const bundleAndTabImporter = wrapImporter<{ default: any }>(
   typeof window !== 'undefined' && process.env.NODE_ENV !== 'test'
-    ? (new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any)
+    ? (new Function('path', 'return import(path)') as any)
     : p => Promise.resolve(require(p))
 )
 
@@ -133,7 +130,7 @@ export async function loadModuleBundleAsync(
     `${MODULES_STATIC_URL}/bundles/${moduleName}.js`
   )
   try {
-    const loadedModule = result(getRequireProvider(context))
+    const loadedModule = (result as ModuleBundle)(getRequireProvider(context))
     return Object.entries(loadedModule).reduce((res, [name, value]) => {
       if (typeof value === 'function') {
         const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`
