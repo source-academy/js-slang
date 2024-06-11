@@ -142,7 +142,11 @@ const getDefaultExportExpression = (
   nodes: es.ModuleDeclaration[],
   exportedNameToIdentifierMap: Partial<Record<string, es.Identifier>>
 ): es.Expression | null => {
-  let defaultExport: es.Expression | null = null
+  let defaultExport:
+    | es.MaybeNamedFunctionDeclaration
+    | es.MaybeNamedClassDeclaration
+    | es.Expression
+    | null = null
 
   // Handle default exports which are parsed as ExportNamedDeclaration AST nodes.
   // 'export { name as default };' is equivalent to 'export default name;' but
@@ -164,7 +168,6 @@ const getDefaultExportExpression = (
     // This should never occur because multiple default exports should have
     // been caught by the Acorn parser when parsing into an AST.
     assert(defaultExport === null, 'Encountered multiple default exports!')
-
     if (isDeclaration(node.declaration)) {
       const identifier = getIdentifier(node.declaration)
       if (identifier === null) {

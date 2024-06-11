@@ -35,11 +35,8 @@ function stream_tail(xs) {
 /**
  * Returns <CODE>true</CODE> if
  * <CODE>xs</CODE> is a stream as defined in the textbook, and
- * <CODE>false</CODE> otherwise. Iterative process; 
- * time: <CODE>O(n)</CODE>, space: <CODE>O(1)</CODE>, where <CODE>n</CODE>
- * is the length of the 
- * chain of <CODE>stream_tail</CODE> operations that can be applied to <CODE>xs</CODE>.
- * recurses down the stream and checks that it ends with the empty stream null.
+ * <CODE>false</CODE> otherwise. Iterative process.
+ * Recurses down the stream and checks that it ends with the empty stream null.
  * Laziness:  No: <CODE>is_stream</CODE> needs to force the given stream.
  * @param {value} xs - given candidate
  * @returns {boolean} whether <CODE>xs</CODE> is a stream
@@ -107,8 +104,7 @@ function stream() {
 /**
  * Returns the length of the stream
  * <CODE>xs</CODE>. 
- * Iterative process; time: <CODE>O(n)</CODE>, space:
- * <CODE>O(1)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+ * Iterative process.
  * Lazy? No: The function needs to explore the whole stream 
  * @param {stream} xs - given stream
  * @returns {number} length of <CODE>xs</CODE>
@@ -165,8 +161,7 @@ function build_stream(fun, n) {
 /**
  * Applies unary function <CODE>f</CODE> to every
  * element of the stream <CODE>xs</CODE>.
- * Iterative process; time: <CODE>O(n)</CODE>, space: <CODE>O(1)</CODE>,
- * Where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+ * Iterative process.
  * <CODE>f</CODE> is applied element-by-element:
  * <CODE>stream_for_each(f, stream(1, 2))</CODE> results in the calls
  * <CODE>f(1)</CODE> and <CODE>f(2)</CODE>.
@@ -188,9 +183,8 @@ function stream_for_each(fun, xs) {
 
 /**
  * Returns stream <CODE>xs</CODE> in reverse
- * order. Iterative process; time: <CODE>O(n)</CODE>,
- * space: <CODE>O(n)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
- * The process is iterative, but consumes space <CODE>O(n)</CODE>
+ * order. Iterative process.
+ * The process is iterative, but consumes space <CODE>Omega(n)</CODE>
  * because of the result stream.
  * Lazy? No: <CODE>stream_reverse</CODE> 
  * forces the exploration of the entire stream
@@ -232,8 +226,7 @@ function stream_append(xs, ys) {
  * whose head is identical to
  * <CODE>v</CODE> (using <CODE>===</CODE>); returns <CODE>null</CODE> if the
  * element does not occur in the stream.
- * Iterative process; time: <CODE>O(n)</CODE>,
- * space: <CODE>O(1)</CODE>, where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+ * Iterative process.
  * Lazy? Sort-of: <CODE>stream_member</CODE> 
  * forces the stream only until the element 
  * is found.
@@ -375,9 +368,7 @@ function eval_stream(s, n) {
  * Returns the element
  * of stream <CODE>xs</CODE> at position <CODE>n</CODE>, 
  * where the first element has index 0.
- * Iterative process;
- * time: <CODE>O(n)</CODE>, space: <CODE>O(1)</CODE>,
- * where <CODE>n</CODE> is the length of <CODE>xs</CODE>.
+ * Iterative process.
  * Lazy? Sort-of: <CODE>stream_ref</CODE> only forces the computation of
  *                the first <CODE>n</CODE> elements, and leaves the rest of
  *                the stream untouched.

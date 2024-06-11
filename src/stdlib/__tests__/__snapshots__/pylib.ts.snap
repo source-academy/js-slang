@@ -97,7 +97,7 @@ Object {
   "code": "True * 2",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 1: Error: Expected number on left hand side of operation, got boolean.",
+  "parsedErrors": "Line 1: Error: Invalid types for multiply operation: boolean, bigint",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],

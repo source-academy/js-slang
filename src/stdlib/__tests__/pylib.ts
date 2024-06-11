@@ -98,9 +98,7 @@ test('cannot multiply non-number values', () => {
     True * 2
   `,
     { chapter: Chapter.PYTHON_1, native: true }
-  ).toMatchInlineSnapshot(
-    `"Line 1: Error: Expected number on left hand side of operation, got boolean."`
-  )
+  ).toMatchInlineSnapshot(`"Line 1: Error: Invalid types for multiply operation: boolean, bigint"`)
 })
 
 test('dividing integer and float is ok', () => {
