@@ -1,5 +1,5 @@
 import type { ExportNamedDeclaration } from 'estree'
-import { Chapter} from '../../../types'
+import { Chapter } from '../../../types'
 import { type Rule, RuleError } from '../../types'
 
 export class NoExportNamedDeclarationWithSourceError extends RuleError<ExportNamedDeclaration> {

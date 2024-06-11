@@ -47,7 +47,7 @@ describe('preprocessFileImports', () => {
 
   const assertASTsAreEquivalent = (
     actualProgram: Program | undefined,
-    expectedCode: string,
+    expectedCode: string
   ): void => {
     if (!actualProgram) {
       throw new Error('Actual program should not be undefined!')

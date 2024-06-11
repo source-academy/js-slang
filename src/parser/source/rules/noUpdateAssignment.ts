@@ -1,4 +1,9 @@
-import type { AssignmentExpression, AssignmentOperator, BinaryOperator, LogicalOperator } from 'estree'
+import type {
+  AssignmentExpression,
+  AssignmentOperator,
+  BinaryOperator,
+  LogicalOperator
+} from 'estree'
 import { generate } from 'astring'
 
 import { RuleError, type Rule } from '../../types'

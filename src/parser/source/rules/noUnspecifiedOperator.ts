@@ -54,8 +54,16 @@ const nonPermittedUnarySnippets = nonPermittedUnaryOperators.map(
   op => [`${op} a;`, `Operator '${op}' is not allowed.`] as [string, string]
 )
 
-type OperatorNodeTypes = es.BinaryExpression | es.UnaryExpression | es.LogicalExpression | es.AssignmentExpression
-type OperatorTypes = es.BinaryOperator | es.UnaryOperator | es.LogicalOperator | es.AssignmentOperator
+type OperatorNodeTypes =
+  | es.BinaryExpression
+  | es.UnaryExpression
+  | es.LogicalExpression
+  | es.AssignmentExpression
+type OperatorTypes =
+  | es.BinaryOperator
+  | es.UnaryOperator
+  | es.LogicalOperator
+  | es.AssignmentOperator
 
 export class NoUnspecifiedOperatorError extends RuleError<OperatorNodeTypes> {
   public unspecifiedOperator: OperatorTypes

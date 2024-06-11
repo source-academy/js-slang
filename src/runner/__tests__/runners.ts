@@ -119,8 +119,8 @@ describe('FullJS Unit Tests', () => {
     expectResultsToEqual(noErrorSnippets, Chapter.FULL_JS)
   })
 
-  test('Source builtins are accessible in fullJS program', async () => {
-    expectResult("parse('head(list(1,2,3));');", Chapter.FULL_JS).toEqual(expect.anything())
+  test('Source builtins are accessible in fullJS program', () => {
+    return expectResult("parse('head(list(1,2,3));');", Chapter.FULL_JS).toEqual(expect.anything())
   })
 
   test('Simulate fullJS REPL', async () => {

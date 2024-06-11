@@ -45,6 +45,21 @@ export function mapIdentifiersToNames(ids: es.Identifier[]): string[] {
   return ids.map(({ name }) => name)
 }
 
+// In Source programs, VariableDeclarations can only declare 1 variable at a time
+export function getDeclaratorFromSingleDeclaration({ declarations }: es.VariableDeclaration) {
+  assert(declarations.length === 1, 'Expected VariableDeclaration to have exactly one declaration')
+  const declaration = declarations[0]
+  assert(
+    declaration.id.type === 'Identifier',
+    'Expected VariableDeclaration to have exactly one declaration'
+  )
+  return {
+    init: declaration.init,
+    id: declaration.id,
+    loc: declaration.loc
+  }
+}
+
 export function getIdentifiersFromVariableDeclaration(decl: es.VariableDeclaration | es.Pattern) {
   function internal(node: es.Pattern): es.Identifier[] {
     switch (node.type) {

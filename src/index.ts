@@ -11,9 +11,7 @@ import { setBreakpointAtLine } from './stdlib/inspector'
 import {
   Chapter,
   Context,
-  Error as ResultError,
   ExecutionMethod,
-  Finished,
   ModuleContext,
   RecursivePartial,
   Result,
@@ -249,9 +247,9 @@ export async function runFilesInContext(
   return result
 }
 
-export function resume(result: Result): Finished | ResultError | Promise<Result> {
+export function resume(result: Result): Promise<Result> {
   if (result.status === 'finished' || result.status === 'error') {
-    return result
+    return Promise.resolve(result)
   } else if (result.status === 'suspended-cse-eval') {
     const value = resumeEvaluate(result.context)
     return CSEResultPromise(result.context, value)

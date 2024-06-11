@@ -15,7 +15,7 @@ const noSpreadInArray: Rule<SpreadElement> = {
   name: 'no-spread-in-array',
   testSnippets: [
     ['const a = [...b];', 'Line 1: Spread syntax is not allowed in arrays.'],
-    ['display(...args);', undefined],
+    ['display(...args);', undefined]
   ],
 
   checkers: {

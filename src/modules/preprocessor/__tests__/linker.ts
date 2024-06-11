@@ -209,7 +209,7 @@ describe('Test checking if verbose errors should be enabled', () => {
   })
 
   test('When the entrypoint file has the directive but has parser errors', async () => {
-    const [, result] = await testCode(
+    const [{ errors }, result] = await testCode(
       {
         '/a.js': `
         'enable verbose';
@@ -218,6 +218,9 @@ describe('Test checking if verbose errors should be enabled', () => {
       },
       '/a.js'
     )
+
+    expect(errors.length).toEqual(1)
+    expect(errors[0]).toBeInstanceOf(MissingSemicolonError)
 
     expect(result.ok).toEqual(false)
     expect(result.verboseErrors).toEqual(true)
