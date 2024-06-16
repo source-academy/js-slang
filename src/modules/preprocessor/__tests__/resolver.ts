@@ -60,7 +60,7 @@ it('Checks the module manifest when importing source modules', async () => {
   expect(result).toMatchObject({ type: 'source' })
 })
 
-it('Returns false on failing to resolve a source module', async () => {
+it('Returns undefined on failing to resolve a source module', async () => {
   const result = await resolveModule('/', 'unknown_module', () => true, {
     extensions: ['js']
   })
