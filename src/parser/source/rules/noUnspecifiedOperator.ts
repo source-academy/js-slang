@@ -135,7 +135,9 @@ const operators: OperatorClassifications = {
   }
 }
 
-export class NoUnspecifiedOperatorError<T extends OperatorNodeTypes = OperatorNodeTypes> extends RuleError<T> {
+export class NoUnspecifiedOperatorError<
+  T extends OperatorNodeTypes = OperatorNodeTypes
+> extends RuleError<T> {
   public unspecifiedOperator: T['operator']
 
   constructor(node: T) {
@@ -196,11 +198,7 @@ const noUnspecifiedOperator = Object.entries(operators).reduce(
 
     return {
       ...res,
-      testSnippets: [
-        ...res.testSnippets!,
-        ...disallowedSnippets,
-        ...allowedSnippets
-      ],
+      testSnippets: [...res.testSnippets!, ...disallowedSnippets, ...allowedSnippets],
       checkers: {
         ...res.checkers,
         [nodeType]: checker
@@ -211,7 +209,7 @@ const noUnspecifiedOperator = Object.entries(operators).reduce(
     name: 'no-unspecified-operator',
     testSnippets: [
       ['a == b', 'Line 1: Use === instead of =='],
-      ['a != b', 'Line 1: Use !== instead of !='],
+      ['a != b', 'Line 1: Use !== instead of !=']
     ],
     checkers: {}
   } as Rule<OperatorNodeTypes>
