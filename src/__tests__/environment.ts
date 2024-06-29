@@ -1,10 +1,10 @@
 import { Program } from 'estree'
 
-import { evaluateProgram as evaluate } from '../interpreter/interpreter'
 import { mockContext } from '../mocks/context'
 import { parse } from '../parser/parser'
 import { Chapter } from '../types'
 import { stripIndent } from '../utils/formatters'
+import { evaluate } from '../cse-machine/interpreter'
 
 test('Function params and body identifiers are in different environment', () => {
   const code = stripIndent`
@@ -18,11 +18,12 @@ test('Function params and body identifiers are in different environment', () => 
   const context = mockContext(Chapter.SOURCE_4)
   context.prelude = null // hide the unneeded prelude
   const parsed = parse(code, context)
-  const it = evaluate(parsed as any as Program, context)
-  const stepsToComment = 13 // manually counted magic number
-  for (let i = 0; i < stepsToComment; i += 1) {
-    it.next()
-  }
+  evaluate(parsed as any as Program, context, {
+    envSteps: 13,
+    stepLimit: 1000,
+    isPrelude: false
+  })
+
   context.runtime.environments.forEach(environment => {
     expect(environment).toMatchSnapshot()
   })

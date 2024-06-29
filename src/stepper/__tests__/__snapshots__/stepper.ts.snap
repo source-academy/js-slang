@@ -2103,13 +2103,7 @@ false ? 1 : 100 * factorial(100 - 1);
 "
 `;
 
-exports[`Evaluation of empty code and imports Evaluate empty program 1`] = `
-"
-undefined;
-"
-`;
-
-exports[`Expressions: Binary operators And-shortcut-false test case 1`] = `
+exports[`Expressions: Binary operators And-shortcut-false 1`] = `
 "if (false && 1 + 2 === 1 + 2) {
   1;
 } else {
@@ -2158,7 +2152,7 @@ if (false) {
 "
 `;
 
-exports[`Expressions: Binary operators And-shortcut-true test case 1`] = `
+exports[`Expressions: Binary operators And-shortcut-true 1`] = `
 "if (true && 1 + 2 === 2 + 3) {
   1;
 } else {
@@ -2243,7 +2237,7 @@ if (false) {
 "
 `;
 
-exports[`Expressions: Binary operators Left-binary-reduce test case 1`] = `
+exports[`Expressions: Binary operators Left-binary-reduce 1`] = `
 "if (1 + 2 + 3 === 1 + 2 + 3) {
   1;
 } else {
@@ -2340,7 +2334,7 @@ if (true) {
 "
 `;
 
-exports[`Expressions: Binary operators Or-shortcut-false test case 1`] = `
+exports[`Expressions: Binary operators Or-shortcut-false 1`] = `
 "if (false || 1 + 2 === 1 + 2) {
   1;
 } else {
@@ -2425,7 +2419,7 @@ if (true) {
 "
 `;
 
-exports[`Expressions: Binary operators Or-shortcut-true test case 1`] = `
+exports[`Expressions: Binary operators Or-shortcut-true 1`] = `
 "if (true || 1 + 2 === 2 + 3) {
   1;
 } else {
@@ -2474,7 +2468,7 @@ if (true) {
 "
 `;
 
-exports[`Expressions: Binary operators Prim-binary-reduce test case 1`] = `
+exports[`Expressions: Binary operators Prim-binary-reduce 1`] = `
 "if (1 >= 2) {
   1;
 } else {
@@ -2523,7 +2517,7 @@ if (false) {
 "
 `;
 
-exports[`Expressions: Binary operators Right-binary-reduce test case 1`] = `
+exports[`Expressions: Binary operators Right-binary-reduce 1`] = `
 "if (1 >= 1 + 1) {
   1;
 } else {
@@ -2584,7 +2578,94 @@ if (false) {
 "
 `;
 
-exports[`Expressions: conditionals Conditional-false-reduce test case 1`] = `
+exports[`Expressions: Blocks Block-expression-empty-reduce 1`] = `
+"function foo(x) {}
+foo(0);
+
+function foo(x) {}
+foo(0);
+
+foo(0);
+
+foo(0);
+
+{};
+
+{};
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Expressions: Blocks Block-expression-intro 1`] = `
+"function foo(x) {
+  1 + 1;
+}
+foo(0);
+
+function foo(x) {
+  1 + 1;
+}
+foo(0);
+
+foo(0);
+
+foo(0);
+
+{
+  1 + 1;
+};
+
+{
+  1 + 1;
+};
+
+{
+  2;
+};
+
+{
+  2;
+};
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Expressions: Blocks Block-expression-single-reduce 1`] = `
+"function foo(x) {
+  1;
+}
+foo(0);
+
+function foo(x) {
+  1;
+}
+foo(0);
+
+foo(0);
+
+foo(0);
+
+{
+  1;
+};
+
+{
+  1;
+};
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Expressions: Conditionals Conditional-false-reduce 1`] = `
 "false ? 1 + 2 : 2 + 3;
 
 false ? 1 + 2 : 2 + 3;
@@ -2599,7 +2680,7 @@ false ? 1 + 2 : 2 + 3;
 "
 `;
 
-exports[`Expressions: conditionals Conditional-predicate-reduce test case 1`] = `
+exports[`Expressions: Conditionals Conditional-predicate-reduce 1`] = `
 "1 + 1 === 2 ? 1 + 2 : 2 + 3;
 
 1 + 1 === 2 ? 1 + 2 : 2 + 3;
@@ -2622,7 +2703,7 @@ true ? 1 + 2 : 2 + 3;
 "
 `;
 
-exports[`Expressions: conditionals Conditional-true-reduce test case 1`] = `
+exports[`Expressions: Conditionals Conditional-true-reduce 1`] = `
 "true ? 1 + 2 : 2 + 3;
 
 true ? 1 + 2 : 2 + 3;
@@ -2637,2102 +2718,7 @@ true ? 1 + 2 : 2 + 3;
 "
 `;
 
-exports[`Expresssions: Blocks Block-expression-empty-reduce test case 1`] = `
-"function foo(x) {}
-foo(0);
-
-function foo(x) {}
-foo(0);
-
-foo(0);
-
-foo(0);
-
-{};
-
-{};
-
-undefined;
-
-undefined;
-"
-`;
-
-exports[`Expresssions: Blocks Block-expression-intro test case 1`] = `
-"function foo(x) {
-  1 + 1;
-}
-foo(0);
-
-function foo(x) {
-  1 + 1;
-}
-foo(0);
-
-foo(0);
-
-foo(0);
-
-{
-  1 + 1;
-};
-
-{
-  1 + 1;
-};
-
-{
-  2;
-};
-
-{
-  2;
-};
-
-undefined;
-
-undefined;
-"
-`;
-
-exports[`Expresssions: Blocks Block-expression-single-reduce test case 1`] = `
-"function foo(x) {
-  1;
-}
-foo(0);
-
-function foo(x) {
-  1;
-}
-foo(0);
-
-foo(0);
-
-foo(0);
-
-{
-  1;
-};
-
-{
-  1;
-};
-
-undefined;
-
-undefined;
-"
-`;
-
-exports[`Infinite recursion 1`] = `
-"function f() {
-  return f();
-}
-f();
-
-function f() {
-  return f();
-}
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-f();
-
-"
-`;
-
-exports[`Programs Eliminate-constant-declaration test case 1 1`] = `
+exports[`Programs Eliminate-constant-declartion 1 1`] = `
 "const x = 0;
 
 const x = 0;
@@ -4742,7 +2728,7 @@ undefined;
 "
 `;
 
-exports[`Programs Eliminate-constant-declaration test case 2 1`] = `
+exports[`Programs Eliminate-constant-declartion 2 1`] = `
 "1;
 const x = 0;
 
@@ -4755,7 +2741,7 @@ const x = 0;
 "
 `;
 
-exports[`Programs Eliminate-function-declaration test case 1 1`] = `
+exports[`Programs Eliminate-function-declaration 1 1`] = `
 "function foo(x) {
   return 0;
 }
@@ -4769,7 +2755,7 @@ undefined;
 "
 `;
 
-exports[`Programs Eliminate-function-declaration test case 2 1`] = `
+exports[`Programs Eliminate-function-declaration 2 1`] = `
 "1;
 function foo(x) {
   return 0;
@@ -4786,7 +2772,7 @@ function foo(x) {
 "
 `;
 
-exports[`Programs Program-intro test case 1 1`] = `
+exports[`Programs Program-intro 1 1`] = `
 "1 + 1;
 
 1 + 1;
@@ -4797,7 +2783,7 @@ exports[`Programs Program-intro test case 1 1`] = `
 "
 `;
 
-exports[`Programs Program-intro test case 2 1`] = `
+exports[`Programs Program-intro 2 1`] = `
 "1;
 1 + 1;
 
@@ -4816,7 +2802,7 @@ exports[`Programs Program-intro test case 2 1`] = `
 "
 `;
 
-exports[`Programs Program-reduce test case 1`] = `
+exports[`Programs Program-reduce 1`] = `
 "1;
 2;
 
@@ -4829,740 +2815,20 @@ exports[`Programs Program-reduce test case 1`] = `
 "
 `;
 
-exports[`Statements: Blocks Block-statement-empty-reduce test case 1 1`] = `
-"{}
-
-{}
-
-
+exports[`Snapshot code snippets Evaluate empty program 1`] = `
+"
 undefined;
 "
 `;
 
-exports[`Statements: Blocks Block-statement-empty-reduce test case 2 1`] = `
-"{
-  {
-    {}
-    {}
-  }
-  {
-    {}
-    {}
-  }
-}
-
-{
-  {
-    {}
-    {}
-  }
-  {
-    {}
-    {}
-  }
-}
-
-{
-  {
-    {}
-  }
-  {
-    {}
-    {}
-  }
-}
-
-{
-  {
-    {}
-  }
-  {
-    {}
-    {}
-  }
-}
-
-{
-  {}
-  {
-    {}
-    {}
-  }
-}
-
-{
-  {}
-  {
-    {}
-    {}
-  }
-}
-
-{
-  {
-    {}
-    {}
-  }
-}
-
-{
-  {
-    {}
-    {}
-  }
-}
-
-{
-  {
-    {}
-  }
-}
-
-{
-  {
-    {}
-  }
-}
-
-{
-  {}
-}
-
-{
-  {}
-}
-
-{}
-
-{}
-
-
-undefined;
-"
-`;
-
-exports[`Statements: Blocks Block-statement-intro test case 1`] = `
-"{
-  1 + 1;
-}
-
-{
-  1 + 1;
-}
-
-{
-  2;
-}
-
-{
-  2;
-}
-
-2;
-
-2;
-"
-`;
-
-exports[`Statements: Blocks Block-statement-single-reduce test case 1`] = `
-"{
-  1;
-}
-
-{
-  1;
-}
-
-1;
-
-1;
-"
-`;
-
-exports[`Statements: Conditionals Conditional-statement-alternative test case 1`] = `
-"if (false) {
-  1;
-} else {
-  2;
-}
-
-if (false) {
-  1;
-} else {
-  2;
-}
-
-{
-  undefined;
-  2;
-}
-
-{
-  undefined;
-  2;
-}
-
-{
-  2;
-}
-
-{
-  2;
-}
-
-2;
-
-2;
-"
-`;
-
-exports[`Statements: Conditionals Conditional-statement-blockexpr-alternative test case 1 1`] = `
-"function foo(x) {
-  if (false) {
-    1;
-  } else {
-    2;
-  }
-}
-foo(0);
-
-function foo(x) {
-  if (false) {
-    1;
-  } else {
-    2;
-  }
-}
-foo(0);
-
-foo(0);
-
-foo(0);
-
-{
-  if (false) {
-    1;
-  } else {
-    2;
-  }
-};
-
-{
-  if (false) {
-    1;
-  } else {
-    2;
-  }
-};
-
-{
-  {
-    2;
-  }
-};
-
-{
-  {
-    2;
-  }
-};
-
-{
-  2;
-};
-
-{
-  2;
-};
-
-undefined;
-
-undefined;
-"
-`;
-
-exports[`Statements: Conditionals Conditional-statement-blockexpr-alternative test case 2 1`] = `
-"function foo(x) {
-  3;
-  if (false) {
-    1;
-  } else {
-    2;
-  }
-}
-foo(0);
-
-function foo(x) {
-  3;
-  if (false) {
-    1;
-  } else {
-    2;
-  }
-}
-foo(0);
-
-foo(0);
-
-foo(0);
-
-{
-  3;
-  if (false) {
-    1;
-  } else {
-    2;
-  }
-};
-
-{
-  3;
-  if (false) {
-    1;
-  } else {
-    2;
-  }
-};
-
-{
-  3;
-  {
-    2;
-  }
-};
-
-{
-  3;
-  {
-    2;
-  }
-};
-
-{
-  3;
-  2;
-};
-
-{
-  3;
-  2;
-};
-
-{
-  2;
-};
-
-{
-  2;
-};
-
-undefined;
-
-undefined;
-"
-`;
-
-exports[`Statements: Conditionals Conditional-statement-blockexpr-consequent test case 1 1`] = `
-"function foo(x) {
-  if (true) {
-    1;
-  } else {
-    2;
-  }
-}
-foo(0);
-
-function foo(x) {
-  if (true) {
-    1;
-  } else {
-    2;
-  }
-}
-foo(0);
-
-foo(0);
-
-foo(0);
-
-{
-  if (true) {
-    1;
-  } else {
-    2;
-  }
-};
-
-{
-  if (true) {
-    1;
-  } else {
-    2;
-  }
-};
-
-{
-  {
-    1;
-  }
-};
-
-{
-  {
-    1;
-  }
-};
-
-{
-  1;
-};
-
-{
-  1;
-};
-
-undefined;
-
-undefined;
-"
-`;
-
-exports[`Statements: Conditionals Conditional-statement-blockexpr-consequent test case 2 1`] = `
-"function foo(x) {
-  3;
-  if (true) {
-    1;
-  } else {
-    2;
-  }
-}
-foo(0);
-
-function foo(x) {
-  3;
-  if (true) {
-    1;
-  } else {
-    2;
-  }
-}
-foo(0);
-
-foo(0);
-
-foo(0);
-
-{
-  3;
-  if (true) {
-    1;
-  } else {
-    2;
-  }
-};
-
-{
-  3;
-  if (true) {
-    1;
-  } else {
-    2;
-  }
-};
-
-{
-  3;
-  {
-    1;
-  }
-};
-
-{
-  3;
-  {
-    1;
-  }
-};
-
-{
-  3;
-  1;
-};
-
-{
-  3;
-  1;
-};
-
-{
-  1;
-};
-
-{
-  1;
-};
-
-undefined;
-
-undefined;
-"
-`;
-
-exports[`Statements: Conditionals Conditional-statement-consequent test case 1`] = `
-"if (true) {
-  1;
-} else {
-  2;
-}
-
-if (true) {
-  1;
-} else {
-  2;
-}
-
-{
-  undefined;
-  1;
-}
-
-{
-  undefined;
-  1;
-}
-
-{
-  1;
-}
-
-{
-  1;
-}
-
-1;
-
-1;
-"
-`;
-
-exports[`Statements: Conditionals Conditional-statement-predicate test case 1`] = `
-"if (1 + 2 + 3 === 1) {} else {}
-
-if (1 + 2 + 3 === 1) {} else {}
-
-if (3 + 3 === 1) {} else {}
-
-if (3 + 3 === 1) {} else {}
-
-if (6 === 1) {} else {}
-
-if (6 === 1) {} else {}
-
-if (false) {} else {}
-
-if (false) {} else {}
-
-{
-  undefined;
-}
-
-{
-  undefined;
-}
-
-undefined;
-
-undefined;
-"
-`;
-
-exports[`Statements: Constant declarations Evaluate-constant-declaration test case 1`] = `
-"const x = 1 + 2 + 3;
-
-const x = 1 + 2 + 3;
-
-const x = 3 + 3;
-
-const x = 3 + 3;
-
-const x = 6;
-
-const x = 6;
-
-
-undefined;
-"
-`;
-
-exports[`Statements: Expression statements Expression-statement-reduce test case 1`] = `
-"1 + 2 + 3;
-
-1 + 2 + 3;
-
-3 + 3;
-
-3 + 3;
-
-6;
-
-6;
-"
-`;
-
-exports[`Test calling functions Argument reduction steps 1`] = `
-"(1 * 3)(2 * 3 + 10);
-
-(1 * 3)(2 * 3 + 10);
-
-(3)(2 * 3 + 10);
-
-(3)(2 * 3 + 10);
-
-(3)(6 + 10);
-
-(3)(6 + 10);
-
-(3)(16);
-
-(3)(16);
-"
-`;
-
-exports[`Test calling functions Built-in function 1`] = `
-"is_boolean(false);
-
-is_boolean(false);
-
-true;
-
-true;
-"
-`;
-
-exports[`Test calling functions Function that exists 1`] = `
-"function foo(x) {
-  return x;
-}
-foo(1 + 2);
-
-function foo(x) {
-  return x;
-}
-foo(1 + 2);
-
-foo(1 + 2);
-
-foo(1 + 2);
-
-foo(3);
-
-foo(3);
-
-3;
-
-3;
-"
-`;
-
-exports[`Test calling functions Imported module function 1`] = `
-"pair(1, 1);
-
-pair(1, 1);
-
-[1, 1];
-
-[1, 1];
-"
-`;
-
-exports[`Test calling functions Incorrect number of argument (less) 1`] = `
-"Start of evaluation
-Function foo declared, parameter(s) a required
-Function foo declared, parameter(s) a required
-Line 5: Expected 1 arguments, but got 0."
-`;
-
-exports[`Test calling functions Incorrect number of argument (more) 1`] = `
-"Start of evaluation
-Function foo declared, parameter(s) a required
-Function foo declared, parameter(s) a required
-Line 5: Expected 1 arguments, but got 3."
-`;
-
-exports[`Test calling functions Literal function should error 1`] = `
-"Start of evaluation
-Line 2: Calling non-function value 1."
-`;
-
-exports[`Test calling functions Math function 1`] = `
-"math_abs(-1);
-
-math_abs(-1);
-
-1;
-
-1;
-"
-`;
-
-exports[`Test catching errors from built in function Incorrect number of arguments 1`] = `
-"Start of evaluation
-"
-`;
-
-exports[`Test catching errors from built in function Incorrect type of argument for math function 1`] = `
-"Start of evaluation
-"
-`;
-
-exports[`Test catching errors from built in function Incorrect type of arguments for module function 1`] = `
-"Start of evaluation
-"
-`;
-
-exports[`Test catching of undeclared variable error Variable not declared in block statement 1`] = `"Line 3: Name undeclared_variable not declared."`;
-
-exports[`Test catching of undeclared variable error Variable not declared in function declaration 1`] = `"Line 3: Name undeclared_variable not declared."`;
-
-exports[`Test catching of undeclared variable error Variable not declared in program 1`] = `"Line 2: Name undeclared_variable not declared."`;
-
-exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in block 1`] = `
-"{
-  'value';
-  'also a value';
-}
-
-{
-  'value';
-  'also a value';
-}
-
-{
-  'also a value';
-}
-
-{
-  'also a value';
-}
-
-'also a value';
-
-'also a value';
-"
-`;
-
-exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in functions 1`] = `
+exports[`Snapshot code snippets Infinite recursion 1`] = `
 "function f() {
-  'value';
-  'also a value';
-  return 'another value';
+  return f();
 }
 f();
 
 function f() {
-  'value';
-  'also a value';
-  return 'another value';
+  return f();
 }
 f();
 
@@ -5570,470 +2836,2000 @@ f();
 
 f();
 
-{
-  'value';
-  'also a value';
-  return 'another value';
-};
+f();
 
-{
-  'value';
-  'also a value';
-  return 'another value';
-};
+f();
 
-{
-  'also a value';
-  return 'another value';
-};
+f();
 
-{
-  'also a value';
-  return 'another value';
-};
+f();
 
-{
-  return 'another value';
-};
+f();
 
-{
-  return 'another value';
-};
+f();
 
-'another value';
+f();
 
-'another value';
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
+f();
+
 "
 `;
 
-exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in program 1`] = `
-"'value';
-'also a value';
-
-'value';
-'also a value';
-
-'also a value';
-
-'also a value';
-"
-`;
-
-exports[`Test correct evaluation sequence when first statement is a value Mix statements 1`] = `
-"'value';
-const x = 10;
-function f() {
-  20;
-  function p() {
-    22;
-  }
-}
-const z = 30;
-'also a value';
-{
-  'another value';
-  const a = 40;
-  a;
-}
-'another value';
-const a = 40;
-
-'value';
-const x = 10;
-function f() {
-  20;
-  function p() {
-    22;
-  }
-}
-const z = 30;
-'also a value';
-{
-  'another value';
-  const a = 40;
-  a;
-}
-'another value';
-const a = 40;
-
-'value';
-function f() {
-  20;
-  function p() {
-    22;
-  }
-}
-const z = 30;
-'also a value';
-{
-  'another value';
-  const a = 40;
-  a;
-}
-'another value';
-const a = 40;
-
-'value';
-function f() {
-  20;
-  function p() {
-    22;
-  }
-}
-const z = 30;
-'also a value';
-{
-  'another value';
-  const a = 40;
-  a;
-}
-'another value';
-const a = 40;
-
-'value';
-const z = 30;
-'also a value';
-{
-  'another value';
-  const a = 40;
-  a;
-}
-'another value';
-const a = 40;
-
-'value';
-const z = 30;
-'also a value';
-{
-  'another value';
-  const a = 40;
-  a;
-}
-'another value';
-const a = 40;
-
-'value';
-'also a value';
-{
-  'another value';
-  const a = 40;
-  a;
-}
-'another value';
-const a = 40;
-
-'value';
-'also a value';
-{
-  'another value';
-  const a = 40;
-  a;
-}
-'another value';
-const a = 40;
-
-'also a value';
-{
-  'another value';
-  const a = 40;
-  a;
-}
-'another value';
-const a = 40;
-
-'also a value';
-{
-  'another value';
-  const a = 40;
-  a;
-}
-'another value';
-const a = 40;
-
-'also a value';
-{
-  'another value';
-  40;
-}
-'another value';
-const a = 40;
-
-'also a value';
-{
-  'another value';
-  40;
-}
-'another value';
-const a = 40;
-
-'also a value';
-{
-  40;
-}
-'another value';
-const a = 40;
-
-'also a value';
-{
-  40;
-}
-'another value';
-const a = 40;
-
-'also a value';
-40;
-'another value';
-const a = 40;
-
-'also a value';
-40;
-'another value';
-const a = 40;
-
-40;
-'another value';
-const a = 40;
-
-40;
-'another value';
-const a = 40;
-
-'another value';
-const a = 40;
-
-'another value';
-const a = 40;
-
-'another value';
-
-'another value';
-"
-`;
-
-exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in block 1`] = `
-"{
-  'value';
-  const x = 10;
-}
-
-{
-  'value';
-  const x = 10;
-}
-
-{
-  'value';
-}
-
-{
-  'value';
-}
-
-'value';
-
-'value';
-"
-`;
-
-exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in function 1`] = `
-"function f() {
-  'value';
-  const x = 10;
-  return 'another value';
-}
-f();
-
-function f() {
-  'value';
-  const x = 10;
-  return 'another value';
-}
-f();
-
-f();
-
-f();
-
-{
-  'value';
-  const x = 10;
-  return 'another value';
-};
-
-{
-  'value';
-  const x = 10;
-  return 'another value';
-};
-
-{
-  'value';
-  return 'another value';
-};
-
-{
-  'value';
-  return 'another value';
-};
-
-{
-  return 'another value';
-};
-
-{
-  return 'another value';
-};
-
-'another value';
-
-'another value';
-"
-`;
-
-exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in program 1`] = `
-"'value';
-const x = 10;
-
-'value';
-const x = 10;
-
-'value';
-
-'value';
-"
-`;
-
-exports[`Test reducing of empty block into epsilon Empty block in function 1`] = `
-"function f() {
-  3;
-  {}
-}
-f();
-
-function f() {
-  3;
-  {}
-}
-f();
-
-f();
-
-f();
-
-{
-  3;
-  {}
-};
-
-{
-  3;
-  {}
-};
-
-{
-  3;
-};
-
-{
-  3;
-};
-
-undefined;
-
-undefined;
-"
-`;
-
-exports[`Test reducing of empty block into epsilon Empty block in program 1`] = `
-"3;
-{}
-
-3;
-{}
-
-3;
-
-3;
-"
-`;
-
-exports[`Test reducing of empty block into epsilon Empty blocks in block 1`] = `
-"{
-  3;
-  {
-    {}
-    {}
-  }
-}
-
-{
-  3;
-  {
-    {}
-    {}
-  }
-}
-
-{
-  3;
-  {
-    {}
-  }
-}
-
-{
-  3;
-  {
-    {}
-  }
-}
-
-{
-  3;
-  {}
-}
-
-{
-  3;
-  {}
-}
-
-{
-  3;
-}
-
-{
-  3;
-}
-
-3;
-
-3;
-"
-`;
-
-exports[`Test runtime errors Incompatible types operation 1`] = `
-"Start of evaluation
-Binary expression 2 * 3 evaluated
-Binary expression 2 * 3 evaluated
-Line 2: Expected string on right hand side of operation, got number."
-`;
-
-exports[`Test runtime errors Variable used before assigning in functions 1`] = `
-"Start of evaluation
-Function foo declared
-Function foo declared
-Function foo runs
-Function foo runs
-Line 3: Name unassigned_variable declared later in current scope but not yet assigned"
-`;
-
-exports[`Test runtime errors Variable used before assigning in program 1`] = `
-"Start of evaluation
-Line 2: Name unassigned_variable declared later in current scope but not yet assigned"
-`;
-
-exports[`const declarations in blocks subst into call expressions 1`] = `
+exports[`Snapshot code snippets const declarations in blocks subst into call expressions 1`] = `
 "const z = 1;
 function f(g) {
   const z = 3;
@@ -6096,7 +4892,7 @@ f(undefined);
 "
 `;
 
-exports[`expmod 1`] = `
+exports[`Snapshot code snippets expmod 1`] = `
 "function is_even(n) {
   return n % 2 === 0;
 }
@@ -6323,7 +5119,7 @@ expmod(4, 3, 5);
 "
 `;
 
-exports[`function declarations in blocks are protected 1`] = `
+exports[`Snapshot code snippets function declarations in blocks are protected 1`] = `
 "function repeat_pattern(n, p, r) {
   function twice_p(r) {
     return p(p(r));
@@ -6648,7 +5444,7 @@ true ? 5 : 0 % 2 !== 0 ? repeat_pattern(0 - 1, twice_p, twice_p(5)) : repeat_pat
 "
 `;
 
-exports[`multiple clash 2 for function declaration 1`] = `
+exports[`Snapshot code snippets multiple clashes for function declaration 2 1`] = `
 "function g() {
   return x + x_1;
 }
@@ -6771,201 +5567,7 @@ h(1);
 "
 `;
 
-exports[`multiple clash 2 for function expression 1`] = `
-"function f(x) {
-  function h(x_1) {
-    return x_2 + g();
-  }
-  return h;
-}
-function g() {
-  return x + x_1;
-}
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-f(1)(1);
-
-function f(x) {
-  function h(x_1) {
-    return x_2 + g();
-  }
-  return h;
-}
-function g() {
-  return x + x_1;
-}
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-f(1)(1);
-
-function g() {
-  return x + x_1;
-}
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-f(1)(1);
-
-function g() {
-  return x + x_1;
-}
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-f(1)(1);
-
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-f(1)(1);
-
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-f(1)(1);
-
-const x_1 = 2;
-const x = 1;
-f(1)(1);
-
-const x_1 = 2;
-const x = 1;
-f(1)(1);
-
-const x = 1;
-f(1)(1);
-
-const x = 1;
-f(1)(1);
-
-f(1)(1);
-
-f(1)(1);
-
-{
-  function h(x_4) {
-    return 0 + g();
-  }
-  return h;
-}(1);
-
-{
-  function h(x_4) {
-    return 0 + g();
-  }
-  return h;
-}(1);
-
-{
-  return h;
-}(1);
-
-{
-  return h;
-}(1);
-
-h(1);
-
-h(1);
-
-0 + g();
-
-0 + g();
-
-0 + (1 + 2);
-
-0 + (1 + 2);
-
-0 + 3;
-
-0 + 3;
-
-3;
-
-3;
-"
-`;
-
-exports[`multiple clash 2 for lambda function 1`] = `
-"const f = x => x_1 => x_2 + g();
-const g = () => x + x_1;
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-f(1)(1);
-
-const f = x => x_1 => x_2 + g();
-const g = () => x + x_1;
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-f(1)(1);
-
-const g = () => x + x_1;
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-(x => x_1 => x_2 + g())(1)(1);
-
-const g = () => x + x_1;
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-(x => x_1 => x_2 + g())(1)(1);
-
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-(x_3 => x_4 => x_2 + (() => x + x_1)())(1)(1);
-
-const x_2 = 0;
-const x_1 = 2;
-const x = 1;
-(x_3 => x_4 => x_2 + (() => x + x_1)())(1)(1);
-
-const x_1 = 2;
-const x = 1;
-(x_3 => x_4 => 0 + (() => x + x_1)())(1)(1);
-
-const x_1 = 2;
-const x = 1;
-(x_3 => x_4 => 0 + (() => x + x_1)())(1)(1);
-
-const x = 1;
-(x_3 => x_4 => 0 + (() => x + 2)())(1)(1);
-
-const x = 1;
-(x_3 => x_4 => 0 + (() => x + 2)())(1)(1);
-
-(x_3 => x_4 => 0 + (() => 1 + 2)())(1)(1);
-
-(x_3 => x_4 => 0 + (() => 1 + 2)())(1)(1);
-
-(x_4 => 0 + (() => 1 + 2)())(1);
-
-(x_4 => 0 + (() => 1 + 2)())(1);
-
-0 + (() => 1 + 2)();
-
-0 + (() => 1 + 2)();
-
-0 + (1 + 2);
-
-0 + (1 + 2);
-
-0 + 3;
-
-0 + 3;
-
-3;
-
-3;
-"
-`;
-
-exports[`multiple clash for function declaration 1`] = `
+exports[`Snapshot code snippets multiple clashes for function declarations 1`] = `
 "function g() {
   return x_2 + x_3;
 }
@@ -7088,7 +5690,7 @@ h(1);
 "
 `;
 
-exports[`multiple clash for function expression 1`] = `
+exports[`Snapshot code snippets multiple clashes for function expression 1`] = `
 "function f(x_2) {
   function h(x_3) {
     return x_4 + g();
@@ -7205,7 +5807,124 @@ h(1);
 "
 `;
 
-exports[`multiple clash for lambda function 1`] = `
+exports[`Snapshot code snippets multiple clashes for function expression 2 1`] = `
+"function f(x) {
+  function h(x_1) {
+    return x_2 + g();
+  }
+  return h;
+}
+function g() {
+  return x + x_1;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+function f(x) {
+  function h(x_1) {
+    return x_2 + g();
+  }
+  return h;
+}
+function g() {
+  return x + x_1;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+function g() {
+  return x + x_1;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+function g() {
+  return x + x_1;
+}
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x_1 = 2;
+const x = 1;
+f(1)(1);
+
+const x = 1;
+f(1)(1);
+
+const x = 1;
+f(1)(1);
+
+f(1)(1);
+
+f(1)(1);
+
+{
+  function h(x_4) {
+    return 0 + g();
+  }
+  return h;
+}(1);
+
+{
+  function h(x_4) {
+    return 0 + g();
+  }
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+{
+  return h;
+}(1);
+
+h(1);
+
+h(1);
+
+0 + g();
+
+0 + g();
+
+0 + (1 + 2);
+
+0 + (1 + 2);
+
+0 + 3;
+
+0 + 3;
+
+3;
+
+3;
+"
+`;
+
+exports[`Snapshot code snippets multiple clashes for lambda functions 1`] = `
 "const f = x_2 => x_3 => x_4 + g();
 const g = () => x_2 + x_3;
 const x_3 = 0;
@@ -7282,86 +6001,76 @@ const x_4 = 2;
 "
 `;
 
-exports[`redeclaration of predeclared functions work control 1`] = `
-"length(list(1, 2, 3));
+exports[`Snapshot code snippets multiple clashes for lambda functions 2 1`] = `
+"const f = x => x_1 => x_2 + g();
+const g = () => x + x_1;
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
 
-length(list(1, 2, 3));
+const f = x => x_1 => x_2 + g();
+const g = () => x + x_1;
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+f(1)(1);
 
-length([1, [2, [3, null]]]);
+const g = () => x + x_1;
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+(x => x_1 => x_2 + g())(1)(1);
 
-length([1, [2, [3, null]]]);
+const g = () => x + x_1;
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+(x => x_1 => x_2 + g())(1)(1);
 
-$length([1, [2, [3, null]]], 0);
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+(x_3 => x_4 => x_2 + (() => x + x_1)())(1)(1);
 
-$length([1, [2, [3, null]]], 0);
+const x_2 = 0;
+const x_1 = 2;
+const x = 1;
+(x_3 => x_4 => x_2 + (() => x + x_1)())(1)(1);
 
-is_null([1, [2, [3, null]]]) ? 0 : $length(tail([1, [2, [3, null]]]), 0 + 1);
+const x_1 = 2;
+const x = 1;
+(x_3 => x_4 => 0 + (() => x + x_1)())(1)(1);
 
-is_null([1, [2, [3, null]]]) ? 0 : $length(tail([1, [2, [3, null]]]), 0 + 1);
+const x_1 = 2;
+const x = 1;
+(x_3 => x_4 => 0 + (() => x + x_1)())(1)(1);
 
-false ? 0 : $length(tail([1, [2, [3, null]]]), 0 + 1);
+const x = 1;
+(x_3 => x_4 => 0 + (() => x + 2)())(1)(1);
 
-false ? 0 : $length(tail([1, [2, [3, null]]]), 0 + 1);
+const x = 1;
+(x_3 => x_4 => 0 + (() => x + 2)())(1)(1);
 
-$length(tail([1, [2, [3, null]]]), 0 + 1);
+(x_3 => x_4 => 0 + (() => 1 + 2)())(1)(1);
 
-$length(tail([1, [2, [3, null]]]), 0 + 1);
+(x_3 => x_4 => 0 + (() => 1 + 2)())(1)(1);
 
-$length([2, [3, null]], 0 + 1);
+(x_4 => 0 + (() => 1 + 2)())(1);
 
-$length([2, [3, null]], 0 + 1);
+(x_4 => 0 + (() => 1 + 2)())(1);
 
-$length([2, [3, null]], 1);
+0 + (() => 1 + 2)();
 
-$length([2, [3, null]], 1);
+0 + (() => 1 + 2)();
 
-is_null([2, [3, null]]) ? 1 : $length(tail([2, [3, null]]), 1 + 1);
+0 + (1 + 2);
 
-is_null([2, [3, null]]) ? 1 : $length(tail([2, [3, null]]), 1 + 1);
+0 + (1 + 2);
 
-false ? 1 : $length(tail([2, [3, null]]), 1 + 1);
+0 + 3;
 
-false ? 1 : $length(tail([2, [3, null]]), 1 + 1);
-
-$length(tail([2, [3, null]]), 1 + 1);
-
-$length(tail([2, [3, null]]), 1 + 1);
-
-$length([3, null], 1 + 1);
-
-$length([3, null], 1 + 1);
-
-$length([3, null], 2);
-
-$length([3, null], 2);
-
-is_null([3, null]) ? 2 : $length(tail([3, null]), 2 + 1);
-
-is_null([3, null]) ? 2 : $length(tail([3, null]), 2 + 1);
-
-false ? 2 : $length(tail([3, null]), 2 + 1);
-
-false ? 2 : $length(tail([3, null]), 2 + 1);
-
-$length(tail([3, null]), 2 + 1);
-
-$length(tail([3, null]), 2 + 1);
-
-$length(null, 2 + 1);
-
-$length(null, 2 + 1);
-
-$length(null, 3);
-
-$length(null, 3);
-
-is_null(null) ? 3 : $length(tail(null), 3 + 1);
-
-is_null(null) ? 3 : $length(tail(null), 3 + 1);
-
-true ? 3 : $length(tail(null), 3 + 1);
-
-true ? 3 : $length(tail(null), 3 + 1);
+0 + 3;
 
 3;
 
@@ -7369,32 +6078,7 @@ true ? 3 : $length(tail(null), 3 + 1);
 "
 `;
 
-exports[`redeclaration of predeclared functions work test 1`] = `
-"function length(xs) {
-  return 0;
-}
-length(list(1, 2, 3));
-
-function length(xs) {
-  return 0;
-}
-length(list(1, 2, 3));
-
-length(list(1, 2, 3));
-
-length(list(1, 2, 3));
-
-length([1, [2, [3, null]]]);
-
-length([1, [2, [3, null]]]);
-
-0;
-
-0;
-"
-`;
-
-exports[`removes debugger statements 1`] = `
+exports[`Snapshot code snippets remove debugger statements 1`] = `
 "function f(n) {
   return n === 0 ? 1 : n * f(n - 1);
 }
@@ -7483,7 +6167,7 @@ false ? 1 : 3 * f(3 - 1);
 "
 `;
 
-exports[`renaming clash in replacement for function declaration 1`] = `
+exports[`Snapshot code snippets renaming clash in replacement for function declaration 1`] = `
 "function g() {
   return x_1 + x_2;
 }
@@ -7588,7 +6272,7 @@ g();
 "
 `;
 
-exports[`renaming clash in replacement for function expression 1`] = `
+exports[`Snapshot code snippets renaming clash in replacement for function expressions 1`] = `
 "function f(x_1) {
   function h(x_2) {
     return g();
@@ -7687,7 +6371,7 @@ g();
 "
 `;
 
-exports[`renaming clash in replacement for lambda function 1`] = `
+exports[`Snapshot code snippets renaming clash in replacement for lambda function 1`] = `
 "const g = () => x_1 + x_2;
 const f = x_1 => x_2 => g();
 const x_1 = 0;
@@ -7746,7 +6430,7 @@ const x_2 = 0;
 "
 `;
 
-exports[`renaming clash test for functions 1`] = `
+exports[`Snapshot code snippets renaming clash test for functions 1`] = `
 "function f(w_8) {
   function h(w_9) {
     return w_8 + w_9 + g();
@@ -7837,7 +6521,7 @@ h(2);
 "
 `;
 
-exports[`renaming clash test for lambda function 1`] = `
+exports[`Snapshot code snippets renaming clash test for lambda function 1`] = `
 "const f = w_11 => w_10 => w_11 + w_10 + g();
 const g = () => w_10;
 const w_10 = 0;
@@ -7888,7 +6572,7 @@ const w_10 = 0;
 "
 `;
 
-exports[`renaming clash with declaration in replacement for function declaration 1`] = `
+exports[`Snapshot code snippets renaming clash with declaration in replacement for function declaration 1`] = `
 "function g() {
   const x_2 = 2;
   return x_1 + x_2 + x;
@@ -8021,7 +6705,7 @@ h(1);
 "
 `;
 
-exports[`renaming clash with declaration in replacement for function expression 1`] = `
+exports[`Snapshot code snippets renaming clash with declaration in replacement for function expression 1`] = `
 "function f(x) {
   function h(x_1) {
     return g();
@@ -8146,7 +6830,7 @@ g();
 "
 `;
 
-exports[`renaming clash with declaration in replacement for lambda function 1`] = `
+exports[`Snapshot code snippets renaming clash with declaration in replacement for lambda function 1`] = `
 "const f = x => x_1 => g();
 const g = () => {
   const x_2 = 2;
@@ -8269,7 +6953,7 @@ const x_1 = 0;
 "
 `;
 
-exports[`renaming clash with parameter of function declaration in block 1`] = `
+exports[`Snapshot code snippets renaming clash with parameter of function declaration in block 1`] = `
 "function g() {
   return x_1;
 }
@@ -8362,84 +7046,88 @@ h(2);
 "
 `;
 
-exports[`renaming clash with parameter of lambda function declaration in block 1`] = `
-"const g = () => x_1;
-const f = x_1 => {
-  const h = x_2 => x_1 + g();
+exports[`Snapshot code snippets renaming clash with parameter of lambda function declaration in block 1`] = `
+"function g() {
+  return x_1;
+}
+function f(x_1) {
+  function h(x_2) {
+    return x_1 + g();
+  }
   return h;
-};
+}
 const x_1 = 1;
 f(3)(2);
 
-const g = () => x_1;
-const f = x_1 => {
-  const h = x_2 => x_1 + g();
+function g() {
+  return x_1;
+}
+function f(x_1) {
+  function h(x_2) {
+    return x_1 + g();
+  }
   return h;
-};
+}
 const x_1 = 1;
 f(3)(2);
 
-const f = x_3 => {
-  const h = x_2 => x_3 + (() => x_1)();
+function f(x_3) {
+  function h(x_2) {
+    return x_3 + g();
+  }
   return h;
-};
+}
 const x_1 = 1;
 f(3)(2);
 
-const f = x_3 => {
-  const h = x_2 => x_3 + (() => x_1)();
+function f(x_3) {
+  function h(x_2) {
+    return x_3 + g();
+  }
   return h;
-};
+}
 const x_1 = 1;
 f(3)(2);
 
 const x_1 = 1;
-(x_3 => {
-  const h = x_2 => x_3 + (() => x_1)();
-  return h;
-})(3)(2);
+f(3)(2);
 
 const x_1 = 1;
-(x_3 => {
-  const h = x_2 => x_3 + (() => x_1)();
-  return h;
-})(3)(2);
+f(3)(2);
 
-(x_3 => {
-  const h = x_2 => x_3 + (() => 1)();
-  return h;
-})(3)(2);
+f(3)(2);
 
-(x_3 => {
-  const h = x_2 => x_3 + (() => 1)();
-  return h;
-})(3)(2);
+f(3)(2);
 
 {
-  const h = x_2 => 3 + (() => 1)();
+  function h(x_2) {
+    return 3 + g();
+  }
   return h;
 }(2);
 
 {
-  const h = x_2 => 3 + (() => 1)();
+  function h(x_2) {
+    return 3 + g();
+  }
   return h;
 }(2);
 
 {
-  return x_2 => 3 + (() => 1)();
+  return h;
 }(2);
 
 {
-  return x_2 => 3 + (() => 1)();
+  return h;
 }(2);
 
-(x_2 => 3 + (() => 1)())(2);
+h(2);
 
-(x_2 => 3 + (() => 1)())(2);
+h(2);
 
-3 + (() => 1)();
+3 + g();
 
-3 + (() => 1)();
+3 + g();
 
 3 + 1;
 
@@ -8451,7 +7139,7 @@ const x_1 = 1;
 "
 `;
 
-exports[`renaming of outer parameter in lambda function 1`] = `
+exports[`Snapshot code snippets renaming of outer parameter in lambda function 1`] = `
 "const g = () => w_1;
 const f = w_1 => w_2 => w_1 + g();
 const w_1 = 0;
@@ -8498,7 +7186,7 @@ const w_1 = 0;
 "
 `;
 
-exports[`return in nested blocks 1`] = `
+exports[`Snapshot code snippets return in nested blocks 1`] = `
 "function f(x) {
   {
     return 1;
@@ -8543,78 +7231,7 @@ f(0);
 "
 `;
 
-exports[`scoping test for block expressions 1`] = `
-"function f(x) {
-  const y = x;
-  return g();
-}
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-function f(x) {
-  const y = x;
-  return g();
-}
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-function g() {
-  return y;
-}
-const y = 1;
-f(0);
-
-const y = 1;
-f(0);
-
-const y = 1;
-f(0);
-
-f(0);
-
-f(0);
-
-{
-  const y_1 = 0;
-  return g();
-};
-
-{
-  const y_1 = 0;
-  return g();
-};
-
-{
-  return g();
-};
-
-{
-  return g();
-};
-
-g();
-
-g();
-
-1;
-
-1;
-"
-`;
-
-exports[`scoping test for block expressions, no renaming 1`] = `
+exports[`Snapshot code snippets scoping test for block expressions 1`] = `
 "function h(w) {
   function f(w) {
     return g();
@@ -8697,7 +7314,90 @@ g();
 "
 `;
 
-exports[`scoping test for blocks nested in lambda expressions 1`] = `
+exports[`Snapshot code snippets scoping test for block expressions, no renaming 1`] = `
+"function h(w) {
+  function f(w) {
+    return g();
+  }
+  function g() {
+    return w;
+  }
+  return f(0);
+}
+h(1);
+
+function h(w) {
+  function f(w) {
+    return g();
+  }
+  function g() {
+    return w;
+  }
+  return f(0);
+}
+h(1);
+
+h(1);
+
+h(1);
+
+{
+  function f(w) {
+    return g();
+  }
+  function g() {
+    return 1;
+  }
+  return f(0);
+};
+
+{
+  function f(w) {
+    return g();
+  }
+  function g() {
+    return 1;
+  }
+  return f(0);
+};
+
+{
+  function g() {
+    return 1;
+  }
+  return f(0);
+};
+
+{
+  function g() {
+    return 1;
+  }
+  return f(0);
+};
+
+{
+  return f(0);
+};
+
+{
+  return f(0);
+};
+
+f(0);
+
+f(0);
+
+g();
+
+g();
+
+1;
+
+1;
+"
+`;
+
+exports[`Snapshot code snippets scoping test for blocks nested in lambda expressions 1`] = `
 "const f = x => {
   g();
 };
@@ -8796,7 +7496,7 @@ undefined;
 "
 `;
 
-exports[`scoping test for function expressions 1`] = `
+exports[`Snapshot code snippets scoping test for function expressions 1`] = `
 "function f(x) {
   return g();
 }
@@ -8847,7 +7547,7 @@ g();
 "
 `;
 
-exports[`scoping test for lambda expressions 1`] = `
+exports[`Snapshot code snippets scoping test for lambda expressions 1`] = `
 "const f = x => g();
 const g = () => x;
 const x = 1;
@@ -8886,7 +7586,7 @@ const x = 1;
 "
 `;
 
-exports[`scoping test for lambda expressions nested in blocks 1`] = `
+exports[`Snapshot code snippets scoping test for lambda expressions nested in blocks 1`] = `
 "{
   const f = x => g();
   const g = () => x;
@@ -8953,7 +7653,7 @@ exports[`scoping test for lambda expressions nested in blocks 1`] = `
 "
 `;
 
-exports[`subsets 1`] = `
+exports[`Snapshot code snippets subsets 1`] = `
 "function subsets(s) {
   if (is_null(s)) {
     return list(null);
@@ -11741,5 +10441,1310 @@ true ? (zs => (zs => (zs => (zs => (xs => xs)(pair(head([null, [[3, null], [[2, 
 [null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]];
 
 [null, [[3, null], [[2, null], [[2, [3, null]], [[1, null], [[1, [3, null]], [[1, [2, null]], [[1, [2, [3, null]]], null]]]]]]]];
+"
+`;
+
+exports[`Statements: Blocks Block-statement-empty-reduce 1 1`] = `
+"{}
+
+{}
+
+
+undefined;
+"
+`;
+
+exports[`Statements: Blocks Block-statement-empty-reduce 2 1`] = `
+"{
+  {
+    {}
+    {}
+  }
+  {
+    {}
+    {}
+  }
+}
+
+{
+  {
+    {}
+    {}
+  }
+  {
+    {}
+    {}
+  }
+}
+
+{
+  {
+    {}
+  }
+  {
+    {}
+    {}
+  }
+}
+
+{
+  {
+    {}
+  }
+  {
+    {}
+    {}
+  }
+}
+
+{
+  {}
+  {
+    {}
+    {}
+  }
+}
+
+{
+  {}
+  {
+    {}
+    {}
+  }
+}
+
+{
+  {
+    {}
+    {}
+  }
+}
+
+{
+  {
+    {}
+    {}
+  }
+}
+
+{
+  {
+    {}
+  }
+}
+
+{
+  {
+    {}
+  }
+}
+
+{
+  {}
+}
+
+{
+  {}
+}
+
+{}
+
+{}
+
+
+undefined;
+"
+`;
+
+exports[`Statements: Blocks Block-statement-intro 1`] = `
+"{
+  1 + 1;
+}
+
+{
+  1 + 1;
+}
+
+{
+  2;
+}
+
+{
+  2;
+}
+
+2;
+
+2;
+"
+`;
+
+exports[`Statements: Blocks Block-statement-single-reduce 1`] = `
+"{
+  1;
+}
+
+{
+  1;
+}
+
+1;
+
+1;
+"
+`;
+
+exports[`Statements: Conditionals Conditional-statement-alternative 1`] = `
+"if (false) {
+  1;
+} else {
+  2;
+}
+
+if (false) {
+  1;
+} else {
+  2;
+}
+
+{
+  undefined;
+  2;
+}
+
+{
+  undefined;
+  2;
+}
+
+{
+  2;
+}
+
+{
+  2;
+}
+
+2;
+
+2;
+"
+`;
+
+exports[`Statements: Conditionals Conditional-statement-blockexpr-alternative 1 1`] = `
+"function foo(x) {
+  if (false) {
+    1;
+  } else {
+    2;
+  }
+}
+foo(0);
+
+function foo(x) {
+  if (false) {
+    1;
+  } else {
+    2;
+  }
+}
+foo(0);
+
+foo(0);
+
+foo(0);
+
+{
+  if (false) {
+    1;
+  } else {
+    2;
+  }
+};
+
+{
+  if (false) {
+    1;
+  } else {
+    2;
+  }
+};
+
+{
+  {
+    2;
+  }
+};
+
+{
+  {
+    2;
+  }
+};
+
+{
+  2;
+};
+
+{
+  2;
+};
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Statements: Conditionals Conditional-statement-blockexpr-alternative 2 1`] = `
+"function foo(x) {
+  3;
+  if (false) {
+    1;
+  } else {
+    2;
+  }
+}
+foo(0);
+
+function foo(x) {
+  3;
+  if (false) {
+    1;
+  } else {
+    2;
+  }
+}
+foo(0);
+
+foo(0);
+
+foo(0);
+
+{
+  3;
+  if (false) {
+    1;
+  } else {
+    2;
+  }
+};
+
+{
+  3;
+  if (false) {
+    1;
+  } else {
+    2;
+  }
+};
+
+{
+  3;
+  {
+    2;
+  }
+};
+
+{
+  3;
+  {
+    2;
+  }
+};
+
+{
+  3;
+  2;
+};
+
+{
+  3;
+  2;
+};
+
+{
+  2;
+};
+
+{
+  2;
+};
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Statements: Conditionals Conditional-statement-blockexpr-consequent 1 1`] = `
+"function foo(x) {
+  if (true) {
+    1;
+  } else {
+    2;
+  }
+}
+foo(0);
+
+function foo(x) {
+  if (true) {
+    1;
+  } else {
+    2;
+  }
+}
+foo(0);
+
+foo(0);
+
+foo(0);
+
+{
+  if (true) {
+    1;
+  } else {
+    2;
+  }
+};
+
+{
+  if (true) {
+    1;
+  } else {
+    2;
+  }
+};
+
+{
+  {
+    1;
+  }
+};
+
+{
+  {
+    1;
+  }
+};
+
+{
+  1;
+};
+
+{
+  1;
+};
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Statements: Conditionals Conditional-statement-blockexpr-consequent 2 1`] = `
+"function foo(x) {
+  3;
+  if (true) {
+    1;
+  } else {
+    2;
+  }
+}
+foo(0);
+
+function foo(x) {
+  3;
+  if (true) {
+    1;
+  } else {
+    2;
+  }
+}
+foo(0);
+
+foo(0);
+
+foo(0);
+
+{
+  3;
+  if (true) {
+    1;
+  } else {
+    2;
+  }
+};
+
+{
+  3;
+  if (true) {
+    1;
+  } else {
+    2;
+  }
+};
+
+{
+  3;
+  {
+    1;
+  }
+};
+
+{
+  3;
+  {
+    1;
+  }
+};
+
+{
+  3;
+  1;
+};
+
+{
+  3;
+  1;
+};
+
+{
+  1;
+};
+
+{
+  1;
+};
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Statements: Conditionals Conditional-statement-consequent 1`] = `
+"if (true) {
+  1;
+} else {
+  2;
+}
+
+if (true) {
+  1;
+} else {
+  2;
+}
+
+{
+  undefined;
+  1;
+}
+
+{
+  undefined;
+  1;
+}
+
+{
+  1;
+}
+
+{
+  1;
+}
+
+1;
+
+1;
+"
+`;
+
+exports[`Statements: Conditionals Conditional-statement-predicate 1`] = `
+"if (1 + 2 + 3 === 1) {} else {}
+
+if (1 + 2 + 3 === 1) {} else {}
+
+if (3 + 3 === 1) {} else {}
+
+if (3 + 3 === 1) {} else {}
+
+if (6 === 1) {} else {}
+
+if (6 === 1) {} else {}
+
+if (false) {} else {}
+
+if (false) {} else {}
+
+{
+  undefined;
+}
+
+{
+  undefined;
+}
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Statements: Constant declarations Evaluate-constant-declaration 1`] = `
+"const x = 1 + 2 + 3;
+
+const x = 1 + 2 + 3;
+
+const x = 3 + 3;
+
+const x = 3 + 3;
+
+const x = 6;
+
+const x = 6;
+
+
+undefined;
+"
+`;
+
+exports[`Statements: Expression statements Expression-statement-reduce 1`] = `
+"1 + 2 + 3;
+
+1 + 2 + 3;
+
+3 + 3;
+
+3 + 3;
+
+6;
+
+6;
+"
+`;
+
+exports[`Test calling functions Argument reduction steps 1`] = `
+"(1 * 3)(2 * 3 + 10);
+
+(1 * 3)(2 * 3 + 10);
+
+(3)(2 * 3 + 10);
+
+(3)(2 * 3 + 10);
+
+(3)(6 + 10);
+
+(3)(6 + 10);
+
+(3)(16);
+
+(3)(16);
+"
+`;
+
+exports[`Test calling functions Builtin function 1`] = `
+"is_boolean(false);
+
+is_boolean(false);
+
+true;
+
+true;
+"
+`;
+
+exports[`Test calling functions Function that exists 1`] = `
+"function foo(x) {
+  return x;
+}
+foo(1 + 2);
+
+function foo(x) {
+  return x;
+}
+foo(1 + 2);
+
+foo(1 + 2);
+
+foo(1 + 2);
+
+foo(3);
+
+foo(3);
+
+3;
+
+3;
+"
+`;
+
+exports[`Test calling functions Math function 1`] = `
+"math_abs(-1);
+
+math_abs(-1);
+
+1;
+
+1;
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in block 1`] = `
+"{
+  'value';
+  'also a value';
+}
+
+{
+  'value';
+  'also a value';
+}
+
+{
+  'also a value';
+}
+
+{
+  'also a value';
+}
+
+'also a value';
+
+'also a value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in function 1`] = `
+"function f() {
+  'value';
+  'also a value';
+  return 'another value';
+}
+f();
+
+function f() {
+  'value';
+  'also a value';
+  return 'another value';
+}
+f();
+
+f();
+
+f();
+
+{
+  'value';
+  'also a value';
+  return 'another value';
+};
+
+{
+  'value';
+  'also a value';
+  return 'another value';
+};
+
+{
+  'also a value';
+  return 'another value';
+};
+
+{
+  'also a value';
+  return 'another value';
+};
+
+{
+  return 'another value';
+};
+
+{
+  return 'another value';
+};
+
+'another value';
+
+'another value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Irreducible second statement in program 1`] = `
+"'value';
+'also a value';
+
+'value';
+'also a value';
+
+'also a value';
+
+'also a value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Mix statements 1`] = `
+"'value';
+const x = 10;
+function f() {
+  20;
+  function p() {
+    22;
+  }
+}
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+const x = 10;
+function f() {
+  20;
+  function p() {
+    22;
+  }
+}
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+function f() {
+  20;
+  function p() {
+    22;
+  }
+}
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+function f() {
+  20;
+  function p() {
+    22;
+  }
+}
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+const z = 30;
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'value';
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  'another value';
+  const a = 40;
+  a;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  'another value';
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  'another value';
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+{
+  40;
+}
+'another value';
+const a = 40;
+
+'also a value';
+40;
+'another value';
+const a = 40;
+
+'also a value';
+40;
+'another value';
+const a = 40;
+
+40;
+'another value';
+const a = 40;
+
+40;
+'another value';
+const a = 40;
+
+'another value';
+const a = 40;
+
+'another value';
+const a = 40;
+
+'another value';
+
+'another value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in block 1`] = `
+"{
+  'value';
+  const x = 10;
+}
+
+{
+  'value';
+  const x = 10;
+}
+
+{
+  'value';
+}
+
+{
+  'value';
+}
+
+'value';
+
+'value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in function 1`] = `
+"function f() {
+  'value';
+  const x = 10;
+  return 'another value';
+}
+f();
+
+function f() {
+  'value';
+  const x = 10;
+  return 'another value';
+}
+f();
+
+f();
+
+f();
+
+{
+  'value';
+  const x = 10;
+  return 'another value';
+};
+
+{
+  'value';
+  const x = 10;
+  return 'another value';
+};
+
+{
+  'value';
+  return 'another value';
+};
+
+{
+  'value';
+  return 'another value';
+};
+
+{
+  return 'another value';
+};
+
+{
+  return 'another value';
+};
+
+'another value';
+
+'another value';
+"
+`;
+
+exports[`Test correct evaluation sequence when first statement is a value Reducible second statement in program 1`] = `
+"'value';
+const x = 10;
+
+'value';
+const x = 10;
+
+'value';
+
+'value';
+"
+`;
+
+exports[`Test errors Test catching errors from builtin functions Incorrect number of arguments 1`] = `
+"Start of evaluation
+"
+`;
+
+exports[`Test errors Test catching errors from builtin functions Incorrect type of argument for math function 1`] = `
+"Start of evaluation
+"
+`;
+
+exports[`Test errors Test catching errors from builtin functions Incorrect type of argument for module function 1`] = `
+"Start of evaluation
+"
+`;
+
+exports[`Test errors Test catching of undeclared variable error Variable not declared in block statement 1`] = `"Line 1: Name undeclared_variable not declared."`;
+
+exports[`Test errors Test catching of undeclared variable error Variable not declared in function declaration 1`] = `"Line 3: Name undeclared_variable not declared."`;
+
+exports[`Test errors Test catching of undeclared variable error Variable not declared in program 1`] = `"Line 1: Name undeclared_variable not declared."`;
+
+exports[`Test errors Test function call errors Fewer than correct number of arguments 1`] = `
+"Start of evaluation
+Function foo declared, parameter(s) a required
+Function foo declared, parameter(s) a required
+Line 5: Expected 1 arguments, but got 0."
+`;
+
+exports[`Test errors Test function call errors Literal function should error 1`] = `
+"Start of evaluation
+Line 1: Calling non-function value 1."
+`;
+
+exports[`Test errors Test function call errors More than correct number of arguments 1`] = `
+"Start of evaluation
+Function foo declared, parameter(s) a required
+Function foo declared, parameter(s) a required
+Line 5: Expected 1 arguments, but got 3."
+`;
+
+exports[`Test errors Test runtime errors Incompatible types operation 1`] = `
+"Start of evaluation
+Binary expression 2 * 3 evaluated
+Binary expression 2 * 3 evaluated
+Line 1: Expected string on right hand side of operation, got number."
+`;
+
+exports[`Test errors Test runtime errors Variable used before assignment in functions 1`] = `
+"Start of evaluation
+Function foo declared
+Function foo declared
+Function foo runs
+Function foo runs
+Line 3: Name unassigned_variable declared later in current scope but not yet assigned"
+`;
+
+exports[`Test errors Test runtime errors Variable used before assignment in program 1`] = `
+"Start of evaluation
+Line 2: Name unassigned_variable declared later in current scope but not yet assigned"
+`;
+
+exports[`Test reducing of empty block into epsilon Empty block in function 1`] = `
+"function f() {
+  3;
+  {}
+}
+f();
+
+function f() {
+  3;
+  {}
+}
+f();
+
+f();
+
+f();
+
+{
+  3;
+  {}
+};
+
+{
+  3;
+  {}
+};
+
+{
+  3;
+};
+
+{
+  3;
+};
+
+undefined;
+
+undefined;
+"
+`;
+
+exports[`Test reducing of empty block into epsilon Empty block in program 1`] = `
+"3;
+{}
+
+3;
+{}
+
+3;
+
+3;
+"
+`;
+
+exports[`Test reducing of empty block into epsilon Empty blocks in block 1`] = `
+"{
+  3;
+  {
+    {}
+    {}
+  }
+}
+
+{
+  3;
+  {
+    {}
+    {}
+  }
+}
+
+{
+  3;
+  {
+    {}
+  }
+}
+
+{
+  3;
+  {
+    {}
+  }
+}
+
+{
+  3;
+  {}
+}
+
+{
+  3;
+  {}
+}
+
+{
+  3;
+}
+
+{
+  3;
+}
+
+3;
+
+3;
+"
+`;
+
+exports[`redclaration of predeclared functions work control 1`] = `
+"length(list(1, 2, 3));
+
+length(list(1, 2, 3));
+
+length([1, [2, [3, null]]]);
+
+length([1, [2, [3, null]]]);
+
+$length([1, [2, [3, null]]], 0);
+
+$length([1, [2, [3, null]]], 0);
+
+is_null([1, [2, [3, null]]]) ? 0 : $length(tail([1, [2, [3, null]]]), 0 + 1);
+
+is_null([1, [2, [3, null]]]) ? 0 : $length(tail([1, [2, [3, null]]]), 0 + 1);
+
+false ? 0 : $length(tail([1, [2, [3, null]]]), 0 + 1);
+
+false ? 0 : $length(tail([1, [2, [3, null]]]), 0 + 1);
+
+$length(tail([1, [2, [3, null]]]), 0 + 1);
+
+$length(tail([1, [2, [3, null]]]), 0 + 1);
+
+$length([2, [3, null]], 0 + 1);
+
+$length([2, [3, null]], 0 + 1);
+
+$length([2, [3, null]], 1);
+
+$length([2, [3, null]], 1);
+
+is_null([2, [3, null]]) ? 1 : $length(tail([2, [3, null]]), 1 + 1);
+
+is_null([2, [3, null]]) ? 1 : $length(tail([2, [3, null]]), 1 + 1);
+
+false ? 1 : $length(tail([2, [3, null]]), 1 + 1);
+
+false ? 1 : $length(tail([2, [3, null]]), 1 + 1);
+
+$length(tail([2, [3, null]]), 1 + 1);
+
+$length(tail([2, [3, null]]), 1 + 1);
+
+$length([3, null], 1 + 1);
+
+$length([3, null], 1 + 1);
+
+$length([3, null], 2);
+
+$length([3, null], 2);
+
+is_null([3, null]) ? 2 : $length(tail([3, null]), 2 + 1);
+
+is_null([3, null]) ? 2 : $length(tail([3, null]), 2 + 1);
+
+false ? 2 : $length(tail([3, null]), 2 + 1);
+
+false ? 2 : $length(tail([3, null]), 2 + 1);
+
+$length(tail([3, null]), 2 + 1);
+
+$length(tail([3, null]), 2 + 1);
+
+$length(null, 2 + 1);
+
+$length(null, 2 + 1);
+
+$length(null, 3);
+
+$length(null, 3);
+
+is_null(null) ? 3 : $length(tail(null), 3 + 1);
+
+is_null(null) ? 3 : $length(tail(null), 3 + 1);
+
+true ? 3 : $length(tail(null), 3 + 1);
+
+true ? 3 : $length(tail(null), 3 + 1);
+
+3;
+
+3;
+"
+`;
+
+exports[`redclaration of predeclared functions work test 1`] = `
+"function length(xs) {
+  return 0;
+}
+length(list(1, 2, 3));
+
+function length(xs) {
+  return 0;
+}
+length(list(1, 2, 3));
+
+length(list(1, 2, 3));
+
+length(list(1, 2, 3));
+
+length([1, [2, [3, null]]]);
+
+length([1, [2, [3, null]]]);
+
+0;
+
+0;
 "
 `;

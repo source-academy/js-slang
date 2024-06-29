@@ -1,17 +1,12 @@
-import * as es from 'estree'
-
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Rule, SourceError } from '../../../types'
+import { ForStatement } from 'estree'
+import { RuleError, type Rule } from '../../types'
 import { stripIndent } from '../../../utils/formatters'
 
-export class ForStatmentMustHaveAllParts implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
+const parts = ['init', 'test', 'update'] as const
 
-  constructor(public node: es.ForStatement, private missingParts: string[]) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
+export class ForStatmentMustHaveAllParts extends RuleError<ForStatement> {
+  constructor(node: ForStatement, private missingParts: string[]) {
+    super(node)
   }
 
   public explain() {
@@ -27,12 +22,18 @@ export class ForStatmentMustHaveAllParts implements SourceError {
   }
 }
 
-const forStatementMustHaveAllParts: Rule<es.ForStatement> = {
+const forStatementMustHaveAllParts: Rule<ForStatement> = {
   name: 'for-statement-must-have-all-parts',
 
+  testSnippets: [
+    ['let i = 0; for (; i < 0; i = i + 1) {}', 'Line 1: Missing init expression in for statement.'],
+    ['for (let i = 0; ; i = i + 1) {}', 'Line 1: Missing test expression in for statement.'],
+    ['for (let i = 0; i < 0;) {}', 'Line 1: Missing update expression in for statement']
+  ],
+
   checkers: {
-    ForStatement(node: es.ForStatement) {
-      const missingParts = ['init', 'test', 'update'].filter(part => node[part] === null)
+    ForStatement(node) {
+      const missingParts = parts.filter(part => node[part] === null)
       if (missingParts.length > 0) {
         return [new ForStatmentMustHaveAllParts(node, missingParts)]
       } else {

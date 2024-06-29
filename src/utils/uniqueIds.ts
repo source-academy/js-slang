@@ -66,17 +66,3 @@ export function getIdentifiersInProgram(program: es.Program) {
   })
   return identifiers
 }
-
-export function getFunctionDeclarationNamesInProgram(program: es.Program): Set<string> {
-  const functionNames = new Set<string>()
-
-  simple(program, {
-    FunctionDeclaration(node: es.FunctionDeclaration) {
-      if (node.id && node.id.type === 'Identifier') {
-        functionNames.add(node.id.name)
-      }
-    }
-  })
-
-  return functionNames
-}

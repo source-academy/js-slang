@@ -1,11 +1,19 @@
 import { parse as acornParse, Token, tokenizer } from 'acorn'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { DEFAULT_ECMA_VERSION } from '../../constants'
-import { Chapter, Context, Node, Rule, SourceError, Variant } from '../../types'
+import {
+  ErrorSeverity,
+  ErrorType,
+  type Chapter,
+  type Context,
+  type Node,
+  type SourceError,
+  type Variant
+} from '../../types'
 import { ancestor, AncestorWalkerFn } from '../../utils/walkers'
 import { DisallowedConstructError, FatalSyntaxError } from '../errors'
-import { AcornOptions, Parser } from '../types'
+import type { AcornOptions, Parser, Rule } from '../types'
 import { createAcornParserOptions, positionToSourceLocation } from '../utils'
 import defaultRules from './rules'
 import syntaxBlacklist from './syntax'
@@ -48,10 +56,22 @@ export class SourceParser implements Parser<AcornOptions> {
       ) as unknown as es.Program
     } catch (error) {
       if (error instanceof SyntaxError) {
-        error = new FatalSyntaxError(
-          positionToSourceLocation((error as any).loc, options?.sourceFile),
-          error.toString()
-        )
+        const loc = positionToSourceLocation((error as any).loc, options?.sourceFile)
+
+        if (error.message.match(/Deleting local variable in strict mode.+/)) {
+          // Handle the otherwise mysterious syntax error when using delete incorrectly
+          const newError: SourceError = {
+            location: loc,
+            explain: () => "Operator 'delete' is not allowed.",
+            type: ErrorType.SYNTAX,
+            severity: ErrorSeverity.ERROR,
+            elaborate: () => "Operator 'delete' is not allowed."
+          }
+
+          error = newError
+        } else {
+          error = new FatalSyntaxError(loc, error.toString())
+        }
       }
 
       if (throwOnError) throw error
@@ -65,20 +85,19 @@ export class SourceParser implements Parser<AcornOptions> {
     const validationWalkers: Map<string, AncestorWalkerFn<any>> = new Map()
     this.getDisallowedSyntaxes().forEach((syntaxNodeName: string) => {
       validationWalkers.set(syntaxNodeName, (node: Node, _state: any, _ancestors: [Node]) => {
-        if (node.type != syntaxNodeName) return
+        if (node.type !== syntaxNodeName) return
 
-        const error: DisallowedConstructError = new DisallowedConstructError(node)
+        const error = new DisallowedConstructError(node)
         if (throwOnError) throw error
         context.errors.push(error)
       })
     })
 
     this.getLangRules()
-      .map(rule => Object.entries(rule.checkers))
-      .flat()
+      .flatMap(rule => Object.entries(rule.checkers))
       .forEach(([syntaxNodeName, checker]) => {
         const langWalker: AncestorWalkerFn<any> = (node: Node, _state: any, ancestors: Node[]) => {
-          const errors: SourceError[] = checker(node, ancestors)
+          const errors: SourceError[] = checker(node as any, ancestors)
 
           if (throwOnError && errors.length > 0) throw errors[0]
           errors.forEach(e => context.errors.push(e))

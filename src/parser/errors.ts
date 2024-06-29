@@ -60,7 +60,7 @@ export class DisallowedConstructError implements SourceError {
   }
 
   public explain() {
-    return `${this.nodeType} are not allowed`
+    return `${this.nodeType} are not allowed.`
   }
 
   public elaborate() {

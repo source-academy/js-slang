@@ -3,6 +3,7 @@ import type es from 'estree'
 import assert from '../assert'
 import { simple } from '../walkers'
 import { ArrayMap } from '../dict'
+import type { Node } from '../../types'
 import { isImportDeclaration, isVariableDeclaration } from './typeGuards'
 
 export function getModuleDeclarationSource(
@@ -40,35 +41,100 @@ export function filterImportDeclarations({
   )
 }
 
-export function extractIdsFromPattern(pattern: es.Pattern) {
-  const identifiers: es.Identifier[] = []
-
-  simple(pattern, {
-    Identifier: (node: es.Identifier) => {
-      identifiers.push(node)
-    }
-  })
-
-  return identifiers
+export function mapIdentifiersToNames(ids: es.Identifier[]): string[] {
+  return ids.map(({ name }) => name)
 }
 
-export function getIdsFromDeclaration(
-  decl: es.Declaration,
-  allowNull: true
-): (es.Identifier | null)[]
-export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: false): es.Identifier[]
-export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: boolean) {
-  const rawIds = isVariableDeclaration(decl)
-    ? decl.declarations.flatMap(({ id }) => extractIdsFromPattern(id))
-    : [decl.id]
+// In Source programs, VariableDeclarations can only declare 1 variable at a time
+export function getDeclaratorFromSingleDeclaration({ declarations }: es.VariableDeclaration) {
+  assert(declarations.length === 1, 'Expected VariableDeclaration to have exactly one declaration')
+  const declaration = declarations[0]
+  assert(
+    declaration.id.type === 'Identifier',
+    'Expected VariableDeclaration to have exactly one declaration'
+  )
+  return {
+    init: declaration.init,
+    id: declaration.id,
+    loc: declaration.loc
+  }
+}
 
-  if (!allowNull) {
-    rawIds.forEach(each => {
-      assert(each !== null, 'Encountered a null identifier!')
-    })
+export function getIdentifiersFromVariableDeclaration(decl: es.VariableDeclaration | es.Pattern) {
+  function internal(node: es.Pattern): es.Identifier[] {
+    switch (node.type) {
+      case 'ArrayPattern':
+        return node.elements.flatMap(internal)
+      case 'AssignmentPattern':
+        return internal(node.left)
+      case 'Identifier':
+        return [node]
+      case 'MemberExpression':
+        throw new Error(
+          'Should not get MemberExpressions as part of the id for a VariableDeclarator'
+        )
+      case 'ObjectPattern':
+        return node.properties.flatMap(prop =>
+          prop.type === 'RestElement' ? internal(prop) : internal(prop.value)
+        )
+      case 'RestElement':
+        return internal(node.argument)
+    }
   }
 
-  return rawIds
+  if (isVariableDeclaration(decl)) {
+    return decl.declarations.flatMap(({ id }) => internal(id))
+  }
+  return internal(decl)
+}
+
+export function getDeclaredIdentifiers(
+  decl:
+    | es.Declaration
+    | Exclude<es.ModuleDeclaration, es.ExportAllDeclaration>
+    | es.Program
+    | es.BlockStatement,
+  checkForVarDeclarations?: boolean
+): es.Identifier[] {
+  if (decl.type === 'Program' || decl.type === 'BlockStatement') {
+    const varDecls: es.Identifier[] = []
+    if (checkForVarDeclarations) {
+      simple(decl, {
+        VariableDeclaration(node: es.VariableDeclaration) {
+          // just to account for any 'var' declarations
+          // which technically are always globally scoped
+          if (node.kind !== 'var') return
+          getIdentifiersFromVariableDeclaration(node).forEach(identifier =>
+            varDecls.push(identifier)
+          )
+        }
+      })
+    }
+
+    // Don't recursively find declared identifiers
+    return [...varDecls, ...decl.body.flatMap(internal)]
+  }
+
+  function internal(decl: Node): es.Identifier[] {
+    switch (decl.type) {
+      case 'ClassDeclaration':
+      case 'FunctionDeclaration':
+        // Identifier is only null when part of a export default declaration
+        // in which case that node introduces no new identifiers
+        return decl.id ? [decl.id] : []
+      case 'ExportDefaultDeclaration':
+      case 'ExportNamedDeclaration':
+        return decl.declaration ? internal(decl.declaration) : []
+      case 'ImportDeclaration':
+        return decl.specifiers.map(({ local }) => local)
+      case 'VariableDeclaration':
+        return getIdentifiersFromVariableDeclaration(decl)
+      default:
+        return []
+    }
+  }
+
+  return internal(decl)
 }
 
 export const getImportedName = (

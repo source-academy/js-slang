@@ -103,6 +103,7 @@ export default async function parseProgramsAndConstructImportGraph(
         }
       : {}
 
+    files[fromModule] = fileText
     const program = parse(fileText, context, parseOptions)
     if (!program) {
       // The program has syntax errors or something,
@@ -111,7 +112,6 @@ export default async function parseProgramsAndConstructImportGraph(
     }
 
     programs[fromModule] = program
-    files[fromModule] = fileText
 
     await Promise.all(
       mapAndFilter(program.body, node => {
@@ -147,7 +147,7 @@ export default async function parseProgramsAndConstructImportGraph(
       // we use parseAt to try parse the first line
       statement = parseAt(entrypointFileText, 0) as es.Node | null
     } else {
-      // Otherwise we can use the entrypoint program as it has been passed
+      // Otherwise we can use the entrypoint program as it has been parsed
       const entrypointProgram = programs[entrypointFilePath]
 
       // Check if the program had any code at all

@@ -6,7 +6,7 @@ import { mockContext } from '../../../mocks/context'
 import { Chapter, type RecursivePartial } from '../../../types'
 import { memoizedGetModuleDocsAsync } from '../../loader/loaders'
 import preprocessFileImports from '..'
-import { sanitizeAST } from '../../../utils/ast/sanitizer'
+import { sanitizeAST } from '../../../utils/testing/sanitizer'
 import { parse } from '../../../parser/parser'
 import {
   accessExportFunctionName,
@@ -47,8 +47,7 @@ describe('preprocessFileImports', () => {
 
   const assertASTsAreEquivalent = (
     actualProgram: Program | undefined,
-    expectedCode: string,
-    log: boolean = false
+    expectedCode: string
   ): void => {
     if (!actualProgram) {
       throw new Error('Actual program should not be undefined!')
@@ -190,7 +189,7 @@ describe('preprocessFileImports', () => {
       },
       shouldAddFileName: true
     })
-    assertASTsAreEquivalent(actualProgram, expectedCode, true)
+    assertASTsAreEquivalent(actualProgram, expectedCode)
   })
 
   it('collates Source module imports at the start of the top-level environment of the preprocessed program', async () => {

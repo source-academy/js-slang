@@ -1,4 +1,5 @@
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
+import { Chapter } from '../types'
 
 export class PromiseTimeoutError extends RuntimeSourceError {}
 
@@ -41,4 +42,11 @@ export function objectKeys<T extends string | number | symbol>(obj: Record<T, an
  */
 export function objectValues<T>(obj: Record<any, T>) {
   return Object.values(obj) as T[]
+}
+
+export function valueToChapterName(chapter: Chapter): string {
+  const result = objectKeys(Chapter).find(name => Chapter[name] === chapter)
+  if (!result) throw new Error(`Invalid chapter value ${chapter}`)
+
+  return result
 }

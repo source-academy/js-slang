@@ -1,14 +1,17 @@
-import * as es from 'estree'
+import type es from 'estree'
 
-import { Rule, Variant } from '../../../types'
+import { Variant } from '../../../types'
+import type { Rule } from '../../types'
 import { NoUnspecifiedOperatorError } from './noUnspecifiedOperator'
 
 const noTypeofOperator: Rule<es.UnaryExpression> = {
   name: 'no-typeof-operator',
   disableForVariants: [Variant.TYPED],
 
+  testSnippets: [['typeof "string";', "Line 1: Operator 'typeof' is not allowed."]],
+
   checkers: {
-    UnaryExpression(node: es.UnaryExpression) {
+    UnaryExpression(node) {
       if (node.operator === 'typeof') {
         return [new NoUnspecifiedOperatorError(node)]
       } else {

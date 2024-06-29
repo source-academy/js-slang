@@ -3,12 +3,7 @@ import * as _ from 'lodash'
 
 import { Chapter, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import {
-  expectDifferentParsedErrors,
-  expectParsedError,
-  expectParsedErrorNoSnapshot,
-  expectResult
-} from '../../utils/testing'
+import { expectDifferentParsedErrors, expectParsedError, expectResult } from '../../utils/testing'
 
 jest.spyOn(_, 'memoize').mockImplementation(func => func as any)
 
@@ -32,7 +27,7 @@ test('Undefined variable error is thrown', () => {
 })
 
 test('Undefined variable error is thrown - verbose', () => {
-  return expectParsedError(undefinedVariableVerbose).toMatchInlineSnapshot(`
+  return expectParsedError(undefinedVariableVerbose, optionEC).toMatchInlineSnapshot(`
             "Line 2, Column 0: Name im_undefined not declared.
             Before you can read the value of im_undefined, you need to declare it as a variable or a constant. You can do this using the let or const keywords.
             "
@@ -55,9 +50,7 @@ test('Undefined variables are caught even when unreached', () => {
 })
 
 test('Undefined variable error message differs from verbose version', () => {
-  return expectDifferentParsedErrors(undefinedVariable, undefinedVariableVerbose, optionEC).toBe(
-    undefined
-  )
+  return expectDifferentParsedErrors(undefinedVariable, undefinedVariableVerbose, optionEC)
 })
 
 const assignToBuiltin = stripIndent`
@@ -86,7 +79,7 @@ test('Error when assigning to builtin - verbose', () => {
 test('Assigning to builtin error message differs from verbose version', () => {
   return expectDifferentParsedErrors(assignToBuiltin, assignToBuiltinVerbose, {
     variant: Variant.EXPLICIT_CONTROL
-  }).toBe(undefined)
+  })
 })
 
 const assignToBuiltin1 = stripIndent`
@@ -115,7 +108,7 @@ test('Error when assigning to builtin - verbose', () => {
 test('Assigning to builtin error message differs from verbose version', () => {
   return expectDifferentParsedErrors(assignToBuiltin1, assignToBuiltinVerbose1, {
     variant: Variant.EXPLICIT_CONTROL
-  }).toBe(undefined)
+  })
 })
 
 test('Nice errors when errors occur inside builtins', () => {
@@ -149,7 +142,7 @@ test("Builtins don't create additional errors when it's not their fault", () => 
 })
 
 test('Infinite recursion with a block bodied function', () => {
-  return expectParsedErrorNoSnapshot(
+  return expectParsedError(
     stripIndent`
     function i(n) {
       return n === 0 ? 0 : 1 + i(n-1);
@@ -161,7 +154,7 @@ test('Infinite recursion with a block bodied function', () => {
 }, 15000)
 
 test('Infinite recursion with function calls in argument', () => {
-  return expectParsedErrorNoSnapshot(
+  return expectParsedError(
     stripIndent`
     function i(n, redundant) {
       return n === 0 ? 0 : 1 + i(n-1, r());
@@ -178,7 +171,7 @@ test('Infinite recursion with function calls in argument', () => {
 }, 20000)
 
 test('Infinite recursion of mutually recursive functions', () => {
-  return expectParsedErrorNoSnapshot(
+  return expectParsedError(
     stripIndent`
     function f(n) {
       return n === 0 ? 0 : 1 + g(n - 1);
@@ -225,7 +218,7 @@ test('Calling non function value undefined error message differs from verbose ve
     callingNonFunctionValueUndefined,
     callingNonFunctionValueUndefinedVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueUndefinedArgs = stripIndent`
@@ -257,7 +250,7 @@ test('Calling non function value undefined with arguments error message differs 
     callingNonFunctionValueUndefinedArgs,
     callingNonFunctionValueUndefinedArgsVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueNull = stripIndent`
@@ -288,7 +281,7 @@ test('Calling non function value null error message differs from verbose version
     callingNonFunctionValueNull,
     callingNonFunctionValueNullVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueTrue = stripIndent`
@@ -318,7 +311,7 @@ test('Calling non function value true error message differs from verbose version
     callingNonFunctionValueTrue,
     callingNonFunctionValueTrueVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValue0 = stripIndent`
@@ -349,7 +342,7 @@ test('Calling non function value 0 error message differs from verbose version', 
     callingNonFunctionValue0,
     callingNonFunctionValue0Verbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueString = stripIndent`
@@ -380,7 +373,7 @@ test('Calling non function value string error message differs from verbose versi
     callingNonFunctionValueString,
     callingNonFunctionValueStringVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueArray = stripIndent`
@@ -411,7 +404,7 @@ test('Calling non function value array error message differs from verbose versio
     callingNonFunctionValueArray,
     callingNonFunctionValueArrayVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 const callingNonFunctionValueObject = stripIndent`
@@ -427,7 +420,7 @@ test('Calling non function value object error message differs from verbose versi
     callingNonFunctionValueObject,
     callingNonFunctionValueObjectVerbose,
     optionEC
-  ).toBe(undefined)
+  )
 })
 
 test('Error when calling function with too few arguments', () => {
@@ -931,7 +924,7 @@ test('Cascading js errors work properly', () => {
 })
 
 test('Check that stack is at most 10k in size', () => {
-  return expectParsedErrorNoSnapshot(
+  return expectParsedError(
     stripIndent`
     function f(x) {
       if (x <= 0) {

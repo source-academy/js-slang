@@ -1,19 +1,11 @@
+import type { ForStatement } from 'estree'
 import { generate } from 'astring'
-import * as es from 'estree'
 
-import { UNKNOWN_LOCATION } from '../../../constants'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { RuleError, type Rule } from '../../types'
 
-export class BracesAroundForError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
+const errorMsg = 'Missing curly braces around "for" block.'
 
-  constructor(public node: es.ForStatement) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class BracesAroundForError extends RuleError<ForStatement> {
   public explain() {
     return 'Missing curly braces around "for" block.'
   }
@@ -29,11 +21,19 @@ export class BracesAroundForError implements SourceError {
   }
 }
 
-const bracesAroundFor: Rule<es.ForStatement> = {
+const bracesAroundFor: Rule<ForStatement> = {
   name: 'braces-around-for',
-
+  testSnippets: [
+    [
+      `
+        let j = 0;
+        for (let i = 0; i < 1; i = i + 1) j = j + 1;
+      `,
+      errorMsg
+    ]
+  ],
   checkers: {
-    ForStatement(node: es.ForStatement, _ancestors: [Node]) {
+    ForStatement(node) {
       if (node.body.type !== 'BlockStatement') {
         return [new BracesAroundForError(node)]
       } else {

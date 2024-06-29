@@ -1,6 +1,8 @@
+import type { Node } from 'acorn'
+
 export const libraryParserLanguage = 100
 
-const syntaxBlacklist: { [nodeName: string]: number } = {
+const syntaxBlacklist: { [K in Node['type']]: number } = {
   // List of all node types taken from
   // https://github.com/acornjs/acorn/blob/master/acorn-walk/src/index.js
 

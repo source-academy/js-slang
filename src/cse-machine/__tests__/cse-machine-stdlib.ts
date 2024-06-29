@@ -1,6 +1,13 @@
 import { Chapter, Value, Variant } from '../../types'
 import { stripIndent } from '../../utils/formatters'
-import { expectResult, snapshotFailure } from '../../utils/testing'
+import { expectParsedError, expectResult } from '../../utils/testing'
+
+import * as interpreter from '../interpreter'
+jest.spyOn(interpreter, 'evaluate')
+
+beforeEach(() => {
+  jest.clearAllMocks()
+})
 
 test.each([
   [
@@ -429,18 +436,19 @@ test.each([
   ]
 ] as [Chapter, string, boolean, Value][])(
   'Builtins work as expected %#',
-  (chapter: Chapter, snippet: string, passing: boolean, returnValue: Value) => {
+  async (chapter: Chapter, snippet: string, passing: boolean, returnValue: Value) => {
     if (passing) {
-      return expectResult(stripIndent(snippet), {
+      await expectResult(stripIndent(snippet), {
         chapter,
         variant: Variant.EXPLICIT_CONTROL
       }).toEqual(returnValue)
     } else {
-      return snapshotFailure(
-        stripIndent(snippet),
-        { chapter, variant: Variant.EXPLICIT_CONTROL },
-        'fails'
-      )
+      await expectParsedError(stripIndent(snippet), {
+        chapter,
+        variant: Variant.EXPLICIT_CONTROL
+      }).not.toEqual('')
     }
+
+    expect(interpreter.evaluate).toHaveBeenCalled()
   }
 )
