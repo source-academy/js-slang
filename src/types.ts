@@ -344,3 +344,5 @@ export type RecursivePartial<T> = T extends Array<any>
       [K in keyof T]: RecursivePartial<T[K]>
     }>
   : T
+
+export type NodeTypeToNode<T extends Node['type']> = Extract<Node, { type: T }>

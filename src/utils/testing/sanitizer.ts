@@ -1,6 +1,5 @@
-import type es from 'estree'
-
 import { simple } from '../walkers'
+import type { Node, NodeTypeToNode } from '../../types'
 
 const locationKeys = ['loc', 'start', 'end']
 
@@ -8,7 +7,7 @@ const locationKeys = ['loc', 'start', 'end']
 // For our purposes, those properties aren't important, so we can
 // remove them from the corresponding node
 const propertiesToDelete: {
-  [K in es.Node['type']]?: (keyof Extract<es.Node, { type: K }>)[]
+  [K in Node['type']]?: (keyof NodeTypeToNode<K>)[]
 } = {
   CallExpression: ['optional'],
   // Honestly not sure where the 'expression' property comes from
@@ -19,7 +18,7 @@ const propertiesToDelete: {
 const sanitizers = Object.entries(propertiesToDelete).reduce(
   (res, [nodeType, props]) => ({
     ...res,
-    [nodeType](node: es.Node) {
+    [nodeType](node: Node) {
       for (const prop of props) {
         delete node[prop]
       }
@@ -42,8 +41,8 @@ const sanitizers = Object.entries(propertiesToDelete).reduce(
  *
  * @param node The AST which should be stripped of extra properties
  */
-export function sanitizeAST(node: es.Node) {
-  const convertNode = (obj: es.Node): es.Node => {
+export function sanitizeAST(node: Node) {
+  const convertNode = (obj: Node): Node => {
     return Object.entries(obj).reduce((res, [key, value]) => {
       // Filter out location related properties and don't
       // return them with the created object
@@ -66,7 +65,7 @@ export function sanitizeAST(node: es.Node) {
         ...res,
         [key]: value
       }
-    }, {} as es.Node)
+    }, {} as Node)
   }
 
   simple(node, sanitizers)
