@@ -81,7 +81,12 @@ expectParsedErrorsToEqual(
       'function any(x, x) {}',
       'Line 1: SyntaxError: Argument name clash (1:16)'
     ],
-    ['No empty statements', ';', 'Line 1: Empty statements are not allowed.']
+    ['No empty statements', ';', 'Line 1: Empty statements are not allowed.'],
+    [
+      'delete operator is properly handled',
+      'const hi = 0;\ndelete hi;',
+      "Line 2: Operator 'delete' is not allowed."
+    ]
   ],
   Chapter.SOURCE_4
 )

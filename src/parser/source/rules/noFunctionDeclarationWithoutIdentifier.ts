@@ -1,7 +1,7 @@
-import type { FunctionDeclaration } from 'estree'
+import type { FunctionDeclaration, MaybeNamedFunctionDeclaration } from 'estree'
 import { RuleError, type Rule } from '../../types'
 
-export class NoFunctionDeclarationWithoutIdentifierError extends RuleError<FunctionDeclaration> {
+export class NoFunctionDeclarationWithoutIdentifierError extends RuleError<MaybeNamedFunctionDeclaration> {
   public explain() {
     return `The 'function' keyword needs to be followed by a name.`
   }
