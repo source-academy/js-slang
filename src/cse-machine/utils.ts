@@ -508,7 +508,7 @@ export const checkNumberOfArguments = (
   } else if (isContinuation(callee)) {
     // Continuations have variadic arguments,
     // and so we can let it pass
-    // in future, if we can somehow check the number of arguments
+    // TODO: in future, if we can somehow check the number of arguments
     // expected by the continuation, we can add a check here.
     return undefined
   } else {

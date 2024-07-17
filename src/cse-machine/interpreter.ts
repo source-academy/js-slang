@@ -1195,56 +1195,5 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.BREAK_MARKER]: function () {},
-
-  [InstrType.GENERATE_CONT]: function (
-    _command: GenContInstr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
-    throw new Error('This should never be called!')
-    const contControl = control.copy()
-    const contStash = stash.copy()
-    const contEnv = context.runtime.environments
-
-    // Remove all data related to the continuation-consuming function
-    contControl.pop()
-    contStash.pop()
-
-    // Now this will accurately represent the slice of the
-    // program execution at the time of the call/cc call
-    const continuation = makeContinuation(contControl, contStash, contEnv)
-
-    stash.push(continuation)
-  },
-
-  [InstrType.RESUME_CONT]: function (
-    command: ResumeContInstr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
-    throw new Error('This should never be called!')
-    // pop the arguments
-    const args: Value[] = []
-    for (let i = 0; i < command.numOfArgs; i++) {
-      args.unshift(stash.pop())
-    }
-    const cn: Continuation = stash.pop() as Continuation
-
-    const contControl = getContinuationControl(cn)
-    const contStash = getContinuationStash(cn)
-    const contEnv = getContinuationEnv(cn)
-
-    // Set the control and stash to the continuation's control and stash
-    control.setTo(contControl)
-    stash.setTo(contStash)
-
-    // Push the arguments given to the continuation back onto the stash
-    stash.push(...args)
-
-    // Restore the environment pointer to that of the continuation's environment
-    context.runtime.environments = contEnv
-  }
+  [InstrType.BREAK_MARKER]: function () {}
 }

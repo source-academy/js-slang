@@ -75,7 +75,7 @@ export function isContinuation(f: Function): f is Continuation {
 /**
  * Provides an adequate representation of what calling
  * call/cc or continuations looks like, to give to the
- * GENERATE_CONT and RESUME_CONT instructions.
+ * APPLICATION instruction.
  */
 export function makeDummyContCallExpression(callee: string, argument: string): es.CallExpression {
   return {
