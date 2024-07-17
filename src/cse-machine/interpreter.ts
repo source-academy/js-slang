@@ -954,16 +954,29 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
-      const dummyContCallExpression = makeDummyContCallExpression('f', 'cont')
+      // const dummyContCallExpression = makeDummyContCallExpression('f', 'cont')
 
-      // Restore the state of the stash,
-      // but replace the function application instruction with
-      // a resume continuation instruction
-      stash.push(func)
-      // we need to push the arguments back onto the stash
-      // as well
+      // // Restore the state of the stash,
+      // // but replace the function application instruction with
+      // // a resume continuation instruction
+      // stash.push(func)
+      // // we need to push the arguments back onto the stash
+      // // as well
+      // stash.push(...args)
+      // control.push(instr.resumeContInstr(command.numOfArgs, dummyContCallExpression))
+
+      // get the C, S, E from the continuation
+      const contControl = getContinuationControl(func)
+      const contStash = getContinuationStash(func)
+      const contEnv = getContinuationEnv(func)
+
+      // update the C, S, E of the current context
+      control.setTo(contControl)
+      stash.setTo(contStash)
+      context.runtime.environments = contEnv
+
+      // push the arguments back onto the stash
       stash.push(...args)
-      control.push(instr.resumeContInstr(command.numOfArgs, dummyContCallExpression))
       return
     }
 
@@ -1192,6 +1205,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control: Control,
     stash: Stash
   ) {
+    throw new Error('This should never be called!')
     // pop the arguments
     const args: Value[] = []
     for (let i = 0; i < command.numOfArgs; i++) {
