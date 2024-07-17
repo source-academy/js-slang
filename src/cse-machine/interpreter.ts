@@ -937,16 +937,35 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
+      // generate a continuation here
+      const contControl = control.copy()
+      const contStash = stash.copy()
+      const contEnv = context.runtime.environments.slice()
+
+      // at this point, the extra CALL instruction
+      // has been removed from the control stack.
+      // additionally, the single closure argument has been
+      // removed (as the parameter of call/cc) from the stash
+      // and additionally, call/cc itself has been removed from the stash.
+
+      // as such, there is no further need to modify the
+      // copied C, S and E!
+
+      const continuation = makeContinuation(contControl, contStash, contEnv)
+
       // Get the callee
       const cont_callee: Value = args[0]
 
       const dummyFCallExpression = makeDummyContCallExpression('f', 'cont')
 
       // Prepare a function call for the continuation-consuming function
-      // along with a newly generated continuation
       control.push(instr.appInstr(command.numOfArgs, dummyFCallExpression))
-      control.push(instr.genContInstr(dummyFCallExpression.arguments[0]))
+
+      // push the argument (the continuation caller) back onto the stash
       stash.push(cont_callee)
+
+      // finally, push the continuation onto the stash
+      stash.push(continuation)
       return
     }
 
@@ -1184,6 +1203,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     control: Control,
     stash: Stash
   ) {
+    throw new Error('This should never be called!')
     const contControl = control.copy()
     const contStash = stash.copy()
     const contEnv = context.runtime.environments
