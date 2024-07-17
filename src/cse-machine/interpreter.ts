@@ -23,7 +23,6 @@ import * as seq from '../utils/statementSeqTransform'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
 import Closure from './closure'
 import {
-  Continuation,
   getContinuationControl,
   getContinuationEnv,
   getContinuationStash,
@@ -45,10 +44,8 @@ import {
   CseError,
   EnvInstr,
   ForInstr,
-  GenContInstr,
   Instr,
   InstrType,
-  ResumeContInstr,
   UnOpInstr,
   WhileInstr
 } from './types'

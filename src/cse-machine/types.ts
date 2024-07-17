@@ -74,12 +74,6 @@ export interface ArrLitInstr extends BaseInstr {
   arity: number
 }
 
-export type GenContInstr = BaseInstr
-
-export interface ResumeContInstr extends BaseInstr {
-  numOfArgs: number
-}
-
 export type Instr =
   | BaseInstr
   | WhileInstr
