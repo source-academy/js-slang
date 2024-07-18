@@ -8,16 +8,26 @@ import { Control, Stash } from './interpreter'
  * If the interpreter sees this specific function, a continuation at the current
  * point of evaluation is executed instead of a regular function call.
  */
+export class Call_cc extends Function {
+  private static instance: Call_cc = new Call_cc()
 
-export function call_with_current_continuation(f: Function): any {
-  return 'SHOULD NOT BE CALLED!'
+  private constructor() {
+    super()
+  }
+
+  public static get(): Call_cc {
+    return Call_cc.instance
+  }
+
+  public toString(): string {
+    return 'call/cc'
+  }
 }
 
-/**
- * Checks if the function refers to the designated function object call/cc.
- */
-export function isCallWithCurrentContinuation(f: Function): boolean {
-  return f === call_with_current_continuation
+export const call_with_current_continuation = Call_cc.get()
+
+export function isCallWithCurrentContinuation(value: any): boolean {
+  return value === call_with_current_continuation
 }
 
 /**

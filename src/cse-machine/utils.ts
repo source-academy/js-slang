@@ -11,7 +11,7 @@ import * as instr from './instrCreator'
 import { Control } from './interpreter'
 import { AppInstr, EnvArray, ControlItem, Instr, InstrType } from './types'
 import Closure from './closure'
-import { Continuation } from './continuations'
+import { Continuation, isCallWithCurrentContinuation } from './continuations'
 
 /**
  * Typeguard for Instr to distinguish between program statements and instructions.
@@ -505,6 +505,15 @@ export const checkNumberOfArguments = (
         )
       )
     }
+  } else if (isCallWithCurrentContinuation(callee)) {
+    // call/cc should have a single argument
+    if (args.length !== 1) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
+      )
+    }
+    return undefined
   } else if (callee instanceof Continuation) {
     // Continuations have variadic arguments,
     // and so we can let it pass
