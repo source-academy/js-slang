@@ -23,12 +23,8 @@ import * as seq from '../utils/statementSeqTransform'
 import { checkProgramForUndefinedVariables } from '../validator/validator'
 import Closure from './closure'
 import {
-  getContinuationControl,
-  getContinuationEnv,
-  getContinuationStash,
+  Continuation,
   isCallWithCurrentContinuation,
-  isContinuation,
-  makeContinuation,
   makeDummyContCallExpression
 } from './continuations'
 import * as instr from './instrCreator'
@@ -948,7 +944,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // as such, there is no further need to modify the
       // copied C, S and E!
 
-      const continuation = makeContinuation(contControl, contStash, contEnv)
+      const continuation = new Continuation(contControl, contStash, contEnv)
 
       // Get the callee
       const cont_callee: Value = args[0]
@@ -966,7 +962,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       return
     }
 
-    if (isContinuation(func)) {
+    if (func instanceof Continuation) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
@@ -982,9 +978,9 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // control.push(instr.resumeContInstr(command.numOfArgs, dummyContCallExpression))
 
       // get the C, S, E from the continuation
-      const contControl = getContinuationControl(func)
-      const contStash = getContinuationStash(func)
-      const contEnv = getContinuationEnv(func)
+      const contControl = func.getControl()
+      const contStash = func.getStash()
+      const contEnv = func.getEnv()
 
       // update the C, S, E of the current context
       control.setTo(contControl)
