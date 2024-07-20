@@ -872,7 +872,6 @@ const propertySetter: PropertySetter = new Map<string, Transformer>([
   [InstrType.CONTINUE_MARKER, setToFalse],
   [InstrType.BREAK_MARKER, setToFalse],
   [InstrType.MARKER, setToFalse],
-  [InstrType.RESUME_CONT, setToFalse],
   [
     InstrType.ENVIRONMENT,
     // Need further testing
@@ -885,7 +884,6 @@ const propertySetter: PropertySetter = new Map<string, Transformer>([
   ],
   [InstrType.ASSIGNMENT, setToTrue],
   [InstrType.ARRAY_LITERAL, setToTrue],
-  [InstrType.GENERATE_CONT, setToTrue],
   [
     InstrType.WHILE,
     (instr: WhileInstr) => {
