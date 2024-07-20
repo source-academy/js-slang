@@ -673,72 +673,6 @@ export const hasContinueStatement = (block: es.BlockStatement | StatementSequenc
   return hasContinue
 }
 
-/**
- * Checks whether the evaluation of the given command depends on the current environment.
- * @param command The command to be checked
- * @return `true` if the command is environment depedent, else `false`.
- * NOTE: this check is meant to detect and avoid pushing environment instruction onto the
- * control in SIMPLE CASES, so it might not be exhaustive
- */
-// export const isEnvDependent = (command: ControlItem): boolean => {
-//   // If the result is already calculated, return it
-//   if (command.isEnvDependent != undefined) {
-//     return command.isEnvDependent
-//   }
-
-//   // Otherwise, calculate and store the result
-//   let isDependent = true
-//   if (isInstr(command)) {
-//     const type = command.instrType
-//     isDependent = !(
-//       type === InstrType.UNARY_OP ||
-//       type === InstrType.BINARY_OP ||
-//       type === InstrType.POP ||
-//       type === InstrType.ARRAY_ACCESS ||
-//       type === InstrType.ARRAY_ASSIGNMENT ||
-//       type === InstrType.RESET ||
-//       type === InstrType.CONTINUE_MARKER ||
-//       type === InstrType.BREAK_MARKER
-//     )
-//   } else {
-//     const type = command.type
-//     switch (type) {
-//       case 'StatementSequence':
-//         isDependent = command.body.some((statement: es.Statement) => isEnvDependent(statement))
-//       case 'Literal':
-//         isDependent = false
-//         break
-//       case 'BinaryExpression':
-//         isDependent = isEnvDependent(command.left) || isEnvDependent(command.right)
-//         break
-//       case 'LogicalExpression':
-//         isDependent = isEnvDependent(command.left) || isEnvDependent(command.right)
-//         break
-//       case 'UnaryExpression':
-//         isDependent = isEnvDependent(command.argument)
-//         break
-//       case 'ExpressionStatement':
-//         isDependent = isEnvDependent(command.expression)
-//         break
-//       default:
-//         break
-//     }
-//   }
-//   command.isEnvDependent = isDependent
-//   return isDependent
-// }
-
-/**
- * Checks whether an environment instruction needs to be pushed onto the control.
- * @param control The current control to be checked
- * @return `true` if the environment instruction can be avoided, else `false`.
- * NOTE: this check is meant to detect and avoid pushing environment instruction onto the
- * control in SIMPLE CASES, so it might not be exhaustive
- */
-// export const canAvoidEnvInstr = (control: Control): boolean => {
-//   return !control.getStack().some((command: ControlItem) => isEnvDependent(command))
-// }
-
 type PropertySetter = Map<string, Transformer>
 type Transformer = (item: ControlItem) => ControlItem
 
@@ -901,14 +835,6 @@ const propertySetter: PropertySetter = new Map<string, Transformer>([
       return node
     }
   ],
-  [
-    'Property',
-    (node: Node) => {
-      node = node as es.Property
-      node.isEnvDependent = isEnvDependent(node.key) || isEnvDependent(node.value)
-      return node
-    }
-  ],
 
   [
     'ImportDeclaration',
@@ -924,57 +850,6 @@ const propertySetter: PropertySetter = new Map<string, Transformer>([
   ['ImportDefaultSpecifier', setToTrue],
 
   [
-    'ExportNamedDeclaration',
-    (node: Node) => {
-      node = node as es.ExportNamedDeclaration
-      node.isEnvDependent =
-        isEnvDependent(node.declaration) || node.specifiers.some(x => isEnvDependent(x))
-      return node
-    }
-  ],
-
-  [
-    'ExportDefaultDeclaration',
-    (node: Node) => {
-      node = node as es.ExportDefaultDeclaration
-      node.isEnvDependent = isEnvDependent(node.declaration)
-      return node
-    }
-  ],
-
-  ['ExportSpecifier', setToTrue],
-
-  [
-    'ClassDeclaration',
-    (node: Node) => {
-      node = node as es.ClassDeclaration
-      node.isEnvDependent =
-        isEnvDependent(node.body) ||
-        (node.id !== null && isEnvDependent(node.id)) ||
-        isEnvDependent(node.superClass)
-      return node
-    }
-  ],
-
-  [
-    'NewExpression',
-    (node: Node) => {
-      node = node as es.NewExpression
-      node.isEnvDependent = node.arguments.some(x => isEnvDependent(x))
-      return node
-    }
-  ],
-
-  [
-    'MethodDefinition',
-    (node: Node) => {
-      node = node as es.MethodDefinition
-      node.isEnvDependent = isEnvDependent(node.key) || isEnvDependent(node.value)
-      return node
-    }
-  ],
-
-  [
     'FunctionExpression',
     (node: Node) => {
       node = node as es.FunctionExpression
@@ -982,54 +857,6 @@ const propertySetter: PropertySetter = new Map<string, Transformer>([
         isEnvDependent(node.id) ||
         node.params.some(x => isEnvDependent(x)) ||
         isEnvDependent(node.body)
-      return node
-    }
-  ],
-
-  [
-    'ThisExpression',
-    (_node: es.ThisExpression) => {
-      return _node
-    }
-  ],
-
-  [
-    'Super',
-    (_node: es.Super) => {
-      return _node
-    }
-  ],
-
-  [
-    'TryStatement',
-    (node: Node) => {
-      node = node as es.TryStatement
-      node.isEnvDependent =
-        isEnvDependent(node.block) || isEnvDependent(node.handler) || isEnvDependent(node.finalizer)
-      return node
-    }
-  ],
-  [
-    'ThrowStatement',
-    (node: Node) => {
-      node = node as es.ThrowStatement
-      node.isEnvDependent = isEnvDependent(node.argument)
-      return node
-    }
-  ],
-  [
-    'SpreadElement',
-    (node: Node) => {
-      node = node as es.SpreadElement
-      node.isEnvDependent = isEnvDependent(node.argument)
-      return node
-    }
-  ],
-  [
-    'RestElement',
-    (node: Node) => {
-      node = node as es.RestElement
-      node.isEnvDependent = isEnvDependent(node.argument)
       return node
     }
   ],
@@ -1102,16 +929,11 @@ export function isEnvDependent(item: ControlItem | null | undefined): boolean {
   if (item.isEnvDependent !== undefined) {
     return item.isEnvDependent
   }
-  if (isNode(item)) {
-    const setter = propertySetter.get(item.type)
-    if (setter) {
-      return setter(item)?.isEnvDependent ?? false
-    }
-  } else if (isInstr(item)) {
-    const setter = propertySetter.get(item.instrType)
-    if (setter) {
-      return setter(item)?.isEnvDependent ?? false
-    }
+  const setter = isNode(item) ? propertySetter.get(item.type) : propertySetter.get(item.instrType)
+
+  if (setter) {
+    return setter(item)?.isEnvDependent ?? false
   }
+
   return false
 }

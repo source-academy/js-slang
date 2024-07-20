@@ -94,7 +94,7 @@ for (const context of contexts) {
     expect((await context).runtime.changepointSteps).toMatchSnapshot()
   })
 }
-test('Avoid unnescessary environment instruction 1', () => {
+test('Avoid unnescessary environment instruction', () => {
   const CSEState = evaluateCode(
     stripIndent(
       `
@@ -113,7 +113,7 @@ test('Avoid unnescessary environment instruction 1', () => {
   }
 })
 
-test('Avoid unnescessary environment instruction 2', () => {
+test('Avoid unnescessary environment instruction', () => {
   const CSEState = evaluateCode(
     stripIndent(
       `
@@ -132,7 +132,7 @@ test('Avoid unnescessary environment instruction 2', () => {
   }
 })
 
-test('Avoid unnescessary environment instruction 3', () => {
+test('Avoid unnescessary environment instruction', () => {
   const CSEState = evaluateCode(
     stripIndent(
       `
@@ -153,7 +153,7 @@ test('Avoid unnescessary environment instruction 3', () => {
   }
 })
 
-test('Avoid unnescessary environment instruction 4', () => {
+test('Avoid unnescessary environment instruction', () => {
   const CSEState = evaluateCode(
     stripIndent(
       `
@@ -166,6 +166,37 @@ test('Avoid unnescessary environment instruction 4', () => {
             1 + 2;
             3;
         }
+    `
+    )
+  )
+
+  for (const state of CSEState) {
+    expect(state.control.getNumEnvDependentItems()).toMatchSnapshot()
+  }
+})
+
+test('Avoid unnescessary environment instruction', () => {
+  const CSEState = evaluateCode(
+    stripIndent(
+      `
+      const arr = [1,2,3];
+      let sum = 0;
+
+      function add(x, y) {
+          return x + y;
+      }
+
+      for(let i = 1; i < 10; i = i + 1) {
+          let j = 0;
+          while(j < i) {
+              sum = add(sum, i);
+              j = j + 1;
+          }
+          if (sum > 100 && sum < 200) {
+              arr[0] = sum;
+              break;
+          }
+      }
     `
     )
   )
