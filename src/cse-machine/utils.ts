@@ -881,14 +881,8 @@ const propertySetter: PropertySetter = new Map<string, Transformer>([
   [InstrType.CONTINUE_MARKER, setToFalse],
   [InstrType.BREAK_MARKER, setToFalse],
   [InstrType.MARKER, setToFalse],
-  [
-    InstrType.ENVIRONMENT,
-    setToFalse
-  ],
-  [
-    InstrType.APPLICATION,
-    setToTrue
-  ],
+  [InstrType.ENVIRONMENT, setToFalse],
+  [InstrType.APPLICATION, setToTrue],
   [InstrType.ASSIGNMENT, setToTrue],
   [InstrType.ARRAY_LITERAL, setToTrue],
   [
