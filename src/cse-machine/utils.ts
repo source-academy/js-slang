@@ -883,12 +883,10 @@ const propertySetter: PropertySetter = new Map<string, Transformer>([
   [InstrType.MARKER, setToFalse],
   [
     InstrType.ENVIRONMENT,
-    // Need further testing
     setToFalse
   ],
   [
     InstrType.APPLICATION,
-    // Need further testing: need to differentiate between application to call_cc and normal function
     setToTrue
   ],
   [InstrType.ASSIGNMENT, setToTrue],
