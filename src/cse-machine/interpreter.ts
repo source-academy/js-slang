@@ -103,6 +103,11 @@ export class Control extends Stack<ControlItem> {
     return this.numEnvDependentItems === 0
   }
 
+  // For testing purposes
+  public getNumEnvDependentItems(): number {
+    return this.numEnvDependentItems
+  }
+
   public pop(): ControlItem | undefined {
     const item = super.pop()
     if (item !== undefined && isEnvDependent(item)) {
@@ -452,7 +457,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
     // Push ENVIRONMENT instruction if needed - if next control stack item
     // exists and is not an environment instruction, OR the control only contains
-    // environment indepedent item
+    // environment indepedent items
     if (
       next &&
       !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
@@ -1000,7 +1005,7 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
 
       // Push ENVIRONMENT instruction if needed - if next control stack item
       // exists and is not an environment instruction, OR the control only contains
-      // environment indepedent item
+      // environment indepedent items
       if (
         next &&
         !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
