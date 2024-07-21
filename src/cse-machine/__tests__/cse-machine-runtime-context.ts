@@ -179,7 +179,9 @@ test('Avoid unnescessary environment instruction', () => {
   const CSEState = evaluateCode(
     stripIndent(
       `
+      import "rune";
       const arr = [1,2,3];
+      const c = (x => x)(1);
       let sum = 0;
 
       function add(x, y) {
@@ -197,6 +199,7 @@ test('Avoid unnescessary environment instruction', () => {
               break;
           }
       }
+      display(sum);
     `
     )
   )

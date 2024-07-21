@@ -858,18 +858,6 @@ const propertySetter: PropertySetter = new Map<string, Transformer>([
 
   ['ImportDefaultSpecifier', setToTrue],
 
-  [
-    'FunctionExpression',
-    (node: Node) => {
-      node = node as es.FunctionExpression
-      node.isEnvDependent =
-        isEnvDependent(node.id) ||
-        node.params.some(x => isEnvDependent(x)) ||
-        isEnvDependent(node.body)
-      return node
-    }
-  ],
-
   //Instruction
   [InstrType.RESET, setToFalse],
   [InstrType.UNARY_OP, setToFalse],
