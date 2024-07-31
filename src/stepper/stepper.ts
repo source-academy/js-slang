@@ -3370,8 +3370,7 @@ export function getEvaluationSteps(
       'Start of evaluation'
     ]
     /**
-     * push the content into frontend for showing contents in the
-     * this comment may not be correct, please correct it if you find any mismatch in description
+     * push the content into frontend for showing contents in the webpage
      */
     steps.push([
       reducedWithPath[0] as es.Program,
@@ -3421,13 +3420,6 @@ export function getEvaluationSteps(
           ast.expressionStatement(ast.identifier('undefined'))
         ])
       }
-    }
-    /**
-     * Deprecated check for empty program
-     * It can be deleted or kept as a reference for legacy code.
-     */
-    if (steps.length === 0) {
-      steps.push([reducedWithPath[0] as es.Program, [], 'Nothing to evaluate'])
     }
     return steps
   } catch (error) {
