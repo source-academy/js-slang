@@ -10,12 +10,12 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
 import {
+  Variant,
   type Context,
   type ContiguousArrayElements,
   type Environment,
   type Node,
-  type Value,
-  Variant
+  type Value
 } from '../types'
 import * as create from '../utils/ast/astCreator'
 import { conditionalExpression, literal, primitive } from '../utils/ast/astCreator'
@@ -637,7 +637,7 @@ export const evaluators: { [nodeType: string]: Evaluator<Node> } = {
   },
 
   ObjectExpression: function*(node: es.ObjectExpression, context: Context) {
-    const obj = {}
+    const obj: Record<any, any> = {}
     for (const propUntyped of node.properties) {
       // node.properties: es.Property | es.SpreadExpression, but
       // our Acorn is set to ES6 which cannot have a es.SpreadExpression
