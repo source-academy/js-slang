@@ -7,7 +7,8 @@ import {
   type Variant,
   type SourceError,
   ErrorType,
-  ErrorSeverity
+  ErrorSeverity,
+  type NodeTypeToNode
 } from '../types'
 import { UNKNOWN_LOCATION } from '../constants'
 
@@ -45,7 +46,7 @@ export interface Rule<T extends Node> {
   disableFromChapter?: Chapter
   disableForVariants?: Variant[]
   checkers: {
-    [K in T['type']]: (node: Extract<T, { type: K }>, ancestors: Node[]) => SourceError[]
+    [K in T['type']]: (node: NodeTypeToNode<K>, ancestors: Node[]) => SourceError[]
   }
 }
 

@@ -1,9 +1,47 @@
 import type es from 'estree'
 
-import { UNKNOWN_LOCATION } from '../../../constants'
+import { generate } from 'astring'
 import { RuleError, type Rule } from '../../types'
+import type { SourceError } from '../../../types'
 
-export const nonPermittedBinaryOperators: (es.BinaryOperator | es.LogicalOperator)[] = [
+type OperatorNodeTypes =
+  | es.BinaryExpression
+  | es.UnaryExpression
+  | es.LogicalExpression
+  | es.AssignmentExpression
+
+type OperatorRecord<T extends OperatorNodeTypes> = {
+  /**
+   * Array of allowed operators
+   */
+  allowed: T['operator'][]
+
+  /**
+   * Array of disallowed operators
+   */
+  disallowed: T['operator'][]
+
+  /**
+   * Function used to map allowed operators to test snippets
+   */
+  allowedSnippetMapper: (ops: T['operator'][]) => string
+
+  /**
+   * Function used to map disallowed operators to test snippets
+   */
+  disallowedSnippetMapper: (ops: T['operator'][]) => [string, string]
+
+  /**
+   * Checking function to use with the given node type
+   */
+  checker: (node: T, ancestors: Node[]) => SourceError[]
+}
+
+type OperatorClassifications = {
+  [K in OperatorNodeTypes['type']]: OperatorRecord<Extract<OperatorNodeTypes, { type: K }>>
+}
+
+const disallowedBinaryOperators: es.BinaryOperator[] = [
   // '==',
   // '!=',
   // "**",
@@ -18,63 +56,93 @@ export const nonPermittedBinaryOperators: (es.BinaryOperator | es.LogicalOperato
   '>>>'
 ]
 
-const permittedBinaryOperators: (es.BinaryOperator | es.LogicalOperator)[] = [
-  '+',
-  '-',
-  '*',
-  '/',
-  '%',
-  '===',
-  '!==',
-  '<',
-  '>',
-  '<=',
-  '>=',
-  '&&',
-  '||'
-]
+const operators: OperatorClassifications = {
+  AssignmentExpression: {
+    allowed: ['='],
+    disallowed: [
+      // Some operators aren't recognized as valid operators
+      '+=',
+      '-=',
+      '*=',
+      '/=',
+      '%=',
+      // "**=",
+      '<<=',
+      '>>=',
+      '>>>=',
+      '|=',
+      '^=',
+      '&='
+      // "||=",
+      // "&&=",
+      // "??="
+    ],
+    allowedSnippetMapper: op => `a ${op} b`,
+    disallowedSnippetMapper: op => [
+      `a ${op} b;`,
+      `Line 1: The assignment operator ${op} is not allowed. Use = instead.`
+    ],
+    checker(node) {
+      if (node.operator !== '=') return [new NoUpdateAssignment(node)]
 
-const permittedBinarySnippets = permittedBinaryOperators.map(op => {
-  return [`a ${op} b;`, undefined] as [string, undefined]
-})
+      const op = node.operator.slice(0, -1) as es.BinaryOperator
+      if (disallowedBinaryOperators.includes(op)) {
+        return [new NoUnspecifiedOperatorError(node)]
+      }
 
-const nonPermittedBinarySnippets = nonPermittedBinaryOperators.map(op => {
-  return [`a ${op} b;`, `Operator '${op}' is not allowed.`] as [string, string]
-})
+      return []
+    }
+  },
+  BinaryExpression: {
+    disallowed: disallowedBinaryOperators,
+    allowed: ['+', '-', '*', '/', '%', '===', '!==', '<', '>', '<=', '>='],
+    allowedSnippetMapper: op => `a ${op} b;`,
+    disallowedSnippetMapper: op => [`a ${op} b;`, `Operator '${op}' is not allowed.`],
+    checker(node) {
+      if (node.operator === '==' || node.operator === '!=') {
+        return [new StrictEqualityError(node)]
+      } else if (this.disallowed.includes(node.operator)) {
+        return [new NoUnspecifiedOperatorError(node)]
+      }
 
-// No tests for permitted unary test snippets because typeof operator is a bit more
-// complex as to when its permitted
-const permittedUnaryOperators: es.UnaryOperator[] = ['-', '!', 'typeof']
+      return []
+    }
+  },
+  LogicalExpression: {
+    allowed: ['||', '&&'],
+    disallowed: ['??'],
+    allowedSnippetMapper: op => `a ${op} b;`,
+    disallowedSnippetMapper: op => [`a ${op} b;`, `Operator '${op}' is not allowed.`],
+    checker(node) {
+      if (this.disallowed.includes(node.operator)) {
+        return [new NoUnspecifiedOperatorError(node)]
+      } else {
+        return []
+      }
+    }
+  },
+  UnaryExpression: {
+    allowed: ['-', '!', 'typeof'],
+    disallowed: ['~', '+', 'void'],
+    allowedSnippetMapper: op => `${op} a;`,
+    disallowedSnippetMapper: op => [`${op} a;`, `Operator '${op}' is not allowed.`],
+    checker(node) {
+      if (this.disallowed.includes(node.operator)) {
+        return [new NoUnspecifiedOperatorError(node)]
+      }
+      return []
+    }
+  }
+}
 
-// TODO: potentially handle the delete operator separately?
-// it gives 'deleting local variable in strict mode' as the error instead of
-// non-permitted operator
-const nonPermittedUnaryOperators: es.UnaryOperator[] = ['~', '+', 'void']
-const nonPermittedUnarySnippets = nonPermittedUnaryOperators.map(
-  op => [`${op} a;`, `Operator '${op}' is not allowed.`] as [string, string]
-)
+export class NoUnspecifiedOperatorError<
+  T extends OperatorNodeTypes = OperatorNodeTypes
+> extends RuleError<T> {
+  public unspecifiedOperator: T['operator']
 
-type OperatorNodeTypes =
-  | es.BinaryExpression
-  | es.UnaryExpression
-  | es.LogicalExpression
-  | es.AssignmentExpression
-type OperatorTypes =
-  | es.BinaryOperator
-  | es.UnaryOperator
-  | es.LogicalOperator
-  | es.AssignmentOperator
-
-export class NoUnspecifiedOperatorError extends RuleError<OperatorNodeTypes> {
-  public unspecifiedOperator: OperatorTypes
-
-  constructor(node: OperatorNodeTypes) {
+  constructor(node: T) {
     super(node)
     this.unspecifiedOperator = node.operator
-  }
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
   }
 
   public explain() {
@@ -86,8 +154,22 @@ export class NoUnspecifiedOperatorError extends RuleError<OperatorNodeTypes> {
   }
 }
 
-export class StrictEqualityError extends RuleError<es.BinaryExpression> {
-  public explain() {
+export class NoUpdateAssignment extends NoUnspecifiedOperatorError<es.AssignmentExpression> {
+  public override explain() {
+    return `The assignment operator ${this.node.operator} is not allowed. Use = instead.`
+  }
+
+  public override elaborate() {
+    const leftStr = generate(this.node.left)
+    const rightStr = generate(this.node.right)
+    const opStr = this.node.operator.slice(0, -1)
+
+    return `\n\t${leftStr} = ${leftStr} ${opStr} ${rightStr};`
+  }
+}
+
+export class StrictEqualityError extends NoUnspecifiedOperatorError<es.BinaryExpression> {
+  public override explain() {
     if (this.node.operator === '==') {
       return 'Use === instead of ==.'
     } else {
@@ -95,47 +177,42 @@ export class StrictEqualityError extends RuleError<es.BinaryExpression> {
     }
   }
 
-  public elaborate() {
+  public override elaborate() {
     return '== and != are not valid operators.'
   }
 }
 
-const noUnspecifiedOperator: Rule<es.BinaryExpression | es.UnaryExpression | es.LogicalExpression> =
+const noUnspecifiedOperator = Object.entries(operators).reduce(
+  (
+    res,
+    [nodeType, { checker, allowed, disallowed, allowedSnippetMapper, disallowedSnippetMapper }]
+  ) => {
+    const allowedSnippets = allowed.map(each => {
+      // type intersection gets narrowed down to never, so we manually suppress the ts error
+      // @ts-expect-error 2345
+      return [allowedSnippetMapper(each), undefined] as [string, undefined]
+    })
+
+    // @ts-expect-error 2345
+    const disallowedSnippets = disallowed.map(disallowedSnippetMapper)
+
+    return {
+      ...res,
+      testSnippets: [...res.testSnippets!, ...disallowedSnippets, ...allowedSnippets],
+      checkers: {
+        ...res.checkers,
+        [nodeType]: checker
+      }
+    }
+  },
   {
     name: 'no-unspecified-operator',
     testSnippets: [
-      ...permittedBinarySnippets,
-      ...nonPermittedBinarySnippets,
-      ...nonPermittedUnarySnippets,
-      ['const x = 1 == 2;', 'Line 1: Use === instead of ==.'],
-      ['const x = 1 != 2;', 'Line 1: Use !== instead of !=.']
+      ['a == b', 'Line 1: Use === instead of =='],
+      ['a != b', 'Line 1: Use !== instead of !=']
     ],
-
-    checkers: {
-      BinaryExpression(node) {
-        if (node.operator === '==' || node.operator === '!=') {
-          return [new StrictEqualityError(node)]
-        } else if (!permittedBinaryOperators.includes(node.operator)) {
-          return [new NoUnspecifiedOperatorError(node)]
-        } else {
-          return []
-        }
-      },
-      LogicalExpression(node) {
-        if (!permittedBinaryOperators.includes(node.operator)) {
-          return [new NoUnspecifiedOperatorError(node)]
-        } else {
-          return []
-        }
-      },
-      UnaryExpression(node) {
-        if (!permittedUnaryOperators.includes(node.operator)) {
-          return [new NoUnspecifiedOperatorError(node)]
-        } else {
-          return []
-        }
-      }
-    }
-  }
+    checkers: {}
+  } as Rule<OperatorNodeTypes>
+)
 
 export default noUnspecifiedOperator

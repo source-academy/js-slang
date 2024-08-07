@@ -62,7 +62,8 @@ const singleVariableDeclaration: Rule<VariableDeclaration> = {
   name: 'single-variable-declaration',
   testSnippets: [
     ['let i = 0, j = 0;', 'Line 1: Multiple declarations in a single statement.'],
-    ['let i;', 'Line 1: Missing value in variable declaration.']
+    ['let i;', 'Line 1: Missing value in variable declaration.'],
+    ['for (const x of []) {}', undefined]
   ],
 
   checkers: {

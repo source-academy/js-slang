@@ -19,7 +19,6 @@ import noTemplateExpression from './noTemplateExpression'
 import noTypeofOperator from './noTypeofOperator'
 import noUnspecifiedLiteral from './noUnspecifiedLiteral'
 import noUnspecifiedOperator from './noUnspecifiedOperator'
-import noUpdateAssignment from './noUpdateAssignment'
 import noVar from './noVar'
 import singleVariableDeclaration from './singleVariableDeclaration'
 
@@ -40,7 +39,6 @@ const rules: Rule<any>[] = [
   noUnspecifiedLiteral,
   noUnspecifiedOperator,
   noTypeofOperator,
-  noUpdateAssignment,
   noVar,
   singleVariableDeclaration,
   noEval,
