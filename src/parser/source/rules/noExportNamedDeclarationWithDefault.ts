@@ -1,20 +1,10 @@
-import * as es from 'estree'
-
-import { UNKNOWN_LOCATION } from '../../../constants'
+import type { ExportNamedDeclaration, ExportSpecifier } from 'estree'
 import { defaultExportLookupName } from '../../../stdlib/localImport.prelude'
-import { ErrorSeverity, ErrorType, Node, Rule, SourceError } from '../../../types'
+import { RuleError, type Rule } from '../../types'
 import syntaxBlacklist from '../syntax'
+import { mapAndFilter } from '../../../utils/misc'
 
-export class NoExportNamedDeclarationWithDefaultError implements SourceError {
-  public type = ErrorType.SYNTAX
-  public severity = ErrorSeverity.ERROR
-
-  constructor(public node: es.ExportNamedDeclaration) {}
-
-  get location() {
-    return this.node.loc ?? UNKNOWN_LOCATION
-  }
-
+export class NoExportNamedDeclarationWithDefaultError extends RuleError<ExportSpecifier> {
   public explain() {
     return 'Export default declarations are not allowed'
   }
@@ -24,19 +14,28 @@ export class NoExportNamedDeclarationWithDefaultError implements SourceError {
   }
 }
 
-const noExportNamedDeclarationWithDefault: Rule<es.ExportNamedDeclaration> = {
+const noExportNamedDeclarationWithDefault: Rule<ExportNamedDeclaration> = {
   name: 'no-declare-mutable',
   disableFromChapter: syntaxBlacklist['ExportDefaultDeclaration'],
+  testSnippets: [
+    [
+      `
+        const a = 0;
+        export { a as default };
+      `,
+      'Line 3: Export default declarations are not allowed'
+    ]
+  ],
 
   checkers: {
-    ExportNamedDeclaration(node: es.ExportNamedDeclaration, _ancestors: [Node]) {
-      const errors: NoExportNamedDeclarationWithDefaultError[] = []
-      node.specifiers.forEach((specifier: es.ExportSpecifier) => {
-        if (specifier.exported.name === defaultExportLookupName) {
-          errors.push(new NoExportNamedDeclarationWithDefaultError(node))
+    ExportNamedDeclaration(node) {
+      return mapAndFilter(node.specifiers, spec => {
+        if (spec.exported.name === defaultExportLookupName) {
+          return new NoExportNamedDeclarationWithDefaultError(spec)
         }
+
+        return undefined
       })
-      return errors
     }
   }
 }

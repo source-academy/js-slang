@@ -9,18 +9,57 @@ import { Chapter } from '../../../types'
 import { stripIndent } from '../../../utils/formatters'
 import parseProgramsAndConstructImportGraph from '../linker'
 import analyzeImportsAndExports from '../analyzer'
-import { parse } from '../../../parser/parser'
-import { mockContext } from '../../../mocks/context'
-import type { Program } from 'estree'
 import loadSourceModules from '../../loader'
 import type { SourceFiles as Files } from '../../moduleTypes'
 import { objectKeys } from '../../../utils/misc'
+import { testTrueAndFalseCases } from '../../../utils/testing'
 
 jest.mock('../../loader/loaders')
 
 beforeEach(() => {
   jest.clearAllMocks()
 })
+
+async function testCode<T extends Files>(
+  files: T,
+  entrypointFilePath: keyof T,
+  allowUndefinedImports: boolean,
+  throwOnDuplicateNames: boolean
+) {
+  const context = createContext(Chapter.FULL_JS)
+  const importGraphResult = await parseProgramsAndConstructImportGraph(
+    p => Promise.resolve(files[p]),
+    entrypointFilePath as string,
+    context,
+    {},
+    true
+  )
+
+  // Return 'undefined' if there are errors while parsing.
+  if (context.errors.length !== 0 || !importGraphResult.ok) {
+    throw context.errors[0]
+  }
+
+  const { programs, topoOrder, sourceModulesToImport } = importGraphResult
+  await loadSourceModules(sourceModulesToImport, context, false)
+
+  try {
+    analyzeImportsAndExports(programs, entrypointFilePath as string, topoOrder, context, {
+      allowUndefinedImports,
+      throwOnDuplicateNames
+    })
+  } catch (error) {
+    if (
+      !(error instanceof DuplicateImportNameError) &&
+      !(error instanceof UndefinedNamespaceImportError)
+    ) {
+      throw error
+    }
+
+    return error
+  }
+  return true
+}
 
 describe('Test throwing import validation errors', () => {
   type ErrorInfo = {
@@ -43,38 +82,12 @@ describe('Test throwing import validation errors', () => {
 
   // Providing an ErrorInfo object indicates that the test case should throw
   // the corresponding error
-  type ImportTestCaseWithNoError<T extends Files> = [string, T, keyof T]
-  type ImportTestCaseWithError<T extends Files> = [...ImportTestCaseWithNoError<T>, ErrorInfo]
-  type ImportTestCase<T extends Files> = ImportTestCaseWithError<T> | ImportTestCaseWithNoError<T>
+  type ImportTestCaseWithNoError = [string, Files, string]
+  type ImportTestCaseWithError = [...ImportTestCaseWithNoError, ErrorInfo]
+  type ImportTestCase = ImportTestCaseWithError | ImportTestCaseWithNoError
 
-  async function testCode<T extends Files>(
-    files: T,
-    entrypointFilePath: keyof T,
-    allowUndefinedImports: boolean,
-    throwOnDuplicateNames: boolean
-  ) {
-    const context = createContext(Chapter.FULL_JS)
-    const importGraphResult = await parseProgramsAndConstructImportGraph(
-      p => Promise.resolve(files[p]),
-      entrypointFilePath as string,
-      context,
-      {},
-      true
-    )
-
-    // Return 'undefined' if there are errors while parsing.
-    if (context.errors.length !== 0 || !importGraphResult.ok) {
-      throw context.errors[0]
-    }
-
-    const { programs, topoOrder, sourceModulesToImport } = importGraphResult
-    await loadSourceModules(sourceModulesToImport, context, false)
-
-    analyzeImportsAndExports(programs, entrypointFilePath as string, topoOrder, context, {
-      allowUndefinedImports,
-      throwOnDuplicateNames
-    })
-    return true
+  function expectValidationError(obj: any): asserts obj is UndefinedNamespaceImportError {
+    expect(obj).toBeInstanceOf(UndefinedNamespaceImportError)
   }
 
   async function testFailure<T extends Files>(
@@ -83,15 +96,11 @@ describe('Test throwing import validation errors', () => {
     allowUndefinedImports: boolean,
     errInfo: ErrorInfo
   ) {
-    let err: any = null
-    try {
-      await testCode(files, entrypointFilePath, allowUndefinedImports, false)
-    } catch (error) {
-      err = error
-    }
+    const err = await testCode(files, entrypointFilePath, allowUndefinedImports, false)
 
-    expect(err).not.toEqual(null)
+    expectValidationError(err)
     expect(err.moduleName).toEqual(errInfo.moduleName)
+
     switch (errInfo.type) {
       case 'namespace': {
         // Check namespace import
@@ -104,7 +113,7 @@ describe('Test throwing import validation errors', () => {
       }
       default: {
         expect(err).toBeInstanceOf(UndefinedImportError)
-        expect(err.symbol).toEqual(errInfo.symbol)
+        expect((err as UndefinedImportError).symbol).toEqual(errInfo.symbol)
       }
     }
 
@@ -125,50 +134,36 @@ describe('Test throwing import validation errors', () => {
   }
 
   type FullTestCase = [string, Files, `/${string}`, ErrorInfo | boolean]
-  function testCases<T extends Files>(desc: string, cases: ImportTestCase<T>[]) {
-    const [allNoCases, allYesCases] = cases.reduce(
-      ([noThrow, yesThrow], [desc, files, entry, errorInfo], i) => {
+  function testCases(desc: string, cases: ImportTestCase[]) {
+    testTrueAndFalseCases(
+      desc,
+      'allowUndefinedImports',
+      cases,
+      ([desc, files, entry, errorInfo]) => {
         return [
+          [`${desc} should not throw an error`, files, entry, true] as FullTestCase,
           [
-            ...noThrow,
-            [`${i + 1}: ${desc} should not throw an error`, files, entry, true] as FullTestCase
-          ],
-          [
-            ...yesThrow,
-            [
-              `${i + 1}: ${desc} should${errorInfo ? '' : ' not'} throw an error`,
-              files,
-              entry,
-              errorInfo
-            ] as FullTestCase
-          ]
+            `${desc} should${errorInfo ? '' : ' not'} throw an error`,
+            files,
+            entry,
+            errorInfo
+          ] as FullTestCase
         ]
       },
-      [[], []] as [FullTestCase[], FullTestCase[]]
+      async ([files, entrypointFilePath, errorInfo]) => {
+        if (errorInfo === true) {
+          // If allowUndefinedImports is true, the analyzer should never throw an error
+          await testSuccess(files, entrypointFilePath, true)
+        } else if (!errorInfo) {
+          // Otherwise it should not throw when no errors are expected
+          await testSuccess(files, entrypointFilePath, false)
+        } else {
+          // Or throw the expected error
+          await testFailure(files, entrypointFilePath, false, errorInfo)
+        }
+      },
+      true
     )
-
-    const caseTester: (...args: FullTestCase) => Promise<void> = async (
-      _,
-      files,
-      entrypointFilePath,
-      errorInfo
-    ) => {
-      if (errorInfo === true) {
-        // If allowUndefinedImports is true, the analyzer should never throw an error
-        await testSuccess(files, entrypointFilePath, true)
-      } else if (!errorInfo) {
-        // Otherwise it should not throw when no errors are expected
-        await testSuccess(files, entrypointFilePath, false)
-      } else {
-        // Or throw the expected error
-        await testFailure(files, entrypointFilePath, false, errorInfo)
-      }
-    }
-
-    describe(`${desc} with allowUndefinedimports true`, () =>
-      test.each(allNoCases)('%s', caseTester))
-    describe(`${desc} with allowUndefinedimports false`, () =>
-      test.each(allYesCases)('%s', caseTester))
   }
 
   describe('Test regular imports', () => {
@@ -643,111 +638,73 @@ describe('Test throwing DuplicateImportNameErrors', () => {
   const isTestCaseWithNoError = <T extends Files>(c: TestCase<T>): c is TestCaseWithNoError<T> =>
     c.length === 2
 
-  type FullTestCase =
-    | [string, Record<string, Program>, true, string | undefined]
-    | [string, Record<string, Program>, false, undefined]
+  type FullTestCase = [Files, true, string | undefined] | [Files, false, undefined]
+
+  function expectDuplicateError(obj: any): asserts obj is DuplicateImportNameError {
+    expect(obj).toBeInstanceOf(DuplicateImportNameError)
+  }
 
   function testCases<T extends Files>(desc: string, cases: TestCase<T>[]) {
-    const [allNoCases, allYesCases] = cases.reduce(
-      ([noThrow, yesThrow], c, i) => {
-        const context = mockContext(Chapter.LIBRARY_PARSER)
-        const programs = Object.entries(c[1]).reduce((res, [name, file]) => {
-          const parsed = parse(file!, context, { sourceFile: name })
-          if (!parsed) {
-            console.error(context.errors[0])
-            throw new Error('Failed to parse code!')
-          }
-          return {
-            ...res,
-            [name]: parsed
-          }
-        }, {} as Record<string, Program>)
-
+    testTrueAndFalseCases<TestCase<any>, FullTestCase>(
+      desc,
+      'throwOnDuplicateImports',
+      cases,
+      c => {
         // For each test case, split it into the case where throwOnDuplicateImports is true
         // and when it is false. No errors should ever be thrown when throwOnDuplicateImports is false
         if (isTestCaseWithNoError(c)) {
           // No error message was given, so no error is expected to be thrown,
           // regardless of the value of throwOnDuplicateImports
           const [desc] = c
-          const noThrowCase: FullTestCase = [
-            `${i + 1}. ${desc}: no error `,
-            programs,
+          const noThrowCase: [string, ...FullTestCase] = [
+            `${desc}: no error `,
+            c[1],
             false,
             undefined
           ]
-          const yesThrowCase: FullTestCase = [
-            `${i + 1}. ${desc}: no error`,
-            programs,
+          const yesThrowCase: [string, ...FullTestCase] = [
+            `${desc}: no error`,
+            c[1],
             true,
             undefined
           ]
-          return [
-            [...noThrow, noThrowCase],
-            [...yesThrow, yesThrowCase]
-          ]
+          return [noThrowCase, yesThrowCase]
         }
 
         const [desc, , errMsg] = c
-        const noThrowCase: FullTestCase = [
-          `${i + 1}. ${desc}: no error`,
-          programs,
-          false,
-          undefined
-        ]
-        const yesThrowCase: FullTestCase = [`${i + 1}. ${desc}: error`, programs, true, errMsg]
-        return [
-          [...noThrow, noThrowCase],
-          [...yesThrow, yesThrowCase]
-        ]
+        const noThrowCase: [string, ...FullTestCase] = [`${desc}: no error`, c[1], false, undefined]
+        const yesThrowCase: [string, ...FullTestCase] = [`${desc}: error`, c[1], true, errMsg]
+        return [noThrowCase, yesThrowCase]
       },
-      [[], []] as [FullTestCase[], FullTestCase[]]
-    )
+      async ([files, shouldThrow, errMsg]) => {
+        const [entrypointFilePath] = objectKeys(files)
 
-    const caseTester: (...args: FullTestCase) => Promise<void> = async (
-      _,
-      programs,
-      shouldThrow,
-      errMsg
-    ) => {
-      const context = createContext(Chapter.FULL_JS)
-      const [entrypointFilePath, ...topoOrder] = objectKeys(programs)
+        const promise = testCode(files, entrypointFilePath, true, shouldThrow)
+        if (!shouldThrow || errMsg === undefined) {
+          return expect(promise).resolves.toEqual(true)
+        }
 
-      await loadSourceModules(new Set(['one_module', 'another_module']), context, false)
-
-      const runTest = () =>
-        analyzeImportsAndExports(programs, entrypointFilePath, topoOrder, context, {
-          allowUndefinedImports: true,
-          throwOnDuplicateNames: shouldThrow
-        })
-
-      if (!shouldThrow || errMsg === undefined) {
-        expect(runTest).not.toThrow()
-      }
-      try {
-        runTest()
-      } catch (err) {
-        expect(err).toBeInstanceOf(DuplicateImportNameError)
+        const err = await promise
+        expectDuplicateError(err)
 
         // Make sure the locations are always displayed in order
         // for consistency across tests (ok since locString should be order agnostic)
-        const segments = (err.locString as string).split(',').map(each => each.trim())
+        const segments = err.locString.split(',').map(each => each.trim())
         segments.sort()
 
         expect(segments.join(', ')).toEqual(errMsg)
-      }
-    }
-
-    describe(`${desc} with throwOnDuplicateImports false`, () =>
-      test.each(allNoCases)('%s', caseTester))
-    describe(`${desc} with throwOnDuplicateImports true`, () =>
-      test.each(allYesCases)('%s', caseTester))
+      },
+      true
+    )
   }
 
   testCases('Imports from different modules', [
     [
       'Different imports from different Source modules across multiple files',
       {
-        '/a.js': `import { foo as a } from 'one_module';`,
+        '/a.js': `import { foo as a } from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import { bar as a } from 'another_module';`
       },
       '(/a.js:1:9), (/b.js:1:9)'
@@ -763,7 +720,9 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     [
       'Different imports including default imports across multiple files',
       {
-        '/a.js': `import a from 'one_module';`,
+        '/a.js': `import a from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import a from 'another_module';`
       },
       '(/a.js:1:7), (/b.js:1:7)'
@@ -771,7 +730,9 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     [
       'Different imports of different types from Source modules',
       {
-        '/a.js': `import { foo as a } from 'one_module';`,
+        '/a.js': `import { foo as a } from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import a from 'another_module';`
       },
       '(/a.js:1:9), (/b.js:1:7)'
@@ -779,14 +740,19 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     [
       'Different imports from both Source and local modules',
       {
-        '/a.js': `import { foo as a } from 'one_module';`,
-        '/b.js': `import { a } from './c.js';`
+        '/a.js': `import { foo as a } from 'one_module';
+        import { b } from './b.js';
+        `,
+        '/b.js': `import { c } from './c.js';`,
+        '/c.js': 'export function c() {}'
       }
     ],
     [
       'Namespace imports from Source modules',
       {
-        '/a.js': `import * as a from 'one_module';`,
+        '/a.js': `import * as a from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import * as a from 'another_module';`
       },
       '(/a.js:1:7), (/b.js:1:7)'
@@ -794,7 +760,10 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     [
       'Three conflicting imports',
       {
-        '/a.js': `import * as a from 'one_module';`,
+        '/a.js': `import * as a from 'one_module';
+        import { b } from './b.js';
+        import { c } from './c.js';
+        `,
         '/b.js': `import a from 'another_module';`,
         '/c.js': `import { foo as a } from 'one_module';`
       },
@@ -806,14 +775,21 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     [
       'Same import across multiple files 1',
       {
-        '/a.js': `import { foo as a } from 'one_module';`,
+        '/a.js': `import { foo as a } from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import { foo as a } from 'one_module';`
       }
     ],
     [
       'Same import across multiple files 2',
       {
-        '/a.js': `import { foo as a } from 'one_module';`,
+        '/a.js': `import { foo as a } from 'one_module';
+        
+        import { b } from './b.js';
+        import { c } from './c.js';
+        import { d } from './d.js';
+        `,
         '/b.js': `import { foo as a } from 'one_module';`,
         '/c.js': `import { foo as b } from 'one_module';`,
         '/d.js': `import { foo as b } from 'one_module';`
@@ -822,7 +798,9 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     [
       'Different import across multiple files',
       {
-        '/a.js': `import { foo as a } from 'one_module';`,
+        '/a.js': `import { foo as a } from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import { bar as a } from 'one_module';`
       },
       '(/a.js:1:9), (/b.js:1:9)'
@@ -830,21 +808,27 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     [
       'Different namespace imports across multiple files',
       {
-        '/a.js': `import * as a from 'one_module';`,
+        '/a.js': `import * as a from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import * as a from 'one_module';`
       }
     ],
     [
       'Same default import across multiple files',
       {
-        '/a.js': `import a from 'one_module';`,
+        '/a.js': `import a from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import a from 'one_module';`
       }
     ],
     [
       'Different types of imports across multiple files 1',
       {
-        '/a.js': `import { foo as a } from 'one_module';`,
+        '/a.js': `import { foo as a } from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import a from 'one_module';`
       },
       '(/a.js:1:9), (/b.js:1:7)'
@@ -852,7 +836,9 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     [
       'Different types of imports across multiple files 2',
       {
-        '/a.js': `import * as a from 'one_module';`,
+        '/a.js': `import * as a from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import a from 'one_module';`
       },
       '(/a.js:1:7), (/b.js:1:7)'
@@ -860,7 +846,10 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     [
       'Different types of imports across multiple files 3',
       {
-        '/a.js': `import * as a from 'one_module';`,
+        '/a.js': `import * as a from 'one_module';
+        import { b } from './b.js';
+        import { c } from './c.js';
+        `,
         '/b.js': `import a from 'one_module';`,
         '/c.js': `import * as a from 'one_module';`
       },
@@ -869,7 +858,10 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     [
       'Different types of imports across multiple files 4',
       {
-        '/a.js': `import * as a from 'one_module';`,
+        '/a.js': `import * as a from 'one_module';
+        import { b } from './b.js';
+        import { c } from './c.js';
+        `,
         '/b.js': `import a from 'one_module';`,
         '/c.js': `import { foo as a } from 'one_module';`
       },
@@ -878,21 +870,27 @@ describe('Test throwing DuplicateImportNameErrors', () => {
     [
       'Handles aliasing correctly 1',
       {
-        '/a.js': `import a from 'one_module';`,
+        '/a.js': `import a from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import { default as a } from 'one_module';`
       }
     ],
     [
       'Handles aliasing correctly 2',
       {
-        '/a.js': `import { foo as a } from 'one_module';`,
+        '/a.js': `import { foo as a } from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import { foo } from 'one_module';`
       }
     ],
     [
       'Handles aliasing correctly 3',
       {
-        '/a.js': `import { foo as a } from 'one_module';`,
+        '/a.js': `import { foo as a } from 'one_module';
+        import { b } from './b.js';
+        `,
         '/b.js': `import { a as foo } from 'one_module';`
       }
     ]

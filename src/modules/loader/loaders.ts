@@ -21,16 +21,6 @@ export function setModulesStaticURL(url: string) {
 }
 
 function wrapImporter<T>(func: (p: string) => Promise<T>) {
-  /*
-    Browsers natively support esm's import() but Jest and Node do not. So we need
-    to change which import function we use based on the environment.
-
-    For the browser, we use the function constructor to hide the import calls from
-    webpack so that webpack doesn't try to compile them away.
-
-    Browsers automatically cache import() calls, so we add a query parameter with the
-    current time to always invalidate the cache and handle the memoization ourselves
-  */
   return async (p: string): Promise<T> => {
     try {
       const result = await timeoutPromise(func(p), 10000)
@@ -56,7 +46,7 @@ function wrapImporter<T>(func: (p: string) => Promise<T>) {
 
 // Exported for testing
 export const docsImporter = wrapImporter<{ default: any }>(async p => {
-  // TODO: USe import attributes when they become supported
+  // TODO: Use import attributes when they become supported
   // Import Assertions and Attributes are not widely supported by all
   // browsers yet, so we use fetch in the meantime
   const resp = await fetch(p)
@@ -74,11 +64,9 @@ function getManifestImporter() {
   let manifest: ModuleManifest | null = null
 
   async function func() {
-    if (manifest !== null) {
-      return manifest
+    if (manifest === null) {
+      ;({ default: manifest } = await docsImporter(`${MODULES_STATIC_URL}/modules.json`))
     }
-
-    ;({ default: manifest } = await docsImporter(`${MODULES_STATIC_URL}/modules.json`))
 
     return manifest!
   }
@@ -120,9 +108,16 @@ function getMemoizedDocsImporter() {
 export const memoizedGetModuleManifestAsync = getManifestImporter()
 export const memoizedGetModuleDocsAsync = getMemoizedDocsImporter()
 
-const bundleAndTabImporter = wrapImporter<{ default: ModuleBundle }>(
+/*
+  Browsers natively support esm's import() but Jest and Node do not. So we need
+  to change which import function we use based on the environment.
+
+  For the browser, we use the function constructor to hide the import calls from
+  webpack so that webpack doesn't try to compile them away.
+*/
+const bundleAndTabImporter = wrapImporter<{ default: any }>(
   typeof window !== 'undefined' && process.env.NODE_ENV !== 'test'
-    ? (new Function('path', 'return import(`${path}?q=${Date.now()}`)') as any)
+    ? (new Function('path', 'return import(path)') as any)
     : p => Promise.resolve(require(p))
 )
 
@@ -135,7 +130,7 @@ export async function loadModuleBundleAsync(
     `${MODULES_STATIC_URL}/bundles/${moduleName}.js`
   )
   try {
-    const loadedModule = result(getRequireProvider(context))
+    const loadedModule = (result as ModuleBundle)(getRequireProvider(context))
     return Object.entries(loadedModule).reduce((res, [name, value]) => {
       if (typeof value === 'function') {
         const repr = `function ${name} {\n\t[Function from ${moduleName}\n\tImplementation hidden]\n}`

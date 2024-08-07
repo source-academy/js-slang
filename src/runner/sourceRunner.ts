@@ -2,23 +2,19 @@ import type es from 'estree'
 import * as _ from 'lodash'
 import type { RawSourceMap } from 'source-map'
 
-import { type IOptions, type Result } from '..'
-import { JSSLANG_PROPERTIES, UNKNOWN_LOCATION } from '../constants'
-import { CSEResultPromise, evaluate as CSEvaluate } from '../cse-machine/interpreter'
+import type { IOptions, Result } from '..'
+import { JSSLANG_PROPERTIES } from '../constants'
+import { CSEResultPromise, evaluate } from '../cse-machine/interpreter'
 import { ExceptionError } from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { TimeoutError } from '../errors/timeoutErrors'
 import { transpileToGPU } from '../gpu/gpu'
 import { isPotentialInfiniteLoop } from '../infiniteLoops/errors'
 import { testForInfiniteLoop } from '../infiniteLoops/runtime'
-import { evaluateProgram as evaluate } from '../interpreter/interpreter'
-import { nonDetEvaluate } from '../interpreter/interpreter-non-det'
-import { transpileToLazy } from '../lazy/lazy'
 import preprocessFileImports from '../modules/preprocessor'
 import { defaultAnalysisOptions } from '../modules/preprocessor/analyzer'
 import { defaultLinkerOptions } from '../modules/preprocessor/linker'
 import { parse } from '../parser/parser'
-import { AsyncScheduler, NonDetScheduler, PreemptiveScheduler } from '../schedulers'
 import {
   callee,
   getEvaluationSteps,
@@ -28,11 +24,8 @@ import {
 } from '../stepper/stepper'
 import { sandboxedEval } from '../transpiler/evalContainer'
 import { transpile } from '../transpiler/transpiler'
-import { Chapter, type Context, type RecursivePartial, type Scheduler, Variant } from '../types'
-import { forceIt } from '../utils/operators'
+import { Chapter, type Context, type RecursivePartial, Variant } from '../types'
 import { validateAndAnnotate } from '../validator/validator'
-import { compileForConcurrent } from '../vm/svml-compiler'
-import { runWithProgram } from '../vm/svml-machine'
 import type { FileGetter } from '../modules/moduleTypes'
 import { mapResult } from '../alt-langs/mapper'
 import { toSourceError } from './errors'
@@ -40,7 +33,6 @@ import { fullJSRunner } from './fullJSRunner'
 import { determineExecutionMethod, determineVariant, resolvedErrorPromise } from './utils'
 
 const DEFAULT_SOURCE_OPTIONS: Readonly<IOptions> = {
-  scheduler: 'async',
   steps: 1000,
   stepLimit: -1,
   executionMethod: 'auto',
@@ -63,29 +55,6 @@ let previousCode: {
   entrypointFilePath: string
 } | null = null
 let isPreviousCodeTimeoutError = false
-
-function runConcurrent(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  if (context.shouldIncreaseEvaluationTimeout) {
-    context.nativeStorage.maxExecTime *= JSSLANG_PROPERTIES.factorToIncreaseBy
-  } else {
-    context.nativeStorage.maxExecTime = options.originalMaxExecTime
-  }
-
-  try {
-    return Promise.resolve({
-      status: 'finished',
-      context,
-      value: runWithProgram(compileForConcurrent(program, context), context)
-    })
-  } catch (error) {
-    if (error instanceof RuntimeSourceError || error instanceof ExceptionError) {
-      context.errors.push(error) // use ExceptionErrors for non Source Errors
-      return resolvedErrorPromise
-    }
-    context.errors.push(new ExceptionError(error, UNKNOWN_LOCATION))
-    return resolvedErrorPromise
-  }
-}
 
 function runSubstitution(
   program: es.Program,
@@ -114,20 +83,6 @@ function runSubstitution(
   })
 }
 
-function runInterpreter(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  let it = evaluate(program, context)
-  let scheduler: Scheduler
-  if (context.variant === Variant.NON_DET) {
-    it = nonDetEvaluate(program, context)
-    scheduler = new NonDetScheduler()
-  } else if (options.scheduler === 'async') {
-    scheduler = new AsyncScheduler()
-  } else {
-    scheduler = new PreemptiveScheduler(options.steps)
-  }
-  return scheduler.run(it, context)
-}
-
 async function runNative(
   program: es.Program,
   context: Context,
@@ -153,17 +108,10 @@ async function runNative(
       case Variant.GPU:
         transpileToGPU(transpiledProgram)
         break
-      case Variant.LAZY:
-        transpileToLazy(transpiledProgram)
-        break
     }
 
     ;({ transpiled, sourceMapJson } = transpile(transpiledProgram, context))
     let value = sandboxedEval(transpiled, context.nativeStorage)
-
-    if (context.variant === Variant.LAZY) {
-      value = forceIt(value)
-    }
 
     if (!options.isPrelude) {
       isPreviousCodeTimeoutError = false
@@ -218,7 +166,7 @@ async function runNative(
 }
 
 function runCSEMachine(program: es.Program, context: Context, options: IOptions): Promise<Result> {
-  const value = CSEvaluate(program, context, options)
+  const value = evaluate(program, context, options)
   return CSEResultPromise(context, value)
 }
 
@@ -238,7 +186,7 @@ async function sourceRunner(
     context.chapter === Chapter.FULL_TS ||
     context.chapter === Chapter.PYTHON_1
   ) {
-    return fullJSRunner(program, context, theOptions.importOptions)
+    return fullJSRunner(program, context)
   }
 
   validateAndAnnotate(program, context)
@@ -246,19 +194,20 @@ async function sourceRunner(
     return resolvedErrorPromise
   }
 
+  // TODO: What should we do when concurrent variant is used for execution?
   if (context.variant === Variant.CONCURRENT) {
-    return runConcurrent(program, context, theOptions)
-  }
-
-  if (theOptions.useSubst) {
-    return runSubstitution(program, context, theOptions)
+    throw new Error('Cannot execute with concurrent variant!')
   }
 
   determineExecutionMethod(theOptions, context, program, isVerboseErrorsEnabled)
 
+  if (context.executionMethod === 'stepper' || theOptions.useSubst) {
+    return runSubstitution(program, context, theOptions)
+  }
+
   // native, don't evaluate prelude
   if (context.executionMethod === 'native' && context.variant === Variant.NATIVE) {
-    return await fullJSRunner(program, context, theOptions.importOptions)
+    return fullJSRunner(program, context)
   }
 
   // All runners after this point evaluate the prelude.
@@ -288,7 +237,7 @@ async function sourceRunner(
     return runNative(program, context, theOptions)
   }
 
-  return runInterpreter(program, context, theOptions)
+  throw new Error(`Unknown execution method: ${context.executionMethod}`)
 }
 
 /**
@@ -357,12 +306,11 @@ export function runCodeInSource(
   context: Context,
   options: RecursivePartial<IOptions> = {},
   defaultFilePath: string = '/default.js',
-  fileGetter?: FileGetter
+  fileGetter: FileGetter = () => Promise.resolve(undefined)
 ) {
   return sourceFilesRunner(
     path => {
       if (path === defaultFilePath) return Promise.resolve(code)
-      if (!fileGetter) return Promise.resolve(undefined)
       return fileGetter(path)
     },
     defaultFilePath,

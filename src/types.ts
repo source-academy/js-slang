@@ -6,13 +6,14 @@
 /* tslint:disable:max-classes-per-file */
 
 import { SourceLocation } from 'acorn'
-import * as es from 'estree'
+import type es from 'estree'
 
 import { EnvTree } from './createContext'
 import Heap from './cse-machine/heap'
 import { Control, Stash } from './cse-machine/interpreter'
 import type { ModuleFunctions } from './modules/moduleTypes'
 import { Representation } from './alt-langs/mapper'
+import { TypeEnvironment } from './typeChecker/types'
 
 /**
  * Defines functions that act as built-ins, but might rely on
@@ -47,15 +48,6 @@ export interface SourceError {
   elaborate(): string
 }
 
-export interface Rule<T extends Node> {
-  name: string
-  disableFromChapter?: Chapter
-  disableForVariants?: Variant[]
-  checkers: {
-    [name: string]: (node: T, ancestors: Node[]) => SourceError[]
-  }
-}
-
 export interface Comment {
   type: 'Line' | 'Block'
   value: string
@@ -64,7 +56,7 @@ export interface Comment {
   loc: SourceLocation | undefined
 }
 
-export type ExecutionMethod = 'native' | 'interpreter' | 'auto' | 'cse-machine'
+export type ExecutionMethod = 'native' | 'auto' | 'cse-machine' | 'stepper'
 
 export enum Chapter {
   SOURCE_1 = 1,
@@ -94,8 +86,6 @@ export enum Variant {
   TYPED = 'typed',
   NATIVE = 'native',
   WASM = 'wasm',
-  LAZY = 'lazy',
-  NON_DET = 'non-det',
   CONCURRENT = 'concurrent',
   GPU = 'gpu',
   EXPLICIT_CONTROL = 'explicit-control'
@@ -104,19 +94,6 @@ export enum Variant {
 export interface Language {
   chapter: Chapter
   variant: Variant
-}
-
-export type ValueWrapper = LetWrapper | ConstWrapper
-
-export interface LetWrapper {
-  kind: 'let'
-  getValue: () => Value
-  assignNewValue: <T>(newValue: T) => T
-}
-
-export interface ConstWrapper {
-  kind: 'const'
-  getValue: () => Value
 }
 
 export interface NativeStorage {
@@ -262,12 +239,6 @@ export interface Environment {
   thisContext?: Value
 }
 
-export interface Thunk {
-  value: any
-  isMemoized: boolean
-  f: () => any
-}
-
 export interface Error {
   status: 'error'
 }
@@ -289,17 +260,12 @@ export interface Suspended {
   context: Context
 }
 
-export type SuspendedNonDet = Omit<Suspended, 'status'> & { status: 'suspended-non-det' } & {
-  value: Value
-  representation?: Representation // never used, only kept for consistency with Finished
-}
-
 export interface SuspendedCseEval {
   status: 'suspended-cse-eval'
   context: Context
 }
 
-export type Result = Suspended | SuspendedNonDet | Finished | Error | SuspendedCseEval
+export type Result = Suspended | Finished | Error | SuspendedCseEval
 
 export interface Scheduler {
   run(it: IterableIterator<Value>, context: Context): Promise<Result>
@@ -364,150 +330,6 @@ export {
   SVMFunction
 } from './vm/svml-compiler'
 
-export type ContiguousArrayElementExpression = Exclude<es.ArrayExpression['elements'][0], null>
-
-export type ContiguousArrayElements = ContiguousArrayElementExpression[]
-
-// =======================================
-// Types used in type checker for type inference/type error checker for Source Typed variant
-// =======================================
-
-export type PrimitiveType = 'boolean' | 'null' | 'number' | 'string' | 'undefined'
-
-export type TSAllowedTypes = 'any' | 'void'
-
-export const disallowedTypes = ['bigint', 'never', 'object', 'symbol', 'unknown'] as const
-
-export type TSDisallowedTypes = (typeof disallowedTypes)[number]
-
-// All types recognised by type parser as basic types
-export type TSBasicType = PrimitiveType | TSAllowedTypes | TSDisallowedTypes
-
-// Types for nodes used in type inference
-export type NodeWithInferredType<T extends Node> = InferredType & T
-
-export type FuncDeclWithInferredTypeAnnotation = NodeWithInferredType<es.FunctionDeclaration> &
-  TypedFuncDecl
-
-export type InferredType = Untypable | Typed | NotYetTyped
-
-export interface TypedFuncDecl {
-  functionInferredType?: Type
-}
-
-export interface Untypable {
-  typability?: 'Untypable'
-  inferredType?: Type
-}
-
-export interface NotYetTyped {
-  typability?: 'NotYetTyped'
-  inferredType?: Type
-}
-
-export interface Typed {
-  typability?: 'Typed'
-  inferredType?: Type
-}
-
-// Constraints used in type inference
-export type Constraint = 'none' | 'addable'
-
-// Types used by both type inferencer and Source Typed
-export type Type =
-  | Primitive
-  | Variable
-  | FunctionType
-  | List
-  | Pair
-  | SArray
-  | UnionType
-  | LiteralType
-
-export interface Primitive {
-  kind: 'primitive'
-  name: PrimitiveType | TSAllowedTypes
-  // Value is needed for Source Typed type error checker due to existence of literal types
-  value?: string | number | boolean
-}
-
-// In Source Typed, Variable type is used for
-// 1. Type parameters
-// 2. Type references of generic types with type arguments
-export interface Variable {
-  kind: 'variable'
-  name: string
-  constraint: Constraint
-  // Used in Source Typed variant to store type arguments of generic types
-  typeArgs?: Type[]
-}
-
-// cannot name Function, conflicts with TS
-export interface FunctionType {
-  kind: 'function'
-  parameterTypes: Type[]
-  returnType: Type
-}
-export interface List {
-  kind: 'list'
-  elementType: Type
-  // Used in Source Typed variants to check for type mismatches against pairs
-  typeAsPair?: Pair
-}
-
-export interface Pair {
-  kind: 'pair'
-  headType: Type
-  tailType: Type
-}
-export interface SArray {
-  kind: 'array'
-  elementType: Type
-}
-
-// Union types and literal types are only used in Source Typed for typechecking
-export interface UnionType {
-  kind: 'union'
-  types: Type[]
-}
-
-export interface LiteralType {
-  kind: 'literal'
-  value: string | number | boolean
-}
-
-export type BindableType = Type | ForAll | PredicateType
-
-// In Source Typed, ForAll type is used for generic types
-export interface ForAll {
-  kind: 'forall'
-  polyType: Type
-  // Used in Source Typed variant to store type parameters of generic types
-  typeParams?: Variable[]
-}
-
-export interface PredicateType {
-  kind: 'predicate'
-  ifTrueType: Type | ForAll
-}
-
-export type PredicateTest = {
-  node: NodeWithInferredType<es.CallExpression>
-  ifTrueType: Type | ForAll
-  argVarName: string
-}
-
-/**
- * Each element in the TypeEnvironment array represents a different scope
- * (e.g. first element is the global scope, last element is the closest).
- * Within each scope, variable types/declaration kinds, as well as type aliases, are stored.
- */
-export type TypeEnvironment = {
-  typeMap: Map<string, BindableType>
-  declKindMap: Map<string, AllowedDeclarations>
-  typeAliasMap: Map<string, Type | ForAll>
-}[]
-
 /**
  * Helper type to recursively make properties that are also objects
  * partial
@@ -522,3 +344,5 @@ export type RecursivePartial<T> = T extends Array<any>
       [K in keyof T]: RecursivePartial<T[K]>
     }>
   : T
+
+export type NodeTypeToNode<T extends Node['type']> = Extract<Node, { type: T }>
