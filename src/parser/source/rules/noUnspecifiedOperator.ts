@@ -183,10 +183,9 @@ export class StrictEqualityError extends NoUnspecifiedOperatorError<es.BinaryExp
 }
 
 const noUnspecifiedOperator = Object.entries(operators).reduce(
-  (
-    res,
-    [nodeType, { checker, allowed, disallowed, allowedSnippetMapper, disallowedSnippetMapper }]
-  ) => {
+  (res, [nodeType, ruleObj]) => {
+    const { checker, allowed, disallowed, allowedSnippetMapper, disallowedSnippetMapper } = ruleObj
+
     const allowedSnippets = allowed.map(each => {
       // type intersection gets narrowed down to never, so we manually suppress the ts error
       // @ts-expect-error 2345
@@ -201,7 +200,7 @@ const noUnspecifiedOperator = Object.entries(operators).reduce(
       testSnippets: [...res.testSnippets!, ...disallowedSnippets, ...allowedSnippets],
       checkers: {
         ...res.checkers,
-        [nodeType]: checker
+        [nodeType]: checker.bind(ruleObj)
       }
     }
   },
