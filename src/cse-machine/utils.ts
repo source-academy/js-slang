@@ -6,12 +6,12 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import type { Environment, Node, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
+import Closure from './closure'
+import { Continuation, isCallWithCurrentContinuation } from './continuations'
 import Heap from './heap'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
-import { AppInstr, EnvArray, ControlItem, Instr, InstrType } from './types'
-import Closure from './closure'
-import { Continuation, isCallWithCurrentContinuation } from './continuations'
+import { AppInstr, ControlItem, EnvArray, Instr, InstrType } from './types'
 
 /**
  * Typeguard for Instr to distinguish between program statements and instructions.
@@ -276,7 +276,7 @@ export const createEnvironment = (
   const environment: Environment = {
     name: isIdentifier(callExpression.callee)
       ? callExpression.callee.name
-      : closure.declaredName ?? closure.functionName,
+      : (closure.declaredName ?? closure.functionName),
     tail: closure.environment,
     head: {},
     heap: new Heap(),
