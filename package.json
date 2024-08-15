@@ -48,7 +48,9 @@
     "source-map": "0.7.3"
   },
   "resolutions": {
-    "**/gl": "^8.0.2"
+    "**/gl": "^8.0.2",
+    "**/string-width": "^4.2.0",
+    "**/strip-ansi": "^6.0.0"
   },
   "scripts": {
     "build": "yarn docs && yarn build:slang",
