@@ -16,4 +16,4 @@ coverage/
 test-report.html
 
 yarn-error.log
-.yarn/install-state.gz
+**/.yarn/install-state.gz
