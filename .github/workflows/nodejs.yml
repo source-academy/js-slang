@@ -30,14 +30,13 @@ jobs:
       run: |
         sudo apt-get update && \
         sudo apt-get install -y --no-install-recommends \
-        libxi-dev libgl1-mesa-dev \
         texlive texlive-fonts-extra texlive-lang-cjk latexmk latex-cjk-all
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
         node-version: 20
         cache: yarn
-    - run: yarn install --frozen-lockfile
+    - run: yarn install --immutable
     - run: yarn build
     - run: yarn format:ci
     - run: yarn eslint

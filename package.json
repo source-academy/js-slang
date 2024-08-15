@@ -27,9 +27,7 @@
   "files": [
     "dist"
   ],
-  "bin": {
-    "js-slang": "dist/repl/index.js"
-  },
+  "bin": "dist/repl/index.js",
   "dependencies": {
     "@babel/parser": "^7.19.4",
     "@commander-js/extra-typings": "^12.0.1",
@@ -46,9 +44,6 @@
     "js-base64": "^3.7.5",
     "lodash": "^4.17.21",
     "source-map": "0.7.3"
-  },
-  "resolutions": {
-    "**/gl": "^6.0.2"
   },
   "scripts": {
     "build": "yarn docs && yarn build:slang",
@@ -86,9 +81,12 @@
     "jest-html-reporter": "^3.2.0",
     "jsdoc": "3.6.11",
     "jsdom": "^19.0.0",
-    "prettier": "^2.1.2",
+    "prettier": "^3.3.3",
     "ts-jest": "^29.0.0",
     "typescript": "^4.0.3"
+  },
+  "resolutions": {
+    "gl": "^8.0.2"
   },
   "jest": {
     "snapshotFormat": {
@@ -130,5 +128,6 @@
         }
       ]
     ]
-  }
+  },
+  "packageManager": "yarn@4.4.0"
 }

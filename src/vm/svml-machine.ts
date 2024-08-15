@@ -657,24 +657,24 @@ function node_kind(x: number) {
   return x === NUMBER_TAG
     ? 'number'
     : x === BOOL_TAG
-    ? 'boolean'
-    : x === CLOSURE_TAG
-    ? 'closure'
-    : x === RTS_FRAME_TAG
-    ? 'RTS frame'
-    : x === OS_TAG
-    ? 'OS'
-    : x === ENV_TAG
-    ? 'environment'
-    : x === UNDEFINED_TAG
-    ? 'undefined'
-    : x === NULL_TAG
-    ? 'null'
-    : x === STRING_TAG
-    ? 'string'
-    : x === ARRAY_TAG
-    ? 'array'
-    : ' (unknown node kind)'
+      ? 'boolean'
+      : x === CLOSURE_TAG
+        ? 'closure'
+        : x === RTS_FRAME_TAG
+          ? 'RTS frame'
+          : x === OS_TAG
+            ? 'OS'
+            : x === ENV_TAG
+              ? 'environment'
+              : x === UNDEFINED_TAG
+                ? 'undefined'
+                : x === NULL_TAG
+                  ? 'null'
+                  : x === STRING_TAG
+                    ? 'string'
+                    : x === ARRAY_TAG
+                      ? 'array'
+                      : ' (unknown node kind)'
 }
 export function show_heap(s: string) {
   const len = HEAP.length
