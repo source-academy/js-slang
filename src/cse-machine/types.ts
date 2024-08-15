@@ -22,9 +22,7 @@ export enum InstrType {
   CONTINUE = 'Continue',
   CONTINUE_MARKER = 'ContinueMarker',
   BREAK = 'Break',
-  BREAK_MARKER = 'BreakMarker',
-  GENERATE_CONT = 'GenerateContinuation',
-  RESUME_CONT = 'ResumeContinuation'
+  BREAK_MARKER = 'BreakMarker'
 }
 
 interface BaseInstr {
@@ -76,12 +74,6 @@ export interface ArrLitInstr extends BaseInstr {
   arity: number
 }
 
-export type GenContInstr = BaseInstr
-
-export interface ResumeContInstr extends BaseInstr {
-  numOfArgs: number
-}
-
 export type Instr =
   | BaseInstr
   | WhileInstr
@@ -90,10 +82,10 @@ export type Instr =
   | BranchInstr
   | EnvInstr
   | ArrLitInstr
-  | GenContInstr
-  | ResumeContInstr
 
-export type ControlItem = Node | Instr
+export type ControlItem = (Node | Instr) & {
+  isEnvDependent?: boolean
+}
 
 // Every array also has the properties `id` and `environment` for use in the frontend CSE Machine
 export type EnvArray = any[] & {

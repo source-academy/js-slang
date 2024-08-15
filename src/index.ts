@@ -27,20 +27,11 @@ export { SourceDocumentation } from './editors/ace/docTooltip'
 
 import { CSEResultPromise, resumeEvaluate } from './cse-machine/interpreter'
 import { ModuleNotFoundError } from './modules/errors'
-import type { ImportOptions, SourceFiles } from './modules/moduleTypes'
+import type { ImportOptions } from './modules/moduleTypes'
 import preprocessFileImports from './modules/preprocessor'
 import { validateFilePath } from './modules/preprocessor/filePaths'
-import { mergeImportOptions } from './modules/utils'
 import { getKeywords, getProgramNames, NameDeclaration } from './name-extractor'
-import { parse } from './parser/parser'
-import { decodeError, decodeValue } from './parser/scheme'
-import {
-  fullJSRunner,
-  hasVerboseErrors,
-  htmlRunner,
-  resolvedErrorPromise,
-  sourceFilesRunner
-} from './runner'
+import { htmlRunner, resolvedErrorPromise, sourceFilesRunner } from './runner'
 
 export interface IOptions {
   scheduler: 'preemptive' | 'async'
@@ -216,6 +207,9 @@ export async function runInContext(
   return runFilesInContext(files, defaultFilePath, context, options)
 }
 
+// this is the first entrypoint for all source files.
+// as such, all mapping functions required by alternate languages
+// should be defined here.
 export async function runFilesInContext(
   files: Partial<Record<string, string>>,
   entrypointFilePath: string,
@@ -230,58 +224,30 @@ export async function runFilesInContext(
     }
   }
 
-  const code = files[entrypointFilePath]
-  if (code === undefined) {
-    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
-    return resolvedErrorPromise
-  }
-
-  if (
-    context.chapter === Chapter.FULL_JS ||
-    context.chapter === Chapter.FULL_TS ||
-    context.chapter === Chapter.PYTHON_1
-  ) {
-    const program = parse(code, context)
-    if (program === null) {
+  let result: Result
+  if (context.chapter === Chapter.HTML) {
+    const code = files[entrypointFilePath]
+    if (code === undefined) {
+      context.errors.push(new ModuleNotFoundError(entrypointFilePath))
       return resolvedErrorPromise
     }
-
-    const fullImportOptions = mergeImportOptions(options.importOptions)
-    return fullJSRunner(program, context, fullImportOptions)
-  }
-
-  if (context.chapter === Chapter.HTML) {
-    return htmlRunner(code, context, options)
-  }
-
-  if (context.chapter <= +Chapter.SCHEME_1 && context.chapter >= +Chapter.FULL_SCHEME) {
-    // If the language is scheme, we need to format all errors and returned values first
-    // Use the standard runner to get the result
-    const evaluated: Promise<Result> = sourceFilesRunner(
-      files,
+    result = await htmlRunner(code, context, options)
+  } else {
+    // FIXME: Clean up state management so that the `parseError` function is pure.
+    //        This is not a huge priority, but it would be good not to make use of
+    //        global state.
+    ;({ result, verboseErrors } = await sourceFilesRunner(
+      p => Promise.resolve(files[p]),
       entrypointFilePath,
       context,
-      options
-    ).then(result => {
-      // Format the returned value
-      if (result.status === 'finished') {
-        return {
-          ...result,
-          value: decodeValue(result.value)
-        } as Finished
+      {
+        ...options,
+        shouldAddFileName: options.shouldAddFileName ?? Object.keys(files).length > 1
       }
-      return result
-    })
-    // Format all errors in the context
-    context.errors = context.errors.map(error => decodeError(error))
-    return evaluated
+    ))
   }
 
-  // FIXME: Clean up state management so that the `parseError` function is pure.
-  //        This is not a huge priority, but it would be good not to make use of
-  //        global state.
-  verboseErrors = hasVerboseErrors(code)
-  return sourceFilesRunner(files, entrypointFilePath, context, options)
+  return result
 }
 
 export function resume(result: Result): Finished | ResultError | Promise<Result> {
@@ -327,23 +293,19 @@ export async function compileFiles(
     }
   }
 
-  const entrypointCode = files[entrypointFilePath]
-  if (entrypointCode === undefined) {
-    context.errors.push(new ModuleNotFoundError(entrypointFilePath))
-    return undefined
-  }
-
-  const preprocessedProgram = await preprocessFileImports(
-    files as SourceFiles,
+  const preprocessResult = await preprocessFileImports(
+    p => Promise.resolve(files[p]),
     entrypointFilePath,
-    context
+    context,
+    { shouldAddFileName: Object.keys(files).length > 1 }
   )
-  if (!preprocessedProgram) {
+
+  if (!preprocessResult.ok) {
     return undefined
   }
 
   try {
-    return compileToIns(preprocessedProgram, undefined, vmInternalFunctions)
+    return compileToIns(preprocessResult.program, undefined, vmInternalFunctions)
   } catch (error) {
     context.errors.push(error)
     return undefined

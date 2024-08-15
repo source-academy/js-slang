@@ -6,12 +6,12 @@ import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import type { Environment, Node, StatementSequence, Value } from '../types'
 import * as ast from '../utils/ast/astCreator'
-import { isContinuation } from './continuations'
 import Heap from './heap'
 import * as instr from './instrCreator'
 import { Control } from './interpreter'
 import { AppInstr, EnvArray, ControlItem, Instr, InstrType } from './types'
 import Closure from './closure'
+import { Continuation, isCallWithCurrentContinuation } from './continuations'
 
 /**
  * Typeguard for Instr to distinguish between program statements and instructions.
@@ -505,10 +505,19 @@ export const checkNumberOfArguments = (
         )
       )
     }
-  } else if (isContinuation(callee)) {
+  } else if (isCallWithCurrentContinuation(callee)) {
+    // call/cc should have a single argument
+    if (args.length !== 1) {
+      return handleRuntimeError(
+        context,
+        new errors.InvalidNumberOfArguments(exp, 1, args.length, false)
+      )
+    }
+    return undefined
+  } else if (callee instanceof Continuation) {
     // Continuations have variadic arguments,
     // and so we can let it pass
-    // in future, if we can somehow check the number of arguments
+    // TODO: in future, if we can somehow check the number of arguments
     // expected by the continuation, we can add a check here.
     return undefined
   } else {
@@ -662,4 +671,70 @@ export const hasContinueStatement = (block: es.BlockStatement | StatementSequenc
     }
   }
   return hasContinue
+}
+
+/**
+ * Checks whether the evaluation of the given command depends on the current environment.
+ * @param command The command to be checked
+ * @return `true` if the command is environment depedent, else `false`.
+ * NOTE: this check is meant to detect and avoid pushing environment instruction onto the
+ * control in SIMPLE CASES, so it might not be exhaustive
+ */
+export const isEnvDependent = (command: ControlItem): boolean => {
+  // If the result is already calculated, return it
+  if (command.isEnvDependent != undefined) {
+    return command.isEnvDependent
+  }
+
+  // Otherwise, calculate and store the result
+  let isDependent = true
+  if (isInstr(command)) {
+    const type = command.instrType
+    isDependent = !(
+      type === InstrType.UNARY_OP ||
+      type === InstrType.BINARY_OP ||
+      type === InstrType.POP ||
+      type === InstrType.ARRAY_ACCESS ||
+      type === InstrType.ARRAY_ASSIGNMENT ||
+      type === InstrType.RESET ||
+      type === InstrType.CONTINUE_MARKER ||
+      type === InstrType.BREAK_MARKER
+    )
+  } else {
+    const type = command.type
+    switch (type) {
+      case 'StatementSequence':
+        isDependent = command.body.some((statement: es.Statement) => isEnvDependent(statement))
+      case 'Literal':
+        isDependent = false
+        break
+      case 'BinaryExpression':
+        isDependent = isEnvDependent(command.left) || isEnvDependent(command.right)
+        break
+      case 'LogicalExpression':
+        isDependent = isEnvDependent(command.left) || isEnvDependent(command.right)
+        break
+      case 'UnaryExpression':
+        isDependent = isEnvDependent(command.argument)
+        break
+      case 'ExpressionStatement':
+        isDependent = isEnvDependent(command.expression)
+        break
+      default:
+        break
+    }
+  }
+  command.isEnvDependent = isDependent
+  return isDependent
+}
+
+/**
+ * Checks whether an environment instruction needs to be pushed onto the control.
+ * @param control The current control to be checked
+ * @return `true` if the environment instruction can be avoided, else `false`.
+ * NOTE: this check is meant to detect and avoid pushing environment instruction onto the
+ * control in SIMPLE CASES, so it might not be exhaustive
+ */
+export const canAvoidEnvInstr = (control: Control): boolean => {
+  return !control.getStack().some((command: ControlItem) => isEnvDependent(command))
 }

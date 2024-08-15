@@ -7,7 +7,6 @@ import type { Result } from '..'
 import { NATIVE_STORAGE_ID } from '../constants'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import type { ImportOptions } from '../modules/moduleTypes'
-import hoistAndMergeImports from '../modules/preprocessor/transformers/hoistAndMergeImports'
 import { parse } from '../parser/parser'
 import {
   evallerReplacer,
@@ -61,9 +60,6 @@ export async function fullJSRunner(
   const preludeAndBuiltins: es.Statement[] = containsPrevEval(context)
     ? []
     : [...getBuiltins(context.nativeStorage), ...prelude]
-
-  // modules
-  hoistAndMergeImports(program)
 
   // evaluate and create a separate block for preludes and builtins
   const preEvalProgram: es.Program = create.program([

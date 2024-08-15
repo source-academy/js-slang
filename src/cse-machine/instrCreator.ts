@@ -13,10 +13,8 @@ import {
   BranchInstr,
   EnvInstr,
   ForInstr,
-  GenContInstr,
   Instr,
   InstrType,
-  ResumeContInstr,
   UnOpInstr,
   WhileInstr
 } from './types'
@@ -136,16 +134,5 @@ export const breakInstr = (srcNode: Node): Instr => ({
 
 export const breakMarkerInstr = (srcNode: Node): Instr => ({
   instrType: InstrType.BREAK_MARKER,
-  srcNode
-})
-
-export const genContInstr = (srcNode: Node): GenContInstr => ({
-  instrType: InstrType.GENERATE_CONT,
-  srcNode
-})
-
-export const resumeContInstr = (numOfArgs: number, srcNode: es.Node): ResumeContInstr => ({
-  numOfArgs: numOfArgs,
-  instrType: InstrType.RESUME_CONT,
   srcNode
 })

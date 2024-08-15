@@ -1,9 +1,10 @@
-import * as fs from 'fs'
+import type fslib from 'fs/promises'
 import * as repl from 'repl' // 'repl' here refers to the module named 'repl' in index.d.ts
 import { inspect } from 'util'
+import { Command } from '@commander-js/extra-typings'
 
+import { createContext, type IOptions, parseError, type Result, resume, runInContext } from '..'
 import { CUT, TRY_AGAIN } from '../constants'
-import { createContext, IOptions, parseError, Result, resume, runInContext } from '../index'
 import Closure from '../interpreter/closure'
 import { Chapter, Context, SuspendedNonDet, Variant } from '../types'
 
@@ -113,20 +114,16 @@ function _startRepl(chapter: Chapter = Chapter.SOURCE_1, useSubst: boolean, prel
   })
 }
 
-function main() {
-  const firstArg = process.argv[2]
-  if (process.argv.length === 3 && String(Number(firstArg)) !== firstArg.trim()) {
-    fs.readFile(firstArg, 'utf8', (err, data) => {
-      if (err) {
-        throw err
-      }
-      _startRepl(Chapter.SOURCE_3, false, data)
-    })
-  } else {
-    const chapter = Chapter.SOURCE_3
-    const useSubst = process.argv.length > 3 ? process.argv[3] === 'subst' : false
-    _startRepl(chapter, useSubst)
-  }
-}
+export const nonDetCommand = new Command('non-det')
+  .option('--useSubst')
+  .argument('<filename>')
+  .action(async (fileName, { useSubst }) => {
+    if (fileName !== undefined) {
+      const fs: typeof fslib = require('fs/promises')
+      const data = await fs.readFile(fileName, 'utf-8')
 
-main()
+      _startRepl(Chapter.SOURCE_3, false, data)
+    } else {
+      _startRepl(Chapter.SOURCE_3, !!useSubst)
+    }
+  })

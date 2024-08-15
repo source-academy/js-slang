@@ -1,0 +1,152 @@
+\documentclass[epic,eepic,10pt,a4paper]{article}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{graphicx,bookman}
+\usepackage{graphics}
+\usepackage{CJKutf8}
+\usepackage{latexsym}
+\usepackage{mathtools}
+\usepackage{amsmath,amssymb}
+
+\usepackage[T1]{fontenc}
+
+\usepackage[paper=210mm:297mm]{typearea}
+
+\usepackage{listings}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={const, let, break, case, catch, continue, debugger, default, delete, do, else, finally, for, function, if, in, instanceof, new, return, switch, this, throw, try, typeof, var, void, while, with},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  sensitive=true
+}
+
+\lstset{
+   language=JavaScript,
+   basicstyle=\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   escapechar={^}
+}
+
+\pagestyle{myheadings}
+
+% ALIGN EVEN- AND ODD-NUMBERED PAGES.
+\evensidemargin 35pt
+
+% HORIZONTAL MARGINS
+% Left margin 1 inch (0 + 1)
+\setlength{\oddsidemargin}{0in}
+% Text width 6.5 inch (so right margin 1 inch).
+\setlength{\textwidth}{6.5in}
+
+% ----------------
+% VERTICAL MARGINS
+% Top margin 0.5 inch (-0.5 + 1)
+\setlength{\topmargin}{-0.5in}
+% Head height 0.25 inch (where page headers go)
+\setlength{\headheight}{0.25in}
+% Head separation 0.25 inch (between header and top line of text)
+\setlength{\headsep}{0.25in}
+% Text height 8.5 inch (so bottom margin 1.5 in)
+\setlength{\textheight}{10.0in}
+
+% ----------------
+% PARAGRAPH INDENTATION
+\setlength{\parindent}{0in}
+
+% SPACE BETWEEN PARAGRAPHS
+%\setlength{\parskip}{\medskipamount}
+
+% ----------------
+% EVALUATION SYMBOL
+\newcommand{\evalsto}{$\Longrightarrow$}
+
+% ----------------
+% STRUTS
+% HORIZONTAL STRUT.  One argument (width).
+\newcommand{\hstrut}[1]{\hspace*{#1}}
+% VERTICAL STRUT. Two arguments (offset from baseline, height).
+\newcommand{\vstrut}[2]{\rule[#1]{0in}{#2}}
+
+% ----------------
+% EMPTY BOXES OF VARIOUS WIDTHS, FOR INDENTATION
+\newcommand{\hm}{\hspace*{1em}}
+\newcommand{\hmm}{\hspace*{2em}}
+\newcommand{\hmmm}{\hspace*{3em}}
+\newcommand{\hmmmm}{\hspace*{4em}}
+
+% ----------------
+% VARIOUS CONVENIENT WIDTHS RELATIVE TO THE TEXT WIDTH, FOR BOXES.
+\newlength{\hlessmm}
+\setlength{\hlessmm}{\textwidth}
+\addtolength{\hlessmm}{-2em}
+
+\newlength{\hlessmmmm}
+\setlength{\hlessmmmm}{\textwidth}
+\addtolength{\hlessmmmm}{-4em}
+
+% ----------------
+% ``TIGHTLIST'' ENVIRONMENT (no para space between items, small indent)
+\newenvironment{tightlist}%
+{\begin{list}{$\bullet$}{%
+    \setlength{\topsep}{0in}
+    \setlength{\partopsep}{0in}
+    \setlength{\itemsep}{0in}
+    \setlength{\parsep}{0in}
+    \setlength{\leftmargin}{1.5em}
+    \setlength{\rightmargin}{0in}
+    \setlength{\itemindent}{0in}
+}
+}%
+{\end{list}
+}
+
+% ----------------
+% CODE FONT (e.g. {\cf x := 0}).
+\newcommand{\cf}{\footnotesize\tt}
+
+% ----------------
+% INSTRUCTION POINTER
+\newcommand{\IP}{$\bullet$}
+\newcommand{\goesto}{$\longrightarrow$}
+
+% \illuswidth is used to set up boxes around illustrations.
+\newlength{\illuswidth}
+\setlength{\illuswidth}{\textwidth}
+\addtolength{\illuswidth}{-7pt}
+
+% PROBLEM SET HEADER -- args are semester and problem set or solution
+% example: \psetheader{Spring Semester, 1989}{Problem set 1}
+\newcommand{\docheader}[4]{%
+
+  \thispagestyle{empty}
+  
+\markright{SICP, Python Adaptation, #2 #3, #1}
+\begin{center}
+  {\Large {\bf Specification of #2 #3}---#1 edition}\\[10mm]
+
+  {\large #4}\\[5mm]
+
+  {\large National University of Singapore \\
+          School of Computing}\\[10mm]
+
+  {\large \today}\\[10mm]
+\end{center}
+}
+
+% ----------------------------------------------------------------
+% HERE BEGINS THE DOCUMENT
+% start with \begin{document}
+
+
+        \usepackage{url}
+        \usepackage{hyperref}
+
+        \hypersetup{
+    colorlinks=true,
+    linkcolor=Maroon,
+    filecolor=Maroon,      
+    urlcolor=Maroon
+}

@@ -6,7 +6,7 @@ interface BaseNodeWithoutComments {
   // The type property should be a string literal. For example, Identifier
   // has: `type: "Identifier"`
   type: string
-  loc?: es.SourceLocation | null | undefined
+  loc?: SourceLocation | null | undefined
   range?: [number, number] | undefined
 }
 
@@ -47,6 +47,12 @@ export type Node = NodeMap[keyof NodeMap]
 export interface Comment extends BaseNodeWithoutComments {
   type: 'Line' | 'Block'
   value: string
+}
+
+export interface SourceLocation {
+  source?: string | null | undefined
+  start: Position
+  end: Position
 }
 
 export interface Position {
@@ -217,13 +223,17 @@ export type Declaration = FunctionDeclaration | VariableDeclaration | ClassDecla
 
 type BaseDeclaration = BaseStatement
 
-export interface FunctionDeclaration extends BaseFunction, BaseDeclaration {
+export interface MaybeNamedFunctionDeclaration extends BaseFunction, BaseDeclaration {
   type: 'FunctionDeclaration'
   /** It is null when a function declaration is a part of the `export default function` statement */
   id: Identifier | null
   body: BlockStatement
   // Added to support type syntax
   returnType?: TSTypeAnnotation
+}
+
+export interface FunctionDeclaration extends MaybeNamedFunctionDeclaration {
+  id: Identifier
 }
 
 export interface VariableDeclaration extends BaseDeclaration {
@@ -486,6 +496,9 @@ export type AssignmentOperator =
   | '|='
   | '^='
   | '&='
+  | '||='
+  | '&&='
+  | '??='
 
 export type UpdateOperator = '++' | '--'
 
@@ -588,10 +601,14 @@ export interface MethodDefinition extends BaseNode {
   static: boolean
 }
 
-export interface ClassDeclaration extends BaseClass, BaseDeclaration {
+export interface MaybeNamedClassDeclaration extends BaseClass, BaseDeclaration {
   type: 'ClassDeclaration'
   /** It is null when a class declaration is a part of the `export default class` statement */
   id: Identifier | null
+}
+
+export interface ClassDeclaration extends MaybeNamedClassDeclaration {
+  id: Identifier
 }
 
 export interface ClassExpression extends BaseClass, BaseExpression {
@@ -659,7 +676,7 @@ export interface ExportSpecifier extends BaseModuleSpecifier {
 
 export interface ExportDefaultDeclaration extends BaseModuleDeclaration {
   type: 'ExportDefaultDeclaration'
-  declaration: Declaration | Expression
+  declaration: MaybeNamedFunctionDeclaration | MaybeNamedClassDeclaration | Expression
 }
 
 export interface ExportAllDeclaration extends BaseModuleDeclaration {

@@ -1,7 +1,7 @@
 import * as _ from 'lodash'
 
-import { RecursivePartial } from '../types'
-import { ImportOptions } from './moduleTypes'
+import type { RecursivePartial } from '../types'
+import type { ImportOptions } from './moduleTypes'
 import { defaultAnalysisOptions } from './preprocessor/analyzer'
 
 const exportDefaultStr = 'export default'

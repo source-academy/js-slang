@@ -1,9 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`adding a string and an integer is ok: expectResult 1`] = `
+Object {
+  "alertResult": Array [],
+  "code": "\\"a\\" + 1",
+  "displayResult": Array [],
+  "numErrors": 0,
+  "parsedErrors": "",
+  "result": "a1",
+  "resultStatus": "finished",
+  "visualiseListResult": Array [],
+}
+`;
+
 exports[`adding an integer and a float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_adder(1.0, BigInt(2))",
+  "code": "1.0 + 2",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -16,7 +29,7 @@ Object {
 exports[`adding two floats is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_adder(1.0, 2.0)",
+  "code": "1.0 + 2.0",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -29,7 +42,7 @@ Object {
 exports[`adding two integers is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_adder(BigInt(1), BigInt(2))",
+  "code": "1 + 2",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -42,7 +55,7 @@ Object {
 exports[`cannot divide non-number values: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_divider(\\"a\\", 2)",
+  "code": "\\"a\\" / 2",
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 1: Error: Expected number on left hand side of operation, got string.",
@@ -55,7 +68,7 @@ Object {
 exports[`cannot floor non-number values: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_floorer(\\"a\\", 2)",
+  "code": "\\"a\\" // 2",
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 1: Error: Expected number on left hand side of operation, got string.",
@@ -68,7 +81,7 @@ Object {
 exports[`cannot mod non-number values: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_modder(\\"a\\", 2)",
+  "code": "\\"a\\" % 2",
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 1: Error: Expected number on left hand side of operation, got string.",
@@ -81,10 +94,10 @@ Object {
 exports[`cannot multiply non-number values: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_multiplier(\\"a\\", 2)",
+  "code": "True * 2",
   "displayResult": Array [],
   "numErrors": 1,
-  "parsedErrors": "Line 1: Error: Expected number on left hand side of operation, got string.",
+  "parsedErrors": "Line 1: Error: Invalid types for multiply operation: boolean, bigint",
   "result": undefined,
   "resultStatus": "error",
   "visualiseListResult": Array [],
@@ -94,7 +107,7 @@ Object {
 exports[`cannot power non-number values: expectParsedError 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_powerer(\\"a\\", 2)",
+  "code": "\\"a\\" ** 2",
   "displayResult": Array [],
   "numErrors": 1,
   "parsedErrors": "Line 1: Error: Expected number on left hand side of operation, got string.",
@@ -107,7 +120,7 @@ Object {
 exports[`dividing float and float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_divider(1.0, 2.0)",
+  "code": "1.0 / 2.0",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -120,7 +133,7 @@ Object {
 exports[`dividing integer and float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_divider(BigInt(2), 1.0)",
+  "code": "2 / 1.0",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -133,7 +146,7 @@ Object {
 exports[`dividing integer and integer is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_divider(BigInt(1), BigInt(2))",
+  "code": "1 / 2",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -146,7 +159,7 @@ Object {
 exports[`flooring float and float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_floorer(1.0, 2.0)",
+  "code": "1.0 // 2.0",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -159,7 +172,7 @@ Object {
 exports[`flooring integer and float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_floorer(BigInt(2), 1.0)",
+  "code": "2 // 1.0",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -172,7 +185,7 @@ Object {
 exports[`flooring integer and integer is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_floorer(BigInt(2), BigInt(1))",
+  "code": "2 // 1",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -185,7 +198,7 @@ Object {
 exports[`minusing an integer from a float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_minuser(1.0, BigInt(2))",
+  "code": "1.0 - 2",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -198,7 +211,7 @@ Object {
 exports[`minusing two floats is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_minuser(1.0, 2.0)",
+  "code": "1.0 - 2.0",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -211,7 +224,7 @@ Object {
 exports[`minusing two integers is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_minuser(BigInt(1), BigInt(2))",
+  "code": "1 - 2",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -224,7 +237,7 @@ Object {
 exports[`modding float and float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_modder(1.0, 2.0)",
+  "code": "1.0 % 2.0",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -237,7 +250,7 @@ Object {
 exports[`modding integer and float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_modder(BigInt(2), 1.0)",
+  "code": "2 % 1.0",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -250,7 +263,7 @@ Object {
 exports[`modding integer and integer is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_modder(BigInt(2), BigInt(1))",
+  "code": "2 % 1",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -263,7 +276,7 @@ Object {
 exports[`multiplying float and float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_multiplier(1.0, 2.0)",
+  "code": "1.0 * 2.0",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -276,7 +289,7 @@ Object {
 exports[`multiplying integer and float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_multiplier(1.0, BigInt(2))",
+  "code": "1.0 * 2",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -289,7 +302,7 @@ Object {
 exports[`multiplying integer and integer is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_multiplier(BigInt(1), BigInt(2))",
+  "code": "1 * 2",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -302,7 +315,7 @@ Object {
 exports[`powering float and float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_powerer(1.0, 2.0)",
+  "code": "1.0 ** 2.0",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -315,7 +328,7 @@ Object {
 exports[`powering integer and float is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_powerer(BigInt(2), 1.0)",
+  "code": "2 ** 1.0",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",
@@ -328,7 +341,7 @@ Object {
 exports[`powering integer and integer is ok: expectResult 1`] = `
 Object {
   "alertResult": Array [],
-  "code": "__py_powerer(BigInt(2), BigInt(1))",
+  "code": "2 ** 1",
   "displayResult": Array [],
   "numErrors": 0,
   "parsedErrors": "",

@@ -1,0 +1,29 @@
+\subsection*{MISC Library}
+
+
+The following
+names are provided by the MISC library:
+\begin{itemize}
+\item \href{https://sourceacademy.org/sicpjs/1.2.6\#ex_1.22}{\lstinline{get_time()}}: \textit{primitive}, returns number of milliseconds elapsed since January 1, 1970 00:00:00 UTC
+\item \verb#parse_int#\texttt{(s, i)}: \textit{primitive}, 
+interprets the \emph{string} \texttt{s} as an integer, using the positive integer \texttt{i} as radix, and returns the respective value,
+see \href{https://www.ecma-international.org/ecma-262/9.0/index.html\#sec-parseint-string-radix}{\color{DarkBlue}ECMAScript Specification, Section 18.2.5}.
+\item \href{https://sourceacademy.org/sicpjs/4.1.2\#p2}{\lstinline{is_boolean(x)}}, \href{https://sourceacademy.org/sicpjs/2.3.2\#p5}{\lstinline{is_float(x), is_int(x)}}
+  \href{https://sourceacademy.org/sicpjs/2.3.2\#p7}{\lstinline{is_string(x)}}, \verb#is_function#\texttt{(x)}: \textit{primitive}, returns \texttt{true} if the type of \texttt{x} matches the function name and \texttt{false} if it does not. We specify that \verb#is_float# returns \texttt{true} for \texttt{NaN} and \texttt{Infinity}.
+\item \texttt{prompt(s)}: \textit{primitive}, pops up a window that displays the \emph{string} \texttt{s}, provides
+an input line for the user to enter a text, a ``Cancel'' button and an ``OK'' button. The call of \texttt{prompt}
+suspends execution of the program until one of the two buttons is pressed. If 
+the ``OK'' button is pressed, \texttt{prompt} returns the entered text as a string.
+If the ``Cancel'' button is pressed, \texttt{prompt} returns a non-string value.
+\item \href{https://sourceacademy.org/sicpjs/1.2.6\#footnote-7}{\texttt{print(x)}}: \textit{primitive}, displays the value \texttt{x} in the console\footnote{The notation used for the display of values is consistent with \href{http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf}{\color{DarkBlue}JSON}, but also displays \texttt{undefined} and function objects.}; returns the argument \texttt{a}.
+\item \texttt{print(x, s)}: \textit{primitive}, displays the string \texttt{s}, followed by a space character, followed by the value \texttt{x} in the console\footnotemark[\value{footnote}]; returns the argument \texttt{x}.
+\item \href{https://sourceacademy.org/sicpjs/1.2.6\#footnote-7}{\texttt{error(x)}}: \textit{primitive}, displays the value \texttt{x} in the console\footnotemark[\value{footnote}] with error flag. The evaluation
+  of any call of \texttt{error} aborts the running program immediately.
+\item \href{https://sourceacademy.org/sicpjs/2.1.3\#footnote-2}{\texttt{error(x, s)}}: \textit{primitive}, displays the string \texttt{s}, followed by a space character, followed by the value \texttt{x} in the console\footnotemark[\value{footnote}] with error flag. The evaluation
+  of any call of \texttt{error} aborts the running program immediately.
+\item \href{https://sourceacademy.org/sicpjs/3.3.4\#p24}{\lstinline{str(x)}}: \textit{primitive}, returns a string that represents\footnotemark[\value{footnote}] the value \texttt{x}. 
+\end{itemize}
+All library functions can be assumed to run
+in $O(1)$ time, except \texttt{print}, \texttt{error} and \texttt{str}, 
+which run in $O(n)$ time, where $n$ is
+the size (number of components such as pairs) of their first argument.

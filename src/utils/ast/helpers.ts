@@ -2,7 +2,18 @@ import type es from 'estree'
 
 import assert from '../assert'
 import { simple } from '../walkers'
+import { ArrayMap } from '../dict'
 import { isImportDeclaration, isVariableDeclaration } from './typeGuards'
+
+export function getModuleDeclarationSource(
+  node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
+): string {
+  assert(
+    typeof node.source?.value === 'string',
+    `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`
+  )
+  return node.source.value
+}
 
 /**
  * Filters out all import declarations from a program, and sorts them by
@@ -11,28 +22,19 @@ import { isImportDeclaration, isVariableDeclaration } from './typeGuards'
 export function filterImportDeclarations({
   body
 }: es.Program): [
-  Record<string, es.ImportDeclaration[]>,
+  ArrayMap<string, es.ImportDeclaration>,
   Exclude<es.Program['body'][0], es.ImportDeclaration>[]
 ] {
   return body.reduce(
     ([importNodes, otherNodes], node) => {
       if (!isImportDeclaration(node)) return [importNodes, [...otherNodes, node]]
 
-      const moduleName = node.source.value
-      assert(
-        typeof moduleName === 'string',
-        `Expected import declaration to have source of type string, got ${moduleName}`
-      )
-
-      if (!(moduleName in importNodes)) {
-        importNodes[moduleName] = []
-      }
-
-      importNodes[moduleName].push(node)
+      const moduleName = getModuleDeclarationSource(node)
+      importNodes.add(moduleName, node)
       return [importNodes, otherNodes]
     },
-    [{}, []] as [
-      Record<string, es.ImportDeclaration[]>,
+    [new ArrayMap(), []] as [
+      ArrayMap<string, es.ImportDeclaration>,
       Exclude<es.Program['body'][0], es.ImportDeclaration>[]
     ]
   )
@@ -50,10 +52,23 @@ export function extractIdsFromPattern(pattern: es.Pattern) {
   return identifiers
 }
 
-export function getIdsFromDeclaration(decl: es.Declaration) {
-  return isVariableDeclaration(decl)
+export function getIdsFromDeclaration(
+  decl: es.Declaration,
+  allowNull: true
+): (es.Identifier | null)[]
+export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: false): es.Identifier[]
+export function getIdsFromDeclaration(decl: es.Declaration, allowNull?: boolean) {
+  const rawIds = isVariableDeclaration(decl)
     ? decl.declarations.flatMap(({ id }) => extractIdsFromPattern(id))
     : [decl.id]
+
+  if (!allowNull) {
+    rawIds.forEach(each => {
+      assert(each !== null, 'Encountered a null identifier!')
+    })
+  }
+
+  return rawIds
 }
 
 export const getImportedName = (
@@ -69,14 +84,4 @@ export const getImportedName = (
     case 'ExportSpecifier':
       return spec.local.name
   }
-}
-
-export function getModuleDeclarationSource(
-  node: Exclude<es.ModuleDeclaration, es.ExportDefaultDeclaration>
-): string {
-  assert(
-    typeof node.source?.value === 'string',
-    `Expected ${node.type} to have a source value of type string, got ${node.source?.value}`
-  )
-  return node.source.value
 }

@@ -14,21 +14,17 @@ import { UNKNOWN_LOCATION } from '../constants'
 import * as errors from '../errors/errors'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { checkEditorBreakpoints } from '../stdlib/inspector'
-import { Context, ContiguousArrayElements, Result, type StatementSequence, Value } from '../types'
+import { Context, ContiguousArrayElements, Result, Value, type StatementSequence } from '../types'
 import * as ast from '../utils/ast/astCreator'
 import { filterImportDeclarations } from '../utils/ast/helpers'
 import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import { checkProgramForUndefinedVariables } from '../validator/validator'
 import * as seq from '../utils/statementSeqTransform'
+import { checkProgramForUndefinedVariables } from '../validator/validator'
+import Closure from './closure'
 import {
   Continuation,
-  getContinuationControl,
-  getContinuationEnv,
-  getContinuationStash,
   isCallWithCurrentContinuation,
-  isContinuation,
-  makeContinuation,
   makeDummyContCallExpression
 } from './continuations'
 import * as instr from './instrCreator'
@@ -39,15 +35,13 @@ import {
   AssmtInstr,
   BinOpInstr,
   BranchInstr,
-  ControlItem,
   CSEBreak,
+  ControlItem,
   CseError,
   EnvInstr,
   ForInstr,
-  GenContInstr,
   Instr,
   InstrType,
-  ResumeContInstr,
   UnOpInstr,
   WhileInstr
 } from './types'
@@ -72,6 +66,7 @@ import {
   hasImportDeclarations,
   isBlockStatement,
   isEnvArray,
+  isEnvDependent,
   isInstr,
   isNode,
   isSimpleFunction,
@@ -82,7 +77,6 @@ import {
   setVariable,
   valueProducing
 } from './utils'
-import Closure from './closure'
 
 type CmdEvaluator = (
   command: ControlItem,
@@ -97,15 +91,33 @@ type CmdEvaluator = (
  * It contains syntax tree nodes or instructions.
  */
 export class Control extends Stack<ControlItem> {
+  private numEnvDependentItems: number
   public constructor(program?: es.Program | StatementSequence) {
     super()
-
+    this.numEnvDependentItems = 0
     // Load program into control stack
     program ? this.push(program) : null
   }
 
+  public canAvoidEnvInstr(): boolean {
+    return this.numEnvDependentItems === 0
+  }
+
+  public pop(): ControlItem | undefined {
+    const item = super.pop()
+    if (item !== undefined && isEnvDependent(item)) {
+      this.numEnvDependentItems--
+    }
+    return item
+  }
+
   public push(...items: ControlItem[]): void {
     const itemsNew: ControlItem[] = Control.simplifyBlocksWithoutDeclarations(...items)
+    itemsNew.forEach((item: ControlItem) => {
+      if (isEnvDependent(item)) {
+        this.numEnvDependentItems++
+      }
+    })
     super.push(...itemsNew)
   }
 
@@ -214,7 +226,7 @@ function evaluateImports(program: es.Program, context: Context) {
     const [importNodeMap] = filterImportDeclarations(program)
 
     const environment = currentEnvironment(context)
-    for (const [moduleName, nodes] of Object.entries(importNodeMap)) {
+    for (const [moduleName, nodes] of importNodeMap) {
       const functions = context.nativeStorage.loadedModules[moduleName]
       for (const node of nodes) {
         for (const spec of node.specifiers) {
@@ -439,8 +451,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     const next = control.peek()
 
     // Push ENVIRONMENT instruction if needed - if next control stack item
-    // exists and is not an environment instruction
-    if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+    // exists and is not an environment instruction, OR the control only contains
+    // environment indepedent item
+    if (
+      next &&
+      !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
+      !control.canAvoidEnvInstr()
+    ) {
       control.push(instr.envInstr(currentEnvironment(context), command))
     }
 
@@ -913,33 +930,65 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
+      // generate a continuation here
+      const contControl = control.copy()
+      const contStash = stash.copy()
+      const contEnv = context.runtime.environments.slice()
+
+      // at this point, the extra CALL instruction
+      // has been removed from the control stack.
+      // additionally, the single closure argument has been
+      // removed (as the parameter of call/cc) from the stash
+      // and additionally, call/cc itself has been removed from the stash.
+
+      // as such, there is no further need to modify the
+      // copied C, S and E!
+
+      const continuation = new Continuation(contControl, contStash, contEnv)
+
       // Get the callee
       const cont_callee: Value = args[0]
 
       const dummyFCallExpression = makeDummyContCallExpression('f', 'cont')
 
       // Prepare a function call for the continuation-consuming function
-      // along with a newly generated continuation
       control.push(instr.appInstr(command.numOfArgs, dummyFCallExpression))
-      control.push(instr.genContInstr(dummyFCallExpression.arguments[0]))
+
+      // push the argument (the continuation caller) back onto the stash
       stash.push(cont_callee)
+
+      // finally, push the continuation onto the stash
+      stash.push(continuation)
       return
     }
 
-    if (isContinuation(func)) {
+    if (func instanceof Continuation) {
       // Check for number of arguments mismatch error
       checkNumberOfArguments(context, func, args, command.srcNode)
 
-      const dummyContCallExpression = makeDummyContCallExpression('f', 'cont')
+      // const dummyContCallExpression = makeDummyContCallExpression('f', 'cont')
 
-      // Restore the state of the stash,
-      // but replace the function application instruction with
-      // a resume continuation instruction
-      stash.push(func)
-      // we need to push the arguments back onto the stash
-      // as well
+      // // Restore the state of the stash,
+      // // but replace the function application instruction with
+      // // a resume continuation instruction
+      // stash.push(func)
+      // // we need to push the arguments back onto the stash
+      // // as well
+      // stash.push(...args)
+      // control.push(instr.resumeContInstr(command.numOfArgs, dummyContCallExpression))
+
+      // get the C, S, E from the continuation
+      const contControl = func.getControl()
+      const contStash = func.getStash()
+      const contEnv = func.getEnv()
+
+      // update the C, S, E of the current context
+      control.setTo(contControl)
+      stash.setTo(contStash)
+      context.runtime.environments = contEnv
+
+      // push the arguments back onto the stash
       stash.push(...args)
-      control.push(instr.resumeContInstr(command.numOfArgs, dummyContCallExpression))
       return
     }
 
@@ -950,8 +999,13 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
       const next = control.peek()
 
       // Push ENVIRONMENT instruction if needed - if next control stack item
-      // exists and is not an environment instruction
-      if (next && !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT)) {
+      // exists and is not an environment instruction, OR the control only contains
+      // environment indepedent item
+      if (
+        next &&
+        !(isInstr(next) && next.instrType === InstrType.ENVIRONMENT) &&
+        !control.canAvoidEnvInstr()
+      ) {
         control.push(instr.envInstr(currentEnvironment(context), command.srcNode))
       }
 
@@ -1134,54 +1188,5 @@ const cmdEvaluators: { [type: string]: CmdEvaluator } = {
     }
   },
 
-  [InstrType.BREAK_MARKER]: function () {},
-
-  [InstrType.GENERATE_CONT]: function (
-    _command: GenContInstr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
-    const contControl = control.copy()
-    const contStash = stash.copy()
-    const contEnv = context.runtime.environments
-
-    // Remove all data related to the continuation-consuming function
-    contControl.pop()
-    contStash.pop()
-
-    // Now this will accurately represent the slice of the
-    // program execution at the time of the call/cc call
-    const continuation = makeContinuation(contControl, contStash, contEnv)
-
-    stash.push(continuation)
-  },
-
-  [InstrType.RESUME_CONT]: function (
-    command: ResumeContInstr,
-    context: Context,
-    control: Control,
-    stash: Stash
-  ) {
-    // pop the arguments
-    const args: Value[] = []
-    for (let i = 0; i < command.numOfArgs; i++) {
-      args.unshift(stash.pop())
-    }
-    const cn: Continuation = stash.pop() as Continuation
-
-    const contControl = getContinuationControl(cn)
-    const contStash = getContinuationStash(cn)
-    const contEnv = getContinuationEnv(cn)
-
-    // Set the control and stash to the continuation's control and stash
-    control.setTo(contControl)
-    stash.setTo(contStash)
-
-    // Push the arguments given to the continuation back onto the stash
-    stash.push(...args)
-
-    // Restore the environment pointer to that of the continuation's environment
-    context.runtime.environments = contEnv
-  }
+  [InstrType.BREAK_MARKER]: function () {}
 }
