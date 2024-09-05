@@ -45,57 +45,89 @@ async function expectSuccess<T extends SourceFiles>(files: T, entrypointFilePath
   return result
 }
 
-test('Causes CircularImportError when imports are circular', async () => {
-  const [error] = await expectError(
-    {
-      '/a.js': `import { b } from "./b.js";`,
-      '/b.js': `import { a } from "./a.js";`
-    },
-    '/a.js'
-  )
+describe('Test self circular import errors', () => {
+  async function expectCircularError<T extends SourceFiles>(files: T, entrypoint: keyof T) {
+    const [error] = await expectError(files, entrypoint)
+    expect(error).toBeInstanceOf(CircularImportError)
+  }
 
-  expect(error).toBeInstanceOf(CircularImportError)
-})
+  test('Causes CircularImportError when imports are circular', async () => {
+    await expectCircularError(
+      {
+        '/a.js': `import { b } from "./b.js";`,
+        '/b.js': `import { a } from "./a.js";`
+      },
+      '/a.js'
+    )
+  })
 
-// TODO: https://github.com/source-academy/js-slang/issues/1535
-test.skip('Longer cycle causes also causes CircularImportError', async () => {
-  const [error] = await expectError(
-    {
-      '/a.js': `
-      import { c } from "./c.js";
-      
-    `,
-      '/b.js': 'import { a } from "./a.js";',
-      '/c.js': 'import { b } from "./b.js";',
-      '/d.js': 'import { c } from "./c.js";',
-      '/e.js': 'import { d } from "./d.js";'
-    },
-    '/e.js'
-  )
-
-  expect(error).toBeInstanceOf(CircularImportError)
-  expect(resolver.default).not.toHaveBeenCalledWith('./e.js')
-})
-
-test('Self Circular Imports cause a short circuiting of the linker', async () => {
-  const [error] = await expectError(
-    {
-      '/a.js': 'import { a } from "./a.js";',
-      '/c.js': `
-        import { b } from "./b.js";
-        export const c = "c";
-      `,
-      '/d.js': `
-        import { a } from "./a.js";
+  // TODO: https://github.com/source-academy/js-slang/issues/1535
+  test.skip('Longer cycle causes also causes CircularImportError', async () => {
+    await expectCircularError(
+      {
+        '/a.js': `
         import { c } from "./c.js";
-      `
-    },
-    '/d.js'
-  )
+        
+      `,
+        '/b.js': 'import { a } from "./a.js";',
+        '/c.js': 'import { b } from "./b.js";',
+        '/d.js': 'import { c } from "./c.js";',
+        '/e.js': 'import { d } from "./d.js";'
+      },
+      '/e.js'
+    )
 
-  expect(error).toBeInstanceOf(CircularImportError)
-  expect(resolver.default).not.toHaveBeenCalledWith('./c.js')
-  expect(resolver.default).not.toHaveBeenCalledWith('./b.js')
+    expect(resolver.default).not.toHaveBeenCalledWith('./e.js')
+  })
+
+  test('Self circular imports for not the entrypoint', async () => {
+    await expectCircularError(
+      {
+        '/a.js': 'import { a } from "./a.js";',
+        '/c.js': `
+          import { b } from "./b.js";
+          export const c = "c";
+        `,
+        '/d.js': `
+          import { a } from "./a.js";
+          import { c } from "./c.js";
+        `
+      },
+      '/d.js'
+    )
+
+    expect(resolver.default).not.toHaveBeenCalledWith('./c.js')
+    expect(resolver.default).not.toHaveBeenCalledWith('./b.js')
+  })
+
+  test('Self circular imports for a relative entrypoint', () =>
+    expectCircularError(
+      {
+        '/a.js': `import { a } from './dir/../a.js';`
+      },
+      '/a.js'
+    ))
+
+  test('Self circular imports for an absolute entrypoint', async () => {
+    await expectCircularError(
+      {
+        '/a.js': 'import { a } from "/a.js";',
+        '/c.js': `
+          import { b } from "./b.js";
+          export const c = "c";
+        `,
+        '/d.js': `
+          import { a } from "./a.js";
+          import { c } from "./c.js";
+        `
+      },
+      '/a.js'
+    )
+
+    expect(resolver.default).not.toHaveBeenCalledWith('./c.js')
+    expect(resolver.default).not.toHaveBeenCalledWith('./b.js')
+    expect(resolver.default).not.toHaveBeenCalledWith('./d.js')
+  })
 })
 
 test('Parse errors cause a short circuiting of the linker', async () => {
