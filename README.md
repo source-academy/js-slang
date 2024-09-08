@@ -48,7 +48,7 @@ $ cd dist
 $ npm link
 ```
 
-If you do not wish to add \"js-slang\" to your PATH, replace \"js-slang\" with \"node dist/repl/repl.js\" in the following examples.
+If you do not wish to add \"js-slang\" to your PATH, replace \"js-slang\" with \"node dist/repl\" in the following examples.
 
 To try out _Source_ in a REPL, run
 
