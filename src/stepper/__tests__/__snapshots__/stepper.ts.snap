@@ -5507,12 +5507,12 @@ math_abs(-1);
 
 exports[`Test catching errors from built in function Incorrect number of arguments 1`] = `
 "Start of evaluation
-"
+Expected 2 arguments, but got 1"
 `;
 
 exports[`Test catching errors from built in function Incorrect type of argument for math function 1`] = `
 "Start of evaluation
-"
+Math functions must be called with number arguments"
 `;
 
 exports[`Test catching errors from built in function Incorrect type of arguments for module function 1`] = `
