@@ -1751,7 +1751,9 @@ function reduceMain(
         ]
       }
     },
-
+    /**
+     * Please refer to reduction of Program in stepper specification
+     */
     Program(
       node: es.Program,
       context: Context,
@@ -1974,7 +1976,9 @@ function reduceMain(
         ]
       }
     },
-
+    /**
+     * Please refer to reduction of BlockStatement in stepper specification
+     */
     BlockStatement(
       node: es.BlockStatement,
       context: Context,
@@ -2195,7 +2199,10 @@ function reduceMain(
         ]
       }
     },
-
+    /**
+     * Please refer to reduction of BlockExpression in stepper specification
+     * This is related to function application
+     */
     BlockExpression(
       node: BlockExpression,
       context: Context,
@@ -3346,6 +3353,7 @@ export function getEvaluationSteps(
   const steps: [es.Program, string[][], string][] = []
   try {
     checkProgramForUndefinedVariables(program, context)
+    //reading the step limit
     const limit = stepLimit === undefined ? 1000 : stepLimit % 2 === 0 ? stepLimit : stepLimit + 1
     evaluateImports(program, context)
     // starts with substituting predefined constants
@@ -3362,6 +3370,9 @@ export function getEvaluationSteps(
       [],
       'Start of evaluation'
     ]
+    /**
+     * push the content into frontend for showing contents in the webpage
+     */
     steps.push([
       reducedWithPath[0] as es.Program,
       reducedWithPath[2].length > 1 ? reducedWithPath[2].slice(1) : reducedWithPath[2],
@@ -3373,6 +3384,10 @@ export function getEvaluationSteps(
     // odd steps: program after reduction
     let i = 1
     let limitExceeded = false
+    /**
+     * This is the start of actual reduction, calling reduceMain function in each iteration
+     * cause the program get reduced by one step at one iteration
+     */
     while (isStatementsReducible(reducedWithPath[0] as es.Program, context)) {
       //Should work on isReducibleStatement instead of checking body.length
       if (steps.length === limit) {
@@ -3380,6 +3395,7 @@ export function getEvaluationSteps(
         limitExceeded = true
         break
       }
+      //the program reduce by one step here
       reducedWithPath = reduceMain(reducedWithPath[0], context)
       steps.push([
         reducedWithPath[0] as es.Program,
@@ -3405,9 +3421,6 @@ export function getEvaluationSteps(
           ast.expressionStatement(ast.identifier('undefined'))
         ])
       }
-    }
-    if (steps.length === 0) {
-      steps.push([reducedWithPath[0] as es.Program, [], 'Nothing to evaluate'])
     }
     return steps
   } catch (error) {
