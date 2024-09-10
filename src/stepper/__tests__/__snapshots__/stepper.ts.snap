@@ -5507,12 +5507,12 @@ math_abs(-1);
 
 exports[`Test catching errors from built in function Incorrect number of arguments 1`] = `
 "Start of evaluation
-"
+Expected 2 arguments, but got 1"
 `;
 
 exports[`Test catching errors from built in function Incorrect type of argument for math function 1`] = `
 "Start of evaluation
-"
+Math functions must be called with number arguments"
 `;
 
 exports[`Test catching errors from built in function Incorrect type of arguments for module function 1`] = `
@@ -6320,6 +6320,894 @@ expmod(4, 3, 5);
     }
   }
 };
+
+{
+  {
+    {
+      return 4 * expmod(4, 3 - 1, 5) % 5;
+    }
+  }
+};
+
+{
+  {
+    {
+      return 4 * expmod(4, 3 - 1, 5) % 5;
+    }
+  }
+};
+
+{
+  {
+    return 4 * expmod(4, 3 - 1, 5) % 5;
+  }
+};
+
+{
+  {
+    return 4 * expmod(4, 3 - 1, 5) % 5;
+  }
+};
+
+{
+  return 4 * expmod(4, 3 - 1, 5) % 5;
+};
+
+{
+  return 4 * expmod(4, 3 - 1, 5) % 5;
+};
+
+4 * expmod(4, 3 - 1, 5) % 5;
+
+4 * expmod(4, 3 - 1, 5) % 5;
+
+4 * expmod(4, 2, 5) % 5;
+
+4 * expmod(4, 2, 5) % 5;
+
+4 * {
+  if (2 === 0) {
+    return 1;
+  } else {
+    if (is_even(2)) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  if (2 === 0) {
+    return 1;
+  } else {
+    if (is_even(2)) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  if (false) {
+    return 1;
+  } else {
+    if (is_even(2)) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  if (false) {
+    return 1;
+  } else {
+    if (is_even(2)) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    if (is_even(2)) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    if (is_even(2)) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    if (2 % 2 === 0) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    if (2 % 2 === 0) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    if (0 === 0) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    if (0 === 0) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    if (true) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    if (true) {
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    } else {
+      return 4 * expmod(4, 2 - 1, 5) % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = expmod(4, 2 / 2, 5);
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = expmod(4, 1, 5);
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = expmod(4, 1, 5);
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        if (1 === 0) {
+          return 1;
+        } else {
+          if (is_even(1)) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        if (1 === 0) {
+          return 1;
+        } else {
+          if (is_even(1)) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        if (false) {
+          return 1;
+        } else {
+          if (is_even(1)) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        if (false) {
+          return 1;
+        } else {
+          if (is_even(1)) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          if (is_even(1)) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          if (is_even(1)) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          if (1 % 2 === 0) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          if (1 % 2 === 0) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          if (1 === 0) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          if (1 === 0) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          if (false) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          if (false) {
+            const to_half = expmod(4, 1 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          {
+            undefined;
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          {
+            undefined;
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          {
+            return 4 * expmod(4, 1 - 1, 5) % 5;
+          }
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          return 4 * expmod(4, 1 - 1, 5) % 5;
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        {
+          return 4 * expmod(4, 1 - 1, 5) % 5;
+        }
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        return 4 * expmod(4, 1 - 1, 5) % 5;
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = {
+        return 4 * expmod(4, 1 - 1, 5) % 5;
+      };
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * expmod(4, 1 - 1, 5) % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * expmod(4, 1 - 1, 5) % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * expmod(4, 0, 5) % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * expmod(4, 0, 5) % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * {
+        if (0 === 0) {
+          return 1;
+        } else {
+          if (is_even(0)) {
+            const to_half = expmod(4, 0 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 0 - 1, 5) % 5;
+          }
+        }
+      } % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * {
+        if (0 === 0) {
+          return 1;
+        } else {
+          if (is_even(0)) {
+            const to_half = expmod(4, 0 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 0 - 1, 5) % 5;
+          }
+        }
+      } % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * {
+        if (true) {
+          return 1;
+        } else {
+          if (is_even(0)) {
+            const to_half = expmod(4, 0 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 0 - 1, 5) % 5;
+          }
+        }
+      } % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * {
+        if (true) {
+          return 1;
+        } else {
+          if (is_even(0)) {
+            const to_half = expmod(4, 0 / 2, 5);
+            return to_half * to_half % 5;
+          } else {
+            return 4 * expmod(4, 0 - 1, 5) % 5;
+          }
+        }
+      } % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * {
+        {
+          return 1;
+        }
+      } % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * {
+        {
+          return 1;
+        }
+      } % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * {
+        return 1;
+      } % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * {
+        return 1;
+      } % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * 1 % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 * 1 % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4 % 5;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      const to_half = 4;
+      return to_half * to_half % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      return 4 * 4 % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      undefined;
+      return 4 * 4 % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      return 4 * 4 % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    {
+      return 4 * 4 % 5;
+    }
+  }
+} % 5;
+
+4 * {
+  {
+    return 4 * 4 % 5;
+  }
+} % 5;
+
+4 * {
+  {
+    return 4 * 4 % 5;
+  }
+} % 5;
+
+4 * {
+  return 4 * 4 % 5;
+} % 5;
+
+4 * {
+  return 4 * 4 % 5;
+} % 5;
+
+4 * (4 * 4 % 5) % 5;
+
+4 * (4 * 4 % 5) % 5;
+
+4 * (16 % 5) % 5;
+
+4 * (16 % 5) % 5;
+
+4 * 1 % 5;
+
+4 * 1 % 5;
+
+4 % 5;
+
+4 % 5;
+
+4;
+
+4;
 "
 `;
 
