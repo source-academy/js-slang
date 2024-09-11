@@ -28,6 +28,7 @@ export enum InstrType {
 interface BaseInstr {
   instrType: InstrType
   srcNode: Node
+  isEnvDependent?: boolean
 }
 
 export interface WhileInstr extends BaseInstr {
