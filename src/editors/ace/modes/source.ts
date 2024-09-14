@@ -113,9 +113,9 @@ export function HighlightRulesSelector(
     const VariantForbiddenRegexSelector = () => {
       if (variant === Variant.TYPED) {
         // Removes the part of the regex that highlights singular |, since Typed variant uses union types
-        return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]/
+        return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|(?<!&)*&(?!&)/
       }
-      return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|[^&]*&[^&]|[^\|]*\|[^\|]/
+      return /\.{3}|--+|\+\++|\^|(==|!=)[^=]|[$%&*+\-~\/^]=+|(?<!&)*&(?!&)|(?<!\|)\|(?!\|)/
     }
 
     // @ts-ignore
